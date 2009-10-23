@@ -948,7 +948,7 @@ public class FeatureEdit extends JPanel
       cvForm = new CVPanel(getFeature());
       cvForm.setBackground(Color.WHITE);
 
-      matchForm = new MatchPanel(this, 
+      matchForm = new MatchPanel(getFeature(), 
           (DocumentEntry)getFeature().getEmblFeature().getEntry());
       matchForm.setBackground(Color.WHITE);
       
@@ -1699,9 +1699,9 @@ public class FeatureEdit extends JPanel
       //
       // strip out CV qualifiers
       //
-      if( (cvForm != null       && cvForm.isCvTag(this_qualifier)) ||
-          (propertiesPanel != null     && propertiesPanel.isPropertiesTag(this_qualifier, getFeature())) ||
-          (matchForm != null && matchForm.isMatchTag(this_qualifier)) ||
+      if( (cvForm != null && CVPanel.isCvTag(this_qualifier)) ||
+          (propertiesPanel != null && PropertiesPanel.isPropertiesTag(this_qualifier, getFeature())) ||
+          (matchForm != null && MatchPanel.isMatchTag(this_qualifier)) ||
           (propertiesPanel != null && ProteinMapPanel.isProteinMapElement(this_qualifier)) )
         continue;
       

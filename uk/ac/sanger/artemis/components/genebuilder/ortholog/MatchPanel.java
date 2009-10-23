@@ -29,7 +29,6 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
@@ -67,7 +66,6 @@ import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.util.ReadOnlyException;
 import uk.ac.sanger.artemis.util.StringVector;
 import uk.ac.sanger.artemis.chado.ChadoTransactionManager;
-import uk.ac.sanger.artemis.components.FeatureEdit;
 import uk.ac.sanger.artemis.components.SwingWorker;
 import uk.ac.sanger.artemis.components.genebuilder.GeneEdit;
 import uk.ac.sanger.artemis.components.genebuilder.GeneEditorPanel;
@@ -106,14 +104,14 @@ public class MatchPanel extends JPanel
   // used to test if match panel has contents
   private boolean empty = true;
   private static boolean LOADING = false;
-  private FeatureEdit feature_edit;
+  private Feature feature;
   
-  public MatchPanel(final FeatureEdit feature_edit, 
+  public MatchPanel(final Feature feature, 
                     final DocumentEntry entry)
   {
     super(new BorderLayout());
     this.entry = entry;
-    this.feature_edit = feature_edit;
+    this.feature = feature;
   }
   
   /**
@@ -121,7 +119,7 @@ public class MatchPanel extends JPanel
    * @param qualifier
    * @return
    */
-  public boolean isMatchTag(final Qualifier qualifier)
+  public static boolean isMatchTag(final Qualifier qualifier)
   {
     return isMatchTag(qualifier.getName());
   }
@@ -701,9 +699,7 @@ public class MatchPanel extends JPanel
         Component matchComponent = createMatchQualifiersComponent(feature);
         LOADING = false;
         
-        if(feature_edit.getFeature().getSystematicName().equals(
-           feature.getSystematicName()))
-          add(matchComponent);
+        add(matchComponent);
        
         remove(loadingData);
         repaint();

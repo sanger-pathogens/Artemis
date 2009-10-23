@@ -26,6 +26,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.FontMetrics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -95,7 +96,7 @@ public class PropertiesPanel extends JPanel
    * @param qualifier
    * @return
    */
-  public boolean isPropertiesTag(final Qualifier qualifier, final Feature feature)
+  public static boolean isPropertiesTag(final Qualifier qualifier, final Feature feature)
   {
     if(qualifier.getName().equals("ID") ||
        qualifier.getName().equals("Name") ||
@@ -141,14 +142,13 @@ public class PropertiesPanel extends JPanel
     
     
     Box gffBox = Box.createVerticalBox();
-    gffBox.add(Box.createVerticalStrut(5));
     
     GridBagLayout grid = new GridBagLayout();
     GridBagConstraints c = new GridBagConstraints();
     
     int maxLabelWidth = new JLabel("temporary_systematic_id ").getPreferredSize().width;
 
-    c.ipady = 3;
+    c.ipady = 1;
     JPanel gridPanel = new JPanel(grid);
     gridPanel.setBackground(Color.WHITE);
     
@@ -187,7 +187,7 @@ public class PropertiesPanel extends JPanel
         firstFound = false;
       }
     }
-    
+
     Dimension cellDimension = null;
     nrows = 0;
     if(idQualifier != null)
@@ -195,7 +195,7 @@ public class PropertiesPanel extends JPanel
       final String uniquename = (String)idQualifier.getValues().get(0);
       JLabel idField = new JLabel("ID");
       
-      uniquenameTextField = new JTextField(uniquename);
+      uniquenameTextField = new PropertiesTextField(uniquename);
       cellDimension = new Dimension(uniquenameTextField.getPreferredSize().width+10,
                                     idField.getPreferredSize().height+10);
       
@@ -218,18 +218,16 @@ public class PropertiesPanel extends JPanel
       Qualifier featIdQualifier = gffQualifiers.getQualifierByName("feature_id");
       if(featIdQualifier != null)
       {
-        
         idField.setToolTipText("feature_id="+(String)featIdQualifier.getValues().get(0));
         uniquenameTextField.setToolTipText("feature_id="+(String)featIdQualifier.getValues().get(0));
       }
       nrows++;
     }
-    
-     
-    
+
+
     if(!feature.getKey().getKeyString().equals(DatabaseDocument.EXONMODEL))
     {
-      primaryNameTextField = new JTextField();
+      primaryNameTextField = new PropertiesTextField();
       if(nameQualifier != null)
       {
         primaryNameTextField.setText((String)nameQualifier.getValues().get(0));
@@ -266,7 +264,7 @@ public class PropertiesPanel extends JPanel
       for(int i=0; i<parents.size(); i++)
       {
         String parent = (String)parents.get(i);
-        JTextField parentTextField = new JTextField(parent);
+        JTextField parentTextField = new PropertiesTextField(parent);
         
         if(cellDimension == null ||
            cellDimension.width < parentTextField.getPreferredSize().width+10)
@@ -299,7 +297,7 @@ public class PropertiesPanel extends JPanel
       for(int i=0; i<derivesFroms.size(); i++)
       {
         String derivesFrom = (String)derivesFroms.get(i);
-        JTextField derivesFromTextField = new JTextField(derivesFrom);
+        JTextField derivesFromTextField = new PropertiesTextField(derivesFrom);
         
         if(cellDimension == null ||
            cellDimension.width < derivesFromTextField.getPreferredSize().width+10)
@@ -332,7 +330,7 @@ public class PropertiesPanel extends JPanel
       //timeField.setPreferredSize(new Dimension(timeField.getPreferredSize().width+10,
       //                 timeField.getPreferredSize().height));
       
-      JTextField timeTextField = new JTextField(time);
+      JTextField timeTextField = new PropertiesTextField(time);
       if(cellDimension == null ||
          cellDimension.width < timeTextField.getPreferredSize().width+10)
          cellDimension = new Dimension(timeTextField.getPreferredSize().width+10,
@@ -369,7 +367,7 @@ public class PropertiesPanel extends JPanel
     if(obsoleteQualifier != null)
     {
       boolean isObsolete = Boolean.parseBoolean((String) obsoleteQualifier.getValues().get(0));
-      obsoleteField = new JCheckBox("is obsolete", isObsolete);
+      obsoleteField = new PropertiesCheckBox("is obsolete", isObsolete);
       obsoleteField.setOpaque(false);
       obsoleteField.addActionListener(new ActionListener()
       {
@@ -397,13 +395,13 @@ public class PropertiesPanel extends JPanel
     c.fill = GridBagConstraints.NONE;
     c.anchor = GridBagConstraints.NORTHWEST;
     nrows++;
-    partialField5prime = new JCheckBox("is partial 5'", 
+    partialField5prime = new PropertiesCheckBox("is partial 5'", 
         ( isPartialQualfier5 != null ) ? true : false);
     partialField5prime.setOpaque(false);
     gridPanel.add(partialField5prime, c);
     c.gridy = nrows;
     nrows++;
-    partialField3prime = new JCheckBox("is partial 3'", 
+    partialField3prime = new PropertiesCheckBox("is partial 3'", 
         ( isPartialQualfier3 != null ) ? true : false);
     partialField3prime.setOpaque(false);
     gridPanel.add(partialField3prime, c);
@@ -806,7 +804,7 @@ public class PropertiesPanel extends JPanel
     GridBagConstraints c = new GridBagConstraints();
     c.gridx = 0;
     c.gridy = nrows;
-    c.ipady = 3;
+    c.ipady = 1;
     c.gridwidth = 2;
     c.anchor = GridBagConstraints.CENTER;
     c.fill   = GridBagConstraints.HORIZONTAL;
@@ -982,7 +980,7 @@ public class PropertiesPanel extends JPanel
     c.gridx = 2;
     c.gridy = nrows;
     
-    gridPanel.add(Box.createHorizontalStrut(25), c);
+    gridPanel.add(Box.createHorizontalStrut(15), c);
   }
   
   /**
@@ -1058,5 +1056,45 @@ public class PropertiesPanel extends JPanel
   public void setObsoleteChanged(boolean obsoleteChanged)
   {
     obsoleteField.setSelected(obsoleteChanged);
+  }
+  
+  class PropertiesCheckBox extends JCheckBox
+  {
+    private static final long serialVersionUID = 1L;
+    
+    PropertiesCheckBox(String txt, boolean b)
+    {
+      super(txt, b);
+      FontMetrics fm = getFontMetrics(getFont());
+      int preferredHeight = fm.getHeight()+fm.getDescent();
+      Dimension d = super.getPreferredSize();
+      d.height = preferredHeight;
+      setPreferredSize(d);
+    }
+  }
+  
+  class PropertiesTextField extends JTextField
+  {
+    private static final long serialVersionUID = 1L;
+
+    PropertiesTextField()
+    {
+      super();
+      FontMetrics fm = getFontMetrics(getFont());
+      int preferredHeight = fm.getHeight()+fm.getDescent();
+      Dimension d = super.getPreferredSize();
+      d.height = preferredHeight;
+      setPreferredSize(d);
+    }
+    
+    PropertiesTextField(String txt)
+    {
+      super(txt);
+      FontMetrics fm = getFontMetrics(getFont());
+      int preferredHeight = fm.getHeight()+fm.getDescent();
+      Dimension d = super.getPreferredSize();
+      d.height = preferredHeight;
+      setPreferredSize(d);
+    }
   }
 }

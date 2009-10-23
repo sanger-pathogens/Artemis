@@ -103,7 +103,7 @@ public class CVPanel extends JPanel
    * @param qualifier
    * @return
    */
-  public boolean isCvTag(final Qualifier qualifier)
+  public static boolean isCvTag(final Qualifier qualifier)
   {
     return isCvTag(qualifier.getName());
   }
@@ -113,7 +113,7 @@ public class CVPanel extends JPanel
    * @param qualifierName
    * @return
    */
-  public boolean isCvTag(String qualifierName)
+  public static boolean isCvTag(String qualifierName)
   {
     if(qualifierName.startsWith("/"))
       qualifierName = qualifierName.substring(1);

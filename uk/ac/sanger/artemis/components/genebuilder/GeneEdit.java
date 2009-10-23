@@ -145,11 +145,11 @@ public class GeneEdit
     int index = location.indexOf('=') + 1;
     String schema = location.substring(index);
 
-    final List schemas = dao.getOrganisms(); //dao.getSchema();
+    final List<Organism> schemas = dao.getOrganisms(); //dao.getSchema();
 
-    Vector v_schemas = new Vector(schemas.size());
+    Vector<String> v_schemas = new Vector<String>(schemas.size());
     for(int i=0; i<schemas.size(); i++)
-      v_schemas.add( ((Organism)schemas.get(i)).getCommonName() );
+      v_schemas.add( schemas.get(i).getCommonName() );
     
     v_schemas.add(0, "All");
 
@@ -160,7 +160,7 @@ public class GeneEdit
     schema_list.setSelectedItem(schema);
 
     final JTextField gene_text = new JTextField(20);
-    gene_text.setText("PFA0005w"); //"SPAC212.04c");
+    gene_text.setText("Smp_000030"); //"SPAC212.04c");
     
     c.gridx = 0;
     c.gridy = 0;
@@ -390,7 +390,10 @@ public class GeneEdit
     entry_group.addEntryChangeListener(ctm);
     ctm.setEntryGroup(entry_group);
     
-    new GeneBuilderFrame(gff_gene_feature, entry_group, selection, null, ctm); 
+    if(System.getProperty("basic") == null)
+      new GeneBuilderFrame(gff_gene_feature, entry_group, selection, null, ctm); 
+    else
+      new BasicGeneBuilderFrame(gff_gene_feature, entry_group, selection, null, ctm); 
   }
   
   /**
@@ -442,7 +445,7 @@ public class GeneEdit
     final javax.swing.plaf.FontUIResource font_ui_resource =
       Options.getOptions().getFontUIResource();
 
-    java.util.Enumeration keys = UIManager.getDefaults().keys();
+    java.util.Enumeration<Object> keys = UIManager.getDefaults().keys();
     while(keys.hasMoreElements()) 
     {
       Object key = keys.nextElement();

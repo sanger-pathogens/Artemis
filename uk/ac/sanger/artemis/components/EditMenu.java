@@ -28,6 +28,7 @@ package uk.ac.sanger.artemis.components;
 import uk.ac.sanger.artemis.*;
 import uk.ac.sanger.artemis.sequence.*;
 import uk.ac.sanger.artemis.util.*;
+import uk.ac.sanger.artemis.components.genebuilder.BasicGeneBuilderFrame;
 import uk.ac.sanger.artemis.components.genebuilder.GeneBuilderFrame;
 import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 import uk.ac.sanger.artemis.components.genebuilder.GeneViewerPanel;
@@ -975,11 +976,17 @@ public class EditMenu extends SelectionMenu
       }
       else
       {
-        final GeneBuilderFrame gbFrame = 
-             new GeneBuilderFrame(selection_feature, entry_group,
-                                  selection, goto_event_source);
-        gbFrame.addGeneBuilderHash(geneBuilderHash);
-        geneBuilderHash.put(gene, gbFrame);
+        if(System.getProperty("basic") == null)
+        {
+          final GeneBuilderFrame gbFrame = 
+            new GeneBuilderFrame(selection_feature, entry_group,
+                                 selection, goto_event_source);
+          gbFrame.addGeneBuilderHash(geneBuilderHash);
+          geneBuilderHash.put(gene, gbFrame);
+        }
+        else
+          new BasicGeneBuilderFrame(selection_feature, entry_group,
+              selection, goto_event_source, null);
       }
       
       return false;
