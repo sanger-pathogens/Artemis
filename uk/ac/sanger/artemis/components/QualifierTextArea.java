@@ -254,6 +254,7 @@ public class QualifierTextArea extends JTextPane
         ';',
         ',',
         '\"',
+        '|',
         '\n' };
     
     
