@@ -27,7 +27,6 @@ package uk.ac.sanger.artemis.components;
 
 import uk.ac.sanger.artemis.*;
 import uk.ac.sanger.artemis.util.ReadOnlyException;
-import uk.ac.sanger.artemis.editor.BrowserControl;
 import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.InvalidKeyException;
 
@@ -167,7 +166,13 @@ public class RunMenu extends SelectionMenu
           else
             residues = features.elementAt(0).getBases();
           
-          BrowserControl.displayURL(program.getProgramOptions()+residues);
+          String data = RunBlastAtNCBI.setData(programName, residues);
+          if(data != null)
+          {
+            RunBlastAtNCBI blastSearch = new RunBlastAtNCBI(data);
+            blastSearch.start();
+          }
+          //BrowserControl.displayURL(program.getProgramOptions()+residues);
         }
       });
     }
