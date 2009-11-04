@@ -198,7 +198,7 @@ public class ProteinMapPanel extends MapPanel
       
       drawFeature(g2d, ppStart, ppEnd, 
                   ypos, protein.getColour(), 1, 
-                  selection.contains(gene), 2.f);
+                  selection.contains(gene), 2.f, getFontHeight());
       
       //record position for tooltip
       Rectangle r = new Rectangle(ppStart, ypos, ppEnd-ppStart, 1*getFontHeight());
@@ -301,7 +301,7 @@ public class ProteinMapPanel extends MapPanel
 
           final Color col = Color.GRAY;
 
-          drawFeature(g2d, start, end, ypos, col, 1, false, 2.f);
+          drawFeature(g2d, start, end, ypos, col, 1, false, 2.f, getFontHeight());
           
           //record position for tooltip
           Rectangle r = new Rectangle(start, ypos, end-start, 1*getFontHeight());
@@ -369,7 +369,7 @@ public class ProteinMapPanel extends MapPanel
             }
             
             drawFeature(g2d, start, end, 
-                  ypos, col, 1, false, 2.f);
+                  ypos, col, 1, false, 2.f, getFontHeight());
             
             
             StringVector parts = StringVector.getStrings((String)values.get(k), ";");

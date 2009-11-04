@@ -53,20 +53,21 @@ public class MapPanel extends JPanel
    * @param colour  feature colour
    * @param size    parameter to control the height of the feature
    */
-  protected void drawFeature(Graphics2D g2d, int start, int end, 
+  protected static void drawFeature(Graphics2D g2d, int start, int end, 
                            int ypos, Color colour, float size,
-                           boolean selected, float selected_size)
+                           boolean selected, float selected_size,
+                           int fontHeight)
   {
     RoundRectangle2D e = new RoundRectangle2D.Float(start, ypos, 
         end-start,
-        getFontHeight()*size, 0, ypos);
+        fontHeight*size, 0, ypos);
 
     if(colour == null)
       colour = Color.BLACK;
     
     GradientPaint gp = new GradientPaint(start, ypos, 
         colour,
-        start, ypos+( (getFontHeight()/2) * size ), 
+        start, ypos+( (fontHeight/2) * size ), 
         Color.white, true);
     g2d.setPaint(gp); 
     g2d.fill(e);

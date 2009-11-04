@@ -25,18 +25,33 @@ package uk.ac.sanger.artemis.components.genebuilder;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.FontMetrics;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
 import java.util.List;
 
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import uk.ac.sanger.artemis.Entry;
 import uk.ac.sanger.artemis.EntryChangeEvent;
 import uk.ac.sanger.artemis.EntryChangeListener;
 import uk.ac.sanger.artemis.EntryGroup;
@@ -44,8 +59,10 @@ import uk.ac.sanger.artemis.Feature;
 import uk.ac.sanger.artemis.FeatureChangeEvent;
 import uk.ac.sanger.artemis.FeatureChangeListener;
 import uk.ac.sanger.artemis.GotoEventSource;
+import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.Selection;
 import uk.ac.sanger.artemis.chado.ChadoTransactionManager;
+import uk.ac.sanger.artemis.components.MessageDialog;
 import uk.ac.sanger.artemis.components.QualifierTextArea;
 import uk.ac.sanger.artemis.components.Utilities;
 import uk.ac.sanger.artemis.components.genebuilder.cv.CVPanel;
@@ -53,12 +70,20 @@ import uk.ac.sanger.artemis.components.genebuilder.gff.PropertiesPanel;
 import uk.ac.sanger.artemis.components.genebuilder.ortholog.MatchPanel;
 import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
 import uk.ac.sanger.artemis.io.DocumentEntry;
+import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
+import uk.ac.sanger.artemis.io.Key;
+import uk.ac.sanger.artemis.io.Location;
+import uk.ac.sanger.artemis.io.LocationParseException;
+import uk.ac.sanger.artemis.io.OutOfDateException;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.QualifierInfo;
 import uk.ac.sanger.artemis.io.QualifierLazyLoading;
+import uk.ac.sanger.artemis.io.QualifierParseException;
 import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.io.StreamQualifier;
+import uk.ac.sanger.artemis.util.OutOfRangeException;
+import uk.ac.sanger.artemis.util.ReadOnlyException;
 import uk.ac.sanger.artemis.util.StringVector;
 
 
@@ -66,8 +91,18 @@ public class BasicGeneBuilderFrame extends JFrame
        implements EntryChangeListener, FeatureChangeListener
 {
   private static final long serialVersionUID = 1L;
-  private Feature feature;
-  
+  private Feature activeFeature;
+  private ChadoCanonicalGene chadoGene;
+  private EntryGroup entry_group;
+  private CVPanel cvPanel;
+  private MatchPanel matchForm;
+  private PropertiesPanel propertiesPanel;
+  private QualifierTextArea qualifier_text_area;
+  private JTabbedPane tabPane = new JTabbedPane();
+  private JTextField locationText = new JTextField(80);
+  private Border empty = new EmptyBorder(0,0,0,0);
+  private JScrollPane jsp = new JScrollPane();
+
   public BasicGeneBuilderFrame(Feature feature,
                           final EntryGroup entry_group,
                           final Selection selection,
@@ -84,8 +119,10 @@ public class BasicGeneBuilderFrame extends JFrame
   {
     super();
     
-    this.feature = feature;
-    final ChadoCanonicalGene chadoGene = 
+    this.activeFeature = feature;
+    this.entry_group = entry_group;
+    
+    chadoGene = 
       ((GFFStreamFeature)feature.getEmblFeature()).getChadoGene();
     
     // set title
@@ -98,36 +135,105 @@ public class BasicGeneBuilderFrame extends JFrame
       chadoGene.getTranscripts();
     
     JPanel mainPanel = (JPanel) getContentPane();
-    final JTabbedPane tabPane = new JTabbedPane();
-    mainPanel.add(tabPane);
+    mainPanel.setLayout(new BorderLayout());
+    
+    JPanel northPanel = new JPanel(new BorderLayout());
+    JLabel statusLine = createStatusBar();
+
+    final BasicGeneViewerPanel viewer = new BasicGeneViewerPanel(
+        this,
+        chadoGene, selection, 
+        entry_group, this, statusLine);
+    
+    northPanel.add(viewer, BorderLayout.CENTER);
+    northPanel.add(statusLine, BorderLayout.NORTH);
+    northPanel.add(locationText, BorderLayout.SOUTH);
+    
+    mainPanel.add(northPanel, BorderLayout.NORTH);
+    mainPanel.add(tabPane, BorderLayout.CENTER);
     
     for(int i=0; i<transcripts.size(); i++)
     {
-      Feature transcript = (Feature) transcripts.get(i).getUserData();
-      tabPane.addTab(transcript.getIDString(), new JPanel(new BorderLayout()));
+      GFFStreamFeature transcript = (GFFStreamFeature) transcripts.get(i);
+      tabPane.addTab(GeneUtils.getUniqueName(transcript),
+                     new JPanel(new BorderLayout()));
     }
     
-    addComonentToTab(tabPane, chadoGene, transcripts, entry_group, null);
+    addComponentToTab(tabPane, chadoGene, transcripts, entry_group, null);
+    updateLocation();
+    
     tabPane.addChangeListener(new ChangeListener()
     {
       // This method is called whenever the selected tab changes
       public void stateChanged(ChangeEvent evt) 
       {
         if(((JComponent)tabPane.getSelectedComponent()).getComponentCount() < 1)
-          addComonentToTab(tabPane, chadoGene, transcripts, entry_group, this);
+        {
+          addComponentToTab(tabPane, chadoGene, transcripts, entry_group, this);
+        }
+        
+        viewer.repaint();
       }
     });
     
+    final FlowLayout flow_layout =
+      new FlowLayout(FlowLayout.CENTER, 18, 1);
+    final JPanel ok_cancel_update_panel = new JPanel(flow_layout);
+    if (!getFeature().isReadOnly())
+    {
+      final JButton okButton = new JButton("OK");
+      okButton.addActionListener(new ActionListener()
+      {
+        public void actionPerformed(ActionEvent e)
+        {
+          if(setProteinFeature()) 
+          {
+            stopListening();
+            
+            if(propertiesPanel != null)
+              propertiesPanel.updateObsoleteSettings(); 
+            dispose();
+          }
+        }
+      });
+      ok_cancel_update_panel.add(okButton);
+    }
+    
+    mainPanel.add(ok_cancel_update_panel, BorderLayout.SOUTH);
+    
+    tabPane.setBorder(empty);
     setTitle(title);
     pack();
     
     final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
     int height = getPreferredSize().height;
     if(height > (screen.height*0.9))   
-      setSize(getPreferredSize().width, (int)(screen.height*0.9));
+    {
+      setSize(getPreferredSize().width+jsp.getVerticalScrollBar().getWidth(), 
+              (int)(screen.height*0.9));
+    }
     Utilities.centreFrame(this);
     
     setVisible(true);
+  }
+  
+  protected int getFontHeight()
+  {
+    final FontMetrics fm = getFontMetrics(Options.getOptions().getFont());
+    return fm.getHeight();  
+  }
+  
+  private JLabel createStatusBar()
+  {
+    JLabel statusLine = new JLabel();
+    statusLine.setMinimumSize(new Dimension(100, getFontHeight()));
+    statusLine.setPreferredSize(new Dimension(100, getFontHeight()));
+
+    Border loweredbevel = BorderFactory.createLoweredBevelBorder();
+    Border raisedbevel = BorderFactory.createRaisedBevelBorder();
+    Border compound = BorderFactory.createCompoundBorder(raisedbevel,loweredbevel);
+    statusLine.setBorder(compound);
+    return statusLine;
   }
   
   private void addToPanel(JComponent section, JPanel container, String sectionName)
@@ -139,23 +245,28 @@ public class BasicGeneBuilderFrame extends JFrame
     container.add(section);
   }
   
-  private void addComonentToTab(final JTabbedPane tabPane, 
-                                final ChadoCanonicalGene chadoGene,
-                                final List<uk.ac.sanger.artemis.io.Feature> transcripts,
-                                final EntryGroup entry_group,
-                                final ChangeListener changeListener)
+  private Feature getSelectedTranscriptFeature()
   {
     int sel = tabPane.getSelectedIndex();
-    
-    Feature transcript = (Feature) transcripts.get(sel).getUserData();
+    return (Feature) chadoGene.getTranscripts().get(sel).getUserData();
+  }
+  
+  private void addComponentToTab(final JTabbedPane tabPane, 
+                                 final ChadoCanonicalGene chadoGene,
+                                 final List<uk.ac.sanger.artemis.io.Feature> transcripts,
+                                 final EntryGroup entry_group,
+                                 final ChangeListener changeListener)
+  {
+    Feature transcript = getSelectedTranscriptFeature();
     String transcriptName = GeneUtils.getUniqueName(transcript.getEmblFeature());
       
     JPanel panel = new JPanel();
-    JScrollPane jsp = new JScrollPane(panel);
+    jsp.setViewportView(panel);
+    jsp.setBorder(empty);
     panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
     panel.setBackground(Color.WHITE);
 
-    PropertiesPanel propertiesPanel = new PropertiesPanel(transcript);
+    propertiesPanel = new PropertiesPanel(transcript);
     addToPanel(propertiesPanel, panel, "Properties");
 
     Feature protein =
@@ -163,9 +274,9 @@ public class BasicGeneBuilderFrame extends JFrame
       
     GeneUtils.addLazyQualifiers((GFFStreamFeature)protein.getEmblFeature());
   
-    QualifierTextArea qualifier_text_area = new QualifierTextArea();
-    CVPanel cvPanel = new CVPanel(protein);
-    MatchPanel matchForm = new MatchPanel(protein, 
+    qualifier_text_area = new QualifierTextArea();
+    cvPanel = new CVPanel(protein);
+    matchForm = new MatchPanel(protein, 
           (DocumentEntry)getFeature().getEmblFeature().getEntry());
       
     qualifier_text_area.setText(getQualifierString(entry_group, protein));
@@ -226,7 +337,210 @@ public class BasicGeneBuilderFrame extends JFrame
   
   public Feature getFeature()
   {
-    return feature;
+    return activeFeature;
+  }
+  
+  protected String getTranscriptNameInView()
+  {
+    return tabPane.getTitleAt( tabPane.getSelectedIndex() );
+  }
+  
+  protected void setObsoleteChanged(boolean obs)
+  {
+    propertiesPanel.setObsoleteChanged(obs);
+  }
+  
+  private Entry getEntry()
+  {
+    return getFeature().getEntry();
+  }
+  
+  /**
+   *  Remove this object as a feature and entry change listener.
+   **/
+  public void stopListening() 
+  {
+    getEntry().removeEntryChangeListener(this);
+    getFeature().removeFeatureChangeListener(this);
+    if(cvPanel != null)
+      getFeature().removeFeatureChangeListener(cvPanel);
+    if(propertiesPanel != null)
+      getFeature().removeFeatureChangeListener(propertiesPanel);
+    if(matchForm != null)
+      getFeature().removeFeatureChangeListener(matchForm);
+  }
+  
+  
+  protected void setActiveFeature(final Feature feature)
+  {
+    this.activeFeature = feature;
+    updateLocation();
+  }
+  
+  /**
+   *  Set the key, location and qualifiers of the feature to be the same as
+   *  what values currently shown in the components.
+   *  @return true if and only if action succeeds.  It may fail because of an
+   *    illegal location or qualifier, in which case a message will be
+   *    displayed before returning.
+   **/
+  private boolean setProteinFeature() 
+  {
+    Feature transcript = getSelectedTranscriptFeature();
+    String transcriptName = GeneUtils.getUniqueName(transcript.getEmblFeature());
+    
+    Feature protein =
+      (Feature) chadoGene.getProteinOfTranscript(transcriptName).getUserData();
+    
+    final Key key = protein.getKey();
+    final Location location = protein.getLocation();
+    final QualifierVector qualifiers;
+
+    try 
+    {
+      qualifiers =
+        qualifier_text_area.getParsedQualifiers(getEntry().getEntryInformation ());
+ 
+      QualifierVector oldQualifiers = protein.getQualifiers();
+      
+      // preserve protein properties
+      for(int i=0; i<oldQualifiers.size(); i++)
+      {
+        Qualifier qualifier = (Qualifier) oldQualifiers.get(i);
+        if(PropertiesPanel.isPropertiesTag(qualifier, protein) )
+          qualifiers.addQualifierValues(qualifier);
+      }
+
+      // if using controlled vocab form
+      if(cvPanel != null)
+      {
+        QualifierVector cvQualifiers = cvPanel.getCvQualifiers();
+        if(cvQualifiers != null && cvQualifiers.size() > 0)
+          qualifiers.addAll(cvQualifiers);
+      }
+      
+      /*if(propertiesPanel != null)
+      {
+        QualifierVector gffQualifiers = propertiesPanel.getGffQualifiers(getFeature());
+        if(gffQualifiers != null && gffQualifiers.size() > 0)
+          qualifiers.addAll(gffQualifiers);
+        
+        QualifierVector mapQualifiers = ProteinMapPanel.getProteinMapQualifiers(getFeature());
+        if(mapQualifiers != null && mapQualifiers.size() > 0)
+          qualifiers.addAll(mapQualifiers);
+      }*/
+      
+      if(matchForm != null)
+      {
+        QualifierVector orthologQualifiers = matchForm.getMatchQualifiers();
+        if(orthologQualifiers != null && orthologQualifiers.size() > 0)
+          qualifiers.addAll(orthologQualifiers);
+      }
+    }
+    catch(QualifierParseException exception) 
+    {
+      final String error_string = exception.getMessage();
+      System.out.println(error_string);
+      new MessageDialog(this, "Cannot apply changes because of a qualifier " +
+                        "error: " + error_string);
+      return false;
+    }
+
+    try 
+    {
+      entry_group.getActionController().startAction();
+
+      try 
+      {
+        protein.set(null, key, location, qualifiers);
+      }
+      catch(OutOfDateException e) 
+      {
+        int status = JOptionPane.showConfirmDialog(this, 
+                   "the feature has changed since the edit " +
+                   "window was opened, continue?", 
+                   "Feature Changed", JOptionPane.OK_CANCEL_OPTION);
+
+        if(status == JOptionPane.OK_OPTION)
+          getFeature().set(key, location, qualifiers);
+        else 
+          return false;
+      }
+      catch(java.lang.Error err)
+      {
+        err.printStackTrace();
+
+        if(err.getMessage().indexOf("InvalidRelationException")>-1)
+        {
+          JScrollPane jsp = new JScrollPane(new JLabel(err.getMessage()));
+          jsp.setPreferredSize(new Dimension(200,100));
+          JOptionPane.showMessageDialog(null, jsp, 
+                      "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        return false;
+      }
+    } 
+    catch(EntryInformationException e) 
+    {
+      final String error_string = e.getMessage();
+      new MessageDialog(this, "Cannot apply changes: " + error_string);
+
+      return false;
+    } 
+    catch(OutOfRangeException e) 
+    {
+      new MessageDialog(this, "Cannot apply changes - the location is out of " +
+                        "range for this sequence");
+      return false;
+    } 
+    catch(ReadOnlyException e) 
+    {
+      new MessageDialog(this, "Cannot apply changes - the feature is " +
+                        "read only");
+      return false;
+    } 
+    finally
+    {
+      entry_group.getActionController ().endAction ();
+    }
+
+    dribble();
+    return true;
+  }
+  
+  /**
+   *  On Unix machines this method will append the text of the feature to a
+   *  file in a current directory called .dribble + <the entry name>
+   **/
+  private void dribble()
+  {
+    if(!Options.isUnixHost()) 
+      return;
+
+    final String dribble_file_name;
+
+    if(getEntry().getName() != null) 
+      dribble_file_name = ".dribble." + getEntry().getName();
+    else 
+      dribble_file_name = ".dribble.no_name";
+
+    try  
+    {
+      final Writer writer = new FileWriter(dribble_file_name, true);
+      getFeature().writeNative(writer);
+      writer.flush();
+      writer.close();
+    } 
+    catch(IOException e) 
+    {
+      System.err.println("IO exception while accessing " + dribble_file_name +
+                         ": " + e.getMessage());
+    }
+  }
+  
+  private void updateLocation()
+  {
+    locationText.setText(getFeature().getLocation().toStringShort());
   }
 
   public void entryChanged(EntryChangeEvent event)
@@ -234,7 +548,6 @@ public class BasicGeneBuilderFrame extends JFrame
     // TODO Auto-generated method stub
     
   }
-
   public void featureChanged(FeatureChangeEvent event)
   {
     // TODO Auto-generated method stub

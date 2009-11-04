@@ -248,7 +248,26 @@ public class GeneViewerPanel extends MapPanel
     {
       public void actionPerformed(ActionEvent event)  
       {
-        deleteFeatures();
+        FeatureVector features = selection.getAllFeatures();
+        boolean delete = deleteFeatures(features, chado_gene);
+        
+        try
+        {
+          if(delete)
+          {
+            for(int i = 0; i < features.size(); i++)
+              GeneUtils.deleteAllFeature(features.elementAt(i), chado_gene);
+            repaint();
+          }
+          else
+            gene_builder.getFeatureEdit().setObsoleteChanged(true);
+        }
+        catch(ReadOnlyException e)
+        {
+          JOptionPane.showMessageDialog(null, 
+              e.getMessage(), "Read Only", 
+              JOptionPane.WARNING_MESSAGE);
+        } 
       }
     });
     menu.add(deleteMenu);
@@ -556,10 +575,9 @@ public class GeneViewerPanel extends MapPanel
   /**
    * Delete or make features obsolete
    */
-  private void deleteFeatures()
-  {
-    FeatureVector features = selection.getAllFeatures();
-    
+  protected static Boolean deleteFeatures(FeatureVector features,
+                                          ChadoCanonicalGene chado_gene)
+  {   
     final String feature_count_string;
     if (features.size () < 2)
       feature_count_string = "the selected feature";
@@ -577,25 +595,8 @@ public class GeneViewerPanel extends MapPanel
                   JOptionPane.OK_CANCEL_OPTION,
                   JOptionPane.QUESTION_MESSAGE);
     if(option == JOptionPane.CANCEL_OPTION)
-            return;
-    
-    try
-    {
-      if(delete.isSelected())
-      {
-        for(int i = 0; i < features.size(); i++)
-          GeneUtils.deleteAllFeature(features.elementAt(i), chado_gene);
-        repaint();
-      }
-      else
-        gene_builder.getFeatureEdit().setObsoleteChanged(true);
-    }
-    catch(ReadOnlyException e)
-    {
-      JOptionPane.showMessageDialog(null, 
-          e.getMessage(), "Read Only", 
-          JOptionPane.WARNING_MESSAGE);
-    }  
+      return null;
+    return delete.isSelected();
   }
   
   public static uk.ac.sanger.artemis.Feature 
@@ -669,7 +670,8 @@ public class GeneViewerPanel extends MapPanel
     drawFeature(g2d, border, 
                 getSize().width - border, 
                 ypos, gene.getColour(), 1, 
-                selection.contains(gene), 2.f);
+                selection.contains(gene), 2.f,
+                getFontHeight());
     
     List transcripts = chado_gene.getTranscripts();   
     fraction = (float)(getSize().width - (2*border))/
@@ -679,24 +681,10 @@ public class GeneViewerPanel extends MapPanel
     
     for(int i=0; i<transcripts.size(); i++)
     {
-      /*
-      // draw frame lines
-   
-      if(!overlay_transcripts || i == 0)
-        drawFrameLines(g2d, ypos, 
-            start, end, fraction);
-    
-      drawTranscriptOnFrameLine(g2d, (Feature)transcripts.get(i), 
-          start, end, ypos, 
-          fraction);
-   
-      if(!overlay_transcripts)
-        ypos += 9 * getFontHeight() * 2;
-      */
-       
       drawTranscriptOnLine(g2d, (Feature)transcripts.get(i), 
                            start, end, ypos, 
-                           fraction);
+                           fraction, selection, chado_gene,
+                           getFontHeight());
       
       if(i != transcripts.size()-1)
         ypos += getTranscriptSize();
@@ -716,7 +704,7 @@ public class GeneViewerPanel extends MapPanel
         ypos = (border*5)+(getTranscriptSize()*ntranscript);
         drawFeature(g2d, select_start, select_end, 
                     ypos, Color.YELLOW, 1.5f,
-                    false, 2.f);
+                    false, 2.f, getFontHeight());
       }
     }
     setPreferredSize(new Dimension(getSize().width, ypos+border));
@@ -1100,9 +1088,11 @@ public class GeneViewerPanel extends MapPanel
    * @param ypos
    * @param fraction
    */
-  private void drawTranscriptOnLine(Graphics2D g2d, Feature embl_transcript, 
+  protected static void drawTranscriptOnLine(Graphics2D g2d, Feature embl_transcript, 
                                     final int start, final int end, int ypos, 
-                                    float fraction)
+                                    float fraction, Selection selection, 
+                                    ChadoCanonicalGene chado_gene,
+                                    int fontHeight)
   {
     BasicStroke stroke = new BasicStroke(48.f);
     g2d.setStroke(stroke);
@@ -1119,12 +1109,13 @@ public class GeneViewerPanel extends MapPanel
         ( GeneUtils.isObsolete((GFFStreamFeature)embl_transcript) ? " (obsolete)" : ""), border, ypos);
     drawFeature(g2d, t_start, t_end, 
                 ypos, transcript.getColour(), 1, 
-                selection.contains(transcript), 2.f);
+                selection.contains(transcript), 2.f, fontHeight);
 
     //List exons = chado_gene.getSpliceSitesOfTranscript(
     //    getQualifier( embl_transcript, "ID" ), "exon");
 
-    Set spliceSiteTypes = chado_gene.getSpliceTypes(getQualifier( embl_transcript, "ID" ));
+    Set spliceSiteTypes = chado_gene.getSpliceTypes(
+        getQualifier( embl_transcript, "ID" ));
     ypos += border*2;
     
     if(spliceSiteTypes != null)
@@ -1194,7 +1185,7 @@ public class GeneViewerPanel extends MapPanel
             drawExons(g2d, ex_start, ex_end, last_ex_start, last_ex_end,
                 last_ypos, 0, ypos, exon.getColour(), 1.5f, exon
                     .isForwardFeature(), last_segment,
-                selection.contains(exon), selected_size);
+                selection.contains(exon), selected_size, fontHeight);
 
             last_ex_end = ex_end;
             last_ex_start = ex_start;
@@ -1210,18 +1201,18 @@ public class GeneViewerPanel extends MapPanel
         transcript_id);
     
     if(embl_utr != null)
-      drawFeatureList(g2d, embl_utr, ypos);
+      drawFeatureList(g2d, embl_utr, ypos, selection, fontHeight, start, fraction);
     
     embl_utr = chado_gene.get5UtrOfTranscript(
         transcript_id);
     
     if(embl_utr != null)
-      drawFeatureList(g2d, embl_utr, ypos);
+      drawFeatureList(g2d, embl_utr, ypos, selection, fontHeight, start, fraction);
     
     // draw other transcript child features
     List embl_other = chado_gene.getOtherFeaturesOfTranscript(transcript_id);
     if(embl_other != null)
-      drawFeatureList(g2d, embl_other, ypos);
+      drawFeatureList(g2d, embl_other, ypos, selection, fontHeight, start, fraction);
   }
   
   /**
@@ -1230,9 +1221,13 @@ public class GeneViewerPanel extends MapPanel
    * @param embl_utr
    * @param ypos
    */
-  private void drawFeatureList(final Graphics2D g2d,
+  private static void drawFeatureList(final Graphics2D g2d,
                        final List feature_list,
-                       final int ypos)
+                       final int ypos, 
+                       Selection selection, 
+                       int fontHeight,
+                       int start,
+                       float fraction)
   {
     for(int i=0; i<feature_list.size(); i++)
     {
@@ -1253,7 +1248,7 @@ public class GeneViewerPanel extends MapPanel
         int r_end   = border + (int) ((range.getEnd() - start) * fraction);
 
         drawFeature(g2d, r_start, r_end, ypos, feature.getColour(), 1.5f,
-                    selection.contains(feature), 2.f);
+                    selection.contains(feature), 2.f, fontHeight);
       }
     }
   }
@@ -1300,15 +1295,15 @@ public class GeneViewerPanel extends MapPanel
    * @param selected
    * @param selected_size
    */
-  private void drawExons(Graphics2D g2d, int ex_start, int ex_end, 
+  private static void drawExons(Graphics2D g2d, int ex_start, int ex_end, 
                          int last_ex_start, int last_ex_end, int last_ypos,
                          int offset, int ypos, Color exon_colour,
                          float size,
                          boolean isForward, boolean last_segment,
-                         boolean selected, float selected_size)
+                         boolean selected, float selected_size, int fontHeight)
   {   
     drawFeature(g2d, ex_start, ex_end, 
-                ypos+offset, exon_colour, size, selected, selected_size);
+                ypos+offset, exon_colour, size, selected, selected_size, fontHeight);
     
     // draw connections
     if(last_ex_end != 0 ||
@@ -1326,15 +1321,15 @@ public class GeneViewerPanel extends MapPanel
       if(isForward)
       {
         g2d.drawLine(last_ex_end, last_ypos, 
-                     last_ex_end+((ex_start-last_ex_end)/2), ymid-getFontHeight()/2);
-        g2d.drawLine(last_ex_end+((ex_start-last_ex_end)/2), ymid-getFontHeight()/2, 
+                     last_ex_end+((ex_start-last_ex_end)/2), ymid-fontHeight/2);
+        g2d.drawLine(last_ex_end+((ex_start-last_ex_end)/2), ymid-fontHeight/2, 
                      ex_start, ypos+offset); 
       }
       else
       { 
         g2d.drawLine(last_ex_start, last_ypos, 
-                     last_ex_start+((ex_end-last_ex_start)/2), ymid-getFontHeight()/2);
-        g2d.drawLine(last_ex_start+((ex_end-last_ex_start)/2), ymid-getFontHeight()/2, 
+                     last_ex_start+((ex_end-last_ex_start)/2), ymid-fontHeight/2);
+        g2d.drawLine(last_ex_start+((ex_end-last_ex_start)/2), ymid-fontHeight/2, 
                      ex_end, ypos+offset); 
       }  
     }
@@ -1349,16 +1344,16 @@ public class GeneViewerPanel extends MapPanel
       {      
 
         g2d.drawLine(ex_end, ypos, 
-                     ex_end+getFontHeight()/2, ypos+(int)((getFontHeight()*size)/2));
-        g2d.drawLine(ex_end+getFontHeight()/2, ypos+(int)((getFontHeight()*size)/2),
-                     ex_end, ypos+(int)((getFontHeight()*size)));
+                     ex_end+fontHeight/2, ypos+(int)((fontHeight*size)/2));
+        g2d.drawLine(ex_end+fontHeight/2, ypos+(int)((fontHeight*size)/2),
+                     ex_end, ypos+(int)((fontHeight*size)));
       }
       else
       {
         g2d.drawLine(ex_start, ypos, 
-                     ex_start-getFontHeight()/2, ypos+(int)((getFontHeight()*size)/2));
-        g2d.drawLine(ex_start-getFontHeight()/2, ypos+(int)((getFontHeight()*size)/2),
-                     ex_start, ypos+(int)((getFontHeight()*size)));
+                     ex_start-fontHeight/2, ypos+(int)((fontHeight*size)/2));
+        g2d.drawLine(ex_start-fontHeight/2, ypos+(int)((fontHeight*size)/2),
+                     ex_start, ypos+(int)((fontHeight*size)));
       }
     }
   }
@@ -1692,7 +1687,9 @@ public class GeneViewerPanel extends MapPanel
         GeneUtils.addSegment(feature, ranges, transcript_name);
         final QualifierVector old_qualifiers = feature.getQualifiers().copy();
         ((uk.ac.sanger.artemis.Feature)feature.getUserData()).addSegment(range, old_qualifiers);
-        gene_builder.setActiveFeature((uk.ac.sanger.artemis.Feature)feature.getUserData(), false);
+        
+        if(gene_builder != null)
+          gene_builder.setActiveFeature((uk.ac.sanger.artemis.Feature)feature.getUserData(), false);
       }
     }
     catch(InvalidRelationException e)
@@ -1714,7 +1711,7 @@ public class GeneViewerPanel extends MapPanel
   
 
   
-  private String getQualifier(Feature feature, String name) 
+  private static String getQualifier(Feature feature, String name) 
   {
     Qualifier qualifier = null;
     try
