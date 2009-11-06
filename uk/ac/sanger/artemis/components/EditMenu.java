@@ -986,7 +986,7 @@ public class EditMenu extends SelectionMenu
         }
         else
           new BasicGeneBuilderFrame(selection_feature, entry_group,
-              selection, goto_event_source, null);
+              selection, null);
       }
       
       return false;
