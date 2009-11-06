@@ -19,7 +19,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  */
-
 package uk.ac.sanger.artemis.components.genebuilder;
 
 import java.awt.BorderLayout;
@@ -50,6 +49,11 @@ import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.DefaultStyledDocument;
+import javax.swing.text.Document;
+import javax.swing.text.Element;
 
 import uk.ac.sanger.artemis.Entry;
 import uk.ac.sanger.artemis.EntryChangeEvent;
@@ -58,7 +62,6 @@ import uk.ac.sanger.artemis.EntryGroup;
 import uk.ac.sanger.artemis.Feature;
 import uk.ac.sanger.artemis.FeatureChangeEvent;
 import uk.ac.sanger.artemis.FeatureChangeListener;
-import uk.ac.sanger.artemis.GotoEventSource;
 import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.Selection;
 import uk.ac.sanger.artemis.chado.ChadoTransactionManager;
@@ -72,9 +75,9 @@ import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
 import uk.ac.sanger.artemis.io.DocumentEntry;
 import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
+import uk.ac.sanger.artemis.io.InvalidRelationException;
 import uk.ac.sanger.artemis.io.Key;
 import uk.ac.sanger.artemis.io.Location;
-import uk.ac.sanger.artemis.io.LocationParseException;
 import uk.ac.sanger.artemis.io.OutOfDateException;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.QualifierInfo;
@@ -82,6 +85,7 @@ import uk.ac.sanger.artemis.io.QualifierLazyLoading;
 import uk.ac.sanger.artemis.io.QualifierParseException;
 import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.io.StreamQualifier;
+import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
 import uk.ac.sanger.artemis.util.ReadOnlyException;
 import uk.ac.sanger.artemis.util.StringVector;
@@ -93,7 +97,9 @@ public class BasicGeneBuilderFrame extends JFrame
   private static final long serialVersionUID = 1L;
   private Feature activeFeature;
   private ChadoCanonicalGene chadoGene;
+  private ChadoTransactionManager chadoTransactionManager;
   private EntryGroup entry_group;
+  private Selection selection;
   private CVPanel cvPanel;
   private MatchPanel matchForm;
   private PropertiesPanel propertiesPanel;
@@ -105,22 +111,22 @@ public class BasicGeneBuilderFrame extends JFrame
 
   public BasicGeneBuilderFrame(Feature feature,
                           final EntryGroup entry_group,
-                          final Selection selection,
-                          final GotoEventSource goto_event_source)
+                          final Selection selection)
   {
-    this(feature, entry_group, selection, goto_event_source, null);
+    this(feature, entry_group, selection, null);
   }
   
   public BasicGeneBuilderFrame(Feature feature,
       final EntryGroup entry_group,
       final Selection selection,
-      final GotoEventSource goto_event_source,
       final ChadoTransactionManager chadoTransactionManager)
   {
     super();
     
     this.activeFeature = feature;
     this.entry_group = entry_group;
+    this.chadoTransactionManager = chadoTransactionManager;
+    this.selection = selection;
     
     chadoGene = 
       ((GFFStreamFeature)feature.getEmblFeature()).getChadoGene();
@@ -137,19 +143,40 @@ public class BasicGeneBuilderFrame extends JFrame
     JPanel mainPanel = (JPanel) getContentPane();
     mainPanel.setLayout(new BorderLayout());
     
+    JTabbedPane tabMapViewer = new JTabbedPane();
     JPanel northPanel = new JPanel(new BorderLayout());
     JLabel statusLine = createStatusBar();
 
-    final BasicGeneViewerPanel viewer = new BasicGeneViewerPanel(
-        this,
-        chadoGene, selection, 
+    final BasicGeneViewerPanel nucViewer = new BasicGeneViewerPanel(
+        this, chadoGene, selection, 
         entry_group, this, statusLine);
     
-    northPanel.add(viewer, BorderLayout.CENTER);
+    northPanel.add(nucViewer, BorderLayout.CENTER);
     northPanel.add(statusLine, BorderLayout.NORTH);
     northPanel.add(locationText, BorderLayout.SOUTH);
+    tabMapViewer.addTab("Gene Map", northPanel);
     
-    mainPanel.add(northPanel, BorderLayout.NORTH);
+    //
+    // protein map
+    List<uk.ac.sanger.artemis.io.Feature> proteins = 
+      ProteinMapPanel.getProteinsWithProteinMapElement(
+        (GFFStreamFeature) getFeature().getEmblFeature());  
+    final BasicProteinMapPanel proteinMap;
+    if(proteins != null)
+    {
+      proteinMap = 
+        new BasicProteinMapPanel((GFFStreamFeature) proteins.get(0), 
+            chadoGene, selection, this);
+      
+      final JScrollPane jsp_ppviewer = new JScrollPane(proteinMap);
+      jsp_ppviewer.getViewport().setBackground(Color.white);
+      jsp_ppviewer.setPreferredSize( proteinMap.getPreferredSize() );
+      tabMapViewer.addTab("Protein Map", jsp_ppviewer);
+    }
+    else
+      proteinMap = null;
+    
+    mainPanel.add(tabMapViewer, BorderLayout.NORTH);
     mainPanel.add(tabPane, BorderLayout.CENTER);
     
     for(int i=0; i<transcripts.size(); i++)
@@ -172,7 +199,9 @@ public class BasicGeneBuilderFrame extends JFrame
           addComponentToTab(tabPane, chadoGene, transcripts, entry_group, this);
         }
         
-        viewer.repaint();
+        nucViewer.repaint();
+        if(proteinMap != null)
+          proteinMap.repaint();
       }
     });
     
@@ -213,8 +242,60 @@ public class BasicGeneBuilderFrame extends JFrame
               (int)(screen.height*0.9));
     }
     Utilities.centreFrame(this);
-    
     setVisible(true);
+  }
+  
+  public void dispose()
+  {
+    dispose(false);
+  }
+  
+  /**
+   * Override to ensure the GeneBuilderFrame removes all listeners
+   */
+  private void dispose(final boolean reopen)
+  {
+    try
+    {
+      stopListeningAll();
+    }
+    catch(InvalidRelationException e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    
+    if(chadoTransactionManager != null &&
+       chadoTransactionManager.hasTransactions())
+    { 
+      int select = JOptionPane.showConfirmDialog(this, 
+          "Commit changes back to the database?", 
+          "Commit", JOptionPane.YES_NO_OPTION);
+      
+      if(select == JOptionPane.YES_OPTION)
+      {
+        DatabaseDocument dbDoc =
+          (DatabaseDocument)(
+            (GFFStreamFeature)activeFeature.getEmblFeature()).getDocumentEntry().getDocument();
+        ChadoTransactionManager.commit(dbDoc, false,chadoTransactionManager);
+      }
+    }
+    
+    if(reopen)
+    {
+      new BasicGeneBuilderFrame(activeFeature, entry_group, 
+                                selection, chadoTransactionManager);
+    }
+    else if(!GeneUtils.isBoundaryOK(chadoGene))
+    {
+      int result = JOptionPane.showConfirmDialog(this, 
+          "Gene model boundary needs fixing.\nFix this now?", 
+          "Gene Boundary", JOptionPane.YES_NO_OPTION);
+      if(result == JOptionPane.YES_OPTION)
+        GeneUtils.checkGeneBoundary(chadoGene);
+    }
+    
+    super.dispose();
   }
   
   protected int getFontHeight()
@@ -278,8 +359,10 @@ public class BasicGeneBuilderFrame extends JFrame
     cvPanel = new CVPanel(protein);
     matchForm = new MatchPanel(protein, 
           (DocumentEntry)getFeature().getEmblFeature().getEntry());
-      
+    
+    qualifier_text_area.getDocument().addDocumentListener(new TextAreaDocumentListener());
     qualifier_text_area.setText(getQualifierString(entry_group, protein));
+
     addToPanel(qualifier_text_area, panel, "Core");
 
     addToPanel(cvPanel, panel, "Controlled Vocabulary");
@@ -291,6 +374,17 @@ public class BasicGeneBuilderFrame extends JFrame
     tabPane.addChangeListener(changeListener);
   }
   
+  private void setQualifierTextAreaSize(Document doc)
+  {
+    Element root = doc.getDefaultRootElement();
+    int lines = root.getElementCount();
+    int lineHeight = qualifier_text_area.getFontMetrics(qualifier_text_area.getFont()).getHeight();
+
+    qualifier_text_area.setPreferredSize(
+          new Dimension( qualifier_text_area.getPreferredSize().width,
+              lineHeight*lines));
+  }
+
   /**
    *  Return a string containing one qualifier per line.  These are the
    *  original qualifiers, not the qualifiers from the qualifier_text_area.
@@ -370,6 +464,46 @@ public class BasicGeneBuilderFrame extends JFrame
       getFeature().removeFeatureChangeListener(matchForm);
   }
   
+  /**
+   *  Remove this object as a feature and entry change listener.
+   **/
+  private void stopListening(final Feature feature) 
+  {
+    if(getEntry() != null)
+      getEntry().removeEntryChangeListener(this);
+    feature.removeFeatureChangeListener(this);
+  }
+  
+  private void stopListeningAll() throws InvalidRelationException
+  {
+    uk.ac.sanger.artemis.io.Feature embl_gene = 
+      (uk.ac.sanger.artemis.io.Feature)chadoGene.getGene();
+    Feature gene = (Feature)embl_gene.getUserData();   
+    stopListening(gene);
+    
+    List<uk.ac.sanger.artemis.io.Feature> transcripts = chadoGene.getTranscripts();
+    for(int i=0; i<transcripts.size(); i++)
+    {
+      uk.ac.sanger.artemis.io.Feature transcript = transcripts.get(i);
+      Feature trans = (Feature)transcript.getUserData();
+       
+      stopListening(trans);
+      
+      List<uk.ac.sanger.artemis.io.Feature> exons = chadoGene.getSpliceSitesOfTranscript(
+          (String)trans.getQualifierByName("ID").getValues().get(0), 
+          DatabaseDocument.EXONMODEL);
+      
+      if(exons == null)
+        continue;
+      
+      for(int j=0; j<exons.size(); j++)
+      {
+        uk.ac.sanger.artemis.io.Feature embl_exon = exons.get(j);
+        Feature exon = (Feature)embl_exon.getUserData();
+        stopListening(exon);      
+      }
+    }
+  }
   
   protected void setActiveFeature(final Feature feature)
   {
@@ -407,7 +541,8 @@ public class BasicGeneBuilderFrame extends JFrame
       for(int i=0; i<oldQualifiers.size(); i++)
       {
         Qualifier qualifier = (Qualifier) oldQualifiers.get(i);
-        if(PropertiesPanel.isPropertiesTag(qualifier, protein) )
+        if(PropertiesPanel.isPropertiesTag(qualifier, protein) ||
+           BasicProteinMapPanel.isProteinMapElement(qualifier))
           qualifiers.addQualifierValues(qualifier);
       }
 
@@ -418,17 +553,6 @@ public class BasicGeneBuilderFrame extends JFrame
         if(cvQualifiers != null && cvQualifiers.size() > 0)
           qualifiers.addAll(cvQualifiers);
       }
-      
-      /*if(propertiesPanel != null)
-      {
-        QualifierVector gffQualifiers = propertiesPanel.getGffQualifiers(getFeature());
-        if(gffQualifiers != null && gffQualifiers.size() > 0)
-          qualifiers.addAll(gffQualifiers);
-        
-        QualifierVector mapQualifiers = ProteinMapPanel.getProteinMapQualifiers(getFeature());
-        if(mapQualifiers != null && mapQualifiers.size() > 0)
-          qualifiers.addAll(mapQualifiers);
-      }*/
       
       if(matchForm != null)
       {
@@ -552,6 +676,27 @@ public class BasicGeneBuilderFrame extends JFrame
   {
     // TODO Auto-generated method stub
     
+  }
+  
+  class TextAreaDocumentListener implements DocumentListener
+  {
+
+    public void insertUpdate(DocumentEvent e)
+    {
+      updateSize(e);
+    }
+    public void removeUpdate(DocumentEvent e) 
+    {
+      updateSize(e);
+    }
+    
+  //Plain text components do not fire these events
+    public void changedUpdate(DocumentEvent e) {}
+
+    public void updateSize(DocumentEvent e) 
+    {
+      setQualifierTextAreaSize( (Document)e.getDocument() );
+    }
   }
   
 }

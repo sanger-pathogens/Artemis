@@ -393,7 +393,7 @@ public class GeneEdit
     if(System.getProperty("basic") == null)
       new GeneBuilderFrame(gff_gene_feature, entry_group, selection, null, ctm); 
     else
-      new BasicGeneBuilderFrame(gff_gene_feature, entry_group, selection, null, ctm); 
+      new BasicGeneBuilderFrame(gff_gene_feature, entry_group, selection, ctm); 
   }
   
   /**

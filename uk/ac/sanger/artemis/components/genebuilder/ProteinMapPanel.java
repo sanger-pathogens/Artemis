@@ -65,9 +65,9 @@ public class ProteinMapPanel extends MapPanel
     "cytoplasm_location",
     "cytoplasmic_polypeptide_region"
   };
-  private static String GPI_ANCHORED   = "GPI_anchor_cleavage_site";
+  protected static String GPI_ANCHORED   = "GPI_anchor_cleavage_site";
   //private static String PlasmoAP_SCORE = "PlasmoAP_score";
-  private static String[] SIGNALP = 
+  protected static String[] SIGNALP = 
   { 
     "signal_peptide"
     //"SignalP_prediction", 
@@ -77,7 +77,7 @@ public class ProteinMapPanel extends MapPanel
   
   public static String POLYPEPTIDE_DOMAIN = "polypeptide_domain";
   
-  private static Vector PROTEIN_MAP_ELEMENTS = new Vector();
+  protected static Vector<String> PROTEIN_MAP_ELEMENTS = new Vector<String>();
   static
   {
     Collections.addAll(PROTEIN_MAP_ELEMENTS, TMHMM);
@@ -87,8 +87,8 @@ public class ProteinMapPanel extends MapPanel
     PROTEIN_MAP_ELEMENTS.add(POLYPEPTIDE_DOMAIN);
   }
 
-  private Hashtable toolTipPositions = new Hashtable();
-  private Feature feature;
+  protected Hashtable<Rectangle, String> toolTipPositions = new Hashtable<Rectangle, String>();
+  protected Feature feature;
 
   public ProteinMapPanel(final Feature feature, 
                          final ChadoCanonicalGene chado_gene,
@@ -136,6 +136,10 @@ public class ProteinMapPanel extends MapPanel
   public void paintComponent(Graphics g)
   {
     super.paintComponent(g);
+    
+    if(this instanceof BasicProteinMapPanel)
+      return;
+    
     Graphics2D g2d = (Graphics2D)g;
     
     QualifierVector qualifiers = feature.getQualifiers();
@@ -155,7 +159,7 @@ public class ProteinMapPanel extends MapPanel
     float fraction = (float)(getSize().width - (2*border))/
                      (float)(geneEnd-geneStart);
     
-    final List transcripts = chado_gene.getTranscripts();
+    final List<Feature> transcripts = chado_gene.getTranscripts();
     for(int i=0; i<transcripts.size(); i++)
     {
       Feature transcript = (Feature)transcripts.get(i);
@@ -170,7 +174,7 @@ public class ProteinMapPanel extends MapPanel
       uk.ac.sanger.artemis.Feature protein = 
         (uk.ac.sanger.artemis.Feature)protein_embl_feature.getUserData();
       
-      List exons = chado_gene.getSpliceSitesOfTranscript(transcriptName, 
+      List<Feature> exons = chado_gene.getSpliceSitesOfTranscript(transcriptName, 
                                             DatabaseDocument.EXONMODEL);
       if(exons == null || exons.size() == 0)
         exons = chado_gene.getSpliceSitesOfTranscript(transcriptName,
@@ -179,7 +183,7 @@ public class ProteinMapPanel extends MapPanel
       if(exons == null || exons.size() == 0)
         continue;
       
-      Feature exon_embl_feature = (Feature)exons.get(0);
+      Feature exon_embl_feature = exons.get(0);
       
       uk.ac.sanger.artemis.Feature exon = 
         (uk.ac.sanger.artemis.Feature)exon_embl_feature.getUserData();
@@ -249,7 +253,7 @@ public class ProteinMapPanel extends MapPanel
    * @param ppLength
    * @return
    */
-  private int drawDomain(final Feature feature, 
+  protected int drawDomain(final Feature feature, 
       final Graphics2D g2d, int ypos,
       final int ppStart, final int ppEnd, final int ppLength)
   {
@@ -323,7 +327,7 @@ public class ProteinMapPanel extends MapPanel
    * @param ppEnd
    * @param ppLength
    */
-  private void drawPrediction(final Feature feature, 
+  protected void drawPrediction(final Feature feature, 
                         final Graphics2D g2d, final int ypos,
                         final int ppStart, final int ppEnd, final int ppLength,
                         final String[] prediction)
@@ -396,7 +400,7 @@ public class ProteinMapPanel extends MapPanel
    * @param ypos
    * @return
    */
-  private int drawGPIArrow(final Graphics2D g2d,
+  protected int drawGPIArrow(final Graphics2D g2d,
       final Qualifier gpiAnchor,
       final int ppStart, final int ppEnd, final int ppLength,
       int ypos)
@@ -469,10 +473,10 @@ public class ProteinMapPanel extends MapPanel
       return false;
     
     boolean isLink = false;
-    final Vector dbs = QualifierTextArea.DATABASES;
+    final Vector<String> dbs = QualifierTextArea.DATABASES;
     for(int i=0; i<dbs.size(); i++)
     {
-      String db = (String)dbs.get(i);
+      String db = dbs.get(i);
       int beginIndex;
       if( (beginIndex=tt.indexOf(db+":")) > -1 )
       {
@@ -492,10 +496,10 @@ public class ProteinMapPanel extends MapPanel
   public String getToolTipText(MouseEvent me)
   {
     Point p = me.getPoint();
-    Enumeration rectangles = toolTipPositions.keys();
+    Enumeration<Rectangle> rectangles = toolTipPositions.keys();
     while(rectangles.hasMoreElements())
     {
-      Rectangle r = (Rectangle)rectangles.nextElement();
+      Rectangle r = rectangles.nextElement();
       if((r.x <= p.x && r.x+r.width >= p.x) &&
          (r.y <= p.y && r.y+r.height >= p.y) )
         return (String) toolTipPositions.get(r);
@@ -509,15 +513,15 @@ public class ProteinMapPanel extends MapPanel
    * @param feature
    * @return
    */
-  public static List getProteinsWithProteinMapElement(final GFFStreamFeature feature)
+  public static List<Feature> getProteinsWithProteinMapElement(final GFFStreamFeature feature)
   {
-    List transcripts = feature.getChadoGene().getTranscripts();
-    List proteins = null;
+    List<Feature> transcripts = feature.getChadoGene().getTranscripts();
+    List<Feature> proteins = null;
     if(transcripts != null)
     {
       for(int i=0; i<transcripts.size(); i++)
       {
-        Feature transcript = (Feature)transcripts.get(i);
+        Feature transcript = transcripts.get(i);
         String transcriptName = GeneUtils.getUniqueName(transcript);
         Feature protein = feature.getChadoGene().getProteinOfTranscript(transcriptName);
         
@@ -528,7 +532,7 @@ public class ProteinMapPanel extends MapPanel
             if(isProteinMapElement((Qualifier)qualifiers.get(j)))
             {
               if(proteins == null)
-                proteins = new Vector();
+                proteins = new Vector<Feature>();
               proteins.add(protein);
             }
         }
