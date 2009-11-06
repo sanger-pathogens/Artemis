@@ -76,6 +76,7 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Vector;
 
 public class DatabaseJPanel extends JPanel
 {
@@ -85,6 +86,7 @@ public class DatabaseJPanel extends JPanel
   private boolean splitGFFEntry = false;
   private JTree tree;
   private DatabaseDocument doc;
+  private static Vector<String> opening = new Vector<String>();
   private static org.apache.log4j.Logger logger4j = 
     org.apache.log4j.Logger.getLogger(DatabaseJPanel.class);
   
@@ -252,7 +254,7 @@ public class DatabaseJPanel extends JPanel
    * @param isNotSrcFeature true is the entry name may not be a source feature
    * @return
    */
-  public static EntryEdit show(final DatabaseEntrySource entry_source,
+  private static EntryEdit show(final DatabaseEntrySource entry_source,
                           final JComponent srcComponent,
                           final JLabel status_line,
                           final Splash splash_main,
@@ -298,10 +300,27 @@ public class DatabaseJPanel extends JPanel
       f = ((FeatureLoc) it.next()).getFeatureBySrcFeatureId();
     }
     
-    return openEntry(Integer.toString(f.getFeatureId()), entry_source, 
+    // warn when opening duplicate entries at the same time
+    if(opening.contains(f.getUniqueName()))
+    {
+      int status = JOptionPane.showOptionDialog(null, 
+          f.getUniqueName()+" already opening. Continue?", 
+          "Open", JOptionPane.YES_NO_OPTION,
+          JOptionPane.QUESTION_MESSAGE, null, 
+          new String[] {"Yes", "No"}, "No");
+  
+      if(status != JOptionPane.YES_OPTION)
+        return null;
+    }
+    
+    opening.add(f.getUniqueName());
+    EntryEdit ee = openEntry(Integer.toString(f.getFeatureId()), entry_source, 
         srcComponent, status_line, 
         stream_progress_listener,
         splitGFFEntry, splash_main,  f.getUniqueName(), userName, range);
+    opening.remove(f.getUniqueName());
+    
+    return ee;
   }
 
   /**
@@ -405,7 +424,7 @@ public class DatabaseJPanel extends JPanel
         {
           //npe.printStackTrace();
           JOptionPane.showMessageDialog(DatabaseJPanel.this, 
-              featureName + " not found!", 
+              featureName + " not opened/found!", 
               "Failed to Open", JOptionPane.WARNING_MESSAGE);
           logger4j.debug(featureName + " not found!");
         }
