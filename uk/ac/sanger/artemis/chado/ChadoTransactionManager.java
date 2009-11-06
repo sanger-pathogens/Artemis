@@ -1434,7 +1434,7 @@ public class ChadoTransactionManager
         final FeatureProp featureprop = getFeatureProp(uniquename, qualifier_string,
                                                  lcvterm_id, rank);
         
-        logger4j.debug("FEATUREPROP "+type+" "+qualifier_string);
+        logger4j.debug("FEATUREPROP "+type+" "+qualifier_name+"="+qualifier_string);
         tsn = new ChadoTransaction(type,
             featureprop,
             feature.getLastModified(), feature, feature.getKey().getKeyString(),
@@ -1449,7 +1449,7 @@ public class ChadoTransactionManager
       FeatureProp featureprop = getFeatureProp(uniquename,
                          qualifier_string, lcvterm_id, rank);
     
-      logger4j.debug("FEATUREPROP "+type+" "+qualifier_string);
+      logger4j.debug("FEATUREPROP "+type+" "+qualifier_name+"="+qualifier_string);
       tsn = new ChadoTransaction(type,
           featureprop,
           feature.getLastModified(), feature, feature.getKey().getKeyString(),
