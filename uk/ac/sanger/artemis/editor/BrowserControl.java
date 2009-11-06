@@ -80,8 +80,8 @@ public class BrowserControl
 
       	String[] browsers = 
         {
-          "firefox", "opera", "konqueror", 
-          "epiphany", "mozilla", "netscape" 
+      	  "mozilla", "firefox", "opera", "konqueror", 
+          "epiphany", "netscape" 
         };
         String browser = null;
         for(int count = 0; count < browsers.length && browser == null; count++)
