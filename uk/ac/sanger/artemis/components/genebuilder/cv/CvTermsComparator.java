@@ -28,13 +28,10 @@ import java.util.Comparator;
 
 import org.gmod.schema.cv.CvTerm;
 
-public class CvTermsComparator implements Comparator
+public class CvTermsComparator implements Comparator<CvTerm>
 {
-  public int compare(Object o1, Object o2)
+  public int compare(CvTerm cvTerm1, CvTerm cvTerm2)
   {
-    CvTerm cvTerm1 = (CvTerm)o1;
-    CvTerm cvTerm2 = (CvTerm)o2;
-    
     return cvTerm1.getName().toLowerCase().compareTo( 
            cvTerm2.getName().toLowerCase() );
   }   
