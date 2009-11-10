@@ -166,6 +166,12 @@ public class DatePanel
     return "";
   }
   
-
+  protected static String getDate()
+  {
+    java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat(
+        "yyyyMMdd");
+    Date date = new Date();
+    return sdf.format(date);
+  }
   
 }
