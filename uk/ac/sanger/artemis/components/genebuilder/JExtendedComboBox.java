@@ -76,6 +76,16 @@ public class JExtendedComboBox extends JComboBox
     super(vector);
     init(useAutoComplete);
   } 
+  
+  /**
+   * @param str
+   * @param useAutoComplete  set true to use auto-complete
+   */
+  public JExtendedComboBox(final boolean useAutoComplete)
+  { 
+    super();
+    init(useAutoComplete);
+  } 
 
   public JExtendedComboBox(String str[])
   { 
