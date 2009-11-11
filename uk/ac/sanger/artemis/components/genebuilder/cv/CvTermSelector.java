@@ -4,10 +4,10 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Collections;
@@ -60,10 +60,17 @@ class CvTermSelector extends JPanel
     super(new GridBagLayout());
 
     setBackground(Color.white);
-    createCvComboBox();
+    createComponentToAddCvTerm();
+  }
 
+  /**
+   * Add components to the panel for adding CvTerm's to
+   * the annotation.
+   */
+  private void createComponentToAddCvTerm()
+  {
+    createCvComboBox();
     int row = 0;
-    
     c.gridx = 0;
     c.gridy = row;
     c.anchor = GridBagConstraints.EAST;
@@ -120,7 +127,11 @@ class CvTermSelector extends JPanel
     c.gridwidth = 2;
     add(evidenceList,c);
   }
-  
+
+  /**
+   * Add components to the panel for adding a CvTerm to
+   * the database.
+   */
   private void createComponentToAddCvTermToDb()
   {
     removeAll();
@@ -172,7 +183,10 @@ class CvTermSelector extends JPanel
     repaint();
     revalidate();
   }
-  
+
+  /**
+   * Create the JComboBox of the CV's.
+   */
   private void createCvComboBox()
   {
     cvCombo = 
@@ -222,7 +236,11 @@ class CvTermSelector extends JPanel
     else if(e.getActionCommand().equals("SEARCH"))
       searchCvTerms();
   }
-  
+
+  /**
+   * Utility to return the name of the CV in the database.
+   * @return
+   */
   protected String getCvName()
   {
     String cvName = (String) cvCombo.getSelectedItem();
@@ -273,14 +291,20 @@ class CvTermSelector extends JPanel
     repaint();
     revalidate();
   }
-  
-  public boolean showOptions(final JFrame frame, final DatabaseDocument doc)
+
+  /**
+   * Show the CvTerm selector in an dialog.
+   * @param frame
+   * @param doc
+   * @return
+   */
+  protected boolean showOptions(final JFrame frame, final DatabaseDocument doc)
   {
     final JOptionPane optionPane = new JOptionPane(
         this,
         JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
 
-    final JDialog dialog = new JDialog(frame, "Click a button", true);
+    final JDialog dialog = new JDialog(frame, "CV Term Selector", true);
     dialog.setContentPane(optionPane);
     dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
     
@@ -293,27 +317,30 @@ class CvTermSelector extends JPanel
         if (dialog.isVisible() && (e.getSource() == optionPane)
             && (prop.equals(JOptionPane.VALUE_PROPERTY)))
         {
-          if(editableCvCombo != null)
+          int value = ((Integer) optionPane.getValue()).intValue();
+          if (value == JOptionPane.OK_OPTION)
           {
-            cvTerm = addCvTermToDb(doc);
-            
-            if(addToAnnotation.isSelected())
+            if (editableCvCombo != null)
             {
-              cv = (String)editableCvCombo.getSelectedItem();
-              if(DatabaseDocument.PRODUCTS_TAG_CVNAME.equals(cv))
-                cv = "product";
+              cvTerm = addCvTermToDb(doc);
+              if (addToAnnotation.isSelected())
+              {
+                cv = (String) editableCvCombo.getSelectedItem();
+                if (DatabaseDocument.PRODUCTS_TAG_CVNAME.equals(cv))
+                  cv = "product";
+              }
             }
-          }
-          else
-          {
-            if (termList == null)
-              cvTerm = null;
             else
-              cvTerm = getCvTermFromSelectedItem();
+            {
+              if (termList == null)
+                cvTerm = null;
+              else
+                cvTerm = getCvTermFromSelectedItem();
 
-            cv = (String) cvCombo.getSelectedItem();
-            if (evidenceList != null && evidenceList.getSelectedIndex() > -1)
-              evidenceCode = GoBox.evidenceCodes[2][evidenceList.getSelectedIndex()];
+              cv = (String) cvCombo.getSelectedItem();
+              if (evidenceList != null && evidenceList.getSelectedIndex() > -1)
+                evidenceCode = GoBox.evidenceCodes[2][evidenceList.getSelectedIndex()];
+            }
           }
           dialog.setVisible(false);
           dialog.dispose();
@@ -321,15 +348,35 @@ class CvTermSelector extends JPanel
       }
     });
     dialog.pack();
+    centerDialog(dialog);
     dialog.setVisible(true);
 
-    int value = ((Integer) optionPane.getValue()).intValue();
-    if (value != JOptionPane.OK_OPTION)
-      return false;
-    else
+    int value = ((Integer) optionPane.getValue()).intValue();  
+    if(value == JOptionPane.OK_OPTION && cvTerm != null)
       return true;
+    else
+      return false;
   }
-  
+
+  /**
+   * Center the given dialog on the screen.
+   * @param dialog
+   */
+  private void centerDialog(JDialog dialog)
+  {
+    final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+    final int x_position =(screen.width - dialog.getSize().width) / 2;
+    int y_position =(screen.height - dialog.getSize().height) / 2;
+    if(y_position < 10) 
+      y_position = 10;
+
+    dialog.setLocation(new Point(x_position, y_position));
+  }
+
+  /**
+   * Return the CvTerm for a selected item in the list of terms.
+   * @return
+   */
   private CvTerm getCvTermFromSelectedItem()
   {
     if (termList.getSelectedItem() instanceof String)
@@ -346,7 +393,12 @@ class CvTermSelector extends JPanel
       return (CvTerm) termList.getSelectedItem();
     return null;
   }
-  
+
+  /**
+   * Add the Selected term to the database.
+   * @param doc
+   * @return
+   */
   private CvTerm addCvTermToDb(final DatabaseDocument doc)
   {
     final java.util.List<String> cvNames = 
@@ -361,7 +413,6 @@ class CvTermSelector extends JPanel
         newTerm.getText().trim(), 
         (String)editableCvCombo.getSelectedItem(), 
         definition.getText().trim(), db);
-    
     try
     {
       doc.insertCvTerm(cvTerm);
@@ -375,13 +426,13 @@ class CvTermSelector extends JPanel
     }
     return null;
   }
-  
-  
+
+  // getters
   protected CvTerm getCvTerm()
   {
     return cvTerm;
   }
-  
+
   protected String getCv()
   {
     return cv;
