@@ -30,8 +30,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collections;
@@ -40,10 +38,7 @@ import java.util.Vector;
 
 
 import javax.swing.Box;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JPanel;
 import javax.swing.JButton;
@@ -58,9 +53,7 @@ import uk.ac.sanger.artemis.Feature;
 import uk.ac.sanger.artemis.FeatureChangeEvent;
 import uk.ac.sanger.artemis.FeatureChangeListener;
 import uk.ac.sanger.artemis.chado.ChadoTransactionManager;
-//import uk.ac.sanger.artemis.components.Splash;
 import uk.ac.sanger.artemis.components.genebuilder.GeneEditorPanel;
-import uk.ac.sanger.artemis.components.genebuilder.JExtendedComboBox;
 
 import org.gmod.schema.cv.CvTerm;
 
@@ -70,32 +63,28 @@ import org.gmod.schema.cv.CvTerm;
 public class CVPanel extends JPanel
              implements FeatureChangeListener
 {
-
   /** */
   private static final long serialVersionUID = 1L;
 
   private QualifierVector cvQualifiers;
-  private Vector editableComponents;
+  private Vector<AbstractCvBox> editableComponents;
   public static org.apache.log4j.Logger logger4j = 
     org.apache.log4j.Logger.getLogger(CVPanel.class);
-  
-  private JExtendedComboBox evidenceList;
   
   private JButton hide_show_CC;
   private JButton hide_show_GO;
   private Feature feature;
-  private DatabaseDocument doc;
   
+  private DatabaseDocument doc;
   //used to test if cv panel has contents
   private boolean empty = true;
   
   public CVPanel(final Feature feature)
   {
     super(new BorderLayout());
-
     updateFromFeature(feature);
     doc = (DatabaseDocument)
-          ((GFFStreamFeature)feature.getEmblFeature()).getDocumentEntry().getDocument();
+      ((GFFStreamFeature)feature.getEmblFeature()).getDocumentEntry().getDocument();
   }
   
   /**
@@ -128,13 +117,13 @@ public class CVPanel extends JPanel
   private Component createCVQualifiersComponent()
   {
     empty = true;
-    Vector cv_tags = new Vector();
+    Vector<String> cv_tags = new Vector<String>();
     cv_tags.add("GO");
     cv_tags.add("controlled_curation");
     cv_tags.add("product");
     cv_tags.add("class");
     
-    editableComponents = new Vector();
+    editableComponents = new Vector<AbstractCvBox>();
     
     final Dimension dimension  = new Dimension(100, 
         (new JTextField()).getPreferredSize().height);
@@ -147,8 +136,16 @@ public class CVPanel extends JPanel
     addRemove.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
-      { 
-        addCvTerm();
+      {        
+        CvTermSelector cvTermSelector = new CvTermSelector();
+        if(cvTermSelector.showOptions(null, doc))
+        {
+          addCvTermQualifier(cvTermSelector.getCvTerm(),
+              cvTermSelector.getCvName(),
+              cvTermSelector.getCv(),
+              cvTermSelector.getEvidenceCode());
+        }
+        
       }
     });
     xBox.add(addRemove);
@@ -171,10 +168,8 @@ public class CVPanel extends JPanel
 
     Dimension go_dimension = null;
     int nGo = 0;
-    
-    
-    
-    
+
+ 
     Box goBox = null;
     Box goHeadings = null;
     for(int qualifier_index = 0; qualifier_index < cvQualifiers.size();
@@ -299,8 +294,8 @@ public class CVPanel extends JPanel
       cvBox.add(goBox);
       GeneEditorPanel.addLightSeparator(cvBox);
     }
-    
-    
+
+
     n = 0;
     for(int qualifier_index = 0; qualifier_index < cvQualifiers.size();
         ++qualifier_index) 
@@ -326,8 +321,8 @@ public class CVPanel extends JPanel
           xLabel.add(Box.createHorizontalGlue());
           xLabel.add(hide_show_CC);
           cvBox.add(xLabel);
-        
-        
+
+
           final Box xHeadings = Box.createHorizontalBox();
           yBox.add(xHeadings);
 //        add column headings
@@ -360,7 +355,7 @@ public class CVPanel extends JPanel
           
           xHeadings.add(Box.createHorizontalGlue());
         }
-        
+
         for(int value_index = 0; value_index < qualifier_strings.size();
             ++value_index)
         {
@@ -374,28 +369,28 @@ public class CVPanel extends JPanel
                   qualifierString, value_index, 
                   dimension, go_dimension);
           editableComponents.add(ccBox);
-          
+
           xBox = ccBox.getBox();
           xBox.add(Box.createHorizontalGlue());
           xBox.add(getRemoveButton(this_qualifier, value_index));         
           yBox.add(xBox);
           yBox.add(Box.createVerticalStrut(2));
         }
-  
+
         // add CC rows
         cvBox.add(yBox); 
         if(hide_show_CC.getText().equals("+"))
           yBox.setVisible(false);
       }
     }
-    
+
     if(n > 0)
       GeneEditorPanel.addLightSeparator(cvBox);
-    
+
     //
     // RILEY
     //
-    
+
     if(go_dimension == null)
       go_dimension = new JLabel("product ").getPreferredSize();
     n = 0;
@@ -440,7 +435,7 @@ public class CVPanel extends JPanel
         }
       }
     }
-    
+
     cvBox.add(Box.createVerticalGlue());
     validate();
     return cvBox;
@@ -453,13 +448,13 @@ public class CVPanel extends JPanel
   private void addHideShowButton(final Box box, final JButton hide_show)
   {
     hide_show.setOpaque(false);
-    
+
     // remove any old listeners
     ActionListener l[] = hide_show.getActionListeners();
     if(l != null)
       for(int i=0;i<l.length;i++)
         hide_show.removeActionListener(l[i]);
-    
+
     hide_show.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
@@ -477,7 +472,7 @@ public class CVPanel extends JPanel
       }
     });
   }
-  
+
 
   private static int getWidthOfGoField()
   {
@@ -505,7 +500,7 @@ public class CVPanel extends JPanel
     }); 
     return buttRemove;
   }
-  
+
   public void updateFromFeature(final Feature feature)
   {
     this.feature = feature;
@@ -562,230 +557,17 @@ public class CVPanel extends JPanel
     add(createCVQualifiersComponent(),
         BorderLayout.CENTER);
   }
-  
-  /**
-   * Add a CV term to the feature
-   */
-  private void addCvTerm() 
-  {
-    final Box xBox = Box.createHorizontalBox();
-    final JExtendedComboBox comboCV = 
-      new JExtendedComboBox(ChadoTransactionManager.CV_NAME);
- 
-    final java.util.List cvNames = 
-      DatabaseDocument.getCvControledCurationNames();
-    comboCV.addItem(JExtendedComboBox.SEPARATOR);
-    for(int i=0; i<cvNames.size(); i++)
-      comboCV.addItem(cvNames.get(i));
-    
-    comboCV.addItem(JExtendedComboBox.SEPARATOR);
-    comboCV.addItem(JExtendedComboBox.SEPARATOR);
-    
-    final String ADD_TERM = "Add term ...";
-    comboCV.addItem(ADD_TERM);
-    
-    JExtendedComboBox term_list = null;
-    
-    Dimension d = comboCV.getPreferredSize();
-    d = new Dimension(80,(int)d.getHeight());
-    comboCV.setPreferredSize(d);
-    xBox.add(comboCV);
-    
-    int step = 0;
 
-    CvTerm cvterm  = null;
-    String cv_name = null;
-    String cv_type = null;
-    Vector terms   = null;
-    while(step < 5)
-    {  
-      if(step == 0)
-      {
-        cv_type = prompCv(xBox, comboCV);
-            
-        if(cv_type == null)
-          return;
-        
-        if(cv_type.equals(ADD_TERM))
-        {
-          addCvTermToDB(cvNames);
-          return;
-        }
-        step = 1;
-      }
-      
-      if(step == 1)
-      {
-        cv_name = promptCvName(xBox, comboCV);
-        if(cv_name == null)
-          return;
-        else if(cv_name.equals(""))
-        {
-          step = 0;
-          continue;
-        }
-        step = 2;
-      }
-          
-      if(step == 2)
-      {
-        final Object obj = promptKeyWord(xBox, cv_name);
-        
-        if(obj == null)                   // CANCEL
-          return;
-        else if(!(obj instanceof Vector)) // PREV
-        {
-          step = 1;
-          continue;
-        }
-
-        terms = (Vector)obj;
-        if(terms.size() < 1)
-        {
-          JOptionPane.showMessageDialog(this, 
-              "No terms found for in the \""+cv_name+"\" controlled vocabulary", 
-              "Terms Not Found", JOptionPane.INFORMATION_MESSAGE);
-          logger4j.warn("No CV terms found for "+cv_name+
-                        " (these may not have been loaded into chado)");
-          return;
-        }
-        
-        step = 3;
-      }
-      
-      if(step == 3)
-      {
-        cvterm = promptCvTerms(xBox, terms, term_list);
-        if(cvterm == null)                // CANCEL
-          return;
-        else if(cvterm.getName() == null) // PREV
-        {
-          step = 2;
-          continue;
-        }
-        
-        if(cv_name.equals("molecular_function") ||
-           cv_name.equals("biological_process") ||
-           cv_name.equals("cellular_component"))
-          step = 4;
-        else
-          step = 5;
-      }
-      
-      if(step == 4)
-      {
-        int select = promptEvidence(xBox);
-        if(select == 0)       // PREV
-        {
-          step = 3;
-          continue;
-        }
-        else if(select == 1)  // CANCEL
-          return;
-        
-        step = 5;
-      }
-
-    }
-    addCvTermQualifier(cvterm, cv_name, cv_type);
-  }
-  
-  /**
-   * Add a new CvTerm to the database
-   * @param cvNames
-   */
-  private void addCvTermToDB(final java.util.List cvNames)
-  {
-    final JPanel gridPanel = new JPanel(new GridBagLayout());
-    final GridBagConstraints c = new GridBagConstraints();
-
-    final JExtendedComboBox comboCV = 
-      new JExtendedComboBox(new Vector(cvNames));
-    comboCV.addItem(JExtendedComboBox.SEPARATOR);
-    comboCV.addItem(ChadoTransactionManager.PRODUCT_CV);
-    
-    c.anchor = GridBagConstraints.WEST;
-    c.ipadx = 5;
-    c.gridx = 0;
-    c.gridy = 0;
-    
-    gridPanel.add(new JLabel("Controlled vocabulary:"), c);
-    
-    c.gridx = 1;
-    gridPanel.add(new JLabel("Term to add:"), c);
-    
-    c.gridy = 1;
-    c.gridx = 0;
-    gridPanel.add(comboCV, c);
-    
-    c.gridy = 1;
-    c.gridx = 1;
-    final JTextField term = new JTextField(25);
-    gridPanel.add(term, c);
-    
-    c.gridy = 2;
-    c.gridx = 0;
-    gridPanel.add(new JLabel("Definition (optional):"), c);
-    
-    c.gridy = 3;
-    c.gridx = 0;
-    c.gridwidth = 2;
-    c.fill = GridBagConstraints.HORIZONTAL;
-    final JTextField definition = new JTextField();
-    gridPanel.add(definition, c);
-    
-    c.gridy = 4;
-    c.gridx = 0;
-    c.gridwidth = 1;
-    final JCheckBox addToAnnotation = new JCheckBox("Add to annotation", false);
-    gridPanel.add(addToAnnotation, c);
-    
-    
-    int select = JOptionPane.showConfirmDialog(null, 
-        gridPanel, "Add a new term to the database", 
-        JOptionPane.OK_CANCEL_OPTION);
-    
-    if(select == JOptionPane.CANCEL_OPTION)
-      return;
-    
-    final String db;
-    if(cvNames.contains((String)comboCV.getSelectedItem()))
-      db = ChadoTransactionManager.CONTROLLED_CURATION_DB;
-    else
-      db = ChadoTransactionManager.PRODUCT_DB;
-    
-    final CvTerm cvTerm = ChadoTransactionManager.getCvTerm(
-        term.getText().trim(), 
-        (String)comboCV.getSelectedItem(), 
-        definition.getText().trim(), db);
-    
-    try
-    {
-      doc.insertCvTerm(cvTerm);
-      
-      if(addToAnnotation.isSelected())
-      {
-        String type = (String)comboCV.getSelectedItem();
-        if(DatabaseDocument.PRODUCTS_TAG_CVNAME.equals(type))
-          type = "product";
-        addCvTermQualifier(cvTerm, null, type);
-      }
-    }
-    catch(RuntimeException re)
-    {
-      JOptionPane.showMessageDialog(null, re.getMessage(),
-          "Problems Writing to Database ",
-          JOptionPane.ERROR_MESSAGE);
-    }
-  }
-  
   /**
    * Add CvTerm qualifier
    * @param cvterm
    * @param go_name
    * @param cv_type
    */
-  private void addCvTermQualifier(CvTerm cvterm, final String go_name, String cv_type)
+  private void addCvTermQualifier(CvTerm cvterm, 
+                                  final String go_name,
+                                  String cv_type,
+                                  final String evidenceCode)
   {
     if(!cv_type.equals("GO") &&
        !cv_type.equals("controlled_curation") && 
@@ -809,7 +591,8 @@ public class CVPanel extends JPanel
        cv_qualifier.addValue("GOid=GO:"+cvterm.getDbXRef().getAccession()+";"+
            "aspect="+go_name+";"+
            "term="+cvterm.getName()+";"+
-           "evidence="+ GoBox.evidenceCodes[2][ evidenceList.getSelectedIndex() ]);
+           "evidence="+ evidenceCode+";"+
+           "date="+ DatePanel.getDate());
      else if(cv_type.equals("controlled_curation"))
        cv_qualifier.addValue("term="+cvterm.getName());
      else if(cv_type.equals("product"))
@@ -832,7 +615,7 @@ public class CVPanel extends JPanel
      revalidate();
      repaint();
   }
-  
+
   private void removeCvTerm(final String qualifier_name, 
                             final int value_index)
   {
@@ -855,8 +638,8 @@ public class CVPanel extends JPanel
         BorderLayout.CENTER);
     validate();
   }
-  
-  
+
+
   /**
    * Get the latest (edited) controlled vocab qualifiers
    * @return
@@ -881,200 +664,7 @@ public class CVPanel extends JPanel
     
     return cvQualifiers;
   }
-  
-  /**
-   * Prompt for the CV type
-   * @param xBox
-   * @param comboCV
-   * @return
-   */
-  private String prompCv(final Box xBox, final JComboBox comboCV)
-  {
-    final Object[] options  = { "CANCEL", "NEXT>"};
 
-    int select = JOptionPane.showOptionDialog(null, 
-          xBox, "Add CV",
-          JOptionPane.YES_NO_CANCEL_OPTION, 
-          JOptionPane.QUESTION_MESSAGE, null,
-          options, options[1]);
-    if(select == 0)
-      return null;
-    return (String)comboCV.getSelectedItem(); // ChadoTransactionManager.cv_tags[comboCV.getSelectedIndex()];
-  }
-  
-  /**
-   * Prompt for the name of the CV
-   * @param xBox
-   * @param comboCV
-   * @return
-   */
-  private String promptCvName(final Box xBox, final JComboBox comboCV)
-  {
-    final String options[] = { "<PREV", "CANCEL", "NEXT>"};
-     
-    String cv_name = (String)comboCV.getSelectedItem();
-       //ChadoTransactionManager.cv_tags[comboCV.getSelectedIndex()];
-    logger4j.debug("Selected CV is " + cv_name);
-
-    if(cv_name.equals("GO"))
-    {
-      final String aspect[] = { "F", "P", "C" };
-      final JComboBox combo = new JComboBox(aspect);
-      
-      xBox.removeAll();
-      xBox.add(comboCV);
-      xBox.add(combo);
-
-      int select = JOptionPane.showOptionDialog(null, 
-            xBox, "Aspect",
-            JOptionPane.YES_NO_CANCEL_OPTION, 
-            JOptionPane.QUESTION_MESSAGE,
-            null, options, options[2]);
-      if(select == 1)
-        return null;
-      else if(select == 0)
-      {
-        xBox.remove(combo);
-        return "";
-      }
-
-      if(((String) combo.getSelectedItem()).equals("F"))
-          cv_name = "molecular_function";
-      else if(((String) combo.getSelectedItem()).equals("P"))
-        cv_name = "biological_process";
-      else if(((String) combo.getSelectedItem()).equals("C"))
-        cv_name = "cellular_component";
-    }
-    else if(cv_name.equals("product"))
-      cv_name = DatabaseDocument.PRODUCTS_TAG_CVNAME;
-    else if(cv_name.equals("controlled_curation"))
-      cv_name = DatabaseDocument.CONTROLLED_CURATION_TAG_CVNAME;
-    else if(cv_name.equals("class"))
-      cv_name = DatabaseDocument.RILEY_TAG_CVNAME;
-    
-    return cv_name;
-  }
-  
-  /**
-   * Keyword search of CV terms
-   * @param xBox
-   * @param cv_name
-   * @return
-   */
-  private Object promptKeyWord(final Box xBox, final String cv_name)
-  {
-    final String options[] = { "<PREV", "CANCEL", "NEXT>"};
-    final JTextField tfield = new JTextField(25);
-    tfield.setSelectionStart(0);
-    tfield.setSelectionEnd(tfield.getText().length());
-    tfield.setSelectedTextColor(Color.blue);
-    xBox.add(tfield);
-    
-    final Box yBox = Box.createVerticalBox();
-    yBox.add(xBox);
-    final JCheckBox ignoreCase = new JCheckBox("Ignore case",false);
-    yBox.add(ignoreCase);
-    
-    int select = JOptionPane.showOptionDialog(null, yBox,
-        "keyword term selection",
-         JOptionPane.YES_NO_CANCEL_OPTION,
-         JOptionPane.QUESTION_MESSAGE,
-         null,
-         options,
-         options[2]);
-    
-    if(select == 1)
-      return null;
-    else if(select == 0)
-    {
-      xBox.remove(tfield);
-      return new Object();
-    }
-    
-    xBox.remove(tfield);
-    
-    logger4j.debug("CvTerm cache lookup: "+tfield.getText().trim()+" from "+cv_name);
-    return DatabaseDocument.getCvterms(tfield.getText().trim(), 
-                             cv_name, ignoreCase.isSelected());
-  }
-  
-  /**
-   * Prompt for CV term
-   * @param xBox
-   * @param terms
-   * @return
-   */
-  private CvTerm promptCvTerms(final Box xBox, final Vector terms,
-                               JExtendedComboBox term_list)
-  {
-    final String options[] = { "<PREV", "CANCEL", "NEXT>"};   
-    
-    if(term_list == null)
-    {
-      Collections.sort(terms, new CvTermsComparator());
-      term_list = new JExtendedComboBox(terms, true);
-
-      Dimension d = new Dimension(500,term_list.getPreferredSize().height);
-      term_list.setPreferredSize(d);
-      term_list.setMaximumSize(d);
-      //term_list.setRenderer(new CVCellRenderer());
-    }
-    else
-      xBox.remove(term_list);
-    
-    xBox.add(term_list);
-    
-    int select = JOptionPane.showOptionDialog(null, xBox,
-        "CV term selection",
-         JOptionPane.YES_NO_CANCEL_OPTION,
-         JOptionPane.QUESTION_MESSAGE,
-         null,
-         options,
-         options[2]);
-    
-    if(select == 1)
-      return null;
-    else if(select == 0)
-    {
-      xBox.remove(term_list);
-      return new CvTerm();
-    }
-    
-    if(term_list.getSelectedItem() instanceof String)
-    {
-      final String selectedStr = (String)term_list.getSelectedItem();
-      for(int i=0; i<terms.size(); i++)
-      {
-        CvTerm cvTerm = (CvTerm)terms.get(i);
-        if(cvTerm.getName().equals(selectedStr))
-          return cvTerm;
-      }
-    }
-    
-    return (CvTerm)term_list.getSelectedItem();
-  }
-  
-  private int promptEvidence(final Box xBox)
-  {
-    final String options[] = { "<PREV", "CANCEL", "NEXT>"};
-    evidenceList = new JExtendedComboBox(GoBox.evidenceCodes[1]);
-    evidenceList.setSelectedItem("NR \t:: not recorded");
-    xBox.add(evidenceList);
-    
-    int select = JOptionPane.showOptionDialog(null, xBox,
-        "CV term selection",
-         JOptionPane.YES_NO_CANCEL_OPTION,
-         JOptionPane.QUESTION_MESSAGE,
-         null,
-         options,
-         options[2]);
-    
-    if(select == 0)
-      xBox.remove(evidenceList);
-    
-    return select;
-  }
-  
   public static String getDescription()
   {
     final StringBuffer buff = new StringBuffer(); 
@@ -1083,7 +673,6 @@ public class CVPanel extends JPanel
     
     return buff.toString();
   }
-  
   
   /**
    *  Implementation of the FeatureChangeListener interface.  We need to
@@ -1118,18 +707,14 @@ public class CVPanel extends JPanel
   }
   
   
-  class StringVectorComparator implements Comparator
+  class StringVectorComparator implements Comparator<String>
   {
-    public StringVectorComparator()
-    {
-    }
-
-    public final int compare(Object a, Object b)
+    public final int compare(String a, String b)
     {
       int result;
 
-      String strA = getField("aspect", (String)a);
-      String strB = getField("aspect", (String)b);
+      String strA = getField("aspect", a);
+      String strB = getField("aspect", b);
       result = strA.compareTo(strB);
 
       return result;
@@ -1160,7 +745,6 @@ public class CVPanel extends JPanel
     }
   }
 
-
   public boolean isEmpty()
   {
     return empty;
@@ -1170,5 +754,5 @@ public class CVPanel extends JPanel
   {
     this.empty = empty;
   }
-  
+
 }
