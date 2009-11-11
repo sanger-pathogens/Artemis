@@ -1243,7 +1243,8 @@ public class BamView extends JPanel
       }
       else
       {
-        if(!pr.sam1.getMateUnmappedFlag())
+        if(!pr.sam1.getMateUnmappedFlag() &&
+            pr.sam1.getMateReferenceName().equals(pr.sam1.getReferenceName()))
         {
           int prStart;
           
@@ -1960,12 +1961,12 @@ public class BamView extends JPanel
     }
     
     menu.add(new JSeparator());
-    
+
     JMenu maxHeightMenu = new JMenu("Plot Height");
     menu.add(maxHeightMenu);
-    
-    final String hgts[] = 
-       {"500", "800", "1000", "1500", "2500", "5000"};
+
+    final String hgts[] =
+       {"500", "800", "1000", "1500", "2500", "5000", "50000"};
     
     ButtonGroup bgroup = new ButtonGroup();
     for(int i=0; i<hgts.length; i++)
