@@ -2005,6 +2005,26 @@ public class DatabaseDocument extends Document
     return cvterm_match;
   }
   
+  
+  public static CvTerm getCvtermFromGoId(final String goId)
+  {
+    Enumeration enum_cvterm = cvterms.keys();
+    while (enum_cvterm.hasMoreElements())
+    {
+      Integer key = (Integer) enum_cvterm.nextElement();
+      CvTerm cvTerm = (CvTerm) cvterms.get(key);
+
+      if(cvTerm.getCv().getName().equals("molecular_function") ||
+         cvTerm.getCv().getName().equals("biological_process") ||
+         cvTerm.getCv().getName().equals("cellular_component"))
+      {
+        if(cvTerm.getDbXRef().getAccession().equals(goId))
+          return cvTerm;
+      }
+    }
+    return null;
+  }
+
   /**
    * Similar to <code>String.indexOf(String, int)</code>, but it ignores
    * case
