@@ -11,7 +11,9 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Collections;
+import java.util.List;
 import java.util.Vector;
+import java.util.regex.Pattern;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -94,7 +96,7 @@ class CvTermSelector extends JPanel
     c.gridy = ++row;
     c.gridx = 0;
     c.anchor = GridBagConstraints.EAST;
-    add(new JLabel("Keywords: "),c);
+    add(new JLabel("Keywords (or GOid): "),c);
     c.gridx = 1;
     c.anchor = GridBagConstraints.WEST;
     add(keyWord,c);
@@ -267,13 +269,21 @@ class CvTermSelector extends JPanel
    */
   private void searchCvTerms()
   {
-    String cvName = getCvName();
-
-    terms = 
-      DatabaseDocument.getCvterms(keyWord.getText().trim(), 
-                                  cvName, ignoreCase.isSelected());
-
-    Collections.sort(terms, new CvTermsComparator());
+    String key = keyWord.getText().trim();
+    
+    if (((String) cvCombo.getSelectedItem()).equals("GO") &&
+        Pattern.matches("^\\d{7}$", key))
+    {
+      terms = getTermsForGoId();
+    }
+    else
+    {
+      String cvName = getCvName();
+      terms = 
+        DatabaseDocument.getCvterms(key, 
+                                    cvName, ignoreCase.isSelected());
+      Collections.sort(terms, new CvTermsComparator());
+    }
     
     remove(termList);
     termList = new JExtendedComboBox(terms, true);
@@ -290,6 +300,17 @@ class CvTermSelector extends JPanel
 
     repaint();
     revalidate();
+  }
+  
+  private Vector<CvTerm> getTermsForGoId()
+  {
+    CvTerm cvTerm = 
+      DatabaseDocument.getCvtermFromGoId(keyWord.getText().trim());
+
+    terms = new Vector<CvTerm>(); 
+    if(cvTerm != null)
+      terms.add(cvTerm);
+    return terms;
   }
 
   /**
