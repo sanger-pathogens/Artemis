@@ -570,6 +570,7 @@ extra_qualifiers_gff = \
     polypeptide_domain "text" \
     previous_systematic_id "text" \
     primary_name "text" \
+    product_synonym "text" \
     similarity "text" \
     stop_codon_redefined_as_selenocysteine none \
     synonym "text" \
