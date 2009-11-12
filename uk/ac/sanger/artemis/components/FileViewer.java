@@ -314,7 +314,7 @@ public class FileViewer extends JFrame
     appendString(read_string, level);
   }
   
-  protected void appendString(final String read_string, final Level level) 
+  public void appendString(final String read_string, final Level level) 
   {
     final Document doc = textPane.getStyledDocument();
     try
