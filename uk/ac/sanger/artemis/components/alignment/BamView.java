@@ -80,6 +80,8 @@ import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
+import org.apache.log4j.Level;
+
 import net.sf.samtools.AlignmentBlock;
 import net.sf.samtools.SAMFileHeader;
 import net.sf.samtools.SAMFileReader;
@@ -99,6 +101,7 @@ import uk.ac.sanger.artemis.components.DisplayAdjustmentEvent;
 import uk.ac.sanger.artemis.components.DisplayAdjustmentListener;
 import uk.ac.sanger.artemis.components.EntryFileDialog;
 import uk.ac.sanger.artemis.components.FeatureDisplay;
+import uk.ac.sanger.artemis.components.FileViewer;
 import uk.ac.sanger.artemis.components.MessageDialog;
 import uk.ac.sanger.artemis.components.SwingWorker;
 import uk.ac.sanger.artemis.editor.MultiLineToolTipUI;
@@ -238,12 +241,26 @@ public class BamView extends JPanel
   
   public String getToolTipText()
   {
-    String msg = (mouseOverSAMRecord != null ? 
+    if(mouseOverSAMRecord == null)
+      return null;
+    
+    String msg = 
         mouseOverSAMRecord.getReadName() + "\n" + 
         mouseOverSAMRecord.getAlignmentStart() + ".." +
         mouseOverSAMRecord.getAlignmentEnd() + "\nisize=" +
-        mouseOverSAMRecord.getInferredInsertSize() + "\nrname=" +
-        mouseOverSAMRecord.getReferenceName() : null);
+        mouseOverSAMRecord.getInferredInsertSize() + "\nrname=";
+
+    if(mouseOverSAMRecord.getProperPairFlag() && !mouseOverSAMRecord.getMateUnmappedFlag())
+    {
+      msg = msg +
+        mouseOverSAMRecord.getReferenceName() + "\nstrand (read/mate): "+
+       (mouseOverSAMRecord.getReadNegativeStrandFlag() ? "-" : "+")+" / "+
+       (mouseOverSAMRecord.getMateNegativeStrandFlag() ? "-" : "+");
+    }
+    else
+      msg = msg +
+        mouseOverSAMRecord.getReferenceName() + "\nstrand (read/mate): "+
+       (mouseOverSAMRecord.getReadNegativeStrandFlag() ? "-" : "+");
     
     if(msg != null && mouseOverInsertion != null)
       msg = msg + "\nInsertion at:" +mouseOverInsertion;
@@ -2356,6 +2373,8 @@ public class BamView extends JPanel
   class PopupListener extends MouseAdapter
   {
 	JMenuItem gotoMateMenuItem;
+	JMenuItem showDetails;
+	
     public void mouseClicked(MouseEvent e)
     {
       if(e.isPopupTrigger() ||
@@ -2396,6 +2415,9 @@ public class BamView extends JPanel
         
         if(gotoMateMenuItem != null)
           popup.remove(gotoMateMenuItem);
+
+        if(showDetails != null)
+          popup.remove(showDetails);
         
         if( mouseOverSAMRecord != null && 
             mouseOverSAMRecord.getReadPairedFlag() &&
@@ -2424,11 +2446,69 @@ public class BamView extends JPanel
 			}  
           });
           popup.add(gotoMateMenuItem);
+        }  
+          
+        if( mouseOverSAMRecord != null)
+        {
+          final SAMRecord thisSAMRecord = mouseOverSAMRecord;
+          showDetails = new JMenuItem("Show details of : "+
+              thisSAMRecord.getReadName());
+          showDetails.addActionListener(new ActionListener()
+          {
+            public void actionPerformed(ActionEvent e) 
+            {
+              FileViewer viewDetail = new FileViewer(thisSAMRecord.getReadName(), true, false);
+              appendToDetailView(thisSAMRecord, viewDetail);
+            }  
+          });
+          popup.add(showDetails);
         }
         popup.show(e.getComponent(),
                 e.getX(), e.getY());
       }
     }
+  }
+  
+  private void appendToDetailView(SAMRecord thisSAMRecord, FileViewer viewDetail)
+  {
+    viewDetail.appendString("Read Name             "+thisSAMRecord.getReadName()+"\n", Level.INFO);
+    viewDetail.appendString("Coordinates           "+thisSAMRecord.getAlignmentStart()+".."+
+                                                     thisSAMRecord.getAlignmentEnd()+"\n", Level.DEBUG);
+    viewDetail.appendString("Length                "+thisSAMRecord.getReadLength()+"\n", Level.DEBUG);
+    viewDetail.appendString("Reference Name        "+thisSAMRecord.getReferenceName()+"\n", Level.DEBUG);
+    viewDetail.appendString("Inferred Size         "+thisSAMRecord.getInferredInsertSize()+"\n", Level.DEBUG);
+    
+    if(thisSAMRecord.getProperPairFlag() && !thisSAMRecord.getMateUnmappedFlag())
+    {
+      viewDetail.appendString("Mate Reference Name   "+thisSAMRecord.getMateReferenceName()+"\n", Level.DEBUG);
+      viewDetail.appendString("Mate Start Coordinate "+thisSAMRecord.getMateAlignmentStart()+"\n", Level.DEBUG);
+      viewDetail.appendString("Strand (read/mate)    "+
+        (thisSAMRecord.getReadNegativeStrandFlag() ? "-" : "+")+" / "+
+        (thisSAMRecord.getMateNegativeStrandFlag() ? "-" : "+"), Level.DEBUG);
+    }
+    else
+    {
+      viewDetail.appendString("Strand (read)         "+
+          (thisSAMRecord.getReadNegativeStrandFlag() ? "-" : "+"), Level.DEBUG);
+    }
+    
+    viewDetail.appendString("\n\nCigar String          "+thisSAMRecord.getCigarString(), Level.DEBUG);
+    
+    viewDetail.appendString("\n\nFlags:", Level.INFO);
+    viewDetail.appendString("\nDuplicate Read    "+
+        (thisSAMRecord.getDuplicateReadFlag() ? "yes" : "no"), Level.DEBUG);
+    viewDetail.appendString("\nFirst of Pair     "+
+        (thisSAMRecord.getFirstOfPairFlag() ? "yes" : "no"), Level.DEBUG);
+    viewDetail.appendString("\nMate Unmapped     "+
+        (thisSAMRecord.getMateUnmappedFlag() ? "yes" : "no"), Level.DEBUG);  
+    viewDetail.appendString("\nProper Pair       "+
+        (thisSAMRecord.getProperPairFlag() ? "yes" : "no"), Level.DEBUG);
+    viewDetail.appendString("\nRead Fails Vendor\nQuality Check     "+
+        (thisSAMRecord.getReadFailsVendorQualityCheckFlag() ? "yes" : "no"), Level.DEBUG);
+    viewDetail.appendString("\nRead Unmapped     "+
+        (thisSAMRecord.getReadUnmappedFlag() ? "yes" : "no"), Level.DEBUG);
+    viewDetail.appendString("\nSecond Of Pair    "+
+        (thisSAMRecord.getSecondOfPairFlag() ? "yes" : "no"), Level.DEBUG);
   }
   
   class PairedRead
