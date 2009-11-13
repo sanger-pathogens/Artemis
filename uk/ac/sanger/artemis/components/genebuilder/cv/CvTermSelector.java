@@ -370,6 +370,7 @@ class CvTermSelector extends JPanel
     });
     dialog.pack();
     centerDialog(dialog);
+    dialog.setMinimumSize(getPreferredSize());
     dialog.setVisible(true);
 
     int value = ((Integer) optionPane.getValue()).intValue();  
