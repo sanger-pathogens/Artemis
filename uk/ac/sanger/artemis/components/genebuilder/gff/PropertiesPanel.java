@@ -37,7 +37,7 @@ import java.util.Vector;
 
 import javax.swing.Box;
 import javax.swing.ButtonGroup;
-import javax.swing.DefaultListModel;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -48,6 +48,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
+import javax.swing.ListCellRenderer;
 import javax.swing.SwingConstants;
 
 import org.gmod.schema.cv.CvTerm;
@@ -240,7 +241,7 @@ public class PropertiesPanel extends JPanel
             nameField.getPreferredSize().height+10);
 
       primaryNameTextField.setMaximumSize(cellDimension);
-      
+
       c.gridx = 3;
       c.gridy = nrows;
       c.ipadx = 5;
@@ -490,7 +491,8 @@ public class PropertiesPanel extends JPanel
         GFFStreamFeature gffFeature = (GFFStreamFeature)feature.getEmblFeature();
         if(gffFeature.getChadoGene() != null)
         {
-          Set children = gffFeature.getChadoGene().getChildren(gffFeature);
+          Set<uk.ac.sanger.artemis.io.Feature> children = 
+        	  gffFeature.getChadoGene().getChildren(gffFeature);
           gffFeature.getChadoGene().updateUniqueName(oldName, newName, children);
         }
       }
@@ -617,7 +619,8 @@ public class PropertiesPanel extends JPanel
     
     if(gffFeature.getChadoGene() == null)
       return;
-    Set children = gffFeature.getChadoGene().getChildren(gffFeature);
+    Set<uk.ac.sanger.artemis.io.Feature> children =
+    	gffFeature.getChadoGene().getChildren(gffFeature);
  
     if(children.size() > 0)
     {
@@ -633,7 +636,7 @@ public class PropertiesPanel extends JPanel
       {
         try
         {
-          Iterator it = children.iterator();
+          Iterator<uk.ac.sanger.artemis.io.Feature> it = children.iterator();
           while(it.hasNext())
           {
             GFFStreamFeature gffChildFeature = (GFFStreamFeature)it.next();
@@ -663,7 +666,7 @@ public class PropertiesPanel extends JPanel
   
   private void removeSynonym()
   {
-    Vector synonymTypes = new Vector();
+    Vector<String> synonymTypes = new Vector<String>();
     for(int i=0; i<gffQualifiers.size(); i++)
     {
       Qualifier qualifier = (Qualifier) gffQualifiers.get(i);
@@ -720,7 +723,7 @@ public class PropertiesPanel extends JPanel
   
   private void addSynonym()
   {
-    final Vector synonyms = DatabaseDocument.getCvterms("", 
+    final Vector<CvTerm> synonyms = DatabaseDocument.getCvterms("", 
         ChadoTransactionManager.SYNONYM_TAG_CVNAME, false);
     final JExtendedComboBox list = new JExtendedComboBox(synonyms);
     final String options[] = { "CANCEL", "NEXT>"};   
@@ -745,9 +748,7 @@ public class PropertiesPanel extends JPanel
     xBox.add(newSynonym);
     
     final JCheckBox current = new JCheckBox("make current", true);
-    
-    if(isSystematicId(synonymName))
-      xBox.add(current);
+    xBox.add(current);
     
     select = JOptionPane.showConfirmDialog(null, xBox, 
         "Input name", JOptionPane.OK_CANCEL_OPTION);
@@ -758,7 +759,7 @@ public class PropertiesPanel extends JPanel
     Qualifier synonymQualifier = gffQualifiers.getQualifierByName(synonymName);
     
     String newSynonymValue = newSynonym.getText();
-    if(isSystematicId(synonymName) && !current.isSelected())
+    if(!current.isSelected())
       newSynonymValue = newSynonymValue + ";current=false";
     
     if(synonymQualifier == null)
@@ -893,25 +894,7 @@ public class PropertiesPanel extends JPanel
     empty = false;
     int current = -1;
     final StringVector values = qualifier.getValues();
-    final Vector featureSynonym = new Vector();
-    if(isSystematicId(qualifier.getName()))
-      featureSynonym.add("-");
-    
-    for(int j=0; j<values.size(); j++)
-    {
-      String value = (String) values.get(j);
-      StringVector strings = StringVector.getStrings(value, ";");
-      
-      // if the value ends with ';current=false' then it is NOT current
-      if(strings.size()>1)
-        featureSynonym.add((String) strings.get(0));
-      else
-      {
-        current = 0;
-        featureSynonym.add(0, value);
-      }
-    }
-    
+
     final JLabel sysidField = new JLabel(qualifier.getName()+" ");
     sysidField.setPreferredSize(new Dimension(maxLabelWidth, 
                      sysidField.getPreferredSize().height));
@@ -936,9 +919,26 @@ public class PropertiesPanel extends JPanel
     
     if(isSystematicId(qualifier.getName()))
     {    
+      final Vector<String> featureSynonym = new Vector<String>();
+      featureSynonym.add("-");
+      
+      for(int j=0; j<values.size(); j++)
+      {
+        String value = (String) values.get(j);
+        StringVector strings = StringVector.getStrings(value, ";");
+        
+        // if the value ends with ';current=false' then it is NOT current
+        if(strings.size()>1)
+          featureSynonym.add((String) strings.get(0));
+        else
+        {
+          current = 0;
+          featureSynonym.add(0, value);
+        }
+      }
+      
       final JExtendedComboBox comboBox = new JExtendedComboBox(
                                                featureSynonym);
-      
       if(current == -1)
         current = featureSynonym.indexOf("-");
       
@@ -962,13 +962,10 @@ public class PropertiesPanel extends JPanel
     }
     else
     { 
-      final DefaultListModel listModel = new DefaultListModel();
-      for(int k = featureSynonym.size()-1; k > -1; k--)
-        listModel.addElement(featureSynonym.get(k));
+      final JList name_list = new JList(values);
+      name_list.setCellRenderer(new SynonymCellRenderer());
       
-      final JList name_list = new JList(listModel);
-      
-      if(featureSynonym.size() > 5)
+      if(values.size() > 5)
       {
         final JScrollPane jsp = new JScrollPane(name_list);
         gridPanel.add(jsp, c);
@@ -1095,6 +1092,22 @@ public class PropertiesPanel extends JPanel
       Dimension d = super.getPreferredSize();
       d.height = preferredHeight;
       setPreferredSize(d);
+    }
+  }
+  
+  class SynonymCellRenderer implements ListCellRenderer
+  {
+    protected DefaultListCellRenderer defaultRenderer = new DefaultListCellRenderer();
+    public Component getListCellRendererComponent(JList list, Object value, int index,
+        boolean isSelected, boolean cellHasFocus) 
+    {
+      String val = (String) value;
+      String strings[] = val.split(";");
+      
+      JLabel renderer = new JLabel((String) strings[0]);
+      if(strings.length > 1 && ((String)strings[1]).indexOf("current=false") > -1)
+        renderer.setEnabled(false);
+      return renderer;
     }
   }
 }
