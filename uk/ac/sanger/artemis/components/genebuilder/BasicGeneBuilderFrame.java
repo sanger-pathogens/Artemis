@@ -317,12 +317,13 @@ public class BasicGeneBuilderFrame extends JFrame
     return statusLine;
   }
   
-  private void addToPanel(JComponent section, JPanel container, String sectionName)
+  private void addToPanel(JComponent section, JPanel container, 
+		                  String sectionName, String description)
   {
     section.setBackground(Color.WHITE);
     GeneEditorPanel.addDarkSeparator(container);
     GeneEditorPanel.addOpenClosePanel(sectionName, section, container,
-        MatchPanel.getDescription());
+    		description);
     container.add(section);
   }
   
@@ -348,7 +349,7 @@ public class BasicGeneBuilderFrame extends JFrame
     panel.setBackground(Color.WHITE);
 
     propertiesPanel = new PropertiesPanel(transcript);
-    addToPanel(propertiesPanel, panel, "Properties");
+    addToPanel(propertiesPanel, panel, "Properties","");
 
     Feature protein =
         (Feature) chadoGene.getProteinOfTranscript(transcriptName).getUserData();
@@ -363,11 +364,11 @@ public class BasicGeneBuilderFrame extends JFrame
     qualifier_text_area.getDocument().addDocumentListener(new TextAreaDocumentListener());
     qualifier_text_area.setText(getQualifierString(entry_group, protein));
 
-    addToPanel(qualifier_text_area, panel, "Core");
+    addToPanel(qualifier_text_area, panel, "Core", "");
 
-    addToPanel(cvPanel, panel, "Controlled Vocabulary");
+    addToPanel(cvPanel, panel, "Controlled Vocabulary", CVPanel.getDescription());
     matchForm.updateFromFeature(protein);
-    addToPanel(matchForm, panel, "Match");
+    addToPanel(matchForm, panel, "Match", MatchPanel.getDescription());
 
     tabPane.removeChangeListener(changeListener);
     ((JComponent)tabPane.getSelectedComponent()).add(jsp);
