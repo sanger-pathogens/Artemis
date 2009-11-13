@@ -204,13 +204,13 @@ public class PropertiesPanel extends JPanel
         uniquenameTextField.setEditable(false);
       uniquenameTextField.setMaximumSize(cellDimension);
       
-      c.gridx = 3;
+      c.gridx = 0;
       c.gridy = nrows;
       c.ipadx = 5;
       c.fill = GridBagConstraints.NONE;
       c.anchor = GridBagConstraints.SOUTHEAST;
       gridPanel.add(idField, c);
-      c.gridx = 4;
+      c.gridx = 1;
       c.ipadx = 0;
       c.fill = GridBagConstraints.HORIZONTAL;
       c.anchor = GridBagConstraints.SOUTHWEST;
@@ -242,13 +242,13 @@ public class PropertiesPanel extends JPanel
 
       primaryNameTextField.setMaximumSize(cellDimension);
 
-      c.gridx = 3;
+      c.gridx = 0;
       c.gridy = nrows;
       c.ipadx = 5;
       c.fill = GridBagConstraints.NONE;
       c.anchor = GridBagConstraints.EAST;
       gridPanel.add(nameField, c);
-      c.gridx = 4;
+      c.gridx = 1;
       c.gridy = nrows;
       c.ipadx = 0;
       c.fill = GridBagConstraints.HORIZONTAL;
@@ -256,8 +256,7 @@ public class PropertiesPanel extends JPanel
       gridPanel.add(primaryNameTextField, c);
       nrows++;
     }
-    
-    
+
     if(parentQualifier != null)
     {
       StringVector parents = parentQualifier.getValues();
@@ -274,13 +273,13 @@ public class PropertiesPanel extends JPanel
         parentTextField.setMaximumSize(cellDimension);
         parentTextField.setEditable(false);
         
-        c.gridx = 3;
+        c.gridx = 0;
         c.gridy = nrows;
         c.ipadx = 5;
         c.fill = GridBagConstraints.NONE;
         c.anchor = GridBagConstraints.EAST;
         gridPanel.add(parentField, c); 
-        c.gridx = 4;
+        c.gridx = 1;
         c.gridy = nrows;
         c.ipadx = 0;
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -289,8 +288,7 @@ public class PropertiesPanel extends JPanel
         nrows++;
       }
     }
-      
-    
+
     if(derivesFromQualifier != null)
     {
       StringVector derivesFroms = derivesFromQualifier.getValues();
@@ -307,13 +305,13 @@ public class PropertiesPanel extends JPanel
         derivesFromTextField.setMaximumSize(cellDimension);
         derivesFromTextField.setEditable(false);
         
-        c.gridx = 3;
+        c.gridx = 0;
         c.gridy = nrows;
         c.ipadx = 5;
         c.fill = GridBagConstraints.NONE;
         c.anchor = GridBagConstraints.EAST;
         gridPanel.add(derivesFromsField, c); 
-        c.gridx = 4;
+        c.gridx = 1;
         c.gridy = nrows;
         c.ipadx = 0;
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -339,13 +337,13 @@ public class PropertiesPanel extends JPanel
       timeTextField.setMaximumSize(cellDimension);
       timeTextField.setEditable(false);
       
-      c.gridx = 3;
+      c.gridx = 0;
       c.gridy = nrows;
       c.ipadx = 5;
       c.fill = GridBagConstraints.NONE;
       c.anchor = GridBagConstraints.EAST;
       gridPanel.add(timeField, c);
-      c.gridx = 4;
+      c.gridx = 1;
       c.gridy = nrows;
       c.ipadx = 0;
       c.fill = GridBagConstraints.HORIZONTAL;
@@ -382,7 +380,7 @@ public class PropertiesPanel extends JPanel
             obsoleteField.setSelected(!obsoleteField.isSelected());
         }
       });
-      c.gridx = 4;
+      c.gridx = 1;
       c.gridy = nrows;
       c.ipadx = 5;
       c.fill = GridBagConstraints.NONE;
@@ -390,7 +388,7 @@ public class PropertiesPanel extends JPanel
       gridPanel.add(obsoleteField, c);
     }
     
-    c.gridx = 3;
+    c.gridx = 0;
     c.gridy = nrows;
     c.ipadx = 5;
     c.fill = GridBagConstraints.NONE;
@@ -803,7 +801,7 @@ public class PropertiesPanel extends JPanel
                              final int maxLabelWidth)
   {
     GridBagConstraints c = new GridBagConstraints();
-    c.gridx = 0;
+    c.gridx = 2;
     c.gridy = nrows;
     c.ipady = 1;
     c.gridwidth = 2;
@@ -900,7 +898,7 @@ public class PropertiesPanel extends JPanel
                      sysidField.getPreferredSize().height));
     sysidField.setHorizontalAlignment(SwingConstants.RIGHT);
     
-    c.gridx = 0;
+    c.gridx = 2;
     c.gridy = nrows;
     c.ipadx = 5;
     c.fill = GridBagConstraints.NONE;
@@ -911,9 +909,9 @@ public class PropertiesPanel extends JPanel
       c.anchor = GridBagConstraints.NORTHEAST;
     gridPanel.add(sysidField, c);
 
-    c.gridx = 1;
-    c.gridy = nrows;
+    c.gridx = 3;
     c.ipadx = 5;
+    c.gridy = nrows;
     c.fill = GridBagConstraints.HORIZONTAL;
     c.anchor = GridBagConstraints.NORTHWEST;
     
@@ -964,7 +962,7 @@ public class PropertiesPanel extends JPanel
     { 
       final JList name_list = new JList(values);
       name_list.setCellRenderer(new SynonymCellRenderer());
-      
+      c.gridheight = values.size();
       if(values.size() > 5)
       {
         final JScrollPane jsp = new JScrollPane(name_list);
@@ -974,10 +972,11 @@ public class PropertiesPanel extends JPanel
         gridPanel.add(name_list, c);
     }
     
+    c.gridheight = 1;
     c.gridx = 2;
     c.gridy = nrows;
     
-    gridPanel.add(Box.createHorizontalStrut(15), c);
+    //gridPanel.add(Box.createHorizontalStrut(1), c);
   }
   
   /**
