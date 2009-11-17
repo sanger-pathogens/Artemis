@@ -122,17 +122,12 @@ public class PropertiesPanel extends JPanel
     c.ipady = 1;
     JPanel gridPanel = new JPanel(grid);
     gridPanel.setBackground(Color.WHITE);
-    
-    JLabel lab = new JLabel("previous_systematic_id ");
-    int maxLabelWidth = lab.getPreferredSize().width;
-    
-    Dimension cellDimension = new Dimension(maxLabelWidth, 
-        lab.getPreferredSize().height + 5);
-   
+      
     int nrow = 0;
-    addNames(cellDimension, c, gridPanel, nrow++);
+    addNames(c, gridPanel, nrow++);
     nrow = addSynonyms(c, gridPanel, nrow);
-    //addParent(cellDimension, c, gridPanel, nrow++);
+    
+    addParent(c, gridPanel, nrow++);
     
     // phase of translation wrt / codon_start
     if(feature.getEntry().getEntryInformation().isValidQualifier(
@@ -180,56 +175,13 @@ public class PropertiesPanel extends JPanel
   }
   
   /**
-   * Add Parent or Derives_from.
-   * @param cellDimension
-   * @param c
-   * @param gridPanel
-   * @param nrows
-   */
-  private void addParent(Dimension cellDimension,
-                         GridBagConstraints c,
-                         JPanel gridPanel,
-                         int nrows)
-  {
-    Qualifier parentQualifier      = gffQualifiers.getQualifierByName("Parent");
-    if(parentQualifier != null && 
-       parentQualifier.getValues().size() == 1)
-    {
-      StringVector parents = parentQualifier.getValues();
-      JLabel parentField = new JLabel("  Parent: "+parents.get(0));
-      c.gridx = 4;
-      c.gridy = nrows;
-      c.ipadx = 5;
-      c.fill = GridBagConstraints.NONE;
-      c.anchor = GridBagConstraints.EAST;
-      gridPanel.add(parentField, c); 
-      return;
-    }
-
-    Qualifier derivesFromQualifier = gffQualifiers.getQualifierByName("Derives_from");
-    if(derivesFromQualifier != null && 
-       derivesFromQualifier.getValues().size() == 1)
-    {
-      StringVector derivesFroms = derivesFromQualifier.getValues();
-      JLabel derivesFromsField = new JLabel("  Derives from: "+derivesFroms.get(0));
-      c.gridx = 4;
-      c.gridy = nrows;
-      c.ipadx = 5;
-      c.fill = GridBagConstraints.NONE;
-      c.anchor = GridBagConstraints.EAST;
-      gridPanel.add(derivesFromsField, c); 
-    }
-  }
-  
-  /**
    * Add uniquename and name to the panel.
    * @param cellDimension
    * @param c
    * @param gridPanel
    * @param nrows
    */
-  private void addNames(Dimension cellDimension, 
-                        GridBagConstraints c, 
+  private void addNames(GridBagConstraints c, 
                         JPanel gridPanel, 
                         int nrows)
   {
@@ -238,16 +190,20 @@ public class PropertiesPanel extends JPanel
    
     final String uniquename = (String)idQualifier.getValues().get(0);
     uniquenameTextField = new JTextField(uniquename);
-    uniquenameTextField.setPreferredSize(calcPreferredWidth());
+    uniquenameTextField.setPreferredSize(calcPreferredMaxTextFieldWidth());
     uniquenameTextField.setCaretPosition(0);
+    
+    JLabel idField = new JLabel("ID ");
+    idField.setFont(getFont().deriveFont(Font.BOLD));
+    idField.setHorizontalAlignment(SwingConstants.RIGHT);
+    idField.setPreferredSize(calcPreferredLabelWidth());
 
-    JLabel idField = new JLabel("ID");
     c.gridx = 0;
     c.gridy = nrows;
     c.ipadx = 5;
     c.fill = GridBagConstraints.NONE;
     c.anchor = GridBagConstraints.EAST;
-    gridPanel.add(new JLabel("ID"), c);
+    gridPanel.add(idField, c);
     c.gridx = 1;
     c.ipadx = 0;
     c.fill = GridBagConstraints.HORIZONTAL;
@@ -257,10 +213,14 @@ public class PropertiesPanel extends JPanel
     Qualifier featIdQualifier = gffQualifiers.getQualifierByName("feature_id");
     if (featIdQualifier != null)
     {
-      idField.setToolTipText("feature_id="
-          + (String) featIdQualifier.getValues().get(0));
-      uniquenameTextField.setToolTipText("feature_id="
-          + (String) featIdQualifier.getValues().get(0));
+      String parent = getParentString();
+      String tt = "feature_id=" +
+        (String) featIdQualifier.getValues().get(0) + "\n" +
+        uniquename +
+        (parent == null ? "" : "\n"+parent);
+
+      idField.setToolTipText(tt);
+      uniquenameTextField.setToolTipText(tt);
     }
     
     if(feature.getKey().getKeyString().equals(DatabaseDocument.EXONMODEL))
@@ -269,7 +229,7 @@ public class PropertiesPanel extends JPanel
     if (!feature.getKey().getKeyString().equals(DatabaseDocument.EXONMODEL))
     {
       primaryNameTextField = new JTextField();
-      primaryNameTextField.setPreferredSize(calcPreferredWidth());
+      primaryNameTextField.setPreferredSize(calcPreferredMaxTextFieldWidth());
       
       if (nameQualifier != null)
       {
@@ -281,15 +241,95 @@ public class PropertiesPanel extends JPanel
       c.ipadx = 5;
       c.fill = GridBagConstraints.NONE;
       c.anchor = GridBagConstraints.EAST;
-      gridPanel.add(new JLabel("  Name"), c);
+      JLabel lab = new JLabel("  Name");
+      lab.setFont(getFont().deriveFont(Font.BOLD));
+      gridPanel.add(lab, c);
       c.gridx = 3;
       c.ipadx = 0;
       c.fill = GridBagConstraints.HORIZONTAL;
       c.anchor = GridBagConstraints.WEST;
       gridPanel.add(primaryNameTextField, c);
     }
-    
-    addParent(cellDimension, c, gridPanel, nrows);
+  }
+
+  /**
+   * Get the parent feature name.
+   * @return
+   */
+  private String getParentString()
+  {
+    Qualifier parentQualifier      = gffQualifiers.getQualifierByName("Parent");
+    if(parentQualifier != null && 
+       parentQualifier.getValues().size() == 1)
+    {
+      StringVector parents = parentQualifier.getValues();
+      return "Parent: "+parents.get(0);
+    }
+
+    Qualifier derivesFromQualifier = gffQualifiers.getQualifierByName("Derives_from");
+    if(derivesFromQualifier != null && 
+       derivesFromQualifier.getValues().size() == 1)
+    {
+      StringVector derivesFroms = derivesFromQualifier.getValues();
+      return "Derives from: "+derivesFroms.get(0);
+    }
+    return null;
+  }
+  
+  /**
+   * Add Parent or Derives_from.
+   * @param c
+   * @param gridPanel
+   * @param nrows
+   */
+  private void addParent(GridBagConstraints c,
+                         JPanel gridPanel,
+                         int nrows)
+  {
+    Qualifier parentQualifier = gffQualifiers.getQualifierByName("Parent");
+    if(parentQualifier != null && 
+       parentQualifier.getValues().size() == 1)
+    {
+      StringVector parents = parentQualifier.getValues();
+      JLabel parentField = new JLabel("Parent");
+      parentField.setFont(getFont().deriveFont(Font.BOLD));
+      c.gridx = 0;
+      c.gridy = nrows;
+      c.ipadx = 5;
+      c.fill = GridBagConstraints.NONE;
+      c.anchor = GridBagConstraints.EAST;
+      gridPanel.add(parentField, c);
+      
+      JTextField parent = new JTextField(" "+(String) parents.get(0));
+      parent.setPreferredSize(calcPreferredMaxTextFieldWidth());
+      parent.setBorder(BorderFactory.createEmptyBorder());
+      c.gridx = 1;
+      c.anchor = GridBagConstraints.WEST;
+      gridPanel.add(parent, c);
+      return;
+    }
+
+    Qualifier derivesFromQualifier = gffQualifiers.getQualifierByName("Derives_from");
+    if(derivesFromQualifier != null && 
+       derivesFromQualifier.getValues().size() == 1)
+    {
+      StringVector derivesFroms = derivesFromQualifier.getValues();
+      JLabel derivesFromsField = new JLabel("Derives from");
+      derivesFromsField.setFont(getFont().deriveFont(Font.BOLD));
+      c.gridx = 0;
+      c.gridy = nrows;
+      c.ipadx = 5;
+      c.fill = GridBagConstraints.NONE;
+      c.anchor = GridBagConstraints.EAST;
+      gridPanel.add(derivesFromsField, c);
+      
+      JTextField parent = new JTextField(" "+(String) derivesFroms.get(0));
+      parent.setPreferredSize(calcPreferredMaxTextFieldWidth());
+      parent.setBorder(BorderFactory.createEmptyBorder());
+      c.gridx = 1;
+      c.anchor = GridBagConstraints.WEST;
+      gridPanel.add(parent, c);
+    }
   }
   
   /**
@@ -784,7 +824,10 @@ public class PropertiesPanel extends JPanel
     c.anchor = GridBagConstraints.EAST;
     c.fill = GridBagConstraints.NONE;
     c.ipadx = 5;
-    gridPanel.add(new JLabel("Codon Start"), c);
+    
+    JLabel lab = new JLabel("Codon Start");
+    lab.setFont(getFont().deriveFont(Font.BOLD));
+    gridPanel.add(lab, c);
     xBox.add(phase1);
     xBox.add(phase2);
     xBox.add(phase3);
@@ -818,10 +861,14 @@ public class PropertiesPanel extends JPanel
     empty = false;
     final StringVector values = qualifier.getValues();
 
-    final JLabel sysidField = new JLabel(qualifier.getName()+" ");
-    sysidField.setPreferredSize(new Dimension(maxLabelWidth, 
-                     sysidField.getPreferredSize().height));
-    
+    String name = qualifier.getName();
+    if(name.equals("previous_systematic_id"))
+      name = "prev_sys_id";
+    final JLabel sysidField = new JLabel(name+" ");
+    sysidField.setFont(getFont().deriveFont(Font.BOLD));
+    sysidField.setHorizontalAlignment(SwingConstants.RIGHT);
+    sysidField.setPreferredSize(calcPreferredLabelWidth());
+
     c.gridx = 0;
     c.gridy = nrows;
     c.ipadx = 5;
@@ -875,16 +922,22 @@ public class PropertiesPanel extends JPanel
     obsoleteField.setSelected(obsoleteChanged);
   }
   
-  private Dimension calcPreferredWidth()
+  private Dimension calcPreferredLabelWidth()
   {
-    int maxLabelWidth = new JLabel("previous_systematic_id ").getPreferredSize().width;
+    int maxLabelWidth = new JLabel("prev_sys_id ").getPreferredSize().width;
+    return calcPreferred(maxLabelWidth);
+  }
+  
+  private Dimension calcPreferredMaxTextFieldWidth()
+  {
+    int maxLabelWidth = new JLabel("previous_systematic_id       ").getPreferredSize().width;
     return calcPreferred(maxLabelWidth);
   }
   
   private Dimension calcPreferred(int w)
   {
     FontMetrics fm = getFontMetrics(getFont());
-    int preferredHeight = fm.getHeight()+fm.getDescent()+8;
+    int preferredHeight = fm.getHeight()+fm.getDescent()+4;
     Dimension d = super.getPreferredSize();
     d.height = preferredHeight;
     d.width  = w;
