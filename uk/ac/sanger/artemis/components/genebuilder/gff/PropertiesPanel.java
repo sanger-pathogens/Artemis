@@ -26,6 +26,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -35,24 +36,20 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.Vector;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.ButtonGroup;
-import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
-import javax.swing.ListCellRenderer;
 import javax.swing.SwingConstants;
 
 import org.gmod.schema.cv.CvTerm;
-
 
 import uk.ac.sanger.artemis.FeatureChangeEvent;
 import uk.ac.sanger.artemis.FeatureChangeListener;
@@ -119,15 +116,229 @@ public class PropertiesPanel extends JPanel
   private Component createGffQualifiersComponent()
   {
     empty = true;
-    int nrows = 0;
+    GridBagLayout grid = new GridBagLayout();
+    GridBagConstraints c = new GridBagConstraints();
     
-    Qualifier idQualifier          = gffQualifiers.getQualifierByName("ID");
-    Qualifier nameQualifier        = gffQualifiers.getQualifierByName("Name");
-    Qualifier parentQualifier      = gffQualifiers.getQualifierByName("Parent");
-    Qualifier derivesFromQualifier = gffQualifiers.getQualifierByName("Derives_from");
-    Qualifier timeQualifier        = gffQualifiers.getQualifierByName("timelastmodified");
-    Qualifier obsoleteQualifier    = gffQualifiers.getQualifierByName("isObsolete");
+    c.ipady = 1;
+    JPanel gridPanel = new JPanel(grid);
+    gridPanel.setBackground(Color.WHITE);
+    
+    JLabel lab = new JLabel("previous_systematic_id ");
+    int maxLabelWidth = lab.getPreferredSize().width;
+    
+    Dimension cellDimension = new Dimension(maxLabelWidth, 
+        lab.getPreferredSize().height + 5);
+   
+    int nrow = 0;
+    addNames(cellDimension, c, gridPanel, nrow++);
+    nrow = addSynonyms(c, gridPanel, nrow);
+    //addParent(cellDimension, c, gridPanel, nrow++);
+    
+    // phase of translation wrt / codon_start
+    if(feature.getEntry().getEntryInformation().isValidQualifier(
+       feature.getKey(), "codon_start"))
+    {
+      addPhaseComponent(c, gridPanel, nrow++);
+    }
+    else
+      phaseButtonGroup = null;
 
+    addOptions(c, gridPanel, nrow);
+
+    // add/remove buttons   
+    final JButton addSynonymButton = new JButton("ADD SYNONYM");
+    addSynonymButton.setOpaque(false);
+    addSynonymButton.setToolTipText("Add id or synonym");
+    addSynonymButton.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      { 
+        addSynonym();
+      }
+    });
+    
+    c.gridx = 0;
+    c.gridy = ++nrow;
+    c.gridwidth = 2;
+    c.fill = GridBagConstraints.NONE;
+    gridPanel.add(addSynonymButton, c);
+
+    Qualifier timeQualifier = gffQualifiers.getQualifierByName("timelastmodified");
+    if (timeQualifier != null)
+    {
+      String time = (String) timeQualifier.getValues().get(0);
+      JLabel timeLabel = new JLabel(time);
+      timeLabel.setEnabled(false);
+      timeLabel.setToolTipText("time last modified");
+
+      c.gridx = 4;
+      c.gridwidth = GridBagConstraints.REMAINDER;
+      c.anchor = GridBagConstraints.EAST;
+      gridPanel.add(timeLabel,c);
+    }  
+    return gridPanel;
+  }
+  
+  /**
+   * Add Parent or Derives_from.
+   * @param cellDimension
+   * @param c
+   * @param gridPanel
+   * @param nrows
+   */
+  private void addParent(Dimension cellDimension,
+                         GridBagConstraints c,
+                         JPanel gridPanel,
+                         int nrows)
+  {
+    Qualifier parentQualifier      = gffQualifiers.getQualifierByName("Parent");
+    if(parentQualifier != null && 
+       parentQualifier.getValues().size() == 1)
+    {
+      StringVector parents = parentQualifier.getValues();
+      JLabel parentField = new JLabel("  Parent: "+parents.get(0));
+      c.gridx = 4;
+      c.gridy = nrows;
+      c.ipadx = 5;
+      c.fill = GridBagConstraints.NONE;
+      c.anchor = GridBagConstraints.EAST;
+      gridPanel.add(parentField, c); 
+      return;
+    }
+
+    Qualifier derivesFromQualifier = gffQualifiers.getQualifierByName("Derives_from");
+    if(derivesFromQualifier != null && 
+       derivesFromQualifier.getValues().size() == 1)
+    {
+      StringVector derivesFroms = derivesFromQualifier.getValues();
+      JLabel derivesFromsField = new JLabel("  Derives from: "+derivesFroms.get(0));
+      c.gridx = 4;
+      c.gridy = nrows;
+      c.ipadx = 5;
+      c.fill = GridBagConstraints.NONE;
+      c.anchor = GridBagConstraints.EAST;
+      gridPanel.add(derivesFromsField, c); 
+    }
+  }
+  
+  /**
+   * Add uniquename and name to the panel.
+   * @param cellDimension
+   * @param c
+   * @param gridPanel
+   * @param nrows
+   */
+  private void addNames(Dimension cellDimension, 
+                        GridBagConstraints c, 
+                        JPanel gridPanel, 
+                        int nrows)
+  {
+    Qualifier idQualifier   = gffQualifiers.getQualifierByName("ID");
+    Qualifier nameQualifier = gffQualifiers.getQualifierByName("Name");
+   
+    final String uniquename = (String)idQualifier.getValues().get(0);
+    uniquenameTextField = new JTextField(uniquename);
+    uniquenameTextField.setPreferredSize(calcPreferredWidth());
+    uniquenameTextField.setCaretPosition(0);
+
+    JLabel idField = new JLabel("ID");
+    c.gridx = 0;
+    c.gridy = nrows;
+    c.ipadx = 5;
+    c.fill = GridBagConstraints.NONE;
+    c.anchor = GridBagConstraints.EAST;
+    gridPanel.add(new JLabel("ID"), c);
+    c.gridx = 1;
+    c.ipadx = 0;
+    c.fill = GridBagConstraints.HORIZONTAL;
+    c.anchor = GridBagConstraints.WEST;
+    gridPanel.add(uniquenameTextField, c);
+
+    Qualifier featIdQualifier = gffQualifiers.getQualifierByName("feature_id");
+    if (featIdQualifier != null)
+    {
+      idField.setToolTipText("feature_id="
+          + (String) featIdQualifier.getValues().get(0));
+      uniquenameTextField.setToolTipText("feature_id="
+          + (String) featIdQualifier.getValues().get(0));
+    }
+    
+    if(feature.getKey().getKeyString().equals(DatabaseDocument.EXONMODEL))
+      uniquenameTextField.setEditable(false);
+
+    if (!feature.getKey().getKeyString().equals(DatabaseDocument.EXONMODEL))
+    {
+      primaryNameTextField = new JTextField();
+      primaryNameTextField.setPreferredSize(calcPreferredWidth());
+      
+      if (nameQualifier != null)
+      {
+        primaryNameTextField.setText((String) nameQualifier.getValues().get(0));
+        empty = false;
+      }
+
+      c.gridx = 2;
+      c.ipadx = 5;
+      c.fill = GridBagConstraints.NONE;
+      c.anchor = GridBagConstraints.EAST;
+      gridPanel.add(new JLabel("  Name"), c);
+      c.gridx = 3;
+      c.ipadx = 0;
+      c.fill = GridBagConstraints.HORIZONTAL;
+      c.anchor = GridBagConstraints.WEST;
+      gridPanel.add(primaryNameTextField, c);
+    }
+    
+    addParent(cellDimension, c, gridPanel, nrows);
+  }
+  
+  /**
+   * Add synonyms to the panel.
+   * @param c
+   * @param gridPanel
+   * @param nrows
+   * @return
+   */
+  private int addSynonyms(GridBagConstraints c, JPanel gridPanel, int nrows)
+  {
+    int maxSynonymWidth = 0;
+    int maxLabelWidth = new JLabel("previous_systematic_id ").getPreferredSize().width;
+    
+    for(int i=0; i<gffQualifiers.size(); i++)
+    {
+      final Qualifier qualifier = (Qualifier)gffQualifiers.get(i);
+      if( ChadoTransactionManager.isSynonymTag(qualifier.getName(), 
+          (GFFStreamFeature)feature.getEmblFeature()) &&
+          isSystematicId(qualifier.getName()))
+      {
+        addSynonymComponent(qualifier, c, gridPanel, nrows++,
+            maxLabelWidth, maxSynonymWidth);  
+      }
+    }
+    
+    for(int i=0; i<gffQualifiers.size(); i++)
+    {
+      final Qualifier qualifier = (Qualifier)gffQualifiers.get(i);
+      if( ChadoTransactionManager.isSynonymTag(qualifier.getName(), 
+          (GFFStreamFeature)feature.getEmblFeature()) &&
+          !isSystematicId(qualifier.getName()))
+      {
+        addSynonymComponent(qualifier, c, gridPanel, nrows++, 
+            maxLabelWidth, maxSynonymWidth);  
+      }
+    }
+    return nrows;
+  }
+  
+  
+  /**
+   * Add partial and obsolete options to the panel.
+   * @param c
+   * @param gridPanel
+   * @param nrows
+   */
+  private void addOptions(GridBagConstraints c, JPanel gridPanel, int nrows)
+  {
     Qualifier isPartialQualfier5;
     Qualifier isPartialQualfier3;
     if(feature.isForwardFeature())
@@ -140,307 +351,48 @@ public class PropertiesPanel extends JPanel
       isPartialQualfier3   = gffQualifiers.getQualifierByName("isFminPartial");
       isPartialQualfier5   = gffQualifiers.getQualifierByName("isFmaxPartial");
     }
-    
-    
-    Box gffBox = Box.createVerticalBox();
-    
-    GridBagLayout grid = new GridBagLayout();
-    GridBagConstraints c = new GridBagConstraints();
-    
-    int maxLabelWidth = new JLabel("temporary_systematic_id ").getPreferredSize().width;
-
-    c.ipady = 1;
-    JPanel gridPanel = new JPanel(grid);
-    gridPanel.setBackground(Color.WHITE);
-    
-    //
-    // create components for synonym qualifiers
-    int maxSynonymWidth = 0;
-    for(int i=0; i<gffQualifiers.size(); i++)
-    {
-      final Qualifier qualifier = (Qualifier)gffQualifiers.get(i);
-      if( ChadoTransactionManager.isSynonymTag(qualifier.getName(), 
-          (GFFStreamFeature)feature.getEmblFeature()) &&
-          isSystematicId(qualifier.getName()))
-      {
-        addSynonymComponent(qualifier, c, gridPanel, nrows,
-            maxLabelWidth, maxSynonymWidth);  
-        nrows++;
-      }
-    }
-    
-    boolean firstFound = true;
-    for(int i=0; i<gffQualifiers.size(); i++)
-    {
-      final Qualifier qualifier = (Qualifier)gffQualifiers.get(i);
-      if( ChadoTransactionManager.isSynonymTag(qualifier.getName(), 
-          (GFFStreamFeature)feature.getEmblFeature()) &&
-          !isSystematicId(qualifier.getName()))
-      {
-        if(firstFound && nrows > 0)
-        {
-          addJSeparator(gridPanel, nrows, maxSynonymWidth);
-          nrows++;
-        }
-        addSynonymComponent(qualifier, c, gridPanel, nrows, 
-            maxLabelWidth, maxSynonymWidth);  
-        nrows++;
-        firstFound = false;
-      }
-    }
-
-    Dimension cellDimension = null;
-    nrows = 0;
-    if(idQualifier != null)
-    {
-      final String uniquename = (String)idQualifier.getValues().get(0);
-      JLabel idField = new JLabel("ID");
-      
-      uniquenameTextField = new PropertiesTextField(uniquename);
-      cellDimension = new Dimension(uniquenameTextField.getPreferredSize().width+10,
-                                    idField.getPreferredSize().height+10);
-      
-      if(feature.getKey().getKeyString().equals(DatabaseDocument.EXONMODEL))
-        uniquenameTextField.setEditable(false);
-      uniquenameTextField.setMaximumSize(cellDimension);
-      
-      c.gridx = 0;
-      c.gridy = nrows;
-      c.ipadx = 5;
-      c.fill = GridBagConstraints.NONE;
-      c.anchor = GridBagConstraints.SOUTHEAST;
-      gridPanel.add(idField, c);
-      c.gridx = 1;
-      c.ipadx = 0;
-      c.fill = GridBagConstraints.HORIZONTAL;
-      c.anchor = GridBagConstraints.SOUTHWEST;
-      gridPanel.add(uniquenameTextField, c);
-      
-      Qualifier featIdQualifier = gffQualifiers.getQualifierByName("feature_id");
-      if(featIdQualifier != null)
-      {
-        idField.setToolTipText("feature_id="+(String)featIdQualifier.getValues().get(0));
-        uniquenameTextField.setToolTipText("feature_id="+(String)featIdQualifier.getValues().get(0));
-      }
-      nrows++;
-    }
-
-
-    if(!feature.getKey().getKeyString().equals(DatabaseDocument.EXONMODEL))
-    {
-      primaryNameTextField = new PropertiesTextField();
-      if(nameQualifier != null)
-      {
-        primaryNameTextField.setText((String)nameQualifier.getValues().get(0));
-        empty = false;
-      }
-  
-      final JLabel nameField = new JLabel("Name");
-      if(cellDimension == null)
-        cellDimension = new Dimension(primaryNameTextField.getPreferredSize().width+10,
-            nameField.getPreferredSize().height+10);
-
-      primaryNameTextField.setMaximumSize(cellDimension);
-
-      c.gridx = 0;
-      c.gridy = nrows;
-      c.ipadx = 5;
-      c.fill = GridBagConstraints.NONE;
-      c.anchor = GridBagConstraints.EAST;
-      gridPanel.add(nameField, c);
-      c.gridx = 1;
-      c.gridy = nrows;
-      c.ipadx = 0;
-      c.fill = GridBagConstraints.HORIZONTAL;
-      c.anchor = GridBagConstraints.NORTHWEST;
-      gridPanel.add(primaryNameTextField, c);
-      nrows++;
-    }
-
-    if(parentQualifier != null)
-    {
-      StringVector parents = parentQualifier.getValues();
-      JLabel parentField = new JLabel("Parent");
-      for(int i=0; i<parents.size(); i++)
-      {
-        String parent = (String)parents.get(i);
-        JTextField parentTextField = new PropertiesTextField(parent);
-        
-        if(cellDimension == null ||
-           cellDimension.width < parentTextField.getPreferredSize().width+10)
-          cellDimension = new Dimension(parentTextField.getPreferredSize().width+10,
-                                        parentField.getPreferredSize().height+10);
-        parentTextField.setMaximumSize(cellDimension);
-        parentTextField.setEditable(false);
-        
-        c.gridx = 0;
-        c.gridy = nrows;
-        c.ipadx = 5;
-        c.fill = GridBagConstraints.NONE;
-        c.anchor = GridBagConstraints.EAST;
-        gridPanel.add(parentField, c); 
-        c.gridx = 1;
-        c.gridy = nrows;
-        c.ipadx = 0;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.anchor = GridBagConstraints.NORTHWEST;
-        gridPanel.add(parentTextField, c); 
-        nrows++;
-      }
-    }
-
-    if(derivesFromQualifier != null)
-    {
-      StringVector derivesFroms = derivesFromQualifier.getValues();
-      JLabel derivesFromsField = new JLabel("Derives_from");
-      for(int i=0; i<derivesFroms.size(); i++)
-      {
-        String derivesFrom = (String)derivesFroms.get(i);
-        JTextField derivesFromTextField = new PropertiesTextField(derivesFrom);
-        
-        if(cellDimension == null ||
-           cellDimension.width < derivesFromTextField.getPreferredSize().width+10)
-          cellDimension = new Dimension(derivesFromTextField.getPreferredSize().width+10,
-                                        derivesFromsField.getPreferredSize().height+10);
-        derivesFromTextField.setMaximumSize(cellDimension);
-        derivesFromTextField.setEditable(false);
-        
-        c.gridx = 0;
-        c.gridy = nrows;
-        c.ipadx = 5;
-        c.fill = GridBagConstraints.NONE;
-        c.anchor = GridBagConstraints.EAST;
-        gridPanel.add(derivesFromsField, c); 
-        c.gridx = 1;
-        c.gridy = nrows;
-        c.ipadx = 0;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.anchor = GridBagConstraints.NORTHWEST;
-        gridPanel.add(derivesFromTextField, c); 
-        nrows++;
-      }
-    }
-    
-    if(timeQualifier != null)
-    {
-      String time = (String)timeQualifier.getValues().get(0);
-      
-      JLabel timeField = new JLabel("timelastmodified");
-      //timeField.setPreferredSize(new Dimension(timeField.getPreferredSize().width+10,
-      //                 timeField.getPreferredSize().height));
-      
-      JTextField timeTextField = new PropertiesTextField(time);
-      if(cellDimension == null ||
-         cellDimension.width < timeTextField.getPreferredSize().width+10)
-         cellDimension = new Dimension(timeTextField.getPreferredSize().width+10,
-                                       timeField.getPreferredSize().height+10);
-      timeTextField.setMaximumSize(cellDimension);
-      timeTextField.setEditable(false);
-      
-      c.gridx = 0;
-      c.gridy = nrows;
-      c.ipadx = 5;
-      c.fill = GridBagConstraints.NONE;
-      c.anchor = GridBagConstraints.EAST;
-      gridPanel.add(timeField, c);
-      c.gridx = 1;
-      c.gridy = nrows;
-      c.ipadx = 0;
-      c.fill = GridBagConstraints.HORIZONTAL;
-      c.anchor = GridBagConstraints.NORTHWEST;
-      gridPanel.add(timeTextField, c);
-      nrows++;
-    }  
-
-    // phase of translation wrt / codon_start
-    if(feature.getEntry().getEntryInformation().isValidQualifier(
-        feature.getKey(), "codon_start"))
-    {
-      c.gridy = nrows;
-      addPhaseComponent(c, gridPanel);
-      nrows++;
-    }
-    else
-      phaseButtonGroup = null;
-    
-    if(obsoleteQualifier != null)
-    {
-      boolean isObsolete = Boolean.parseBoolean((String) obsoleteQualifier.getValues().get(0));
-      obsoleteField = new PropertiesCheckBox("is obsolete", isObsolete);
-      obsoleteField.setOpaque(false);
-      obsoleteField.addActionListener(new ActionListener()
-      {
-        public void actionPerformed(ActionEvent e)
-        {
-          int result = JOptionPane.showConfirmDialog(
-              PropertiesPanel.this, "Change this feature to be "+
-              (obsoleteField.isSelected() ? "obsolete!" : "not obsolete!"), 
-              "Change obsolete option", JOptionPane.OK_CANCEL_OPTION);
-          if(result == JOptionPane.CANCEL_OPTION)
-            obsoleteField.setSelected(!obsoleteField.isSelected());
-        }
-      });
-      c.gridx = 1;
-      c.gridy = nrows;
-      c.ipadx = 5;
-      c.fill = GridBagConstraints.NONE;
-      c.anchor = GridBagConstraints.NORTHWEST;
-      gridPanel.add(obsoleteField, c);
-    }
-    
-    c.gridx = 0;
-    c.gridy = nrows;
-    c.ipadx = 5;
-    c.fill = GridBagConstraints.NONE;
-    c.anchor = GridBagConstraints.NORTHWEST;
-    nrows++;
-    partialField5prime = new PropertiesCheckBox("is partial 5'", 
+     
+    Box optionsBox = Box.createHorizontalBox();
+    partialField5prime = new JCheckBox("partial 5'", 
         ( isPartialQualfier5 != null ) ? true : false);
+    Dimension d = calcPreferred(partialField5prime.getPreferredSize().width);
+    partialField5prime.setPreferredSize(d);
     partialField5prime.setOpaque(false);
-    gridPanel.add(partialField5prime, c);
-    c.gridy = nrows;
-    nrows++;
-    partialField3prime = new PropertiesCheckBox("is partial 3'", 
+    optionsBox.add(partialField5prime);
+
+    partialField3prime = new JCheckBox("partial 3'", 
         ( isPartialQualfier3 != null ) ? true : false);
+    partialField3prime.setPreferredSize(d);
     partialField3prime.setOpaque(false);
-    gridPanel.add(partialField3prime, c);
-    nrows++;
-    
-    gffBox.add(gridPanel);
+    optionsBox.add(partialField3prime);
     
     
-    // add/remove buttons
-    Box xBox = Box.createHorizontalBox();
+    Qualifier obsoleteQualifier = gffQualifiers.getQualifierByName("isObsolete");
+    boolean isObsolete = Boolean.parseBoolean((String) obsoleteQualifier.getValues().get(0));
+    obsoleteField = new JCheckBox("obsolete", isObsolete);
+    obsoleteField.setPreferredSize(calcPreferred(obsoleteField.getPreferredSize().width));
     
-    final JButton addSynonym = new JButton("ADD SYNONYM");
-    addSynonym.setOpaque(false);
-    addSynonym.setToolTipText("Add id or synonym");
-    addSynonym.addActionListener(new ActionListener()
+    obsoleteField.setOpaque(false);
+    obsoleteField.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
-      { 
-        addSynonym();
+      {
+        int result = JOptionPane.showConfirmDialog(
+            PropertiesPanel.this, "Change this feature to be "+
+            (obsoleteField.isSelected() ? "obsolete!" : "not obsolete!"), 
+            "Change obsolete option", JOptionPane.OK_CANCEL_OPTION);
+        if(result == JOptionPane.CANCEL_OPTION)
+          obsoleteField.setSelected(!obsoleteField.isSelected());
       }
     });
-    xBox.add(addSynonym);
-    xBox.add(Box.createHorizontalStrut(10));
-    
-    final JButton removeSynonym = new JButton("REMOVE SYNONYM");
-    removeSynonym.setOpaque(false);
-    removeSynonym.setToolTipText("Remove id or synonym");
-    removeSynonym.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent e)
-      { 
-        removeSynonym();
-      }
-    });
-    xBox.add(removeSynonym);
-    
-    xBox.add(Box.createHorizontalGlue());
-    gffBox.add(xBox);
-    
-    return gffBox;
+    optionsBox.add(obsoleteField);
+
+    c.gridx = 0;
+    c.anchor = GridBagConstraints.WEST;
+    c.gridwidth = GridBagConstraints.REMAINDER;
+    c.gridy = nrows;
+    gridPanel.add(optionsBox, c);
+    c.gridwidth = 1;
   }
   
   public void updateFromFeature(final Feature feature)
@@ -462,9 +414,8 @@ public class PropertiesPanel extends JPanel
    
     feature.addFeatureChangeListener(this);  
     add(createGffQualifiersComponent());
-
-    repaint();
     revalidate();
+    repaint();
   }
 
   /**
@@ -662,60 +613,32 @@ public class PropertiesPanel extends JPanel
     return false;
   }
   
-  private void removeSynonym()
-  {
-    Vector<String> synonymTypes = new Vector<String>();
-    for(int i=0; i<gffQualifiers.size(); i++)
-    {
-      Qualifier qualifier = (Qualifier) gffQualifiers.get(i);
-      if(ChadoTransactionManager.isSynonymTag(qualifier.getName(), 
-         (GFFStreamFeature)feature.getEmblFeature()))
-        synonymTypes.add(qualifier.getName());
-    }
+  private void removeSynonym(String synonymName, String qualifierValue)
+  {   
+    int select = JOptionPane.showConfirmDialog(null, 
+        "Delete "+qualifierValue+"?",
+        "Select synonym type", JOptionPane.OK_CANCEL_OPTION);
     
-    final JExtendedComboBox list = new JExtendedComboBox(synonymTypes);
-    final String options[] = { "CANCEL", "NEXT>"};   
-    
-    int select = JOptionPane.showOptionDialog(null, list,
-        "Select synonym type",
-         JOptionPane.YES_NO_CANCEL_OPTION,
-         JOptionPane.QUESTION_MESSAGE,
-         null,
-         options,
-         options[1]);
-    
-    if(select == 0)
+    if(select != JOptionPane.OK_OPTION)
       return;
     
-    Box xBox = Box.createHorizontalBox();
-    final String synonymName = (String) list.getSelectedItem();
-    final JLabel name = new JLabel( synonymName );
-    xBox.add(name);
-    
-    Qualifier qualifier = gffQualifiers.getQualifierByName(synonymName);
-    StringVector values = qualifier.getValues();
-    final JExtendedComboBox valueList = new JExtendedComboBox(values);
-    xBox.add(valueList);
-    
-    select = JOptionPane.showConfirmDialog(null, xBox, 
-        "Input name", JOptionPane.OK_CANCEL_OPTION);
-    
-    if(select == JOptionPane.CANCEL_OPTION)
-      return;
+    StringVector values =
+      gffQualifiers.getQualifierByName(synonymName).getValues();
     
     if(values.size()==1)
       gffQualifiers.removeQualifierByName(synonymName);
     else
     {
       int index = gffQualifiers.indexOfQualifierWithName(synonymName);
-      values.remove(valueList.getSelectedIndex());
-      gffQualifiers.remove(index); 
+      values.remove(qualifierValue);
+      gffQualifiers.remove(index);
       gffQualifiers.add(index, new Qualifier(synonymName, values));
     }
     
     removeAll();
     add(createGffQualifiersComponent());
     revalidate();
+    repaint();
   }
   
   
@@ -801,7 +724,7 @@ public class PropertiesPanel extends JPanel
                              final int maxLabelWidth)
   {
     GridBagConstraints c = new GridBagConstraints();
-    c.gridx = 2;
+    c.gridx = 0;
     c.gridy = nrows;
     c.ipady = 1;
     c.gridwidth = 2;
@@ -818,7 +741,7 @@ public class PropertiesPanel extends JPanel
    * @param c
    * @param gridPanel
    */
-  private void addPhaseComponent(final GridBagConstraints c, final JPanel gridPanel)
+  private void addPhaseComponent(final GridBagConstraints c, final JPanel gridPanel, int nrows)
   {
     Qualifier qualifierCodonStart = gffQualifiers.getQualifierByName("codon_start");
     phaseButtonGroup = new ButtonGroup();
@@ -856,7 +779,8 @@ public class PropertiesPanel extends JPanel
     }
     
     Box xBox = Box.createHorizontalBox();
-    c.gridx = 3;
+    c.gridx = 0;
+    c.gridy = nrows;
     c.anchor = GridBagConstraints.EAST;
     c.fill = GridBagConstraints.NONE;
     c.ipadx = 5;
@@ -866,10 +790,12 @@ public class PropertiesPanel extends JPanel
     xBox.add(phase3);
     xBox.add(phaseNone);
     xBox.add(Box.createHorizontalGlue());
-    c.gridx = 4;
+    c.gridx = 1;
     c.anchor = GridBagConstraints.WEST;
     c.ipadx = 0;
+    c.gridwidth = 2;
     gridPanel.add(xBox, c);
+    c.gridwidth = 1;
   }
   
   /**
@@ -890,148 +816,43 @@ public class PropertiesPanel extends JPanel
                                    int maxSynonymWidth)
   {
     empty = false;
-    int current = -1;
     final StringVector values = qualifier.getValues();
 
     final JLabel sysidField = new JLabel(qualifier.getName()+" ");
     sysidField.setPreferredSize(new Dimension(maxLabelWidth, 
                      sysidField.getPreferredSize().height));
-    sysidField.setHorizontalAlignment(SwingConstants.RIGHT);
     
-    c.gridx = 2;
+    c.gridx = 0;
     c.gridy = nrows;
     c.ipadx = 5;
-    c.fill = GridBagConstraints.NONE;
-    
-    if(isSystematicId(qualifier.getName()))
-      c.anchor = GridBagConstraints.EAST;
-    else
-      c.anchor = GridBagConstraints.NORTHEAST;
+    c.anchor = GridBagConstraints.EAST;
     gridPanel.add(sysidField, c);
 
-    c.gridx = 3;
+    c.gridx = 1;
     c.ipadx = 5;
-    c.gridy = nrows;
-    c.fill = GridBagConstraints.HORIZONTAL;
-    c.anchor = GridBagConstraints.NORTHWEST;
-    
-    if(isSystematicId(qualifier.getName()))
-    {    
-      final Vector<String> featureSynonym = new Vector<String>();
-      featureSynonym.add("-");
-      
-      for(int j=0; j<values.size(); j++)
-      {
-        String value = (String) values.get(j);
-        StringVector strings = StringVector.getStrings(value, ";");
-        
-        // if the value ends with ';current=false' then it is NOT current
-        if(strings.size()>1)
-          featureSynonym.add((String) strings.get(0));
-        else
-        {
-          current = 0;
-          featureSynonym.add(0, value);
-        }
-      }
-      
-      final JExtendedComboBox comboBox = new JExtendedComboBox(
-                                               featureSynonym);
-      if(current == -1)
-        current = featureSynonym.indexOf("-");
-      
-      comboBox.setHighLightCurrent(true);
-      comboBox.setSelectedIndex(current);
-      comboBox.setCurrent(current);
-      comboBox.setOpaque(false);
-      comboBox.addActionListener(new ActionListener()
-      {
-        public void actionPerformed(ActionEvent e)
-        {
-          comboBoxActionForSysId(comboBox, qualifier);
-        }
-      });
-      
-      final String tt = "current "+qualifier.getName()+" is shown";
-      sysidField.setToolTipText(tt);
-      comboBox.setToolTipText(tt);
-      
-      gridPanel.add(comboBox, c);
-    }
-    else
-    { 
-      final JList name_list = new JList(values);
-      name_list.setCellRenderer(new SynonymCellRenderer());
-      c.gridheight = values.size();
-      if(values.size() > 5)
-      {
-        final JScrollPane jsp = new JScrollPane(name_list);
-        gridPanel.add(jsp, c);
-      }
-      else
-        gridPanel.add(name_list, c);
-    }
-    
-    c.gridheight = 1;
-    c.gridx = 2;
-    c.gridy = nrows;
-    
-    //gridPanel.add(Box.createHorizontalStrut(1), c);
-  }
-  
-  /**
-   * Process changes made in the systematic_id combobox. This
-   * is designed to show the current sys_id if there is one or
-   * "-" if there is no current sys_id. Any non-current sys_id's
-   * are shown in the drop down list of the combo.
-   * @param comboBox
-   * @param qualifier
-   */
-  private void comboBoxActionForSysId(final JExtendedComboBox comboBox,
-                                      final Qualifier qualifier)
-  {
-    if(comboBox.getSelectedIndex() == comboBox.getCurrent())
-      return;
-    
-    final String msg;
-    if(comboBox.getSelectedItem().equals("-"))
-      msg = "Change so there is no current value.";
-    else
-      msg = "Change the current value of "+
-      qualifier.getName()+" to "+comboBox.getSelectedItem()+"?";
-      
-    int select = JOptionPane.showConfirmDialog(null, 
-        msg, 
-        qualifier.getName()+" change", 
-        JOptionPane.OK_CANCEL_OPTION);
-    if(select == JOptionPane.CANCEL_OPTION)
-      comboBox.setSelectedIndex(comboBox.getCurrent());
-    else
+    c.anchor = GridBagConstraints.WEST;
+
+    Box synBox = Box.createHorizontalBox();
+    for (int i = 0; i < values.size(); i++)
     {
-      StringVector values = qualifier.getValues();
-      StringVector newValues = new StringVector();
-      String selectedValue = (String) comboBox.getSelectedItem();
+      final String val = (String) values.get(i);
+      String strings[] = val.split(";");
+
+      JLabel syn = new JLabel(" "+(String) strings[0] + ";");
+      syn.setPreferredSize(calcPreferred(syn.getPreferredSize().width));
       
-      for(int i =0; i<values.size(); i++)
-      {
-        String value = (String) values.get(i);
-        
-        if(value.equals("-"))
-          continue;
-        
-        StringVector strings = StringVector.getStrings(value, ";");
-        if(selectedValue.equals(strings.get(0)))
-          value = selectedValue;
-        else
-          value = strings.get(0)+";current=false";
-        
-        newValues.add(value);
-      }
-      int index = gffQualifiers.indexOfQualifierWithName(qualifier.getName());
-      gffQualifiers.remove(index);
-      gffQualifiers.add(index, new Qualifier(qualifier.getName(), newValues));
-      comboBox.setCurrent(comboBox.getSelectedIndex());
-    }  
+      if (strings.length > 1
+          && ((String) strings[1]).indexOf("current=false") > -1)
+        syn.setEnabled(false);
+      synBox.add(syn);
+      
+      RemoveButton remove = new RemoveButton("X", qualifier.getName(), val);
+      synBox.add(remove);
+    }
+    c.gridwidth = GridBagConstraints.REMAINDER;
+
+    gridPanel.add(synBox, c);
+    c.gridwidth = 1;
   }
   
   public void featureChanged(FeatureChangeEvent event)
@@ -1054,59 +875,50 @@ public class PropertiesPanel extends JPanel
     obsoleteField.setSelected(obsoleteChanged);
   }
   
-  class PropertiesCheckBox extends JCheckBox
+  private Dimension calcPreferredWidth()
   {
-    private static final long serialVersionUID = 1L;
-    
-    PropertiesCheckBox(String txt, boolean b)
-    {
-      super(txt, b);
-      FontMetrics fm = getFontMetrics(getFont());
-      int preferredHeight = fm.getHeight()+fm.getDescent();
-      Dimension d = super.getPreferredSize();
-      d.height = preferredHeight;
-      setPreferredSize(d);
-    }
+    int maxLabelWidth = new JLabel("previous_systematic_id ").getPreferredSize().width;
+    return calcPreferred(maxLabelWidth);
   }
   
-  class PropertiesTextField extends JTextField
+  private Dimension calcPreferred(int w)
   {
-    private static final long serialVersionUID = 1L;
+    FontMetrics fm = getFontMetrics(getFont());
+    int preferredHeight = fm.getHeight()+fm.getDescent()+8;
+    Dimension d = super.getPreferredSize();
+    d.height = preferredHeight;
+    d.width  = w;
+    return d;
+  }
 
-    PropertiesTextField()
-    {
-      super();
-      FontMetrics fm = getFontMetrics(getFont());
-      int preferredHeight = fm.getHeight()+fm.getDescent();
-      Dimension d = super.getPreferredSize();
-      d.height = preferredHeight;
-      setPreferredSize(d);
-    }
-    
-    PropertiesTextField(String txt)
-    {
-      super(txt);
-      FontMetrics fm = getFontMetrics(getFont());
-      int preferredHeight = fm.getHeight()+fm.getDescent();
-      Dimension d = super.getPreferredSize();
-      d.height = preferredHeight;
-      setPreferredSize(d);
-    }
-  }
-  
-  class SynonymCellRenderer implements ListCellRenderer
+  public class RemoveButton extends JButton 
   {
-    protected DefaultListCellRenderer defaultRenderer = new DefaultListCellRenderer();
-    public Component getListCellRendererComponent(JList list, Object value, int index,
-        boolean isSelected, boolean cellHasFocus) 
+    private static final long serialVersionUID = 1L;
+    
+    public RemoveButton(final String text, final String name, final String val)
     {
-      String val = (String) value;
-      String strings[] = val.split(";");
+      super(text);
+
+      setVerticalTextPosition(SwingConstants.TOP);
+      setHorizontalTextPosition(SwingConstants.LEFT);
+
+      setForeground(Color.red);
+      setFont(getFont().deriveFont(Font.BOLD, 9.f));
+      setBorder(BorderFactory.createEmptyBorder());
+      setOpaque(false);
       
-      JLabel renderer = new JLabel((String) strings[0]);
-      if(strings.length > 1 && ((String)strings[1]).indexOf("current=false") > -1)
-        renderer.setEnabled(false);
-      return renderer;
+      Dimension size = new Dimension(9,20);
+      setPreferredSize(size);
+      setMaximumSize(size);
+
+      addActionListener(new ActionListener()
+      {
+        public void actionPerformed(ActionEvent e)
+        {
+          removeSynonym(name, val);
+        }  
+      });
     }
   }
+
 }
