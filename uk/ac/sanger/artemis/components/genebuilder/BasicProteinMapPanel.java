@@ -70,7 +70,8 @@ public class BasicProteinMapPanel extends ProteinMapPanel
     float fraction = (float)(getSize().width - (2*border))/
                      (float)(geneEnd-geneStart);
 
-    String transcriptName = gbFrame.getTranscriptNameInView();   
+    String transcriptName = GeneUtils.getUniqueName(
+        gbFrame.getSelectedTranscriptFeature().getEmblFeature()); 
     Feature protein_embl_feature = 
        (Feature)chado_gene.getProteinOfTranscript(transcriptName);
 

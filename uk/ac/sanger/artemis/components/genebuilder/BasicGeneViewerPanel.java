@@ -254,7 +254,7 @@ public class BasicGeneViewerPanel extends MapPanel
           }
           else
           {
-            gbFrame.setObsoleteChanged(true);
+            gbFrame.setObsoleteChanged(true, features);
           }
         }
         catch(ReadOnlyException e)
@@ -376,7 +376,7 @@ public class BasicGeneViewerPanel extends MapPanel
       {
         if(last_cursor_position == null)
           return;
-        Feature transcript = getTranscriptNameInView();
+        Feature transcript = gbFrame.getSelectedTranscriptFeature().getEmblFeature();
         
         if(transcript == null)
         {
@@ -601,9 +601,7 @@ public class BasicGeneViewerPanel extends MapPanel
     
     ypos += border*2;
     
-    Feature transcript =
-      chado_gene.getTranscriptFeatureFromName(gbFrame.getTranscriptNameInView());
-    
+    Feature transcript = gbFrame.getSelectedTranscriptFeature().getEmblFeature();
     
     GeneViewerPanel.drawTranscriptOnLine(g2d, transcript, 
         start, end, ypos, 
@@ -631,17 +629,6 @@ public class BasicGeneViewerPanel extends MapPanel
     }
   }
 
-  /**
-   * Return the closest transcript feature from a given point on the
-   * panel.
-   * @param p 
-   * @return
-   */
-  private Feature getTranscriptNameInView()
-  {
-    return chado_gene.getTranscriptFeatureFromName(
-        gbFrame.getTranscriptNameInView());
-  }
   
   /**
    * Given a point on the panel find the feature drawn at that
@@ -654,7 +641,7 @@ public class BasicGeneViewerPanel extends MapPanel
     if (p.y <= border + getFontHeight())
       return chado_gene.getGene();
 
-    Feature transcript = getTranscriptNameInView();
+    Feature transcript = gbFrame.getSelectedTranscriptFeature().getEmblFeature();
 
     if (p.y >= (border * 3) && p.y <= (border * 3) + getFontHeight())
       return transcript;
