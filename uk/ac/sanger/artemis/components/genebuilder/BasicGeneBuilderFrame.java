@@ -79,6 +79,7 @@ import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.io.InvalidRelationException;
 import uk.ac.sanger.artemis.io.Key;
 import uk.ac.sanger.artemis.io.Location;
+import uk.ac.sanger.artemis.io.LocationParseException;
 import uk.ac.sanger.artemis.io.OutOfDateException;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.QualifierInfo;
@@ -216,17 +217,7 @@ public class BasicGeneBuilderFrame extends JFrame
       {
         public void actionPerformed(ActionEvent e)
         {
-          Feature gene = (Feature) chadoGene.getGene().getUserData();
-          Feature transcript = getSelectedTranscriptFeature();
-          
-          QualifierVector geneProperties =
-            propertiesPanel.getGeneProperties(gene);
-          QualifierVector transcriptProperties =
-            propertiesPanel.getTranscriptProperties(transcript);
-          
-          if(setFeaturePropertiesByFeature(gene, geneProperties) &&
-             setFeaturePropertiesByFeature(transcript, transcriptProperties) &&
-             setProteinFeature()) 
+          if(setLocation() && setQualifiers()) 
           {
             stopListening();
             propertiesPanel.updateObsoleteSettings(); 
@@ -235,6 +226,28 @@ public class BasicGeneBuilderFrame extends JFrame
         }
       });
       ok_cancel_update_panel.add(okButton);
+      
+      final JButton applyButton = new JButton("Apply");
+      applyButton.addActionListener(new ActionListener()
+      {
+        public void actionPerformed(ActionEvent e)
+        {
+          setLocation(); 
+          setQualifiers();
+        }
+      });
+      ok_cancel_update_panel.add(applyButton);
+      
+      final JButton cancelButton = new JButton("Cancel");
+      cancelButton.addActionListener(new ActionListener()
+      {
+        public void actionPerformed(ActionEvent e) 
+        {
+          stopListening();
+          dispose();
+        }
+      });
+      ok_cancel_update_panel.add(cancelButton);
     }
 
     mainPanel.add(ok_cancel_update_panel, BorderLayout.SOUTH);
@@ -413,8 +426,7 @@ public class BasicGeneBuilderFrame extends JFrame
   {
 	Feature transcript = getSelectedTranscriptFeature();
     String transcriptName = GeneUtils.getUniqueName(transcript.getEmblFeature());
-	return
-		chadoGene.getSpliceSitesOfTranscript(transcriptName, DatabaseDocument.EXONMODEL);
+	return chadoGene.getSpliceSitesOfTranscript(transcriptName, DatabaseDocument.EXONMODEL);
   }
   
   private void addComponentToTab(final JTabbedPane tabPane, 
@@ -462,7 +474,8 @@ public class BasicGeneBuilderFrame extends JFrame
   {
     Element root = doc.getDefaultRootElement();
     int lines = root.getElementCount();
-    int lineHeight = qualifier_text_area.getFontMetrics(qualifier_text_area.getFont()).getHeight();
+    int lineHeight = qualifier_text_area.getFontMetrics(
+        qualifier_text_area.getFont()).getHeight();
 
     qualifier_text_area.setPreferredSize(
           new Dimension( qualifier_text_area.getPreferredSize().width,
@@ -485,8 +498,7 @@ public class BasicGeneBuilderFrame extends JFrame
       final Qualifier this_qualifier = (Qualifier)qualifiers.elementAt(qualifier_index);
 
       //
-      // strip out CV qualifiers
-      //
+      // strip out CV / Properties / Match qualifiers
       if( (CVPanel.isCvTag(this_qualifier)) ||
           (PropertiesPanel.isPropertiesTag(this_qualifier, feature)) ||
           (MatchPanel.isMatchTag(this_qualifier)) ||
@@ -821,6 +833,56 @@ public class BasicGeneBuilderFrame extends JFrame
   private void updateLocation()
   {
     locationText.setText(getFeature().getLocation().toStringShort());
+  }
+  
+  private boolean setLocation()
+  {
+    final Location location;
+    try 
+    {
+      location = new Location(locationText.getText());
+      System.out.println(locationText.getText());
+      activeFeature.setLocation(location);
+    }
+    catch(LocationParseException exception) 
+    {
+      final String error_string = exception.getMessage ();
+      JOptionPane.showMessageDialog(this, "Location Error",
+          "Cannot apply changes because of location error: " +
+           error_string, JOptionPane.WARNING_MESSAGE);
+      return false;
+    }
+    catch (ReadOnlyException e)
+    {
+      JOptionPane.showMessageDialog(this, "Location",
+          "Read Only", JOptionPane.WARNING_MESSAGE);
+      return false;
+    }
+    catch (OutOfRangeException e)
+    {
+      final String error_string = e.getMessage ();
+      JOptionPane.showMessageDialog(this, "Location Error",
+          "Cannot apply changes because of location error: " +
+           error_string, JOptionPane.WARNING_MESSAGE);
+      return false;
+    }
+
+    return true;
+  }
+  
+  private boolean setQualifiers()
+  {
+    Feature gene = (Feature) chadoGene.getGene().getUserData();
+    Feature transcript = getSelectedTranscriptFeature();
+    
+    QualifierVector geneProperties =
+      propertiesPanel.getGeneProperties(gene);
+    QualifierVector transcriptProperties =
+      propertiesPanel.getTranscriptProperties(transcript);
+    
+    return (setFeaturePropertiesByFeature(gene, geneProperties) &&
+            setFeaturePropertiesByFeature(transcript, transcriptProperties) &&
+            setProteinFeature());
   }
 
   public void entryChanged(EntryChangeEvent event)
