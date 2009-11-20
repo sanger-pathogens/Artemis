@@ -80,7 +80,7 @@ public class PropertiesPanel extends JPanel
   /** controls if this panel is automatically closed or open */
   private boolean empty = true;
   /** track if feature isObsolete flag has changed */
-  private boolean obsoleteChanged = false;
+  boolean obsoleteChanged = false;
 
   private ButtonGroup phaseButtonGroup = null;
   
