@@ -235,7 +235,15 @@ public class PropertiesPanel extends JPanel
       gridPanel.add(primaryNameTextField, c);
     }
     
-    AddSynonymButton addSynonymButton = new AddSynonymButton("Add Synonym");
+    ActionListener addAction = new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        addSynonym();
+      }  
+    };
+    
+    AddButton addSynonymButton = new AddButton(addAction, "Add Synonym");
     c.gridx = 4;
     gridPanel.add(addSynonymButton, c);
   }
@@ -885,7 +893,14 @@ public class PropertiesPanel extends JPanel
         syn.setEnabled(false);
       synBox.add(syn);
       
-      RemoveSynonymButton remove = new RemoveSynonymButton(qualifier.getName(), val);
+      ActionListener removeAction = new ActionListener()
+      {
+        public void actionPerformed(ActionEvent e)
+        {
+          removeSynonym(qualifier.getName(), val);
+        }  
+      };
+      RemoveButton remove = new RemoveButton(removeAction);
       synBox.add(remove);
     }
     c.gridwidth = GridBagConstraints.REMAINDER;
@@ -941,68 +956,6 @@ public class PropertiesPanel extends JPanel
     Border grayline = BorderFactory.createLineBorder(Color.gray);
     setBorder(BorderFactory.createTitledBorder(grayline, 
         feature.getKey().getKeyString()));
-  }
-
-  protected class RemoveSynonymButton extends JButton 
-  {
-    private static final long serialVersionUID = 1L;
-    
-    public RemoveSynonymButton(final String name, final String val)
-    {
-      super("X");
-
-      setVerticalTextPosition(SwingConstants.TOP);
-      setHorizontalTextPosition(SwingConstants.LEFT);
-
-      setForeground(Color.red);
-      setFont(getFont().deriveFont(Font.BOLD, 9.f));
-      setBorder(BorderFactory.createEmptyBorder());
-      setOpaque(false);
-      
-      Dimension size = new Dimension(9,20);
-      setPreferredSize(size);
-      setMaximumSize(size);
-
-      addActionListener(new ActionListener()
-      {
-        public void actionPerformed(ActionEvent e)
-        {
-          removeSynonym(name, val);
-        }  
-      });
-    }
-  }
-  
-  protected class AddSynonymButton extends JButton 
-  {
-    private static final long serialVersionUID = 1L;
-    
-    public AddSynonymButton(String tt)
-    {
-      super("+");
-
-      setToolTipText(tt);
-      setVerticalTextPosition(SwingConstants.TOP);
-      setHorizontalTextPosition(SwingConstants.LEFT);
-
-      setForeground(new Color(0,100,0));
-      setFont(getFont().deriveFont(Font.BOLD, 16.f));
-      
-      setBorder(new SoftBevelBorder ( BevelBorder.RAISED ));
-      setOpaque(false);
-      
-      Dimension size = new Dimension(16,20);
-      setPreferredSize(size);
-      setMaximumSize(size);
-
-      addActionListener(new ActionListener()
-      {
-        public void actionPerformed(ActionEvent e)
-        {
-          addSynonym();
-        }  
-      });
-    }
   }
 
 }
