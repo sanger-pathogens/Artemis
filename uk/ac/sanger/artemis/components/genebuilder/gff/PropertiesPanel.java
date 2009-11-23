@@ -404,6 +404,8 @@ public class PropertiesPanel extends JPanel
     
     
     Qualifier obsoleteQualifier = gffQualifiers.getQualifierByName("isObsolete");
+    if(obsoleteQualifier == null)
+      return;
     boolean isObsolete = Boolean.parseBoolean((String) obsoleteQualifier.getValues().get(0));
     obsoleteField = new JCheckBox("obsolete", isObsolete);
     obsoleteField.setPreferredSize(calcPreferred(obsoleteField.getPreferredSize().width));
