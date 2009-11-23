@@ -339,8 +339,20 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
         for(int j=0; j<newValues.size(); j++)
         {
           String val = (String)newValues.get(j);
-          if(val.startsWith("term=") && val.endsWith(";"))
-            val = val.substring(5,  val.length()-1);
+          
+          int ind = 0;
+          if((ind=val.indexOf(";db_xref="))>-1)
+            val = val.substring(0,ind);
+          
+          if((ind=val.indexOf(";evidence="))>-1)
+            val = val.substring(0,ind);
+          
+          if(val.startsWith("term="))
+            val = val.substring(5,  val.length());
+          
+          if(val.endsWith(";"))
+            val = val.substring(0,  val.length()-1);
+          
           tmpNewValues.add(val);
         }
  
