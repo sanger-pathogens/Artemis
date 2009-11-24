@@ -966,7 +966,10 @@ public class ChadoCanonicalGene
       
       String name = (String)getGene().getQualifierByName("ID").getValues().get(0);
 
-      return name + "." + transcript_number + ":pep";
+      if(isUniqueName(name+ "." + transcript_number + ":pep"))
+        return name+ "." + transcript_number + ":pep";
+      else
+        return name + "." + transcript_number + "a:pep";
     }
     catch(InvalidRelationException e)
     {
