@@ -256,6 +256,7 @@ public class BasicGeneViewerPanel extends MapPanel
           {
             gbFrame.setObsoleteChanged(true, features);
           }
+          gbFrame.dispose(true);
         }
         catch(ReadOnlyException e)
         {
@@ -342,31 +343,7 @@ public class BasicGeneViewerPanel extends MapPanel
     menu.add(deleteSegmentMenu);
     
     menu.add(new JSeparator());
-    final JMenuItem createTranscript = new JMenuItem("Create transcript");
-    createTranscript.setAccelerator(CREATE_FEATURES_KEY);
-    createTranscript.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent event)  
-      {
-        // TODO
-        repaint();
-      }
-    });
-    menu.add(createTranscript);
-    
-    
-    final JMenuItem duplicateTranscript = new JMenuItem("Duplicate selected transcript");
-    duplicateTranscript.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent event)  
-      {
-     // TODO duplicateTranscript(entry_group);
-        repaint();
-      }
-    });
-    menu.add(duplicateTranscript);
-    
-    
+      
     final JMenu createFeatureMenu = new JMenu("Add to transcript in selected range");
     
     final JMenuItem createExon = new JMenuItem("exon");
@@ -550,7 +527,7 @@ public class BasicGeneViewerPanel extends MapPanel
         try
         {
           GeneUtils.convertPseudo(chado_gene);
-       // TODO gene_builder.dispose(true);
+          gene_builder.dispose(true);
         }
         catch(ReadOnlyException e)
         {
@@ -601,12 +578,19 @@ public class BasicGeneViewerPanel extends MapPanel
     
     ypos += border*2;
     
-    Feature transcript = gbFrame.getSelectedTranscriptFeature().getEmblFeature();
-    
-    GeneViewerPanel.drawTranscriptOnLine(g2d, transcript, 
-        start, end, ypos, 
-        fraction, selection, chado_gene,
-        getFontHeight());
+    try
+    {
+      Feature transcript = gbFrame.getSelectedTranscriptFeature().getEmblFeature();
+      GeneViewerPanel.drawTranscriptOnLine(g2d, transcript, 
+          start, end, ypos, 
+          fraction, selection, chado_gene,
+          getFontHeight());
+    }
+    catch(NullPointerException npe)
+    {
+      return;
+    }
+
     ypos += getTranscriptSize();
 
     setPreferredSize(new Dimension(getSize().width, ypos+border));
