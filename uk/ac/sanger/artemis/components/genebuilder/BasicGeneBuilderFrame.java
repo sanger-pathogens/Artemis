@@ -206,7 +206,7 @@ public class BasicGeneBuilderFrame extends JFrame
     {
       GFFStreamFeature transcript = (GFFStreamFeature) transcripts.get(i);
       tabPane.insertTab(GeneUtils.getUniqueName(transcript), 
-          null, new JPanel(new BorderLayout()), "", i);
+          null, new JPanel(new BorderLayout()), null, i);
     }
 
     tabPane.insertTab("+", 

@@ -250,13 +250,17 @@ public class BasicGeneViewerPanel extends MapPanel
           {
             for(int i = 0; i < features.size(); i++)
               GeneUtils.deleteAllFeature(features.elementAt(i), chado_gene);
-            repaint();
           }
           else
           {
             gbFrame.setObsoleteChanged(true, features);
           }
           gbFrame.dispose(true);
+        }
+        catch(NullPointerException npe)
+        {
+          // can't reopen
+          gbFrame.dispose(false);
         }
         catch(ReadOnlyException e)
         {
