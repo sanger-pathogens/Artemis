@@ -23,6 +23,7 @@
 package uk.ac.sanger.artemis.components.genebuilder.gff;
 
 import java.awt.FlowLayout;
+import java.util.List;
 
 import javax.swing.Box;
 import javax.swing.JPanel;
@@ -34,12 +35,14 @@ import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.io.QualifierVector;
+import uk.ac.sanger.artemis.util.DatabaseDocument;
 
 public class BasicPropertiesPanel extends JPanel
 {
   private static final long serialVersionUID = 1L;
   private PropertiesPanel genePropPanel;
   private PropertiesPanel transcriptPropPanel;
+  private PropertiesPanel exonPropPanel;
   private PropertiesPanel pepPropPanel;
   private Feature gene;
   
@@ -50,21 +53,31 @@ public class BasicPropertiesPanel extends JPanel
     
     Box yBox = Box.createVerticalBox();
     gene = (Feature) chadoGene.getGene().getUserData();
-    genePropPanel = new PropertiesPanel(gene, false, true, false);
+    genePropPanel = new PropertiesPanel(gene, true, false, true, false);
     yBox.add(genePropPanel);
     
     Feature transcript = gbFrame.getSelectedTranscriptFeature();
-    transcriptPropPanel = new PropertiesPanel(transcript, false, false, false);
+    transcriptPropPanel = new PropertiesPanel(transcript, true, false, false, false);
     yBox.add(transcriptPropPanel);
     
     String transcriptName = GeneUtils.getUniqueName(transcript.getEmblFeature());
+    
+    List<uk.ac.sanger.artemis.io.Feature> exons =
+      chadoGene.getSpliceSitesOfTranscript(transcriptName, DatabaseDocument.EXONMODEL);
+    if(exons != null)
+    {
+      Feature exon = (Feature) exons.get(0).getUserData();
+      exonPropPanel = new PropertiesPanel(exon, false, false, false, false);
+      yBox.add(exonPropPanel);
+    }
+     
     uk.ac.sanger.artemis.io.Feature pep =
       chadoGene.getProteinOfTranscript(transcriptName);
     
     if(pep != null)
     {
       Feature protein = (Feature) pep.getUserData();
-      pepPropPanel = new PropertiesPanel(protein, false, false, false);
+      pepPropPanel = new PropertiesPanel(protein, true, false, false, false);
       yBox.add(pepPropPanel);
     }
     
@@ -84,6 +97,11 @@ public class BasicPropertiesPanel extends JPanel
   public QualifierVector getTranscriptProperties(Feature feature)
   {
     return transcriptPropPanel.getGffQualifiers(feature);
+  }
+  
+  public QualifierVector getExonProperties(Feature feature)
+  {
+    return exonPropPanel.getGffQualifiers(feature);
   }
   
   public void updateObsoleteSettings()
