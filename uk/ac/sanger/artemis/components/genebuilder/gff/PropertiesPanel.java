@@ -39,7 +39,6 @@ import java.util.Vector;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.ButtonGroup;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -47,9 +46,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
-import javax.swing.border.SoftBevelBorder;
 
 import org.gmod.schema.cv.CvTerm;
 
@@ -59,6 +56,7 @@ import uk.ac.sanger.artemis.Feature;
 import uk.ac.sanger.artemis.chado.ChadoTransactionManager;
 import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 import uk.ac.sanger.artemis.components.genebuilder.JExtendedComboBox;
+import uk.ac.sanger.artemis.editor.MultiLineToolTipUI;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.QualifierVector;
@@ -84,22 +82,30 @@ public class PropertiesPanel extends JPanel
 
   private ButtonGroup phaseButtonGroup = null;
   
+  private boolean showNames   = true;
   private boolean showParent  = true;
   private boolean showOptions = true;
   private boolean showTimeLastModified = true;
   
-  public PropertiesPanel(final Feature feature)
+  static
   {
-    this(feature, true, true, true);
+    MultiLineToolTipUI.initialize();
   }
   
-  public PropertiesPanel(final Feature feature, 
+  public PropertiesPanel(final Feature feature)
+  {
+    this(feature, true, true, true, true);
+  }
+  
+  public PropertiesPanel(final Feature feature,
+                         boolean showNames,
                          boolean showParent,
                          boolean showOptions, 
                          boolean showTimeLastModified)
   {
     super(new FlowLayout(FlowLayout.LEFT));
     
+    this.showNames   = showNames;
     this.showOptions = showOptions;
     this.showParent  = showParent;
     this.showTimeLastModified = showTimeLastModified;
@@ -141,8 +147,12 @@ public class PropertiesPanel extends JPanel
     gridPanel.setBackground(Color.white);
 
     int nrow = 0;
-    addNames(c, gridPanel, nrow++);
-    nrow = addSynonyms(c, gridPanel, nrow);
+    
+    if(showNames)
+    {
+      addNames(c, gridPanel, nrow++);
+      nrow = addSynonyms(c, gridPanel, nrow);
+    }
     
     if(showParent)
       addParent(c, gridPanel, nrow++);
@@ -199,11 +209,16 @@ public class PropertiesPanel extends JPanel
     Qualifier featIdQualifier = gffQualifiers.getQualifierByName("feature_id");
     if (featIdQualifier != null)
     {
+      Qualifier timeQualifier = gffQualifiers.getQualifierByName("timelastmodified");
+      String time = null;
+      if (timeQualifier != null)
+        time = (String) timeQualifier.getValues().get(0);
+      
       String parent = getParentString();
       String tt = "feature_id=" +
-        (String) featIdQualifier.getValues().get(0) + "\n" +
-        uniquename +
-        (parent == null ? "" : "\n"+parent);
+        (String) featIdQualifier.getValues().get(0) +
+        (parent == null ? "" : "\n"+parent)+
+        (time == null ? "" : "\n"+time);
 
       idField.setToolTipText(tt);
       uniquenameTextField.setToolTipText(tt);
@@ -483,7 +498,8 @@ public class PropertiesPanel extends JPanel
     // check editable components for changes
     
     Qualifier idQualifier = gffQualifiers.getQualifierByName("ID");
-    if(!((String)(idQualifier.getValues().get(0))).equals(uniquenameTextField.getText()))
+    if(showNames &&
+        !((String)(idQualifier.getValues().get(0))).equals(uniquenameTextField.getText()))
     {
       if(!uniquenameTextField.getText().equals(""))
       {
