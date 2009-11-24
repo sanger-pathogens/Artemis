@@ -606,7 +606,7 @@ public class GeneViewerPanel extends MapPanel
     return createTranscript(chadoGene, entry_group, chadoGene.getGene().getLocation());
   }
   
-  private static uk.ac.sanger.artemis.Feature 
+  public static uk.ac.sanger.artemis.Feature 
                      createTranscript(final ChadoCanonicalGene chadoGene,
                                       final EntryGroup entry_group,
                                       final Location location)
@@ -1489,7 +1489,7 @@ public class GeneViewerPanel extends MapPanel
   }*/
 
  
-  private static uk.ac.sanger.artemis.Feature addFeature(
+  protected static uk.ac.sanger.artemis.Feature addFeature(
                           final Range range,
                           final String transcriptName,
                           String featureName,
