@@ -77,7 +77,7 @@ import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.util.StringVector;
 
-class TransferAnnotationTool extends JFrame
+public class TransferAnnotationTool extends JFrame
 {
   private static final long serialVersionUID = 1L;
   private static String[] NON_TRANSFERABLE_QUALIFIERS =
