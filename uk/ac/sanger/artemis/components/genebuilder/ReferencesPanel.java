@@ -160,6 +160,14 @@ public class ReferencesPanel extends JPanel
     return referenceQualifier;
   }
   
+  protected boolean isEmpty()
+  {
+    QualifierVector qualifiers = getQualifiers();
+    if(qualifiers == null)
+      return true;
+    return false;
+  }
+  
   private String[] getValues(String txt)
   {
     String delim = "[\t\n\f\r,]";
