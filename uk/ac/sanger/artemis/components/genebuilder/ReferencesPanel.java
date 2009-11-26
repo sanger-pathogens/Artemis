@@ -70,9 +70,9 @@ public class ReferencesPanel extends JPanel
     
     //
     // literature & dbxref
-    literatureTextArea = new QualifierTextArea(1,81);
+    literatureTextArea = new QualifierTextArea();
     literatureTextArea.setBorder(BorderFactory.createLineBorder(Color.gray));
-    dbxrefTextArea = new QualifierTextArea(1,81);
+    dbxrefTextArea = new QualifierTextArea();
     dbxrefTextArea.setBorder(BorderFactory.createLineBorder(Color.gray));
     
     literatureTextArea.getDocument().addDocumentListener(
