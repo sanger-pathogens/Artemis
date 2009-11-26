@@ -564,6 +564,7 @@ extra_qualifiers_gff = \
     GO "text" \
     isFminPartial none \
     isFmaxPartial none \
+    literature "text" \
     note "text" \
     orthologous_to "text" \
     paralogous_to "text" \
