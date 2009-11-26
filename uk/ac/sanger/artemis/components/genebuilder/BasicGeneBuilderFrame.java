@@ -32,6 +32,7 @@ import java.awt.event.ActionListener;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -71,6 +72,7 @@ import uk.ac.sanger.artemis.components.MessageDialog;
 import uk.ac.sanger.artemis.components.QualifierTextArea;
 import uk.ac.sanger.artemis.components.Utilities;
 import uk.ac.sanger.artemis.components.genebuilder.cv.CVPanel;
+
 import uk.ac.sanger.artemis.components.genebuilder.gff.BasicPropertiesPanel;
 import uk.ac.sanger.artemis.components.genebuilder.gff.PropertiesPanel;
 import uk.ac.sanger.artemis.components.genebuilder.ortholog.MatchPanel;
@@ -107,6 +109,7 @@ public class BasicGeneBuilderFrame extends JFrame
   private CVPanel cvPanel;
   private MatchPanel matchForm;
   private BasicPropertiesPanel propertiesPanel;
+  private ReferencesPanel refPanel;
   private QualifierTextArea qualifier_text_area;
   private JTabbedPane tabPane = new JTabbedPane();
   private JTextField locationText = new JTextField(60);
@@ -490,22 +493,30 @@ public class BasicGeneBuilderFrame extends JFrame
     panel.setBackground(Color.WHITE);
 
     propertiesPanel = new BasicPropertiesPanel(chadoGene, this);
-    addToPanel(propertiesPanel, panel, "Properties","");
+    addToPanel(propertiesPanel, panel, "Properties",null);
 
     Feature protein =
         (Feature) chadoGene.getProteinOfTranscript(transcriptName).getUserData();
       
     GeneUtils.addLazyQualifiers((GFFStreamFeature)protein.getEmblFeature());
-  
+
+    //
+    // literature
+    refPanel = new ReferencesPanel(protein);
+    addToPanel(refPanel, panel, "Literature/Dbxref", null);
+    
+    //
+    // core text
     qualifier_text_area = new QualifierTextArea();
     cvPanel = new CVPanel(protein);
     matchForm = new MatchPanel(protein, 
           (DocumentEntry)getFeature().getEmblFeature().getEntry());
     
-    qualifier_text_area.getDocument().addDocumentListener(new TextAreaDocumentListener());
+    qualifier_text_area.getDocument().addDocumentListener(
+        new TextAreaDocumentListener(qualifier_text_area));
     qualifier_text_area.setText(getQualifierString(entry_group, protein));
 
-    addToPanel(qualifier_text_area, panel, "Core", "");
+    addToPanel(qualifier_text_area, panel, "Core", null);
 
     addToPanel(cvPanel, panel, "Controlled Vocabulary", CVPanel.getDescription());
     matchForm.updateFromFeature(protein);
@@ -514,18 +525,6 @@ public class BasicGeneBuilderFrame extends JFrame
     tabPane.removeChangeListener(changeListener);
     ((JComponent)tabPane.getSelectedComponent()).add(jsp);
     tabPane.addChangeListener(changeListener);
-  }
-  
-  private void setQualifierTextAreaSize(Document doc)
-  {
-    Element root = doc.getDefaultRootElement();
-    int lines = root.getElementCount();
-    int lineHeight = qualifier_text_area.getFontMetrics(
-        qualifier_text_area.getFont()).getHeight();
-
-    qualifier_text_area.setPreferredSize(
-          new Dimension( qualifier_text_area.getPreferredSize().width,
-              lineHeight*lines));
   }
 
   /**
@@ -548,6 +547,7 @@ public class BasicGeneBuilderFrame extends JFrame
       if( (CVPanel.isCvTag(this_qualifier)) ||
           (PropertiesPanel.isPropertiesTag(this_qualifier, feature)) ||
           (MatchPanel.isMatchTag(this_qualifier)) ||
+          (ReferencesPanel.isReferenceTag(this_qualifier)) ||
           (ProteinMapPanel.isProteinMapElement(this_qualifier)) )
         continue;
       
@@ -699,6 +699,13 @@ public class BasicGeneBuilderFrame extends JFrame
         QualifierVector orthologQualifiers = matchForm.getMatchQualifiers();
         if(orthologQualifiers != null && orthologQualifiers.size() > 0)
           qualifiers.addAll(orthologQualifiers);
+      }
+      
+      if(refPanel != null)
+      {
+        QualifierVector referenceQualifiers = refPanel.getQualifiers();
+        if(referenceQualifiers != null && referenceQualifiers.size() > 0)
+          qualifiers.addAll(referenceQualifiers);
       }
     }
     catch(QualifierParseException exception) 
@@ -989,26 +996,6 @@ public class BasicGeneBuilderFrame extends JFrame
     updateKey();
     updateLocation();
     repaint();
-  }
-  
-  class TextAreaDocumentListener implements DocumentListener
-  {
-    public void insertUpdate(DocumentEvent e)
-    {
-      updateSize(e);
-    }
-    public void removeUpdate(DocumentEvent e) 
-    {
-      updateSize(e);
-    }
-    
-  //Plain text components do not fire these events
-    public void changedUpdate(DocumentEvent e) {}
-
-    public void updateSize(DocumentEvent e) 
-    {
-      setQualifierTextAreaSize( (Document)e.getDocument() );
-    }
   }
   
 }
