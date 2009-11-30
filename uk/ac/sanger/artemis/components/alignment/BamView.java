@@ -27,6 +27,7 @@ import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Composite;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -124,6 +125,8 @@ public class BamView extends JPanel
   private Vector<String> seqNames = new Vector<String>();
   private String bam;
 
+  private SAMRecordFlagPredicate samRecordFlagPredicate;
+  
   private Bases bases;
   private JScrollPane jspView;
   private JScrollBar scrollBar;
@@ -439,7 +442,12 @@ public class BamView extends JPanel
       {
         cnt++;
         SAMRecord samRecord = it.next();
-        readsInView.add(samRecord);
+        
+        if( samRecordFlagPredicate == null ||
+           !samRecordFlagPredicate.testPredicate(samRecord))
+        {
+          readsInView.add(samRecord);
+        }
         
         if(cnt > checkMemAfter)
         {
@@ -1611,6 +1619,42 @@ public class BamView extends JPanel
     { 
       topPanel = new JMenuBar();
       frame.setJMenuBar((JMenuBar)topPanel);
+      
+      JMenu fileMenu = new JMenu("File");
+      topPanel.add(fileMenu);
+
+      JMenuItem readBam = new JMenuItem("Read BAM...");
+      fileMenu.add(readBam);
+      readBam.addActionListener(new ActionListener()
+      {
+        public void actionPerformed(ActionEvent e)
+        {
+          String[] s = new String[0];
+          BamView.main(s);
+          BamView.this.setVisible(false);
+          
+          Component comp = BamView.this;
+          
+          while( !(comp instanceof JFrame) )
+            comp = comp.getParent();
+          ((JFrame)comp).dispose();
+        } 
+      });
+      
+      JMenuItem exit = new JMenuItem("Exit");
+      fileMenu.add(exit);
+      exit.addActionListener(new ActionListener()
+      {
+        public void actionPerformed(ActionEvent e)
+        {
+          int status = JOptionPane.showConfirmDialog(BamView.this, 
+              "Close BamView?", "Close", 
+              JOptionPane.OK_CANCEL_OPTION);
+          if(status != JOptionPane.OK_OPTION)
+            return;
+          System.exit(0);
+        } 
+      });
     }
     
     if(seqNames.size() > 1)
@@ -2004,6 +2048,17 @@ public class BamView extends JPanel
         }
       });
     }
+    
+    JMenuItem filter = new JMenuItem("Filter by Flag...");
+    menu.add(filter);
+    filter.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        new SAMRecordFilter(BamView.this);
+      } 
+    });
+    
   }
   
   public void setVisible(boolean visible)
@@ -2510,6 +2565,19 @@ public class BamView extends JPanel
     viewDetail.appendString("\nSecond Of Pair    "+
         (thisSAMRecord.getSecondOfPairFlag() ? "yes" : "no"), Level.DEBUG);
   }
+
+  protected SAMRecordFlagPredicate getSamRecordFlagPredicate()
+  {
+    return samRecordFlagPredicate;
+  }
+
+  protected void setSamRecordFlagPredicate(
+      SAMRecordFlagPredicate samRecordFlagPredicate)
+  {
+    laststart = -1;
+    lastend = -1;
+    this.samRecordFlagPredicate = samRecordFlagPredicate;
+  }
   
   class PairedRead
   {
@@ -2579,6 +2647,4 @@ public class BamView extends JPanel
         view.jspView.getVerticalScrollBar().getMaximum());
     frame.setVisible(true);
   }
-
-
 }
