@@ -28,7 +28,7 @@ import net.sf.samtools.SAMRecord;
  **/
 public class SAMRecordFlagPredicate implements SAMRecordPredicate
 {
-  private int flag[];
+  private int flag;
   
   private static final int READ_PAIRED_FLAG = 0x1;
   private static final int PROPER_PAIR_FLAG = 0x2;
@@ -73,7 +73,7 @@ public class SAMRecordFlagPredicate implements SAMRecordPredicate
   };
 
   
-  public SAMRecordFlagPredicate(int flag[])
+  public SAMRecordFlagPredicate(int flag)
   {
     this.flag = flag;
   }
@@ -86,11 +86,20 @@ public class SAMRecordFlagPredicate implements SAMRecordPredicate
    **/
   public boolean testPredicate (final SAMRecord samRecord)
   {
-    for(int i=0; i<flag.length; i++)
+    return isFlagSet(samRecord.getFlags());
+  }
+  
+  protected boolean isFlagSet(int thisFlag)
+  {
+    for(int i=0; i<FLAGS.length; i++)
     {
-      if((samRecord.getFlags() & flag[i]) == flag[i])
-        return true;
+      if((flag & FLAGS[i]) == FLAGS[i])
+      {
+        if((thisFlag & FLAGS[i]) == FLAGS[i])
+          return true;
+      }
     }
+
     return false;
   }
 }
