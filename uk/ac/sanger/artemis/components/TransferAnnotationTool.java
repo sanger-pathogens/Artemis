@@ -739,6 +739,8 @@ public class TransferAnnotationTool extends JFrame
    */
   private static String[] removeArrayElement(final String strArr[], final String str)
   {
+    if(strArr.length == 1)
+      return strArr;
     String[] newarray = new String[strArr.length - 1];
     int count = 0;
     for (int i = 0; i < strArr.length; i++)
