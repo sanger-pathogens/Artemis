@@ -145,6 +145,7 @@ public class BamView extends JPanel
   private JPanel mainPanel;
   private CoveragePanel coveragePanel;
   private boolean showScale = true;
+  private boolean logScale = false;
   private Ruler ruler;
   private int nbasesInView;
   
@@ -156,6 +157,8 @@ public class BamView extends JPanel
   
   private boolean asynchronous = true;
   private boolean showBaseAlignment = false;
+  
+  private JCheckBoxMenuItem logMenuItem = new JCheckBoxMenuItem("Use Log Scale", logScale);
   private JCheckBoxMenuItem checkBoxStackView = new JCheckBoxMenuItem("Stack View");
   private JCheckBoxMenuItem baseQualityColour = new JCheckBoxMenuItem("Colour by Base Quality");;
   private JCheckBoxMenuItem markInsertions = new JCheckBoxMenuItem("Mark Insertions");
@@ -937,7 +940,7 @@ public class BamView extends JPanel
       {
         if(isSingle)
         {
-          int ypos = (getHeight() - scaleHeight) - samRecord.getReadString().length();
+          int ypos = getYPos(scaleHeight, samRecord.getReadString().length()); // (getHeight() - scaleHeight) - samRecord.getReadString().length();
           if(ypos > r.getMaxY() || ypos < r.getMinY())
             continue;
           
@@ -947,7 +950,7 @@ public class BamView extends JPanel
         continue;
       }
 
-      int ypos = (getHeight() - scaleHeight) - ( Math.abs(samRecord.getInferredInsertSize()) );
+      int ypos = getYPos(scaleHeight, Math.abs(samRecord.getInferredInsertSize()));
       if( (ypos > r.getMaxY() || ypos < r.getMinY()) && ypos > 0 )
         continue;
       
@@ -990,6 +993,21 @@ public class BamView extends JPanel
     }
     
     drawYScale(g2, scaleHeight);
+  }
+  
+  private int getYPos(int scaleHeight, int size)
+  {
+    int ypos;
+    
+    if(!logScale)
+      ypos = (getHeight() - scaleHeight) - size;
+    else
+    {
+      int logInfSize = (int)( Math.log(size) * 100);
+      ypos = (getHeight() - scaleHeight) - logInfSize;
+    }
+    
+    return ypos;
   }
   
   /**
@@ -1426,6 +1444,23 @@ public class BamView extends JPanel
   {
     g2.setColor(Color.black);
     int maxY = getPreferredSize().height-xScaleHeight;
+    
+    if(logScale)
+    {
+      int start = 10;
+      int count = 0;
+      int ypos = getYPos(xScaleHeight, start);
+      
+      while(ypos > 0 && count < 15 && start > 1)
+      {
+        g2.drawLine(0, ypos, 2, ypos);
+        g2.drawString(Integer.toString(start), 3, ypos);
+        start = start*5;
+        ypos = getYPos(xScaleHeight, start);
+        count++;
+      }
+      return;
+    }
     
     for(int i=100; i<maxY; i+=100)
     {
@@ -1875,6 +1910,7 @@ public class BamView extends JPanel
           isStackView = false;
           isPairedStackView = false;
           isStrandStackView = false;
+          logMenuItem.setEnabled(true);
         }
         repaint();
       }
@@ -1896,6 +1932,7 @@ public class BamView extends JPanel
           isStrandStackView = !isStackView;
           checkBoxPairedStackView.setSelected(!isStackView);
           checkBoxStrandStackView.setSelected(!isStackView);
+          logMenuItem.setEnabled(false);
         }
         repaint();
       }
@@ -1917,6 +1954,7 @@ public class BamView extends JPanel
           isStrandStackView = !isPairedStackView;
           checkBoxStackView.setSelected(!isPairedStackView);
           checkBoxStrandStackView.setSelected(!isPairedStackView);
+          logMenuItem.setEnabled(false);
         }
         repaint();
       }
@@ -1938,6 +1976,7 @@ public class BamView extends JPanel
           checkBoxStackView.setSelected(!isStrandStackView);
           checkBoxPairedStackView.setSelected(!isStrandStackView);
           setViewportMidPoint();
+          logMenuItem.setEnabled(false);
         }
         repaint();
       }
@@ -2032,7 +2071,7 @@ public class BamView extends JPanel
 
     JMenu maxHeightMenu = new JMenu("Plot Height");
     menu.add(maxHeightMenu);
-
+    
     final String hgts[] =
        {"500", "800", "1000", "1500", "2500", "5000", "50000"};
     
@@ -2055,6 +2094,18 @@ public class BamView extends JPanel
         }
       });
     }
+    
+    menu.add(new JSeparator());
+    logMenuItem.setFont(checkIsizeStackView.getFont());
+    menu.add(logMenuItem);
+    logMenuItem.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        logScale = logMenuItem.isSelected();
+        repaint();
+      }
+    });
     
     JMenuItem filter = new JMenuItem("Filter by Flag...");
     menu.add(filter);
