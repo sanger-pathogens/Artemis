@@ -1673,8 +1673,17 @@ public class BamView extends JPanel
         {
           String[] s = new String[0];
           BamView.main(s);
+        } 
+      });
+      
+      
+      JMenuItem close = new JMenuItem("Close");
+      fileMenu.add(close);
+      close.addActionListener(new ActionListener()
+      {
+        public void actionPerformed(ActionEvent e)
+        {
           BamView.this.setVisible(false);
-          
           Component comp = BamView.this;
           
           while( !(comp instanceof JFrame) )
@@ -1684,13 +1693,14 @@ public class BamView extends JPanel
       });
       
       JMenuItem exit = new JMenuItem("Exit");
+      fileMenu.add(new JSeparator());
       fileMenu.add(exit);
       exit.addActionListener(new ActionListener()
       {
         public void actionPerformed(ActionEvent e)
         {
           int status = JOptionPane.showConfirmDialog(BamView.this, 
-              "Close BamView?", "Close", 
+              "Exit BamView?", "Exit", 
               JOptionPane.OK_CANCEL_OPTION);
           if(status != JOptionPane.OK_OPTION)
             return;
@@ -2623,6 +2633,9 @@ public class BamView extends JPanel
         (thisSAMRecord.getReadUnmappedFlag() ? "yes" : "no"), Level.DEBUG);
     viewDetail.appendString("\nSecond Of Pair    "+
         (thisSAMRecord.getSecondOfPairFlag() ? "yes" : "no"), Level.DEBUG);
+    
+    viewDetail.appendString("\n\nRead Bases:\n", Level.INFO);
+    viewDetail.appendString(new String(thisSAMRecord.getReadBases()), Level.DEBUG);
   }
 
   protected SAMRecordFlagPredicate getSamRecordFlagPredicate()
