@@ -126,6 +126,7 @@ public class BamView extends JPanel
   private String bam;
 
   private SAMRecordFlagPredicate samRecordFlagPredicate;
+  private SAMRecordMapQPredicate samRecordMapQPredicate;
   
   private Bases bases;
   private JScrollPane jspView;
@@ -251,18 +252,22 @@ public class BamView extends JPanel
         mouseOverSAMRecord.getReadName() + "\n" + 
         mouseOverSAMRecord.getAlignmentStart() + ".." +
         mouseOverSAMRecord.getAlignmentEnd() + "\nisize=" +
-        mouseOverSAMRecord.getInferredInsertSize() + "\nrname=";
+        mouseOverSAMRecord.getInferredInsertSize() + "\nmapq=" +
+        mouseOverSAMRecord.getMappingQuality()+"\nrname="+
+        mouseOverSAMRecord.getReferenceName();
 
-    if(mouseOverSAMRecord.getProperPairFlag() && !mouseOverSAMRecord.getMateUnmappedFlag())
+    if( mouseOverSAMRecord.getReadPairedFlag() && 
+        mouseOverSAMRecord.getProperPairFlag() && 
+       !mouseOverSAMRecord.getMateUnmappedFlag())
     {
       msg = msg +
-        mouseOverSAMRecord.getReferenceName() + "\nstrand (read/mate): "+
+        "\nstrand (read/mate): "+
        (mouseOverSAMRecord.getReadNegativeStrandFlag() ? "-" : "+")+" / "+
        (mouseOverSAMRecord.getMateNegativeStrandFlag() ? "-" : "+");
     }
     else
       msg = msg +
-        mouseOverSAMRecord.getReferenceName() + "\nstrand (read/mate): "+
+        "\nstrand (read/mate): "+
        (mouseOverSAMRecord.getReadNegativeStrandFlag() ? "-" : "+");
     
     if(msg != null && mouseOverInsertion != null)
@@ -446,7 +451,9 @@ public class BamView extends JPanel
         if( samRecordFlagPredicate == null ||
            !samRecordFlagPredicate.testPredicate(samRecord))
         {
-          readsInView.add(samRecord);
+          if(samRecordMapQPredicate == null ||
+             samRecordMapQPredicate.testPredicate(samRecord))
+            readsInView.add(samRecord);
         }
         
         if(cnt > checkMemAfter)
@@ -2058,7 +2065,7 @@ public class BamView extends JPanel
         new SAMRecordFilter(BamView.this);
       } 
     });
-    
+    menu.add(new JSeparator());
   }
   
   public void setVisible(boolean visible)
@@ -2532,6 +2539,7 @@ public class BamView extends JPanel
     viewDetail.appendString("Length                "+thisSAMRecord.getReadLength()+"\n", Level.DEBUG);
     viewDetail.appendString("Reference Name        "+thisSAMRecord.getReferenceName()+"\n", Level.DEBUG);
     viewDetail.appendString("Inferred Size         "+thisSAMRecord.getInferredInsertSize()+"\n", Level.DEBUG);
+    viewDetail.appendString("Mapping Quality       "+thisSAMRecord.getMappingQuality()+"\n", Level.DEBUG);
     
     if(thisSAMRecord.getProperPairFlag() && !thisSAMRecord.getMateUnmappedFlag())
     {
@@ -2577,6 +2585,19 @@ public class BamView extends JPanel
     laststart = -1;
     lastend = -1;
     this.samRecordFlagPredicate = samRecordFlagPredicate;
+  }
+  
+  protected SAMRecordMapQPredicate getSamRecordMapQPredicate()
+  {
+    return samRecordMapQPredicate;
+  }
+
+  protected void setSamRecordMapQPredicate(
+      SAMRecordMapQPredicate samRecordMapQPredicate)
+  {
+    laststart = -1;
+    lastend = -1;
+    this.samRecordMapQPredicate = samRecordMapQPredicate;
   }
   
   class PairedRead
