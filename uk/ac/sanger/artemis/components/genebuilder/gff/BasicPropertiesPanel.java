@@ -54,10 +54,12 @@ public class BasicPropertiesPanel extends JPanel
     Box yBox = Box.createVerticalBox();
     gene = (Feature) chadoGene.getGene().getUserData();
     genePropPanel = new PropertiesPanel(gene, true, false, true, false);
+    genePropPanel.makeBorder();
     yBox.add(genePropPanel);
     
     Feature transcript = gbFrame.getSelectedTranscriptFeature();
     transcriptPropPanel = new PropertiesPanel(transcript, true, false, false, false);
+    transcriptPropPanel.makeBorder();
     yBox.add(transcriptPropPanel);
     
     String transcriptName = GeneUtils.getUniqueName(transcript.getEmblFeature());
@@ -68,6 +70,7 @@ public class BasicPropertiesPanel extends JPanel
     {
       Feature exon = (Feature) exons.get(0).getUserData();
       exonPropPanel = new PropertiesPanel(exon, false, false, false, false);
+      exonPropPanel.makeBorder();
       yBox.add(exonPropPanel);
     }
      
@@ -78,6 +81,7 @@ public class BasicPropertiesPanel extends JPanel
     {
       Feature protein = (Feature) pep.getUserData();
       pepPropPanel = new PropertiesPanel(protein, true, false, false, false);
+      pepPropPanel.makeBorder();
       yBox.add(pepPropPanel);
     }
     

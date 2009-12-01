@@ -112,7 +112,7 @@ public class PropertiesPanel extends JPanel
     
     setBackground(Color.WHITE);
     updateFromFeature(feature);
-    makeBorder();
+    //makeBorder();
   }
   
   /**
