@@ -766,7 +766,9 @@ public class PropertiesPanel extends JPanel
     else
       synonymQualifier.addValue(newSynonymValue);
     
-    final StringVector values = synonymQualifier.getValues();
+    final StringVector newValues = synonymQualifier.getValues();
+    
+    /*
     final StringVector newValues = new StringVector();
     for(int i=0; i<values.size(); i++)
     {
@@ -780,6 +782,7 @@ public class PropertiesPanel extends JPanel
       
       newValues.add(thisValue);
     }
+    */
 
     int index = gffQualifiers.indexOfQualifierWithName(synonymName);
     if(index == -1)
