@@ -26,13 +26,13 @@ package uk.ac.sanger.artemis.components.genebuilder.cv;
 
 import java.awt.Dimension;
 import java.awt.FontMetrics;
+import java.util.Vector;
 
 import javax.swing.Box;
 import javax.swing.JTextField;
 
 import org.gmod.schema.cv.CvTerm;
 
-import uk.ac.sanger.artemis.components.Splash;
 import uk.ac.sanger.artemis.components.genebuilder.JExtendedComboBox;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.QualifierVector;
@@ -162,17 +162,72 @@ class ControlledCurationBox extends AbstractCvBox
 
   protected void updateQualifier(QualifierVector qv)
   {
-    StringVector values = origQualifier.getValues();
-    values.remove(value_index);
-    String updatedQualifierString = updateQualifierString();
-    
-    Splash.logger4j.debug(origQualifierString);
-    Splash.logger4j.debug(updatedQualifierString);
-    values.add(value_index, updatedQualifierString);
-    
     int index = qv.indexOfQualifierWithName(origQualifier.getName());
+    Qualifier oldQualifier = qv.getQualifierByName(origQualifier.getName());
     
-    origQualifier = new Qualifier(origQualifier.getName(), values);
+    final String term = getField("term=", origQualifierString);
+    
+    StringVector oldValues = oldQualifier.getValues();
+    Vector<Integer> values_index = new Vector<Integer>();
+    for(int i=0; i<oldValues.size(); i++)
+    {
+      String oldValue = (String)oldValues.get(i);
+      String newTerm = getField("term=", oldValue);
+      if(newTerm.equals(term))
+        values_index.add(new Integer(i));
+    }
+  
+    if(values_index.size() > 0)
+    { 
+      String oldValue = (String) oldValues.get(value_index);
+      String oldTermId  = getField("term=", oldValue);
+      
+      if(!term.equals(oldTermId))
+      {
+        if(values_index.size() == 1)
+        value_index = ((Integer)values_index.get(0)).intValue();
+        else
+        {
+          final String with = getField("with=", origQualifierString);
+          final String evidence = getField("evidence=", origQualifierString);
+          final String dbxref = getField("dbxref=", origQualifierString);
+          for(int i=0; i<values_index.size(); i++)
+          {
+            int ind = ((Integer)values_index.get(i)).intValue();
+            value_index = ind;
+            String value = (String) oldValues.get(ind);
+
+            if(!with.equals(""))
+            {
+              String thisWith = getField("with=", value);
+              if(thisWith.equals(with))
+                break;
+            }
+          
+            if(!dbxref.equals(""))
+            {
+              String thisDbxref = getField("dbxref=", value);
+              if(thisDbxref.equals(dbxref))
+                break;
+            }
+          
+            String thisEvidence = getField("evidence=", value);
+            if(thisEvidence.equals(evidence))
+              break;
+          }
+        }
+      }
+    }
+    else
+      value_index = -99;
+
+    if(value_index > -1)
+      oldValues.remove(value_index);
+    
+    String updatedQualifierString = updateQualifierString();
+    oldValues.add(value_index, updatedQualifierString);
+    
+    origQualifier = new Qualifier(origQualifier.getName(), oldValues);
     qv.remove(index);
     qv.add(index, origQualifier);
   }
