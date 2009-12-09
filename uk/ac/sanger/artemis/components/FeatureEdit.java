@@ -991,7 +991,8 @@ public class FeatureEdit extends JPanel
         }
       });
 
-      ok_cancel_update_panel.add(oneView);
+      if(((GFFStreamFeature)getFeature().getEmblFeature()).getChadoGene() != null)
+        ok_cancel_update_panel.add(oneView);
       ok_cancel_update_panel.add(tabbedView);
       fillerBox.add(Box.createHorizontalStrut( 
           tabbedView.getPreferredSize().width ));
