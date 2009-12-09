@@ -976,7 +976,8 @@ public class EditMenu extends SelectionMenu
       }
       else
       {
-        if(System.getProperty("basic") == null)
+        if(System.getProperty("basic") == null ||
+           System.getProperty("basic").equals("false"))
         {
           final GeneBuilderFrame gbFrame = 
             new GeneBuilderFrame(selection_feature, entry_group,
