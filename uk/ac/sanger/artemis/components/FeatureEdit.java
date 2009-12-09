@@ -52,6 +52,7 @@ import uk.ac.sanger.artemis.io.StreamQualifier;
 import uk.ac.sanger.artemis.io.QualifierInfo;
 
 import uk.ac.sanger.artemis.components.ProgressThread;
+import uk.ac.sanger.artemis.components.genebuilder.BasicGeneBuilderFrame;
 import uk.ac.sanger.artemis.components.genebuilder.GeneBuilderFrame;
 import uk.ac.sanger.artemis.components.genebuilder.GeneEditorPanel;
 import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
@@ -957,7 +958,7 @@ public class FeatureEdit extends JPanel
 
       addGffAnnotationView(lower_panel);
       
-      final JCheckBox tabbedView = new JCheckBox("Tabbed View", isTabbedView);
+      final JCheckBox tabbedView = new JCheckBox("Tab View", isTabbedView);
       tabbedView.addItemListener(new ItemListener()
       {
         public void itemStateChanged(ItemEvent e)
@@ -969,6 +970,28 @@ public class FeatureEdit extends JPanel
         }
       });
 
+
+      final JCheckBox oneView = new JCheckBox("Overview", false);
+      oneView.addItemListener(new ItemListener()
+      {
+        public void itemStateChanged(ItemEvent e)
+        {
+          if(setFeature()) 
+          {
+            stopListening();
+            
+            if(propertiesPanel != null)
+              propertiesPanel.updateObsoleteSettings();
+            
+            frame.dispose();
+            System.setProperty("basic", "true");
+            new BasicGeneBuilderFrame(getFeature(), entry_group,
+                selection, null);
+          }
+        }
+      });
+
+      ok_cancel_update_panel.add(oneView);
       ok_cancel_update_panel.add(tabbedView);
       fillerBox.add(Box.createHorizontalStrut( 
           tabbedView.getPreferredSize().width ));
