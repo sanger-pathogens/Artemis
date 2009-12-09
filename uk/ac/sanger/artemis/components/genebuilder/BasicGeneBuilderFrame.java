@@ -29,16 +29,18 @@ import java.awt.FontMetrics;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -51,10 +53,6 @@ import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.text.Document;
-import javax.swing.text.Element;
 
 import uk.ac.sanger.artemis.Entry;
 import uk.ac.sanger.artemis.EntryChangeEvent;
@@ -262,6 +260,25 @@ public class BasicGeneBuilderFrame extends JFrame
     final FlowLayout flow_layout =
       new FlowLayout(FlowLayout.CENTER, 18, 1);
     final JPanel ok_cancel_update_panel = new JPanel(flow_layout);
+    
+    final JCheckBox oneView = new JCheckBox("Overview", true);
+    oneView.addItemListener(new ItemListener()
+    {
+      public void itemStateChanged(ItemEvent e)
+      {
+        try
+        {
+          stopListeningAll();
+        }
+        catch (InvalidRelationException e1){}
+        dispose();
+        new GeneBuilderFrame(getFeature(), entry_group,
+            selection, null);
+        System.setProperty("basic", "false");
+      }
+    });
+    ok_cancel_update_panel.add(oneView);
+    
     if (!getFeature().isReadOnly())
     {
       final JButton okButton = new JButton("OK");
