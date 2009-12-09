@@ -160,7 +160,7 @@ public class GeneEdit
     schema_list.setSelectedItem(schema);
 
     final JTextField gene_text = new JTextField(20);
-    gene_text.setText("Smp_000030"); //"SPAC212.04c");
+    gene_text.setText("Smp_000130"); //"SPAC212.04c");
     
     c.gridx = 0;
     c.gridy = 0;
