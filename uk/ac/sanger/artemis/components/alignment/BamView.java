@@ -123,7 +123,8 @@ public class BamView extends JPanel
   private Hashtable<String, Integer> seqLengths = new Hashtable<String, Integer>();
   private Hashtable<String, Integer> offsetLengths;
   private Vector<String> seqNames = new Vector<String>();
-  private String bam;
+  private List<String> bamList;
+  private List<Integer> hideBamList = new Vector<Integer>();
 
   private SAMRecordFlagPredicate samRecordFlagPredicate;
   private SAMRecordMapQPredicate samRecordMapQPredicate;
@@ -158,6 +159,7 @@ public class BamView extends JPanel
   private boolean asynchronous = true;
   private boolean showBaseAlignment = false;
   
+  private JMenu bamFilesMenu = new JMenu("BAM files");
   private JCheckBoxMenuItem logMenuItem = new JCheckBoxMenuItem("Use Log Scale", logScale);
   private JCheckBoxMenuItem checkBoxStackView = new JCheckBoxMenuItem("Stack View");
   private JCheckBoxMenuItem baseQualityColour = new JCheckBoxMenuItem("Colour by Base Quality");;
@@ -191,13 +193,13 @@ public class BamView extends JPanel
   public static org.apache.log4j.Logger logger4j = 
     org.apache.log4j.Logger.getLogger(BamView.class);
   
-  public BamView(String bam, 
+  public BamView(List<String> bamList, 
                  String reference,
                  int nbasesInView)
   {
     super();
     setBackground(Color.white);
-    this.bam = bam;
+    this.bamList = bamList;
     this.nbasesInView = nbasesInView;
     
     if(reference != null)
@@ -279,84 +281,9 @@ public class BamView extends JPanel
     return msg;
   }
 
-  /*
-  private void readHeader()
-  {
-    String samtoolCmd = "";
-    if(System.getProperty("samtoolDir") != null)
-      samtoolCmd = System.getProperty("samtoolDir");
-    String cmd[] = { samtoolCmd+File.separator+"samtools",  
-			     "view", "-H", bam };
-	
-    RunSamTools samtools = new RunSamTools(cmd, null, null, null);
-	
-    if(samtools.getProcessStderr() != null)
-      System.out.println(samtools.getProcessStderr());
- 
-    String header = samtools.getProcessStdout();
-    
-    StringReader samReader = new StringReader(header);
-	BufferedReader buff = new BufferedReader(samReader);
-    
-	String line;
-	try 
-	{
-	  while((line = buff.readLine()) != null)
-	  {
-	    if(line.indexOf("LN:") > -1)
-	    {
-	      String parts[] = line.split("\t");
-	      String name = "";
-	      int seqLength = 0;
-	      for(int i=0; i<parts.length; i++)
-	      {
-	        if(parts[i].startsWith("LN:"))
-	          seqLength = Integer.parseInt( parts[i].substring(3) );
-	        else if(parts[i].startsWith("SN:"))
-	          name = parts[i].substring(3);
-	      }
-	      seqLengths.put(name, seqLength);
-	      seqNames.add(name);
-	    }
-	  }
-	} 
-	catch (IOException e) 
-	{
-	  e.printStackTrace();
-	}
-  }
-
-  private void readFromBam(int start, int end)
-  {
-    String refName = (String) combo.getSelectedItem();
-    
-    String samtoolCmd = "";
-    if(System.getProperty("samtoolDir") != null)
-      samtoolCmd = System.getProperty("samtoolDir");
-    
-	String cmd[] = { samtoolCmd+File.separator+"samtools",  
-				     "view", 
-				     bam, refName+":"+start+"-"+end };
-		
-	for(int i=0; i<cmd.length;i++)
-	  System.out.print(cmd[i]+" ");
-	System.out.println();
-	
-    if(readsInView == null)
-      readsInView = new Vector<SAMRecord>();
-    else
-      readsInView.clear();
-	RunSamTools samtools = new RunSamTools(cmd, null, null, readsInView);
-		
-	if(samtools.getProcessStderr() != null)
-      System.out.println(samtools.getProcessStderr());
-	    
-	samtools.waitForStdout();
-  }*/
-  
-
   private void readHeaderPicard()
   {
+    String bam = bamList.get(0);
     File bamFile = new File(bam);
     File indexFile = new File(bam+".bai");
     final SAMFileReader inputSam = new SAMFileReader(bamFile, indexFile);
@@ -375,19 +302,16 @@ public class BamView extends JPanel
   /**
    * Read a SAM or BAM file.
    */
-  private void readFromBamPicard(int start, int end)
+  private void readFromBamPicard(int start, int end, int bamIndex)
   {
     // Open the input file.  Automatically detects whether input is SAM or BAM
     // and delegates to a reader implementation for the appropriate format.
+    String bam = bamList.get(bamIndex);
+    //System.out.println("Reading from ... "+bam);
     File bamFile = new File(bam);
     File indexFile = new File(bam+".bai");
     final SAMFileReader inputSam = new SAMFileReader(bamFile, indexFile);
     inputSam.setValidationStringency(ValidationStringency.SILENT);
- 
-    if(readsInView == null)
-      readsInView = new Vector<SAMRecord>();
-    else
-      readsInView.clear();
 
     if(concatSequences)
     {
@@ -412,8 +336,7 @@ public class BamView extends JPanel
             thisEnd = thisLength;
           
           //System.out.println("READ "+seqNames.get(i)+"  "+thisStart+".."+thisEnd);
-          
-          iterateOverBam(inputSam, seqNames.get(i), thisStart, thisEnd);
+          iterateOverBam(inputSam, seqNames.get(i), thisStart, thisEnd, bamIndex);
         }
         lastLen = len;
       }
@@ -421,11 +344,12 @@ public class BamView extends JPanel
     else
     {
       String refName = (String) combo.getSelectedItem();
-      iterateOverBam(inputSam, refName, start, end);
+      iterateOverBam(inputSam, refName, start, end, bamIndex);
     }
     
     inputSam.close();
     //System.out.println("readFromBamPicard "+start+".."+end);
+    //System.out.println("Reads in view ... "+readsInView.size());
   }
   
   /**
@@ -437,8 +361,13 @@ public class BamView extends JPanel
    * @param end
    */
   private void iterateOverBam(final SAMFileReader inputSam, 
-                              String refName, int start, int end)
+                              String refName, int start, int end,
+                              int bamIndex)
   { 
+    boolean multipleBAM = false;
+    if(bamList.size() > 1)
+      multipleBAM = true;
+    
     CloseableIterator<SAMRecord> it = inputSam.queryOverlapping(refName, start, end);
     MemoryMXBean memory = ManagementFactory.getMemoryMXBean();
     int checkMemAfter = 8000;
@@ -450,13 +379,17 @@ public class BamView extends JPanel
       {
         cnt++;
         SAMRecord samRecord = it.next();
-        
+
         if( samRecordFlagPredicate == null ||
            !samRecordFlagPredicate.testPredicate(samRecord))
         {
           if(samRecordMapQPredicate == null ||
              samRecordMapQPredicate.testPredicate(samRecord))
+          {
+            if(multipleBAM)
+              samRecord.setAttribute("FL", bamIndex);
             readsInView.add(samRecord);
+          }
         }
         
         if(cnt > checkMemAfter)
@@ -569,7 +502,17 @@ public class BamView extends JPanel
         {
           float heapFractionUsedBefore = (float) ((float) memory.getHeapMemoryUsage().getUsed() / 
                                                   (float) memory.getHeapMemoryUsage().getMax());
-          readFromBamPicard(start, end);
+
+          if(readsInView == null)
+            readsInView = new Vector<SAMRecord>();
+          else
+            readsInView.clear();
+          
+          for(int i=0; i<bamList.size(); i++)
+          {
+            if(!hideBamList.contains(i))
+              readFromBamPicard(start, end, i);
+          }
           float heapFractionUsedAfter = (float) ((float) memory.getHeapMemoryUsage().getUsed() / 
                                                  (float) memory.getHeapMemoryUsage().getMax());
 
@@ -859,7 +802,8 @@ public class BamView extends JPanel
 
     // highlight
     if(highlightSAMRecord != null &&
-       highlightSAMRecord.getReadName().equals(samRecord.getReadName()))
+       highlightSAMRecord.getReadName().equals(samRecord.getReadName()) &&
+       blocks.size() > 0)
     {
       refPos = blocks.get(0).getReferenceStart()+offset-refSeqStart;
       int xstart = refPos*ALIGNMENT_PIX_PER_BASE;
@@ -868,7 +812,7 @@ public class BamView extends JPanel
       g2.drawRect(xstart, ypos-BASE_HEIGHT, width, BASE_HEIGHT);
     }
     
-    if(lastMousePoint != null)
+    if(lastMousePoint != null && blocks.size() > 0)
     {
       refPos = blocks.get(0).getReferenceStart()+offset-refSeqStart;
       int xstart = refPos*ALIGNMENT_PIX_PER_BASE;
@@ -879,7 +823,7 @@ public class BamView extends JPanel
          lastMousePoint.getX() < xend)
       {
         mouseOverSAMRecord = samRecord;
-        
+
         if(insertions != null)
           mouseOverInsertion = insertions.get((int)lastMousePoint.getX());
       }
@@ -1665,7 +1609,7 @@ public class BamView extends JPanel
       JMenu fileMenu = new JMenu("File");
       topPanel.add(fileMenu);
 
-      JMenuItem readBam = new JMenuItem("Read BAM...");
+      JMenuItem readBam = new JMenuItem("Open new BamView ...");
       fileMenu.add(readBam);
       readBam.addActionListener(new ActionListener()
       {
@@ -1675,7 +1619,6 @@ public class BamView extends JPanel
           BamView.main(s);
         } 
       });
-      
       
       JMenuItem close = new JMenuItem("Close");
       fileMenu.add(close);
@@ -1890,10 +1833,59 @@ public class BamView extends JPanel
     setFocusable(true);
     requestFocusInWindow();
   }
+  
+  private void addToViewMenu(final int thisBamIndex)
+  {
+    File f = new File(bamList.get(thisBamIndex));
+    final JCheckBoxMenuItem cbBam = new JCheckBoxMenuItem(
+                                     f.getName(), true);
+    bamFilesMenu.add(cbBam);
+    cbBam.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        if(cbBam.isSelected())
+          hideBamList.remove(new Integer(thisBamIndex));
+        else
+          hideBamList.add(new Integer(thisBamIndex));
+        laststart = -1;
+        lastend = -1;
+        repaint();
+      } 
+    });
+  }
 
   
   private void createMenus(JComponent menu)
-  {   
+  {
+    final JMenuItem addBam = new JMenuItem("Add Bam ...");
+    menu.add(addBam);
+    addBam.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        FileSelectionDialog bamFileSelection = new FileSelectionDialog(null, false);
+        List<String> bamFiles = bamFileSelection.getBamFiles();
+        int count = bamList.size();
+       
+        bamList.addAll(bamFileSelection.getBamFiles());
+        
+        for(int i=0; i<bamFiles.size(); i++)
+          addToViewMenu(i+count);
+        laststart = -1;
+        lastend = -1;
+        
+        repaint();
+      } 
+    });
+    
+    bamFilesMenu.setFont(addBam.getFont());
+    menu.add(bamFilesMenu);
+    for(int i=0; i<bamList.size(); i++)
+      addToViewMenu(i);
+    
+    menu.add(new JSeparator());
+    
     JMenu viewMenu = new JMenu("Views");
     ButtonGroup group = new ButtonGroup();
     final JCheckBoxMenuItem checkBoxPairedStackView = new JCheckBoxMenuItem("Paired Stack View");
@@ -2672,25 +2664,31 @@ public class BamView extends JPanel
   
   public static void main(String[] args)
   {
-    String bam;
+    List<String> bam = new Vector<String>();;
     String reference = null;
     if(args.length == 0)
     {
-      FileSelectionPanel fileSelection = new FileSelectionPanel();
-      fileSelection.showPanel();
-      bam = fileSelection.getBamFile();
+      FileSelectionDialog fileSelection = new FileSelectionDialog(null, true);
+      bam = fileSelection.getBamFiles();
       reference = fileSelection.getReferenceFile();
       if(reference == null || reference.equals(""))
         reference = null;
     }
-    else
-      bam = args[0];
+    else if(!args[0].startsWith("-"))
+    {
+      for(int i=0; i< args.length; i++)
+        bam.add(args[i]);
+    }
     int nbasesInView = 1000;
 
     for(int i=0;i<args.length; i++)
     {
       if(args[i].equals("-a"))
-        bam = args[++i];
+      {
+        while(i < args.length-1 && !args[++i].startsWith("-"))
+          bam.add(args[i]);
+        --i;
+      }
       else if(args[i].equals("-r"))
         reference = args[++i];
       else if(args[i].equals("-v"))

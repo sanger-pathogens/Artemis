@@ -79,11 +79,11 @@ class SAMRecordFilter extends JPanel
     add(new JSeparator(),c);
     
     c.gridy = nrows++;
-    add(new JLabel("Reads can be filtered using the FLAG column in the BAM file."),c);
+    add(new JLabel("To filter reads using the FLAG column in the BAM file"),c);
     c.gridy = nrows++;
-    add(new JLabel("Selecting any of the options below hides the reads with that"),c);
+    add(new JLabel("select any of the options below to hide the reads with"),c);
     c.gridy = nrows++;
-    add(new JLabel("flag set."),c);
+    add(new JLabel("that flag set."),c);
     final JCheckBox flagCheck[] = new JCheckBox[nflags];
     final SAMRecordFlagPredicate predicate = bamView.getSamRecordFlagPredicate();
     
@@ -108,6 +108,7 @@ class SAMRecordFilter extends JPanel
       add(flagCheck[j], c);
     }
 
+    
     final JFrame f = new JFrame("Filter Settings");
     JButton closeFrame = new JButton("Close");
     closeFrame.addActionListener(new ActionListener()
