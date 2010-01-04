@@ -1265,7 +1265,9 @@ public class EntryEdit extends JFrame
             return;
           }
 
-          jamView = new BamView(bamFile.getAbsolutePath(), null, 2000);
+          List<String> listBams = new Vector<String>();
+          listBams.add(bamFile.getAbsolutePath());
+          jamView = new BamView(listBams, null, 2000);
           jamView.setShowScale(false);
           jamView.setBases(getEntryGroup().getBases());
           jamView.addJamToPanel(jamPanel, null, true, feature_display);
