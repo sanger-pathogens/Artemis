@@ -38,7 +38,7 @@ CLASSPATH=$CLASSPATH:$ARTEMIS_HOME/lib/ibatis/ibatis-2.3.4.726.jar:$ARTEMIS_HOME
 export CLASSPATH
 
 # picard jars
-CLASSPATH=$CLASSPATH:$ARTEMIS_HOME/lib/picard/sam-1.04.jar:$ARTEMIS_HOME/lib/picard/picard-1.04.jar
+CLASSPATH=$CLASSPATH:$ARTEMIS_HOME/lib/picard/sam.jar:$ARTEMIS_HOME/lib/picard/picard.jar
 export CLASSPATH
 
 
