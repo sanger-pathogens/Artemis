@@ -7,6 +7,8 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
@@ -17,8 +19,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 /**
  * Filter reads bases on their mapping quality (mapq) or the
@@ -96,9 +96,9 @@ class SAMRecordFilter extends JPanel
          predicate.isFlagSet(SAMRecordFlagPredicate.FLAGS[j]))
         flagCheck[j].setSelected(true);
       
-      flagCheck[j].addChangeListener(new ChangeListener()
+      flagCheck[j].addItemListener(new ItemListener()
       {
-        public void stateChanged(ChangeEvent e)
+        public void itemStateChanged(ItemEvent e)
         {
           filterChange(bamView, flagCheck);
         }            
