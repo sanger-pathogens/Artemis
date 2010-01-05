@@ -8,7 +8,7 @@ SHELL=/bin/sh
 
 JAVAC := javac -source 1.5 -target 1.5 $(OPT_FLAGS) $(EXTRA_FLAGS)
 
-REAL_CLASSPATH := CLASSPATH=lib/biojava.jar:lib/jemAlign.jar:lib/j2ssh/j2ssh-core.jar:lib/ibatis/ibatis-2.3.4.726.jar:lib/ibatis/log4j-1.2.14.jar:lib/chado-14-interface.jar:lib/postgresql-8.4-701.jdbc3.jar:lib/picard/picard-1.04.jar:lib/picard/sam-1.04.jar:.
+REAL_CLASSPATH := CLASSPATH=lib/biojava.jar:lib/jemAlign.jar:lib/j2ssh/j2ssh-core.jar:lib/ibatis/ibatis-2.3.4.726.jar:lib/ibatis/log4j-1.2.14.jar:lib/chado-14-interface.jar:lib/postgresql-8.4-701.jdbc3.jar:lib/picard/picard.jar:lib/picard/sam.jar:.
 
 NAMES:= \
 	uk/ac/sanger/artemis/OptionChangeListener \
