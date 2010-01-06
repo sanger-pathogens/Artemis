@@ -373,7 +373,27 @@ public class Block implements Transferable
     int xstart = (int) ((bstart-(lineNumberStart*basesPerLine))*singleBaseWidth)+borderWidth2;
     int xend   = (int) ((bend-(lineNumberEnd*basesPerLine))*singleBaseWidth)+borderWidth2;
     
-    BasicStroke basicstroke = new BasicStroke(
+    if(rect == null)
+      rect = new Vector();
+    
+    BasicStroke basicstroke;
+    if(bstart == bend)
+    {
+      // SNP / variation feature
+      basicstroke = new BasicStroke(
+          1.f,
+          BasicStroke.CAP_BUTT, 
+          BasicStroke.JOIN_MITER);
+      g2.setStroke(basicstroke);
+      g2.drawLine(xstart,ypos,xstart,(int) (ypos+strokeSize));
+      Rectangle r = new Rectangle();
+      r.setLocation(xstart,ypos);
+      r.setSize(current_dna.getWidth()-borderWidth2-xstart,2);
+      rect.add(r);
+      return;
+    }
+    
+    basicstroke = new BasicStroke(
         strokeSize,
         BasicStroke.CAP_BUTT, 
         BasicStroke.JOIN_MITER);
@@ -386,10 +406,7 @@ public class Block implements Transferable
       xstart+=strokeSize/2;
       g2.fillPolygon(xPoints,yPoints,3);
     }
-    
-    
-    if(rect == null)
-      rect = new Vector();
+
 
     Rectangle r;
     
