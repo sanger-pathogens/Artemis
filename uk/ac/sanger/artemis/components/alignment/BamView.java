@@ -51,7 +51,10 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.util.Collections;
@@ -2374,6 +2377,28 @@ public class BamView extends JPanel
     return nbasesInView;
   }
   
+  private String getVersion()
+  {
+    final ClassLoader cl = this.getClass().getClassLoader();
+    try
+    {
+      String line;
+      InputStream in = cl.getResourceAsStream("etc/versions");
+      BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+      while((line = reader.readLine()) != null)
+      {
+        if(line.startsWith("BamView"))
+          return line.substring( "BamView".length() ).trim();
+      }
+      reader.close();
+      in.close();
+    }
+    catch (Exception ex)
+    {
+    }
+    return null;
+  }
+  
   /**
    * Artemis event notification
    */
@@ -2709,7 +2734,7 @@ public class BamView extends JPanel
     }
 
     final BamView view = new BamView(bam, reference, nbasesInView);
-    JFrame frame = new JFrame("BamView");
+    JFrame frame = new JFrame("BamView v"+view.getVersion());
     
     // translucent
     //frame.getRootPane().putClientProperty("Window.alpha", new Float(0.9f));
