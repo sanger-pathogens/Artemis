@@ -168,7 +168,7 @@ public class GraphMenu extends JMenu
         {
           try
           {
-            addUserPlot ();
+            addUserPlot (null);
             adjustSplitPane(true);
           }
           catch(java.lang.OutOfMemoryError emem)
@@ -240,6 +240,26 @@ public class GraphMenu extends JMenu
       {
         new MessageDialog (frame, "error while reading usage data: " + e);
       }
+    }
+    
+    // add user plots from the command line JVM option
+    if(System.getProperty("userplot") != null)
+    {
+      String plots[] = System.getProperty("userplot").split("\\s");
+      try
+      {
+        for(int i=0;i<plots.length; i++)
+        {
+          File f = new File(plots[i]);
+          if(f.exists())
+            addUserPlot (f);
+          else
+            System.err.println(plots[i]+" not found.");
+        }
+        splitPane.setDividerSize(3);
+        splitPane.setDividerLocation(150);
+      }
+      catch(Exception e){}
     }
   }
 
@@ -525,28 +545,30 @@ public class GraphMenu extends JMenu
   /**
    *  Add a UserDataAlgorithm to the display.
    **/
-  private void addUserPlot () 
+  private void addUserPlot (File file) 
   {
-    final JFrame frame = Utilities.getComponentFrame (base_plot_group);
-    final StickyFileChooser dialog = new StickyFileChooser ();
-
-    dialog.setDialogTitle ("Select a data file name ...");
-    dialog.setDialogType (JFileChooser.OPEN_DIALOG);
     final JCheckBox logTransform = new JCheckBox("Use log(data+1)", false);
-    dialog.setAccessory(logTransform);
-    
-    final int status = dialog.showOpenDialog (frame);
-
-    if (status != JFileChooser.APPROVE_OPTION ||
-        dialog.getSelectedFile () == null) 
+    if (file == null)
     {
-      return;
+      final JFrame frame = Utilities.getComponentFrame(base_plot_group);
+      final StickyFileChooser dialog = new StickyFileChooser();
+
+      dialog.setDialogTitle("Select a data file name ...");
+      dialog.setDialogType(JFileChooser.OPEN_DIALOG);
+
+      dialog.setAccessory(logTransform);
+
+      final int status = dialog.showOpenDialog(frame);
+      if(status != JFileChooser.APPROVE_OPTION || 
+         dialog.getSelectedFile() == null)
+      {
+        return;
+      }
+
+      file = new File(dialog.getCurrentDirectory(), 
+                      dialog.getSelectedFile().getName());
     }
-
-    final File file =
-      new File (dialog.getCurrentDirectory (),
-                dialog.getSelectedFile ().getName ());
-
+    
     frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
     if (file.length () != 0) 
     {
