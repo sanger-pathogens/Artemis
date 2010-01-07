@@ -1,4 +1,7 @@
 Version 11+
+	It is now possible to add user plots from the command line using the 
+	JVM userplot option, e.g. art -Duserplot=/pathToFile/userPlot.
+
 	Added support to be able to read BAM files to display read alignments.
 	It uses picard (http://picard.sourceforge.net/) to read from the BAM file
 	and so requires Artemis to be run with Java 1.6.
