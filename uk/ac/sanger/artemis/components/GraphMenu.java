@@ -245,7 +245,7 @@ public class GraphMenu extends JMenu
     // add user plots from the command line JVM option
     if(System.getProperty("userplot") != null)
     {
-      String plots[] = System.getProperty("userplot").split("\\s");
+      String plots[] = System.getProperty("userplot").split("[\\s:]");
       try
       {
         for(int i=0;i<plots.length; i++)
