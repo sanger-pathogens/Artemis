@@ -649,6 +649,21 @@ public class ChadoCanonicalGene
         }
       }
     }
+    
+    // search children of all transcripts
+    List<Feature> transcripts = getTranscripts();
+    for(int i=0;i<transcripts.size(); i++)
+    {
+      Feature transcript = transcripts.get(i);
+      Set<Feature> children = getChildren(transcript);
+      Iterator<Feature> it = children.iterator();
+      while(it.hasNext())
+      {
+        Feature f = it.next();
+        if(name.equals(GeneUtils.getUniqueName(f)))
+          return GeneUtils.getUniqueName(transcript);
+      }
+    }
  
     return null;
   }
