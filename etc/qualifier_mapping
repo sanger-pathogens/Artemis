@@ -21,6 +21,7 @@ GPI_anchored                note
 GPI_anchor_cleavage_site    note
 ID                          locus_tag
 Name                        primary_name
+product_synonym             product
 #
 # CHADO qualifiers to be ignored
 timelastmodified
