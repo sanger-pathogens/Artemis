@@ -53,10 +53,13 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
+import java.net.URL;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -122,6 +125,7 @@ public class BamView extends JPanel
                      implements DisplayAdjustmentListener, SelectionChangeListener
 {
   private static final long serialVersionUID = 1L;
+  private Hashtable<String, File> bamIndexFileHash = null;
   private List<SAMRecord> readsInView;
   private Hashtable<String, Integer> seqLengths = new Hashtable<String, Integer>();
   private Hashtable<String, Integer> offsetLengths;
@@ -228,6 +232,10 @@ public class BamView extends JPanel
           "This requires Java 1.6 or higher.", 
           "Check Java Version", JOptionPane.WARNING_MESSAGE);
     }
+    catch (IOException e)
+    {
+      e.printStackTrace();
+    }
 
     final javax.swing.plaf.FontUIResource font_ui_resource =
       Options.getOptions().getFontUIResource();
@@ -283,13 +291,88 @@ public class BamView extends JPanel
     
     return msg;
   }
+  
+  /**
+   * Get the BAM index file from the list
+   * @param bam
+   * @return
+   * @throws IOException
+   */
+  private File getBamIndexFile(String bam) throws IOException
+  {
+    if(bamIndexFileHash == null)
+      bamIndexFileHash = new Hashtable<String, File>();
+    
+    File bamIndexFile = null;
+    if(!bamIndexFileHash.containsKey(bam+".bai"))
+     {
+       if(bam.startsWith("http"))
+       {
+         final URL urlBamIndexFile = new URL(bam+".bai");
+         InputStream is = urlBamIndexFile.openStream();
+           
+         // Create temp file.
+         bamIndexFile = File.createTempFile(
+             urlBamIndexFile.getFile().replaceAll("[\\/\\s]", "_"), ".bai"); 
+         bamIndexFile.deleteOnExit();
 
-  private void readHeaderPicard()
+         FileOutputStream out = new FileOutputStream(bamIndexFile); 
+         int c;
+         while ((c = is.read()) != -1) 
+           out.write(c);
+         out.flush();
+         out.close();
+         is.close();
+
+         System.out.println("create... "+bamIndexFile.getAbsolutePath());
+       }
+       else
+         bamIndexFile = new File(bam+".bai");
+       bamIndexFileHash.put(bam+".bai", bamIndexFile);
+     }
+     else
+     {
+       Enumeration<String> names = bamIndexFileHash.keys();
+       while(names.hasMoreElements())
+       {
+         String name = names.nextElement();
+         if(name.equals(bam+".bai"))
+         {
+           bamIndexFile = bamIndexFileHash.get(name);
+           break;  
+         }
+       }
+     }
+    return bamIndexFile;
+  }
+  
+  /**
+   * Get the SAM file reader.
+   * @param bam
+   * @return
+   * @throws IOException
+   */
+  private SAMFileReader getSAMFileReader(final String bam) throws IOException
+  {  
+    File bamIndexFile = getBamIndexFile(bam);;
+    if(!bam.startsWith("http"))
+    {
+      File bamFile = new File(bam);
+      return new SAMFileReader(bamFile, bamIndexFile);
+    }
+    else
+    {
+      final URL urlBamFile = new URL(bam);
+      return new SAMFileReader(urlBamFile, bamIndexFile, true);
+    }
+  }
+
+  private void readHeaderPicard() throws IOException
   {
     String bam = bamList.get(0);
-    File bamFile = new File(bam);
-    File indexFile = new File(bam+".bai");
-    final SAMFileReader inputSam = new SAMFileReader(bamFile, indexFile);
+    final SAMFileReader inputSam = getSAMFileReader(bam);
+    
+    //final SAMFileReader inputSam = new SAMFileReader(bamFile, indexFile);
     SAMFileHeader header = inputSam.getFileHeader();
     List<SAMSequenceRecord> readGroups = header.getSequenceDictionary().getSequences();
     
@@ -301,19 +384,21 @@ public class BamView extends JPanel
     }
     inputSam.close();
   }
+
   
   /**
    * Read a SAM or BAM file.
+   * @throws IOException 
    */
-  private void readFromBamPicard(int start, int end, int bamIndex)
+  private void readFromBamPicard(int start, int end, int bamIndex) 
+          throws IOException
   {
     // Open the input file.  Automatically detects whether input is SAM or BAM
     // and delegates to a reader implementation for the appropriate format.
-    String bam = bamList.get(bamIndex);
-    //System.out.println("Reading from ... "+bam);
-    File bamFile = new File(bam);
-    File indexFile = new File(bam+".bai");
-    final SAMFileReader inputSam = new SAMFileReader(bamFile, indexFile);
+    String bam = bamList.get(bamIndex);  
+    final SAMFileReader inputSam = getSAMFileReader(bam);
+    
+    //final SAMFileReader inputSam = new SAMFileReader(bamFile, indexFile);
     inputSam.setValidationStringency(ValidationStringency.SILENT);
 
     if(concatSequences)
@@ -402,6 +487,9 @@ public class BamView extends JPanel
             (float)((float)memory.getHeapMemoryUsage().getUsed()/
                     (float)memory.getHeapMemoryUsage().getMax());
           logger4j.debug("Heap memory usage (used/max): "+heapFraction);
+          
+          if(readsInView.size() > checkMemAfter*2 && !waitingFrame.isVisible())
+            waitingFrame.showWaiting("loading...", mainPanel);
           
           if(heapFraction > 0.97) 
           {
@@ -496,9 +584,6 @@ public class BamView extends JPanel
     if(laststart != start ||
        lastend   != end)
     {
-      if(!waitingFrame.isVisible())
-        waitingFrame.showWaiting("loading...", mainPanel);
-
       synchronized (this)
       {
         try
@@ -531,10 +616,17 @@ public class BamView extends JPanel
             changeToStackView = true;
           }
 
+          Collections.sort(readsInView, new SAMRecordComparator());
           if ((!isStackView && !isStrandStackView)
               || pixPerBase * 1.08f >= ALIGNMENT_PIX_PER_BASE)
           {
             Collections.sort(readsInView, new SAMRecordComparator());
+          }
+          else if( (isStackView || isStrandStackView) &&
+              bamList.size() > 1)
+          {
+            // merge multiple BAM files
+            Collections.sort(readsInView, new SAMRecordPositionComparator());
           }
         }
         catch (OutOfMemoryError ome)
@@ -542,6 +634,10 @@ public class BamView extends JPanel
           JOptionPane.showMessageDialog(this, "Out of Memory");
           readsInView.clear();
           return;
+        }
+        catch(IOException me)
+        {
+          me.printStackTrace();
         }
       }
     }
