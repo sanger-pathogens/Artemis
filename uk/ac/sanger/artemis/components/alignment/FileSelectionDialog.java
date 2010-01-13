@@ -9,6 +9,12 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Vector;
 
@@ -23,7 +29,7 @@ import uk.ac.sanger.artemis.components.StickyFileChooser;
 /**
  * File selection panel to allow input of DNA sequences
  */
-class FileSelectionDialog extends JDialog
+public class FileSelectionDialog extends JDialog
 {
   private static final long serialVersionUID = 1L;
   
@@ -135,19 +141,83 @@ class FileSelectionDialog extends JDialog
     });
   }
   
+  /**
+   * Return true only if this is a list of filenames.
+   * @param filename
+   * @return
+   */
+  private boolean isListOfFiles(String filename) 
+  {
+    if(filename.startsWith("http"))
+      return false;
+
+    try
+    {
+      File f = new File(filename);
+      if (f.exists())
+      {
+        FileInputStream fstream = new FileInputStream(f);
+        DataInputStream in = new DataInputStream(fstream);
+        BufferedReader br = new BufferedReader(new InputStreamReader(in));
+
+        f = new File(br.readLine().trim());
+        if (f.exists())
+          return true;
+      }
+    }
+    catch (IOException e)
+    {
+      return false;
+    }
+    return false;
+  }
+  
+  /**
+   * Read a list of file names from a file.
+   * @param filename
+   * @return
+   */
+  private List<String> getListOfFiles(String filename)
+  {
+    List<String> bamFiles = new Vector<String>();
+    try
+    {
+      File f = new File(filename);
+      if (f.exists())
+      {
+        FileInputStream fstream = new FileInputStream(f);
+        DataInputStream in = new DataInputStream(fstream);
+        BufferedReader br = new BufferedReader(new InputStreamReader(in));
+        
+        String line;
+        while((line = br.readLine()) != null)
+          bamFiles.add(line.trim());
+      }
+    }
+    catch (IOException e){}
+    return bamFiles;
+  }
   
   /**
    * Get the BAM files as a <code>List</code> of <code>String</code>'s.
    * @return
    */
-  protected List<String> getBamFiles()
+  public List<String> getBamFiles()
   {
     List<String> bamFiles = new Vector<String>();
     for(int i=0; i<bamFields.size(); i++)
     {
       String file = bamFields.get(i).getText();
+      
       if(file != null && !file.equals(""))
-        bamFiles.add(file);
+      {
+        if(isListOfFiles(file))
+        {
+          bamFiles.addAll(getListOfFiles(file));
+        }
+        else
+          bamFiles.add(file);
+      }
     }
     return bamFiles;
   }
