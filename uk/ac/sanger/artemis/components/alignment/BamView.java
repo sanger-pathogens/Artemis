@@ -443,9 +443,9 @@ public class BamView extends JPanel
                               String refName, int start, int end,
                               int bamIndex)
   { 
-    boolean multipleBAM = false;
-    if(bamList.size() > 1)
-      multipleBAM = true;
+    //boolean multipleBAM = false;
+    //if(bamList.size() > 1)
+    //  multipleBAM = true;
     
     CloseableIterator<SAMRecord> it = inputSam.queryOverlapping(refName, start, end);
     MemoryMXBean memory = ManagementFactory.getMemoryMXBean();
