@@ -88,6 +88,8 @@ public class TransferAnnotationTool extends JFrame
     "feature_relationship_rank",
     "Parent",
     "isObsolete",
+    "isFminPartial",
+    "isFmaxPartial",
     "timelastmodified",
     "cytoplasm_location",
     "cytoplasmic_polypeptide_region",
