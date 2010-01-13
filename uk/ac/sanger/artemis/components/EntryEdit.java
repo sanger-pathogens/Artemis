@@ -30,6 +30,7 @@ import uk.ac.sanger.artemis.chado.ChadoTransactionManager;
 import uk.ac.sanger.artemis.chado.CommitFrame;
 import uk.ac.sanger.artemis.circular.DNADraw;
 import uk.ac.sanger.artemis.components.alignment.BamView;
+import uk.ac.sanger.artemis.components.alignment.FileSelectionDialog;
 import uk.ac.sanger.artemis.components.alignment.LookSeqPanel;
 import uk.ac.sanger.artemis.components.filetree.FileList;
 import uk.ac.sanger.artemis.components.filetree.FileManager;
@@ -1249,24 +1250,9 @@ public class EntryEdit extends JFrame
       {
         public void actionPerformed(ActionEvent e)
         {
-          StickyFileChooser fileChooser = new StickyFileChooser();
-          int status = fileChooser.showOpenDialog(EntryEdit.this);
-          if(status != StickyFileChooser.APPROVE_OPTION)
-            return;
-          
-          File bamFile = fileChooser.getSelectedFile();
-          // check bam index file exists
-          File bamIndexFile = new File(bamFile.getAbsolutePath()+".bai");
-          if(!bamIndexFile.exists())
-          {
-            JOptionPane.showMessageDialog(EntryEdit.this, 
-                "BAM index file not found:"+bamIndexFile.getAbsolutePath(), 
-                "Missing Index File", JOptionPane.WARNING_MESSAGE);
-            return;
-          }
+          FileSelectionDialog fileChooser = new FileSelectionDialog(null, false);
+          List<String> listBams = fileChooser.getBamFiles();
 
-          List<String> listBams = new Vector<String>();
-          listBams.add(bamFile.getAbsolutePath());
           jamView = new BamView(listBams, null, 2000);
           jamView.setShowScale(false);
           jamView.setBases(getEntryGroup().getBases());
