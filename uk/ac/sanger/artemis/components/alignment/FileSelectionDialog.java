@@ -146,7 +146,7 @@ public class FileSelectionDialog extends JDialog
    * @param filename
    * @return
    */
-  private boolean isListOfFiles(String filename) 
+  protected static boolean isListOfFiles(String filename) 
   {
     if(filename.startsWith("http"))
       return false;
@@ -177,7 +177,7 @@ public class FileSelectionDialog extends JDialog
    * @param filename
    * @return
    */
-  private List<String> getListOfFiles(String filename)
+  protected static List<String> getListOfFiles(String filename)
   {
     List<String> bamFiles = new Vector<String>();
     try
