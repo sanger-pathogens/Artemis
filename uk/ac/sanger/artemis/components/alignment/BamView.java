@@ -2797,7 +2797,13 @@ public class BamView extends JPanel
       if(args[i].equals("-a"))
       {
         while(i < args.length-1 && !args[++i].startsWith("-"))
-          bam.add(args[i]);
+        {
+          String filename = args[i];
+          if(FileSelectionDialog.isListOfFiles(filename))
+            bam.addAll(FileSelectionDialog.getListOfFiles(filename));
+          else
+            bam.add(filename);
+        }
         --i;
       }
       else if(args[i].equals("-r"))
