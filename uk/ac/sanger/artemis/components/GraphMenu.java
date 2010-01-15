@@ -46,6 +46,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.IOException;
 import java.io.File;
+import java.net.URL;
 import java.util.List;
 import java.util.Vector;
 
@@ -250,11 +251,26 @@ public class GraphMenu extends JMenu
       {
         for(int i=0;i<plots.length; i++)
         {
-          File f = new File(plots[i]);
-          if(f.exists())
-            addUserPlot (f);
+          if(plots[i].startsWith("http:") ||
+             plots[i].startsWith("file:") ||
+             plots[i].startsWith("ftp:"))
+          {
+            uk.ac.sanger.artemis.util.Document document =
+              new uk.ac.sanger.artemis.util.URLDocument (new URL(plots[i]));
+            addUserPlot (document);
+          }
           else
-            System.err.println(plots[i]+" not found.");
+          {
+            File f = new File(plots[i]);
+            if(f.exists())
+            {
+              uk.ac.sanger.artemis.util.Document document =
+                new uk.ac.sanger.artemis.util.FileDocument (f);
+              addUserPlot (document);
+            }
+            else
+              System.err.println(plots[i]+" not found.");
+          }
         }
         splitPane.setDividerSize(3);
         splitPane.setDividerLocation(150);
@@ -545,10 +561,10 @@ public class GraphMenu extends JMenu
   /**
    *  Add a UserDataAlgorithm to the display.
    **/
-  private void addUserPlot (File file) 
+  private void addUserPlot (uk.ac.sanger.artemis.util.Document document) 
   {
     final JCheckBox logTransform = new JCheckBox("Use log(data+1)", false);
-    if (file == null)
+    if (document == null)
     {
       final JFrame frame = Utilities.getComponentFrame(base_plot_group);
       final StickyFileChooser dialog = new StickyFileChooser();
@@ -565,17 +581,16 @@ public class GraphMenu extends JMenu
         return;
       }
 
-      file = new File(dialog.getCurrentDirectory(), 
+      File file = new File(dialog.getCurrentDirectory(), 
                       dialog.getSelectedFile().getName());
+      
+      document =
+        new uk.ac.sanger.artemis.util.FileDocument (file);
     }
     
     frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-    if (file.length () != 0) 
-    {
-      final uk.ac.sanger.artemis.util.Document document =
-        new uk.ac.sanger.artemis.util.FileDocument (file);
-
-      final Strand forward_strand =
+    
+    final Strand forward_strand =
         getEntryGroup ().getBases ().getForwardStrand ();
 
       try 
@@ -614,7 +629,7 @@ public class GraphMenu extends JMenu
         new MessageDialog (Utilities.getComponentFrame (base_plot_group),
                            "error while reading user data: " + e);
       }
-    }
+    
     frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
   }
 
