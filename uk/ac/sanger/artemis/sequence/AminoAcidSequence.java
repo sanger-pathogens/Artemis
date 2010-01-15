@@ -675,7 +675,7 @@ public class AminoAcidSequence
           amino_acid_string.charAt(amino_acid_string.length() - offset - 1);
 
         // X matches any AA
-        if(amino_acid_char == 'x')
+        if(amino_acid_char == 'x' || amino_acid_char == 'X')
           // X matches any AA
           continue;
 
@@ -727,7 +727,7 @@ public class AminoAcidSequence
           amino_acid_string.charAt(amino_acid_string.length() - offset - 1);
 
         // X matches any AA
-        if(amino_acid_char == 'x') 
+        if(amino_acid_char == 'x' || amino_acid_char == 'X') 
           continue;
 
         if(getCodonTranslation(base3, base2, base1) != amino_acid_char)
