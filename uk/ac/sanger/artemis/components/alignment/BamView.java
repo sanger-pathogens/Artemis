@@ -172,7 +172,7 @@ public class BamView extends JPanel
   private JCheckBoxMenuItem logMenuItem = new JCheckBoxMenuItem("Use Log Scale", logScale);
   private JCheckBoxMenuItem checkBoxStackView = new JCheckBoxMenuItem("Stack View");
   private JCheckBoxMenuItem baseQualityColour = new JCheckBoxMenuItem("Colour by Base Quality");;
-  private JCheckBoxMenuItem markInsertions = new JCheckBoxMenuItem("Mark Insertions");
+  private JCheckBoxMenuItem markInsertions = new JCheckBoxMenuItem("Mark Insertions", true);
   private AlphaComposite translucent = 
     AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f);
   
@@ -250,7 +250,7 @@ public class BamView extends JPanel
       if(value instanceof javax.swing.plaf.FontUIResource) 
         UIManager.put(key, font_ui_resource);
     }
-    
+
     setFont(Options.getOptions().getFont());
     FontMetrics fm  = getFontMetrics(getFont());
     ALIGNMENT_PIX_PER_BASE = fm.charWidth('M');
