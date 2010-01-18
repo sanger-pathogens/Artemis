@@ -15,6 +15,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.URL;
 import java.util.List;
 import java.util.Vector;
 
@@ -149,7 +151,24 @@ public class FileSelectionDialog extends JDialog
   protected static boolean isListOfFiles(String filename) 
   {
     if(filename.startsWith("http"))
+    {
+      try
+      {
+        URL urlBamIndexFile = new URL(filename);
+        InputStreamReader reader = new InputStreamReader(urlBamIndexFile.openStream());
+        
+        BufferedReader is = new BufferedReader(reader);
+        String s = is.readLine();
+        is.close();
+        reader.close();
+        
+        if(s != null && s.trim().startsWith("http"))
+          return true;
+      }
+      catch (IOException e){}
+
       return false;
+    }
 
     try
     {
@@ -182,20 +201,51 @@ public class FileSelectionDialog extends JDialog
     List<String> bamFiles = new Vector<String>();
     try
     {
-      File f = new File(filename);
-      if (f.exists())
+      if(filename.startsWith("http"))
       {
-        FileInputStream fstream = new FileInputStream(f);
-        DataInputStream in = new DataInputStream(fstream);
-        BufferedReader br = new BufferedReader(new InputStreamReader(in));
-        
-        String line;
-        while((line = br.readLine()) != null)
-          bamFiles.add(line.trim());
+        try
+        {
+          URL urlBamIndexFile = new URL(filename);
+          InputStreamReader reader = new InputStreamReader(urlBamIndexFile.openStream()); 
+          addFilesToListFromReader(reader, bamFiles);
+          reader.close();
+        }
+        catch (IOException e){}
+      }
+      else
+      {
+        File f = new File(filename);
+        if (f.exists())
+        {
+          FileInputStream fstream = new FileInputStream(f);
+          InputStreamReader reader = new InputStreamReader(fstream); 
+          addFilesToListFromReader(reader, bamFiles);
+          reader.close();
+        }
       }
     }
     catch (IOException e){}
     return bamFiles;
+  }
+  
+  /**
+   * Read a list of files in and add them to the collection.
+   * @param in
+   * @param bamFiles
+   * @throws IOException
+   */
+  private static void addFilesToListFromReader(Reader in, List<String> bamFiles) 
+          throws IOException
+  {
+    BufferedReader br = new BufferedReader(in);
+    String line;
+    while ((line = br.readLine()) != null)
+    {
+      line = line.trim();
+      if(!line.equals(""))
+        bamFiles.add(line);
+    }
+    br.close();
   }
   
   /**
