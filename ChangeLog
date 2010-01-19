@@ -2,7 +2,8 @@ Version 11+
 	It is now possible to add user plots from the command line using the 
 	JVM userplot option, e.g. art -Duserplot=/pathToFile/userPlot 
 	and for multiple plots this is comma separated
-	art -Duserplot='/pathToFile/userPlot1,/pathToFile/userPlot2'
+	art -Duserplot='/pathToFile/userPlot1,/pathToFile/userPlot2', it
+	can also read the plots from URL's.
 
 	Added support to be able to read BAM files to display read alignments.
 	It uses picard (http://picard.sourceforge.net/) to read from the BAM file
