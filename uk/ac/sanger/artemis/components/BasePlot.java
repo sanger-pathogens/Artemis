@@ -28,6 +28,7 @@ package uk.ac.sanger.artemis.components;
 import uk.ac.sanger.artemis.*;
 import uk.ac.sanger.artemis.sequence.*;
 import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
+import uk.ac.sanger.artemis.editor.MultiLineToolTipUI;
 import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.Key;
 import uk.ac.sanger.artemis.io.Location;
@@ -183,6 +184,7 @@ public class BasePlot extends Plot
     setBackground(Color.WHITE);
     getSelection().addSelectionChangeListener(this);
 
+    MultiLineToolTipUI.initialize();
     setToolTipText("tool_tip");
     
     addPlotMouseListener(new PlotMouseListener() 
@@ -1006,6 +1008,27 @@ public class BasePlot extends Plot
        tt = tt + ", " + df.format(ypos);
     }
  
+    if(lines != null)
+    {
+      // if heat map display column number
+      String plotType = lines[0].getPlotType();
+      if(plotType.equals(LineAttributes.PLOT_TYPES[2]))
+      {
+        final int graph_height = super.getSize().height -
+                  getLabelHeight() - getScaleHeight() - 2;
+        
+        float hgt = ((float)graph_height/(float)lines.length);
+        float mousePos = (float) (event.getPoint().getY()- 
+                  getLabelHeight() - getScaleHeight() - 2.f );
+
+        int plotNumber = Math.round(( mousePos / hgt )+.5f);
+        if(plotNumber < 1)
+          plotNumber = 1;
+        
+        tt = "Plot number : "+plotNumber+"\n"+tt;
+      }
+    }
+    
     return tt;
   }
 
