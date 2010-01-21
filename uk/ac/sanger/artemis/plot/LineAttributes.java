@@ -40,6 +40,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -258,6 +259,9 @@ public class LineAttributes
     c.gridx = gridx++;
     c.gridy = gridy++;
     gridx++;
+    
+    final JCheckBox applyToAll = new JCheckBox("Apply colour to all");
+
     panel.add(new JLabel("Colour"), c);
     c.gridx = gridx++;
     panel.add(new JLabel("Line style"), c);
@@ -284,7 +288,14 @@ public class LineAttributes
         {
           Color newColour = JColorChooser.showDialog(null, "Colour Chooser",
               thislines[colourNumber].getLineColour());
-          thislines[colourNumber].setLineColour(newColour);
+          
+          if(applyToAll.isSelected())
+          {
+            for(int iplot=0; iplot<numPlots; iplot++)
+              thislines[iplot].setLineColour(newColour);
+          }
+          else
+            thislines[colourNumber].setLineColour(newColour); 
           colourLabel.setBackground(thislines[colourNumber].getLineColour());
           plot.repaint();
         }
@@ -327,6 +338,12 @@ public class LineAttributes
       panel.add(slider, c);
       
     }
+    
+    c.gridx = 0;
+    c.gridy = gridy++;
+    c.gridwidth = GridBagConstraints.REMAINDER;
+    c.anchor = GridBagConstraints.WEST;
+    panel.add(applyToAll, c);
 
     JScrollPane jsp = new JScrollPane(panel, 
         JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
