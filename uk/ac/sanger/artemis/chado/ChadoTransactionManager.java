@@ -2248,7 +2248,8 @@ public class ChadoTransactionManager
   {
     FeaturePub featurePub = new FeaturePub();
     Pub pub = new Pub();
-    pub.setUniqueName(qualifier_string);
+    pub.setUniqueName(qualifier_string.trim());
+
     org.gmod.schema.sequence.Feature feat = 
       new org.gmod.schema.sequence.Feature();
     feat.setUniqueName(uniqueName);
