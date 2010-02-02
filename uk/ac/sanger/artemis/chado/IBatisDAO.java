@@ -878,11 +878,25 @@ public class IBatisDAO extends GmodDAO
         FeatureLoc thisFeatureLoc = (FeatureLoc) featureLocs.get(i);
         int thisSrcFeatureId = 
           thisFeatureLoc.getFeatureBySrcFeatureId().getFeatureId();
+        
         if(srcFeatureId != thisSrcFeatureId)
         {
-          thisFeatureLoc.setFmin(thisFeatureLoc.getFmin()+diffFmin);
-          thisFeatureLoc.setFmax(thisFeatureLoc.getFmax()+diffFmax);
-          sqlMap.update("updateFeatureLoc", thisFeatureLoc);
+          // check to see if the featureloc fmin/fmax are marked as partial
+          // if they are then ignore as they are likely to be the end of
+          // a contig
+          boolean changed = false;
+          if(!thisFeatureLoc.isFminPartial())
+          {
+            thisFeatureLoc.setFmin(thisFeatureLoc.getFmin()+diffFmin);
+            changed = true;
+          }
+          if(!thisFeatureLoc.isFmaxPartial())
+          {
+            thisFeatureLoc.setFmax(thisFeatureLoc.getFmax()+diffFmax);
+            changed = true;
+          }
+          if(changed)
+            sqlMap.update("updateFeatureLoc", thisFeatureLoc);
         }
       }
     }
