@@ -59,6 +59,7 @@ public class RunPfamSearchThread extends Thread
 
       // Send data
       URL url = new URL(pfamUrl);
+
       URLConnection conn = url.openConnection();
       conn.setDoOutput(true);
       OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
@@ -70,13 +71,14 @@ public class RunPfamSearchThread extends Thread
           new InputStreamReader(conn.getInputStream()));
       String urlResults = pfamUrl+"/results?";
       String line;
-      String eta = "10";
+      String eta = "5";
       while ((line = rd.readLine()) != null)
       {
         int index;
-        if((index = line.indexOf("jobId=")) > -1)
+        if((index = line.indexOf("job_id=")) > -1)
         {
-          urlResults = urlResults.concat(line.substring(index));
+          line = line.substring(index+8, line.length()-2);
+          urlResults = urlResults.concat("jobId="+line);
         }
         else if((index = line.indexOf("<estimated_time>")) > -1)
         {
