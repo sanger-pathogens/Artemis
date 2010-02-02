@@ -61,7 +61,7 @@ cd ~/artemis
 
     <PARA>
       <COMMAND>
-java -classpath lib/biojava.jar:lib/jemAlign.jar:lib/j2ssh/j2ssh-core.jar:lib/ibatis/ibatis-2.3.0.677.jar:lib/ibatis/log4j-1.2.14.jar:lib/chado-14-interface.jar:. -Dartemis.environment=UNIX uk.ac.sanger.artemis.components.ArtemisMain
+java -classpath lib/biojava.jar:lib/jemAlign.jar:lib/j2ssh/j2ssh-core.jar:lib/ibatis/ibatis-2.3.4.726.jar:lib/ibatis/log4j-1.2.14.jar:lib/chado-14-interface.jar:lib/postgresql-8.4-701.jdbc3.jar:lib/picard.jar:lib/picard/sam.jar:. -Dartemis.environment=UNIX uk.ac.sanger.artemis.components.ArtemisMain
       </COMMAND>
     </PARA>
   </SECT1>
@@ -71,12 +71,22 @@ java -classpath lib/biojava.jar:lib/jemAlign.jar:lib/j2ssh/j2ssh-core.jar:lib/ib
   <SECT1 ID="RUNNINGMAC">
     <TITLE>Running &prog; on Macintosh Systems</TITLE>
     <PARA>
-On Macintosh machines &prog; can be started by double clicking on the Artemis
+On MacOSX machines &prog; can be started by double clicking on the Artemis
 icon. The icon can be added to the dock by dragging it from a 'Finder' window
 and dropping it onto the position in the dock you want it. In addition
 sequence files (with gff, embl, EMBL, genbank, gbk, fasta, seq, art file name
 extensions) can be dragged and dropped on to the Artemis application image to 
 open them up.
+    </PARA>
+    <PARA>
+To change the memory allocated to &prog; on MacOSX, set the value in the file Info.plist 
+in the directory Artemis.app/Contents. Towards the bottom of the file there are a couple of 
+lines that look like this:
+<SYNOPSIS>
+ &lt;key&gt;VMOptions&lt;/key&gt;
+ &lt;string&gt;-Xmx800m&lt;/string&gt;
+</SYNOPSIS>
+ Changing the value after -Xmx will change the memory used by &prog;. 
     </PARA>
   </SECT1>
 
