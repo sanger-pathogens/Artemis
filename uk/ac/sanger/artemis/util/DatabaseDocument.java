@@ -2279,6 +2279,31 @@ public class DatabaseDocument extends Document
   }
   
   /**
+   * Given a feature uniqueName return the features that are part_of 
+   * that gene
+   * @param geneName
+   * @return
+   */
+  public Vector getPartOfFeatures(final String uniqueName)
+  {
+    Feature feature = getFeatureByUniquename(uniqueName);
+    if(feature == null)
+      return null;
+    
+    Collection frs = feature.getFeatureRelationshipsForObjectId();
+    Iterator it = frs.iterator();
+    Vector partOfFeatures = new Vector(frs.size());
+    while(it.hasNext())
+    {
+      FeatureRelationship fr = (FeatureRelationship)it.next();
+      if(fr.getCvTerm().getName().equalsIgnoreCase("part_of"))
+        partOfFeatures.add(fr.getFeatureBySubjectId());
+    }
+    
+    return partOfFeatures;
+  }
+  
+  /**
    * Given a gene unique name return the poplypeptide chado features that belong
    * to that gene
    * @param geneName
