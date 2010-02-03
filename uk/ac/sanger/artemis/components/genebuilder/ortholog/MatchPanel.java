@@ -370,6 +370,9 @@ public class MatchPanel extends JPanel
         uniqueName = geneField.getText().trim();
         polypeptides = doc.getPolypeptideFeatures(uniqueName);
         
+        if(polypeptides == null || polypeptides.size() == 0)
+          polypeptides = doc.getPartOfFeatures(uniqueName);
+
         final Vector polypeptideNames = new Vector();
         
         for(int i=0; i<polypeptides.size(); i++)
