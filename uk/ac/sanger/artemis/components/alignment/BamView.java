@@ -629,6 +629,10 @@ public class BamView extends JPanel
         {
           me.printStackTrace();
         }
+        catch(net.sf.samtools.util.RuntimeIOException re)
+        {
+          JOptionPane.showMessageDialog(this, re.getMessage());
+        }
       }
     }
     
