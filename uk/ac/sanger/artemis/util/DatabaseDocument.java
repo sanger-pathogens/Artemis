@@ -1385,6 +1385,8 @@ public class DatabaseDocument extends Document
         if(featprop.getValue() != null)
           this_buff.append(GFFStreamFeature.encode(qualifier_name)+ "=" +
                            GFFStreamFeature.encode(featprop.getValue())+";");
+        else
+          this_buff.append(GFFStreamFeature.encode(qualifier_name)+";");
       }
     }
 
