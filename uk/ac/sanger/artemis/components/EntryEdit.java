@@ -1253,6 +1253,7 @@ public class EntryEdit extends JFrame
           FileSelectionDialog fileChooser = new FileSelectionDialog(null, false);
           List<String> listBams = fileChooser.getBamFiles();
 
+          jamPanel.removeAll();
           jamView = new BamView(listBams, null, 2000);
           jamView.setShowScale(false);
           jamView.setBases(getEntryGroup().getBases());
