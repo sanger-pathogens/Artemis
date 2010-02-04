@@ -1398,10 +1398,13 @@ public class ChadoTransactionManager
             ++rank)
         {
           String qualifier_string = (String)new_qualifier_strings.elementAt(rank);
+          
           int index = qualifier_string.indexOf("=");
           if(index > -1)
             qualifier_string = qualifier_string.substring(index+1);
-         
+          else
+            qualifier_string = null;
+
           processFeatureProp(feature, name, qualifier_string, rank, ChadoTransaction.INSERT, 
                              uniquename, lcvterm_id);
         }
