@@ -89,6 +89,7 @@ rpt_family       no         "text"
 rpt_type         no         list    TANDEM INVERTED FLANKING TERMINAL DIRECT \
                                     DISPERSED OTHER
 rpt_unit         no         "text"
+rpt_unit_seq     no         "text"
 segment          no         "text"
 sequenced_mol    no         "list"  "cDNA" "cDNA to genomic RNA" \
                                     "cDNA to mRNA" "cDNA to other RNA" \
