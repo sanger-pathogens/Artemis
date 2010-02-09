@@ -211,6 +211,10 @@ public class BamView extends JPanel
     this.bamList = bamList;
     this.nbasesInView = nbasesInView;
     
+    // filter out unmapped reads by default
+    setSamRecordFlagPredicate(
+        new SAMRecordFlagPredicate(SAMRecordFlagPredicate.READ_UNMAPPED_FLAG));
+    
     if(reference != null)
     {
       EntryGroup entryGroup = new SimpleEntryGroup();
