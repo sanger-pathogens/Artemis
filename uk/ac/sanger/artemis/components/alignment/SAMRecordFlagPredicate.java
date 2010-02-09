@@ -32,7 +32,7 @@ public class SAMRecordFlagPredicate implements SAMRecordPredicate
   
   private static final int READ_PAIRED_FLAG = 0x1;
   private static final int PROPER_PAIR_FLAG = 0x2;
-  private static final int READ_UNMAPPED_FLAG = 0x4;
+  protected static final int READ_UNMAPPED_FLAG = 0x4;
   private static final int MATE_UNMAPPED_FLAG = 0x8;
   private static final int READ_STRAND_FLAG = 0x10;
   private static final int MATE_STRAND_FLAG = 0x20;
