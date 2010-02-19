@@ -25,9 +25,12 @@
 
 package uk.ac.sanger.artemis.io;
 
+import uk.ac.sanger.artemis.FeatureSegmentVector;
 import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 import uk.ac.sanger.artemis.components.genebuilder.cv.GoBox;
+import uk.ac.sanger.artemis.sequence.AminoAcidSequence;
+import uk.ac.sanger.artemis.sequence.Bases;
 import uk.ac.sanger.artemis.util.*;
 
 import java.io.IOException;
@@ -261,6 +264,11 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
         }
       }
       
+      if(qualifiers.getQualifierByName("stop_codon_redefined_as_selenocysteine") != null)
+      {
+        handleSelenocysteine(qualifiers, feature);
+      }
+      
       for(int i=0; i<DATABASE_QUALIFIERS_TO_REMOVE.length; i++)
       {
         if(!getEntryInformation().isValidQualifier((String) DATABASE_QUALIFIERS_TO_REMOVE[i]))
@@ -299,6 +307,7 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
     }
   }
   
+
   /**
    * Merge qualifiers
    * @param qualifiers
@@ -658,4 +667,57 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
       }
     }
   }
+  
+  /**
+   * Change the stop_codon_redefined_as_selenocysteine SO qualifier
+   * to the transl_except EMBL qualifier.
+   * @param qualifiers
+   * @param feature
+   */
+  private void handleSelenocysteine(QualifierVector qualifiers, Feature feature)
+  {
+    if(!feature.getKey().getKeyString().equals(DatabaseDocument.EXONMODEL))
+      return;
+    qualifiers.removeQualifierByName("stop_codon_redefined_as_selenocysteine");
+
+    uk.ac.sanger.artemis.Feature f = ((uk.ac.sanger.artemis.Feature)feature.getUserData());
+    
+    int translatedBasePosion = 0;
+    String aa = f.getTranslation().toString();
+    for(int i=0; i<aa.length(); i++)
+    {
+      if(AminoAcidSequence.isStopCodon(aa.charAt(i)))
+      {
+        translatedBasePosion = i*3;
+        break;
+      }
+    }
+
+    FeatureSegmentVector segments = f.getSegments();
+    int nbases = 0;
+    int sequenceloc = 0;
+    for(int i=0; i<segments.size(); i++)
+    {
+      int seglen = segments.elementAt(i).getBases().length();
+      if(nbases+seglen > translatedBasePosion)
+      {
+        Bases bases = f.getStrand().getBases();
+        sequenceloc = segments.elementAt(i).getStart().getPosition() +
+                              (translatedBasePosion-nbases);
+        
+        if(!f.isForwardFeature())
+          sequenceloc = bases.getComplementPosition(sequenceloc);
+      }
+      nbases += seglen;
+    }
+    
+    String pos = "";
+    if(f.isForwardFeature())
+      pos = sequenceloc+".."+(sequenceloc+2);
+    else
+      pos = "complement("+(sequenceloc-2)+".."+sequenceloc+")";
+    
+    qualifiers.add(new Qualifier("transl_except","(pos:"+pos+",aa:Sec)"));
+  }
+
 }
