@@ -126,8 +126,6 @@ class PrivateBox extends AbstractCvBox
     if(!old.equals(termCombo.getSelectedItem()))
       return true;
     
-    System.out.println(old+"  "+termCombo.getSelectedItem());
-    
     old = getField("qualifier=", origQualifierString);
     if(!old.equals(qualfTextField.getText()))
       return true;
