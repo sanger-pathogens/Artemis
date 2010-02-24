@@ -34,6 +34,7 @@ import uk.ac.sanger.artemis.io.ReadFormatException;
 
 import uk.ac.sanger.artemis.chado.ArtemisUtils;
 import uk.ac.sanger.artemis.chado.ChadoCvTermView;
+import uk.ac.sanger.artemis.chado.ChadoTransactionManager;
 import uk.ac.sanger.artemis.chado.FeatureForUpdatingResidues;
 import uk.ac.sanger.artemis.chado.IBatisDAO;
 import uk.ac.sanger.artemis.chado.JdbcDAO;
@@ -1579,6 +1580,12 @@ public class DatabaseDocument extends Document
       constructCvTermString(attr_buff, dao, feature_cvterm, featureCvTermDbXRefs, 
           featureCvTermPubs, dbXRef, false, gene_builder);
     }
+    else if(cvterm.getCv().getName().equals(ChadoTransactionManager.PRIVATE_CV))
+    {
+      attr_buff.append("private=");
+      constructCvTermString(attr_buff, dao, feature_cvterm, featureCvTermDbXRefs, 
+          featureCvTermPubs, dbXRef, false, gene_builder);
+    }
     else if(cvterm.getCv().getName().equals(DatabaseDocument.RILEY_TAG_CVNAME))
     {
       // class include the cvTermId as a convenience for looking up the term
@@ -1600,6 +1607,7 @@ public class DatabaseDocument extends Document
           featureCvTermPubs, dbXRef, true, gene_builder);
 
     }
+    
   }
   
   /**
