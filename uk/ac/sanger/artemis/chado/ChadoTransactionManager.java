@@ -137,6 +137,8 @@ public class ChadoTransactionManager
   public static String PRODUCT_DB = "PRODUCT";
   public static String PRODUCT_CV = 
          Options.getOptions().getProperty("product_cvname");
+  public static String PRIVATE_CV = 
+          Options.getOptions().getProperty("private_cvname");
   
   // number of SQL commands successfully processed during a commit
   public static int commitReturnValue = 0;
@@ -156,6 +158,10 @@ public class ChadoTransactionManager
     if(Options.getOptions().getPropertyTruthValue("product_cv"))
     { 
       logger4j.debug("PRODUCT STORED AS A CV (product_cv=yes) IN "+PRODUCT_CV);
+      int nsize = 4;
+      if(PRIVATE_CV != null)
+        nsize++;
+      
       CV_NAME = new String[]
         { "GO",
           "controlled_curation",
@@ -165,11 +171,17 @@ public class ChadoTransactionManager
     else
     {
       logger4j.debug("PRODUCT STORED AS A FEATUREPROP (product_cv=no)");
+      int nsize = 3;
+      if(PRIVATE_CV != null)
+        nsize++;
+      
       CV_NAME = new String[]
         { "GO",
           "controlled_curation",
           "class" };
     }
+    if(PRIVATE_CV != null)
+      CV_NAME[CV_NAME.length-1] = "private";
     logger4j.debug("SYNONYM NAMES ARE STORED IN "+SYNONYM_TAG_CVNAME);
   }
   
@@ -2304,6 +2316,8 @@ public class ChadoTransactionManager
       cvName = "CC_";
     else if(qualifier_name.equals("product"))
       cvName = PRODUCT_CV;
+    else if(qualifier_name.equals("private"))
+      cvName = PRIVATE_CV;
     
     for(int i=0; i<strings.size(); i++)
     {    
