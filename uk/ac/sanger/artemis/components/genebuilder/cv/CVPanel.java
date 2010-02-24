@@ -163,6 +163,19 @@ public class CVPanel extends JPanel
       }
     });
     xBox.add(lookUp);
+    
+    JButton addPrivate = new JButton("ADD PRIVATE");
+    addPrivate.setOpaque(false);
+    addPrivate.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      { 
+        addPrivateQualifier();
+      }
+    });
+    if(ChadoTransactionManager.PRIVATE_CV != null)
+      xBox.add(addPrivate);
+    
     xBox.add(Box.createHorizontalGlue());
     cvBox.add(xBox);
 
@@ -247,8 +260,6 @@ public class CVPanel extends JPanel
       }
     }
     
-
-    
     int n = 0;
     for(int qualifier_index = 0; qualifier_index < cvQualifiers.size();
         ++qualifier_index) 
@@ -288,6 +299,57 @@ public class CVPanel extends JPanel
     if(n > 0)
       GeneEditorPanel.addLightSeparator(cvBox);
     
+    // private field
+    n = 0;
+    for(int qualifier_index = 0; qualifier_index < cvQualifiers.size();
+        ++qualifier_index) 
+    {
+      final Qualifier this_qualifier = 
+        (Qualifier)cvQualifiers.elementAt(qualifier_index);
+      if(this_qualifier.getName().equals("private"))
+      {
+        final StringVector qualifier_strings = this_qualifier.getValues();
+
+        for(int value_index = 0; value_index < qualifier_strings.size(); ++value_index)
+        {
+          final int v_index = value_index;
+
+          xBox = Box.createHorizontalBox();
+          final String qualifierString = (String) qualifier_strings
+              .elementAt(value_index);
+          
+          empty = false;
+            
+          xBox = Box.createHorizontalBox();            
+          final PrivateBox privateBox = new PrivateBox(
+                    this_qualifier,
+                    qualifierString, value_index, 
+                    dimension, go_dimension);
+          editableComponents.add(privateBox);
+            
+          xBox = privateBox.getBox();
+          xBox.add(Box.createHorizontalGlue());
+          xBox.add(getRemoveButton(this_qualifier, v_index));
+          
+          if(n == 0)
+          {
+            final Box xLabel = Box.createHorizontalBox();
+            JLabel lab = new JLabel("Private");
+            lab.setFont(lab.getFont().deriveFont(Font.BOLD));
+            xLabel.add(lab);
+            xLabel.add(Box.createHorizontalGlue());
+            cvBox.add(xLabel); 
+          }
+          n++;
+          cvBox.add(xBox); 
+        }
+      }
+    }
+    
+    if(n > 0)
+      GeneEditorPanel.addLightSeparator(cvBox);
+    
+    //
     if(goBox != null)
     {
       cvBox.add(goHeadings);
@@ -556,6 +618,43 @@ public class CVPanel extends JPanel
     removeAll();
     add(createCVQualifiersComponent(),
         BorderLayout.CENTER);
+  }
+  
+  /**
+   * Add a private qualifier
+   */
+  private void addPrivateQualifier()
+  {
+    cvQualifiers = getCvQualifiers();
+    Qualifier cv_qualifier = cvQualifiers.getQualifierByName("private");
+    
+    final int index;
+    if(cv_qualifier == null)
+    {
+      cv_qualifier = new Qualifier("private");
+      index = -1;
+    }
+    else
+     index = cvQualifiers.indexOf(cv_qualifier);
+    
+    cv_qualifier.addValue(
+        "term="+PrivateBox.getDefaultTerm().getName()+";"+
+        "curatorName="+doc.getUserName()+";"+
+        "date="+ DatePanel.getDate());
+    
+    if(index > -1)
+    {
+      cvQualifiers.remove(index);
+      cvQualifiers.add(index, cv_qualifier);
+    }
+    else
+      cvQualifiers.add(cv_qualifier);
+    
+    removeAll();
+    add(createCVQualifiersComponent(),
+        BorderLayout.CENTER);
+    revalidate();
+    repaint();
   }
 
   /**
