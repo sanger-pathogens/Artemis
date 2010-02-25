@@ -164,17 +164,17 @@ public class CVPanel extends JPanel
     });
     xBox.add(lookUp);
     
-    JButton addPrivate = new JButton("ADD PRIVATE");
-    addPrivate.setOpaque(false);
-    addPrivate.addActionListener(new ActionListener()
+    JButton addHistory = new JButton("ADD HISTORY");
+    addHistory.setOpaque(false);
+    addHistory.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
       { 
-        addPrivateQualifier();
+        addHistoryQualifier();
       }
     });
-    if(ChadoTransactionManager.PRIVATE_CV != null)
-      xBox.add(addPrivate);
+    if(ChadoTransactionManager.HISTORY_CV != null)
+      xBox.add(addHistory);
     
     xBox.add(Box.createHorizontalGlue());
     cvBox.add(xBox);
@@ -299,14 +299,14 @@ public class CVPanel extends JPanel
     if(n > 0)
       GeneEditorPanel.addLightSeparator(cvBox);
     
-    // private field
+    // history field
     n = 0;
     for(int qualifier_index = 0; qualifier_index < cvQualifiers.size();
         ++qualifier_index) 
     {
       final Qualifier this_qualifier = 
         (Qualifier)cvQualifiers.elementAt(qualifier_index);
-      if(this_qualifier.getName().equals("private"))
+      if(this_qualifier.getName().equals("history"))
       {
         final StringVector qualifier_strings = this_qualifier.getValues();
 
@@ -321,20 +321,20 @@ public class CVPanel extends JPanel
           empty = false;
             
           xBox = Box.createHorizontalBox();            
-          final PrivateBox privateBox = new PrivateBox(
+          final HistoryBox historyBox = new HistoryBox(
                     this_qualifier,
                     qualifierString, value_index, 
                     dimension, go_dimension);
-          editableComponents.add(privateBox);
+          editableComponents.add(historyBox);
             
-          xBox = privateBox.getBox();
+          xBox = historyBox.getBox();
           xBox.add(Box.createHorizontalGlue());
           xBox.add(getRemoveButton(this_qualifier, v_index));
           
           if(n == 0)
           {
             final Box xLabel = Box.createHorizontalBox();
-            JLabel lab = new JLabel("Private");
+            JLabel lab = new JLabel("History");
             lab.setFont(lab.getFont().deriveFont(Font.BOLD));
             xLabel.add(lab);
             xLabel.add(Box.createHorizontalGlue());
@@ -621,24 +621,24 @@ public class CVPanel extends JPanel
   }
   
   /**
-   * Add a private qualifier
+   * Add a history qualifier
    */
-  private void addPrivateQualifier()
+  private void addHistoryQualifier()
   {
     cvQualifiers = getCvQualifiers();
-    Qualifier cv_qualifier = cvQualifiers.getQualifierByName("private");
+    Qualifier cv_qualifier = cvQualifiers.getQualifierByName("history");
     
     final int index;
     if(cv_qualifier == null)
     {
-      cv_qualifier = new Qualifier("private");
+      cv_qualifier = new Qualifier("history");
       index = -1;
     }
     else
      index = cvQualifiers.indexOf(cv_qualifier);
     
     cv_qualifier.addValue(
-        "term="+PrivateBox.getDefaultTerm().getName()+";"+
+        "term="+HistoryBox.getDefaultTerm().getName()+";"+
         "curatorName="+doc.getUserName()+";"+
         "date="+ DatePanel.getDate());
     

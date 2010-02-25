@@ -1,4 +1,4 @@
-/* PrivateBox
+/* HistoryBox
  *
  * created: 2007
  *
@@ -40,7 +40,7 @@ import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.util.StringVector;
 
-class PrivateBox extends AbstractCvBox
+class HistoryBox extends AbstractCvBox
 {
   private Box xBox;
   private int value_index;
@@ -52,14 +52,14 @@ class PrivateBox extends AbstractCvBox
   private Qualifier origQualifier;
   
   /**
-   * Display private qualifiers
+   * Display history qualifiers
    * @param qualifier
    * @param qualifierString
    * @param value_index
    * @param dimension
    * @param go_dimension
    */
-  public PrivateBox(final Qualifier qualifier,
+  public HistoryBox(final Qualifier qualifier,
                     final String qualifierString,
                     final int value_index,
                     final Dimension dimension,
@@ -255,7 +255,7 @@ class PrivateBox extends AbstractCvBox
   
   protected static Vector<CvTerm> getCvTerms()
   {
-    return DatabaseDocument.getCvterms("", ChadoTransactionManager.PRIVATE_CV, false);
+    return DatabaseDocument.getCvterms("", ChadoTransactionManager.HISTORY_CV, false);
   }
   
   private static Vector<String> getCvTermStrings()
@@ -273,7 +273,7 @@ class PrivateBox extends AbstractCvBox
   protected static CvTerm getDefaultTerm()
   {
     CvTerm cvterm =
-      (CvTerm) DatabaseDocument.getCvterms("", ChadoTransactionManager.PRIVATE_CV, false).get(0);
+      (CvTerm) DatabaseDocument.getCvterms("", ChadoTransactionManager.HISTORY_CV, false).get(0);
     return cvterm;
   }
 }
