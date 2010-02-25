@@ -1580,9 +1580,9 @@ public class DatabaseDocument extends Document
       constructCvTermString(attr_buff, dao, feature_cvterm, featureCvTermDbXRefs, 
           featureCvTermPubs, dbXRef, false, gene_builder);
     }
-    else if(cvterm.getCv().getName().equals(ChadoTransactionManager.PRIVATE_CV))
+    else if(cvterm.getCv().getName().equals(ChadoTransactionManager.HISTORY_CV))
     {
-      attr_buff.append("private=");
+      attr_buff.append("history=");
       constructCvTermString(attr_buff, dao, feature_cvterm, featureCvTermDbXRefs, 
           featureCvTermPubs, dbXRef, false, gene_builder);
     }
