@@ -562,6 +562,7 @@ extra_qualifiers_gff = \
     controlled_curation "text" \
     fasta_file "text" \
     GO "text" \
+    history "text" \
     isFminPartial none \
     isFmaxPartial none \
     literature "text" \
@@ -678,6 +679,7 @@ invisible_qualifiers_gff= \
     GO             \
     GPI_anchored \
     GPI_anchor_cleavage_site \
+    history \
     ID             \
     insertion_seq  \
     isFminPartial \
@@ -857,8 +859,8 @@ product_cv=yes
 product_cvname = genedb_products
 # cv containing synonym names
 synonym_cvname = genedb_synonym_type
-# cv containing annotation types for private qualifier
-private_cvname = annotation_change
+# cv containing annotation types for history qualifier
+history_cvname = annotation_change
 
 # set default delete behaviour to make things obsolete, if
 # this is not provided the default is to permanently delete
