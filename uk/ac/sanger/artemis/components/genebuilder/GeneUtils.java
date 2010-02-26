@@ -1236,7 +1236,7 @@ public class GeneUtils
       final String oldId = getUniqueName(child);
       
       final Set childrenOfChild = gene.getChildren(child);
-      int index = oldId.indexOf('.');
+      int index = oldId.lastIndexOf('.');
       
       if(index == -1)
         index = oldId.indexOf(':');
@@ -1255,7 +1255,7 @@ public class GeneUtils
           while(itKeys.hasNext())
           {
             String oldKey = (String)itKeys.next();
-            index = oldKey.indexOf('.');
+            index = oldKey.lastIndexOf('.');
             if(index == -1)
               index = oldKey.indexOf(':');
             final String newKey = newName + oldKey.substring(index);

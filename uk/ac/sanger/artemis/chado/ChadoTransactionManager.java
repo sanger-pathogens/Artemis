@@ -65,6 +65,8 @@ import java.util.Vector;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Enumeration;
+import java.util.regex.Pattern;
+
 import javax.swing.JOptionPane;
 
 import org.gmod.schema.sequence.FeatureCvTermProp;
@@ -2012,9 +2014,16 @@ public class ChadoTransactionManager
       if(children != null && children.size()>0)
       {
         final String prefix;
-
-        if(uniqueName[0].indexOf(".") > -1)
-          prefix = uniqueName[0].split("\\.")[0];
+        int index;
+        if((index = uniqueName[0].lastIndexOf(".") )> -1)
+        {
+          boolean numbered = Pattern.matches("\\S+\\.\\d+$", uniqueName[0]);
+          //prefix = uniqueName[0].split("\\.")[0];         
+          if(numbered)
+            prefix = uniqueName[0].substring(0, index);
+          else
+            prefix = uniqueName[0];
+        }
         else
           prefix = uniqueName[0].split(":")[0];
         int val = JOptionPane.showConfirmDialog(null, 
