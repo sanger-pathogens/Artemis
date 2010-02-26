@@ -354,7 +354,7 @@ public class BamView extends JPanel
     else
     {
       final URL urlBamFile = new URL(bam);
-      samFileReader = new SAMFileReader(urlBamFile, bamIndexFile, true);
+      samFileReader = new SAMFileReader(urlBamFile, bamIndexFile, false);
     }
     samFileReader.setValidationStringency(ValidationStringency.SILENT);
     samFileReaderHash.put(bam, samFileReader);
