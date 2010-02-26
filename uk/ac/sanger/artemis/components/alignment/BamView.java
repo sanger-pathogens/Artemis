@@ -880,12 +880,12 @@ public class BamView extends JPanel
         {
           if(insertions == null)
             insertions = new Hashtable<Integer, String>();
-          
+
           g2.setColor(deepPink);
-          
-          int xscreen = refPos*ALIGNMENT_PIX_PER_BASE;
+
+          int xscreen = (refPos+1)*ALIGNMENT_PIX_PER_BASE;
           insertions.put(xscreen, 
-              (samRecord.getAlignmentStart()+len-2)+" "+
+              (samRecord.getAlignmentStart()+len-1)+" "+
               readSeq.substring(blockEnd-1, nextBlockStart-1));
           g2.drawLine(xscreen, ypos, xscreen, ypos-BASE_HEIGHT);
           
