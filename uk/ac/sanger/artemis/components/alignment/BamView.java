@@ -132,7 +132,7 @@ public class BamView extends JPanel
   private Hashtable<String, Integer> seqLengths = new Hashtable<String, Integer>();
   private Hashtable<String, Integer> offsetLengths;
   private Vector<String> seqNames = new Vector<String>();
-  private List<String> bamList;
+  protected List<String> bamList;
   private List<Integer> hideBamList = new Vector<Integer>();
 
   private SAMRecordFlagPredicate samRecordFlagPredicate;
@@ -447,9 +447,9 @@ public class BamView extends JPanel
                               String refName, int start, int end,
                               int bamIndex)
   { 
-    //boolean multipleBAM = false;
-    //if(bamList.size() > 1)
-    //  multipleBAM = true;
+    boolean multipleBAM = false;
+    if(bamList.size() > 1)
+      multipleBAM = true;
     
     CloseableIterator<SAMRecord> it = inputSam.queryOverlapping(refName, start, end);
     MemoryMXBean memory = ManagementFactory.getMemoryMXBean();
@@ -469,8 +469,8 @@ public class BamView extends JPanel
           if(samRecordMapQPredicate == null ||
              samRecordMapQPredicate.testPredicate(samRecord))
           {
-            //if(multipleBAM)
-            //  samRecord.setAttribute("FL", bamIndex);
+            if(multipleBAM)
+              samRecord.setAttribute("FL", bamIndex);
             readsInView.add(samRecord);
           }
         }
@@ -1408,7 +1408,8 @@ public class BamView extends JPanel
     
     if(offTheTop)
       g2.setColor(darkOrange); 
-    else if(samRecord.getReadNegativeStrandFlag()) // strand of the query (1 for reverse)
+    else if(samRecord.getReadNegativeStrandFlag() &&
+            samRecord.getMateNegativeStrandFlag()) // strand of the query (1 for reverse)
       g2.setColor(Color.red);
     else
       g2.setColor(Color.blue);
