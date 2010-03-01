@@ -68,7 +68,8 @@ import net.sf.samtools.SAMRecord;
         public void actionPerformed(ActionEvent e)
         {
           lines =
-            LineAttributes.configurePlots(jamView.bamList, lines, CoveragePanel.this);
+            LineAttributes.configurePlots(jamView.bamList, 
+                getLineAttributes(), CoveragePanel.this);
         }
       });
       popup.add(configure);
@@ -211,6 +212,13 @@ import net.sf.samtools.SAMRecord;
     {
       if(lines == null)
         lines = LineAttributes.init(jamView.bamList.size());
+      else if(lines.length < jamView.bamList.size())
+      {
+        LineAttributes tmpLines[] = LineAttributes.init(jamView.bamList.size());
+        for(int i=0;i<lines.length;i++)
+          tmpLines[i] = lines[i];
+        lines = tmpLines;
+      }
       return lines;
     }
   
