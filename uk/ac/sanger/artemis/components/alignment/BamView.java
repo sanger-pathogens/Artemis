@@ -164,14 +164,15 @@ public class BamView extends JPanel
   private int laststart;
   private int lastend;
   private int maxUnitIncrement = 8;
-  
+
   private boolean asynchronous = true;
   private boolean showBaseAlignment = false;
   
   private JMenu bamFilesMenu = new JMenu("BAM files");
   private JCheckBoxMenuItem logMenuItem = new JCheckBoxMenuItem("Use Log Scale", logScale);
   private JCheckBoxMenuItem checkBoxStackView = new JCheckBoxMenuItem("Stack View");
-  private JCheckBoxMenuItem baseQualityColour = new JCheckBoxMenuItem("Colour by Base Quality");;
+  private JCheckBoxMenuItem colourByCoverageColour = new JCheckBoxMenuItem("Coverage Plot Colours");
+  private JCheckBoxMenuItem baseQualityColour = new JCheckBoxMenuItem("Base Quality");
   private JCheckBoxMenuItem markInsertions = new JCheckBoxMenuItem("Mark Insertions", true);
   private AlphaComposite translucent = 
     AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f);
@@ -1012,12 +1013,14 @@ public class BamView extends JPanel
                    (int)((samNextRecord.getAlignmentStart()-getBaseAtStartOfView())*pixPerBase), ypos);
           }
           
-          if( samRecord.getReadNegativeStrandFlag() && // strand of the query (1 for reverse)
+          if(colourByCoverageColour.isSelected())
+            g2.setColor(getColourByCoverageColour(samRecord));
+          else if( samRecord.getReadNegativeStrandFlag() && // strand of the query (1 for reverse)
               samNextRecord.getReadNegativeStrandFlag() )
             g2.setColor(Color.red);
           else
             g2.setColor(Color.blue);
-          
+
           drawRead(g2, samRecord, pixPerBase, ypos, baseAtStartOfView);
           drawRead(g2, samNextRecord, pixPerBase, ypos, baseAtStartOfView);
         }
@@ -1050,7 +1053,7 @@ public class BamView extends JPanel
     
     return ypos;
   }
-  
+ 
   /**
    * Draw the reads as lines in vertical stacks. The reads are colour 
    * coded as follows:
@@ -1103,10 +1106,13 @@ public class BamView extends JPanel
       int recordStart = samRecord.getAlignmentStart()+offset;
       int recordEnd = samRecord.getAlignmentEnd()+offset;
       
-      if(lstStart != recordStart || lstEnd != recordEnd)
+      if(colourByCoverageColour.isSelected() ||
+         lstStart != recordStart || lstEnd != recordEnd)
       { 
-        if (!samRecord.getReadPairedFlag() ||  // read is not paired in sequencing
-            samRecord.getMateUnmappedFlag() )  // mate is unmapped )  // mate is unmapped 
+        if(colourByCoverageColour.isSelected())
+          g2.setColor(getColourByCoverageColour(samRecord));
+        else if (!samRecord.getReadPairedFlag() ||   // read is not paired in sequencing
+                  samRecord.getMateUnmappedFlag() )  // mate is unmapped )  // mate is unmapped 
           g2.setColor(Color.black);
         else
           g2.setColor(Color.blue);
@@ -1196,8 +1202,10 @@ public class BamView extends JPanel
       
         if(lstStart != recordStart || lstEnd != recordEnd)
         { 
-          if (!samRecord.getReadPairedFlag() ||   // read is not paired in sequencing
-               samRecord.getMateUnmappedFlag() )  // mate is unmapped 
+          if(colourByCoverageColour.isSelected())
+            g2.setColor(getColourByCoverageColour(samRecord));
+          else if (!samRecord.getReadPairedFlag() ||   // read is not paired in sequencing
+                    samRecord.getMateUnmappedFlag() )  // mate is unmapped 
             g2.setColor(Color.black);
           else
             g2.setColor(Color.blue);
@@ -1350,7 +1358,9 @@ public class BamView extends JPanel
         }
       }
       
-      if( pr.sam1.getReadNegativeStrandFlag() && // strand of the query (1 for reverse)
+      if(colourByCoverageColour.isSelected())
+        g2.setColor(getColourByCoverageColour(pr.sam1));
+      else if( pr.sam1.getReadNegativeStrandFlag() && // strand of the query (1 for reverse)
           ( pr.sam2 != null && pr.sam2.getReadNegativeStrandFlag() ) )
         g2.setColor(Color.red);
       else
@@ -1406,14 +1416,15 @@ public class BamView extends JPanel
       }
     }
     
-    if(offTheTop)
+    if(colourByCoverageColour.isSelected())
+      g2.setColor(getColourByCoverageColour(samRecord));
+    else if(offTheTop)
       g2.setColor(darkOrange); 
     else if(samRecord.getReadNegativeStrandFlag() &&
             samRecord.getMateNegativeStrandFlag()) // strand of the query (1 for reverse)
       g2.setColor(Color.red);
     else
       g2.setColor(Color.blue);
-
  
     drawRead(g2, samRecord, pixPerBase, ypos, baseAtStartOfView);
     
@@ -1991,6 +2002,7 @@ public class BamView extends JPanel
     final JCheckBoxMenuItem checkIsizeStackView = new JCheckBoxMenuItem("Inferred Size View", true);
     checkBoxStackView.setFont(checkIsizeStackView.getFont());
     baseQualityColour.setFont(checkIsizeStackView.getFont());
+    colourByCoverageColour.setFont(checkIsizeStackView.getFont());
     markInsertions.setFont(checkIsizeStackView.getFont());
     
     group.add(checkBoxStackView);
@@ -2084,6 +2096,27 @@ public class BamView extends JPanel
     viewMenu.add(checkBoxStrandStackView);  
     menu.add(viewMenu);
  
+    final JCheckBoxMenuItem checkBoxSNPs = new JCheckBoxMenuItem("SNPs");
+    // 
+    JMenu colourMenu = new JMenu("Colour By");
+    colourMenu.add(colourByCoverageColour);
+    
+    baseQualityColour.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        if(baseQualityColour.isSelected())
+        {
+          checkBoxSNPs.setSelected(false);
+          isSNPs = false;
+        }
+        repaint();
+      }
+    });
+    colourMenu.add(baseQualityColour);
+    menu.add(colourMenu);
+    
+    //
     JMenu showMenu = new JMenu("Show");
     JCheckBoxMenuItem checkBoxSingle = new JCheckBoxMenuItem("Single Reads");
     checkBoxSingle.addActionListener(new ActionListener()
@@ -2095,8 +2128,7 @@ public class BamView extends JPanel
       }
     });
     showMenu.add(checkBoxSingle);
-
-    final JCheckBoxMenuItem checkBoxSNPs = new JCheckBoxMenuItem("SNPs");
+    
     checkBoxSNPs.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
@@ -2115,20 +2147,6 @@ public class BamView extends JPanel
       }
     });
     showMenu.add(checkBoxSNPs);
- 
-    baseQualityColour.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent e)
-      {
-        if(baseQualityColour.isSelected())
-        {
-          checkBoxSNPs.setSelected(false);
-          isSNPs = false;
-        }
-        repaint();
-      }
-    });
-    showMenu.add(baseQualityColour);
     
     markInsertions.addActionListener(new ActionListener()
     {
@@ -2169,7 +2187,7 @@ public class BamView extends JPanel
     
     menu.add(new JSeparator());
 
-    JMenu maxHeightMenu = new JMenu("Plot Height");
+    JMenu maxHeightMenu = new JMenu("BamView Height");
     menu.add(maxHeightMenu);
     
     final String hgts[] =
@@ -2455,6 +2473,20 @@ public class BamView extends JPanel
     {
       e.printStackTrace();
     }
+  }
+  
+  /**
+   * Get the colour for the given read given to it by the coverage plot.
+   * @param samRecord
+   * @return
+   */
+  private Color getColourByCoverageColour(SAMRecord samRecord)
+  {
+    LineAttributes lines[] = CoveragePanel.getLineAttributes(bamList.size());
+    int fileIndex = 0;
+    if(bamList.size()>1)
+      fileIndex = (Integer) samRecord.getAttribute("FL");
+    return lines[fileIndex].getLineColour(); 
   }
   
   private Selection getSelection()
