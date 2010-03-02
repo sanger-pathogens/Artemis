@@ -53,7 +53,7 @@ import net.sf.samtools.SAMRecord;
     private float pixPerBase;
     private BamView jamView;
     private JPopupMenu popup;
-    private LineAttributes lines[];
+    private static LineAttributes lines[];
     
     public CoveragePanel(final BamView jamView)
     {
@@ -69,7 +69,7 @@ import net.sf.samtools.SAMRecord;
         {
           lines =
             LineAttributes.configurePlots(jamView.bamList, 
-                getLineAttributes(), CoveragePanel.this);
+                getLineAttributes(jamView.bamList.size()), CoveragePanel.this);
         }
       });
       popup.add(configure);
@@ -148,7 +148,7 @@ import net.sf.samtools.SAMRecord;
         }
       }
 
-      lines = getLineAttributes();
+      lines = getLineAttributes(jamView.bamList.size());
       Enumeration<String> plotEum = plots.keys();
       while(plotEum.hasMoreElements())
       {
@@ -208,13 +208,13 @@ import net.sf.samtools.SAMRecord;
     }
     
     
-    private LineAttributes[] getLineAttributes()
+    protected static LineAttributes[] getLineAttributes(int nsize)
     {
       if(lines == null)
-        lines = LineAttributes.init(jamView.bamList.size());
-      else if(lines.length < jamView.bamList.size())
+        lines = LineAttributes.init(nsize);
+      else if(lines.length < nsize)
       {
-        LineAttributes tmpLines[] = LineAttributes.init(jamView.bamList.size());
+        LineAttributes tmpLines[] = LineAttributes.init(nsize);
         for(int i=0;i<lines.length;i++)
           tmpLines[i] = lines[i];
         lines = tmpLines;
