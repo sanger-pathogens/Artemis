@@ -142,10 +142,8 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
     {
       try
       {
-        if(feature instanceof GFFStreamFeature && feature.getEntry() instanceof DatabaseDocumentEntry)
+        if(feature instanceof GFFStreamFeature)
           return mapGffToNativeFeature(feature);
-        else if(feature instanceof GFFStreamFeature)
-          return new GFFStreamFeature(feature);
         else if (this instanceof EmblDocumentEntry)
           return new EmblStreamFeature(feature);
         else
