@@ -32,6 +32,7 @@ import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
 import uk.ac.sanger.artemis.io.EmblStreamFeature;
 import uk.ac.sanger.artemis.io.DocumentEntry;
 import uk.ac.sanger.artemis.io.EmblDocumentEntry;
+import uk.ac.sanger.artemis.io.GFFDocumentEntry;
 import uk.ac.sanger.artemis.io.PartialSequence;
 import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.io.RangeVector;
@@ -224,7 +225,8 @@ public class Entry implements FeatureChangeListener, Selectable
   {
     final EntryInformation artemis_entry_information;
     
-    if(getEMBLEntry() instanceof DatabaseDocumentEntry &&
+    if((getEMBLEntry() instanceof DatabaseDocumentEntry ||
+        getEMBLEntry() instanceof GFFDocumentEntry) &&
        destination_type == DocumentEntryFactory.EMBL_FORMAT)
       artemis_entry_information = Options.getArtemisEntryInformation();
     else
