@@ -419,7 +419,9 @@ public class EntryFileDialog extends StickyFileChooser
           if(n != JOptionPane.CANCEL_OPTION &&
              !idField.getText().trim().equals(""))
           {
-            String header = "ID   "+idField.getText().trim();
+            int length = entry.getBases().getLength();
+            String header = "ID   "+idField.getText().trim()+"; SV ; ; ; ; ; "+length+" BP.";
+            //String header = "ID   "+idField.getText().trim();
             if(entry.getFeatureCount() > 0)
               header = header.concat("\nFH   Key             "+
                                      "Location/Qualifiers\nFH\n");
