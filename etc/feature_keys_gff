@@ -22,13 +22,14 @@ three_prime_UTR     ID Name Alias Parent Note Target Gap Derives_from Dbxref Ont
 five_prime_UTR      ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id isObsolete timelastmodified systematic_id note comment private curation
 transcript          ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id isObsolete timelastmodified private comment
 primary_transcript  ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id isObsolete timelastmodified product note comment controlled_curation 
-tRNA                ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id isObsolete timelastmodified product note comment controlled_curation private
-rRNA                ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id isObsolete timelastmodified product note comment controlled_curation private
-mRNA                ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id isObsolete timelastmodified product note comment controlled_curation private
-ncRNA               ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id isObsolete timelastmodified product note comment controlled_curation private
-snRNA               ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id isObsolete timelastmodified product note comment controlled_curation private
-scRNA               ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id isObsolete timelastmodified product note comment controlled_curation private
-snoRNA              ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id isObsolete timelastmodified product note comment controlled_curation private
+tRNA                ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id isObsolete timelastmodified product note comment controlled_curation private locus_tag
+rRNA                ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id isObsolete timelastmodified product note comment controlled_curation private locus_tag
+tmRNA                ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id isObsolete timelastmodified product note comment controlled_curation private locus_tag
+mRNA                ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id isObsolete timelastmodified product note comment controlled_curation private locus_tag
+ncRNA               ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id isObsolete timelastmodified product note comment controlled_curation private locus_tag
+snRNA               ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id isObsolete timelastmodified product note comment controlled_curation private locus_tag
+scRNA               ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id isObsolete timelastmodified product note comment controlled_curation private locus_tag
+snoRNA              ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id isObsolete timelastmodified product note comment controlled_curation private locus_tag
 polypeptide_domain  ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id isObsolete timelastmodified 
 polypeptide_motif   ID Name Alias Parent Note Target Gap Derives_from feature_id isObsolete timelastmodified
 signal_peptide      ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id isObsolete timelastmodified 
