@@ -30,6 +30,7 @@ import uk.ac.sanger.artemis.FeatureSegmentVector;
 import uk.ac.sanger.artemis.sequence.SequenceChangeListener;
 import uk.ac.sanger.artemis.sequence.SequenceChangeEvent;
 import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
+import uk.ac.sanger.artemis.components.genebuilder.ProteinMapPanel;
 import uk.ac.sanger.artemis.components.genebuilder.cv.GoBox;
 import uk.ac.sanger.artemis.components.genebuilder.ortholog.MatchPanel;
 import uk.ac.sanger.artemis.components.genebuilder.ortholog.OrthoParalogTable;
@@ -37,6 +38,7 @@ import uk.ac.sanger.artemis.components.genebuilder.ortholog.SimilarityTable;
 import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
 import uk.ac.sanger.artemis.io.DatabaseInferredFeature;
 import uk.ac.sanger.artemis.io.DocumentEntry;
+import uk.ac.sanger.artemis.io.LazyQualifierValue;
 import uk.ac.sanger.artemis.io.QualifierLazyLoading;
 import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.io.Qualifier;
@@ -511,6 +513,10 @@ public class ChadoTransactionManager
         
         final GFFStreamFeature gff_feature =
           (GFFStreamFeature)event.getFeature().getEmblFeature();
+        
+        deletePolypetideDomains(gff_feature, event.getFeature());
+        deleteSimilarity(feature_uniquename, gff_feature);
+        
         if(event.getFeature().getSegments().size() > 0)
         {
           RangeVector ranges = gff_feature.getLocation().getRanges();
@@ -523,8 +529,6 @@ public class ChadoTransactionManager
         }
         else
           deleteFeature(feature_uniquename, gff_feature.getKey().getKeyString(), gff_feature);
-        
-        deleteSimilarity(feature_uniquename, gff_feature);
       }
       catch(InvalidRelationException e)
       {
@@ -967,6 +971,52 @@ public class ChadoTransactionManager
     List tsns = DatabaseDocument.getUpdateResiduesColumnTransactions(tsn);
     if(tsns != null)
       sql.addAll(tsns);
+  }
+  
+  /**
+   * Delete protein domains, non_cytoplasm_location, cytoplasm_location,
+   * membrane_structure, transmembrane, signal_peptide
+   * @param gff_feature
+   * @param feature
+   */
+  private void deletePolypetideDomains(final GFFStreamFeature gff_feature,
+                                       final Feature feature)
+  {
+    if(!gff_feature.getKey().getKeyString().equals("polypeptide"))
+      return;
+
+    QualifierVector qualifiers =
+        ProteinMapPanel.getProteinMapQualifiers(feature);
+    
+    if(qualifiers == null)
+      return;
+    for(int i=0; i<qualifiers.size(); i++)
+    {
+      if(!(qualifiers.get(i) instanceof QualifierLazyLoading))
+        continue;
+      
+      QualifierLazyLoading qualifier = (QualifierLazyLoading) qualifiers.get(i);
+      List<LazyQualifierValue> values = qualifier.getLazyValues();
+      for(int j=0; j<values.size(); j++)
+      {
+        if(values.get(j) instanceof FeatureLocLazyQualifierValue)
+        {
+          FeatureLocLazyQualifierValue val =
+              (FeatureLocLazyQualifierValue)values.get(j);
+          org.gmod.schema.sequence.Feature chadoFeature = val.getMatchFeature();
+            
+          logger4j.debug("FEATURE_DELETED "+val.getMatchFeature().getUniqueName()+
+              " "+qualifier.getName());
+           
+          ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.DELETE,
+               chadoFeature,
+               null, null, "polypeptide_domain",
+               "FEATURE: ID="+chadoFeature.getUniqueName()+" "+qualifier.getName());
+
+          sql.add(tsn);
+        }
+      }
+    }
   }
   
   /**
