@@ -46,6 +46,7 @@ import org.gmod.schema.sequence.FeatureLoc;
 import org.gmod.schema.sequence.FeatureProp;
 import org.gmod.schema.sequence.FeatureRelationship;
 
+import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.util.StringVector;
@@ -287,7 +288,18 @@ public class ArtemisUtils
       final Enumeration id_keys= rangeHash.keys();
       uniqueName = (String)id_keys.nextElement();
       
-      DatabaseDocument doc = (DatabaseDocument)feature.getDocumentEntry().getDocument();
+      DatabaseDocument doc;
+      
+      try
+      {
+        doc = (DatabaseDocument)feature.getDocumentEntry().getDocument();
+      }
+      catch(Exception e)
+      {
+        doc = (DatabaseDocument) (
+            (DatabaseDocumentEntry)((uk.ac.sanger.artemis.Feature)feature.getUserData()).
+            getEntry().getEMBLEntry()).getDocument();
+      }
       FeatureLoc loc = new FeatureLoc();
       Feature srcFeature = new Feature();
       srcFeature.setFeatureId(Integer.parseInt(doc.getSrcFeatureId()));
