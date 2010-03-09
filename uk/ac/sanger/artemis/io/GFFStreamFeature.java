@@ -1338,4 +1338,36 @@ public class GFFStreamFeature extends SimpleDocumentFeature
     this.chadoLazyFeature = chadoLazyFeature;
   }
   
+  public static void main(String args[])
+  {
+    Key key = new Key("region");
+    try
+    {
+      final EntryInformation entry_information =
+        SimpleEntryInformation.getDefaultEntryInformation ();
+      GFFDocumentEntry entry = new GFFDocumentEntry(entry_information);
+
+      Location location = new Location("1003..1222");
+      QualifierVector qualifiers = new QualifierVector();
+      GFFStreamFeature f = new GFFStreamFeature(key, location, qualifiers);
+      entry.add(f);
+      
+      java.io.File aFile = new java.io.File("x");
+      java.io.FileWriter writer = new java.io.FileWriter(aFile);
+      f.writeToStream(writer);
+      writer.close();
+    }
+    catch (LocationParseException e)
+    {
+      e.printStackTrace();
+    }
+    catch (IOException e)
+    {
+      e.printStackTrace();
+    }
+    catch (EntryInformationException e)
+    {
+      e.printStackTrace();
+    }
+  }
 }
