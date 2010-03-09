@@ -84,18 +84,18 @@ import net.sf.samtools.SAMRecord;
     {
       super.paintComponent(g);
       Graphics2D g2 = (Graphics2D)g;
-      
+
       List<SAMRecord> readsInView = jamView.getReadsInView();
       if(readsInView == null)
         return;
-      
+
       int windowSize = (jamView.getBasesInView()/200);
-      if(windowSize < 5)
-        windowSize = 5;
+      if(windowSize < 1)
+        windowSize = 1;
 
       int nBins = Math.round((end-start+1.f)/windowSize);
       int max = drawPlot(g2, nBins, windowSize);
-      
+
       String maxStr = Float.toString(max/windowSize);
       FontMetrics fm = getFontMetrics(getFont());
       g2.setColor(Color.black);
@@ -117,12 +117,14 @@ import net.sf.samtools.SAMRecord;
       {
         SAMRecord thisRead = readsInView.get(i);
         int offset = jamView.getSequenceOffset(thisRead.getReferenceName());
+        offset = offset - jamView.getBaseAtStartOfView();
+        
         int length = thisRead.getReadLength();
 
         for(int j=0; j<length;j++)
         {
           int bin = 
-            (int)(((thisRead.getAlignmentStart()-start) + j + offset) / windowSize);
+            (int)((thisRead.getAlignmentStart() + j + offset) / windowSize);
 
           if(bin < 0 || bin > nBins-1)
             continue;
