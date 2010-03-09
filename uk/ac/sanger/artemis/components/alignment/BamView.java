@@ -149,11 +149,13 @@ public class BamView extends JPanel
   private boolean isPairedStackView = false;
   private boolean isStrandStackView = false;
   private boolean isCoverage = false;
+  private boolean isSNPplot = false;
   
   private FeatureDisplay feature_display;
   private Selection selection;
   private JPanel mainPanel;
   private CoveragePanel coveragePanel;
+  private SnpPanel snpPanel;
   private boolean showScale = true;
   private boolean logScale = false;
   private Ruler ruler;
@@ -664,6 +666,12 @@ public class BamView extends JPanel
 	    coveragePanel.setStartAndEnd(start, end);
 	    coveragePanel.setPixPerBase(pixPerBase);
 	    coveragePanel.repaint();
+	  }
+	  if(isSNPplot)
+	  {
+	    snpPanel.setStartAndEnd(start, end);
+	    snpPanel.setPixPerBase(pixPerBase);
+	    snpPanel.repaint();
 	  }
 	}
 
@@ -1892,6 +1900,10 @@ public class BamView extends JPanel
     coveragePanel = new CoveragePanel(this);
     bottomPanel.add(coveragePanel, BorderLayout.CENTER);
 
+    //
+    snpPanel = new SnpPanel(this, bases);
+    bottomPanel.add(snpPanel, BorderLayout.NORTH);
+    
     if(feature_display == null)
     {
       scrollBar = new JScrollBar(JScrollBar.HORIZONTAL, 1, nbasesInView, 1,
@@ -1902,6 +1914,10 @@ public class BamView extends JPanel
         public void adjustmentValueChanged(AdjustmentEvent e)
         {
           repaint();
+          if(coveragePanel != null)
+            coveragePanel.repaint();
+          if(snpPanel != null)
+            snpPanel.repaint();
         }
       });
       bottomPanel.add(scrollBar, BorderLayout.SOUTH);
@@ -1910,7 +1926,9 @@ public class BamView extends JPanel
     mainPanel.add(bottomPanel, BorderLayout.SOUTH);
     coveragePanel.setPreferredSize(new Dimension(900, 100));
     coveragePanel.setVisible(false);
-    
+    snpPanel.setPreferredSize(new Dimension(900, 100));
+    snpPanel.setVisible(false);
+
     jspView.getVerticalScrollBar().setValue(
         jspView.getVerticalScrollBar().getMaximum());
     jspView.getVerticalScrollBar().setUnitIncrement(maxUnitIncrement);
@@ -2096,7 +2114,7 @@ public class BamView extends JPanel
     viewMenu.add(checkBoxStrandStackView);  
     menu.add(viewMenu);
  
-    final JCheckBoxMenuItem checkBoxSNPs = new JCheckBoxMenuItem("SNPs");
+    final JCheckBoxMenuItem checkBoxSNPs = new JCheckBoxMenuItem("SNP marks");
     // 
     JMenu colourMenu = new JMenu("Colour By");
     colourMenu.add(colourByCoverageColour);
@@ -2156,8 +2174,10 @@ public class BamView extends JPanel
       }
     });
     showMenu.add(markInsertions);
-    showMenu.add(new JSeparator());
+    menu.add(showMenu);
     
+    //
+    JMenu graphMenu = new JMenu("Graph");
     JCheckBoxMenuItem checkBoxCoverage = new JCheckBoxMenuItem("Coverage");
     checkBoxCoverage.addActionListener(new ActionListener()
     {
@@ -2168,8 +2188,21 @@ public class BamView extends JPanel
         repaint();
       }
     });
-    showMenu.add(checkBoxCoverage);
-    menu.add(showMenu);
+    graphMenu.add(checkBoxCoverage);
+    
+    JCheckBoxMenuItem checkBoxSNP = new JCheckBoxMenuItem("SNP");
+    checkBoxSNP.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        isSNPplot = !isSNPplot;
+        snpPanel.setVisible(isSNPplot);
+        repaint();
+      }
+    });
+    graphMenu.add(checkBoxSNP);
+    menu.add(graphMenu);
+    
     
     if(feature_display != null)
     {
@@ -2250,7 +2283,7 @@ public class BamView extends JPanel
     jspView.getViewport().setViewPosition(p);
   }
   
-  private int getBaseAtStartOfView()
+  protected int getBaseAtStartOfView()
   {
     if(feature_display != null)
       return feature_display.getForwardBaseAtLeftEdge();
@@ -2581,12 +2614,20 @@ public class BamView extends JPanel
       int width = feature_display.getMaxVisibleBases();
       setZoomLevel(width);
       repaint();
+      if(coveragePanel != null && coveragePanel.isVisible())
+        coveragePanel.repaint();
+      if(snpPanel != null && snpPanel.isVisible())
+        snpPanel.repaint();
     }
     else
     {
       setDisplay(event.getStart(), 
         event.getStart()+feature_display.getMaxVisibleBases(), event);
       repaint();
+      if(coveragePanel != null && coveragePanel.isVisible())
+        coveragePanel.repaint();
+      if(snpPanel != null && snpPanel.isVisible())
+        snpPanel.repaint();
     }
   }
   
