@@ -145,7 +145,7 @@ public class BamView extends JPanel
   private JComboBox combo;
   private boolean isSingle = false;
   private boolean isSNPs = false;
-  private boolean isStackView = false;
+  private boolean isStackView = true;
   private boolean isPairedStackView = false;
   private boolean isStrandStackView = false;
   private boolean isCoverage = false;
@@ -172,7 +172,7 @@ public class BamView extends JPanel
   
   private JMenu bamFilesMenu = new JMenu("BAM files");
   private JCheckBoxMenuItem logMenuItem = new JCheckBoxMenuItem("Use Log Scale", logScale);
-  private JCheckBoxMenuItem checkBoxStackView = new JCheckBoxMenuItem("Stack View");
+  private JCheckBoxMenuItem checkBoxStackView = new JCheckBoxMenuItem("Stack View", isStackView);
   private JCheckBoxMenuItem colourByCoverageColour = new JCheckBoxMenuItem("Coverage Plot Colours");
   private JCheckBoxMenuItem baseQualityColour = new JCheckBoxMenuItem("Base Quality");
   private JCheckBoxMenuItem markInsertions = new JCheckBoxMenuItem("Mark Insertions", true);
@@ -2017,7 +2017,7 @@ public class BamView extends JPanel
     ButtonGroup group = new ButtonGroup();
     final JCheckBoxMenuItem checkBoxPairedStackView = new JCheckBoxMenuItem("Paired Stack View");
     final JCheckBoxMenuItem checkBoxStrandStackView = new JCheckBoxMenuItem("Strand Stack View");
-    final JCheckBoxMenuItem checkIsizeStackView = new JCheckBoxMenuItem("Inferred Size View", true);
+    final JCheckBoxMenuItem checkIsizeStackView = new JCheckBoxMenuItem("Inferred Size View", false);
     checkBoxStackView.setFont(checkIsizeStackView.getFont());
     baseQualityColour.setFont(checkIsizeStackView.getFont());
     colourByCoverageColour.setFont(checkIsizeStackView.getFont());
