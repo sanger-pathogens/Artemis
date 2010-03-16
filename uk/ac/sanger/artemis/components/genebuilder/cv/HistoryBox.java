@@ -104,7 +104,7 @@ class HistoryBox extends AbstractCvBox
     curatorNameField.setCaretPosition(0);
     xBox.add(curatorNameField);
     
-    qual = getField("qualifier=", qualifierString);
+    qual = getFieldIgnoreSeparator("qualifier", qualifierString);
     qualfTextField = new JTextField(qual);      
     qualfTextField.setToolTipText("qualifier column");
     Dimension dimension2 = new Dimension(dimension.width*2, dimension.height);
@@ -126,7 +126,7 @@ class HistoryBox extends AbstractCvBox
     if(!old.equals(termCombo.getSelectedItem()))
       return true;
     
-    old = getField("qualifier=", origQualifierString);
+    old = getFieldIgnoreSeparator("qualifier", origQualifierString);
     if(!old.equals(qualfTextField.getText()))
       return true;
     
@@ -238,11 +238,12 @@ class HistoryBox extends AbstractCvBox
                                        newQualifierString);
     }
     
-    old = getField("qualifier=", origQualifierString);
+    old = getFieldIgnoreSeparator("qualifier", origQualifierString);
     if(!old.equals(qualfTextField.getText()))
     {
-      newQualifierString = changeField("qualifier=", qualfTextField.getText().trim(), 
-                                       newQualifierString);
+      newQualifierString = newQualifierString.replaceAll("qualifier=[^;]+", "");
+      newQualifierString = newQualifierString.replaceAll("[;]+", ";");
+      newQualifierString += ";qualifier="+qualfTextField.getText().trim();
     }
     
     return newQualifierString;

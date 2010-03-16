@@ -62,6 +62,41 @@ abstract class AbstractCvBox
   
   /**
    * Strip out the value of a field of interest from a qualifier string
+   * by splitting on '='.
+   * @param fieldName
+   * @param qualifierString
+   * @return
+   */
+  protected static String getFieldIgnoreSeparator(final String fieldName, final String qualifierString)
+  {
+    String[] parts = qualifierString.split("=");
+    StringBuffer buff = null;
+    for(int i=0; i<parts.length; i++)
+    {
+      if(parts[i].endsWith(fieldName) && i<parts.length-1)
+      {
+        if(buff == null)
+          buff = new StringBuffer();
+        else
+          buff.append("; ");
+        
+        String part = parts[i+1];
+        if(i<parts.length-2)
+        {
+          int ind = part.lastIndexOf(';');
+          buff.append(part.substring(0, ind));
+        }
+        else
+          buff.append(part);
+      }
+    }
+    if(buff != null)
+      return buff.toString();
+    return getField(fieldName, qualifierString);
+  }
+  
+  /**
+   * Strip out the value of a field of interest from a qualifier string
    * 
    * @param fieldName
    * @param qualifierString
@@ -108,6 +143,21 @@ abstract class AbstractCvBox
     return newQualifierString;
   }
   
+/*  protected String replace(String str, String pattern, String replace) 
+  { 
+    int s = 0; 
+    int e = 0; 
+    StringBuffer result = new StringBuffer(); 
+    while ((e = str.indexOf(pattern, s)) >= 0) 
+    { 
+      result.append(str.substring(s, e)); 
+      result.append(replace); 
+      s = e+pattern.length(); 
+    } 
+    result.append(str.substring(s)); 
+    return result.toString(); 
+  } */
+  
   /**
    * Get a Date object from a date string in the format 20061129
    * @param dateStr
@@ -129,9 +179,6 @@ abstract class AbstractCvBox
     cal.set(year,month,day);
     return cal.getTime();
   }
-  
-
-
   
   protected abstract boolean isQualifierChanged();
   protected abstract void updateQualifier(final QualifierVector qv);

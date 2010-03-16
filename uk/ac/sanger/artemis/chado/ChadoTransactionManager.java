@@ -2440,7 +2440,11 @@ public class ChadoTransactionManager
         String prop = this_qualifier_part.substring(index+1);
         
         logger4j.debug("FeatureCvTermProp = "+this_qualifier_part_lowercase);
-        CvTerm cvTerm = getCvTerm(this_qualifier_part.substring(0,index), null);
+        CvTerm cvTerm;
+        if(index == -1 && cvName.equals(HISTORY_CV))
+          cvTerm = getCvTerm("qualifier", null);
+        else
+          cvTerm = getCvTerm(this_qualifier_part.substring(0,index), null);
         
         if(cvTerm == null)
           JOptionPane.showMessageDialog(null, 
