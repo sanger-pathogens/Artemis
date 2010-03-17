@@ -120,13 +120,13 @@ public class UserDataAlgorithm extends BaseAlgorithm
 
     LinePushBackReader pushback_reader = new LinePushBackReader (document_reader);
     String first_line = pushback_reader.readLine (); 
-    
-    Pattern dataPattern = Pattern.compile("^\\s*([\\d\\.]+\\s*)+$");
+
+    Pattern dataPattern = Pattern.compile("^\\s*([\\d\\.-]+\\s*)+$");
     Pattern blastPattern = Pattern.compile(
       "^(\\S+\\t+){2}[\\d\\.]+\\t+(\\d+\\t+){7}\\S+\\t+(\\s*\\d+)$");
     Pattern mspCrunchPattern = Pattern.compile(
         "^\\d+\\s[\\d\\.]+(\\s\\d+){2}\\s\\D\\S+(\\s\\d+){2}\\s\\D\\S+.*");
-    
+
     if(dataPattern.matcher(first_line).matches())
       FORMAT = BASE_PER_LINE_FORMAT;
     else if(blastPattern.matcher(first_line).matches())
