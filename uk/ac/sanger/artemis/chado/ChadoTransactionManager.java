@@ -2447,9 +2447,17 @@ public class ChadoTransactionManager
           cvTerm = getCvTerm(this_qualifier_part.substring(0,index), null);
         
         if(cvTerm == null)
-          JOptionPane.showMessageDialog(null, 
+        {
+          if(cvName.equals(HISTORY_CV))
+          {
+            cvTerm = getCvTerm("qualifier", null);
+            prop = this_qualifier_part_lowercase;
+          }
+          else
+            JOptionPane.showMessageDialog(null, 
               "This cv term is missing :\n"+this_qualifier_part.substring(0,index), 
               "cv term not found", JOptionPane.ERROR_MESSAGE);
+        }
         FeatureCvTermProp featureCvTermProp = new FeatureCvTermProp();
         featureCvTermProp.setValue(prop);
         featureCvTermProp.setCvTerm(cvTerm);
