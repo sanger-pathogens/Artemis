@@ -69,30 +69,22 @@ abstract class AbstractCvBox
    */
   protected static String getFieldIgnoreSeparator(final String fieldName, final String qualifierString)
   {
-    String[] parts = qualifierString.split("=");
+    String[] completeValues = qualifierString.split(";[\\S&&[^;=]]+=");   
     StringBuffer buff = null;
-    for(int i=0; i<parts.length; i++)
+    for(int i=0; i<completeValues.length; i++)
     {
-      if(parts[i].endsWith(fieldName) && i<parts.length-1)
+      if(qualifierString.indexOf(fieldName+"="+completeValues[i])>-1)
       {
         if(buff == null)
           buff = new StringBuffer();
         else
           buff.append("; ");
-        
-        String part = parts[i+1];
-        if(i<parts.length-2)
-        {
-          int ind = part.lastIndexOf(';');
-          buff.append(part.substring(0, ind));
-        }
-        else
-          buff.append(part);
+        buff.append(completeValues[i]);
       }
     }
-    if(buff != null)
-      return buff.toString();
-    return getField(fieldName, qualifierString);
+    if(buff == null)
+      return getField(fieldName, qualifierString);
+    return buff.toString();
   }
   
   /**
