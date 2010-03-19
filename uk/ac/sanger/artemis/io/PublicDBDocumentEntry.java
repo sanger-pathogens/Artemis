@@ -207,7 +207,9 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
       }
     }
     
-
+    Location location = joinUtrs(feature, key, qualifiers);
+    if(location == null)
+      return null;
     // flatten gene model - combining qualifiers
     if(key.getKeyString().equals(DatabaseDocument.EXONMODEL))
     {
@@ -286,13 +288,11 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
       
       if(this instanceof EmblDocumentEntry)
         return new EmblStreamFeature (
-            key, 
-            feature.getLocation(), 
+            key, location, 
             qualifiers);
       else
         return new GenbankStreamFeature (
-            key, 
-            feature.getLocation(), 
+            key, location, 
             qualifiers);
     }
     catch(InvalidRelationException e)
@@ -305,6 +305,53 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
     }
   }
   
+  /**
+   * Handle UTR joins
+   * @param feature
+   * @param key
+   * @param qualifiers
+   * @return
+   */
+  private Location joinUtrs(Feature feature, Key key, QualifierVector qualifiers)
+  {
+    Location location = feature.getLocation();
+    if(key.getKeyString().equals("5'UTR") ||
+       key.getKeyString().equals("3'UTR"))
+    {
+      ChadoCanonicalGene gene = ((GFFStreamFeature)feature).getChadoGene();
+      String utrName = GeneUtils.getUniqueName(feature);
+      String transcriptName = gene.getTranscriptFromName(utrName);
+      List<Feature> utrs;
+      
+      if(key.getKeyString().equals("5'UTR"))
+        utrs = gene.get5UtrOfTranscript(transcriptName);
+      else
+        utrs = gene.get3UtrOfTranscript(transcriptName);
+      
+      if(utrs.size() > 1)
+      {
+        int start = Integer.MAX_VALUE;
+        RangeVector ranges = new RangeVector();
+        for(int i=0; i<utrs.size(); i++)
+        {
+          Feature utr = utrs.get(i);
+          Range range = utr.getLocation().getTotalRange();
+          if(start > range.getStart())
+            start = range.getStart();
+          ranges.add(range);
+        }
+        
+        if(start != feature.getLocation().getTotalRange().getStart())
+          return null;
+        
+        location =
+          new Location(ranges, feature.getLocation().isComplement());
+      }
+      qualifiers.setQualifier(new Qualifier("locus_tag", transcriptName));
+      qualifiers.removeQualifierByName("ID");
+    }
+    return location;
+  }
 
   /**
    * Merge qualifiers
