@@ -62,6 +62,13 @@ public class FastaTextPane extends JScrollPane
   protected static int MAX_HITS = 70;
   private static boolean remoteMfetch = false;
   private static boolean forceUrl = false;
+  
+  static {
+    if(System.getProperty("useSRS") != null)
+      forceUrl = true;
+  }
+
+  
   public static HitInfo[] cacheHits = new HitInfo[BigPane.CACHE_SIZE];
   public static int nCacheHits = 0;
   private static String mfetchExecutablePath = "/nfs/disk100/pubseq/bin/mfetch";
@@ -701,7 +708,10 @@ public class FastaTextPane extends JScrollPane
       if(!keepRunning)
         return;
       
-      final boolean isLocalMfetchExists = getMfetchExecutable().exists();
+      boolean isLocalMfetchExists = getMfetchExecutable().exists();
+      if(isForceUrl())
+        isLocalMfetchExists = false;
+
       BufferedReader strbuff = null;
       final File fgetz = new File("/usr/local/pubseq/bin/getz");
       
