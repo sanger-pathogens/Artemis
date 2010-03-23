@@ -950,7 +950,7 @@ public class ChadoTransactionManager
     featureloc.setFmin(new Integer(segment.getRawRange().getStart()-1));
     featureloc.setFmax(new Integer(segment.getRawRange().getEnd()));
     chado_feature.setUniqueName(segment_uniquename);
-    chado_feature.setName(segment_uniquename);
+    //chado_feature.setName(segment_uniquename);
 
     String key = feature.getKey().toString();
     if(key.equals(DatabaseDocument.EXONMODEL))
