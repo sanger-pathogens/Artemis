@@ -241,6 +241,8 @@ then
 # Use openURL($new_file, new-tab) to get new-tab
 elif $NETSCAPE -remote "openURL($new_file)"
 then
+    sleep 1m 
+    rm -f $new_file
     exit 0
 else
     echo starting new netscape 2>&1
@@ -258,6 +260,8 @@ else
     do
         if $NETSCAPE -remote "openURL($new_file)" 2> /dev/null
         then
+	    sleep 1m
+	    rm -f $new_file
             exit 0
         else
             sleep 2
