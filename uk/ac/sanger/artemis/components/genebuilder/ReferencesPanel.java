@@ -62,8 +62,9 @@ public class ReferencesPanel extends JPanel
     return false;
   }
   
-  private void updateFromFeature(Feature feature)
+  public void updateFromFeature(Feature feature)
   {
+    super.removeAll();
     GridBagConstraints c = new GridBagConstraints();
     JPanel gridPanel = new JPanel(new GridBagLayout());
     gridPanel.setBackground(Color.white);
@@ -98,20 +99,27 @@ public class ReferencesPanel extends JPanel
     c.gridy = 0;
     c.ipadx = 5;
     c.ipady = 5;
-    c.anchor = GridBagConstraints.NORTHWEST;
+    c.anchor = GridBagConstraints.NORTHEAST;
     c.fill = GridBagConstraints.NONE;
-    gridPanel.add(new JLabel("Literature"),c);
+    JLabel litLab = new JLabel("Literature");
+    litLab.setToolTipText("Comma separated list, e.g. PMID:12345, PMID:56789...");
+    gridPanel.add(litLab,c);
     c.gridx = 1;
+    c.anchor = GridBagConstraints.NORTHWEST;
     gridPanel.add(literatureTextArea,c);
     
     c.gridx = 0;
     c.gridy = 1;
-    gridPanel.add(new JLabel("Dbxref"),c);
+    c.anchor = GridBagConstraints.NORTHEAST;
+    JLabel dbLab = new JLabel("Dbxref");
+    dbLab.setToolTipText("Comma separated list, e.g. UniProtKB:Q9NFB6, ...");
+    gridPanel.add(dbLab,c);
     c.gridx = 1;
+    c.anchor = GridBagConstraints.NORTHWEST;
     gridPanel.add(dbxrefTextArea,c);
-    
+
     add(gridPanel);
-    
+
     literatureTextArea.setText(litBuffer.toString()+"\n");
     dbxrefTextArea.setText(dbxrefBuffer.toString()+"\n");
   }

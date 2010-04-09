@@ -216,7 +216,9 @@ public class GeneBuilderFrame extends JFrame
     feature_editor = new FeatureEdit(feature, entry_group,
                         selection, goto_event_source, this);
    
-      
+    feature_editor.getQualifierTextArea().getDocument().addDocumentListener(
+        new TextAreaDocumentListener(feature_editor.getQualifierTextArea()));
+
     tabpane = new JTabbedPane();
     tabpane.addTab("Annotation", feature_editor);
     setTabTitle();

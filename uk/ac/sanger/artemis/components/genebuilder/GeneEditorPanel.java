@@ -57,11 +57,13 @@ public class GeneEditorPanel extends JPanel
   private OpenSectionButton cvButton;
   private OpenSectionButton matchButton;
   private OpenSectionButton propertiesButton;
+  private OpenSectionButton refButton;
   
   private QualifierTextArea qualifier_text_area;
   private CVPanel cvForm;
   private MatchPanel matchForm;
   private PropertiesPanel propertiesPanel;
+  private ReferencesPanel refPanel;
 
   /**
    * Gene editor panel - showing annotation in a single panel.
@@ -71,7 +73,8 @@ public class GeneEditorPanel extends JPanel
    * @param propertiesPanel
    */
   public GeneEditorPanel(final QualifierTextArea qualifier_text_area,
-                         final CVPanel cvForm, 
+                         final CVPanel cvForm,
+                         final ReferencesPanel refPanel,
                          final MatchPanel matchForm,
                          final PropertiesPanel propertiesPanel)
   {
@@ -79,19 +82,24 @@ public class GeneEditorPanel extends JPanel
     this.cvForm = cvForm;
     this.matchForm = matchForm;
     this.propertiesPanel = propertiesPanel;
+    this.refPanel = refPanel;
     
     setLayout( new BoxLayout(this, BoxLayout.PAGE_AXIS) );
     setBackground(Color.WHITE);
-    JScrollPane jspCore = new JScrollPane(qualifier_text_area);
-    jspCore.setPreferredSize(new Dimension(jspCore.getPreferredSize().width, 100));
+    //JScrollPane jspCore = new JScrollPane(qualifier_text_area);
+    //jspCore.setPreferredSize(new Dimension(jspCore.getPreferredSize().width, 100));
     
     addDarkSeparator(this);
     propertiesButton = addOpenClosePanel("Properties", propertiesPanel, this, null);
     add(propertiesPanel);
     
     addDarkSeparator(this);
-    coreButton = addOpenClosePanel("Core",jspCore, this, null);
-    add(jspCore);
+    coreButton = addOpenClosePanel("Core",qualifier_text_area, this, null);
+    add(qualifier_text_area);
+    
+    addDarkSeparator(this);
+    refButton = addOpenClosePanel("References",refPanel, this, null);
+    add(refPanel);
     
     addDarkSeparator(this);
     cvButton = addOpenClosePanel("Controlled Vocabulary", cvForm, this,
@@ -121,6 +129,11 @@ public class GeneEditorPanel extends JPanel
       cvButton.setOpen(false);
     else
       cvButton.setOpen(true);
+    
+    if(refPanel.isEmpty())
+      refButton.setOpen(false);
+    else
+      refButton.setOpen(true);
     
     if(matchForm.isEmpty())
       matchButton.setOpen(false);
