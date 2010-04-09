@@ -57,6 +57,7 @@ import uk.ac.sanger.artemis.components.genebuilder.GeneBuilderFrame;
 import uk.ac.sanger.artemis.components.genebuilder.GeneEditorPanel;
 import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 import uk.ac.sanger.artemis.components.genebuilder.ProteinMapPanel;
+import uk.ac.sanger.artemis.components.genebuilder.ReferencesPanel;
 import uk.ac.sanger.artemis.components.genebuilder.cv.CVPanel;
 import uk.ac.sanger.artemis.components.genebuilder.gff.PropertiesPanel;
 import uk.ac.sanger.artemis.components.genebuilder.ortholog.MatchPanel;
@@ -154,6 +155,8 @@ public class FeatureEdit extends JPanel
   
   /** similarity/ortholog/paralog tab */
   private MatchPanel matchForm;
+  
+  private ReferencesPanel refPanel;
   
   private EntryInformation entry_information;
   
@@ -956,6 +959,9 @@ public class FeatureEdit extends JPanel
       propertiesPanel = new PropertiesPanel(getFeature());
       propertiesPanel.setBackground(Color.WHITE);
 
+      refPanel = new ReferencesPanel(getFeature());
+      refPanel.setBackground(Color.WHITE);
+      
       addGffAnnotationView(lower_panel);
       
       final JCheckBox tabbedView = new JCheckBox("Tab View", isTabbedView);
@@ -1123,6 +1129,13 @@ public class FeatureEdit extends JPanel
       cvForm.setVisible(true);      // ensure visible
       jspCV.setPreferredSize(jspCore.getPreferredSize());
       tabbedPane.add("CV", jspCV);
+      
+      
+      JScrollPane jspRef = new JScrollPane(refPanel);
+      refPanel.setVisible(true);      // ensure visible
+      jspRef.setPreferredSize(jspCore.getPreferredSize());
+      tabbedPane.add("References", jspRef);
+      
       JScrollPane jspOrtholog = new JScrollPane(matchForm);
       matchForm.setVisible(true);   // ensure visible
       jspOrtholog.setPreferredSize(getPreferredSize());
@@ -1139,7 +1152,7 @@ public class FeatureEdit extends JPanel
       }
       
       editorPanel = new GeneEditorPanel(qualifier_text_area, cvForm,
-          matchForm, propertiesPanel);
+          refPanel, matchForm, propertiesPanel);
       JScrollPane jsp = new JScrollPane(editorPanel);
           
       jsp.setPreferredSize(
@@ -1694,6 +1707,9 @@ public class FeatureEdit extends JPanel
       // load synonym
       if(cvForm != null)
         cvForm.updateFromFeature(getFeature());
+      
+      if(refPanel != null)
+        refPanel.updateFromFeature(getFeature());
 
       if(propertiesPanel != null)
         propertiesPanel.updateFromFeature(getFeature());
@@ -1724,6 +1740,7 @@ public class FeatureEdit extends JPanel
       // strip out CV qualifiers
       //
       if( (cvForm != null && CVPanel.isCvTag(this_qualifier)) ||
+          (refPanel != null && ReferencesPanel.isReferenceTag(this_qualifier)) ||
           (propertiesPanel != null && PropertiesPanel.isPropertiesTag(this_qualifier, getFeature())) ||
           (matchForm != null && MatchPanel.isMatchTag(this_qualifier)) ||
           (propertiesPanel != null && ProteinMapPanel.isProteinMapElement(this_qualifier)) )
@@ -1802,6 +1819,13 @@ public class FeatureEdit extends JPanel
         QualifierVector cvQualifiers = cvForm.getCvQualifiers();
         if(cvQualifiers != null && cvQualifiers.size() > 0)
           qualifiers.addAll(cvQualifiers);
+      }
+      
+      if(refPanel != null)
+      {
+        QualifierVector refQualifiers = refPanel.getQualifiers();
+        if(refQualifiers != null && refQualifiers.size() > 0)
+          qualifiers.addAll(refQualifiers);
       }
       
       if(propertiesPanel != null)
@@ -1986,6 +2010,11 @@ public class FeatureEdit extends JPanel
   public void setObsoleteChanged(boolean obsoleteChanged)
   {
     propertiesPanel.setObsoleteChanged(obsoleteChanged);
+  }
+
+  public QualifierTextArea getQualifierTextArea()
+  {
+    return qualifier_text_area;
   }
 
 }
