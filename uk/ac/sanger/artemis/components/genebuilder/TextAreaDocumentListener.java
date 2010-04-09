@@ -27,7 +27,6 @@ import java.util.StringTokenizer;
 
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.text.Document;
 
 import uk.ac.sanger.artemis.components.QualifierTextArea;
 
@@ -39,6 +38,7 @@ public class TextAreaDocumentListener implements DocumentListener
   public TextAreaDocumentListener(QualifierTextArea qta)
   {
     this.qta = qta;
+    setQualifierTextAreaSize();
   }
 
   public void insertUpdate(DocumentEvent e)
@@ -58,7 +58,7 @@ public class TextAreaDocumentListener implements DocumentListener
 
   private void updateSize(DocumentEvent e)
   {
-    setQualifierTextAreaSize((Document) e.getDocument());
+    setQualifierTextAreaSize();
   }
 
 /*  private int getLineCount(Document doc)
@@ -137,7 +137,7 @@ public class TextAreaDocumentListener implements DocumentListener
    * Set the size from the number of lines.
    * @param doc
    */
-  private void setQualifierTextAreaSize(Document doc)
+  private void setQualifierTextAreaSize()
   {
     int lines = getNumberOfLines(qta.getPreferredSize().width);
     int lineHeight = qta.getFontMetrics(qta.getFont()).getHeight();
