@@ -1254,7 +1254,20 @@ public class EntryEdit extends JFrame
           List<String> listBams = fileChooser.getBamFiles();
 
           jamPanel.removeAll();
-          jamView = new BamView(listBams, null, 2000);
+          
+          try
+          {
+            jamView = new BamView(listBams, null, 2000);
+          }
+          catch(Exception ex)
+          {
+            JOptionPane.showMessageDialog(null,
+                ex.getMessage(),
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
+            return;
+          }
+          
           jamView.setShowScale(false);
           jamView.setBases(getEntryGroup().getBases());
           jamView.addJamToPanel(jamPanel, null, true, feature_display);
