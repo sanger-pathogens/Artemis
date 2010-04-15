@@ -663,7 +663,13 @@ public class DatabaseDocument extends Document
     FeatureLoc featureloc = new FeatureLoc();
     featureloc.setFeatureBySrcFeatureId(srcFeature);
     Feature child = new Feature();
+    
+    // ignore match_part (BLAST HSPs)
+    CvTerm cvTerm = getCvTermByCvAndCvTerm("match_part", "sequence");
+    
     child.setFeatureLoc(featureloc);
+    child.setAnalysis(false);
+    child.setCvTerm(cvTerm);
     
     final List featList = dao.getFeaturesByLocatedOnFeature(child);
     final ByteBuffer[] buffers = new ByteBuffer[TYPES.length + 1];
