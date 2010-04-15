@@ -219,7 +219,10 @@
     WHERE
         <dynamic>
          <isGreaterThan property="featureLoc.featureBySrcFeatureId.featureId" compareValue="0"> 
-           srcfeature_id=$featureLoc.featureBySrcFeatureId.featureId$ 
+           srcfeature_id=$featureLoc.featureBySrcFeatureId.featureId$
+		   <isNotNull property="analysis">                        
+             AND is_analysis=#analysis#
+           </isNotNull>
          </isGreaterThan>
 		 <isGreaterEqual property="featureLoc.fmin" compareValue="0" prepend="AND"> 
            <![CDATA[ fl.fmin >= $featureLoc.fmin$ AND fl.fmax < $featureLoc.fmax$ ]]>
