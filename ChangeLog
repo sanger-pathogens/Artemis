@@ -1,10 +1,12 @@
 Version 12+
+	Add BamView panel to ACT.
+
 	Fix for writing EMBL files out from GFF entries.
 
 	An option has been added in BamView to colour reads by the colour 
 	used in the coverage plot - useful when looking at multiple BAM files.
 	
-	Plot multiple coverage plots in BamView when multipl BAM files are
+	Plot multiple coverage plots in BamView when multiple BAM files are
 	loaded in.
 
 Version 12
