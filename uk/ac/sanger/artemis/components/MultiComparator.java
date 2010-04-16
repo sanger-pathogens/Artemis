@@ -27,6 +27,8 @@ package uk.ac.sanger.artemis.components;
 
 import uk.ac.sanger.artemis.*;
 import uk.ac.sanger.artemis.chado.ChadoTransactionManager;
+import uk.ac.sanger.artemis.components.alignment.BamView;
+import uk.ac.sanger.artemis.components.alignment.FileSelectionDialog;
 import uk.ac.sanger.artemis.components.filetree.FileManager;
 import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 import uk.ac.sanger.artemis.util.RemoteFileDocument;
@@ -41,10 +43,15 @@ import java.awt.event.*;
 import java.io.IOException;
 import java.io.File;
 import java.net.URL;
+import java.util.List;
+
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 
 /**
@@ -92,6 +99,9 @@ public class MultiComparator extends JFrame
    **/
   private FeatureDisplay[] feature_display_array = null;
 
+  private JPanel bamPanel[] = null;
+  private Dimension dimensionAlignViewer = null;
+  
   /**
    *  An array of AlignmentViewer objects - one per ComparisonData.  Created
    *  in the constructor.
@@ -176,6 +186,8 @@ public class MultiComparator extends JFrame
       new FeatureDisplay[entry_group_array.length];
     base_plot_group_array =
       new BasePlotGroup[entry_group_array.length];
+    bamPanel = 
+      new JPanel[entry_group_array.length];
     alignment_viewer_array =
       new AlignmentViewer[comparison_data_array.length];
     comparator_glue_array =
@@ -221,6 +233,7 @@ public class MultiComparator extends JFrame
       feature_display_array[i].addDisplayAdjustmentListener(base_plot_group);
 
       base_plot_group_array[i] = base_plot_group;
+      bamPanel[i] = new JPanel();
 
       this_entry_group.ref();
     }
@@ -251,7 +264,7 @@ public class MultiComparator extends JFrame
     GridBagConstraints c = new GridBagConstraints();
 
     c.gridwidth  = GridBagConstraints.REMAINDER;
-    c.fill       = GridBagConstraints.HORIZONTAL;
+    c.fill       = GridBagConstraints.BOTH;
     c.anchor     = GridBagConstraints.NORTH;
     c.gridheight = 1;
     c.weightx    = 1;
@@ -264,29 +277,31 @@ public class MultiComparator extends JFrame
       {
         // put graph above the sequence in this case
         c.weighty = 0;
-        gridbag.setConstraints(base_plot_group_array[i], c);
-        getContentPane().add(base_plot_group_array[i]);
+        getContentPane().add(base_plot_group_array[i], c);
+        c.weighty = 1;
+        bamPanel[i].setVisible(false);
+        getContentPane().add(bamPanel[i], c);
       }
 
       c.weighty = 0;
-      gridbag.setConstraints(feature_display_array[i], c);
-      getContentPane().add(feature_display_array[i]);
+      getContentPane().add(feature_display_array[i], c);
 
       if(i == getEntryGroupArray().length - 1 &&
             getEntryGroupArray().length == 2) 
       {
         // put graph below the sequence in this case
         c.weighty = 0;
-        gridbag.setConstraints(base_plot_group_array[i], c);
-        getContentPane().add(base_plot_group_array[i]);
+        getContentPane().add(base_plot_group_array[i], c);
+        c.weighty = 1;
+        bamPanel[i].setVisible(false);
+        getContentPane().add(bamPanel[i], c);
       }
 
       if(i < getAlignmentViewerArray().length) 
       {
         c.fill = GridBagConstraints.BOTH;
         c.weighty = 1;
-        gridbag.setConstraints(getAlignmentViewerArray()[i], c);
-        getContentPane().add(getAlignmentViewerArray()[i]);
+        getContentPane().add(getAlignmentViewerArray()[i], c);
       }
     }
 
@@ -924,6 +939,60 @@ public class MultiComparator extends JFrame
         entry_group_menu.addSeparator();
       }
 
+      JMenuItem read_bam_file = new JMenuItem("Read BAM ...");
+      final JPanel thisBamPanel = bamPanel[i];
+      final FeatureDisplay feature_display = feature_display_array[i];
+ 
+      read_bam_file.addActionListener(new ActionListener()
+      {
+        public void actionPerformed(ActionEvent e)
+        {
+          FileSelectionDialog fileChooser = new FileSelectionDialog(null, false);
+          List<String> listBams = fileChooser.getBamFiles();
+
+          thisBamPanel.removeAll();
+          thisBamPanel.setVisible(true);
+          
+          BamView bamView;
+          try
+          {
+            bamView = new BamView(listBams, null, 2000);
+          }
+          catch(Exception ex)
+          {
+            JOptionPane.showMessageDialog(null,
+                ex.getMessage(),
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
+            return;
+          }
+          
+          bamView.setShowScale(false);
+          bamView.setBases(entry_group.getBases());
+          bamView.addJamToPanel(thisBamPanel, null, true, feature_display);
+          bamView.getJspView().setHorizontalScrollBarPolicy(
+              JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+          bamView.removeBorder();
+          bamView.setDisplay(feature_display.getFirstVisibleForwardBase(), 
+                             feature_display.getLastVisibleForwardBase(), null);
+         
+          if(dimensionAlignViewer == null)
+            dimensionAlignViewer = alignment_viewer_array[0].getSize();
+          
+          thisBamPanel.setPreferredSize(new Dimension(500, dimensionAlignViewer.height/2));
+          
+          thisBamPanel.revalidate();
+          bamView.getJspView().getVerticalScrollBar().setValue(
+              bamView.getJspView().getVerticalScrollBar().getMaximum());
+          
+          feature_display.addDisplayAdjustmentListener(bamView);
+          feature_display.getSelection().addSelectionChangeListener(bamView);
+
+          MultiComparator.this.validate();
+        }
+      });
+      entry_group_menu.add(read_bam_file);
+      
       final JMenuItem edit_subject = new JMenuItem("Edit In Artemis");
       edit_subject.addActionListener(new ActionListener() 
       {
