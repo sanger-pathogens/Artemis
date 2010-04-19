@@ -37,6 +37,9 @@ CLASSPATH=$CLASSPATH:$ACT_HOME/lib/j2ssh/commons-logging.jar:$ACT_HOME/lib/j2ssh
 # iBatis jars
 CLASSPATH=$CLASSPATH:$ACT_HOME/lib/ibatis/ibatis-2.3.4.726.jar:$ACT_HOME/lib/ibatis/:$ACT_HOME/lib/ibatis/log4j-1.2.14.jar:$ACT_HOME/lib/ibatis/cglib-nodep-2.2.jar:$ACT_HOME/lib/retrotranslator-runtime-1.1.0.jar
 
+# picard jars
+CLASSPATH=$CLASSPATH:$ACT_HOME/lib/picard/sam.jar:$ACT_HOME/lib/picard/picard.jar
+
 export CLASSPATH
 
 ACT_PROPERTIES="-Dartemis.environment=UNIX"
