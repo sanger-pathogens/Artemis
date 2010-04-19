@@ -1123,5 +1123,13 @@ public class MultiComparator extends JFrame
   {
     return base_plot_group_array;
   }
+  
+  /**
+   *  Return the Bam JPanel objects that were created in the constructor.
+   **/
+  protected JPanel[] getBamPanelArray() 
+  {
+    return bamPanel;
+  }
 
 }
