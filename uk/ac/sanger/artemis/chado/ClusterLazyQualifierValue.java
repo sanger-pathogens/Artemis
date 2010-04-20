@@ -123,10 +123,68 @@ public class ClusterLazyQualifierValue implements LazyQualifierValue
     
     //final Document document = ((DocumentEntry)feature.getEntry()).getDocument();
     List allClusters = ((DatabaseDocument)document).getClustersByFeatureIds(clusterFeatureIds);
-
+    List<Integer> featureIds = new Vector<Integer>();
     for(int i=0;i<allClusters.size(); i++)
     {
       final Feature clusterFeature = (Feature)allClusters.get(i);
+      Collection subjects = clusterFeature.getFeatureRelationshipsForSubjectId();
+      Iterator it = subjects.iterator();
+      while(it.hasNext())
+      {
+        FeatureRelationship fr = (FeatureRelationship)it.next();
+        featureIds.add(fr.getFeatureBySubjectId().getFeatureId());
+      }
+    }
+    
+    // bulk load parent features
+    List<FeatureRelationship> parentFrs = 
+      ((DatabaseDocument)document).getParentFeaturesByChildFeatureIds(featureIds);
+    featureIds.clear();
+    Hashtable<Integer, FeatureRelationship> hashFR = new Hashtable<Integer, FeatureRelationship>();
+    for(int i=0; i<parentFrs.size(); i++)
+    {
+      FeatureRelationship frBulk = parentFrs.get(i);
+      featureIds.add(frBulk.getFeatureByObjectId().getFeatureId());
+      hashFR.put(frBulk.getFeatureBySubjectId().getFeatureId(), frBulk);
+    }
+    
+    // bulk load grand parent features (to find gene)
+    parentFrs = 
+      ((DatabaseDocument)document).getParentFeaturesByChildFeatureIds(featureIds);
+    for(int i=0; i<parentFrs.size(); i++)
+    {
+      FeatureRelationship frBulk = parentFrs.get(i);
+      hashFR.put(frBulk.getFeatureBySubjectId().getFeatureId(), frBulk);
+    }
+    
+    for(int i=0;i<allClusters.size(); i++)
+    {
+      final Feature clusterFeature = (Feature)allClusters.get(i);
+      Collection<FeatureRelationship> sbjts = clusterFeature.getFeatureRelationshipsForSubjectId();
+      List<FeatureRelationship> newSubject = new Vector<FeatureRelationship>();
+      Iterator<FeatureRelationship> it = sbjts.iterator();
+      while(it.hasNext())
+      {
+        FeatureRelationship fr = it.next();
+        FeatureRelationship frBulk = hashFR.get(fr.getFeatureBySubjectId().getFeatureId());
+        List<FeatureRelationship> frsForSbjtId = new Vector<FeatureRelationship>();
+
+        Feature parent = frBulk.getFeatureByObjectId();
+        if(!parent.getCvTerm().getName().equals("gene") ||
+           !parent.getCvTerm().getName().equals("pseudogene") &&
+           hashFR.contains(frBulk.getFeatureByObjectId().getFeatureId()))
+        {
+          frBulk = hashFR.get(frBulk.getFeatureByObjectId().getFeatureId());
+        }
+        frsForSbjtId.add(frBulk);
+        
+        fr.getFeatureBySubjectId().setFeatureRelationshipsForSubjectId(frsForSbjtId);
+        newSubject.add(fr);
+        
+        //System.out.println(fr.getFeatureBySubjectId().getUniqueName()+" "+
+        //                   frBulk.getFeatureByObjectId().getUniqueName());
+      }
+      clusterFeature.setFeatureRelationshipsForSubjectId(newSubject);
       
       final Vector v = (Vector)hash.get(new Integer(clusterFeature.getFeatureId()));
       for(int j=0; j<v.size(); j++)
@@ -135,6 +193,11 @@ public class ClusterLazyQualifierValue implements LazyQualifierValue
         lazyValue.addToCluster(clusterFeature);
       }
     }
+
+    clusterFeatureIds.clear();
+    featureIds.clear();
+    parentFrs.clear();
+    hashFR.clear();
   }
   
   private void addToCluster(final Feature clusterFeature)
@@ -194,7 +257,7 @@ public class ClusterLazyQualifierValue implements LazyQualifierValue
 
           value = value.concat(matchFeature.getOrganism().getCommonName()+":");
           if(loadGeneName)
-          {
+          {          
             String geneName = getGeneName(matchFeature);
             value = value.concat(geneName+" ");
           }
