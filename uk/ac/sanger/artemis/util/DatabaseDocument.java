@@ -665,7 +665,15 @@ public class DatabaseDocument extends Document
     Feature child = new Feature();
     
     // ignore match_part (BLAST HSPs)
-    CvTerm cvTerm = getCvTermByCvAndCvTerm("match_part", "sequence");
+    CvTerm cvTerm;
+    try
+    {
+      cvTerm = getCvTermByCvAndCvTerm("match_part", "sequence");
+    }
+    catch(NullPointerException ne)
+    {
+      cvTerm = dao.getCvTermByNameAndCvName("match_part", "sequence");
+    }
     
     child.setFeatureLoc(featureloc);
     child.setAnalysis(false);
