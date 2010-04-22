@@ -1396,19 +1396,28 @@ public class ViewMenu extends SelectionMenu
           // ./fasta/abc.seq.00001.out
           final File dir_name = new File(program_name);
 
+          File rootFile;
+          if(root_document.getLocation() instanceof File)
+            rootFile = (File)root_document.getLocation();
+          else
+            rootFile = new File(".");
+          
           final Document[] possible_documents = new Document[] {
+              new ZipFileDocument(new File(rootFile, program_name+File.separatorChar+program_name+".zip"), file_name),
+              new ZipFileDocument(new File(rootFile, program_name+".zip"), file_name),
+              new ZipFileDocument(new File(program_name+".zip"), file_name),
+              new ZipFileDocument(new File(program_name, program_name+".zip"), file_name),
               root_document.append(program_name).append(file_name),
               root_document.append(file_name),
               new FileDocument(new File(file_name)),
               new FileDocument(dir_name).append(file_name),
               new FileDocument(new File(System.getProperty("user.dir")))
-                  .append(program_name).append(file_name) };
+                  .append(program_name).append(file_name),
+              };
 
-          for(int possible_document_index = 0; possible_document_index < possible_documents.length; ++possible_document_index)
+          for(int k = 0; k < possible_documents.length; ++k)
           {
-
-            final Document this_document = possible_documents[possible_document_index];
-
+            final Document this_document = possible_documents[k];
             if(this_document.readable())
             {
               document = this_document;
