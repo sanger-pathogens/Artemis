@@ -97,10 +97,10 @@ public class ZipFileDocument extends FileDocument
       while ((ze=zis.getNextEntry())!=null)
       {
         if( !ze.isDirectory() && 
-            (ze.getName().equals(zipEntryName) || ze.getName().equals(zipEntryName+".gz")))
+            (ze.getName().equals(zipEntryName) || ze.getName().equals(zipEntryName+".gz") ||
+             ze.getName().endsWith("/"+zipEntryName) || ze.getName().endsWith("/"+zipEntryName+".gz")))
         {
-          if(ze.getName().equals(zipEntryName+".gz"))
-            zipEntryName = ze.getName();
+          zipEntryName = ze.getName();
           zis.close();
           return true;
         }
