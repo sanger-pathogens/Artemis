@@ -24,6 +24,7 @@ package uk.ac.sanger.artemis.util;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.ZipEntry;
@@ -44,7 +45,8 @@ public class ZipFileDocument extends FileDocument
   /**
    *  Return the name of this Document.
    **/
-  public String getName () {
+  public String getName () 
+  {
     return zipEntryName;
   }
   
@@ -56,12 +58,9 @@ public class ZipFileDocument extends FileDocument
    **/
   public InputStream getInputStream() throws IOException
   {
-    System.out.println(zipEntryName);
-    
     if(!zipFile.getName().endsWith(".zip"))
       return super.getInputStream();
-    
-    System.out.println(zipEntryName);
+
     byte b[] = getEntryContent(zipFile, zipEntryName);
     
     if(b == null)
@@ -80,6 +79,17 @@ public class ZipFileDocument extends FileDocument
     if(zipEntryName.endsWith(".gz"))
       return new WorkingGZIPInputStream(new ByteArrayInputStream(b));
     return new ByteArrayInputStream(b);
+  }
+  
+  public String writeTmpFile(String txt) throws IOException
+  {
+    final File tmpFile = File.createTempFile(zipEntryName, "tmp");
+    tmpFile.deleteOnExit();
+  
+    FileWriter out = new FileWriter(tmpFile);
+    out.write(txt);
+    out.close();
+    return tmpFile.getAbsolutePath();
   }
   
   /**
