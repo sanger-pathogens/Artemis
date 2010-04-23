@@ -1022,21 +1022,27 @@ public class GFFStreamFeature extends SimpleDocumentFeature
         
         if(value_index>0)
           buffer.append("%2C");
-        try
+        
+        if(name.equals("Parent"))
+          buffer.append(this_value);
+        else
         {
-          buffer.append(Integer.valueOf(this_value));
-        }
-        catch(NumberFormatException _)
-        {
-          // not an integer
           try
           {
-            buffer.append(Double.valueOf(this_value));
+            buffer.append(Integer.valueOf(this_value));
           }
-          catch (NumberFormatException __)
+          catch(NumberFormatException _)
           {
-            // not a double or integer so quote it
-            buffer.append(this_value);
+            // not an integer
+            try
+            {
+              buffer.append(Double.valueOf(this_value));
+            }
+            catch (NumberFormatException __)
+            {
+              // not a double or integer so quote it
+              buffer.append(this_value);
+            }
           }
         }
       }
