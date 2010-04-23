@@ -29,6 +29,7 @@ import uk.ac.sanger.artemis.ExternalProgram;
 import uk.ac.sanger.artemis.ExternalProgramException;
 import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.util.Document;
+import uk.ac.sanger.artemis.util.ZipFileDocument;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -83,9 +84,14 @@ public class SearchResultViewer extends FileViewer
     {
       public void actionPerformed(ActionEvent event) 
       {
+        String fileName = document.toString();
         try 
         {
-          sendToBrowser(document.toString());
+          if(document instanceof ZipFileDocument)
+            fileName = ((ZipFileDocument)document).writeTmpFile(
+                SearchResultViewer.this.getText());
+          
+          sendToBrowser(fileName);
         }
         catch (IOException e) 
         {

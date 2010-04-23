@@ -1463,7 +1463,7 @@ public class ViewMenu extends SelectionMenu
           else
           {
             new SearchResultViewer(program_name + " results for "
-                + this_feature.getIDString() + " from " + document, document);
+                + this_feature.getIDString() + " from " + document.getName(), document);
           }
         }
         catch(ExternalProgramException e)
