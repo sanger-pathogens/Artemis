@@ -32,6 +32,7 @@ import uk.ac.sanger.artemis.util.*;
 import uk.ac.sanger.artemis.components.filetree.FileList;
 import uk.ac.sanger.artemis.components.filetree.RemoteFileNode;
 import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
+
 import uk.ac.sanger.artemis.io.DocumentEntry;
 import uk.ac.sanger.artemis.io.InvalidRelationException;
 import uk.ac.sanger.artemis.io.Key;
@@ -1354,6 +1355,9 @@ public class ViewMenu extends SelectionMenu
         // TODO Auto-generated catch block
         e1.printStackTrace();
       }
+      
+      if(qualifier == null)
+        continue;
       StringVector qualifier_values = qualifier.getValues();
       String qualifier_value;
       if(qualifier_values == null || qualifier_values.size() == 0) {
@@ -1383,67 +1387,10 @@ public class ViewMenu extends SelectionMenu
           file_name = file_name.substring (program_name.length () + 1);
         }
 
-        Document root_document = this_feature.getEntry().getRootDocument();
-
-        if(root_document == null)
-          root_document = new FileDocument(new File("."));
-        
+       
         try
         {
-          Document document = null;
-
-          // try the current directory with the program name added:
-          // ./fasta/abc.seq.00001.out
-          final File dir_name = new File(program_name);
-
-          File rootFile;
-          if(root_document.getLocation() instanceof File)
-            rootFile = (File)root_document.getLocation();
-          else
-            rootFile = new File(".");
-          
-          final Document[] possible_documents = new Document[] {
-              new ZipFileDocument(new File(rootFile, program_name+File.separatorChar+program_name+".zip"), file_name),
-              new ZipFileDocument(new File(rootFile, program_name+".zip"), file_name),
-              new ZipFileDocument(new File(program_name+".zip"), file_name),
-              new ZipFileDocument(new File(program_name, program_name+".zip"), file_name),
-              root_document.append(program_name).append(file_name),
-              root_document.append(file_name),
-              new FileDocument(new File(file_name)),
-              new FileDocument(dir_name).append(file_name),
-              new FileDocument(new File(System.getProperty("user.dir")))
-                  .append(program_name).append(file_name),
-              };
-
-          for(int k = 0; k < possible_documents.length; ++k)
-          {
-            final Document this_document = possible_documents[k];
-            if(this_document.readable())
-            {
-              document = this_document;
-              break;
-            }
-            else
-            {
-              final File gzip_file = new File(this_document.toString() + ".gz");
-              final Document gzip_document = new FileDocument(gzip_file);
-
-              if(gzip_document.readable())
-              {
-                document = gzip_document;
-                break;
-              }
-            }
-          }
-
-          // if not found locally check remote side
-          if(document == null
-              && ((DocumentEntry) (this_feature.getEntry().getEMBLEntry()))
-                  .getDocument() instanceof RemoteFileDocument)
-          {
-            document = checkRemoteNode(this_feature, program_name, file_name,
-                dir_name);
-          }
+          Document document = getSearchDocument(this_feature, program_name, file_name);
 
           if(document == null)
           {
@@ -1476,6 +1423,78 @@ public class ViewMenu extends SelectionMenu
         }
       }
     }
+  }
+  
+  /**
+   * Get the corresponding fasta/blast search result. This looks initially
+   * in program zip files, and then local file documents and finally, if a 
+   * remote file connection has been made, it looks in the remote file system.
+   * @param this_feature
+   * @param program
+   * @param fileName
+   * @return
+   * @throws IOException
+   */
+  public static Document getSearchDocument(Feature this_feature, String program, String fileName) 
+          throws IOException
+  {      
+    Entry entry = this_feature.getEntry();
+    Document root_document = entry.getRootDocument();
+
+    if(root_document == null)
+      root_document = new FileDocument(new File("."));
+    Document document = null;
+
+    final File dir_name = new File(program);
+    File rootFile;
+    if(root_document.getLocation() instanceof File)
+      rootFile = (File)root_document.getLocation();
+    else
+      rootFile = new File(".");
+    
+    final Document[] possible_documents = new Document[] {
+        new ZipFileDocument(new File(rootFile, program+File.separatorChar+program+".zip"), fileName),
+        new ZipFileDocument(new File(rootFile, program+".zip"), fileName),
+        new ZipFileDocument(new File(program+".zip"), fileName),
+        new ZipFileDocument(new File(program, program+".zip"), fileName),
+        root_document.append(program).append(fileName),
+        root_document.append(fileName),
+        new FileDocument(new File(fileName)),
+        new FileDocument(dir_name).append(fileName),
+        new FileDocument(new File(System.getProperty("user.dir")))
+            .append(program).append(fileName),
+        };
+
+    for(int k = 0; k < possible_documents.length; ++k)
+    {
+      final Document this_document = possible_documents[k];
+      if(this_document.readable())
+      {
+        document = this_document;
+        break;
+      }
+      else
+      {
+        final File gzip_file = new File(this_document.toString() + ".gz");
+        final Document gzip_document = new FileDocument(gzip_file);
+
+        if(gzip_document.readable())
+        {
+          document = gzip_document;
+          break;
+        }
+      }
+    }
+
+    // if not found locally try SSH remote site
+    if(document == null && 
+        ((DocumentEntry) (entry.getEMBLEntry())).getDocument() instanceof RemoteFileDocument)
+    {
+      File fdata = new File(program, fileName);
+      // check on the remote side and scp the file over
+      document = checkRemoteNode(this_feature, program, fileName, fdata.getParentFile());
+    }
+    return document;
   }
 
   /**
@@ -1628,8 +1647,8 @@ public class ViewMenu extends SelectionMenu
    * @param dir_name
    * @return
    */
-  public static Document checkRemoteNode(final Feature this_feature,
-                               final String program_name,
+  private static Document checkRemoteNode(final Feature this_feature,
+                               final String program,
                                String file_name,
                                final File dir_name)
   {
@@ -1639,17 +1658,28 @@ public class ViewMenu extends SelectionMenu
     RemoteFileNode node = doc.getRemoteFileNode();
     Document document = null;
     FileList flist = new FileList();
-    String fileName = node.getPathName().concat(
-        "/" + program_name + "/" + file_name);
-    FileAttributes attr = flist.stat(fileName);
+    String path = node.getPathName().concat(
+        "/" + program + "/" + program + ".zip");
+    FileAttributes attr = flist.stat(path);
     
+    if(attr != null && attr.isFile())
+    {
+      File fn = flist.getZipEntryContents(path, file_name, dir_name);
+      return new FileDocument(fn);
+    }
+
+    path = node.getPathName().concat(
+          "/" + program + "/" + file_name);
+    attr = flist.stat(path);
+
     if(attr == null || !attr.isFile())
     {
       file_name = file_name + ".gz";
-      fileName = node.getPathName().concat(
-          "/" + program_name + "/" + file_name);
-      attr = flist.stat(fileName);
+      path = node.getPathName().concat(
+        "/" + program + "/" + file_name);
+      attr = flist.stat(path);
     }
+
     
     if(attr != null && attr.isFile())
     {
@@ -1658,7 +1688,7 @@ public class ViewMenu extends SelectionMenu
       FTProgress progress = monitor.add(node.getFile());
 
       RemoteFileNode fileNode = new RemoteFileNode("", file_name, null,
-          node.getPathName().concat("/" + program_name), false);
+          node.getPathName().concat("/" + program), false);
       document = new RemoteFileDocument(fileNode);
       byte contents[] = fileNode.getFileContents(progress);
       File fn = new File(dir_name.getAbsoluteFile(), file_name);
@@ -1670,7 +1700,7 @@ public class ViewMenu extends SelectionMenu
     return document;
   }
   
-  private static boolean writeByteFile(byte[] contents, File fn)
+  public static boolean writeByteFile(byte[] contents, File fn)
   {
     if(fn.exists())
     {
