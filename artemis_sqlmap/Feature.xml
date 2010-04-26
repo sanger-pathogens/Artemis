@@ -459,7 +459,7 @@
 
   <sql id="source_feature_cvterm_names">
 	  cvterm.name LIKE '%chromosome%' OR cvterm.name LIKE '%sequence%' OR 
-	    cvterm.name IN ('supercontig', 'ultra_scaffold', 'golden_path_region', 'contig')
+	    cvterm.name IN ('supercontig', 'ultra_scaffold', 'golden_path_region', 'contig', 'plasmid')
   </sql>
   <select id="getResidueFeatures" parameterClass="java.lang.Integer"
             resultMap="map-feature-with-residues-result">
