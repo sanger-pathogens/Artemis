@@ -34,7 +34,6 @@ import java.awt.Font;
 import java.awt.Dimension;
 import java.io.InputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.InputStreamReader;
@@ -46,29 +45,29 @@ import java.net.URL;
 import java.net.MalformedURLException;
 
 import uk.ac.sanger.artemis.components.filetree.FileList;
-import uk.ac.sanger.artemis.util.WorkingGZIPInputStream;
+import uk.ac.sanger.artemis.util.Document;
 
 public class FastaTextPane extends JScrollPane
 {
   /***/
   private static final long serialVersionUID = 1L;
   private JTextArea textArea;
-  private Vector hitInfoCollection = null;
+  private Vector<HitInfo> hitInfoCollection = null;
   private String format = null;
-  private File dataFile;
+  private Document document;
   private int qlen;
-  private Vector listerners = new Vector();
-  private Vector threads = new Vector();
+  private Vector<FastaListener> listeners = new Vector<FastaListener>();
+  private Vector<GetzThread> threads = new Vector<GetzThread>();
   protected static int MAX_HITS = 70;
   private static boolean remoteMfetch = false;
   private static boolean forceUrl = false;
   
-  static {
+  static 
+  {
     if(System.getProperty("useSRS") != null)
       forceUrl = true;
   }
 
-  
   public static HitInfo[] cacheHits = new HitInfo[BigPane.CACHE_SIZE];
   public static int nCacheHits = 0;
   private static String mfetchExecutablePath = "/nfs/disk100/pubseq/bin/mfetch";
@@ -76,31 +75,32 @@ public class FastaTextPane extends JScrollPane
   private static org.apache.log4j.Logger logger4j = 
     org.apache.log4j.Logger.getLogger(FastaTextPane.class);
   
-  public FastaTextPane(File dataFile)
+  public FastaTextPane(Document document)
   {
     super();
-    //read fasta file
 
-    this.dataFile = dataFile;
-    format = getResultsFormat();
-    StringBuffer contents = null;
+    this.document = document;
+    format = getResultsFormat(); 
 
-    if(format.equals("fasta"))
-      contents = readFASTAFile(format);
-    else if(format.equals("blastp"))
-      contents = readBLASTPFile(format);
+    if(format != null)
+    {
+      StringBuffer contents = null;
+      if(format.equals("fasta"))
+        contents = readFASTAFile(format);
+      else if(format.equals("blastp"))
+        contents = readBLASTPFile(format);
+      textArea = new JTextArea(contents.toString());
+      setTextAreaFont(BigPane.font);
+      textArea.setEditable(false);
 
-    textArea = new JTextArea(contents.toString());
-    setTextAreaFont(BigPane.font);
-    textArea.setEditable(false);
-
-    setViewportView(textArea);
-    setPreferredSize(new Dimension(500,300));
+      setViewportView(textArea);
+      setPreferredSize(new Dimension(500,300));
+    }
   }
 
   protected void addFastaListener(FastaListener obj)
   {
-    listerners.add(obj);
+    listeners.add(obj);
   }
 
   protected void reRead()
@@ -116,9 +116,9 @@ public class FastaTextPane extends JScrollPane
     textArea.setText(contents.toString());
     setViewportView(textArea);
 
-    Enumeration enumListeners = listerners.elements();
+    Enumeration<FastaListener> enumListeners = listeners.elements();
     while(enumListeners.hasMoreElements())
-      ((FastaListener)enumListeners.nextElement()).update();
+      enumListeners.nextElement().update();
   }
 
   /**
@@ -136,16 +136,6 @@ public class FastaTextPane extends JScrollPane
   {
     textArea.setFont(f);
   }
-  
-  private InputStream getInputStream()
-            throws IOException
-  {
-    FileInputStream inStream = new FileInputStream(dataFile);
-    if(dataFile.getName().endsWith(".gz"))
-      return new WorkingGZIPInputStream(inStream);
-    else
-      return inStream;
-  }
 
   /**
   *
@@ -155,14 +145,6 @@ public class FastaTextPane extends JScrollPane
   */
   private String getResultsFormat()
   {
-    File fn = dataFile;
-
-//  if(!fn.exists())
-//  {
-//    dataFile = dataFile+".gz";
-//    fn = new File(dataFile);
-//  }
-
     InputStreamReader streamReader = null;
     BufferedReader buffReader = null;
     String line = null;
@@ -170,7 +152,7 @@ public class FastaTextPane extends JScrollPane
 
     try
     {
-      streamReader = new InputStreamReader(getInputStream());
+      streamReader = new InputStreamReader(document.getInputStream());
       buffReader = new BufferedReader(streamReader);
       while( (line = buffReader.readLine()) != null)
       {
@@ -190,7 +172,8 @@ public class FastaTextPane extends JScrollPane
     }
     catch(IOException ioe)
     {
-      System.out.println("Cannot read file: " + fn.getAbsolutePath() );
+      System.out.println("Cannot read file: " + 
+          document.getName() +"\n"+ioe.getMessage());
     }
     
     return format;
@@ -205,10 +188,10 @@ public class FastaTextPane extends JScrollPane
     InputStreamReader streamReader = null;
     BufferedReader buffReader = null;
 
-    hitInfoCollection = new Vector();
+    hitInfoCollection = new Vector<HitInfo>();
     try
     {
-      streamReader = new InputStreamReader(getInputStream());
+      streamReader = new InputStreamReader(document.getInputStream());
       buffReader = new BufferedReader(streamReader);
 
       String line = null;
@@ -390,7 +373,7 @@ public class FastaTextPane extends JScrollPane
     }
     catch (IOException ioe)
     {
-      System.out.println("Cannot read file: " + dataFile.getName());
+      System.out.println("Cannot read file: " + document.getName());
     }
     return sbuff;
   }
@@ -404,10 +387,10 @@ public class FastaTextPane extends JScrollPane
     InputStreamReader streamReader = null;
     BufferedReader buffReader = null;
 
-    hitInfoCollection = new Vector();
+    hitInfoCollection = new Vector<HitInfo>();
     try
     {
-      streamReader = new InputStreamReader(getInputStream());
+      streamReader = new InputStreamReader(document.getInputStream());
       buffReader = new BufferedReader(streamReader);
 
       String line = null;
@@ -541,7 +524,7 @@ public class FastaTextPane extends JScrollPane
     }
     catch (IOException ioe)
     {
-      System.out.println("Cannot read file: " + dataFile.getName());
+      System.out.println("Cannot read file: " + document.getName());
     }
     return sbuff;
   }
@@ -557,13 +540,13 @@ public class FastaTextPane extends JScrollPane
     return qlen;
   }
 
-  protected Vector getHitCollection()
+  protected Vector<HitInfo> getHitCollection()
   {
     return hitInfoCollection;
   }
 
 
-  private HitInfo getHitInfo(String acc, final Vector hits)
+  private HitInfo getHitInfo(String acc, final Vector<HitInfo> hits)
   {
     int ind = 0;
     acc     = acc.trim();
@@ -593,11 +576,11 @@ public class FastaTextPane extends JScrollPane
   */
   protected void stopGetz()
   {
-    Enumeration threadEnum = threads.elements();
+    Enumeration<GetzThread> threadEnum = threads.elements();
 
     while(threadEnum.hasMoreElements())
     {
-      GetzThread gthread = (GetzThread)threadEnum.nextElement();
+      GetzThread gthread = threadEnum.nextElement();
       if(gthread.isAlive())
         gthread.stopMe();
     }
@@ -605,24 +588,16 @@ public class FastaTextPane extends JScrollPane
 
   class GetzThread extends Thread
   {
-    private Vector hitInfoCollection;
+    private Vector<HitInfo> hitInfoCollection;
     private boolean keepRunning = true;
 
-    protected GetzThread(Vector hitInfoCollection)
+    protected GetzThread(Vector<HitInfo> hitInfoCollection)
     {
       this.hitInfoCollection = hitInfoCollection;
     }
 
     public void run()
     {
-//    int max = hitInfoCollection.size();
-//    if(max > 10)
-//      max = 10;
-
-//    for(int i=0; i<max; i++)
-//      DataCollectionPane.getzCall((HitInfo)hitInfoCollection.get(i),false);
-
-//    DataCollectionPane.getzCall(hitInfoCollection,hitInfoCollection.size());
       getzCall(hitInfoCollection,hitInfoCollection.size());
     }
 
@@ -639,7 +614,7 @@ public class FastaTextPane extends JScrollPane
     * @param ortholog     true if ortholog is selected.
     *
     */
-    private void getzCall(final Vector hits, final int nretrieve)
+    private void getzCall(final Vector<HitInfo> hits, final int nretrieve)
     {
       final String env[] = { "PATH=/usr/local/pubseq/bin/:/nfs/disk100/pubseq/bin/" };
 
@@ -662,12 +637,12 @@ public class FastaTextPane extends JScrollPane
           remoteMfetch = attr.isFile();
       }
         
-      Enumeration ehits = hits.elements();
+      Enumeration<HitInfo> ehits = hits.elements();
       while(ehits.hasMoreElements() && keepRunning)
       {
         if(n>nretrieve)
           break;
-        HitInfo hit = (HitInfo)ehits.nextElement();
+        HitInfo hit = ehits.nextElement();
         
         HitInfo cacheHit = checkCache(hit);
         if(cacheHit != null)
@@ -965,7 +940,7 @@ public class FastaTextPane extends JScrollPane
   private void getDbXRefWithMfetch(final boolean isLocalMfetchExists,
                                    final StringBuffer queryMfetch[],
                                    final String env[], 
-                                   final Vector hits)
+                                   final Vector<HitInfo> hits)
   {
     String res = null;
     String line = null;

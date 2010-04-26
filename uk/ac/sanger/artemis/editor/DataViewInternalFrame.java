@@ -31,8 +31,7 @@ import javax.swing.event.ChangeEvent;
 
 import uk.ac.sanger.artemis.Feature;
 import uk.ac.sanger.artemis.components.ViewMenu;
-import uk.ac.sanger.artemis.io.DocumentEntry;
-import uk.ac.sanger.artemis.util.RemoteFileDocument;
+import uk.ac.sanger.artemis.util.Document;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -91,48 +90,28 @@ public class DataViewInternalFrame extends JInternalFrame
       for(int i = 0; i < files.size(); i++)
       {
         String fileName = (String) files.get(i);
-        // ensure results file exists
-        File fdata = new File(System.getProperty("user.dir") + fileName);
-
-        if(!fdata.exists())
+        Document document = null;
+        
+        try
         {
-          fdata = new File(fileName + ".gz");
+          String thisFileName = fileName;
+          int ind = fileName.indexOf(programName + File.separatorChar);
+          if(ind > -1) 
+            thisFileName = fileName.substring (ind + programName.length () + 1);
 
-          if(!fdata.exists())
-            fdata = new File(fileName);
+          document = ViewMenu.getSearchDocument(edit_feature, programName, thisFileName);
+        }
+        catch (IOException e)
+        {
+          e.printStackTrace();
+        }
 
-          if(!fdata.exists())
-          {
-            fdata = new File(System.getProperty("user.dir")
-                + File.separatorChar + fileName);
-            if(!fdata.exists())
-              fdata = new File(System.getProperty("user.dir")
-                  + File.separatorChar + fileName + ".gz");
-          }
-
-          // if not found locally try SSH remote site
-          if(!fdata.exists()
-              && ((DocumentEntry) (edit_feature.getEntry().getEMBLEntry()))
-                  .getDocument() instanceof RemoteFileDocument)
-          {
-            fdata = new File(System.getProperty("user.dir")
-                + File.separatorChar + fileName);
-            // check on the remote side and scp the file over
-            ViewMenu.checkRemoteNode(edit_feature, programName,
-                fdata.getName(), new File(programName));
-
-            if(!fdata.exists())
-              fdata = new File(System.getProperty("user.dir")
-                  + File.separatorChar + fileName + ".gz");
-          }
-
-          if(!fdata.exists())
-          {
-            JOptionPane.showMessageDialog(desktop, "Results file: \n"
-                + fileName + "\ndoes not exist!", "File Not Found",
-                JOptionPane.WARNING_MESSAGE);
-            continue;
-          }
+        if(document == null)
+        {
+          JOptionPane.showMessageDialog(desktop, "Results file: \n"
+              + fileName + "\ndoes not exist!", "File Not Found",
+              JOptionPane.WARNING_MESSAGE);
+          continue;
         }
 
         String tabName = (String) fileName;
@@ -147,9 +126,12 @@ public class DataViewInternalFrame extends JInternalFrame
         }
 
         // add fasta results internal frame
-        FastaTextPane fastaPane = new FastaTextPane(fdata);
-        fastaCollection.add(fastaPane);
-
+        FastaTextPane fastaPane = new FastaTextPane(document);
+        if(fastaPane.getFormat() != null)
+          fastaCollection.add(fastaPane);
+        else
+          continue;
+        
         /*
         if(qualifier_txt.indexOf("/" + fastaPane.getFormat() + "_file=\"") == -1)
         {
