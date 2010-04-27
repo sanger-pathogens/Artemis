@@ -21,13 +21,13 @@
 
 package uk.ac.sanger.artemis.components.filetree;
 
-import uk.ac.sanger.artemis.components.ViewMenu;
 import uk.ac.sanger.artemis.j2ssh.FTProgress;
-import uk.ac.sanger.artemis.j2ssh.FileTransferProgressMonitor;
 import uk.ac.sanger.artemis.j2ssh.SshFileManager;
 import uk.ac.sanger.artemis.j2ssh.SshPSUClient;
 
 import java.util.Hashtable;
+import java.util.zip.GZIPOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.File;
 
@@ -146,42 +146,55 @@ public class FileList
     return ssh_client.getFileContents(file, monitor);
   }
   
+  /**
+   * Transfer an entry from a zip file on the remote file system and
+   * create a copy on the local file system.
+   * @param zipFile
+   * @param entry
+   * @param dir_name
+   * @return
+   */
   public File getZipEntryContents(String zipFile, String entry, File dir_name)
   {  
-    String zipDir = zipFile.substring(0, zipFile.lastIndexOf("/"));
-    String cmd = "unzip "+zipFile+" "+entry+" "+entry+".gz -d "+zipDir;
-    
+    String stdOut = getZipEntry(zipFile, entry, "unzip -p "+zipFile+" "+entry+".gz | gunzip");
+    if(stdOut == null || stdOut.equals(""))
+      stdOut = getZipEntry(zipFile, entry, "unzip -p "+zipFile+" "+entry);
+  
+    if(stdOut == null || stdOut.equals(""))
+      return null;
+    // write to the local file system
+    try
+    {
+      File localfn = new File(dir_name.getAbsoluteFile(), entry+".gz");
+      localfn.getParentFile().mkdirs();
+      if(localfn.createNewFile())
+      {
+        GZIPOutputStream out = new GZIPOutputStream(new FileOutputStream(localfn));
+        out.write(stdOut.getBytes());
+        out.close();
+        return localfn;
+      }
+    }
+    catch (IOException e)
+    {
+      System.err.println(e.getMessage());
+    }
+    return null;
+  }
+  
+  private String getZipEntry(String zipFile, String entry, String cmd)
+  {
     SshPSUClient sshClient = new SshPSUClient(cmd);
     sshClient.start();
-    FileAttributes attr = null;
-    
-    int count = 0;
-    while(count < 100 && (attr == null || !attr.isFile()))
-    {
-      attr = stat(zipDir+"/"+entry);
-      if(attr == null || !attr.isFile())
-      {
-        attr = stat(zipDir+"/"+entry+".gz");
-        if(attr != null && attr.isFile())
-          entry = entry+".gz";
-      }
-      count++;
+    while(sshClient.isAlive() || sshClient.isAlive())
       try
       {
-        Thread.sleep(200);
+        Thread.sleep(2);
       }
-      catch (InterruptedException e){}
-    }
-    
-    File localfn = new File(dir_name.getAbsoluteFile(), entry);
-    FileTransferProgressMonitor monitor = new FileTransferProgressMonitor(null);
-    FTProgress progress = monitor.add(localfn.getName());
-    
-    byte[] contents = getFileContents(zipDir+"/"+entry, progress);
-    delete(zipDir+"/"+entry);
-    ViewMenu.writeByteFile(contents, localfn);
-    monitor.close();
-    return localfn;
+      catch (InterruptedException e1){}
+
+    //String stdErr = sshClient.getStdErr();
+    return sshClient.getStdOut();
   }
 
 
