@@ -1702,7 +1702,7 @@ public class ViewMenu extends SelectionMenu
     return document;
   }
   
-  public static boolean writeByteFile(byte[] contents, File fn)
+  private static boolean writeByteFile(byte[] contents, File fn)
   {
     if(fn.exists())
     {
