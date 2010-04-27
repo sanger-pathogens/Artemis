@@ -1665,6 +1665,8 @@ public class ViewMenu extends SelectionMenu
     if(attr != null && attr.isFile())
     {
       File fn = flist.getZipEntryContents(path, file_name, dir_name);
+      if(fn == null)
+        return null;
       return new FileDocument(fn);
     }
 
