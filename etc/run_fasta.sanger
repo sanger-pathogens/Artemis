@@ -426,7 +426,7 @@ sub bsub
 
   print BSUB "gzip -9f $prefix$num";
   print BSUB "\${LSB_JOBINDEX}\.out\n";
-  print BSUB "zip ${dirname}fasta.zip $prefix$num";
+  print BSUB "zip -j ${dirname}fasta.zip $prefix$num";
   print BSUB "\${LSB_JOBINDEX}\.out\.gz\n";
   print BSUB "rm -f $prefix$num";
   print BSUB "\${LSB_JOBINDEX}\.out\.gz\n";
