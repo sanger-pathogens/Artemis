@@ -6,7 +6,17 @@
 # to customise this script see the function called run_one_prog below
 
 
-RCS_HEADER="$Header: //tmp/pathsoft/artemis/etc/run_blastp.sanger,v 1.5 2007-02-27 10:56:30 tjc Exp $"
+RCS_HEADER="$Header: /cvsroot/pathsoft/artemis/etc/run_blastp.sanger,v 1.5 2007/02/27 10:56:30 tjc Exp $"
+
+cleanUp()
+{
+  echo $1
+  cat $1 | while thisLine=`line`
+  do
+     rm -f $thisLine
+  done
+  rm -f $1
+}
 
 PROG=`echo $RCS_HEADER | sed 's/.*run_\(.*\),v.*/\1/'`
 
@@ -25,6 +35,10 @@ else
         echo    or: $0 file_of_filenames database 1>&2
         exit 1
     fi
+fi
+
+if [ $DATABASE = "psu/Kineto_aa" ]; then
+  BLASTDB=/lustre/pathogen/blast; export BLASTDB
 fi
 
 
@@ -99,7 +113,7 @@ my $pwd      = $ARGV[2];
 chomp $file;
 chomp $database;
 
-open(BSUB, "| bsub -q normal -o fasta_errors -n 1 -R \"select[blast && mem > 500] rusage[r1m=1:mem=500]\" -K") or die "could not open bsub pipe : $!";
+open(BSUB, "| bsub -q normal -o fasta_errors -n 1 -R \"select[long && mem > 500] rusage[r1m=1:mem=500]\" -K") or die "could not open bsub pipe : $!";
 open(LIST_FILE,$file);
 
 $EXEC="blastall";
@@ -152,6 +166,8 @@ local *BSUB;
 my $file     = $ARGV[0];
 my $database = $ARGV[1];
 my $pwd      = $ARGV[2];
+my $dirname  = $ARGV[3];
+
 chomp $file;
 chomp $database;
 
@@ -368,7 +384,7 @@ sub bsub
   
   push(@bsub_jobs, "$name$random\_blastp");
 
-  my $QUEUE="longblastq";
+  my $QUEUE="long";
   if($NUM_JOBS <= 6)
   {
     $QUEUE="normal";
@@ -376,7 +392,7 @@ sub bsub
 
   print "flexi_blast.pl -p $database $prefix$num\n";
 
-  open(BSUB, "| bsub -q $QUEUE -o /dev/null -n 1 -R \"select[blast && mem > 500] rusage[mem=500]\" -J$name$random\_blastp\"[$index]%16\"")  or die "could not open bsub pipe  : $!";
+  open(BSUB, "| bsub -q $QUEUE -o /dev/null -n 1 -R \"select[mem > 500] rusage[mem=500]\" -J$name$random\_blastp\"[$index]%16\"")  or die "could not open bsub pipe  : $!";
   print BSUB "cd $NEW_WDIR\n";
   print BSUB "flexi_blast.pl -p $database $prefix$num";
   print BSUB "\${LSB_JOBINDEX} > $prefix$num";
@@ -384,6 +400,11 @@ sub bsub
 
   print BSUB "gzip -9f $prefix$num";
   print BSUB "\${LSB_JOBINDEX}\.out\n";
+  print BSUB "zip -j ${dirname}blastp.zip $prefix$num";
+  print BSUB "\${LSB_JOBINDEX}\.out\.gz\n";
+  print BSUB "rm -f $prefix$num";
+  print BSUB "\${LSB_JOBINDEX}\.out\.gz\n";
+
 
  close BSUB or die "--Could not submit job : $!";
 }
@@ -411,10 +432,13 @@ then
       CMD=`echo $PERL_PROG_1`
       ssh babel "cd $WDIR; perl -w -e '$CMD' \"$1\" \"$EXPANDED_DATABASE\" \"$PWD\""
    else
-      perl -w -e "$PERL_PROG" "$1" "$EXPANDED_DATABASE" "$PWD"
+      DIR=`dirname $PWD/$1`
+      perl -w -e "$PERL_PROG" "$1" "$EXPANDED_DATABASE" "$PWD" "$DIR/"
    fi
 else
     run_one_prog $1 $2 $EXPANDED_DATABASE
 fi
+
+cleanUp $1
 
 exit 0
