@@ -24,6 +24,7 @@
 
 package uk.ac.sanger.artemis.j2ssh;
 
+import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.components.MessageDialog;
 
 import javax.swing.JFileChooser;
@@ -68,6 +69,7 @@ public class SshPSUClient extends Thread
   private SshClient ssh;
   private String user;
   private boolean keep = false;
+  private boolean zipResults = false;
   
   //
   StdoutStdErrHandler stdouth;
@@ -273,6 +275,14 @@ public class SshPSUClient extends Thread
         db = "%uniprot";
     } 
 
+    if(settings.getProperty("zip") != null)
+    {
+      String zipValue = settings.getProperty("zip");
+      zipResults = Boolean.parseBoolean(zipValue);
+      
+      logger4j.debug("zip results :: "+zipResults);
+    }
+    
     if(wdir == null && settings.getProperty("wdir") != null)
       wdir = settings.getProperty("wdir");
 
@@ -494,11 +504,19 @@ public class SshPSUClient extends Thread
       }
 
       logger4j.debug("GET SUCCESS "+filepath+".out");
-
+      sftp.rm(wdir+filename);
+      
       if(!keep)
       {
         sftp.rm(outputfile);
-        sftp.rm(wdir+filename);
+      }
+      else if(zipResults)
+      {
+        cmd = "gzip "+outputfile+"; zip -j "+wdir+program+".zip "+
+                                    outputfile+".gz; rm -f "+outputfile+".gz";
+        logger4j.debug(cmd);
+        SshPSUClient sshClient = new SshPSUClient(cmd);
+        sshClient.start();
       }
       sftp = getSftpClient();
       sftp.rm(outputfile+".err");
