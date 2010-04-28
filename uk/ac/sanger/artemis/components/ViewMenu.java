@@ -1405,7 +1405,12 @@ public class ViewMenu extends SelectionMenu
 
           if(send_to_browser)
           {
-            SearchResultViewer.sendToBrowser(document.toString());
+            String fileName = document.toString();
+            if(document instanceof ZipFileDocument)
+                fileName = ((ZipFileDocument)document).writeTmpFile(
+                    getDocumentContents(document));
+            
+            SearchResultViewer.sendToBrowser(fileName);
           }
           else
           {
@@ -1497,6 +1502,18 @@ public class ViewMenu extends SelectionMenu
     return document;
   }
 
+  private static String getDocumentContents(Document document) throws IOException
+  {
+    final BufferedReader buffered_reader = new BufferedReader(document.getReader());
+    String line;
+    final StringBuffer line_buffer = new StringBuffer();
+    while((line = buffered_reader.readLine()) != null) 
+      line_buffer.append(line).append('\n');
+
+    buffered_reader.close();  
+    return line_buffer.toString();
+  }
+  
   /**
    *  Open a FeatureInfo component for each of the selected features.  The
    *  new component will listen for feature change events and update itself.
