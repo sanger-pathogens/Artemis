@@ -385,7 +385,8 @@ public class ChadoCanonicalGene
       while(it.hasNext())
       {
         String type = it.next();
-        if(!type.equals(DatabaseDocument.EXONMODEL))
+        if(!type.equals(DatabaseDocument.EXONMODEL) &&
+           !type.equals("pseudogenic_exon"))
         {
           List<Feature> splicedFeatures = getSpliceSitesOfTranscript(transcriptId, type);
           if(splicedFeatures.size() == 1)
