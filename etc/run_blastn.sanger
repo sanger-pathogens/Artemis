@@ -8,6 +8,16 @@
 
 RCS_HEADER="$Header: //tmp/pathsoft/artemis/etc/run_blastn.sanger,v 1.2 2005-06-09 12:48:51 tjc Exp $"
 
+cleanUp()
+{
+  echo $1
+  cat $1 | while thisLine=`line`
+  do
+    rm -f $thisLine
+  done
+  rm -f $1
+}
+
 PROG=`echo $RCS_HEADER | sed 's/.*run_\(.*\),v.*/\1/'`
 
 
@@ -38,7 +48,7 @@ run_one_prog () {
     INPUT_FILE=$1
     OUTPUT_FILE=$2
     DATABASE=$3
-
+    DIRNAME=$4
 
     ### change these lines:
     EXEC=blastall
@@ -60,6 +70,7 @@ run_one_prog () {
         *)
     esac
 
+    echo $DIRNAME
     if [ $REMOTE = "Y" ]; then
       WDIR=`pwd`
       export WDIR
@@ -71,14 +82,11 @@ run_one_prog () {
 #        $EXTRA_ARGS 2>&1 > $OUTPUT_FILE |
 #        tee ${PROG}_errors.new 1>&2
 
-      bsub -q  longblastq -o $OUTPUT_FILE -e ${PROG}_errors.new -I flexi_blast.pl $DATABASE $INPUT_FILE $EXTRA_ARGS 
+      bsub -q  long -o $OUTPUT_FILE -e ${PROG}_errors.new -I flexi_blast.pl $DATABASE $INPUT_FILE $EXTRA_ARGS 
     fi
 
     #### end of changes
-
-
-    # Artemis can read compressed files
-    gzip -9 $OUTPUT_FILE &
+    while [ ! -f $OUTPUT_FILE ]; do sleep 2; done
 
     if [ -s ${PROG}_errors.new ]
     then
@@ -87,21 +95,28 @@ run_one_prog () {
           cat ${PROG}_errors.new ) >> $OUTPUT_FILE
         cat ${PROG}_errors.new >> ${PROG}_errors
     fi
+
+    # Artemis can read compressed files
+    gzip -9 $OUTPUT_FILE
+    zip -j ${DIRNAME}blastn.zip ${OUTPUT_FILE}.gz
+    rm -f ${OUTPUT_FILE}.gz
 }
 
 (echo "#!/bin/sh -"; echo "kill $$") > $PROG.kill
 
 chmod a+x $PROG.kill
+DIR=`dirname $PWD/$1`
 
 if [ x$ONEFILE = x ]
 then
     for i in `cat $1`
     do
-        run_one_prog $i $i.out $EXPANDED_DATABASE
+        run_one_prog $i $i.out $EXPANDED_DATABASE "$DIR/"
     done
 
 else
-    run_one_prog $1 $2 $EXPANDED_DATABASE
+    run_one_prog $1 $2 $EXPANDED_DATABASE "$DIR/"
 fi
 
+cleanUp $1
 exit 0
