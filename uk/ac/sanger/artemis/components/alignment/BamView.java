@@ -2787,7 +2787,7 @@ public class BamView extends JPanel
     viewDetail.appendString("Inferred Size         "+thisSAMRecord.getInferredInsertSize()+"\n", Level.DEBUG);
     viewDetail.appendString("Mapping Quality       "+thisSAMRecord.getMappingQuality()+"\n", Level.DEBUG);
     
-    if(thisSAMRecord.getProperPairFlag() && !thisSAMRecord.getMateUnmappedFlag())
+    if(thisSAMRecord.getReadPairedFlag() && thisSAMRecord.getProperPairFlag() && !thisSAMRecord.getMateUnmappedFlag())
     {
       viewDetail.appendString("Mate Reference Name   "+thisSAMRecord.getMateReferenceName()+"\n", Level.DEBUG);
       viewDetail.appendString("Mate Start Coordinate "+thisSAMRecord.getMateAlignmentStart()+"\n", Level.DEBUG);
@@ -2806,17 +2806,25 @@ public class BamView extends JPanel
     viewDetail.appendString("\n\nFlags:", Level.INFO);
     viewDetail.appendString("\nDuplicate Read    "+
         (thisSAMRecord.getDuplicateReadFlag() ? "yes" : "no"), Level.DEBUG);
-    viewDetail.appendString("\nFirst of Pair     "+
+    
+    viewDetail.appendString("\nRead Paired       "+
+        (thisSAMRecord.getReadPairedFlag() ? "yes" : "no"), Level.DEBUG);
+    if(thisSAMRecord.getReadPairedFlag())
+    {
+      viewDetail.appendString("\nFirst of Pair     "+
         (thisSAMRecord.getFirstOfPairFlag() ? "yes" : "no"), Level.DEBUG);
-    viewDetail.appendString("\nMate Unmapped     "+
+      viewDetail.appendString("\nMate Unmapped     "+
         (thisSAMRecord.getMateUnmappedFlag() ? "yes" : "no"), Level.DEBUG);  
-    viewDetail.appendString("\nProper Pair       "+
+      viewDetail.appendString("\nProper Pair       "+
         (thisSAMRecord.getProperPairFlag() ? "yes" : "no"), Level.DEBUG);
+    }
     viewDetail.appendString("\nRead Fails Vendor\nQuality Check     "+
         (thisSAMRecord.getReadFailsVendorQualityCheckFlag() ? "yes" : "no"), Level.DEBUG);
     viewDetail.appendString("\nRead Unmapped     "+
         (thisSAMRecord.getReadUnmappedFlag() ? "yes" : "no"), Level.DEBUG);
-    viewDetail.appendString("\nSecond Of Pair    "+
+    
+    if(thisSAMRecord.getReadPairedFlag())
+      viewDetail.appendString("\nSecond Of Pair    "+
         (thisSAMRecord.getSecondOfPairFlag() ? "yes" : "no"), Level.DEBUG);
     
     viewDetail.appendString("\n\nRead Bases:\n", Level.INFO);
