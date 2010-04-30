@@ -128,119 +128,89 @@ public class ExternalProgram
     // sequence_file_names will be set by prepareRun()
     final File file_of_filenames = prepareRun(features, sequence_file_names);
 
-//  final Integer job_control_id =
-//    Options.getOptions().getIntegerProperty("jcon_" + getName() +
-//                                              "_program_id");
-
-//  final Integer min_jc_jobs =
-//    Options.getOptions().getIntegerProperty("jcon_min_jobs");
-
-//  String jcon_template =
-//    Options.getOptions().getProperty("jcon_" + getName() + "_template");
-
-//  final String jcon_batch_queue =
-//    Options.getOptions().getProperty("jcon_batch_queue");
-
-//  if(job_control_id != null &&
-//     min_jc_jobs != null &&
-//     jcon_template != null &&
-//     jcon_batch_queue != null &&
-//     features.size() >= min_jc_jobs.intValue()) 
-//  {
-//    return ExternalProgramUtils.runJConProgram(this, features, 
-//                			         sequence_file_names, logger);
-//  }
-//  else 
-//  {
-      try 
+    try
+    {
+      if( System.getProperty("j2ssh") != null && 
+         !System.getProperty("j2ssh").equals("false") && 
+          (getRealName().indexOf("blast") > -1 || getRealName().startsWith("fast")))
       {
-        if( System.getProperty("j2ssh") != null &&
-            !System.getProperty("j2ssh").equals("false") &&
-            (getRealName().indexOf("blast") > -1 || getRealName().startsWith("fast")) )
+        logger4j.debug("GET READY TO CALL SSH CLIENT " + getRealName());
+
+        final Feature this_feature = features.elementAt(0);
+        Entry entry = this_feature.getEntry();
+        String[] args;
+
+        if (((DocumentEntry) entry.getEMBLEntry()).getDocument() instanceof RemoteFileDocument)
         {
+          RemoteFileDocument nodeDoc = (RemoteFileDocument) (((DocumentEntry) entry
+              .getEMBLEntry()).getDocument());
+          RemoteFileNode node = nodeDoc.getRemoteFileNode();
 
-          logger4j.debug("GET READY TO CALL SSH CLIENT "+getRealName());
+          String wdir = node.getRootDir() + "/" + node.getFullName();
+          int index = wdir.lastIndexOf("/");
+          wdir = wdir.substring(0, index);
 
-          final Feature this_feature = features.elementAt(0);
-          Entry entry = this_feature.getEntry();
-          String [] args;
+          args = new String[9];
 
-          if(((DocumentEntry)entry.getEMBLEntry()).getDocument()
-                            instanceof RemoteFileDocument)
-          {
-            RemoteFileDocument nodeDoc =
-               (RemoteFileDocument)(((DocumentEntry)entry.getEMBLEntry()).getDocument());
-            RemoteFileNode node = nodeDoc.getRemoteFileNode();
+          args[0] = "-f";
+          args[1] = file_of_filenames.getPath();
+          args[2] = "-cmd";
+          args[3] = getRealName();
+          args[4] = "-wdir";
+          args[5] = wdir;
+          args[6] = "-d";
+          args[7] = getProgramOptions();
+          args[8] = "-keep";
+        }
+        else
+        {
+          args = new String[6];
 
-            String wdir = node.getRootDir()+"/"+node.getFullName();
-            int index = wdir.lastIndexOf("/");
-            wdir = wdir.substring(0,index);
-
-            args = new String[9];
-
-            args[0] = "-f";    args[1] = file_of_filenames.getPath();
-            args[2] = "-cmd";  args[3] = getRealName();
-            args[4] = "-wdir"; args[5] = wdir; 
-            args[6] = "-d";    args[7] = getProgramOptions();
-            args[8] = "-keep";
-          }
-          else
-          {
-            args = new String[6];
-
-            args[0] = "-f";    args[1] = file_of_filenames.getPath();
-            args[2] = "-cmd";  args[3] = getRealName();
-            args[4] = "-d";    args[5] = getProgramOptions();
-          }
-
-          logger4j.debug("CALL SSH CLIENT "+getRealName());
-
-          uk.ac.sanger.artemis.j2ssh.SshPSUClient ssh =
-                new uk.ac.sanger.artemis.j2ssh.SshPSUClient(args);
-          ssh.start();
-          new ProgressBarFrame(1, getName());
-          return null;
+          args[0] = "-f";
+          args[1] = file_of_filenames.getPath();
+          args[2] = "-cmd";
+          args[3] = getRealName();
+          args[4] = "-d";
+          args[5] = getProgramOptions();
         }
 
-        final String [] arguments;
-
-        switch(program_type) 
-        {
-          case DNA_PROGRAM:
-            // fall through
-          case AA_PROGRAM:
-            arguments = new String [] 
-            {
-              file_of_filenames.getPath(),
-              getProgramOptions()
-            };
-            break;
-          case APPLICATION:
-            arguments = new String [] 
-            {
-              file_of_filenames.getPath(),
-            };
-            break;
-          default:
-            throw new Error("internal error - unknown program type");
-        }
-
-        final Process process =
-          startProgram("run_" + getRealName(), arguments);
-
-        //
-        //
+        logger4j.debug("CALL SSH CLIENT " + getRealName());
+        uk.ac.sanger.artemis.j2ssh.SshPSUClient ssh = new uk.ac.sanger.artemis.j2ssh.SshPSUClient(
+            args);
+        ssh.start();
         new ProgressBarFrame(1, getName());
-        return new ProcessMonitor(process, getName(), logger);
-      } 
-      catch(SecurityException e) 
-      {
-        // re-throw as an ExternalProgramException
-        throw new ExternalProgramException("SecurityException while running " +
-                                            getName() + ": " +
-                                            e.getMessage());
+        return null;
       }
-//  }
+
+      final String[] arguments;
+      switch (program_type)
+      {
+      case DNA_PROGRAM:
+        // fall through
+      case AA_PROGRAM:
+        arguments = new String[]
+        { file_of_filenames.getPath(), getProgramOptions() };
+        break;
+      case APPLICATION:
+        arguments = new String[]
+        { file_of_filenames.getPath(), };
+        break;
+      default:
+        throw new Error("internal error - unknown program type");
+      }
+
+      final Process process = startProgram("run_" + getRealName(), arguments);
+
+      //
+      new ProgressBarFrame(1, getName());
+      return new ProcessMonitor(process, getName(), logger);
+    }
+    catch (SecurityException e)
+    {
+      // re-throw as an ExternalProgramException
+      throw new ExternalProgramException("SecurityException while running "
+          + getName() + ": " + e.getMessage());
+    }
   }
   
 
@@ -298,7 +268,7 @@ public class ExternalProgram
     File first_directory = null;
 
     // stores the number of features in each directory
-    final Hashtable feature_count_hash = new Hashtable();
+    final Hashtable<File, Long> feature_count_hash = new Hashtable<File, Long>();
 
     for(int i = 0 ; i < features.size() ; ++i) 
     {
@@ -341,12 +311,12 @@ public class ExternalProgram
       node = nodeDoc.getRemoteFileNode();
     }  
     
-    final java.util.Hashtable file_number_hash = new java.util.Hashtable();
+    final Hashtable<File, Long> file_number_hash = new Hashtable<File, Long>();
 
-    for(final Enumeration e = feature_count_hash.keys() ;
+    for(final Enumeration<File> e = feature_count_hash.keys() ;
          e.hasMoreElements() ;) 
     {
-      final File directory =(File) e.nextElement();
+      final File directory = e.nextElement();
 
       final long old_file_number = getFileNumber(directory, node);
 
