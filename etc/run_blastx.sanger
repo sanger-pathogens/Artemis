@@ -86,7 +86,7 @@ run_one_prog () {
 
 
     # Artemis can read compressed files
-    while [ ! -f $OUTPUT_FILE ]; do sleep 2; done
+    count=0; while  (test ! -f $OUTPUT_FILE)  && (test $count -lt 1000) ; do sleep 2; count+=1; done
 
     gzip -9 $OUTPUT_FILE
     zip -j ${DIRNAME}blastx.zip ${OUTPUT_FILE}.gz
