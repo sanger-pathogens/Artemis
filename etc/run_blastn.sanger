@@ -86,7 +86,7 @@ run_one_prog () {
     fi
 
     #### end of changes
-    while [ ! -f $OUTPUT_FILE ]; do sleep 2; done
+    count=0; while  (test ! -f $OUTPUT_FILE)  && (test $count -lt 1000) ; do sleep 2; count+=1; done
 
     if [ -s ${PROG}_errors.new ]
     then
