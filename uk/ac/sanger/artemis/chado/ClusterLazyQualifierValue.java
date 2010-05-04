@@ -167,6 +167,8 @@ public class ClusterLazyQualifierValue implements LazyQualifierValue
       {
         FeatureRelationship fr = it.next();
         FeatureRelationship frBulk = hashFR.get(fr.getFeatureBySubjectId().getFeatureId());
+        if(frBulk == null)
+          continue;
         List<FeatureRelationship> frsForSbjtId = new Vector<FeatureRelationship>();
 
         Feature parent = frBulk.getFeatureByObjectId();
