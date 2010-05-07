@@ -8,15 +8,6 @@
 
 RCS_HEADER="$Header: /cvsroot/pathsoft/artemis/etc/run_blastp.sanger,v 1.5 2007/02/27 10:56:30 tjc Exp $"
 
-cleanUp()
-{
-  echo $1
-  cat $1 | while thisLine=`line`
-  do
-     rm -f $thisLine
-  done
-  rm -f $1
-}
 
 PROG=`echo $RCS_HEADER | sed 's/.*run_\(.*\),v.*/\1/'`
 
@@ -266,6 +257,14 @@ if(defined @jobs100000)
 for($count = 0; $count < @bsub_jobs; $count++)
 {
   open(BSUB, "| bsub -q normal -R \"select[mem > 1] rusage[mem=1]\" -o /dev/null -e /dev/null -w \"ended($bsub_jobs[$count])\" -K -J \"$bsub_jobs[$count]\_fin\"")  or die "could not open bsub pipe  : $!";
+
+  if($count == @bsub_jobs-1)
+  {
+#   print BSUB "zip -j ${dirname}blastp.zip ${dirname}\*out.gz\n";
+#   print BSUB "rm -f ${dirname}\*out.gz\n";
+    print BSUB "find ${dirname} -name '\*out.gz' -maxdepth 1 -print | xargs zip -j ${dirname}blastp.zip\n";
+    print BSUB "find ${dirname} -name '\*out.gz' -maxdepth 1 -print | xargs rm -f\n";
+  }
   print BSUB "\"echo finished > /dev/null\" > /dev/null 2> /dev/null";
   close BSUB; # or die "--Could not submit job : $!";
 } 
@@ -400,10 +399,8 @@ sub bsub
 
   print BSUB "gzip -9f $prefix$num";
   print BSUB "\${LSB_JOBINDEX}\.out\n";
-  print BSUB "zip -j ${dirname}blastp.zip $prefix$num";
-  print BSUB "\${LSB_JOBINDEX}\.out\.gz\n";
   print BSUB "rm -f $prefix$num";
-  print BSUB "\${LSB_JOBINDEX}\.out\.gz\n";
+  print BSUB "\${LSB_JOBINDEX}\n";
 
 
  close BSUB or die "--Could not submit job : $!";
@@ -438,7 +435,5 @@ then
 else
     run_one_prog $1 $2 $EXPANDED_DATABASE
 fi
-
-cleanUp $1
 
 exit 0
