@@ -80,11 +80,37 @@ public class FeatureKeyQualifierPredicate
                                        final String qualifier_value,
                                        final boolean sub_string_match,
                                        final boolean ignore_case) {
+    this(key, qualifier_name, qualifier_value, sub_string_match, ignore_case, false);
+  }
+  
+  /**
+   *  Create a new FeatureKeyPredicate object.
+   *  @param key testPredicate () will return false if this Key isn't the
+   *    same as the Key of the test Feature.
+   *  @param qualifier_name testPredicate () will return false if the test
+   *    Feature does not contain a Qualifier with this name.  If null then
+   *    match any qualifier.
+   *  @param qualifier_value testPredicate () will return false if the test
+   *    Feature does not contain a Qualifier named qualifier_name with this
+   *    value.
+   *  @param sub_string_match if true then qualifier_value need only match a
+   *    substring for the predicate to be true.  If false then qualifier_value
+   *    must match the full length of the target for the predicate to be true.
+   *  @param ignore_case If true then case will be ignored when searching for
+   *    qualifier_value.
+   **/
+  public FeatureKeyQualifierPredicate (final Key key,
+                                       final String qualifier_name,
+                                       final String qualifier_value,
+                                       final boolean sub_string_match,
+                                       final boolean ignore_case,
+                                       final boolean deleteQualifier) {
     this.key                  = key;
     this.qualifier_name       = qualifier_name;
     this.qualifier_must_exist = false;
     this.sub_string_match     = sub_string_match;
     this.ignore_case          = ignore_case;
+    this.deleteQualifier      = deleteQualifier;
 
     if (ignore_case) {
       this.qualifier_value = qualifier_value.toLowerCase ();
@@ -165,10 +191,9 @@ public class FeatureKeyQualifierPredicate
         qualifier_names_to_search = new StringVector (qualifier_name);
       }
 
-      return feature.containsText (qualifier_value,
-                                   ignore_case,
-                                   sub_string_match,
-                                   qualifier_names_to_search);
+      return feature.findOrReplaceText (qualifier_value, ignore_case,
+                                   sub_string_match, deleteQualifier,
+                                   qualifier_names_to_search, null);
     }
   }
 
@@ -206,4 +231,7 @@ public class FeatureKeyQualifierPredicate
    *  If true then case will be ignored when searching for qualifier_value.
    **/
   private boolean ignore_case = false;
+  
+  /** If true delete the qualifier value */
+  private boolean deleteQualifier = false;
 }
