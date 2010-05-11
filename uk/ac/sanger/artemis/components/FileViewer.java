@@ -271,17 +271,13 @@ public class FileViewer extends JFrame
     final BufferedReader buffered_reader = new BufferedReader(read_stream);
 
     String line;
-
     final StringBuffer line_buffer = new StringBuffer();
-
     while((line = buffered_reader.readLine()) != null) 
       line_buffer.append(line).append('\n');
 
-    buffered_reader.close();
-
-    final String new_text = line_buffer.toString();
-    textPane.setText(new_text);
+    textPane.setText(line_buffer.toString());
     textPane.setCaretPosition(0);
+    buffered_reader.close();
   }
 
   /**
