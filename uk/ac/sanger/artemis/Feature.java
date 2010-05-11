@@ -1103,6 +1103,7 @@ public class Feature
       return null;
   }
 
+  
   /**
    *  Return true if and only if any qualifier in this feature contains the
    *  given text string.
@@ -1117,9 +1118,10 @@ public class Feature
                               final boolean match_substring,
                               final StringVector qualifier_names) 
   {
-    return findOrReplaceText(search_text, fold_case, match_substring, 
+    return findOrReplaceText(search_text, fold_case, match_substring, false,
                              qualifier_names, null);
   }
+
   
   /**
    *  Return true if and only if any qualifier in this feature contains the
@@ -1135,6 +1137,7 @@ public class Feature
   public boolean findOrReplaceText(final String search_text,
                               final boolean fold_case,
                               final boolean match_substring,
+                              final boolean deleteQualifier,
                               final StringVector qualifier_names,
                               final String replaceText) 
   {
@@ -1147,9 +1150,10 @@ public class Feature
 
     final QualifierVector qualifiers = getQualifiers();
     QualifierVector newQualifiers = null;
+    Vector<String> qualifiersToDelete = null;
     int qual_size =  qualifiers.size();
 
-    boolean hasReplacedText = false;
+    boolean hasReplacedOrDeletedText = false;
     
     for(int i = 0; i  < qual_size; ++i) 
     {
@@ -1164,6 +1168,7 @@ public class Feature
       if(values != null)
       {
         StringVector newValues = null;
+        StringVector deleteValues = null;
         int val_size = values.size();
         
         for(int values_index = 0; values_index < val_size; 
@@ -1182,9 +1187,16 @@ public class Feature
              match_substring &&
              this_value_string.indexOf(real_search_text) != -1)
           {
+            if(deleteQualifier)
+            {
+              if(deleteValues == null)
+                deleteValues = new StringVector();
+              deleteValues.add(this_value_string);
+              continue;
+            }
             // found the match & return true if replace function off
             if(replaceText == null)
-              return true;
+              return true;            
             
             String new_text = replaceText;
             if(match_substring)
@@ -1207,8 +1219,42 @@ public class Feature
             newQualifiers = new QualifierVector();
           newQualifiers.setQualifier(
               new Qualifier(this_qualifier.getName(),newValues));
-          hasReplacedText = true;
+          hasReplacedOrDeletedText = true;
         }
+        
+        if(deleteQualifier && deleteValues != null)
+        {
+          newValues = this_qualifier.getValues();
+          newValues.removeAll(deleteValues);
+          
+          if(newValues.size() < 1)
+          {
+            if(qualifiersToDelete == null)
+              qualifiersToDelete = new Vector<String>();
+            qualifiersToDelete.add(this_qualifier.getName());
+          }
+          else
+          {
+            newQualifiers = new QualifierVector();
+            newQualifiers.setQualifier(
+              new Qualifier(this_qualifier.getName(),newValues));
+          }
+          hasReplacedOrDeletedText = true;
+        }
+      }
+    }
+    
+    // delete qualifiers
+    if(qualifiersToDelete != null)
+    {
+      try
+      {
+        for (int i = 0; i < qualifiersToDelete.size(); i++)
+          removeQualifierByName(qualifiersToDelete.get(i));
+      }
+      catch (Exception e)
+      {
+        e.printStackTrace();
       }
     }
     
@@ -1231,7 +1277,7 @@ public class Feature
       }
     }
     
-    return hasReplacedText;
+    return hasReplacedOrDeletedText;
   }
 
   public boolean hasValidStartCodon() 
