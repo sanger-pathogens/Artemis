@@ -21,6 +21,7 @@
 
 package uk.ac.sanger.artemis.util;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,6 +35,7 @@ public class ZipFileDocument extends FileDocument
 {
   private File zipFile;
   private String zipEntryName;
+  private byte b[] = null;
   
   public ZipFileDocument(File zipFile, String zipEntryName)
   {
@@ -61,7 +63,8 @@ public class ZipFileDocument extends FileDocument
     if(!zipFile.getName().endsWith(".zip"))
       return super.getInputStream();
 
-    byte b[] = getEntryContent(zipFile, zipEntryName);
+    if(b == null)
+      b = getEntryContent(zipFile, zipEntryName);
     
     if(b == null)
     {
@@ -72,9 +75,7 @@ public class ZipFileDocument extends FileDocument
       }
       
       if(b == null)
-      {
         return null;
-      }
     }
     if(zipEntryName.endsWith(".gz"))
       return new WorkingGZIPInputStream(new ByteArrayInputStream(b));
@@ -100,21 +101,31 @@ public class ZipFileDocument extends FileDocument
   {
     try
     {
+      FileInputStream fis = new FileInputStream(zipFile);
       ZipInputStream zis = new ZipInputStream(
-          new FileInputStream(zipFile));
+          new BufferedInputStream(fis));
       ZipEntry ze;
       
       while ((ze=zis.getNextEntry())!=null)
       {
-        if( !ze.isDirectory() && 
-            (ze.getName().equals(zipEntryName) || ze.getName().equals(zipEntryName+".gz") ||
-             ze.getName().endsWith("/"+zipEntryName) || ze.getName().endsWith("/"+zipEntryName+".gz")))
+        if( (ze.getName().equals(zipEntryName) || ze.getName().equals(zipEntryName+".gz")) &&
+             !ze.isDirectory())
         {
           zipEntryName = ze.getName();
+          
+          ByteBuffer buff = new ByteBuffer();
+          b = new byte[1];
+          while(zis.read(b,0,1) != -1)
+            buff.append(b);
+          
+          b = buff.getBytes();
+          
+          fis.close();
           zis.close();
           return true;
         }
       }
+      fis.close();
       zis.close();
     }
     catch (IOException e){}
