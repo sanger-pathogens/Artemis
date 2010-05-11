@@ -199,6 +199,11 @@ public class FindAndReplace extends JFrame
     c.gridy = ++ypos;
     panel.add(qualifierValueSubString, c);
     
+    final JCheckBox deleteQualifier = new JCheckBox("Delete qualifier(s)", false);
+    deleteQualifier.setToolTipText("Find & Delete");
+    c.gridy = ++ypos;
+    panel.add(deleteQualifier, c);
+    
     // boolean searches
     c.gridy = ++ypos;
     c.anchor = GridBagConstraints.WEST;
@@ -329,13 +334,15 @@ public class FindAndReplace extends JFrame
             findText = findText.trim().replaceAll("\\s+", " & ");
           predicate = constructFeaturePredicateFromBooleanList(
               findText, key, qualifierName, 
-              qualifierValueSubString.isSelected(), !caseSensitive.isSelected());
+              qualifierValueSubString.isSelected(), !caseSensitive.isSelected(),
+              deleteQualifier.isSelected());
         }
         else
           predicate = new FeatureKeyQualifierPredicate(key, qualifierName,
                                                        findTextField.getText(), 
                                                        qualifierValueSubString.isSelected(), 
-                                                       !caseSensitive.isSelected());
+                                                       !caseSensitive.isSelected(),
+                                                       deleteQualifier.isSelected());
         
         final FilteredEntryGroup filtered_entry_group =
           new FilteredEntryGroup(entry_group, predicate, findTextField.getText());
@@ -392,7 +399,8 @@ public class FindAndReplace extends JFrame
             new FeatureKeyQualifierPredicate(key, qualifierName,
                                              findTextField.getText(), 
                                              qualifierValueSubString.isSelected(), 
-                                             !caseSensitive.isSelected());
+                                             !caseSensitive.isSelected(),
+                                             false);
 
         final FilteredEntryGroup filtered_entry_group =
           new FilteredEntryGroup(entry_group, predicate, findTextField.getText());
@@ -405,7 +413,8 @@ public class FindAndReplace extends JFrame
         {
           final Feature feature = features.elementAt(i);
           feature.findOrReplaceText(findTextField.getText(),
-              !caseSensitive.isSelected(), qualifierValueSubString.isSelected(), 
+              !caseSensitive.isSelected(), qualifierValueSubString.isSelected(),
+              false,
               qualifierStrings, replaceTextField.getText());
         }
         
@@ -562,7 +571,8 @@ public class FindAndReplace extends JFrame
                            final Key key,
                            final String qualifierName,
                            final boolean isSubString,
-                           final boolean isCaseInsensitive)
+                           final boolean isCaseInsensitive,
+                           final boolean deleteQualifier)
   {
     text = text.replaceAll(" && ", " & ");
     text = text.replaceAll(" (a|A)(n|N)(d|D) ", " & ");
@@ -584,7 +594,8 @@ public class FindAndReplace extends JFrame
           orPredicates.add(new FeatureKeyQualifierPredicate(key, qualifierName,
               valuesOr[j].trim(), 
               isSubString, 
-              isCaseInsensitive));
+              isCaseInsensitive,
+              deleteQualifier));
         }
       }
       else 
@@ -592,13 +603,14 @@ public class FindAndReplace extends JFrame
         andPredicates.add(new FeatureKeyQualifierPredicate(key, qualifierName,
                                                  valuesAnd[i].trim(), 
                                                  isSubString, 
-                                                 isCaseInsensitive));
+                                                 isCaseInsensitive,
+                                                 deleteQualifier));
       }
     }
     
     if(andPredicates.size() == 0 && orPredicates.size() == 0)
       return new FeatureKeyQualifierPredicate(key, qualifierName,
-          text, isSubString, isCaseInsensitive);
+          text, isSubString, isCaseInsensitive, deleteQualifier);
     else if(andPredicates.size() == 0)
       return new FeaturePredicateConjunction(orPredicates, FeaturePredicateConjunction.OR);
     else if(orPredicates.size() == 0)
