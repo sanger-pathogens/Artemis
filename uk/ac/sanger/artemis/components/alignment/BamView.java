@@ -2867,8 +2867,17 @@ public class BamView extends JPanel
   public static void main(String[] args)
   {
     BamFrame frame = new BamFrame();
-    if(args.length == 0 && frame.getBamFile() != null)
-      args = new String[]{ frame.getBamFile() };
+    
+    if(args.length == 0 && BamFrame.isMac())
+    {
+      try
+      {
+        Thread.sleep(1000);
+      }
+      catch (InterruptedException e1) {}
+      if(frame.getBamFile() != null);
+        args = new String[]{ frame.getBamFile() };
+    }
       
     List<String> bam = new Vector<String>();
     String reference = null;

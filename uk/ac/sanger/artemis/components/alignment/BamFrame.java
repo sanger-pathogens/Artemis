@@ -53,8 +53,6 @@ import javax.swing.JOptionPane;
     protected void loadFile(final String bamFile)
     {
       this.bamFile = bamFile;
-      JOptionPane.showMessageDialog(this, bamFile);
-      
     }
 
     protected void exitApp()
@@ -71,7 +69,7 @@ import javax.swing.JOptionPane;
       return bamFile;
     }
     
-    private boolean isMac()
+    protected static boolean isMac()
     {
       return System.getProperty("mrj.version") != null;
     }
