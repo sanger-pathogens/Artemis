@@ -25,14 +25,14 @@ import javax.swing.JOptionPane;
         // methods we wish to
         // use as delegates for various com.apple.eawt.ApplicationListener
         // methods
-        Class splashClass = Class.forName("uk.ac.sanger.artemis.components.alignment.BamFrame");
-        BamOSXAdapter.setQuitHandler(this, splashClass.getDeclaredMethod(
+        Class bamClass = Class.forName("uk.ac.sanger.artemis.components.alignment.BamFrame");
+        BamOSXAdapter.setQuitHandler(this, bamClass.getDeclaredMethod(
             "exitApp", (Class[]) null));
-        BamOSXAdapter.setAboutHandler(this, splashClass.getDeclaredMethod("about",
+        BamOSXAdapter.setAboutHandler(this, bamClass.getDeclaredMethod("about",
             (Class[]) null));
         // OSXAdapter.setPreferencesHandler(this,
         // splashClass.getDeclaredMethod("preferences", (Class[])null));
-        BamOSXAdapter.setFileHandler(this, splashClass.getDeclaredMethod(
+        BamOSXAdapter.setFileHandler(this, bamClass.getDeclaredMethod(
             "loadFile", new Class[]
             { String.class }));
       }
@@ -44,18 +44,17 @@ import javax.swing.JOptionPane;
 
     protected void about()
     {
-      ClassLoader cl = this.getClass().getClassLoader();
-      ImageIcon icon = new ImageIcon(cl.getResource("images/icon.gif"));
-
       JOptionPane.showMessageDialog(this,
           "BamView\nthis is free software and is distributed"
               + "\nunder the terms of the GNU General Public License.",
-          "About", JOptionPane.INFORMATION_MESSAGE, icon);
+          "About", JOptionPane.INFORMATION_MESSAGE);
     }
 
     protected void loadFile(final String bamFile)
     {
-      this.bamFile = bamFile; 
+      this.bamFile = bamFile;
+      JOptionPane.showMessageDialog(this, bamFile);
+      
     }
 
     protected void exitApp()
