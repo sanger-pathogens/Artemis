@@ -2875,7 +2875,7 @@ public class BamView extends JPanel
         Thread.sleep(1000);
       }
       catch (InterruptedException e1) {}
-      if(frame.getBamFile() != null);
+      if(frame.getBamFile() != null)
         args = new String[]{ frame.getBamFile() };
     }
       
