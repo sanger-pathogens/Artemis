@@ -210,6 +210,7 @@ public class BamView extends JPanel
                  int nbasesInView)
   {
     super();
+    
     setBackground(Color.white);
     this.bamList = bamList;
     this.nbasesInView = nbasesInView;
@@ -2861,19 +2862,27 @@ public class BamView extends JPanel
   {
     SAMRecord sam1;
     SAMRecord sam2;
-  }
-  
+  } 
+ 
   public static void main(String[] args)
   {
-    List<String> bam = new Vector<String>();;
+    BamFrame frame = new BamFrame();
+    if(args.length == 0 && frame.getBamFile() != null)
+      args = new String[]{ frame.getBamFile() };
+      
+    List<String> bam = new Vector<String>();
     String reference = null;
     if(args.length == 0)
     {
+      System.setProperty("default_directory", System.getProperty("user.dir"));
       FileSelectionDialog fileSelection = new FileSelectionDialog(null, true);
       bam = fileSelection.getBamFiles();
       reference = fileSelection.getReferenceFile();
       if(reference == null || reference.equals(""))
         reference = null;
+      
+      if(bam == null || bam.size() < 1)
+        System.exit(0);
     }
     else if(!args[0].startsWith("-"))
     {
@@ -2916,7 +2925,7 @@ public class BamView extends JPanel
     }
 
     final BamView view = new BamView(bam, reference, nbasesInView);
-    JFrame frame = new JFrame("BamView v"+view.getVersion());
+    frame.setTitle("BamView v"+view.getVersion());
     
     // translucent
     //frame.getRootPane().putClientProperty("Window.alpha", new Float(0.9f));
