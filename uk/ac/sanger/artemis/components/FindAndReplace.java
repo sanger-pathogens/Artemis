@@ -86,7 +86,7 @@ public class FindAndReplace extends JFrame
       final BasePlotGroup base_plot_group)
   {
     super("Search");
-    
+
     this.entry_group = entry_group;
     
     final JTabbedPane tabPane = new JTabbedPane();
@@ -312,6 +312,17 @@ public class FindAndReplace extends JFrame
         if(findTextField.getText().equals(""))
           JOptionPane.showMessageDialog(FindAndReplace.this,
               "No text entered.", "No Text", JOptionPane.WARNING_MESSAGE);
+        
+        if(deleteQualifier.isSelected())
+        {
+          int status = JOptionPane.showConfirmDialog(FindAndReplace.this,
+                "Delete the matching qualifiers?", 
+                "Delete", JOptionPane.OK_CANCEL_OPTION);
+
+          if(status == JOptionPane.CANCEL_OPTION)
+        	  return;
+        }
+        
         setCursor(new Cursor(Cursor.WAIT_CURSOR));
         Key key = null;
         if(selectedKeyButton.isSelected())
