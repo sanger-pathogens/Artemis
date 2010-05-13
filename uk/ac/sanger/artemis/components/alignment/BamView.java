@@ -1820,6 +1820,8 @@ public class BamView extends JPanel
 
     combo = new JComboBox(seqNames);
     combo.setEditable(false);
+    combo.setMaximumRowCount(20);
+    
     combo.addItemListener(new ItemListener()
     {
       public void itemStateChanged(ItemEvent e)
