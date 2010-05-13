@@ -267,8 +267,7 @@ public class AddMenu extends SelectionMenu
     });
     
     add (create_intron_features_item);
-    if(entry_group.getDefaultEntry().getEMBLEntry() instanceof 
-        uk.ac.sanger.artemis.io.DatabaseDocumentEntry)
+    if(GeneUtils.isDatabaseEntry(entry_group))
       create_intron_features_item.setEnabled(false);
     
     final JMenuItem create_intergenic_features_item =
@@ -290,8 +289,7 @@ public class AddMenu extends SelectionMenu
     });
 
     add (create_exon_features_item);
-    if(entry_group.getDefaultEntry().getEMBLEntry() instanceof 
-        uk.ac.sanger.artemis.io.DatabaseDocumentEntry)
+    if(GeneUtils.isDatabaseEntry(entry_group))
       create_exon_features_item.setEnabled(false);
 
     final JMenuItem create_gene_features_item =
@@ -304,8 +302,7 @@ public class AddMenu extends SelectionMenu
     });
 
     add (create_gene_features_item);
-    if(entry_group.getDefaultEntry().getEMBLEntry() instanceof 
-        uk.ac.sanger.artemis.io.DatabaseDocumentEntry)
+    if(GeneUtils.isDatabaseEntry(entry_group))
       create_gene_features_item.setEnabled(false);
 
     addSeparator ();
