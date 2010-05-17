@@ -1,4 +1,4 @@
-Version 12+
+Version 12.+
 	Add an option to delete qualifiers in the Find/Replace tool.
 
 	Artemis can read in a set of zipped search results (e.g. blastp/blastp.zip).
