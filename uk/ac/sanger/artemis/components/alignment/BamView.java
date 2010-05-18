@@ -1828,7 +1828,11 @@ public class BamView extends JPanel
       {
         laststart = -1;
         lastend = -1;
-        setZoomLevel(BamView.this.nbasesInView);
+        
+        if(feature_display != null)
+          setZoomLevel(feature_display.getMaxVisibleBases());
+        else
+          setZoomLevel(BamView.this.nbasesInView);
       }
     });
     topPanel.add(combo);
