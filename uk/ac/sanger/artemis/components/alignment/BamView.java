@@ -624,7 +624,7 @@ public class BamView extends JPanel
               bamList.size() > 1)
           {
             // merge multiple BAM files
-            Collections.sort(readsInView, new SAMRecordPositionComparator());
+            Collections.sort(readsInView, new SAMRecordPositionComparator(BamView.this));
           }
         }
         catch (OutOfMemoryError ome)

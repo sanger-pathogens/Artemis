@@ -30,14 +30,23 @@ import net.sf.samtools.SAMRecord;
 
  class SAMRecordPositionComparator implements Comparator<Object>
   {
+    public BamView bamView;
+    public SAMRecordPositionComparator(BamView bamView)
+    {
+      this.bamView = bamView;
+    }
+    
     public int compare(Object o1, Object o2) 
     {
       SAMRecord pr1 = (SAMRecord) o1;
       SAMRecord pr2 = (SAMRecord) o2;
       
-      if(pr1.getAlignmentStart() < pr2.getAlignmentStart())
+      int offset1 = bamView.getSequenceOffset(pr1.getReferenceName());
+      int offset2 = bamView.getSequenceOffset(pr2.getReferenceName());
+      
+      if(pr1.getAlignmentStart()+offset1 < pr2.getAlignmentStart()+offset2)
         return -1;
-      else if(pr1.getAlignmentStart() > pr2.getAlignmentStart())
+      else if(pr1.getAlignmentStart()+offset1 > pr2.getAlignmentStart()+offset2)
         return 1;  
       return 0;
     }
