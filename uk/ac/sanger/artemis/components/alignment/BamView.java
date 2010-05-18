@@ -1345,9 +1345,10 @@ public class BamView extends JPanel
       
       if(pr.sam2 != null)
       {
+        int offset = getSequenceOffset(pr.sam1.getReferenceName());
         drawTranslucentJointedLine(g2, 
-                (int)((pr.sam1.getAlignmentEnd()-getBaseAtStartOfView())*pixPerBase),
-                (int)((pr.sam2.getAlignmentStart()-getBaseAtStartOfView())*pixPerBase), ypos);
+                (int)((pr.sam1.getAlignmentEnd()+offset-getBaseAtStartOfView())*pixPerBase),
+                (int)((pr.sam2.getAlignmentStart()+offset-getBaseAtStartOfView())*pixPerBase), ypos);
       }
       else
       {
@@ -1360,10 +1361,11 @@ public class BamView extends JPanel
             prStart = pr.sam1.getAlignmentEnd();
           else
             prStart = pr.sam1.getAlignmentStart();
-            
+          
+          int offset = getSequenceOffset(pr.sam1.getReferenceName());
           drawTranslucentJointedLine(g2, 
-              (int)( (prStart-getBaseAtStartOfView())*pixPerBase),
-              (int)( (pr.sam1.getMateAlignmentStart()-getBaseAtStartOfView())*pixPerBase), ypos);
+              (int)( (prStart+offset-getBaseAtStartOfView())*pixPerBase),
+              (int)( (pr.sam1.getMateAlignmentStart()+offset-getBaseAtStartOfView())*pixPerBase), ypos);
         }
       }
       
@@ -1374,6 +1376,7 @@ public class BamView extends JPanel
         g2.setColor(Color.red);
       else
         g2.setColor(Color.blue);
+      
       drawRead(g2, pr.sam1, pixPerBase, ypos, baseAtStartOfView);
       
       if(pr.sam2 != null)
