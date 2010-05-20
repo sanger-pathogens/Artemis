@@ -1345,10 +1345,11 @@ public class BamView extends JPanel
       
       if(pr.sam2 != null)
       {
-        int offset = getSequenceOffset(pr.sam1.getReferenceName());
+        int offset1 = getSequenceOffset(pr.sam1.getReferenceName());
+        int offset2 = getSequenceOffset(pr.sam2.getReferenceName());
         drawTranslucentJointedLine(g2, 
-                (int)((pr.sam1.getAlignmentEnd()+offset-getBaseAtStartOfView())*pixPerBase),
-                (int)((pr.sam2.getAlignmentStart()+offset-getBaseAtStartOfView())*pixPerBase), ypos);
+                (int)((pr.sam1.getAlignmentEnd()+offset1-getBaseAtStartOfView())*pixPerBase),
+                (int)((pr.sam2.getAlignmentStart()+offset2-getBaseAtStartOfView())*pixPerBase), ypos);
       }
       else
       {
