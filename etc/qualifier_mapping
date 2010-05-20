@@ -11,6 +11,9 @@ polypeptide_domain          note
 PlasmoAP_score              note
 membrane_structure          note
 non_cytoplasm_location      note
+non_cytoplasmic_polypeptide_region note
+transmembrane_polypeptide_region note
+cytoplasmic_polypeptide_region note
 cytoplasm_location          note
 transmembrane               note
 signal_anchor_probability   note
@@ -31,3 +34,4 @@ Parent
 Derives_from
 feature_relationship_rank
 isObsolete
+isFminPartial
