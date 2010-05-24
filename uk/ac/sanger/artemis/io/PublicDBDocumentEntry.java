@@ -643,6 +643,9 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
     {
       keyMapProperties.load(keyStream);
       qualifierMapProperties.load(qualifierStream);
+      
+      if(System.getProperty("nohistory") != null)
+        qualifierMapProperties.setProperty("history", "");
     }
     catch(IOException e)
     {
