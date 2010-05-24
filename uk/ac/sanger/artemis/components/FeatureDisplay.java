@@ -346,6 +346,11 @@ public class FeatureDisplay extends EntryGroupPanel
     show_labels =
       Options.getOptions().getPropertyTruthValue("feature_labels");
 
+    show_reverse_lines =
+      Options.getOptions().getPropertyTruthValue("show_reverse_lines");
+    
+    show_forward_lines =
+      Options.getOptions().getPropertyTruthValue("show_forward_lines");
     
     final StringVector frame_line_features = 
       Options.getOptions().getOptionValues("frame_line_features");
