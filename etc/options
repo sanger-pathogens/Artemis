@@ -357,6 +357,11 @@ show_results = no
 # default to true on start up
 features_on_frame_lines = no
 
+# if these options are "yes" the forward and reverse feature lines
+# are displayed
+show_forward_lines = yes
+show_reverse_lines = yes
+
 # features to show on the frame line
 #frame_line_features =  \
 #  CDS \
