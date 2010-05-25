@@ -260,10 +260,8 @@ for($count = 0; $count < @bsub_jobs; $count++)
 
   if($count == @bsub_jobs-1)
   {
-#   print BSUB "zip -j ${dirname}blastp.zip ${dirname}\*out.gz\n";
-#   print BSUB "rm -f ${dirname}\*out.gz\n";
-    print BSUB "find ${dirname} -name '\*out.gz' -maxdepth 1 -print | xargs zip -j ${dirname}blastp.zip\n";
-    print BSUB "find ${dirname} -name '\*out.gz' -maxdepth 1 -print | xargs rm -f\n";
+    print BSUB "find ${dirname} -maxdepth 1 -name \"\*out.gz\" -print | xargs zip -j ${dirname}blastp.zip\n";
+    print BSUB "find ${dirname} -maxdepth 1 -name \"\*out.gz\" -print | xargs rm -f\n";
   }
   print BSUB "\"echo finished > /dev/null\" > /dev/null 2> /dev/null";
   close BSUB; # or die "--Could not submit job : $!";
