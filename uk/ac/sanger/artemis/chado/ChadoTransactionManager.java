@@ -1965,6 +1965,11 @@ public class ChadoTransactionManager
       {
         Hashtable mappingIds = feature.getNewIdMapToOldId();
         
+        if(mappingIds == null)
+        {
+          logger4j.debug("No mapping found.");
+          return;
+        }
         Object newKeys[] = segmentRangeStore.keySet().toArray();
         uniqueName = new String[newKeys.length];
         oldUniqueNames = new String[newKeys.length];
