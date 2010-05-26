@@ -2575,6 +2575,12 @@ public class BamView extends JPanel
    */
   public void displayAdjustmentValueChanged(final DisplayAdjustmentEvent event)
   {
+    if(event.getType() == DisplayAdjustmentEvent.REV_COMP_EVENT &&
+       event.isRevCompDisplay())
+      JOptionPane.showMessageDialog(this, 
+          "Flipping the display is not supported by BamView.", "Warning", 
+          JOptionPane.WARNING_MESSAGE);
+
     if(!asynchronous)
     {
       // if not asynchronous
