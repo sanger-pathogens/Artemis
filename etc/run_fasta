@@ -51,8 +51,8 @@ if [ -f "$FASTLIBS" ]; then
 fi
 
 # expand any ~ or environment variables
-EXPANDED_DATABASE=`echo "echo $DATABASE" | /bin/csh -f`
-
+#EXPANDED_DATABASE=`echo "echo $DATABASE" | /bin/csh -f`
+eval EXPANDED_DATABASE="$DATABASE"
 
 ### change this function to suit your site:
 
