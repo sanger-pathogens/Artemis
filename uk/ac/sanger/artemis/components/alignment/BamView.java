@@ -895,7 +895,7 @@ public class BamView extends JPanel
 
           int xscreen = (refPos+1)*ALIGNMENT_PIX_PER_BASE;
           insertions.put(xscreen, 
-              (samRecord.getAlignmentStart()+len-1)+" "+
+              (refPos+refSeqStart+1)+" "+
               readSeq.substring(blockEnd-1, nextBlockStart-1));
           g2.drawLine(xscreen, ypos, xscreen, ypos-BASE_HEIGHT);
           
