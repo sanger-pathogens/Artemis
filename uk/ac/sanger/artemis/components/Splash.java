@@ -575,28 +575,15 @@ abstract public class Splash extends JFrame
       options_menu.add(black_belt_mode_item);
     }
 
-    if(Options.isUnixHost()) 
+    options_menu.addSeparator();
+    menu_listener = new ActionListener() 
     {
-      options_menu.addSeparator();
-
-      menu_listener = new ActionListener() 
+      public void actionPerformed(ActionEvent event) 
       {
-        public void actionPerformed(ActionEvent event) 
-        {
-          showLog();
-        }
-      };
-      makeMenuItem(options_menu, "Show Log Window", menu_listener);
-
-      menu_listener = new ActionListener() 
-      {
-        public void actionPerformed(ActionEvent event) 
-        {
-          logger.setVisible(false);
-        }
-      };
-      makeMenuItem(options_menu, "Hide Log Window", menu_listener);
-    }
+        showLog();
+      }
+    };
+    makeMenuItem(options_menu, "Show Log Window", menu_listener);
 
     menu_listener = new ActionListener()
     {
