@@ -38,6 +38,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -54,6 +55,7 @@ import net.sf.samtools.SAMRecord;
     private BamView jamView;
     private JPopupMenu popup;
     private static LineAttributes lines[];
+    private boolean includeCombined = false;
     
     public CoveragePanel(final BamView jamView)
     {
@@ -67,12 +69,29 @@ import net.sf.samtools.SAMRecord;
       {
         public void actionPerformed(ActionEvent e)
         {
+          int size = jamView.bamList.size();
+          if(includeCombined)
+            size++;
           lines =
             LineAttributes.configurePlots(jamView.bamList, 
-                getLineAttributes(jamView.bamList.size()), CoveragePanel.this);
+                getLineAttributes(size), CoveragePanel.this);
         }
       });
       popup.add(configure);
+      
+      if(jamView.bamList.size() > 1)
+      {
+        final JCheckBoxMenuItem showCombined = new JCheckBoxMenuItem("Show Combined Plot", false);
+        showCombined.addActionListener(new ActionListener()
+        {
+          public void actionPerformed(ActionEvent e)
+          {
+            includeCombined = showCombined.isSelected();
+            repaint();
+          }
+        });
+        popup.add(showCombined);
+      }
       
       addMouseListener(new PopupListener());
     }
@@ -112,6 +131,15 @@ import net.sf.samtools.SAMRecord;
       List<String> bamList = jamView.bamList;
       final Hashtable<String, Integer[]> plots = new Hashtable<String, Integer[]>();
       
+      Integer combinedCoverage[] = null;
+      if(includeCombined)
+      {
+        combinedCoverage = new Integer[nBins];
+        for(int k=0; k<combinedCoverage.length; k++)
+          combinedCoverage[k] = 0;
+        plots.put("-1", combinedCoverage);
+      }
+      
       int max = 0;
       for(int i=0; i<readsInView.size(); i++)
       {
@@ -121,6 +149,21 @@ import net.sf.samtools.SAMRecord;
         
         int length = thisRead.getReadLength();
 
+        String fileName;
+        if(bamList.size() > 1)
+          fileName = bamList.get((Integer) thisRead.getAttribute("FL"));
+        else
+          fileName = bamList.get(0);
+        Integer coverage[] = plots.get(fileName);
+        
+        if(coverage == null)
+        {
+          coverage = new Integer[nBins];
+          for(int k=0; k<coverage.length; k++)
+            coverage[k] = 0;
+          plots.put(fileName, coverage);
+        }         
+        
         for(int j=0; j<length;j++)
         {
           int bin = 
@@ -128,40 +171,46 @@ import net.sf.samtools.SAMRecord;
 
           if(bin < 0 || bin > nBins-1)
             continue;
-
-          String fileName;
-          if(bamList.size() > 1)
-            fileName = bamList.get((Integer) thisRead.getAttribute("FL"));
-          else
-            fileName = bamList.get(0);
-          Integer coverage[] = plots.get(fileName);
           
-          if(coverage == null)
-          {
-            coverage = new Integer[nBins];
-            for(int k=0; k<coverage.length; k++)
-              coverage[k] = 0;
-            plots.put(fileName, coverage);
-          }         
- 
           coverage[bin]+=1;
           if(coverage[bin] > max)
             max = coverage[bin];
+          
+          if(includeCombined)
+          {
+            combinedCoverage[bin]+=1;
+            if(combinedCoverage[bin] > max)
+              max = combinedCoverage[bin];
+          }
         }
       }
 
-      lines = getLineAttributes(jamView.bamList.size());
+      int size = jamView.bamList.size();
+      if(includeCombined)
+      {
+        lines = getLineAttributes(size+1);
+        lines[size].setLineColour(Color.black);
+      }
+      else
+        lines = getLineAttributes(size);
+      
       Enumeration<String> plotEum = plots.keys();
       while(plotEum.hasMoreElements())
       {
         String fileName = (String) plotEum.nextElement();
         Integer[] thisPlot = plots.get(fileName);
         
-        g2.setColor(lines[bamList.indexOf(fileName)].getLineColour());
+        int index;
+        if(fileName.equals("-1"))
+          index = lines.length-1;
+        else
+          index = bamList.indexOf(fileName);
         
-        if(lines[bamList.indexOf(fileName)].getPlotType() == LineAttributes.PLOT_TYPES[0])
+        g2.setColor(lines[index].getLineColour());
+        
+        if(lines[index].getPlotType() == LineAttributes.PLOT_TYPES[0])
         {
-          g2.setStroke(lines[bamList.indexOf(fileName)].getStroke());
+          g2.setStroke(lines[index].getStroke());
           for(int i=1; i<thisPlot.length; i++)
           {
             int x0 = (int) ((((i-1)*(windowSize)) - windowSize/2.f)*pixPerBase);
