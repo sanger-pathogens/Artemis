@@ -632,11 +632,18 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
    **/
   private static void initDatabaseMappings()
   {
-    final InputStream keyStream =
-      Options.class.getResourceAsStream("/etc/key_mapping");
-    final InputStream qualifierStream =
-      Options.class.getResourceAsStream("/etc/qualifier_mapping");
-    
+    InputStream keyStream = 
+      Options.class.getResourceAsStream("/key_mapping");
+    if (keyStream == null)
+      keyStream = 
+        Options.class.getResourceAsStream("/etc/key_mapping");
+
+    InputStream qualifierStream = 
+      Options.class.getResourceAsStream("/qualifier_mapping");
+    if (qualifierStream == null)
+      qualifierStream = 
+        Options.class.getResourceAsStream("/etc/qualifier_mapping");
+
     final Properties keyMapProperties = new Properties();
     final Properties qualifierMapProperties = new Properties();
     try
