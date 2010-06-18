@@ -26,6 +26,7 @@
 package uk.ac.sanger.artemis;
 
 import uk.ac.sanger.artemis.util.*;
+import uk.ac.sanger.artemis.components.Splash;
 import uk.ac.sanger.artemis.io.Key;
 import uk.ac.sanger.artemis.io.KeyVector;
 import uk.ac.sanger.artemis.io.QualifierInfo;
@@ -34,9 +35,17 @@ import uk.ac.sanger.artemis.io.QualifierInfoException;
 import uk.ac.sanger.artemis.io.EntryInformation;
 import uk.ac.sanger.artemis.io.SimpleEntryInformation;
 
-import java.awt.*;
-import java.io.*;
-import java.util.*;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Properties;
+import java.util.Vector;
+
 
 /**
  *  An object of this class is used to read, write and store all the
@@ -49,6 +58,8 @@ import java.util.*;
 
 public class Options extends Properties 
 {
+  private static final long serialVersionUID = 1L;
+
   /**
    *  This is the object that will be returned by getOptions().
    **/
@@ -89,7 +100,7 @@ public class Options extends Properties
    *  A map of colour numbers to Color object.  This is initialised by
    *  setDefaultColourMap().
    **/
-  private Vector colour_map = null;
+  private Vector<Color> colour_map = null;
 
   /** A vector containing ExternalProgram objects that we can run. */
   private ExternalProgramVector external_programs = null;
@@ -102,7 +113,6 @@ public class Options extends Properties
 
   /** Set by getInvisibleQualifiers() and reset by resetCachedValues() */
   private StringVector invisible_qualifiers = null;
-
 
   /** 
    *  Create a new Options object with default settings for the options.
@@ -290,19 +300,22 @@ public class Options extends Properties
           final Document options_document =
             new FileDocument(new File(this_options_file));
 
-          // read the "uk.ac.sanger.artemis.ini" file from the current directory if it exists
+          // read the option files if they exist
           if(options_document.readable()) 
           {
 
             final InputStream options_document_stream =
               options_document.getInputStream();
 
-            if(!run_quietly) 
+            /*if(!run_quietly) 
               System.err.println("reading options from \"" +
-                                  this_options_file + "\"");
+                                  this_options_file + "\"");*/
 
+            Splash.appendToLog(this_options_file+" options read");
             load(options_document_stream);
           }
+          else
+            Splash.appendToLog(this_options_file+" not found");
         }
       }
     } 
@@ -639,7 +652,7 @@ public class Options extends Properties
       return null;
     }
     else 
-      return (Color) colour_map.elementAt(colour_number);
+      return colour_map.elementAt(colour_number);
   }
 
   /**
@@ -1000,7 +1013,7 @@ public class Options extends Properties
 
     font = new Font(getProperty("font_name"), Font.PLAIN, font_size);
     
-    colour_map = new Vector(25);
+    colour_map = new Vector<Color>(25);
 
     int colour_number = 0;
 
