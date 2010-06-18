@@ -54,6 +54,7 @@ import java.util.Properties;
 
 abstract public class Splash extends JFrame
 {
+  private static final long serialVersionUID = 1L;
 
   /**
    *  Do any necessary cleanup then exit.
@@ -97,7 +98,7 @@ abstract public class Splash extends JFrame
   public static boolean save_systematic_names = false;
   /**  The Artemis LogViewer. */
   private final static LogViewer logger = new LogViewer();
-  
+  private static String optionsLogString[];
   public static org.apache.log4j.Logger logger4j = 
          org.apache.log4j.Logger.getLogger(Splash.class);
   
@@ -112,6 +113,12 @@ abstract public class Splash extends JFrame
     logger4j.info(System.getProperty("java.home"));
     logger4j.info(System.getProperty("os.name"));
     logger4j.info("Starting application: "+program_name);
+    
+    if(optionsLogString != null)
+    {
+      for(int i=0; i<optionsLogString.length; i++)
+        logger4j.info(optionsLogString[i]);
+    }
   }
   
   /**
@@ -249,6 +256,24 @@ abstract public class Splash extends JFrame
       catch(IOException e)
       {
       }
+    }
+  }
+
+  public static void appendToLog(String s)
+  {
+    if(optionsLogString == null)
+      optionsLogString = new String[]{s};
+    else
+    {
+      String logStringTmp[] = new String[optionsLogString.length];
+      for(int i=0; i<logStringTmp.length; i++)
+        logStringTmp[i] = optionsLogString[i];
+      optionsLogString = new String[logStringTmp.length+1];
+      
+      for(int i=0; i<logStringTmp.length; i++)
+        optionsLogString[i] = logStringTmp[i];
+      
+      optionsLogString[optionsLogString.length-1] = s;
     }
   }
   
