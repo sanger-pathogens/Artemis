@@ -4,7 +4,6 @@
 comment                     note
 Note                        note
 Dbxref                      db_xref
-private                     note
 orthologous_to              ortholog
 paralogous_to               paralog
 polypeptide_domain          note
@@ -35,3 +34,4 @@ Derives_from
 feature_relationship_rank
 isObsolete
 isFminPartial
+private
