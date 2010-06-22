@@ -265,6 +265,7 @@ public class ReadAndWriteEntry
         
         // note that read_only and noprompt -D parameters redundant now
         System.out.println("Advanced parameters:");
+        System.out.println("-l\tlocation of mapping files (qualifier_mapping and key_mapping)");
         System.out.println("-z\t[y|n] gzip output, default is y");
         System.out.println("-a\t[y|n] for EMBL submission format change to n, default is y");
         System.out.println("-pp\t[y|n] read polypeptide domain features, default is n");
@@ -293,26 +294,22 @@ public class ReadAndWriteEntry
           if(i + 1 < args.length && args[i + 1].toLowerCase().equals("n"))
             flatten = false;
         }
-
-        if (key.equals("-i"))
+        else if (key.equals("-i"))
         {
           if(i + 1 < args.length && args[i + 1].toLowerCase().equals("n"))
             ignoreObsolete = false;
         }
-        
-        if (key.equals("-a"))
+        else if (key.equals("-a"))
         {
           if(i + 1 < args.length && args[i + 1].toLowerCase().equals("n"))
             include_diana_extensions = false;
         }
-        
-        if (key.equals("-z"))
+        else if (key.equals("-z"))
         {
           if(i + 1 < args.length && args[i + 1].toLowerCase().equals("n"))
             gzip = false;
         }
-        
-        if (key.equals("-o"))
+        else if (key.equals("-o"))
         {
           if(i + 1 < args.length && args[i + 1].toLowerCase().equals("gff"))
           {
@@ -320,8 +317,7 @@ public class ReadAndWriteEntry
             suffix = ".gff";
           }
         }
- 
-        if (key.equals("-pp"))
+        else if (key.equals("-pp"))
         {
           if(i + 1 < args.length && args[i + 1].toLowerCase().equals("y"))
             LocalAndRemoteFileManager.domainLoad.setSelected(true);
@@ -329,20 +325,19 @@ public class ReadAndWriteEntry
         
         // GSV :: added these command-line parameters
         // note that read_only and noprompt -D parameters redundant now
-        if (key.equals("-u"))
+        else if (key.equals("-u"))
         {
         	System.setProperty("uimode", args[i + 1]);
         }
-        
-        if (key.equals("-c"))
+        else if (key.equals("-c"))
         {
         	System.setProperty("chado", args[i + 1]);
         }
-        if (key.equals("-p"))
+        else if (key.equals("-p"))
         {
         	System.setProperty("chadoPassword", args[i + 1]);
         }
-        if (key.equals("-fp"))
+        else if (key.equals("-fp"))
         {
         	filePath = args[i + 1];
         }
