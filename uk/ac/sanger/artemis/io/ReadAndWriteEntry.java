@@ -265,7 +265,7 @@ public class ReadAndWriteEntry
         
         // note that read_only and noprompt -D parameters redundant now
         System.out.println("Advanced parameters:");
-        System.out.println("-l\tlocation of mapping files (qualifier_mapping and key_mapping)");
+        System.out.println("-l\tlocation of EMBL mapping files (qualifier_mapping and key_mapping)");
         System.out.println("-z\t[y|n] gzip output, default is y");
         System.out.println("-a\t[y|n] for EMBL submission format change to n, default is y");
         System.out.println("-pp\t[y|n] read polypeptide domain features, default is n");
