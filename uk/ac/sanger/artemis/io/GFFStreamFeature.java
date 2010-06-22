@@ -926,6 +926,9 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       if(lname)
         continue;
       
+      if(this_qualifier.getName().equals("private") && System.getProperty("noprivate") != null)
+        continue;
+
       // GSV :: see new getQualifierString signature
       // this qualifier is NOT one of the reserved qualifiers 
       String this_qualifier_str = getQualifierString(this_qualifier, false);
