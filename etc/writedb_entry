@@ -56,10 +56,16 @@ do
 		let "nextID = $idx + 1";
 		DEFAULT_CONNECTION="-Dchado=${!nextID}"		
 	fi
+	if [ '-l' == "${arg}" ]; then
+		let "nextID = $idx + 2";
+                eval MAPPING_PATH="${!nextID}"
+		CLASSPATH="${MAPPING_PATH}:$CLASSPATH"
+		export CLASSPATH
+	fi
 	let idx++
 done
 
-
+echo $CLASSPATH
 echo starting to write with flags: $DEFAULT_CONNECTION $FLAGS 1>&2
 
 java $DEFAULT_CONNECTION $FLAGS uk.ac.sanger.artemis.io.ReadAndWriteEntry "$@"
