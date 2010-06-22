@@ -273,6 +273,7 @@ public class ReadAndWriteEntry
         System.out.println("-u\t[swing|console|script] the UI mode : run in swing (with popup dialog boxes) mode, run in console mode (choices entered in the console window), or in script mode (all choices default to continue, all parameters passed on command line) ");
         System.out.println("-p\tthe password for connecting to the Chado database");
         System.out.println("-fp\t the file path (the folder you want to save the files in)");
+        System.out.println("-np\t[y|n] do not write out private qualifiers, default is y");
         
         System.exit(0);
       }
@@ -283,6 +284,7 @@ public class ReadAndWriteEntry
       boolean include_diana_extensions = true;
       String suffix = ".embl";
       boolean gzip = true;
+      boolean noprivates = true;
       
       String filePath = "";
       
@@ -308,6 +310,11 @@ public class ReadAndWriteEntry
         {
           if(i + 1 < args.length && args[i + 1].toLowerCase().equals("n"))
             gzip = false;
+        }
+        else if (key.equals("-np"))
+        {
+          if(i + 1 < args.length && args[i + 1].toLowerCase().equals("n"))
+            noprivates = false;
         }
         else if (key.equals("-o"))
         {
@@ -386,6 +393,9 @@ public class ReadAndWriteEntry
       if(gzip)
         suffix = suffix + ".gz";
 
+      if(noprivates)
+        System.setProperty("noprivates", "true");
+      
       for(int i=0;i < names.length; i++)
       {
         
