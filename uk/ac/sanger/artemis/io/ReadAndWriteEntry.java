@@ -394,7 +394,7 @@ public class ReadAndWriteEntry
         suffix = suffix + ".gz";
 
       if(noprivates)
-        System.setProperty("noprivates", "true");
+        System.setProperty("noprivate", "true");
       
       for(int i=0;i < names.length; i++)
       {
