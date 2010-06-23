@@ -59,7 +59,7 @@ N_region        	ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontolo
 #TATA_box        	ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id isObsolete timelastmodified allele citation evidence gene label locus_tag map note comment partial 
 #attenuator      	ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id isObsolete timelastmodified allele citation evidence gene label locus_tag map note comment operon partial phenotype 
 #enhancer        	ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id isObsolete timelastmodified allele citation evidence gene label locus_tag map note comment partial standard_name 
-gap             	ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id isObsolete timelastmodified @estimated_length
+gap             	ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id isObsolete timelastmodified @estimated_length score
 #iDNA            	ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id isObsolete timelastmodified allele citation evidence function gene label locus_tag map note comment number partial standard_name 
 #mature_peptide  	ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id isObsolete timelastmodified EC_number allele citation codon codon_start evidence function gene label locus_tag map note comment partial product pseudo standard_name 
 #modified_base_site  ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id isObsolete timelastmodified @mod_base allele citation evidence frequency gene label locus_tag map note comment 
