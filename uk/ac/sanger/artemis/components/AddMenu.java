@@ -59,6 +59,7 @@ import java.awt.event.WindowEvent;
 import java.util.Comparator;
 import java.util.Vector;
 import java.util.Enumeration;
+import java.util.regex.Pattern;
 
 import javax.swing.Box;
 import javax.swing.JCheckBox;
@@ -1692,6 +1693,8 @@ public class AddMenu extends SelectionMenu
     else
       unsure = new Key ("unsure");
     
+    Pattern p = Pattern.compile("^(n|N)+$"); // pattern match for all n's
+    
     for (int i = 1 ; i <= bases.getLength () ; ++i) {
       try {
         if (! Bases.isLegalBase (bases.getBaseAt (i))) {
@@ -1717,10 +1720,17 @@ public class AddMenu extends SelectionMenu
 
           final QualifierVector qualifiers = new QualifierVector ();
 
-          qualifiers.setQualifier (new Qualifier ("note", unsure_bases));
-
-          final Feature feature =
-            new_entry.createFeature (unsure, location, qualifiers);
+          if(p.matcher(unsure_bases).matches())
+          {
+            final Feature feature =
+              new_entry.createFeature (new Key("gap"), location, qualifiers);
+          }
+          else
+          {
+            qualifiers.setQualifier (new Qualifier ("note", unsure_bases));
+            final Feature feature =
+              new_entry.createFeature (unsure, location, qualifiers);
+          }
         }
       } catch (ReadOnlyException e) {
         throw new Error ("internal error - unexpected exception: " + e);
