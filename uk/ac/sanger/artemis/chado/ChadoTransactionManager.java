@@ -447,8 +447,9 @@ public class ChadoTransactionManager
   public void entryChanged(EntryChangeEvent event)
   {
 	logMDC();
+
     if(event.getType() == EntryChangeEvent.FEATURE_ADDED)
-    { 
+    {
       // if this is a duplicate feature then ignore
       if(event.isDuplicate())
       {
@@ -474,6 +475,9 @@ public class ChadoTransactionManager
         return;
       
       final Feature feature = event.getFeature();
+      
+      if(! (((GFFStreamFeature)feature.getEmblFeature()).getDocumentEntry().getDocument() instanceof DatabaseDocument))
+        return;
       
       final FeatureSegmentVector segments = feature.getSegments();
       
