@@ -186,7 +186,8 @@ public class Selector extends JFrame
     getContentPane().add(by_qualifier_panel);
 
     boolean isGFF = false;
-    if(getEntryGroup().getDefaultEntry().getEMBLEntry() instanceof GFFDocumentEntry)
+    if(getEntryGroup().getDefaultEntry() != null &&
+       getEntryGroup().getDefaultEntry().getEMBLEntry() instanceof GFFDocumentEntry)
       isGFF = true;
     qualifier_selector = new QualifierChoice(default_entry_information,
                                               key_selector.getSelectedItem(),
