@@ -38,6 +38,7 @@ import uk.ac.sanger.artemis.sequence.Strand;
 import uk.ac.sanger.artemis.util.*;
 import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
+import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.io.Key;
 import uk.ac.sanger.artemis.io.Range;
@@ -1684,7 +1685,13 @@ public class AddMenu extends SelectionMenu
     Entry new_entry = null;
 
     final Bases bases = entry_group.getBases ();
-
+    final Key unsure;
+    if(entry_group.getSequenceEntry() != null &&
+       entry_group.getSequenceEntry().getEMBLEntry() instanceof DatabaseDocumentEntry)
+      unsure = new Key ("region");
+    else
+      unsure = new Key ("unsure");
+    
     for (int i = 1 ; i <= bases.getLength () ; ++i) {
       try {
         if (! Bases.isLegalBase (bases.getBaseAt (i))) {
@@ -1713,7 +1720,7 @@ public class AddMenu extends SelectionMenu
           qualifiers.setQualifier (new Qualifier ("note", unsure_bases));
 
           final Feature feature =
-            new_entry.createFeature (new Key ("unsure"), location, qualifiers);
+            new_entry.createFeature (unsure, location, qualifiers);
         }
       } catch (ReadOnlyException e) {
         throw new Error ("internal error - unexpected exception: " + e);
