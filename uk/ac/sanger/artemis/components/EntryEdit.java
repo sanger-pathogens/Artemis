@@ -1250,7 +1250,8 @@ public class EntryEdit extends JFrame
       {
         public void actionPerformed(ActionEvent e)
         {
-          FileSelectionDialog fileChooser = new FileSelectionDialog(null, false);
+          FileSelectionDialog fileChooser = new FileSelectionDialog(
+              null, false, "BamView", "BAM");
           List<String> listBams = fileChooser.getBamFiles();
 
           jamPanel.removeAll();

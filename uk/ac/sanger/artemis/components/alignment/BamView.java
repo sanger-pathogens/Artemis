@@ -2002,7 +2002,8 @@ public class BamView extends JPanel
     {
       public void actionPerformed(ActionEvent e)
       {
-        FileSelectionDialog bamFileSelection = new FileSelectionDialog(null, false);
+        FileSelectionDialog bamFileSelection = new FileSelectionDialog(
+            null, false, "BamView", "BAM");
         List<String> bamFiles = bamFileSelection.getBamFiles();
         int count = bamList.size();
        
@@ -2900,7 +2901,8 @@ public class BamView extends JPanel
     if(args.length == 0)
     {
       System.setProperty("default_directory", System.getProperty("user.dir"));
-      FileSelectionDialog fileSelection = new FileSelectionDialog(null, true);
+      FileSelectionDialog fileSelection = new FileSelectionDialog(
+          null, true, "BamView", "BAM");
       bam = fileSelection.getBamFiles();
       reference = fileSelection.getReferenceFile();
       if(reference == null || reference.equals(""))

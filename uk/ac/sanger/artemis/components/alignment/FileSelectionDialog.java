@@ -43,19 +43,24 @@ public class FileSelectionDialog extends JDialog
   
   /**
    * Constructor to display any given input files and options provided and
+   * @param f
+   * @param showReferenceOption
+   * @param program - program name
+   * @param fileType - type of file (e.g. bam, vcf)
    */
-  public FileSelectionDialog(Frame f, boolean showReferenceOption)
+  public FileSelectionDialog(Frame f, boolean showReferenceOption, 
+      final String program, final String fileType)
   {
-    super(f, "BamView :: Select Files", true);
+    super(f, program+" :: Select Files", true);
 
-    addBamField();
+    addBamField(fileType);
     
     JButton addMoreFiles = new JButton("Add More");
     addMoreFiles.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
       {
-        addBamField();
+        addBamField(fileType);
       }
     });
     
@@ -101,7 +106,7 @@ public class FileSelectionDialog extends JDialog
    * Add a text field to the dialog for adding in a path
    * to a BAM file.
    */
-  private void addBamField()
+  private void addBamField(String fileType)
   {
     JTextField bamField = new JTextField(30);
     bamFields.add(bamField);
@@ -111,7 +116,7 @@ public class FileSelectionDialog extends JDialog
     c.gridy = row;
     c.gridx = 0;
     c.anchor = GridBagConstraints.WEST;
-    dialog.add(new JLabel(" BAM file: "), c);
+    dialog.add(new JLabel(" "+fileType+" file: "), c);
     c.gridy = ++row;
     dialog.add(bamField, c);
     c.gridx = 1;
@@ -148,7 +153,7 @@ public class FileSelectionDialog extends JDialog
    * @param filename
    * @return
    */
-  protected static boolean isListOfFiles(String filename) 
+  public static boolean isListOfFiles(String filename) 
   {
     if(filename.startsWith("http"))
     {
@@ -196,7 +201,7 @@ public class FileSelectionDialog extends JDialog
    * @param filename
    * @return
    */
-  protected static List<String> getListOfFiles(String filename)
+  public static List<String> getListOfFiles(String filename)
   {
     List<String> bamFiles = new Vector<String>();
     try
@@ -276,7 +281,7 @@ public class FileSelectionDialog extends JDialog
    * Get the reference
    * @return
    */
-  protected String getReferenceFile()
+  public String getReferenceFile()
   {
     return referenceField.getText();
   }
