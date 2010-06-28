@@ -95,7 +95,7 @@ public class DNADraw extends ScrollPanel
   private DNADraw current_dna;
   private JFrame mainFrame;
 
-  private Point location    = new Point(75,75);
+  private Point location    = new Point();
   private Dimension border  = new Dimension(150,100);
   private Dimension panelSize = new Dimension(690,690);
   private Dimension linearPanelSize = new Dimension(800,350);
@@ -150,7 +150,9 @@ public class DNADraw extends ScrollPanel
   
   public DNADraw()
   {
-    super(new BorderLayout()); 
+    super(new BorderLayout());
+    location.setLocation(75.d, 75.d);
+    
     current_dna = this;
     setBackground(Color.white);
     setPreferredSize(panelSize);
@@ -322,7 +324,7 @@ public class DNADraw extends ScrollPanel
   */
   protected double getDiameter()
   {
-    return getWidth()-border.getWidth();
+    return ((double)getWidth())-border.getWidth();
   }
 
 

@@ -25,6 +25,7 @@ import uk.ac.sanger.artemis.Feature;
 import javax.swing.*;
 
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Line2D;
 import java.awt.*;
 import java.awt.datatransfer.*;
 import java.awt.event.*;
@@ -495,22 +496,22 @@ public class Block implements Transferable
     double bdiameter = ddiameter*getTrack().getPosition();
  
     // 
-    // to avoid rounding problems convert to int's 
-    int strokeInt2 = Math.round(getStrokeSize()/2.f);
-    int strokeInt  = strokeInt2*2;
+    float stroke  = getStrokeSize();
+    float stroke2 = getStrokeSize()/2.f;
+    int strokeInt = (int)stroke;
     
-    int d2 = (int)(bdiameter/2.d);
-    int d  = d2*2;
+    double d2 = (bdiameter/2.d);
+    double d  = d2*2.d;
     
-    int locx = location.x+(int)shift;
-    int locy = location.y+(int)shift;
+    double locx = location.getX()+shift;
+    double locy = location.getY()+shift;
     
     if(arrowHead)
     {
       newOrig.rotate(Math.toRadians(-angStart-angEnd),
           locx+d2,locy+d2);
       
-      int xmid = locx+d;
+      int xmid = (int)(locx+d);
       int ymid = location.y+(int)(dradii);
       int[] xPoints = {xmid-strokeInt,xmid+strokeInt,xmid};
       int[] yPoints = {ymid-strokeInt,ymid-strokeInt,ymid};
@@ -523,7 +524,7 @@ public class Block implements Transferable
       newOrig.rotate(Math.toRadians(-angStart),
           locx+d2,locy+d2);
 
-      int xmid = locx+d;
+      int xmid = (int)(locx+d);
       int ymid = location.y+(int)(dradii);
       int[] xPoints = {xmid-strokeInt,xmid+strokeInt,xmid};
       int[] yPoints = {ymid+strokeInt,ymid+strokeInt,ymid};
@@ -542,9 +543,9 @@ public class Block implements Transferable
     // if too small draw arc as a line
     if(Math.abs(angEnd) < 0.4d)
     {
-    	newOrig = (AffineTransform) (origin.clone());
+      newOrig = (AffineTransform) (origin.clone());
       
-      int xLine = d2-strokeInt2 ; 
+      double xLine = d2-stroke2 ; 
       newOrig.translate(locx+d2,locy+d2);
       newOrig.rotate(Math.toRadians(-angStart));
 
@@ -555,12 +556,13 @@ public class Block implements Transferable
 
       g2.setStroke(basicstroke);
       g2.setTransform(newOrig);
-      g2.drawLine(xLine, 0, xLine+strokeInt, 0);
+      //g2.drawLine((int)xLine, 0, (int)(xLine+strokeInt), 0);
+      g2.draw(new Line2D.Double(xLine, 0.d, xLine+stroke, 0.d));
     }
     else
     {
       BasicStroke basicstroke = new BasicStroke(
-          strokeInt,
+          stroke,
           BasicStroke.CAP_BUTT, 
           BasicStroke.JOIN_MITER);
 
