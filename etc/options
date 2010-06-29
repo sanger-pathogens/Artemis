@@ -666,6 +666,8 @@ invisible_qualifiers_gff= \
     country        \
     cultivar       \
     cytoplasm_location \
+    cytoplasmic_polypeptide_region \
+    Dbxref \
     DNA_transposon \
     Derives_from   \
     dev_stage      \
@@ -695,6 +697,7 @@ invisible_qualifiers_gff= \
     isolate        \
     kinetoplast    \
     lab_host       \
+    literature     \
     locus_tag      \
     macronuclear   \
     map            \
@@ -704,6 +707,7 @@ invisible_qualifiers_gff= \
     mol_type       \
     Name           \
     non_cytoplasm_location \
+    non_cytoplasmic_polypeptide_region \
     Note           \
     note           \
     Ontology_term  \
@@ -719,6 +723,7 @@ invisible_qualifiers_gff= \
     previous_systematic_id \
     primary_name \
     product        \
+    product_synonym \
     protein_id     \
     replace        \
     results        \
@@ -748,6 +753,7 @@ invisible_qualifiers_gff= \
     tissue_lib     \
     tissue_type    \
     transmembrane  \
+    transmembrane_polypeptide_region  \
     transgenic     \
     translation
 
