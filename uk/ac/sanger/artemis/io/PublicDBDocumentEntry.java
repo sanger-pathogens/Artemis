@@ -232,7 +232,7 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
       {
         final Feature protein = chadoGene.getProteinOfTranscript(transcriptName);
         if(protein != null)
-          combineQualifiers(qualifiers, protein.getQualifiers().copy());
+          combineQualifiers(qualifiers, protein.getQualifiers().copy(), false);
 
         if(transcript != null)
           ntranscripts = handleTranscripts(qualifiers, transcript, ntranscripts, chadoGene);
@@ -250,7 +250,7 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
     	addNewQualifier(qualifiers, newIDQualifier);
     	geneQualifiers.removeQualifierByName("ID");
       }
-      combineQualifiers(qualifiers, geneQualifiers);
+      combineQualifiers(qualifiers, geneQualifiers, true);
     }
     
     try
@@ -359,15 +359,15 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
    * @param newQualifiers
    */
   private void combineQualifiers(final QualifierVector qualifiers,
-                                 final QualifierVector newQualifiers)
+                                 final QualifierVector newQualifiers,
+                                 final boolean isGene)
   {
     Qualifier qualifier;
     for(int i=0; i<newQualifiers.size(); i++)
     {
       Qualifier newQualifier = (Qualifier) newQualifiers.get(i);
       
-      if( newQualifier.getName().equals("ID") &&
-          ((String)newQualifier.getValues().get(0)).indexOf(':') > -1 )
+      if( newQualifier.getName().equals("ID") && !isGene )
       {
     	continue;
       }
@@ -496,7 +496,7 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
 		                        ChadoCanonicalGene chadoGene)
   {
 	QualifierVector transcriptQualifiers = transcript.getQualifiers().copy();
-    combineQualifiers(qualifiers, transcriptQualifiers);
+    combineQualifiers(qualifiers, transcriptQualifiers, false);
     ntranscripts = chadoGene.getTranscripts().size();
     if(ntranscripts > 1)
     {
