@@ -252,6 +252,17 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
       }
       combineQualifiers(qualifiers, geneQualifiers, true);
     }
+    else if(GeneUtils.isNonCodingTranscripts(key))
+    {
+      // use gene id for non-coding transcripts
+      ChadoCanonicalGene chadoGene = ((GFFStreamFeature)feature).getChadoGene();
+      if(chadoGene != null)
+      {
+        qualifiers.removeQualifierByName("ID");
+        QualifierVector geneQualifiers = chadoGene.getGene().getQualifiers().copy();
+        combineQualifiers(qualifiers, geneQualifiers, true);
+      }
+    }
     
     try
     {
