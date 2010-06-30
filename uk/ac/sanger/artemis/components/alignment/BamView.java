@@ -878,8 +878,10 @@ public class BamView extends JPanel
 
         g2.drawString(readSeq.substring(readPos, readPos+1), 
                       refPos*ALIGNMENT_PIX_PER_BASE, ypos);
+        
+
       }
-      
+          
       // look for insertions
       if(markInsertions.isSelected() && i < blocks.size()-1)
       {
@@ -905,24 +907,44 @@ public class BamView extends JPanel
           g2.setColor(col);
         }
       }
+      
+      // highlight
+      if(highlightSAMRecord != null &&
+         highlightSAMRecord.getReadName().equals(samRecord.getReadName()))
+      {
+        refPos =  block.getReferenceStart() + offset - refSeqStart;
+        int xstart = refPos*ALIGNMENT_PIX_PER_BASE;
+        int width  = block.getLength()*ALIGNMENT_PIX_PER_BASE;
+        Color col1 = g2.getColor();
+        g2.setColor(Color.red);
+        g2.drawRect(xstart, ypos-BASE_HEIGHT, width, BASE_HEIGHT);        
+        if(i < blocks.size()-1)
+        {
+          int nextStart = 
+            (blocks.get(i+1).getReferenceStart() + offset - refSeqStart)*ALIGNMENT_PIX_PER_BASE;
+          g2.drawLine(xstart+width, ypos-(BASE_HEIGHT/2), nextStart, ypos-(BASE_HEIGHT/2));
+        }
+        
+        g2.setColor(col1);
+      }
+      else if(i < blocks.size()-1)
+      {
+        refPos =  block.getReferenceStart() + offset - refSeqStart;
+        int xstart = refPos*ALIGNMENT_PIX_PER_BASE;
+        int width  = block.getLength()*ALIGNMENT_PIX_PER_BASE;
+        int nextStart = 
+          (blocks.get(i+1).getReferenceStart() + offset - refSeqStart)*ALIGNMENT_PIX_PER_BASE;
+        g2.drawLine(xstart+width, ypos-(BASE_HEIGHT/2), nextStart, ypos-(BASE_HEIGHT/2));
+      }
     }
 
-    // highlight
-    if(highlightSAMRecord != null &&
-       highlightSAMRecord.getReadName().equals(samRecord.getReadName()) &&
-       blocks.size() > 0)
-    {
-      refPos = blocks.get(0).getReferenceStart()+offset-refSeqStart;
-      int xstart = refPos*ALIGNMENT_PIX_PER_BASE;
-      int width  = len*ALIGNMENT_PIX_PER_BASE;
-      g2.setColor(Color.red);
-      g2.drawRect(xstart, ypos-BASE_HEIGHT, width, BASE_HEIGHT);
-    }
-    
     if(lastMousePoint != null && blocks.size() > 0)
     {
       refPos = blocks.get(0).getReferenceStart()+offset-refSeqStart;
       int xstart = refPos*ALIGNMENT_PIX_PER_BASE;
+      
+      refPos = blocks.get(blocks.size()-1).getReferenceStart()+
+               blocks.get(blocks.size()-1).getLength()+offset-refSeqStart;
       int xend   = (refPos+len)*ALIGNMENT_PIX_PER_BASE;
 
       if(lastMousePoint.getY() > ypos-11 && lastMousePoint.getY() < ypos)
