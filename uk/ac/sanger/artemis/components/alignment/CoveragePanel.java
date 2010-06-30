@@ -43,6 +43,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
+import net.sf.samtools.AlignmentBlock;
 import net.sf.samtools.SAMRecord;
 
   public class CoveragePanel extends JPanel
@@ -146,8 +147,6 @@ import net.sf.samtools.SAMRecord;
         SAMRecord thisRead = readsInView.get(i);
         int offset = jamView.getSequenceOffset(thisRead.getReferenceName());
         offset = offset - jamView.getBaseAtStartOfView();
-        
-        int length = thisRead.getReadLength();
 
         String fileName;
         if(bamList.size() > 1)
@@ -164,24 +163,29 @@ import net.sf.samtools.SAMRecord;
           plots.put(fileName, coverage);
         }         
         
-        for(int j=0; j<length;j++)
+        List<AlignmentBlock> blocks = thisRead.getAlignmentBlocks();
+        for(int j=0; j<blocks.size(); j++)
         {
-          int bin = 
-            (int)((thisRead.getAlignmentStart() + j + offset) / windowSize);
-
-          if(bin < 0 || bin > nBins-1)
-            continue;
-          
-          coverage[bin]+=1;
-          if(coverage[bin] > max)
-            max = coverage[bin];
-          
-          if(includeCombined)
+          AlignmentBlock block = blocks.get(j);
+ 
+          for(int k=0; k<block.getLength(); k++)
           {
-            combinedCoverage[bin]+=1;
-            if(combinedCoverage[bin] > max)
-              max = combinedCoverage[bin];
-          }
+            int pos = block.getReferenceStart() + k + offset;
+            int bin = pos/windowSize;
+            if(bin < 0 || bin > nBins-1)
+              continue;
+            
+            coverage[bin]+=1;
+            if(coverage[bin] > max)
+              max = coverage[bin];
+            
+            if(includeCombined)
+            {
+              combinedCoverage[bin]+=1;
+              if(combinedCoverage[bin] > max)
+                max = combinedCoverage[bin];
+            }
+          } 
         }
       }
 
