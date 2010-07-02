@@ -1,7 +1,6 @@
-/* PrintArtemis.java
+/* PrintVCFview
  *
- *
- * Copyright(C) 2004  Genome Research Limited
+ * Copyright(C) 2010  Genome Research Limited
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -35,9 +34,7 @@ import java.io.*;
 import uk.ac.sanger.artemis.editor.ScrollPanel;
 
 /**
-*
-* Use to print images from Artemis
-*
+* Use to print images from VCFview
 */
 public class PrintVCFview extends ScrollPanel implements Printable 
 {
