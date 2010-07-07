@@ -34,6 +34,7 @@ import uk.ac.sanger.artemis.components.alignment.FileSelectionDialog;
 import uk.ac.sanger.artemis.components.alignment.LookSeqPanel;
 import uk.ac.sanger.artemis.components.filetree.FileList;
 import uk.ac.sanger.artemis.components.filetree.FileManager;
+import uk.ac.sanger.artemis.components.variant.VCFview;
 import uk.ac.sanger.artemis.editor.BigPane;
 import uk.ac.sanger.artemis.editor.FastaTextPane;
 import uk.ac.sanger.artemis.editor.HitInfo;
@@ -112,8 +113,10 @@ public class EntryEdit extends JFrame
 
   /** Alignment panel */
   private BamView jamView;
-  private JPanel jamPanel;
+  private JPanel bamPanel;
+  private JPanel vcfPanel;
   private JSplitPane lowerSplitPane;
+  private JSplitPane ngSplitPane;
   
  /**
   *  The EntrySourceVector reference that is created in the constructor.
@@ -233,20 +236,27 @@ public class EntryEdit extends JFrame
     base_plot_group =
       new BasePlotGroup(getEntryGroup(), this, getSelection(),
                         getGotoEventSource());
-    //box_panel.add(base_plot_group);
 
-    jamPanel = new JPanel();
+    bamPanel = new JPanel();
+    vcfPanel = new JPanel();
+    ngSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, 
+        bamPanel, vcfPanel);
+    ngSplitPane.setBorder(null);
+    ngSplitPane.setResizeWeight(0.5);
+    ngSplitPane.setDividerLocation(1);
+    Dimension minimumSize = new Dimension(0, 0);
+    bamPanel.setMinimumSize(minimumSize);
+    vcfPanel.setMinimumSize(minimumSize);
+
+    
     lowerSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, 
-                                    jamPanel, mainPanel);
+        ngSplitPane, mainPanel);
     lowerSplitPane.setResizeWeight(0.);
     lowerSplitPane.setDividerSize(0);
     lowerSplitPane.setDividerLocation(0);
-    
-    //lowerSplitPane.setBorder(null);
-    
+
     final JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, 
                                              base_plot_group, lowerSplitPane);
-
     splitPane.setDividerSize(0);
     splitPane.setResizeWeight(0.);
     splitPane.setBorder(null);
@@ -274,7 +284,7 @@ public class EntryEdit extends JFrame
                          getGotoEventSource(), base_plot_group);
     
     // read alignment panel
-    //main_box_panel.add(jamPanel);
+    //main_box_panel.add(bamPanel);
     
     one_line_per_entry_display.setShowLabels(false);
     one_line_per_entry_display.setOneLinePerEntry(true);
@@ -530,14 +540,19 @@ public class EntryEdit extends JFrame
     return base_plot_group;
   }
   
-  protected JPanel getJamPanel()
+  protected JPanel getBamPanel()
   {
-    return jamPanel;
+    return bamPanel;
   }
   
   protected JPanel getJamView()
   {
     return jamView;
+  }
+  
+  protected JPanel getVcfPanel()
+  {
+    return vcfPanel;
   }
 
 
@@ -1245,50 +1260,94 @@ public class EntryEdit extends JFrame
 
       file_menu.addSeparator();
       
-      JMenuItem read_bam_file = new JMenuItem("Read BAM ...");
+      JMenuItem read_bam_file = new JMenuItem("Read BAM / VCF ...");
       read_bam_file.addActionListener(new ActionListener()
       {
         public void actionPerformed(ActionEvent e)
         {
           FileSelectionDialog fileChooser = new FileSelectionDialog(
-              null, false, "BamView", "BAM");
-          List<String> listBams = fileChooser.getBamFiles();
+              null, false, "BAM / VCF View", "BAM / VCF");
 
-          jamPanel.removeAll();
+          List<String> listBams = fileChooser.getFiles(".*\\.bam$");
+          logger4j.debug("No. BAM FILES="+listBams.size());
           
-          try
+          if(listBams.size() > 0)
           {
-            jamView = new BamView(listBams, null, 2000);
+            bamPanel.removeAll();
+            try
+            {
+              jamView = new BamView(listBams, null, 2000);
+            }
+            catch (Exception ex)
+            {
+              JOptionPane.showMessageDialog(null, ex.getMessage(), "Error",
+                  JOptionPane.ERROR_MESSAGE);
+              return;
+            }
+
+            jamView.setShowScale(false);
+            jamView.setBases(getEntryGroup().getBases());
+            jamView.addJamToPanel(bamPanel, null, true, feature_display);
+            jamView.getJspView().setHorizontalScrollBarPolicy(
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+            jamView.removeBorder();
+            jamView.setDisplay(feature_display.getFirstVisibleForwardBase(),
+                feature_display.getLastVisibleForwardBase(), null);
+            bamPanel.revalidate();
+            jamView.getJspView().getVerticalScrollBar().setValue(
+                jamView.getJspView().getVerticalScrollBar().getMaximum());
+            feature_display.addDisplayAdjustmentListener(jamView);
+            feature_display.getSelection().addSelectionChangeListener(jamView);
+
+            lowerSplitPane.setDividerSize(3);
+            lowerSplitPane.setDividerLocation(0.35d);
+
+            if(vcfPanel.getComponents().length > 0)
+            {
+              ngSplitPane.setResizeWeight(0.5);
+              ngSplitPane.setDividerSize(3);
+              ngSplitPane.setDividerLocation(0.5);
+            }
+            else
+            {
+              ngSplitPane.setResizeWeight(1);
+              ngSplitPane.setDividerSize(1);
+              ngSplitPane.setDividerLocation(1.d);
+            }
           }
-          catch(Exception ex)
+          
+          List<String> vcfFiles = fileChooser.getFiles(".*\\.vcf(\\.gz)*$");
+          logger4j.debug("No. VCF FILES="+vcfFiles.size());
+          if (vcfFiles.size() > 0)
           {
-            JOptionPane.showMessageDialog(null,
-                ex.getMessage(),
-                "Error",
-                JOptionPane.ERROR_MESSAGE);
-            return;
+            vcfPanel.removeAll();
+            VCFview vcfView = new VCFview(null, vcfPanel, vcfFiles,
+                feature_display.getMaxVisibleBases(), 1, null, null,
+                feature_display);
+
+            feature_display.addDisplayAdjustmentListener(vcfView);
+
+            lowerSplitPane.setDividerSize(3);
+            lowerSplitPane.setDividerLocation(0.35d);
+            
+            if(bamPanel.getComponents().length > 0)
+            {
+              ngSplitPane.setResizeWeight(0.5);
+              ngSplitPane.setDividerSize(3);
+              ngSplitPane.setDividerLocation(0.5);
+            }
+            else
+            {
+              ngSplitPane.setResizeWeight(0);
+              ngSplitPane.setDividerSize(0);
+              ngSplitPane.setDividerLocation(0.);
+            }
           }
-          
-          jamView.setShowScale(false);
-          jamView.setBases(getEntryGroup().getBases());
-          jamView.addJamToPanel(jamPanel, null, true, feature_display);
-          jamView.getJspView().setHorizontalScrollBarPolicy(
-              JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-          jamView.removeBorder();
-          jamView.setDisplay(feature_display.getFirstVisibleForwardBase(), 
-                             feature_display.getLastVisibleForwardBase(), null);
-          jamPanel.revalidate();
-          jamView.getJspView().getVerticalScrollBar().setValue(
-              jamView.getJspView().getVerticalScrollBar().getMaximum());
-          feature_display.addDisplayAdjustmentListener(jamView);
-          feature_display.getSelection().addSelectionChangeListener(jamView);
-          
-          lowerSplitPane.setDividerSize(3);
-          lowerSplitPane.setDividerLocation(0.35d);
         }
       });
       file_menu.add(read_bam_file);
-      
+
+     
       file_menu.addSeparator();
 
       final JMenuItem save_default =

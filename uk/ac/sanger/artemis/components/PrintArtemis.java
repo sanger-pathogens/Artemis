@@ -96,8 +96,8 @@ public class PrintArtemis extends ScrollPanel implements Printable
 
     if(jamDisplay.isSelected() && entry.getJamView() != null && entry.getJamView().isVisible())
     {
-      entry.getJamPanel().paintComponents(g2d);
-      g2d.translate(0,entry.getJamPanel().getHeight());
+      entry.getBamPanel().paintComponents(g2d);
+      g2d.translate(0,entry.getBamPanel().getHeight());
     }
     
     // one line per entry
@@ -152,7 +152,7 @@ public class PrintArtemis extends ScrollPanel implements Printable
 
     if(jamDisplay.isSelected() && 
        entry.getJamView() != null && entry.getJamView().isVisible())
-      height += entry.getJamPanel().getHeight();
+      height += entry.getBamPanel().getHeight();
     
     if(plotsDisplay.isSelected())
       height += entry.getBasePlotGroup().getHeight();

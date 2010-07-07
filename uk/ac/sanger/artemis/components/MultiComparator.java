@@ -949,7 +949,7 @@ public class MultiComparator extends JFrame
         {
           FileSelectionDialog fileChooser = new FileSelectionDialog(
               null, false, "BamView", "BAM");
-          List<String> listBams = fileChooser.getBamFiles();
+          List<String> listBams = fileChooser.getFiles(".*\\.bam$");
 
           thisBamPanel.removeAll();
           thisBamPanel.setVisible(true);

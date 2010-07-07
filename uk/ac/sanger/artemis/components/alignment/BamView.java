@@ -2026,10 +2026,10 @@ public class BamView extends JPanel
       {
         FileSelectionDialog bamFileSelection = new FileSelectionDialog(
             null, false, "BamView", "BAM");
-        List<String> bamFiles = bamFileSelection.getBamFiles();
+        List<String> bamFiles = bamFileSelection.getFiles(".*\\.bam$");
         int count = bamList.size();
        
-        bamList.addAll(bamFileSelection.getBamFiles());
+        bamList.addAll(bamFileSelection.getFiles(".*\\.bam$"));
         
         for(int i=0; i<bamFiles.size(); i++)
           addToViewMenu(i+count);
@@ -2925,13 +2925,16 @@ public class BamView extends JPanel
       System.setProperty("default_directory", System.getProperty("user.dir"));
       FileSelectionDialog fileSelection = new FileSelectionDialog(
           null, true, "BamView", "BAM");
-      bam = fileSelection.getBamFiles();
+      bam = fileSelection.getFiles(".*\\.bam$");
       reference = fileSelection.getReferenceFile();
       if(reference == null || reference.equals(""))
         reference = null;
       
       if(bam == null || bam.size() < 1)
+      {
+        System.err.println("No files found.");
         System.exit(0);
+      }
     }
     else if(!args[0].startsWith("-"))
     {

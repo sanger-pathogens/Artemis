@@ -27,6 +27,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Insets;
@@ -49,6 +50,7 @@ import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -57,6 +59,8 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
 
 import net.sf.samtools.util.BlockCompressedInputStream;
 
@@ -65,8 +69,13 @@ import org.apache.log4j.Level;
 import uk.ac.sanger.artemis.Entry;
 import uk.ac.sanger.artemis.EntryGroup;
 import uk.ac.sanger.artemis.Options;
+import uk.ac.sanger.artemis.SelectionChangeEvent;
+import uk.ac.sanger.artemis.SelectionChangeListener;
 import uk.ac.sanger.artemis.SimpleEntryGroup;
+import uk.ac.sanger.artemis.components.DisplayAdjustmentEvent;
+import uk.ac.sanger.artemis.components.DisplayAdjustmentListener;
 import uk.ac.sanger.artemis.components.EntryFileDialog;
+import uk.ac.sanger.artemis.components.FeatureDisplay;
 import uk.ac.sanger.artemis.components.FileViewer;
 import uk.ac.sanger.artemis.components.MessageDialog;
 import uk.ac.sanger.artemis.components.alignment.FileSelectionDialog;
@@ -86,42 +95,50 @@ import uk.ac.sanger.artemis.util.OutOfRangeException;
 
 
 public class VCFview extends JPanel
+             implements DisplayAdjustmentListener, SelectionChangeListener
 {
   private static final long serialVersionUID = 1L;
   private JScrollBar scrollBar;
+  private JPanel vcfPanel;
   private TabixReader tr[];
   private String header[];
+  private FeatureDisplay feature_display;
   private int nbasesInView;
   private int seqLength;
   private String chr;
   private String mouseOverVCFline;
   private int mouseOverIndex = -1;
   private JPopupMenu popup;
-  private int LINE_HEIGHT = 25;
+  private int LINE_HEIGHT = 20;
 
-  public VCFview(final JFrame frame, 
+  public VCFview(final JFrame frame,
+                 final JPanel vcfPanel,
                  final List<String> vcfFiles, 
                  final int nbasesInView,
                  final int seqLength,
                  final String chr,
-                 final String reference)
+                 final String reference,
+                 final FeatureDisplay feature_display)
   {
     super();
     
     this.nbasesInView = nbasesInView;
     this.seqLength = seqLength;
     this.chr = chr;
+    this.feature_display = feature_display;
+    this.vcfPanel = vcfPanel;
     
     setBackground(Color.white);
-    setPreferredSize(new Dimension(900, vcfFiles.size()*(LINE_HEIGHT+5)));
     MultiLineToolTipUI.initialize();
     setToolTipText("");
+    vcfPanel.setPreferredSize(new Dimension(900, vcfFiles.size()*(LINE_HEIGHT+5)));
     
-    if(reference != null)
-    {
-      EntryGroup entryGroup = getReference(reference);
-      this.seqLength = entryGroup.getSequenceEntry().getBases().getLength();
-    }
+    if(feature_display != null)
+      this.seqLength = feature_display.getBases().getLength();
+    else if(reference != null)
+      this.seqLength = getReference(reference).getSequenceEntry().getBases().getLength();
+    
+
     
     try
     {
@@ -136,7 +153,6 @@ public class VCFview extends JPanel
     }
     catch (IOException e)
     {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
     
@@ -144,7 +160,8 @@ public class VCFview extends JPanel
         JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
         JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
     
-    frame.getContentPane().add(jspView, BorderLayout.CENTER);
+    vcfPanel.setLayout(new BorderLayout());
+    vcfPanel.add(jspView, BorderLayout.CENTER);
     
     if(this.nbasesInView > this.seqLength)
       this.nbasesInView = this.seqLength/2;
@@ -177,9 +194,32 @@ public class VCFview extends JPanel
     addMouseListener(new PopupListener());
     
     //
-    //
-    JMenuBar topPanel = new JMenuBar();
-    frame.setJMenuBar((JMenuBar)topPanel);
+    createMenus(frame);
+    setDisplay();
+    
+    if(feature_display == null)
+    {
+      vcfPanel.add(scrollBar, BorderLayout.SOUTH);
+      frame.pack();
+      frame.setVisible(true);
+    }
+    else
+    {
+      Border empty = new EmptyBorder(0,0,0,0);
+      jspView.setBorder(empty);
+    }
+  }
+  
+  private void createMenus(JFrame frame)
+  {
+    JComponent topPanel;
+    if(feature_display != null)
+      topPanel = new JPanel(new FlowLayout(FlowLayout.LEADING, 0, 0));
+    else
+    { 
+      topPanel = new JMenuBar();
+      frame.setJMenuBar((JMenuBar)topPanel);
+    }
     
     JMenu fileMenu = new JMenu("File");
     topPanel.add(fileMenu);
@@ -223,7 +263,6 @@ public class VCFview extends JPanel
       } 
     });
     
-    
     JButton zoomIn = new JButton("-");
     Insets ins = new Insets(1,1,1,1);
     zoomIn.setMargin(ins);
@@ -248,7 +287,6 @@ public class VCFview extends JPanel
     topPanel.add(zoomOut);
     
     final JComboBox combo = new JComboBox(tr[0].getmSeq());
-    
     if(chr == null)
       this.chr = tr[0].getmSeq()[0];
     combo.setSelectedItem(this.chr);
@@ -264,10 +302,6 @@ public class VCFview extends JPanel
       }
     });
     topPanel.add(combo);
-    
-    frame.getContentPane().add(scrollBar, BorderLayout.SOUTH);
-    frame.pack();
-    frame.setVisible(true);
   }
   
   private static EntryGroup getReference(String reference)
@@ -381,17 +415,17 @@ public class VCFview extends JPanel
   protected void paintComponent(Graphics g)
   {
     super.paintComponent(g);
-    
     mouseOverVCFline = null;
 
     float pixPerBase = getPixPerBaseByWidth();
     String s;
     
-    int start = scrollBar.getValue();
+    int start = getBaseAtStartOfView();
     int end   = start+nbasesInView;
     String region = chr+":"+start+"-"+end;
     
-    drawScale((Graphics2D)g, start, end, pixPerBase, getHeight());
+    //if(feature_display == null)
+      drawScale((Graphics2D)g, start, end, pixPerBase, getHeight());
     // a region is specified; random access
     for (int i = 0; i < tr.length; i++)
     {
@@ -411,6 +445,14 @@ public class VCFview extends JPanel
         e.printStackTrace();
       }
     }
+  }
+  
+  protected int getBaseAtStartOfView()
+  {
+    if(feature_display != null)
+      return feature_display.getForwardBaseAtLeftEdge();
+    else
+      return scrollBar.getValue();
   }
   
   private void drawVariantCall(Graphics g, String line, int start, int index, float pixPerBase)
@@ -437,8 +479,7 @@ public class VCFview extends JPanel
     String parts[] = line.split("\\t");
     int pos[] = new int[2];
     pos[0] = Math.round((Integer.parseInt(parts[1]) - start)*pixPerBase);
-    pos[1] = getHeight() - 15 - (vcfFileIndex*(LINE_HEIGHT+5));
-    
+    pos[1] = getHeight() - 15 - (vcfFileIndex*(LINE_HEIGHT+5)); 
     return pos;
   }
   
@@ -446,7 +487,7 @@ public class VCFview extends JPanel
   {
     float pixPerBase = getPixPerBaseByWidth();
     String s;
-    int start = scrollBar.getValue();
+    int start = getBaseAtStartOfView();
     int end   = start+nbasesInView;
     String region = chr+":"+start+"-"+end;
     
@@ -618,7 +659,7 @@ public class VCFview extends JPanel
 
   private float getPixPerBaseByWidth()
   {
-    return (float)getWidth() / (float)nbasesInView;
+    return (float)vcfPanel.getWidth() / (float)nbasesInView;
   }
   
   /**
@@ -698,6 +739,25 @@ public class VCFview extends JPanel
      }
    }
    
+   private void setDisplay()
+   {
+     Dimension d = new Dimension();
+     d.setSize(nbasesInView*getPixPerBaseByWidth(), tr.length*(LINE_HEIGHT+5));
+     setPreferredSize(d);
+   }
+   
+   public void displayAdjustmentValueChanged(DisplayAdjustmentEvent event)
+   {
+     nbasesInView = feature_display.getMaxVisibleBases();
+     setDisplay();
+     repaint();
+   }
+
+   public void selectionChanged(SelectionChangeEvent event)
+   {
+     
+   }
+   
   public static void main(String args[])
   {
     List<String> vcfFileList = new Vector<String>();
@@ -707,7 +767,7 @@ public class VCFview extends JPanel
       System.setProperty("default_directory", System.getProperty("user.dir"));
       FileSelectionDialog fileSelection = new FileSelectionDialog(
           null, true, "VCFview", "VCF");
-      vcfFileList = fileSelection.getBamFiles();
+      vcfFileList = fileSelection.getFiles(".vcf");
       reference = fileSelection.getReferenceFile();
       if(reference.equals(""))
         reference = null;
@@ -766,7 +826,8 @@ public class VCFview extends JPanel
     else
     {
       JFrame f = new JFrame();
-      new VCFview(f, vcfFileList, nbasesInView, 100000000, null, reference);
+      new VCFview(f, (JPanel) f.getContentPane(), vcfFileList, 
+          nbasesInView, 100000000, null, reference, null);
     }
   }
 }

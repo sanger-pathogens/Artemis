@@ -19,6 +19,8 @@ import java.io.Reader;
 import java.net.URL;
 import java.util.List;
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -254,27 +256,38 @@ public class FileSelectionDialog extends JDialog
   }
   
   /**
-   * Get the BAM files as a <code>List</code> of <code>String</code>'s.
+   * Get the BAM or VCF files as a <code>List</code> of <code>String</code>'s.
    * @return
    */
-  public List<String> getBamFiles()
+  public List<String> getFiles(String patternStr)
   {
-    List<String> bamFiles = new Vector<String>();
+    Pattern p = Pattern.compile(patternStr);
+    
+    List<String> files = new Vector<String>();
     for(int i=0; i<bamFields.size(); i++)
     {
       String file = bamFields.get(i).getText();
-      
       if(file != null && !file.equals(""))
       {
         if(isListOfFiles(file))
         {
-          bamFiles.addAll(getListOfFiles(file));
+          List<String> filesInList = getListOfFiles(file);
+          for(int j=0; j<filesInList.size(); j++)
+          {
+            Matcher m = p.matcher(filesInList.get(j));
+            if(m.matches())
+              files.add(filesInList.get(j));
+          }
         }
         else
-          bamFiles.add(file);
+        {
+          Matcher m = p.matcher(file);
+          if(m.matches())
+            files.add(file);
+        }
       }
     }
-    return bamFiles;
+    return files;
   }
   
   /**
