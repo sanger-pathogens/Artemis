@@ -287,7 +287,8 @@ public class FeatureDisplay extends EntryGroupPanel
 
   private Object[] protein_keys = { "CDS", 
                                     "BLASTCDS",
-                                    "polypeptide" };
+                                    "polypeptide",
+                                    "pseudogenic_exon"};
 
   /**
    *  Create a new FeatureDisplay object with the horizontal scrollbar at the
