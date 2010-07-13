@@ -178,7 +178,7 @@ public class ReferencesPanel extends JPanel
   
   private String[] getValues(String txt)
   {
-    String delim = "[\t\n\f\r,]";
+    String delim = "[\t\n\f\r,;]";
     String[] lits = txt.split(delim);
     for(int i=0; i<lits.length; i++)
       lits[i] = lits[i].trim();
