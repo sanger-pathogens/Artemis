@@ -50,8 +50,7 @@ prokaryotic_start_codons = atg gtg ttg
 
 #
 # Genetic Codes :
-# http://www3.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi?mode=t#SG1
-# http://www.ncbi.nlm.nih.gov/collab/FT/#7.5.5
+# http://www.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi?mode=c
 #
 
 genetic_codes = \
