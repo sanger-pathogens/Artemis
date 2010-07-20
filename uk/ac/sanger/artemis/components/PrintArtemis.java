@@ -51,6 +51,7 @@ public class PrintArtemis extends ScrollPanel implements Printable
   private JCheckBox groupsDisplay   = new JCheckBox("Show Entries Loaded",true);
   private JCheckBox plotsDisplay    = new JCheckBox("Show Graphs",true);
   private JCheckBox jamDisplay      = new JCheckBox("Show Read Alignment",true);
+  private JCheckBox vcfDisplay      = new JCheckBox("Show VCF",true);
   private JCheckBox onelineDisplay  = new JCheckBox("Show One Line Display",true);
   private JCheckBox baseDisplay     = new JCheckBox("Show Bases Display",true);
   private JCheckBox featListDisplay = new JCheckBox("Show Feature List",true);
@@ -98,6 +99,12 @@ public class PrintArtemis extends ScrollPanel implements Printable
     {
       entry.getBamPanel().paintComponents(g2d);
       g2d.translate(0,entry.getBamPanel().getHeight());
+    }
+    
+    if(vcfDisplay.isSelected() && entry.getVcfPanel() != null && entry.getVcfPanel().isVisible())
+    {
+      entry.getVcfPanel().paintComponents(g2d);
+      g2d.translate(0,entry.getVcfPanel().getHeight());
     }
     
     // one line per entry
@@ -153,6 +160,10 @@ public class PrintArtemis extends ScrollPanel implements Printable
     if(jamDisplay.isSelected() && 
        entry.getJamView() != null && entry.getJamView().isVisible())
       height += entry.getBamPanel().getHeight();
+    
+    if(vcfDisplay.isSelected() && 
+        entry.getVcfPanel() != null && entry.getVcfPanel().isVisible())
+       height += entry.getVcfPanel().getHeight();
     
     if(plotsDisplay.isSelected())
       height += entry.getBasePlotGroup().getHeight();
@@ -297,6 +308,23 @@ public class PrintArtemis extends ScrollPanel implements Printable
       }
     });
     optionsmenu.add(showJam);
+    
+ // draw vcf viewer
+    JCheckBoxMenuItem showVcf = new JCheckBoxMenuItem("Show VCF View",
+                                                      vcfDisplay.isSelected());
+    
+    if(entry.getVcfPanel() == null || !entry.getVcfPanel().isVisible())
+      showJam.setEnabled(false);
+    
+    showVcf.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        vcfDisplay.setSelected(!vcfDisplay.isSelected());
+        repaint();
+      }
+    });
+    optionsmenu.add(showVcf);
     
 // draw one line 
     JCheckBoxMenuItem showOneLine = new JCheckBoxMenuItem("Show One Line Display",
