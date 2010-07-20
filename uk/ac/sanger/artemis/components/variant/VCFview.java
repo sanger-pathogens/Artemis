@@ -109,7 +109,7 @@ public class VCFview extends JPanel
   private String mouseOverVCFline;
   private int mouseOverIndex = -1;
   private JPopupMenu popup;
-  private int LINE_HEIGHT = 20;
+  private int LINE_HEIGHT = 15;
 
   public VCFview(final JFrame frame,
                  final JPanel vcfPanel,
@@ -131,15 +131,14 @@ public class VCFview extends JPanel
     setBackground(Color.white);
     MultiLineToolTipUI.initialize();
     setToolTipText("");
-    vcfPanel.setPreferredSize(new Dimension(900, vcfFiles.size()*(LINE_HEIGHT+5)));
+    vcfPanel.setPreferredSize(new Dimension(900, 
+        (vcfFiles.size()+1)*(LINE_HEIGHT+5)));
     
     if(feature_display != null)
       this.seqLength = feature_display.getBases().getLength();
     else if(reference != null)
       this.seqLength = getReference(reference).getSequenceEntry().getBases().getLength();
-    
 
-    
     try
     {
       tr = new TabixReader[vcfFiles.size()];
@@ -424,7 +423,7 @@ public class VCFview extends JPanel
     int end   = start+nbasesInView;
     String region = chr+":"+start+"-"+end;
     
-    //if(feature_display == null)
+    if(feature_display == null)
       drawScale((Graphics2D)g, start, end, pixPerBase, getHeight());
     // a region is specified; random access
     for (int i = 0; i < tr.length; i++)
@@ -742,7 +741,7 @@ public class VCFview extends JPanel
    private void setDisplay()
    {
      Dimension d = new Dimension();
-     d.setSize(nbasesInView*getPixPerBaseByWidth(), tr.length*(LINE_HEIGHT+5));
+     d.setSize(nbasesInView*getPixPerBaseByWidth(), (tr.length+1)*(LINE_HEIGHT+5));
      setPreferredSize(d);
    }
    
