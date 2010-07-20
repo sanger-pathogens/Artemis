@@ -114,6 +114,7 @@ public class EntryEdit extends JFrame
   /** Alignment panel */
   private BamView jamView;
   private JPanel bamPanel;
+  private VCFview vcfView;
   private JPanel vcfPanel;
   private JSplitPane lowerSplitPane;
   private JSplitPane ngSplitPane;
@@ -242,8 +243,7 @@ public class EntryEdit extends JFrame
     ngSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, 
         bamPanel, vcfPanel);
     ngSplitPane.setBorder(null);
-    ngSplitPane.setResizeWeight(0.5);
-    ngSplitPane.setDividerLocation(1);
+
     Dimension minimumSize = new Dimension(0, 0);
     bamPanel.setMinimumSize(minimumSize);
     vcfPanel.setMinimumSize(minimumSize);
@@ -252,9 +252,9 @@ public class EntryEdit extends JFrame
     lowerSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, 
         ngSplitPane, mainPanel);
     lowerSplitPane.setResizeWeight(0.);
-    lowerSplitPane.setDividerSize(0);
-    lowerSplitPane.setDividerLocation(0);
 
+    setNGDivider();
+    
     final JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, 
                                              base_plot_group, lowerSplitPane);
     splitPane.setDividerSize(0);
@@ -1140,6 +1140,9 @@ public class EntryEdit extends JFrame
     {
       public void actionPerformed(ActionEvent event)
       {
+        if(jamView == null)
+          return;
+        
         if (!jamView.isVisible())
         {
           jamView.setVisible(true);
@@ -1148,8 +1151,6 @@ public class EntryEdit extends JFrame
           jamView.revalidate();
           feature_display.addDisplayAdjustmentListener(jamView);
           feature_display.getSelection().addSelectionChangeListener(jamView);
-
-          lowerSplitPane.setDividerLocation(0.35d);
         }
         else
         {
@@ -1157,9 +1158,37 @@ public class EntryEdit extends JFrame
           feature_display.getSelection().removeSelectionChangeListener(jamView);
           jamView.setVisible(false);
         }
+        setNGDivider();
       }
     });
     display_menu.add(show_Jam_item);
+    
+    
+    final JMenuItem show_Vcf_item = new JMenuItem("VCF");
+    show_Vcf_item.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent event)
+      {
+        if(vcfView == null)
+          return;
+        
+        if (!vcfView.isVisible())
+        {
+          vcfView.setVisible(true);
+          vcfView.revalidate();
+          feature_display.addDisplayAdjustmentListener(vcfView);
+          feature_display.getSelection().addSelectionChangeListener(vcfView);
+        }
+        else
+        {
+          feature_display.removeDisplayAdjustmentListener(vcfView);
+          feature_display.getSelection().removeSelectionChangeListener(vcfView);
+          vcfView.setVisible(false);
+        }
+        setNGDivider();
+      }
+    });
+    display_menu.add(show_Vcf_item);
 
     menu_bar.add(display_menu);
   }
@@ -1299,21 +1328,7 @@ public class EntryEdit extends JFrame
             feature_display.addDisplayAdjustmentListener(jamView);
             feature_display.getSelection().addSelectionChangeListener(jamView);
 
-            lowerSplitPane.setDividerSize(3);
-            lowerSplitPane.setDividerLocation(0.35d);
-
-            if(vcfPanel.getComponents().length > 0)
-            {
-              ngSplitPane.setResizeWeight(0.5);
-              ngSplitPane.setDividerSize(3);
-              ngSplitPane.setDividerLocation(0.5);
-            }
-            else
-            {
-              ngSplitPane.setResizeWeight(1);
-              ngSplitPane.setDividerSize(1);
-              ngSplitPane.setDividerLocation(1.d);
-            }
+            setNGDivider();
           }
           
           List<String> vcfFiles = fileChooser.getFiles(".*\\.vcf(\\.gz)*$");
@@ -1321,27 +1336,13 @@ public class EntryEdit extends JFrame
           if (vcfFiles.size() > 0)
           {
             vcfPanel.removeAll();
-            VCFview vcfView = new VCFview(null, vcfPanel, vcfFiles,
+            vcfView = new VCFview(null, vcfPanel, vcfFiles,
                 feature_display.getMaxVisibleBases(), 1, null, null,
                 feature_display);
 
             feature_display.addDisplayAdjustmentListener(vcfView);
-
-            lowerSplitPane.setDividerSize(3);
-            lowerSplitPane.setDividerLocation(0.35d);
             
-            if(bamPanel.getComponents().length > 0)
-            {
-              ngSplitPane.setResizeWeight(0.5);
-              ngSplitPane.setDividerSize(3);
-              ngSplitPane.setDividerLocation(0.5);
-            }
-            else
-            {
-              ngSplitPane.setResizeWeight(0);
-              ngSplitPane.setDividerSize(0);
-              ngSplitPane.setDividerLocation(0.);
-            }
+            setNGDivider();
           }
         }
       });
@@ -1842,6 +1843,55 @@ public class EntryEdit extends JFrame
     file_menu.add(close);
   }
 
+  /**
+   * Handle the split panes divider positions for BamView and VcfView.
+   */
+  private void setNGDivider() 
+  {
+    if( (bamPanel.getComponents().length > 0 && bamPanel.isVisible()) &&
+        (vcfPanel.getComponents().length > 0 && vcfView.isVisible()))
+    {
+      ngSplitPane.setVisible(true);
+      lowerSplitPane.setDividerSize(3);
+      lowerSplitPane.setDividerLocation(0.35d);
+      
+      ngSplitPane.setResizeWeight(0.5);
+      ngSplitPane.setDividerSize(3);
+      ngSplitPane.setDividerLocation(0.5);
+      
+      logger4j.debug("BAM & VCF visible");
+    }
+    else if(vcfPanel.getComponents().length > 0 && vcfView.isVisible())
+    {
+      ngSplitPane.setVisible(true);
+      lowerSplitPane.setDividerSize(3);
+      lowerSplitPane.setDividerLocation(0.35d);
+      
+      ngSplitPane.setResizeWeight(0);
+      ngSplitPane.setDividerSize(0);
+      ngSplitPane.setDividerLocation(0.);
+      logger4j.debug("VCF visible");
+    }
+    else if(bamPanel.getComponents().length > 0 && bamPanel.isVisible()) 
+    {
+      ngSplitPane.setVisible(true);
+      lowerSplitPane.setDividerSize(3);
+      lowerSplitPane.setDividerLocation(0.35d);
+      
+      ngSplitPane.setResizeWeight(1);
+      ngSplitPane.setDividerSize(1);
+      ngSplitPane.setDividerLocation(1.d);
+      logger4j.debug("BAM visible");
+    }
+    else
+    {
+      lowerSplitPane.setResizeWeight(0);
+      lowerSplitPane.setDividerSize(0);
+      lowerSplitPane.setDividerLocation(0);
+      logger4j.debug("BAM & VCF not visible");
+    }
+  }
+  
   private void printMenu()
   {
     JMenuItem printImage = new JMenuItem("Save As Image Files (png/jpeg)...");
