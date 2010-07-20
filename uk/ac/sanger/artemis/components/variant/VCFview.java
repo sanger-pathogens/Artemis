@@ -69,6 +69,7 @@ import org.apache.log4j.Level;
 import uk.ac.sanger.artemis.Entry;
 import uk.ac.sanger.artemis.EntryGroup;
 import uk.ac.sanger.artemis.Options;
+import uk.ac.sanger.artemis.Selection;
 import uk.ac.sanger.artemis.SelectionChangeEvent;
 import uk.ac.sanger.artemis.SelectionChangeListener;
 import uk.ac.sanger.artemis.SimpleEntryGroup;
@@ -87,7 +88,9 @@ import uk.ac.sanger.artemis.io.Key;
 import uk.ac.sanger.artemis.io.Location;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.QualifierVector;
+import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.sequence.Bases;
+import uk.ac.sanger.artemis.sequence.MarkerRange;
 import uk.ac.sanger.artemis.sequence.NoSequenceException;
 import uk.ac.sanger.artemis.util.Document;
 import uk.ac.sanger.artemis.util.DocumentFactory;
@@ -103,11 +106,15 @@ public class VCFview extends JPanel
   private TabixReader tr[];
   private String header[];
   private FeatureDisplay feature_display;
+  private Selection selection;
   private int nbasesInView;
   private int seqLength;
+  private Bases bases;
   private String chr;
   private String mouseOverVCFline;
   private int mouseOverIndex = -1;
+//record of where a mouse drag starts
+  private int dragStart = -1;
   private JPopupMenu popup;
   private int LINE_HEIGHT = 15;
 
@@ -135,10 +142,12 @@ public class VCFview extends JPanel
         (vcfFiles.size()+1)*(LINE_HEIGHT+5)));
     
     if(feature_display != null)
-      this.seqLength = feature_display.getBases().getLength();
+      this.bases = feature_display.getBases();
     else if(reference != null)
-      this.seqLength = getReference(reference).getSequenceEntry().getBases().getLength();
-
+      this.bases = getReference(reference).getSequenceEntry().getBases();
+    if(bases != null)
+      this.seqLength = bases.getLength();
+    
     try
     {
       tr = new TabixReader[vcfFiles.size()];
@@ -181,7 +190,7 @@ public class VCFview extends JPanel
     {
       public void mouseDragged(MouseEvent event)
       {
-       // handleCanvasMouseDrag(event);
+        handleCanvasMouseDrag(event);
       }
       
       public void mouseMoved(MouseEvent e)
@@ -201,11 +210,13 @@ public class VCFview extends JPanel
       vcfPanel.add(scrollBar, BorderLayout.SOUTH);
       frame.pack();
       frame.setVisible(true);
+      selection = new Selection(null);
     }
     else
     {
       Border empty = new EmptyBorder(0,0,0,0);
       jspView.setBorder(empty);
+      selection = feature_display.getSelection();
     }
   }
   
@@ -422,9 +433,8 @@ public class VCFview extends JPanel
     int start = getBaseAtStartOfView();
     int end   = start+nbasesInView;
     String region = chr+":"+start+"-"+end;
-    
-    if(feature_display == null)
-      drawScale((Graphics2D)g, start, end, pixPerBase, getHeight());
+       
+    drawSelectionRange((Graphics2D)g, pixPerBase, start, end);
     // a region is specified; random access
     for (int i = 0; i < tr.length; i++)
     {
@@ -444,6 +454,44 @@ public class VCFview extends JPanel
         e.printStackTrace();
       }
     }
+
+    if(feature_display == null)
+      drawScale((Graphics2D)g, start, end, pixPerBase, getHeight());
+  }
+  
+  /**
+   * Highlight a selected range
+   * @param g2
+   * @param pixPerBase
+   * @param start
+   * @param end
+   */
+  private void drawSelectionRange(Graphics2D g2, float pixPerBase, int start, int end)
+  {
+    if(getSelection() != null)
+    {
+      Range selectedRange = getSelection().getSelectionRange();
+
+      if(selectedRange != null)
+      {
+        int rangeStart = selectedRange.getStart();
+        int rangeEnd   = selectedRange.getEnd();
+        
+        if(end < rangeStart || start > rangeEnd)
+          return;
+        
+        int x = (int) (pixPerBase*(rangeStart-getBaseAtStartOfView()));
+        int width = (int) (pixPerBase*(rangeEnd-rangeStart+1));
+
+        g2.setColor(Color.pink);
+        g2.fillRect(x, 0, width, getHeight());
+      }
+    }
+  }
+  
+  private Selection getSelection()
+  {
+    return selection;
   }
   
   protected int getBaseAtStartOfView()
@@ -543,6 +591,61 @@ public class VCFview extends JPanel
       drawTicks(g2, start, end, pixPerBase, 500, ypos);
     else
       drawTicks(g2, start, end, pixPerBase, 100, ypos);
+  }
+  
+  /**
+   *  Handle a mouse drag event on the drawing canvas.
+   **/
+  private void handleCanvasMouseDrag(final MouseEvent event)
+  {
+    if(event.getButton() == MouseEvent.BUTTON3) 
+      return;
+
+    if(event.getClickCount() > 1)
+    {
+      getSelection().clear();
+      repaint();
+      return;  
+    }
+
+    highlightRange(event, 
+        MouseEvent.BUTTON1_DOWN_MASK & MouseEvent.BUTTON2_DOWN_MASK);
+  }
+  
+  /**
+   * 
+   * @param event
+   * @param onmask
+   */
+  private void highlightRange(MouseEvent event, int onmask)
+  {
+    float pixPerBase = getPixPerBaseByWidth();
+    int start = (int) ( ( (event.getPoint().getX())/pixPerBase) + getBaseAtStartOfView() );
+    
+    if(start < 1)
+      start = 1;
+    if(start > seqLength)
+      start = seqLength;
+    
+    if (dragStart < 0 && (event.getModifiersEx() & onmask) == onmask)
+      dragStart = start;
+    else if((event.getModifiersEx() & onmask) != onmask)
+      dragStart = -1;
+    
+    MarkerRange drag_range;
+    try
+    {
+      if(dragStart < 0)
+        drag_range = new MarkerRange (bases.getForwardStrand(), start, start);
+      else
+        drag_range = new MarkerRange (bases.getForwardStrand(), dragStart, start);
+      getSelection().setMarkerRange(drag_range);
+      repaint();
+    }
+    catch (OutOfRangeException e)
+    {
+      e.printStackTrace();
+    }
   }
   
   /**
@@ -673,6 +776,12 @@ public class VCFview extends JPanel
        if(e.isPopupTrigger() ||
           e.getButton() == MouseEvent.BUTTON3)
          return;
+       
+       if(e.getClickCount() > 1)
+       {
+         getSelection().clear();
+         repaint();
+       }
      }
      
      public void mousePressed(MouseEvent e)
@@ -682,6 +791,7 @@ public class VCFview extends JPanel
 
      public void mouseReleased(MouseEvent e)
      {
+       dragStart = -1;
        maybeShowPopup(e);
      }
 
@@ -754,7 +864,7 @@ public class VCFview extends JPanel
 
    public void selectionChanged(SelectionChangeEvent event)
    {
-     
+     repaint();
    }
    
   public static void main(String args[])
