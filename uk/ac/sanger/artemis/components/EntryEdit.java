@@ -1341,7 +1341,7 @@ public class EntryEdit extends JFrame
                 feature_display);
 
             feature_display.addDisplayAdjustmentListener(vcfView);
-            
+            feature_display.getSelection().addSelectionChangeListener(vcfView);
             setNGDivider();
           }
         }
