@@ -49,6 +49,7 @@ import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -68,6 +69,11 @@ import org.apache.log4j.Level;
 
 import uk.ac.sanger.artemis.Entry;
 import uk.ac.sanger.artemis.EntryGroup;
+import uk.ac.sanger.artemis.Feature;
+import uk.ac.sanger.artemis.FeatureKeyPredicate;
+import uk.ac.sanger.artemis.FeatureSegment;
+import uk.ac.sanger.artemis.FeatureSegmentVector;
+import uk.ac.sanger.artemis.FeatureVector;
 import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.Selection;
 import uk.ac.sanger.artemis.SelectionChangeEvent;
@@ -89,6 +95,7 @@ import uk.ac.sanger.artemis.io.Location;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.io.Range;
+import uk.ac.sanger.artemis.sequence.AminoAcidSequence;
 import uk.ac.sanger.artemis.sequence.Bases;
 import uk.ac.sanger.artemis.sequence.MarkerRange;
 import uk.ac.sanger.artemis.sequence.NoSequenceException;
@@ -109,7 +116,7 @@ public class VCFview extends JPanel
   private Selection selection;
   private int nbasesInView;
   private int seqLength;
-  private Bases bases;
+  private EntryGroup entryGroup;
   private String chr;
   private String mouseOverVCFline;
   private int mouseOverIndex = -1;
@@ -117,6 +124,11 @@ public class VCFview extends JPanel
   private int dragStart = -1;
   private JPopupMenu popup;
   private int LINE_HEIGHT = 15;
+  
+  private boolean showSynonymous = true;
+  private boolean showNonSynonymous = true;
+  private boolean showDeletions = true;
+  private boolean showInsertions = true;
 
   public VCFview(final JFrame frame,
                  final JPanel vcfPanel,
@@ -142,11 +154,11 @@ public class VCFview extends JPanel
         (vcfFiles.size()+1)*(LINE_HEIGHT+5)));
     
     if(feature_display != null)
-      this.bases = feature_display.getBases();
+      this.entryGroup = feature_display.getEntryGroup();
     else if(reference != null)
-      this.bases = getReference(reference).getSequenceEntry().getBases();
-    if(bases != null)
-      this.seqLength = bases.getLength();
+      this.entryGroup = getReference(reference);
+    if(entryGroup != null)
+      this.seqLength = entryGroup.getSequenceEntry().getBases().getLength();
     
     try
     {
@@ -312,6 +324,53 @@ public class VCFview extends JPanel
       }
     });
     topPanel.add(combo);
+    
+    // popup menu
+    popup = new JPopupMenu();
+    final JCheckBoxMenuItem showSyn = new JCheckBoxMenuItem(
+        "Show synonymous", showSynonymous);
+    showSyn.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e)
+      {
+        showSynonymous = showSyn.isSelected();
+        repaint();
+      }
+    });
+    popup.add(showSyn);
+    
+    final JCheckBoxMenuItem showNonSyn = new JCheckBoxMenuItem(
+        "Show non-synonymous", showNonSynonymous);
+    showNonSyn.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e)
+      {
+        showNonSynonymous = showNonSyn.isSelected();
+        repaint();
+      }
+    });
+    popup.add(showNonSyn);
+    
+    
+    final JCheckBoxMenuItem showDeletionsMenu = new JCheckBoxMenuItem(
+        "Show deletions", showDeletions);
+    showDeletionsMenu.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e)
+      {
+        showDeletions = showDeletionsMenu.isSelected();
+        repaint();
+      }
+    });
+    popup.add(showDeletionsMenu);
+    
+    final JCheckBoxMenuItem showInsertionsMenu = new JCheckBoxMenuItem(
+        "Show insertions", showInsertions);
+    showInsertionsMenu.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e)
+      {
+        showInsertions = showInsertionsMenu.isSelected();
+        repaint();
+      }
+    });
+    popup.add(showInsertionsMenu);
   }
   
   private static EntryGroup getReference(String reference)
@@ -435,6 +494,9 @@ public class VCFview extends JPanel
     String region = chr+":"+start+"-"+end;
        
     drawSelectionRange((Graphics2D)g, pixPerBase, start, end);
+ 
+    FeatureVector features = getCDSFeaturesInRange(start, end);
+    
     // a region is specified; random access
     for (int i = 0; i < tr.length; i++)
     {
@@ -445,7 +507,7 @@ public class VCFview extends JPanel
       {
         while ((s = iter.next()) != null)
         {
-          drawVariantCall(g, s, start, i, pixPerBase);
+          drawVariantCall(g, s, start, i, pixPerBase, features);
         }
       }
       catch (IOException e)
@@ -457,6 +519,31 @@ public class VCFview extends JPanel
 
     if(feature_display == null)
       drawScale((Graphics2D)g, start, end, pixPerBase, getHeight());
+  }
+  
+  private FeatureVector getCDSFeaturesInRange(int start, int end)
+  {
+    try
+    {
+      Range range = new Range(start, end);
+      FeatureVector features = entryGroup.getFeaturesInRange(range);
+           
+      FeatureKeyPredicate predicate = new FeatureKeyPredicate(Key.CDS);
+      final FeatureVector cdsFeatures = new FeatureVector();
+
+      for(int i=0; i<features.size(); i++)
+      {
+        final Feature this_feature = features.elementAt(i);
+        if(predicate.testPredicate(this_feature))
+          cdsFeatures.add(this_feature);
+      }
+      return cdsFeatures;
+    }
+    catch (OutOfRangeException e1)
+    {
+      e1.printStackTrace();
+    }
+    return null;
   }
   
   /**
@@ -502,10 +589,27 @@ public class VCFview extends JPanel
       return scrollBar.getValue();
   }
   
-  private void drawVariantCall(Graphics g, String line, int start, int index, float pixPerBase)
+  private void drawVariantCall(Graphics g, String line, int start, int index, float pixPerBase, FeatureVector features)
   {
     String parts[] = line.split("\\t");
-    int pos[] = getScreenPosition(line, pixPerBase, start, index);
+    
+    if(!showDeletions && parts[4].indexOf("D")>-1)
+      return;
+    
+    if(!showInsertions && parts[4].indexOf("I")>-1)
+      return;
+    
+    if(!showSynonymous || !showNonSynonymous)
+    {
+      boolean isSyn = isSynonymous(features, 
+          Integer.parseInt(parts[1]),parts[4].toLowerCase().charAt(0));
+      
+      if( (!showSynonymous && isSyn) ||
+          (!showNonSynonymous && !isSyn) )
+        return;
+    }
+    
+    int pos[] = getScreenPosition(parts[1], pixPerBase, start, index);
     
     if(parts[4].equals("C"))
       g.setColor(Color.red);
@@ -516,16 +620,87 @@ public class VCFview extends JPanel
     else if(parts[4].equals("T"))
       g.setColor(Color.black);
     else
-      g.setColor(Color.yellow);
-
+    {
+      if(parts[4].startsWith("D"))
+        g.setColor(Color.gray);
+      else
+        g.setColor(Color.yellow);
+    }
+    
     g.drawLine(pos[0], pos[1], pos[0], pos[1]-LINE_HEIGHT);
   }
   
-  private int[] getScreenPosition(String line, float pixPerBase, int start, int vcfFileIndex)
+  private boolean isSynonymous(FeatureVector features, int basePosition, char variant)
   {
-    String parts[] = line.split("\\t");
+    int intronlength = 0;
+    Range lastRange = null;
+    
+    for(int i = 0; i<features.size(); i++)
+    {
+      Feature feature = features.elementAt(i);
+      
+      if(feature.getRawFirstBase() < basePosition && feature.getRawLastBase() > basePosition)
+      {
+        FeatureSegmentVector segments = feature.getSegments();
+        for(int j=0; j< segments.size(); j++)
+        {
+          FeatureSegment segment = segments.elementAt(j);
+          Range range = segment.getRawRange();
+          
+          if(j > 0)
+          {
+            if(feature.isForwardFeature())
+              intronlength+=range.getStart()-lastRange.getEnd()-1;
+            else
+              intronlength+=lastRange.getStart()-range.getEnd()-1;
+            
+            if(intronlength < 0)
+              intronlength = 0;
+          }
+          
+          if(range.getStart() < basePosition && range.getEnd() > basePosition)
+          {
+            int mod;
+            int codonStart;
+            
+            if(feature.isForwardFeature())
+            {
+              mod = (basePosition-feature.getRawFirstBase())%3;
+              codonStart = basePosition-feature.getRawFirstBase()-mod;
+            }
+            else
+            {
+              mod = (feature.getRawLastBase()-basePosition)%3;
+              codonStart = feature.getRawLastBase()-basePosition-mod;
+            }
+
+            codonStart-=intronlength;
+            char codon[] = feature.getBases().substring(codonStart, codonStart+3).toLowerCase().toCharArray();
+
+            //String oldBase = new String(codon);
+            char aaRef = AminoAcidSequence.getCodonTranslation(codon[0], codon[1], codon[2]);
+
+            codon[mod] = variant;
+            char aaNew = AminoAcidSequence.getCodonTranslation(codon[0], codon[1], codon[2]);
+            
+            if(aaNew == aaRef)
+              return true;
+            else 
+              return false;
+          }
+
+          lastRange = range;
+        }
+      }
+    }
+    
+    return true;
+  }
+  
+  private int[] getScreenPosition(String base, float pixPerBase, int start, int vcfFileIndex)
+  {
     int pos[] = new int[2];
-    pos[0] = Math.round((Integer.parseInt(parts[1]) - start)*pixPerBase);
+    pos[0] = Math.round((Integer.parseInt(base) - start)*pixPerBase);
     pos[1] = getHeight() - 15 - (vcfFileIndex*(LINE_HEIGHT+5)); 
     return pos;
   }
@@ -547,7 +722,7 @@ public class VCFview extends JPanel
       {
         while ((s = iter.next()) != null)
         {
-          int pos[] = getScreenPosition(s, pixPerBase, start, i);
+          int pos[] = getScreenPosition(s.split("\\t")[1], pixPerBase, start, i);
           if(lastMousePoint != null &&
              lastMousePoint.getY() < pos[1] &&
              lastMousePoint.getY() > pos[1]-LINE_HEIGHT &&
@@ -636,9 +811,9 @@ public class VCFview extends JPanel
     try
     {
       if(dragStart < 0)
-        drag_range = new MarkerRange (bases.getForwardStrand(), start, start);
+        drag_range = new MarkerRange (entryGroup.getSequenceEntry().getBases().getForwardStrand(), start, start);
       else
-        drag_range = new MarkerRange (bases.getForwardStrand(), dragStart, start);
+        drag_range = new MarkerRange (entryGroup.getSequenceEntry().getBases().getForwardStrand(), dragStart, start);
       getSelection().setMarkerRange(drag_range);
       repaint();
     }
@@ -799,9 +974,6 @@ public class VCFview extends JPanel
      {
        if(e.isPopupTrigger())
        {
-         if(popup == null)
-           popup = new JPopupMenu();
-         
          if(showDetails != null)
            popup.remove(showDetails);
          
@@ -839,11 +1011,9 @@ public class VCFview extends JPanel
              }  
            });
            popup.add(showDetails);
-           
-           popup.show(e.getComponent(),
-               e.getX(), e.getY());
          }
-
+         popup.show(e.getComponent(),
+             e.getX(), e.getY());
        }
      }
    }
