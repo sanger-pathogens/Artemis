@@ -58,6 +58,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollBar;
@@ -131,6 +132,7 @@ public class VCFview extends JPanel
   private boolean showDeletions = true;
   private boolean showInsertions = true;
   private boolean showMultiAlleles = true;
+  private float MIN_QUALITY = -10;
   
   private Pattern multiAllelePattern = Pattern.compile("^[AGCT],[AGCT,]+$");
 
@@ -387,6 +389,31 @@ public class VCFview extends JPanel
     });
     popup.add(showMultiAllelesMenu);
     popup.addSeparator();
+    
+    final JMenuItem filterByQuality = new JMenuItem("Filter by quality");
+    filterByQuality.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e)
+      {
+        //
+        String inputValue = JOptionPane.showInputDialog(null, 
+            "Enter a minimum quality score:", MIN_QUALITY);
+        
+        if(inputValue == null)
+          return;
+        try
+        {
+          MIN_QUALITY = Float.parseFloat(inputValue);
+          repaint();
+        }
+        catch(NumberFormatException ex)
+        {
+          JOptionPane.showMessageDialog(null, 
+              "Number "+inputValue+" not recognised.", 
+              "Format Error", JOptionPane.ERROR_MESSAGE);
+        }
+      }
+    });
+    popup.add(filterByQuality);
   }
   
   private static EntryGroup getReference(String reference)
@@ -629,8 +656,11 @@ public class VCFview extends JPanel
     return false;
   }
   
-  private boolean showVariant(String variant, FeatureVector features, int basePosition)
+  private boolean showVariant(String variant, FeatureVector features, int basePosition, float quality)
   {
+    if(quality < MIN_QUALITY)
+      return false;
+    
     if(!showDeletions && isDeletion(variant))
       return false;
     
@@ -657,7 +687,9 @@ public class VCFview extends JPanel
   {
     String parts[] = line.split("\\t");
     int basePosition = Integer.parseInt(parts[1]);
-    if( !showVariant(parts[4], features, basePosition) )
+    float quality = Float.parseFloat(parts[5]);
+    
+    if( !showVariant(parts[4], features, basePosition, quality) )
       return;
     
     int pos[] = getScreenPosition(basePosition, pixPerBase, start, index);
@@ -800,7 +832,9 @@ public class VCFview extends JPanel
         {
           String parts[] = s.split("\\t");
           int basePosition = Integer.parseInt(parts[1]);
-          if( !showVariant(parts[4], features, basePosition) )
+          float quality = Float.parseFloat(parts[5]);
+          
+          if( !showVariant(parts[4], features, basePosition, quality) )
             continue;
           
           int pos[] = getScreenPosition(basePosition, pixPerBase, start, i);
