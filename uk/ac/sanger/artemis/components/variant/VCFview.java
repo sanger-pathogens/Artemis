@@ -47,6 +47,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
@@ -71,8 +73,6 @@ import uk.ac.sanger.artemis.Entry;
 import uk.ac.sanger.artemis.EntryGroup;
 import uk.ac.sanger.artemis.Feature;
 import uk.ac.sanger.artemis.FeatureKeyPredicate;
-import uk.ac.sanger.artemis.FeatureSegment;
-import uk.ac.sanger.artemis.FeatureSegmentVector;
 import uk.ac.sanger.artemis.FeatureVector;
 import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.Selection;
@@ -95,6 +95,7 @@ import uk.ac.sanger.artemis.io.Location;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.io.Range;
+import uk.ac.sanger.artemis.io.RangeVector;
 import uk.ac.sanger.artemis.sequence.AminoAcidSequence;
 import uk.ac.sanger.artemis.sequence.Bases;
 import uk.ac.sanger.artemis.sequence.MarkerRange;
@@ -129,6 +130,9 @@ public class VCFview extends JPanel
   private boolean showNonSynonymous = true;
   private boolean showDeletions = true;
   private boolean showInsertions = true;
+  private boolean showMultiAlleles = true;
+  
+  private Pattern multiAllelePattern = Pattern.compile("^[AGCT],[AGCT,]+$");
 
   public VCFview(final JFrame frame,
                  final JPanel vcfPanel,
@@ -371,6 +375,18 @@ public class VCFview extends JPanel
       }
     });
     popup.add(showInsertionsMenu);
+    
+    final JCheckBoxMenuItem showMultiAllelesMenu = new JCheckBoxMenuItem(
+        "Show multiple alleles", showMultiAlleles);
+    showMultiAllelesMenu.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e)
+      {
+        showMultiAlleles = showMultiAllelesMenu.isSelected();
+        repaint();
+      }
+    });
+    popup.add(showMultiAllelesMenu);
+    popup.addSeparator();
   }
   
   private static EntryGroup getReference(String reference)
@@ -589,27 +605,62 @@ public class VCFview extends JPanel
       return scrollBar.getValue();
   }
   
-  private void drawVariantCall(Graphics g, String line, int start, int index, float pixPerBase, FeatureVector features)
+  /**
+   * Is this a deletion type.
+   * @param variant
+   * @return
+   */
+  private boolean isDeletion(String variant)
   {
-    String parts[] = line.split("\\t");
+    if(variant.indexOf("D")>-1)
+      return true;
+    return false;
+  }
+  
+  /**
+   * Is this an insertion type.
+   * @param variant
+   * @return
+   */
+  private boolean isInsertion(String variant)
+  {
+    if(variant.indexOf("I")>-1)
+      return true;
+    return false;
+  }
+  
+  private boolean showVariant(String variant, FeatureVector features, int basePosition)
+  {
+    if(!showDeletions && isDeletion(variant))
+      return false;
     
-    if(!showDeletions && parts[4].indexOf("D")>-1)
-      return;
+    if(!showInsertions && isInsertion(variant))
+      return false;
     
-    if(!showInsertions && parts[4].indexOf("I")>-1)
-      return;
-    
-    if(!showSynonymous || !showNonSynonymous)
+    if( (!showSynonymous || !showNonSynonymous) &&
+         !isDeletion(variant) && !isInsertion(variant) && variant.length() == 1)
     {
-      boolean isSyn = isSynonymous(features, 
-          Integer.parseInt(parts[1]),parts[4].toLowerCase().charAt(0));
+      boolean isSyn = isSynonymous(features, basePosition, variant.toLowerCase().charAt(0));
       
       if( (!showSynonymous && isSyn) ||
           (!showNonSynonymous && !isSyn) )
-        return;
+        return false;
     }
     
-    int pos[] = getScreenPosition(parts[1], pixPerBase, start, index);
+    if(!showMultiAlleles && multiAllelePattern.matcher(variant).matches())
+      return false;
+    
+    return true;
+  }
+  
+  private void drawVariantCall(Graphics g, String line, int start, int index, float pixPerBase, FeatureVector features)
+  {
+    String parts[] = line.split("\\t");
+    int basePosition = Integer.parseInt(parts[1]);
+    if( !showVariant(parts[4], features, basePosition) )
+      return;
+    
+    int pos[] = getScreenPosition(basePosition, pixPerBase, start, index);
     
     if(parts[4].equals("C"))
       g.setColor(Color.red);
@@ -619,14 +670,22 @@ public class VCFview extends JPanel
       g.setColor(Color.blue);
     else if(parts[4].equals("T"))
       g.setColor(Color.black);
+    else if(isDeletion(parts[4]))
+      g.setColor(Color.gray);
+    else if(isInsertion(parts[4]))
+      g.setColor(Color.yellow);
     else
     {
-      if(parts[4].startsWith("D"))
-        g.setColor(Color.gray);
+      Matcher m = multiAllelePattern.matcher(parts[4]);
+      if(m.matches())
+      {
+        g.setColor(Color.orange);
+        g.fillArc(pos[0]-3, pos[1]-LINE_HEIGHT-3, 6, 6, 0, 360);
+      }
       else
-        g.setColor(Color.yellow);
+        g.setColor(Color.pink);
     }
-    
+
     g.drawLine(pos[0], pos[1], pos[0], pos[1]-LINE_HEIGHT);
   }
   
@@ -641,11 +700,12 @@ public class VCFview extends JPanel
       
       if(feature.getRawFirstBase() < basePosition && feature.getRawLastBase() > basePosition)
       {
-        FeatureSegmentVector segments = feature.getSegments();
-        for(int j=0; j< segments.size(); j++)
+        RangeVector ranges = feature.getLocation().getRanges();
+        intronlength = 0;
+
+        for(int j=0; j< ranges.size(); j++)
         {
-          FeatureSegment segment = segments.elementAt(j);
-          Range range = segment.getRawRange();
+          Range range = (Range) ranges.get(j);
           
           if(j > 0)
           {
@@ -675,18 +735,33 @@ public class VCFview extends JPanel
             }
 
             codonStart-=intronlength;
-            char codon[] = feature.getBases().substring(codonStart, codonStart+3).toLowerCase().toCharArray();
-
-            //String oldBase = new String(codon);
-            char aaRef = AminoAcidSequence.getCodonTranslation(codon[0], codon[1], codon[2]);
-
-            codon[mod] = variant;
-            char aaNew = AminoAcidSequence.getCodonTranslation(codon[0], codon[1], codon[2]);
             
-            if(aaNew == aaRef)
-              return true;
-            else 
-              return false;
+            try
+            {
+              char codon[] = feature.getBases().substring(codonStart,
+                  codonStart + 3).toLowerCase().toCharArray();
+
+              // String oldBase = new String(codon);
+              char aaRef = AminoAcidSequence.getCodonTranslation(codon[0],
+                  codon[1], codon[2]);
+
+              codon[mod] = variant;
+              char aaNew = AminoAcidSequence.getCodonTranslation(codon[0],
+                  codon[1], codon[2]);
+
+              if (aaNew == aaRef)
+                return true;
+              else
+                return false;
+            }
+            catch(Exception e)
+            {
+              for(int k=0; k<ranges.size(); k++)
+                System.out.println(k+" "+ ((Range)ranges.get(k)).getStart() );
+              
+              System.out.println(feature.getIDString()+"  "+codonStart+" "+intronlength+" basePosition="+basePosition+" segment="+range.getStart()+".."+range.getEnd()+" mod="+mod);
+              throw new RuntimeException(e);
+            }
           }
 
           lastRange = range;
@@ -694,13 +769,13 @@ public class VCFview extends JPanel
       }
     }
     
-    return true;
+    return false;
   }
   
-  private int[] getScreenPosition(String base, float pixPerBase, int start, int vcfFileIndex)
+  private int[] getScreenPosition(int base, float pixPerBase, int start, int vcfFileIndex)
   {
     int pos[] = new int[2];
-    pos[0] = Math.round((Integer.parseInt(base) - start)*pixPerBase);
+    pos[0] = Math.round((base - start)*pixPerBase);
     pos[1] = getHeight() - 15 - (vcfFileIndex*(LINE_HEIGHT+5)); 
     return pos;
   }
@@ -712,6 +787,7 @@ public class VCFview extends JPanel
     int start = getBaseAtStartOfView();
     int end   = start+nbasesInView;
     String region = chr+":"+start+"-"+end;
+    FeatureVector features = getCDSFeaturesInRange(start, end);
     
     for (int i = 0; i < tr.length; i++)
     {
@@ -722,7 +798,12 @@ public class VCFview extends JPanel
       {
         while ((s = iter.next()) != null)
         {
-          int pos[] = getScreenPosition(s.split("\\t")[1], pixPerBase, start, i);
+          String parts[] = s.split("\\t");
+          int basePosition = Integer.parseInt(parts[1]);
+          if( !showVariant(parts[4], features, basePosition) )
+            continue;
+          
+          int pos[] = getScreenPosition(basePosition, pixPerBase, start, i);
           if(lastMousePoint != null &&
              lastMousePoint.getY() < pos[1] &&
              lastMousePoint.getY() > pos[1]-LINE_HEIGHT &&
