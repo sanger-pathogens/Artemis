@@ -137,6 +137,7 @@ public class VCFview extends JPanel
   private float MIN_QUALITY = -10;
   
   private Pattern multiAllelePattern = Pattern.compile("^[AGCT],[AGCT,]+$");
+  private static Pattern tabPattern = Pattern.compile("\t");
 
   public VCFview(final JFrame frame,
                  final JPanel vcfPanel,
@@ -528,7 +529,7 @@ public class VCFview extends JPanel
     if(mouseOverVCFline == null)
       return null;
     
-    String parts[] = mouseOverVCFline.split("\t");
+    String parts[] = tabPattern.split(mouseOverVCFline, 0);
     String msg = 
            "Seq: "+parts[0]+"\n";
     msg += "Pos: "+parts[1]+"\n";
@@ -671,16 +672,23 @@ public class VCFview extends JPanel
     return false;
   }
   
-  private boolean showVariant(String variant, FeatureVector features, int basePosition, float quality)
-  {
-    if(quality < MIN_QUALITY)
-      return false;
-    
+  private boolean showVariant(String variant, FeatureVector features, int basePosition, String quality)
+  {  
     if(!showDeletions && isDeletion(variant))
       return false;
     
     if(!showInsertions && isInsertion(variant))
       return false;
+    
+    try
+    {
+      if(Float.parseFloat(quality) < MIN_QUALITY)
+        return false;
+    }
+    catch(NumberFormatException e)
+    {
+      System.err.println(e.getMessage()); 
+    }
     
     if(!showNonOverlappings && !isOverlappingFeature(features, basePosition))
         return false;
@@ -720,13 +728,14 @@ public class VCFview extends JPanel
     return false;
   }
   
+  
   private void drawVariantCall(Graphics g, String line, int start, int index, float pixPerBase, FeatureVector features)
   {
-    String parts[] = line.split("\\t");
+    //String parts[] = line.split("\\t");
+    String parts[] = tabPattern.split(line, 0);
     int basePosition = Integer.parseInt(parts[1]);
-    float quality = Float.parseFloat(parts[5]);
-    
-    if( !showVariant(parts[4], features, basePosition, quality) )
+   
+    if( !showVariant(parts[4], features, basePosition, parts[5]) )
       return;
     
     int pos[] = getScreenPosition(basePosition, pixPerBase, start, index);
@@ -867,11 +876,10 @@ public class VCFview extends JPanel
       {
         while ((s = iter.next()) != null)
         {
-          String parts[] = s.split("\\t");
+          String parts[] = tabPattern.split(s, 7);
           int basePosition = Integer.parseInt(parts[1]);
-          float quality = Float.parseFloat(parts[5]);
-          
-          if( !showVariant(parts[4], features, basePosition, quality) )
+
+          if( !showVariant(parts[4], features, basePosition, parts[5]) )
             continue;
           
           int pos[] = getScreenPosition(basePosition, pixPerBase, start, i);
@@ -1015,7 +1023,7 @@ public class VCFview extends JPanel
             
             while ((s = iter.next()) != null)
             {
-              String parts[] = s.split("\\t");
+              String parts[] = tabPattern.split(s, 0);;
 
               Location location = new Location(parts[1]+".."+parts[1]);
               QualifierVector qualifiers = new QualifierVector();           
@@ -1131,7 +1139,7 @@ public class VCFview extends JPanel
          
          if( mouseOverVCFline != null )
          {
-           final String parts[] = mouseOverVCFline.split("\\t");
+           final String parts[] = tabPattern.split(mouseOverVCFline, 0);
       
            showDetails = new JMenuItem("Show details of : "+parts[0]+":"+parts[1]+" "+parts[2]);
            showDetails.addActionListener(new ActionListener()
