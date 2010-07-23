@@ -132,6 +132,8 @@ public class VCFview extends JPanel
   private boolean showDeletions = true;
   private boolean showInsertions = true;
   private boolean showMultiAlleles = true;
+  // show variants that do not overlap CDS
+  private boolean showNonOverlappings = true;
   private float MIN_QUALITY = -10;
   
   private Pattern multiAllelePattern = Pattern.compile("^[AGCT],[AGCT,]+$");
@@ -333,8 +335,12 @@ public class VCFview extends JPanel
     
     // popup menu
     popup = new JPopupMenu();
+    
+    JMenu showMenu = new JMenu("Show");
+    popup.add(showMenu);
+    
     final JCheckBoxMenuItem showSyn = new JCheckBoxMenuItem(
-        "Show synonymous", showSynonymous);
+        "Synonymous", showSynonymous);
     showSyn.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e)
       {
@@ -342,10 +348,10 @@ public class VCFview extends JPanel
         repaint();
       }
     });
-    popup.add(showSyn);
+    showMenu.add(showSyn);
     
     final JCheckBoxMenuItem showNonSyn = new JCheckBoxMenuItem(
-        "Show non-synonymous", showNonSynonymous);
+        "Non-synonymous", showNonSynonymous);
     showNonSyn.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e)
       {
@@ -353,11 +359,11 @@ public class VCFview extends JPanel
         repaint();
       }
     });
-    popup.add(showNonSyn);
+    showMenu.add(showNonSyn);
     
     
     final JCheckBoxMenuItem showDeletionsMenu = new JCheckBoxMenuItem(
-        "Show deletions", showDeletions);
+        "Deletions", showDeletions);
     showDeletionsMenu.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e)
       {
@@ -365,10 +371,10 @@ public class VCFview extends JPanel
         repaint();
       }
     });
-    popup.add(showDeletionsMenu);
+    showMenu.add(showDeletionsMenu);
     
     final JCheckBoxMenuItem showInsertionsMenu = new JCheckBoxMenuItem(
-        "Show insertions", showInsertions);
+        "Insertions", showInsertions);
     showInsertionsMenu.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e)
       {
@@ -376,10 +382,10 @@ public class VCFview extends JPanel
         repaint();
       }
     });
-    popup.add(showInsertionsMenu);
+    showMenu.add(showInsertionsMenu);
     
     final JCheckBoxMenuItem showMultiAllelesMenu = new JCheckBoxMenuItem(
-        "Show multiple alleles", showMultiAlleles);
+        "Multiple alleles", showMultiAlleles);
     showMultiAllelesMenu.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e)
       {
@@ -387,8 +393,18 @@ public class VCFview extends JPanel
         repaint();
       }
     });
-    popup.add(showMultiAllelesMenu);
-    popup.addSeparator();
+    showMenu.add(showMultiAllelesMenu);
+    
+    final JCheckBoxMenuItem showNonOverlappingsMenu = new JCheckBoxMenuItem(
+        "Varaints not overlapping CDS", showNonOverlappings);
+    showNonOverlappingsMenu.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e)
+      {
+        showNonOverlappings = showNonOverlappingsMenu.isSelected();
+        repaint();
+      }
+    });
+    showMenu.add(showNonOverlappingsMenu);
     
     final JMenuItem filterByQuality = new JMenuItem("Filter by quality");
     filterByQuality.addActionListener(new ActionListener(){
@@ -397,7 +413,6 @@ public class VCFview extends JPanel
         //
         String inputValue = JOptionPane.showInputDialog(null, 
             "Enter a minimum quality score:", MIN_QUALITY);
-        
         if(inputValue == null)
           return;
         try
@@ -667,6 +682,9 @@ public class VCFview extends JPanel
     if(!showInsertions && isInsertion(variant))
       return false;
     
+    if(!showNonOverlappings && !isOverlappingFeature(features, basePosition))
+        return false;
+    
     if( (!showSynonymous || !showNonSynonymous) &&
          !isDeletion(variant) && !isInsertion(variant) && variant.length() == 1)
     {
@@ -681,6 +699,25 @@ public class VCFview extends JPanel
       return false;
     
     return true;
+  }
+  
+  private boolean isOverlappingFeature(FeatureVector features, int basePosition)
+  {
+    for(int i = 0; i<features.size(); i++)
+    {
+      Feature feature = features.elementAt(i);
+      if(feature.getRawFirstBase() < basePosition && feature.getRawLastBase() > basePosition)
+      {
+        RangeVector ranges = feature.getLocation().getRanges();
+        for(int j=0; j< ranges.size(); j++)
+        {
+          Range range = (Range) ranges.get(j);
+          if(range.getStart() < basePosition && range.getEnd() > basePosition)
+            return true;
+        }
+      }
+    }
+    return false;
   }
   
   private void drawVariantCall(Graphics g, String line, int start, int index, float pixPerBase, FeatureVector features)
