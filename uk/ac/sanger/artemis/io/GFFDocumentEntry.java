@@ -449,11 +449,12 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
           (Feature)temp_lookup_hash.get(Integer.toString(featureLoc.getSrcFeatureId()));
         
         if(queryFeature != null)
-        { 
+        {
           Qualifier qualifier = queryFeature.getQualifierByName(qualifierName);
           final FeatureLocLazyQualifierValue sim = 
             new FeatureLocLazyQualifierValue(matchFeature, featureLoc.getSrcFeatureId());
-          if(qualifier == null)
+          
+          if(qualifier == null || !(qualifier instanceof QualifierLazyLoading))
             qualifier = new QualifierLazyLoading(qualifierName, sim);
           else
             ((QualifierLazyLoading)qualifier).addValue(sim);
