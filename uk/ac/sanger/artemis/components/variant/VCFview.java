@@ -122,6 +122,8 @@ public class VCFview extends JPanel
   private String chr;
   private String mouseOverVCFline;
   private int mouseOverIndex = -1;
+  
+  private boolean vcf_v4 = false;
 //record of where a mouse drag starts
   private int dragStart = -1;
   private JPopupMenu popup;
@@ -136,7 +138,7 @@ public class VCFview extends JPanel
   private boolean showNonOverlappings = true;
   private float MIN_QUALITY = -10;
   
-  private Pattern multiAllelePattern = Pattern.compile("^[AGCT],[AGCT,]+$");
+  private Pattern multiAllelePattern = Pattern.compile("^[AGCT]+,[AGCT,]+$");
   private static Pattern tabPattern = Pattern.compile("\t");
 
   public VCFview(final JFrame frame,
@@ -495,6 +497,10 @@ public class VCFview extends JPanel
       {
         if(!line.startsWith("##"))
           break;
+        
+        if(line.indexOf("VCFv4") > -1)
+          vcf_v4 = true;
+        
         buff.append(line+"\n");
       }
     }
@@ -653,9 +659,14 @@ public class VCFview extends JPanel
    * @param variant
    * @return
    */
-  private boolean isDeletion(String variant)
+  private boolean isDeletion(String ref, String variant)
   {
-    if(variant.indexOf("D")>-1)
+    if(vcf_v4)
+    {
+      if( variant.length() < ref.length() && !(variant.indexOf(",") > -1) )
+        return true;
+    }
+    else if(variant.indexOf("D")>-1)
       return true;
     return false;
   }
@@ -665,19 +676,24 @@ public class VCFview extends JPanel
    * @param variant
    * @return
    */
-  private boolean isInsertion(String variant)
+  private boolean isInsertion(String ref, String variant)
   {
-    if(variant.indexOf("I")>-1)
+    if(vcf_v4)
+    {
+      if( variant.length() > ref.length() && !(variant.indexOf(",") > -1) )
+        return true;
+    }
+    else if(variant.indexOf("I")>-1)
       return true;
     return false;
   }
   
-  private boolean showVariant(String variant, FeatureVector features, int basePosition, String quality)
+  private boolean showVariant(String ref, String variant, FeatureVector features, int basePosition, String quality)
   {  
-    if(!showDeletions && isDeletion(variant))
+    if(!showDeletions && isDeletion(ref, variant))
       return false;
     
-    if(!showInsertions && isInsertion(variant))
+    if(!showInsertions && isInsertion(ref, variant))
       return false;
     
     try
@@ -694,7 +710,7 @@ public class VCFview extends JPanel
         return false;
     
     if( (!showSynonymous || !showNonSynonymous) &&
-         !isDeletion(variant) && !isInsertion(variant) && variant.length() == 1)
+         !isDeletion(ref, variant) && !isInsertion(ref, variant) && variant.length() == 1)
     {
       boolean isSyn = isSynonymous(features, basePosition, variant.toLowerCase().charAt(0));
       
@@ -735,23 +751,23 @@ public class VCFview extends JPanel
     String parts[] = tabPattern.split(line, 0);
     int basePosition = Integer.parseInt(parts[1]);
    
-    if( !showVariant(parts[4], features, basePosition, parts[5]) )
+    if( !showVariant(parts[3], parts[4], features, basePosition, parts[5]) )
       return;
     
     int pos[] = getScreenPosition(basePosition, pixPerBase, start, index);
-    
-    if(parts[4].equals("C"))
-      g.setColor(Color.red);
-    else if(parts[4].equals("A"))
-      g.setColor(Color.green);
-    else if(parts[4].equals("G"))
-      g.setColor(Color.blue);
-    else if(parts[4].equals("T"))
-      g.setColor(Color.black);
-    else if(isDeletion(parts[4]))
+
+    if(isDeletion(parts[3], parts[4]))
       g.setColor(Color.gray);
-    else if(isInsertion(parts[4]))
+    else if(isInsertion(parts[3], parts[4]))
       g.setColor(Color.yellow);
+    else if(parts[4].equals("C") && parts[3].length() == 1)
+      g.setColor(Color.red);
+    else if(parts[4].equals("A") && parts[3].length() == 1)
+      g.setColor(Color.green);
+    else if(parts[4].equals("G") && parts[3].length() == 1)
+      g.setColor(Color.blue);
+    else if(parts[4].equals("T") && parts[3].length() == 1)
+      g.setColor(Color.black);
     else
     {
       Matcher m = multiAllelePattern.matcher(parts[4]);
@@ -879,7 +895,7 @@ public class VCFview extends JPanel
           String parts[] = tabPattern.split(s, 7);
           int basePosition = Integer.parseInt(parts[1]);
 
-          if( !showVariant(parts[4], features, basePosition, parts[5]) )
+          if( !showVariant(parts[3], parts[4], features, basePosition, parts[5]) )
             continue;
           
           int pos[] = getScreenPosition(basePosition, pixPerBase, start, i);
