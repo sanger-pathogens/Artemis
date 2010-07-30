@@ -134,6 +134,11 @@ public class VCFview extends JPanel
   private boolean showDeletions = true;
   private boolean showInsertions = true;
   private boolean showMultiAlleles = true;
+  
+  private boolean markAsNewStop = true;
+  final JCheckBoxMenuItem markNewStops =
+    new JCheckBoxMenuItem("Mark new stops within CDS features", markAsNewStop);
+  
   // show variants that do not overlap CDS
   private boolean showNonOverlappings = true;
   private float MIN_QUALITY = -10;
@@ -409,6 +414,16 @@ public class VCFview extends JPanel
     });
     showMenu.add(showNonOverlappingsMenu);
     
+    markNewStops.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e)
+      {
+        if(!markNewStops.isSelected())
+          markAsNewStop = false;
+        repaint();
+      }
+    });
+    popup.add(markNewStops);
+    
     final JMenuItem filterByQuality = new JMenuItem("Filter by quality");
     filterByQuality.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e)
@@ -571,9 +586,7 @@ public class VCFview extends JPanel
       try
       {
         while ((s = iter.next()) != null)
-        {
           drawVariantCall(g, s, start, i, pixPerBase, features);
-        }
       }
       catch (IOException e)
       {
@@ -709,13 +722,31 @@ public class VCFview extends JPanel
     if(!showNonOverlappings && !isOverlappingFeature(features, basePosition))
         return false;
     
-    if( (!showSynonymous || !showNonSynonymous) &&
-         !isDeletion(ref, variant) && !isInsertion(ref, variant) && variant.length() == 1)
+    int isSyn = -1;
+    if(markNewStops.isSelected() &&
+       !isDeletion(ref, variant) && 
+       !isInsertion(ref, variant) && 
+        variant.length() == 1 && 
+        ref.length() == 1)
     {
-      boolean isSyn = isSynonymous(features, basePosition, variant.toLowerCase().charAt(0));
+      isSyn = isSynonymous(features, basePosition, variant.toLowerCase().charAt(0));
+      if(isSyn == 2)
+        markAsNewStop = true;
+      else
+        markAsNewStop = false;
+    }
+    
+    if( (!showSynonymous || !showNonSynonymous) &&
+         !isDeletion(ref, variant) && 
+         !isInsertion(ref, variant) && 
+         variant.length() == 1 && 
+         ref.length() == 1)
+    {
+      if(isSyn == -1)
+        isSyn = isSynonymous(features, basePosition, variant.toLowerCase().charAt(0));
       
-      if( (!showSynonymous && isSyn) ||
-          (!showNonSynonymous && !isSyn) )
+      if( (!showSynonymous && isSyn == 1) ||
+          (!showNonSynonymous && isSyn != 1 ) )
         return false;
     }
     
@@ -780,10 +811,22 @@ public class VCFview extends JPanel
         g.setColor(Color.pink);
     }
 
+    if(markAsNewStop)
+      g.fillArc(pos[0]-3, pos[1]-(LINE_HEIGHT/2)-3, 6, 6, 0, 360);
+    
     g.drawLine(pos[0], pos[1], pos[0], pos[1]-LINE_HEIGHT);
   }
   
-  private boolean isSynonymous(FeatureVector features, int basePosition, char variant)
+  /**
+   * @param features
+   * @param basePosition
+   * @param variant
+   * @return
+   * 0 if false;
+   * 1 if synonymous;  
+   * 2 if non-synonymous and creates a stop codon
+   */
+  private int isSynonymous(FeatureVector features, int basePosition, char variant)
   {
     int intronlength = 0;
     Range lastRange = null;
@@ -839,14 +882,18 @@ public class VCFview extends JPanel
               char aaRef = AminoAcidSequence.getCodonTranslation(codon[0],
                   codon[1], codon[2]);
 
+              if(!feature.isForwardFeature())
+                variant = Bases.complement(variant);
               codon[mod] = variant;
               char aaNew = AminoAcidSequence.getCodonTranslation(codon[0],
                   codon[1], codon[2]);
 
-              if (aaNew == aaRef)
-                return true;
+              if (aaNew == aaRef) 
+                return 1;
+              else if(AminoAcidSequence.isStopCodon(aaNew))
+                return 2;
               else
-                return false;
+                return 0;
             }
             catch(Exception e)
             {
@@ -863,7 +910,7 @@ public class VCFview extends JPanel
       }
     }
     
-    return false;
+    return 0;
   }
   
   private int[] getScreenPosition(int base, float pixPerBase, int start, int vcfFileIndex)
