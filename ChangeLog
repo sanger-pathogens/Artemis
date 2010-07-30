@@ -1,4 +1,6 @@
 Version 12.+
+	Add support for VCF v3.3 and v4.0.
+
 	Add option to show combined coverage plots for multiple BAMs.
 
 	Add show_forward_lines and show_reverse_lines as options for switching
