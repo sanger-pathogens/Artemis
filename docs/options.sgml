@@ -99,6 +99,24 @@ LINKEND="VIEWS-POPUPMENU-TOGGLES-FEATURE-BORDERS">).  [default: "yes"]
       </PARA>
     </SECT2>
 
+    <SECT2 ID="OPTIONS-SHOWFORWARDLINES">
+       <TITLE><LITERAL>show_forward_lines</LITERAL></TITLE>
+       <PARA>
+If set to yes, the forward frame lines are shown by default. This can
+also be set in the views popup menu.  [default: "yes"]
+       <PARA>
+       </PARA>
+    </SECT2>
+
+    <SECT2 ID="OPTIONS-SHOWREVERSELINES">
+       <TITLE><LITERAL>show_reverse_lines</LITERAL></TITLE>
+       <PARA>
+	  If set to yes, the reverse frame lines are shown by default. This can
+	  also be set in the views popup menu.  [default: "yes"]
+       <PARA>
+       </PARA>
+    </SECT2>
+
     <SECT2 ID="OPTIONS-DRAWFEATUREARROWS">
       <TITLE><LITERAL>draw_feature_arrows</LITERAL></TITLE>
       <PARA>
