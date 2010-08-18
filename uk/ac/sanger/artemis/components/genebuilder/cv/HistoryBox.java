@@ -24,17 +24,21 @@
 
 package uk.ac.sanger.artemis.components.genebuilder.cv;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.util.Vector;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JTextField;
 
 import org.gmod.schema.cv.CvTerm;
 
 import uk.ac.sanger.artemis.chado.ChadoTransactionManager;
+import uk.ac.sanger.artemis.components.QualifierTextArea;
 import uk.ac.sanger.artemis.components.genebuilder.JExtendedComboBox;
+import uk.ac.sanger.artemis.components.genebuilder.TextAreaDocumentListener;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
@@ -46,7 +50,7 @@ class HistoryBox extends AbstractCvBox
   private int value_index;
   private JExtendedComboBox termCombo;
   private JTextField curatorNameField;
-  private JTextField qualfTextField;
+  private QualifierTextArea qualfTextField;
   private DatePanel dateField;
   private String origQualifierString;
   private Qualifier origQualifier;
@@ -69,7 +73,11 @@ class HistoryBox extends AbstractCvBox
     this.origQualifierString = qualifierString;
     this.value_index  = value_index;
     this.xBox = Box.createHorizontalBox();
+    
+    Box yBox = Box.createVerticalBox();
 
+    Box lineBox = Box.createHorizontalBox();
+    
     final String term = getField("term=", qualifierString);
     
     termCombo = 
@@ -92,32 +100,48 @@ class HistoryBox extends AbstractCvBox
     termCombo.setMaximumSize(d);
     
     termCombo.setSelectedItem(term);
-    xBox.add(termCombo);
+    lineBox.add(termCombo);
 
     // feature_cvterm_prop's
+    Dimension dimension2 = new Dimension(d.width*2, d.height);
     String qual = getField("curatorName=", qualifierString);
-    curatorNameField = new JTextField(qual);      
+    curatorNameField = new JTextField(qual);
     curatorNameField.setToolTipText("qualifier column");
-    curatorNameField.setPreferredSize(dimension);
-    curatorNameField.setMaximumSize(dimension);
+    curatorNameField.setPreferredSize(dimension2);
+    curatorNameField.setMaximumSize(dimension2);
     curatorNameField.setActionCommand("curatorName=");
     curatorNameField.setCaretPosition(0);
-    xBox.add(curatorNameField);
-    
-    qual = getFieldIgnoreSeparator("qualifier", qualifierString);
-    qualfTextField = new JTextField(qual);      
-    qualfTextField.setToolTipText("qualifier column");
-    Dimension dimension2 = new Dimension(dimension.width*2, dimension.height);
-    qualfTextField.setPreferredSize(dimension2);
-    qualfTextField.setMaximumSize(dimension2);
-    qualfTextField.setActionCommand("qualifier=");
-    qualfTextField.setCaretPosition(0);
-    xBox.add(qualfTextField);
+    lineBox.add(curatorNameField);
 
     dateField = new DatePanel(getField("date=", qualifierString),
                               dimension.height);
 
-    xBox.add(dateField.getDateSpinner());
+    lineBox.add(dateField.getDateSpinner());
+    lineBox.add(Box.createHorizontalGlue());
+    yBox.add(lineBox);
+    
+    lineBox = Box.createHorizontalBox();
+    lineBox.add(Box.createHorizontalStrut(5));
+    Dimension dimension4 = new Dimension(
+        termCombo.getPreferredSize().width+
+        curatorNameField.getPreferredSize().width+
+        dateField.getDateSpinner().getPreferredSize().width-5, dimension.height*20);
+    qual = getFieldIgnoreSeparator("qualifier", qualifierString);
+    qualfTextField = new QualifierTextArea();
+    qualfTextField.setBorder(BorderFactory.createLineBorder(Color.gray));
+
+    qualfTextField.setText(qual);      
+    qualfTextField.setToolTipText("qualifier column");
+    qualfTextField.setPreferredSize(dimension4);
+    qualfTextField.setMaximumSize(dimension4);
+    qualfTextField.getDocument().addDocumentListener(
+        new TextAreaDocumentListener(qualfTextField));
+    qualfTextField.setCaretPosition(0);
+    lineBox.add(qualfTextField);
+    lineBox.add(Box.createHorizontalGlue());
+    yBox.add(lineBox);
+    
+    xBox.add(yBox);
   }
 
   protected boolean isQualifierChanged()
