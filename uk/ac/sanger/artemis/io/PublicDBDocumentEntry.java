@@ -373,7 +373,6 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
                                  final QualifierVector newQualifiers,
                                  final boolean isGene)
   {
-    Qualifier qualifier;
     for(int i=0; i<newQualifiers.size(); i++)
     {
       Qualifier newQualifier = (Qualifier) newQualifiers.get(i);
@@ -512,7 +511,7 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
     if(ntranscripts > 1)
     {
       addNewQualifier(qualifiers, transcriptQualifiers.getQualifierByName("ID"));
-      List transcripts = chadoGene.getTranscripts();
+      List<Feature> transcripts = chadoGene.getTranscripts();
       for(int i=0;i<ntranscripts;i++)
       {
         Feature thisTranscript = (Feature)transcripts.get(i);
@@ -636,6 +635,12 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
       return new EmblStreamSequence (sequence);
     else 
       return new GenbankStreamSequence (sequence);
+  }
+  
+  public static Object[] getDatabaseQualifiersToRemove()  
+  {
+    initDatabaseMappings();
+    return DATABASE_QUALIFIERS_TO_REMOVE;
   }
   
   /**
