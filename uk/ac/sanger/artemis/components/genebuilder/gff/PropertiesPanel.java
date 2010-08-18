@@ -402,7 +402,7 @@ public class PropertiesPanel extends JPanel
       isPartialQualfier3   = gffQualifiers.getQualifierByName("isFminPartial");
       isPartialQualfier5   = gffQualifiers.getQualifierByName("isFmaxPartial");
     }
-     
+
     Box optionsBox = Box.createHorizontalBox();
     partialField5prime = new JCheckBox("partial 5'", 
         ( isPartialQualfier5 != null ) ? true : false);
@@ -416,12 +416,13 @@ public class PropertiesPanel extends JPanel
     partialField3prime.setPreferredSize(d);
     partialField3prime.setOpaque(false);
     optionsBox.add(partialField3prime);
-    
-    
+
     Qualifier obsoleteQualifier = gffQualifiers.getQualifierByName("isObsolete");
+    boolean isObsolete;
     if(obsoleteQualifier == null)
-      return;
-    boolean isObsolete = Boolean.parseBoolean((String) obsoleteQualifier.getValues().get(0));
+      isObsolete = false;
+    else
+      isObsolete = Boolean.parseBoolean((String) obsoleteQualifier.getValues().get(0));
     obsoleteField = new JCheckBox("obsolete", isObsolete);
     obsoleteField.setPreferredSize(calcPreferred(obsoleteField.getPreferredSize().width));
     
