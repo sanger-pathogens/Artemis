@@ -148,6 +148,10 @@ public class ReadAndWriteEntry
       final FeatureVector features = entry.getAllFeatures();
       for(int i=0; i<features.size(); i++)
         addAllKeysQualifiers(artemis_entry_information, features.elementAt(i).getEmblFeature());
+      
+      if(entry.getEMBLEntry() instanceof GFFDocumentEntry)
+        addQualifierToEntryInfo(artemis_entry_information, 
+          (String)PublicDBDocumentEntry.getDatabaseQualifiersToRemove()[0]);
     }
     PublicDBDocumentEntry.IGNORE_OBSOLETE_FEATURES = ignoreObsolete;
     
@@ -229,6 +233,22 @@ public class ReadAndWriteEntry
       }
     }
 
+  }
+  
+  private static void addQualifierToEntryInfo(final EntryInformation entry_information,
+                                             final String qualifier_name)
+  {
+    KeyVector keys = new KeyVector();
+    QualifierInfo qualifierInfo = new QualifierInfo(qualifier_name, QualifierInfo.QUOTED_TEXT,
+                                      keys, null, false);
+    try
+    {
+      entry_information.addQualifierInfo(qualifierInfo);
+    }
+    catch(QualifierInfoException e)
+    {
+      e.printStackTrace();
+    }
   }
   
   /**
