@@ -30,6 +30,7 @@ import uk.ac.sanger.artemis.util.*;
 import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
 import uk.ac.sanger.artemis.io.Entry;
 import uk.ac.sanger.artemis.io.DocumentEntryFactory;
+import uk.ac.sanger.artemis.io.GFFDocumentEntry;
 import uk.ac.sanger.artemis.io.ReadFormatException;
 import uk.ac.sanger.artemis.io.EntryInformation;
 import uk.ac.sanger.artemis.io.EntryInformationException;
@@ -389,10 +390,12 @@ public class EntryFileDialog extends StickyFileChooser
           yBox.add(remoteSave);
           useAccessory = true;
         }
-        else if(entry.getEMBLEntry() instanceof DatabaseDocumentEntry)
+        else if(entry.getEMBLEntry() instanceof DatabaseDocumentEntry ||
+                entry.getEMBLEntry() instanceof GFFDocumentEntry)
         {
           yBox.add(flattenGeneModel);
-          yBox.add(ignoreObsoleteFeatures);
+          if(entry.getEMBLEntry() instanceof DatabaseDocumentEntry)
+            yBox.add(ignoreObsoleteFeatures);
           useAccessory = true;
         }
 
@@ -447,7 +450,8 @@ public class EntryFileDialog extends StickyFileChooser
                              false);
         try 
         {
-          if(entry.getEMBLEntry() instanceof DatabaseDocumentEntry)
+          if(entry.getEMBLEntry() instanceof DatabaseDocumentEntry ||
+             entry.getEMBLEntry() instanceof GFFDocumentEntry)
             ReadAndWriteEntry.writeDatabaseEntryToFile(entry, file, 
                 flattenGeneModel.isSelected(), 
                 ignoreObsoleteFeatures.isSelected(), false, 
