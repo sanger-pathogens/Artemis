@@ -77,7 +77,6 @@ class HistoryBox extends AbstractCvBox
     Box yBox = Box.createVerticalBox();
 
     Box lineBox = Box.createHorizontalBox();
-    
     final String term = getField("term=", qualifierString);
     
     termCombo = 
@@ -128,6 +127,7 @@ class HistoryBox extends AbstractCvBox
         dateField.getDateSpinner().getPreferredSize().width-5, dimension.height*20);
     qual = getFieldIgnoreSeparator("qualifier", qualifierString);
     qualfTextField = new QualifierTextArea();
+    qualfTextField.setUseHyperlinks(false);
     qualfTextField.setBorder(BorderFactory.createLineBorder(Color.gray));
 
     qualfTextField.setText(qual);      
