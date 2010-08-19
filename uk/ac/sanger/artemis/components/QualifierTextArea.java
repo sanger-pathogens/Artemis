@@ -71,6 +71,8 @@ public class QualifierTextArea extends JTextPane
   private static StringVector dbsLinks;
   public static Vector DATABASES = new Vector();
   
+  private boolean useHyperlinks = true;
+  
   /**
    *  Create a new QualifierTextArea containing no text.
    **/
@@ -227,6 +229,9 @@ public class QualifierTextArea extends JTextPane
   private void setStyleForHyperLinks(final String s, 
                                      final String db)
   {
+    if(!isUseHyperlinks())
+      return;
+    
     int ind = 0;
     while((ind = indexOfIgnoreCase(s, db+":", ind)) > -1)
     {
@@ -437,5 +442,16 @@ public class QualifierTextArea extends JTextPane
       //e1.printStackTrace();
     }
     return null;
+  }
+  
+  private boolean isUseHyperlinks()
+  {
+    return useHyperlinks;
+  }
+
+
+  public void setUseHyperlinks(boolean useHyperlinks)
+  {
+    this.useHyperlinks = useHyperlinks;
   }
 }
