@@ -45,12 +45,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -74,6 +76,7 @@ import uk.ac.sanger.artemis.Entry;
 import uk.ac.sanger.artemis.EntryGroup;
 import uk.ac.sanger.artemis.Feature;
 import uk.ac.sanger.artemis.FeatureKeyPredicate;
+import uk.ac.sanger.artemis.FeaturePredicate;
 import uk.ac.sanger.artemis.FeatureVector;
 import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.Selection;
@@ -142,6 +145,10 @@ public class VCFview extends JPanel
   // show variants that do not overlap CDS
   private boolean showNonOverlappings = true;
   private float MIN_QUALITY = -10;
+  
+  Hashtable<String, Integer> offsetLengths = null;
+  private boolean concatSequences = false;
+  private Point lastMousePoint;
   
   private Pattern multiAllelePattern = Pattern.compile("^[AGCT]+,[AGCT,]+$");
   private static Pattern tabPattern = Pattern.compile("\t");
@@ -214,23 +221,10 @@ public class VCFview extends JPanel
     
     //
     //
-    final MouseMotionListener mouseMotionListener = new MouseMotionListener()
-    {
-      public void mouseDragged(MouseEvent event)
-      {
-        handleCanvasMouseDrag(event);
-      }
-      
-      public void mouseMoved(MouseEvent e)
-      {
-        findVariantAtPoint(e.getPoint());
-      }
-    };
-    addMouseMotionListener(mouseMotionListener);
     addMouseListener(new PopupListener());
     
     //
-    createMenus(frame);
+    createMenus(frame, jspView);
     setDisplay();
     
     if(feature_display == null)
@@ -248,85 +242,90 @@ public class VCFview extends JPanel
     }
   }
   
-  private void createMenus(JFrame frame)
+  private void createMenus(JFrame frame, final JScrollPane jspView)
   {
-    JComponent topPanel;
+    final JComponent topPanel;
     if(feature_display != null)
       topPanel = new JPanel(new FlowLayout(FlowLayout.LEADING, 0, 0));
     else
     { 
       topPanel = new JMenuBar();
       frame.setJMenuBar((JMenuBar)topPanel);
+      
+      JMenu fileMenu = new JMenu("File");
+      topPanel.add(fileMenu);
+    
+      JMenuItem printImage = new JMenuItem("Save As Image Files (png/jpeg)...");
+      printImage.addActionListener(new ActionListener()
+      {
+        public void actionPerformed(ActionEvent e)
+        {
+          PrintVCFview part = new PrintVCFview(VCFview.this);
+          part.print();
+        }
+      });
+      fileMenu.add(printImage);
+      
+      JMenuItem printPS = new JMenuItem("Print...");
+      printPS.addActionListener(new ActionListener()
+      {
+        public void actionPerformed(ActionEvent e)
+        {
+          PrintVCFview part = new PrintVCFview(VCFview.this);
+          part.validate();
+          part.doPrintActions();
+        }
+      });
+      fileMenu.add(printPS);
+      
+
+      JMenuItem close = new JMenuItem("Close");
+      fileMenu.add(close);
+      close.addActionListener(new ActionListener()
+      {
+        public void actionPerformed(ActionEvent e)
+        {
+          VCFview.this.setVisible(false);
+          Component comp = VCFview.this;
+          
+          while( !(comp instanceof JFrame) )
+            comp = comp.getParent();
+          ((JFrame)comp).dispose();
+        } 
+      });
+      
+      JButton zoomIn = new JButton("-");
+      Insets ins = new Insets(1,1,1,1);
+      zoomIn.setMargin(ins);
+      zoomIn.addActionListener(new ActionListener()
+      {
+        public void actionPerformed(ActionEvent e)
+        {
+          setZoomLevel((int) (VCFview.this.nbasesInView * 1.1));
+        }
+      });
+      topPanel.add(zoomIn);
+
+      JButton zoomOut = new JButton("+");
+      zoomOut.setMargin(ins);
+      zoomOut.addActionListener(new ActionListener()
+      {
+        public void actionPerformed(ActionEvent e)
+        {
+          setZoomLevel((int) (VCFview.this.nbasesInView * .9));
+        }
+      });
+      topPanel.add(zoomOut);
     }
     
-    JMenu fileMenu = new JMenu("File");
-    topPanel.add(fileMenu);
-  
-    JMenuItem printImage = new JMenuItem("Save As Image Files (png/jpeg)...");
-    printImage.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent e)
-      {
-        PrintVCFview part = new PrintVCFview(VCFview.this);
-        part.print();
-      }
-    });
-    fileMenu.add(printImage);
-    
-    JMenuItem printPS = new JMenuItem("Print...");
-    printPS.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent e)
-      {
-        PrintVCFview part = new PrintVCFview(VCFview.this);
-        part.validate();
-        part.doPrintActions();
-      }
-    });
-    fileMenu.add(printPS);
-    
-
-    JMenuItem close = new JMenuItem("Close");
-    fileMenu.add(close);
-    close.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent e)
-      {
-        VCFview.this.setVisible(false);
-        Component comp = VCFview.this;
-        
-        while( !(comp instanceof JFrame) )
-          comp = comp.getParent();
-        ((JFrame)comp).dispose();
-      } 
-    });
-    
-    JButton zoomIn = new JButton("-");
-    Insets ins = new Insets(1,1,1,1);
-    zoomIn.setMargin(ins);
-    zoomIn.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent e)
-      {
-        setZoomLevel((int) (VCFview.this.nbasesInView * 1.1));
-      }
-    });
-    topPanel.add(zoomIn);
-
-    JButton zoomOut = new JButton("+");
-    zoomOut.setMargin(ins);
-    zoomOut.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent e)
-      {
-        setZoomLevel((int) (VCFview.this.nbasesInView * .9));
-      }
-    });
-    topPanel.add(zoomOut);
-    
     final JComboBox combo = new JComboBox(tr[0].getmSeq());
+    
+    if(tr[0].getmSeq().length > 1)
+      combo.addItem("Combine All");
+    
     if(chr == null)
       this.chr = tr[0].getmSeq()[0];
+
     combo.setSelectedItem(this.chr);
     combo.setEditable(false);
     combo.setMaximumRowCount(20);
@@ -335,11 +334,52 @@ public class VCFview extends JPanel
     {
       public void itemStateChanged(ItemEvent e)
       {
-        VCFview.this.chr = (String) combo.getSelectedItem();
+        if(combo.getSelectedItem().equals("Combine All"))
+          concatSequences = true;
+        else 
+        {
+          VCFview.this.chr = (String) combo.getSelectedItem();
+          concatSequences = false;
+        }
         repaint();
       }
     });
     topPanel.add(combo);
+    if(topPanel instanceof JPanel)
+      vcfPanel.add(topPanel, BorderLayout.NORTH);
+    
+    // auto hide top panel
+    final JCheckBox buttonAutoHide = new JCheckBox("Hide", true);
+    buttonAutoHide.setToolTipText("Auto-Hide");
+    topPanel.add(buttonAutoHide);
+    final MouseMotionListener mouseMotionListener = new MouseMotionListener()
+    {
+      public void mouseDragged(MouseEvent event)
+      {
+        handleCanvasMouseDrag(event);
+      }
+      
+      public void mouseMoved(MouseEvent e)
+      {
+        findVariantAtPoint(e.getPoint());
+
+        int thisHgt = HEIGHT;
+        if (thisHgt < 5)
+          thisHgt = 15;
+
+        int y = (int) (e.getY() - jspView.getViewport().getViewRect().getY());
+        if (y < thisHgt)
+          topPanel.setVisible(true);
+        else
+        {
+          if (buttonAutoHide.isSelected())
+            topPanel.setVisible(false);
+        }
+
+      }
+    };
+    addMouseMotionListener(mouseMotionListener);
+
     
     // popup menu
     popup = new JPopupMenu();
@@ -561,42 +601,109 @@ public class VCFview extends JPanel
     return msg;
   }
   
+  
+  
+  /**
+   * For VCF files with multiple references sequences, calculate
+   * the offset from the start of the concatenated sequence for 
+   * a given reference.
+   * @param refName
+   * @return
+   */
+  protected int getSequenceOffset(String refName)
+  {
+    if(!concatSequences)
+      return 0;
+    
+    if(offsetLengths == null)
+    {   
+      String[] contigs = tr[0].getmSeq();
+      FeatureVector features = entryGroup.getAllFeatures();
+      offsetLengths = new Hashtable<String, Integer>(contigs.length);
+      for(int i=0; i<contigs.length; i++)
+      {
+        FeatureContigPredicate predicate = new FeatureContigPredicate(contigs[i]);
+        for(int j=0; j<features.size(); j++)
+        {
+          if(predicate.testPredicate(features.elementAt(j)))
+          {
+            offsetLengths.put(contigs[i], features.elementAt(j).getFirstBase()-1);
+            break;
+          }
+        }
+      }
+    }
+    return offsetLengths.get(refName);
+  }
+  
   protected void paintComponent(Graphics g)
   {
     super.paintComponent(g);
     mouseOverVCFline = null;
 
     float pixPerBase = getPixPerBaseByWidth();
-    String s;
-    
     int start = getBaseAtStartOfView();
     int end   = start+nbasesInView;
-    String region = chr+":"+start+"-"+end;
        
     drawSelectionRange((Graphics2D)g, pixPerBase, start, end);
- 
+
     FeatureVector features = getCDSFeaturesInRange(start, end);
-    
-    // a region is specified; random access
     for (int i = 0; i < tr.length; i++)
     {
-      TabixReader.Iterator iter = tr[i].query(region); // get the iterator
-      if (iter == null)
-        return;
-      try
+      if(concatSequences) 
       {
-        while ((s = iter.next()) != null)
-          drawVariantCall(g, s, start, i, pixPerBase, features);
-      }
-      catch (IOException e)
-      {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      }
+        String[] contigs = tr[0].getmSeq();
+        for(int j=0; j<contigs.length; j++)
+        {
+          int offset = getSequenceOffset(contigs[j]);
+          int nextOffset;
+          if(j<contigs.length-1)
+            nextOffset = getSequenceOffset(contigs[j+1]);
+          else
+            nextOffset = seqLength;
+          
+          if( (offset >= start && offset < end) ||
+              (offset < start && start < nextOffset) )
+          {
+            int thisStart = start - offset;
+            if(thisStart < 1)
+              thisStart = 1;
+            int thisEnd   = end - offset;
+            
+            drawRegion(g, contigs[j]+":"+thisStart+"-"+thisEnd, i, start, pixPerBase, features); 
+          }
+        }
+
+      } 
+      else
+        drawRegion(g, chr+":"+start+"-"+end, i, start, pixPerBase, features); 
     }
 
     if(feature_display == null)
       drawScale((Graphics2D)g, start, end, pixPerBase, getHeight());
+  }
+  
+  private void drawRegion(Graphics g, 
+                          String region,
+                          int i, 
+                          int start, 
+                          float pixPerBase, 
+                          FeatureVector features) 
+  {
+    String s;
+    TabixReader.Iterator iter = tr[i].query(region); // get the iterator
+    if (iter == null)
+      return;
+    try
+    {
+      while ((s = iter.next()) != null)
+        drawVariantCall(g, s, start, i, pixPerBase, features);
+    }
+    catch (IOException e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }  
   }
   
   private FeatureVector getCDSFeaturesInRange(int start, int end)
@@ -780,7 +887,8 @@ public class VCFview extends JPanel
   {
     //String parts[] = line.split("\\t");
     String parts[] = tabPattern.split(line, 0);
-    int basePosition = Integer.parseInt(parts[1]);
+    
+    int basePosition = Integer.parseInt(parts[1]) + getSequenceOffset(parts[0]);
    
     if( !showVariant(parts[3], parts[4], features, basePosition, parts[5]) )
       return;
@@ -921,47 +1029,83 @@ public class VCFview extends JPanel
     return pos;
   }
   
-  private void findVariantAtPoint(Point lastMousePoint)
+  private void findVariantAtPoint(Point mousePoint)
   {
     float pixPerBase = getPixPerBaseByWidth();
-    String s;
     int start = getBaseAtStartOfView();
     int end   = start+nbasesInView;
-    String region = chr+":"+start+"-"+end;
     FeatureVector features = getCDSFeaturesInRange(start, end);
     
     for (int i = 0; i < tr.length; i++)
     {
-      TabixReader.Iterator iter = tr[i].query(region); // get the iterator
-      if (iter == null)
-        return;
-      try
+      if(concatSequences) 
       {
-        while ((s = iter.next()) != null)
+        String[] contigs = tr[0].getmSeq();
+        for(int j=0; j<contigs.length; j++)
         {
-          String parts[] = tabPattern.split(s, 7);
-          int basePosition = Integer.parseInt(parts[1]);
-
-          if( !showVariant(parts[3], parts[4], features, basePosition, parts[5]) )
-            continue;
+          int offset = getSequenceOffset(contigs[j]);
+          int nextOffset;
+          if(j<contigs.length-1)
+            nextOffset = getSequenceOffset(contigs[j+1]);
+          else
+            nextOffset = seqLength;
           
-          int pos[] = getScreenPosition(basePosition, pixPerBase, start, i);
-          if(lastMousePoint != null &&
-             lastMousePoint.getY() < pos[1] &&
-             lastMousePoint.getY() > pos[1]-LINE_HEIGHT &&
-             lastMousePoint.getX() > pos[0]-3 &&
-             lastMousePoint.getX() < pos[0]+3)
-           {
-             mouseOverVCFline = s;
-             mouseOverIndex = i;
-           }
+          if( (offset >= start && offset < end) ||
+              (offset < start && start < nextOffset) )
+          {
+            int thisStart = start - offset;
+            if(thisStart < 1)
+              thisStart = 1;
+            int thisEnd   = end - offset;
+            searchRegion(contigs[j]+":"+thisStart+"-"+thisEnd, i, mousePoint, features, start, pixPerBase);
+          }
         }
-      }
-      catch (IOException e)
-      {
-        e.printStackTrace();
-      }
+      } 
+      else
+        searchRegion(chr+":"+start+"-"+end, i, mousePoint, features, start, pixPerBase);
     }
+  }
+  
+  private void searchRegion(String region, int i, Point mousePoint, FeatureVector features,
+                            int start, float pixPerBase) 
+  {
+    TabixReader.Iterator iter = tr[i].query(region); // get the iterator
+    if (iter == null)
+      return;
+    try
+    { 
+      String s;
+      while ((s = iter.next()) != null)
+        isMouseOver(mousePoint, s, features, i, start, pixPerBase);
+    }
+    catch (IOException e)
+    {
+      e.printStackTrace();
+    }  
+  }
+  
+  private void isMouseOver(Point mousePoint, 
+                           String s, 
+                           FeatureVector features, 
+                           int i, 
+                           int start, float pixPerBase)
+  {
+    String parts[] = tabPattern.split(s, 7);
+    int basePosition = Integer.parseInt(parts[1]) + getSequenceOffset(parts[0]);
+
+    if( !showVariant(parts[3], parts[4], features, basePosition, parts[5]) )
+      return;
+    
+    int pos[] = getScreenPosition(basePosition, pixPerBase, start, i);
+    if(mousePoint != null &&
+       mousePoint.getY() < pos[1] &&
+       mousePoint.getY() > pos[1]-LINE_HEIGHT &&
+       mousePoint.getX() > pos[0]-3 &&
+       mousePoint.getX() < pos[0]+3)
+     {
+       mouseOverVCFline = s;
+       mouseOverIndex = i;
+     }
   }
   
   private void drawScale(Graphics2D g2, int start, int end, float pixPerBase, int ypos)
@@ -1259,6 +1403,22 @@ public class VCFview extends JPanel
    {
      repaint();
    }
+   
+  class FeatureContigPredicate implements FeaturePredicate
+  {
+    String contigName;
+    FeatureContigPredicate(String contigName)
+    {
+      this.contigName = contigName;
+    }
+    
+    public boolean testPredicate(Feature feature)
+    {
+      if(feature.getIDString().equals(contigName))
+        return true;
+      return false;
+    }
+  }
    
   public static void main(String args[])
   {
