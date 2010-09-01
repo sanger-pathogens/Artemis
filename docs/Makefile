@@ -25,7 +25,7 @@ art_html_build : *.sgml *.dsl *.css
 	 else \
 	   mkdir art_html_build; \
 	 fi; \
-	 cd art_html_build; ln -sf ../*.sgml ../*.gif ../*.eps ../*.css .; \
+	 cd art_html_build; ln -sf ../*.sgml ../*.gif ../*.png ../*.eps ../*.css .; \
 	 $(JADE) $(JADE_PARAM) manual.sgml;\
 	 $(JADE) -V nochunks $(JADE_PARAM) manual.sgml > artemis_manual_complete.html)
 
@@ -36,7 +36,7 @@ act_html_build : *.sgml *.dsl *.css
 	 else \
 	   mkdir act_html_build; \
 	 fi; \
-	 cd act_html_build; ln -sf ../*.sgml ../*.gif ../*.eps ../*.css .; \
+	 cd act_html_build; ln -sf ../*.sgml ../*.gif ../*.png ../*.eps ../*.css .; \
 	 $(JADE) $(JADE_PARAM) act_manual.sgml;\
 	 $(JADE) -V nochunks $(JADE_PARAM) act_manual.sgml > act_manual_complete.html)
 
