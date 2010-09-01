@@ -138,9 +138,9 @@ public class VCFview extends JPanel
   private boolean showInsertions = true;
   private boolean showMultiAlleles = true;
   
-  private boolean markAsNewStop = true;
+  private boolean markAsNewStop = false;
   final JCheckBoxMenuItem markNewStops =
-    new JCheckBoxMenuItem("Mark new stops within CDS features", markAsNewStop);
+    new JCheckBoxMenuItem("Mark new stops within CDS features", true);
   
   // show variants that do not overlap CDS
   private boolean showNonOverlappings = true;
@@ -321,7 +321,7 @@ public class VCFview extends JPanel
     final JComboBox combo = new JComboBox(tr[0].getmSeq());
     
     if(tr[0].getmSeq().length > 1)
-      combo.addItem("Combine All");
+      combo.addItem("Combine References");
     
     if(chr == null)
       this.chr = tr[0].getmSeq()[0];
@@ -334,7 +334,7 @@ public class VCFview extends JPanel
     {
       public void itemStateChanged(ItemEvent e)
       {
-        if(combo.getSelectedItem().equals("Combine All"))
+        if(combo.getSelectedItem().equals("Combine References"))
           concatSequences = true;
         else 
         {
