@@ -2654,10 +2654,18 @@ public class BamView extends JPanel
       int width = feature_display.getMaxVisibleBases();
       setZoomLevel(width);
       repaint();
-      if(coveragePanel != null && coveragePanel.isVisible())
+      if(coveragePanel != null && coveragePanel.isVisible()) 
+      {
+        coveragePanel.setStartAndEnd(BamView.this.startBase, BamView.this.endBase);
+        coveragePanel.setPixPerBase(getPixPerBaseByWidth());
         coveragePanel.repaint();
+      }
       if(snpPanel != null && snpPanel.isVisible())
+      {
+        snpPanel.setStartAndEnd(BamView.this.startBase, BamView.this.endBase);
+        snpPanel.setPixPerBase(getPixPerBaseByWidth());
         snpPanel.repaint();
+      }
     }
     else
     {
