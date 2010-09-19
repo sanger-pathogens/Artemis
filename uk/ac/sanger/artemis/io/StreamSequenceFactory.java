@@ -51,12 +51,14 @@ abstract public class StreamSequenceFactory
 
   /** The tag use for sequence that is in FASTA or similar format. */
   final public static int FASTA_FORMAT = 4;
+  
+  final public static int INDEXED_FASTA_FORMAT = 5;
 
   /** 
    *  Read a StreamSequence object from a LinePushBackReader object.
    **/
   public static StreamSequence makeStreamSequence(final LinePushBackReader
-                                                   in_stream)
+                                                   in_stream, Entry entry)
       throws IOException 
   {
     final int sequence_type = getSequenceType(in_stream);
@@ -66,7 +68,11 @@ abstract public class StreamSequenceFactory
       case EMBL_FORMAT:
         return new EmblStreamSequence(in_stream);
       case FASTA_FORMAT:
+      {
+        if(IndexFastaStream.isIndexed(entry))
+          return new IndexFastaStream(entry);
         return new FastaStreamSequence(in_stream);
+      }
       case GENBANK_FORMAT:
         return new GenbankStreamSequence(in_stream);
       case RAW_FORMAT:
