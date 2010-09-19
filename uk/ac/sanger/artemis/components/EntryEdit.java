@@ -497,6 +497,16 @@ public class EntryEdit extends JFrame
 
     return box_across;
   }
+  
+  public void resetScrolls()
+  {
+    base_display.setFirstBase(1);
+    base_display.fixScrollbar();
+    feature_display.setFirstBase(1);
+    feature_display.fixScrollbar();
+    one_line_per_entry_display.setFirstBase(1);
+    one_line_per_entry_display.fixScrollbar();
+  }
 
   /**
   *
