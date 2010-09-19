@@ -26,11 +26,16 @@
 package uk.ac.sanger.artemis.components;
 
 import uk.ac.sanger.artemis.*;
+import uk.ac.sanger.artemis.io.IndexFastaStream;
+
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Iterator;
 import java.util.Vector;
 
 import javax.swing.*;
+
+import net.sf.picard.reference.FastaSequenceIndex;
 
 /**
  *  This component allows the user to change the "active" setting of the
@@ -210,6 +215,31 @@ public class EntryGroupDisplay extends JPanel
 
     entry_components.addElement(new_component);
     add(new_component);
+    
+    if(entry.getEMBLEntry().getSequence() instanceof IndexFastaStream)
+    {
+      FastaSequenceIndex indexFasta = 
+        ((IndexFastaStream)entry.getEMBLEntry().getSequence()).getFastaIndex();
+      Iterator it = indexFasta.iterator();
+      Vector contigs = new Vector();
+      while(it.hasNext())
+        contigs.add(  it.next().toString().split(";")[0] );
+      final JComboBox cb = new JComboBox(contigs);
+      add(cb);
+      cb.addActionListener(new ActionListener()
+      {
+        public void actionPerformed(ActionEvent e)
+        {
+          IndexFastaStream is = (IndexFastaStream)entry.getEMBLEntry().getSequence();
+          is.setContigByIndex(cb.getSelectedIndex());
+          
+          owning_component.resetScrolls();
+          owning_component.getFeatureDisplay().getBases().clearCodonCache();
+          owning_component.repaint();
+        }
+        
+      });
+    }
   }
 
   /**
