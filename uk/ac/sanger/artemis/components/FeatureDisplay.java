@@ -4363,7 +4363,7 @@ public class FeatureDisplay extends EntryGroupPanel
    *  Update the parameters of the scrollbar taking changes to the entry_group
    *  into account.
    **/
-  private void fixScrollbar() 
+  protected void fixScrollbar() 
   {
     if(scrollbar == null)
       return;
