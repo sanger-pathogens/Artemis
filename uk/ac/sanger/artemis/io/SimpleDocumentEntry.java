@@ -123,8 +123,8 @@ abstract public class SimpleDocumentEntry
     final int MAX_LOOP = 9999;
     
     while((new_line_group =
-            LineGroup.readNextLineGroup(pushback_reader)) != null) 
-    {
+            LineGroup.readNextLineGroup(pushback_reader, this)) != null) 
+    {       
       if(new_line_group instanceof SimpleDocumentFeature)
       {
         final SimpleDocumentFeature new_feature =
@@ -158,6 +158,9 @@ abstract public class SimpleDocumentEntry
       }
       else 
         addLineGroup(new_line_group);
+      
+      if(new_line_group instanceof IndexFastaStream)
+        break;
     }
 
     pushback_reader.close();
@@ -443,7 +446,7 @@ abstract public class SimpleDocumentEntry
       try 
       {
         while((new_line_group =
-                LineGroup.readNextLineGroup(pushback_reader)) != null)
+                LineGroup.readNextLineGroup(pushback_reader, this)) != null)
         {
           if(new_line_group instanceof MiscLineGroup) 
             new_line_groups.addElement(new_line_group);
