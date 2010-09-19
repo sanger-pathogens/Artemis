@@ -168,7 +168,7 @@ abstract class LineGroup
    *  @exception InvalidRelationException Thrown if this Feature cannot contain
    *    a particular Qualifier.
    **/
-  protected static LineGroup readNextLineGroup (final LinePushBackReader reader)
+  protected static LineGroup readNextLineGroup (final LinePushBackReader reader, final Entry entry)
       throws IOException, InvalidRelationException 
   {
 
@@ -199,7 +199,7 @@ abstract class LineGroup
     switch (line_type) 
     {
       case SEQUENCE:
-        return StreamSequenceFactory.makeStreamSequence (reader);
+        return StreamSequenceFactory.makeStreamSequence (reader, entry);
 
       case EMBL_FEATURE:
         return EmblStreamFeature.readFromStream (reader);
