@@ -31,7 +31,11 @@ import net.sf.picard.reference.FastaSequenceIndex;
 import net.sf.picard.reference.IndexedFastaSequenceFile;
 import net.sf.picard.reference.ReferenceSequence;
 
+import uk.ac.sanger.artemis.io.Entry;
+import uk.ac.sanger.artemis.Options;
+import uk.ac.sanger.artemis.components.EntryFileDialog;
 import uk.ac.sanger.artemis.util.FileDocument;
+import uk.ac.sanger.artemis.util.URLDocument;
 
 public class IndexFastaStream extends StreamSequence 
 {
@@ -42,11 +46,20 @@ public class IndexFastaStream extends StreamSequence
   
   public IndexFastaStream(Entry entry)
   {
-    File fasta = ((FileDocument)((DocumentEntry)entry).getDocument()).getFile();
-    File fastaIndexFile = new File(fasta.getParentFile().getAbsolutePath(), fasta.getName()+".fai");
-    fastaIndex = new FastaSequenceIndex(fastaIndexFile);
-
-    indexSeqFile = new IndexedFastaSequenceFile(fasta, fastaIndex);
+    DocumentEntry doc = (DocumentEntry)entry;
+    if(doc instanceof URLDocument)
+    {
+      //URL url = (URL)((URLDocument)doc).getLocation();
+      // not supported yet
+    }
+    else
+    {
+      File fasta = ((FileDocument)doc.getDocument()).getFile();
+      File fastaIndexFile = new File(fasta.getParentFile().getAbsolutePath(), fasta.getName()+".fai");
+      fastaIndex = new FastaSequenceIndex(fastaIndexFile);
+      indexSeqFile = new IndexedFastaSequenceFile(fasta, fastaIndex);
+    }
+    
     setContigByIndex(0);
   }
   
@@ -86,7 +99,8 @@ public class IndexFastaStream extends StreamSequence
    **/
   public String getSubSequence(int start, int end) 
   {
-    return new String(indexSeqFile.getSubsequenceAt(contig, start, end).getBases()).toLowerCase();
+    byte b[] = indexSeqFile.getSubsequenceAt(contig, start, end).getBases();
+    return new String(b).toLowerCase();
   }
   
   public char[] getCharSubSequence(int start, int end) 
@@ -175,5 +189,36 @@ public class IndexFastaStream extends StreamSequence
   public FastaSequenceIndex getFastaIndex()
   {
     return fastaIndex;
+  }
+  
+  public static void main(String args[])
+  {
+    EntryInformation new_entry_information =
+      new SimpleEntryInformation(Options.getArtemisEntryInformation());
+
+    try
+    {
+      Entry emblEntry = null;
+      if(args[0].startsWith("http:"))
+      {
+        
+        
+      }
+      else
+      {
+        final uk.ac.sanger.artemis.Entry entry =  
+          new uk.ac.sanger.artemis.Entry(EntryFileDialog.getEntryFromFile(
+                    null, new FileDocument(new File(args[0])),
+                    new_entry_information, true));
+        emblEntry = entry.getEMBLEntry();
+      }
+      
+      IndexFastaStream istream = new IndexFastaStream(emblEntry);
+      System.out.println(istream.getCharSubSequence(1, 8000));
+    }
+    catch (Exception e)
+    {
+      e.printStackTrace();
+    }
   }
 }
