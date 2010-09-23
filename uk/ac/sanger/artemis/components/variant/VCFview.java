@@ -76,7 +76,6 @@ import uk.ac.sanger.artemis.Entry;
 import uk.ac.sanger.artemis.EntryGroup;
 import uk.ac.sanger.artemis.Feature;
 import uk.ac.sanger.artemis.FeatureKeyPredicate;
-import uk.ac.sanger.artemis.FeaturePredicate;
 import uk.ac.sanger.artemis.FeatureVector;
 import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.Selection;
@@ -1411,22 +1410,6 @@ public class VCFview extends JPanel
    {
      repaint();
    }
-   
-  class FeatureContigPredicate implements FeaturePredicate
-  {
-    String contigName;
-    FeatureContigPredicate(String contigName)
-    {
-      this.contigName = contigName;
-    }
-    
-    public boolean testPredicate(Feature feature)
-    {
-      if(feature.getIDString().equals(contigName))
-        return true;
-      return false;
-    }
-  }
    
   public static void main(String args[])
   {
