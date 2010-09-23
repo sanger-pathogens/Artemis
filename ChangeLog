@@ -1,4 +1,7 @@
 Version 12.+
+	Add support to read indexed fasta sequence files. An index file is created
+	using SAMtools.
+
 	Add support for VCF v3.3 and v4.0.
 
 	Add option to show combined coverage plots for multiple BAMs.
