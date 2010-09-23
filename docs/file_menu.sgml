@@ -106,7 +106,7 @@ in the VCF panel.
  	<PARA>
 For single base changes the colour represents the base it is being changed to, i.e. T black,
 G blue, A green, C red. There are options available to filter the display by the different 
-types of variantions. Right clicking on the VCF panel will display a pop-up menu in which 
+types of variants. Right clicking on the VCF panel will display a pop-up menu in which 
 it is possible to select to hide or show synonymous, non-synonymous, deletion (grey), 
 insertion (yellow), and multiple allele (orange line with a circle at the top) 
 variants.  From this menu it is also possible to hide the variants that do not overlap CDS 
