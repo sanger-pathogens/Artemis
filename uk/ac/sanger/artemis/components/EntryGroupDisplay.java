@@ -223,7 +223,13 @@ public class EntryGroupDisplay extends JPanel
       Iterator it = indexFasta.iterator();
       Vector contigs = new Vector();
       while(it.hasNext())
-        contigs.add(  it.next().toString().split(";")[0] );
+      {
+        String contig = it.next().toString().split(";")[0];
+        if(contig.startsWith("contig "))
+          contig = contig.substring(6);
+        contigs.add(  contig );
+      }
+      
       final JComboBox cb = new JComboBox(contigs);
       add(cb);
       cb.addActionListener(new ActionListener()
