@@ -27,9 +27,12 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Iterator;
 
+import javax.swing.JOptionPane;
+
 import net.sf.picard.reference.FastaSequenceIndex;
 import net.sf.picard.reference.IndexedFastaSequenceFile;
 import net.sf.picard.reference.ReferenceSequence;
+import net.sf.picard.reference.ReferenceSequenceFileFactory;
 
 import uk.ac.sanger.artemis.io.Entry;
 import uk.ac.sanger.artemis.Options;
@@ -57,7 +60,19 @@ public class IndexFastaStream extends StreamSequence
       File fasta = ((FileDocument)doc.getDocument()).getFile();
       File fastaIndexFile = new File(fasta.getParentFile().getAbsolutePath(), fasta.getName()+".fai");
       fastaIndex = new FastaSequenceIndex(fastaIndexFile);
-      indexSeqFile = new IndexedFastaSequenceFile(fasta, fastaIndex);
+      
+      try
+      {
+        indexSeqFile = new IndexedFastaSequenceFile(fasta, fastaIndex);
+      }
+      catch(IllegalArgumentException ie)
+      {
+        JOptionPane.showConfirmDialog(null, 
+            "Expecting fasta extensions:\n"+
+            ReferenceSequenceFileFactory.FASTA_EXTENSIONS.toString()+
+            "\n"+ie.getMessage(), 
+            "Error", JOptionPane.ERROR_MESSAGE);
+      }
     }
     
     setContigByIndex(0);
