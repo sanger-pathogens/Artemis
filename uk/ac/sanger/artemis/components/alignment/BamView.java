@@ -99,6 +99,7 @@ import net.sf.samtools.util.CloseableIterator;
 
 import uk.ac.sanger.artemis.Entry;
 import uk.ac.sanger.artemis.EntryGroup;
+import uk.ac.sanger.artemis.FeatureVector;
 import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.Selection;
 import uk.ac.sanger.artemis.SelectionChangeEvent;
@@ -111,6 +112,7 @@ import uk.ac.sanger.artemis.components.FeatureDisplay;
 import uk.ac.sanger.artemis.components.FileViewer;
 import uk.ac.sanger.artemis.components.MessageDialog;
 import uk.ac.sanger.artemis.components.SwingWorker;
+import uk.ac.sanger.artemis.components.variant.FeatureContigPredicate;
 import uk.ac.sanger.artemis.editor.MultiLineToolTipUI;
 import uk.ac.sanger.artemis.io.EntryInformation;
 import uk.ac.sanger.artemis.io.Range;
@@ -537,14 +539,37 @@ public class BamView extends JPanel
     
     if(offsetLengths == null)
     {   
-      offsetLengths = new Hashtable<String, Integer>(combo.getItemCount());
+/*    offsetLengths = new Hashtable<String, Integer>(combo.getItemCount());
       int offset = 0;
       for(int i=0; i<combo.getItemCount(); i++)
       {
         String thisSeqName = (String) combo.getItemAt(i);
         offsetLengths.put(thisSeqName, offset);
         offset += seqLengths.get(combo.getItemAt(i));
+      }*/
+
+      FeatureVector features = feature_display.getEntryGroup().getAllFeatures();
+      offsetLengths = new Hashtable<String, Integer>(seqNames.size());
+      for(int i=0; i<seqNames.size(); i++)
+      {
+        FeatureContigPredicate predicate = new FeatureContigPredicate(seqNames.get(i));
+        for(int j=0; j<features.size(); j++)
+        {
+          if(predicate.testPredicate(features.elementAt(j)))
+          {
+            offsetLengths.put(seqNames.get(i), features.elementAt(j).getFirstBase()-1);
+            break;
+          }
+        }
       }
+      
+      if(offsetLengths.size() != seqNames.size())
+        JOptionPane.showMessageDialog(this, 
+            "There is a problem matching the reference sequences\n"+
+            "to the names in the BAM file. This may mean the labels\n"+
+            "on the reference features do not match those in the in\n"+
+            "the BAM file.", 
+            "Problem Found", JOptionPane.WARNING_MESSAGE);
     }
     return offsetLengths.get(refName);
   }
