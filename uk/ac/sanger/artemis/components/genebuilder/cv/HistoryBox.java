@@ -181,7 +181,7 @@ class HistoryBox extends AbstractCvBox
       if(newTerm.equals(term))
         values_index.add(new Integer(i));
     }
-  
+    
     if(values_index.size() > 0)
     { 
       String oldValue = (String) oldValues.get(value_index);
@@ -190,7 +190,7 @@ class HistoryBox extends AbstractCvBox
       if(!term.equals(oldTermId))
       {
         if(values_index.size() == 1)
-        value_index = ((Integer)values_index.get(0)).intValue();
+          value_index = ((Integer)values_index.get(0)).intValue();
         else
         {
           final String with = getField("with=", origQualifierString);
@@ -240,7 +240,6 @@ class HistoryBox extends AbstractCvBox
   private String updateQualifierString()
   {
     String newQualifierString = origQualifierString;
-    
     String old = getField("term=", origQualifierString);
     if(!old.equals(dateField.getText()))
     {
@@ -265,11 +264,13 @@ class HistoryBox extends AbstractCvBox
     old = getFieldIgnoreSeparator("qualifier", origQualifierString);
     if(!old.equals(qualfTextField.getText()))
     {
+      newQualifierString = newQualifierString.replaceAll(old, "");
       newQualifierString = newQualifierString.replaceAll("qualifier=[^;]+", "");
-      newQualifierString = newQualifierString.replaceAll("[;]+", ";");
+      newQualifierString = newQualifierString.replaceAll("qualifier=", "");
+      newQualifierString = newQualifierString.replaceAll("[;]{2,}", ";");
       newQualifierString += ";qualifier="+qualfTextField.getText().trim();
     }
-    
+
     return newQualifierString;
   }
   
