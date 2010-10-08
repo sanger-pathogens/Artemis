@@ -29,17 +29,14 @@ import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.geom.GeneralPath;
 import java.util.List;
 
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 
 import uk.ac.sanger.artemis.io.Range;
@@ -49,26 +46,22 @@ import uk.ac.sanger.artemis.util.OutOfRangeException;
 import net.sf.samtools.AlignmentBlock;
 import net.sf.samtools.SAMRecord;
 
-  public class SnpPanel extends JPanel
+  public class SnpPanel extends AbstractGraphPanel
   {
     private static final long serialVersionUID = 1L;
-
-    private int start;
-    private int end;
-    private float pixPerBase;
     private BamView bamView;
-    private JPopupMenu popup;
+
     private Bases bases;
     private float minBaseQualityFilter = 0;
-    
+       
     public SnpPanel(final BamView bamView, Bases bases)
     {
       super();
       setBackground(Color.white);
       this.bamView = bamView;
       this.bases = bases;
+      initPopupMenu(this);
       
-      popup = new JPopupMenu();
       JMenuItem configure = new JMenuItem("Filter by Base Quality...");
       configure.addActionListener(new ActionListener()
       {
@@ -94,7 +87,6 @@ import net.sf.samtools.SAMRecord;
         }
       });
       popup.add(configure);
-      addMouseListener(new PopupListener());
     }
     
     /**
@@ -112,7 +104,16 @@ import net.sf.samtools.SAMRecord;
       if(readsInView == null)
         return;
       
-      int windowSize = (bamView.getBasesInView()/300);
+      int windowSize;
+      
+      if(autoWinSize)
+      {
+        windowSize = (bamView.getBasesInView()/300);
+        userWinSize = windowSize;
+      }
+      else
+        windowSize = userWinSize;
+      
       if(windowSize < 1)
         windowSize = 1;
 
@@ -242,47 +243,5 @@ import net.sf.samtools.SAMRecord;
       }
       return max;
     }
-
-    protected void setStartAndEnd(int start, int end)
-    {
-      this.start = start;
-      this.end = end;
-    }
-
-    protected void setPixPerBase(float pixPerBase)
-    {
-      this.pixPerBase = pixPerBase;
-    }
-
-  /**
-   * Popup menu listener
-   */
-   class PopupListener extends MouseAdapter
-   {
-     JMenuItem gotoMateMenuItem;
-     JMenuItem showDetails;
-     
-     public void mouseClicked(MouseEvent e)
-     {
-     }
-     
-     public void mousePressed(MouseEvent e)
-     {
-       maybeShowPopup(e);
-     }
-
-     public void mouseReleased(MouseEvent e)
-     {
-       maybeShowPopup(e);
-     }
-
-     private void maybeShowPopup(MouseEvent e)
-     {
-       if(e.isPopupTrigger())
-       {
-         popup.show(e.getComponent(),
-                 e.getX(), e.getY());
-       }
-     }
-   }
+   
   }

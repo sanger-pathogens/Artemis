@@ -31,8 +31,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.geom.GeneralPath;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -40,21 +38,15 @@ import java.util.List;
 
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 
 import net.sf.samtools.AlignmentBlock;
 import net.sf.samtools.SAMRecord;
 
-  public class CoveragePanel extends JPanel
+  public class CoveragePanel extends AbstractGraphPanel
   {
     private static final long serialVersionUID = 1L;
-
-    private int start;
-    private int end;
-    private float pixPerBase;
     private BamView jamView;
-    private JPopupMenu popup;
+
     private static LineAttributes lines[];
     private boolean includeCombined = false;
     
@@ -63,8 +55,8 @@ import net.sf.samtools.SAMRecord;
       super();
       setBackground(Color.white);
       this.jamView = jamView;
-      
-      popup = new JPopupMenu();
+      initPopupMenu(this);
+
       JMenuItem configure = new JMenuItem("Configure...");
       configure.addActionListener(new ActionListener()
       {
@@ -93,8 +85,6 @@ import net.sf.samtools.SAMRecord;
         });
         popup.add(showCombined);
       }
-      
-      addMouseListener(new PopupListener());
     }
     
     /**
@@ -109,7 +99,15 @@ import net.sf.samtools.SAMRecord;
       if(readsInView == null)
         return;
 
-      int windowSize = (jamView.getBasesInView()/200);
+      int windowSize;
+      if(autoWinSize)
+      {
+        windowSize = (jamView.getBasesInView()/200);
+        userWinSize = windowSize;
+      }
+      else
+        windowSize = userWinSize;
+      
       if(windowSize < 1)
         windowSize = 1;
 
@@ -250,18 +248,7 @@ import net.sf.samtools.SAMRecord;
       int type = AlphaComposite.SRC_OVER;
       return(AlphaComposite.getInstance(type, alpha));
      }
-
-    protected void setStartAndEnd(int start, int end)
-    {
-      this.start = start;
-      this.end = end;
-    }
-
-    protected void setPixPerBase(float pixPerBase)
-    {
-      this.pixPerBase = pixPerBase;
-    }
-    
+  
     
     protected static LineAttributes[] getLineAttributes(int nsize)
     {
@@ -276,37 +263,4 @@ import net.sf.samtools.SAMRecord;
       }
       return lines;
     }
-  
-  
-  /**
-   * Popup menu listener
-   */
-   class PopupListener extends MouseAdapter
-   {
-     JMenuItem gotoMateMenuItem;
-     JMenuItem showDetails;
-     
-     public void mouseClicked(MouseEvent e)
-     {
-     }
-     
-     public void mousePressed(MouseEvent e)
-     {
-       maybeShowPopup(e);
-     }
-
-     public void mouseReleased(MouseEvent e)
-     {
-       maybeShowPopup(e);
-     }
-
-     private void maybeShowPopup(MouseEvent e)
-     {
-       if(e.isPopupTrigger())
-       {
-         popup.show(e.getComponent(),
-                 e.getX(), e.getY());
-       }
-     }
-   }
   }
