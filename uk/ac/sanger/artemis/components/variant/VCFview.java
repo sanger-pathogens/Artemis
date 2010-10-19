@@ -147,8 +147,7 @@ public class VCFview extends JPanel
   
   Hashtable<String, Integer> offsetLengths = null;
   private boolean concatSequences = false;
-  private Point lastMousePoint;
-  
+
   private Pattern multiAllelePattern = Pattern.compile("^[AGCT]+,[AGCT,]+$");
   private static Pattern tabPattern = Pattern.compile("\t");
 
@@ -192,6 +191,12 @@ public class VCFview extends JPanel
         header[i] = readHeader(vcfFiles.get(i));
         tr[i] = new TabixReader(vcfFiles.get(i));
       }
+    }
+    catch(java.lang.UnsupportedClassVersionError err)
+    {
+      JOptionPane.showMessageDialog(null, 
+          "This requires Java 1.6 or higher.", 
+          "Check Java Version", JOptionPane.WARNING_MESSAGE);
     }
     catch (IOException e)
     {
