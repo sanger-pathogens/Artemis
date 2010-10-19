@@ -31,6 +31,7 @@ import uk.ac.sanger.artemis.components.alignment.BamView;
 import uk.ac.sanger.artemis.components.alignment.FileSelectionDialog;
 import uk.ac.sanger.artemis.components.filetree.FileManager;
 import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
+import uk.ac.sanger.artemis.components.variant.VCFview;
 import uk.ac.sanger.artemis.util.RemoteFileDocument;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
 import uk.ac.sanger.artemis.util.InputStreamProgressListener;
@@ -100,6 +101,7 @@ public class MultiComparator extends JFrame
   private FeatureDisplay[] feature_display_array = null;
 
   private JPanel bamPanel[] = null;
+  private JPanel vcfPanel[] = null;
   private Dimension dimensionAlignViewer = null;
   
   /**
@@ -188,6 +190,8 @@ public class MultiComparator extends JFrame
       new BasePlotGroup[entry_group_array.length];
     bamPanel = 
       new JPanel[entry_group_array.length];
+    vcfPanel =
+      new JPanel[entry_group_array.length];
     alignment_viewer_array =
       new AlignmentViewer[comparison_data_array.length];
     comparator_glue_array =
@@ -234,7 +238,7 @@ public class MultiComparator extends JFrame
 
       base_plot_group_array[i] = base_plot_group;
       bamPanel[i] = new JPanel();
-
+      vcfPanel[i] = new JPanel();
       this_entry_group.ref();
     }
 
@@ -280,7 +284,9 @@ public class MultiComparator extends JFrame
         getContentPane().add(base_plot_group_array[i], c);
         c.weighty = 1;
         bamPanel[i].setVisible(false);
+        vcfPanel[i].setVisible(false);
         getContentPane().add(bamPanel[i], c);
+        getContentPane().add(vcfPanel[i], c);
       }
 
       c.weighty = 0;
@@ -294,7 +300,9 @@ public class MultiComparator extends JFrame
         getContentPane().add(base_plot_group_array[i], c);
         c.weighty = 1;
         bamPanel[i].setVisible(false);
+        vcfPanel[i].setVisible(false);
         getContentPane().add(bamPanel[i], c);
+        getContentPane().add(vcfPanel[i], c);
       }
 
       if(i < getAlignmentViewerArray().length) 
@@ -939,8 +947,9 @@ public class MultiComparator extends JFrame
         entry_group_menu.addSeparator();
       }
 
-      JMenuItem read_bam_file = new JMenuItem("Read BAM ...");
+      JMenuItem read_bam_file = new JMenuItem("Read BAM / VCF ...");
       final JPanel thisBamPanel = bamPanel[i];
+      final JPanel thisVCFPanel = vcfPanel[i];
       final FeatureDisplay feature_display = feature_display_array[i];
  
       read_bam_file.addActionListener(new ActionListener()
@@ -948,48 +957,63 @@ public class MultiComparator extends JFrame
         public void actionPerformed(ActionEvent e)
         {
           FileSelectionDialog fileChooser = new FileSelectionDialog(
-              null, false, "BamView", "BAM");
+              null, false, "BAM / VCF View", "BAM / VCF");
           List<String> listBams = fileChooser.getFiles(".*\\.bam$");
 
-          thisBamPanel.removeAll();
-          thisBamPanel.setVisible(true);
+          if(listBams.size() > 0)
+          {
+            thisBamPanel.removeAll();
+            thisBamPanel.setVisible(true);
           
-          BamView bamView;
-          try
-          {
-            bamView = new BamView(listBams, null, 2000);
-          }
-          catch(Exception ex)
-          {
-            JOptionPane.showMessageDialog(null,
+            BamView bamView;
+            try
+            {
+              bamView = new BamView(listBams, null, 2000);
+            }
+            catch(Exception ex)
+            {
+              JOptionPane.showMessageDialog(null,
                 ex.getMessage(),
                 "Error",
                 JOptionPane.ERROR_MESSAGE);
-            return;
-          }
-          
-          bamView.setShowScale(false);
-          bamView.setBases(entry_group.getBases());
-          bamView.addJamToPanel(thisBamPanel, null, true, feature_display);
-          bamView.getJspView().setHorizontalScrollBarPolicy(
+              return;
+            }
+
+            bamView.setShowScale(false);
+            bamView.setBases(entry_group.getBases());
+            bamView.addJamToPanel(thisBamPanel, null, true, feature_display);
+            bamView.getJspView().setHorizontalScrollBarPolicy(
               JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-          bamView.removeBorder();
-          bamView.setDisplay(feature_display.getFirstVisibleForwardBase(), 
+            bamView.removeBorder();
+            bamView.setDisplay(feature_display.getFirstVisibleForwardBase(), 
                              feature_display.getLastVisibleForwardBase(), null);
          
-          if(dimensionAlignViewer == null)
-            dimensionAlignViewer = alignment_viewer_array[0].getSize();
-          
-          thisBamPanel.setPreferredSize(new Dimension(500, dimensionAlignViewer.height/2));
-          
-          thisBamPanel.revalidate();
-          bamView.getJspView().getVerticalScrollBar().setValue(
+            if(dimensionAlignViewer == null)
+              dimensionAlignViewer = alignment_viewer_array[0].getSize();
+            thisBamPanel.setPreferredSize(new Dimension(500, dimensionAlignViewer.height/2));
+            thisBamPanel.revalidate();
+            bamView.getJspView().getVerticalScrollBar().setValue(
               bamView.getJspView().getVerticalScrollBar().getMaximum());
           
-          feature_display.addDisplayAdjustmentListener(bamView);
-          feature_display.getSelection().addSelectionChangeListener(bamView);
+            feature_display.addDisplayAdjustmentListener(bamView);
+            feature_display.getSelection().addSelectionChangeListener(bamView);
+            MultiComparator.this.validate();
+          }
 
-          MultiComparator.this.validate();
+          List<String> vcfFiles = fileChooser.getFiles(".*\\.vcf(\\.gz)*$");
+          if (vcfFiles.size() > 0)
+          {
+            thisVCFPanel.removeAll();
+            thisVCFPanel.setVisible(true);
+            
+            VCFview vcfView = new VCFview(null, thisVCFPanel, vcfFiles,
+                feature_display.getMaxVisibleBases(), 1, null, null,
+                feature_display);
+            
+            feature_display.addDisplayAdjustmentListener(vcfView);
+            feature_display.getSelection().addSelectionChangeListener(vcfView);
+            MultiComparator.this.validate();
+          }
         }
       });
       entry_group_menu.add(read_bam_file);
