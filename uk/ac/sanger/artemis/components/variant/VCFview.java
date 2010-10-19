@@ -651,7 +651,7 @@ public class VCFview extends JPanel
     float pixPerBase = getPixPerBaseByWidth();
     int start = getBaseAtStartOfView();
     int end   = start+nbasesInView;
-       
+    
     drawSelectionRange((Graphics2D)g, pixPerBase, start, end);
 
     FeatureVector features = getCDSFeaturesInRange(start, end);
@@ -683,7 +683,12 @@ public class VCFview extends JPanel
 
       } 
       else
-        drawRegion(g, chr+":"+start+"-"+end, i, start, pixPerBase, features); 
+      {
+        int thisStart = start;
+        if(thisStart < 1)
+          thisStart = 1;
+        drawRegion(g, chr+":"+thisStart+"-"+end, i, start, pixPerBase, features); 
+      }
     }
 
     if(feature_display == null)
@@ -1069,7 +1074,12 @@ public class VCFview extends JPanel
         }
       } 
       else
-        searchRegion(chr+":"+start+"-"+end, i, mousePoint, features, start, pixPerBase);
+      {
+        int thisStart = start;
+        if(thisStart < 1)
+          thisStart = 1;
+        searchRegion(chr+":"+thisStart+"-"+end, i, mousePoint, features, start, pixPerBase);
+      }
     }
   }
   
