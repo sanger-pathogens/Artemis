@@ -1156,5 +1156,13 @@ public class MultiComparator extends JFrame
   {
     return bamPanel;
   }
+  
+  /**
+   *  Return the VCF JPanel objects that were created in the constructor.
+   **/
+  protected JPanel[] getVcfPanelArray()
+  {
+    return vcfPanel;
+  }
 
 }
