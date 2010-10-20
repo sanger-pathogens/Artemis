@@ -96,6 +96,12 @@ public class PrintACT extends ScrollPanel implements Printable
           mc.getBamPanelArray()[i].paintComponents(g2d);
           g2d.translate(0,mc.getBamPanelArray()[i].getHeight());
         }
+        
+        if(mc.getVcfPanelArray()[i].isVisible())
+        {
+          mc.getVcfPanelArray()[i].paintComponents(g2d);
+          g2d.translate(0,mc.getVcfPanelArray()[i].getHeight());
+        }
       }
       
       mc.getFeatureDisplayArray()[i].paintComponent(g2d);
@@ -118,6 +124,12 @@ public class PrintACT extends ScrollPanel implements Printable
         {
           mc.getBamPanelArray()[i].paintComponents(g2d);
           g2d.translate(0,mc.getBamPanelArray()[i].getHeight());
+        }
+        
+        if(mc.getVcfPanelArray()[i].isVisible())
+        {
+          mc.getVcfPanelArray()[i].paintComponents(g2d);
+          g2d.translate(0,mc.getVcfPanelArray()[i].getHeight());
         }
       }
 
@@ -158,6 +170,9 @@ public class PrintACT extends ScrollPanel implements Printable
       if(mc.getBamPanelArray()[i].isVisible())
         height += mc.getBamPanelArray()[i].getHeight();
 
+      if(mc.getVcfPanelArray()[i].isVisible())
+        height += mc.getVcfPanelArray()[i].getHeight();
+      
       height += mc.getFeatureDisplayArray()[i].getHeight();
       if(mc.getFeatureDisplayArray()[i].getWidth() < width)
         width = mc.getFeatureDisplayArray()[i].getWidth();
@@ -378,6 +393,9 @@ public class PrintACT extends ScrollPanel implements Printable
 
       if(mc.getBamPanelArray()[i].isVisible())
         height += mc.getBamPanelArray()[i].getHeight();
+      
+      if(mc.getVcfPanelArray()[i].isVisible())
+        height += mc.getVcfPanelArray()[i].getHeight();
       
       height += mc.getFeatureDisplayArray()[i].getHeight();
       if(mc.getFeatureDisplayArray()[i].getWidth() < width)
