@@ -199,7 +199,7 @@ public class BamView extends JPanel
   private boolean concatSequences = false;
   private int ALIGNMENT_PIX_PER_BASE;
   private int BASE_HEIGHT;
-  
+
   private JPopupMenu popup;
   private PopupMessageFrame popFrame = new PopupMessageFrame();
   private PopupMessageFrame waitingFrame = new PopupMessageFrame("waiting...");
@@ -492,12 +492,13 @@ public class BamView extends JPanel
           if(readsInView.size() > checkMemAfter*2 && !waitingFrame.isVisible())
             waitingFrame.showWaiting("loading...", mainPanel);
           
-          if(heapFraction > 0.97) 
+          if(heapFraction > 0.90) 
           {
             popFrame.show(
-              "Over 97 % of the maximum memory\nlimit ("+
-              (memory.getHeapMemoryUsage().getMax()/1000000.f)+" Mb).\n"+
-              "Zoom in or consider increasing the\nmemory for this application.",
+              "Using > 90 % of the maximum memory limit:"+
+              (memory.getHeapMemoryUsage().getMax()/1000000.f)+" Mb.\n"+
+              "Not all reads in this range have been read in. Zoom in or\n"+
+              "consider increasing the memory for this application.",
               mainPanel,
               15000);
             break;
@@ -509,6 +510,7 @@ public class BamView extends JPanel
         System.out.println(e.getMessage());
       }
     }
+
     it.close();
   }
 
@@ -1603,7 +1605,7 @@ public class BamView extends JPanel
     
     if(highlightSAMRecord != null && 
        highlightSAMRecord.getReadName().equals(thisRead.getReadName()))
-     {
+    {
        Stroke originalStroke = g2.getStroke();
        Stroke stroke =
          new BasicStroke (3.f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND);
@@ -1614,12 +1616,34 @@ public class BamView extends JPanel
                    (int)( thisEnd * pixPerBase), ypos);
        g2.setColor(c);
        g2.setStroke(originalStroke);
-     }
+    }
 
-    g2.drawLine((int)( thisStart * pixPerBase), ypos,
-                (int)( thisEnd * pixPerBase), ypos);
-    
+    List<AlignmentBlock> blocks = thisRead.getAlignmentBlocks();    
+    if(blocks.size() == 1)
+      g2.drawLine((int)( thisStart * pixPerBase), ypos,
+                  (int)( thisEnd * pixPerBase), ypos);
+    else
+    {
+      Color c = g2.getColor();
+      int lastEnd = 0;
+      for(int i=0; i<blocks.size(); i++)
+      {
+        AlignmentBlock block = blocks.get(i);
+        int blockStart = block.getReferenceStart()+offset-baseAtStartOfView;
+        int blockEnd = blockStart + block.getLength() - 1;
 
+        g2.drawLine((int)( blockStart * pixPerBase), ypos,
+                    (int)( blockEnd * pixPerBase), ypos);
+        if(i > 0 && blockStart != lastEnd)
+        {
+          g2.setColor(Color.gray);
+          g2.drawLine((int)( blockStart * pixPerBase), ypos,
+                      (int)( lastEnd * pixPerBase), ypos);
+          g2.setColor(c);
+        }
+        lastEnd = blockEnd;
+      }
+    }
 
     // test if the mouse is over this read
     if(lastMousePoint != null)
