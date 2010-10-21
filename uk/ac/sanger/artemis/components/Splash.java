@@ -35,6 +35,7 @@ import uk.ac.sanger.artemis.sequence.Bases;
 import uk.ac.sanger.artemis.sequence.AminoAcidSequence;
 
 import java.io.*;
+import java.lang.management.ManagementFactory;
 import java.awt.*;
 import java.awt.event.*;
 
@@ -112,6 +113,7 @@ abstract public class Splash extends JFrame
     logger4j.info(System.getProperty("java.vendor"));
     logger4j.info(System.getProperty("java.home"));
     logger4j.info(System.getProperty("os.name"));
+    logger4j.info("Max. Heap Memory / Mb: "+ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getMax()/1000000);
     logger4j.info("Starting application: "+program_name);
     
     if(optionsLogString != null)
