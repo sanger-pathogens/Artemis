@@ -1618,12 +1618,12 @@ public class BamView extends JPanel
        g2.setStroke(originalStroke);
     }
 
-    List<AlignmentBlock> blocks = thisRead.getAlignmentBlocks();    
-    if(blocks.size() == 1)
+    if(thisRead.getCigar().getCigarElements().size() == 1)
       g2.drawLine((int)( thisStart * pixPerBase), ypos,
                   (int)( thisEnd * pixPerBase), ypos);
     else
     {
+      List<AlignmentBlock> blocks = thisRead.getAlignmentBlocks();
       Color c = g2.getColor();
       int lastEnd = 0;
       for(int i=0; i<blocks.size(); i++)
