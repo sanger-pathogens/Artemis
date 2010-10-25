@@ -1258,7 +1258,8 @@ public class BamView extends JPanel
         int recordStart = samRecord.getAlignmentStart()+offset;
         int recordEnd   = samRecord.getAlignmentEnd()+offset;
       
-        if(lstStart != recordStart || lstEnd != recordEnd)
+        if(colourByCoverageColour.isSelected() ||
+            lstStart != recordStart || lstEnd != recordEnd)
         { 
           if(colourByCoverageColour.isSelected())
             g2.setColor(getColourByCoverageColour(samRecord));
