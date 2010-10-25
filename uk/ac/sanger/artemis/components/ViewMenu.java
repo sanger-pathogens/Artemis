@@ -1559,7 +1559,7 @@ public class ViewMenu extends SelectionMenu
 
       if (features_to_view.size () > MAXIMUM_SELECTED_FEATURES) {
         new MessageDialog (getParentFrame (),
-                           "waning: only viewing bases for " +
+                           "warning: only viewing bases for " +
                            "the first " + MAXIMUM_SELECTED_FEATURES +
                            " selected features");
       }
