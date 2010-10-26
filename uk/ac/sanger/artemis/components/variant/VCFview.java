@@ -252,7 +252,9 @@ public class VCFview extends JPanel
     if(feature_display != null)
       topPanel = new JPanel(new FlowLayout(FlowLayout.LEADING, 0, 0));
     else
-    { 
+    {
+      markNewStops.setSelected(false);
+      markNewStops.setEnabled(false);
       topPanel = new JMenuBar();
       frame.setJMenuBar((JMenuBar)topPanel);
       
@@ -725,6 +727,8 @@ public class VCFview extends JPanel
   
   private FeatureVector getCDSFeaturesInRange(int start, int end)
   {
+    if(entryGroup == null)
+      return null;
     try
     {
       Range range = new Range(start, end);
@@ -1183,6 +1187,8 @@ public class VCFview extends JPanel
    */
   private void highlightRange(MouseEvent event, int onmask)
   {
+    if(entryGroup == null)
+      return;
     float pixPerBase = getPixPerBaseByWidth();
     int start = (int) ( ( (event.getPoint().getX())/pixPerBase) + getBaseAtStartOfView() );
     
