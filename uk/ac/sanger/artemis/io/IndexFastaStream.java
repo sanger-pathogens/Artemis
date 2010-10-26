@@ -38,6 +38,7 @@ import uk.ac.sanger.artemis.io.Entry;
 import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.components.EntryFileDialog;
 import uk.ac.sanger.artemis.util.FileDocument;
+import uk.ac.sanger.artemis.util.ReadOnlyException;
 import uk.ac.sanger.artemis.util.URLDocument;
 
 public class IndexFastaStream extends StreamSequence 
@@ -188,6 +189,13 @@ public class IndexFastaStream extends StreamSequence
   public int getFormatType()
   {
     return StreamSequenceFactory.INDEXED_FASTA_FORMAT;
+  }
+  
+  public void setFromChar(final char dna[])
+  {
+    JOptionPane.showMessageDialog(null,"Read only sequence.", 
+        "Warning", JOptionPane.WARNING_MESSAGE);
+    throw new RuntimeException(new ReadOnlyException());
   }
 
   @Override
