@@ -390,6 +390,47 @@ public class VCFview extends JPanel
     // popup menu
     popup = new JPopupMenu();
     
+    JMenuItem addVCFMenu = new JMenuItem("Add VCF ...");
+    addVCFMenu.addActionListener(new ActionListener() 
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        FileSelectionDialog fileSelection = new FileSelectionDialog(
+            null, true, "VCFview", "VCF");
+        List<String> vcfFileList = fileSelection.getFiles(".*\\.vcf(\\.gz)*$");
+
+        int count = vcfFileList.size();
+        int oldSize = tr.length;
+        
+        TabixReader[] trTmp = new TabixReader[count + tr.length];
+        System.arraycopy(tr, 0, trTmp, 0, tr.length);
+        tr = trTmp;
+        
+        String[] hdTmp = new String[count + tr.length];
+        System.arraycopy(header, 0, hdTmp, 0, header.length);
+        header = hdTmp;
+        
+        try
+        {
+          for (int i = 0; i < vcfFileList.size(); i++)
+          {
+            header[i+oldSize] = readHeader(vcfFileList.get(i));
+            tr[i+oldSize] = new TabixReader(vcfFileList.get(i));
+          }
+        }
+        catch (IOException ioe)
+        {
+          ioe.printStackTrace();
+        }
+
+        setDisplay();
+        repaint();
+        jspView.revalidate();
+      }
+    });
+    popup.add(addVCFMenu);
+    popup.addSeparator();
+    
     JMenu showMenu = new JMenu("Show");
     popup.add(showMenu);
     
@@ -494,7 +535,7 @@ public class VCFview extends JPanel
     });
     popup.add(filterByQuality);
   }
-  
+
   private static EntryGroup getReference(String reference)
   {
     EntryGroup entryGroup = new SimpleEntryGroup();
