@@ -86,13 +86,20 @@ public class IndexFastaStream extends StreamSequence
    */
   public static boolean isIndexed(Entry entry)
   {
-    if( entry instanceof DocumentEntry && 
-        ((DocumentEntry)entry).getDocument() instanceof FileDocument)
+    try
     {
-      File fasta = ((FileDocument)((DocumentEntry)entry).getDocument()).getFile();
-      File fastaIndexFile = new File(fasta.getParentFile().getAbsolutePath(), fasta.getName()+".fai");
-      if(fastaIndexFile.exists())
-        return true;
+      if (entry instanceof DocumentEntry
+          && ((DocumentEntry) entry).getDocument() instanceof FileDocument)
+      {
+        File fasta = ((FileDocument) ((DocumentEntry) entry).getDocument()).getFile();
+        File fastaIndexFile = new File(fasta.getParentFile().getAbsolutePath(), fasta.getName() + ".fai");
+        if (fastaIndexFile.exists())
+          return true;
+      }
+    }
+    catch(Exception e)
+    {
+      e.printStackTrace();
     }
     return false;
   }
