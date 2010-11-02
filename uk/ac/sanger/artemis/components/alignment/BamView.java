@@ -145,6 +145,7 @@ public class BamView extends JPanel
   private JScrollBar scrollBar;
   
   private JComboBox combo;
+  private boolean isOrientation = false;
   private boolean isSingle = false;
   private boolean isSNPs = false;
   private boolean isStackView = true;
@@ -1084,13 +1085,13 @@ public class BamView extends JPanel
         }
         else
         {
-          drawLoneRead(g2, samRecord, ypos, pixPerBase, baseAtStartOfView);
+          drawLoneRead(g2, samRecord, ypos, pixPerBase, baseAtStartOfView, scaleHeight);
           i--;
         }
       }
       else
       {
-        drawLoneRead(g2, samRecord, ypos, pixPerBase, baseAtStartOfView);
+        drawLoneRead(g2, samRecord, ypos, pixPerBase, baseAtStartOfView, scaleHeight);
       }
     }
     
@@ -1446,7 +1447,7 @@ public class BamView extends JPanel
    * @param stroke
    */
   private void drawLoneRead(Graphics2D g2, SAMRecord samRecord, int ypos, 
-      float pixPerBase, int baseAtStartOfView)
+      float pixPerBase, int baseAtStartOfView, int scaleHeight)
   {
     boolean offTheTop = false;
     int offset = getSequenceOffset(samRecord.getReferenceName());
@@ -1458,8 +1459,15 @@ public class BamView extends JPanel
       offTheTop = true;
       ypos = samRecord.getReadString().length();
     }
+    
+    if(samRecord.getInferredInsertSize() <= 0)
+    {
+      offTheTop = true;
+      ypos = getHeight() - scaleHeight - 5;
+    }
       
-    if(Math.abs(samRecord.getMateAlignmentStart()-samRecord.getAlignmentEnd())*pixPerBase > 2.f)
+    if(samRecord.getInferredInsertSize() > 0 &&
+      Math.abs(samRecord.getMateAlignmentStart()-samRecord.getAlignmentEnd())*pixPerBase > 2.f)
     {
       g2.setColor(Color.LIGHT_GRAY);
       
@@ -1645,6 +1653,9 @@ public class BamView extends JPanel
         lastEnd = blockEnd;
       }
     }
+    
+    if(isOrientation)
+      drawArrow(g2, thisRead, thisStart, thisEnd, pixPerBase, ypos);
 
     // test if the mouse is over this read
     if(lastMousePoint != null)
@@ -1659,6 +1670,36 @@ public class BamView extends JPanel
     
     if (isSNPs)
       showSNPsOnReads(g2, thisRead, pixPerBase, ypos, offset);
+  }
+  
+  /**
+   * Draw arrow on the read to indicate orientation.
+   * @param g2
+   * @param thisRead
+   * @param thisStart
+   * @param thisEnd
+   * @param pixPerBase
+   * @param ypos
+   */
+  private void drawArrow(Graphics2D g2,
+                         SAMRecord thisRead, 
+                         int thisStart, 
+                         int thisEnd, 
+                         float pixPerBase, 
+                         int ypos)
+  {
+    if(thisRead.getReadNegativeStrandFlag())
+    {
+      int apos = ypos + 2;
+      g2.drawLine((int)( (thisStart+5) * pixPerBase), apos,
+                  (int)( thisStart * pixPerBase), ypos);
+    }
+    else
+    {
+      int apos = ypos - 2;
+      g2.drawLine((int)( (thisEnd-5) * pixPerBase), apos,
+                  (int)( thisEnd * pixPerBase), ypos);
+    }  
   }
   
   /**
@@ -2220,6 +2261,17 @@ public class BamView extends JPanel
     
     //
     JMenu showMenu = new JMenu("Show");
+    JCheckBoxMenuItem checkBoxOrientation = new JCheckBoxMenuItem("Orientation");
+    checkBoxOrientation.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        isOrientation = !isOrientation;
+        repaint();
+      }
+    });
+    showMenu.add(checkBoxOrientation);
+    
     JCheckBoxMenuItem checkBoxSingle = new JCheckBoxMenuItem("Single Reads");
     checkBoxSingle.addActionListener(new ActionListener()
     {
