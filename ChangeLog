@@ -1,4 +1,6 @@
 Version 12.+
+	Add option to display orientation of reads in BamView.
+
 	In Bamview, display reads that are split over introns so that the exon boundaries can 
 	be identified by colouring the line between the aligned blocks grey.
 	
