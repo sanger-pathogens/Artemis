@@ -1460,13 +1460,13 @@ public class BamView extends JPanel
       ypos = samRecord.getReadString().length();
     }
     
-    if(samRecord.getInferredInsertSize() <= 0)
+    if(samRecord.getInferredInsertSize() == 0)
     {
       offTheTop = true;
       ypos = getHeight() - scaleHeight - 5;
     }
       
-    if(samRecord.getInferredInsertSize() > 0 &&
+    if(samRecord.getInferredInsertSize() != 0 &&
       Math.abs(samRecord.getMateAlignmentStart()-samRecord.getAlignmentEnd())*pixPerBase > 2.f)
     {
       g2.setColor(Color.LIGHT_GRAY);
