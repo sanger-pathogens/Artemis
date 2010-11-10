@@ -1,12 +1,18 @@
 Version 12.+
-	Add option to display orientation of reads in BamView.
+	It is now possible to add BAM / VCF files from the command line using the 
+	JVM bam option, e.g. art -Dbam=/pathToFile/file.bam 
+	and for multiple BAM's/VCF's this is comma separated
+	art -Duserplot='/pathToFile/file1.bam,/pathToFile/file2.bam', it
+	can also read the BAM's from URL's.
+	
+	Added option to display orientation of reads in BamView.
 
 	In Bamview, display reads that are split over introns so that the exon boundaries can 
 	be identified by colouring the line between the aligned blocks grey.
 	
 	Add VCF panel to ACT.
 	
-	Add support to read indexed fasta sequence files. An index file is created
+	Support added to read indexed fasta sequence files. An index file is created
 	using SAMtools.
 
 	Add support for VCF v3.3 and v4.0.
