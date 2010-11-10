@@ -481,6 +481,15 @@ public class EntryEdit extends JFrame
     jsp_feature_list.getVerticalScrollBar().setUnitIncrement(feature_list.getLineHeight());
 
     Utilities.centreFrame(this);
+    
+    if(System.getProperty("bam") != null)
+    {
+      String ngs[] = System.getProperty("bam").split("[\\s,]");
+      FileSelectionDialog fileChooser = new FileSelectionDialog(ngs);
+      List<String> listBams = fileChooser.getFiles(".*\\.bam$");
+      List<String> vcfFiles = fileChooser.getFiles(".*\\.vcf(\\.gz)*$");
+      loadBamAndVcf(listBams, vcfFiles);
+    }
   }
 
   private Box setExpanderButton(final JButton butt)
@@ -1306,58 +1315,12 @@ public class EntryEdit extends JFrame
         {
           FileSelectionDialog fileChooser = new FileSelectionDialog(
               null, false, "BAM / VCF View", "BAM / VCF");
-
           List<String> listBams = fileChooser.getFiles(".*\\.bam$");
-          logger4j.debug("No. BAM FILES="+listBams.size());
-          
-          if(listBams.size() > 0)
-          {
-            bamPanel.removeAll();
-            try
-            {
-              jamView = new BamView(listBams, null, 2000);
-            }
-            catch (Exception ex)
-            {
-              JOptionPane.showMessageDialog(null, ex.getMessage(), "Error",
-                  JOptionPane.ERROR_MESSAGE);
-              return;
-            }
-
-            jamView.setShowScale(false);
-            jamView.setBases(getEntryGroup().getBases());
-            jamView.addJamToPanel(bamPanel, null, true, feature_display);
-            jamView.getJspView().setHorizontalScrollBarPolicy(
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-            jamView.removeBorder();
-            jamView.setDisplay(feature_display.getFirstVisibleForwardBase(),
-                feature_display.getLastVisibleForwardBase(), null);
-            bamPanel.revalidate();
-            jamView.getJspView().getVerticalScrollBar().setValue(
-                jamView.getJspView().getVerticalScrollBar().getMaximum());
-            feature_display.addDisplayAdjustmentListener(jamView);
-            feature_display.getSelection().addSelectionChangeListener(jamView);
-
-            setNGDivider();
-          }
-          
           List<String> vcfFiles = fileChooser.getFiles(".*\\.vcf(\\.gz)*$");
-          logger4j.debug("No. VCF FILES="+vcfFiles.size());
-          if (vcfFiles.size() > 0)
-          {
-            vcfPanel.removeAll();
-            vcfView = new VCFview(null, vcfPanel, vcfFiles,
-                feature_display.getMaxVisibleBases(), 1, null, null,
-                feature_display);
-
-            feature_display.addDisplayAdjustmentListener(vcfView);
-            feature_display.getSelection().addSelectionChangeListener(vcfView);
-            setNGDivider();
-          }
+          loadBamAndVcf(listBams, vcfFiles);
         }
       });
-      file_menu.add(read_bam_file);
-
+      file_menu.add(read_bam_file);    
      
       file_menu.addSeparator();
 
@@ -1851,6 +1814,55 @@ public class EntryEdit extends JFrame
     });
 
     file_menu.add(close);
+  }
+  
+  private void loadBamAndVcf(List<String> listBams, List<String> vcfFiles) 
+  {
+    logger4j.debug("No. BAM FILES="+listBams.size());
+    
+    if(listBams.size() > 0)
+    {
+      bamPanel.removeAll();
+      try
+      {
+        jamView = new BamView(listBams, null, 2000);
+      }
+      catch (Exception ex)
+      {
+        JOptionPane.showMessageDialog(null, ex.getMessage(), "Error",
+            JOptionPane.ERROR_MESSAGE);
+        return;
+      }
+
+      jamView.setShowScale(false);
+      jamView.setBases(getEntryGroup().getBases());
+      jamView.addJamToPanel(bamPanel, null, true, feature_display);
+      jamView.getJspView().setHorizontalScrollBarPolicy(
+          JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+      jamView.removeBorder();
+      jamView.setDisplay(feature_display.getFirstVisibleForwardBase(),
+          feature_display.getLastVisibleForwardBase(), null);
+      bamPanel.revalidate();
+      jamView.getJspView().getVerticalScrollBar().setValue(
+          jamView.getJspView().getVerticalScrollBar().getMaximum());
+      feature_display.addDisplayAdjustmentListener(jamView);
+      feature_display.getSelection().addSelectionChangeListener(jamView);
+
+      setNGDivider();
+    }
+    
+    logger4j.debug("No. VCF FILES="+vcfFiles.size());
+    if (vcfFiles.size() > 0)
+    {
+      vcfPanel.removeAll();
+      vcfView = new VCFview(null, vcfPanel, vcfFiles,
+          feature_display.getMaxVisibleBases(), 1, null, null,
+          feature_display);
+
+      feature_display.addDisplayAdjustmentListener(vcfView);
+      feature_display.getSelection().addSelectionChangeListener(vcfView);
+      setNGDivider();
+    }
   }
 
   /**
