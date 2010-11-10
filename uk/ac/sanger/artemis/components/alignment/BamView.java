@@ -567,12 +567,16 @@ public class BamView extends JPanel
       }
       
       if(offsetLengths.size() != seqNames.size())
+      {
         JOptionPane.showMessageDialog(this, 
             "There is a problem matching the reference sequences\n"+
             "to the names in the BAM file. This may mean the labels\n"+
             "on the reference features do not match those in the in\n"+
             "the BAM file.", 
             "Problem Found", JOptionPane.WARNING_MESSAGE);
+        concatSequences = false;
+        return 0;
+      }
     }
     return offsetLengths.get(refName);
   }
@@ -1892,7 +1896,7 @@ public class BamView extends JPanel
       int len = 0;
       for(int i=0; i<seqNames.size(); i++)
         len += seqLengths.get(seqNames.get(i));
-    
+      
       if(feature_display != null &&
          len == feature_display.getSequenceLength())
         concatSequences = true;
