@@ -43,6 +43,15 @@ public class FileSelectionDialog extends JDialog
   private List<JTextField> bamFields = new Vector<JTextField>(30);
   private JTextField referenceField = new JTextField(30);
   
+  public FileSelectionDialog(String fileNames[])
+  {
+    for(int i=0; i<fileNames.length; i++)
+    {
+      JTextField bamField = new JTextField(fileNames[i]);
+      bamFields.add(bamField);
+    }
+  }
+  
   /**
    * Constructor to display any given input files and options provided and
    * @param f
