@@ -59,7 +59,13 @@ public class IndexFastaStream extends StreamSequence
     else
     {
       File fasta = ((FileDocument)doc.getDocument()).getFile();
-      File fastaIndexFile = new File(fasta.getParentFile().getAbsolutePath(), fasta.getName()+".fai");
+      File parentDir = fasta.getParentFile();
+      File fastaIndexFile;
+      if(parentDir != null)
+        fastaIndexFile = new File(parentDir.getAbsolutePath(), fasta.getName() + ".fai");
+      else
+        fastaIndexFile = new File(fasta.getName() + ".fai");
+      
       fastaIndex = new FastaSequenceIndex(fastaIndexFile);
       
       try
