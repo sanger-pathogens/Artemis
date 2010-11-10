@@ -92,7 +92,12 @@ public class IndexFastaStream extends StreamSequence
           && ((DocumentEntry) entry).getDocument() instanceof FileDocument)
       {
         File fasta = ((FileDocument) ((DocumentEntry) entry).getDocument()).getFile();
-        File fastaIndexFile = new File(fasta.getParentFile().getAbsolutePath(), fasta.getName() + ".fai");
+        File parentDir = fasta.getParentFile();
+        File fastaIndexFile;
+        if(parentDir != null)
+          fastaIndexFile = new File(parentDir.getAbsolutePath(), fasta.getName() + ".fai");
+        else
+          fastaIndexFile = new File(fasta.getName() + ".fai");
         if (fastaIndexFile.exists())
           return true;
       }
