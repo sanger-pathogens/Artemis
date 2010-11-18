@@ -1,4 +1,6 @@
 Version 12.+
+	Memory optimisation of codon caching, reducing the memory footprint.
+	
 	It is now possible to add BAM / VCF files from the command line using the 
 	JVM bam option, e.g. art -Dbam=/pathToFile/file.bam 
 	and for multiple BAM's/VCF's this is comma separated
