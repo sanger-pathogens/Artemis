@@ -745,14 +745,15 @@ public class Bases
                                                                range_end_index+1);
 
         setCache(range_start_index, range_end_index, sequence_string, i,
-                 query_codons, this_forward_codon_flags, ncurrent_byte, bit_position);
-      } 
+                 query_codons, this_forward_codon_flags, ncurrent_byte, 
+                 bit_position);
+        bitty = (byte) ((this_forward_codon_flags[ncurrent_byte]
+                                 >> (2*bit_position) ) & 0x0003);
+      }
 
-      bitty = (byte) ((this_forward_codon_flags[ncurrent_byte]
-                              >> (2*bit_position) ) & 0x0003);
       if(  bitty == 1 ||                         // not a stop/start codon
           (direction == FORWARD && bitty == 3) ||
-          (direction != FORWARD && bitty !=3 ))  
+          (direction != FORWARD && bitty != 3 ))  
         continue;
 
       if(direction == FORWARD) 
@@ -790,6 +791,17 @@ public class Bases
     return return_positions;
   }
 
+  /**
+   * Set the codon cache for forward and reverse strand.
+   * @param range_start_index
+   * @param range_end_index
+   * @param sequence_string
+   * @param i
+   * @param query_codons
+   * @param this_codon_flags
+   * @param ncurrent_byte
+   * @param bit_position
+   */
   private void setCache(int range_start_index, 
                         int range_end_index, 
                         char[] sequence_string, 
@@ -799,8 +811,10 @@ public class Bases
                         int ncurrent_byte,
                         int bit_position)
   {
- // is this a match to either a stop (or start) codon
+    // test if stop (or start) codon
     boolean ismatch = false;
+    
+    // forward codon
     if(i < range_end_index-1)
       if(query_codons == null)
         ismatch = isStopCodon(sequence_string[i-range_start_index],
@@ -814,17 +828,18 @@ public class Bases
 
     if(ismatch)
     {
-      this_codon_flags[ncurrent_byte] =
-                (byte)(this_codon_flags[ncurrent_byte] 
-                       | (0x0002 << 2*bit_position));
+      this_codon_flags[ncurrent_byte] =                // forward strand stop/start = 2
+             (byte)(this_codon_flags[ncurrent_byte] 
+                     | (0x0002 << 2*bit_position));
     }
     else
     {
-      this_codon_flags[ncurrent_byte] =
+      this_codon_flags[ncurrent_byte] =                // cached no stop/start = 1
         (byte)(this_codon_flags[ncurrent_byte] 
                | (0x0001 << 2*bit_position));
     }
 
+    // reverse codon
     ismatch = false;
     if(i-range_start_index > 1)
       if(query_codons == null)
@@ -837,7 +852,7 @@ public class Bases
                           complement(sequence_string[i-range_start_index-2]),
                           query_codons);
     if(ismatch)
-      this_codon_flags[ncurrent_byte] =
+      this_codon_flags[ncurrent_byte] =                // reverse strand stop/start = 3
              (byte)(this_codon_flags[ncurrent_byte] 
                      | (0x0003 << 2*bit_position));
   }
