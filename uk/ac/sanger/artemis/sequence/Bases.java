@@ -728,7 +728,7 @@ public class Bases
       
     for(int i = range_start_index; i < range_end_index+1; i += 1)
     {
-      if(i < 0 || i >= sequence_length-1)
+      if(i < 0 || i >= sequence_length)
         continue;
 
       ncurrent_byte = i >> 1 >> 1;
@@ -841,7 +841,7 @@ public class Bases
 
     // reverse codon
     ismatch = false;
-    if(i-range_start_index > 1)
+    if(i-range_start_index > 1 && i-range_start_index < sequence_string.length)
       if(query_codons == null)
         ismatch = isStopCodon(complement(sequence_string[i-range_start_index]),
                               complement(sequence_string[i-range_start_index-1]),
