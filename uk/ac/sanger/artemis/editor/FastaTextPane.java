@@ -703,7 +703,7 @@ public class FastaTextPane extends JScrollPane
           
           if(isLocalMfetchExists)  // local
           {
-            String cmd[]   = { "mfetch", "-p", "22140", "-f", "acc org des gen",
+            String cmd[]   = { "mfetch", "-f", "acc org des gen",
               "-d", "uniprot", "-i", "acc:"+mfetch };
        
             ExternalApplication app = new ExternalApplication(cmd,
@@ -713,7 +713,7 @@ public class FastaTextPane extends JScrollPane
           else                 // remote
           {
             String cmd   = 
-              "mfetch -p 22140 -f \"acc org des gen\" -d uniprot -i \"acc:"+mfetch+"\"" ;
+              "mfetch -f \"acc org des gen\" -d uniprot -i \"acc:"+mfetch+"\"" ;
             uk.ac.sanger.artemis.j2ssh.SshPSUClient ssh =
               new uk.ac.sanger.artemis.j2ssh.SshPSUClient(cmd);
             ssh.run();
@@ -764,7 +764,7 @@ public class FastaTextPane extends JScrollPane
       }
       else
       {
-        String cmd[]   = { "getz", "-p", "22140", "-f", "acc org description gen",
+        String cmd[]   = { "getz", "-f", "acc org description gen",
                            "[uniprot-acc:"+querySRS.toString()+"]" };
                       
         ExternalApplication app = new ExternalApplication(cmd,
@@ -1116,7 +1116,7 @@ public class FastaTextPane extends JScrollPane
 
     if(isLocalMfetchExists)
     {
-      final String cmd[]   = { "mfetch", "-p", "22140", "-f", "id",
+      final String cmd[]   = { "mfetch", "-f", "id",
           "-d", "uniprot", "-i", "acc:"+hit.getID(), 
           "-l", DB };
 
@@ -1128,7 +1128,7 @@ public class FastaTextPane extends JScrollPane
     else if(remoteMfetch)
     {
       final String cmd   = 
-        "mfetch -p 22140 -f id -d uniprot -i \"acc:"+hit.getID()+"\" -l "+DB ;
+        "mfetch -f id -d uniprot -i \"acc:"+hit.getID()+"\" -l "+DB ;
       uk.ac.sanger.artemis.j2ssh.SshPSUClient ssh =
         new uk.ac.sanger.artemis.j2ssh.SshPSUClient(cmd);
       ssh.run();
@@ -1195,7 +1195,7 @@ public class FastaTextPane extends JScrollPane
 
     if(isLocalMfetchExists)
     {
-      final String cmd[]   = { "mfetch", "-p", "22140", "-f", "id",
+      final String cmd[]   = { "mfetch", "-f", "id",
           "-d", "uniprot", "-i", "acc:"+mfetchList, 
           "-L", DB };
 
@@ -1207,7 +1207,7 @@ public class FastaTextPane extends JScrollPane
     else if(remoteMfetch)
     {
       final String cmd   = 
-        "mfetch -p 22140 -f id -d uniprot -i \"acc:"+mfetchList+"\" -L "+DB ;
+        "mfetch -f id -d uniprot -i \"acc:"+mfetchList+"\" -L "+DB ;
       uk.ac.sanger.artemis.j2ssh.SshPSUClient ssh =
         new uk.ac.sanger.artemis.j2ssh.SshPSUClient(cmd);
       ssh.run();
