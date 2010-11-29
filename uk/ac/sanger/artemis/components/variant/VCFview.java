@@ -115,6 +115,7 @@ public class VCFview extends JPanel
   private JScrollBar scrollBar;
   private JPanel vcfPanel;
   private TabixReader tr[];
+  private List<String> vcfFiles;
   private String header[];
   private FeatureDisplay feature_display;
   private Selection selection;
@@ -149,7 +150,7 @@ public class VCFview extends JPanel
   private boolean concatSequences = false;
 
   private Pattern multiAllelePattern = Pattern.compile("^[AGCT]+,[AGCT,]+$");
-  private static Pattern tabPattern = Pattern.compile("\t");
+  protected static Pattern tabPattern = Pattern.compile("\t");
 
   public VCFview(final JFrame frame,
                  final JPanel vcfPanel,
@@ -167,6 +168,7 @@ public class VCFview extends JPanel
     this.chr = chr;
     this.feature_display = feature_display;
     this.vcfPanel = vcfPanel;
+    this.vcfFiles = vcfFiles;
     
     setBackground(Color.white);
     MultiLineToolTipUI.initialize();
@@ -398,6 +400,7 @@ public class VCFview extends JPanel
         FileSelectionDialog fileSelection = new FileSelectionDialog(
             null, true, "VCFview", "VCF");
         List<String> vcfFileList = fileSelection.getFiles(".*\\.vcf(\\.gz)*$");
+        vcfFiles.addAll(vcfFileList);
 
         int count = vcfFileList.size();
         int oldSize = tr.length;
@@ -534,6 +537,16 @@ public class VCFview extends JPanel
       }
     });
     popup.add(filterByQuality);
+    
+    
+    final JMenuItem exportVCF = new JMenuItem("Export filtered VCF");
+    exportVCF.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e)
+      {
+        IOUtils.export(entryGroup, vcfFiles, VCFview.this);
+      }
+    });
+    popup.add(exportVCF);
   }
 
   private static EntryGroup getReference(String reference)
@@ -870,7 +883,7 @@ public class VCFview extends JPanel
     return false;
   }
   
-  private boolean showVariant(String ref, String variant, FeatureVector features, int basePosition, String quality)
+  protected boolean showVariant(String ref, String variant, FeatureVector features, int basePosition, String quality)
   {  
     if(!showDeletions && isDeletion(ref, variant))
       return false;
