@@ -296,7 +296,7 @@ public abstract class StreamSequence
   protected void appendChar(final char dna[])
   {
     int newlength = sequence_length + dna.length;
-    int numBytes  = Math.round( newlength/2.f );
+    int numBytes  = (int)Math.round( (double)newlength/2.d );
     if(numBytes > capacity())
       expandCapacity(numBytes);
 
