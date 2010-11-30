@@ -604,11 +604,20 @@ public class VCFview extends JPanel
     buff.append(fileName+"\n");
     try
     {
-      FileInputStream fileStream = new FileInputStream(fileName);
-      BlockCompressedInputStream inputStrean = new BlockCompressedInputStream(fileStream);
+      if(IOUtils.isBCF(fileName))
+      {
+        JOptionPane.showMessageDialog(null, 
+            "Looks like a BCF formated file.\n"+
+            "Convert to VCF and use bgzip and tabix\n"+
+            "to compress and index respectively.", 
+            "Unsupported Format", 
+            JOptionPane.WARNING_MESSAGE);
+      }
       
+      BlockCompressedInputStream is = 
+        new BlockCompressedInputStream(new FileInputStream(fileName));
       String line;
-      while( (line = TabixReader.readLine(inputStrean) ) != null )
+      while( (line = TabixReader.readLine(is) ) != null )
       {
         if(!line.startsWith("##"))
           break;
@@ -1495,7 +1504,7 @@ public class VCFview extends JPanel
       System.setProperty("default_directory", System.getProperty("user.dir"));
       FileSelectionDialog fileSelection = new FileSelectionDialog(
           null, true, "VCFview", "VCF");
-      vcfFileList = fileSelection.getFiles(".vcf");
+      vcfFileList = fileSelection.getFiles(".*\\.[bv]{1}cf(\\.gz)*$");
       reference = fileSelection.getReferenceFile();
       if(reference.equals(""))
         reference = null;
