@@ -42,32 +42,7 @@ import uk.ac.sanger.artemis.io.Key;
 import net.sf.samtools.util.BlockCompressedInputStream;
 
 class IOUtils
-{
-
-  private static void writeHeader(final String fileName, final Writer writer)
-  {
-    try
-    {
-      FileInputStream fileStream = new FileInputStream(fileName);
-      BlockCompressedInputStream is = new BlockCompressedInputStream(fileStream);
-
-      int c;
-      int lc = -1;
-      
-      while((c = is.read()) >= 0)
-      {
-        if(lc == '\n' && c != '#')
-          break;
-        writer.write(c);
-      }
-      is.close();
-    }
-    catch (IOException e)
-    {
-      e.printStackTrace();
-    }
-  }
-  
+{ 
   /**
    * Write filtered uncompressed VCF. Uses the filter in VCFview to
    * determine if variants are written.
@@ -81,7 +56,6 @@ class IOUtils
                                  final VCFview vcfView,
                                  final FeatureVector features)
   {
-    writeHeader(vcfFileName, writer);
     try
     {
       TabixReader tr = new TabixReader(vcfFileName);
@@ -89,7 +63,10 @@ class IOUtils
       while ((line = tr.readLine()) != null)
       {
         if(line.startsWith("#"))
+        {
+          writer.write(line+'\n');
           continue;
+        }
         String parts[] = VCFview.tabPattern.split(line, 0);
         int basePosition = Integer.parseInt(parts[1]) + vcfView.getSequenceOffset(parts[0]);
         if( !vcfView.showVariant(parts[3], parts[4], features, basePosition, parts[5]) )
@@ -104,6 +81,12 @@ class IOUtils
     }
   }
   
+  /**
+   * Export as a VCF based on the filtering applied in the VCFview.
+   * @param entryGroup
+   * @param vcfFiles
+   * @param vcfView
+   */
   protected static void export(final EntryGroup entryGroup, 
                                final List<String> vcfFiles,
                                final VCFview vcfView)
@@ -140,6 +123,26 @@ class IOUtils
       JOptionPane.showMessageDialog(vcfView, e1.getMessage(),
           "Error", JOptionPane.ERROR_MESSAGE);
     }
+  }
+
+  /**
+   * Test if this is a BCF file.
+   * @param fileName
+   * @return
+   * @throws IOException
+   */
+  protected static boolean isBCF(String fileName) throws IOException
+  {
+    FileInputStream fis = new FileInputStream(fileName);
+    BlockCompressedInputStream is = new BlockCompressedInputStream(fis);
+    byte[] magic = new byte[4];
+    is.read(magic);
+    fis.close();
+    is.close();
+    String line = new String(magic);
+    if(line.equals("BCF\4"))
+      return true;
+    return false;
   }
   
 }
