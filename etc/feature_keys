@@ -35,6 +35,7 @@ gene            allele citation db_xref evidence function gene inference label l
 iDNA            allele citation db_xref evidence function gene inference label locus_tag map note number partial standard_name usedin
 intron          allele citation cons_splice db_xref evidence function gene inference label locus_tag map note number partial standard_name usedin gene_synonym
 mRNA            allele citation db_xref evidence exception function gene inference label locus_tag map note operon partial product pseudo standard_name transcript_id usedin
+tmRNA           allele citation db_xref evidence exception function gene inference label locus_tag map note operon partial product pseudo standard_name transcript_id usedin
 mat_peptide     EC_number allele citation codon codon_start db_xref evidence function gene inference label locus_tag map note partial product pseudo standard_name transl_except usedin
 misc_RNA        allele citation db_xref evidence function gene inference label locus_tag map note operon partial product standard_name usedin
 misc_binding    @bound_moiety allele citation db_xref evidence function gene inference label locus_tag map note partial usedin
