@@ -65,7 +65,6 @@ do
 	let idx++
 done
 
-echo $CLASSPATH
 echo starting to write with flags: $DEFAULT_CONNECTION $FLAGS 1>&2
 
 java $DEFAULT_CONNECTION $FLAGS uk.ac.sanger.artemis.io.ReadAndWriteEntry "$@"
