@@ -28,14 +28,15 @@ import java.util.Iterator;
 
 class VCFRecord
 {
-  public String alt;
-  public String ref;
-  int seqID;
-  int pos;
-  float quality;
-  String info;
-  String format;
-  HashMap<String, String> data = new HashMap<String, String>();
+  protected String ID;
+  protected String alt;
+  protected String ref;
+  protected String seqID;
+  protected int pos;
+  protected float quality;
+  protected String info;
+  protected String format;
+  protected HashMap<String, String> data = new HashMap<String, String>();
   
   public String toString()
   {
@@ -43,6 +44,6 @@ class VCFRecord
     Iterator<String> it = data.values().iterator();
     while(it.hasNext())
       buff.append(it.next()+ ( (it.hasNext()) ? ":" : "" ) );
-    return seqID+"\t"+pos+"\t"+ref+"\t"+alt+"\t"+quality+"\t"+info+"\t"+format+"\t"+buff.toString();
+    return seqID+"\t"+pos+"\t"+ID+"\t"+ref+"\t"+alt+"\t"+quality+"\t"+info+"\t"+format+"\t"+buff.toString();
   }
 }

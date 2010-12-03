@@ -41,15 +41,35 @@ class BCFReader
   public static final int TAD_LIDX_SHIFT = 13; // linear index shift
   private static Pattern formatPattern = Pattern.compile("[^0-9]+");
   private BlockCompressedInputStream is;
+  private FileInputStream indexFileStream;
+  private List<BCFIndex> idx;
   
-  public void query(File bcf, long offset) throws IOException
+  // header information and names
+  private List<String> seqNames;
+  private List<String> sampleNames;
+  private int nsamples;
+  private String metaData;
+  
+  /**
+   * @param bcf  BCF file
+   * @throws IOException
+   */
+  public BCFReader(File bcf) throws IOException
   {
     is = new BlockCompressedInputStream(bcf);
-    is.seek(offset);
+    readHeader();
+    
+    File bcfIndex = new File(bcf.getAbsolutePath()+".bci");
+    indexFileStream = new FileInputStream(bcfIndex);
+    idx = loadIndex();
+  }
+
+  protected void seek(long off) throws IOException
+  {
+    is.seek(off);
   }
   
-  
-  public VCFRecord next(int bid, int beg, int end) throws IOException
+  protected VCFRecord next(int bid, int beg, int end) throws IOException
   {
     try
     {
@@ -74,10 +94,83 @@ class BCFReader
     return null;
   }
   
+  protected void close() throws IOException
+  {
+    is.close();
+    indexFileStream.close();
+  }
+  
+  private void readHeader() throws IOException
+  {
+    byte[] magic = new byte[4];
+    is.read(magic);
+
+    String line = new String(magic);
+    if(!line.equals("BCF\4"))
+    {
+      throw new IOException("Not BCF format.");
+    }
+
+    // sequence names
+    seqNames = getList(readInt(is));
+
+    // sample names
+    sampleNames = getList(readInt(is));
+    nsamples = sampleNames.size();
+
+    int len = readInt(is);   
+    byte meta[] = new byte[len];
+    is.read(meta);
+
+    StringBuffer buff = new StringBuffer();
+    for(int i=0; i<meta.length; i++)
+      buff.append((char)meta[i]);
+
+    metaData = buff.toString();
+  }
+  
+  protected String headerToString()
+  {
+    StringBuffer head = new StringBuffer();
+    head.append("##fileformat=VCFv4.0\n");
+    head.append("#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\t");
+    
+    for(int i=0; i<sampleNames.size(); i++)
+      head.append(sampleNames.get(i)+" ");
+    return head.toString();
+  }
+  
+  /**
+   * Given the length of the concatenated names, that are NULL padded
+   * construct a list of the Strings.
+   * @param len
+   * @return
+   * @throws IOException
+   */
+  private List<String> getList(int len) throws IOException
+  {
+    byte names[] = new byte[len];
+    is.read(names);
+    
+    List<String> list = new Vector<String>();
+    StringBuffer buff = new StringBuffer();
+    for(int i=0; i<names.length; i++)
+    {
+      if(names[i] != 0)
+        buff.append((char)names[i]);
+      else if(buff.length() > 0)
+      {
+        list.add(buff.toString());
+        buff = new StringBuffer();
+      }
+    }
+    return list;
+  }
+  
   private VCFRecord readVCFRecord() throws IOException
   {
     VCFRecord bcfRecord = new VCFRecord();
-    bcfRecord.seqID = readInt(is);    
+    bcfRecord.seqID = seqNames.get(readInt(is));    
     bcfRecord.pos = readInt(is)+1;
     bcfRecord.quality = readFloat(is);
     
@@ -87,8 +180,9 @@ class BCFReader
 
     String parts[] = getParts(str);
     
-    bcfRecord.ref = parts[0];
-    bcfRecord.alt = parts[1];
+    bcfRecord.ID  = parts[0];
+    bcfRecord.ref = parts[1];
+    bcfRecord.alt = parts[2];
     String fmt = parts[parts.length-1];
 
     if(formatPattern.matcher(fmt).matches())
@@ -103,7 +197,7 @@ class BCFReader
       String fmts[] = bcfRecord.format.split(":");
       for(int j=0; j<fmts.length; j++)
       {
-        int nb = getByteSize(fmts[j],1,nc);
+        int nb = getByteSize(fmts[j],nc);
         str = new byte[nb];
         is.read(str);
         
@@ -137,7 +231,10 @@ class BCFReader
     for(int i=0; i<b.length; i++)
     {
       if(i == 0 && b[i] == 0)
+      {
+        buff.append(". ");
         continue;
+      }
 
       if(b[i] == 0)
       {
@@ -166,7 +263,7 @@ class BCFReader
    * @param nc
    * @return
    */
-  private static int getByteSize(String tag, int nsamples, int nc)
+  private int getByteSize(String tag, int nc)
   {
     if(tag.equals("DP"))        // Read depth
       return 2*nsamples;        // uint16_t[n]
@@ -215,10 +312,9 @@ class BCFReader
     return (int)(b & 0xFF);
   }
   
-  protected static List<BCFIndex> loadIndex(File bcfIndex) throws IOException
+  protected List<BCFIndex> loadIndex() throws IOException
   {
-    FileInputStream fis = new FileInputStream(bcfIndex);
-    BlockCompressedInputStream is = new BlockCompressedInputStream(fis);
+    BlockCompressedInputStream is = new BlockCompressedInputStream(indexFileStream);
     byte[] magic = new byte[4];
     is.read(magic);
     
@@ -242,7 +338,7 @@ class BCFReader
     return idx;
   }
   
-  protected long queryIndex(List<BCFIndex> idx, int tid, int beg)
+  protected long queryIndex(int tid, int beg)
   {
     long min_off = -1;
     if (beg < 0) 
@@ -276,29 +372,35 @@ class BCFReader
     return ByteBuffer.wrap(buf).order(ByteOrder.LITTLE_ENDIAN).getLong();
   }
 
+  protected String getMetaData()
+  {
+    return metaData;
+  }
+
   public static void main(String args[])
   {
     try
     {
-      List<BCFIndex> idx = loadIndex(new File(args[0]));
-      
       int sbeg = 0;
       int send = Integer.MAX_VALUE;
-      if(args.length > 2)
+      if(args.length > 1)
       {
-        sbeg = Integer.parseInt(args[2]);
-        send = Integer.parseInt(args[3]);
+        sbeg = Integer.parseInt(args[1]);
+        send = Integer.parseInt(args[2]);
       }
       
-      BCFReader reader = new BCFReader();
+      BCFReader reader = new BCFReader(new File(args[0]));
       int bid = 0;
-      long off = reader.queryIndex(idx, bid, sbeg);
-      reader.query(new File(args[1]), off);
       
+      long off = reader.queryIndex(bid, sbeg);
+      reader.seek(off);
+
+      System.out.println(reader.headerToString());
       VCFRecord bcfRecord;
       while( (bcfRecord = reader.next(bid, sbeg, send)) != null )
         System.out.println(bcfRecord.toString());
       
+      reader.close();
     }
     catch (IOException e)
     {
