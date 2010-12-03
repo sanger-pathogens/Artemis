@@ -1,3 +1,26 @@
+/*
+ * created: 2010
+ *
+ * This file is part of Artemis
+ *
+ * Copyright(C) 2010  Genome Research Limited
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or(at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ */
+
 package uk.ac.sanger.artemis.components.variant;
 
 import java.io.File;
@@ -16,60 +39,91 @@ import net.sf.samtools.util.BlockCompressedInputStream;
 class BCFReader
 {
   public static final int TAD_LIDX_SHIFT = 13; // linear index shift
-  private static Pattern formatPattern = Pattern.compile("[^0-9]+"); 
+  private static Pattern formatPattern = Pattern.compile("[^0-9]+");
+  private BlockCompressedInputStream is;
   
-  public void query(File bcf, long offset, int beg, int end) throws IOException
+  public void query(File bcf, long offset) throws IOException
   {
-    BlockCompressedInputStream is = new BlockCompressedInputStream(bcf);
+    is = new BlockCompressedInputStream(bcf);
     is.seek(offset);
-    
-    for(int i=0; i<7299; i++)
+  }
+  
+  
+  public VCFRecord next(int bid, int beg, int end) throws IOException
+  {
+    try
     {
-      int id = readInt(is);
-      int pos = readInt(is)+1;
-      float qual = readFloat(is);
-      int slen = readInt(is);
-      System.out.print("ID: "+id + " POS: "+pos + " QUAL: "+qual + " ");
-      byte[] str = new byte[slen];
-      is.read(str);
-
-      String parts[] = getParts(str);
-      
-      String ref = parts[0];
-      String alt = parts[1];
-      String fmt = parts[parts.length-1];
-
-      if(formatPattern.matcher(fmt).matches())
+      VCFRecord bcfRecord = readVCFRecord();
+      if(bcfRecord.pos >= beg && bcfRecord.pos <= end)
+        return bcfRecord;
+      else if(bcfRecord.pos < beg)
       {
-        String info = parts[parts.length-2];
-        System.out.println(info+"    "+fmt);
-        
-        String format = parts[parts.length-1];
-        
-        int nc  = 3;
-        System.out.println("ALT:"+alt+" REF:"+ref);
-        if(alt.equals("."))
-          nc = 1;
-
-        String fmts[] = format.split(":");
-        for(int j=0; j<fmts.length; j++)
+        while( (bcfRecord = readVCFRecord()).pos <= beg )
         {
-          int nb = getByteSize(fmts[j],1,nc);
-          str = new byte[nb];
-          is.read(str);
-          
-          if(fmts[j].equals("GT"))
-            System.out.println("nbytes = "+nb+" GT:"+getGTString(str[0]));
-          else if(fmts[j].equals("PL"))
-            System.out.println("nbytes = "+nb+" PL:"+getPLString(str, nc));
-          else if(fmts[j].equals("DP")||fmts[j].equals("SP")||fmts[j].equals("GQ"))
-          {
-            System.out.println("nbytes = "+nb+" "+fmts[j]+":"+byteToInt(str[0]));
-          } 
-
+          if(bcfRecord.pos >= beg && bcfRecord.pos <= end)
+            return bcfRecord;
         }
       }
+    } 
+    catch(Exception e)
+    {
+      if(is.read() != -1)  // eof
+        e.printStackTrace();
     }
+    
+    return null;
+  }
+  
+  private VCFRecord readVCFRecord() throws IOException
+  {
+    VCFRecord bcfRecord = new VCFRecord();
+    bcfRecord.seqID = readInt(is);    
+    bcfRecord.pos = readInt(is)+1;
+    bcfRecord.quality = readFloat(is);
+    
+    int slen = readInt(is);
+    byte[] str = new byte[slen];
+    is.read(str);
+
+    String parts[] = getParts(str);
+    
+    bcfRecord.ref = parts[0];
+    bcfRecord.alt = parts[1];
+    String fmt = parts[parts.length-1];
+
+    if(formatPattern.matcher(fmt).matches())
+    {
+      bcfRecord.info = parts[parts.length-2];
+      bcfRecord.format = parts[parts.length-1];
+      
+      int nc  = 3;
+      if(bcfRecord.alt.equals("."))
+        nc = 1;
+
+      String fmts[] = bcfRecord.format.split(":");
+      for(int j=0; j<fmts.length; j++)
+      {
+        int nb = getByteSize(fmts[j],1,nc);
+        str = new byte[nb];
+        is.read(str);
+        
+        final String value;
+        if(fmts[j].equals("GT"))
+          value = getGTString(str[0]);
+        else if(fmts[j].equals("PL"))
+          value = getPLString(str, nc);
+        else if(fmts[j].equals("DP")||fmts[j].equals("SP")||fmts[j].equals("GQ"))
+          value = Integer.toString(byteToInt(str[0]));
+        else
+          value = "";
+        bcfRecord.data.put(fmts[j], value);
+      }
+      
+    }
+    else
+      bcfRecord.info = parts[parts.length-1];
+    
+    return bcfRecord;
   }
   
   /**
@@ -161,37 +215,34 @@ class BCFReader
     return (int)(b & 0xFF);
   }
   
-  public static List<Index> load(File bcfIndex) throws IOException
+  protected static List<BCFIndex> loadIndex(File bcfIndex) throws IOException
   {
     FileInputStream fis = new FileInputStream(bcfIndex);
     BlockCompressedInputStream is = new BlockCompressedInputStream(fis);
     byte[] magic = new byte[4];
     is.read(magic);
-    System.out.println(new String(magic));
+    
+    if(!new String(magic).equals("BCI\4"))
+      System.err.println("Not a BCF index file:: "+new String(magic));
     
     int n = readInt(is);
-    
-    List<Index> idx = new Vector<Index>(n);
+    List<BCFIndex> idx = new Vector<BCFIndex>(n);
     
     for(int i=0; i<n; i++)
     {
-      Index idx2 = new Index();
+      BCFIndex idx2 = new BCFIndex();
       idx2.n = readInt(is);
       idx2.index2_offset = new long[idx2.n];
       
       for(int j=0; j<idx2.n; j++)
-      {
         idx2.index2_offset[j] = readLong(is);
-      }
-      
-      if(is.read() == -1)
-        System.out.println("EOF");
+
       idx.add(idx2);
     }
     return idx;
   }
   
-  public long queryIndex(List<Index> idx, int tid, int beg)
+  protected long queryIndex(List<BCFIndex> idx, int tid, int beg)
   {
     long min_off = -1;
     if (beg < 0) 
@@ -206,20 +257,20 @@ class BCFReader
     return min_off;
   }
   
-  public static int readInt(final InputStream is) throws IOException {
+  protected static int readInt(final InputStream is) throws IOException {
     byte[] buf = new byte[4];
     is.read(buf);
     return ByteBuffer.wrap(buf).order(ByteOrder.LITTLE_ENDIAN).getInt();
   }
   
   
-  public static float readFloat(final InputStream is) throws IOException {
+  protected static float readFloat(final InputStream is) throws IOException {
     byte[] buf = new byte[4];
     is.read(buf);
     return ByteBuffer.wrap(buf).order(ByteOrder.LITTLE_ENDIAN).getFloat();
   }
 
-  public static long readLong(final InputStream is) throws IOException {
+  protected static long readLong(final InputStream is) throws IOException {
     byte[] buf = new byte[8];
     is.read(buf);
     return ByteBuffer.wrap(buf).order(ByteOrder.LITTLE_ENDIAN).getLong();
@@ -229,25 +280,25 @@ class BCFReader
   {
     try
     {
-      List<Index> idx = load(new File(args[0]));
+      List<BCFIndex> idx = loadIndex(new File(args[0]));
       
-      int sbeg;
-      int send;
-      if(args.length < 3)
-      {
-        sbeg = 326758;
-        send = sbeg+1;
-      }
-      else
+      int sbeg = 0;
+      int send = Integer.MAX_VALUE;
+      if(args.length > 2)
       {
         sbeg = Integer.parseInt(args[2]);
         send = Integer.parseInt(args[3]);
       }
       
       BCFReader reader = new BCFReader();
-      long off = reader.queryIndex(idx, 0, sbeg);
-      System.out.println(off);
-      reader.query(new File(args[1]), off, sbeg, send);
+      int bid = 0;
+      long off = reader.queryIndex(idx, bid, sbeg);
+      reader.query(new File(args[1]), off);
+      
+      VCFRecord bcfRecord;
+      while( (bcfRecord = reader.next(bid, sbeg, send)) != null )
+        System.out.println(bcfRecord.toString());
+      
     }
     catch (IOException e)
     {
@@ -257,16 +308,8 @@ class BCFReader
   }
 }
 
-class BCFRecord
-{
-  int seqID;
-  int pos;
-  float quality;
-  String info;
-  String format;
-}
 
-class Index
+class BCFIndex
 {
   int n;
   long index2_offset[];
