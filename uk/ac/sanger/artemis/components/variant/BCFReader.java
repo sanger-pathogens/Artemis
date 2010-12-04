@@ -181,8 +181,10 @@ class BCFReader
     getParts(str, bcfRecord);
     
     if(formatPattern.matcher(bcfRecord.format).matches())
-    {     
-      int nc  = 3;
+    {
+      int n_alleles = bcfRecord.getNumAlleles();
+      int nc  = (int) (n_alleles * ((float)(((float)n_alleles+1.f)/2.f)));
+
       if(bcfRecord.alt.equals("."))
         nc = 1;
 
