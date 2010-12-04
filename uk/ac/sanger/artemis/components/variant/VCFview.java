@@ -26,6 +26,7 @@ package uk.ac.sanger.artemis.components.variant;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
@@ -543,7 +544,9 @@ public class VCFview extends JPanel
     exportVCF.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e)
       {
+        VCFview.this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
         IOUtils.export(entryGroup, vcfFiles, VCFview.this);
+        VCFview.this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
       }
     });
     popup.add(exportVCF);
@@ -747,7 +750,7 @@ public class VCFview extends JPanel
               thisStart = 1;
             int thisEnd   = end - offset;
             
-            drawRegion(g, contigs[j]+":"+thisStart+"-"+thisEnd, i, start, pixPerBase, features); 
+            drawRegion(g, contigs[j], thisStart+"-"+thisEnd, i, start, pixPerBase, features); 
           }
         }
 
@@ -757,7 +760,7 @@ public class VCFview extends JPanel
         int thisStart = start;
         if(thisStart < 1)
           thisStart = 1;
-        drawRegion(g, chr+":"+thisStart+"-"+end, i, start, pixPerBase, features); 
+        drawRegion(g, chr, thisStart+"-"+end, i, start, pixPerBase, features); 
       }
     }
 
@@ -765,7 +768,8 @@ public class VCFview extends JPanel
       drawScale((Graphics2D)g, start, end, pixPerBase, getHeight());
   }
   
-  private void drawRegion(Graphics g, 
+  private void drawRegion(Graphics g,
+                          String chr,
                           String region,
                           int i, 
                           int start, 
@@ -773,13 +777,16 @@ public class VCFview extends JPanel
                           FeatureVector features) 
   {
     String s;
-    TabixReader.Iterator iter = tr[i].query(region); // get the iterator
+    TabixReader.Iterator iter = tr[i].query(chr+":"+region); // get the iterator
     if (iter == null)
       return;
     try
     {
       while ((s = iter.next()) != null)
-        drawVariantCall(g, s, start, i, pixPerBase, features);
+      {
+        VCFRecord vcfRecord = VCFRecord.parse(s);
+        drawVariantCall(g, vcfRecord, start, i, pixPerBase, features);
+      }
     }
     catch (IOException e)
     {
@@ -892,7 +899,7 @@ public class VCFview extends JPanel
     return false;
   }
   
-  protected boolean showVariant(String ref, String variant, FeatureVector features, int basePosition, String quality)
+  protected boolean showVariant(String ref, String variant, FeatureVector features, int basePosition, float quality)
   {  
     if(!showDeletions && isDeletion(ref, variant))
       return false;
@@ -902,7 +909,7 @@ public class VCFview extends JPanel
     
     try
     {
-      if(Float.parseFloat(quality) < MIN_QUALITY)
+      if(quality < MIN_QUALITY)
         return false;
     }
     catch(NumberFormatException e)
@@ -967,33 +974,33 @@ public class VCFview extends JPanel
   }
   
   
-  private void drawVariantCall(Graphics g, String line, int start, int index, float pixPerBase, FeatureVector features)
+  private void drawVariantCall(Graphics g, VCFRecord record, int start, int index, float pixPerBase, FeatureVector features)
   {
     //String parts[] = line.split("\\t");
-    String parts[] = tabPattern.split(line, 0);
+    //String parts[] = tabPattern.split(line, 0);
     
-    int basePosition = Integer.parseInt(parts[1]) + getSequenceOffset(parts[0]);
+    int basePosition = record.pos + getSequenceOffset(record.chrom);
    
-    if( !showVariant(parts[3], parts[4], features, basePosition, parts[5]) )
+    if( !showVariant(record.ref, record.alt, features, basePosition, record.quality) )
       return;
     
     int pos[] = getScreenPosition(basePosition, pixPerBase, start, index);
 
-    if(isDeletion(parts[3], parts[4]))
+    if(isDeletion(record.ref, record.alt))
       g.setColor(Color.gray);
-    else if(isInsertion(parts[3], parts[4]))
+    else if(isInsertion(record.ref, record.alt))
       g.setColor(Color.yellow);
-    else if(parts[4].equals("C") && parts[3].length() == 1)
+    else if(record.alt.equals("C") && record.ref.length() == 1)
       g.setColor(Color.red);
-    else if(parts[4].equals("A") && parts[3].length() == 1)
+    else if(record.alt.equals("A") && record.ref.length() == 1)
       g.setColor(Color.green);
-    else if(parts[4].equals("G") && parts[3].length() == 1)
+    else if(record.alt.equals("G") && record.ref.length() == 1)
       g.setColor(Color.blue);
-    else if(parts[4].equals("T") && parts[3].length() == 1)
+    else if(record.alt.equals("T") && record.ref.length() == 1)
       g.setColor(Color.black);
     else
     {
-      Matcher m = multiAllelePattern.matcher(parts[4]);
+      Matcher m = multiAllelePattern.matcher(record.alt);
       if(m.matches())
       {
         g.setColor(Color.orange);
@@ -1165,7 +1172,10 @@ public class VCFview extends JPanel
     { 
       String s;
       while ((s = iter.next()) != null)
-        isMouseOver(mousePoint, s, features, i, start, pixPerBase);
+      {
+        VCFRecord vcfRecord = VCFRecord.parse(s);
+        isMouseOver(mousePoint, vcfRecord, features, i, start, pixPerBase);
+      }
     }
     catch (IOException e)
     {
@@ -1174,15 +1184,14 @@ public class VCFview extends JPanel
   }
   
   private void isMouseOver(Point mousePoint, 
-                           String s, 
+                           VCFRecord record, 
                            FeatureVector features, 
                            int i, 
                            int start, float pixPerBase)
   {
-    String parts[] = tabPattern.split(s, 7);
-    int basePosition = Integer.parseInt(parts[1]) + getSequenceOffset(parts[0]);
+    int basePosition = record.pos + getSequenceOffset(record.chrom);
 
-    if( !showVariant(parts[3], parts[4], features, basePosition, parts[5]) )
+    if( !showVariant(record.ref, record.alt, features, basePosition, record.quality) )
       return;
     
     int pos[] = getScreenPosition(basePosition, pixPerBase, start, i);
@@ -1192,7 +1201,7 @@ public class VCFview extends JPanel
        mousePoint.getX() > pos[0]-3 &&
        mousePoint.getX() < pos[0]+3)
      {
-       mouseOverVCFline = s;
+       mouseOverVCFline = record.toString();
        mouseOverIndex = i;
      }
   }

@@ -67,9 +67,10 @@ class IOUtils
           writer.write(line+'\n');
           continue;
         }
-        String parts[] = VCFview.tabPattern.split(line, 0);
-        int basePosition = Integer.parseInt(parts[1]) + vcfView.getSequenceOffset(parts[0]);
-        if( !vcfView.showVariant(parts[3], parts[4], features, basePosition, parts[5]) )
+        
+        VCFRecord record = VCFRecord.parse(line);
+        int basePosition = record.pos + vcfView.getSequenceOffset(record.chrom);
+        if( !vcfView.showVariant(record.ref, record.alt, features, basePosition, record.quality) )
           continue;
         writer.write(line+'\n');
       }
