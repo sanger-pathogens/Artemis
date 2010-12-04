@@ -31,6 +31,7 @@ class VCFRecord
   protected String ID;
   protected String alt;
   protected String ref;
+  protected String filter;
   protected String seqID;
   protected int pos;
   protected float quality;
@@ -44,6 +45,6 @@ class VCFRecord
     Iterator<String> it = data.values().iterator();
     while(it.hasNext())
       buff.append(it.next()+ ( (it.hasNext()) ? ":" : "" ) );
-    return seqID+"\t"+pos+"\t"+ID+"\t"+ref+"\t"+alt+"\t"+quality+"\t"+info+"\t"+format+"\t"+buff.toString();
+    return seqID+"\t"+pos+"\t"+ID+"\t"+ref+"\t"+alt+"\t"+quality+"\t"+filter+"\t"+info+"\t"+format+"\t"+buff.toString();
   }
 }
