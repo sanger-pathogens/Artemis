@@ -42,6 +42,14 @@ class VCFRecord
            "\t"+filter+"\t"+info+"\t"+format+"\t"+getSampleDataString();
   }
   
+  protected int getNumAlleles()
+  {
+    if (alt.equals(".")) 
+      return 1;
+
+    return alt.split(",").length+1;
+  }
+  
   /**
    * Parse a VCF line and return a VCFRecord
    * @param line
