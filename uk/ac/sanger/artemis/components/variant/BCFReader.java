@@ -26,9 +26,6 @@ package uk.ac.sanger.artemis.components.variant;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.util.List;
 import java.util.Vector;
 import java.util.regex.Pattern;
@@ -36,7 +33,7 @@ import java.util.regex.Pattern;
 import net.sf.samtools.util.BlockCompressedInputStream;
 
 
-class BCFReader
+class BCFReader extends AbstractVCFReader
 {
   public static final int TAD_LIDX_SHIFT = 13; // linear index shift
   private static Pattern formatPattern = Pattern.compile("[^0-9]+");
@@ -45,8 +42,8 @@ class BCFReader
   private List<BCFIndex> idx;
   
   // header information and names
-  private List<String> seqNames;
-  private List<String> sampleNames;
+  private String[] seqNames;
+  private String[] sampleNames;
   private int nsamples;
   private String metaData;
   
@@ -83,6 +80,8 @@ class BCFReader
           if(bcfRecord.pos >= beg && bcfRecord.pos <= end)
             return bcfRecord;
         }
+        if(bcfRecord.pos >= beg && bcfRecord.pos <= end)
+          return bcfRecord;
       }
     } 
     catch(Exception e)
@@ -112,11 +111,11 @@ class BCFReader
     }
 
     // sequence names
-    seqNames = getList(readInt(is));
+    seqNames = getArray(readInt(is));
 
     // sample names
-    sampleNames = getList(readInt(is));
-    nsamples = sampleNames.size();
+    sampleNames = getArray(readInt(is));
+    nsamples = sampleNames.length;
 
     int len = readInt(is);   
     byte meta[] = new byte[len];
@@ -135,8 +134,8 @@ class BCFReader
     head.append("##fileformat=VCFv4.0\n");
     head.append("#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\t");
     
-    for(int i=0; i<sampleNames.size(); i++)
-      head.append(sampleNames.get(i)+" ");
+    for(int i=0; i<sampleNames.length; i++)
+      head.append(sampleNames[i]+" ");
     return head.toString();
   }
   
@@ -147,30 +146,34 @@ class BCFReader
    * @return
    * @throws IOException
    */
-  private List<String> getList(int len) throws IOException
+  private String[] getArray(int len) throws IOException
   {
-    byte names[] = new byte[len];
-    is.read(names);
+    byte b[] = new byte[len];
+    is.read(b);
     
-    List<String> list = new Vector<String>();
+    List<String> names = new Vector<String>();
     StringBuffer buff = new StringBuffer();
-    for(int i=0; i<names.length; i++)
+    for(int i=0; i<b.length; i++)
     {
-      if(names[i] != 0)
-        buff.append((char)names[i]);
+      if(b[i] != 0)
+        buff.append((char)b[i]);
       else if(buff.length() > 0)
       {
-        list.add(buff.toString());
+        names.add(buff.toString());
         buff = new StringBuffer();
       }
     }
-    return list;
+    
+    String[] arr = new String[names.size()];
+    for(int i=0; i< arr.length; i++)
+      arr[i] = names.get(i);
+    return arr;
   }
   
   private VCFRecord readVCFRecord() throws IOException
   {
     VCFRecord bcfRecord = new VCFRecord();
-    bcfRecord.chrom = seqNames.get(readInt(is));    
+    bcfRecord.chrom = seqNames[readInt(is)];    
     bcfRecord.pos = readInt(is)+1;
     bcfRecord.quality = readFloat(is);
     
@@ -348,6 +351,17 @@ class BCFReader
     return idx;
   }
   
+  protected int getSeqIndex(String chr)
+  {
+    for(int i=0; i<seqNames.length; i++)
+    {
+      if(seqNames[i].equals(chr))
+        return i;
+    }
+        
+    return -1;
+  }
+  
   protected long queryIndex(int tid, int beg)
   {
     long min_off = -1;
@@ -361,25 +375,6 @@ class BCFReader
     min_off = (i == idx.get(tid).n)? offset[idx.get(tid).n-1] : offset[i];
        
     return min_off;
-  }
-  
-  protected static int readInt(final InputStream is) throws IOException {
-    byte[] buf = new byte[4];
-    is.read(buf);
-    return ByteBuffer.wrap(buf).order(ByteOrder.LITTLE_ENDIAN).getInt();
-  }
-  
-  
-  protected static float readFloat(final InputStream is) throws IOException {
-    byte[] buf = new byte[4];
-    is.read(buf);
-    return ByteBuffer.wrap(buf).order(ByteOrder.LITTLE_ENDIAN).getFloat();
-  }
-
-  protected static long readLong(final InputStream is) throws IOException {
-    byte[] buf = new byte[8];
-    is.read(buf);
-    return ByteBuffer.wrap(buf).order(ByteOrder.LITTLE_ENDIAN).getLong();
   }
 
   protected String getMetaData()
@@ -417,6 +412,11 @@ class BCFReader
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
+  }
+
+  protected String[] getSeqNames()
+  {
+    return seqNames;
   }
 }
 

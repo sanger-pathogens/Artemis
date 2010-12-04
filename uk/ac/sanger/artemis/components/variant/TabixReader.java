@@ -36,7 +36,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.lang.StringBuffer;
 
-public class TabixReader
+public class TabixReader extends AbstractVCFReader
 {
 	private String mFn;
 	private BlockCompressedInputStream mFp;
@@ -394,7 +394,7 @@ public class TabixReader
 		}
 	}
 	
-	  protected String[] getmSeq()
+	  protected String[] getSeqNames()
 	  {
 	    return mSeq;
 	  }

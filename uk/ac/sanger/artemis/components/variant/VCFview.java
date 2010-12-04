@@ -115,7 +115,7 @@ public class VCFview extends JPanel
   private static final long serialVersionUID = 1L;
   private JScrollBar scrollBar;
   private JPanel vcfPanel;
-  private TabixReader tr[];
+  private AbstractVCFReader vcfReaders[];
   private List<String> vcfFiles;
   private String header[];
   private FeatureDisplay feature_display;
@@ -152,6 +152,8 @@ public class VCFview extends JPanel
 
   private Pattern multiAllelePattern = Pattern.compile("^[AGCT]+,[AGCT,]+$");
   protected static Pattern tabPattern = Pattern.compile("\t");
+  
+  public static String VCFFILE_SUFFIX = ".*\\.[bv]{1}cf(\\.gz)*$";
 
   public VCFview(final JFrame frame,
                  final JPanel vcfPanel,
@@ -186,13 +188,12 @@ public class VCFview extends JPanel
     
     try
     {
-      tr = new TabixReader[vcfFiles.size()];
+      vcfReaders = new AbstractVCFReader[vcfFiles.size()];
       header = new String[vcfFiles.size()];
       
       for(int i=0; i<vcfFiles.size(); i++)
       {
-        header[i] = readHeader(vcfFiles.get(i));
-        tr[i] = new TabixReader(vcfFiles.get(i));
+        header[i] = readHeader(vcfFiles.get(i), i);
       }
     }
     catch(java.lang.UnsupportedClassVersionError err)
@@ -200,10 +201,6 @@ public class VCFview extends JPanel
       JOptionPane.showMessageDialog(null, 
           "This requires Java 1.6 or higher.", 
           "Check Java Version", JOptionPane.WARNING_MESSAGE);
-    }
-    catch (IOException e)
-    {
-      e.printStackTrace();
     }
     
     final JScrollPane jspView = new JScrollPane(this, 
@@ -327,13 +324,13 @@ public class VCFview extends JPanel
       topPanel.add(zoomOut);
     }
     
-    final JComboBox combo = new JComboBox(tr[0].getmSeq());
+    final JComboBox combo = new JComboBox(vcfReaders[0].getSeqNames());
     
-    if(tr[0].getmSeq().length > 1)
+    if(vcfReaders[0].getSeqNames().length > 1)
       combo.addItem("Combine References");
     
     if(chr == null)
-      this.chr = tr[0].getmSeq()[0];
+      this.chr = vcfReaders[0].getSeqNames()[0];
 
     combo.setSelectedItem(this.chr);
     combo.setEditable(false);
@@ -400,32 +397,22 @@ public class VCFview extends JPanel
       {
         FileSelectionDialog fileSelection = new FileSelectionDialog(
             null, true, "VCFview", "VCF");
-        List<String> vcfFileList = fileSelection.getFiles(".*\\.vcf(\\.gz)*$");
+        List<String> vcfFileList = fileSelection.getFiles(VCFFILE_SUFFIX);
         vcfFiles.addAll(vcfFileList);
 
         int count = vcfFileList.size();
-        int oldSize = tr.length;
+        int oldSize = vcfReaders.length;
         
-        TabixReader[] trTmp = new TabixReader[count + tr.length];
-        System.arraycopy(tr, 0, trTmp, 0, tr.length);
-        tr = trTmp;
+        AbstractVCFReader[] trTmp = new AbstractVCFReader[count + vcfReaders.length];
+        System.arraycopy(vcfReaders, 0, trTmp, 0, vcfReaders.length);
+        vcfReaders = trTmp;
         
-        String[] hdTmp = new String[count + tr.length];
+        String[] hdTmp = new String[count + vcfReaders.length];
         System.arraycopy(header, 0, hdTmp, 0, header.length);
         header = hdTmp;
         
-        try
-        {
-          for (int i = 0; i < vcfFileList.size(); i++)
-          {
-            header[i+oldSize] = readHeader(vcfFileList.get(i));
-            tr[i+oldSize] = new TabixReader(vcfFileList.get(i));
-          }
-        }
-        catch (IOException ioe)
-        {
-          ioe.printStackTrace();
-        }
+        for (int i = 0; i < vcfFileList.size(); i++)
+          header[i+oldSize] = readHeader(vcfFileList.get(i), i+oldSize);
 
         setDisplay();
         repaint();
@@ -601,7 +588,7 @@ public class VCFview extends JPanel
    * @param fileName
    * @return
    */
-  private String readHeader(final String fileName)
+  private String readHeader(final String fileName, int index)
   {
     StringBuffer buff = new StringBuffer();
     buff.append(fileName+"\n");
@@ -609,14 +596,10 @@ public class VCFview extends JPanel
     {
       if(IOUtils.isBCF(fileName))
       {
-        JOptionPane.showMessageDialog(null, 
-            "Looks like a BCF formated file.\n"+
-            "Convert to VCF and use bgzip and tabix\n"+
-            "to compress and index respectively.", 
-            "Unsupported Format", 
-            JOptionPane.WARNING_MESSAGE);
+        vcfReaders[index] = new BCFReader(new File(vcfFiles.get(index)));
+        return ((BCFReader)vcfReaders[index]).headerToString();
       }
-      
+
       BlockCompressedInputStream is = 
         new BlockCompressedInputStream(new FileInputStream(fileName));
       String line;
@@ -630,11 +613,14 @@ public class VCFview extends JPanel
         
         buff.append(line+"\n");
       }
+      
+      vcfReaders[index] = new TabixReader(fileName);
     }
     catch (IOException e)
     {
       e.printStackTrace();
     }
+    
     return buff.toString();
   }
   
@@ -689,7 +675,7 @@ public class VCFview extends JPanel
     
     if(offsetLengths == null)
     {   
-      String[] contigs = tr[0].getmSeq();
+      String[] contigs = vcfReaders[0].getSeqNames();
       FeatureVector features = entryGroup.getAllFeatures();
       offsetLengths = new Hashtable<String, Integer>(contigs.length);
       for(int i=0; i<contigs.length; i++)
@@ -728,11 +714,11 @@ public class VCFview extends JPanel
     drawSelectionRange((Graphics2D)g, pixPerBase, start, end);
 
     FeatureVector features = getCDSFeaturesInRange(start, end);
-    for (int i = 0; i < tr.length; i++)
+    for (int i = 0; i < vcfReaders.length; i++)
     {
       if(concatSequences) 
       {
-        String[] contigs = tr[0].getmSeq();
+        String[] contigs = vcfReaders[0].getSeqNames();
         for(int j=0; j<contigs.length; j++)
         {
           int offset = getSequenceOffset(contigs[j]);
@@ -750,7 +736,7 @@ public class VCFview extends JPanel
               thisStart = 1;
             int thisEnd   = end - offset;
             
-            drawRegion(g, contigs[j], thisStart+"-"+thisEnd, i, start, pixPerBase, features); 
+            drawRegion(g, contigs[j], thisStart, thisEnd, i, start, pixPerBase, features); 
           }
         }
 
@@ -760,7 +746,7 @@ public class VCFview extends JPanel
         int thisStart = start;
         if(thisStart < 1)
           thisStart = 1;
-        drawRegion(g, chr, thisStart+"-"+end, i, start, pixPerBase, features); 
+        drawRegion(g, chr, thisStart, end, i, start, pixPerBase, features); 
       }
     }
 
@@ -770,29 +756,55 @@ public class VCFview extends JPanel
   
   private void drawRegion(Graphics g,
                           String chr,
-                          String region,
+                          int sbeg,
+                          int send,
                           int i, 
                           int start, 
                           float pixPerBase, 
                           FeatureVector features) 
   {
     String s;
-    TabixReader.Iterator iter = tr[i].query(chr+":"+region); // get the iterator
-    if (iter == null)
-      return;
-    try
+    
+    if(vcfReaders[i] instanceof BCFReader)
     {
-      while ((s = iter.next()) != null)
+      BCFReader bcfReader = (BCFReader)vcfReaders[i];
+      int bid = bcfReader.getSeqIndex(chr);
+      long off = bcfReader.queryIndex(bid, sbeg);
+
+      try
       {
-        VCFRecord vcfRecord = VCFRecord.parse(s);
-        drawVariantCall(g, vcfRecord, start, i, pixPerBase, features);
+        bcfReader.seek(off);
+        VCFRecord bcfRecord;
+
+        while( (bcfRecord = bcfReader.next(bid, sbeg, send)) != null )
+          drawVariantCall(g, bcfRecord, start, i, pixPerBase, features);
+      }
+      catch (IOException e)
+      {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
       }
     }
-    catch (IOException e)
+    else
     {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }  
+      TabixReader.Iterator iter = 
+        ((TabixReader)vcfReaders[i]).query(chr+":"+sbeg+"-"+send); // get the iterator
+      if (iter == null)
+        return;
+      try
+      {
+        while ((s = iter.next()) != null)
+        {
+          VCFRecord vcfRecord = VCFRecord.parse(s);
+          drawVariantCall(g, vcfRecord, start, i, pixPerBase, features);
+        }
+      }
+      catch (IOException e)
+      {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+    }
   }
   
   private FeatureVector getCDSFeaturesInRange(int start, int end)
@@ -998,6 +1010,8 @@ public class VCFview extends JPanel
       g.setColor(Color.blue);
     else if(record.alt.equals("T") && record.ref.length() == 1)
       g.setColor(Color.black);
+    else if(record.alt.equals(".") && record.ref.length() == 1)
+      g.setColor(Color.magenta);
     else
     {
       Matcher m = multiAllelePattern.matcher(record.alt);
@@ -1074,6 +1088,8 @@ public class VCFview extends JPanel
             
             try
             {
+              if(codonStart+3 > feature.getBases().length())
+                return 0;
               char codon[] = feature.getBases().substring(codonStart,
                   codonStart + 3).toLowerCase().toCharArray();
 
@@ -1127,11 +1143,11 @@ public class VCFview extends JPanel
     int end   = start+nbasesInView;
     FeatureVector features = getCDSFeaturesInRange(start, end);
     
-    for (int i = 0; i < tr.length; i++)
+    for (int i = 0; i < vcfReaders.length; i++)
     {
       if(concatSequences) 
       {
-        String[] contigs = tr[0].getmSeq();
+        String[] contigs = vcfReaders[0].getSeqNames();
         for(int j=0; j<contigs.length; j++)
         {
           int offset = getSequenceOffset(contigs[j]);
@@ -1148,7 +1164,7 @@ public class VCFview extends JPanel
             if(thisStart < 1)
               thisStart = 1;
             int thisEnd   = end - offset;
-            searchRegion(contigs[j]+":"+thisStart+"-"+thisEnd, i, mousePoint, features, start, pixPerBase);
+            searchRegion(contigs[j], thisStart, thisEnd, i, mousePoint, features, start, pixPerBase);
           }
         }
       } 
@@ -1157,30 +1173,53 @@ public class VCFview extends JPanel
         int thisStart = start;
         if(thisStart < 1)
           thisStart = 1;
-        searchRegion(chr+":"+thisStart+"-"+end, i, mousePoint, features, start, pixPerBase);
+        searchRegion(chr, thisStart, end, i, mousePoint, features, start, pixPerBase);
       }
     }
   }
   
-  private void searchRegion(String region, int i, Point mousePoint, FeatureVector features,
+  private void searchRegion(String chr, int sbeg, int send, int i, 
+                            Point mousePoint, FeatureVector features,
                             int start, float pixPerBase) 
   {
-    TabixReader.Iterator iter = tr[i].query(region); // get the iterator
-    if (iter == null)
-      return;
-    try
-    { 
-      String s;
-      while ((s = iter.next()) != null)
+    if(vcfReaders[i] instanceof BCFReader)
+    {
+      BCFReader bcfReader = (BCFReader)vcfReaders[i];
+      int bid = bcfReader.getSeqIndex(chr);
+      long off = bcfReader.queryIndex(bid, sbeg);
+      try
       {
-        VCFRecord vcfRecord = VCFRecord.parse(s);
-        isMouseOver(mousePoint, vcfRecord, features, i, start, pixPerBase);
+        bcfReader.seek(off);
+        VCFRecord bcfRecord;
+        while( (bcfRecord = bcfReader.next(bid, sbeg, send)) != null )
+          isMouseOver(mousePoint, bcfRecord, features, i, start, pixPerBase);
+      }
+      catch (IOException e)
+      {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
       }
     }
-    catch (IOException e)
+    else
     {
-      e.printStackTrace();
-    }  
+      TabixReader.Iterator iter = 
+        ((TabixReader)vcfReaders[i]).query(chr+":"+sbeg+"-"+send); // get the iterator
+      if (iter == null)
+        return;
+      try
+      { 
+        String s;
+        while ((s = iter.next()) != null)
+        {
+          VCFRecord vcfRecord = VCFRecord.parse(s);
+          isMouseOver(mousePoint, vcfRecord, features, i, start, pixPerBase);
+        }
+      }
+      catch (IOException e)
+      {
+        e.printStackTrace();
+      }
+    }
   }
   
   private void isMouseOver(Point mousePoint, 
@@ -1488,7 +1527,7 @@ public class VCFview extends JPanel
    private void setDisplay()
    {
      Dimension d = new Dimension();
-     d.setSize(nbasesInView*getPixPerBaseByWidth(), (tr.length+1)*(LINE_HEIGHT+5));
+     d.setSize(nbasesInView*getPixPerBaseByWidth(), (vcfReaders.length+1)*(LINE_HEIGHT+5));
      setPreferredSize(d);
    }
    
@@ -1513,7 +1552,7 @@ public class VCFview extends JPanel
       System.setProperty("default_directory", System.getProperty("user.dir"));
       FileSelectionDialog fileSelection = new FileSelectionDialog(
           null, true, "VCFview", "VCF");
-      vcfFileList = fileSelection.getFiles(".*\\.[bv]{1}cf(\\.gz)*$");
+      vcfFileList = fileSelection.getFiles(VCFFILE_SUFFIX);
       reference = fileSelection.getReferenceFile();
       if(reference.equals(""))
         reference = null;
