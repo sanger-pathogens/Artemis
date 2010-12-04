@@ -91,6 +91,8 @@ class VCFRecord
    */
   private String getSampleDataString()
   {
+    if(data == null)
+      return "";
     StringBuffer buff = new StringBuffer();
     for(int i=0; i<data.length; i++)       // loop over samples
     {
