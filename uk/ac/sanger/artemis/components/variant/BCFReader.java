@@ -170,7 +170,7 @@ class BCFReader
   private VCFRecord readVCFRecord() throws IOException
   {
     VCFRecord bcfRecord = new VCFRecord();
-    bcfRecord.seqID = seqNames.get(readInt(is));    
+    bcfRecord.chrom = seqNames.get(readInt(is));    
     bcfRecord.pos = readInt(is)+1;
     bcfRecord.quality = readFloat(is);
     
