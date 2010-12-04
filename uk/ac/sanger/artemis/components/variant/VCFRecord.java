@@ -23,9 +23,6 @@
 
 package uk.ac.sanger.artemis.components.variant;
 
-import java.util.HashMap;
-import java.util.Iterator;
-
 class VCFRecord
 {
   protected String ID;
@@ -37,14 +34,32 @@ class VCFRecord
   protected float quality;
   protected String info;
   protected String format;
-  protected HashMap<String, String> data = new HashMap<String, String>();
+  protected String data[][];
   
   public String toString()
   {
+    return seqID+"\t"+pos+"\t"+ID+"\t"+ref+"\t"+alt+"\t"+quality+
+           "\t"+filter+"\t"+info+"\t"+format+"\t"+getSampleDataString();
+  }
+  
+  /**
+   * Return the sample data as a tab-delimited string
+   * @return
+   */
+  private String getSampleDataString()
+  {
     StringBuffer buff = new StringBuffer();
-    Iterator<String> it = data.values().iterator();
-    while(it.hasNext())
-      buff.append(it.next()+ ( (it.hasNext()) ? ":" : "" ) );
-    return seqID+"\t"+pos+"\t"+ID+"\t"+ref+"\t"+alt+"\t"+quality+"\t"+filter+"\t"+info+"\t"+format+"\t"+buff.toString();
+    for(int i=0; i<data.length; i++)       // loop over samples
+    {
+      for(int j=0; j<data[i].length; j++)  // loop over values
+      {
+        buff.append(data[i][j]);
+        if(j<data[i].length-1)
+          buff.append(":");
+      }
+      if(i<data.length-1)
+        buff.append("\t");
+    }
+    return buff.toString();
   }
 }

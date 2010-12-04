@@ -187,22 +187,28 @@ class BCFReader
         nc = 1;
 
       String fmts[] = bcfRecord.format.split(":");
-      for(int j=0; j<fmts.length; j++)
+      bcfRecord.data = new String[nsamples][fmts.length];
+      
+      for(int j=0; j<nsamples; j++)
       {
-        int nb = getByteSize(fmts[j],nc);
-        str = new byte[nb];
-        is.read(str);
+        for(int k=0; k<fmts.length; k++)
+        {
+          int nb = getByteSize(fmts[k],nc);
+          str = new byte[nb];
+          is.read(str);
         
-        final String value;
-        if(fmts[j].equals("GT"))
-          value = getGTString(str[0]);
-        else if(fmts[j].equals("PL"))
-          value = getPLString(str, nc);
-        else if(fmts[j].equals("DP")||fmts[j].equals("SP")||fmts[j].equals("GQ"))
-          value = Integer.toString(byteToInt(str[0]));
-        else
-          value = "";
-        bcfRecord.data.put(fmts[j], value);
+          final String value;
+          if(fmts[k].equals("GT"))
+            value = getGTString(str[0]);
+          else if(fmts[k].equals("PL"))
+            value = getPLString(str, nc);
+          else if(fmts[k].equals("DP")||fmts[k].equals("SP")||fmts[k].equals("GQ"))
+            value = Integer.toString(byteToInt(str[0]));
+          else
+            value = "";
+  
+          bcfRecord.data[j][k] = value;
+        }
       }
       
     }
