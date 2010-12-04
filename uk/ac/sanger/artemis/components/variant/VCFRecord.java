@@ -29,7 +29,7 @@ class VCFRecord
   protected String alt;
   protected String ref;
   protected String filter;
-  protected String seqID;
+  protected String chrom;
   protected int pos;
   protected float quality;
   protected String info;
@@ -38,8 +38,43 @@ class VCFRecord
   
   public String toString()
   {
-    return seqID+"\t"+pos+"\t"+ID+"\t"+ref+"\t"+alt+"\t"+quality+
+    return chrom+"\t"+pos+"\t"+ID+"\t"+ref+"\t"+alt+"\t"+quality+
            "\t"+filter+"\t"+info+"\t"+format+"\t"+getSampleDataString();
+  }
+  
+  /**
+   * Parse a VCF line and return a VCFRecord
+   * @param line
+   * @return
+   */
+  protected static VCFRecord parse(String line)
+  {
+    VCFRecord rec = new VCFRecord();
+    String parts[] = line.split("\\t");
+
+    rec.chrom = parts[0];
+    rec.pos   = Integer.parseInt(parts[1]);
+    rec.ID    = parts[2];
+    rec.ref   = parts[3];
+    rec.alt   = parts[4];
+    rec.quality = Float.parseFloat(parts[5]);
+    rec.filter  = parts[6];
+    rec.info    = parts[7];
+    
+    if(parts.length > 9)
+    {
+      rec.format  = parts[8].trim();
+      int nsamples = parts.length-9;
+      int nfmt = rec.format.split(":").length;
+      
+      rec.data = new String[nsamples][nfmt];
+      for(int i=0; i<nsamples; i++)
+      {
+        String data[] = parts[9+i].split(":");
+        rec.data[i] = data;
+      }
+    }
+    return rec;
   }
   
   /**
