@@ -178,18 +178,10 @@ class BCFReader
     byte[] str = new byte[slen];
     is.read(str);
 
-    String parts[] = getParts(str);
+    getParts(str, bcfRecord);
     
-    bcfRecord.ID  = parts[0];
-    bcfRecord.ref = parts[1];
-    bcfRecord.alt = parts[2];
-    String fmt = parts[parts.length-1];
-
-    if(formatPattern.matcher(fmt).matches())
-    {
-      bcfRecord.info = parts[parts.length-2];
-      bcfRecord.format = parts[parts.length-1];
-      
+    if(formatPattern.matcher(bcfRecord.format).matches())
+    {     
       int nc  = 3;
       if(bcfRecord.alt.equals("."))
         nc = 1;
@@ -214,40 +206,50 @@ class BCFReader
       }
       
     }
-    else
-      bcfRecord.info = parts[parts.length-1];
     
     return bcfRecord;
   }
   
   /**
-   * Make a string from the byte array. Expanding NULL padding.
+   * Make a string from the byte array (expanding NULL padding) to
+   * determine the parts:- ID+REF+ALT+FILTER+INFO+FORMAT.
    * @param b
    * @return
    */
-  private String[] getParts(byte[] b)
+  private void getParts(byte[] b, VCFRecord bcfRecord)
   {
     StringBuffer buff = new StringBuffer();
+
     for(int i=0; i<b.length; i++)
     {
-      if(i == 0 && b[i] == 0)
-      {
-        buff.append(". ");
-        continue;
-      }
-
       if(b[i] == 0)
       {
-        if(i > 0 && b[i-1] == 0 && b[i+1] == 0)
-          buff.append(".");
+        if(i == 0)
+        {
+          buff.append(". ");
+          continue;
+        }
+        
+        if(b[i-1] == 0 || (i < b.length-1 && b[i+1] == 0))
+        {
+          i++;
+          buff.append(" . ");
+        }
         else
           buff.append(" ");
+        continue;
       }
-      else
-        buff.append((char)b[i]);
+      buff.append((char)b[i]);
     }
     
-    return buff.toString().split(" ");
+    String parts[] = buff.toString().replace("  ", " ").split(" ");
+
+    bcfRecord.ID   = parts[0];
+    bcfRecord.ref  = parts[1];
+    bcfRecord.alt  = parts[2];
+    bcfRecord.filter = parts[3];
+    bcfRecord.info   = parts[4];
+    bcfRecord.format = parts[5];
   }
   
   /**
