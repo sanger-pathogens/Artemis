@@ -487,7 +487,7 @@ public class EntryEdit extends JFrame
       String ngs[] = System.getProperty("bam").split("[\\s,]");
       FileSelectionDialog fileChooser = new FileSelectionDialog(ngs);
       List<String> listBams = fileChooser.getFiles(".*\\.bam$");
-      List<String> vcfFiles = fileChooser.getFiles(".*\\.vcf(\\.gz)*$");
+      List<String> vcfFiles = fileChooser.getFiles(VCFview.VCFFILE_SUFFIX);
       loadBamAndVcf(listBams, vcfFiles);
     }
   }
@@ -1316,7 +1316,7 @@ public class EntryEdit extends JFrame
           FileSelectionDialog fileChooser = new FileSelectionDialog(
               null, false, "BAM / VCF View", "BAM / VCF");
           List<String> listBams = fileChooser.getFiles(".*\\.bam$");
-          List<String> vcfFiles = fileChooser.getFiles(".*\\.vcf(\\.gz)*$");
+          List<String> vcfFiles = fileChooser.getFiles(VCFview.VCFFILE_SUFFIX);
           loadBamAndVcf(listBams, vcfFiles);
         }
       });
