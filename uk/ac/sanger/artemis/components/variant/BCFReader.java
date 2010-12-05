@@ -317,7 +317,7 @@ class BCFReader extends AbstractVCFReader
    */
   private String getGTString(byte b)
   {
-    return ((b >> 3) + ( (b >> 6 == 1) ? "|" : "/") + byteToInt(b));
+    return ((b >> 3 & 7) + ( ((b >> 6 & 1 )== 1 ) ? "|" : "/") + (b & 7));
   }
  
   private int byteToInt(byte b)
