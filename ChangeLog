@@ -1,4 +1,6 @@
 Version 12.+
+	Add support for reading in indexed BCF (Binary VCF) files.
+	
 	Memory optimisation of codon caching, reducing the memory footprint.
 	
 	It is now possible to add BAM / VCF files from the command line using the 
