@@ -25,17 +25,22 @@ package uk.ac.sanger.artemis.components.variant;
 
 class VCFRecord
 {
-  protected String ID;
-  protected String alt;
-  protected String ref;
-  protected String filter;
-  protected String chrom;
-  protected int pos;
-  protected float quality;
-  protected String info;
-  protected String format;
-  protected String data[][];
+  private String chrom;
+  private int pos;
+  private String ID;
+  private String ref;
+  private String alt;
+  private float quality;
+  private String filter;
+  private String info;
+  private String format;
+  private String data[][];
   
+
+  /**
+   * Return the string representation of the VCF record as a
+   * tab-delimited string.
+   */
   public String toString()
   {
     return chrom+"\t"+pos+"\t"+ID+"\t"+ref+"\t"+alt+"\t"+quality+
@@ -106,5 +111,165 @@ class VCFRecord
         buff.append("\t");
     }
     return buff.toString();
+  }
+
+  /**
+   * @return the chrom
+   */
+  protected String getChrom()
+  {
+    return chrom;
+  }
+
+  /**
+   * @param chrom the chrom to set
+   */
+  protected void setChrom(String chrom)
+  {
+    this.chrom = chrom;
+  }
+
+  /**
+   * @return the pos
+   */
+  protected int getPos()
+  {
+    return pos;
+  }
+
+  /**
+   * @param pos the pos to set
+   */
+  protected void setPos(int pos)
+  {
+    this.pos = pos;
+  }
+
+  /**
+   * @return the iD
+   */
+  protected String getID()
+  {
+    return ID;
+  }
+
+  /**
+   * @param iD the iD to set
+   */
+  protected void setID(String iD)
+  {
+    ID = iD;
+  }
+
+  /**
+   * @return the ref
+   */
+  protected String getRef()
+  {
+    return ref;
+  }
+
+  /**
+   * @param ref the ref to set
+   */
+  protected void setRef(String ref)
+  {
+    this.ref = ref;
+  }
+
+  /**
+   * @return the alt
+   */
+  protected String getAlt()
+  {
+    return alt;
+  }
+
+  /**
+   * @param alt the alt to set
+   */
+  protected void setAlt(String alt)
+  {
+    this.alt = alt;
+  }
+
+  /**
+   * @return the quality
+   */
+  protected float getQuality()
+  {
+    return quality;
+  }
+
+  /**
+   * @param quality the quality to set
+   */
+  protected void setQuality(float quality)
+  {
+    this.quality = quality;
+  }
+
+  /**
+   * @return the filter
+   */
+  protected String getFilter()
+  {
+    return filter;
+  }
+
+  /**
+   * @param filter the filter to set
+   */
+  protected void setFilter(String filter)
+  {
+    this.filter = filter;
+  }
+
+  /**
+   * @return the info
+   */
+  protected String getInfo()
+  {
+    return info;
+  }
+
+  /**
+   * @param info the info to set
+   */
+  protected void setInfo(String info)
+  {
+    this.info = info;
+  }
+
+  /**
+   * @return the format
+   */
+  protected String getFormat()
+  {
+    return format;
+  }
+
+  /**
+   * @param format the format to set
+   */
+  protected void setFormat(String format)
+  {
+    this.format = format;
+  }
+
+  /**
+   * @return the data
+   */
+  protected String[][] getData()
+  {
+    return data;
+  }
+
+  /**
+   * @param data the data to set
+   */
+  protected void setData(String[][] data)
+  {
+    this.data = data;
   }
 }
