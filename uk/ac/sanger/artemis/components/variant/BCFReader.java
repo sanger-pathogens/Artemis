@@ -211,7 +211,7 @@ class BCFReader extends AbstractVCFReader
           else if(fmts[k].equals("DP")||fmts[k].equals("SP")||fmts[k].equals("GQ"))
             value = Integer.toString(byteToInt(str[0]));
           else
-            value = "";
+            value = new String(str);
   
           bcfRecord.getData()[j][k] = value;
         }
