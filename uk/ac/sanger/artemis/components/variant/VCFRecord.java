@@ -91,6 +91,20 @@ class VCFRecord
   }
   
   /**
+   * For example DP or MQ
+   * @param key
+   * @return
+   */
+  protected String getInfoValue(String key)
+  {
+    String parts[] = info.split(";");
+    for(int i=0; i<parts.length; i++)
+      if(parts[i].startsWith(key+"="))
+        return parts[i].substring(key.length()+1);
+    return null;
+  }
+  
+  /**
    * Return the sample data as a tab-delimited string
    * @return
    */
