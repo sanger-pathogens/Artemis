@@ -26,10 +26,7 @@ package uk.ac.sanger.artemis.components.variant;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Writer;
 import java.util.List;
-
-import javax.swing.JOptionPane;
 
 import uk.ac.sanger.artemis.EntryGroup;
 import uk.ac.sanger.artemis.Feature;
@@ -47,17 +44,22 @@ class IOUtils
    * Write filtered uncompressed VCF. Uses the filter in VCFview to
    * determine if variants are written.
    * @param vcfFileName
-   * @param writer
    * @param vcfView
    * @param features
    */
   protected static void writeVCF(final String vcfFileName, 
-                                 final Writer writer, 
                                  final VCFview vcfView,
                                  final FeatureVector features)
   {
     try
     {
+      FileWriter writer = new FileWriter(vcfFileName+".filter");
+      if(IOUtils.isBCF(vcfFileName))
+      {
+        BCFReader.writeVCF(writer, vcfFileName);
+        return;
+      }
+      
       TabixReader tr = new TabixReader(vcfFileName);
       String line;
       while ((line = tr.readLine()) != null)
@@ -69,8 +71,8 @@ class IOUtils
         }
         
         VCFRecord record = VCFRecord.parse(line);
-        int basePosition = record.pos + vcfView.getSequenceOffset(record.chrom);
-        if( !vcfView.showVariant(record.ref, record.alt, features, basePosition, record.quality) )
+        int basePosition = record.getPos() + vcfView.getSequenceOffset(record.getChrom());
+        if( !vcfView.showVariant(record.getRef(), record.getAlt(), features, basePosition, record.getQuality()) )
           continue;
         writer.write(line+'\n');
       }
@@ -106,24 +108,14 @@ class IOUtils
         features.add (current_feature);
     }
     
-    try
+    String filterFiles = "";
+    for(int i=0; i<vcfFiles.size(); i++)
     {
-      String filterFiles = "";
-      for(int i=0; i<vcfFiles.size(); i++)
-      {
-
-        FileWriter writer = new FileWriter(vcfFiles.get(i)+".filter");
-        IOUtils.writeVCF(vcfFiles.get(i), writer, vcfView, features);
-        filterFiles += vcfFiles.get(i)+".filter\n";
-      }
-
-      new MessageDialog (null, "Saved Files", filterFiles, false);
+      IOUtils.writeVCF(vcfFiles.get(i), vcfView, features);
+      filterFiles += vcfFiles.get(i)+".filter\n";
     }
-    catch (IOException e1)
-    {
-      JOptionPane.showMessageDialog(vcfView, e1.getMessage(),
-          "Error", JOptionPane.ERROR_MESSAGE);
-    }
+
+    new MessageDialog (null, "Saved Files", filterFiles, false);
   }
 
   /**
