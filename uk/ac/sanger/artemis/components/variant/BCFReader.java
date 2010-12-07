@@ -26,6 +26,7 @@ package uk.ac.sanger.artemis.components.variant;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.Writer;
 import java.util.List;
 import java.util.Vector;
 import java.util.regex.Pattern;
@@ -66,21 +67,21 @@ class BCFReader extends AbstractVCFReader
     is.seek(off);
   }
   
-  protected VCFRecord next(int bid, int beg, int end) throws IOException
+  protected VCFRecord next(int beg, int end) throws IOException
   {
     try
     {
       VCFRecord bcfRecord = readVCFRecord();
-      if(bcfRecord.pos >= beg && bcfRecord.pos <= end)
+      if(bcfRecord.getPos() >= beg && bcfRecord.getPos() <= end)
         return bcfRecord;
-      else if(bcfRecord.pos < beg)
+      else if(bcfRecord.getPos() < beg)
       {
-        while( (bcfRecord = readVCFRecord()).pos <= beg )
+        while( (bcfRecord = readVCFRecord()).getPos() <= beg )
         {
-          if(bcfRecord.pos >= beg && bcfRecord.pos <= end)
+          if(bcfRecord.getPos() >= beg && bcfRecord.getPos() <= end)
             return bcfRecord;
         }
-        if(bcfRecord.pos >= beg && bcfRecord.pos <= end)
+        if(bcfRecord.getPos() >= beg && bcfRecord.getPos() <= end)
           return bcfRecord;
       }
     } 
@@ -173,9 +174,9 @@ class BCFReader extends AbstractVCFReader
   private VCFRecord readVCFRecord() throws IOException
   {
     VCFRecord bcfRecord = new VCFRecord();
-    bcfRecord.chrom = seqNames[readInt(is)];    
-    bcfRecord.pos = readInt(is)+1;
-    bcfRecord.quality = readFloat(is);
+    bcfRecord.setChrom( seqNames[readInt(is)] );    
+    bcfRecord.setPos ( readInt(is)+1 );
+    bcfRecord.setQuality( readFloat(is) );
     
     int slen = readInt(is);
     byte[] str = new byte[slen];
@@ -183,16 +184,16 @@ class BCFReader extends AbstractVCFReader
 
     getParts(str, bcfRecord);
     
-    if(formatPattern.matcher(bcfRecord.format).matches())
+    if(formatPattern.matcher(bcfRecord.getFormat()).matches())
     {
       int n_alleles = bcfRecord.getNumAlleles();
       int nc  = (int) (n_alleles * ((float)(((float)n_alleles+1.f)/2.f)));
 
-      if(bcfRecord.alt.equals("."))
+      if(bcfRecord.getAlt().equals("."))
         nc = 1;
 
-      String fmts[] = bcfRecord.format.split(":");
-      bcfRecord.data = new String[nsamples][fmts.length];
+      String fmts[] = bcfRecord.getFormat().split(":");
+      bcfRecord.setData( new String[nsamples][fmts.length] );
       
       for(int j=0; j<nsamples; j++)
       {
@@ -212,7 +213,7 @@ class BCFReader extends AbstractVCFReader
           else
             value = "";
   
-          bcfRecord.data[j][k] = value;
+          bcfRecord.getData()[j][k] = value;
         }
       }
       
@@ -255,12 +256,12 @@ class BCFReader extends AbstractVCFReader
     
     String parts[] = buff.toString().replace("  ", " ").split(" ");
 
-    bcfRecord.ID   = parts[0];
-    bcfRecord.ref  = parts[1];
-    bcfRecord.alt  = parts[2];
-    bcfRecord.filter = parts[3];
-    bcfRecord.info   = parts[4];
-    bcfRecord.format = parts[5];
+    bcfRecord.setID( parts[0] );
+    bcfRecord.setRef( parts[1] );
+    bcfRecord.setAlt( parts[2] );
+    bcfRecord.setFilter( parts[3] );
+    bcfRecord.setInfo( parts[4] );
+    bcfRecord.setFormat( parts[5] );
   }
   
   /**
@@ -323,6 +324,20 @@ class BCFReader extends AbstractVCFReader
   private int byteToInt(byte b)
   {
     return (int)(b & 0xFF);
+  }
+  
+  protected static void writeVCF(Writer writer, String vcfFileName) throws IOException
+  {
+    BCFReader reader = new BCFReader(new File(vcfFileName));
+    writer.write( reader.headerToString()+"\n" );
+    
+    int sbeg = 0;
+    int send = Integer.MAX_VALUE;
+    VCFRecord record;
+    
+    while( (record = reader.next(sbeg, send)) != null)
+      writer.write(record.toString()+"\n");
+    writer.close();
   }
   
   protected List<BCFIndex> loadIndex() throws IOException
@@ -402,7 +417,7 @@ class BCFReader extends AbstractVCFReader
 
       System.out.println(reader.headerToString());
       VCFRecord bcfRecord;
-      while( (bcfRecord = reader.next(bid, sbeg, send)) != null )
+      while( (bcfRecord = reader.next(sbeg, send)) != null )
         System.out.println(bcfRecord.toString());
       
       reader.close();

@@ -533,7 +533,7 @@ public class VCFview extends JPanel
       {
         VCFview.this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
         IOUtils.export(entryGroup, vcfFiles, VCFview.this);
-        VCFview.this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
+        VCFview.this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
       }
     });
     popup.add(exportVCF);
@@ -776,8 +776,11 @@ public class VCFview extends JPanel
         bcfReader.seek(off);
         VCFRecord bcfRecord;
 
-        while( (bcfRecord = bcfReader.next(bid, sbeg, send)) != null )
-          drawVariantCall(g, bcfRecord, start, i, pixPerBase, features);
+        while( (bcfRecord = bcfReader.next(sbeg, send)) != null )
+        {
+          if(bcfRecord.getChrom().equals(chr))
+            drawVariantCall(g, bcfRecord, start, i, pixPerBase, features);
+        }
       }
       catch (IOException e)
       {
@@ -991,30 +994,30 @@ public class VCFview extends JPanel
     //String parts[] = line.split("\\t");
     //String parts[] = tabPattern.split(line, 0);
     
-    int basePosition = record.pos + getSequenceOffset(record.chrom);
+    int basePosition = record.getPos() + getSequenceOffset(record.getChrom());
    
-    if( !showVariant(record.ref, record.alt, features, basePosition, record.quality) )
+    if( !showVariant(record.getRef(), record.getAlt(), features, basePosition, record.getQuality()) )
       return;
     
     int pos[] = getScreenPosition(basePosition, pixPerBase, start, index);
 
-    if(isDeletion(record.ref, record.alt))
+    if(isDeletion(record.getRef(), record.getAlt()))
       g.setColor(Color.gray);
-    else if(isInsertion(record.ref, record.alt))
+    else if(isInsertion(record.getRef(), record.getAlt()))
       g.setColor(Color.yellow);
-    else if(record.alt.equals("C") && record.ref.length() == 1)
+    else if(record.getAlt().equals("C") && record.getRef().length() == 1)
       g.setColor(Color.red);
-    else if(record.alt.equals("A") && record.ref.length() == 1)
+    else if(record.getAlt().equals("A") && record.getRef().length() == 1)
       g.setColor(Color.green);
-    else if(record.alt.equals("G") && record.ref.length() == 1)
+    else if(record.getAlt().equals("G") && record.getRef().length() == 1)
       g.setColor(Color.blue);
-    else if(record.alt.equals("T") && record.ref.length() == 1)
+    else if(record.getAlt().equals("T") && record.getRef().length() == 1)
       g.setColor(Color.black);
-    else if(record.alt.equals(".") && record.ref.length() == 1)
+    else if(record.getAlt().equals(".") && record.getRef().length() == 1)
       g.setColor(Color.magenta);
     else
     {
-      Matcher m = multiAllelePattern.matcher(record.alt);
+      Matcher m = multiAllelePattern.matcher(record.getAlt());
       if(m.matches())
       {
         g.setColor(Color.orange);
@@ -1191,8 +1194,11 @@ public class VCFview extends JPanel
       {
         bcfReader.seek(off);
         VCFRecord bcfRecord;
-        while( (bcfRecord = bcfReader.next(bid, sbeg, send)) != null )
-          isMouseOver(mousePoint, bcfRecord, features, i, start, pixPerBase);
+        while( (bcfRecord = bcfReader.next(sbeg, send)) != null )
+        {
+          if(bcfRecord.getChrom().equals(chr))
+            isMouseOver(mousePoint, bcfRecord, features, i, start, pixPerBase);
+        }
       }
       catch (IOException e)
       {
@@ -1228,9 +1234,9 @@ public class VCFview extends JPanel
                            int i, 
                            int start, float pixPerBase)
   {
-    int basePosition = record.pos + getSequenceOffset(record.chrom);
+    int basePosition = record.getPos() + getSequenceOffset(record.getChrom());
 
-    if( !showVariant(record.ref, record.alt, features, basePosition, record.quality) )
+    if( !showVariant(record.getRef(), record.getAlt(), features, basePosition, record.getQuality()) )
       return;
     
     int pos[] = getScreenPosition(basePosition, pixPerBase, start, i);
