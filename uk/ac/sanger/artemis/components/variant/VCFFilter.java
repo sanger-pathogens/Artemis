@@ -21,6 +21,7 @@ public class VCFFilter extends JFrame
   private static int MIN_DP = 0;
   private static float MIN_MQ = 0;
   private static float MIN_AF1 = 0;
+  private static float MAX_CI95 = 10;
   
   /**
    * Filter VCF records by different values in the record, QUAL, DP, MQ and AF1.
@@ -39,7 +40,7 @@ public class VCFFilter extends JFrame
     c.gridx = 0;
     c.anchor = GridBagConstraints.WEST;
     panel.add(new JLabel("Minimum quality score (QUAL):"), c);
-    final JTextField minQuality = new JTextField(Float.toString(MIN_QUALITY), 15);
+    final JTextField minQuality = new JTextField(Float.toString(MIN_QUALITY), 8);
     c.gridx = 1;
     panel.add(minQuality, c);
     
@@ -47,7 +48,7 @@ public class VCFFilter extends JFrame
     c.gridy = c.gridy+1;
     c.gridx = 0;
     panel.add(new JLabel("Minimum combined depth across samples (DP):"), c);
-    final JTextField minDP = new JTextField(Integer.toString(MIN_DP), 15);
+    final JTextField minDP = new JTextField(Integer.toString(MIN_DP), 8);
     c.gridx = 1;
     panel.add(minDP, c);
     
@@ -55,7 +56,7 @@ public class VCFFilter extends JFrame
     c.gridy = c.gridy+1;
     c.gridx = 0;
     panel.add(new JLabel("Minimum RMS mapping quality (MQ):"), c);
-    final JTextField minMQ = new JTextField(Float.toString(MIN_MQ),15);
+    final JTextField minMQ = new JTextField(Float.toString(MIN_MQ),8);
     c.gridx = 1;
     panel.add(minMQ, c);
     
@@ -63,10 +64,18 @@ public class VCFFilter extends JFrame
     c.gridy = c.gridy+1;
     c.gridx = 0;
     panel.add(new JLabel("Minimum site frequency of strongest non-reference allele (AF1):"), c);
-    final JTextField minAF1 = new JTextField(Float.toString(MIN_AF1),15);
+    final JTextField minAF1 = new JTextField(Float.toString(MIN_AF1),8);
     c.gridx = 1;
     panel.add(minAF1, c);
     
+    // max CI95
+    c.gridy = c.gridy+1;
+    c.gridx = 0;
+    panel.add(new JLabel("Maximum 95% confidence interval variation from AF (CI95):"), c);
+    final JTextField maxCI95 = new JTextField(Float.toString(MAX_CI95),8);
+    c.gridx = 1;
+    panel.add(maxCI95, c);
+
     //
     c.gridy = c.gridy+1;
     c.gridx = 0;
@@ -82,6 +91,7 @@ public class VCFFilter extends JFrame
           MIN_DP = Integer.parseInt(minDP.getText());
           MIN_MQ = Float.parseFloat(minMQ.getText());
           MIN_AF1 = Float.parseFloat(minAF1.getText());
+          MAX_CI95 = Float.parseFloat(maxCI95.getText());
           vcfView.repaint();
         }
         catch(NumberFormatException ex)
@@ -141,6 +151,18 @@ public class VCFFilter extends JFrame
       {
         if(VCFFilter.MIN_AF1 > 0 && Float.parseFloat(record.getInfoValue("AF1")) < VCFFilter.MIN_AF1)
           return false;
+      }
+      catch(NullPointerException npe){}
+      
+      
+      try
+      {
+        String vals[] = record.getInfoValue("CI95").split(",");
+        for(int i=0; i<vals.length; i++)
+        {
+          if(VCFFilter.MAX_CI95 < 10 && Float.parseFloat(vals[i]) > VCFFilter.MAX_CI95)
+            return false;
+        }
       }
       catch(NullPointerException npe){}
     }
