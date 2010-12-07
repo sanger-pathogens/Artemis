@@ -154,6 +154,9 @@ public class VCFview extends JPanel
   protected static Pattern tabPattern = Pattern.compile("\t");
   
   public static String VCFFILE_SUFFIX = ".*\\.[bv]{1}cf(\\.gz)*$";
+  
+  public static org.apache.log4j.Logger logger4j = 
+    org.apache.log4j.Logger.getLogger(VCFview.class);
 
   public VCFview(final JFrame frame,
                  final JPanel vcfPanel,
@@ -769,6 +772,12 @@ public class VCFview extends JPanel
     {
       BCFReader bcfReader = (BCFReader)vcfReaders[i];
       int bid = bcfReader.getSeqIndex(chr);
+      if(bid < 0)
+      {
+        logger4j.debug(chr+" NOT FOUND");
+        return;
+      }
+      
       long off = bcfReader.queryIndex(bid, sbeg);
 
       try
@@ -784,7 +793,7 @@ public class VCFview extends JPanel
       }
       catch (IOException e)
       {
-        // TODO Auto-generated catch block
+        logger4j.warn(e.getMessage());
         e.printStackTrace();
       }
     }
@@ -804,7 +813,7 @@ public class VCFview extends JPanel
       }
       catch (IOException e)
       {
-        // TODO Auto-generated catch block
+        logger4j.warn(e.getMessage());
         e.printStackTrace();
       }
     }
@@ -1189,6 +1198,13 @@ public class VCFview extends JPanel
     {
       BCFReader bcfReader = (BCFReader)vcfReaders[i];
       int bid = bcfReader.getSeqIndex(chr);
+      
+      if(bid < 0)
+      {
+        logger4j.debug(chr+" NOT FOUND");
+        return;
+      }
+      
       long off = bcfReader.queryIndex(bid, sbeg);
       try
       {
