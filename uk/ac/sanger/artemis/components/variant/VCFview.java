@@ -785,11 +785,8 @@ public class VCFview extends JPanel
         bcfReader.seek(off);
         VCFRecord bcfRecord;
 
-        while( (bcfRecord = bcfReader.next(sbeg, send)) != null )
-        {
-          if(bcfRecord.getChrom().equals(chr))
-            drawVariantCall(g, bcfRecord, start, i, pixPerBase, features);
-        }
+        while( (bcfRecord = bcfReader.next(chr, sbeg, send)) != null )
+          drawVariantCall(g, bcfRecord, start, i, pixPerBase, features);
       }
       catch (IOException e)
       {
@@ -1210,11 +1207,8 @@ public class VCFview extends JPanel
       {
         bcfReader.seek(off);
         VCFRecord bcfRecord;
-        while( (bcfRecord = bcfReader.next(sbeg, send)) != null )
-        {
-          if(bcfRecord.getChrom().equals(chr))
-            isMouseOver(mousePoint, bcfRecord, features, i, start, pixPerBase);
-        }
+        while( (bcfRecord = bcfReader.next(chr, sbeg, send)) != null )
+          isMouseOver(mousePoint, bcfRecord, features, i, start, pixPerBase);
       }
       catch (IOException e)
       {

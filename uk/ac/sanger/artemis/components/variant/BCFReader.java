@@ -67,17 +67,23 @@ class BCFReader extends AbstractVCFReader
     is.seek(off);
   }
   
-  protected VCFRecord next(int beg, int end) throws IOException
+  protected VCFRecord next(String chr, int beg, int end) throws IOException
   {
     try
     {
       VCFRecord bcfRecord = readVCFRecord();
+      if(chr != null && !bcfRecord.getChrom().equals(chr))
+        return null;
+
       if(bcfRecord.getPos() >= beg && bcfRecord.getPos() <= end)
         return bcfRecord;
       else if(bcfRecord.getPos() < beg)
       {
         while( (bcfRecord = readVCFRecord()).getPos() <= beg )
         {
+          if(chr != null && !bcfRecord.getChrom().equals(chr))
+            return null;
+
           if(bcfRecord.getPos() >= beg && bcfRecord.getPos() <= end)
             return bcfRecord;
         }
@@ -335,7 +341,7 @@ class BCFReader extends AbstractVCFReader
     int send = Integer.MAX_VALUE;
     VCFRecord record;
     
-    while( (record = reader.next(sbeg, send)) != null)
+    while( (record = reader.next(null, sbeg, send)) != null)
       writer.write(record.toString()+"\n");
     writer.close();
   }
@@ -386,9 +392,15 @@ class BCFReader extends AbstractVCFReader
     long offset[] = idx.get(tid).index2_offset;
     int i;
 
-    for(i = beg>>TAD_LIDX_SHIFT; i < idx.get(tid).n && offset[i] == 0; ++i);
-    min_off = (i == idx.get(tid).n)? offset[idx.get(tid).n-1] : offset[i];
-       
+    try
+    {
+      for(i = beg>>TAD_LIDX_SHIFT; i < idx.get(tid).n && offset[i] == 0; ++i);
+      min_off = (i == idx.get(tid).n)? offset[idx.get(tid).n-1] : offset[i];
+    }
+    catch(ArrayIndexOutOfBoundsException e)
+    {
+      return offset[offset.length-1];
+    }
     return min_off;
   }
 
@@ -403,22 +415,36 @@ class BCFReader extends AbstractVCFReader
     {
       int sbeg = 0;
       int send = Integer.MAX_VALUE;
+      String chr = null;
       if(args.length > 1)
       {
-        sbeg = Integer.parseInt(args[1]);
-        send = Integer.parseInt(args[2]);
+        String parts[] = args[1].split(":");
+        chr = parts[0];
+        
+        String rgn[] = parts[1].split("-");
+        sbeg = Integer.parseInt(rgn[0]);
+        send = Integer.parseInt(rgn[1]);
       }
       
       BCFReader reader = new BCFReader(new File(args[0]));
       int bid = 0;
+      if(chr != null)
+        bid = reader.getSeqIndex(chr);
       
       long off = reader.queryIndex(bid, sbeg);
       reader.seek(off);
 
       System.out.println(reader.headerToString());
       VCFRecord bcfRecord;
-      while( (bcfRecord = reader.next(sbeg, send)) != null )
-        System.out.println(bcfRecord.toString());
+      while( (bcfRecord = reader.next(chr, sbeg, send)) != null )
+      {
+        System.out.println(bcfRecord.getChrom());
+        if(chr != null && bcfRecord.getChrom().equals(chr))
+          System.out.println(bcfRecord.toString());
+        else
+          break;
+      }
+          
       
       reader.close();
     }
