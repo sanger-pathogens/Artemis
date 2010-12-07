@@ -72,7 +72,7 @@ class IOUtils
         
         VCFRecord record = VCFRecord.parse(line);
         int basePosition = record.getPos() + vcfView.getSequenceOffset(record.getChrom());
-        if( !vcfView.showVariant(record.getRef(), record.getAlt(), features, basePosition, record.getQuality()) )
+        if( !vcfView.showVariant(record, features, basePosition) )
           continue;
         writer.write(line+'\n');
       }

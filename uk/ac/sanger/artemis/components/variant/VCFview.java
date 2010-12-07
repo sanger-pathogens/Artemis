@@ -145,7 +145,6 @@ public class VCFview extends JPanel
   
   // show variants that do not overlap CDS
   private boolean showNonOverlappings = true;
-  private float MIN_QUALITY = -10;
   
   Hashtable<String, Integer> offsetLengths = null;
   private boolean concatSequences = false;
@@ -505,30 +504,16 @@ public class VCFview extends JPanel
     });
     popup.add(markNewStops);
     
-    final JMenuItem filterByQuality = new JMenuItem("Filter by quality");
-    filterByQuality.addActionListener(new ActionListener(){
+    
+    final JMenuItem byQuality = new JMenuItem("Filter ...");
+    byQuality.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e)
       {
-        //
-        String inputValue = JOptionPane.showInputDialog(null, 
-            "Enter a minimum quality score:", MIN_QUALITY);
-        if(inputValue == null)
-          return;
-        try
-        {
-          MIN_QUALITY = Float.parseFloat(inputValue);
-          repaint();
-        }
-        catch(NumberFormatException ex)
-        {
-          JOptionPane.showMessageDialog(null, 
-              "Number "+inputValue+" not recognised.", 
-              "Format Error", JOptionPane.ERROR_MESSAGE);
-        }
+        new VCFFilter(VCFview.this);
       }
     });
-    popup.add(filterByQuality);
-    
+    popup.add(byQuality);
+    popup.addSeparator();
     
     final JMenuItem exportVCF = new JMenuItem("Export filtered VCF");
     exportVCF.addActionListener(new ActionListener(){
@@ -920,35 +905,28 @@ public class VCFview extends JPanel
     return false;
   }
   
-  protected boolean showVariant(String ref, String variant, FeatureVector features, int basePosition, float quality)
+  protected boolean showVariant(VCFRecord record, FeatureVector features, int basePosition)
   {  
-    if(!showDeletions && isDeletion(ref, variant))
+    if(!showDeletions && isDeletion(record.getRef(), record.getAlt()))
       return false;
     
-    if(!showInsertions && isInsertion(ref, variant))
+    if(!showInsertions && isInsertion(record.getRef(), record.getAlt()))
       return false;
-    
-    try
-    {
-      if(quality < MIN_QUALITY)
-        return false;
-    }
-    catch(NumberFormatException e)
-    {
-      System.err.println(e.getMessage()); 
-    }
+
+    if(!VCFFilter.passFilter(record))
+      return false;
     
     if(!showNonOverlappings && !isOverlappingFeature(features, basePosition))
         return false;
     
     int isSyn = -1;
     if(markNewStops.isSelected() &&
-       !isDeletion(ref, variant) && 
-       !isInsertion(ref, variant) && 
-        variant.length() == 1 && 
-        ref.length() == 1)
+       !isDeletion(record.getRef(), record.getAlt()) && 
+       !isInsertion(record.getRef(), record.getAlt()) && 
+        record.getAlt().length() == 1 && 
+        record.getRef().length() == 1)
     {
-      isSyn = isSynonymous(features, basePosition, variant.toLowerCase().charAt(0));
+      isSyn = isSynonymous(features, basePosition, record.getAlt().toLowerCase().charAt(0));
       if(isSyn == 2)
         markAsNewStop = true;
       else
@@ -956,20 +934,20 @@ public class VCFview extends JPanel
     }
     
     if( (!showSynonymous || !showNonSynonymous) &&
-         !isDeletion(ref, variant) && 
-         !isInsertion(ref, variant) && 
-         variant.length() == 1 && 
-         ref.length() == 1)
+         !isDeletion(record.getRef(), record.getAlt()) && 
+         !isInsertion(record.getRef(), record.getAlt()) && 
+         record.getAlt().length() == 1 && 
+         record.getRef().length() == 1)
     {
       if(isSyn == -1)
-        isSyn = isSynonymous(features, basePosition, variant.toLowerCase().charAt(0));
+        isSyn = isSynonymous(features, basePosition, record.getAlt().toLowerCase().charAt(0));
       
       if( (!showSynonymous && isSyn == 1) ||
           (!showNonSynonymous && isSyn != 1 ) )
         return false;
     }
     
-    if(!showMultiAlleles && multiAllelePattern.matcher(variant).matches())
+    if(!showMultiAlleles && multiAllelePattern.matcher(record.getAlt()).matches())
       return false;
     
     return true;
@@ -1002,7 +980,7 @@ public class VCFview extends JPanel
     
     int basePosition = record.getPos() + getSequenceOffset(record.getChrom());
    
-    if( !showVariant(record.getRef(), record.getAlt(), features, basePosition, record.getQuality()) )
+    if( !showVariant(record, features, basePosition) )
       return;
     
     int pos[] = getScreenPosition(basePosition, pixPerBase, start, index);
@@ -1246,7 +1224,7 @@ public class VCFview extends JPanel
   {
     int basePosition = record.getPos() + getSequenceOffset(record.getChrom());
 
-    if( !showVariant(record.getRef(), record.getAlt(), features, basePosition, record.getQuality()) )
+    if( !showVariant(record, features, basePosition) )
       return;
     
     int pos[] = getScreenPosition(basePosition, pixPerBase, start, i);
