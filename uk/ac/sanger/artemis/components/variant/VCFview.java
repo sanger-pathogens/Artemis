@@ -516,7 +516,11 @@ public class VCFview extends JPanel
       if(IOUtils.isBCF(fileName))
       {
         vcfReaders[index] = new BCFReader(new File(vcfFiles.get(index)));
-        return ((BCFReader)vcfReaders[index]).headerToString();
+  
+        String hdr = ((BCFReader)vcfReaders[index]).headerToString();
+        if(hdr.indexOf("VCFv4") > -1)
+          vcf_v4 = true;
+        return hdr;
       }
 
       BlockCompressedInputStream is = 
