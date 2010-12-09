@@ -1,11 +1,13 @@
 package uk.ac.sanger.artemis.components.variant;
 
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -24,19 +26,109 @@ public class VCFFilter extends JFrame
   private static float MAX_CI95 = 10;
   
   /**
-   * Filter VCF records by different values in the record, QUAL, DP, MQ and AF1.
+   * Filter VCF records by the variant type and/or by different values in 
+   * the record, QUAL, DP, MQ and AF1.
    * @param vcfView
    */
   public VCFFilter(final VCFview vcfView)
   {
-    super("Filter");
+    super("Variant Filter");
     GridBagConstraints c = new GridBagConstraints();
     
     JPanel panel = (JPanel)getContentPane();
     panel.setLayout(new GridBagLayout());
 
-    // min quality
+    // Filter by type
+    c.gridx = 0;
     c.gridy = 0;
+    c.anchor = GridBagConstraints.WEST;
+    JLabel typeLabel = new JLabel("TYPE:");
+    typeLabel.setFont(typeLabel.getFont().deriveFont(Font.BOLD));
+    panel.add(typeLabel, c);
+    
+    c.gridy = c.gridy + 1;
+    final JCheckBox showSyn = new JCheckBox("Synonymous", vcfView.showSynonymous);
+    panel.add(showSyn, c);
+    showSyn.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e)
+      {
+        vcfView.showSynonymous = showSyn.isSelected();
+        vcfView.repaint();
+      }
+    });
+
+    c.gridy = c.gridy + 1;
+    final JCheckBox showNonSyn = new JCheckBox("Non-synonymous", vcfView.showNonSynonymous);
+    panel.add(showNonSyn, c);
+    showNonSyn.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e)
+      {
+        vcfView.showNonSynonymous = showNonSyn.isSelected();
+        vcfView.repaint();
+      }
+    });
+    
+    c.gridy = c.gridy + 1;
+    final JCheckBox showDeletionsMenu = new JCheckBox("Deletions", vcfView.showDeletions);
+    panel.add(showDeletionsMenu, c);
+    showDeletionsMenu.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e)
+      {
+        vcfView.showDeletions = showDeletionsMenu.isSelected();
+        vcfView.repaint();
+      }
+    });
+
+    c.gridy = c.gridy + 1;
+    final JCheckBox showInsertionsMenu = new JCheckBox("Insertions", vcfView.showInsertions);
+    panel.add(showInsertionsMenu, c);
+    showInsertionsMenu.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e)
+      {
+        vcfView.showInsertions = showInsertionsMenu.isSelected();
+        vcfView.repaint();
+      }
+    });
+    
+    c.gridy = c.gridy + 1;
+    final JCheckBox showMultiAllelesMenu = new JCheckBox("Multiple alleles", vcfView.showMultiAlleles);
+    panel.add(showMultiAllelesMenu, c);
+    showMultiAllelesMenu.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e)
+      {
+        vcfView.showMultiAlleles = showMultiAllelesMenu.isSelected();
+        vcfView.repaint();
+      }
+    });
+    
+    c.gridy = c.gridy + 1;
+    final JCheckBox showNonOverlappingsMenu = new JCheckBox("Varaints not overlapping CDS", vcfView.showNonOverlappings);
+    panel.add(showNonOverlappingsMenu, c);
+    showNonOverlappingsMenu.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e)
+      {
+        vcfView.showNonOverlappings = showNonOverlappingsMenu.isSelected();
+        vcfView.repaint();
+      }
+    });
+    
+    if(vcfView.getEntryGroup() == null || vcfView.getEntryGroup().getAllFeaturesCount() == 0)
+    {
+      showSyn.setEnabled(false);
+      showNonSyn.setEnabled(false);
+      showNonOverlappingsMenu.setEnabled(false);
+    }
+    
+    // Filter by property
+    c.gridy = c.gridy+1;
+    panel.add(new JLabel(" "), c);
+    c.gridy = c.gridy+1;
+    JLabel propLabel = new JLabel("PROPERTY:");
+    propLabel.setFont(propLabel.getFont().deriveFont(Font.BOLD));
+    panel.add(propLabel, c);
+    
+    // min quality
+    c.gridy = c.gridy+1;
     c.gridx = 0;
     c.anchor = GridBagConstraints.WEST;
     panel.add(new JLabel("Minimum quality score (QUAL):"), c);

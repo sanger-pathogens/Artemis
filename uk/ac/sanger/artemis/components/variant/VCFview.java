@@ -133,18 +133,17 @@ public class VCFview extends JPanel
   private JPopupMenu popup;
   private int LINE_HEIGHT = 15;
   
-  private boolean showSynonymous = true;
-  private boolean showNonSynonymous = true;
-  private boolean showDeletions = true;
-  private boolean showInsertions = true;
-  private boolean showMultiAlleles = true;
+  protected boolean showSynonymous = true;
+  protected boolean showNonSynonymous = true;
+  protected boolean showDeletions = true;
+  protected boolean showInsertions = true;
+  protected boolean showMultiAlleles = true;
+  // show variants that do not overlap CDS
+  protected boolean showNonOverlappings = true;
   
   private boolean markAsNewStop = false;
   final JCheckBoxMenuItem markNewStops =
     new JCheckBoxMenuItem("Mark new stops within CDS features", true);
-  
-  // show variants that do not overlap CDS
-  private boolean showNonOverlappings = true;
   
   Hashtable<String, Integer> offsetLengths = null;
   private boolean concatSequences = false;
@@ -424,75 +423,7 @@ public class VCFview extends JPanel
     popup.add(addVCFMenu);
     popup.addSeparator();
     
-    JMenu showMenu = new JMenu("Show");
-    popup.add(showMenu);
     
-    final JCheckBoxMenuItem showSyn = new JCheckBoxMenuItem(
-        "Synonymous", showSynonymous);
-    showSyn.addActionListener(new ActionListener(){
-      public void actionPerformed(ActionEvent e)
-      {
-        showSynonymous = showSyn.isSelected();
-        repaint();
-      }
-    });
-    showMenu.add(showSyn);
-    
-    final JCheckBoxMenuItem showNonSyn = new JCheckBoxMenuItem(
-        "Non-synonymous", showNonSynonymous);
-    showNonSyn.addActionListener(new ActionListener(){
-      public void actionPerformed(ActionEvent e)
-      {
-        showNonSynonymous = showNonSyn.isSelected();
-        repaint();
-      }
-    });
-    showMenu.add(showNonSyn);
-    
-    
-    final JCheckBoxMenuItem showDeletionsMenu = new JCheckBoxMenuItem(
-        "Deletions", showDeletions);
-    showDeletionsMenu.addActionListener(new ActionListener(){
-      public void actionPerformed(ActionEvent e)
-      {
-        showDeletions = showDeletionsMenu.isSelected();
-        repaint();
-      }
-    });
-    showMenu.add(showDeletionsMenu);
-    
-    final JCheckBoxMenuItem showInsertionsMenu = new JCheckBoxMenuItem(
-        "Insertions", showInsertions);
-    showInsertionsMenu.addActionListener(new ActionListener(){
-      public void actionPerformed(ActionEvent e)
-      {
-        showInsertions = showInsertionsMenu.isSelected();
-        repaint();
-      }
-    });
-    showMenu.add(showInsertionsMenu);
-    
-    final JCheckBoxMenuItem showMultiAllelesMenu = new JCheckBoxMenuItem(
-        "Multiple alleles", showMultiAlleles);
-    showMultiAllelesMenu.addActionListener(new ActionListener(){
-      public void actionPerformed(ActionEvent e)
-      {
-        showMultiAlleles = showMultiAllelesMenu.isSelected();
-        repaint();
-      }
-    });
-    showMenu.add(showMultiAllelesMenu);
-    
-    final JCheckBoxMenuItem showNonOverlappingsMenu = new JCheckBoxMenuItem(
-        "Varaints not overlapping CDS", showNonOverlappings);
-    showNonOverlappingsMenu.addActionListener(new ActionListener(){
-      public void actionPerformed(ActionEvent e)
-      {
-        showNonOverlappings = showNonOverlappingsMenu.isSelected();
-        repaint();
-      }
-    });
-    showMenu.add(showNonOverlappingsMenu);
     
     markNewStops.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e)
@@ -1437,6 +1368,11 @@ public class VCFview extends JPanel
   private float getPixPerBaseByWidth()
   {
     return (float)vcfPanel.getWidth() / (float)nbasesInView;
+  }
+  
+  protected EntryGroup getEntryGroup()
+  {
+    return entryGroup;
   }
   
   /**
