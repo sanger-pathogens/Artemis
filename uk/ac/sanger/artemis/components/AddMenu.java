@@ -1693,7 +1693,7 @@ public class AddMenu extends SelectionMenu
     else
       unsure = new Key ("unsure");
     
-    Pattern p = Pattern.compile("^(n|N)+$"); // pattern match for all n's
+    Pattern p = Pattern.compile("^[nN]+$"); // pattern match for all n's
     
     for (int i = 1 ; i <= bases.getLength () ; ++i) {
       try {
