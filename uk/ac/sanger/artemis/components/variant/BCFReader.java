@@ -317,7 +317,7 @@ class BCFReader extends AbstractVCFReader
   }
   
   /**
-   * GT genotype, allele values separated by Ó/Ó or Ò|Ó, i.e.
+   * GT genotype, allele values separated by / or |, i.e.
    * unphased or phased.
    * @param b
    * @return
