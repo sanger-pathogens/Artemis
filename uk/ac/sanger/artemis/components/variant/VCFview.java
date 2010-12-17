@@ -52,6 +52,7 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
@@ -64,6 +65,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.border.Border;
@@ -100,7 +102,6 @@ import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.io.RangeVector;
-import uk.ac.sanger.artemis.sequence.AminoAcidSequence;
 import uk.ac.sanger.artemis.sequence.Bases;
 import uk.ac.sanger.artemis.sequence.MarkerRange;
 import uk.ac.sanger.artemis.sequence.NoSequenceException;
@@ -142,8 +143,15 @@ public class VCFview extends JPanel
   protected boolean showNonOverlappings = true;
   
   private boolean markAsNewStop = false;
-  final JCheckBoxMenuItem markNewStops =
+  private JCheckBoxMenuItem markNewStops =
     new JCheckBoxMenuItem("Mark new stops within CDS features", true);
+  
+  private static int VARIANT_COLOUR_SCHEME = 0;
+  private static int SYN_COLOUR_SCHEME     = 1;
+  private static int QUAL_COLOUR_SCHEME    = 2;
+  
+  private int colourScheme = 0;
+  private Color colMap[] = makeColours(Color.RED, 255);
   
   Hashtable<String, Integer> offsetLengths = null;
   private boolean concatSequences = false;
@@ -423,8 +431,7 @@ public class VCFview extends JPanel
     popup.add(addVCFMenu);
     popup.addSeparator();
     
-    
-    
+
     markNewStops.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e)
       {
@@ -444,6 +451,48 @@ public class VCFview extends JPanel
       }
     });
     popup.add(byQuality);
+    
+    final JMenu colourBy = new JMenu("Colour By");
+    popup.add(colourBy);
+    ButtonGroup group = new ButtonGroup();
+    final JRadioButtonMenuItem colByAlt   = new JRadioButtonMenuItem("Variant");
+    colByAlt.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e)
+      {
+        if(colByAlt.isSelected())
+          colourScheme = 0;
+        repaint();
+      }
+    });
+    colourBy.add(colByAlt);
+    
+    final JRadioButtonMenuItem colBySyn   = new JRadioButtonMenuItem("Synonymous/Non-synonymous");
+    colBySyn.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e)
+      {
+        if(colBySyn.isSelected())
+          colourScheme = 1;
+        repaint();
+      }
+    });
+    colourBy.add(colBySyn);
+    
+    final JRadioButtonMenuItem colByScore = new JRadioButtonMenuItem("Score");
+    colByScore.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e)
+      {
+        if(colByScore.isSelected())
+          colourScheme = 2;
+        repaint();
+      }
+    });
+    colourBy.add(colByScore);
+    
+    group.add(colByAlt);
+    group.add(colBySyn);
+    group.add(colByScore);
+    colByAlt.setSelected(true);
+    
     popup.addSeparator();
     
     final JMenuItem exportVCF = new JMenuItem("Export filtered VCF");
@@ -854,14 +903,14 @@ public class VCFview extends JPanel
     if(!showNonOverlappings && !isOverlappingFeature(features, basePosition))
         return false;
     
-    int isSyn = -1;
+    short isSyn = -1;
     if(markNewStops.isSelected() &&
        !isDeletion(record.getRef(), record.getAlt()) && 
        !isInsertion(record.getRef(), record.getAlt()) && 
         record.getAlt().length() == 1 && 
         record.getRef().length() == 1)
     {
-      isSyn = isSynonymous(features, basePosition, record.getAlt().toLowerCase().charAt(0));
+      isSyn = record.getSynFlag(features, basePosition);
       if(isSyn == 2)
         markAsNewStop = true;
       else
@@ -875,10 +924,10 @@ public class VCFview extends JPanel
          record.getRef().length() == 1)
     {
       if(isSyn == -1)
-        isSyn = isSynonymous(features, basePosition, record.getAlt().toLowerCase().charAt(0));
+        isSyn = record.getSynFlag(features, basePosition);
       
       if( (!showSynonymous && isSyn == 1) ||
-          (!showNonSynonymous && isSyn != 1 ) )
+          (!showNonSynonymous && (isSyn == 0 || isSyn == 2) ) )
         return false;
     }
     
@@ -920,30 +969,27 @@ public class VCFview extends JPanel
     
     int pos[] = getScreenPosition(basePosition, pixPerBase, start, index);
 
-    if(isDeletion(record.getRef(), record.getAlt()))
-      g.setColor(Color.gray);
-    else if(isInsertion(record.getRef(), record.getAlt()))
-      g.setColor(Color.yellow);
-    else if(record.getAlt().equals("C") && record.getRef().length() == 1)
-      g.setColor(Color.red);
-    else if(record.getAlt().equals("A") && record.getRef().length() == 1)
-      g.setColor(Color.green);
-    else if(record.getAlt().equals("G") && record.getRef().length() == 1)
-      g.setColor(Color.blue);
-    else if(record.getAlt().equals("T") && record.getRef().length() == 1)
-      g.setColor(Color.black);
-    else if(record.getAlt().equals(".") && record.getRef().length() == 1)
-      g.setColor(Color.magenta);
+    if(colourScheme == QUAL_COLOUR_SCHEME)
+      g.setColor(getQualityColour(record));
     else
     {
-      Matcher m = multiAllelePattern.matcher(record.getAlt());
-      if(m.matches())
-      {
-        g.setColor(Color.orange);
-        g.fillArc(pos[0]-3, pos[1]-LINE_HEIGHT-3, 6, 6, 0, 360);
-      }
+      if(isDeletion(record.getRef(), record.getAlt()))
+        g.setColor(Color.gray);
+      else if(isInsertion(record.getRef(), record.getAlt()))
+        g.setColor(Color.yellow);
+      else if(record.getAlt().length() == 1 && record.getRef().length() == 1)
+        g.setColor(getColourForSNP(record, features, basePosition));
       else
-        g.setColor(Color.pink);
+      {
+        Matcher m = multiAllelePattern.matcher(record.getAlt());
+        if(m.matches())
+        {
+          g.setColor(Color.orange);
+          g.fillArc(pos[0]-3, pos[1]-LINE_HEIGHT-3, 6, 6, 0, 360);
+        }
+        else
+          g.setColor(Color.pink);
+      }
     }
 
     if(markAsNewStop)
@@ -953,101 +999,89 @@ public class VCFview extends JPanel
   }
   
   /**
+   * Determine the colour depending on the colour scheme in use.
+   * @param record
    * @param features
    * @param basePosition
-   * @param variant
    * @return
-   * 0 if false;
-   * 1 if synonymous;  
-   * 2 if non-synonymous and creates a stop codon
    */
-  private int isSynonymous(FeatureVector features, int basePosition, char variant)
+  private Color getColourForSNP(VCFRecord record, FeatureVector features, int basePosition)
   {
-    int intronlength = 0;
-    Range lastRange = null;
-    
-    for(int i = 0; i<features.size(); i++)
+    if(colourScheme == VARIANT_COLOUR_SCHEME)
+      return getVariantColour(record.getAlt());
+    else if(colourScheme == SYN_COLOUR_SCHEME)  // synonymous / non-synonymous
     {
-      Feature feature = features.elementAt(i);
-      
-      if(feature.getRawFirstBase() < basePosition && feature.getRawLastBase() > basePosition)
-      {
-        RangeVector ranges = feature.getLocation().getRanges();
-        intronlength = 0;
-
-        for(int j=0; j< ranges.size(); j++)
-        {
-          Range range = (Range) ranges.get(j);
-          
-          if(j > 0)
-          {
-            if(feature.isForwardFeature())
-              intronlength+=range.getStart()-lastRange.getEnd()-1;
-            else
-              intronlength+=lastRange.getStart()-range.getEnd()-1;
-            
-            if(intronlength < 0)
-              intronlength = 0;
-          }
-          
-          if(range.getStart() < basePosition && range.getEnd() > basePosition)
-          {
-            int mod;
-            int codonStart;
-            
-            if(feature.isForwardFeature())
-            {
-              mod = (basePosition-feature.getRawFirstBase())%3;
-              codonStart = basePosition-feature.getRawFirstBase()-mod;
-            }
-            else
-            {
-              mod = (feature.getRawLastBase()-basePosition)%3;
-              codonStart = feature.getRawLastBase()-basePosition-mod;
-            }
-
-            codonStart-=intronlength;
-            
-            try
-            {
-              if(codonStart+3 > feature.getBases().length())
-                return 0;
-              char codon[] = feature.getBases().substring(codonStart,
-                  codonStart + 3).toLowerCase().toCharArray();
-
-              // String oldBase = new String(codon);
-              char aaRef = AminoAcidSequence.getCodonTranslation(codon[0],
-                  codon[1], codon[2]);
-
-              if(!feature.isForwardFeature())
-                variant = Bases.complement(variant);
-              codon[mod] = variant;
-              char aaNew = AminoAcidSequence.getCodonTranslation(codon[0],
-                  codon[1], codon[2]);
-
-              if (aaNew == aaRef) 
-                return 1;
-              else if(AminoAcidSequence.isStopCodon(aaNew))
-                return 2;
-              else
-                return 0;
-            }
-            catch(Exception e)
-            {
-              for(int k=0; k<ranges.size(); k++)
-                System.out.println(k+" "+ ((Range)ranges.get(k)).getStart() );
-              
-              System.out.println(feature.getIDString()+"  "+codonStart+" "+intronlength+" basePosition="+basePosition+" segment="+range.getStart()+".."+range.getEnd()+" mod="+mod);
-              throw new RuntimeException(e);
-            }
-          }
-
-          lastRange = range;
-        }
-      }
+      short synFlag = record.getSynFlag(features, basePosition);
+      if(synFlag == 1)
+        return Color.red;
+      else if(synFlag == 0 || synFlag == 2)
+        return Color.blue;
+      else
+        return getVariantColour(record.getAlt());
     }
-    
-    return 0;
+    else // score
+      return getQualityColour(record);
+  }
+  
+  private Color getQualityColour(VCFRecord record)
+  {
+    if(colMap == null)
+      colMap = makeColours(Color.RED, 255);
+    int idx = (int) record.getQuality()-1;
+    if(idx > colMap.length-1)
+      idx = colMap.length-1;
+    else if(idx < 0)
+      idx = 0;
+    return colMap[idx];
+  }
+  
+  private Color getVariantColour(String variant)
+  {
+    if(variant.equals("C"))
+      return Color.red;
+    else if(variant.equals("A"))
+      return Color.green;
+    else if(variant.equals("G"))
+      return Color.blue;
+    else if(variant.equals("T"))
+      return Color.black;
+    else
+      return Color.magenta;
+  }
+  
+  /**
+   * Generate the colours for heat map plots.
+   * @param col
+   * @param NUMBER_OF_SHADES
+   * @return
+   */
+  private Color[] makeColours(Color col, int NUMBER_OF_SHADES)
+  {
+    Color definedColour[] = new Color[NUMBER_OF_SHADES];
+    for(int i = 0; i < NUMBER_OF_SHADES; ++i)
+    {
+      int R = col.getRed();
+      int G = col.getGreen();
+      int B = col.getBlue();
+
+      float scale = ((float)(NUMBER_OF_SHADES-i) * (float)(255 / NUMBER_OF_SHADES )) ;
+      
+      if((R+scale) <= 255)
+        R += scale;
+      else
+        R = 254;
+      if((G+scale) <= 255)
+        G += scale;
+      else
+        G = 254;
+      if((B+scale) <= 255)
+        B += scale;
+      else
+        B = 254;
+
+      definedColour[i] = new Color(R,G,B);
+    }
+    return definedColour;
   }
   
   private int[] getScreenPosition(int base, float pixPerBase, int start, int vcfFileIndex)

@@ -23,6 +23,13 @@
 
 package uk.ac.sanger.artemis.components.variant;
 
+import uk.ac.sanger.artemis.Feature;
+import uk.ac.sanger.artemis.FeatureVector;
+import uk.ac.sanger.artemis.io.Range;
+import uk.ac.sanger.artemis.io.RangeVector;
+import uk.ac.sanger.artemis.sequence.AminoAcidSequence;
+import uk.ac.sanger.artemis.sequence.Bases;
+
 class VCFRecord
 {
   private String chrom;
@@ -35,6 +42,7 @@ class VCFRecord
   private String info;
   private String format;
   private String data[][];
+  private short synFlag = -1;
   
 
   /**
@@ -286,4 +294,118 @@ class VCFRecord
   {
     this.data = data;
   }
+
+
+  /**
+   * @param features
+   * @param basePosition
+   * 0 if non-synonymous;
+   * 1 if synonymous;  
+   * 2 if non-synonymous and creates a stop codon
+   */
+  protected short getSynFlag(FeatureVector features, int basePosition)
+  {
+    if(synFlag == -1)
+      this.synFlag = isSynonymous(features, basePosition);
+    return synFlag;
+  }
+
+  /**
+   * @param features
+   * @param basePosition
+   * @return
+   * 0 if non-synonymous;
+   * 1 if synonymous;  
+   * 2 if non-synonymous and creates a stop codon
+   * 3 not within a gene
+   */
+  private short isSynonymous(FeatureVector features, int basePosition)
+  {
+    char variant = getAlt().toLowerCase().charAt(0);
+    int intronlength = 0;
+    Range lastRange = null;
+    
+    for(int i = 0; i<features.size(); i++)
+    {
+      Feature feature = features.elementAt(i);
+      if(feature.getRawFirstBase() < basePosition && feature.getRawLastBase() > basePosition)
+      {
+        RangeVector ranges = feature.getLocation().getRanges();
+        intronlength = 0;
+
+        for(int j=0; j< ranges.size(); j++)
+        {
+          Range range = (Range) ranges.get(j);
+          
+          if(j > 0)
+          {
+            if(feature.isForwardFeature())
+              intronlength+=range.getStart()-lastRange.getEnd()-1;
+            else
+              intronlength+=lastRange.getStart()-range.getEnd()-1;
+            
+            if(intronlength < 0)
+              intronlength = 0;
+          }
+          
+          if(range.getStart() < basePosition && range.getEnd() > basePosition)
+          {
+            int mod;
+            int codonStart;
+            
+            if(feature.isForwardFeature())
+            {
+              mod = (basePosition-feature.getRawFirstBase())%3;
+              codonStart = basePosition-feature.getRawFirstBase()-mod;
+            }
+            else
+            {
+              mod = (feature.getRawLastBase()-basePosition)%3;
+              codonStart = feature.getRawLastBase()-basePosition-mod;
+            }
+
+            codonStart-=intronlength;
+            
+            try
+            {
+              if(codonStart+3 > feature.getBases().length())
+                return 0;
+              char codon[] = feature.getBases().substring(codonStart,
+                  codonStart + 3).toLowerCase().toCharArray();
+
+              // String oldBase = new String(codon);
+              char aaRef = AminoAcidSequence.getCodonTranslation(codon[0],
+                  codon[1], codon[2]);
+
+              if(!feature.isForwardFeature())
+                variant = Bases.complement(variant);
+              codon[mod] = variant;
+              char aaNew = AminoAcidSequence.getCodonTranslation(codon[0],
+                  codon[1], codon[2]);
+
+              if (aaNew == aaRef) 
+                return 1;
+              else if(AminoAcidSequence.isStopCodon(aaNew))
+                return 2;
+              else
+                return 0;
+            }
+            catch(Exception e)
+            {
+              for(int k=0; k<ranges.size(); k++)
+                System.out.println(k+" "+ ((Range)ranges.get(k)).getStart() );
+              
+              System.out.println(feature.getIDString()+"  "+codonStart+" "+intronlength+" basePosition="+basePosition+" segment="+range.getStart()+".."+range.getEnd()+" mod="+mod);
+              throw new RuntimeException(e);
+            }
+          }
+
+          lastRange = range;
+        }
+      }
+    }
+    
+    return 3;
+  }
+  
 }
