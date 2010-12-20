@@ -58,7 +58,7 @@ promoter        allele citation db_xref evidence function gene inference label l
 protein_bind    @bound_moiety allele citation db_xref evidence function gene inference label locus_tag map note partial standard_name usedin
 rRNA            allele citation db_xref evidence function gene inference label locus_tag map note partial product pseudo standard_name usedin ncRNA_class
 rep_origin      allele citation db_xref direction evidence gene inference label locus_tag map note partial standard_name usedin
-repeat_region   allele citation db_xref evidence function gene inference insertion_seq label locus_tag map note partial rpt_family rpt_type rpt_unit rpt_unit_seq standard_name transposon usedin
+repeat_region   allele citation db_xref evidence function gene inference insertion_seq label locus_tag map note partial rpt_family rpt_type rpt_unit rpt_unit_range rpt_unit_seq standard_name transposon usedin
 repeat_unit     allele citation db_xref evidence function gene inference label locus_tag map note partial rpt_family rpt_type rpt_unit usedin
 satellite       allele citation db_xref evidence gene inference label locus_tag map note partial rpt_family rpt_type rpt_unit standard_name usedin
 scRNA           allele citation db_xref evidence function gene inference label locus_tag map note partial product pseudo standard_name usedin
