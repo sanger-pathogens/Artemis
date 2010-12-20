@@ -94,6 +94,10 @@ generating this from a VCF file:
 	bgzip file.vcf
 	tabix -p vcf file.vcf.gz
 	</SYNOPSIS>
+      <PARA>
+Alternatively a Binary VCF (<ULINK URL="http://samtools.sourceforge.net/mpileup.shtml">BCF</ULINK>) can
+be indexed with BCFtools and read into Artemis or ACT.
+      </PARA>
 	<PARA>
 As with reading in multiple BAM files, it is possible to read a number of (compressed and indexed)
 VCF files by listing their full paths in a single file. They then get displayed in separate rows 
@@ -107,17 +111,22 @@ in the VCF panel.
 For single base changes the colour represents the base it is being changed to, i.e. T black,
 G blue, A green, C red. There are options available to filter the display by the different 
 types of variants. Right clicking on the VCF panel will display a pop-up menu in which 
-it is possible to select to hide or show synonymous, non-synonymous, deletion (grey), 
+there is a 'Filter...' menu. This opens a window with check boxes for a number of varaint types and properties that can
+be used to filter on. This can be used to show and hide synonymous, non-synonymous, deletion (grey), 
 insertion (yellow), and multiple allele (orange line with a circle at the top) 
-variants.  From this menu it is also possible to hide the variants that do not overlap CDS 
-features. There is an option to mark variants that introduce stop codons (into the CDS 
-features) with a circle in the middle of the line that represents the variant. There is also 
-an option to filter by the quality score.
+variants.  In this window there is a check box to hide the variants that do not overlap CDS features.
+There is an option to mark variants that introduce stop codons (into the CDS 
+features) with a circle in the middle of the line that represents the variant. There are also options
+to filter the variants by various properties such as their quality score (QUAL) or their depth across the
+samples (DP).
     	</PARA>
 	<PARA>
 Placing the mouse over a vertical line shows an overview  of the variation as a 
 tooltip. Also right clicking over a line then gives an extra option in the pop-up
-menu to show the details for that variation in a separate window.
+menu to show the details for that variation in a separate window. There are also
+alternative colouring schemes. It is possible to colour the variants by whether they are 
+synonymous or non-synonymous or by their quality score (the lower the quality the 
+more faded the variant appears).
 	</PARA>
   </SECT2>
 
