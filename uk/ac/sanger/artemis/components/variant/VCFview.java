@@ -904,6 +904,7 @@ public class VCFview extends JPanel
         return false;
     
     short isSyn = -1;
+    markAsNewStop = false;
     if(markNewStops.isSelected() &&
        !isDeletion(record.getRef(), record.getAlt()) && 
        !isInsertion(record.getRef(), record.getAlt()) && 
@@ -913,8 +914,6 @@ public class VCFview extends JPanel
       isSyn = record.getSynFlag(features, basePosition);
       if(isSyn == 2)
         markAsNewStop = true;
-      else
-        markAsNewStop = false;
     }
     
     if( (!showSynonymous || !showNonSynonymous) &&
