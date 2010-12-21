@@ -44,8 +44,11 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
@@ -552,11 +555,60 @@ public class VCFview extends JPanel
   }
   
   /**
+   * Test and download if on a http server
+   * @param fileName
+   * @return
+   */
+  private String testForURL(String fileName)
+  {
+    if(!fileName.startsWith("http:"))
+      return fileName;
+
+    String newFileName = download(fileName, null, ".bcf");
+    download(fileName+".bci", newFileName, ".bci");
+    return newFileName;
+  }
+  
+  protected String download(String f, String newName, String suffix)
+  {
+    try
+    {
+      final URL urlFile = new URL(f);
+      InputStream is = urlFile.openStream();
+
+      // Create temp file.
+      File bcfFile;
+      if(newName != null)
+        bcfFile = new File(newName+suffix);
+      else
+        bcfFile = File.createTempFile(urlFile.getFile().replaceAll(
+        "[\\/\\s]", "_"), suffix);
+      bcfFile.deleteOnExit();
+
+      FileOutputStream out = new FileOutputStream(bcfFile);
+      int c;
+      while ((c = is.read()) != -1)
+        out.write(c);
+      out.flush();
+      out.close();
+      is.close();
+      return bcfFile.getAbsolutePath();
+    }
+    catch(IOException ioe)
+    {
+      JOptionPane.showMessageDialog(null, 
+          "Problem downloading\n"+f, 
+          "Problem", JOptionPane.WARNING_MESSAGE);
+    }
+    return null;
+  }
+  
+  /**
    * Read the vcf header
    * @param fileName
    * @return
    */
-  private String readHeader(final String fileName, int index)
+  private String readHeader(String fileName, int index)
   {
     StringBuffer buff = new StringBuffer();
     buff.append(fileName+"\n");
@@ -564,7 +616,8 @@ public class VCFview extends JPanel
     {
       if(IOUtils.isBCF(fileName))
       {
-        vcfReaders[index] = new BCFReader(new File(vcfFiles.get(index)));
+        fileName = testForURL(fileName);
+        vcfReaders[index] = new BCFReader(new File(fileName));
   
         String hdr = ((BCFReader)vcfReaders[index]).headerToString();
         if(hdr.indexOf("VCFv4") > -1)
