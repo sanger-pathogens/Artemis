@@ -26,6 +26,8 @@ package uk.ac.sanger.artemis.components.variant;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.List;
 
 import uk.ac.sanger.artemis.EntryGroup;
@@ -126,11 +128,18 @@ class IOUtils
    */
   protected static boolean isBCF(String fileName) throws IOException
   {
-    FileInputStream fis = new FileInputStream(fileName);
-    BlockCompressedInputStream is = new BlockCompressedInputStream(fis);
+    InputStream ins;
+    if(fileName.startsWith("http:"))
+    {
+      final URL urlBamIndexFile = new URL(fileName);
+      ins = urlBamIndexFile.openStream();
+    }
+    else
+      ins = new FileInputStream(fileName);
+    BlockCompressedInputStream is = new BlockCompressedInputStream(ins);
     byte[] magic = new byte[4];
     is.read(magic);
-    fis.close();
+    ins.close();
     is.close();
     String line = new String(magic);
     if(line.equals("BCF\4"))
