@@ -41,7 +41,7 @@
     </PRODUCTNAME>
     <PUBDATE>16 May 2000</PUBDATE>
     <COPYRIGHT>
-      <YEAR>2000-2010</YEAR>
+      <YEAR>2000-2011</YEAR>
       <HOLDER>Genome Research Limited</HOLDER>
     </COPYRIGHT>
     <LEGALNOTICE>
@@ -68,7 +68,7 @@
     </LEGALNOTICE>
     <ABSTRACT>
       <PARA>
-This document describes release 9 of &prog; - a DNA sequence comparison
+This document describes release 10 of &prog; - a DNA sequence comparison
 viewer.
       </PARA>
     </ABSTRACT>
