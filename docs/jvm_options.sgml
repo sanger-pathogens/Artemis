@@ -39,8 +39,8 @@ separated to open multiple plots (-Duserplot=-Duserplot='/pathToFile/userPlot1,/
     <SECT2 ID="JVM-NG">
        <TITLE><LITERAL>-Dbam=pathToFile</LITERAL></TITLE>
       <PARA>
-This can be used to open BAM files or VCF/BCF files (see <XREF LINKEND="FILEMENU-READ-BAM"> for more about the
-using these file types).
+This can be used to open BAM files and/or VCF/BCF files (see <XREF LINKEND="FILEMENU-READ-BAM"> for more about the
+using these file types). This can take a path name to a file or an HTTP address.
       </PARA>
     </SECT2>
 
