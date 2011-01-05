@@ -44,7 +44,7 @@ This function only reads the feature section of the input file - the sequence
       </LISTITEM>
       <LISTITEM>
         <PARA>
-          FASTA files and indexed FASTA files can be used. The files are indexed
+          FASTA files and indexed FASTA files can be read. The files are indexed
 using <ULINK URL="http://samtools.sourceforge.net/">SAMtools</ULINK> (e.g. 
 <COMMAND>samtools faidx ref.fasta</COMMAND>). A drop down menu of the contigs or chromosomes
 is provided in the Entry toolbar to select the sequence. Using indexed FASTA files
