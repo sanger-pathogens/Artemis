@@ -20,7 +20,9 @@
 <!ENTITY mousebuttons SYSTEM "mousebuttons.sgml">
 <!ENTITY gettingjava SYSTEM "getting_java.sgml">
 <!ENTITY unixargs SYSTEM "unix_args.sgml">
+<!ENTITY jvmopts SYSTEM "jvm_options.sgml">
 <!ENTITY options-menu SYSTEM "options_menu.sgml">
+<!ENTITY nextgen SYSTEM "next_gen.sgml">
 
 <!ENTITY % artemis-only "IGNORE">
 
