@@ -71,16 +71,18 @@ import javax.swing.JTextArea;
      */
     private int getNumberOfLines(FontMetrics fm, final String text, final int width)
     {
-        String delim = " \t\n\f\r";
+      String delim = " \t\n\f\r";
       StringTokenizer tok = new StringTokenizer(text, delim, true);
       //final String words[] = text.split("\\s");
       int lineOffset = 0;
       int lineNumber = 1;
+      int w2 = (fm.stringWidth(" ")+1)/2;
+     
       while(tok.hasMoreTokens())
       {
         int thisWordLength = fm.stringWidth(tok.nextToken());
         lineOffset+=thisWordLength;
-        if(lineOffset>width)
+        if(lineOffset>=width-w2)
         {
           lineNumber++;
           lineOffset = thisWordLength;
