@@ -1,0 +1,59 @@
+    <SECT2 ID="JVMOPTS-MEM">
+      <TITLE><LITERAL>-Xmsn -Xmxn</LITERAL></TITLE>
+      <PARA>
+Use <LITERAL>-Xmsn</LITERAL> to specify the initial size, in bytes, of the
+memory allocation pool. This value must be a multiple of 1024 greater than
+1MB. Append the letter k or K to indicate kilobytes, or m or M to indicate
+megabytes.
+      </PARA>
+      <PARA>
+Use <LITERAL>-Xmxn</LITERAL> to specify the maximum size, in bytes, of the
+memory allocation pool. This value must a multiple of 1024 greater than
+2MB. Append the letter k or K to indicate kilobytes, or m or M to indicate
+megabytes.
+      </PARA>
+    </SECT2>
+
+    <SECT2 ID="BB-MODE">
+       <TITLE><LITERAL>-Dblack_belt_mode=false</LITERAL></TITLE>
+      <PARA>
+If this is set to false then warning messages are kept to a minimum.
+      </PARA>
+    </SECT2>
+
+    <SECT2 ID="JVM-OFFSET">
+       <TITLE><LITERAL>-Doffset=10000</LITERAL></TITLE>
+      <PARA>
+This sets the base position that &prog; opens at, e.g. 10000.
+      </PARA>
+    </SECT2>
+
+    <SECT2 ID="JVM-USERPLOT">
+       <TITLE><LITERAL>-Duserplot=pathToFile</LITERAL></TITLE>
+      <PARA>
+This can be used to open userplots from the command line. The paths are comma
+separated to open multiple plots (-Duserplot=-Duserplot='/pathToFile/userPlot1,/pathToFile/userPlot2').
+      </PARA>
+    </SECT2>
+
+    <SECT2 ID="JVM-NG">
+       <TITLE><LITERAL>-Dbam=pathToFile</LITERAL></TITLE>
+      <PARA>
+This can be used to open BAM files or VCF/BCF files (see <XREF LINKEND="FILEMENU-READ-BAM"> for more about the
+using these file types).
+      </PARA>
+    </SECT2>
+
+    <SECT2 ID="JVM-FWD-LINES">
+       <TITLE><LITERAL>-Dshow_forward_lines=false</LITERAL></TITLE>
+      <PARA>
+Hide/show forward frame lines.
+      </PARA>
+    </SECT2>
+
+    <SECT2 ID="JVM-BWD-LINES">
+       <TITLE><LITERAL>-Dshow_reverse_lines=false</LITERAL></TITLE>
+      <PARA>
+Hide/show reverse frame lines.
+      </PARA>
+    </SECT2>
