@@ -34,18 +34,27 @@ This function only reads the feature section of the input file - the sequence
     <ITEMIZEDLIST>
       <LISTITEM>
         <PARA>
-          <ULINK URL="http://www.ebi.ac.uk/embl/Documentation/FT_definitions/feature_table.html">EMBL or GenBank feature tables</ULINK>
+          <ULINK URL="http://www.ebi.ac.uk/embl/Documentation/">EMBL or GenBank feature tables</ULINK>
         </PARA>
       </LISTITEM>
       <LISTITEM>
         <PARA>
-          <ULINK URL="http://song.sourceforge.net/gff3.shtml">GFF Version 3 files</ULINK>
+          <ULINK URL="http://www.sequenceontology.org/gff3.shtml">GFF Version 3 files</ULINK>
+        </PARA>
+      </LISTITEM>
+      <LISTITEM>
+        <PARA>
+          FASTA files and in addition indexed FASTA files can be used. The files are indexed
+using <ULINK URL="http://samtools.sourceforge.net/">SAMtools</ULINK> (e.g. 
+<COMMAND>samtools faidx ref.fasta</COMMAND>). A drop down menu of the contigs or chromosomes
+is provided in the Entry toolbar to select the sequence. Using indexed FASTA files
+improves the memory management and enables large genomes to be viewed.
         </PARA>
       </LISTITEM>
       <LISTITEM>
         <PARA>
 The output of <ULINK
-URL="http://www.cgr.ki.se/cgr/groups/sonnhammer/MSPcrunch.html"><COMMAND>MSPcrunch</COMMAND></ULINK>.
+URL="http://sonnhammer.sbc.su.se/download/software/MSPcrunch+Blixem/"><COMMAND>MSPcrunch</COMMAND></ULINK>.
 <COMMAND>MSPcrunch</COMMAND> must be run with the <COMMAND>-x</COMMAND> or
 <COMMAND>-d</COMMAND> flags.
         </PARA>
