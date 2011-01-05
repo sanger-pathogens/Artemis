@@ -44,6 +44,24 @@ using these file types).
       </PARA>
     </SECT2>
 
+    <SECT2 ID="JVM-CHADO">
+       <TITLE><LITERAL>-Dchado="hostname:port/database?username"</LITERAL></TITLE>
+      <PARA>
+This is used to get &prog; to look for the database. The address of the database
+(hostname, port and name) can be conveniently included
+(e.g. -Dchado="genedb-db.sanger.ac.uk:5432/snapshot?genedb_ro") and
+these details are then the default database address in the popup login window. 
+      </PARA>
+    </SECT2>
+
+    <SECT2 ID="JVM-CHADO-READONLY">
+       <TITLE><LITERAL>-Dread_only</LITERAL></TITLE>
+      <PARA>
+For a read only chado connection -Dread_only is specified on the command line
+(e.g. art -Dchado="genedb-db.sanger.ac.uk:5432/snapshot?genedb_ro" -Dread_only).
+      </PARA>
+    </SECT2>
+
     <SECT2 ID="JVM-FWD-LINES">
        <TITLE><LITERAL>-Dshow_forward_lines=false</LITERAL></TITLE>
       <PARA>
