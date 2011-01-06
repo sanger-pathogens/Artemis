@@ -64,7 +64,7 @@ URL="http://sonnhammer.sbc.su.se/download/software/MSPcrunch+Blixem/"><COMMAND>M
 The output of <ULINK URL="http://www.ncbi.nlm.nih.gov/blast/">blastall version
 2.2.2</ULINK> or better.  <COMMAND>blastall</COMMAND> must be run with the
 <COMMAND>-m 8</COMMAND> flag which generates one line of information per HSP.
-Note that currently &prog; displays each Blast HSP is a separate feature
+Note that currently &prog; displays each Blast HSP as a separate feature
 rather than displaying each BLAST hit as a feature.
         </PARA>
       </LISTITEM>

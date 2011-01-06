@@ -7,7 +7,7 @@ Java 1.6.
      </PARA>
      <PARA>
 <ULINK URL="http://samtools.sourceforge.net/">BAM</ULINK> files need to be sorted and indexed using <ULINK
-URL="http://samtools.sourceforge.net/">samtools</ULINK>. The index file should be in
+URL="http://samtools.sourceforge.net/">SAMtools</ULINK>. The index file should be in
 the same directory as the BAM file. This provides an integrated
 <ULINK URL="http://bamview.sourceforge.net/">BamView</ULINK> panel in &prog;, displaying
 sequence alignment mappings to a reference sequence. Multiple BAM files can be loaded
