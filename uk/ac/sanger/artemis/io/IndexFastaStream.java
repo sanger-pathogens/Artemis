@@ -47,6 +47,12 @@ public class IndexFastaStream extends StreamSequence
   private FastaSequenceIndex fastaIndex;
   private int len;
   private String contig;
+  static {
+    ReferenceSequenceFileFactory.FASTA_EXTENSIONS.add(".dna");
+    ReferenceSequenceFileFactory.FASTA_EXTENSIONS.add(".seq");
+    ReferenceSequenceFileFactory.FASTA_EXTENSIONS.add(".fas");
+    ReferenceSequenceFileFactory.FASTA_EXTENSIONS.add(".ffn");
+  }
   
   public IndexFastaStream(Entry entry)
   {
