@@ -78,7 +78,16 @@ class VCFRecord
     rec.ID    = parts[2];
     rec.ref   = parts[3];
     rec.alt   = parts[4];
-    rec.quality = Float.parseFloat(parts[5]);
+    
+    try
+    {
+      rec.quality = Float.parseFloat(parts[5]);
+    }
+    catch(NumberFormatException e)
+    {
+      rec.quality = 0.f;
+    }
+    
     rec.filter  = parts[6];
     rec.info    = parts[7];
     
