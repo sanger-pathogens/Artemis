@@ -31,6 +31,7 @@ CLASSPATH="$ARTEMIS_HOME:$ARTEMIS_HOME/lib/biojava.jar:$ARTEMIS_HOME/lib/jemAlig
 
 # iBatis jars
 CLASSPATH="$CLASSPATH:$ARTEMIS_HOME/lib/ibatis/ibatis-2.3.4.726.jar:$ARTEMIS_HOME/lib/ibatis/:$ARTEMIS_HOME/lib/ibatis/log4j-1.2.14.jar:$ARTEMIS_HOME/lib/ibatis/cglib-nodep-2.2.jar:$ARTEMIS_HOME/lib/retrotranslator-runtime-1.1.0.jar"
+CLASSPATH="$CLASSPATH:$ARTEMIS_HOME/lib/picard/picard.jar"
 export CLASSPATH
 
 FLAGS="-mx1024m -ms20m -Djdbc.drivers=org.postgresql.Driver -Dibatis"
