@@ -255,9 +255,6 @@ public class DatabaseEntrySource implements EntrySource, Serializable
       {
         if (db_entry.getSequence() == null)
         {
-//          JOptionPane.showMessageDialog(null,
-//              "The selected entry contains no sequence: " + id, "No Sequence",
-//              JOptionPane.ERROR_MESSAGE);
           UI.error("The selected entry contains no sequence: " + id, "No Sequence");
           return null;
         }
@@ -271,18 +268,10 @@ public class DatabaseEntrySource implements EntrySource, Serializable
     }
     catch(InvalidKeyException e)
     {
-//      JOptionPane.showMessageDialog(null, 
-//                                    "Unexpected error while accessing " +
-//                                    id + ": " + e,
-//                                    "Invalid Key", JOptionPane.ERROR_MESSAGE);
       UI.error("Unexpected error while accessing " + id + ": " + e, "Invalid Key");
     }
     catch(EntryInformationException e)
     {
-//      JOptionPane.showMessageDialog(null, 
-//                                    "Failed to get entry: " + e,
-//                                    "Entry Information Exception",
-//                                    JOptionPane.ERROR_MESSAGE);
       UI.error("Failed to get entry: " + e,"Entry Information Exception");
     }
 
