@@ -76,6 +76,7 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 
 public class DatabaseJPanel extends JPanel
@@ -182,36 +183,15 @@ public class DatabaseJPanel extends JPanel
         (DatabaseTreeNode)path.getLastPathComponent();
       String node_name = (String)seq_node.getUserObject();
       String userName = doc.getUserName();
-
+      
       final String id = seq_node.getFeatureId();
       if(id != null)
       {
-    	getEntryEditFromDatabase(id, entry_source, tree, 
+    	boolean readOnly = setOrganismProps(seq_node.getOrganism().getOrganismProps());
+        getEntryEditFromDatabase(id, entry_source, tree, 
             status_line, stream_progress_listener, 
             splitGFFEntry, splash_main, 
-            node_name, userName);
-    	
-    	Frame[] frames = JFrame.getFrames();
-    	Splash splash = null;
-        for(int i=0;i<frames.length;i++)
-        {
-          if(frames[i] instanceof Splash)
-          {
-        	splash = (Splash)frames[i];
-        	break;
-          }
-        }
-        
-        if(splash != null)
-        {
-          final Iterator it = seq_node.getOrganism().getOrganismProps().iterator();
-          while (it.hasNext()) 
-          {
-	        OrganismProp organismProp = (OrganismProp) it.next();
-     	    if (organismProp.getCvTerm().getName().equals("translationTable"))
-		   	  splash.setTranslationTable(organismProp.getValue());
-		  }
-        }
+            node_name, userName, readOnly);
       }
     }
     catch(NullPointerException npe)
@@ -296,10 +276,11 @@ public class DatabaseJPanel extends JPanel
     if(isNotSrcFeature && f.getFeatureLocsForFeatureId() != null
                        && f.getFeatureLocsForFeatureId().size() > 0)
     {
-      Iterator it = f.getFeatureLocsForFeatureId().iterator();
-      f = ((FeatureLoc) it.next()).getFeatureBySrcFeatureId();
+      Iterator<FeatureLoc> it = f.getFeatureLocsForFeatureId().iterator();
+      f = it.next().getFeatureBySrcFeatureId();
     }
     
+    boolean readOnly = setOrganismProps(f.getOrganism().getOrganismProps());
     // warn when opening duplicate entries at the same time
     if(opening.contains(f.getUniqueName()))
     {
@@ -312,15 +293,51 @@ public class DatabaseJPanel extends JPanel
       if(status != JOptionPane.YES_OPTION)
         return null;
     }
-    
+
     opening.add(f.getUniqueName());
     EntryEdit ee = openEntry(Integer.toString(f.getFeatureId()), entry_source, 
         srcComponent, status_line, 
         stream_progress_listener,
-        splitGFFEntry, splash_main,  f.getUniqueName(), userName, range);
+        splitGFFEntry, splash_main,  f.getUniqueName(), userName, range, readOnly);
     opening.remove(f.getUniqueName());
     
     return ee;
+  }
+  
+  /**
+   * Use the OrganismProps to set the translation table and
+   * determine in this is a read only entry.
+   * @param op
+   * @return
+   */
+  private static boolean setOrganismProps(Set<OrganismProp> op)
+  {
+    Splash splash = getSplash();
+    boolean readOnly = false;
+    final Iterator<OrganismProp> it = op.iterator();
+    while (it.hasNext()) 
+    {
+      OrganismProp organismProp = it.next();
+      if(splash != null &&
+         organismProp.getCvTerm().getName().equals("translationTable"))
+        splash.setTranslationTable(organismProp.getValue());
+      
+     if(organismProp.getCvTerm().getName().equals("frozen") &&
+        organismProp.getValue().equals("yes"))
+       readOnly = true;
+    } 
+    return readOnly;
+  }
+  
+  private static Splash getSplash()
+  {
+    Frame[] frames = JFrame.getFrames();
+    for(int i=0;i<frames.length;i++)
+    {
+      if(frames[i] instanceof Splash)
+        return (Splash)frames[i];
+    }
+    return null;
   }
 
   /**
@@ -344,7 +361,8 @@ public class DatabaseJPanel extends JPanel
       final boolean splitGFFEntry,
       final Splash splash_main, 
       final String dbDocumentName,
-      final String userName)
+      final String userName,
+      final boolean readOnly)
   {
     SwingWorker entryWorker = new SwingWorker()
     {
@@ -360,7 +378,7 @@ public class DatabaseJPanel extends JPanel
           while(DatabaseDocument.isCvThreadAlive())
             Thread.sleep(5);
           openEntry(srcfeatureId, entry_source, srcComponent, status_line, stream_progress_listener,
-              splitGFFEntry, splash_main, dbDocumentName, userName, null);
+              splitGFFEntry, splash_main, dbDocumentName, userName, null, readOnly);
         }
         catch(RuntimeException re)
         {
@@ -378,7 +396,7 @@ public class DatabaseJPanel extends JPanel
             userName = userName.substring(5);
             
           openEntry(srcfeatureId, entry_source, srcComponent, status_line, stream_progress_listener,
-              splitGFFEntry, splash_main, dbDocumentName, userName, null);
+              splitGFFEntry, splash_main, dbDocumentName, userName, null, readOnly);
         }
         catch(InterruptedException e)
         {
@@ -414,6 +432,7 @@ public class DatabaseJPanel extends JPanel
         try
         {
           DatabaseJPanel.this.setCursor(cbusy);
+          
           EntryEdit ee = show(entry_source, 
              DatabaseJPanel.this, status_line, splash_main,
              stream_progress_listener, ":" + featureName,
@@ -462,7 +481,8 @@ public class DatabaseJPanel extends JPanel
       final Splash splash_main, 
       final String dbDocumentName,
       final String userName,
-      final Range range) 
+      final Range range, 
+      final boolean readOnly) 
   {
     Cursor cdone = new Cursor(Cursor.DEFAULT_CURSOR);
     try
@@ -473,9 +493,10 @@ public class DatabaseJPanel extends JPanel
 
       final Entry entry = entry_source.getEntry(srcfeatureId, userName,
           stream_progress_listener, range);
-
+      
       DatabaseDocumentEntry db_entry = (DatabaseDocumentEntry) entry
           .getEMBLEntry();
+      db_entry.setReadOnly(readOnly);
       DatabaseDocument doc = (DatabaseDocument) db_entry.getDocument();
       doc.setName(dbDocumentName);
 
@@ -572,10 +593,10 @@ public class DatabaseJPanel extends JPanel
         else if(System.getProperty("database_manager_cache_off") != null)
           logger4j.debug("Database manager cache off");
         
-        final List organisms = doc.getOrganismsContainingSrcFeatures();
+        final List<Organism> organisms = doc.getOrganismsContainingSrcFeatures();
         for(int i=0; i<organisms.size(); i++)
         {
-          Organism org = (Organism)organisms.get(i);
+          Organism org = organisms.get(i);
           
           String name = org.getCommonName();
           if(name == null || name.equals(""))
