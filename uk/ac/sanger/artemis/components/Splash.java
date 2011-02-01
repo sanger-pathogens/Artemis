@@ -616,6 +616,7 @@ abstract public class Splash extends JFrame
     {
       public void actionPerformed(ActionEvent event)
       {
+        Options.getOptions().setProperty("artemis.user.dir.prompt","yes"); 
         setWorkingDirectory();
       }
     };
@@ -710,6 +711,10 @@ abstract public class Splash extends JFrame
        Options.getOptions().getProperty("artemis.user.dir") != null)
       wdir.setText( Options.getOptions().getProperty("artemis.user.dir") );
 
+    if( Options.getOptions().getProperty("artemis.user.dir.prompt") != null &&
+       !Options.getOptions().getPropertyTruthValue("artemis.user.dir.prompt") )
+      return;
+    
     Box bdown   = Box.createVerticalBox();
     Box bacross = Box.createHorizontalBox();
     JButton browse = new JButton("Browse...");
@@ -729,11 +734,19 @@ abstract public class Splash extends JFrame
     bdown.add(bacross);
 
     bacross = Box.createHorizontalBox();
-    JCheckBox saveDir = new JCheckBox("Save between sessions");
+    JCheckBox saveDir = new JCheckBox("Save between sessions", false);
     bacross.add(saveDir);
     bacross.add(Box.createHorizontalGlue());
-    bdown.add(bacross);    
- 
+    bdown.add(bacross);
+    
+    
+    bacross = Box.createHorizontalBox();
+    JCheckBox hide = new JCheckBox("Do not show this prompt again", false);
+    bacross.add(hide);
+    bacross.add(Box.createHorizontalGlue());
+    bdown.add(bacross);
+    
+    
     Object[] possibleValues = { "OK" };
     JOptionPane.showOptionDialog(null,
                                bdown,
@@ -742,6 +755,13 @@ abstract public class Splash extends JFrame
                                JOptionPane.QUESTION_MESSAGE,null,
                                possibleValues, possibleValues[0]);
 
+    if(hide.isSelected() || 
+       Options.getOptions().getProperty("artemis.user.dir.prompt") != null )
+    {
+      Options.getOptions().setProperty("artemis.user.dir.prompt",
+          Boolean.toString(!hide.isSelected())); 
+    }
+    
     if( (new File(wdir.getText().trim())).exists() )
     {
       System.setProperty("user.dir", wdir.getText().trim());
@@ -752,7 +772,8 @@ abstract public class Splash extends JFrame
 
   protected static void exitApp()
   {
-    if(save_wd_properties || save_display_name || save_systematic_names)
+    if(save_wd_properties    || save_display_name || save_systematic_names || 
+       Options.getOptions().getProperty("artemis.user.dir.prompt") != null)
       saveProperties();
     System.exit(0);
   }
@@ -769,7 +790,6 @@ abstract public class Splash extends JFrame
     String prop = uhome+fs+".artemis_options";
 
     writeProperties(prop);
-    
   }
 
   /**
@@ -796,6 +816,12 @@ abstract public class Splash extends JFrame
            {
              line = addEscapeChars("artemis.user.dir="+System.getProperty("user.dir"));
              save_wd_properties = false;
+           }
+           
+           if(line.startsWith("artemis.user.dir.prompt"))
+           {
+             line = addEscapeChars("artemis.user.dir.prompt="+ 
+                 Options.getOptions().getProperty("artemis.user.dir.prompt"));
            }
 
            if(line.startsWith("display_name_qualifiers") && save_display_name)
@@ -825,6 +851,13 @@ abstract public class Splash extends JFrame
          {
            bufferedwriter.write(
                addEscapeChars("artemis.user.dir="+System.getProperty("user.dir")));
+           bufferedwriter.newLine();
+         }
+
+         if(Options.getOptions().getProperty("artemis.user.dir.prompt") != null)
+         {
+           bufferedwriter.write("artemis.user.dir.prompt="+ 
+               Options.getOptions().getProperty("artemis.user.dir.prompt"));
            bufferedwriter.newLine();
          }
          
