@@ -43,7 +43,6 @@ import uk.ac.sanger.artemis.io.Range;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JTree;
@@ -55,7 +54,6 @@ import javax.swing.border.Border;
 import javax.swing.tree.TreePath;
 
 import org.gmod.schema.organism.Organism;
-import org.gmod.schema.organism.OrganismProp;
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureLoc;
 
@@ -68,7 +66,6 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.Dimension;
-import java.awt.Frame;
 import java.awt.Toolkit;
 import java.awt.Cursor;
 import java.awt.FontMetrics;
@@ -76,7 +73,6 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.Vector;
 
 public class DatabaseJPanel extends JPanel
@@ -187,7 +183,7 @@ public class DatabaseJPanel extends JPanel
       final String id = seq_node.getFeatureId();
       if(id != null)
       {
-    	boolean readOnly = setOrganismProps(seq_node.getOrganism().getOrganismProps());
+    	boolean readOnly = DatabaseTreeNode.setOrganismProps(seq_node.getOrganism().getOrganismProps());
         getEntryEditFromDatabase(id, entry_source, tree, 
             status_line, stream_progress_listener, 
             splitGFFEntry, splash_main, 
@@ -280,7 +276,7 @@ public class DatabaseJPanel extends JPanel
       f = it.next().getFeatureBySrcFeatureId();
     }
     
-    boolean readOnly = setOrganismProps(f.getOrganism().getOrganismProps());
+    boolean readOnly = DatabaseTreeNode.setOrganismProps(f.getOrganism().getOrganismProps());
     // warn when opening duplicate entries at the same time
     if(opening.contains(f.getUniqueName()))
     {
@@ -302,42 +298,6 @@ public class DatabaseJPanel extends JPanel
     opening.remove(f.getUniqueName());
     
     return ee;
-  }
-  
-  /**
-   * Use the OrganismProps to set the translation table and
-   * determine in this is a read only entry.
-   * @param op
-   * @return
-   */
-  private static boolean setOrganismProps(Set<OrganismProp> op)
-  {
-    Splash splash = getSplash();
-    boolean readOnly = false;
-    final Iterator<OrganismProp> it = op.iterator();
-    while (it.hasNext()) 
-    {
-      OrganismProp organismProp = it.next();
-      if(splash != null &&
-         organismProp.getCvTerm().getName().equals("translationTable"))
-        splash.setTranslationTable(organismProp.getValue());
-      
-     if(organismProp.getCvTerm().getName().equals("frozen") &&
-        organismProp.getValue().equals("yes"))
-       readOnly = true;
-    } 
-    return readOnly;
-  }
-  
-  private static Splash getSplash()
-  {
-    Frame[] frames = JFrame.getFrames();
-    for(int i=0;i<frames.length;i++)
-    {
-      if(frames[i] instanceof Splash)
-        return (Splash)frames[i];
-    }
-    return null;
   }
 
   /**
