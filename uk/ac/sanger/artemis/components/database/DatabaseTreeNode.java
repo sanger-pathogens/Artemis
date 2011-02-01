@@ -24,16 +24,20 @@
 
 package uk.ac.sanger.artemis.components.database;
 
+import java.awt.Frame;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
 
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.gmod.schema.organism.Organism;
+import org.gmod.schema.organism.OrganismProp;
 import org.gmod.schema.sequence.Feature;
 
+import uk.ac.sanger.artemis.components.Splash;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
 
 import java.io.File;
@@ -42,7 +46,9 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.io.IOException;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 /**
 *
@@ -137,6 +143,42 @@ public class DatabaseTreeNode extends DefaultMutableTreeNode
 	  organismCommonName = getOrganism().getGenus() + "." + getOrganism().getSpecies();
   }
   
+  /**
+   * Use the OrganismProps to set the translation table and
+   * determine in this is a read only entry.
+   * @param op
+   * @return
+   */
+  public static boolean setOrganismProps(Set<OrganismProp> op)
+  {
+    Splash splash = getSplash();
+    boolean readOnly = false;
+    final Iterator<OrganismProp> it = op.iterator();
+    while (it.hasNext()) 
+    {
+      OrganismProp organismProp = it.next();
+      if(splash != null &&
+         organismProp.getCvTerm().getName().equals("translationTable"))
+        splash.setTranslationTable(organismProp.getValue());
+      
+     if(organismProp.getCvTerm().getName().equals("frozen") &&
+        organismProp.getValue().equals("yes"))
+       readOnly = true;
+    } 
+    return readOnly;
+  }
+  
+  private static Splash getSplash()
+  {
+    Frame[] frames = JFrame.getFrames();
+    for(int i=0;i<frames.length;i++)
+    {
+      if(frames[i] instanceof Splash)
+        return (Splash)frames[i];
+    }
+    return null;
+  }
+  
   /** @return   true if node is a directory */
   public boolean getAllowsChildren() { return !isLeaf; }
   /** @return         true if node is a file */
@@ -154,12 +196,12 @@ public class DatabaseTreeNode extends DefaultMutableTreeNode
     if(isLeaf)
       return;
     
-    List sequenceList = dbDoc.getResidueFeatures(new Integer(getOrganism().getOrganismId()));
-    Hashtable sequenceNode = new Hashtable();
+    List<Feature> sequenceList = dbDoc.getResidueFeatures(new Integer(getOrganism().getOrganismId()));
+    Hashtable<String, DatabaseTreeNode> sequenceNode = new Hashtable<String, DatabaseTreeNode>();
     
     for(int i=0;i<sequenceList.size(); i++)
     {
-      Feature f = (Feature)sequenceList.get(i);
+      Feature f = sequenceList.get(i);
       DatabaseTreeNode typeNode;
       if(!sequenceNode.containsKey(f.getCvTerm().getName()))
       {
@@ -248,7 +290,7 @@ public class DatabaseTreeNode extends DefaultMutableTreeNode
     DatabaseTreeNode.dbDoc = dbDoc;
   }
   
-  protected Organism getOrganism()
+  public Organism getOrganism()
   {
     if(organism == null && organismCommonName != null)
       organism = dbDoc.getOrganismByCommonName(organismCommonName);
