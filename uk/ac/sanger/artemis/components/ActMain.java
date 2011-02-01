@@ -251,13 +251,14 @@ public class ActMain extends Splash
         if(this_file_name instanceof DatabaseTreeNode)
         {
           DatabaseTreeNode dbNode = (DatabaseTreeNode)this_file_name;
-          //DatabaseEntrySource entry_source = dbNode.getEntrySource();
-         
           try
           {
             entry = dbEntrySource.getEntry(dbNode.getFeatureId(), 
                 dbNode.getUserName(), progress_listener);
+            
+            boolean readOnly = DatabaseTreeNode.setOrganismProps(dbNode.getOrganism().getOrganismProps());
             embl_entry = (DatabaseDocumentEntry)entry.getEMBLEntry();
+            ((DatabaseDocumentEntry)embl_entry).setReadOnly(readOnly);
           }
           catch(NoSequenceException e)
           {
@@ -312,11 +313,8 @@ public class ActMain extends Splash
         entry_group_array[i / 2] = entry_group;
         return true;
       }
-
-
     };
     entryWorker.start();
-
     return true;
   }
 
