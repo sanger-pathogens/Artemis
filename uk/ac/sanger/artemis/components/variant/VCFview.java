@@ -144,6 +144,7 @@ public class VCFview extends JPanel
   protected boolean showMultiAlleles = true;
   // show variants that do not overlap CDS
   protected boolean showNonOverlappings = true;
+  protected boolean showNonVariants = false;
   
   private boolean markAsNewStop = false;
   private JCheckBoxMenuItem markNewStops =
@@ -498,6 +499,9 @@ public class VCFview extends JPanel
     
     popup.addSeparator();
     
+    final JMenu export = new JMenu("Export");
+    popup.add(export);
+    
     final JMenuItem exportVCF = new JMenuItem("Export filtered VCF");
     exportVCF.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e)
@@ -507,7 +511,18 @@ public class VCFview extends JPanel
         VCFview.this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
       }
     });
-    popup.add(exportVCF);
+    export.add(exportVCF);
+    
+    final JMenuItem exportFasta = new JMenuItem("Export FASTA");
+    exportFasta.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e)
+      {
+        VCFview.this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
+        //IOUtils.export(entryGroup, vcfFiles, VCFview.this);
+        VCFview.this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+      }
+    });
+    
   }
 
   private static EntryGroup getReference(String reference)
@@ -954,7 +969,10 @@ public class VCFview extends JPanel
       return false;
     
     if(!showNonOverlappings && !isOverlappingFeature(features, basePosition))
-        return false;
+      return false;
+    
+    if(!showNonVariants && record.getAlt().equals("."))
+      return false;
     
     short isSyn = -1;
     markAsNewStop = false;

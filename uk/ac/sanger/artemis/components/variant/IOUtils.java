@@ -23,6 +23,7 @@
  */
 package uk.ac.sanger.artemis.components.variant;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -30,12 +31,15 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 
+import javax.swing.JFileChooser;
+
 import uk.ac.sanger.artemis.EntryGroup;
 import uk.ac.sanger.artemis.Feature;
 import uk.ac.sanger.artemis.FeatureEnumeration;
 import uk.ac.sanger.artemis.FeatureKeyQualifierPredicate;
 import uk.ac.sanger.artemis.FeatureVector;
 import uk.ac.sanger.artemis.components.MessageDialog;
+import uk.ac.sanger.artemis.components.StickyFileChooser;
 import uk.ac.sanger.artemis.io.Key;
 
 import net.sf.samtools.util.BlockCompressedInputStream;
@@ -49,17 +53,18 @@ class IOUtils
    * @param vcfView
    * @param features
    */
-  protected static void writeVCF(final String vcfFileName, 
+  protected static File writeVCF(final String vcfFileName, 
                                  final VCFview vcfView,
                                  final FeatureVector features)
   {
     try
     {
-      FileWriter writer = new FileWriter(vcfFileName+".filter");
+      File filterFile = getFile(vcfFileName);
+      FileWriter writer = new FileWriter(filterFile);
       if(IOUtils.isBCF(vcfFileName))
       {
         BCFReader.writeVCF(writer, vcfFileName);
-        return;
+        return filterFile;
       }
       
       TabixReader tr = new TabixReader(vcfFileName);
@@ -79,11 +84,29 @@ class IOUtils
         writer.write(line+'\n');
       }
       writer.close();
+      return filterFile;
     }
     catch (IOException e)
     {
       e.printStackTrace();
+      return null;
     }
+  }
+  
+  private static File getFile(final String vcfFileName) throws IOException
+  {
+    final StickyFileChooser file_dialog = new StickyFileChooser();
+
+    file_dialog.setSelectedFile(new File(vcfFileName+".filter"));
+    file_dialog.setDialogTitle("Choose save file ...");
+    file_dialog.setDialogType(JFileChooser.SAVE_DIALOG);
+    final int status = file_dialog.showSaveDialog(null);
+
+    if(status != JFileChooser.APPROVE_OPTION ||
+       file_dialog.getSelectedFile() == null) 
+      return null;
+    
+    return file_dialog.getSelectedFile();
   }
   
   /**
@@ -113,8 +136,8 @@ class IOUtils
     String filterFiles = "";
     for(int i=0; i<vcfFiles.size(); i++)
     {
-      IOUtils.writeVCF(vcfFiles.get(i), vcfView, features);
-      filterFiles += vcfFiles.get(i)+".filter\n";
+      File filterFile = IOUtils.writeVCF(vcfFiles.get(i), vcfView, features);
+      filterFiles += filterFile.getAbsolutePath()+"\n";
     }
 
     new MessageDialog (null, "Saved Files", filterFiles, false);

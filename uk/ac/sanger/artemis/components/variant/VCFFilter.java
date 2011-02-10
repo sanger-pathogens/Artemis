@@ -112,6 +112,17 @@ public class VCFFilter extends JFrame
       }
     });
     
+    c.gridy = c.gridy + 1;
+    final JCheckBox showNonVariantMenu = new JCheckBox("Non-Varaints", vcfView.showNonVariants);
+    panel.add(showNonVariantMenu, c);
+    showNonVariantMenu.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e)
+      {
+        vcfView.showNonVariants = showNonVariantMenu.isSelected();
+        vcfView.repaint();
+      }
+    });
+    
     if(vcfView.getEntryGroup() == null || vcfView.getEntryGroup().getAllFeaturesCount() == 0)
     {
       showSyn.setEnabled(false);
