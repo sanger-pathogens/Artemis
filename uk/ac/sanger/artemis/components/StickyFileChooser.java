@@ -30,7 +30,6 @@ import uk.ac.sanger.artemis.Options;
 import java.io.File;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.filechooser.FileSystemView;
 
 /**
  *  A JFileChooser that remembers which directory it is in for next time.
