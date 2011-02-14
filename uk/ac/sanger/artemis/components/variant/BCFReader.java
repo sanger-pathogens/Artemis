@@ -47,6 +47,7 @@ class BCFReader extends AbstractVCFReader
   private String[] sampleNames;
   private int nsamples;
   private String metaData;
+  private String fileName;
   
   /**
    * @param bcf  BCF file
@@ -60,6 +61,7 @@ class BCFReader extends AbstractVCFReader
     File bcfIndex = new File(bcf.getAbsolutePath()+".bci");
     indexFileStream = new FileInputStream(bcfIndex);
     idx = loadIndex();
+    fileName = bcf.getAbsolutePath();
   }
 
   protected void seek(long off) throws IOException
@@ -67,7 +69,7 @@ class BCFReader extends AbstractVCFReader
     is.seek(off);
   }
   
-  protected VCFRecord next(String chr, int beg, int end) throws IOException
+  protected VCFRecord nextRecord(String chr, int beg, int end) throws IOException
   {
     try
     {
@@ -237,31 +239,19 @@ class BCFReader extends AbstractVCFReader
   private void getParts(byte[] b, VCFRecord bcfRecord)
   {
     StringBuffer buff = new StringBuffer();
-
     for(int i=0; i<b.length; i++)
     {
-      if(b[i] == 0)
-      {
-        if(i == 0)
-        {
-          buff.append(". ");
-          continue;
-        }
-        
-        if(b[i-1] == 0 || (i < b.length-1 && b[i+1] == 0))
-        {
-          i++;
-          buff.append(" . ");
-        }
-        else
-          buff.append(" ");
-        continue;
-      }
-      buff.append((char)b[i]);
+      if(i == 0 && b[i] == 0)
+        buff.append(". ");
+      else if(b[i] == 0 && b[i-1] == 0)
+        buff.append(" . ");
+      else if(b[i] == 0)
+        buff.append(" ");
+      else
+        buff.append((char)b[i]);
     }
-    
-    String parts[] = buff.toString().replace("  ", " ").split(" ");
 
+    String parts[] = buff.toString().replace("  ", " ").split(" ");
     bcfRecord.setID( parts[0] );
     bcfRecord.setRef( parts[1] );
     bcfRecord.setAlt( parts[2] );
@@ -341,9 +331,10 @@ class BCFReader extends AbstractVCFReader
     int send = Integer.MAX_VALUE;
     VCFRecord record;
     
-    while( (record = reader.next(null, sbeg, send)) != null)
+    while( (record = reader.nextRecord(null, sbeg, send)) != null)
       writer.write(record.toString()+"\n");
     writer.close();
+    reader.close();
   }
   
   protected List<BCFIndex> loadIndex() throws IOException
@@ -409,6 +400,60 @@ class BCFReader extends AbstractVCFReader
     return metaData;
   }
 
+  protected String[] getSeqNames()
+  {
+    return seqNames;
+  }
+  
+  protected String getFileName()
+  {
+    return fileName;
+  }
+  
+  protected BCFReaderIterator query(String chr, int sbeg, int send) throws IOException
+  {
+    return new BCFReaderIterator(chr, sbeg, send);
+  }
+  
+  public class BCFReaderIterator
+  {
+    private String chr;
+    private int sbeg;
+    private int send;
+    private int count = 0;
+    
+    public BCFReaderIterator(String chr, int sbeg, int send)
+    {
+      this.chr = chr;
+      this.sbeg = sbeg;
+      this.send = send;
+    }
+    
+    private boolean seekPosition() throws IOException
+    {
+      int bid = getSeqIndex(chr);
+      if(bid < 0)
+      {
+        VCFview.logger4j.debug(chr+" NOT FOUND");
+        return false;
+      }
+
+      long off = queryIndex(bid, sbeg);
+      seek(off);
+      return true;
+    }
+    
+    public VCFRecord next() throws IOException
+    {
+      if(count == 0 && !seekPosition())
+        return null;
+
+      count+=1;
+      return nextRecord(chr, sbeg, send);
+    }
+  }
+  
+  
   public static void main(String args[])
   {
     try
@@ -436,7 +481,7 @@ class BCFReader extends AbstractVCFReader
 
       System.out.println(reader.headerToString());
       VCFRecord bcfRecord;
-      while( (bcfRecord = reader.next(chr, sbeg, send)) != null )
+      while( (bcfRecord = reader.nextRecord(chr, sbeg, send)) != null )
       {
         System.out.println(bcfRecord.getChrom());
         if(chr != null && bcfRecord.getChrom().equals(chr))
@@ -455,12 +500,7 @@ class BCFReader extends AbstractVCFReader
     }
   }
 
-  protected String[] getSeqNames()
-  {
-    return seqNames;
-  }
 }
-
 
 class BCFIndex
 {

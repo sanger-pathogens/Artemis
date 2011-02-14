@@ -398,4 +398,9 @@ public class TabixReader extends AbstractVCFReader
 	  {
 	    return mSeq;
 	  }
+	  
+	  protected String getFileName()
+	  {
+	    return mFn;
+	  }
 }

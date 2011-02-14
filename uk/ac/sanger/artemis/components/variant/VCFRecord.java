@@ -304,7 +304,40 @@ class VCFRecord
     this.data = data;
   }
 
-
+  /**
+   * Is this a deletion type.
+   * @param variant
+   * @return
+   */
+  protected boolean isDeletion(boolean vcf_v4)
+  {
+    if(vcf_v4)
+    {
+      if( alt.length() < ref.length() && !(alt.indexOf(",") > -1) )
+        return true;
+    }
+    else if(alt.indexOf("D")>-1)
+      return true;
+    return false;
+  }
+  
+  /**
+   * Is this an insertion type.
+   * @param variant
+   * @return
+   */
+  protected boolean isInsertion(boolean vcf_v4)
+  {
+    if(vcf_v4)
+    {
+      if( alt.length() > ref.length() && !(alt.indexOf(",") > -1) )
+        return true;
+    }
+    else if(alt.indexOf("I")>-1)
+      return true;
+    return false;
+  }
+  
   /**
    * @param features
    * @param basePosition

@@ -95,6 +95,7 @@ import uk.ac.sanger.artemis.components.FeatureDisplay;
 import uk.ac.sanger.artemis.components.FileViewer;
 import uk.ac.sanger.artemis.components.MessageDialog;
 import uk.ac.sanger.artemis.components.alignment.FileSelectionDialog;
+import uk.ac.sanger.artemis.components.variant.BCFReader.BCFReaderIterator;
 import uk.ac.sanger.artemis.editor.MultiLineToolTipUI;
 import uk.ac.sanger.artemis.io.EmblStreamFeature;
 import uk.ac.sanger.artemis.io.EntryInformation;
@@ -518,11 +519,11 @@ public class VCFview extends JPanel
       public void actionPerformed(ActionEvent e)
       {
         VCFview.this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-        //IOUtils.export(entryGroup, vcfFiles, VCFview.this);
+        IOUtils.exportFasta(entryGroup, vcfReaders, chr, VCFview.this, vcf_v4);
         VCFview.this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
       }
     });
-    
+    export.add(exportFasta);
   }
 
   private static EntryGroup getReference(String reference)
@@ -807,22 +808,12 @@ public class VCFview extends JPanel
     
     if(vcfReaders[i] instanceof BCFReader)
     {
-      BCFReader bcfReader = (BCFReader)vcfReaders[i];
-      int bid = bcfReader.getSeqIndex(chr);
-      if(bid < 0)
-      {
-        logger4j.debug(chr+" NOT FOUND");
-        return;
-      }
-      
-      long off = bcfReader.queryIndex(bid, sbeg);
-
       try
       {
-        bcfReader.seek(off);
+        BCFReader bcfReader = (BCFReader)vcfReaders[i];
+        BCFReaderIterator it = bcfReader.query(chr, sbeg, send);
         VCFRecord bcfRecord;
-
-        while( (bcfRecord = bcfReader.next(chr, sbeg, send)) != null )
+        while((bcfRecord = it.next()) != null)
           drawVariantCall(g, bcfRecord, start, i, pixPerBase, features);
       }
       catch (IOException e)
@@ -830,6 +821,7 @@ public class VCFview extends JPanel
         logger4j.warn(e.getMessage());
         e.printStackTrace();
       }
+      
     }
     else
     {
@@ -923,46 +915,14 @@ public class VCFview extends JPanel
       return scrollBar.getValue();
   }
   
-  /**
-   * Is this a deletion type.
-   * @param variant
-   * @return
-   */
-  private boolean isDeletion(String ref, String variant)
-  {
-    if(vcf_v4)
-    {
-      if( variant.length() < ref.length() && !(variant.indexOf(",") > -1) )
-        return true;
-    }
-    else if(variant.indexOf("D")>-1)
-      return true;
-    return false;
-  }
-  
-  /**
-   * Is this an insertion type.
-   * @param variant
-   * @return
-   */
-  private boolean isInsertion(String ref, String variant)
-  {
-    if(vcf_v4)
-    {
-      if( variant.length() > ref.length() && !(variant.indexOf(",") > -1) )
-        return true;
-    }
-    else if(variant.indexOf("I")>-1)
-      return true;
-    return false;
-  }
+
   
   protected boolean showVariant(VCFRecord record, FeatureVector features, int basePosition)
   {  
-    if(!showDeletions && isDeletion(record.getRef(), record.getAlt()))
+    if(!showDeletions && record.isDeletion(vcf_v4))
       return false;
     
-    if(!showInsertions && isInsertion(record.getRef(), record.getAlt()))
+    if(!showInsertions && record.isInsertion(vcf_v4))
       return false;
 
     if(!VCFFilter.passFilter(record))
@@ -977,8 +937,8 @@ public class VCFview extends JPanel
     short isSyn = -1;
     markAsNewStop = false;
     if(markNewStops.isSelected() &&
-       !isDeletion(record.getRef(), record.getAlt()) && 
-       !isInsertion(record.getRef(), record.getAlt()) && 
+       !record.isDeletion(vcf_v4) && 
+       !record.isInsertion(vcf_v4) && 
         record.getAlt().length() == 1 && 
         record.getRef().length() == 1)
     {
@@ -988,8 +948,8 @@ public class VCFview extends JPanel
     }
     
     if( (!showSynonymous || !showNonSynonymous) &&
-         !isDeletion(record.getRef(), record.getAlt()) && 
-         !isInsertion(record.getRef(), record.getAlt()) && 
+         !record.isDeletion(vcf_v4) && 
+         !record.isInsertion(vcf_v4) && 
          record.getAlt().length() == 1 && 
          record.getRef().length() == 1)
     {
@@ -1029,9 +989,6 @@ public class VCFview extends JPanel
   
   private void drawVariantCall(Graphics g, VCFRecord record, int start, int index, float pixPerBase, FeatureVector features)
   {
-    //String parts[] = line.split("\\t");
-    //String parts[] = tabPattern.split(line, 0);
-    
     int basePosition = record.getPos() + getSequenceOffset(record.getChrom());
    
     if( !showVariant(record, features, basePosition) )
@@ -1043,9 +1000,9 @@ public class VCFview extends JPanel
       g.setColor(getQualityColour(record));
     else
     {
-      if(isDeletion(record.getRef(), record.getAlt()))
+      if(record.isDeletion(vcf_v4))
         g.setColor(Color.gray);
-      else if(isInsertion(record.getRef(), record.getAlt()))
+      else if(record.isInsertion(vcf_v4))
         g.setColor(Color.yellow);
       else if(record.getAlt().length() == 1 && record.getRef().length() == 1)
         g.setColor(getColourForSNP(record, features, basePosition));
@@ -1210,21 +1167,12 @@ public class VCFview extends JPanel
   {
     if(vcfReaders[i] instanceof BCFReader)
     {
-      BCFReader bcfReader = (BCFReader)vcfReaders[i];
-      int bid = bcfReader.getSeqIndex(chr);
-      
-      if(bid < 0)
-      {
-        logger4j.debug(chr+" NOT FOUND");
-        return;
-      }
-      
-      long off = bcfReader.queryIndex(bid, sbeg);
       try
       {
-        bcfReader.seek(off);
+        BCFReader bcfReader = (BCFReader)vcfReaders[i];
+        BCFReaderIterator it = bcfReader.query(chr, sbeg, send);
         VCFRecord bcfRecord;
-        while( (bcfRecord = bcfReader.next(chr, sbeg, send)) != null )
+        while((bcfRecord = it.next()) != null)
           isMouseOver(mousePoint, bcfRecord, features, i, start, pixPerBase);
       }
       catch (IOException e)

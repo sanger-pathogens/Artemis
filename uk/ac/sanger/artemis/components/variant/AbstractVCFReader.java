@@ -32,6 +32,7 @@ import java.nio.ByteOrder;
 public abstract class AbstractVCFReader
 {
   protected abstract String[] getSeqNames();
+  protected abstract String getFileName();
   
   protected static int readInt(final InputStream is) throws IOException {
     byte[] buf = new byte[4];
