@@ -256,22 +256,10 @@ class IOUtils
     {
       
     }
-    else if(vcfRecord.getAlt().isNonVariant())
-    {
-      String ref = vcfRecord.getRef();
-      if(vcfRecord.getAlt().isNonVariant())
-        buff.append(ref.toUpperCase());
-      else
-        buff.append(ref);
-    }
+    else if(vcfRecord.getAlt().isNonVariant())                   // non-variant SNP
+      buff.append(vcfRecord.getRef());
     else
-    {
-      String alt = vcfRecord.getAlt().toString();
-      if(vcfRecord.getAlt().isNonVariant())
-        buff.append(alt.toUpperCase());
-      else
-        buff.append(alt);
-    }
+      buff.append(vcfRecord.getAlt().toString().toLowerCase());  // SNP
     
     if(isFwd && position < bases.length())
       buff.append(bases.substring(position+1));
