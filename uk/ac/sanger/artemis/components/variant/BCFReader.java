@@ -194,10 +194,10 @@ class BCFReader extends AbstractVCFReader
     
     if(formatPattern.matcher(bcfRecord.getFormat()).matches())
     {
-      int n_alleles = bcfRecord.getNumAlleles();
+      int n_alleles = bcfRecord.getAlt().getNumAlleles();
       int nc  = (int) (n_alleles * ((float)(((float)n_alleles+1.f)/2.f)));
 
-      if(bcfRecord.getAlt().equals("."))
+      if(bcfRecord.getAlt().isNonVariant())
         nc = 1;
 
       String fmts[] = bcfRecord.getFormat().split(":");

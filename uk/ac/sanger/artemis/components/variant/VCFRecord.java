@@ -23,6 +23,8 @@
 
 package uk.ac.sanger.artemis.components.variant;
 
+import java.util.regex.Pattern;
+
 import uk.ac.sanger.artemis.Feature;
 import uk.ac.sanger.artemis.FeatureVector;
 import uk.ac.sanger.artemis.io.Range;
@@ -36,13 +38,14 @@ class VCFRecord
   private int pos;
   private String ID;
   private String ref;
-  private String alt;
+  private VariantBase var;
   private float quality;
   private String filter;
   private String info;
   private String format;
   private String data[][];
   private short synFlag = -1;
+  protected static Pattern MULTI_ALLELE_PATTERN = Pattern.compile("^[AGCT]+,[AGCT,]+$");
   
 
   /**
@@ -51,17 +54,10 @@ class VCFRecord
    */
   public String toString()
   {
-    return chrom+"\t"+pos+"\t"+ID+"\t"+ref+"\t"+alt+"\t"+quality+
+    return chrom+"\t"+pos+"\t"+ID+"\t"+ref+"\t"+var.toString()+"\t"+quality+
            "\t"+filter+"\t"+info+"\t"+format+"\t"+getSampleDataString();
   }
-  
-  protected int getNumAlleles()
-  {
-    if (alt.equals(".")) 
-      return 1;
-
-    return alt.split(",").length+1;
-  }
+ 
   
   /**
    * Parse a VCF line and return a VCFRecord
@@ -77,7 +73,7 @@ class VCFRecord
     rec.pos   = Integer.parseInt(parts[1]);
     rec.ID    = parts[2];
     rec.ref   = parts[3];
-    rec.alt   = parts[4];
+    rec.var   = rec.new VariantBase(parts[4]);
     
     try
     {
@@ -211,9 +207,9 @@ class VCFRecord
   /**
    * @return the alt
    */
-  protected String getAlt()
+  protected VariantBase getAlt()
   {
-    return alt;
+    return var;
   }
 
   /**
@@ -221,7 +217,7 @@ class VCFRecord
    */
   protected void setAlt(String alt)
   {
-    this.alt = alt;
+    this.var = new VariantBase(alt);
   }
 
   /**
@@ -304,39 +300,7 @@ class VCFRecord
     this.data = data;
   }
 
-  /**
-   * Is this a deletion type.
-   * @param variant
-   * @return
-   */
-  protected boolean isDeletion(boolean vcf_v4)
-  {
-    if(vcf_v4)
-    {
-      if( alt.length() < ref.length() && !(alt.indexOf(",") > -1) )
-        return true;
-    }
-    else if(alt.indexOf("D")>-1)
-      return true;
-    return false;
-  }
-  
-  /**
-   * Is this an insertion type.
-   * @param variant
-   * @return
-   */
-  protected boolean isInsertion(boolean vcf_v4)
-  {
-    if(vcf_v4)
-    {
-      if( alt.length() > ref.length() && !(alt.indexOf(",") > -1) )
-        return true;
-    }
-    else if(alt.indexOf("I")>-1)
-      return true;
-    return false;
-  }
+
   
   /**
    * @param features
@@ -363,7 +327,7 @@ class VCFRecord
    */
   private short isSynonymous(FeatureVector features, int basePosition)
   {
-    char variant = getAlt().toLowerCase().charAt(0);
+    char variant = getAlt().toString().toLowerCase().charAt(0);
     int intronlength = 0;
     Range lastRange = null;
     
@@ -448,6 +412,97 @@ class VCFRecord
     }
     
     return 3;
+  }
+  
+  public class VariantBase
+  {
+    private String alt;
+    public VariantBase(String alt)
+    {
+      this.alt = alt;
+    }
+    
+    public String toString()
+    {
+      return alt;
+    }
+    
+    protected int length()
+    {
+      return alt.length();
+    }
+    
+    /**
+     * Is this a deletion type.
+     * @param variant
+     * @return
+     */
+    protected boolean isDeletion(boolean vcf_v4)
+    {
+      if(vcf_v4)
+      {
+        if( alt.length() < ref.length() && !(alt.indexOf(",") > -1) )
+          return true;
+      }
+      else if(alt.indexOf("D")>-1)
+        return true;
+      return false;
+    }
+    
+    /**
+     * Is this an insertion type.
+     * @param variant
+     * @return
+     */
+    protected boolean isInsertion(boolean vcf_v4)
+    {
+      if(vcf_v4)
+      {
+        if( alt.length() > ref.length() && !(alt.indexOf(",") > -1) )
+          return true;
+      }
+      else if(alt.indexOf("I")>-1)
+        return true;
+      return false;
+    }
+
+    protected boolean isMultiAllele()
+    {
+      if(VCFRecord.MULTI_ALLELE_PATTERN.matcher(alt).matches())
+        return true;
+      return false;
+    }
+    
+    protected int getNumAlleles()
+    {
+      if (alt.equals(".")) 
+        return 1;
+
+      return alt.split(",").length+1;
+    }
+
+    protected int getNumberOfDeletions(boolean vcf_v4)
+    {
+      String alt = getAlt().toString();
+      if(vcf_v4)
+        return getRef().length()-alt.length();
+      
+      int index = alt.indexOf("D");
+      int ndel = 0;
+      try
+      {
+        ndel = Integer.parseInt( alt.substring(index+1) );
+      }
+      catch(NumberFormatException e) { e.printStackTrace(); }
+      return ndel;
+    }
+    
+    protected boolean isNonVariant()
+    {
+      if(alt.equals("."))
+        return true;
+      return false;
+    }
   }
   
 }

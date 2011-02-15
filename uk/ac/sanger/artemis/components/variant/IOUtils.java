@@ -29,8 +29,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.List;
 
 import javax.swing.JFileChooser;
@@ -46,7 +44,6 @@ import uk.ac.sanger.artemis.FeatureVector;
 import uk.ac.sanger.artemis.components.MessageDialog;
 import uk.ac.sanger.artemis.components.StickyFileChooser;
 import uk.ac.sanger.artemis.components.variant.BCFReader.BCFReaderIterator;
-import uk.ac.sanger.artemis.io.FastaStreamSequence;
 import uk.ac.sanger.artemis.io.Key;
 
 import net.sf.samtools.util.BlockCompressedInputStream;
@@ -67,7 +64,7 @@ class IOUtils
   {
     try
     {
-      File filterFile = getFile(vcfFileName, nfiles);
+      File filterFile = getFile(vcfFileName, nfiles, "filter");
       FileWriter writer = new FileWriter(filterFile);
       if(IOUtils.isBCF(vcfFileName))
       {
@@ -101,13 +98,13 @@ class IOUtils
     }
   }
   
-  private static File getFile(final String vcfFileName, final int nfiles) throws IOException
+  private static File getFile(final String vcfFileName, final int nfiles, final String suffix) throws IOException
   {
     if(nfiles > 1)
-      return new File(vcfFileName+".filter");
+      return new File(vcfFileName+suffix);
     final StickyFileChooser file_dialog = new StickyFileChooser();
 
-    file_dialog.setSelectedFile(new File(vcfFileName+".filter"));
+    file_dialog.setSelectedFile(new File(vcfFileName+suffix));
     file_dialog.setDialogTitle("Choose save file ...");
     file_dialog.setDialogType(JFileChooser.SAVE_DIALOG);
     final int status = file_dialog.showSaveDialog(null);
@@ -149,54 +146,60 @@ class IOUtils
                                     final VCFview vcfView,
                                     final boolean vcf_v4)
   {
-    // get all CDS features that do not have the /pseudo qualifier
+     // get all CDS features that do not have the /pseudo qualifier
     final FeatureVector features = getFeatures(
         new FeatureKeyQualifierPredicate(Key.CDS, "pseudo", false), entryGroup);
+    exportFasta(entryGroup, vcfReaders, chr, vcfView, vcf_v4, features); 
+  }
+
+  
+  protected static void exportFasta(final EntryGroup entryGroup,
+                                    final AbstractVCFReader vcfReaders[],
+                                    final String chr,
+                                    final VCFview vcfView,
+                                    final boolean vcf_v4,
+                                    final FeatureVector features)
+  {
+    String suffix = ".fasta";
+    if(features.size() == 1)
+      suffix = "."+features.elementAt(0).getIDString()+suffix;
     
     for (int i = 0; i < vcfReaders.length; i++)
     {
       String vcfFileName = vcfReaders[i].getFileName();
       try
       {
-        File filterFile = getFile(vcfFileName, vcfReaders.length);
+        File filterFile = getFile(vcfFileName, vcfReaders.length, suffix);
         FileWriter writer = new FileWriter(filterFile);
         for (int j = 0; j < features.size(); j++)
         {
           Feature f = features.elementAt(j);
           FeatureSegmentVector segs = f.getSegments();
-          Hashtable<String, String> seqs = new Hashtable<String, String>();
-          String bases = f.getBases();
-          seqs.put("ref", bases);
-          
           StringBuffer buff = new StringBuffer();
-          
           for(int k=0; k<segs.size(); k++)
           {
             FeatureSegment seg = segs.elementAt(k);
             int sbeg = seg.getRawRange().getStart();
             int send = seg.getRawRange().getEnd();
             String segBases = seg.getBases();
-            
+
             if (vcfReaders[i] instanceof BCFReader)
             {
               BCFReaderIterator it = ((BCFReader) vcfReaders[i]).query(chr, sbeg, send);
-              VCFRecord bcfRecord = null;
-
+              VCFRecord bcfRecord;
               while ((bcfRecord = it.next()) != null)
-                segBases = getSeqsVariations(bcfRecord, segBases, sbeg, f.isForwardFeature(), vcf_v4);
+                segBases = getSeqsVariation(bcfRecord, segBases, sbeg, f.isForwardFeature(), vcf_v4);
             }
-            
             buff.append(segBases);
           }
- 
-          Enumeration<String> en = seqs.keys();
-          while(en.hasMoreElements())
-          {
-            String key = en.nextElement();
-            bases = seqs.get(key);
-            FastaStreamSequence stream = new FastaStreamSequence(bases, f.getIDString()+":"+key);
-            stream.writeToStream(writer);
-          }
+          
+          StringBuffer header = new StringBuffer(f.getSystematicName());
+          header.append(" "+f.getIDString()+" ");
+          final String product = f.getProductString();
+          header.append( (product == null ? "undefined product" : product) );
+          header.append(" ").append(f.getWriteRange());
+          
+          writeSequence(writer, header.toString(), buff.toString()); 
         }
         
         writer.close();
@@ -208,24 +211,23 @@ class IOUtils
     }
   }
   
-  private static int getNumberOfDeletions(VCFRecord vcfRecord, boolean vcf_v4)
+  private static void writeSequence(FileWriter writer, String header, String bases) throws IOException
   {
-    if(vcf_v4)
-      return vcfRecord.getRef().length()-vcfRecord.getAlt().length();
-    
-    int index = vcfRecord.getAlt().indexOf("D");
-    int ndel = 0;
-    try
+    writer.write (">" + header + "\n");
+
+    final int SEQUENCE_LINE_BASE_COUNT = 60;
+    for(int k=0; k<bases.length(); k+=SEQUENCE_LINE_BASE_COUNT)
     {
-      ndel = Integer.parseInt( vcfRecord.getAlt().substring(index+1) );
+      int end = k + SEQUENCE_LINE_BASE_COUNT;
+      if(end > bases.length())
+        end = bases.length();
+      writer.write ( bases.substring(k,end) + "\n");
     }
-    catch(NumberFormatException e) { e.printStackTrace(); }
-    return ndel;
   }
   
-  protected static String getSeqsVariations(VCFRecord vcfRecord, 
+  private static String getSeqsVariation(VCFRecord vcfRecord, 
       String bases, int sbeg, boolean isFwd, boolean vcf_v4)
-  {   
+  {
     int position = vcfRecord.getPos()-sbeg;
     if(!isFwd)
       position = bases.length()-position;
@@ -233,24 +235,50 @@ class IOUtils
     if(position > bases.length())
       return bases;
 
-    if(vcfRecord.isDeletion(vcf_v4))
+    StringBuffer buff = new StringBuffer();
+    if(isFwd)
+      buff.append(bases.substring(0,position));
+    else if(position > 0)
+      buff.append(bases.substring(0,position-1)); 
+    
+    if(vcfRecord.getAlt().isDeletion(vcf_v4))
     {
-      int ndel = getNumberOfDeletions(vcfRecord, vcf_v4);
-      
-      if(isFwd)
-        return bases.substring(0,position)+bases.substring(position+ndel);
-      else
-        return bases.substring(0,position-ndel)+bases.substring(position);
+      int ndel = vcfRecord.getAlt().getNumberOfDeletions(vcf_v4);
+      for(int i=0; i<ndel; i++)
+        buff.append("-");
+      position+=ndel;
     }
-    else if(vcfRecord.isInsertion(vcf_v4))
+    else if(vcfRecord.getAlt().isInsertion(vcf_v4))
     {
       
+    }
+    else if(vcfRecord.getAlt().isMultiAllele())
+    {
+      
+    }
+    else if(vcfRecord.getAlt().isNonVariant())
+    {
+      String ref = vcfRecord.getRef();
+      if(vcfRecord.getAlt().isNonVariant())
+        buff.append(ref.toUpperCase());
+      else
+        buff.append(ref);
     }
     else
     {
-      
+      String alt = vcfRecord.getAlt().toString();
+      if(vcfRecord.getAlt().isNonVariant())
+        buff.append(alt.toUpperCase());
+      else
+        buff.append(alt);
     }
-    return bases;
+    
+    if(isFwd && position < bases.length())
+      buff.append(bases.substring(position+1));
+    else
+      buff.append(bases.substring(position));
+
+    return buff.toString();
   }
 
   /**

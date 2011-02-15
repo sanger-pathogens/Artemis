@@ -52,7 +52,6 @@ import java.net.URL;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.ButtonGroup;
@@ -160,8 +159,6 @@ public class VCFview extends JPanel
   
   Hashtable<String, Integer> offsetLengths = null;
   private boolean concatSequences = false;
-
-  private Pattern multiAllelePattern = Pattern.compile("^[AGCT]+,[AGCT,]+$");
   protected static Pattern tabPattern = Pattern.compile("\t");
   
   public static String VCFFILE_SUFFIX = ".*\\.[bv]{1}cf(\\.gz)*$";
@@ -186,7 +183,7 @@ public class VCFview extends JPanel
     this.feature_display = feature_display;
     this.vcfPanel = vcfPanel;
     this.vcfFiles = vcfFiles;
-    
+ 
     setBackground(Color.white);
     MultiLineToolTipUI.initialize();
     setToolTipText("");
@@ -513,6 +510,18 @@ public class VCFview extends JPanel
       }
     });
     export.add(exportVCF);
+    
+    final JMenuItem exportFastaSelected = new JMenuItem("Export FASTA of selected features");
+    exportFastaSelected.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e)
+      {
+        VCFview.this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
+        IOUtils.exportFasta(entryGroup, vcfReaders, chr, VCFview.this, vcf_v4,
+            selection.getAllFeatures());
+        VCFview.this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+      }
+    });
+    export.add(exportFastaSelected);
     
     final JMenuItem exportFasta = new JMenuItem("Export FASTA");
     exportFasta.addActionListener(new ActionListener(){
@@ -919,10 +928,10 @@ public class VCFview extends JPanel
   
   protected boolean showVariant(VCFRecord record, FeatureVector features, int basePosition)
   {  
-    if(!showDeletions && record.isDeletion(vcf_v4))
+    if(!showDeletions && record.getAlt().isDeletion(vcf_v4))
       return false;
     
-    if(!showInsertions && record.isInsertion(vcf_v4))
+    if(!showInsertions && record.getAlt().isInsertion(vcf_v4))
       return false;
 
     if(!VCFFilter.passFilter(record))
@@ -931,14 +940,14 @@ public class VCFview extends JPanel
     if(!showNonOverlappings && !isOverlappingFeature(features, basePosition))
       return false;
     
-    if(!showNonVariants && record.getAlt().equals("."))
+    if(!showNonVariants && record.getAlt().isNonVariant())
       return false;
     
     short isSyn = -1;
     markAsNewStop = false;
     if(markNewStops.isSelected() &&
-       !record.isDeletion(vcf_v4) && 
-       !record.isInsertion(vcf_v4) && 
+       !record.getAlt().isDeletion(vcf_v4) && 
+       !record.getAlt().isInsertion(vcf_v4) && 
         record.getAlt().length() == 1 && 
         record.getRef().length() == 1)
     {
@@ -948,8 +957,8 @@ public class VCFview extends JPanel
     }
     
     if( (!showSynonymous || !showNonSynonymous) &&
-         !record.isDeletion(vcf_v4) && 
-         !record.isInsertion(vcf_v4) && 
+         !record.getAlt().isDeletion(vcf_v4) && 
+         !record.getAlt().isInsertion(vcf_v4) && 
          record.getAlt().length() == 1 && 
          record.getRef().length() == 1)
     {
@@ -961,7 +970,7 @@ public class VCFview extends JPanel
         return false;
     }
     
-    if(!showMultiAlleles && multiAllelePattern.matcher(record.getAlt()).matches())
+    if(!showMultiAlleles && record.getAlt().isMultiAllele())
       return false;
     
     return true;
@@ -1000,16 +1009,15 @@ public class VCFview extends JPanel
       g.setColor(getQualityColour(record));
     else
     {
-      if(record.isDeletion(vcf_v4))
+      if(record.getAlt().isDeletion(vcf_v4))
         g.setColor(Color.gray);
-      else if(record.isInsertion(vcf_v4))
+      else if(record.getAlt().isInsertion(vcf_v4))
         g.setColor(Color.yellow);
       else if(record.getAlt().length() == 1 && record.getRef().length() == 1)
         g.setColor(getColourForSNP(record, features, basePosition));
       else
       {
-        Matcher m = multiAllelePattern.matcher(record.getAlt());
-        if(m.matches())
+        if(record.getAlt().isMultiAllele())
         {
           g.setColor(Color.orange);
           g.fillArc(pos[0]-3, pos[1]-LINE_HEIGHT-3, 6, 6, 0, 360);
@@ -1035,7 +1043,7 @@ public class VCFview extends JPanel
   private Color getColourForSNP(VCFRecord record, FeatureVector features, int basePosition)
   {
     if(colourScheme == VARIANT_COLOUR_SCHEME)
-      return getVariantColour(record.getAlt());
+      return getVariantColour(record.getAlt().toString());
     else if(colourScheme == SYN_COLOUR_SCHEME)  // synonymous / non-synonymous
     {
       short synFlag = record.getSynFlag(features, basePosition);
@@ -1044,7 +1052,7 @@ public class VCFview extends JPanel
       else if(synFlag == 0 || synFlag == 2)
         return Color.blue;
       else
-        return getVariantColour(record.getAlt());
+        return getVariantColour(record.getAlt().toString());
     }
     else // score
       return getQualityColour(record);
