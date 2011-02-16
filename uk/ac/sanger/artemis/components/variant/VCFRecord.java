@@ -522,7 +522,7 @@ class VCFRecord
     
     protected boolean isNonVariant()
     {
-      if(alt.equals("."))
+      if(alt.equals(".") && ref.length() == 1)
         return true;
       return false;
     }
