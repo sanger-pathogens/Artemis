@@ -117,11 +117,26 @@ class VCFRecord
     return null;
   }
   
+  protected String getFormatValue(String key)
+  {
+    String fmts[] = getFormat().split(":");
+    for(int i=0; i<fmts.length; i++)
+    {
+      if(fmts[i].equals(key))
+      {
+        String vals[] = getSampleDataString().split(":");
+        if(vals.length == fmts.length)
+          return vals[i];
+      }
+    }
+    return null;
+  }
+  
   /**
    * Return the sample data as a tab-delimited string
    * @return
    */
-  private String getSampleDataString()
+  protected String getSampleDataString()
   {
     if(data == null)
       return "";
@@ -470,6 +485,14 @@ class VCFRecord
     {
       if(VCFRecord.MULTI_ALLELE_PATTERN.matcher(alt).matches())
         return true;
+      
+      // look at probability of each genotype (PL) information as well
+      String pl;
+      if((pl = getFormatValue("PL")) != null && 
+          pl.split(",").length == 3 &&
+          pl.split(",")[1].equals("0")) // middle value is zero, e.g. 
+        return true;
+
       return false;
     }
     

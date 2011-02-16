@@ -128,7 +128,7 @@ public class VCFview extends JPanel
   private int seqLength;
   private EntryGroup entryGroup;
   private String chr;
-  private String mouseOverVCFline;
+  private VCFRecord mouseVCF;
   private int mouseOverIndex = -1;
   
   private boolean vcf_v4 = false;
@@ -695,17 +695,18 @@ public class VCFview extends JPanel
   
   public String getToolTipText()
   {
-    if(mouseOverVCFline == null)
+    if(mouseVCF == null)
       return null;
-    
-    String parts[] = tabPattern.split(mouseOverVCFline, 0);
+
     String msg = 
-           "Seq: "+parts[0]+"\n";
-    msg += "Pos: "+parts[1]+"\n";
-    msg += "ID:  "+parts[2]+"\n";
-    msg += "Variant: "+parts[3]+" -> "+parts[4]+"\n";
-    msg += "Qual: "+parts[5]+"\n";
-    
+           "Seq: "+mouseVCF.getChrom()+"\n";
+    msg += "Pos: "+mouseVCF.getPos()+"\n";
+    msg += "ID:  "+mouseVCF.getID()+"\n";
+    msg += "Variant: "+mouseVCF.getRef()+" -> "+mouseVCF.getAlt().toString()+"\n";
+    msg += "Qual: "+mouseVCF.getQuality()+"\n";
+    String pl;
+    if((pl = mouseVCF.getFormatValue("PL")) != null && pl.split(",").length > 1)
+      msg += "PL: "+pl+"\n";
     return msg;
   }
   
@@ -755,7 +756,7 @@ public class VCFview extends JPanel
   protected void paintComponent(Graphics g)
   {
     super.paintComponent(g);
-    mouseOverVCFline = null;
+    mouseVCF = null;
 
     float pixPerBase = getPixPerBaseByWidth();
     int start = getBaseAtStartOfView();
@@ -1013,18 +1014,15 @@ public class VCFview extends JPanel
         g.setColor(Color.gray);
       else if(record.getAlt().isInsertion(vcf_v4))
         g.setColor(Color.yellow);
+      else if(record.getAlt().isMultiAllele())
+      {
+        g.setColor(Color.orange);
+        g.fillArc(pos[0]-3, pos[1]-LINE_HEIGHT-3, 6, 6, 0, 360);
+      }
       else if(record.getAlt().length() == 1 && record.getRef().length() == 1)
         g.setColor(getColourForSNP(record, features, basePosition));
       else
-      {
-        if(record.getAlt().isMultiAllele())
-        {
-          g.setColor(Color.orange);
-          g.fillArc(pos[0]-3, pos[1]-LINE_HEIGHT-3, 6, 6, 0, 360);
-        }
-        else
-          g.setColor(Color.pink);
-      }
+        g.setColor(Color.pink);
     }
 
     if(markAsNewStop)
@@ -1081,7 +1079,7 @@ public class VCFview extends JPanel
     else if(variant.equals("T"))
       return Color.black;
     else
-      return Color.magenta;
+      return Color.magenta; // non-variant
   }
   
   /**
@@ -1229,7 +1227,7 @@ public class VCFview extends JPanel
        mousePoint.getX() > pos[0]-3 &&
        mousePoint.getX() < pos[0]+3)
      {
-       mouseOverVCFline = record.toString();
+       mouseVCF = record;
        mouseOverIndex = i;
      }
   }
@@ -1477,34 +1475,33 @@ public class VCFview extends JPanel
          if(showDetails != null)
            popup.remove(showDetails);
          
-         if( mouseOverVCFline != null )
+         if( mouseVCF != null )
          {
-           final String parts[] = tabPattern.split(mouseOverVCFline, 0);
-      
-           showDetails = new JMenuItem("Show details of : "+parts[0]+":"+parts[1]+" "+parts[2]);
+           showDetails = new JMenuItem("Show details of : "+
+               mouseVCF.getChrom()+":"+mouseVCF.getPos()+" "+mouseVCF.getID());
            showDetails.addActionListener(new ActionListener()
            {
              public void actionPerformed(ActionEvent e) 
              {
-               FileViewer viewDetail = new FileViewer(parts[0]+":"+parts[1]+" "+parts[2], true, false);
+               FileViewer viewDetail = new FileViewer(
+                   mouseVCF.getChrom()+":"+mouseVCF.getPos()+" "+mouseVCF.getID(), true, false);
                
                viewDetail.appendString(header[mouseOverIndex]+"\n", Level.INFO);
                
-               viewDetail.appendString("Seq   : "+parts[0]+"\n", Level.DEBUG);
-               viewDetail.appendString("Pos   : "+parts[1]+"\n", Level.DEBUG);
-               viewDetail.appendString("ID    : "+parts[2]+"\n", Level.DEBUG);
-               viewDetail.appendString("Ref   : "+parts[3]+"\n", Level.DEBUG);
-               viewDetail.appendString("Alt   : "+parts[4]+"\n", Level.DEBUG);
-               viewDetail.appendString("Qual  : "+parts[5]+"\n", Level.DEBUG);
-               viewDetail.appendString("Filter: "+parts[6]+"\n", Level.DEBUG);
-               viewDetail.appendString("Info  : "+parts[7]+"\n", Level.DEBUG);
+               viewDetail.appendString("Seq   : "+mouseVCF.getChrom()+"\n", Level.DEBUG);
+               viewDetail.appendString("Pos   : "+mouseVCF.getPos()+"\n", Level.DEBUG);
+               viewDetail.appendString("ID    : "+mouseVCF.getID()+"\n", Level.DEBUG);
+               viewDetail.appendString("Ref   : "+mouseVCF.getRef()+"\n", Level.DEBUG);
+               viewDetail.appendString("Alt   : "+mouseVCF.getAlt().toString()+"\n", Level.DEBUG);
+               viewDetail.appendString("Qual  : "+mouseVCF.getQuality()+"\n", Level.DEBUG);
+               viewDetail.appendString("Filter: "+mouseVCF.getFilter()+"\n", Level.DEBUG);
+               viewDetail.appendString("Info  : "+mouseVCF.getInfo()+"\n", Level.DEBUG);
                
-               if(parts.length > 8)
+               if(mouseVCF.getFormat() != null)
                {
                  viewDetail.appendString("\nGenotype information:\n", Level.INFO);
-                 viewDetail.appendString("Format: "+parts[8]+"\n", Level.DEBUG);
-                 for(int i=9; i<parts.length; i++)
-                   viewDetail.appendString(parts[i]+"\n", Level.DEBUG);
+                 viewDetail.appendString("Format: "+mouseVCF.getFormat()+"\n", Level.DEBUG);
+                 viewDetail.appendString(mouseVCF.getSampleDataString()+"\n", Level.DEBUG);
                }
                
                viewDetail.getTextPane().setCaretPosition(0);
