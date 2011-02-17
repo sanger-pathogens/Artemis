@@ -706,7 +706,7 @@ public class VCFview extends JPanel
     msg += "Qual: "+mouseVCF.getQuality()+"\n";
     String pl;
     if((pl = mouseVCF.getFormatValue("PL")) != null && pl.split(",").length > 1)
-      msg += "PL: "+pl+"\n";
+      msg += "Genotype likelihood (PL): "+pl+"\n";
     return msg;
   }
   
@@ -1008,15 +1008,15 @@ public class VCFview extends JPanel
 
     if(colourScheme == QUAL_COLOUR_SCHEME)
       g.setColor(getQualityColour(record));
-    else if(record.getAlt().isDeletion(vcf_v4))
-      g.setColor(Color.gray);
-    else if(record.getAlt().isInsertion(vcf_v4))
-      g.setColor(Color.yellow);
     else if(record.getAlt().isMultiAllele())
     {
       g.setColor(Color.orange);
       g.fillArc(pos[0]-3, pos[1]-LINE_HEIGHT-3, 6, 6, 0, 360);
     }
+    else if(record.getAlt().isDeletion(vcf_v4))
+      g.setColor(Color.gray);
+    else if(record.getAlt().isInsertion(vcf_v4))
+      g.setColor(Color.yellow);
     else if(record.getAlt().length() == 1 && record.getRef().length() == 1)
     {
       g.setColor(getColourForSNP(record, features, basePosition));
