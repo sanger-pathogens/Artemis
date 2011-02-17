@@ -500,7 +500,7 @@ public class VCFview extends JPanel
     final JMenu export = new JMenu("Export");
     popup.add(export);
     
-    final JMenuItem exportVCF = new JMenuItem("Export filtered VCF");
+    final JMenuItem exportVCF = new JMenuItem("Filtered VCF");
     exportVCF.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e)
       {
@@ -511,7 +511,7 @@ public class VCFview extends JPanel
     });
     export.add(exportVCF);
     
-    final JMenuItem exportFastaSelected = new JMenuItem("Export FASTA of selected features");
+    final JMenuItem exportFastaSelected = new JMenuItem("FASTA of selected feature(s)");
     exportFastaSelected.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e)
       {
@@ -523,7 +523,7 @@ public class VCFview extends JPanel
     });
     export.add(exportFastaSelected);
     
-    final JMenuItem exportFasta = new JMenuItem("Export FASTA");
+    final JMenuItem exportFasta = new JMenuItem("FASTA");
     exportFasta.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e)
       {
@@ -1008,22 +1008,26 @@ public class VCFview extends JPanel
 
     if(colourScheme == QUAL_COLOUR_SCHEME)
       g.setColor(getQualityColour(record));
-    else
+    else if(record.getAlt().isDeletion(vcf_v4))
+      g.setColor(Color.gray);
+    else if(record.getAlt().isInsertion(vcf_v4))
+      g.setColor(Color.yellow);
+    else if(record.getAlt().isMultiAllele())
     {
-      if(record.getAlt().isDeletion(vcf_v4))
-        g.setColor(Color.gray);
-      else if(record.getAlt().isInsertion(vcf_v4))
-        g.setColor(Color.yellow);
-      else if(record.getAlt().isMultiAllele())
-      {
-        g.setColor(Color.orange);
-        g.fillArc(pos[0]-3, pos[1]-LINE_HEIGHT-3, 6, 6, 0, 360);
-      }
-      else if(record.getAlt().length() == 1 && record.getRef().length() == 1)
-        g.setColor(getColourForSNP(record, features, basePosition));
-      else
-        g.setColor(Color.pink);
+      g.setColor(Color.orange);
+      g.fillArc(pos[0]-3, pos[1]-LINE_HEIGHT-3, 6, 6, 0, 360);
     }
+    else if(record.getAlt().length() == 1 && record.getRef().length() == 1)
+    {
+      g.setColor(getColourForSNP(record, features, basePosition));
+      if(record.getAlt().isNonVariant())
+      {
+        g.drawLine(pos[0], pos[1]-2, pos[0], pos[1]-LINE_HEIGHT+4);
+        return;
+      }
+    }
+    else
+      g.setColor(Color.pink);
 
     if(markAsNewStop)
       g.fillArc(pos[0]-3, pos[1]-(LINE_HEIGHT/2)-3, 6, 6, 0, 360);
