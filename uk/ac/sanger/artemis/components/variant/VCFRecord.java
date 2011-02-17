@@ -508,7 +508,11 @@ class VCFRecord
     {
       String alt = getAlt().toString();
       if(vcf_v4)
+      {
+        if(alt.equals("."))
+          return getRef().length();
         return getRef().length()-alt.length();
+      }
       
       int index = alt.indexOf("D");
       int ndel = 0;
