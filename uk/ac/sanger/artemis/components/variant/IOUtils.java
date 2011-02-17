@@ -45,6 +45,7 @@ import uk.ac.sanger.artemis.components.MessageDialog;
 import uk.ac.sanger.artemis.components.StickyFileChooser;
 import uk.ac.sanger.artemis.components.variant.BCFReader.BCFReaderIterator;
 import uk.ac.sanger.artemis.io.Key;
+import uk.ac.sanger.artemis.sequence.Bases;
 
 import net.sf.samtools.util.BlockCompressedInputStream;
 
@@ -182,7 +183,7 @@ class IOUtils
             int sbeg = seg.getRawRange().getStart();
             int send = seg.getRawRange().getEnd();
             String segBases = seg.getBases();
-
+            
             if (vcfReaders[i] instanceof BCFReader)
             {
               BCFReaderIterator it = ((BCFReader) vcfReaders[i]).query(chr, sbeg, send);
@@ -198,7 +199,7 @@ class IOUtils
           final String product = f.getProductString();
           header.append( (product == null ? "undefined product" : product) );
           header.append(" ").append(f.getWriteRange());
-          
+
           writeSequence(writer, header.toString(), buff.toString()); 
         }
         
@@ -230,23 +231,30 @@ class IOUtils
   {
     int position = vcfRecord.getPos()-sbeg;
     if(!isFwd)
-      position = bases.length()-position;
+      position = bases.length()-position-1;
     
     if(position > bases.length())
       return bases;
+    else if(position < 0)
+      return bases;
 
+    if(position < bases.length()-1 && bases.charAt(position) == '-')
+      return bases;
+    
     StringBuffer buff = new StringBuffer();
-    if(isFwd)
-      buff.append(bases.substring(0,position));
-    else if(position > 0)
-      buff.append(bases.substring(0,position-1)); 
+    buff.append(bases.substring(0,position)); 
     
     if(vcfRecord.getAlt().isDeletion(vcf_v4))
     {
       int ndel = vcfRecord.getAlt().getNumberOfDeletions(vcf_v4);
+      
+      if(isFwd)
+        position+=ndel;
+      else
+        buff.delete(position-ndel+1, position);
+      
       for(int i=0; i<ndel; i++)
         buff.append("-");
-      position+=ndel;
     }
     else if(vcfRecord.getAlt().isInsertion(vcf_v4))
     {
@@ -256,16 +264,28 @@ class IOUtils
     {
       
     }
-    else if(vcfRecord.getAlt().isNonVariant())                   // non-variant SNP
-      buff.append(vcfRecord.getRef());
+    else if(vcfRecord.getAlt().isNonVariant())                   // non-variant
+    {
+      if(isFwd)
+        buff.append(vcfRecord.getRef().toUpperCase());
+      else
+        buff.append(Bases.complement(vcfRecord.getRef()).toUpperCase());
+    }
     else
-      buff.append(vcfRecord.getAlt().toString().toLowerCase());  // SNP
+    {
+      String alt = vcfRecord.getAlt().toString().toLowerCase();  // SNP   
+      if(isFwd)
+        buff.append(alt);
+      else
+        buff.append(Bases.complement(alt));
+    }
     
     if(isFwd && position < bases.length())
       buff.append(bases.substring(position+1));
-    else
-      buff.append(bases.substring(position));
-
+    else if(!isFwd)
+    {
+      buff.append(bases.substring(position+1));
+    }
     return buff.toString();
   }
 
