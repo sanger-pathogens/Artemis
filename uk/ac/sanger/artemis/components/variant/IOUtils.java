@@ -42,6 +42,7 @@ import uk.ac.sanger.artemis.FeatureSegment;
 import uk.ac.sanger.artemis.FeatureSegmentVector;
 import uk.ac.sanger.artemis.FeatureVector;
 import uk.ac.sanger.artemis.components.MessageDialog;
+import uk.ac.sanger.artemis.components.SequenceViewer;
 import uk.ac.sanger.artemis.components.StickyFileChooser;
 import uk.ac.sanger.artemis.components.variant.BCFReader.BCFReaderIterator;
 import uk.ac.sanger.artemis.io.Key;
@@ -150,7 +151,7 @@ class IOUtils
      // get all CDS features that do not have the /pseudo qualifier
     final FeatureVector features = getFeatures(
         new FeatureKeyQualifierPredicate(Key.CDS, "pseudo", false), entryGroup);
-    exportFasta(entryGroup, vcfReaders, chr, vcfView, vcf_v4, features); 
+    exportFasta(entryGroup, vcfReaders, chr, vcfView, vcf_v4, features, false); 
   }
 
   
@@ -159,7 +160,8 @@ class IOUtils
                                     final String chr,
                                     final VCFview vcfView,
                                     final boolean vcf_v4,
-                                    final FeatureVector features)
+                                    final FeatureVector features,
+                                    final boolean view)
   {
     String suffix = ".fasta";
     if(features.size() == 1)
@@ -169,9 +171,7 @@ class IOUtils
     {
       String vcfFileName = vcfReaders[i].getFileName();
       try
-      {
-        File filterFile = getFile(vcfFileName, vcfReaders.length, suffix);
-        FileWriter writer = new FileWriter(filterFile);
+      {        
         for (int j = 0; j < features.size(); j++)
         {
           Feature f = features.elementAt(j);
@@ -193,17 +193,28 @@ class IOUtils
             }
             buff.append(segBases);
           }
-          
+
           StringBuffer header = new StringBuffer(f.getSystematicName());
           header.append(" "+f.getIDString()+" ");
           final String product = f.getProductString();
           header.append( (product == null ? "undefined product" : product) );
           header.append(" ").append(f.getWriteRange());
 
-          writeSequence(writer, header.toString(), buff.toString()); 
+          if(view) // sequence viewer
+          {
+            SequenceViewer viewer =
+              new SequenceViewer ("Feature base viewer for feature:" + 
+                f.getIDString (), false);  
+            viewer.setSequence(">"+header.toString(), buff.toString());
+          }
+          else    // write to file
+          {
+            File filterFile = getFile(vcfFileName, vcfReaders.length, suffix);
+            FileWriter writer = new FileWriter(filterFile);
+            writeSequence(writer, header.toString(), buff.toString());
+            writer.close();
+          }
         }
-        
-        writer.close();
       }
       catch (IOException e)
       {
@@ -262,7 +273,11 @@ class IOUtils
     }
     else if(vcfRecord.getAlt().isMultiAllele())
     {
-      
+      String base = MultipleAlleleVariant.getIUBCode(vcfRecord);
+      if(base != null)
+        buff.append(base);
+      else
+        buff.append(bases.charAt(position));
     }
     else if(vcfRecord.getAlt().isNonVariant())                   // non-variant
     {
