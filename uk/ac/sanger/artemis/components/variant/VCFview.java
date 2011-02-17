@@ -497,10 +497,10 @@ public class VCFview extends JPanel
     
     popup.addSeparator();
     
-    final JMenu export = new JMenu("Export");
+    final JMenu export = new JMenu("Export / View");
     popup.add(export);
     
-    final JMenuItem exportVCF = new JMenuItem("Filtered VCF");
+    final JMenuItem exportVCF = new JMenuItem("Write Filtered VCF");
     exportVCF.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e)
       {
@@ -511,17 +511,29 @@ public class VCFview extends JPanel
     });
     export.add(exportVCF);
     
-    final JMenuItem exportFastaSelected = new JMenuItem("FASTA of selected feature(s)");
+    final JMenuItem exportFastaSelected = new JMenuItem("Write FASTA of selected feature(s)");
     exportFastaSelected.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e)
       {
         VCFview.this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
         IOUtils.exportFasta(entryGroup, vcfReaders, chr, VCFview.this, vcf_v4,
-            selection.getAllFeatures());
+            selection.getAllFeatures(), false);
         VCFview.this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
       }
     });
     export.add(exportFastaSelected);
+    
+    final JMenuItem viewFastaSelected = new JMenuItem("View FASTA of selected feature(s)");
+    viewFastaSelected.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e)
+      {
+        VCFview.this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
+        IOUtils.exportFasta(entryGroup, vcfReaders, chr, VCFview.this, vcf_v4,
+            selection.getAllFeatures(), true);
+        VCFview.this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+      }
+    });
+    export.add(viewFastaSelected);
     
     final JMenuItem exportFasta = new JMenuItem("FASTA");
     exportFasta.addActionListener(new ActionListener(){
