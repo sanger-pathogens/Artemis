@@ -516,19 +516,19 @@ public class VCFview extends JPanel
       public void actionPerformed(ActionEvent e)
       {
         VCFview.this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-        IOUtils.exportFasta(entryGroup, vcfReaders, chr, VCFview.this, vcf_v4,
+        IOUtils.exportFasta(vcfReaders, chr, VCFview.this, vcf_v4,
             selection.getAllFeatures(), false);
         VCFview.this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
       }
     });
     export.add(exportFastaSelected);
     
-    final JMenuItem exportFasta = new JMenuItem("FASTA");
+    final JMenuItem exportFasta = new JMenuItem("FASTA of selected base range");
     exportFasta.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e)
       {
         VCFview.this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-        IOUtils.exportFasta(entryGroup, vcfReaders, chr, VCFview.this, vcf_v4);
+        IOUtils.exportFastaByRange(entryGroup, vcfReaders, chr, VCFview.this, vcf_v4, selection, false);
         VCFview.this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
       }
     });
@@ -541,12 +541,23 @@ public class VCFview extends JPanel
       public void actionPerformed(ActionEvent e)
       {
         VCFview.this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-        IOUtils.exportFasta(entryGroup, vcfReaders, chr, VCFview.this, vcf_v4,
+        IOUtils.exportFasta(vcfReaders, chr, VCFview.this, vcf_v4,
             selection.getAllFeatures(), true);
         VCFview.this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
       }
     });
     view.add(viewFastaSelected);
+    
+    final JMenuItem viewFasta = new JMenuItem("FASTA of selected base range");
+    viewFasta.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e)
+      {
+        VCFview.this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
+        IOUtils.exportFastaByRange(entryGroup, vcfReaders, chr, VCFview.this, vcf_v4, selection, true);
+        VCFview.this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+      }
+    });
+    view.add(viewFasta);
   }
 
   private static EntryGroup getReference(String reference)

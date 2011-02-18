@@ -33,6 +33,7 @@ import java.util.List;
 
 import javax.swing.JFileChooser;
 
+import uk.ac.sanger.artemis.Entry;
 import uk.ac.sanger.artemis.EntryGroup;
 import uk.ac.sanger.artemis.Feature;
 import uk.ac.sanger.artemis.FeatureEnumeration;
@@ -41,12 +42,19 @@ import uk.ac.sanger.artemis.FeaturePredicate;
 import uk.ac.sanger.artemis.FeatureSegment;
 import uk.ac.sanger.artemis.FeatureSegmentVector;
 import uk.ac.sanger.artemis.FeatureVector;
+import uk.ac.sanger.artemis.Selection;
 import uk.ac.sanger.artemis.components.MessageDialog;
 import uk.ac.sanger.artemis.components.SequenceViewer;
 import uk.ac.sanger.artemis.components.StickyFileChooser;
 import uk.ac.sanger.artemis.components.variant.BCFReader.BCFReaderIterator;
+import uk.ac.sanger.artemis.io.DocumentEntry;
 import uk.ac.sanger.artemis.io.Key;
+import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.sequence.Bases;
+import uk.ac.sanger.artemis.sequence.MarkerRange;
+import uk.ac.sanger.artemis.util.DatabaseDocument;
+import uk.ac.sanger.artemis.util.FileDocument;
+import uk.ac.sanger.artemis.util.RemoteFileDocument;
 
 import net.sf.samtools.util.BlockCompressedInputStream;
 
@@ -145,21 +153,94 @@ class IOUtils
     new MessageDialog (null, "Saved Files", filterFiles, false);
   }
 
-  protected static void exportFasta(final EntryGroup entryGroup,
+  /**
+   * Write out fasta for a selected base range
+   * @param entryGroup
+   * @param vcfReaders
+   * @param chr
+   * @param vcfView
+   * @param vcf_v4
+   * @param selection
+   * @param view
+   */
+  protected static void exportFastaByRange(
+                                    final EntryGroup entryGroup,
                                     final AbstractVCFReader vcfReaders[],
                                     final String chr,
                                     final VCFview vcfView,
-                                    final boolean vcf_v4)
+                                    final boolean vcf_v4,
+                                    final Selection selection,
+                                    final boolean view)
   {
-     // get all CDS features that do not have the /pseudo qualifier
-    final FeatureVector features = getFeatures(
-        new FeatureKeyQualifierPredicate(Key.CDS, "pseudo", false), entryGroup);
-    exportFasta(entryGroup, vcfReaders, chr, vcfView, vcf_v4, features, false); 
+    MarkerRange marker = selection.getMarkerRange();
+    Range range = marker.getRawRange();
+    int direction = ( marker.isForwardMarker() ? Bases.FORWARD : Bases.REVERSE);
+    FeatureVector features = entryGroup.getAllFeatures();
+    FileWriter writer = null;
+    String fastaFiles = "";
+    
+    String name = entryGroup.getActiveEntries().elementAt(0).getName();
+    try
+    {
+      
+      if(!view)
+      {
+        File newfile = new File(
+           getBaseDirectoryFromEntry(entryGroup.getActiveEntries().elementAt(0)),
+               name);
+      
+        File f = getFile(newfile.getAbsolutePath(), vcfReaders.length, ".fasta");
+        writer = new FileWriter(f);
+        fastaFiles += f.getAbsolutePath()+"\n";
+      }
+      
+      int sbeg = range.getStart();
+      int send = range.getEnd();
+      
+      for (int i = 0; i < vcfReaders.length; i++)
+      {
+        String basesStr = entryGroup.getBases().getSubSequence(marker.getRange(), direction);
+        if (vcfReaders[i] instanceof BCFReader)
+        {
+          BCFReaderIterator it = ((BCFReader) vcfReaders[i]).query(chr, sbeg, send);
+          VCFRecord record;
+          while ((record = it.next()) != null)
+          {
+            int basePosition = record.getPos() + vcfView.getSequenceOffset(record.getChrom());
+            if(vcfView.showVariant(record, features, basePosition) )
+              basesStr = getSeqsVariation(record, basesStr, sbeg, marker.isForwardMarker(), vcf_v4);
+          }
+        }
+          
+        StringBuffer header = new StringBuffer(name+" ");
+        header.append(sbeg+":"+send+ (marker.isForwardMarker() ? "" : " reverse"));
+        header.append(" (").append(vcfReaders[i].getName()).append(")");
+
+        if(view) // sequence viewer
+        {
+          SequenceViewer viewer =
+            new SequenceViewer ("Feature base viewer for selected range: " + 
+                sbeg+":"+send+(marker.isForwardMarker() ? "" : " reverse"), false);  
+          viewer.setSequence(">"+header.toString(), basesStr);
+        }
+        else    // write to file
+          writeSequence(writer, header.toString(), basesStr);
+      }
+      
+      if(writer != null)
+        writer.close();
+    }
+    catch(IOException e)
+    {
+      e.printStackTrace();
+    }
+    
+    if(!view)
+      new MessageDialog (null, "Saved Files", fastaFiles, false);
   }
 
   
-  protected static void exportFasta(final EntryGroup entryGroup,
-                                    final AbstractVCFReader vcfReaders[],
+  protected static void exportFasta(final AbstractVCFReader vcfReaders[],
                                     final String chr,
                                     final VCFview vcfView,
                                     final boolean vcf_v4,
@@ -282,6 +363,11 @@ class IOUtils
     if(vcfRecord.getAlt().isDeletion(vcf_v4))
     {
       int ndel = vcfRecord.getAlt().getNumberOfDeletions(vcf_v4);
+      if(!vcfRecord.getAlt().toString().equals(".") && isFwd)
+      {
+        buff.append(getBase(vcfRecord.getAlt().toString(), isFwd));
+        position+=vcfRecord.getAlt().toString().length();
+      }
       
       if(isFwd)
         position+=ndel-1;
@@ -297,12 +383,7 @@ class IOUtils
         buff.append("-");
     }
     else if(vcfRecord.getAlt().isInsertion(vcf_v4))
-    {
-      if(isFwd)
-        buff.append(vcfRecord.getAlt().toString());
-      else
-        buff.append(Bases.reverseComplement(vcfRecord.getAlt().toString()));
-    }
+      buff.append(getBase(vcfRecord.getAlt().toString(), isFwd));
     else if(vcfRecord.getAlt().isMultiAllele())
     {
       String base = MultipleAlleleVariant.getIUBCode(vcfRecord);
@@ -312,28 +393,30 @@ class IOUtils
         buff.append(bases.charAt(position));
     }
     else if(vcfRecord.getAlt().isNonVariant())                   // non-variant
-    {
-      if(isFwd)
-        buff.append(vcfRecord.getRef().toUpperCase());
-      else
-        buff.append(Bases.complement(vcfRecord.getRef()).toUpperCase());
-    }
+      buff.append(getBase(vcfRecord.getRef(), isFwd).toUpperCase());
     else
-    {
-      String alt = vcfRecord.getAlt().toString().toLowerCase();  // SNP   
-      if(isFwd)
-        buff.append(alt);
-      else
-        buff.append(Bases.complement(alt));
-    }
+      buff.append(getBase(vcfRecord.getAlt().toString().toLowerCase(), isFwd));
     
     if(isFwd && position < bases.length())
       buff.append(bases.substring(position+1));
-    else if(!isFwd)
-    {
+    else if(!isFwd && position < bases.length())
       buff.append(bases.substring(position+1));
-    }
+
     return buff.toString();
+  }
+  
+  /**
+   * Get the actual bases by reverse complementing if on the
+   * reverse strand.
+   * @param baseStr
+   * @param isFwd
+   * @return
+   */
+  private static String getBase(String baseStr, boolean isFwd)
+  {
+    if(isFwd)
+      return baseStr;
+    return Bases.reverseComplement(baseStr);
   }
 
   /**
@@ -380,6 +463,35 @@ class IOUtils
     if(line.equals("BCF\4"))
       return true;
     return false;
+  }
+  
+  /**
+   *  Return the dirtectory that the given entry was read from.
+   **/
+  private static File getBaseDirectoryFromEntry(final Entry entry) 
+  {
+    final uk.ac.sanger.artemis.io.Entry embl_entry = entry.getEMBLEntry();
+
+    if(embl_entry instanceof DocumentEntry) 
+    {
+      final DocumentEntry document_entry =(DocumentEntry) embl_entry;
+
+      if(document_entry.getDocument() instanceof FileDocument) 
+      {
+        final FileDocument file_document =
+         (FileDocument) document_entry.getDocument();
+
+        if(file_document.getFile().getParent() != null) 
+          return new File(file_document.getFile().getParent());
+      }
+    }
+    if(((DocumentEntry)entry.getEMBLEntry()).getDocument()
+       instanceof RemoteFileDocument ||
+       ((DocumentEntry)entry.getEMBLEntry()).getDocument()
+       instanceof DatabaseDocument)
+      return new File(System.getProperty("user.dir"));
+
+    return null;
   }
   
 }
