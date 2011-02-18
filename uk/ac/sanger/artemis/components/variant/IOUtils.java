@@ -52,6 +52,9 @@ import net.sf.samtools.util.BlockCompressedInputStream;
 
 class IOUtils
 { 
+  
+  private static final int MAXIMUM_SELECTED_FEATURES = 25;
+  
   /**
    * Write filtered uncompressed VCF. Uses the filter in VCFview to
    * determine if variants are written.
@@ -163,16 +166,26 @@ class IOUtils
                                     final FeatureVector features,
                                     final boolean view)
   {
+    if(view && features.size () > MAXIMUM_SELECTED_FEATURES)
+      new MessageDialog (null,
+                        "warning: only viewing the sequences for " +
+                        "the first " + MAXIMUM_SELECTED_FEATURES +
+                        " selected features");
+    
     String suffix = ".fasta";
     if(features.size() == 1)
       suffix = "."+features.elementAt(0).getIDString()+suffix;
     
+    FileWriter writer = null;
     for (int i = 0; i < vcfReaders.length; i++)
     {
-      String vcfFileName = vcfReaders[i].getFileName();
       try
-      {        
-        for (int j = 0; j < features.size(); j++)
+      {
+        if(!view)
+          writer = new FileWriter(
+              getFile(vcfReaders[i].getFileName(), vcfReaders.length, suffix));
+        
+        for (int j = 0; j < features.size() && (!view || j < MAXIMUM_SELECTED_FEATURES); j++)
         {
           Feature f = features.elementAt(j);
           FeatureSegmentVector segs = f.getSegments();
@@ -187,9 +200,13 @@ class IOUtils
             if (vcfReaders[i] instanceof BCFReader)
             {
               BCFReaderIterator it = ((BCFReader) vcfReaders[i]).query(chr, sbeg, send);
-              VCFRecord bcfRecord;
-              while ((bcfRecord = it.next()) != null)
-                segBases = getSeqsVariation(bcfRecord, segBases, sbeg, f.isForwardFeature(), vcf_v4);
+              VCFRecord record;
+              while ((record = it.next()) != null)
+              {
+                int basePosition = record.getPos() + vcfView.getSequenceOffset(record.getChrom());
+                if(vcfView.showVariant(record, features, basePosition) )
+                  segBases = getSeqsVariation(record, segBases, sbeg, f.isForwardFeature(), vcf_v4);
+              }
             }
             buff.append(segBases);
           }
@@ -199,6 +216,7 @@ class IOUtils
           final String product = f.getProductString();
           header.append( (product == null ? "undefined product" : product) );
           header.append(" ").append(f.getWriteRange());
+          header.append(" (").append(vcfReaders[i].getName()).append(")");
 
           if(view) // sequence viewer
           {
@@ -208,13 +226,11 @@ class IOUtils
             viewer.setSequence(">"+header.toString(), buff.toString());
           }
           else    // write to file
-          {
-            File filterFile = getFile(vcfFileName, vcfReaders.length, suffix);
-            FileWriter writer = new FileWriter(filterFile);
             writeSequence(writer, header.toString(), buff.toString());
-            writer.close();
-          }
         }
+        
+        if(writer != null)
+          writer.close();
       }
       catch (IOException e)
       {
@@ -260,16 +276,24 @@ class IOUtils
       int ndel = vcfRecord.getAlt().getNumberOfDeletions(vcf_v4);
       
       if(isFwd)
-        position+=ndel;
+        position+=ndel-1;
       else
-        buff.delete(position-ndel+1, position);
+      {
+        if(position-ndel+1 < 0)
+          buff.delete(0, position);
+        else   
+          buff.delete(position-ndel+1, position);
+      }
       
       for(int i=0; i<ndel; i++)
         buff.append("-");
     }
     else if(vcfRecord.getAlt().isInsertion(vcf_v4))
     {
-      
+      if(isFwd)
+        buff.append(vcfRecord.getAlt().toString());
+      else
+        buff.append(Bases.reverseComplement(vcfRecord.getAlt().toString()));
     }
     else if(vcfRecord.getAlt().isMultiAllele())
     {
