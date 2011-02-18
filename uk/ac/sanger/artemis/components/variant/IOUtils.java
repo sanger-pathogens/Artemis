@@ -177,13 +177,18 @@ class IOUtils
       suffix = "."+features.elementAt(0).getIDString()+suffix;
     
     FileWriter writer = null;
+    String fastaFiles = "";
+    
     for (int i = 0; i < vcfReaders.length; i++)
     {
       try
       {
         if(!view)
-          writer = new FileWriter(
-              getFile(vcfReaders[i].getFileName(), vcfReaders.length, suffix));
+        {
+          File f = getFile(vcfReaders[i].getFileName(), vcfReaders.length, suffix);
+          writer = new FileWriter(f);
+          fastaFiles += f.getAbsolutePath()+"\n";
+        }
         
         for (int j = 0; j < features.size() && (!view || j < MAXIMUM_SELECTED_FEATURES); j++)
         {
@@ -237,6 +242,9 @@ class IOUtils
         e.printStackTrace();
       }
     }
+    
+    if(!view )
+      new MessageDialog (null, "Saved Files", fastaFiles, false);
   }
   
   private static void writeSequence(FileWriter writer, String header, String bases) throws IOException
