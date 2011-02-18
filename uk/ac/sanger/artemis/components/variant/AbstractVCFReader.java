@@ -24,6 +24,7 @@
 
 package uk.ac.sanger.artemis.components.variant;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -51,5 +52,13 @@ public abstract class AbstractVCFReader
     byte[] buf = new byte[8];
     is.read(buf);
     return ByteBuffer.wrap(buf).order(ByteOrder.LITTLE_ENDIAN).getLong();
+  }
+  
+  protected String getName()
+  {
+    if(getFileName() == null)
+      return null;
+    File f = new File(getFileName());
+    return f.getName();
   }
 }
