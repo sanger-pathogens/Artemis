@@ -79,16 +79,18 @@ public class VariantBase
     return alt.split(",").length + 1;
   }
 
-  protected int getNumberOfDeletions(boolean vcf_v4)
+  protected int getNumberOfIndels(boolean vcf_v4)
   {
     if (vcf_v4)
     {
       if (alt.equals("."))
         return record.getRef().length();
-      return record.getRef().length() - alt.length();
+      return Math.abs(record.getRef().length() - alt.length());
     }
 
     int index = alt.indexOf("D");
+    if(index < 0)
+      index = alt.indexOf("I");
     int ndel = 0;
     try
     {

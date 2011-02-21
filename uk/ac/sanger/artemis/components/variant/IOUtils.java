@@ -390,7 +390,7 @@ class IOUtils
     
     if(vcfRecord.getAlt().isDeletion(vcf_v4))
     {
-      int ndel = vcfRecord.getAlt().getNumberOfDeletions(vcf_v4);
+      int ndel = vcfRecord.getAlt().getNumberOfIndels(vcf_v4);
       if(!vcfRecord.getAlt().toString().equals(".") && isFwd)
       {
         buff.append(getBase(vcfRecord.getAlt().toString(), isFwd));
