@@ -224,6 +224,19 @@ class IOUtils
               basesStr = getSeqsVariation(record, basesStr, sbeg, marker.isForwardMarker(), vcf_v4);
           }
         }
+        else
+        {
+          TabixReader.Iterator iter = 
+            ((TabixReader)vcfReaders[i]).query(chr+":"+sbeg+"-"+send); // get the iterator
+          String s;
+          while ((s = iter.next()) != null)
+          {
+            VCFRecord record = VCFRecord.parse(s);
+            int basePosition = record.getPos() + vcfView.getSequenceOffset(record.getChrom());
+            if(vcfView.showVariant(record, features, basePosition) )
+              basesStr = getSeqsVariation(record, basesStr, sbeg, marker.isForwardMarker(), vcf_v4);
+          }
+        }
           
         StringBuffer header = new StringBuffer(name+" ");
         header.append(sbeg+":"+send+ (marker.isForwardMarker() ? "" : " reverse"));
@@ -322,6 +335,20 @@ class IOUtils
                   segBases = getSeqsVariation(record, segBases, sbeg, f.isForwardFeature(), vcf_v4);
               }
             }
+            else
+            {
+              TabixReader.Iterator iter = 
+                ((TabixReader)vcfReaders[i]).query(chr+":"+sbeg+"-"+send); // get the iterator
+              String s;
+              while ((s = iter.next()) != null)
+              {
+                VCFRecord record = VCFRecord.parse(s);
+                int basePosition = record.getPos() + vcfView.getSequenceOffset(record.getChrom());
+                if(vcfView.showVariant(record, features, basePosition) )
+                  segBases = getSeqsVariation(record, segBases, sbeg, f.isForwardFeature(), vcf_v4);
+              }
+            }
+
             buff.append(segBases);
           }
 
