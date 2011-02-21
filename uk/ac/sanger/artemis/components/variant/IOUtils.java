@@ -32,6 +32,7 @@ import java.net.URL;
 import java.util.List;
 
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 import uk.ac.sanger.artemis.Entry;
 import uk.ac.sanger.artemis.EntryGroup;
@@ -173,6 +174,14 @@ class IOUtils
                                     final Selection selection,
                                     final boolean view)
   {
+    if(selection.getMarkerRange() == null)
+    {
+      JOptionPane.showMessageDialog(null, 
+          "No base range selected.", 
+          "Warning", JOptionPane.WARNING_MESSAGE);
+      return;  
+    }
+    
     MarkerRange marker = selection.getMarkerRange();
     Range range = marker.getRawRange();
     int direction = ( marker.isForwardMarker() ? Bases.FORWARD : Bases.REVERSE);
@@ -194,7 +203,7 @@ class IOUtils
            getBaseDirectoryFromEntry(entryGroup.getActiveEntries().elementAt(0)),
                name);
       
-        File f = getFile(newfile.getAbsolutePath(), vcfReaders.length, ".fasta");
+        File f = getFile(newfile.getAbsolutePath(), 1, ".fasta");
         writer = new FileWriter(f);
         fastaFiles += f.getAbsolutePath()+"\n";
       }
@@ -258,6 +267,14 @@ class IOUtils
                                     final FeatureVector features,
                                     final boolean view)
   {
+    if(features.size () < 1)
+    {
+      JOptionPane.showMessageDialog(null, 
+          "No features selected.", 
+          "Warning", JOptionPane.WARNING_MESSAGE);
+      return;  
+    }
+    
     if(view && features.size () > MAXIMUM_SELECTED_FEATURES)
       new MessageDialog (null,
                         "warning: only viewing the sequences for " +
