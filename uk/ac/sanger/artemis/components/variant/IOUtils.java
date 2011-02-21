@@ -43,6 +43,7 @@ import uk.ac.sanger.artemis.FeatureSegment;
 import uk.ac.sanger.artemis.FeatureSegmentVector;
 import uk.ac.sanger.artemis.FeatureVector;
 import uk.ac.sanger.artemis.Selection;
+import uk.ac.sanger.artemis.components.FileViewer;
 import uk.ac.sanger.artemis.components.MessageDialog;
 import uk.ac.sanger.artemis.components.SequenceViewer;
 import uk.ac.sanger.artemis.components.StickyFileChooser;
@@ -180,6 +181,10 @@ class IOUtils
     String fastaFiles = "";
     
     String name = entryGroup.getActiveEntries().elementAt(0).getName();
+    int sbeg = range.getStart();
+    int send = range.getEnd();
+
+    StringBuffer buffSeq = null;
     try
     {
       
@@ -193,10 +198,9 @@ class IOUtils
         writer = new FileWriter(f);
         fastaFiles += f.getAbsolutePath()+"\n";
       }
-      
-      int sbeg = range.getStart();
-      int send = range.getEnd();
-      
+      else
+        buffSeq = new StringBuffer();
+
       for (int i = 0; i < vcfReaders.length; i++)
       {
         String basesStr = entryGroup.getBases().getSubSequence(marker.getRange(), direction);
@@ -218,10 +222,11 @@ class IOUtils
 
         if(view) // sequence viewer
         {
-          SequenceViewer viewer =
-            new SequenceViewer ("Feature base viewer for selected range: " + 
-                sbeg+":"+send+(marker.isForwardMarker() ? "" : " reverse"), false);  
-          viewer.setSequence(">"+header.toString(), basesStr);
+          buffSeq.append(">");
+          buffSeq.append(header.toString());
+          buffSeq.append("\n");
+          buffSeq.append(basesStr);
+          buffSeq.append("\n");
         }
         else    // write to file
           writeSequence(writer, header.toString(), basesStr);
@@ -237,6 +242,12 @@ class IOUtils
     
     if(!view)
       new MessageDialog (null, "Saved Files", fastaFiles, false);
+    else
+    {
+      FileViewer viewer = new FileViewer ("Feature base viewer for selected range: " + 
+          sbeg+":"+send+(marker.isForwardMarker() ? "" : " reverse"), true);
+      viewer.getTextPane().setText(buffSeq.toString());
+    }
   }
 
   
