@@ -5,6 +5,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.regex.Pattern;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -24,6 +25,8 @@ public class VCFFilter extends JFrame
   private static float MIN_MQ = 0;
   private static float MIN_AF1 = 0;
   private static float MAX_CI95 = 10;
+  
+  private static Pattern COMMA_PATTERN = Pattern.compile(",");
   
   /**
    * Filter VCF records by the variant type and/or by different values in 
@@ -260,7 +263,7 @@ public class VCFFilter extends JFrame
       
       try
       {
-        String vals[] = record.getInfoValue("CI95").split(",");
+        String vals[] = COMMA_PATTERN.split(record.getInfoValue("CI95"));
         for(int i=0; i<vals.length; i++)
         {
           if(VCFFilter.MAX_CI95 < 10 && Float.parseFloat(vals[i]) > VCFFilter.MAX_CI95)
