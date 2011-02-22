@@ -181,14 +181,14 @@ class IOUtils
           "Warning", JOptionPane.WARNING_MESSAGE);
       return;  
     }
-    
+
     MarkerRange marker = selection.getMarkerRange();
     Range range = marker.getRawRange();
     int direction = ( marker.isForwardMarker() ? Bases.FORWARD : Bases.REVERSE);
     FeatureVector features = entryGroup.getAllFeatures();
     FileWriter writer = null;
     String fastaFiles = "";
-    
+
     String name = entryGroup.getActiveEntries().elementAt(0).getName();
     int sbeg = range.getStart();
     int send = range.getEnd();
@@ -196,7 +196,6 @@ class IOUtils
     StringBuffer buffSeq = null;
     try
     {
-      
       if(!view)
       {
         File newfile = new File(
@@ -222,16 +221,14 @@ class IOUtils
 
         if(view) // sequence viewer
         {
-          buffSeq.append(">");
-          buffSeq.append(header.toString());
-          buffSeq.append("\n");
-          buffSeq.append(basesStr);
+          buffSeq.append(">").append(header.toString()).append("\n");
+          wrapString(basesStr, buffSeq);
           buffSeq.append("\n");
         }
         else    // write to file
           writeSequence(writer, header.toString(), basesStr);
       }
-      
+
       if(writer != null)
         writer.close();
     }
@@ -395,6 +392,19 @@ class IOUtils
       }
     }
     return basesStr;
+  }
+  
+  
+  private static void wrapString(String bases, StringBuffer buff)
+  {
+    final int SEQUENCE_LINE_BASE_COUNT = 60;
+    for(int k=0; k<bases.length(); k+=SEQUENCE_LINE_BASE_COUNT)
+    {
+      int end = k + SEQUENCE_LINE_BASE_COUNT;
+      if(end > bases.length())
+        end = bases.length();
+      buff.append ( bases.substring(k,end) ).append("\n");
+    }
   }
   
   private static void writeSequence(FileWriter writer, String header, String bases) throws IOException
