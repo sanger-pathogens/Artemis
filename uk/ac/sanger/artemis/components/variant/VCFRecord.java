@@ -46,7 +46,8 @@ class VCFRecord
   private String data[][];
   private short synFlag = -1;
   protected static Pattern MULTI_ALLELE_PATTERN = Pattern.compile("^[AGCT]+,[AGCT,]+$");
-  
+  protected static Pattern COLON_PATTERN = Pattern.compile(":");
+  protected static Pattern SEMICOLON_PATTERN = Pattern.compile(";");
 
   /**
    * Return the string representation of the VCF record as a
@@ -96,12 +97,14 @@ class VCFRecord
       rec.data = new String[nsamples][nfmt];
       for(int i=0; i<nsamples; i++)
       {
-        String data[] = parts[9+i].split(":");
+        String data[] = COLON_PATTERN.split(parts[9+i]);
         rec.data[i] = data;
       }
     }
     return rec;
   }
+  
+
   
   /**
    * For example DP or MQ
@@ -110,7 +113,7 @@ class VCFRecord
    */
   protected String getInfoValue(String key)
   {
-    String parts[] = info.split(";");
+    String parts[] = SEMICOLON_PATTERN.split(info);
     for(int i=0; i<parts.length; i++)
       if(parts[i].startsWith(key+"="))
         return parts[i].substring(key.length()+1);
@@ -119,7 +122,7 @@ class VCFRecord
   
   protected String getFormatValue(String key)
   {
-    String fmts[] = getFormat().split(":");
+    String fmts[] = COLON_PATTERN.split(getFormat());
     for(int i=0; i<fmts.length; i++)
     {
       if(fmts[i].equals(key))
