@@ -156,7 +156,7 @@ class IOUtils
   }
 
   /**
-   * Write out fasta for a selected base range
+   * Write out FASTA for a selected base range
    * @param entryGroup
    * @param vcfReaders
    * @param chr
@@ -213,30 +213,8 @@ class IOUtils
       for (int i = 0; i < vcfReaders.length; i++)
       {
         String basesStr = entryGroup.getBases().getSubSequence(marker.getRange(), direction);
-        if (vcfReaders[i] instanceof BCFReader)
-        {
-          BCFReaderIterator it = ((BCFReader) vcfReaders[i]).query(chr, sbeg, send);
-          VCFRecord record;
-          while ((record = it.next()) != null)
-          {
-            int basePosition = record.getPos() + vcfView.getSequenceOffset(record.getChrom());
-            if(vcfView.showVariant(record, features, basePosition) )
-              basesStr = getSeqsVariation(record, basesStr, sbeg, marker.isForwardMarker(), vcf_v4);
-          }
-        }
-        else
-        {
-          TabixReader.Iterator iter = 
-            ((TabixReader)vcfReaders[i]).query(chr+":"+sbeg+"-"+send); // get the iterator
-          String s;
-          while ((s = iter.next()) != null)
-          {
-            VCFRecord record = VCFRecord.parse(s);
-            int basePosition = record.getPos() + vcfView.getSequenceOffset(record.getChrom());
-            if(vcfView.showVariant(record, features, basePosition) )
-              basesStr = getSeqsVariation(record, basesStr, sbeg, marker.isForwardMarker(), vcf_v4);
-          }
-        }
+        basesStr = getBasesInRegion(vcfReaders[i], chr, sbeg, send, basesStr,
+            features, vcfView, marker.isForwardMarker(), vcf_v4);
           
         StringBuffer header = new StringBuffer(name+" ");
         header.append(sbeg+":"+send+ (marker.isForwardMarker() ? "" : " reverse"));
@@ -272,7 +250,16 @@ class IOUtils
     }
   }
 
-  
+  /**
+   * Write the FASTA sequence out for the given features for each of the
+   * VCF/BCF files.
+   * @param vcfReaders
+   * @param chr
+   * @param vcfView
+   * @param vcf_v4
+   * @param features
+   * @param view
+   */
   protected static void exportFasta(final AbstractVCFReader vcfReaders[],
                                     final String chr,
                                     final VCFview vcfView,
@@ -322,34 +309,9 @@ class IOUtils
             FeatureSegment seg = segs.elementAt(k);
             int sbeg = seg.getRawRange().getStart();
             int send = seg.getRawRange().getEnd();
-            String segBases = seg.getBases();
-            
-            if (vcfReaders[i] instanceof BCFReader)
-            {
-              BCFReaderIterator it = ((BCFReader) vcfReaders[i]).query(chr, sbeg, send);
-              VCFRecord record;
-              while ((record = it.next()) != null)
-              {
-                int basePosition = record.getPos() + vcfView.getSequenceOffset(record.getChrom());
-                if(vcfView.showVariant(record, features, basePosition) )
-                  segBases = getSeqsVariation(record, segBases, sbeg, f.isForwardFeature(), vcf_v4);
-              }
-            }
-            else
-            {
-              TabixReader.Iterator iter = 
-                ((TabixReader)vcfReaders[i]).query(chr+":"+sbeg+"-"+send); // get the iterator
-              String s;
-              while ((s = iter.next()) != null)
-              {
-                VCFRecord record = VCFRecord.parse(s);
-                int basePosition = record.getPos() + vcfView.getSequenceOffset(record.getChrom());
-                if(vcfView.showVariant(record, features, basePosition) )
-                  segBases = getSeqsVariation(record, segBases, sbeg, f.isForwardFeature(), vcf_v4);
-              }
-            }
 
-            buff.append(segBases);
+            buff.append( getBasesInRegion(vcfReaders[i], chr, sbeg, send, seg.getBases(),
+                features, vcfView, f.isForwardFeature(), vcf_v4) );
           }
 
           StringBuffer header = new StringBuffer(f.getSystematicName());
@@ -381,6 +343,58 @@ class IOUtils
     
     if(!view )
       new MessageDialog (null, "Saved Files", fastaFiles, false);
+  }
+  
+  /**
+   * For a given VCF file change the sequence in a range and return the
+   * base sequence as a string.
+   * @param reader
+   * @param chr
+   * @param sbeg
+   * @param send
+   * @param basesStr
+   * @param features
+   * @param vcfView
+   * @param isFwd
+   * @param vcf_v4
+   * @return
+   * @throws IOException
+   */
+  private static String getBasesInRegion(final AbstractVCFReader reader,
+                                         final String chr,
+                                         final int sbeg,
+                                         final int send,
+                                         String basesStr,
+                                         final FeatureVector features,
+                                         final VCFview vcfView,
+                                         final boolean isFwd,
+                                         final boolean vcf_v4) throws IOException
+  {
+    if (reader instanceof BCFReader)
+    {
+      BCFReaderIterator it = ((BCFReader) reader).query(chr, sbeg, send);
+      VCFRecord record;
+      while ((record = it.next()) != null)
+      {
+        int basePosition = record.getPos() + vcfView.getSequenceOffset(record.getChrom());
+        if(vcfView.showVariant(record, features, basePosition) )
+          basesStr = getSeqsVariation(record, basesStr, sbeg, isFwd, vcf_v4);
+      }
+    }
+    else
+    {
+      TabixReader.Iterator iter = 
+        (((TabixReader) reader).query(chr+":"+sbeg+"-"+send)); // get the iterator
+      String s;
+      while ((s = iter.next()) != null)
+      {
+        VCFRecord record = VCFRecord.parse(s);
+        int basePosition = record.getPos() + vcfView.getSequenceOffset(record.getChrom());
+        if(vcfView.showVariant(record, features, basePosition) )
+          basesStr = getSeqsVariation(record, basesStr, sbeg, isFwd, vcf_v4);
+      }
+    }
+    return basesStr;
   }
   
   private static void writeSequence(FileWriter writer, String header, String bases) throws IOException
