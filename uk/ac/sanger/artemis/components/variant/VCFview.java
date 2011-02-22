@@ -768,12 +768,16 @@ public class VCFview extends JPanel
       }
       
       if(offsetLengths.size() != contigs.length)
+      {
         JOptionPane.showMessageDialog(this, 
             "There is a problem matching the reference sequences\n"+
             "to the names in the VCF file. This may mean the labels\n"+
             "on the reference features do not match those in the in\n"+
             "the VCF file.", 
             "Problem Found", JOptionPane.WARNING_MESSAGE);
+        concatSequences = false;
+        return 0;
+      }
     }
     return offsetLengths.get(refName);
   }
