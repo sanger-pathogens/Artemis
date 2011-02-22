@@ -200,7 +200,7 @@ class BCFReader extends AbstractVCFReader
       if(bcfRecord.getAlt().isNonVariant())
         nc = 1;
 
-      String fmts[] = bcfRecord.getFormat().split(":");
+      String fmts[] = VCFRecord.COLON_PATTERN.split( bcfRecord.getFormat() );
       bcfRecord.setData( new String[nsamples][fmts.length] );
       
       for(int j=0; j<nsamples; j++)
@@ -251,13 +251,28 @@ class BCFReader extends AbstractVCFReader
         buff.append((char)b[i]);
     }
 
-    String parts[] = buff.toString().replace("  ", " ").split(" ");
-    bcfRecord.setID( parts[0] );
-    bcfRecord.setRef( parts[1] );
-    bcfRecord.setAlt( parts[2] );
-    bcfRecord.setFilter( parts[3] );
-    bcfRecord.setInfo( parts[4] );
-    bcfRecord.setFormat( parts[5] );
+    int ind = 0;
+    int lastInd = 0;
+    int i = 0;
+    while((ind = buff.indexOf(" ", ind)) > -1)
+    {
+      switch( i )
+      {
+        case 0:  bcfRecord.setID(buff.substring(lastInd, ind)); break;
+        case 1:  bcfRecord.setRef(buff.substring(lastInd, ind)); break;
+        case 2:  bcfRecord.setAlt(buff.substring(lastInd, ind)); break;
+        case 3:  bcfRecord.setFilter(buff.substring(lastInd, ind)); break;
+        case 4:  bcfRecord.setInfo(buff.substring(lastInd, ind)); break;
+        case 5:  bcfRecord.setFormat(buff.substring(lastInd, ind)); break;
+        default: return;
+      }
+
+      ind++;
+      if(ind < buff.length() && buff.charAt(ind) == ' ')
+        ind++;
+      lastInd = ind;
+      i++;
+    }
   }
   
   /**
