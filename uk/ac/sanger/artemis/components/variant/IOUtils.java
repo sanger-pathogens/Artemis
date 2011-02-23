@@ -79,7 +79,7 @@ class IOUtils
   {
     try
     {
-      File filterFile = getFile(vcfFileName, nfiles, "filter");
+      File filterFile = getFile(vcfFileName, nfiles, ".filter");
       FileWriter writer = new FileWriter(filterFile);
       if(IOUtils.isBCF(vcfFileName))
       {
