@@ -8,7 +8,7 @@ SHELL=/bin/sh
 
 JAVAC := javac -source 1.5 -target 1.5 $(OPT_FLAGS) $(EXTRA_FLAGS)
 
-REAL_CLASSPATH := CLASSPATH=lib/biojava.jar:lib/jemAlign.jar:lib/j2ssh/j2ssh-core.jar:lib/ibatis/ibatis-2.3.4.726.jar:lib/ibatis/log4j-1.2.14.jar:lib/chado-14-interface.jar:lib/postgresql-8.4-701.jdbc3.jar:lib/picard/picard.jar:lib/picard/sam.jar:.
+REAL_CLASSPATH := CLASSPATH=lib/biojava.jar:lib/jemAlign.jar:lib/j2ssh/j2ssh-core.jar:lib/ibatis/ibatis-2.3.4.726.jar:lib/ibatis/log4j-1.2.14.jar:lib/postgresql-8.4-701.jdbc3.jar:lib/picard/picard.jar:lib/picard/sam.jar:.
 
 NAMES:= \
 	uk/ac/sanger/artemis/OptionChangeListener \
@@ -245,7 +245,7 @@ manual :
 
 CLASS_FILES := `find org uk nsdb type seqdb -name '*.class' -print`
 
-OTHER_FILES := `find images/PSUlogo.gif images/icon.gif images/helix.gif images/sanger-centre.gif COPYING README`
+OTHER_FILES := `find images/PSUlogo.gif images/icon.gif COPYING README`
 
 dist :
 	rm -rf artemis_compiled.tar.gz tar_build
@@ -253,7 +253,7 @@ dist :
 	mkdir tar_build/artemis
 	rm -f artemis_compiled_latest.tar.gz
 	tar cf - $(OTHER_FILES) act art etc | (cd tar_build/artemis; tar xf -)
-	tar cf - artemis_sqlmap dnaplotter uk nsdb type seqdb lib | (cd tar_build/artemis; tar xf -)
+	tar cf - artemis_sqlmap dnaplotter uk org nsdb type seqdb lib | (cd tar_build/artemis; tar xf -)
 	(cd tar_build; find . -name 'CVS' -print | xargs rm -rf; find . -name '.svn' -print | xargs rm -rf; tar cvf ../artemis_compiled.tar artemis)
 
 jar : all artemis.jar
@@ -280,14 +280,14 @@ artemis.jar : $(CLASSES)
             rm -rf META-INF/MANIFEST.MF; \
           done; \
         fi; \
-	cp -R ../lib/LICENSE.Apache ../uk ../nsdb ../type ../seqdb ../etc ../images ../lib/j2ssh/j2ssh.properties \
-	      ../images/PSUlogo.gif ../images/icon.gif ../images/helix.gif ../images/sanger-centre.gif ../README ../artemis_sqlmap .
+	cp -R ../lib/LICENSE.Apache ../uk ../org ../nsdb ../type ../seqdb ../etc ../images ../lib/j2ssh/j2ssh.properties \
+	      ../images/PSUlogo.gif ../images/icon.gif ../README ../artemis_sqlmap .
 	find jar_build -name '*.java' -print | xargs rm -f
 	find jar_build -name '.svn' -print | xargs rm -rf
 	cd jar_build; \
 	rm -rf META-INF/MANIFEST.MF; \
 	echo "Main-Class: uk.ac.sanger.artemis.components.ArtemisMain" > manifest-art; \
-	jar cmf manifest-art artemis.jar images/PSUlogo.gif images/icon.gif images/helix.gif images/sanger-centre.gif README etc \
+	jar cmf manifest-art artemis.jar images/PSUlogo.gif images/icon.gif README etc \
 	                     artemis_sqlmap org uk com net nsdb type seqdb LICENSE.Apache j2ssh.properties; \
         echo "Main-Class: uk.ac.sanger.artemis.circular.DNADraw" > manifest-circular; \
         jar cmf manifest-circular DNAPlotter.jar images/PSUlogo.gif README etc \
@@ -295,13 +295,13 @@ artemis.jar : $(CLASSES)
 	echo "Main-Class: uk.ac.sanger.artemis.components.alignment.BamView" > manifest-bamview; \
 	jar cmf manifest-bamview BamView.jar etc uk org net/sf com/ibatis; \
 	echo "Main-Class: uk.ac.sanger.artemis.components.ActMain" > manifest-act; \
-	jar cmf manifest-act act.jar images/PSUlogo.gif images/icon.gif images/helix.gif images/sanger-centre.gif README etc \
+	jar cmf manifest-act act.jar images/PSUlogo.gif images/icon.gif README etc \
 	                     artemis_sqlmap org uk com net nsdb type seqdb LICENSE.Apache j2ssh.properties; \
 	rm -f etc/log4j.properties; \
-	jar cmf manifest-art artemis_mac.jar images/PSUlogo.gif images/icon.gif images/helix.gif images/sanger-centre.gif README \
-	        uk nsdb type seqdb LICENSE.Apache artemis_sqlmap
+	jar cmf manifest-art artemis_mac.jar images/PSUlogo.gif images/icon.gif README \
+	        uk org/gmod nsdb type seqdb LICENSE.Apache artemis_sqlmap
 
 clean :
-	-rm -rf *.html artemis.jar seqdb nsdb type org resources uk/ac/sanger/jcon/ jar_build
+	-rm -rf *.html artemis.jar seqdb nsdb type resources uk/ac/sanger/jcon/ jar_build tar_build  artemis_compiled.tar
 	-rm -rf TAGS* *.o
 	-find . -name '*.class' -print | xargs rm -f
