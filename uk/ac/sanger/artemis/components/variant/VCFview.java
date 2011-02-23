@@ -70,6 +70,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
@@ -510,6 +511,7 @@ public class VCFview extends JPanel
       }
     });
     export.add(exportVCF);
+    export.add(new JSeparator());
     
     final JMenuItem exportFastaSelected = new JMenuItem("FASTA of selected feature(s)");
     exportFastaSelected.addActionListener(new ActionListener(){
