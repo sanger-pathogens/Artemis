@@ -32,6 +32,7 @@ import java.nio.ByteOrder;
 
 public abstract class AbstractVCFReader
 {
+  private boolean vcf_v4 = false;
   protected abstract String[] getSeqNames();
   protected abstract String getFileName();
   
@@ -60,5 +61,21 @@ public abstract class AbstractVCFReader
       return null;
     File f = new File(getFileName());
     return f.getName();
+  }
+  
+  /**
+   * @return the vcf_v4
+   */
+  protected boolean isVcf_v4()
+  {
+    return vcf_v4;
+  }
+  
+  /**
+   * @param vcfV4 the vcf_v4 to set
+   */
+  protected void setVcf_v4(boolean vcfV4)
+  {
+    vcf_v4 = vcfV4;
   }
 }
