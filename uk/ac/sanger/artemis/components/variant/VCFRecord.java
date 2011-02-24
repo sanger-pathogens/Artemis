@@ -45,7 +45,7 @@ class VCFRecord
   private String format;
   private String data[][];
   private short synFlag = -1;
-  protected static Pattern MULTI_ALLELE_PATTERN = Pattern.compile("^[AGCT]+,[AGCT,]+$");
+  protected static Pattern MULTI_ALLELE_PATTERN = Pattern.compile("^[AGCTagct]+,[AGCTacgt,]+$");
   protected static Pattern COLON_PATTERN = Pattern.compile(":");
   protected static Pattern SEMICOLON_PATTERN = Pattern.compile(";");
 
