@@ -99,7 +99,7 @@ class IOUtils
         
         VCFRecord record = VCFRecord.parse(line);
         int basePosition = record.getPos() + vcfView.getSequenceOffset(record.getChrom());
-        if( !vcfView.showVariant(record, features, basePosition) )
+        if( !vcfView.showVariant(record, features, basePosition, tr.isVcf_v4()) )
           continue;
         writer.write(line+'\n');
       }
@@ -158,19 +158,13 @@ class IOUtils
   /**
    * Write out FASTA for a selected base range
    * @param entryGroup
-   * @param vcfReaders
-   * @param chr
    * @param vcfView
-   * @param vcf_v4
    * @param selection
    * @param view
    */
   protected static void exportFastaByRange(
                                     final EntryGroup entryGroup,
-                                    final AbstractVCFReader vcfReaders[],
-                                    final String chr,
                                     final VCFview vcfView,
-                                    final boolean vcf_v4,
                                     final Selection selection,
                                     final boolean view)
   {
@@ -182,6 +176,7 @@ class IOUtils
       return;  
     }
 
+    AbstractVCFReader vcfReaders[] = vcfView.getVcfReaders();
     MarkerRange marker = selection.getMarkerRange();
     Range range = marker.getRawRange();
     int direction = ( marker.isForwardMarker() ? Bases.FORWARD : Bases.REVERSE);
@@ -212,8 +207,8 @@ class IOUtils
       for (int i = 0; i < vcfReaders.length; i++)
       {
         String basesStr = entryGroup.getBases().getSubSequence(marker.getRange(), direction);
-        basesStr = getBasesInRegion(vcfReaders[i], chr, sbeg, send, basesStr,
-            features, vcfView, marker.isForwardMarker(), vcf_v4);
+        basesStr = getAllBasesInRegion(vcfReaders[i], sbeg, send, basesStr,
+            features, vcfView, marker.isForwardMarker());
           
         StringBuffer header = new StringBuffer(name+" ");
         header.append(sbeg+":"+send+ (marker.isForwardMarker() ? "" : " reverse"));
@@ -250,17 +245,11 @@ class IOUtils
   /**
    * Write the FASTA sequence out for the given features for each of the
    * VCF/BCF files.
-   * @param vcfReaders
-   * @param chr
    * @param vcfView
-   * @param vcf_v4
    * @param features
    * @param view
    */
-  protected static void exportFasta(final AbstractVCFReader vcfReaders[],
-                                    final String chr,
-                                    final VCFview vcfView,
-                                    final boolean vcf_v4,
+  protected static void exportFasta(final VCFview vcfView,
                                     final FeatureVector features,
                                     final boolean view)
   {
@@ -271,19 +260,20 @@ class IOUtils
           "Warning", JOptionPane.WARNING_MESSAGE);
       return;  
     }
-    
+
     if(view && features.size () > MAXIMUM_SELECTED_FEATURES)
       new MessageDialog (null,
                         "warning: only viewing the sequences for " +
                         "the first " + MAXIMUM_SELECTED_FEATURES +
                         " selected features");
-    
+
     String suffix = ".fasta";
     if(features.size() == 1)
       suffix = "."+features.elementAt(0).getIDString()+suffix;
     
     FileWriter writer = null;
     String fastaFiles = "";
+    AbstractVCFReader vcfReaders[] = vcfView.getVcfReaders();
     
     for (int i = 0; i < vcfReaders.length; i++)
     {
@@ -307,8 +297,8 @@ class IOUtils
             int sbeg = seg.getRawRange().getStart();
             int send = seg.getRawRange().getEnd();
 
-            buff.append( getBasesInRegion(vcfReaders[i], chr, sbeg, send, seg.getBases(),
-                features, vcfView, f.isForwardFeature(), vcf_v4) );
+            buff.append( getAllBasesInRegion(vcfReaders[i], sbeg, send, seg.getBases(),
+                features, vcfView, f.isForwardFeature()) );
           }
 
           StringBuffer header = new StringBuffer(f.getSystematicName());
@@ -328,7 +318,7 @@ class IOUtils
           else    // write to file
             writeSequence(writer, header.toString(), buff.toString());
         }
-        
+
         if(writer != null)
           writer.close();
       }
@@ -346,6 +336,57 @@ class IOUtils
    * For a given VCF file change the sequence in a range and return the
    * base sequence as a string.
    * @param reader
+   * @param sbeg
+   * @param send
+   * @param basesStr
+   * @param features
+   * @param vcfView
+   * @param isFwd
+   * @return
+   * @throws IOException
+   */
+  private static String getAllBasesInRegion(final AbstractVCFReader reader,
+      final int sbeg,
+      final int send,
+      String basesStr,
+      final FeatureVector features,
+      final VCFview vcfView,
+      final boolean isFwd) throws IOException
+  {
+    if(vcfView.isConcatenate())
+    {
+      String[] contigs = reader.getSeqNames();
+      for(int j=0; j<contigs.length; j++)
+      {
+        int offset = vcfView.getSequenceOffset(contigs[j]);
+        int nextOffset;
+        if(j<contigs.length-1)
+          nextOffset = vcfView.getSequenceOffset(contigs[j+1]);
+        else
+          nextOffset = vcfView.seqLength;
+        
+        if( (offset >= sbeg && offset < send) ||
+            (offset < sbeg && sbeg < nextOffset) )
+        {
+          int thisStart = sbeg - offset;
+          if(thisStart < 1)
+            thisStart = 1;
+          int thisEnd   = send - offset;
+          basesStr = getBasesInRegion(reader, contigs[j], thisStart, thisEnd, 
+              basesStr, features, vcfView, isFwd);
+        }
+      }
+    }
+    else
+      basesStr = getBasesInRegion(reader, vcfView.getChr(), sbeg, send, 
+          basesStr, features, vcfView, isFwd);
+    return basesStr;
+  }
+  
+  /**
+   * For a given VCF file change the sequence in a range and return the
+   * base sequence as a string.
+   * @param reader
    * @param chr
    * @param sbeg
    * @param send
@@ -353,7 +394,6 @@ class IOUtils
    * @param features
    * @param vcfView
    * @param isFwd
-   * @param vcf_v4
    * @return
    * @throws IOException
    */
@@ -364,9 +404,9 @@ class IOUtils
                                          String basesStr,
                                          final FeatureVector features,
                                          final VCFview vcfView,
-                                         final boolean isFwd,
-                                         final boolean vcf_v4) throws IOException
+                                         final boolean isFwd) throws IOException
   {
+    boolean vcf_v4 = reader.isVcf_v4();
     if (reader instanceof BCFReader)
     {
       BCFReaderIterator it = ((BCFReader) reader).query(chr, sbeg, send);
@@ -374,7 +414,7 @@ class IOUtils
       while ((record = it.next()) != null)
       {
         int basePosition = record.getPos() + vcfView.getSequenceOffset(record.getChrom());
-        if(vcfView.showVariant(record, features, basePosition) )
+        if(vcfView.showVariant(record, features, basePosition, vcf_v4) )
           basesStr = getSeqsVariation(record, basesStr, sbeg, isFwd, vcf_v4);
       }
     }
@@ -387,7 +427,7 @@ class IOUtils
       {
         VCFRecord record = VCFRecord.parse(s);
         int basePosition = record.getPos() + vcfView.getSequenceOffset(record.getChrom());
-        if(vcfView.showVariant(record, features, basePosition) )
+        if(vcfView.showVariant(record, features, basePosition, vcf_v4) )
           basesStr = getSeqsVariation(record, basesStr, sbeg, isFwd, vcf_v4);
       }
     }
@@ -421,6 +461,15 @@ class IOUtils
     }
   }
   
+  /**
+   * Change the bases to reflect a variation record.
+   * @param vcfRecord
+   * @param bases
+   * @param sbeg
+   * @param isFwd
+   * @param vcf_v4
+   * @return
+   */
   private static String getSeqsVariation(VCFRecord vcfRecord, 
       String bases, int sbeg, boolean isFwd, boolean vcf_v4)
   {
