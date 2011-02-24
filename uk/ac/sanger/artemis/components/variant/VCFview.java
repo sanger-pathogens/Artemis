@@ -54,6 +54,7 @@ import java.util.List;
 import java.util.Vector;
 import java.util.regex.Pattern;
 
+import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -131,6 +132,8 @@ public class VCFview extends JPanel
   private String chr;
   private VCFRecord mouseVCF;
   private int mouseOverIndex = -1;
+  
+  private GraphPanel graphPanel;
 
 //record of where a mouse drag starts
   private int dragStart = -1;
@@ -222,7 +225,8 @@ public class VCFview extends JPanel
     vcfPanel.add(jspView, BorderLayout.CENTER);
     
     JPanel bottomPanel = new JPanel(new BorderLayout());
-    GraphPanel graphPanel = new GraphPanel(this);
+    graphPanel = new GraphPanel(this);
+    graphPanel.setBorder(BorderFactory.createMatteBorder(1, 0, 1, 0, Color.gray));
     graphPanel.setPreferredSize(new Dimension(900, 100));
     graphPanel.setVisible(false);
     
@@ -565,6 +569,33 @@ public class VCFview extends JPanel
       }
     });
     view.add(viewFasta);
+    
+    JMenu graph = new JMenu("Graph");
+    popup.add(graph);
+    
+    final JCheckBoxMenuItem graphSNP = new JCheckBoxMenuItem("SNP");
+    final JCheckBoxMenuItem graphDP = new JCheckBoxMenuItem("Depth (DP)");
+    graph.add(graphSNP);
+    graphSNP.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e)
+      {
+        graphPanel.setVisible(graphSNP.isSelected());
+        graphDP.setSelected(false);
+        graphPanel.setType(0);
+        graphPanel.repaint();
+      }
+    });
+    
+    graph.add(graphDP);
+    graphDP.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e)
+      {
+        graphPanel.setVisible(graphDP.isSelected());
+        graphSNP.setSelected(false);
+        graphPanel.setType(1);
+        graphPanel.repaint();
+      }
+    });
   }
 
   private static EntryGroup getReference(String reference)
@@ -616,13 +647,21 @@ public class VCFview extends JPanel
    * @param fileName
    * @return
    */
-  private String testForURL(String fileName)
+  private String testForURL(String fileName, boolean isBCF)
   {
     if(!fileName.startsWith("http:"))
       return fileName;
 
-    String newFileName = download(fileName, null, ".bcf");
-    download(fileName+".bci", newFileName, ".bci");
+    if(isBCF)
+    {
+      String newFileName = download(fileName, null, ".bcf");
+      download(fileName+".bci", newFileName, ".bci");
+      return newFileName;
+    }
+
+    String newFileName = download(fileName, null, ".vcf.gz");
+    download(fileName+".tbi", newFileName, ".tbi");
+
     return newFileName;
   }
   
@@ -673,7 +712,7 @@ public class VCFview extends JPanel
     {
       if(IOUtils.isBCF(fileName))
       {
-        fileName = testForURL(fileName);
+        fileName = testForURL(fileName, true);
         vcfReaders[index] = new BCFReader(new File(fileName));
   
         String hdr = ((BCFReader)vcfReaders[index]).headerToString();
@@ -682,6 +721,7 @@ public class VCFview extends JPanel
         return hdr;
       }
 
+      fileName = testForURL(fileName, false);
       BlockCompressedInputStream is = 
         new BlockCompressedInputStream(new FileInputStream(fileName));
       vcfReaders[index] = new TabixReader(fileName);
@@ -790,6 +830,13 @@ public class VCFview extends JPanel
     return offsetLengths.get(refName);
   }
   
+  public void repaint()
+  {
+    super.repaint();
+    if(graphPanel != null && graphPanel.isVisible())
+      graphPanel.repaint();
+  }
+  
   protected void paintComponent(Graphics g)
   {
     super.paintComponent(g);
@@ -892,7 +939,7 @@ public class VCFview extends JPanel
     }
   }
   
-  private FeatureVector getCDSFeaturesInRange(int start, int end)
+  protected FeatureVector getCDSFeaturesInRange(int start, int end)
   {
     if(entryGroup == null)
       return null;
