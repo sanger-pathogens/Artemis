@@ -198,6 +198,8 @@ class IOUtils
                name);
       
         File f = getFile(newfile.getAbsolutePath(), 1, ".fasta");
+        if(f == null)
+          return;
         writer = new FileWriter(f);
         fastaFiles += f.getAbsolutePath()+"\n";
       }
@@ -275,13 +277,34 @@ class IOUtils
     String fastaFiles = "";
     AbstractVCFReader vcfReaders[] = vcfView.getVcfReaders();
     
-    for (int i = 0; i < vcfReaders.length; i++)
+    
+    try
     {
-      try
+      int opt = 0;
+      if(vcfReaders.length > 1)
       {
-        if(!view)
+        Object[] options = { "Single File", "Multiple Files" };
+        opt = JOptionPane.showOptionDialog(null, "Write to :", 
+                    "Output File",
+                    JOptionPane.DEFAULT_OPTION, 
+                    JOptionPane.QUESTION_MESSAGE, 
+                    null, options, options[0]);
+      }
+      
+      if(!view && opt == 0)
+      {
+        File f = getFile(vcfReaders[0].getFileName(), 1, suffix);
+        if(f == null)
+          return;
+        writer = new FileWriter(f);
+        fastaFiles += f.getAbsolutePath()+"\n";
+      }
+      
+      for (int i = 0; i < vcfReaders.length; i++)
+      {
+        if(!view && opt == 1)
         {
-          File f = getFile(vcfReaders[i].getFileName(), vcfReaders.length, suffix);
+          File f = getFile(vcfReaders[0].getFileName(), vcfReaders.length, suffix);
           writer = new FileWriter(f);
           fastaFiles += f.getAbsolutePath()+"\n";
         }
@@ -296,13 +319,12 @@ class IOUtils
             FeatureSegment seg = segs.elementAt(k);
             int sbeg = seg.getRawRange().getStart();
             int send = seg.getRawRange().getEnd();
-
             buff.append( getAllBasesInRegion(vcfReaders[i], sbeg, send, seg.getBases(),
-                features, vcfView, f.isForwardFeature()) );
+                  features, vcfView, f.isForwardFeature()) );
           }
 
-          StringBuffer header = new StringBuffer(f.getSystematicName());
-          header.append(" "+f.getIDString()+" ");
+          StringBuffer header = new StringBuffer(f.getSystematicName()).append(" ");
+          header.append(f.getIDString()).append(" ");
           final String product = f.getProductString();
           header.append( (product == null ? "undefined product" : product) );
           header.append(" ").append(f.getWriteRange());
@@ -311,21 +333,24 @@ class IOUtils
           if(view) // sequence viewer
           {
             SequenceViewer viewer =
-              new SequenceViewer ("Feature base viewer for feature:" + 
-                f.getIDString (), false);  
+                new SequenceViewer ("Feature base viewer for feature:" + 
+                  f.getIDString (), false);  
             viewer.setSequence(">"+header.toString(), buff.toString());
           }
           else    // write to file
             writeSequence(writer, header.toString(), buff.toString());
         }
 
-        if(writer != null)
+        if(writer != null && opt == 1)
           writer.close();
       }
-      catch (IOException e)
-      {
-        e.printStackTrace();
-      }
+      
+      if(writer != null && opt == 0)
+        writer.close();
+    } 
+    catch(IOException e)
+    {
+      e.printStackTrace(); 
     }
     
     if(!view )
