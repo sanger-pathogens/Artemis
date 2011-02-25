@@ -23,16 +23,20 @@
  */
 
 package uk.ac.sanger.artemis.components.variant;
+import java.awt.AlphaComposite;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Composite;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
@@ -150,6 +154,9 @@ public class VCFview extends JPanel
   protected boolean showNonVariants = false;
   
   private boolean markAsNewStop = false;
+  
+  private boolean showLabels = false;
+  
   private JCheckBoxMenuItem markNewStops =
     new JCheckBoxMenuItem("Mark new stops within CDS features", true);
   
@@ -165,6 +172,7 @@ public class VCFview extends JPanel
   protected static Pattern tabPattern = Pattern.compile("\t");
   
   public static String VCFFILE_SUFFIX = ".*\\.[bv]{1}cf(\\.gz)*$";
+  private static String FILE_SUFFIX = "\\.[bv]{1}cf(\\.gz)*$";
   
   public static org.apache.log4j.Logger logger4j = 
     org.apache.log4j.Logger.getLogger(VCFview.class);
@@ -216,7 +224,7 @@ public class VCFview extends JPanel
           "This requires Java 1.6 or higher.", 
           "Check Java Version", JOptionPane.WARNING_MESSAGE);
     }
-    
+
     final JScrollPane jspView = new JScrollPane(this, 
         JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
         JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -596,6 +604,17 @@ public class VCFview extends JPanel
         graphPanel.repaint();
       }
     });
+    
+    final JCheckBoxMenuItem labels = new JCheckBoxMenuItem("Show Labels", showLabels);
+    labels.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e)
+      {
+        showLabels = labels.isSelected();
+        repaint();
+      }
+    });
+    popup.add(new JSeparator());
+    popup.add(labels);
   }
 
   private static EntryGroup getReference(String reference)
@@ -677,8 +696,13 @@ public class VCFview extends JPanel
       if(newName != null)
         bcfFile = new File(newName+suffix);
       else
-        bcfFile = File.createTempFile(urlFile.getFile().replaceAll(
-        "[\\/\\s]", "_"), suffix);
+      { 
+        String name = urlFile.getFile();
+        int ind = name.lastIndexOf('/');
+        if(ind > -1)
+          name = name.substring(ind+1);
+        bcfFile = File.createTempFile(name.replaceAll("[\\/\\s]", "_"), suffix);
+      }
       bcfFile.deleteOnExit();
 
       FileOutputStream out = new FileOutputStream(bcfFile);
@@ -840,6 +864,8 @@ public class VCFview extends JPanel
   protected void paintComponent(Graphics g)
   {
     super.paintComponent(g);
+    
+    Graphics2D g2d = (Graphics2D)g;
     mouseVCF = null;
 
     float pixPerBase = getPixPerBaseByWidth();
@@ -871,7 +897,7 @@ public class VCFview extends JPanel
               thisStart = 1;
             int thisEnd   = end - offset;
             
-            drawRegion(g, contigs[j], thisStart, thisEnd, i, start, pixPerBase, features); 
+            drawRegion(g2d, contigs[j], thisStart, thisEnd, i, start, pixPerBase, features); 
           }
         }
 
@@ -881,13 +907,47 @@ public class VCFview extends JPanel
         int thisStart = start;
         if(thisStart < 1)
           thisStart = 1;
-        drawRegion(g, chr, thisStart, end, i, start, pixPerBase, features); 
+        drawRegion(g2d, chr, thisStart, end, i, start, pixPerBase, features); 
       }
     }
 
     if(feature_display == null)
-      drawScale((Graphics2D)g, start, end, pixPerBase, getHeight());
+      drawScale(g2d, start, end, pixPerBase, getHeight());
+    
+    // show labels for each VCF
+    if(showLabels)
+    {
+      g.setColor(Color.black);
+      int max = 0;
+      FontMetrics fm = getFontMetrics(getFont());
+      String lab[] = new String[vcfReaders.length];
+      for (int i = 0; i < vcfReaders.length; i++)
+      {
+        lab[i] = vcfReaders[i].getName().replaceAll(FILE_SUFFIX, "");
+        int width = fm.stringWidth(lab[i]);
+        if(max < width)
+         max = width;
+      }
+      
+      Rectangle square = new Rectangle(0, 0, max, getHeight());
+      Composite originalComposite = g2d.getComposite();
+      g2d.setPaint(Color.lightGray);
+      g2d.setComposite(makeComposite(0.75f));
+      g2d.fill(square);
+      g2d.setComposite(originalComposite);
+
+      g2d.setColor(Color.black);
+      g2d.drawLine(max+1, 0, max+1, getHeight());
+      for (int i = 0; i < vcfReaders.length; i++)
+        g.drawString(lab[i], 1, getYPostion(i));
+    }
   }
+  
+  private AlphaComposite makeComposite(float alpha) 
+  {
+    return(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
+  }
+
   
   private void drawRegion(Graphics g,
                           String chr,
@@ -1210,8 +1270,13 @@ public class VCFview extends JPanel
   {
     int pos[] = new int[2];
     pos[0] = Math.round((base - start)*pixPerBase);
-    pos[1] = getHeight() - 15 - (vcfFileIndex*(LINE_HEIGHT+5)); 
+    pos[1] = getYPostion(vcfFileIndex); 
     return pos;
+  }
+  
+  private int getYPostion(int vcfFileIndex)
+  {
+    return getHeight() - 15 - (vcfFileIndex*(LINE_HEIGHT+5));
   }
   
   private void findVariantAtPoint(Point mousePoint)
