@@ -31,6 +31,9 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 
+import javax.swing.Box;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
@@ -79,7 +82,7 @@ class IOUtils
   {
     try
     {
-      File filterFile = getFile(vcfFileName, nfiles, ".filter");
+      File filterFile = getFile(vcfFileName, nfiles, ".filter", null);
       FileWriter writer = new FileWriter(filterFile);
       if(IOUtils.isBCF(vcfFileName))
       {
@@ -113,15 +116,19 @@ class IOUtils
     }
   }
   
-  private static File getFile(final String vcfFileName, final int nfiles, final String suffix) throws IOException
+  private static File getFile(final String vcfFileName, final int nfiles,
+      final String suffix, final JComponent comp) throws IOException
   {
     if(nfiles > 1)
       return new File(vcfFileName+suffix);
-    final StickyFileChooser file_dialog = new StickyFileChooser();
 
+    final StickyFileChooser file_dialog = new StickyFileChooser();
     file_dialog.setSelectedFile(new File(vcfFileName+suffix));
     file_dialog.setDialogTitle("Choose save file ...");
     file_dialog.setDialogType(JFileChooser.SAVE_DIALOG);
+    if(comp != null)
+      file_dialog.setAccessory(comp);
+    
     final int status = file_dialog.showSaveDialog(null);
 
     if(status != JFileChooser.APPROVE_OPTION ||
@@ -197,7 +204,7 @@ class IOUtils
            getBaseDirectoryFromEntry(entryGroup.getActiveEntries().elementAt(0)),
                name);
       
-        File f = getFile(newfile.getAbsolutePath(), 1, ".fasta");
+        File f = getFile(newfile.getAbsolutePath(), 1, ".fasta", null);
         if(f == null)
           return;
         writer = new FileWriter(f);
@@ -276,44 +283,40 @@ class IOUtils
     FileWriter writer = null;
     String fastaFiles = "";
     AbstractVCFReader vcfReaders[] = vcfView.getVcfReaders();
-    
+
+    JCheckBox single = new JCheckBox("Single FASTA", true);
+    JCheckBox combine = new JCheckBox("Combine feature sequences", true);
+    Box yBox = Box.createVerticalBox();
+    if(!view && vcfReaders.length > 1)
+      yBox.add(single);
+    yBox.add(combine);
     
     try
     {
-      int opt = 0;
-      if(vcfReaders.length > 1)
+      if(!view)
       {
-        Object[] options = { "Single File", "Multiple Files" };
-        opt = JOptionPane.showOptionDialog(null, "Write to :", 
-                    "Output File",
-                    JOptionPane.DEFAULT_OPTION, 
-                    JOptionPane.QUESTION_MESSAGE, 
-                    null, options, options[0]);
-      }
-      
-      if(!view && opt == 0)
-      {
-        File f = getFile(vcfReaders[0].getFileName(), 1, suffix);
-        if(f == null)
-          return;
+        File f = getFile(vcfReaders[0].getFileName(), 1, suffix, yBox);
         writer = new FileWriter(f);
         fastaFiles += f.getAbsolutePath()+"\n";
       }
-      
+      else
+        JOptionPane.showMessageDialog(null, yBox, "View Option(s)", JOptionPane.INFORMATION_MESSAGE);
+
       for (int i = 0; i < vcfReaders.length; i++)
       {
-        if(!view && opt == 1)
+        if(!view && i > 0 && !single.isSelected())
         {
-          File f = getFile(vcfReaders[0].getFileName(), vcfReaders.length, suffix);
+          File f = getFile(vcfReaders[i].getFileName(), vcfReaders.length, suffix, null);
           writer = new FileWriter(f);
           fastaFiles += f.getAbsolutePath()+"\n";
         }
-        
+
+        StringBuffer buff = new StringBuffer();
         for (int j = 0; j < features.size() && (!view || j < MAXIMUM_SELECTED_FEATURES); j++)
         {
           Feature f = features.elementAt(j);
           FeatureSegmentVector segs = f.getSegments();
-          StringBuffer buff = new StringBuffer();
+          
           for(int k=0; k<segs.size(); k++)
           {
             FeatureSegment seg = segs.elementAt(k);
@@ -323,29 +326,21 @@ class IOUtils
                   features, vcfView, f.isForwardFeature()) );
           }
 
-          StringBuffer header = new StringBuffer(f.getSystematicName()).append(" ");
-          header.append(f.getIDString()).append(" ");
-          final String product = f.getProductString();
-          header.append( (product == null ? "undefined product" : product) );
-          header.append(" ").append(f.getWriteRange());
-          header.append(" (").append(vcfReaders[i].getName()).append(")");
-
-          if(view) // sequence viewer
+          if(!combine.isSelected())
           {
-            SequenceViewer viewer =
-                new SequenceViewer ("Feature base viewer for feature:" + 
-                  f.getIDString (), false);  
-            viewer.setSequence(">"+header.toString(), buff.toString());
+            writeOrView(vcfReaders[i], f, writer, buff);
+            buff = new StringBuffer();
           }
-          else    // write to file
-            writeSequence(writer, header.toString(), buff.toString());
         }
+        
+        if(combine.isSelected())
+          writeOrView(vcfReaders[i], null, writer, buff);
 
-        if(writer != null && opt == 1)
+        if(writer != null && !single.isSelected())
           writer.close();
       }
       
-      if(writer != null && opt == 0)
+      if(writer != null && single.isSelected())
         writer.close();
     } 
     catch(IOException e)
@@ -355,6 +350,39 @@ class IOUtils
     
     if(!view )
       new MessageDialog (null, "Saved Files", fastaFiles, false);
+  }
+  
+  /**
+   * Construct a header and write or view the sequence.
+   * @param reader
+   * @param f
+   * @param writer
+   * @param buff
+   * @throws IOException
+   */
+  private static void writeOrView(AbstractVCFReader reader, Feature f,
+      FileWriter writer, StringBuffer buff)
+          throws IOException
+  {
+    StringBuffer header = new StringBuffer();
+    header.append(reader.getName()).append(" ");
+    if(f != null)
+    {
+      header.append(f.getSystematicName()).append(" ");
+      header.append(f.getIDString()).append(" ");
+      final String product = f.getProductString();
+      header.append( (product == null ? "undefined product" : product) );
+      header.append(" ").append(f.getWriteRange());
+    }
+    
+    if(writer == null) // sequence viewer
+    {
+      SequenceViewer viewer =
+          new SequenceViewer ("Feature base viewer for feature(s)", false);  
+      viewer.setSequence(header.toString(), buff.toString());
+    }
+    else    // write to file
+      writeSequence(writer, header.toString(), buff.toString());
   }
   
   /**
@@ -474,7 +502,8 @@ class IOUtils
   
   private static void writeSequence(FileWriter writer, String header, String bases) throws IOException
   {
-    writer.write (">" + header + "\n");
+    if(header != null)
+      writer.write (">" + header + "\n");
 
     final int SEQUENCE_LINE_BASE_COUNT = 60;
     for(int k=0; k<bases.length(); k+=SEQUENCE_LINE_BASE_COUNT)
