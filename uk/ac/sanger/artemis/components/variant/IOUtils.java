@@ -296,6 +296,8 @@ class IOUtils
       if(!view)
       {
         File f = getFile(vcfReaders[0].getFileName(), 1, suffix, yBox);
+        if(f == null)
+          return;
         writer = new FileWriter(f);
         fastaFiles += f.getAbsolutePath()+"\n";
       }
