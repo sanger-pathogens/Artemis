@@ -356,11 +356,9 @@ class VCFRecord
       {
         RangeVector ranges = feature.getLocation().getRanges();
         intronlength = 0;
-
         for(int j=0; j< ranges.size(); j++)
         {
           Range range = (Range) ranges.get(j);
-          
           if(j > 0)
           {
             if(feature.isForwardFeature())
@@ -379,16 +377,14 @@ class VCFRecord
             
             if(feature.isForwardFeature())
             {
-              mod = (basePosition-feature.getRawFirstBase())%3;
-              codonStart = basePosition-feature.getRawFirstBase()-mod;
+              mod = (basePosition-feature.getRawFirstBase()-intronlength)%3;
+              codonStart = basePosition-feature.getRawFirstBase()-intronlength-mod;
             }
             else
             {
-              mod = (feature.getRawLastBase()-basePosition)%3;
-              codonStart = feature.getRawLastBase()-basePosition-mod;
+              mod = (feature.getRawLastBase()-basePosition-intronlength)%3;
+              codonStart = feature.getRawLastBase()-basePosition-intronlength-mod;
             }
-
-            codonStart-=intronlength;
             
             try
             {
@@ -397,7 +393,6 @@ class VCFRecord
               char codon[] = feature.getBases().substring(codonStart,
                   codonStart + 3).toLowerCase().toCharArray();
 
-              // String oldBase = new String(codon);
               char aaRef = AminoAcidSequence.getCodonTranslation(codon[0],
                   codon[1], codon[2]);
 
