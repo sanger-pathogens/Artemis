@@ -2177,10 +2177,15 @@ public class BamView extends JPanel
     menu.add(new JSeparator());
     
     JMenu viewMenu = new JMenu("Views");
-    cbStackView.setFont(cbIsizeStackView.getFont());
-    baseQualityColour.setFont(cbIsizeStackView.getFont());
-    colourByCoverageColour.setFont(cbIsizeStackView.getFont());
-    markInsertions.setFont(cbIsizeStackView.getFont());
+    cbStackView.setFont(viewMenu.getFont());
+    cbIsizeStackView.setFont(viewMenu.getFont());
+    cbPairedStackView.setFont(viewMenu.getFont());
+    cbStrandStackView.setFont(viewMenu.getFont());
+    cbCoverageView.setFont(viewMenu.getFont());
+    
+    baseQualityColour.setFont(viewMenu.getFont());
+    colourByCoverageColour.setFont(viewMenu.getFont());
+    markInsertions.setFont(viewMenu.getFont());
     
     cbIsizeStackView.addActionListener(new ActionListener()
     {
@@ -2402,7 +2407,7 @@ public class BamView extends JPanel
     }
     
     menu.add(new JSeparator());
-    logMenuItem.setFont(cbIsizeStackView.getFont());
+    logMenuItem.setFont(menu.getFont());
     menu.add(logMenuItem);
     logMenuItem.addActionListener(new ActionListener()
     {
