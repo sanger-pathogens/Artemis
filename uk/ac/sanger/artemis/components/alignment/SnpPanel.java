@@ -60,7 +60,7 @@ import net.sf.samtools.SAMRecord;
       setBackground(Color.white);
       this.bamView = bamView;
       this.bases = bases;
-      initPopupMenu(this);
+      initPopupMenu(this, popup);
       
       JMenuItem configure = new JMenuItem("Filter by Base Quality...");
       configure.addActionListener(new ActionListener()

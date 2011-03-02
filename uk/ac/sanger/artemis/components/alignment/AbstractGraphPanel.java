@@ -31,6 +31,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -49,7 +50,7 @@ public class AbstractGraphPanel extends JPanel
   protected int userWinSize = 1;
   protected JPopupMenu popup = new JPopupMenu();
   
-  public void initPopupMenu(final JPanel graphPanel)
+  public void initPopupMenu(final JPanel graphPanel, JComponent menu)
   {
     final JMenuItem setScale = new JMenuItem("Set the Window Size...");
     setScale.addActionListener(new ActionListener()
@@ -97,7 +98,7 @@ public class AbstractGraphPanel extends JPanel
         graphPanel.repaint();
       }
     });
-    popup.add(setScale);
+    menu.add(setScale);
     
     addMouseListener(new PopupListener());
   }

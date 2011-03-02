@@ -148,9 +148,7 @@ public class BamView extends JPanel
   private boolean isOrientation = false;
   private boolean isSingle = false;
   private boolean isSNPs = false;
-  private boolean isStackView = true;
-  private boolean isPairedStackView = false;
-  private boolean isStrandStackView = false;
+  
   private boolean isCoverage = false;
   private boolean isSNPplot = false;
   
@@ -175,18 +173,29 @@ public class BamView extends JPanel
   
   private JMenu bamFilesMenu = new JMenu("BAM files");
   private JCheckBoxMenuItem logMenuItem = new JCheckBoxMenuItem("Use Log Scale", logScale);
-  private JCheckBoxMenuItem checkBoxStackView = new JCheckBoxMenuItem("Stack View", isStackView);
+  
+  private JCheckBoxMenuItem cbStackView = new JCheckBoxMenuItem("Stack", true);
+  private JCheckBoxMenuItem cbPairedStackView = new JCheckBoxMenuItem("Paired Stack");
+  private JCheckBoxMenuItem cbStrandStackView = new JCheckBoxMenuItem("Strand Stack");
+  private JCheckBoxMenuItem cbIsizeStackView = new JCheckBoxMenuItem("Inferred Size", false);
+  private JCheckBoxMenuItem cbCoverageView = new JCheckBoxMenuItem("Coverage", false);
+  private JCheckBoxMenuItem cbLastSelected;
+  
+  private ButtonGroup buttonGroup = new ButtonGroup();
+  
   private JCheckBoxMenuItem colourByCoverageColour = new JCheckBoxMenuItem("Coverage Plot Colours");
   private JCheckBoxMenuItem baseQualityColour = new JCheckBoxMenuItem("Base Quality");
   private JCheckBoxMenuItem markInsertions = new JCheckBoxMenuItem("Mark Insertions", true);
   private AlphaComposite translucent = 
     AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f);
   
+  private CoveragePanel coverageView = new CoveragePanel();
+  
   /** Used to colour the frames. */
-  private Color lightGrey = new Color(200, 200, 200);
-  private Color darkGreen = new Color(0, 150, 0);
-  private Color darkOrange = new Color(255,140,0);
-  private Color deepPink   = new Color(139,10,80);
+  private static Color LIGHT_GREY = new Color(200, 200, 200);
+  private static Color DARK_GREEN = new Color(0, 150, 0);
+  private static Color DARK_ORANGE = new Color(255,140,0);
+  private static Color DEEP_PINK   = new Color(139,10,80);
   
   private Point lastMousePoint = null;
   private SAMRecord mouseOverSAMRecord = null;
@@ -195,6 +204,7 @@ public class BamView extends JPanel
   // record of where a mouse drag starts
   private int dragStart = -1;
   
+  private static int MAX_BASES = 26000;
   private int maxHeight = 800;
   
   private boolean concatSequences = false;
@@ -270,6 +280,12 @@ public class BamView extends JPanel
     
     MultiLineToolTipUI.initialize();
     setToolTipText("");
+    
+    buttonGroup.add(cbStackView);
+    buttonGroup.add(cbPairedStackView);
+    buttonGroup.add(cbStrandStackView);
+    buttonGroup.add(cbIsizeStackView);
+    buttonGroup.add(cbCoverageView);
   }
   
   public String getToolTipText()
@@ -392,7 +408,7 @@ public class BamView extends JPanel
    * Read a SAM or BAM file.
    * @throws IOException 
    */
-  private void readFromBamPicard(int start, int end, int bamIndex) 
+  private void readFromBamPicard(int start, int end, int bamIndex, float pixPerBase) 
           throws IOException
   {
     // Open the input file.  Automatically detects whether input is SAM or BAM
@@ -426,7 +442,7 @@ public class BamView extends JPanel
             thisEnd = thisLength;
           
           //System.out.println("READ "+seqNames.get(i)+"  "+thisStart+".."+thisEnd);
-          iterateOverBam(inputSam, seqNames.get(i), thisStart, thisEnd, bamIndex);
+          iterateOverBam(inputSam, seqNames.get(i), thisStart, thisEnd, bamIndex, pixPerBase);
         }
         lastLen = len;
       }
@@ -434,7 +450,7 @@ public class BamView extends JPanel
     else
     {
       String refName = (String) combo.getSelectedItem();
-      iterateOverBam(inputSam, refName, start, end, bamIndex);
+      iterateOverBam(inputSam, refName, start, end, bamIndex, pixPerBase);
     }
     
     //inputSam.close();
@@ -452,7 +468,7 @@ public class BamView extends JPanel
    */
   private void iterateOverBam(final SAMFileReader inputSam, 
                               String refName, int start, int end,
-                              int bamIndex)
+                              int bamIndex, float pixPerBase)
   { 
     boolean multipleBAM = false;
     if(bamList.size() > 1)
@@ -478,7 +494,12 @@ public class BamView extends JPanel
           {
             if(multipleBAM)
               samRecord.setAttribute("FL", bamIndex);
-            readsInView.add(samRecord);
+            
+            if(isCoverageView(pixPerBase) || isCoverage)
+              coverageView.addRecord(samRecord);
+            
+            if(!isCoverageView(pixPerBase))
+              readsInView.add(samRecord);
           }
         }
         
@@ -610,11 +631,18 @@ public class BamView extends JPanel
         end = seqLength;
     }
     
+    
     boolean changeToStackView = false;
     MemoryMXBean memory = ManagementFactory.getMemoryMXBean();
     if(laststart != start ||
-       lastend   != end)
+       lastend   != end ||
+       coverageView.isRedraw())
     {
+      if(isCoverageView(pixPerBase) || isCoverage)
+      {
+        coverageView.init(this, pixPerBase, start, end);
+      }
+      
       synchronized (this)
       {
         try
@@ -626,11 +654,11 @@ public class BamView extends JPanel
             readsInView = new Vector<SAMRecord>();
           else
             readsInView.clear();
-          
+
           for(int i=0; i<bamList.size(); i++)
           {
             if(!hideBamList.contains(i))
-              readFromBamPicard(start, end, i);
+              readFromBamPicard(start, end, i, pixPerBase);
           }
           float heapFractionUsedAfter = (float) ((float) memory.getHeapMemoryUsage().getUsed() / 
                                                  (float) memory.getHeapMemoryUsage().getMax());
@@ -640,19 +668,17 @@ public class BamView extends JPanel
           // System.out.println("Heap memory used "+heapFractionUsedAfter);
 
           if ((heapFractionUsedAfter - heapFractionUsedBefore) > 0.06
-              && !isStackView && heapFractionUsedAfter > 0.8)
+              && !isStackView() && heapFractionUsedAfter > 0.8)
           {
-            checkBoxStackView.setSelected(true);
-            isStackView = true;
+            cbStackView.setSelected(true);
             changeToStackView = true;
           }
 
-          if ((!isStackView && !isStrandStackView)
-              || pixPerBase * 1.08f >= ALIGNMENT_PIX_PER_BASE)
+          if((!isStackView() && !isStrandStackView()) || isBaseAlignmentView(pixPerBase))
           {
             Collections.sort(readsInView, new SAMRecordComparator());
           }
-          else if( (isStackView || isStrandStackView) &&
+          else if( (isStackView() || isStrandStackView()) &&
               bamList.size() > 1)
           {
             // merge multiple BAM files
@@ -679,18 +705,26 @@ public class BamView extends JPanel
     //System.out.println(start+".."+end+" " +
     //    "sequence length = "+getSequenceLength()+
     //    " pixPerBase="+pixPerBase);
-    
+       
     laststart = start;
     lastend   = end;
-	if(showBaseAlignment)
+    
+    if(showBaseAlignment)
 	  drawBaseAlignment(g2, seqLength, pixPerBase, start, end);
 	else
 	{
-	  if(isStackView)  
+	  if(isCoverageView(pixPerBase))
+	  {
+	    int hgt = jspView.getVisibleRect().height;
+	    g2.translate(0, getHeight()-hgt);
+	    coverageView.draw(g2, getWidth(), hgt);
+	    coverageView.drawMax(g2);
+	  }
+	  else if(isStackView())  
 	    drawStackView(g2, seqLength, pixPerBase, start, end);
-	  else if(isPairedStackView)
+	  else if(isPairedStackView())
 	    drawPairedStackView(g2, seqLength, pixPerBase, start, end);
-	  else if(isStrandStackView)
+	  else if(isStrandStackView())
 	    drawStrandStackView(g2, seqLength, pixPerBase, start, end);
 	  else
 	    drawLineView(g2, seqLength, pixPerBase, start, end);
@@ -778,7 +812,7 @@ public class BamView extends JPanel
         refSeq = 
           bases.getSubSequence(new Range(refSeqStart, seqEnd), Bases.FORWARD).toUpperCase();
         
-        g2.setColor(lightGrey);
+        g2.setColor(LIGHT_GREY);
         g2.fillRect(0, ypos-11, mainPanel.getWidth(), 11);
         drawSelectionRange(g2, ALIGNMENT_PIX_PER_BASE, start, end);
         g2.setColor(Color.black);
@@ -925,7 +959,7 @@ public class BamView extends JPanel
           if(insertions == null)
             insertions = new Hashtable<Integer, String>();
 
-          g2.setColor(deepPink);
+          g2.setColor(DEEP_PINK);
 
           int xscreen = (refPos+1)*ALIGNMENT_PIX_PER_BASE;
           insertions.put(xscreen, 
@@ -1001,9 +1035,9 @@ public class BamView extends JPanel
     if (baseQuality < 10)
       g2.setColor(Color.blue);
     else if (baseQuality < 20)
-      g2.setColor(darkGreen);
+      g2.setColor(DARK_GREEN);
     else if (baseQuality < 30)
-      g2.setColor(darkOrange);
+      g2.setColor(DARK_ORANGE);
     else
       g2.setColor(Color.black);
   }
@@ -1189,7 +1223,7 @@ public class BamView extends JPanel
           ypos = ypos-2;
       }
       else
-        g2.setColor(darkGreen);
+        g2.setColor(DARK_GREEN);
 
       lstStart = recordStart;
       lstEnd   = recordEnd;
@@ -1283,7 +1317,7 @@ public class BamView extends JPanel
             ypos = ypos + ystep;
         }
         else
-          g2.setColor(darkGreen);
+          g2.setColor(DARK_GREEN);
 
         lstStart = recordStart;
         lstEnd   = recordEnd;
@@ -1494,7 +1528,7 @@ public class BamView extends JPanel
     if(colourByCoverageColour.isSelected())
       g2.setColor(getColourByCoverageColour(samRecord));
     else if(offTheTop)
-      g2.setColor(darkOrange); 
+      g2.setColor(DARK_ORANGE); 
     else if(samRecord.getReadNegativeStrandFlag() &&
             samRecord.getMateNegativeStrandFlag()) // strand of the query (1 for reverse)
       g2.setColor(Color.red);
@@ -2143,104 +2177,83 @@ public class BamView extends JPanel
     menu.add(new JSeparator());
     
     JMenu viewMenu = new JMenu("Views");
-    ButtonGroup group = new ButtonGroup();
-    final JCheckBoxMenuItem checkBoxPairedStackView = new JCheckBoxMenuItem("Paired Stack View");
-    final JCheckBoxMenuItem checkBoxStrandStackView = new JCheckBoxMenuItem("Strand Stack View");
-    final JCheckBoxMenuItem checkIsizeStackView = new JCheckBoxMenuItem("Inferred Size View", false);
-    checkBoxStackView.setFont(checkIsizeStackView.getFont());
-    baseQualityColour.setFont(checkIsizeStackView.getFont());
-    colourByCoverageColour.setFont(checkIsizeStackView.getFont());
-    markInsertions.setFont(checkIsizeStackView.getFont());
+    cbStackView.setFont(cbIsizeStackView.getFont());
+    baseQualityColour.setFont(cbIsizeStackView.getFont());
+    colourByCoverageColour.setFont(cbIsizeStackView.getFont());
+    markInsertions.setFont(cbIsizeStackView.getFont());
     
-    group.add(checkBoxStackView);
-    group.add(checkBoxPairedStackView);
-    group.add(checkBoxStrandStackView);
-    group.add(checkIsizeStackView);
-    
-    checkIsizeStackView.addActionListener(new ActionListener()
+    cbIsizeStackView.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
       {
         laststart = -1;
         lastend = -1;
         
-        if(checkIsizeStackView.isSelected())
-        {
-          isStackView = false;
-          isPairedStackView = false;
-          isStrandStackView = false;
+        if(isIsizeStackView())
           logMenuItem.setEnabled(true);
-        }
         repaint();
       }
     });
-    viewMenu.add(checkIsizeStackView);
+    viewMenu.add(cbIsizeStackView);
     
     
-    checkBoxStackView.addActionListener(new ActionListener()
+    cbStackView.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
       {
         laststart = -1;
         lastend = -1;
-        isStackView = !isStackView;
-        
-        if(isStackView)
-        {
-          isPairedStackView = !isStackView;
-          isStrandStackView = !isStackView;
-          checkBoxPairedStackView.setSelected(!isStackView);
-          checkBoxStrandStackView.setSelected(!isStackView);
+
+        if(isStackView())
           logMenuItem.setEnabled(false);
-        }
         repaint();
       }
     });
-    viewMenu.add(checkBoxStackView);
+    viewMenu.add(cbStackView);
     
 
-    checkBoxPairedStackView.addActionListener(new ActionListener()
+    cbPairedStackView.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
       {
         laststart = -1;
         lastend = -1;
-        isPairedStackView = !isPairedStackView;
         
-        if(isPairedStackView)
-        {
-          isStackView = !isPairedStackView;
-          isStrandStackView = !isPairedStackView;
-          checkBoxStackView.setSelected(!isPairedStackView);
-          checkBoxStrandStackView.setSelected(!isPairedStackView);
+        if(cbPairedStackView.isSelected())
           logMenuItem.setEnabled(false);
-        }
         repaint();
       }
     });
-    viewMenu.add(checkBoxPairedStackView);
+    viewMenu.add(cbPairedStackView);
     
-    checkBoxStrandStackView.addActionListener(new ActionListener()
+    cbStrandStackView.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
       {
         laststart = -1;
         lastend = -1;
-        isStrandStackView = !isStrandStackView;
-        
-        if(isStrandStackView)
+
+        if(isStrandStackView())
         {
-          isStackView = !isStrandStackView;
-          isPairedStackView = !isStrandStackView;
-          checkBoxStackView.setSelected(!isStrandStackView);
-          checkBoxPairedStackView.setSelected(!isStrandStackView);
           setViewportMidPoint();
           logMenuItem.setEnabled(false);
         }
         repaint();
       }
     });
-    viewMenu.add(checkBoxStrandStackView);  
+    viewMenu.add(cbStrandStackView);
+    
+    cbCoverageView.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        laststart = -1;
+        lastend = -1;
+        repaint();
+      }
+    });
+    viewMenu.add(cbCoverageView);
+    
     menu.add(viewMenu);
  
     final JCheckBoxMenuItem checkBoxSNPs = new JCheckBoxMenuItem("SNP marks");
@@ -2325,6 +2338,8 @@ public class BamView extends JPanel
       {
         isCoverage = !isCoverage;
         coveragePanel.setVisible(isCoverage);
+        laststart = -1;
+        lastend = -1;
         repaint();
       }
     });
@@ -2387,7 +2402,7 @@ public class BamView extends JPanel
     }
     
     menu.add(new JSeparator());
-    logMenuItem.setFont(checkIsizeStackView.getFont());
+    logMenuItem.setFont(cbIsizeStackView.getFont());
     menu.add(logMenuItem);
     logMenuItem.addActionListener(new ActionListener()
     {
@@ -2407,7 +2422,13 @@ public class BamView extends JPanel
         new SAMRecordFilter(BamView.this);
       } 
     });
-    menu.add(new JSeparator());
+
+    //
+    JMenu coverageMenu = new JMenu("Coverage Options");
+    coverageView.init(this, 0.f, 0, 0);
+    coverageView.createMenus(coverageMenu, BamView.this);
+    viewMenu.add(new JSeparator());
+    viewMenu.add(coverageMenu);
   }
   
   public void setVisible(boolean visible)
@@ -2442,7 +2463,7 @@ public class BamView extends JPanel
     this.nbasesInView = nbasesInView;
     float pixPerBase = getPixPerBaseByWidth(); 
 
-    if(pixPerBase*1.08f >= ALIGNMENT_PIX_PER_BASE)
+    if(isBaseAlignmentView(pixPerBase))
     {
       pixPerBase = ALIGNMENT_PIX_PER_BASE;
       this.nbasesInView = (int)(mainPanel.getWidth()/pixPerBase);
@@ -2457,9 +2478,20 @@ public class BamView extends JPanel
     }
     else if(jspView != null)
     {
+      if(!cbCoverageView.isSelected() && nbasesInView >= MAX_BASES)
+      {
+        cbLastSelected = getSelectedCheckBoxMenuItem();
+        cbCoverageView.setSelected(true);
+      }
+      else if(cbCoverageView.isSelected() && nbasesInView < MAX_BASES && cbLastSelected != null)
+      {
+        cbLastSelected.setSelected(true);
+        cbLastSelected = null;
+      }
+      
       jspView.setColumnHeaderView(null);
       
-      if(!isStrandStackView)
+      if(!isStrandStackView())
         jspView.getVerticalScrollBar().setValue(
             jspView.getVerticalScrollBar().getMaximum());
       showBaseAlignment = false;
@@ -2661,6 +2693,63 @@ public class BamView extends JPanel
       fileIndex = (Integer) samRecord.getAttribute("FL");
     return lines[fileIndex].getLineColour(); 
   }
+
+  protected int getMaxBases()
+  {
+    return MAX_BASES;
+  }
+  
+  protected void setMaxBases(int max)
+  {
+    MAX_BASES = max;
+  }
+  
+  private boolean isStackView()
+  {
+    return cbStackView.isSelected();  
+  }
+  
+  private boolean isPairedStackView()
+  {
+    return cbPairedStackView.isSelected();
+  }
+  
+  private boolean isStrandStackView()
+  {
+    return cbStrandStackView.isSelected();
+  }
+  
+  private boolean isCoverageView(float pixPerBase)
+  {
+    if(isBaseAlignmentView(pixPerBase))
+      return false;
+    return cbCoverageView.isSelected();
+  }
+  
+  private boolean isIsizeStackView()
+  {
+    return cbIsizeStackView.isSelected();
+  }
+  
+  private boolean isBaseAlignmentView(float pixPerBase)
+  {
+    if(pixPerBase*1.08f >= ALIGNMENT_PIX_PER_BASE)
+      return true;
+    return false;
+  }
+  
+  private JCheckBoxMenuItem getSelectedCheckBoxMenuItem()
+  {
+    if(isStackView())
+      return cbStackView;
+    if(isPairedStackView())
+      return cbPairedStackView;
+    if(isStrandStackView())
+      return cbStrandStackView;
+    if(isIsizeStackView())
+      return cbIsizeStackView;
+    return cbCoverageView;
+  }
   
   private Selection getSelection()
   {
@@ -2670,6 +2759,11 @@ public class BamView extends JPanel
   protected List<SAMRecord> getReadsInView()
   {
     return readsInView;
+  }
+  
+  protected Hashtable<String, int[]> getCoveragePlotData()
+  {
+    return coverageView.getPlotData();
   }
   
   protected int getBasesInView()

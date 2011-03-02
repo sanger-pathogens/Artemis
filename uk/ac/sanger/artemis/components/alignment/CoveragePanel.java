@@ -29,6 +29,8 @@ import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.GeneralPath;
@@ -36,8 +38,13 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 
-import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import net.sf.samtools.AlignmentBlock;
 import net.sf.samtools.SAMRecord;
@@ -45,46 +52,62 @@ import net.sf.samtools.SAMRecord;
   public class CoveragePanel extends AbstractGraphPanel
   {
     private static final long serialVersionUID = 1L;
-    private BamView jamView;
+    private BamView bamView;
 
     private static LineAttributes lines[];
     private boolean includeCombined = false;
+    private Hashtable<String, int[]> plots;
+    private int combinedCoverage[];
+    private int nBins;
+    private int windowSize;
+    private int max;
+    private boolean redraw = false;
+    private boolean setMaxBases = false;
     
-    public CoveragePanel(final BamView jamView)
+    protected CoveragePanel(final BamView bamView)
+    {
+      this();
+      this.bamView = bamView;
+      //initPopupMenu(this, popup);
+      createMenus(popup, this);
+      addMouseListener(new PopupListener());
+    }
+    
+    protected CoveragePanel()
     {
       super();
       setBackground(Color.white);
-      this.jamView = jamView;
-      initPopupMenu(this);
-
-      JMenuItem configure = new JMenuItem("Configure...");
+      addMouseListener(new PopupListener());
+      setMaxBases = true;
+    }
+    
+    protected void createMenus(JComponent menu, final JPanel panel)
+    {
+      JMenuItem configure = new JMenuItem("Configure Line(s)...");
       configure.addActionListener(new ActionListener()
       {
         public void actionPerformed(ActionEvent e)
         {
-          int size = jamView.bamList.size();
+          int size = bamView.bamList.size();
           if(includeCombined)
             size++;
           lines =
-            LineAttributes.configurePlots(jamView.bamList, 
+            LineAttributes.configurePlots(bamView.bamList, 
                 getLineAttributes(size), CoveragePanel.this);
         }
       });
-      popup.add(configure);
+      menu.add(configure);
       
-      if(jamView.bamList.size() > 1)
+      JMenuItem optMenu = new JMenuItem("Options...");
+      optMenu.addActionListener(new ActionListener()
       {
-        final JCheckBoxMenuItem showCombined = new JCheckBoxMenuItem("Show Combined Plot", false);
-        showCombined.addActionListener(new ActionListener()
+        public void actionPerformed(ActionEvent e)
         {
-          public void actionPerformed(ActionEvent e)
-          {
-            includeCombined = showCombined.isSelected();
-            repaint();
-          }
-        });
-        popup.add(showCombined);
-      }
+          defineOpts();
+          panel.repaint();
+        }
+      });
+      menu.add(optMenu);
     }
     
     /**
@@ -94,15 +117,27 @@ import net.sf.samtools.SAMRecord;
     {
       super.paintComponent(g);
       Graphics2D g2 = (Graphics2D)g;
-
-      List<SAMRecord> readsInView = jamView.getReadsInView();
+      List<SAMRecord> readsInView = bamView.getReadsInView();
       if(readsInView == null)
         return;
-
-      int windowSize;
+      drawPlot(g2);
+      drawMax(g2);
+    }
+    
+    protected void init(BamView bamView, float pixPerBase, int start, int end)
+    {
+      this.bamView = bamView;
+      setPixPerBase(pixPerBase);
+      setStartAndEnd(start, end);
+      init();
+      redraw = false;
+    }
+    
+    private void init()
+    {
       if(autoWinSize)
       {
-        windowSize = (jamView.getBasesInView()/200);
+        windowSize = (bamView.getBasesInView()/300);
         userWinSize = windowSize;
       }
       else
@@ -110,84 +145,97 @@ import net.sf.samtools.SAMRecord;
       
       if(windowSize < 1)
         windowSize = 1;
+      nBins = Math.round((end-start+1.f)/windowSize);
 
-      int nBins = Math.round((end-start+1.f)/windowSize);
-      int max = drawPlot(g2, nBins, windowSize);
-
-      String maxStr = Float.toString(max/windowSize);
-      FontMetrics fm = getFontMetrics(getFont());
-      g2.setColor(Color.black);
-      
-      int xpos = getWidth() - fm.stringWidth(maxStr) - 
-                 jamView.getJspView().getVerticalScrollBar().getWidth();
-      g2.drawString(maxStr, xpos, fm.getHeight());
-    }
-    
-    
-    private int drawPlot(Graphics2D g2, int nBins, int windowSize)
-    {
-      List<SAMRecord> readsInView = jamView.getReadsInView();
-      List<String> bamList = jamView.bamList;
-      final Hashtable<String, Integer[]> plots = new Hashtable<String, Integer[]>();
-      
-      Integer combinedCoverage[] = null;
+      plots = new Hashtable<String, int[]>();
+      combinedCoverage = null;
       if(includeCombined)
       {
-        combinedCoverage = new Integer[nBins];
+        combinedCoverage = new int[nBins];
         for(int k=0; k<combinedCoverage.length; k++)
           combinedCoverage[k] = 0;
         plots.put("-1", combinedCoverage);
       }
+      max = 0;
+    }
+    
+    protected void drawMax(Graphics2D g2)
+    {
+      String maxStr = Float.toString(max/windowSize);
+      FontMetrics fm = getFontMetrics(getFont());
+      g2.setColor(Color.black);
       
-      int max = 0;
-      for(int i=0; i<readsInView.size(); i++)
+      int xpos = bamView.getJspView().getVisibleRect().width - fm.stringWidth(maxStr) - 
+                 bamView.getJspView().getVerticalScrollBar().getWidth();
+      g2.drawString(maxStr, xpos, fm.getHeight());
+    }
+    
+    private void drawPlot(Graphics2D g2)
+    {
+      init();
+      max = 0;
+      plots = bamView.getCoveragePlotData();
+      Enumeration<String> plotEum = plots.keys();
+      while(plotEum.hasMoreElements())
       {
-        SAMRecord thisRead = readsInView.get(i);
-        int offset = jamView.getSequenceOffset(thisRead.getReferenceName());
-        offset = offset - jamView.getBaseAtStartOfView();
-
-        String fileName;
-        if(bamList.size() > 1)
-          fileName = bamList.get((Integer) thisRead.getAttribute("FL"));
-        else
-          fileName = bamList.get(0);
-        Integer coverage[] = plots.get(fileName);
-        
-        if(coverage == null)
-        {
-          coverage = new Integer[nBins];
-          for(int k=0; k<coverage.length; k++)
-            coverage[k] = 0;
-          plots.put(fileName, coverage);
-        }         
-        
-        List<AlignmentBlock> blocks = thisRead.getAlignmentBlocks();
-        for(int j=0; j<blocks.size(); j++)
-        {
-          AlignmentBlock block = blocks.get(j);
- 
-          for(int k=0; k<block.getLength(); k++)
-          {
-            int pos = block.getReferenceStart() + k + offset;
-            int bin = pos/windowSize;
-            if(bin < 0 || bin > nBins-1)
-              continue;
-            
-            coverage[bin]+=1;
-            if(coverage[bin] > max)
-              max = coverage[bin];
-            
-            if(includeCombined)
-            {
-              combinedCoverage[bin]+=1;
-              if(combinedCoverage[bin] > max)
-                max = combinedCoverage[bin];
-            }
-          } 
-        }
+        String fileName = (String) plotEum.nextElement();
+        int[] thisPlot = plots.get(fileName);
+        for(int i=1; i<thisPlot.length; i++)
+          if(max < thisPlot[i])
+            max = thisPlot[i];
       }
 
-      int size = jamView.bamList.size();
+      draw(g2, getWidth(), getHeight());
+    }
+    
+    protected void addRecord(SAMRecord thisRead)
+    {
+      int offset = bamView.getSequenceOffset(thisRead.getReferenceName());
+      offset = offset - bamView.getBaseAtStartOfView();
+
+      String fileName;
+      if(bamView.bamList.size() > 1)
+        fileName = bamView.bamList.get((Integer) thisRead.getAttribute("FL"));
+      else
+        fileName = bamView.bamList.get(0);
+      int coverage[] = plots.get(fileName);
+      
+      if(coverage == null)
+      {
+        coverage = new int[nBins];
+        for(int k=0; k<coverage.length; k++)
+          coverage[k] = 0;
+        plots.put(fileName, coverage);
+      }         
+      
+      List<AlignmentBlock> blocks = thisRead.getAlignmentBlocks();
+      for(int j=0; j<blocks.size(); j++)
+      {
+        AlignmentBlock block = blocks.get(j);
+        for(int k=0; k<block.getLength(); k++)
+        {
+          int pos = block.getReferenceStart() + k + offset;
+          int bin = pos/windowSize;
+          if(bin < 0 || bin > nBins-1)
+            continue;
+          
+          coverage[bin]+=1;
+          if(coverage[bin] > max)
+            max = coverage[bin];
+          
+          if(includeCombined)
+          {
+            combinedCoverage[bin]+=1;
+            if(combinedCoverage[bin] > max)
+              max = combinedCoverage[bin];
+          }
+        } 
+      }
+    }
+    
+    protected void draw(Graphics2D g2, int wid, int hgt)
+    {
+      int size = bamView.bamList.size();
       if(includeCombined)
       {
         lines = getLineAttributes(size+1);
@@ -200,13 +248,13 @@ import net.sf.samtools.SAMRecord;
       while(plotEum.hasMoreElements())
       {
         String fileName = (String) plotEum.nextElement();
-        Integer[] thisPlot = plots.get(fileName);
-        
+        int[] thisPlot = plots.get(fileName);
+
         int index;
         if(fileName.equals("-1"))
           index = lines.length-1;
         else
-          index = bamList.indexOf(fileName);
+          index = bamView.bamList.indexOf(fileName);
         
         g2.setColor(lines[index].getLineColour());
         
@@ -216,10 +264,10 @@ import net.sf.samtools.SAMRecord;
           for(int i=1; i<thisPlot.length; i++)
           {
             int x0 = (int) ((((i-1)*(windowSize)) - windowSize/2.f)*pixPerBase);
-            int y0 = (int) (getHeight() - (((float)thisPlot[i-1]/(float)max)*getHeight()));
+            int y0 = (int) (hgt - (((float)thisPlot[i-1]/(float)max)*hgt));
             int x1 = (int) (((i*(windowSize)) - windowSize/2.f)*pixPerBase);
-            int y1 = (int) (getHeight() - (((float)thisPlot[i]/(float)max)*getHeight()));
-            
+            int y1 = (int) (hgt - (((float)thisPlot[i]/(float)max)*hgt));
+
             g2.drawLine(x0, y0, x1, y1);
           }
         }
@@ -228,28 +276,26 @@ import net.sf.samtools.SAMRecord;
           g2.setComposite(makeComposite(0.75f));
 
           GeneralPath shape = new GeneralPath();
-          shape.moveTo(0,getHeight());
+          shape.moveTo(0,hgt);
           for(int i=0; i<thisPlot.length; i++)
           {
             float xpos = ((i*(windowSize)) - windowSize/2.f)*pixPerBase;
             shape.lineTo(xpos,
-                getHeight() - (((float)thisPlot[i]/(float)max)*getHeight()));
+                hgt - (((float)thisPlot[i]/(float)max)*hgt));
           }
 
-          shape.lineTo(getWidth(),getHeight());
+          shape.lineTo(wid,hgt);
           g2.fill(shape);
         }
       }
-      return max;
     }
     
     private AlphaComposite makeComposite(float alpha)
     {
       int type = AlphaComposite.SRC_OVER;
       return(AlphaComposite.getInstance(type, alpha));
-     }
-  
-    
+    }
+
     protected static LineAttributes[] getLineAttributes(int nsize)
     {
       if(lines == null)
@@ -262,5 +308,89 @@ import net.sf.samtools.SAMRecord;
         lines = tmpLines;
       }
       return lines;
+    }
+
+    /**
+     * @return the redraw
+     */
+    protected boolean isRedraw()
+    {
+      return redraw;
+    }
+    
+    private void defineOpts()
+    {
+      final JPanel opts = new JPanel(new GridBagLayout());
+      final GridBagConstraints c = new GridBagConstraints();
+
+      final JTextField newBaseMax = new JTextField(Integer.toString(bamView.getMaxBases()), 10);
+      c.gridy = 0;
+      if(setMaxBases)
+      {
+        final JLabel labMax1 = new JLabel("Zoom level before switching");
+        final JLabel labMax2 = new JLabel("to coverage view (in bases):");
+        c.anchor = GridBagConstraints.WEST;
+        opts.add(labMax1, c);
+        c.gridy = c.gridy+1;
+        opts.add(labMax2, c);
+        opts.add(newBaseMax, c);
+      }
+      
+      final JTextField newWinSize = new JTextField(Integer.toString(userWinSize), 10);
+      final JLabel lab = new JLabel("Window size:");
+      lab.setEnabled(!autoWinSize);
+      newWinSize.setEnabled(!autoWinSize);
+      
+      c.gridy = c.gridy+1;
+      c.anchor = GridBagConstraints.EAST;
+      opts.add(lab, c);
+      opts.add(newWinSize, c);
+
+      final JCheckBox autoSet = new JCheckBox("Automatically set window size", autoWinSize);
+      autoSet.addActionListener(new ActionListener()
+      {
+        public void actionPerformed(ActionEvent e)
+        {
+          lab.setEnabled(!autoSet.isSelected());
+          newWinSize.setEnabled(!autoSet.isSelected());
+        }
+      });
+      c.anchor = GridBagConstraints.WEST;
+      c.gridy = c.gridy+1;
+      c.gridwidth = GridBagConstraints.REMAINDER;
+      opts.add(autoSet, c);
+
+      final JCheckBox showCombined = new JCheckBox("Show Combined Plot", includeCombined);
+      if(bamView.bamList.size() == 1)
+        showCombined.setEnabled(false);
+      c.gridy = c.gridy+1;
+      opts.add(showCombined, c);
+          
+      String window_options[] = { "OK", "Cancel" };
+      int select = JOptionPane.showOptionDialog(null, opts, "Coverage Options",
+          JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+          window_options, window_options[0]);
+
+      if(select == 1)
+        return;
+      
+      redraw = true;
+      autoWinSize = autoSet.isSelected();
+      includeCombined = showCombined.isSelected();
+      try
+      {
+        userWinSize = Integer.parseInt(newWinSize.getText().trim());
+        if(setMaxBases)
+          bamView.setMaxBases(Integer.parseInt(newBaseMax.getText().trim()));
+      }
+      catch (NumberFormatException nfe)
+      {
+        return;
+      }
+    }
+    
+    protected Hashtable<String, int[]> getPlotData()
+    {
+      return plots;
     }
   }
