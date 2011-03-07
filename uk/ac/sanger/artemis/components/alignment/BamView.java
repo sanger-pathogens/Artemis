@@ -714,12 +714,7 @@ public class BamView extends JPanel
 	else
 	{
 	  if(isCoverageView(pixPerBase))
-	  {
-	    int hgt = jspView.getVisibleRect().height;
-	    g2.translate(0, getHeight()-hgt);
-	    coverageView.draw(g2, getWidth(), hgt);
-	    coverageView.drawMax(g2);
-	  }
+	    drawCoverage(g2,start, end, pixPerBase);
 	  else if(isStackView())  
 	    drawStackView(g2, seqLength, pixPerBase, start, end);
 	  else if(isPairedStackView())
@@ -1474,6 +1469,27 @@ public class BamView extends JPanel
     }
   }
   
+  /**
+   * Draw the read coverage.
+   * @param g2
+   * @param start
+   * @param end
+   * @param pixPerBase
+   */
+  private void drawCoverage(Graphics2D g2, int start, int end, float pixPerBase)
+  {
+    int scaleHeight = 0;
+    if(isShowScale())
+    {
+      drawScale(g2, start, end, pixPerBase, getHeight());
+      scaleHeight = 15;
+    }
+
+    int hgt = jspView.getVisibleRect().height-scaleHeight;
+    g2.translate(0, getHeight()-hgt-scaleHeight);
+    coverageView.draw(g2, getWidth(), hgt);
+    coverageView.drawMax(g2);  
+  }
   
   /**
    * Draw a read that apparently has a read mate that is not in view.
