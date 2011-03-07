@@ -498,6 +498,9 @@ public class BamView extends JPanel
             if(isCoverageView(pixPerBase) || isCoverage)
               coverageView.addRecord(samRecord);
             
+            if(isSNPplot)
+              snpPanel.addRecord(samRecord);
+            
             if(!isCoverageView(pixPerBase))
               readsInView.add(samRecord);
           }
@@ -639,9 +642,10 @@ public class BamView extends JPanel
        coverageView.isRedraw())
     {
       if(isCoverageView(pixPerBase) || isCoverage)
-      {
         coverageView.init(this, pixPerBase, start, end);
-      }
+      
+      if(isSNPplot)
+        snpPanel.init(this, pixPerBase, start, end);
       
       synchronized (this)
       {
@@ -2373,6 +2377,8 @@ public class BamView extends JPanel
       {
         isSNPplot = !isSNPplot;
         snpPanel.setVisible(isSNPplot);
+        laststart = -1;
+        lastend = -1;
         repaint();
       }
     });
