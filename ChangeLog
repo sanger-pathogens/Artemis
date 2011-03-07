@@ -1,4 +1,7 @@
 Version XX
+	Add new Coverage view to BamView. It automatically switches to this view
+	on zooming out.
+
 	Add options to write out or view FASTA sequences from VCF/BVF variation
 	data.
 
