@@ -315,6 +315,11 @@ import net.sf.samtools.SAMRecord;
      */
     protected boolean isRedraw()
     {
+      if(redraw)
+      {
+        redraw = false;
+        return true;
+      }
       return redraw;
     }
     
