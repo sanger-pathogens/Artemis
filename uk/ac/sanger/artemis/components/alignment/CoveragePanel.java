@@ -26,7 +26,6 @@ package uk.ac.sanger.artemis.components.alignment;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
@@ -52,15 +51,12 @@ import net.sf.samtools.SAMRecord;
   public class CoveragePanel extends AbstractGraphPanel
   {
     private static final long serialVersionUID = 1L;
-    private BamView bamView;
-
     private static LineAttributes lines[];
     private boolean includeCombined = false;
     private Hashtable<String, int[]> plots;
     private int combinedCoverage[];
+
     private int nBins;
-    private int windowSize;
-    private int max;
     private boolean redraw = false;
     private boolean setMaxBases = false;
     
@@ -158,18 +154,7 @@ import net.sf.samtools.SAMRecord;
       }
       max = 0;
     }
-    
-    protected void drawMax(Graphics2D g2)
-    {
-      String maxStr = Float.toString(max/windowSize);
-      FontMetrics fm = getFontMetrics(getFont());
-      g2.setColor(Color.black);
-      
-      int xpos = bamView.getJspView().getVisibleRect().width - fm.stringWidth(maxStr) - 
-                 bamView.getJspView().getVerticalScrollBar().getWidth();
-      g2.drawString(maxStr, xpos, fm.getHeight());
-    }
-    
+
     private void drawPlot(Graphics2D g2)
     {
       init();
