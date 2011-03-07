@@ -23,12 +23,16 @@
  */
 package uk.ac.sanger.artemis.components.alignment;
 
+import java.awt.Color;
+import java.awt.FontMetrics;
+import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.text.DecimalFormat;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -46,6 +50,9 @@ public class AbstractGraphPanel extends JPanel
   protected int end;
   protected float pixPerBase;
   
+  protected BamView bamView;
+  protected int windowSize;
+  protected int max;
   protected boolean autoWinSize = true;
   protected int userWinSize = 1;
   protected JPopupMenu popup = new JPopupMenu();
@@ -61,12 +68,13 @@ public class AbstractGraphPanel extends JPanel
         GridBagConstraints c = new GridBagConstraints();
         JPanel pane = new JPanel(gridbag);
         final JTextField newWinSize = new JTextField(Integer.toString(userWinSize), 10);
+        newWinSize.setEnabled(!autoWinSize);
         final JLabel lab = new JLabel("Window size:");
         c.gridy = 0;
         pane.add(lab, c);
         pane.add(newWinSize, c);
 
-        final JCheckBox autoSet = new JCheckBox("Automatically set window size", false);
+        final JCheckBox autoSet = new JCheckBox("Automatically set window size", autoWinSize);
         autoSet.addActionListener(new ActionListener()
         {
           public void actionPerformed(ActionEvent e)
@@ -101,6 +109,23 @@ public class AbstractGraphPanel extends JPanel
     menu.add(setScale);
     
     addMouseListener(new PopupListener());
+  }
+  
+  /**
+   * Draw maximum average value.
+   * @param g2
+   */
+  protected void drawMax(Graphics2D g2)
+  {
+    DecimalFormat df = new DecimalFormat("0.#");
+    String maxStr = df.format((float)max/(float)windowSize);
+
+    FontMetrics fm = getFontMetrics(getFont());
+    g2.setColor(Color.black);
+    
+    int xpos = bamView.getJspView().getVisibleRect().width - fm.stringWidth(maxStr) - 
+               bamView.getJspView().getVerticalScrollBar().getWidth();
+    g2.drawString(maxStr, xpos, fm.getHeight());
   }
 
   protected void setStartAndEnd(int start, int end)
