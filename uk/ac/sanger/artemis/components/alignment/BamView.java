@@ -2002,8 +2002,6 @@ public class BamView extends JPanel
       public void itemStateChanged(ItemEvent e)
       {
         laststart = -1;
-        lastend = -1;
-        
         if(feature_display != null)
           setZoomLevel(feature_display.getMaxVisibleBases());
         else
@@ -2158,7 +2156,6 @@ public class BamView extends JPanel
         else
           hideBamList.add(new Integer(thisBamIndex));
         laststart = -1;
-        lastend = -1;
         repaint();
       } 
     });
@@ -2182,9 +2179,7 @@ public class BamView extends JPanel
         
         for(int i=0; i<bamFiles.size(); i++)
           addToViewMenu(i+count);
-        laststart = -1;
-        lastend = -1;
-        
+        laststart = -1; 
         repaint();
       } 
     });
@@ -2212,8 +2207,6 @@ public class BamView extends JPanel
       public void actionPerformed(ActionEvent e)
       {
         laststart = -1;
-        lastend = -1;
-        
         if(isIsizeStackView())
           logMenuItem.setEnabled(true);
         repaint();
@@ -2227,8 +2220,6 @@ public class BamView extends JPanel
       public void actionPerformed(ActionEvent e)
       {
         laststart = -1;
-        lastend = -1;
-
         if(isStackView())
           logMenuItem.setEnabled(false);
         repaint();
@@ -2242,8 +2233,6 @@ public class BamView extends JPanel
       public void actionPerformed(ActionEvent e)
       {
         laststart = -1;
-        lastend = -1;
-        
         if(cbPairedStackView.isSelected())
           logMenuItem.setEnabled(false);
         repaint();
@@ -2256,8 +2245,6 @@ public class BamView extends JPanel
       public void actionPerformed(ActionEvent e)
       {
         laststart = -1;
-        lastend = -1;
-
         if(isStrandStackView())
         {
           setViewportMidPoint();
@@ -2273,7 +2260,6 @@ public class BamView extends JPanel
       public void actionPerformed(ActionEvent e)
       {
         laststart = -1;
-        lastend = -1;
         repaint();
       }
     });
@@ -2363,8 +2349,9 @@ public class BamView extends JPanel
       {
         isCoverage = !isCoverage;
         coveragePanel.setVisible(isCoverage);
-        laststart = -1;
-        lastend = -1;
+        
+        if(isCoverage && !cbCoverageView.isSelected())
+          laststart = -1;
         repaint();
       }
     });
@@ -2378,7 +2365,6 @@ public class BamView extends JPanel
         isSNPplot = !isSNPplot;
         snpPanel.setVisible(isSNPplot);
         laststart = -1;
-        lastend = -1;
         repaint();
       }
     });
@@ -2874,7 +2860,7 @@ public class BamView extends JPanel
     if(event.getType() == DisplayAdjustmentEvent.SCALE_ADJUST_EVENT)
     {
       laststart = -1;
-      lastend = -1;
+
       BamView.this.startBase = event.getStart();
       BamView.this.endBase   = event.getEnd();
 
