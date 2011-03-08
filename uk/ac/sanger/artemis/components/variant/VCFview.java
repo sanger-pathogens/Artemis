@@ -736,8 +736,7 @@ public class VCFview extends JPanel
     {
       if(IOUtils.isBCF(fileName))
       {
-        fileName = testForURL(fileName, true);
-        vcfReaders[index] = new BCFReader(new File(fileName));
+        vcfReaders[index] = new BCFReader(fileName);
   
         String hdr = ((BCFReader)vcfReaders[index]).headerToString();
         if(hdr.indexOf("VCFv4") > -1)
