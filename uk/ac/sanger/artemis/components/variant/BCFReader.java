@@ -26,7 +26,9 @@ package uk.ac.sanger.artemis.components.variant;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Writer;
+import java.net.URL;
 import java.util.List;
 import java.util.Vector;
 import java.util.regex.Pattern;
@@ -39,7 +41,7 @@ class BCFReader extends AbstractVCFReader
   public static final int TAD_LIDX_SHIFT = 13; // linear index shift
   private static Pattern formatPattern = Pattern.compile("[^0-9]+");
   private BlockCompressedInputStream is;
-  private FileInputStream indexFileStream;
+  private InputStream indexFileStream;
   private List<BCFIndex> idx;
   
   // header information and names
@@ -50,18 +52,27 @@ class BCFReader extends AbstractVCFReader
   private String fileName;
   
   /**
-   * @param bcf  BCF file
+   * @param bcf  BCF file or url
    * @throws IOException
    */
-  public BCFReader(File bcf) throws IOException
+  public BCFReader(String bcf) throws IOException
   {
-    is = new BlockCompressedInputStream(bcf);
-    readHeader();
-    
-    File bcfIndex = new File(bcf.getAbsolutePath()+".bci");
-    indexFileStream = new FileInputStream(bcfIndex);
+    if(bcf.startsWith("http"))
+    {
+      URL bcfURL = new URL(bcf);
+      is = new BlockCompressedInputStream(bcfURL);
+      indexFileStream = new URL(bcf+".bci").openStream();
+      fileName = bcfURL.getFile();
+    }
+    else 
+    {
+      File bcfFile = new File(bcf);
+      is = new BlockCompressedInputStream(bcfFile);
+      indexFileStream = new FileInputStream(new File(bcf+".bci"));
+      fileName = bcfFile.getAbsolutePath();
+    }
     idx = loadIndex();
-    fileName = bcf.getAbsolutePath();
+    readHeader();
   }
 
   protected void seek(long off) throws IOException
@@ -339,7 +350,7 @@ class BCFReader extends AbstractVCFReader
   
   protected static void writeVCF(Writer writer, String vcfFileName) throws IOException
   {
-    BCFReader reader = new BCFReader(new File(vcfFileName));
+    BCFReader reader = new BCFReader(vcfFileName);
     writer.write( reader.headerToString()+"\n" );
     
     int sbeg = 0;
@@ -486,7 +497,7 @@ class BCFReader extends AbstractVCFReader
         send = Integer.parseInt(rgn[1]);
       }
       
-      BCFReader reader = new BCFReader(new File(args[0]));
+      BCFReader reader = new BCFReader(args[0]);
       int bid = 0;
       if(chr != null)
         bid = reader.getSeqIndex(chr);
