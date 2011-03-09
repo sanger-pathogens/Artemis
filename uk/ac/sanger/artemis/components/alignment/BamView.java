@@ -1187,6 +1187,9 @@ public class BamView extends JPanel
       scaleHeight = 0;
     
     int ypos = (getHeight() - scaleHeight);
+    int ydiff = 2;
+    if(isOrientation)
+      ydiff= 4;
     int maxEnd = 0;
     int lstStart = 0;
     int lstEnd = 0;
@@ -1215,11 +1218,11 @@ public class BamView extends JPanel
         
         if(maxEnd < recordStart)
         {
-          ypos = (getHeight() - scaleHeight)-2;
+          ypos = (getHeight() - scaleHeight)-ydiff;
           maxEnd = recordEnd+2;
         }
         else
-          ypos = ypos-2;
+          ypos = ypos-ydiff;
       }
       else
         g2.setColor(DARK_GREEN);
@@ -1263,11 +1266,14 @@ public class BamView extends JPanel
     drawScale(g2, start, end, pixPerBase, ((getHeight()+scaleHeight)/2));
 
     int ymid = (getHeight()/ 2);
+    int ydiff = 2;
+    if(isOrientation)
+      ydiff= 4;
     // positive strand    
-    drawStrand(g2, false, scaleHeight, ymid-(scaleHeight/2), -2, pixPerBase, stroke);
+    drawStrand(g2, false, scaleHeight, ymid-(scaleHeight/2), -ydiff, pixPerBase, stroke);
     
     // negative strand
-    drawStrand(g2, true, scaleHeight, ymid+(scaleHeight/2), 2, pixPerBase, stroke);
+    drawStrand(g2, true, scaleHeight, ymid+(scaleHeight/2), ydiff, pixPerBase, stroke);
   }
   
   private void drawStrand(Graphics2D g2, 
@@ -1402,7 +1408,10 @@ public class BamView extends JPanel
     else
       scaleHeight = 0;
     
-    int ypos = getHeight() - scaleHeight - 3;
+    int ydiff = 3;
+    if(isOrientation)
+      ydiff= 5;
+    int ypos = getHeight() - scaleHeight - ydiff;
     int lastEnd = 0;
     int baseAtStartOfView = getBaseAtStartOfView();
     Rectangle r = jspView.getViewport().getViewRect();
@@ -1413,7 +1422,7 @@ public class BamView extends JPanel
       
       if(pr.sam1.getAlignmentStart() > lastEnd)
       {
-        ypos = getHeight() - scaleHeight - 3;
+        ypos = getHeight() - scaleHeight - ydiff;
         
         if(pr.sam2 != null)
         {  
@@ -1423,7 +1432,7 @@ public class BamView extends JPanel
           lastEnd = pr.sam1.getAlignmentEnd();
       }
       else
-        ypos = ypos - 3;
+        ypos = ypos - ydiff;
       
       if(ypos > r.getMaxY() || ypos < r.getMinY())
         continue;
