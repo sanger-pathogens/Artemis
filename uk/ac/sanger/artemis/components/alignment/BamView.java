@@ -66,6 +66,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
+import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -223,7 +224,6 @@ public class BamView extends JPanel
                  int nbasesInView)
   {
     super();
-    
     setBackground(Color.white);
     this.bamList = bamList;
     this.nbasesInView = nbasesInView;
@@ -442,7 +442,7 @@ public class BamView extends JPanel
             thisEnd = thisLength;
           
           //System.out.println("READ "+seqNames.get(i)+"  "+thisStart+".."+thisEnd);
-          iterateOverBam(inputSam, seqNames.get(i), thisStart, thisEnd, bamIndex, pixPerBase);
+          iterateOverBam(inputSam, seqNames.get(i), thisStart, thisEnd, bamIndex, pixPerBase, bam);
         }
         lastLen = len;
       }
@@ -450,7 +450,7 @@ public class BamView extends JPanel
     else
     {
       String refName = (String) combo.getSelectedItem();
-      iterateOverBam(inputSam, refName, start, end, bamIndex, pixPerBase);
+      iterateOverBam(inputSam, refName, start, end, bamIndex, pixPerBase, bam);
     }
     
     //inputSam.close();
@@ -468,7 +468,8 @@ public class BamView extends JPanel
    */
   private void iterateOverBam(final SAMFileReader inputSam, 
                               String refName, int start, int end,
-                              int bamIndex, float pixPerBase)
+                              int bamIndex, float pixPerBase,
+                              String bam)
   { 
     boolean multipleBAM = false;
     if(bamList.size() > 1)
@@ -478,6 +479,8 @@ public class BamView extends JPanel
     MemoryMXBean memory = ManagementFactory.getMemoryMXBean();
     int checkMemAfter = 8000;
     int cnt = 0;
+    int seqOffset = getSequenceOffset(refName);
+    int offset = seqOffset- getBaseAtStartOfView();
     
     while ( it.hasNext() )
     {
@@ -495,11 +498,14 @@ public class BamView extends JPanel
             if(multipleBAM)
               samRecord.setAttribute("FL", bamIndex);
             
-            if(isCoverageView(pixPerBase) || isCoverage)
-              coverageView.addRecord(samRecord);
+            if(isCoverageView(pixPerBase))
+              coverageView.addRecord(samRecord, offset, bam);
+            
+            if(isCoverage)
+              coveragePanel.addRecord(samRecord, offset, bam);
             
             if(isSNPplot)
-              snpPanel.addRecord(samRecord);
+              snpPanel.addRecord(samRecord, seqOffset);
             
             if(!isCoverageView(pixPerBase))
               readsInView.add(samRecord);
@@ -633,20 +639,20 @@ public class BamView extends JPanel
       if(end > seqLength)
         end = seqLength;
     }
-    
-    
+
     boolean changeToStackView = false;
     MemoryMXBean memory = ManagementFactory.getMemoryMXBean();
     if(laststart != start ||
        lastend   != end ||
-       coverageView.isRedraw())
+       CoveragePanel.isRedraw())
     {
-      if(isCoverageView(pixPerBase) || isCoverage)
+      if(isCoverageView(pixPerBase))
         coverageView.init(this, pixPerBase, start, end);
-      
+      if(isCoverage)
+        coveragePanel.init(this, pixPerBase, start, end);
       if(isSNPplot)
         snpPanel.init(this, pixPerBase, start, end);
-      
+
       synchronized (this)
       {
         try
@@ -705,11 +711,7 @@ public class BamView extends JPanel
         }
       }
     }
-    
-    //System.out.println(start+".."+end+" " +
-    //    "sequence length = "+getSequenceLength()+
-    //    " pixPerBase="+pixPerBase);
-       
+
     laststart = start;
     lastend   = end;
     
@@ -728,17 +730,9 @@ public class BamView extends JPanel
 	  else
 	    drawLineView(g2, seqLength, pixPerBase, start, end);
 	  if(isCoverage)
-	  {
-	    coveragePanel.setStartAndEnd(start, end);
-	    coveragePanel.setPixPerBase(pixPerBase);
 	    coveragePanel.repaint();
-	  }
 	  if(isSNPplot)
-	  {
-	    snpPanel.setStartAndEnd(start, end);
-	    snpPanel.setPixPerBase(pixPerBase);
 	    snpPanel.repaint();
-	  }
 	}
 
 	if(waitingFrame.isVisible())
@@ -2077,7 +2071,7 @@ public class BamView extends JPanel
     jspView = new JScrollPane(this, 
         JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
         JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-
+    jspView.setViewportBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.gray));
     setDisplay(1, nbasesInView, null);
     mainPanel.setLayout(new BorderLayout());
 
@@ -2103,10 +2097,6 @@ public class BamView extends JPanel
         public void adjustmentValueChanged(AdjustmentEvent e)
         {
           repaint();
-          if(coveragePanel != null)
-            coveragePanel.repaint();
-          if(snpPanel != null)
-            snpPanel.repaint();
         }
       });
       bottomPanel.add(scrollBar, BorderLayout.SOUTH);
@@ -2448,7 +2438,7 @@ public class BamView extends JPanel
     //
     JMenu coverageMenu = new JMenu("Coverage Options");
     coverageView.init(this, 0.f, 0, 0);
-    coverageView.createMenus(coverageMenu, BamView.this);
+    coverageView.createMenus(coverageMenu);
     viewMenu.add(new JSeparator());
     viewMenu.add(coverageMenu);
   }
@@ -2783,11 +2773,6 @@ public class BamView extends JPanel
     return readsInView;
   }
   
-  protected Hashtable<String, int[]> getCoveragePlotData()
-  {
-    return coverageView.getPlotData();
-  }
-  
   protected int getBasesInView()
   {
     return nbasesInView;
@@ -2876,28 +2861,12 @@ public class BamView extends JPanel
       int width = feature_display.getMaxVisibleBases();
       setZoomLevel(width);
       repaint();
-      if(coveragePanel != null && coveragePanel.isVisible()) 
-      {
-        coveragePanel.setStartAndEnd(BamView.this.startBase, BamView.this.endBase);
-        coveragePanel.setPixPerBase(getPixPerBaseByWidth());
-        coveragePanel.repaint();
-      }
-      if(snpPanel != null && snpPanel.isVisible())
-      {
-        snpPanel.setStartAndEnd(BamView.this.startBase, BamView.this.endBase);
-        snpPanel.setPixPerBase(getPixPerBaseByWidth());
-        snpPanel.repaint();
-      }
     }
     else
     {
       setDisplay(event.getStart(), 
         event.getStart()+feature_display.getMaxVisibleBases(), event);
       repaint();
-      if(coveragePanel != null && coveragePanel.isVisible())
-        coveragePanel.repaint();
-      if(snpPanel != null && snpPanel.isVisible())
-        snpPanel.repaint();
     }
   }
   

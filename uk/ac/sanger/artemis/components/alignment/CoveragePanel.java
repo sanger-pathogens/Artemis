@@ -57,27 +57,24 @@ import net.sf.samtools.SAMRecord;
     private int combinedCoverage[];
 
     private int nBins;
-    private boolean redraw = false;
+    private static boolean redraw = false;
     private boolean setMaxBases = false;
     
     protected CoveragePanel(final BamView bamView)
     {
       this();
       this.bamView = bamView;
-      //initPopupMenu(this, popup);
-      createMenus(popup, this);
+      createMenus(popup);
       addMouseListener(new PopupListener());
     }
     
     protected CoveragePanel()
     {
       super();
-      setBackground(Color.white);
-      addMouseListener(new PopupListener());
       setMaxBases = true;
     }
     
-    protected void createMenus(JComponent menu, final JPanel panel)
+    protected void createMenus(JComponent menu)
     {
       JMenuItem configure = new JMenuItem("Configure Line(s)...");
       configure.addActionListener(new ActionListener()
@@ -100,7 +97,7 @@ import net.sf.samtools.SAMRecord;
         public void actionPerformed(ActionEvent e)
         {
           defineOpts();
-          panel.repaint();
+          bamView.repaint();
         }
       });
       menu.add(optMenu);
@@ -113,8 +110,7 @@ import net.sf.samtools.SAMRecord;
     {
       super.paintComponent(g);
       Graphics2D g2 = (Graphics2D)g;
-      List<SAMRecord> readsInView = bamView.getReadsInView();
-      if(readsInView == null)
+      if(plots == null)
         return;
       drawPlot(g2);
       drawMax(g2);
@@ -126,7 +122,6 @@ import net.sf.samtools.SAMRecord;
       setPixPerBase(pixPerBase);
       setStartAndEnd(start, end);
       init();
-      redraw = false;
     }
     
     private void init()
@@ -157,9 +152,7 @@ import net.sf.samtools.SAMRecord;
 
     private void drawPlot(Graphics2D g2)
     {
-      init();
       max = 0;
-      plots = bamView.getCoveragePlotData();
       Enumeration<String> plotEum = plots.keys();
       while(plotEum.hasMoreElements())
       {
@@ -169,45 +162,36 @@ import net.sf.samtools.SAMRecord;
           if(max < thisPlot[i])
             max = thisPlot[i];
       }
-
       draw(g2, getWidth(), getHeight());
     }
     
-    protected void addRecord(SAMRecord thisRead)
+    protected void addRecord(SAMRecord thisRead, int offset, String fileName)
     {
-      int offset = bamView.getSequenceOffset(thisRead.getReferenceName());
-      offset = offset - bamView.getBaseAtStartOfView();
-
-      String fileName;
-      if(bamView.bamList.size() > 1)
-        fileName = bamView.bamList.get((Integer) thisRead.getAttribute("FL"));
-      else
-        fileName = bamView.bamList.get(0);
       int coverage[] = plots.get(fileName);
-      
       if(coverage == null)
       {
         coverage = new int[nBins];
         for(int k=0; k<coverage.length; k++)
           coverage[k] = 0;
         plots.put(fileName, coverage);
-      }         
-      
+      }
+
       List<AlignmentBlock> blocks = thisRead.getAlignmentBlocks();
       for(int j=0; j<blocks.size(); j++)
       {
         AlignmentBlock block = blocks.get(j);
+        int refStart = block.getReferenceStart();
         for(int k=0; k<block.getLength(); k++)
         {
-          int pos = block.getReferenceStart() + k + offset;
+          int pos = refStart + k + offset;
           int bin = pos/windowSize;
           if(bin < 0 || bin > nBins-1)
             continue;
-          
+
           coverage[bin]+=1;
           if(coverage[bin] > max)
             max = coverage[bin];
-          
+
           if(includeCombined)
           {
             combinedCoverage[bin]+=1;
@@ -228,7 +212,7 @@ import net.sf.samtools.SAMRecord;
       }
       else
         lines = getLineAttributes(size);
-      
+
       Enumeration<String> plotEum = plots.keys();
       while(plotEum.hasMoreElements())
       {
@@ -242,7 +226,6 @@ import net.sf.samtools.SAMRecord;
           index = bamView.bamList.indexOf(fileName);
         
         g2.setColor(lines[index].getLineColour());
-        
         if(lines[index].getPlotType() == LineAttributes.PLOT_TYPES[0])
         {
           g2.setStroke(lines[index].getStroke());
@@ -298,7 +281,7 @@ import net.sf.samtools.SAMRecord;
     /**
      * @return the redraw
      */
-    protected boolean isRedraw()
+    protected static boolean isRedraw()
     {
       if(redraw)
       {
@@ -378,9 +361,5 @@ import net.sf.samtools.SAMRecord;
         return;
       }
     }
-    
-    protected Hashtable<String, int[]> getPlotData()
-    {
-      return plots;
-    }
+
   }
