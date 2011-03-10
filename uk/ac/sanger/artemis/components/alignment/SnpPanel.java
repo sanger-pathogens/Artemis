@@ -56,10 +56,9 @@ import net.sf.samtools.SAMRecord;
     public SnpPanel(final BamView bamView, Bases bases)
     {
       super();
-      setBackground(Color.white);
       this.bamView = bamView;
       this.bases = bases;
-      initPopupMenu(this, popup);
+      initPopupMenu(popup);
       
       JMenuItem configure = new JMenuItem("Filter by Base Quality...");
       configure.addActionListener(new ActionListener()
@@ -96,7 +95,7 @@ import net.sf.samtools.SAMRecord;
       super.paintComponent(g);
       Graphics2D g2 = (Graphics2D)g;
 
-      if(bases == null || nBins == 0 || bamView.getReadsInView() == null)
+      if(bases == null || nBins == 0 || snpCount == null)
         return;
       draw(g2);
       drawMax(g2);
@@ -169,7 +168,7 @@ import net.sf.samtools.SAMRecord;
      * @param pixPerBase
      * @param ypos
      */
-    protected void addRecord(SAMRecord thisRead)
+    protected void addRecord(SAMRecord thisRead, int offset)
     {
       if(snpCount == null)
       {
@@ -180,7 +179,7 @@ import net.sf.samtools.SAMRecord;
 
       int thisStart = thisRead.getAlignmentStart();
       int thisEnd   = thisRead.getAlignmentEnd();
-      int offset    = bamView.getSequenceOffset(thisRead.getReferenceName());
+
       // use alignment blocks of the contiguous alignment of
       // subsets of read bases to a reference sequence
       List<AlignmentBlock> blocks = thisRead.getAlignmentBlocks();
