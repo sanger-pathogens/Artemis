@@ -34,6 +34,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.DecimalFormat;
 
+import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -57,7 +58,14 @@ public class AbstractGraphPanel extends JPanel
   protected int userWinSize = 1;
   protected JPopupMenu popup = new JPopupMenu();
   
-  public void initPopupMenu(final JPanel graphPanel, JComponent menu)
+  public AbstractGraphPanel()
+  {
+    super();
+    setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.gray));
+    setBackground(Color.white);
+  }
+  
+  protected void initPopupMenu(JComponent menu)
   {
     final JMenuItem setScale = new JMenuItem("Set the Window Size...");
     setScale.addActionListener(new ActionListener()
@@ -103,7 +111,7 @@ public class AbstractGraphPanel extends JPanel
         {
           return;
         }
-        graphPanel.repaint();
+        bamView.repaint();
       }
     });
     menu.add(setScale);
