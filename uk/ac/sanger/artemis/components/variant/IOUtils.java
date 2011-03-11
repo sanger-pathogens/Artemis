@@ -213,24 +213,14 @@ class IOUtils
       else
         buffSeq = new StringBuffer();
 
+      String basesStr = entryGroup.getBases().getSubSequence(marker.getRange(), direction);
+      writeOrView(null, name, sbeg, send, marker, writer, basesStr, buffSeq);
       for (int i = 0; i < vcfReaders.length; i++)
       {
-        String basesStr = entryGroup.getBases().getSubSequence(marker.getRange(), direction);
+        basesStr = entryGroup.getBases().getSubSequence(marker.getRange(), direction);
         basesStr = getAllBasesInRegion(vcfReaders[i], sbeg, send, basesStr,
             features, vcfView, marker.isForwardMarker());
-          
-        StringBuffer header = new StringBuffer(name+" ");
-        header.append(sbeg+":"+send+ (marker.isForwardMarker() ? "" : " reverse"));
-        header.append(" (").append(vcfReaders[i].getName()).append(")");
-
-        if(view) // sequence viewer
-        {
-          buffSeq.append(">").append(header.toString()).append("\n");
-          wrapString(basesStr, buffSeq);
-          buffSeq.append("\n");
-        }
-        else    // write to file
-          writeSequence(writer, header.toString(), basesStr);
+        writeOrView(vcfReaders[i], name, sbeg, send, marker, writer, basesStr, buffSeq);
       }
 
       if(writer != null)
@@ -260,7 +250,8 @@ class IOUtils
    */
   protected static void exportFasta(final VCFview vcfView,
                                     final FeatureVector features,
-                                    final boolean view)
+                                    final boolean view,
+                                    final EntryGroup entryGroup)
   {
     if(features.size () < 1)
     {
@@ -285,17 +276,20 @@ class IOUtils
     AbstractVCFReader vcfReaders[] = vcfView.getVcfReaders();
 
     JCheckBox single = new JCheckBox("Single FASTA", true);
-    JCheckBox combine = new JCheckBox("Combine feature sequences", true);
+    JCheckBox combineFeats = new JCheckBox("Combine feature sequences", true);
     Box yBox = Box.createVerticalBox();
     if(!view && vcfReaders.length > 1)
       yBox.add(single);
-    yBox.add(combine);
-    
+    yBox.add(combineFeats);
+    String name = entryGroup.getActiveEntries().elementAt(0).getName();
     try
     {
       if(!view)
       {
-        File f = getFile(vcfReaders[0].getFileName(), 1, suffix, yBox);
+        File newfile = new File(
+            getBaseDirectoryFromEntry(entryGroup.getActiveEntries().elementAt(0)),
+                name);
+        File f = getFile(newfile.getAbsolutePath(), 1, suffix, yBox);
         if(f == null)
           return;
         writer = new FileWriter(f);
@@ -304,16 +298,34 @@ class IOUtils
       else
         JOptionPane.showMessageDialog(null, yBox, "View Option(s)", JOptionPane.INFORMATION_MESSAGE);
 
+      // reference sequence
+      StringBuffer buff = new StringBuffer();
+      for (int j = 0; j < features.size() && (!view || j < MAXIMUM_SELECTED_FEATURES); j++)
+      {
+        Feature f = features.elementAt(j);
+        buff.append( f.getBases() );
+        if(!combineFeats.isSelected())
+        {
+          writeOrView(null, f, writer, buff, "");
+          buff = new StringBuffer();
+        }
+      }
+      if(combineFeats.isSelected())
+        writeOrView(null, null, writer, buff, name);
+      if(writer != null && !single.isSelected())
+        writer.close();
+      
+      // 
       for (int i = 0; i < vcfReaders.length; i++)
       {
-        if(!view && i > 0 && !single.isSelected())
+        if(!view && !single.isSelected())
         {
           File f = getFile(vcfReaders[i].getFileName(), vcfReaders.length, suffix, null);
           writer = new FileWriter(f);
           fastaFiles += f.getAbsolutePath()+"\n";
         }
-
-        StringBuffer buff = new StringBuffer();
+        buff = new StringBuffer();
+        
         for (int j = 0; j < features.size() && (!view || j < MAXIMUM_SELECTED_FEATURES); j++)
         {
           Feature f = features.elementAt(j);
@@ -328,15 +340,15 @@ class IOUtils
                   features, vcfView, f.isForwardFeature()) );
           }
 
-          if(!combine.isSelected())
+          if(!combineFeats.isSelected())
           {
-            writeOrView(vcfReaders[i], f, writer, buff);
+            writeOrView(vcfReaders[i], f, writer, buff, "");
             buff = new StringBuffer();
           }
         }
         
-        if(combine.isSelected())
-          writeOrView(vcfReaders[i], null, writer, buff);
+        if(combineFeats.isSelected())
+          writeOrView(vcfReaders[i], null, writer, buff, "");
 
         if(writer != null && !single.isSelected())
           writer.close();
@@ -354,6 +366,26 @@ class IOUtils
       new MessageDialog (null, "Saved Files", fastaFiles, false);
   }
   
+  private static void writeOrView(AbstractVCFReader reader,
+      String seqName, int sbeg, int send, MarkerRange marker, 
+      FileWriter writer, String basesStr, StringBuffer buff) throws IOException
+  {
+    StringBuffer header = new StringBuffer();
+    if(reader != null)
+      header.append(reader.getName());
+    header.append(" ").append(seqName).append(" ");
+    header.append(sbeg).append(":").append(send);
+    header.append((marker.isForwardMarker() ? "" : " reverse"));
+
+    if(writer == null) // sequence viewer
+    {
+      buff.append(">").append(header.toString()).append("\n");
+      wrapString(basesStr, buff);
+    }
+    else    // write to file
+      writeSequence(writer, header.toString(), basesStr);  
+  }
+  
   /**
    * Construct a header and write or view the sequence.
    * @param reader
@@ -363,11 +395,12 @@ class IOUtils
    * @throws IOException
    */
   private static void writeOrView(AbstractVCFReader reader, Feature f,
-      FileWriter writer, StringBuffer buff)
+      FileWriter writer, StringBuffer buff, String hdr)
           throws IOException
   {
-    StringBuffer header = new StringBuffer();
-    header.append(reader.getName()).append(" ");
+    StringBuffer header = new StringBuffer(hdr);
+    if(reader != null)
+      header.append(reader.getName()).append(" ");
     if(f != null)
     {
       header.append(f.getSystematicName()).append(" ");
@@ -381,7 +414,7 @@ class IOUtils
     {
       SequenceViewer viewer =
           new SequenceViewer ("Feature base viewer for feature(s)", false);  
-      viewer.setSequence(header.toString(), buff.toString());
+      viewer.setSequence(">"+header.toString(), buff.toString());
     }
     else    // write to file
       writeSequence(writer, header.toString(), buff.toString());
