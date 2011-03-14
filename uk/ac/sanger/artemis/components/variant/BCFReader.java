@@ -193,16 +193,17 @@ class BCFReader extends AbstractVCFReader
   private VCFRecord readVCFRecord() throws IOException
   {
     VCFRecord bcfRecord = new VCFRecord();
-    bcfRecord.setChrom( seqNames[readInt(is)] );    
+    bcfRecord.setChrom( seqNames[readInt(is)] );  
     bcfRecord.setPos ( readInt(is)+1 );
     bcfRecord.setQuality( readFloat(is) );
-    
+
     int slen = readInt(is);
+
     byte[] str = new byte[slen];
     is.read(str);
 
     getParts(str, bcfRecord);
-    
+
     if(formatPattern.matcher(bcfRecord.getFormat()).matches())
     {
       int n_alleles = bcfRecord.getAlt().getNumAlleles();
@@ -441,14 +442,14 @@ class BCFReader extends AbstractVCFReader
     return new BCFReaderIterator(chr, sbeg, send);
   }
   
-  public class BCFReaderIterator
+  protected class BCFReaderIterator
   {
     private String chr;
     private int sbeg;
     private int send;
     private int count = 0;
     
-    public BCFReaderIterator(String chr, int sbeg, int send)
+    protected BCFReaderIterator(String chr, int sbeg, int send)
     {
       this.chr = chr;
       this.sbeg = sbeg;
@@ -463,7 +464,6 @@ class BCFReader extends AbstractVCFReader
         VCFview.logger4j.debug(chr+" NOT FOUND");
         return false;
       }
-
       long off = queryIndex(bid, sbeg);
       seek(off);
       return true;
@@ -509,14 +509,12 @@ class BCFReader extends AbstractVCFReader
       VCFRecord bcfRecord;
       while( (bcfRecord = reader.nextRecord(chr, sbeg, send)) != null )
       {
-        System.out.println(bcfRecord.getChrom());
         if(chr != null && bcfRecord.getChrom().equals(chr))
           System.out.println(bcfRecord.toString());
         else
           break;
       }
-          
-      
+
       reader.close();
     }
     catch (IOException e)
