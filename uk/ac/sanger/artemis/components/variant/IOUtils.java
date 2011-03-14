@@ -59,6 +59,7 @@ import uk.ac.sanger.artemis.sequence.Bases;
 import uk.ac.sanger.artemis.sequence.MarkerRange;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.util.FileDocument;
+import uk.ac.sanger.artemis.util.OutOfRangeException;
 import uk.ac.sanger.artemis.util.RemoteFileDocument;
 
 import net.sf.samtools.util.BlockCompressedInputStream;
@@ -66,7 +67,8 @@ import net.sf.samtools.util.BlockCompressedInputStream;
 class IOUtils
 { 
   
-  private static final int MAXIMUM_SELECTED_FEATURES = 25;
+  private static int MAXIMUM_SELECTED_FEATURES = 25;
+  private static int SEQUENCE_LINE_BASE_COUNT = 60;
   
   /**
    * Write filtered uncompressed VCF. Uses the filter in VCFview to
@@ -186,7 +188,6 @@ class IOUtils
     AbstractVCFReader vcfReaders[] = vcfView.getVcfReaders();
     MarkerRange marker = selection.getMarkerRange();
     Range range = marker.getRawRange();
-    int direction = ( marker.isForwardMarker() ? Bases.FORWARD : Bases.REVERSE);
     FeatureVector features = entryGroup.getAllFeatures();
     FileWriter writer = null;
     String fastaFiles = "";
@@ -213,20 +214,24 @@ class IOUtils
       else
         buffSeq = new StringBuffer();
 
-      String basesStr = entryGroup.getBases().getSubSequence(marker.getRange(), direction);
-      writeOrView(null, name, sbeg, send, marker, writer, basesStr, buffSeq);
+      Bases bases = entryGroup.getBases();
+      // reference
+      writeOrViewRange(null, sbeg, send, writer, buffSeq, 
+          marker, bases, name, features, vcfView);
+
+      // vcf sequences
       for (int i = 0; i < vcfReaders.length; i++)
-      {
-        basesStr = entryGroup.getBases().getSubSequence(marker.getRange(), direction);
-        basesStr = getAllBasesInRegion(vcfReaders[i], sbeg, send, basesStr,
-            features, vcfView, marker.isForwardMarker());
-        writeOrView(vcfReaders[i], name, sbeg, send, marker, writer, basesStr, buffSeq);
-      }
+        writeOrViewRange(vcfReaders[i], sbeg, send, writer, buffSeq,
+            marker, bases, name, features, vcfView);
 
       if(writer != null)
         writer.close();
     }
     catch(IOException e)
+    {
+      e.printStackTrace();
+    }
+    catch (OutOfRangeException e)
     {
       e.printStackTrace();
     }
@@ -366,9 +371,9 @@ class IOUtils
       new MessageDialog (null, "Saved Files", fastaFiles, false);
   }
   
-  private static void writeOrView(AbstractVCFReader reader,
-      String seqName, int sbeg, int send, MarkerRange marker, 
-      FileWriter writer, String basesStr, StringBuffer buff) throws IOException
+  private static StringBuffer getHeader(AbstractVCFReader reader, 
+      MarkerRange marker, String seqName, 
+      int sbeg, int send)
   {
     StringBuffer header = new StringBuffer();
     if(reader != null)
@@ -376,14 +381,67 @@ class IOUtils
     header.append(" ").append(seqName).append(" ");
     header.append(sbeg).append(":").append(send);
     header.append((marker.isForwardMarker() ? "" : " reverse"));
+    return header;
+  }
+  
+  private static void writeOrViewRange(AbstractVCFReader reader,
+                                       int sbeg, int send,
+                                       FileWriter writer, StringBuffer buffSeq, 
+                                       MarkerRange marker, Bases bases, 
+                                       String name,
+                                       FeatureVector features,
+                                       VCFview vcfView) throws IOException, OutOfRangeException
+  {
+    int direction = ( marker.isForwardMarker() ? Bases.FORWARD : Bases.REVERSE);
+    int length = send-sbeg+1;
+    int MAX_BASE_CHUNK = 2000*SEQUENCE_LINE_BASE_COUNT;
+    String basesStr;
+    StringBuffer header = getHeader(reader, marker, name, sbeg, send);
+    int linePos = 0;
 
+    for(int i=0; i<length; i+=MAX_BASE_CHUNK)
+    {
+      int sbegc = sbeg+i;
+      int sendc = sbeg+i+MAX_BASE_CHUNK-1;
+      if(i+MAX_BASE_CHUNK-1 > length)
+        sendc = send;
+
+      if(direction == Bases.REVERSE)
+      {
+        int tmp = sendc;
+        sendc = bases.getLength () - sbegc + 1;
+        sbegc = bases.getLength () - tmp + 1;
+      }
+
+      MarkerRange m = new MarkerRange(marker.getStrand(), sbegc, sendc);
+      basesStr = bases.getSubSequence(m.getRange(), direction);
+
+      //System.out.println((reader == null ? "" : reader.getName())+" "+sbegc+".."+sendc);
+      if(reader != null)
+        basesStr = getAllBasesInRegion(reader, sbegc, sendc, basesStr,
+                       features, vcfView, marker.isForwardMarker());
+        
+      linePos = writeOrView(writer, header, basesStr, buffSeq, linePos);
+      header = null;
+    }
+  }
+  
+  private static int writeOrView(FileWriter writer, 
+                                  StringBuffer header, 
+                                  String basesStr, 
+                                  StringBuffer buff,
+                                  int linePos) throws IOException
+  {
     if(writer == null) // sequence viewer
     {
-      buff.append(">").append(header.toString()).append("\n");
+      if(header != null)
+        buff.append(">").append(header.toString()).append("\n");
       wrapString(basesStr, buff);
     }
     else    // write to file
-      writeSequence(writer, header.toString(), basesStr);  
+      return writeSequence(writer, header, basesStr, linePos);
+
+    return 0;
   }
   
   /**
@@ -417,7 +475,7 @@ class IOUtils
       viewer.setSequence(">"+header.toString(), buff.toString());
     }
     else    // write to file
-      writeSequence(writer, header.toString(), buff.toString());
+      writeSequence(writer, header, buff.toString(), 0);
   }
   
   /**
@@ -535,19 +593,28 @@ class IOUtils
     }
   }
   
-  private static void writeSequence(FileWriter writer, String header, String bases) throws IOException
+  private static int writeSequence(FileWriter writer, 
+                                   StringBuffer header, 
+                                   String bases, 
+                                   int startPos) throws IOException
   {
     if(header != null)
-      writer.write (">" + header + "\n");
-
-    final int SEQUENCE_LINE_BASE_COUNT = 60;
-    for(int k=0; k<bases.length(); k+=SEQUENCE_LINE_BASE_COUNT)
+      writer.write (">" + header.toString() + "\n");
+    int k = 0;
+    for(k=0; k<bases.length(); k+=SEQUENCE_LINE_BASE_COUNT)
     {
-      int end = k + SEQUENCE_LINE_BASE_COUNT;
+      int end = k + SEQUENCE_LINE_BASE_COUNT - startPos;
       if(end > bases.length())
         end = bases.length();
-      writer.write ( bases.substring(k,end) + "\n");
+      writer.write ( bases.substring(k,end) );
+      
+      if(k < bases.length() -1)
+        writer.write("\n");
+      
+      startPos = 0;
     }
+    
+    return k % SEQUENCE_LINE_BASE_COUNT;
   }
   
   /**
