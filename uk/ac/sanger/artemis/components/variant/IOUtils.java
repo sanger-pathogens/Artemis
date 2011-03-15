@@ -405,11 +405,12 @@ class IOUtils
       if(i+MAX_BASE_CHUNK-1 > length)
         sendc = send;
 
+      int sbegc_raw = sbegc;
+      int sendc_raw = sendc;
       if(direction == Bases.REVERSE)
       {
-        int tmp = sendc;
-        sendc = bases.getLength () - sbegc + 1;
-        sbegc = bases.getLength () - tmp + 1;
+        sendc = bases.getLength () - sbegc_raw + 1;
+        sbegc = bases.getLength () - sendc_raw + 1;
       }
 
       MarkerRange m = new MarkerRange(marker.getStrand(), sbegc, sendc);
@@ -417,7 +418,7 @@ class IOUtils
       FeatureVector features = entryGroup.getFeaturesInRange(m.getRange());
       //System.out.println((reader == null ? "" : reader.getName())+" "+sbegc+".."+sendc);
       if(reader != null)
-        basesStr = getAllBasesInRegion(reader, sbegc, sendc, basesStr,
+        basesStr = getAllBasesInRegion(reader, sbegc_raw, sendc_raw, basesStr,
                        features, vcfView, marker.isForwardMarker());
 
       linePos = writeOrView(writer, header, basesStr, buffSeq, linePos);
