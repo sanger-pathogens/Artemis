@@ -978,22 +978,21 @@ public class VCFview extends JPanel
     }
     else
     {
-      TabixReader.Iterator iter = 
-        ((TabixReader)vcfReaders[i]).query(chr+":"+sbeg+"-"+send); // get the iterator
-      if (iter == null)
-        return;
       try
       {
-        while ((s = iter.next()) != null)
+        TabixReader.Iterator iter = 
+          ((TabixReader)vcfReaders[i]).query(chr+":"+sbeg+"-"+send); // get the iterator
+        if (iter == null)
+          return;
+        while (iter != null && (s = iter.next()) != null)
         {
           VCFRecord vcfRecord = VCFRecord.parse(s);
           drawVariantCall(g, vcfRecord, start, i, pixPerBase, features, vcfReaders[i].isVcf_v4());
         }
       }
-      catch (IOException e)
+      catch (Exception e)
       {
-        logger4j.warn(e.getMessage());
-        e.printStackTrace();
+        logger4j.warn(chr+":"+sbeg+"-"+send+"\n"+e.getMessage());
       }
     }
   }
@@ -1342,12 +1341,12 @@ public class VCFview extends JPanel
     }
     else
     {
-      TabixReader.Iterator iter = 
-        ((TabixReader)vcfReaders[i]).query(chr+":"+sbeg+"-"+send); // get the iterator
-      if (iter == null)
-        return;
       try
-      { 
+      {
+        TabixReader.Iterator iter = 
+          ((TabixReader)vcfReaders[i]).query(chr+":"+sbeg+"-"+send); // get the iterator
+        if (iter == null)
+          return;
         String s;
         while ((s = iter.next()) != null)
         {
@@ -1355,9 +1354,9 @@ public class VCFview extends JPanel
           isMouseOver(mousePoint, vcfRecord, features, i, start, pixPerBase, vcfReaders[i].isVcf_v4());
         }
       }
-      catch (IOException e)
+      catch (Exception e)
       {
-        e.printStackTrace();
+        logger4j.warn(chr+":"+sbeg+"-"+send+"\n"+e.getMessage());
       }
     }
   }
