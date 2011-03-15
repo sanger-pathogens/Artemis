@@ -29,7 +29,6 @@ import uk.ac.sanger.artemis.util.LinePushBackReader;
 
 import java.io.*;
 import java.util.StringTokenizer;
-import java.util.Vector;
 
 /**
  *  This class implements the ComparisonData interface for MSPcrunch -d
@@ -54,7 +53,6 @@ public class MSPcrunchComparisonData extends SimpleComparisonData
    *  Create a new, empty instance of MSPcrunchComparisonData.
    **/
   protected MSPcrunchComparisonData () {
-    
   }
 
   /**
@@ -141,7 +139,6 @@ public class MSPcrunchComparisonData extends SimpleComparisonData
     } catch (IOException e) {
       return false;
     }
-
     return true;
   }
 }
