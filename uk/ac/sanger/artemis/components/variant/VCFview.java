@@ -525,7 +525,7 @@ public class VCFview extends JPanel
       public void actionPerformed(ActionEvent e)
       {
         VCFview.this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-        IOUtils.export(entryGroup, vcfFiles, VCFview.this);
+        IOUtils.export(vcfFiles, VCFview.this);
         VCFview.this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
       }
     });
@@ -537,7 +537,7 @@ public class VCFview extends JPanel
       public void actionPerformed(ActionEvent e)
       {
         VCFview.this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-        IOUtils.exportFasta(VCFview.this, selection.getAllFeatures(), false, entryGroup);
+        IOUtils.exportFasta(VCFview.this, selection.getAllFeatures(), false);
         VCFview.this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
       }
     });
@@ -548,7 +548,7 @@ public class VCFview extends JPanel
       public void actionPerformed(ActionEvent e)
       {
         VCFview.this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-        IOUtils.exportFastaByRange(entryGroup, VCFview.this, selection, false);
+        IOUtils.exportFastaByRange(VCFview.this, selection, false, null);
         VCFview.this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
       }
     });
@@ -561,7 +561,7 @@ public class VCFview extends JPanel
       public void actionPerformed(ActionEvent e)
       {
         VCFview.this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-        IOUtils.exportFasta(VCFview.this, selection.getAllFeatures(), true, entryGroup);
+        IOUtils.exportFasta(VCFview.this, selection.getAllFeatures(), true);
         VCFview.this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
       }
     });
@@ -572,7 +572,7 @@ public class VCFview extends JPanel
       public void actionPerformed(ActionEvent e)
       {
         VCFview.this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-        IOUtils.exportFastaByRange(entryGroup, VCFview.this, selection, true);
+        IOUtils.exportFastaByRange(VCFview.this, selection, true, null);
         VCFview.this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
       }
     });
@@ -636,7 +636,6 @@ public class VCFview extends JPanel
       {
         if (entryGroup.getSequenceEntry() != null)
           bases = entryGroup.getSequenceEntry().getBases();
-
         if (bases == null)
         {
           entry = new Entry(new_embl_entry);

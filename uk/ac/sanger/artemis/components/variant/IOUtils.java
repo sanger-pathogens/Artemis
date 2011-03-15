@@ -28,6 +28,7 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Writer;
 import java.net.URL;
 import java.util.List;
 
@@ -154,13 +155,12 @@ class IOUtils
    * @param vcfFiles
    * @param vcfView
    */
-  protected static void export(final EntryGroup entryGroup, 
-                               final List<String> vcfFiles,
+  protected static void export(final List<String> vcfFiles,
                                final VCFview vcfView)
   {
     // get all CDS features that do not have the /pseudo qualifier
     final FeatureVector features = getFeatures(
-        new FeatureKeyQualifierPredicate(Key.CDS, "pseudo", false), entryGroup);
+        new FeatureKeyQualifierPredicate(Key.CDS, "pseudo", false), vcfView.getEntryGroup());
     
     String filterFiles = "";
     for(int i=0; i<vcfFiles.size(); i++)
@@ -174,16 +174,15 @@ class IOUtils
 
   /**
    * Write out FASTA for a selected base range
-   * @param entryGroup
    * @param vcfView
    * @param selection
    * @param view
    */
   protected static void exportFastaByRange(
-                                    final EntryGroup entryGroup,
                                     final VCFview vcfView,
                                     final Selection selection,
-                                    final boolean view)
+                                    final boolean view,
+                                    Writer writer)
   {
     if(selection.getMarkerRange() == null)
     {
@@ -196,9 +195,9 @@ class IOUtils
     AbstractVCFReader vcfReaders[] = vcfView.getVcfReaders();
     MarkerRange marker = selection.getMarkerRange();
     Range range = marker.getRawRange();
-    FileWriter writer = null;
     String fastaFiles = "";
 
+    EntryGroup entryGroup = vcfView.getEntryGroup();
     String name = entryGroup.getActiveEntries().elementAt(0).getName();
     int sbeg = range.getStart();
     int send = range.getEnd();
@@ -206,7 +205,7 @@ class IOUtils
     StringBuffer buffSeq = null;
     try
     {
-      if(!view)
+      if(!view && writer == null)
       {
         File newfile = new File(
            getBaseDirectoryFromEntry(entryGroup.getActiveEntries().elementAt(0)),
@@ -221,7 +220,7 @@ class IOUtils
       else
         buffSeq = new StringBuffer();
 
-      Bases bases = entryGroup.getBases();
+      Bases bases = entryGroup.getSequenceEntry().getBases();
       // reference
       writeOrViewRange(null, sbeg, send, writer, buffSeq, 
           marker, bases, name, vcfView, entryGroup);
@@ -262,8 +261,7 @@ class IOUtils
    */
   protected static void exportFasta(final VCFview vcfView,
                                     final FeatureVector features,
-                                    final boolean view,
-                                    final EntryGroup entryGroup)
+                                    final boolean view)
   {
     if(features.size () < 1)
     {
@@ -293,13 +291,13 @@ class IOUtils
     if(!view && vcfReaders.length > 1)
       yBox.add(single);
     yBox.add(combineFeats);
-    String name = entryGroup.getActiveEntries().elementAt(0).getName();
+    String name = vcfView.getEntryGroup().getActiveEntries().elementAt(0).getName();
     try
     {
       if(!view)
       {
         File newfile = new File(
-            getBaseDirectoryFromEntry(entryGroup.getActiveEntries().elementAt(0)),
+            getBaseDirectoryFromEntry(vcfView.getEntryGroup().getActiveEntries().elementAt(0)),
                 name);
         File f = getFile(newfile.getAbsolutePath(), 1, suffix, yBox);
         if(f == null)
@@ -393,7 +391,7 @@ class IOUtils
   
   private static void writeOrViewRange(AbstractVCFReader reader,
                                        int sbeg, int send,
-                                       FileWriter writer, StringBuffer buffSeq, 
+                                       Writer writer, StringBuffer buffSeq, 
                                        MarkerRange marker, Bases bases, 
                                        String name,
                                        VCFview vcfView,
@@ -434,11 +432,11 @@ class IOUtils
     }
   }
   
-  private static int writeOrView(FileWriter writer, 
-                                  StringBuffer header, 
-                                  String basesStr, 
-                                  StringBuffer buff,
-                                  int linePos) throws IOException
+  private static int writeOrView(Writer writer, 
+                                 StringBuffer header, 
+                                 String basesStr, 
+                                 StringBuffer buff,
+                                 int linePos) throws IOException
   {
     if(writer == null) // sequence viewer
     {
@@ -608,7 +606,7 @@ class IOUtils
     }
   }
   
-  private static int writeSequence(FileWriter writer, 
+  private static int writeSequence(Writer writer, 
                                    StringBuffer header, 
                                    String bases, 
                                    int startPos) throws IOException
