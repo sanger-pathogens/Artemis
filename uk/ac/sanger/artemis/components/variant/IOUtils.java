@@ -122,7 +122,15 @@ class IOUtils
       final String suffix, final JComponent comp) throws IOException
   {
     if(nfiles > 1)
-      return new File(vcfFileName+suffix);
+    {
+      if(vcfFileName.startsWith("http"))
+      {
+        int ind = vcfFileName.lastIndexOf('/')+1;
+        return new File(vcfFileName.substring(ind)+suffix);
+      }
+      else
+        return new File(vcfFileName+suffix);
+    }
 
     final StickyFileChooser file_dialog = new StickyFileChooser();
     file_dialog.setSelectedFile(new File(vcfFileName+suffix));
