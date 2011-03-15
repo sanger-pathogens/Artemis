@@ -188,7 +188,6 @@ class IOUtils
     AbstractVCFReader vcfReaders[] = vcfView.getVcfReaders();
     MarkerRange marker = selection.getMarkerRange();
     Range range = marker.getRawRange();
-    FeatureVector features = entryGroup.getAllFeatures();
     FileWriter writer = null;
     String fastaFiles = "";
 
@@ -217,12 +216,12 @@ class IOUtils
       Bases bases = entryGroup.getBases();
       // reference
       writeOrViewRange(null, sbeg, send, writer, buffSeq, 
-          marker, bases, name, features, vcfView);
+          marker, bases, name, vcfView, entryGroup);
 
       // vcf sequences
       for (int i = 0; i < vcfReaders.length; i++)
         writeOrViewRange(vcfReaders[i], sbeg, send, writer, buffSeq,
-            marker, bases, name, features, vcfView);
+            marker, bases, name, vcfView, entryGroup);
 
       if(writer != null)
         writer.close();
@@ -389,8 +388,8 @@ class IOUtils
                                        FileWriter writer, StringBuffer buffSeq, 
                                        MarkerRange marker, Bases bases, 
                                        String name,
-                                       FeatureVector features,
-                                       VCFview vcfView) throws IOException, OutOfRangeException
+                                       VCFview vcfView,
+                                       final EntryGroup entryGroup) throws IOException, OutOfRangeException
   {
     int direction = ( marker.isForwardMarker() ? Bases.FORWARD : Bases.REVERSE);
     int length = send-sbeg+1;
@@ -415,12 +414,12 @@ class IOUtils
 
       MarkerRange m = new MarkerRange(marker.getStrand(), sbegc, sendc);
       basesStr = bases.getSubSequence(m.getRange(), direction);
-
+      FeatureVector features = entryGroup.getFeaturesInRange(m.getRange());
       //System.out.println((reader == null ? "" : reader.getName())+" "+sbegc+".."+sendc);
       if(reader != null)
         basesStr = getAllBasesInRegion(reader, sbegc, sendc, basesStr,
                        features, vcfView, marker.isForwardMarker());
-        
+
       linePos = writeOrView(writer, header, basesStr, buffSeq, linePos);
       header = null;
     }
