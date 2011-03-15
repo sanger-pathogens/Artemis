@@ -35,7 +35,6 @@ import java.util.regex.Pattern;
 
 import net.sf.samtools.util.BlockCompressedInputStream;
 
-
 class BCFReader extends AbstractVCFReader
 {
   public static final int TAD_LIDX_SHIFT = 13; // linear index shift
@@ -50,6 +49,9 @@ class BCFReader extends AbstractVCFReader
   private int nsamples;
   private String metaData;
   private String fileName;
+
+  private static org.apache.log4j.Logger logger4j = 
+    org.apache.log4j.Logger.getLogger(BCFReader.class);
   
   /**
    * @param bcf  BCF file or url
@@ -73,6 +75,7 @@ class BCFReader extends AbstractVCFReader
     }
     idx = loadIndex();
     readHeader();
+    logger4j.debug(bcf);
   }
 
   protected void seek(long off) throws IOException
@@ -198,7 +201,8 @@ class BCFReader extends AbstractVCFReader
     bcfRecord.setQuality( readFloat(is) );
 
     int slen = readInt(is);
-
+    if(slen > 5000)
+      return bcfRecord;
     byte[] str = new byte[slen];
     is.read(str);
 
