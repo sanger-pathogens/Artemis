@@ -29,7 +29,6 @@ import uk.ac.sanger.artemis.util.*;
 import uk.ac.sanger.artemis.util.LinePushBackReader;
 
 import java.io.*;
-import java.util.StringTokenizer;
 
 /**
  *  This class contains the method readComparisonData (), which returns an
