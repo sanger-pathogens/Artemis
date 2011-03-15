@@ -234,7 +234,7 @@ class IOUtils
     {
       e.printStackTrace();
     }
-    
+
     if(!view)
       new MessageDialog (null, "Saved Files", fastaFiles, false);
     else
@@ -565,15 +565,22 @@ class IOUtils
     }
     else
     {
-      TabixReader.Iterator iter = 
-        (((TabixReader) reader).query(chr+":"+sbeg+"-"+send)); // get the iterator
-      String s;
-      while ((s = iter.next()) != null)
+      try
       {
-        VCFRecord record = VCFRecord.parse(s);
-        int basePosition = record.getPos() + vcfView.getSequenceOffset(record.getChrom());
-        if(vcfView.showVariant(record, features, basePosition, vcf_v4) )
-          basesStr = getSeqsVariation(record, basesStr, sbeg, isFwd, vcf_v4);
+        TabixReader.Iterator iter = 
+          (((TabixReader) reader).query(chr+":"+sbeg+"-"+send)); // get the iterator
+        String s;
+        while (iter != null && (s = iter.next()) != null)
+        {
+          VCFRecord record = VCFRecord.parse(s);
+          int basePosition = record.getPos() + vcfView.getSequenceOffset(record.getChrom());
+          if(vcfView.showVariant(record, features, basePosition, vcf_v4) )
+            basesStr = getSeqsVariation(record, basesStr, sbeg, isFwd, vcf_v4);
+        }
+      }
+      catch(NullPointerException e)
+      {
+        System.err.println(chr+":"+sbeg+"-"+send+"\n"+e.getMessage());
       }
     }
     return basesStr;
