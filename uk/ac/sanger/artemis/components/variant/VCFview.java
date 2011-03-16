@@ -537,7 +537,7 @@ public class VCFview extends JPanel
       public void actionPerformed(ActionEvent e)
       {
         VCFview.this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-        IOUtils.exportFasta(VCFview.this, selection.getAllFeatures(), false);
+        IOUtils.exportFasta(VCFview.this, selection.getAllFeatures(), false, null);
         VCFview.this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
       }
     });
@@ -561,7 +561,7 @@ public class VCFview extends JPanel
       public void actionPerformed(ActionEvent e)
       {
         VCFview.this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-        IOUtils.exportFasta(VCFview.this, selection.getAllFeatures(), true);
+        IOUtils.exportFasta(VCFview.this, selection.getAllFeatures(), true, null);
         VCFview.this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
       }
     });
