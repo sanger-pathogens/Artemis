@@ -264,7 +264,8 @@ class IOUtils
    */
   protected static void exportFasta(final VCFview vcfView,
                                     final FeatureVector features,
-                                    final boolean view)
+                                    final boolean view,
+                                    Writer writer)
   {
     if(features.size () < 1)
     {
@@ -283,8 +284,7 @@ class IOUtils
     String suffix = ".fasta";
     if(features.size() == 1)
       suffix = "."+features.elementAt(0).getIDString()+suffix;
-    
-    FileWriter writer = null;
+
     String fastaFiles = "";
     AbstractVCFReader vcfReaders[] = vcfView.getVcfReaders();
 
@@ -297,7 +297,7 @@ class IOUtils
     String name = vcfView.getEntryGroup().getActiveEntries().elementAt(0).getName();
     try
     {
-      if(!view)
+      if(!view && writer == null)
       {
         File newfile = new File(
             getBaseDirectoryFromEntry(vcfView.getEntryGroup().getActiveEntries().elementAt(0)),
@@ -308,7 +308,7 @@ class IOUtils
         writer = new FileWriter(f);
         fastaFiles += f.getAbsolutePath()+"\n";
       }
-      else
+      else if(writer == null)
         JOptionPane.showMessageDialog(null, yBox, "View Option(s)", JOptionPane.INFORMATION_MESSAGE);
 
       // reference sequence
@@ -375,7 +375,7 @@ class IOUtils
       e.printStackTrace(); 
     }
     
-    if(!view )
+    if(!view && writer instanceof FileWriter)
       new MessageDialog (null, "Saved Files", fastaFiles, false);
   }
   
@@ -462,7 +462,7 @@ class IOUtils
    * @throws IOException
    */
   private static void writeOrView(AbstractVCFReader reader, Feature f,
-      FileWriter writer, StringBuffer buff, String hdr)
+      Writer writer, StringBuffer buff, String hdr)
           throws IOException
   {
     StringBuffer header = new StringBuffer(hdr);
@@ -535,6 +535,7 @@ class IOUtils
     else
       basesStr = getBasesInRegion(reader, vcfView.getChr(), sbeg, send, 
           basesStr, features, vcfView, isFwd);
+
     return basesStr;
   }
   
@@ -554,7 +555,7 @@ class IOUtils
    */
   private static String getBasesInRegion(final AbstractVCFReader reader,
                                          final String chr,
-                                         final int sbeg,
+                                         int sbeg,
                                          final int send,
                                          String basesStr,
                                          final FeatureVector features,
@@ -562,6 +563,8 @@ class IOUtils
                                          final boolean isFwd) throws IOException
   {
     boolean vcf_v4 = reader.isVcf_v4();
+    int len = basesStr.length();
+    
     if (reader instanceof BCFReader)
     {
       BCFReaderIterator it = ((BCFReader) reader).query(chr, sbeg, send);
@@ -571,6 +574,12 @@ class IOUtils
         int basePosition = record.getPos() + vcfView.getSequenceOffset(record.getChrom());
         if(vcfView.showVariant(record, features, basePosition, vcf_v4) )
           basesStr = getSeqsVariation(record, basesStr, sbeg, isFwd, vcf_v4);
+        
+        if(basesStr.length() > len) // adjust for insertions
+        {
+          sbeg -= (basesStr.length()-len);
+          len = basesStr.length();
+        }
       }
     }
     else
@@ -586,6 +595,13 @@ class IOUtils
           int basePosition = record.getPos() + vcfView.getSequenceOffset(record.getChrom());
           if(vcfView.showVariant(record, features, basePosition, vcf_v4) )
             basesStr = getSeqsVariation(record, basesStr, sbeg, isFwd, vcf_v4);
+          
+          
+          if(basesStr.length() > len) // adjust for insertions
+          {
+            sbeg -= (basesStr.length()-len);
+            len = basesStr.length();
+          }
         }
       }
       catch(NullPointerException e)
