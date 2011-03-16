@@ -285,7 +285,9 @@ public class VCFview extends JPanel
       markNewStops.setSelected(false);
       markNewStops.setEnabled(false);
       topPanel = new JMenuBar();
-      frame.setJMenuBar((JMenuBar)topPanel);
+      
+      if(frame != null)
+        frame.setJMenuBar((JMenuBar)topPanel);
       
       JMenu fileMenu = new JMenu("File");
       topPanel.add(fileMenu);
