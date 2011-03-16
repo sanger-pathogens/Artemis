@@ -43,15 +43,18 @@ public class WriteVCFTest
 {
   private VCFview vcfView;
   
+  
+  // TEST WRITING REGIONS
+  
   /**
    * Write FASTA, from a range selection on the forward strand.
    * Variation is a SNP.
    * VCF line : test    120768  .       C       T
    */
   @Test
-  public void testWriteFwdFastaSNP()
+  public void testRegionWriteFwdFastaSNP()
   {
-    StringWriter writer = getWriter(true, 120768, 120777);
+    StringWriter writer = getRegionWriter(true, 120768, 120777);
     
     StringBuffer buff = new StringBuffer("> test.embl.gz 120768:120777\n");
     buff.append("cttgtcaagg\n");
@@ -66,9 +69,9 @@ public class WriteVCFTest
    * VCF line : test    120768  .       C       T
    */
   @Test
-  public void testWriteRevFastaSNP()
+  public void testRegionWriteRevFastaSNP()
   {
-    StringWriter writer = getWriter(false, 120768, 120777);
+    StringWriter writer = getRegionWriter(false, 120768, 120777);
 
     StringBuffer buff = new StringBuffer("> test.embl.gz 120768:120777 reverse\n");
     buff.append("ccttgacaag\n");
@@ -83,9 +86,9 @@ public class WriteVCFTest
    * test    396838  .       tt      t
    */
   @Test
-  public void testWriteFwdFastaDeletion()
+  public void testRegionWriteFwdFastaDeletion()
   {
-    StringWriter writer = getWriter(true, 396835, 396845);
+    StringWriter writer = getRegionWriter(true, 396835, 396845);
 
     StringBuffer buff = new StringBuffer("> test.embl.gz 396835:396845\n");
     buff.append("tttttaggtat\n");
@@ -100,9 +103,9 @@ public class WriteVCFTest
    * test    396838  .       tt      t
    */
   @Test
-  public void testWriteRevFastaDeletion()
+  public void testRegionWriteRevFastaDeletion()
   {
-    StringWriter writer = getWriter(false, 396835, 396845);
+    StringWriter writer = getRegionWriter(false, 396835, 396845);
 
     StringBuffer buff = new StringBuffer("> test.embl.gz 396835:396845 reverse\n");
     buff.append("atacctaaaaa\n");
@@ -117,9 +120,9 @@ public class WriteVCFTest
    * test    366787  .       t       tT
    */
   @Test
-  public void testWriteFwdFastaInsertion()
+  public void testRegionWriteFwdFastaInsertion()
   {
-    StringWriter writer = getWriter(true, 366785, 366795);
+    StringWriter writer = getRegionWriter(true, 366785, 366795);
 
     StringBuffer buff = new StringBuffer("> test.embl.gz 366785:366795\n");
     buff.append("tttcgcttttt\n");
@@ -134,9 +137,9 @@ public class WriteVCFTest
    * test    366787  .       t       tT
    */
   @Test
-  public void testWriteRevFastaInsertion()
+  public void testRegionWriteRevFastaInsertion()
   {
-    StringWriter writer = getWriter(false, 366785, 366795);
+    StringWriter writer = getRegionWriter(false, 366785, 366795);
 
     StringBuffer buff = new StringBuffer("> test.embl.gz 366785:366795 reverse\n");
     buff.append("aaaaagcgaaa\n");
@@ -152,9 +155,9 @@ public class WriteVCFTest
    * test    361978  .       G       T       77.76842        .       DP=11;AF1=0.95;CI95=0.5,1;DP4=1,0,10,0;MQ=58;PV4=1,9.6e-06,0.37,1       PL:DP:SP:GT:GQ  106,0,0:11:0:1/1:10
    */
   @Test
-  public void testWriteFwdFastaMultipleAllele()
+  public void testRegionWriteFwdFastaMultipleAllele()
   {
-    StringWriter writer = getWriter(true, 361975, 361985);
+    StringWriter writer = getRegionWriter(true, 361975, 361985);
 
     StringBuffer buff = new StringBuffer("> test.embl.gz 361975:361985\n");
     buff.append("actgaaaaatt\n");
@@ -163,15 +166,76 @@ public class WriteVCFTest
     assertEquals("Export FASTA range ", writer.toString(), buff.toString());
   }
   
-  
+  // TEST WRITING FEATURES
   /**
-   * G
+   * Write FASTA, from a feature selection on the forward strand.
+   */
+  @Test
+  public void testFeatureWriteFwdFastaSNP()
+  {
+    StringWriter writer = getFeatureWriter("SPN23F03630,SPN23F03800");
+
+    StringBuffer buff = new StringBuffer();
+    //SPN23F03630
+    buff.append(">test.embl.gz\n");
+    buff.append("atgaagaaaactgtttataaaaaattgggtatttcaattattgcgagtactttattggct\n");
+    buff.append("agccagttatcgacagtatctgctttgagtgttatttctagtacaggtgaagaatatgag\n");
+    buff.append("gtaagtgagacactagaaaaaggtccagagtctaatgattcttcattatctgagatttca\n");
+    buff.append("ccaacgtatggttcatactaccaaaagcaatcagaagtattatcggtaatgatgatttga\n");
+    
+    //SPN23F03800
+    buff.append("atggcaagtatcacactcacaccaagcgaaaaggatattcaggcttttcttgaacactat\n");
+    buff.append("caaaccagtctggctcctagcaagaatccctatatccgctactttttgaaactacctcaa\n");
+    buff.append("gcaacggtttctatctatacttctggaaaaatcttgcttcagggtgaaggggctgaaaaa\n");
+    buff.append("tacgccagtttctttggctatcaagctgtagagcaaaccagcggacaaaatcttccttta\n");
+    buff.append("attgggacagatgaggtgggaaatggttcctactttggtgggcttgcagttgtggctgcc\n");
+    buff.append("tttgtcacacctgaccagcacgactttttacgaaaactcggtgtgggggattctaagact\n");
+    buff.append("ctgaccgaccaaaagatccgtcagattgctcctattctcaaggaaaaaattcagcaccag\n");
+    buff.append("gcactccttctctcacccagcaagtacaacgaggtcatcggagaccgctacaatgctgtt\n");
+    buff.append("tcggttaaggttgccctccataatcaggctatctatctcctccttcaaaaaggtgttcag\n");
+    buff.append("cctgagaaaattgtgattgatgcctttaccagtgctaaaaattatgacaagtacttggca\n");
+    buff.append("caagagaccaatcgtttcagcaatcctatcagcttagaagaaaaggctgagggcaaatac\n");
+    buff.append("ttggctgtcgcagtttcttctgtcattgcgcgtgatctctttctggaaaatcttgaaaat\n");
+    buff.append("ttgggacgagaactgggttatcagcttccaagtggagctggaacggcttctgacaaggtg\n");
+    buff.append("gctagccagattttgcaagcctatggtatgcagggactcaacttctgcgccaaattgcac\n");
+    buff.append("tttaaaaatactgaaaaagcgaaaaacgcttag\n");
+    
+    
+    buff.append(">test.vcf.gz \n");
+    //SPN23F03630
+    buff.append("atgaagaaaactatttataaaaaattgggtatttcaattattgcgagtactttattggct\n");
+    buff.append("agccagttatcgacagtatctgctttgagtgttatttctagtacaggtgaagaatatgag\n");
+    buff.append("gtaagtgagacaytagaaaaaggtccagagtctaatrattcttcattatctgagatttca\n");
+    buff.append("ccaacgtatggttcatactaccaaaagcaatcagaagtattatcggtaatgatgatttga\n");
+
+    //SPN23F03800
+    buff.append("atggcaagtatcacactcacaccaagcgaaaaggatattcaggcttttcttgaacactat\n");
+    buff.append("caaaccagtctggctcctagcaagaatccctatatccgctactttttgaaactacctcaa\n");
+    buff.append("gcaacggtttctatctatacttctggaaaaatcttgcttcagggtgaaggggctgaaaaa\n");
+    buff.append("tacgccagtttctttggctatcaagctgtagagcaaaccagcggacaaaatcttccttta\n");
+    buff.append("attgggacagatgaggtgggaaatggttcctactttggtgggcttgcagttgtggctgcc\n");
+    buff.append("tttgtcacacctgaccagcacgactttttacgaaaactcggtgtgggggattctaagact\n");
+    buff.append("ctgaccgaccaaaagatccgtcagattgctcctattctcaaggaaaaaatccagcaccag\n");
+    buff.append("gcactccttctctcacccagcaagtacaacgaggtcatcggagaccgctacaatgctgtt\n");
+    buff.append("tcggttaaggttgccctccataatcaggctatctatctcctccttcaaaaaggtgttcag\n");
+    buff.append("cctgagaaaattgtgattgatgcctttaccagtgctaaaaattatgacaagtacttggca\n");
+    buff.append("caagaggccaatcgtttcagcaatcctatcagcttagaaaaaaaggctgagggcaaatac\n");
+    buff.append("ttggctgtcgcagtttcttctgtcattgcgcgtgatctctttctggaaaatcttgaaaat\n");
+    buff.append("ctgggacgagaactgggttatcagctcccaagtggagctggaacagcttctgacaaggtg\n");
+    buff.append("gctagccagattttgcaagcctatggtatgcagggactcagcttctgcgccaaattgcac\n");
+    buff.append("tttaaaaacactgaaaaagcgaaaaaaaaaaaacg\n");
+
+    assertEquals("Export FASTA feature ", writer.toString(), buff.toString());
+  }
+
+  /**
+   * Get sequences for a selected region.
    * @param isFwd
    * @param start
    * @param end
    * @return
    */
-  private StringWriter getWriter(boolean isFwd, int start, int end)
+  private StringWriter getRegionWriter(boolean isFwd, int start, int end)
   {
     StringWriter writer = new StringWriter();
     Selection selection = new Selection(null);
@@ -207,6 +271,35 @@ public class WriteVCFTest
       e.printStackTrace();
     }
     IOUtils.exportFastaByRange(vcfView, selection, false, writer);
+    return writer;
+  }
+  
+  /**
+   * Get sequences for features.
+   * @param id comma separated list of feature id's
+   * @return
+   */
+  private StringWriter getFeatureWriter(String ids)
+  {
+    StringWriter writer = new StringWriter();
+    String id[] = ids.split(",");
+    
+    FeatureVector features = vcfView.getEntryGroup().getAllFeatures();
+    FeatureVector selectedFeatures = new FeatureVector();
+    Feature feature = null;
+    for(int i=0; i<features.size(); i++)
+    {
+      for(int j=0; j<id.length; j++)
+      {
+        if(features.elementAt(i).getIDString().equals(id[j]))
+        {
+          feature = features.elementAt(i);
+          selectedFeatures.add(feature);
+        }
+      }
+    }
+    
+    IOUtils.exportFasta(vcfView, selectedFeatures, false, writer);
     return writer;
   }
   
