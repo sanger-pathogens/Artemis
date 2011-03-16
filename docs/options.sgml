@@ -46,7 +46,7 @@ current directory it will be read.
         <LISTITEM>
           <PARA>
 If there is a file in the user's home directory called
-<LITERAL>.artemis_options</LITERAL> it will be read.  (UNIX only).
+<LITERAL>.artemis_options</LITERAL> it will be read.
           </PARA>
         </LISTITEM>
       </ITEMIZEDLIST>
