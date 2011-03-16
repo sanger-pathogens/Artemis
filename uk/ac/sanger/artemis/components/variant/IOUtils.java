@@ -243,7 +243,10 @@ class IOUtils
     }
 
     if(!view)
-      new MessageDialog (null, "Saved Files", fastaFiles, false);
+    {
+      if(writer instanceof FileWriter)
+        new MessageDialog (null, "Saved Files", fastaFiles, false);
+    }
     else
     {
       FileViewer viewer = new FileViewer ("Feature base viewer for selected range: " + 
