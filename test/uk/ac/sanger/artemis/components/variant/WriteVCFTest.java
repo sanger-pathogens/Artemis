@@ -223,12 +223,11 @@ public class WriteVCFTest
   
     List<String> vcfFileList = new Vector<String>();
     vcfFileList.add(vcf.getFile());
-    JFrame f = new JFrame();
-    vcfView = new VCFview(f, (JPanel) f.getContentPane(), 
+
+    vcfView = new VCFview(null, new JPanel(), 
         vcfFileList, 
         5000, 100000000, null, 
         ref.getFile(), null);
-    f.setVisible(false);
   }
 
 }
