@@ -680,7 +680,10 @@ class IOUtils
         buff.append("-");
     }
     else if(vcfRecord.getAlt().isInsertion(vcf_v4))
+    {
       buff.append(getBase(vcfRecord.getAlt().toString(), isFwd));
+      position+=(vcfRecord.getRef().toString().length()-1);
+    }
     else if(vcfRecord.getAlt().isMultiAllele())
     {
       String base = MultipleAlleleVariant.getIUBCode(vcfRecord);
