@@ -265,8 +265,6 @@ public class VCFview extends JPanel
     if(feature_display == null)
     {
       bottomPanel.add(scrollBar, BorderLayout.SOUTH);
-      frame.pack();
-      frame.setVisible(true);
       selection = new Selection(null);
     }
     else
@@ -1779,6 +1777,8 @@ public class VCFview extends JPanel
       JFrame f = new JFrame();
       new VCFview(f, (JPanel) f.getContentPane(), vcfFileList, 
           nbasesInView, 100000000, null, reference, null);
+      f.pack();
+      f.setVisible(true);
     }
   }
 }
