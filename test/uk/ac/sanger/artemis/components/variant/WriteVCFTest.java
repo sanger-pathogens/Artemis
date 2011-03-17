@@ -171,61 +171,105 @@ public class WriteVCFTest
    * Write FASTA, from a feature selection on the forward strand.
    */
   @Test
-  public void testFeatureWriteFwdFastaSNP()
+  public void testFeatureWriteFastaSNP()
   {
-    StringWriter writer = getFeatureWriter("SPN23F03630,SPN23F03800");
+    StringWriter writer = getFeatureWriter("SPN23F03630,SPN23F03800,SPN23F04290");
 
-    StringBuffer buff = new StringBuffer();
+    StringBuffer fastaBuff = new StringBuffer(">test.embl.gz\n");
+    StringBuffer basesBuff = new StringBuffer();
     //SPN23F03630
-    buff.append(">test.embl.gz\n");
-    buff.append("atgaagaaaactgtttataaaaaattgggtatttcaattattgcgagtactttattggct\n");
-    buff.append("agccagttatcgacagtatctgctttgagtgttatttctagtacaggtgaagaatatgag\n");
-    buff.append("gtaagtgagacactagaaaaaggtccagagtctaatgattcttcattatctgagatttca\n");
-    buff.append("ccaacgtatggttcatactaccaaaagcaatcagaagtattatcggtaatgatgatttga\n");
+    
+    basesBuff.append("atgaagaaaactgtttataaaaaattgggtatttcaattattgcgagtactttattggct");
+    basesBuff.append("agccagttatcgacagtatctgctttgagtgttatttctagtacaggtgaagaatatgag");
+    basesBuff.append("gtaagtgagacactagaaaaaggtccagagtctaatgattcttcattatctgagatttca");
+    basesBuff.append("ccaacgtatggttcatactaccaaaagcaatcagaagtattatcggtaatgatgatttga");
     
     //SPN23F03800
-    buff.append("atggcaagtatcacactcacaccaagcgaaaaggatattcaggcttttcttgaacactat\n");
-    buff.append("caaaccagtctggctcctagcaagaatccctatatccgctactttttgaaactacctcaa\n");
-    buff.append("gcaacggtttctatctatacttctggaaaaatcttgcttcagggtgaaggggctgaaaaa\n");
-    buff.append("tacgccagtttctttggctatcaagctgtagagcaaaccagcggacaaaatcttccttta\n");
-    buff.append("attgggacagatgaggtgggaaatggttcctactttggtgggcttgcagttgtggctgcc\n");
-    buff.append("tttgtcacacctgaccagcacgactttttacgaaaactcggtgtgggggattctaagact\n");
-    buff.append("ctgaccgaccaaaagatccgtcagattgctcctattctcaaggaaaaaattcagcaccag\n");
-    buff.append("gcactccttctctcacccagcaagtacaacgaggtcatcggagaccgctacaatgctgtt\n");
-    buff.append("tcggttaaggttgccctccataatcaggctatctatctcctccttcaaaaaggtgttcag\n");
-    buff.append("cctgagaaaattgtgattgatgcctttaccagtgctaaaaattatgacaagtacttggca\n");
-    buff.append("caagagaccaatcgtttcagcaatcctatcagcttagaagaaaaggctgagggcaaatac\n");
-    buff.append("ttggctgtcgcagtttcttctgtcattgcgcgtgatctctttctggaaaatcttgaaaat\n");
-    buff.append("ttgggacgagaactgggttatcagcttccaagtggagctggaacggcttctgacaaggtg\n");
-    buff.append("gctagccagattttgcaagcctatggtatgcagggactcaacttctgcgccaaattgcac\n");
-    buff.append("tttaaaaatactgaaaaagcgaaaaacgcttag\n");
+    basesBuff.append("atggcaagtatcacactcacaccaagcgaaaaggatattcaggcttttcttgaacactat");
+    basesBuff.append("caaaccagtctggctcctagcaagaatccctatatccgctactttttgaaactacctcaa");
+    basesBuff.append("gcaacggtttctatctatacttctggaaaaatcttgcttcagggtgaaggggctgaaaaa");
+    basesBuff.append("tacgccagtttctttggctatcaagctgtagagcaaaccagcggacaaaatcttccttta");
+    basesBuff.append("attgggacagatgaggtgggaaatggttcctactttggtgggcttgcagttgtggctgcc");
+    basesBuff.append("tttgtcacacctgaccagcacgactttttacgaaaactcggtgtgggggattctaagact");
+    basesBuff.append("ctgaccgaccaaaagatccgtcagattgctcctattctcaaggaaaaaattcagcaccag");
+    basesBuff.append("gcactccttctctcacccagcaagtacaacgaggtcatcggagaccgctacaatgctgtt");
+    basesBuff.append("tcggttaaggttgccctccataatcaggctatctatctcctccttcaaaaaggtgttcag");
+    basesBuff.append("cctgagaaaattgtgattgatgcctttaccagtgctaaaaattatgacaagtacttggca");
+    basesBuff.append("caagagaccaatcgtttcagcaatcctatcagcttagaagaaaaggctgagggcaaatac");
+    basesBuff.append("ttggctgtcgcagtttcttctgtcattgcgcgtgatctctttctggaaaatcttgaaaat");
+    basesBuff.append("ttgggacgagaactgggttatcagcttccaagtggagctggaacggcttctgacaaggtg");
+    basesBuff.append("gctagccagattttgcaagcctatggtatgcagggactcaacttctgcgccaaattgcac");
+    basesBuff.append("tttaaaaatactgaaaaagcgaaaaacgcttag");
     
+    //SPN23F04290
+    basesBuff.append("atgctttatgtgggcattgatatcgctaaaaataaacacgatgttacagccttgaatgtt");
+    basesBuff.append("ccaggaaaaactgttcttaaaccactcactttttcaaataataaagctggttttgaactc");
+    basesBuff.append("ttagatctgtctcttcgacagctcaaccaagactgtctcatcgctcttaaacttctttct");
+    basesBuff.append("gatcccaatcgtgaacaatttcaacacgataatcggcaagtagacctaaaaatactggct");
+    basesBuff.append("agacatattcatcgtctcaagaaaaaacagtctgattggaaagtacaatacactcgttgt");
+    basesBuff.append("cttgatatcatctttcctgagttggataaaatcgttggaaagcattcagaatatacctac");
+    basesBuff.append("caactcttgacgcgctaccctaatcctcagaaaaggattgaggcaggatttgataagctg");
+    basesBuff.append("atagaaattaagcgattgaccgcttctaaaattcaggatatcctctcagtcgcacctcgt");
+    basesBuff.append("tctatcgaaacaacatctcctgctcgtgaattcgaaatcatcgaaatcatcaaacattac");
+    basesBuff.append("aagaggctcattgacaaggcggaaacatgtgtcaatgacttgatggctgagttcaactca");
+    basesBuff.append("gtcatcacgacggttactgggattgggggtcgtttaggggcggtcattttagccgagatt");
+    basesBuff.append("cgaaatattcatgcctttgataatcctgctcaattacaagctttcgctggactggattct");
+    basesBuff.append("tctatttatcagtcaggtcagattgatttagctggaagaatgatcaaacggggttcccct");
+    basesBuff.append("catctgcggtgggcactcatacaagctgccaaagcatgcgctcgcttttcacctgctttt");
+    basesBuff.append("aaggcctatcttaagactaagttagaacaaggaaaacattacaatgtagccatcatccac");
+    basesBuff.append("cttgcaaaaaaacttatccgaaccctgttttatatcctaaaaaagagctgccatttgacg");
+    basesBuff.append("aacaaaaagtga");
     
-    buff.append(">test.vcf.gz \n");
+    IOUtils.wrapString(basesBuff.toString(), fastaBuff);
+
+    fastaBuff.append(">test.vcf.gz \n");
+    
+    basesBuff = new StringBuffer();
     //SPN23F03630
-    buff.append("atgaagaaaactatttataaaaaattgggtatttcaattattgcgagtactttattggct\n");
-    buff.append("agccagttatcgacagtatctgctttgagtgttatttctagtacaggtgaagaatatgag\n");
-    buff.append("gtaagtgagacaytagaaaaaggtccagagtctaatrattcttcattatctgagatttca\n");
-    buff.append("ccaacgtatggttcatactaccaaaagcaatcagaagtattatcggtaatgatgatttga\n");
+    basesBuff.append("atgaagaaaactatttataaaaaattgggtatttcaattattgcgagtactttattggct");
+    basesBuff.append("agccagttatcgacagtatctgctttgagtgttatttctagtacaggtgaagaatatgag");
+    basesBuff.append("gtaagtgagacaytagaaaaaggtccagagtctaatrattcttcattatctgagatttca");
+    basesBuff.append("ccaacgtatggttcatactaccaaaagcaatcagaagtattatcggtaatgatgatttga");
 
     //SPN23F03800
-    buff.append("atggcaagtatcacactcacaccaagcgaaaaggatattcaggcttttcttgaacactat\n");
-    buff.append("caaaccagtctggctcctagcaagaatccctatatccgctactttttgaaactacctcaa\n");
-    buff.append("gcaacggtttctatctatacttctggaaaaatcttgcttcagggtgaaggggctgaaaaa\n");
-    buff.append("tacgccagtttctttggctatcaagctgtagagcaaaccagcggacaaaatcttccttta\n");
-    buff.append("attgggacagatgaggtgggaaatggttcctactttggtgggcttgcagttgtggctgcc\n");
-    buff.append("tttgtcacacctgaccagcacgactttttacgaaaactcggtgtgggggattctaagact\n");
-    buff.append("ctgaccgaccaaaagatccgtcagattgctcctattctcaaggaaaaaatccagcaccag\n");
-    buff.append("gcactccttctctcacccagcaagtacaacgaggtcatcggagaccgctacaatgctgtt\n");
-    buff.append("tcggttaaggttgccctccataatcaggctatctatctcctccttcaaaaaggtgttcag\n");
-    buff.append("cctgagaaaattgtgattgatgcctttaccagtgctaaaaattatgacaagtacttggca\n");
-    buff.append("caagaggccaatcgtttcagcaatcctatcagcttagaaaaaaaggctgagggcaaatac\n");
-    buff.append("ttggctgtcgcagtttcttctgtcattgcgcgtgatctctttctggaaaatcttgaaaat\n");
-    buff.append("ctgggacgagaactgggttatcagctcccaagtggagctggaacagcttctgacaaggtg\n");
-    buff.append("gctagccagattttgcaagcctatggtatgcagggactcagcttctgcgccaaattgcac\n");
-    buff.append("tttaaaaacactgaaaaagcgaaaaaaaaaaaacg\n");
+    basesBuff.append("atggcaagtatcacactcacaccaagcgaaaaggatattcaggcttttcttgaacactat");
+    basesBuff.append("caaaccagtctggctcctagcaagaatccctatatccgctactttttgaaactacctcaa");
+    basesBuff.append("gcaacggtttctatctatacttctggaaaaatcttgcttcagggtgaaggggctgaaaaa");
+    basesBuff.append("tacgccagtttctttggctatcaagctgtagagcaaaccagcggacaaaatcttccttta");
+    basesBuff.append("attgggacagatgaggtgggaaatggttcctactttggtgggcttgcagttgtggctgcc");
+    basesBuff.append("tttgtcacacctgaccagcacgactttttacgaaaactcggtgtgggggattctaagact");
+    basesBuff.append("ctgaccgaccaaaagatccgtcagattgctcctattctcaaggaaaaaatccagcaccag");
+    basesBuff.append("gcactccttctctcacccagcaagtacaacgaggtcatcggagaccgctacaatgctgtt");
+    basesBuff.append("tcggttaaggttgccctccataatcaggctatctatctcctccttcaaaaaggtgttcag");
+    basesBuff.append("cctgagaaaattgtgattgatgcctttaccagtgctaaaaattatgacaagtacttggca");
+    basesBuff.append("caagaggccaatcgtttcagcaatcctatcagcttagaaaaaaaggctgagggcaaatac");
+    basesBuff.append("ttggctgtcgcagtttcttctgtcattgcgcgtgatctctttctggaaaatcttgaaaat");
+    basesBuff.append("ctgggacgagaactgggttatcagctcccaagtggagctggaacagcttctgacaaggtg");
+    basesBuff.append("gctagccagattttgcaagcctatggtatgcagggactcagcttctgcgccaaattgcac");
+    basesBuff.append("tttaaaaacactgaaaaagcgaaaaaaacgcttag");
 
-    assertEquals("Export FASTA feature ", writer.toString(), buff.toString());
+    //SPN23F04290
+    basesBuff.append("atgctttatgtgggcattgatatcgctaaaaataaacacgatgttacagccttgaatgtt");
+    basesBuff.append("ccaggaaaaactgttcttaaaccactcactttttcaaataataaagctggttttgaactc");
+    basesBuff.append("ttagatctgtctcttcgacagctcaaccaagactgtctcatcgctcttaaacttctttct");
+    basesBuff.append("gaccccaatcgtgaacaatttcaacacgataatcggcaagtagaactaaaaatactggct");
+    basesBuff.append("agacatattcatcgtctcaagaaaaaacagtctgattggaaagtacaatacactcgttgt");
+    basesBuff.append("cttgatatcatctttcctgagttggataaaatcgttgaaaagcattcagaatatacctac");
+    basesBuff.append("caactcttgacgcgctaccctaatcctcagaaaaggcttgaggcaggatttgataagctg");
+    basesBuff.append("atagaaattaagcgattgaccgcttctaaaattcaggatatcctctcagttgcacctcgt");
+    basesBuff.append("tctatcgmaacaacatctcctgctcgtgaattcgaaatcatcgaaatcatcaaacattac");
+    basesBuff.append("aagaggctcattgacaaggcggaaacatgtgtcaatgacttgatggctgagttcaactcg");
+    basesBuff.append("gtcatcacgacggtcactgggattgggaatcgtttagaggcggtcattttagccgagatt");
+    basesBuff.append("cgaaatattcatgcctttgataatcctgctcaattacaagctttcgctggactggattct");
+    basesBuff.append("tctatttatcagtcaggtcagattgatttagctggaagaatgatcaaacggggttcccct");
+    basesBuff.append("catctgcggtgggcactcatacaagctgccaaagcatgccctcgcttttcacctgctttt");
+    basesBuff.append("aaggcctatcttaagactaagttagaataaggaaaacattacaatgtagccatcatccac");
+    basesBuff.append("cttgcaaaaaaacttatccgaaccctgttttatatcctaaaaaagagctgccatttgacg");
+    basesBuff.append("aacaaaaagtga");
+    
+    IOUtils.wrapString(basesBuff.toString(), fastaBuff);
+
+    assertEquals("Export FASTA feature ", writer.toString(), fastaBuff.toString());
   }
 
   /**
