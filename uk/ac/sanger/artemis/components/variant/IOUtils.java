@@ -613,7 +613,7 @@ class IOUtils
   }
   
   
-  private static void wrapString(String bases, StringBuffer buff)
+  protected static void wrapString(String bases, StringBuffer buff)
   {
     final int SEQUENCE_LINE_BASE_COUNT = 60;
     for(int k=0; k<bases.length(); k+=SEQUENCE_LINE_BASE_COUNT)
