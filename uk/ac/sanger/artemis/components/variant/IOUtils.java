@@ -700,8 +700,12 @@ class IOUtils
     }
     else if(vcfRecord.getAlt().isInsertion(vcf_v4))
     {
+      if(!isFwd)
+        buff.delete(position-vcfRecord.getRef().length()+1, position);
       buff.append(getBase(vcfRecord.getAlt().toString(), isFwd));
-      position+=(vcfRecord.getRef().toString().length()-1);
+
+      if(isFwd)
+        position+=(vcfRecord.getRef().toString().length()-1);
     }
     else if(vcfRecord.getAlt().isMultiAllele())
     {
