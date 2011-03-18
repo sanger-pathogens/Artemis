@@ -18,6 +18,7 @@ import javax.swing.JPanel;
 
 import junit.framework.Assert;
 
+import org.junit.BeforeClass;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -41,8 +42,8 @@ import uk.ac.sanger.artemis.util.DocumentFactory;
  */
 public class WriteVCFTest
 {
-  private VCFview vcfView;
-  
+  private static VCFview vcfView;
+  private static VCFview bcfView;
   
   // TEST WRITING REGIONS
   
@@ -173,7 +174,7 @@ public class WriteVCFTest
   @Test
   public void testFeatureWriteFastaSNP()
   {
-    StringWriter writer = getFeatureWriter("SPN23F03630,SPN23F03800,SPN23F04290");
+    StringWriter writer = getFeatureWriter("SPN23F03630,SPN23F03800,SPN23F04290", vcfView);
 
     StringBuffer fastaBuff = new StringBuffer(">test.embl.gz\n");
     StringBuffer basesBuff = new StringBuffer();
@@ -271,6 +272,115 @@ public class WriteVCFTest
 
     assertEquals("Export FASTA feature ", writer.toString(), fastaBuff.toString());
   }
+  
+  
+  /**
+   * Write FASTA, from a feature selection on the forward strand.
+   */
+  @Test
+  public void testBCFFeatureWriteFastaSNP()
+  {
+    StringWriter writer = getFeatureWriter("PFA0140c,PFA0475c", bcfView);
+
+    StringBuffer fastaBuff = new StringBuffer(">MAL1.embl.gz\n");
+    StringBuffer basesBuff = new StringBuffer();
+    //PFA0140c
+    basesBuff.append("atgagcaatataaatgataataatattcaaaacagcgatgtaaaggaaataaaaaatgat");
+    basesBuff.append("gaatatatgggagaagggtattataatacacataatgaatgtgagggttttgaacaaaac");
+    basesBuff.append("aattatatgaataataatgaaatcaatatggtagatggaaaacatgataatagtgatgat");
+    basesBuff.append("aatataaataattccatgggagggataacacatatgggacatgtgaatgagtataaaaaa");
+    basesBuff.append("ataaaatcattttgtaagttaagaaggaaatttgtatatataaggagaacgggttataat");
+    basesBuff.append("tcatacatatataatagaaagaaaaaaaaaaataaaaataaaatagagactgaaaggaat");
+    basesBuff.append("gtagatgaaatgtataatatgaataataacaataataataatcataacaacaacaacaat");
+    basesBuff.append("aataataataataataataataataataacagatataataataatattaattgtttggat");
+    basesBuff.append("aattttagcgatttatttttaaaatttataaaacaattcattgatcatataaatgtacat");
+    basesBuff.append("ttgaataatgtaaaaaattattatcgaaattatgtgtgtaatgataatatgaaatatgta");
+    basesBuff.append("ttttatttatttattatatatatgttgttaaatattatgattatctttttttcgatgttt");
+    basesBuff.append("gtatatttctttgtatatttttattttatcccacaaaataagtatgtatttcctatagat");
+    basesBuff.append("ttttcattggtaaaaaatcctatagaagattatttacaaaacgaaaaaagatataacatt");
+    basesBuff.append("atgaataaaatgaataatatggacaatatggataatatggataatatgaatcatataaat");
+    basesBuff.append("tatatgaataacatgaatcataataataataataataataataattgtaatataaagaat");
+    basesBuff.append("aattgtaataatattaatatgatgaaaaattttgataagtctaatttcaatgagtcagaa");
+    basesBuff.append("gatttctatataaaatatttcgattctttaaaagaaagcaggaaaagaaatgattattta");
+    basesBuff.append("tataataataaattaaaaggtttttataaagattttcaaaataatattttaagaggtcat");
+    basesBuff.append("atactatttcaaaataaattatattattcagaaaaagaagagttttataagaatttcaat");
+    basesBuff.append("ccttttaattttatatttttttttaagaaaagaacaggaaaagataatttacttaatata");
+    basesBuff.append("aagaaaggatataaaattgatatatttttaaatttttcttatatgaataatgaatataat");
+    basesBuff.append("gacaaatttaattttattcaattagttactgaaatttttaataaaaataataatgtaatg");
+    basesBuff.append("tttagaaatgaaaaattatatatgaataataataattatgaatttataaagaaattacat");
+    basesBuff.append("ttatttttaaatgctcctttttatttttttaatatgtttaataataaaacaaaagaaatt");
+    basesBuff.append("cgattagtacatgattataaatatacgacgaatttttataaaattcaaatatatatatac");
+    basesBuff.append("ccaccgatacaaatacataaagcttctatcgttattcttgtctacgttaattttatatat");
+    basesBuff.append("tattacatgtataattatccttttgtgttcttttatatttttgtttttttcttgagcttc");
+    basesBuff.append("atcttgatatttttcaacactatccttttttttatattgagttgttattattattttaaa");
+    basesBuff.append("aacggattataa");
+    
+    // PFA0475c
+    basesBuff.append("atggaaggacagcataaagaaaaaaatacaaaaataaaaaaaagtaaaaaaccgttagtt");
+    basesBuff.append("gttagtaatagaaaaccattcaacgtttttgaaaaaaaaaaaagtgcaaagccgctcgta");
+    basesBuff.append("agagatcctcgtttttctgatttttcaggatcgttcaatgcgaacttttttagaaatgca");
+    basesBuff.append("tacaagtttttatacgactcaagagaacaagaaaagaagattatagaaaaaaaattaaaa");
+    basesBuff.append("agcaaaaatataacacaagaagaaaaggacgaattaaaaaaaaaatacaatgattataaa");
+    basesBuff.append("agcactgatatattattaaaaaaaaaagaagaagaaaggaaattaaaagcagaattagta");
+    basesBuff.append("aaacaggaaaaacaaaatattctaaccaaaaataaaaaaccttattattatagtgataga");
+    basesBuff.append("aaaattaaaaaaatagttcaagaaaaattgtcgagttataagagtttaaagaaagttata");
+    basesBuff.append("aaaaaagaaaaaaaaacattgcaaaaagagagaaagagaaacatcaaaccaacaaaaaaa");
+    basesBuff.append("aaaatttttttaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+    basesBuff.append("aaaaaaaaaaaaaaaacataa");
+
+    IOUtils.wrapString(basesBuff.toString(), fastaBuff);
+
+    fastaBuff.append(">MAL1_8_16_24h.raw.bcf \n");
+    
+    basesBuff = new StringBuffer();
+    //PFA0140c
+    basesBuff.append("atgagcaatataaatgataataatattcaaaacagcgatgtaaaggaaataaaaaatgat");
+    basesBuff.append("gaatatatgggagaagggtattataatacacataatgaatgtgagggttttgaacaaaac");
+    basesBuff.append("aattatatgaataataatgaaatcaatatggtagatggaaaacatgataatagtgatgat");
+    basesBuff.append("aatataaataattccatgggagggataacacatatgggacatgtgaatgagtataaaaaa");
+    basesBuff.append("ataaaatcattttgtaagttaagaaggaaatttgtatatataaggagaacgggttataat");
+    basesBuff.append("tcatacatatataatagaaagaaaaaaaaaaataaaaataaaatagagactgaaaggaat");
+    basesBuff.append("gtagatgaaatgtataatatgaataataacaataataataatcataacaacaacaacaat");
+    basesBuff.append("aataataataataataataataataataacagatataataataatattaattgtttggat");
+    basesBuff.append("aattttagcgatttatttttaaaatttataaaacaattcattgatcatataaatgtacat");
+    basesBuff.append("ttgaataatgtaaaaaattattatcgaaattatgtgtgtaatgataatatgaaatatgta");
+    basesBuff.append("ttttatttatttattatatatatgttgttaaatattatgattatctttttttcgatgttt");
+    basesBuff.append("gtatatttctttgtatatttttattttatcccacaaaataagtatgtatttcctatagat");
+    basesBuff.append("ttttcattggtaaaaaatcctatagaagattatttacaaaacgaaaaaagatataacatt");
+    basesBuff.append("atgaataaaatgaataatatggacaatatggataatatggataatatgaatcatataaat");
+    basesBuff.append("tatatgaataacatgaatcataataataataataataataataattgtaatataaagaat");
+    basesBuff.append("aattgtaataatattaatatgatgaaaaattttgataagtctaatttcaatgagtcagaa");
+    basesBuff.append("gatttctatataaaatatttcgattctttaaaagaaagcaggaaaagaaatgattattta");
+    basesBuff.append("tataataataaattaaaaggtttttataaagattttcaaaataatattttaagaggtcat");
+    basesBuff.append("atactatttcaaaataaattatattattcagaaaaagaagagttttataagaatttcaat");
+    basesBuff.append("ccttttaattttatatttttttttaagaaaagaacaggaaaagataatttacttaatata");
+    basesBuff.append("aagaaaggatataaaattgatatatttttaaatttttcttatatgaataatgaatataat");
+    basesBuff.append("gacaaatttaattttattcaattagttactgaaatttttaataaaaataataatgtaatg");
+    basesBuff.append("tttagaaatgaaaaattatatatgaataataataattatgaatttataaagaaattacat");
+    basesBuff.append("ttatttttaaatgctcctttttatttttttaatatgtttaataataacacaaaagaaatt");
+    basesBuff.append("cgattagtacatgattataaatatacgacgaatttttataaaattcaaatatatatatac");
+    basesBuff.append("ccaccgatacaaatacataaagcttctatcgttattcttgtctacgttaattttatatat");
+    basesBuff.append("tattacatgtataattatccttttgtgttcttttatatttttgtttttttcttgagcttc");
+    basesBuff.append("atcttgatatttttcaacactatccttttttttatattgagttgttattattattttaaa");
+    basesBuff.append("aacggattataa");
+
+    // PFA0475c
+    basesBuff.append("atggaaggacagcataaagaaaaaaatacaaaaataaaaaaaagtaaaaaaccgttagtt");
+    basesBuff.append("gttagtaatagaaaaccattcaacgtttttgaaaaaaaaaaaagtgcaaagccgctcgta");
+    basesBuff.append("agagatcctcgtttttctgatttttcaggatcgttcaatgcgaacttttttagaaatgca");
+    basesBuff.append("tacaagtttttatacgactcaagagaacaagaaaagaagattatagaaaaaaaattaaaa");
+    basesBuff.append("agcaaaaatataacacaagaagaaaaggacgaattaaaaaaaaaatacaatgattataaa");
+    basesBuff.append("agcactgatatattattaaaaaaaaaagaagaagaaaggaaattaaaagcagaattagta");
+    basesBuff.append("aaacaggaaaaacaaaatattctaaccaaaaataaaaaaccttattattatagtgataga");
+    basesBuff.append("aaaattaaaaaaatagttcaagaaaaattgtcgagtaataagagtttaaagaaagttata");
+    basesBuff.append("aaaaaagaaaaaaaaacattgcaaaaagagagaaagagaaacatcataccaacaaaaaaa");
+    basesBuff.append("aaaatttttttaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+    basesBuff.append("aaaaaaaaaaaaaaaacataa");
+
+    IOUtils.wrapString(basesBuff.toString(), fastaBuff);
+
+    assertEquals("Export FASTA feature ", writer.toString(), fastaBuff.toString());
+  }
 
   /**
    * Get sequences for a selected region.
@@ -323,12 +433,12 @@ public class WriteVCFTest
    * @param id comma separated list of feature id's
    * @return
    */
-  private StringWriter getFeatureWriter(String ids)
+  private StringWriter getFeatureWriter(String ids, final VCFview view)
   {
     StringWriter writer = new StringWriter();
     String id[] = ids.split(",");
     
-    FeatureVector features = vcfView.getEntryGroup().getAllFeatures();
+    FeatureVector features = view.getEntryGroup().getAllFeatures();
     FeatureVector selectedFeatures = new FeatureVector();
     Feature feature = null;
     for(int i=0; i<features.size(); i++)
@@ -343,26 +453,38 @@ public class WriteVCFTest
       }
     }
     
-    IOUtils.exportFasta(vcfView, selectedFeatures, false, writer);
+    IOUtils.exportFasta(view, selectedFeatures, false, writer);
     return writer;
   }
   
   
   /**
-   * Open a flat file and create the components in the TransferAnnotaionTool
-   * used to control the transfer of annotation.
+   * Load in a VCF and BCF into separate VCFviews to be used 
+   * separately in testing.
    */
-  @Before
-  public void setup()
+  @BeforeClass
+  public static void oneTimeSetUp()
   {
-    final URL ref = WriteVCFTest.class.getResource("/data/test.embl.gz");
-    final URL vcf = WriteVCFTest.class.getResource("/data/test.vcf.gz");
+    // load VCF
+    URL ref = WriteVCFTest.class.getResource("/data/test.embl.gz");
+    URL vcf = WriteVCFTest.class.getResource("/data/test.vcf.gz");
   
     List<String> vcfFileList = new Vector<String>();
     vcfFileList.add(vcf.getFile());
 
     vcfView = new VCFview(null, new JPanel(), 
         vcfFileList, 
+        5000, 100000000, null, 
+        ref.getFile(), null);
+    
+    // load BCF
+    ref = WriteVCFTest.class.getResource("/data/MAL1.embl.gz");
+    vcf = WriteVCFTest.class.getResource("/data/MAL1_8_16_24h.raw.bcf");
+    
+    List<String> bcfFileList = new Vector<String>();
+    bcfFileList.add(vcf.getFile());
+    bcfView = new VCFview(null, new JPanel(), 
+        bcfFileList, 
         5000, 100000000, null, 
         ref.getFile(), null);
   }
