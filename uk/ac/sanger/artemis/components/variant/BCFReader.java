@@ -218,30 +218,36 @@ class BCFReader extends AbstractVCFReader
 
       String fmts[] = VCFRecord.COLON_PATTERN.split( bcfRecord.getFormat() );
       bcfRecord.setData( new String[nsamples][fmts.length] );
-      
-      for(int j=0; j<nsamples; j++)
+
+      for(int i=0; i<fmts.length; i++)
       {
-        for(int k=0; k<fmts.length; k++)
+        int nb = getByteSize(fmts[i],nc);
+        str = new byte[nb];
+        is.read(str);
+
+        if(fmts[i].equals("GT"))
         {
-          int nb = getByteSize(fmts[k],nc);
-          str = new byte[nb];
-          is.read(str);
-        
-          final String value;
-          if(fmts[k].equals("GT"))
-            value = getGTString(str[0]);
-          else if(fmts[k].equals("PL"))
-            value = getPLString(str, nc);
-          else if(fmts[k].equals("DP")||fmts[k].equals("SP")||fmts[k].equals("GQ"))
-            value = Integer.toString(byteToInt(str[0]));
-          else
-            value = new String(str);
-  
-          bcfRecord.getData()[j][k] = value;
+          for(int j=0; j<nsamples; j++)
+            bcfRecord.getData()[j][i] = getGTString(str[j]);
         }
-      }
-      
-    }
+        else if(fmts[i].equals("PL"))
+        {
+          String pls[] = getPLString(str, nsamples);
+          for(int j=0; j<nsamples; j++)
+            bcfRecord.getData()[j][i] = pls[j];
+        }
+        else if(fmts[i].equals("DP")||fmts[i].equals("SP")||fmts[i].equals("GQ"))
+        {
+          for(int j=0; j<nsamples; j++)
+            bcfRecord.getData()[j][i] = Integer.toString(byteToInt(str[j]));
+        }
+        else
+        {
+          bcfRecord.getData()[0][i] = new String(str);
+        }
+     }
+   }
+
     
     return bcfRecord;
   }
@@ -323,18 +329,32 @@ class BCFReader extends AbstractVCFReader
     else                        // misc
       return 4*nsamples;        // uint32_t+char*
   }
-  
-  
-  private String getPLString(byte[] b, int nc)
+
+  /**
+   * Phred scaled likelihood of data.
+   * @param b
+   * @param nsamples
+   * @return
+   */
+  private String[] getPLString(byte[] b, int nsamples)
   {
-    StringBuffer buff = new StringBuffer();
-    for(int i=0;i<b.length; i++)
+    String pls[] = new String[nsamples];
+    int nb = b.length / nsamples;
+    int cnt = 0;
+
+    for(int i=0; i<nsamples; i++)
     {
-      buff.append(byteToInt(b[i]));
-      if(i<b.length-1)
-        buff.append(",");
+      StringBuffer buff = new StringBuffer();
+      for(int j=0;j<nb; j++)
+      {
+        buff.append(byteToInt(b[cnt]));
+        if(j<nb-1)
+          buff.append(",");
+        cnt++;
+      }
+      pls[i] = buff.toString();
     }
-    return buff.toString();
+    return pls;
   }
   
   /**
