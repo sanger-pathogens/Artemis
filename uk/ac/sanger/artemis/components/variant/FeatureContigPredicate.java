@@ -36,7 +36,7 @@ public class FeatureContigPredicate implements FeaturePredicate
     
   public boolean testPredicate(Feature feature)
   {
-    if(feature.getIDString().equals(contigName))
+    if(feature.getIDString().trim().equals(contigName))
       return true;
     return false;
   }
