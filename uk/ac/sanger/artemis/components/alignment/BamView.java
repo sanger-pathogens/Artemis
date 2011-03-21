@@ -585,7 +585,7 @@ public class BamView extends JPanel
       offsetLengths = new Hashtable<String, Integer>(seqNames.size());
       for(int i=0; i<seqNames.size(); i++)
       {
-        FeatureContigPredicate predicate = new FeatureContigPredicate(seqNames.get(i));
+        FeatureContigPredicate predicate = new FeatureContigPredicate(seqNames.get(i).trim());
         for(int j=0; j<features.size(); j++)
         {
           if(predicate.testPredicate(features.elementAt(j)))
@@ -598,6 +598,7 @@ public class BamView extends JPanel
       
       if(offsetLengths.size() != seqNames.size())
       {
+        System.err.println("Found: "+offsetLengths.size() +" of "+ seqNames.size());
         JOptionPane.showMessageDialog(this, 
             "There is a problem matching the reference sequences\n"+
             "to the names in the BAM file. This may mean the labels\n"+
