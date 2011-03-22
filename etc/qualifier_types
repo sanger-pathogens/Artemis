@@ -52,12 +52,10 @@ exception                yes        list    "rearrangement required for product"
 experiment               no        "text"
 focus                    yes        none
 frequency                yes        real    0.0  1.0
-func_characterised       no        "text"
 function                 no        "text"
 gene                     yes       "text"
 gene_synonym             no        "text"
 germline                 yes        none
-GO_term                  no        "text"
 haplogroup               yes       "text"
 haplotype                yes       "text"
 host                     no        "text"
