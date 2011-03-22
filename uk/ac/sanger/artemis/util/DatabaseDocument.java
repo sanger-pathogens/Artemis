@@ -1544,33 +1544,61 @@ public class DatabaseDocument extends Document
         attr_buff.append("db_xref="+ pub.getUniqueName());
         nfound_dbxref++;
       }
-      
-      if(featureCvTermDbXRefs != null &&
-              featureCvTermDbXRefs.size() > 0)
+
+      if(featureCvTermPubs != null &&
+          featureCvTermPubs.size() > 0)
       {
+        for(int i=0; i<featureCvTermPubs.size(); i++)
+        {
+          FeatureCvTermPub featureCvTermPub =
+            (FeatureCvTermPub)featureCvTermPubs.get(i);
+          
+          if(feature_cvterm.getFeatureCvTermId() != 
+            featureCvTermPub.getFeatureCvTerm().getFeatureCvTermId())
+            continue;
+          
+          if(nfound_dbxref == 0)
+            attr_buff.append("db_xref=");
+          else if(nfound_dbxref > 0)
+            attr_buff.append("|");
+
+          attr_buff.append(featureCvTermPub.getPub().getUniqueName());
+          nfound_dbxref++;
+        }
+      }
+      if(nfound_dbxref > 0)
+        attr_buff.append("%3B");
+
+      if(featureCvTermDbXRefs != null &&
+          featureCvTermDbXRefs.size() > 0 )
+      {  
+        int nfound = 0;
         for(int i=0; i<featureCvTermDbXRefs.size(); i++)
         {
           FeatureCvTermDbXRef featureCvTermDbXRef =
             (FeatureCvTermDbXRef)featureCvTermDbXRefs.get(i);
-    
+            
           if(feature_cvterm.getFeatureCvTermId() != 
             featureCvTermDbXRef.getFeatureCvTerm().getFeatureCvTermId())
+          {
             continue;
-      
-          if(nfound_dbxref == 0)
-            attr_buff.append("db_xref=");
-          else if(nfound_dbxref > 0)
+          }
+          
+          if(nfound == 0)
+            attr_buff.append("with=");
+          else if(nfound > 0)
             attr_buff.append("|");
           
           DbXRef fc_dbXRef = featureCvTermDbXRef.getDbXRef();
           attr_buff.append(fc_dbXRef.getDb().getName()+":");
           attr_buff.append(fc_dbXRef.getAccession());
-          nfound_dbxref++;
+          nfound++;
         }
+        
+        if(nfound > 0)
+          attr_buff.append("%3B");
       }
       
-      if(nfound_dbxref > 0)
-        attr_buff.append("%3B");
       
       List feature_cvtermprops = (List) feature_cvterm.getFeatureCvTermProps();
       for(int i = 0; i < feature_cvtermprops.size(); i++)
