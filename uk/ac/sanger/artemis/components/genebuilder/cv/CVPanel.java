@@ -400,6 +400,11 @@ public class CVPanel extends JPanel
                               dimension.height));
           xHeadings.add(termLabel);
           
+
+          final JLabel withLabel = new JLabel("With/From");
+          withLabel.setPreferredSize(dimension);
+          xHeadings.add(withLabel);
+          
           final JLabel dbxrefLabel = new JLabel("Dbxref");
           dbxrefLabel.setPreferredSize(dimension);
           xHeadings.add(dbxrefLabel);
@@ -425,7 +430,7 @@ public class CVPanel extends JPanel
           xBox = Box.createHorizontalBox();
           final String qualifierString = 
              (String)qualifier_strings.elementAt(value_index);
-          
+
           final ControlledCurationBox ccBox = new ControlledCurationBox(
                   this_qualifier,
                   qualifierString, value_index, 
