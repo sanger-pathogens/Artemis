@@ -1825,7 +1825,8 @@ public class EntryEdit extends JFrame
       bamPanel.removeAll();
       try
       {
-        jamView = new BamView(listBams, null, 2000);
+        jamView = new BamView(listBams, null, 2000, feature_display, 
+            getEntryGroup().getBases(), bamPanel, null);
       }
       catch (Exception ex)
       {
@@ -1834,12 +1835,6 @@ public class EntryEdit extends JFrame
         return;
       }
 
-      jamView.setShowScale(false);
-      jamView.setBases(getEntryGroup().getBases());
-      jamView.addJamToPanel(bamPanel, null, true, feature_display);
-      jamView.getJspView().setHorizontalScrollBarPolicy(
-          JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-      jamView.removeBorder();
       jamView.setDisplay(feature_display.getFirstVisibleForwardBase(),
           feature_display.getLastVisibleForwardBase(), null);
       bamPanel.revalidate();

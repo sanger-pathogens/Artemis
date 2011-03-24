@@ -968,7 +968,8 @@ public class MultiComparator extends JFrame
             BamView bamView;
             try
             {
-              bamView = new BamView(listBams, null, 2000);
+              bamView = new BamView(listBams, null, 2000, feature_display, 
+                  entry_group.getBases(), thisBamPanel, null);
             }
             catch(Exception ex)
             {
@@ -979,12 +980,6 @@ public class MultiComparator extends JFrame
               return;
             }
 
-            bamView.setShowScale(false);
-            bamView.setBases(entry_group.getBases());
-            bamView.addJamToPanel(thisBamPanel, null, true, feature_display);
-            bamView.getJspView().setHorizontalScrollBarPolicy(
-              JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-            bamView.removeBorder();
             bamView.setDisplay(feature_display.getFirstVisibleForwardBase(), 
                              feature_display.getLastVisibleForwardBase(), null);
          

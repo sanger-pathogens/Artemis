@@ -1,4 +1,4 @@
-/* JamView
+/* BamView
  *
  * created: 2009
  *
@@ -158,7 +158,7 @@ public class BamView extends JPanel
   private JPanel mainPanel;
   private CoveragePanel coveragePanel;
   private SnpPanel snpPanel;
-  private boolean showScale = true;
+
   private boolean logScale = false;
   private Ruler ruler;
   private int nbasesInView;
@@ -167,7 +167,6 @@ public class BamView extends JPanel
   private int endBase   = -1;
   private int laststart;
   private int lastend;
-  private int maxUnitIncrement = 8;
 
   private boolean asynchronous = true;
   private boolean showBaseAlignment = false;
@@ -221,12 +220,19 @@ public class BamView extends JPanel
   
   public BamView(List<String> bamList, 
                  String reference,
-                 int nbasesInView)
+                 int nbasesInView,
+                 final FeatureDisplay feature_display,
+                 final Bases bases,
+                 final JPanel mainPanel,
+                 final JFrame frame)
   {
     super();
     setBackground(Color.white);
     this.bamList = bamList;
     this.nbasesInView = nbasesInView;
+    this.feature_display = feature_display;
+    this.bases = bases;
+    this.mainPanel = mainPanel;
     
     // filter out unmapped reads by default
     setSamRecordFlagPredicate(
@@ -286,6 +292,19 @@ public class BamView extends JPanel
     buttonGroup.add(cbStrandStackView);
     buttonGroup.add(cbIsizeStackView);
     buttonGroup.add(cbCoverageView);
+    addMouseListener(new PopupListener());
+    
+    
+    jspView = new JScrollPane(this, 
+        JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+        JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+    
+    jspView.setViewportBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.gray));
+    Border empty = new EmptyBorder(0,0,0,0);
+    jspView.setBorder(empty);
+    jspView.getVerticalScrollBar().setUnitIncrement(8);
+    
+    addBamToPanel(frame);
   }
   
   public String getToolTipText()
@@ -1047,7 +1066,7 @@ public class BamView extends JPanel
   private void drawLineView(Graphics2D g2, int seqLength, float pixPerBase, int start, int end)
   {
     drawSelectionRange(g2, pixPerBase,start, end);
-    if(showScale)
+    if(isShowScale())
       drawScale(g2, start, end, pixPerBase, getHeight());
     
     Stroke stroke =
@@ -1168,7 +1187,7 @@ public class BamView extends JPanel
     drawSelectionRange(g2, pixPerBase,start, end);
     if(isShowScale())
       drawScale(g2, start, end, pixPerBase, getHeight());
-    
+
     BasicStroke stroke = new BasicStroke(
         1.3f,
         BasicStroke.CAP_BUTT, 
@@ -1883,203 +1902,22 @@ public class BamView extends JPanel
    * Add the alignment view to the supplied <code>JPanel</code> in
    * a <code>JScrollPane</code>.
    * @param mainPanel  panel to add the alignment to
+   * @param frame
    * @param autohide automatically hide the top panel containing the buttons
+   * @param feature_display
    */
-  public void addJamToPanel(final JPanel mainPanel,
-                            final JFrame frame,
-                            final boolean autohide,
-                            final FeatureDisplay feature_display)
+  private void addBamToPanel(final JFrame frame)
   {
-    this.mainPanel = mainPanel;
-    final JComponent topPanel;
-    if(feature_display != null)
-    {
-      this.feature_display = feature_display;
-      this.selection = feature_display.getSelection();
-      topPanel = new JPanel(new FlowLayout(FlowLayout.LEADING, 0, 0));
-    }
-    else
-    { 
-      topPanel = new JMenuBar();
-      frame.setJMenuBar((JMenuBar)topPanel);
-      
-      JMenu fileMenu = new JMenu("File");
-      topPanel.add(fileMenu);
-
-      JMenuItem readBam = new JMenuItem("Open new BamView ...");
-      fileMenu.add(readBam);
-      readBam.addActionListener(new ActionListener()
-      {
-        public void actionPerformed(ActionEvent e)
-        {
-          String[] s = new String[0];
-          BamView.main(s);
-        } 
-      });
-      
-      JMenuItem close = new JMenuItem("Close");
-      fileMenu.add(close);
-      close.addActionListener(new ActionListener()
-      {
-        public void actionPerformed(ActionEvent e)
-        {
-          BamView.this.setVisible(false);
-          Component comp = BamView.this;
-          
-          while( !(comp instanceof JFrame) )
-            comp = comp.getParent();
-          ((JFrame)comp).dispose();
-        } 
-      });
-      
-      JMenuItem exit = new JMenuItem("Exit");
-      fileMenu.add(new JSeparator());
-      fileMenu.add(exit);
-      exit.addActionListener(new ActionListener()
-      {
-        public void actionPerformed(ActionEvent e)
-        {
-          int status = JOptionPane.showConfirmDialog(BamView.this, 
-              "Exit BamView?", "Exit", 
-              JOptionPane.OK_CANCEL_OPTION);
-          if(status != JOptionPane.OK_OPTION)
-            return;
-          System.exit(0);
-        } 
-      });
-    }
-    
-    if(seqNames.size() > 1)
-    {
-      int len = 0;
-      for(int i=0; i<seqNames.size(); i++)
-        len += seqLengths.get(seqNames.get(i));
-      
-      if(feature_display != null &&
-         len == feature_display.getSequenceLength())
-        concatSequences = true;
-      else if(bases != null &&
-          len == bases.getLength() )
-        concatSequences = true;
-    }
-
-    // auto hide top panel
-    final JCheckBox buttonAutoHide = new JCheckBox("Hide", autohide);
-    buttonAutoHide.setToolTipText("Auto-Hide");
-    final MouseMotionListener mouseMotionListener = new MouseMotionListener()
-    {
-      public void mouseDragged(MouseEvent event)
-      {
-        handleCanvasMouseDrag(event);
-      }
-      
-      public void mouseMoved(MouseEvent e)
-      {
-        lastMousePoint = e.getPoint();
-        
-        int thisHgt = HEIGHT;
-        if (thisHgt < 5)
-          thisHgt = 15;
-
-        int y = (int) (e.getY() - jspView.getViewport().getViewRect().getY());
-        if (y < thisHgt)
-        {
-          topPanel.setVisible(true);
-        }
-        else
-        {
-          if (buttonAutoHide.isSelected())
-            topPanel.setVisible(false);
-        }
-        mainPanel.repaint();
-        mainPanel.revalidate();
-      }
-    };
-    addMouseMotionListener(mouseMotionListener);
-
-    combo = new JComboBox(seqNames);
-    combo.setEditable(false);
-    combo.setMaximumRowCount(20);
-    
-    combo.addItemListener(new ItemListener()
-    {
-      public void itemStateChanged(ItemEvent e)
-      {
-        laststart = -1;
-        if(feature_display != null)
-          setZoomLevel(feature_display.getMaxVisibleBases());
-        else
-          setZoomLevel(BamView.this.nbasesInView);
-      }
-    });
-    topPanel.add(combo);
-
-    if(feature_display == null)
-    {
-      final JTextField baseText = new JTextField(8);
-      JButton goTo = new JButton("GoTo:");
-      goTo.setToolTipText("Go to base position");
-      goTo.addActionListener(new ActionListener()
-      {
-        public void actionPerformed(ActionEvent e)
-        {
-          try
-          {
-            int basePosition = Integer.parseInt(baseText.getText());
-            scrollBar.setValue(basePosition);
-          }
-          catch (NumberFormatException nfe)
-          {
-            JOptionPane.showMessageDialog(BamView.this,
-                "Expecting a base number!", "Number Format",
-                JOptionPane.WARNING_MESSAGE);
-          }
-        }
-      });
-      topPanel.add(goTo);
-      topPanel.add(baseText);
-
-      JButton zoomIn = new JButton("-");
-      Insets ins = new Insets(1,1,1,1);
-      zoomIn.setMargin(ins);
-      zoomIn.addActionListener(new ActionListener()
-      {
-        public void actionPerformed(ActionEvent e)
-        {
-          setZoomLevel((int) (BamView.this.nbasesInView * 1.1));
-        }
-      });
-      topPanel.add(zoomIn);
-
-      JButton zoomOut = new JButton("+");
-      zoomOut.setMargin(ins);
-      zoomOut.addActionListener(new ActionListener()
-      {
-        public void actionPerformed(ActionEvent e)
-        {
-          if (showBaseAlignment)
-            return;
-          setZoomLevel((int) (BamView.this.nbasesInView * .9));
-        }
-      });
-      topPanel.add(zoomOut);
-    }
-    
-    topPanel.add(buttonAutoHide);
-
+    final JComponent topPanel = bamTopPanel(frame);
     mainPanel.setPreferredSize(new Dimension(900, 400));
     
-    jspView = new JScrollPane(this, 
-        JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-        JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-    jspView.setViewportBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.gray));
     setDisplay(1, nbasesInView, null);
     mainPanel.setLayout(new BorderLayout());
 
     if(topPanel instanceof JPanel)
       mainPanel.add(topPanel, BorderLayout.NORTH);
     mainPanel.add(jspView, BorderLayout.CENTER);
-    
+
     JPanel bottomPanel = new JPanel(new BorderLayout());
     coveragePanel = new CoveragePanel(this);
     bottomPanel.add(coveragePanel, BorderLayout.CENTER);
@@ -2109,36 +1947,10 @@ public class BamView extends JPanel
     snpPanel.setPreferredSize(new Dimension(900, 100));
     snpPanel.setVisible(false);
 
-    jspView.getVerticalScrollBar().setValue(
-        jspView.getVerticalScrollBar().getMaximum());
-    jspView.getVerticalScrollBar().setUnitIncrement(maxUnitIncrement);
-    
-    if(feature_display == null)
-    {
-      addKeyListener(new KeyAdapter()
-      {
-        public void keyPressed(final KeyEvent event)
-        {
-          switch (event.getKeyCode())
-          {
-          case KeyEvent.VK_UP:
-            setZoomLevel((int) (BamView.this.nbasesInView * 1.1));
-            break;
-          case KeyEvent.VK_DOWN:
-            if (showBaseAlignment)
-              break;
-            setZoomLevel((int) (BamView.this.nbasesInView * .9));
-            break;
-          default:
-            break;
-          }
-        }
-      });
-    }
-
-    addMouseListener(new PopupListener());
     setFocusable(true);
     requestFocusInWindow();
+    jspView.getVerticalScrollBar().setValue(
+        jspView.getVerticalScrollBar().getMaximum());
   }
   
   private void addToViewMenu(final int thisBamIndex)
@@ -2444,6 +2256,205 @@ public class BamView extends JPanel
     viewMenu.add(coverageMenu);
   }
   
+  private JComponent bamTopPanel(final JFrame frame)
+  {
+    final JComponent topPanel;
+    if(feature_display != null)
+    {
+      this.selection = feature_display.getSelection();
+      topPanel = new JPanel(new FlowLayout(FlowLayout.LEADING, 0, 0));
+    }
+    else
+    { 
+      topPanel = new JMenuBar();
+      frame.setJMenuBar((JMenuBar)topPanel);
+      
+      JMenu fileMenu = new JMenu("File");
+      topPanel.add(fileMenu);
+
+      JMenuItem readBam = new JMenuItem("Open new BamView ...");
+      fileMenu.add(readBam);
+      readBam.addActionListener(new ActionListener()
+      {
+        public void actionPerformed(ActionEvent e)
+        {
+          String[] s = new String[0];
+          BamView.main(s);
+        } 
+      });
+      
+      JMenuItem close = new JMenuItem("Close");
+      fileMenu.add(close);
+      close.addActionListener(new ActionListener()
+      {
+        public void actionPerformed(ActionEvent e)
+        {
+          BamView.this.setVisible(false);
+          Component comp = BamView.this;
+          
+          while( !(comp instanceof JFrame) )
+            comp = comp.getParent();
+          ((JFrame)comp).dispose();
+        } 
+      });
+      
+      JMenuItem exit = new JMenuItem("Exit");
+      fileMenu.add(new JSeparator());
+      fileMenu.add(exit);
+      exit.addActionListener(new ActionListener()
+      {
+        public void actionPerformed(ActionEvent e)
+        {
+          int status = JOptionPane.showConfirmDialog(BamView.this, 
+              "Exit BamView?", "Exit", 
+              JOptionPane.OK_CANCEL_OPTION);
+          if(status != JOptionPane.OK_OPTION)
+            return;
+          System.exit(0);
+        } 
+      });
+      
+      addKeyListener(new KeyAdapter()
+      {
+        public void keyPressed(final KeyEvent event)
+        {
+          switch (event.getKeyCode())
+          {
+            case KeyEvent.VK_UP:
+              setZoomLevel((int) (BamView.this.nbasesInView * 1.1));
+              break;
+            case KeyEvent.VK_DOWN:
+              if (showBaseAlignment)
+                break;
+              setZoomLevel((int) (BamView.this.nbasesInView * .9));
+              break;
+            default:
+              break;
+          }
+        }
+      });
+    }
+    
+    if(seqNames.size() > 1)
+    {
+      int len = 0;
+      for(int i=0; i<seqNames.size(); i++)
+        len += seqLengths.get(seqNames.get(i));
+      
+      if(feature_display != null &&
+         len == feature_display.getSequenceLength())
+        concatSequences = true;
+      else if(bases != null &&
+          len == bases.getLength() )
+        concatSequences = true;
+    }
+
+    // auto hide top panel
+    final JCheckBox buttonAutoHide = new JCheckBox("Hide", (feature_display != null));
+    buttonAutoHide.setToolTipText("Auto-Hide");
+    final MouseMotionListener mouseMotionListener = new MouseMotionListener()
+    {
+      public void mouseDragged(MouseEvent event)
+      {
+        handleCanvasMouseDrag(event);
+      }
+      
+      public void mouseMoved(MouseEvent e)
+      {
+        lastMousePoint = e.getPoint();
+        
+        int thisHgt = HEIGHT;
+        if (thisHgt < 5)
+          thisHgt = 15;
+
+        int y = (int) (e.getY() - jspView.getViewport().getViewRect().getY());
+        if (y < thisHgt)
+        {
+          topPanel.setVisible(true);
+        }
+        else
+        {
+          if (buttonAutoHide.isSelected())
+            topPanel.setVisible(false);
+        }
+        mainPanel.repaint();
+        mainPanel.revalidate();
+      }
+    };
+    addMouseMotionListener(mouseMotionListener);
+
+    combo = new JComboBox(seqNames);
+    combo.setEditable(false);
+    combo.setMaximumRowCount(20);
+    
+    combo.addItemListener(new ItemListener()
+    {
+      public void itemStateChanged(ItemEvent e)
+      {
+        laststart = -1;
+        if(feature_display != null)
+          setZoomLevel(feature_display.getMaxVisibleBases());
+        else
+          setZoomLevel(BamView.this.nbasesInView);
+      }
+    });
+    topPanel.add(combo);
+
+    if(feature_display == null)
+    {
+      final JTextField baseText = new JTextField(8);
+      JButton goTo = new JButton("GoTo:");
+      goTo.setToolTipText("Go to base position");
+      goTo.addActionListener(new ActionListener()
+      {
+        public void actionPerformed(ActionEvent e)
+        {
+          try
+          {
+            int basePosition = Integer.parseInt(baseText.getText());
+            scrollBar.setValue(basePosition);
+          }
+          catch (NumberFormatException nfe)
+          {
+            JOptionPane.showMessageDialog(BamView.this,
+                "Expecting a base number!", "Number Format",
+                JOptionPane.WARNING_MESSAGE);
+          }
+        }
+      });
+      topPanel.add(goTo);
+      topPanel.add(baseText);
+
+      JButton zoomIn = new JButton("-");
+      Insets ins = new Insets(1,1,1,1);
+      zoomIn.setMargin(ins);
+      zoomIn.addActionListener(new ActionListener()
+      {
+        public void actionPerformed(ActionEvent e)
+        {
+          setZoomLevel((int) (BamView.this.nbasesInView * 1.1));
+        }
+      });
+      topPanel.add(zoomIn);
+
+      JButton zoomOut = new JButton("+");
+      zoomOut.setMargin(ins);
+      zoomOut.addActionListener(new ActionListener()
+      {
+        public void actionPerformed(ActionEvent e)
+        {
+          if (showBaseAlignment)
+            return;
+          setZoomLevel((int) (BamView.this.nbasesInView * .9));
+        }
+      });
+      topPanel.add(zoomOut);
+    }
+    
+    topPanel.add(buttonAutoHide);
+    return topPanel;
+  }
+  
   public void setVisible(boolean visible)
   {
     super.setVisible(visible);
@@ -2609,31 +2620,12 @@ public class BamView extends JPanel
   
   private boolean isShowScale()
   {
-    return showScale;
+    return (feature_display == null ? true : false);
   }
 
-  public void setShowScale(boolean showScale)
-  {
-    this.showScale = showScale;
-  }
-  
   public JScrollPane getJspView()
   {
     return jspView;
-  }
-  
-  public void setBases(Bases bases)
-  {
-    this.bases = bases;
-  }
-  
-  /**
-   * Remove JScrollPane border
-   */
-  public void removeBorder()
-  {
-    Border empty = new EmptyBorder(0,0,0,0);
-    jspView.setBorder(empty);
   }
   
   /**
@@ -3106,7 +3098,6 @@ public class BamView extends JPanel
   public static void main(String[] args)
   {
     BamFrame frame = new BamFrame();
-    
     if(args.length == 0 && BamFrame.isMac())
     {
       try
@@ -3171,17 +3162,16 @@ public class BamView extends JPanel
         System.out.println("-r\t reference file (optional)");
         System.out.println("-v\t number of bases to display in the view (optional)");
         /*System.out.println("-s\t samtool directory");*/
-
         System.exit(0);
       }
     }
 
-    final BamView view = new BamView(bam, reference, nbasesInView);
+    final BamView view = new BamView(bam, reference, nbasesInView, null, null,
+        (JPanel)frame.getContentPane(), frame);
     frame.setTitle("BamView v"+view.getVersion());
     
     // translucent
     //frame.getRootPane().putClientProperty("Window.alpha", new Float(0.9f));
-
     frame.addWindowFocusListener(new WindowFocusListener()
     {
       public void windowGainedFocus(WindowEvent e)
@@ -3190,8 +3180,7 @@ public class BamView extends JPanel
       }
       public void windowLostFocus(WindowEvent e){}
     });
-    
-    view.addJamToPanel((JPanel)frame.getContentPane(), frame, false, null);
+
     frame.pack();
 
     view.jspView.getVerticalScrollBar().setValue(
