@@ -1,9 +1,7 @@
 package uk.ac.sanger.artemis.components.alignment;
 
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-
 
  class BamFrame extends JFrame
   {
