@@ -399,9 +399,9 @@ public class CVPanel extends JPanel
                 new Dimension(getWidthOfGoField()+dimension.width,
                               dimension.height));
           xHeadings.add(termLabel);
-          
 
-          final JLabel withLabel = new JLabel("With/From");
+
+          final JLabel withLabel = new JLabel("WITH/FROM");
           withLabel.setPreferredSize(dimension);
           xHeadings.add(withLabel);
           
