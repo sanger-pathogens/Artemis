@@ -112,7 +112,7 @@ public class EntryEdit extends JFrame
   private Selection selection = null;
 
   /** Alignment panel */
-  private BamView jamView;
+  private BamView bamView;
   private JPanel bamPanel;
   private VCFview vcfView;
   private JPanel vcfPanel;
@@ -275,9 +275,8 @@ public class EntryEdit extends JFrame
       jspLookSeq.setVisible(false);
       main_box_panel.add(jspLookSeq);
     }
-    
 
-    
+
     // one line per entry display
     one_line_per_entry_display =
       new FeatureDisplay(getEntryGroup(), getSelection(),
@@ -470,10 +469,10 @@ public class EntryEdit extends JFrame
     int screen_height = screen.height;
     int screen_width  = screen.width;
 
-    if(screen_width <= 900 || screen_height <= 700)
+    if(screen_width <= 900 || screen_height <= 800)
       setSize(screen_width * 9 / 10, screen_height * 9 / 10);
     else
-      setSize(900, 700);
+      setSize(900, 800);
 
     final int hgt = getEntryGroup().getAllFeaturesCount() * 
                     feature_list.getLineHeight();
@@ -566,7 +565,7 @@ public class EntryEdit extends JFrame
   
   protected JPanel getJamView()
   {
-    return jamView;
+    return bamView;
   }
   
   protected JPanel getVcfPanel()
@@ -1159,23 +1158,23 @@ public class EntryEdit extends JFrame
     {
       public void actionPerformed(ActionEvent event)
       {
-        if(jamView == null)
+        if(bamView == null)
           return;
         
-        if (!jamView.isVisible())
+        if (!bamView.isVisible())
         {
-          jamView.setVisible(true);
-          jamView.setDisplay(feature_display.getFirstVisibleForwardBase(),
+          bamView.setVisible(true);
+          bamView.setDisplay(feature_display.getFirstVisibleForwardBase(),
                              feature_display.getLastVisibleForwardBase(), null);
-          jamView.revalidate();
-          feature_display.addDisplayAdjustmentListener(jamView);
-          feature_display.getSelection().addSelectionChangeListener(jamView);
+          bamView.revalidate();
+          feature_display.addDisplayAdjustmentListener(bamView);
+          feature_display.getSelection().addSelectionChangeListener(bamView);
         }
         else
         {
-          feature_display.removeDisplayAdjustmentListener(jamView);
-          feature_display.getSelection().removeSelectionChangeListener(jamView);
-          jamView.setVisible(false);
+          feature_display.removeDisplayAdjustmentListener(bamView);
+          feature_display.getSelection().removeSelectionChangeListener(bamView);
+          bamView.setVisible(false);
         }
         setNGDivider();
       }
@@ -1825,7 +1824,7 @@ public class EntryEdit extends JFrame
       bamPanel.removeAll();
       try
       {
-        jamView = new BamView(listBams, null, 2000, feature_display, 
+        bamView = new BamView(listBams, null, 2000, feature_display, 
             getEntryGroup().getBases(), bamPanel, null);
       }
       catch (Exception ex)
@@ -1835,13 +1834,12 @@ public class EntryEdit extends JFrame
         return;
       }
 
-      jamView.setDisplay(feature_display.getFirstVisibleForwardBase(),
+      bamView.getJspView().getVerticalScrollBar().setValue(
+          bamView.getJspView().getVerticalScrollBar().getMaximum());
+      bamView.setDisplay(feature_display.getFirstVisibleForwardBase(),
           feature_display.getLastVisibleForwardBase(), null);
-      bamPanel.revalidate();
-      jamView.getJspView().getVerticalScrollBar().setValue(
-          jamView.getJspView().getVerticalScrollBar().getMaximum());
-      feature_display.addDisplayAdjustmentListener(jamView);
-      feature_display.getSelection().addSelectionChangeListener(jamView);
+      feature_display.addDisplayAdjustmentListener(bamView);
+      feature_display.getSelection().addSelectionChangeListener(bamView);
 
       setNGDivider();
     }
@@ -1870,7 +1868,7 @@ public class EntryEdit extends JFrame
     {
       ngSplitPane.setVisible(true);
       lowerSplitPane.setDividerSize(3);
-      lowerSplitPane.setDividerLocation(0.35d);
+      lowerSplitPane.setDividerLocation(0.4d);
       
       ngSplitPane.setResizeWeight(0.5);
       ngSplitPane.setDividerSize(3);
@@ -1882,7 +1880,7 @@ public class EntryEdit extends JFrame
     {
       ngSplitPane.setVisible(true);
       lowerSplitPane.setDividerSize(3);
-      lowerSplitPane.setDividerLocation(0.35d);
+      lowerSplitPane.setDividerLocation(0.4d);
       
       ngSplitPane.setResizeWeight(0);
       ngSplitPane.setDividerSize(0);
@@ -1893,7 +1891,7 @@ public class EntryEdit extends JFrame
     {
       ngSplitPane.setVisible(true);
       lowerSplitPane.setDividerSize(3);
-      lowerSplitPane.setDividerLocation(0.35d);
+      lowerSplitPane.setDividerLocation(0.4d);
       
       ngSplitPane.setResizeWeight(1);
       ngSplitPane.setDividerSize(1);
