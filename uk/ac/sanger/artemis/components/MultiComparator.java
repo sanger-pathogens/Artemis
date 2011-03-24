@@ -980,13 +980,13 @@ public class MultiComparator extends JFrame
               return;
             }
 
-            bamView.setDisplay(feature_display.getFirstVisibleForwardBase(), 
-                             feature_display.getLastVisibleForwardBase(), null);
-         
             if(dimensionAlignViewer == null)
               dimensionAlignViewer = alignment_viewer_array[0].getSize();
             thisBamPanel.setPreferredSize(new Dimension(500, dimensionAlignViewer.height/2));
-            thisBamPanel.revalidate();
+            
+            bamView.setDisplay(feature_display.getFirstVisibleForwardBase(), 
+                             feature_display.getLastVisibleForwardBase(), null);
+         
             bamView.getJspView().getVerticalScrollBar().setValue(
               bamView.getJspView().getVerticalScrollBar().getMaximum());
           
