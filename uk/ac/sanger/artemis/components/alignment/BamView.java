@@ -67,6 +67,7 @@ import java.util.List;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -155,7 +156,7 @@ public class BamView extends JPanel
   
   private FeatureDisplay feature_display;
   private Selection selection;
-  private JPanel mainPanel;
+  private JPanel mainPanel = new JPanel();
   private CoveragePanel coveragePanel;
   private SnpPanel snpPanel;
 
@@ -223,7 +224,7 @@ public class BamView extends JPanel
                  int nbasesInView,
                  final FeatureDisplay feature_display,
                  final Bases bases,
-                 final JPanel mainPanel,
+                 final JPanel containerPanel,
                  final JFrame frame)
   {
     super();
@@ -232,7 +233,9 @@ public class BamView extends JPanel
     this.nbasesInView = nbasesInView;
     this.feature_display = feature_display;
     this.bases = bases;
-    this.mainPanel = mainPanel;
+    
+    containerPanel.setLayout(new BoxLayout(containerPanel, BoxLayout.Y_AXIS));
+    containerPanel.add(mainPanel);
     
     // filter out unmapped reads by default
     setSamRecordFlagPredicate(
@@ -293,8 +296,7 @@ public class BamView extends JPanel
     buttonGroup.add(cbIsizeStackView);
     buttonGroup.add(cbCoverageView);
     addMouseListener(new PopupListener());
-    
-    
+
     jspView = new JScrollPane(this, 
         JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
         JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -303,7 +305,7 @@ public class BamView extends JPanel
     Border empty = new EmptyBorder(0,0,0,0);
     jspView.setBorder(empty);
     jspView.getVerticalScrollBar().setUnitIncrement(8);
-    
+
     addBamToPanel(frame);
   }
   
@@ -367,7 +369,7 @@ public class BamView extends JPanel
       out.close();
       is.close();
 
-      System.out.println("create... " + bamIndexFile.getAbsolutePath());
+      logger4j.debug("create... " + bamIndexFile.getAbsolutePath());
     }
     else
       bamIndexFile = new File(bam + ".bai");
@@ -1947,8 +1949,7 @@ public class BamView extends JPanel
     snpPanel.setPreferredSize(new Dimension(900, 100));
     snpPanel.setVisible(false);
 
-    setFocusable(true);
-    requestFocusInWindow();
+    mainPanel.revalidate();
     jspView.getVerticalScrollBar().setValue(
         jspView.getVerticalScrollBar().getMaximum());
   }
@@ -1998,6 +1999,29 @@ public class BamView extends JPanel
     
     bamFilesMenu.setFont(addBam.getFont());
     menu.add(bamFilesMenu);
+    
+    final JMenuItem bamSplitter = new JMenuItem("Clone window");
+    bamSplitter.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        BamView bamView = new BamView(bamList, null, nbasesInView, 
+            feature_display, bases, (JPanel) mainPanel.getParent(), null);
+        bamView.getJspView().getVerticalScrollBar().setValue(
+            bamView.getJspView().getVerticalScrollBar().getMaximum());
+
+        int start = getBaseAtStartOfView();
+        setDisplay(start, nbasesInView+start, null);
+        if(feature_display != null)
+        {
+          feature_display.addDisplayAdjustmentListener(bamView);
+          feature_display.getSelection().addSelectionChangeListener(bamView);
+        }
+      } 
+    });
+    bamFilesMenu.add(bamSplitter);
+    bamFilesMenu.add(new JSeparator());
+    
     for(int i=0; i<bamList.size(); i++)
       addToViewMenu(i);
     
@@ -2259,9 +2283,10 @@ public class BamView extends JPanel
   private JComponent bamTopPanel(final JFrame frame)
   {
     final JComponent topPanel;
-    if(feature_display != null)
+    if(frame == null)
     {
-      this.selection = feature_display.getSelection();
+      if(feature_display != null)
+        this.selection = feature_display.getSelection();
       topPanel = new JPanel(new FlowLayout(FlowLayout.LEADING, 0, 0));
     }
     else
@@ -2350,7 +2375,7 @@ public class BamView extends JPanel
     }
 
     // auto hide top panel
-    final JCheckBox buttonAutoHide = new JCheckBox("Hide", (feature_display != null));
+    final JCheckBox buttonAutoHide = new JCheckBox("Hide", (frame == null));
     buttonAutoHide.setToolTipText("Auto-Hide");
     final MouseMotionListener mouseMotionListener = new MouseMotionListener()
     {
