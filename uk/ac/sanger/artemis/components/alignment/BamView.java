@@ -2207,8 +2207,7 @@ public class BamView extends JPanel
       public void actionPerformed(ActionEvent e)
       {
         laststart = -1;
-        if(isIsizeStackView())
-          logMenuItem.setEnabled(true);
+        logMenuItem.setEnabled(isIsizeStackView());
         repaint();
       }
     });
@@ -2220,8 +2219,7 @@ public class BamView extends JPanel
       public void actionPerformed(ActionEvent e)
       {
         laststart = -1;
-        if(isStackView())
-          logMenuItem.setEnabled(false);
+        logMenuItem.setEnabled(isIsizeStackView());
         repaint();
       }
     });
@@ -2233,8 +2231,7 @@ public class BamView extends JPanel
       public void actionPerformed(ActionEvent e)
       {
         laststart = -1;
-        if(cbPairedStackView.isSelected())
-          logMenuItem.setEnabled(false);
+        logMenuItem.setEnabled(isIsizeStackView());
         repaint();
       }
     });
@@ -2248,8 +2245,8 @@ public class BamView extends JPanel
         if(isStrandStackView())
         {
           setViewportMidPoint();
-          logMenuItem.setEnabled(false);
         }
+        logMenuItem.setEnabled(isIsizeStackView());
         repaint();
       }
     });
@@ -2260,6 +2257,7 @@ public class BamView extends JPanel
       public void actionPerformed(ActionEvent e)
       {
         laststart = -1;
+        logMenuItem.setEnabled(isIsizeStackView());
         repaint();
       }
     });
@@ -2417,6 +2415,8 @@ public class BamView extends JPanel
     menu.add(new JSeparator());
     logMenuItem.setFont(menu.getFont());
     menu.add(logMenuItem);
+    logMenuItem.setEnabled(isIsizeStackView());
+    
     logMenuItem.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
