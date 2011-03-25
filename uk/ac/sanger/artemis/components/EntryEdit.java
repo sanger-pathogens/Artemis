@@ -1161,9 +1161,9 @@ public class EntryEdit extends JFrame
         if(bamView == null)
           return;
         
-        if (!bamView.isVisible())
+        if (!bamPanel.isVisible())
         {
-          bamView.setVisible(true);
+          bamPanel.setVisible(true);
           bamView.setDisplay(feature_display.getFirstVisibleForwardBase(),
                              feature_display.getLastVisibleForwardBase(), null);
           bamView.revalidate();
@@ -1174,7 +1174,7 @@ public class EntryEdit extends JFrame
         {
           feature_display.removeDisplayAdjustmentListener(bamView);
           feature_display.getSelection().removeSelectionChangeListener(bamView);
-          bamView.setVisible(false);
+          bamPanel.setVisible(false);
         }
         setNGDivider();
       }
