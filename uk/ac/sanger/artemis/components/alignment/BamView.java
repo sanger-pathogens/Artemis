@@ -2000,28 +2000,6 @@ public class BamView extends JPanel
     bamFilesMenu.setFont(addBam.getFont());
     menu.add(bamFilesMenu);
     
-    final JMenuItem bamSplitter = new JMenuItem("Clone window");
-    bamSplitter.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent e)
-      {
-        BamView bamView = new BamView(bamList, null, nbasesInView, 
-            feature_display, bases, (JPanel) mainPanel.getParent(), null);
-        bamView.getJspView().getVerticalScrollBar().setValue(
-            bamView.getJspView().getVerticalScrollBar().getMaximum());
-
-        int start = getBaseAtStartOfView();
-        setDisplay(start, nbasesInView+start, null);
-        if(feature_display != null)
-        {
-          feature_display.addDisplayAdjustmentListener(bamView);
-          feature_display.getSelection().addSelectionChangeListener(bamView);
-        }
-      } 
-    });
-    bamFilesMenu.add(bamSplitter);
-    bamFilesMenu.add(new JSeparator());
-    
     for(int i=0; i<bamList.size(); i++)
       addToViewMenu(i);
     
@@ -2271,6 +2249,29 @@ public class BamView extends JPanel
         new SAMRecordFilter(BamView.this);
       } 
     });
+    
+    
+    final JMenuItem bamSplitter = new JMenuItem("Clone window");
+    bamSplitter.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        BamView bamView = new BamView(bamList, null, nbasesInView, 
+            feature_display, bases, (JPanel) mainPanel.getParent(), null);
+        bamView.getJspView().getVerticalScrollBar().setValue(
+            bamView.getJspView().getVerticalScrollBar().getMaximum());
+
+        int start = getBaseAtStartOfView();
+        setDisplay(start, nbasesInView+start, null);
+        if(feature_display != null)
+        {
+          feature_display.addDisplayAdjustmentListener(bamView);
+          feature_display.getSelection().addSelectionChangeListener(bamView);
+        }
+      } 
+    });
+    menu.add(new JSeparator());
+    menu.add(bamSplitter);
 
     //
     JMenu coverageMenu = new JMenu("Coverage Options");
