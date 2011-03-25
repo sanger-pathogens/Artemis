@@ -301,7 +301,7 @@ public class BamView extends JPanel
         JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
         JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
     
-    jspView.setViewportBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.gray));
+    jspView.setViewportBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.DARK_GRAY));
     Border empty = new EmptyBorder(0,0,0,0);
     jspView.setBorder(empty);
     jspView.getVerticalScrollBar().setUnitIncrement(8);
