@@ -1,4 +1,8 @@
 Version XX
+	Add option in BamView to clone the alignment panel.
+	
+	Unit tests added for writing VCF/BCF sequences.
+
 	Add new Coverage view to BamView. It automatically switches to this view
 	on zooming out.
 
