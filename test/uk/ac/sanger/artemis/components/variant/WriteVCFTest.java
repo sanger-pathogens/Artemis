@@ -57,7 +57,7 @@ public class WriteVCFTest
   {
     StringWriter writer = getRegionWriter(true, 120768, 120777);
     
-    StringBuffer buff = new StringBuffer("> test.embl.gz 120768:120777\n");
+    StringBuffer buff = new StringBuffer(">test.embl.gz 120768:120777\n");
     buff.append("cttgtcaagg\n");
     buff.append(">test.vcf.gz test.embl.gz 120768:120777\n");
     buff.append("tttgtcaagg\n");
@@ -74,7 +74,7 @@ public class WriteVCFTest
   {
     StringWriter writer = getRegionWriter(false, 120768, 120777);
 
-    StringBuffer buff = new StringBuffer("> test.embl.gz 120768:120777 reverse\n");
+    StringBuffer buff = new StringBuffer(">test.embl.gz 120768:120777 reverse\n");
     buff.append("ccttgacaag\n");
     buff.append(">test.vcf.gz test.embl.gz 120768:120777 reverse\n");
     buff.append("ccttgacaaa\n");
@@ -91,7 +91,7 @@ public class WriteVCFTest
   {
     StringWriter writer = getRegionWriter(true, 396835, 396845);
 
-    StringBuffer buff = new StringBuffer("> test.embl.gz 396835:396845\n");
+    StringBuffer buff = new StringBuffer(">test.embl.gz 396835:396845\n");
     buff.append("tttttaggtat\n");
     buff.append(">test.vcf.gz test.embl.gz 396835:396845\n");
     buff.append("tttt-aggtat\n");
@@ -108,7 +108,7 @@ public class WriteVCFTest
   {
     StringWriter writer = getRegionWriter(false, 396835, 396845);
 
-    StringBuffer buff = new StringBuffer("> test.embl.gz 396835:396845 reverse\n");
+    StringBuffer buff = new StringBuffer(">test.embl.gz 396835:396845 reverse\n");
     buff.append("atacctaaaaa\n");
     buff.append(">test.vcf.gz test.embl.gz 396835:396845 reverse\n");
     buff.append("ataccta-aaa\n");
@@ -125,7 +125,7 @@ public class WriteVCFTest
   {
     StringWriter writer = getRegionWriter(true, 366785, 366795);
 
-    StringBuffer buff = new StringBuffer("> test.embl.gz 366785:366795\n");
+    StringBuffer buff = new StringBuffer(">test.embl.gz 366785:366795\n");
     buff.append("tttcgcttttt\n");
     buff.append(">test.vcf.gz test.embl.gz 366785:366795\n");
     buff.append("tttTcgcttttt\n");
@@ -142,7 +142,7 @@ public class WriteVCFTest
   {
     StringWriter writer = getRegionWriter(false, 366785, 366795);
 
-    StringBuffer buff = new StringBuffer("> test.embl.gz 366785:366795 reverse\n");
+    StringBuffer buff = new StringBuffer(">test.embl.gz 366785:366795 reverse\n");
     buff.append("aaaaagcgaaa\n");
     buff.append(">test.vcf.gz test.embl.gz 366785:366795 reverse\n");
     buff.append("aaaaagcgaaaa\n");
@@ -160,7 +160,7 @@ public class WriteVCFTest
   {
     StringWriter writer = getRegionWriter(true, 361975, 361985);
 
-    StringBuffer buff = new StringBuffer("> test.embl.gz 361975:361985\n");
+    StringBuffer buff = new StringBuffer(">test.embl.gz 361975:361985\n");
     buff.append("actgaaaaatt\n");
     buff.append(">test.vcf.gz test.embl.gz 361975:361985\n");
     buff.append("actkaaaaatt\n");
