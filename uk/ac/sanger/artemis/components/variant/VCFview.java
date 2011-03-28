@@ -171,6 +171,7 @@ public class VCFview extends JPanel
   private boolean concatSequences = false;
   protected static Pattern tabPattern = Pattern.compile("\t");
   
+  private Color lighterGrey = new Color(220,220,220);
   public static String VCFFILE_SUFFIX = ".*\\.[bv]{1}cf(\\.gz)*$";
   private static String FILE_SUFFIX = "\\.[bv]{1}cf(\\.gz)*$";
   
@@ -947,7 +948,7 @@ public class VCFview extends JPanel
   }
 
   
-  private void drawRegion(Graphics g,
+  private void drawRegion(Graphics2D g,
                           String chr,
                           int sbeg,
                           int send,
@@ -1138,7 +1139,7 @@ public class VCFview extends JPanel
   }
   
   
-  private void drawVariantCall(Graphics g, VCFRecord record, int start, int index, 
+  private void drawVariantCall(Graphics2D g, VCFRecord record, int start, int index, 
       float pixPerBase, FeatureVector features, boolean vcf_v4)
   {
     int basePosition = record.getPos() + getSequenceOffset(record.getChrom());
@@ -1158,7 +1159,7 @@ public class VCFview extends JPanel
     else if(record.getAlt().isDeletion(vcf_v4))
       g.setColor(Color.gray);
     else if(record.getAlt().isInsertion(vcf_v4))
-      g.setColor(Color.yellow);
+      g.setColor(Color.magenta);
     else if(record.getAlt().length() == 1 && record.getRef().length() == 1)
     {
       g.setColor(getColourForSNP(record, features, basePosition));
@@ -1225,7 +1226,7 @@ public class VCFview extends JPanel
     else if(variant.equals("T"))
       return Color.black;
     else
-      return Color.magenta; // non-variant
+      return lighterGrey; // non-variant
   }
   
   /**
