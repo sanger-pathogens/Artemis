@@ -255,7 +255,8 @@ public class VCFFilter extends JFrame
 
       try
       {
-        if(VCFFilter.MIN_AF1 > 0 && Float.parseFloat(record.getInfoValue("AF1")) < VCFFilter.MIN_AF1)
+        // AF1 filtered - except for non-variant sites
+        if((!record.getAlt().isNonVariant()) && VCFFilter.MIN_AF1 > 0 && Float.parseFloat(record.getInfoValue("AF1")) < VCFFilter.MIN_AF1)
           return false;
       }
       catch(NullPointerException npe){}
