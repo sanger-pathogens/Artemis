@@ -679,7 +679,9 @@ class IOUtils
     if(vcfRecord.getAlt().isDeletion(vcf_v4))
     {
       int ndel = vcfRecord.getAlt().getNumberOfIndels(vcf_v4);
-      if(!vcfRecord.getAlt().toString().equals(".") && isFwd)
+      if(isFwd &&
+         !vcfRecord.getAlt().toString().equals(".") && 
+         !vcfRecord.getAlt().toString().startsWith("D"))
       {
         buff.append(getBase(vcfRecord.getAlt().toString(), isFwd));
         position+=vcfRecord.getAlt().toString().length();
@@ -702,7 +704,11 @@ class IOUtils
     {
       if(!isFwd)
         buff.delete(position-vcfRecord.getRef().length()+1, position);
-      buff.append(getBase(vcfRecord.getAlt().toString(), isFwd));
+      
+      String in = vcfRecord.getAlt().toString();
+      if(in.startsWith("I"))
+        in = in.substring(1);
+      buff.append(getBase(in, isFwd));
 
       if(isFwd)
         position+=(vcfRecord.getRef().toString().length()-1);
