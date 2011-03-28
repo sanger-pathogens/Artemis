@@ -385,8 +385,8 @@ class IOUtils
   {
     StringBuffer header = new StringBuffer();
     if(reader != null)
-      header.append(reader.getName());
-    header.append(" ").append(seqName).append(" ");
+      header.append(reader.getName()).append(" ");
+    header.append(seqName).append(" ");
     header.append(sbeg).append(":").append(send);
     header.append((marker.isForwardMarker() ? "" : " reverse"));
     return header;
