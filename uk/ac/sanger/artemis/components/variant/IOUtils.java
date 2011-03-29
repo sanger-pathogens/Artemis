@@ -429,6 +429,8 @@ class IOUtils
       if(reader != null)
         basesStr = getAllBasesInRegion(reader, sbegc_raw, sendc_raw, basesStr,
                        features, vcfView, marker.isForwardMarker());
+      else
+        basesStr = basesStr.toUpperCase();
 
       linePos = writeOrView(writer, header, basesStr, buffSeq, linePos);
       header = null;
@@ -466,8 +468,16 @@ class IOUtils
           throws IOException
   {
     StringBuffer header = new StringBuffer(hdr);
+    final String basesStr;
+    
     if(reader != null)
+    {
       header.append(reader.getName()).append(" ");
+      basesStr = buff.toString();
+    }
+    else
+      basesStr = buff.toString().toUpperCase();
+    
     if(f != null)
     {
       header.append(f.getSystematicName()).append(" ");
@@ -481,10 +491,10 @@ class IOUtils
     {
       SequenceViewer viewer =
           new SequenceViewer ("Feature base viewer for feature(s)", false);  
-      viewer.setSequence(">"+header.toString(), buff.toString());
+      viewer.setSequence(">"+header.toString(), basesStr);
     }
     else    // write to file
-      writeSequence(writer, header, buff.toString(), 0);
+      writeSequence(writer, header, basesStr, 0);
   }
   
   /**
