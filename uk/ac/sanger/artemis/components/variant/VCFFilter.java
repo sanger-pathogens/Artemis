@@ -260,8 +260,7 @@ public class VCFFilter extends JFrame
           return false;
       }
       catch(NullPointerException npe){}
-      
-      
+
       try
       {
         String vals[] = COMMA_PATTERN.split(record.getInfoValue("CI95"));
