@@ -103,9 +103,7 @@ class VCFRecord
     }
     return rec;
   }
-  
 
-  
   /**
    * For example DP or MQ
    * @param key
@@ -127,7 +125,7 @@ class VCFRecord
     {
       if(fmts[i].equals(key))
       {
-        String vals[] = getSampleDataString().split(":");
+        String vals[] = COLON_PATTERN.split(getSampleDataString());
         if(vals.length == fmts.length)
           return vals[i];
       }
