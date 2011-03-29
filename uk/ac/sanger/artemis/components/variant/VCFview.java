@@ -166,12 +166,14 @@ public class VCFview extends JPanel
   
   private int colourScheme = 0;
   private Color colMap[] = makeColours(Color.RED, 255);
+  private Color lighterGrey = new Color(220,220,220);
+  private Composite composite;
+  private Composite originalComposite;
   
   Hashtable<String, Integer> offsetLengths = null;
   private boolean concatSequences = false;
   protected static Pattern tabPattern = Pattern.compile("\t");
   
-  private Color lighterGrey = new Color(220,220,220);
   public static String VCFFILE_SUFFIX = ".*\\.[bv]{1}cf(\\.gz)*$";
   private static String FILE_SUFFIX = "\\.[bv]{1}cf(\\.gz)*$";
   
@@ -1143,7 +1145,6 @@ public class VCFview extends JPanel
       float pixPerBase, FeatureVector features, boolean vcf_v4)
   {
     int basePosition = record.getPos() + getSequenceOffset(record.getChrom());
-   
     if( !showVariant(record, features, basePosition, vcf_v4) )
       return;
     
@@ -1165,7 +1166,13 @@ public class VCFview extends JPanel
       g.setColor(getColourForSNP(record, features, basePosition));
       if(record.getAlt().isNonVariant())
       {
-        g.drawLine(pos[0], pos[1]-2, pos[0], pos[1]-LINE_HEIGHT+4);
+        if(originalComposite == null)
+          originalComposite = g.getComposite();
+        if(composite == null)
+          composite = makeComposite(0.1f);
+        g.setComposite(composite);
+        g.drawLine(pos[0], pos[1], pos[0], pos[1]-LINE_HEIGHT+6);
+        g.setComposite(originalComposite);
         return;
       }
     }
