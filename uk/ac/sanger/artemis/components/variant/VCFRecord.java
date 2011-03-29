@@ -42,6 +42,7 @@ class VCFRecord
   private float quality;
   private String filter;
   private String info;
+  private String infos[];
   private String format;
   private String data[][];
   private short synFlag = -1;
@@ -111,10 +112,11 @@ class VCFRecord
    */
   protected String getInfoValue(String key)
   {
-    String parts[] = SEMICOLON_PATTERN.split(info);
-    for(int i=0; i<parts.length; i++)
-      if(parts[i].startsWith(key+"="))
-        return parts[i].substring(key.length()+1);
+    if(infos == null)
+      infos = SEMICOLON_PATTERN.split(info);
+    for(int i=0; i<infos.length; i++)
+      if(infos[i].startsWith(key+"="))
+        return infos[i].substring(key.length()+1);
     return null;
   }
   
