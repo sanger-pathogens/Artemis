@@ -52,6 +52,7 @@ import uk.ac.sanger.artemis.io.DocumentEntryFactory;
 import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
 import uk.ac.sanger.artemis.io.GenbankTblOutputStream;
+import uk.ac.sanger.artemis.io.IndexFastaStream;
 import uk.ac.sanger.artemis.io.InvalidRelationException;
 
 import java.awt.*;
@@ -787,6 +788,15 @@ public class EntryEdit extends JFrame
 
 //  if(!System.getProperty("os.arch").equals("alpha"))
 //  {
+    if(entry.getEMBLEntry().getSequence() instanceof IndexFastaStream)
+    {
+      JOptionPane.showMessageDialog(null, 
+          entry.getName()+" is an indexed sequence.\n"+
+          "This cannot be written out.",
+          "Write Option Not Available", 
+          JOptionPane.WARNING_MESSAGE);
+      return;
+    }
     
     if(useSwingWorker)
     {
