@@ -63,10 +63,13 @@ public class VariantBase
       return true;
 
     // look at probability of each genotype (PL) information as well
-    String pl;
-    if ((pl = record.getFormatValue("PL")) != null && pl.split(",").length == 3 &&
-         pl.split(",")[1].equals("0")) // middle value is zero, e.g.
-      return true;
+    String pl = record.getFormatValue("PL");
+    if(pl != null)
+    {
+      String pls[] = pl.split(",");
+      if(pls.length == 3 && pls[1].equals("0")) // middle value is zero, e.g.
+        return true;
+    }
 
     return false;
   }
