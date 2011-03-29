@@ -205,6 +205,12 @@ class IOUtils
     StringBuffer buffSeq = null;
     try
     {
+      JCheckBox useNs = new JCheckBox("Use N when filtered out", false);
+      Box yBox = Box.createVerticalBox();
+      yBox.add(useNs);
+      if(writer == null)
+        JOptionPane.showMessageDialog(null, yBox, "Option", JOptionPane.INFORMATION_MESSAGE);
+      
       if(!view && writer == null)
       {
         File newfile = new File(
@@ -223,12 +229,12 @@ class IOUtils
       Bases bases = entryGroup.getSequenceEntry().getBases();
       // reference
       writeOrViewRange(null, sbeg, send, writer, buffSeq, 
-          marker, bases, name, vcfView, entryGroup);
+          marker, bases, name, vcfView, entryGroup, useNs.isSelected());
 
       // vcf sequences
       for (int i = 0; i < vcfReaders.length; i++)
         writeOrViewRange(vcfReaders[i], sbeg, send, writer, buffSeq,
-            marker, bases, name, vcfView, entryGroup);
+            marker, bases, name, vcfView, entryGroup, useNs.isSelected());
 
       if(writer != null)
         writer.close();
@@ -290,10 +296,13 @@ class IOUtils
 
     JCheckBox single = new JCheckBox("Single FASTA", true);
     JCheckBox combineFeats = new JCheckBox("Combine feature sequences", true);
+    JCheckBox useNs = new JCheckBox("Use N when filtered out", false);
     Box yBox = Box.createVerticalBox();
     if(!view && vcfReaders.length > 1)
       yBox.add(single);
     yBox.add(combineFeats);
+    yBox.add(useNs);
+    
     String name = vcfView.getEntryGroup().getActiveEntries().elementAt(0).getName();
     try
     {
@@ -350,7 +359,7 @@ class IOUtils
             int sbeg = seg.getRawRange().getStart();
             int send = seg.getRawRange().getEnd();
             buff.append( getAllBasesInRegion(vcfReaders[i], sbeg, send, seg.getBases(),
-                  features, vcfView, f.isForwardFeature()) );
+                  features, vcfView, f.isForwardFeature(), useNs.isSelected()) );
           }
 
           if(!combineFeats.isSelected())
@@ -398,7 +407,8 @@ class IOUtils
                                        MarkerRange marker, Bases bases, 
                                        String name,
                                        VCFview vcfView,
-                                       final EntryGroup entryGroup) throws IOException, OutOfRangeException
+                                       final EntryGroup entryGroup, 
+                                       final boolean useNs) throws IOException, OutOfRangeException
   {
     int direction = ( marker.isForwardMarker() ? Bases.FORWARD : Bases.REVERSE);
     int length = send-sbeg+1;
@@ -428,7 +438,7 @@ class IOUtils
       //System.out.println((reader == null ? "" : reader.getName())+" "+sbegc+".."+sendc);
       if(reader != null)
         basesStr = getAllBasesInRegion(reader, sbegc_raw, sendc_raw, basesStr,
-                       features, vcfView, marker.isForwardMarker());
+                       features, vcfView, marker.isForwardMarker(), useNs);
       else
         basesStr = basesStr.toUpperCase();
 
@@ -516,7 +526,8 @@ class IOUtils
       String basesStr,
       final FeatureVector features,
       final VCFview vcfView,
-      final boolean isFwd) throws IOException
+      final boolean isFwd,
+      final boolean useNs) throws IOException
   {
     if(vcfView.isConcatenate())
     {
@@ -538,13 +549,13 @@ class IOUtils
             thisStart = 1;
           int thisEnd   = send - offset;
           basesStr = getBasesInRegion(reader, contigs[j], thisStart, thisEnd, 
-              basesStr, features, vcfView, isFwd);
+              basesStr, features, vcfView, isFwd, useNs);
         }
       }
     }
     else
       basesStr = getBasesInRegion(reader, vcfView.getChr(), sbeg, send, 
-          basesStr, features, vcfView, isFwd);
+          basesStr, features, vcfView, isFwd, useNs);
 
     return basesStr;
   }
@@ -570,7 +581,8 @@ class IOUtils
                                          String basesStr,
                                          final FeatureVector features,
                                          final VCFview vcfView,
-                                         final boolean isFwd) throws IOException
+                                         final boolean isFwd,
+                                         final boolean useNs) throws IOException
   {
     boolean vcf_v4 = reader.isVcf_v4();
     int len = basesStr.length();
@@ -584,7 +596,15 @@ class IOUtils
         int basePosition = record.getPos() + vcfView.getSequenceOffset(record.getChrom());
         if(vcfView.showVariant(record, features, basePosition, vcf_v4) )
           basesStr = getSeqsVariation(record, basesStr, sbeg, isFwd, vcf_v4);
-        
+        else if(useNs && !VCFFilter.passFilter(record) && isSNPorNonVariant(record))
+        {
+          int position = record.getPos()-sbeg;
+          if(!isFwd)
+            position = basesStr.length()-position-1;
+          basesStr = basesStr.substring(0, position) + 'n' +
+                     basesStr.substring(position+1);
+        }
+          
         if(basesStr.length() > len) // adjust for insertions
         {
           sbeg -= (basesStr.length()-len);
@@ -605,7 +625,14 @@ class IOUtils
           int basePosition = record.getPos() + vcfView.getSequenceOffset(record.getChrom());
           if(vcfView.showVariant(record, features, basePosition, vcf_v4) )
             basesStr = getSeqsVariation(record, basesStr, sbeg, isFwd, vcf_v4);
-          
+          else if(useNs && !VCFFilter.passFilter(record) && isSNPorNonVariant(record))
+          {
+            int position = record.getPos()-sbeg;
+            if(!isFwd)
+              position = basesStr.length()-position-1;
+            basesStr = basesStr.substring(0, position) + 'n' +
+                       basesStr.substring(position+1);
+          }
           
           if(basesStr.length() > len) // adjust for insertions
           {
@@ -622,6 +649,10 @@ class IOUtils
     return basesStr;
   }
   
+  private static boolean isSNPorNonVariant(VCFRecord record)
+  {
+    return (record.getRef().length() == 1 && record.getAlt().length() == 1) || record.getAlt().isNonVariant();
+  }
   
   protected static void wrapString(String bases, StringBuffer buff)
   {
