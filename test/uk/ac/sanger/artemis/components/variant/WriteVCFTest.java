@@ -58,7 +58,7 @@ public class WriteVCFTest
     StringWriter writer = getRegionWriter(true, 120768, 120777);
     
     StringBuffer buff = new StringBuffer(">test.embl.gz 120768:120777\n");
-    buff.append("cttgtcaagg\n");
+    buff.append("cttgtcaagg\n".toUpperCase());
     buff.append(">test.vcf.gz test.embl.gz 120768:120777\n");
     buff.append("tttgtcaagg\n");
     assertEquals("Export FASTA range ", writer.toString(), buff.toString());
@@ -75,7 +75,7 @@ public class WriteVCFTest
     StringWriter writer = getRegionWriter(false, 120768, 120777);
 
     StringBuffer buff = new StringBuffer(">test.embl.gz 120768:120777 reverse\n");
-    buff.append("ccttgacaag\n");
+    buff.append("ccttgacaag\n".toUpperCase());
     buff.append(">test.vcf.gz test.embl.gz 120768:120777 reverse\n");
     buff.append("ccttgacaaa\n");
     assertEquals("Export FASTA range ", writer.toString(), buff.toString());
@@ -92,7 +92,7 @@ public class WriteVCFTest
     StringWriter writer = getRegionWriter(true, 396835, 396845);
 
     StringBuffer buff = new StringBuffer(">test.embl.gz 396835:396845\n");
-    buff.append("tttttaggtat\n");
+    buff.append("tttttaggtat\n".toUpperCase());
     buff.append(">test.vcf.gz test.embl.gz 396835:396845\n");
     buff.append("tttt-aggtat\n");
     assertEquals("Export FASTA range ", writer.toString(), buff.toString());
@@ -109,7 +109,7 @@ public class WriteVCFTest
     StringWriter writer = getRegionWriter(false, 396835, 396845);
 
     StringBuffer buff = new StringBuffer(">test.embl.gz 396835:396845 reverse\n");
-    buff.append("atacctaaaaa\n");
+    buff.append("atacctaaaaa\n".toUpperCase());
     buff.append(">test.vcf.gz test.embl.gz 396835:396845 reverse\n");
     buff.append("ataccta-aaa\n");
     assertEquals("Export FASTA range ", writer.toString(), buff.toString());
@@ -126,7 +126,7 @@ public class WriteVCFTest
     StringWriter writer = getRegionWriter(true, 366785, 366795);
 
     StringBuffer buff = new StringBuffer(">test.embl.gz 366785:366795\n");
-    buff.append("tttcgcttttt\n");
+    buff.append("tttcgcttttt\n".toUpperCase());
     buff.append(">test.vcf.gz test.embl.gz 366785:366795\n");
     buff.append("tttTcgcttttt\n");
     assertEquals("Export FASTA range ", writer.toString(), buff.toString());
@@ -143,7 +143,7 @@ public class WriteVCFTest
     StringWriter writer = getRegionWriter(false, 366785, 366795);
 
     StringBuffer buff = new StringBuffer(">test.embl.gz 366785:366795 reverse\n");
-    buff.append("aaaaagcgaaa\n");
+    buff.append("aaaaagcgaaa\n".toUpperCase());
     buff.append(">test.vcf.gz test.embl.gz 366785:366795 reverse\n");
     buff.append("aaaaagcgaaaa\n");
     assertEquals("Export FASTA range ", writer.toString(), buff.toString());
@@ -161,7 +161,7 @@ public class WriteVCFTest
     StringWriter writer = getRegionWriter(true, 361975, 361985);
 
     StringBuffer buff = new StringBuffer(">test.embl.gz 361975:361985\n");
-    buff.append("actgaaaaatt\n");
+    buff.append("actgaaaaatt\n".toUpperCase());
     buff.append(">test.vcf.gz test.embl.gz 361975:361985\n");
     buff.append("actkaaaaatt\n");
     assertEquals("Export FASTA range ", writer.toString(), buff.toString());
@@ -180,46 +180,46 @@ public class WriteVCFTest
     StringBuffer basesBuff = new StringBuffer();
     //SPN23F03630
     
-    basesBuff.append("atgaagaaaactgtttataaaaaattgggtatttcaattattgcgagtactttattggct");
-    basesBuff.append("agccagttatcgacagtatctgctttgagtgttatttctagtacaggtgaagaatatgag");
-    basesBuff.append("gtaagtgagacactagaaaaaggtccagagtctaatgattcttcattatctgagatttca");
-    basesBuff.append("ccaacgtatggttcatactaccaaaagcaatcagaagtattatcggtaatgatgatttga");
+    basesBuff.append("atgaagaaaactgtttataaaaaattgggtatttcaattattgcgagtactttattggct".toUpperCase());
+    basesBuff.append("agccagttatcgacagtatctgctttgagtgttatttctagtacaggtgaagaatatgag".toUpperCase());
+    basesBuff.append("gtaagtgagacactagaaaaaggtccagagtctaatgattcttcattatctgagatttca".toUpperCase());
+    basesBuff.append("ccaacgtatggttcatactaccaaaagcaatcagaagtattatcggtaatgatgatttga".toUpperCase());
     
     //SPN23F03800
-    basesBuff.append("atggcaagtatcacactcacaccaagcgaaaaggatattcaggcttttcttgaacactat");
-    basesBuff.append("caaaccagtctggctcctagcaagaatccctatatccgctactttttgaaactacctcaa");
-    basesBuff.append("gcaacggtttctatctatacttctggaaaaatcttgcttcagggtgaaggggctgaaaaa");
-    basesBuff.append("tacgccagtttctttggctatcaagctgtagagcaaaccagcggacaaaatcttccttta");
-    basesBuff.append("attgggacagatgaggtgggaaatggttcctactttggtgggcttgcagttgtggctgcc");
-    basesBuff.append("tttgtcacacctgaccagcacgactttttacgaaaactcggtgtgggggattctaagact");
-    basesBuff.append("ctgaccgaccaaaagatccgtcagattgctcctattctcaaggaaaaaattcagcaccag");
-    basesBuff.append("gcactccttctctcacccagcaagtacaacgaggtcatcggagaccgctacaatgctgtt");
-    basesBuff.append("tcggttaaggttgccctccataatcaggctatctatctcctccttcaaaaaggtgttcag");
-    basesBuff.append("cctgagaaaattgtgattgatgcctttaccagtgctaaaaattatgacaagtacttggca");
-    basesBuff.append("caagagaccaatcgtttcagcaatcctatcagcttagaagaaaaggctgagggcaaatac");
-    basesBuff.append("ttggctgtcgcagtttcttctgtcattgcgcgtgatctctttctggaaaatcttgaaaat");
-    basesBuff.append("ttgggacgagaactgggttatcagcttccaagtggagctggaacggcttctgacaaggtg");
-    basesBuff.append("gctagccagattttgcaagcctatggtatgcagggactcaacttctgcgccaaattgcac");
-    basesBuff.append("tttaaaaatactgaaaaagcgaaaaacgcttag");
+    basesBuff.append("atggcaagtatcacactcacaccaagcgaaaaggatattcaggcttttcttgaacactat".toUpperCase());
+    basesBuff.append("caaaccagtctggctcctagcaagaatccctatatccgctactttttgaaactacctcaa".toUpperCase());
+    basesBuff.append("gcaacggtttctatctatacttctggaaaaatcttgcttcagggtgaaggggctgaaaaa".toUpperCase());
+    basesBuff.append("tacgccagtttctttggctatcaagctgtagagcaaaccagcggacaaaatcttccttta".toUpperCase());
+    basesBuff.append("attgggacagatgaggtgggaaatggttcctactttggtgggcttgcagttgtggctgcc".toUpperCase());
+    basesBuff.append("tttgtcacacctgaccagcacgactttttacgaaaactcggtgtgggggattctaagact".toUpperCase());
+    basesBuff.append("ctgaccgaccaaaagatccgtcagattgctcctattctcaaggaaaaaattcagcaccag".toUpperCase());
+    basesBuff.append("gcactccttctctcacccagcaagtacaacgaggtcatcggagaccgctacaatgctgtt".toUpperCase());
+    basesBuff.append("tcggttaaggttgccctccataatcaggctatctatctcctccttcaaaaaggtgttcag".toUpperCase());
+    basesBuff.append("cctgagaaaattgtgattgatgcctttaccagtgctaaaaattatgacaagtacttggca".toUpperCase());
+    basesBuff.append("caagagaccaatcgtttcagcaatcctatcagcttagaagaaaaggctgagggcaaatac".toUpperCase());
+    basesBuff.append("ttggctgtcgcagtttcttctgtcattgcgcgtgatctctttctggaaaatcttgaaaat".toUpperCase());
+    basesBuff.append("ttgggacgagaactgggttatcagcttccaagtggagctggaacggcttctgacaaggtg".toUpperCase());
+    basesBuff.append("gctagccagattttgcaagcctatggtatgcagggactcaacttctgcgccaaattgcac".toUpperCase());
+    basesBuff.append("tttaaaaatactgaaaaagcgaaaaacgcttag".toUpperCase());
     
     //SPN23F04290
-    basesBuff.append("atgctttatgtgggcattgatatcgctaaaaataaacacgatgttacagccttgaatgtt");
-    basesBuff.append("ccaggaaaaactgttcttaaaccactcactttttcaaataataaagctggttttgaactc");
-    basesBuff.append("ttagatctgtctcttcgacagctcaaccaagactgtctcatcgctcttaaacttctttct");
-    basesBuff.append("gatcccaatcgtgaacaatttcaacacgataatcggcaagtagacctaaaaatactggct");
-    basesBuff.append("agacatattcatcgtctcaagaaaaaacagtctgattggaaagtacaatacactcgttgt");
-    basesBuff.append("cttgatatcatctttcctgagttggataaaatcgttggaaagcattcagaatatacctac");
-    basesBuff.append("caactcttgacgcgctaccctaatcctcagaaaaggattgaggcaggatttgataagctg");
-    basesBuff.append("atagaaattaagcgattgaccgcttctaaaattcaggatatcctctcagtcgcacctcgt");
-    basesBuff.append("tctatcgaaacaacatctcctgctcgtgaattcgaaatcatcgaaatcatcaaacattac");
-    basesBuff.append("aagaggctcattgacaaggcggaaacatgtgtcaatgacttgatggctgagttcaactca");
-    basesBuff.append("gtcatcacgacggttactgggattgggggtcgtttaggggcggtcattttagccgagatt");
-    basesBuff.append("cgaaatattcatgcctttgataatcctgctcaattacaagctttcgctggactggattct");
-    basesBuff.append("tctatttatcagtcaggtcagattgatttagctggaagaatgatcaaacggggttcccct");
-    basesBuff.append("catctgcggtgggcactcatacaagctgccaaagcatgcgctcgcttttcacctgctttt");
-    basesBuff.append("aaggcctatcttaagactaagttagaacaaggaaaacattacaatgtagccatcatccac");
-    basesBuff.append("cttgcaaaaaaacttatccgaaccctgttttatatcctaaaaaagagctgccatttgacg");
-    basesBuff.append("aacaaaaagtga");
+    basesBuff.append("atgctttatgtgggcattgatatcgctaaaaataaacacgatgttacagccttgaatgtt".toUpperCase());
+    basesBuff.append("ccaggaaaaactgttcttaaaccactcactttttcaaataataaagctggttttgaactc".toUpperCase());
+    basesBuff.append("ttagatctgtctcttcgacagctcaaccaagactgtctcatcgctcttaaacttctttct".toUpperCase());
+    basesBuff.append("gatcccaatcgtgaacaatttcaacacgataatcggcaagtagacctaaaaatactggct".toUpperCase());
+    basesBuff.append("agacatattcatcgtctcaagaaaaaacagtctgattggaaagtacaatacactcgttgt".toUpperCase());
+    basesBuff.append("cttgatatcatctttcctgagttggataaaatcgttggaaagcattcagaatatacctac".toUpperCase());
+    basesBuff.append("caactcttgacgcgctaccctaatcctcagaaaaggattgaggcaggatttgataagctg".toUpperCase());
+    basesBuff.append("atagaaattaagcgattgaccgcttctaaaattcaggatatcctctcagtcgcacctcgt".toUpperCase());
+    basesBuff.append("tctatcgaaacaacatctcctgctcgtgaattcgaaatcatcgaaatcatcaaacattac".toUpperCase());
+    basesBuff.append("aagaggctcattgacaaggcggaaacatgtgtcaatgacttgatggctgagttcaactca".toUpperCase());
+    basesBuff.append("gtcatcacgacggttactgggattgggggtcgtttaggggcggtcattttagccgagatt".toUpperCase());
+    basesBuff.append("cgaaatattcatgcctttgataatcctgctcaattacaagctttcgctggactggattct".toUpperCase());
+    basesBuff.append("tctatttatcagtcaggtcagattgatttagctggaagaatgatcaaacggggttcccct".toUpperCase());
+    basesBuff.append("catctgcggtgggcactcatacaagctgccaaagcatgcgctcgcttttcacctgctttt".toUpperCase());
+    basesBuff.append("aaggcctatcttaagactaagttagaacaaggaaaacattacaatgtagccatcatccac".toUpperCase());
+    basesBuff.append("cttgcaaaaaaacttatccgaaccctgttttatatcctaaaaaagagctgccatttgacg".toUpperCase());
+    basesBuff.append("aacaaaaagtga".toUpperCase());
     
     IOUtils.wrapString(basesBuff.toString(), fastaBuff);
 
@@ -285,83 +285,83 @@ public class WriteVCFTest
     StringBuffer fastaBuff = new StringBuffer(">MAL1.embl.gz\n");
     StringBuffer basesBuff = new StringBuffer();
     //PFA0140c
-    basesBuff.append("atgagcaatataaatgataataatattcaaaacagcgatgtaaaggaaataaaaaatgat");
-    basesBuff.append("gaatatatgggagaagggtattataatacacataatgaatgtgagggttttgaacaaaac");
-    basesBuff.append("aattatatgaataataatgaaatcaatatggtagatggaaaacatgataatagtgatgat");
-    basesBuff.append("aatataaataattccatgggagggataacacatatgggacatgtgaatgagtataaaaaa");
-    basesBuff.append("ataaaatcattttgtaagttaagaaggaaatttgtatatataaggagaacgggttataat");
-    basesBuff.append("tcatacatatataatagaaagaaaaaaaaaaataaaaataaaatagagactgaaaggaat");
-    basesBuff.append("gtagatgaaatgtataatatgaataataacaataataataatcataacaacaacaacaat");
-    basesBuff.append("aataataataataataataataataataacagatataataataatattaattgtttggat");
-    basesBuff.append("aattttagcgatttatttttaaaatttataaaacaattcattgatcatataaatgtacat");
-    basesBuff.append("ttgaataatgtaaaaaattattatcgaaattatgtgtgtaatgataatatgaaatatgta");
-    basesBuff.append("ttttatttatttattatatatatgttgttaaatattatgattatctttttttcgatgttt");
-    basesBuff.append("gtatatttctttgtatatttttattttatcccacaaaataagtatgtatttcctatagat");
-    basesBuff.append("ttttcattggtaaaaaatcctatagaagattatttacaaaacgaaaaaagatataacatt");
-    basesBuff.append("atgaataaaatgaataatatggacaatatggataatatggataatatgaatcatataaat");
-    basesBuff.append("tatatgaataacatgaatcataataataataataataataataattgtaatataaagaat");
-    basesBuff.append("aattgtaataatattaatatgatgaaaaattttgataagtctaatttcaatgagtcagaa");
-    basesBuff.append("gatttctatataaaatatttcgattctttaaaagaaagcaggaaaagaaatgattattta");
-    basesBuff.append("tataataataaattaaaaggtttttataaagattttcaaaataatattttaagaggtcat");
-    basesBuff.append("atactatttcaaaataaattatattattcagaaaaagaagagttttataagaatttcaat");
-    basesBuff.append("ccttttaattttatatttttttttaagaaaagaacaggaaaagataatttacttaatata");
-    basesBuff.append("aagaaaggatataaaattgatatatttttaaatttttcttatatgaataatgaatataat");
-    basesBuff.append("gacaaatttaattttattcaattagttactgaaatttttaataaaaataataatgtaatg");
-    basesBuff.append("tttagaaatgaaaaattatatatgaataataataattatgaatttataaagaaattacat");
-    basesBuff.append("ttatttttaaatgctcctttttatttttttaatatgtttaataataaaacaaaagaaatt");
-    basesBuff.append("cgattagtacatgattataaatatacgacgaatttttataaaattcaaatatatatatac");
-    basesBuff.append("ccaccgatacaaatacataaagcttctatcgttattcttgtctacgttaattttatatat");
-    basesBuff.append("tattacatgtataattatccttttgtgttcttttatatttttgtttttttcttgagcttc");
-    basesBuff.append("atcttgatatttttcaacactatccttttttttatattgagttgttattattattttaaa");
-    basesBuff.append("aacggattataa");
+    basesBuff.append("atgagcaatataaatgataataatattcaaaacagcgatgtaaaggaaataaaaaatgat".toUpperCase());
+    basesBuff.append("gaatatatgggagaagggtattataatacacataatgaatgtgagggttttgaacaaaac".toUpperCase());
+    basesBuff.append("aattatatgaataataatgaaatcaatatggtagatggaaaacatgataatagtgatgat".toUpperCase());
+    basesBuff.append("aatataaataattccatgggagggataacacatatgggacatgtgaatgagtataaaaaa".toUpperCase());
+    basesBuff.append("ataaaatcattttgtaagttaagaaggaaatttgtatatataaggagaacgggttataat".toUpperCase());
+    basesBuff.append("tcatacatatataatagaaagaaaaaaaaaaataaaaataaaatagagactgaaaggaat".toUpperCase());
+    basesBuff.append("gtagatgaaatgtataatatgaataataacaataataataatcataacaacaacaacaat".toUpperCase());
+    basesBuff.append("aataataataataataataataataataacagatataataataatattaattgtttggat".toUpperCase());
+    basesBuff.append("aattttagcgatttatttttaaaatttataaaacaattcattgatcatataaatgtacat".toUpperCase());
+    basesBuff.append("ttgaataatgtaaaaaattattatcgaaattatgtgtgtaatgataatatgaaatatgta".toUpperCase());
+    basesBuff.append("ttttatttatttattatatatatgttgttaaatattatgattatctttttttcgatgttt".toUpperCase());
+    basesBuff.append("gtatatttctttgtatatttttattttatcccacaaaataagtatgtatttcctatagat".toUpperCase());
+    basesBuff.append("ttttcattggtaaaaaatcctatagaagattatttacaaaacgaaaaaagatataacatt".toUpperCase());
+    basesBuff.append("atgaataaaatgaataatatggacaatatggataatatggataatatgaatcatataaat".toUpperCase());
+    basesBuff.append("tatatgaataacatgaatcataataataataataataataataattgtaatataaagaat".toUpperCase());
+    basesBuff.append("aattgtaataatattaatatgatgaaaaattttgataagtctaatttcaatgagtcagaa".toUpperCase());
+    basesBuff.append("gatttctatataaaatatttcgattctttaaaagaaagcaggaaaagaaatgattattta".toUpperCase());
+    basesBuff.append("tataataataaattaaaaggtttttataaagattttcaaaataatattttaagaggtcat".toUpperCase());
+    basesBuff.append("atactatttcaaaataaattatattattcagaaaaagaagagttttataagaatttcaat".toUpperCase());
+    basesBuff.append("ccttttaattttatatttttttttaagaaaagaacaggaaaagataatttacttaatata".toUpperCase());
+    basesBuff.append("aagaaaggatataaaattgatatatttttaaatttttcttatatgaataatgaatataat".toUpperCase());
+    basesBuff.append("gacaaatttaattttattcaattagttactgaaatttttaataaaaataataatgtaatg".toUpperCase());
+    basesBuff.append("tttagaaatgaaaaattatatatgaataataataattatgaatttataaagaaattacat".toUpperCase());
+    basesBuff.append("ttatttttaaatgctcctttttatttttttaatatgtttaataataaaacaaaagaaatt".toUpperCase());
+    basesBuff.append("cgattagtacatgattataaatatacgacgaatttttataaaattcaaatatatatatac".toUpperCase());
+    basesBuff.append("ccaccgatacaaatacataaagcttctatcgttattcttgtctacgttaattttatatat".toUpperCase());
+    basesBuff.append("tattacatgtataattatccttttgtgttcttttatatttttgtttttttcttgagcttc".toUpperCase());
+    basesBuff.append("atcttgatatttttcaacactatccttttttttatattgagttgttattattattttaaa".toUpperCase());
+    basesBuff.append("aacggattataa".toUpperCase());
     
     // PFA0475c
-    basesBuff.append("atggaaggacagcataaagaaaaaaatacaaaaataaaaaaaagtaaaaaaccgttagtt");
-    basesBuff.append("gttagtaatagaaaaccattcaacgtttttgaaaaaaaaaaaagtgcaaagccgctcgta");
-    basesBuff.append("agagatcctcgtttttctgatttttcaggatcgttcaatgcgaacttttttagaaatgca");
-    basesBuff.append("tacaagtttttatacgactcaagagaacaagaaaagaagattatagaaaaaaaattaaaa");
-    basesBuff.append("agcaaaaatataacacaagaagaaaaggacgaattaaaaaaaaaatacaatgattataaa");
-    basesBuff.append("agcactgatatattattaaaaaaaaaagaagaagaaaggaaattaaaagcagaattagta");
-    basesBuff.append("aaacaggaaaaacaaaatattctaaccaaaaataaaaaaccttattattatagtgataga");
-    basesBuff.append("aaaattaaaaaaatagttcaagaaaaattgtcgagttataagagtttaaagaaagttata");
-    basesBuff.append("aaaaaagaaaaaaaaacattgcaaaaagagagaaagagaaacatcaaaccaacaaaaaaa");
-    basesBuff.append("aaaatttttttaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-    basesBuff.append("aaaaaaaaaaaaaaaacataa");
+    basesBuff.append("atggaaggacagcataaagaaaaaaatacaaaaataaaaaaaagtaaaaaaccgttagtt".toUpperCase());
+    basesBuff.append("gttagtaatagaaaaccattcaacgtttttgaaaaaaaaaaaagtgcaaagccgctcgta".toUpperCase());
+    basesBuff.append("agagatcctcgtttttctgatttttcaggatcgttcaatgcgaacttttttagaaatgca".toUpperCase());
+    basesBuff.append("tacaagtttttatacgactcaagagaacaagaaaagaagattatagaaaaaaaattaaaa".toUpperCase());
+    basesBuff.append("agcaaaaatataacacaagaagaaaaggacgaattaaaaaaaaaatacaatgattataaa".toUpperCase());
+    basesBuff.append("agcactgatatattattaaaaaaaaaagaagaagaaaggaaattaaaagcagaattagta".toUpperCase());
+    basesBuff.append("aaacaggaaaaacaaaatattctaaccaaaaataaaaaaccttattattatagtgataga".toUpperCase());
+    basesBuff.append("aaaattaaaaaaatagttcaagaaaaattgtcgagttataagagtttaaagaaagttata".toUpperCase());
+    basesBuff.append("aaaaaagaaaaaaaaacattgcaaaaagagagaaagagaaacatcaaaccaacaaaaaaa".toUpperCase());
+    basesBuff.append("aaaatttttttaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa".toUpperCase());
+    basesBuff.append("aaaaaaaaaaaaaaaacataa".toUpperCase());
 
     // PFA0570w
-    basesBuff.append("atggaaggaaatgataagtgtttaaatgtcaccttggctgacatagaaaaagatacaatg");
-    basesBuff.append("aaaaataatttaagcctaaatagtaaaggtaatgaacttttaaataataagaaaagtggt");
-    basesBuff.append("tataaaaataatataaagaaaaaaaagaaaaaaagtataaaggaaaataatgggaatgaa");
-    basesBuff.append("caaaataaaggtaatggtactcttaccctaaagaatgaagaaaatgatagtaaggtattc");
-    basesBuff.append("aaaacatacagaaataaaagaaatagcaaaaatgataatatggaaaaacataaaaatgat");
-    basesBuff.append("gtaacaaaaaatgaaaatgatataacaaaaaatgaaaatgatgagataataaaagaagat");
-    basesBuff.append("aaaaatagcaatttaggaaaaaccaatggatataatataaaagatataagaagaaaaaaa");
-    basesBuff.append("aaagacaataataaagaatacataagagaccatatgaaaaaaaaaaaagatataataatg");
-    basesBuff.append("aataataaaggaaaaaaaaataatagtaataataataataatgacaataatgataataat");
-    basesBuff.append("gataataataatagtaataatagcaataataataataataataataataataatagtaat");
-    basesBuff.append("gaatatacaaaaagaaagaatacacataaaaaacatttaaatgaacactataaaaatgag");
-    basesBuff.append("agtaataagaaaaaggttaatgaaaagaaatacaataatagtgtgtatgttaataataat");
-    basesBuff.append("ataaagaaaaatcatgtcaacaaaaataaaaatgaaaattatttacaaaatgtgtggtta");
-    basesBuff.append("tttttattcgataatgaagttagaaaagaaaatgaccaatgtgttggaaaaattatatca");
-    basesBuff.append("ctggatactttcaataccatagaaaaattttacaagaactataaatatatgaaatcgcct");
-    basesBuff.append("tcagccattaaggaaaaatacaacatttatctttttaaacaaaattttagacccctcttt");
-    basesBuff.append("gacgaatatccaaatggttttatttgtaccgttaaaaatgccaatcattttaaaaatgac");
-    basesBuff.append("agcgttgatataatatgggaaaaaatggttcttttggctataggagaagaatttagctta");
-    basesBuff.append("atcgacttatgtggtttacaattatgcataagagataatgaaatgttttttaaaatatgg");
-    basesBuff.append("atgaaaaattattcaaattatctaaaaaatatattgatgaaaaaattaagggacgcctac");
-    basesBuff.append("aatgtatacaataacaaaaaaaatcaacaaggaaagggaaaaaatgaaaaggctaaaaag");
-    basesBuff.append("aattacaataaaaataataagggcgcagaatttgtagctagtaaaaaggattctttaaaa");
-    basesBuff.append("atgcataattatccaaacatagtaccaccaccaaattatttaggaaattacaatgtttac");
-    basesBuff.append("aaatacaacctagatatgaatttgttttatttatataataatcaaaatatgcctaacccg");
-    basesBuff.append("tatatatacattcctgtcaatgtacccaataatcaatataataatatttatccagattat");
-    basesBuff.append("atgtacgacagtaatacgagctatcctatagatataattaataataatttattaagtaat");
-    basesBuff.append("gatattaatgtaccaagcaattttgtaaataataaaatgaatggatcgataatagtagat");
-    basesBuff.append("aaaaaaagtaaaattgattatggattaaagaatgaggattataaaaaaaaatctatgaat");
-    basesBuff.append("tccttaaattcgaatgatatatatgaagatagtaaaagtactacatgtattaaatccgta");
-    basesBuff.append("tataccgatgatgaatatgaatataataatagtagtaataataataataatatatcgtat");
-    basesBuff.append("gcttgtcctggtgatcatgataaaacgttttgtgaattacgaaagaacccaaatgaatct");
-    basesBuff.append("tccatccttgtaattataaatttaaaagaattttatacggaggtaagattagcatatgaa");
-    basesBuff.append("ctatatattatatataataggagaatgaaaaaaaaaaacaataaaacaaattaa");
+    basesBuff.append("atggaaggaaatgataagtgtttaaatgtcaccttggctgacatagaaaaagatacaatg".toUpperCase());
+    basesBuff.append("aaaaataatttaagcctaaatagtaaaggtaatgaacttttaaataataagaaaagtggt".toUpperCase());
+    basesBuff.append("tataaaaataatataaagaaaaaaaagaaaaaaagtataaaggaaaataatgggaatgaa".toUpperCase());
+    basesBuff.append("caaaataaaggtaatggtactcttaccctaaagaatgaagaaaatgatagtaaggtattc".toUpperCase());
+    basesBuff.append("aaaacatacagaaataaaagaaatagcaaaaatgataatatggaaaaacataaaaatgat".toUpperCase());
+    basesBuff.append("gtaacaaaaaatgaaaatgatataacaaaaaatgaaaatgatgagataataaaagaagat".toUpperCase());
+    basesBuff.append("aaaaatagcaatttaggaaaaaccaatggatataatataaaagatataagaagaaaaaaa".toUpperCase());
+    basesBuff.append("aaagacaataataaagaatacataagagaccatatgaaaaaaaaaaaagatataataatg".toUpperCase());
+    basesBuff.append("aataataaaggaaaaaaaaataatagtaataataataataatgacaataatgataataat".toUpperCase());
+    basesBuff.append("gataataataatagtaataatagcaataataataataataataataataataatagtaat".toUpperCase());
+    basesBuff.append("gaatatacaaaaagaaagaatacacataaaaaacatttaaatgaacactataaaaatgag".toUpperCase());
+    basesBuff.append("agtaataagaaaaaggttaatgaaaagaaatacaataatagtgtgtatgttaataataat".toUpperCase());
+    basesBuff.append("ataaagaaaaatcatgtcaacaaaaataaaaatgaaaattatttacaaaatgtgtggtta".toUpperCase());
+    basesBuff.append("tttttattcgataatgaagttagaaaagaaaatgaccaatgtgttggaaaaattatatca".toUpperCase());
+    basesBuff.append("ctggatactttcaataccatagaaaaattttacaagaactataaatatatgaaatcgcct".toUpperCase());
+    basesBuff.append("tcagccattaaggaaaaatacaacatttatctttttaaacaaaattttagacccctcttt".toUpperCase());
+    basesBuff.append("gacgaatatccaaatggttttatttgtaccgttaaaaatgccaatcattttaaaaatgac".toUpperCase());
+    basesBuff.append("agcgttgatataatatgggaaaaaatggttcttttggctataggagaagaatttagctta".toUpperCase());
+    basesBuff.append("atcgacttatgtggtttacaattatgcataagagataatgaaatgttttttaaaatatgg".toUpperCase());
+    basesBuff.append("atgaaaaattattcaaattatctaaaaaatatattgatgaaaaaattaagggacgcctac".toUpperCase());
+    basesBuff.append("aatgtatacaataacaaaaaaaatcaacaaggaaagggaaaaaatgaaaaggctaaaaag".toUpperCase());
+    basesBuff.append("aattacaataaaaataataagggcgcagaatttgtagctagtaaaaaggattctttaaaa".toUpperCase());
+    basesBuff.append("atgcataattatccaaacatagtaccaccaccaaattatttaggaaattacaatgtttac".toUpperCase());
+    basesBuff.append("aaatacaacctagatatgaatttgttttatttatataataatcaaaatatgcctaacccg".toUpperCase());
+    basesBuff.append("tatatatacattcctgtcaatgtacccaataatcaatataataatatttatccagattat".toUpperCase());
+    basesBuff.append("atgtacgacagtaatacgagctatcctatagatataattaataataatttattaagtaat".toUpperCase());
+    basesBuff.append("gatattaatgtaccaagcaattttgtaaataataaaatgaatggatcgataatagtagat".toUpperCase());
+    basesBuff.append("aaaaaaagtaaaattgattatggattaaagaatgaggattataaaaaaaaatctatgaat".toUpperCase());
+    basesBuff.append("tccttaaattcgaatgatatatatgaagatagtaaaagtactacatgtattaaatccgta".toUpperCase());
+    basesBuff.append("tataccgatgatgaatatgaatataataatagtagtaataataataataatatatcgtat".toUpperCase());
+    basesBuff.append("gcttgtcctggtgatcatgataaaacgttttgtgaattacgaaagaacccaaatgaatct".toUpperCase());
+    basesBuff.append("tccatccttgtaattataaatttaaaagaattttatacggaggtaagattagcatatgaa".toUpperCase());
+    basesBuff.append("ctatatattatatataataggagaatgaaaaaaaaaaacaataaaacaaattaa".toUpperCase());
 
     IOUtils.wrapString(basesBuff.toString(), fastaBuff);
 
