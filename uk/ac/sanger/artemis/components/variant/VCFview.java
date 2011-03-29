@@ -1166,13 +1166,13 @@ public class VCFview extends JPanel
       g.setColor(getColourForSNP(record, features, basePosition));
       if(record.getAlt().isNonVariant())
       {
-        if(originalComposite == null)
+      /*if(originalComposite == null)
           originalComposite = g.getComposite();
         if(composite == null)
-          composite = makeComposite(0.1f);
-        g.setComposite(composite);
+          composite = makeComposite(0.1f);*/
+        //g.setComposite(composite);
         g.drawLine(pos[0], pos[1], pos[0], pos[1]-LINE_HEIGHT+6);
-        g.setComposite(originalComposite);
+        //g.setComposite(originalComposite);
         return;
       }
     }
