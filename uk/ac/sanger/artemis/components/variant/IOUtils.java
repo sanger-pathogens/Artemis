@@ -205,7 +205,7 @@ class IOUtils
     StringBuffer buffSeq = null;
     try
     {
-      JCheckBox useNs = new JCheckBox("Use N when filtered out", false);
+      JCheckBox useNs = new JCheckBox("Use N for filtered out sites", false);
       Box yBox = Box.createVerticalBox();
       yBox.add(useNs);
       if(writer == null)
@@ -296,7 +296,7 @@ class IOUtils
 
     JCheckBox single = new JCheckBox("Single FASTA", true);
     JCheckBox combineFeats = new JCheckBox("Combine feature sequences", true);
-    JCheckBox useNs = new JCheckBox("Use N when filtered out", false);
+    JCheckBox useNs = new JCheckBox("Use N for filtered out sites", false);
     Box yBox = Box.createVerticalBox();
     if(!view && vcfReaders.length > 1)
       yBox.add(single);
@@ -596,7 +596,7 @@ class IOUtils
         int basePosition = record.getPos() + vcfView.getSequenceOffset(record.getChrom());
         if(vcfView.showVariant(record, features, basePosition, vcf_v4) )
           basesStr = getSeqsVariation(record, basesStr, sbeg, isFwd, vcf_v4);
-        else if(useNs && !VCFFilter.passFilter(record) && isSNPorNonVariant(record))
+        else if(useNs && isSNPorNonVariant(record))
         {
           int position = record.getPos()-sbeg;
           if(!isFwd)
@@ -625,7 +625,7 @@ class IOUtils
           int basePosition = record.getPos() + vcfView.getSequenceOffset(record.getChrom());
           if(vcfView.showVariant(record, features, basePosition, vcf_v4) )
             basesStr = getSeqsVariation(record, basesStr, sbeg, isFwd, vcf_v4);
-          else if(useNs && !VCFFilter.passFilter(record) && isSNPorNonVariant(record))
+          else if(useNs && isSNPorNonVariant(record))
           {
             int position = record.getPos()-sbeg;
             if(!isFwd)
