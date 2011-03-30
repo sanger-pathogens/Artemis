@@ -167,16 +167,16 @@ public class VCFview extends JPanel
   private int colourScheme = 0;
   private Color colMap[] = makeColours(Color.RED, 255);
   private Color lighterGrey = new Color(220,220,220);
-  private Composite composite;
-  private Composite originalComposite;
-  
+
   Hashtable<String, Integer> offsetLengths = null;
   private boolean concatSequences = false;
   protected static Pattern tabPattern = Pattern.compile("\t");
   
   public static String VCFFILE_SUFFIX = ".*\\.[bv]{1}cf(\\.gz)*$";
   private static String FILE_SUFFIX = "\\.[bv]{1}cf(\\.gz)*$";
-  
+
+  private List<Integer> cacheVariantLines;
+
   public static org.apache.log4j.Logger logger4j = 
     org.apache.log4j.Logger.getLogger(VCFview.class);
 
@@ -960,7 +960,7 @@ public class VCFview extends JPanel
                           FeatureVector features) 
   {
     String s;
-    
+    cacheVariantLines = new Vector<Integer>(5);
     if(vcfReaders[i] instanceof BCFReader)
     {
       try
@@ -1140,7 +1140,6 @@ public class VCFview extends JPanel
     return false;
   }
   
-  
   private void drawVariantCall(Graphics2D g, VCFRecord record, int start, int index, 
       float pixPerBase, FeatureVector features, boolean vcf_v4)
   {
@@ -1166,13 +1165,9 @@ public class VCFview extends JPanel
       g.setColor(getColourForSNP(record, features, basePosition));
       if(record.getAlt().isNonVariant())
       {
-      /*if(originalComposite == null)
-          originalComposite = g.getComposite();
-        if(composite == null)
-          composite = makeComposite(0.1f);*/
-        //g.setComposite(composite);
-        g.drawLine(pos[0], pos[1], pos[0], pos[1]-LINE_HEIGHT+6);
-        //g.setComposite(originalComposite);
+        // use the cache to avoid drawing over a variant with a non-variant
+        if(!cacheVariantLines.contains(pos[0]))
+          g.drawLine(pos[0], pos[1], pos[0], pos[1]-LINE_HEIGHT+6);
         return;
       }
     }
@@ -1181,7 +1176,11 @@ public class VCFview extends JPanel
 
     if(markAsNewStop)
       g.fillArc(pos[0]-3, pos[1]-(LINE_HEIGHT/2)-3, 6, 6, 0, 360);
-    
+
+    if(cacheVariantLines.size() == 5)
+      cacheVariantLines.clear();
+    cacheVariantLines.add(pos[0]);
+
     g.drawLine(pos[0], pos[1], pos[0], pos[1]-LINE_HEIGHT);
   }
   
