@@ -810,6 +810,9 @@ abstract public class Splash extends JFrame
          BufferedReader bufferedreader = new BufferedReader(new FileReader(file_txt));
          BufferedWriter bufferedwriter = new BufferedWriter(new FileWriter(file_tmp));
          String line;
+         
+         boolean prompt_saved = false;
+         
          while ((line = bufferedreader.readLine()) != null)
          {
            if(line.startsWith("artemis.user.dir") && save_wd_properties)
@@ -822,6 +825,7 @@ abstract public class Splash extends JFrame
            {
              line = addEscapeChars("artemis.user.dir.prompt="+ 
                  Options.getOptions().getProperty("artemis.user.dir.prompt"));
+             prompt_saved = true;
            }
 
            if(line.startsWith("display_name_qualifiers") && save_display_name)
@@ -854,7 +858,7 @@ abstract public class Splash extends JFrame
            bufferedwriter.newLine();
          }
 
-         if(Options.getOptions().getProperty("artemis.user.dir.prompt") != null)
+         if(!prompt_saved && Options.getOptions().getProperty("artemis.user.dir.prompt") != null)
          {
            bufferedwriter.write("artemis.user.dir.prompt="+ 
                Options.getOptions().getProperty("artemis.user.dir.prompt"));
