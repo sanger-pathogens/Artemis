@@ -95,13 +95,13 @@ public class PrintArtemis extends ScrollPanel implements Printable
       entry.getBasePlotGroup().printComponent(g2d);
 //  g2d.translate(0,entry.getBasePlotGroup().getHeight());
 
-    if(jamDisplay.isSelected() && entry.getJamView() != null && entry.getJamView().isVisible())
+    if(jamDisplay.isSelected() && entry.getBamPanel() != null && entry.getBamPanel().isVisible())
     {
       entry.getBamPanel().paintComponents(g2d);
-      g2d.translate(0,entry.getBamPanel().getHeight());
+      g2d.translate(0,entry.getBamPanel().getHeight()-1);
     }
     
-    if(vcfDisplay.isSelected() && entry.getVcfPanel() != null && entry.getVcfPanel().isVisible())
+    if(vcfDisplay.isSelected() && entry.getVcfView() != null && entry.getVcfView().isVisible())
     {
       entry.getVcfPanel().paintComponents(g2d);
       g2d.translate(0,entry.getVcfPanel().getHeight());
@@ -134,10 +134,10 @@ public class PrintArtemis extends ScrollPanel implements Printable
     {
       FeatureList flist = entry.getFeatureList();
       Point ploc = flist.getViewport().getViewPosition();
-      flist.setOpaque(false);
+      //flist.setOpaque(false);
       g2d.translate(0,-ploc.y);
       flist.paintComponent(g2d);
-      flist.setOpaque(true);
+      //flist.setOpaque(true);
     }
   }
 
@@ -160,9 +160,9 @@ public class PrintArtemis extends ScrollPanel implements Printable
     if(jamDisplay.isSelected() && 
        entry.getJamView() != null && entry.getJamView().isVisible())
       height += entry.getBamPanel().getHeight();
-    
+
     if(vcfDisplay.isSelected() && 
-        entry.getVcfPanel() != null && entry.getVcfPanel().isVisible())
+        entry.getVcfView() != null && entry.getVcfView().isVisible())
        height += entry.getVcfPanel().getHeight();
     
     if(plotsDisplay.isSelected())
@@ -393,9 +393,8 @@ public class PrintArtemis extends ScrollPanel implements Printable
   public void print()
   {
     // file chooser
-    String cwd = System.getProperty("user.dir");
-    JFileChooser fc = new JFileChooser(cwd);
-    File fselect = new File(cwd+
+    StickyFileChooser fc = new StickyFileChooser();
+    File fselect = new File(fc.getCurrentDirectory()+
                             System.getProperty("file.separator")+
                             "artemis.png");
     fc.setSelectedFile(fselect);
@@ -432,6 +431,22 @@ public class PrintArtemis extends ScrollPanel implements Printable
     {
       bacross = Box.createHorizontalBox();
       bacross.add(plotsDisplay);
+      bacross.add(Box.createHorizontalGlue());
+      YBox.add(bacross);
+    }
+
+    if(entry.getBamPanel() != null && entry.getBamPanel().isVisible())
+    {
+      bacross = Box.createHorizontalBox();
+      bacross.add(jamDisplay);
+      bacross.add(Box.createHorizontalGlue());
+      YBox.add(bacross);
+    }
+    
+    if(entry.getVcfView() != null && entry.getVcfView().isVisible())
+    {
+      bacross = Box.createHorizontalBox();
+      bacross.add(vcfDisplay);
       bacross.add(Box.createHorizontalGlue());
       YBox.add(bacross);
     }
