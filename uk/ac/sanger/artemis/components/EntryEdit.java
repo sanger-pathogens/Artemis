@@ -573,6 +573,11 @@ public class EntryEdit extends JFrame
   {
     return vcfPanel;
   }
+  
+  protected JPanel getVcfView()
+  {
+    return vcfView;
+  }
 
 
   /**
