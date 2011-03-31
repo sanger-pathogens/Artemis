@@ -3159,7 +3159,13 @@ public class BamView extends JPanel
         bam.add(args[i]);
     }
     int nbasesInView = 1000;
-
+    String chr = null;
+    String vw  = null;
+    boolean orientation = false;
+    boolean covPlot     = false;
+    boolean snpPlot     = false;
+    int base = 0;
+    
     for(int i=0;i<args.length; i++)
     {
       if(args[i].equals("-a"))
@@ -3176,18 +3182,35 @@ public class BamView extends JPanel
       }
       else if(args[i].equals("-r"))
         reference = args[++i];
-      else if(args[i].equals("-v"))
+      else if(args[i].equals("-n"))
         nbasesInView = Integer.parseInt(args[++i]);
       else if(args[i].equals("-s"))
         System.setProperty("samtoolDir", args[++i]);
+      else if(args[i].equals("-c"))
+        chr = args[++i].trim();
+      else if(args[i].equals("-b"))
+        base = Integer.parseInt(args[++i].trim());
+      else if(args[i].equals("-v"))
+        vw = args[++i].trim();
+      else if(args[i].equals("-o"))
+        orientation = true;
+      else if(args[i].equals("-pc"))
+        covPlot = true;
+      else if(args[i].equals("-ps"))
+        snpPlot = true;
       else if(args[i].startsWith("-h"))
       { 
         System.out.println("-h\t show help");
         
         System.out.println("-a\t BAM/SAM file to display");
         System.out.println("-r\t reference file (optional)");
-        System.out.println("-v\t number of bases to display in the view (optional)");
-        /*System.out.println("-s\t samtool directory");*/
+        System.out.println("-n\t number of bases to display in the view (optional)");
+        System.out.println("-c\t chromosome name (optional)");
+        System.out.println("-v\t view (optional - IS (inferred size), S (stack, default), PS (paired stack), ST (strand), C (coverage))");
+        System.out.println("-b\t base position (optional)");
+        System.out.println("-o\t show orientation (optional)");
+        System.out.println("-pc\t plot coverage (optional)");
+        System.out.println("-ps\t plot SNP (optional and only with -r)");
         System.exit(0);
       }
     }
@@ -3196,6 +3219,34 @@ public class BamView extends JPanel
         (JPanel)frame.getContentPane(), frame);
     frame.setTitle("BamView v"+view.getVersion());
     
+    if(chr != null)
+      view.combo.setSelectedItem(chr);
+    if(vw != null)
+    {
+      if(vw.equalsIgnoreCase("IS"))
+        view.cbIsizeStackView.setSelected(true);
+      if(vw.equalsIgnoreCase("PS"))
+        view.cbPairedStackView.setSelected(true);
+      if(vw.equalsIgnoreCase("ST"))
+        view.cbStrandStackView.setSelected(true);
+      if(vw.equalsIgnoreCase("C"))
+        view.cbCoverageView.setSelected(true);
+    }
+    if(base > 0)
+      view.scrollBar.setValue(base);
+    if(orientation)
+      view.isOrientation = true;
+    if(covPlot)
+    {
+      view.isCoverage = true;
+      view.coveragePanel.setVisible(true);
+    }
+    if(snpPlot)
+    {
+      view.isSNPplot = true;
+      view.snpPanel.setVisible(true);
+    }
+
     // translucent
     //frame.getRootPane().putClientProperty("Window.alpha", new Float(0.9f));
     frame.addWindowFocusListener(new WindowFocusListener()
