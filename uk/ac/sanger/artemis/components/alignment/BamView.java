@@ -67,6 +67,7 @@ import java.util.List;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -1977,7 +1978,7 @@ public class BamView extends JPanel
   
   private void createMenus(JComponent menu)
   {
-    final JMenuItem addBam = new JMenuItem("Add Bam ...");
+    final JMenuItem addBam = new JMenuItem("Add BAM ...");
     menu.add(addBam);
     addBam.addActionListener(new ActionListener()
     {
@@ -2000,6 +2001,32 @@ public class BamView extends JPanel
     bamFilesMenu.setFont(addBam.getFont());
     menu.add(bamFilesMenu);
     
+    
+    final JMenu analyse = new JMenu("Analyse");
+    menu.add(analyse);
+    final JMenuItem readCount = new JMenuItem("Read count for selected features ...");
+    analyse.add(readCount);
+    readCount.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        FeatureVector features = feature_display.getSelection().getAllFeatures();
+        
+        JCheckBox overlap = new JCheckBox("Include all overlapping reads", true);
+        overlap.setToolTipText("Include reads that partially overlap the feature");
+        JCheckBox spliced = new JCheckBox("Introns included", true);
+        Box yBox = Box.createVerticalBox();
+        yBox.add(overlap);
+        yBox.add(spliced);
+        JOptionPane.showMessageDialog(null, yBox, "Read Count Option", JOptionPane.INFORMATION_MESSAGE);
+        
+        BamUtils.countReads(features, (String)combo.getSelectedItem(), samFileReaderHash, bamList,
+            seqNames, offsetLengths, concatSequences, seqLengths, 
+            samRecordFlagPredicate, samRecordMapQPredicate,
+            !overlap.isSelected(), spliced.isSelected());
+      } 
+    });
+
     for(int i=0; i<bamList.size(); i++)
       addToViewMenu(i);
     
