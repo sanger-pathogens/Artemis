@@ -33,6 +33,8 @@ import java.awt.Font;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.*;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.Reader;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -40,6 +42,7 @@ import java.util.Hashtable;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
@@ -75,7 +78,7 @@ public class FileViewer extends JFrame
   /** The main component we use for displaying the file. */
   private JTextPane textPane = null;
 
-  private Hashtable fontAttributes;
+  private Hashtable<Level, MutableAttributeSet> fontAttributes;
 
   private static Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
   
@@ -101,12 +104,12 @@ public class FileViewer extends JFrame
    **/
   public FileViewer(final String label) 
   {
-    this(label, true, true);
+    this(label, true);
   }
 
   public FileViewer(final String label, final boolean visible)
   {
-    this(label, visible, true);  
+    this(label, visible, true, false);  
   }
   
   /**
@@ -116,7 +119,8 @@ public class FileViewer extends JFrame
    *    this argument is true.
    **/
   public FileViewer(final String label, final boolean visible, 
-                    final boolean showClearButton) 
+                    final boolean showClearButton,
+                    final boolean showSaveButton) 
   {
     super(label);
 
@@ -176,6 +180,19 @@ public class FileViewer extends JFrame
         }
       });
       button_panel.add(clearbutton);
+    }
+    
+    if(showSaveButton)
+    {
+      final JButton saveToFile = new JButton("Save");
+      saveToFile.addActionListener(new ActionListener()
+      {
+        public void actionPerformed(ActionEvent e)
+        {
+          writeToFile();
+        }
+      });
+      button_panel.add(saveToFile);
     }
     
     addWindowListener(new WindowAdapter() 
@@ -330,7 +347,7 @@ public class FileViewer extends JFrame
     Level[] prio = { Level.FATAL, Level.ERROR, 
            Level.WARN, Level.INFO, Level.DEBUG };
 
-    fontAttributes = new Hashtable();
+    fontAttributes = new Hashtable<Level, MutableAttributeSet>();
     for (int i=0; i<prio.length;i++) 
     {
       MutableAttributeSet att = new SimpleAttributeSet();
@@ -405,5 +422,32 @@ public class FileViewer extends JFrame
   public void setHideOnClose(boolean isHideOnClose)
   {
     this.isHideOnClose = isHideOnClose;
+  }
+  
+  private void writeToFile()
+  {
+    StickyFileChooser fc = new StickyFileChooser();
+    fc.showSaveDialog(FileViewer.this);
+    
+    File f = fc.getSelectedFile();
+    if(f.exists() && f.canWrite())
+    {
+      int status = JOptionPane.showConfirmDialog(FileViewer.this, 
+          f.getName()+" exists overwrite?", 
+          "Overwrite", JOptionPane.OK_CANCEL_OPTION);
+      if(status == JOptionPane.CANCEL_OPTION)
+        return;
+    }
+    try
+    {
+      FileWriter writer = new FileWriter(f);
+      writer.write(getText());
+      writer.close();
+    }
+    catch (IOException e1)
+    {
+      JOptionPane.showMessageDialog(FileViewer.this,
+          e1.getMessage(), "Problem Writing", JOptionPane.WARNING_MESSAGE);
+    }
   }
 }
