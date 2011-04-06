@@ -330,7 +330,7 @@ public class InSilicoGelPanel extends JPanel implements ActionListener
     else
     {
       final FileViewer viewer = new FileViewer(restrictOutput.getName(), true,
-          false);
+          false, false);
       BufferedReader br;
       try
       {
