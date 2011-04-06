@@ -256,7 +256,7 @@ class IOUtils
     else
     {
       FileViewer viewer = new FileViewer ("Feature base viewer for selected range: " + 
-          sbeg+":"+send+(marker.isForwardMarker() ? "" : " reverse"), true);
+          sbeg+":"+send+(marker.isForwardMarker() ? "" : " reverse"), true, false, true);
       viewer.getTextPane().setText(buffSeq.toString());
     }
   }

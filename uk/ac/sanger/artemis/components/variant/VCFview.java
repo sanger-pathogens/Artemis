@@ -1666,7 +1666,7 @@ public class VCFview extends JPanel
              public void actionPerformed(ActionEvent e) 
              {
                FileViewer viewDetail = new FileViewer(
-                   mouseVCF.getChrom()+":"+mouseVCF.getPos()+" "+mouseVCF.getID(), true, false);
+                   mouseVCF.getChrom()+":"+mouseVCF.getPos()+" "+mouseVCF.getID(), true, false, true);
                
                viewDetail.appendString(header[mouseOverIndex]+"\n", Level.INFO);
                
