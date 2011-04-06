@@ -3050,7 +3050,7 @@ public class BamView extends JPanel
           {
             public void actionPerformed(ActionEvent e) 
             {
-              FileViewer viewDetail = new FileViewer(thisSAMRecord.getReadName(), true, false);
+              FileViewer viewDetail = new FileViewer(thisSAMRecord.getReadName(), true, false, false);
               appendToDetailView(thisSAMRecord, viewDetail);
             }  
           });
