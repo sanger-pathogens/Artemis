@@ -99,9 +99,8 @@ class BamUtils
     }
 
     StringBuffer buff = new StringBuffer();
-    buff.append("\t");
     for(String bam : bamList)
-      buff.append(bam+"\t");
+      buff.append("#BAM: "+bam+"\n");
     buff.append("\n");
     
     for (String fId : featureReadCount.keySet() ) {
@@ -112,7 +111,7 @@ class BamUtils
       buff.append("\n");
     }
 
-    FileViewer viewer = new FileViewer ("Read Count", true);
+    FileViewer viewer = new FileViewer ("Read Count", true, false, true);
     viewer.getTextPane().setText(buff.toString());
   }
 
