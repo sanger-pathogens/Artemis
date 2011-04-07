@@ -28,10 +28,12 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Composite;
+import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.FontMetrics;
+import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Insets;
@@ -49,7 +51,6 @@ import java.awt.event.MouseMotionListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -95,20 +96,17 @@ import uk.ac.sanger.artemis.SelectionChangeListener;
 import uk.ac.sanger.artemis.SimpleEntryGroup;
 import uk.ac.sanger.artemis.components.DisplayAdjustmentEvent;
 import uk.ac.sanger.artemis.components.DisplayAdjustmentListener;
+import uk.ac.sanger.artemis.components.EntryEdit;
 import uk.ac.sanger.artemis.components.EntryFileDialog;
 import uk.ac.sanger.artemis.components.FeatureDisplay;
 import uk.ac.sanger.artemis.components.FileViewer;
 import uk.ac.sanger.artemis.components.MessageDialog;
+import uk.ac.sanger.artemis.components.MultiComparator;
 import uk.ac.sanger.artemis.components.alignment.FileSelectionDialog;
 import uk.ac.sanger.artemis.components.variant.BCFReader.BCFReaderIterator;
 import uk.ac.sanger.artemis.editor.MultiLineToolTipUI;
-import uk.ac.sanger.artemis.io.EmblStreamFeature;
 import uk.ac.sanger.artemis.io.EntryInformation;
-import uk.ac.sanger.artemis.io.InvalidRelationException;
 import uk.ac.sanger.artemis.io.Key;
-import uk.ac.sanger.artemis.io.Location;
-import uk.ac.sanger.artemis.io.Qualifier;
-import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.io.RangeVector;
 import uk.ac.sanger.artemis.sequence.Bases;
@@ -278,7 +276,7 @@ public class VCFview extends JPanel
     }
   }
   
-  private void createMenus(JFrame frame, final JScrollPane jspView)
+  private void createMenus(final JFrame frame, final JScrollPane jspView)
   {
     final JComponent topPanel;
     if(feature_display != null)
@@ -519,7 +517,32 @@ public class VCFview extends JPanel
     colByAlt.setSelected(true);
     
     popup.addSeparator();
-    
+
+    if (feature_display != null)
+    {
+      final JMenu create = new JMenu("Create");
+      final JMenuItem createTab = new JMenuItem(
+          "Features from variants");
+      popup.add(create);
+      create.add(createTab);
+      createTab.addActionListener(new ActionListener()
+      {
+        public void actionPerformed(ActionEvent e)
+        {
+          Container f = getVcfContainer();
+          try
+          {
+            f.setCursor(new Cursor(Cursor.WAIT_CURSOR));
+            IOUtils.createFeatures(VCFview.this, entryGroup);
+          }
+          finally
+          {
+            f.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+          }
+        }
+      });
+    }
+
     final JMenu export = new JMenu("Write");
     popup.add(export);
     
@@ -527,56 +550,91 @@ public class VCFview extends JPanel
     exportVCF.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e)
       {
-        VCFview.this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-        IOUtils.export(vcfFiles, VCFview.this);
-        VCFview.this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+        Container f = getVcfContainer();
+        try
+        {
+          f.setCursor(new Cursor(Cursor.WAIT_CURSOR));
+          IOUtils.export(vcfFiles, VCFview.this);
+        }
+        finally
+        {
+          f.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+        }
       }
     });
     export.add(exportVCF);
     export.add(new JSeparator());
     
-    final JMenuItem exportFastaSelected = new JMenuItem("FASTA of selected feature(s)");
+    final JMenuItem exportFastaSelected = new JMenuItem("FASTA of selected feature(s) ...");
     exportFastaSelected.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e)
       {
-        VCFview.this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-        IOUtils.exportFasta(VCFview.this, selection.getAllFeatures(), false, null);
-        VCFview.this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+        Container f = getVcfContainer();
+        try
+        {
+          f.setCursor(new Cursor(Cursor.WAIT_CURSOR));
+          IOUtils.exportFasta(VCFview.this, selection.getAllFeatures(), false, null);
+        }
+        finally
+        {
+          f.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+        }
       }
     });
     export.add(exportFastaSelected);
     
-    final JMenuItem exportFasta = new JMenuItem("FASTA of selected base range");
+    final JMenuItem exportFasta = new JMenuItem("FASTA of selected base range ...");
     exportFasta.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e)
       {
-        VCFview.this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-        IOUtils.exportFastaByRange(VCFview.this, selection, false, null);
-        VCFview.this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+        Container f = getVcfContainer();
+        try
+        {
+          f.setCursor(new Cursor(Cursor.WAIT_CURSOR));
+          IOUtils.exportFastaByRange(VCFview.this, selection, false, null);
+        }
+        finally
+        {
+          f.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+        }
       }
     });
     export.add(exportFasta);
     
     final JMenu view = new JMenu("View");
     popup.add(view);
-    final JMenuItem viewFastaSelected = new JMenuItem("FASTA of selected feature(s)");
+    final JMenuItem viewFastaSelected = new JMenuItem("FASTA of selected feature(s) ...");
     viewFastaSelected.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e)
       {
-        VCFview.this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-        IOUtils.exportFasta(VCFview.this, selection.getAllFeatures(), true, null);
-        VCFview.this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+        Container f = getVcfContainer();
+        try
+        {
+          f.setCursor(new Cursor(Cursor.WAIT_CURSOR));
+          IOUtils.exportFasta(VCFview.this, selection.getAllFeatures(), true, null);
+        }
+        finally
+        {
+          f.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+        }
       }
     });
     view.add(viewFastaSelected);
     
-    final JMenuItem viewFasta = new JMenuItem("FASTA of selected base range");
+    final JMenuItem viewFasta = new JMenuItem("FASTA of selected base range ...");
     viewFasta.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e)
       {
-        VCFview.this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-        IOUtils.exportFastaByRange(VCFview.this, selection, true, null);
-        VCFview.this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+        Container f = getVcfContainer();
+        try
+        {
+          f.setCursor(new Cursor(Cursor.WAIT_CURSOR));
+          IOUtils.exportFastaByRange(VCFview.this, selection, true, null);
+        }
+        finally
+        {
+          f.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+        }
       }
     });
     view.add(viewFasta);
@@ -1473,83 +1531,7 @@ public class VCFview extends JPanel
       e.printStackTrace();
     }
   }
-  
-  /**
-   * Write an Artemis tab file
-   * @param vcfFiles
-   * @param seq
-   */
-  private static void writeGffFiles(final List<String> vcfFiles,
-                                    final String seq)
-  {
-    try
-    {         
-      TabixReader tr[] = new TabixReader[vcfFiles.size()];      
-      String s;
-      int step = 50000;
-      int regions[] = null;
-      String chr = seq.split(":")[0];
-      
-      for(int i = 0; i < tr.length; i++)
-      {
-        tr[i] = new TabixReader(vcfFiles.get(i));
-        
-        System.out.println(vcfFiles.get(i)+".tab");
-        FileWriter writer = new FileWriter(new File(vcfFiles.get(i)+".tab"));
-        
-        if(regions == null)
-          regions = tr[i].parseReg(seq);
-        int start = regions[1];
-        int end = regions[2];
-        
-        for(int j = start; j < end + step; j += step)
-        {
-          String region = chr+":"+j+"-"+(j+step);
-          
-          TabixReader.Iterator iter = tr[i].query(region); // get the iterator
-          if (iter == null)
-            continue;
-          try
-          {
-            
-            while ((s = iter.next()) != null)
-            {
-              String parts[] = tabPattern.split(s, 0);;
-
-              Location location = new Location(parts[1]+".."+parts[1]);
-              QualifierVector qualifiers = new QualifierVector();           
-              Qualifier note = new Qualifier("note", parts[3]+" "+parts[4]);
-              qualifiers.addQualifierValues(note);
-              Qualifier score = new Qualifier("score", parts[5]);
-              qualifiers.addQualifierValues(score);
-              
-              try
-              {
-                EmblStreamFeature emblFeature = new EmblStreamFeature(
-                    new Key("SNP"), location, qualifiers);
-                emblFeature.writeToStream(writer);
-              }
-              catch (InvalidRelationException e)
-              {
-                e.printStackTrace();
-              }
-            }
-          }
-          catch (IOException e)
-          {
-            e.printStackTrace();
-          }
-        }
-        writer.close();
-      }
-    }
-    catch (IOException e)
-    {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-  }
-  
+ 
   private void drawTicks(Graphics2D g2, int start, int end, 
                          float pixPerBase, int division, int ypos)
   {
@@ -1617,6 +1599,19 @@ public class VCFview extends JPanel
   protected AbstractVCFReader[] getVcfReaders()
   {
     return vcfReaders;
+  }
+  
+  private Container getVcfContainer()
+  {
+    Frame fs[] = JFrame.getFrames();
+    for(Frame f: fs)
+    {
+      if( f instanceof JFrame && 
+         ((JFrame)f) instanceof EntryEdit ||
+         ((JFrame)f) instanceof MultiComparator)
+        return ((JFrame)f).getContentPane();
+    }
+    return VCFview.this;
   }
   
   /**
@@ -1740,8 +1735,6 @@ public class VCFview extends JPanel
     }
     
     int nbasesInView = 5000000;
-    boolean writeTab = false;
-    String seq = null;
     
     for(int i=0;i<args.length; i++)
     {
@@ -1761,11 +1754,6 @@ public class VCFview extends JPanel
         reference = args[++i];
       else if(args[i].equals("-v"))
         nbasesInView = Integer.parseInt(args[++i]);
-      else if(args[i].equals("-t"))
-      {
-        writeTab = true;
-        seq = args[++i];
-      }
       else if(args[i].startsWith("-h"))
       { 
         System.out.println("-h\t show help");
@@ -1773,21 +1761,16 @@ public class VCFview extends JPanel
         System.out.println("-f\t VCF file to display");
         System.out.println("-r\t reference file (optional)");
         System.out.println("-v\t number of bases to display in the view (optional)");
-        System.out.println("-t\t chr:start-end - this writes out the given region");
+        //System.out.println("-t\t chr:start-end - this writes out the given region");
 
         System.exit(0);
       }
     }
     
-    if(writeTab)
-      writeGffFiles(vcfFileList, seq);
-    else
-    {
-      JFrame f = new JFrame();
-      new VCFview(f, (JPanel) f.getContentPane(), vcfFileList, 
+    JFrame f = new JFrame();
+    new VCFview(f, (JPanel) f.getContentPane(), vcfFileList, 
           nbasesInView, 100000000, null, reference, null);
-      f.pack();
-      f.setVisible(true);
-    }
+    f.pack();
+    f.setVisible(true);
   }
 }

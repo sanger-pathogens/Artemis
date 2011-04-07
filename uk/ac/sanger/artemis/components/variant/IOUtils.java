@@ -54,13 +54,18 @@ import uk.ac.sanger.artemis.components.SequenceViewer;
 import uk.ac.sanger.artemis.components.StickyFileChooser;
 import uk.ac.sanger.artemis.components.variant.BCFReader.BCFReaderIterator;
 import uk.ac.sanger.artemis.io.DocumentEntry;
+import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.Key;
+import uk.ac.sanger.artemis.io.Location;
+import uk.ac.sanger.artemis.io.Qualifier;
+import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.sequence.Bases;
 import uk.ac.sanger.artemis.sequence.MarkerRange;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.util.FileDocument;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
+import uk.ac.sanger.artemis.util.ReadOnlyException;
 import uk.ac.sanger.artemis.util.RemoteFileDocument;
 
 import net.sf.samtools.util.BlockCompressedInputStream;
@@ -806,6 +811,154 @@ class IOUtils
         features.add (current_feature);
     }
     return features;
+  }
+
+  /**
+   * Create features for each variant that has not been filtered out.
+   * @param vcfView
+   * @param entryGroup
+   */
+  protected static void createFeatures(final VCFview vcfView,
+                                       final EntryGroup entryGroup)
+  {
+    final Entry newEntry = entryGroup.createEntry("VCF");
+
+    int sbeg = 1;
+    int send = entryGroup.getSequenceLength();
+    int MAX_BASE_CHUNK = 1000 * SEQUENCE_LINE_BASE_COUNT;
+
+    Bases bases = entryGroup.getSequenceEntry().getBases();
+
+    for (int i = 0; i < send; i += MAX_BASE_CHUNK)
+    {
+      int sbegc = sbeg + i;
+      int sendc = sbeg + i + MAX_BASE_CHUNK - 1;
+      if (i + MAX_BASE_CHUNK - 1 > send)
+        sendc = send;
+
+      try
+      {
+        Range range = new Range(sbegc, sendc);
+        FeatureVector features = entryGroup.getFeaturesInRange(range);
+        String chr = vcfView.getChr();
+        AbstractVCFReader vcfReaders[] = vcfView.getVcfReaders();
+        for(AbstractVCFReader reader: vcfReaders)
+        {
+          if(vcfView.isConcatenate())
+          {
+            for(String contig: reader.getSeqNames())
+              makeFeatures(reader, contig, sbegc, sendc, features, vcfView, bases, newEntry);
+          }
+          else
+            makeFeatures(reader, chr, sbegc, sendc, features, vcfView, bases, newEntry);
+        }
+      }
+      catch (IOException ioe)
+      {
+        ioe.printStackTrace();
+      }
+      catch (OutOfRangeException e)
+      {
+        e.printStackTrace();
+      }
+    }
+  }
+  
+  private static void makeFeatures(
+      final AbstractVCFReader reader, 
+      final String chr, 
+      final int sbegc, 
+      final int sendc, 
+      final FeatureVector features, 
+      final VCFview vcfView, 
+      final Bases bases, 
+      final Entry entry) throws IOException, OutOfRangeException
+  {
+    boolean vcf_v4 = reader.isVcf_v4();
+    Key variantKey = new Key("misc_difference");
+    if (reader instanceof BCFReader)
+    {
+      BCFReaderIterator it = ((BCFReader) reader).query(chr, sbegc, sendc);
+      VCFRecord record;
+      while ((record = it.next()) != null)
+      {
+        makeFeature(record, reader.getName(), vcfView, features, bases, entry, variantKey, vcf_v4);
+      }
+    }
+    else
+    {
+      try
+      {
+        TabixReader.Iterator iter = (((TabixReader) reader).query(chr + ":"
+            + sbegc + "-" + sendc)); // get the iterator
+        String s;
+        while (iter != null && (s = iter.next()) != null)
+        {
+          VCFRecord record = VCFRecord.parse(s);
+          makeFeature(record, reader.getName(), vcfView, features, bases, entry, variantKey, vcf_v4);
+        }
+      }
+      catch (NullPointerException e)
+      {
+        System.err.println(chr + ":" + sbegc + "-" + sendc + "\n"
+            + e.getMessage());
+      }
+    }
+  }
+
+  private static void makeFeature(
+      final VCFRecord record,
+      final String vcfFileName,
+      final VCFview vcfView, 
+      final FeatureVector features, 
+      final Bases bases, 
+      final Entry entry, 
+      final Key variantKey, 
+      final boolean vcf_v4) throws OutOfRangeException, ReadOnlyException
+  {
+    int basePosition = record.getPos() + vcfView.getSequenceOffset(record.getChrom());
+    if (vcfView.showVariant(record, features, basePosition, vcf_v4))
+    {
+      MarkerRange marker = new MarkerRange(bases.getForwardStrand(),
+          basePosition, basePosition);
+      Location location = marker.createLocation();
+      QualifierVector qualifiers = new QualifierVector();
+      String qualifierStr = record.getRef()+"->"+record.getAlt().toString()+
+                            "; "+vcfFileName+"; score="+record.getQuality();
+      if(record.getAlt().isMultiAllele())
+        qualifierStr += "; MULTI-ALLELE";
+      else if(record.getAlt().isDeletion(vcf_v4))
+        qualifierStr += "; DELETION";
+      else if(record.getAlt().isInsertion(vcf_v4))
+        qualifierStr += "; INSERTION";
+      else if(record.getAlt().isNonVariant())
+        return;
+      
+      try
+      {
+        FeatureVector fs = entry.getFeaturesInRange(marker.getRange());
+        if(fs.size() > 0)
+        {
+          for(int i=0; i<fs.size(); i++)
+          {
+            Feature f = fs.elementAt(i);
+            if(f.getKey().compareTo(variantKey) == 0)
+            {
+              f.getQualifiers().addQualifierValues(
+                  new Qualifier("note", qualifierStr));
+              return;
+            }
+          }
+        }
+        
+        qualifiers.addQualifierValues(new Qualifier("note", qualifierStr));
+        entry.createFeature(variantKey, location, qualifiers);
+      }
+      catch (EntryInformationException e)
+      {
+        e.printStackTrace();
+      }
+    }
   }
 
   /**
