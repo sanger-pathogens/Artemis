@@ -116,8 +116,14 @@ class BamUtils
 
     DecimalFormat df = new DecimalFormat("0.00##");
     StringBuffer buff = new StringBuffer();
-    for(String bam : bamList)
-      buff.append("#BAM: "+bam+"\n");
+    for(int j=0; j<bamList.size(); j++)
+    {
+      String bam = bamList.get(j);
+      buff.append("#BAM: "+bam);
+      if(mappedReads != null)
+        buff.append(" Mapped Reads/million: "+ df.format( ((float)mappedReads[j]) / 1000000.f) );
+      buff.append("\n");
+    }
     buff.append("\n");
     
     for (String fId : featureReadCount.keySet() ) {
