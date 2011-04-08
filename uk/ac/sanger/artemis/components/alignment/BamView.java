@@ -29,6 +29,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Composite;
+import java.awt.Container;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.FontMetrics;
@@ -2004,12 +2006,14 @@ public class BamView extends JPanel
     
     final JMenu analyse = new JMenu("Analyse");
     menu.add(analyse);
-    final JMenuItem readCount = new JMenuItem("Read count for selected features ...");
+    final JMenuItem readCount = new JMenuItem("Read count of selected features ...");
     analyse.add(readCount);
     readCount.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
       {
+        Container c = BamUtils.getBamContainer(BamView.this);
+        c.setCursor(new Cursor(Cursor.WAIT_CURSOR));
         FeatureVector features = feature_display.getSelection().getAllFeatures();
         
         JCheckBox overlap = new JCheckBox("Include all overlapping reads", true);
@@ -2023,7 +2027,46 @@ public class BamView extends JPanel
         BamUtils.countReads(features, (String)combo.getSelectedItem(), samFileReaderHash, bamList,
             seqNames, offsetLengths, concatSequences, seqLengths, 
             samRecordFlagPredicate, samRecordMapQPredicate,
-            !overlap.isSelected(), spliced.isSelected());
+            !overlap.isSelected(), spliced.isSelected(), null);
+        c.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+      } 
+    });
+    
+    final JMenuItem rpkm = new JMenuItem("RPKM value of selected features ...");
+    analyse.add(rpkm);
+    rpkm.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        Container c = BamUtils.getBamContainer(BamView.this);
+        c.setCursor(new Cursor(Cursor.WAIT_CURSOR));
+        FeatureVector features = feature_display.getSelection().getAllFeatures();
+        
+        JCheckBox overlap = new JCheckBox("Include all overlapping reads", true);
+        overlap.setToolTipText("Include reads that partially overlap the feature");
+        JCheckBox spliced = new JCheckBox("Introns included", true);
+        Box yBox = Box.createVerticalBox();
+        yBox.add(overlap);
+        yBox.add(spliced);
+        JOptionPane.showMessageDialog(null, yBox, "Read Count Option", JOptionPane.INFORMATION_MESSAGE);
+        
+        int seqlen = 0;
+        if(feature_display != null)
+          seqlen = feature_display.getSequenceLength();
+        else if(bases != null)
+          seqlen = bases.getLength();
+
+        int mappedReads[] =
+          BamUtils.getTotalMappedReads((String)combo.getSelectedItem(),
+              samFileReaderHash, bamList, seqNames, offsetLengths, concatSequences, 
+              offsetLengths, seqlen);
+
+        logger4j.debug("TOTAL MAPPED READS "+mappedReads);
+        BamUtils.countReads(features, (String)combo.getSelectedItem(), samFileReaderHash, bamList,
+            seqNames, offsetLengths, concatSequences, seqLengths, 
+            samRecordFlagPredicate, samRecordMapQPredicate,
+            !overlap.isSelected(), spliced.isSelected(), mappedReads);
+        c.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
       } 
     });
 
