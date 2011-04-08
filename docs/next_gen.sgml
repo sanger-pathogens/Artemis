@@ -46,7 +46,7 @@ G blue, A green, C red. There are options available to filter the display by the
 types of variants. Right clicking on the VCF panel will display a pop-up menu in which
 there is a 'Filter...' menu. This opens a window with check boxes for a number of varaint types and properties that can
 be used to filter on. This can be used to show and hide synonymous, non-synonymous, deletion (grey),
-insertion (yellow), and multiple allele (orange line with a circle at the top)
+insertion (magenta), and multiple allele (orange line with a circle at the top)
 variants.  In this window there is a check box to hide the variants that do not overlap CDS features.
 There is an option to mark variants that introduce stop codons (into the CDS
 features) with a circle in the middle of the line that represents the variant. There are also options
