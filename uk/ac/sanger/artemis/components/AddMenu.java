@@ -48,6 +48,7 @@ import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.LocationParseException;
 import uk.ac.sanger.artemis.io.EntryInformationException;
+import uk.ac.sanger.artemis.io.InvalidRelationException;
 
 import java.awt.Cursor;
 import java.awt.Toolkit;
@@ -815,6 +816,16 @@ public class AddMenu extends SelectionMenu
           final Location intron_location =
             new Location (intron_ranges, cds_location.isComplement ());
           final QualifierVector qualifiers = new QualifierVector ();
+
+          try {
+              final Qualifier systematicId =
+                  selection_feature.getQualifierByName("systematic_id");
+              if (systematicId != null) {
+                  qualifiers.add(systematicId);
+              }
+          } catch (InvalidRelationException e) {
+              throw new Error ("internal error - unexpected exception: " + e);
+          }
 
           try {
             selection_feature.getEntry ().createFeature (intron_key,
