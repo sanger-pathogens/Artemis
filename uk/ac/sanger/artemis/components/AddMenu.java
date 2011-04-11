@@ -750,7 +750,9 @@ public class AddMenu extends SelectionMenu
         final Feature selection_feature =
           selected_features.elementAt (feature_index);
 
-        if (!selection_feature.isProteinFeature ()) {
+        if (!(selection_feature.isProteinFeature () ||
+              selection_feature.getKey().equals("5'UTR") ||
+              selection_feature.getKey().equals("3'UTR"))) {
           continue;
         }
 
