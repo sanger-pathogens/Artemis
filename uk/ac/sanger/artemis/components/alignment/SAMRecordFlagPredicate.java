@@ -30,17 +30,17 @@ public class SAMRecordFlagPredicate implements SAMRecordPredicate
 {
   private int flag;
   
-  private static final int READ_PAIRED_FLAG = 0x1;
-  private static final int PROPER_PAIR_FLAG = 0x2;
+  protected static final int READ_PAIRED_FLAG = 0x1;
+  protected static final int PROPER_PAIR_FLAG = 0x2;
   protected static final int READ_UNMAPPED_FLAG = 0x4;
-  private static final int MATE_UNMAPPED_FLAG = 0x8;
-  private static final int READ_STRAND_FLAG = 0x10;
-  private static final int MATE_STRAND_FLAG = 0x20;
-  private static final int FIRST_OF_PAIR_FLAG = 0x40;
-  private static final int SECOND_OF_PAIR_FLAG = 0x80;
-  private static final int NOT_PRIMARY_ALIGNMENT_FLAG = 0x100;
-  private static final int READ_FAILS_VENDOR_QUALITY_CHECK_FLAG = 0x200;
-  private static final int DUPLICATE_READ_FLAG = 0x400;
+  protected static final int MATE_UNMAPPED_FLAG = 0x8;
+  protected static final int READ_STRAND_FLAG = 0x10;
+  protected static final int MATE_STRAND_FLAG = 0x20;
+  protected static final int FIRST_OF_PAIR_FLAG = 0x40;
+  protected static final int SECOND_OF_PAIR_FLAG = 0x80;
+  protected static final int NOT_PRIMARY_ALIGNMENT_FLAG = 0x100;
+  protected static final int READ_FAILS_VENDOR_QUALITY_CHECK_FLAG = 0x200;
+  protected static final int DUPLICATE_READ_FLAG = 0x400;
   
   protected static final String[] FLAGS_DESCRUIPTION =
   {
@@ -99,7 +99,6 @@ public class SAMRecordFlagPredicate implements SAMRecordPredicate
           return true;
       }
     }
-
     return false;
   }
 }
