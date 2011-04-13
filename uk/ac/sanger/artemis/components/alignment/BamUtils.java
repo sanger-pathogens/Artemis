@@ -69,7 +69,7 @@ class BamUtils
                                    final Hashtable<String, Integer> offsetLengths,
                                    final boolean concatSequences, 
                                    final Hashtable<String, Integer> seqLengths,
-                                   final SAMRecordFlagPredicate samRecordFlagPredicate,
+                                   final SAMRecordPredicate samRecordFlagPredicate,
                                    final SAMRecordMapQPredicate samRecordMapQPredicate,
                                    final boolean contained,
                                    final boolean useIntrons,
@@ -83,7 +83,7 @@ class BamUtils
       
       int start  = f.getFirstBase();
       int end    = f.getLastBase();
-      float fLenKb = getFeatureLength(f);
+      float fLen = getFeatureLength(f);
       List<Float> sampleCounts = new Vector<Float>();
         
       for(int j=0; j<bamList.size(); j++)
@@ -105,9 +105,9 @@ class BamUtils
           cnt = getCount(start, end, bam, refName, samFileReaderHash, 
               seqNames, offsetLengths, concatSequences, seqLengths, 
               samRecordFlagPredicate, samRecordMapQPredicate, contained); 
-       
+
         if(mappedReads != null)
-          cnt = cnt / ((((float)mappedReads[j]) / 1000000.f)*fLenKb);
+          cnt = (cnt / ( ((float)mappedReads[j]/1000000.f) * (fLen/1000.f) )) ;
         
         sampleCounts.add(cnt);
       }
@@ -149,9 +149,9 @@ class BamUtils
     for(int i=0; i<segs.size(); i++)
     {
       Range r = segs.elementAt(i).getRawRange();
-      len += r.getEnd()-r.getStart();
+      len += r.getEnd()-r.getStart()+1;
     }
-    return ((float)len) / 1000.f;
+    return (float)len;
   }
   
   /**
@@ -180,7 +180,7 @@ class BamUtils
       final Hashtable<String, Integer> offsetLengths,
       final boolean concatSequences, 
       final Hashtable<String, Integer> seqLengths,
-      final SAMRecordFlagPredicate samRecordFlagPredicate,
+      final SAMRecordPredicate samRecordFlagPredicate,
       final SAMRecordMapQPredicate samRecordMapQPredicate,
       final boolean contained)
   {
@@ -247,7 +247,11 @@ class BamUtils
     int MAX_BASE_CHUNK = 2000*60;
     int mapped[] = new int[bamList.size()];
     boolean contained = false;
-    SAMRecordFlagPredicate samRecordFlagPredicate = new SAMRecordFlagPredicate(SAMRecordFlagPredicate.READ_UNMAPPED_FLAG); 
+    SAMRecordFlagPredicate samRecordFlagPredicate = new SAMRecordFlagPredicate(
+        (SAMRecordFlagPredicate.READ_UNMAPPED_FLAG | SAMRecordFlagPredicate.DUPLICATE_READ_FLAG));
+    //SAMRecordFlagPredicate p2 = new SAMRecordFlagPredicate(SAMRecordFlagPredicate.PROPER_PAIR_FLAG);
+    //SAMRecordFlagConjunctionPredicate samRecordFlagPredicate = new SAMRecordFlagConjunctionPredicate(p1, p2, 1, true, false);
+
     SAMRecordMapQPredicate samRecordMapQPredicate = new SAMRecordMapQPredicate(-1);
 
     for (int i = 0; i < sequenceLength; i += MAX_BASE_CHUNK)
@@ -302,8 +306,8 @@ class BamUtils
                     String refName, 
                     int start, 
                     int end,
-                    SAMRecordFlagPredicate samRecordFlagPredicate,
-                    SAMRecordMapQPredicate samRecordMapQPredicate,
+                    SAMRecordPredicate samRecordFlagPredicate,
+                    SAMRecordPredicate samRecordMapQPredicate,
                     boolean contained)
   {
     int cnt = 0;
