@@ -2061,7 +2061,7 @@ public class BamView extends JPanel
         int mappedReads[] =
           BamUtils.getTotalMappedReads((String)combo.getSelectedItem(),
               samFileReaderHash, bamList, seqNames, offsetLengths, concatSequences, 
-              offsetLengths, seqlen);
+              offsetLengths, seqlen, samRecordFlagPredicate, samRecordMapQPredicate);
 
         logger4j.debug("TOTAL MAPPED READS "+mappedReads);
         BamUtils.countReads(features, (String)combo.getSelectedItem(), samFileReaderHash, bamList,

@@ -26,6 +26,7 @@ package uk.ac.sanger.artemis.components.alignment;
 import java.awt.Container;
 import java.awt.Frame;
 import java.text.DecimalFormat;
+import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
@@ -81,8 +82,8 @@ class BamUtils
     {     
       Feature f = features.elementAt(i);
       
-      int start  = f.getFirstBase();
-      int end    = f.getLastBase();
+      int start  = f.getRawFirstBase();
+      int end    = f.getRawLastBase();
       float fLen = getFeatureLength(f);
       List<Float> sampleCounts = new Vector<Float>();
         
@@ -94,8 +95,8 @@ class BamUtils
         {
           for(int k=0; k<f.getSegments().size(); k++)
           {
-            start = f.getSegments().elementAt(k).getStart().getPosition();
-            end   = f.getSegments().elementAt(k).getEnd().getPosition();
+            start = f.getSegments().elementAt(k).getRawRange().getStart();
+            end   = f.getSegments().elementAt(k).getRawRange().getEnd();
             cnt += getCount(start, end, bam, refName, samFileReaderHash, 
               seqNames, offsetLengths, concatSequences, seqLengths, 
               samRecordFlagPredicate, samRecordMapQPredicate, contained); 
@@ -126,7 +127,10 @@ class BamUtils
     }
     buff.append("\n");
     
-    for (String fId : featureReadCount.keySet() ) {
+    Object[] readKey = featureReadCount.keySet().toArray();
+    Arrays.sort(readKey);
+    
+    for (Object fId : readKey ) {
       buff.append(fId+"\t");
       List<Float> cnts = featureReadCount.get(fId);
       for(int i=0; i<cnts.size(); i++)
@@ -242,17 +246,13 @@ class BamUtils
       final Hashtable<String, Integer> offsetLengths,
       final boolean concatSequences, 
       final Hashtable<String, Integer> seqLengths,
-      final int sequenceLength)
+      final int sequenceLength,
+      final SAMRecordPredicate samRecordFlagPredicate, 
+      SAMRecordMapQPredicate samRecordMapQPredicate)
   {
     int MAX_BASE_CHUNK = 2000*60;
     int mapped[] = new int[bamList.size()];
     boolean contained = false;
-    SAMRecordFlagPredicate samRecordFlagPredicate = new SAMRecordFlagPredicate(
-        (SAMRecordFlagPredicate.READ_UNMAPPED_FLAG | SAMRecordFlagPredicate.DUPLICATE_READ_FLAG));
-    //SAMRecordFlagPredicate p2 = new SAMRecordFlagPredicate(SAMRecordFlagPredicate.PROPER_PAIR_FLAG);
-    //SAMRecordFlagConjunctionPredicate samRecordFlagPredicate = new SAMRecordFlagConjunctionPredicate(p1, p2, 1, true, false);
-
-    SAMRecordMapQPredicate samRecordMapQPredicate = new SAMRecordMapQPredicate(-1);
 
     for (int i = 0; i < sequenceLength; i += MAX_BASE_CHUNK)
     {
@@ -313,7 +313,7 @@ class BamUtils
     int cnt = 0;
     SAMFileReader inputSam = samFileReaderHash.get(bam);
     final CloseableIterator<SAMRecord> it = inputSam.query(refName, start, end, contained);
-    
+
     while ( it.hasNext() )
     {
       SAMRecord samRecord = it.next();
