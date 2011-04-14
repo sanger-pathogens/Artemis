@@ -238,9 +238,7 @@ public class BamView extends JPanel
     this.nbasesInView = nbasesInView;
     this.feature_display = feature_display;
     this.bases = bases;
-    
-    System.out.println(nbasesInView);
-    
+
     containerPanel.setLayout(new BoxLayout(containerPanel, BoxLayout.Y_AXIS));
     containerPanel.add(mainPanel);
     
