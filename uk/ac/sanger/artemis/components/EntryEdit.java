@@ -484,11 +484,21 @@ public class EntryEdit extends JFrame
     
     if(System.getProperty("bam") != null)
     {
-      String ngs[] = System.getProperty("bam").split("[\\s,]");
-      FileSelectionDialog fileChooser = new FileSelectionDialog(ngs);
-      List<String> listBams = fileChooser.getFiles(".*\\.bam$");
-      List<String> vcfFiles = fileChooser.getFiles(VCFview.VCFFILE_SUFFIX);
-      loadBamAndVcf(listBams, vcfFiles);
+      SwingWorker worker = new SwingWorker()
+      {
+        public Object construct()
+        {
+          EntryEdit.this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
+          String ngs[] = System.getProperty("bam").split("[\\s,]");
+          FileSelectionDialog fileChooser = new FileSelectionDialog(ngs);
+          List<String> listBams = fileChooser.getFiles(".*\\.bam$");
+          List<String> vcfFiles = fileChooser.getFiles(VCFview.VCFFILE_SUFFIX);
+          loadBamAndVcf(listBams, vcfFiles);
+          EntryEdit.this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+          return null;
+        }
+      };
+      worker.start();
     }
   }
 
@@ -1839,7 +1849,7 @@ public class EntryEdit extends JFrame
       bamPanel.removeAll();
       try
       {
-        bamView = new BamView(listBams, null, 2000, feature_display, 
+        bamView = new BamView(listBams, null, feature_display.getMaxVisibleBases(), feature_display, 
             getEntryGroup().getBases(), bamPanel, null);
       }
       catch (Exception ex)
@@ -1895,7 +1905,7 @@ public class EntryEdit extends JFrame
     {
       ngSplitPane.setVisible(true);
       lowerSplitPane.setDividerSize(3);
-      lowerSplitPane.setDividerLocation(0.4d);
+      lowerSplitPane.setDividerLocation(0.25d);
       
       ngSplitPane.setResizeWeight(0);
       ngSplitPane.setDividerSize(0);
@@ -1906,7 +1916,7 @@ public class EntryEdit extends JFrame
     {
       ngSplitPane.setVisible(true);
       lowerSplitPane.setDividerSize(3);
-      lowerSplitPane.setDividerLocation(0.4d);
+      lowerSplitPane.setDividerLocation(0.3d);
       
       ngSplitPane.setResizeWeight(1);
       ngSplitPane.setDividerSize(1);
