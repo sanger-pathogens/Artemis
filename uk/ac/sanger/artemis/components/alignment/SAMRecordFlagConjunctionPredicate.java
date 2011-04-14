@@ -21,6 +21,8 @@
 
 package uk.ac.sanger.artemis.components.alignment;
 
+import java.util.Vector;
+
 import net.sf.samtools.SAMRecord;
 
 /**
@@ -28,71 +30,44 @@ import net.sf.samtools.SAMRecord;
  **/
 public class SAMRecordFlagConjunctionPredicate implements SAMRecordPredicate
 {
-  private SAMRecordPredicate p1;
-  private SAMRecordPredicate p2;
+  private Vector<SAMRecordPredicate> predicates;
   private int type;  // AND or OR
-  private boolean is1 = true;
-  private boolean is2 = true;
-  private static int AND = 0;
+  protected static int AND = 0;
+  protected static int OR = 1;
   
-  public SAMRecordFlagConjunctionPredicate(SAMRecordPredicate p1, SAMRecordPredicate p2, int type, boolean is1, boolean is2)
+  public SAMRecordFlagConjunctionPredicate(SAMRecordPredicate p1, SAMRecordPredicate p2, int type)
   {
-    this.p1 = p1;
-    this.p2 = p2;
+    predicates = new Vector<SAMRecordPredicate>();
+    predicates.add(p1);
+    predicates.add(p2);
     this.type = type;
-    this.is1 = is1;
-    this.is2 = is2;
   }
   
+  public SAMRecordFlagConjunctionPredicate(Vector<SAMRecordPredicate> predicates, int type)
+  {
+    this.predicates = predicates;
+    this.type = type;
+  }
+
   public boolean testPredicate(SAMRecord samRecord)
   {
+    for(SAMRecordPredicate predicate: predicates)
+    {
+      if(predicate.testPredicate(samRecord))
+      {
+        if(type == OR)
+          return true;
+      }
+      else
+      {
+        if(type == AND)
+          return false;
+      }
+    }
+
     if(type == AND)
-    {
-      if(!is1 && !is2)
-      {
-        if(!p1.testPredicate(samRecord) && !p2.testPredicate(samRecord))
-          return true;
-      }
-      else if(!is1)
-      {
-        if(!p1.testPredicate(samRecord) && p2.testPredicate(samRecord))
-          return true;
-      }
-      else if(!is2)
-      {
-        if(p1.testPredicate(samRecord) && !p2.testPredicate(samRecord))
-          return true;
-      }
-      else if(is1 && is2)
-      {
-        if(p1.testPredicate(samRecord) && p2.testPredicate(samRecord))
-          return true;
-      }
-    }
-    else
-    {
-      if(!is1 && !is2)
-      {
-        if(!p1.testPredicate(samRecord) || !p2.testPredicate(samRecord))
-          return true;
-      }
-      else if(!is1)
-      {
-        if(!p1.testPredicate(samRecord) || p2.testPredicate(samRecord))
-          return true;
-      }
-      else if(!is2)
-      {
-        if(p1.testPredicate(samRecord) || !p2.testPredicate(samRecord))
-          return true;
-      }
-      else if(is1 && is2)
-      {
-        if(p1.testPredicate(samRecord) || p2.testPredicate(samRecord))
-          return true;
-      }
-    }
+      return true;
     return false;
   }
-  
+
 }

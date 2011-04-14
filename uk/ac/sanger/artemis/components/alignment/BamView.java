@@ -142,9 +142,11 @@ public class BamView extends JPanel
   protected List<String> bamList;
   private List<Integer> hideBamList = new Vector<Integer>();
 
-  private SAMRecordFlagPredicate samRecordFlagPredicate;
+  private SAMRecordPredicate samRecordFlagPredicate;
   private SAMRecordMapQPredicate samRecordMapQPredicate;
-  
+
+  private SAMRecordFilter filterFrame;
+
   private Bases bases;
   private JScrollPane jspView;
   private JScrollBar scrollBar;
@@ -236,6 +238,8 @@ public class BamView extends JPanel
     this.nbasesInView = nbasesInView;
     this.feature_display = feature_display;
     this.bases = bases;
+    
+    System.out.println(nbasesInView);
     
     containerPanel.setLayout(new BoxLayout(containerPanel, BoxLayout.Y_AXIS));
     containerPanel.add(mainPanel);
@@ -2310,17 +2314,19 @@ public class BamView extends JPanel
       }
     });
     
-    JMenuItem filter = new JMenuItem("Filter by Flag...");
+    JMenuItem filter = new JMenuItem("Filter Reads ...");
     menu.add(filter);
     filter.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
       {
-        new SAMRecordFilter(BamView.this);
+        if(filterFrame == null)
+          filterFrame = new SAMRecordFilter(BamView.this);
+        else
+          filterFrame.setVisible(true);
       } 
     });
-    
-    
+
     final JMenuItem bamSplitter = new JMenuItem("Clone window");
     bamSplitter.addActionListener(new ActionListener()
     {
@@ -3159,13 +3165,13 @@ public class BamView extends JPanel
     viewDetail.appendString(new String(thisSAMRecord.getReadBases()), Level.DEBUG);
   }
 
-  protected SAMRecordFlagPredicate getSamRecordFlagPredicate()
+  protected SAMRecordPredicate getSamRecordFlagPredicate()
   {
     return samRecordFlagPredicate;
   }
 
   protected void setSamRecordFlagPredicate(
-      SAMRecordFlagPredicate samRecordFlagPredicate)
+      SAMRecordPredicate samRecordFlagPredicate)
   {
     laststart = -1;
     lastend = -1;
