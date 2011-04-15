@@ -1,5 +1,12 @@
 Version XX
+	Change BamView filter to enable filtering in and out based on
+	reads flag.
+	
+	Add read count and RPKM calculations to BamView.
+
 	Add option in BamView to clone the alignment panel.
+	
+	Create features option for VCF records.
 	
 	Unit tests added for writing VCF/BCF sequences.
 
