@@ -2010,6 +2010,8 @@ public class BamView extends JPanel
     menu.add(analyse);
     final JMenuItem readCount = new JMenuItem("Read count of selected features ...");
     analyse.add(readCount);
+    if(feature_display == null)
+      readCount.setEnabled(false);
     readCount.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
@@ -2036,6 +2038,8 @@ public class BamView extends JPanel
     
     final JMenuItem rpkm = new JMenuItem("RPKM value of selected features ...");
     analyse.add(rpkm);
+    if(feature_display == null)
+      rpkm.setEnabled(false);
     rpkm.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
