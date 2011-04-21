@@ -29,8 +29,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Composite;
-import java.awt.Container;
-import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.FontMetrics;
@@ -2016,10 +2014,8 @@ public class BamView extends JPanel
     {
       public void actionPerformed(ActionEvent e)
       {
-        Container c = BamUtils.getBamContainer(BamView.this);
-        c.setCursor(new Cursor(Cursor.WAIT_CURSOR));
         FeatureVector features = feature_display.getSelection().getAllFeatures();
-        
+
         JCheckBox overlap = new JCheckBox("Include all overlapping reads", true);
         overlap.setToolTipText("Include reads that partially overlap the feature");
         JCheckBox spliced = new JCheckBox("Introns included", true);
@@ -2028,11 +2024,10 @@ public class BamView extends JPanel
         yBox.add(spliced);
         JOptionPane.showMessageDialog(null, yBox, "Read Count Option", JOptionPane.INFORMATION_MESSAGE);
         
-        BamUtils.countReads(features, (String)combo.getSelectedItem(), samFileReaderHash, bamList,
+        new MappedReads(features, (String)combo.getSelectedItem(), samFileReaderHash, bamList,
             seqNames, offsetLengths, concatSequences, seqLengths, 
             samRecordFlagPredicate, samRecordMapQPredicate,
-            !overlap.isSelected(), spliced.isSelected(), null);
-        c.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+            !overlap.isSelected(), spliced.isSelected());
       } 
     });
     
@@ -2044,10 +2039,8 @@ public class BamView extends JPanel
     {
       public void actionPerformed(ActionEvent e)
       {
-        Container c = BamUtils.getBamContainer(BamView.this);
-        c.setCursor(new Cursor(Cursor.WAIT_CURSOR));
         FeatureVector features = feature_display.getSelection().getAllFeatures();
-        
+
         JCheckBox overlap = new JCheckBox("Include all overlapping reads", true);
         overlap.setToolTipText("Include reads that partially overlap the feature");
         JCheckBox spliced = new JCheckBox("Introns included", true);
@@ -2061,18 +2054,11 @@ public class BamView extends JPanel
           seqlen = feature_display.getSequenceLength();
         else if(bases != null)
           seqlen = bases.getLength();
-
-        int mappedReads[] =
-          BamUtils.getTotalMappedReads((String)combo.getSelectedItem(),
-              samFileReaderHash, bamList, seqNames, offsetLengths, concatSequences, 
-              offsetLengths, seqlen, samRecordFlagPredicate, samRecordMapQPredicate);
-
-        logger4j.debug("TOTAL MAPPED READS "+mappedReads);
-        BamUtils.countReads(features, (String)combo.getSelectedItem(), samFileReaderHash, bamList,
-            seqNames, offsetLengths, concatSequences, seqLengths, 
-            samRecordFlagPredicate, samRecordMapQPredicate,
-            !overlap.isSelected(), spliced.isSelected(), mappedReads);
-        c.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+        
+        new MappedReads(features, (String)combo.getSelectedItem(),
+            samFileReaderHash, bamList, seqNames, offsetLengths, concatSequences, 
+            offsetLengths, seqlen, samRecordFlagPredicate, samRecordMapQPredicate,
+            !overlap.isSelected(), spliced.isSelected());
       } 
     });
 

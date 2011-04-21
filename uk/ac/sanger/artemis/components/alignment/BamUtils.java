@@ -23,130 +23,20 @@
  */
 package uk.ac.sanger.artemis.components.alignment;
 
-import java.awt.Container;
-import java.awt.Frame;
-import java.text.DecimalFormat;
-import java.util.Arrays;
 import java.util.Hashtable;
-import java.util.List;
 import java.util.Vector;
-
-import javax.swing.JFrame;
 
 import net.sf.samtools.SAMFileReader;
 import net.sf.samtools.SAMRecord;
 import net.sf.samtools.util.CloseableIterator;
 import uk.ac.sanger.artemis.Feature;
 import uk.ac.sanger.artemis.FeatureSegmentVector;
-import uk.ac.sanger.artemis.FeatureVector;
-import uk.ac.sanger.artemis.components.EntryEdit;
-import uk.ac.sanger.artemis.components.FileViewer;
-import uk.ac.sanger.artemis.components.MultiComparator;
 import uk.ac.sanger.artemis.io.Range;
 
 class BamUtils
 {
-  /**
-   * Read count for selected reads.
-   * @param features
-   * @param refName
-   * @param samFileReaderHash
-   * @param bamList
-   * @param seqNames
-   * @param offsetLengths
-   * @param concatSequences
-   * @param seqLengths
-   * @param samRecordFlagPredicate
-   * @param samRecordMapQPredicate
-   * @param contained
-   * @param useIntrons
-   * @param mappedReads
-   */
-  protected static void countReads(final FeatureVector features,
-                                   final String refName,
-                                   final Hashtable<String, SAMFileReader> samFileReaderHash,
-                                   final List<String> bamList, 
-                                   final Vector<String> seqNames,
-                                   final Hashtable<String, Integer> offsetLengths,
-                                   final boolean concatSequences, 
-                                   final Hashtable<String, Integer> seqLengths,
-                                   final SAMRecordPredicate samRecordFlagPredicate,
-                                   final SAMRecordMapQPredicate samRecordMapQPredicate,
-                                   final boolean contained,
-                                   final boolean useIntrons,
-                                   final int mappedReads[])
-  {
-    Hashtable<String, List<Float>> featureReadCount = new Hashtable<String, List<Float>>();
 
-    for(int i=0; i<features.size(); i++)
-    {     
-      Feature f = features.elementAt(i);
-      
-      int start  = f.getRawFirstBase();
-      int end    = f.getRawLastBase();
-      float fLen = getFeatureLength(f);
-      List<Float> sampleCounts = new Vector<Float>();
-        
-      for(int j=0; j<bamList.size(); j++)
-      {
-        String bam = bamList.get(j);
-        float cnt = 0;
-        if(!useIntrons && f.getSegments().size() > 1)
-        {
-          for(int k=0; k<f.getSegments().size(); k++)
-          {
-            start = f.getSegments().elementAt(k).getRawRange().getStart();
-            end   = f.getSegments().elementAt(k).getRawRange().getEnd();
-            cnt += getCount(start, end, bam, refName, samFileReaderHash, 
-              seqNames, offsetLengths, concatSequences, seqLengths, 
-              samRecordFlagPredicate, samRecordMapQPredicate, contained); 
-          }
-        }
-        else
-          cnt = getCount(start, end, bam, refName, samFileReaderHash, 
-              seqNames, offsetLengths, concatSequences, seqLengths, 
-              samRecordFlagPredicate, samRecordMapQPredicate, contained); 
-
-        if(mappedReads != null)
-          cnt = (cnt / ( ((float)mappedReads[j]/1000000.f) * (fLen/1000.f) )) ;
-        
-        sampleCounts.add(cnt);
-      }
-      featureReadCount.put(f.getSystematicName(), sampleCounts);
-    }
-
-    DecimalFormat df = new DecimalFormat("0.00##");
-    StringBuffer buff = new StringBuffer();
-    for(int j=0; j<bamList.size(); j++)
-    {
-      String bam = bamList.get(j);
-      buff.append("#BAM: "+bam);
-      if(mappedReads != null)
-        buff.append(" Mapped Reads/million: "+ df.format( ((float)mappedReads[j]) / 1000000.f) );
-      buff.append("\n");
-    }
-    buff.append("\n");
-    
-    Object[] readKey = featureReadCount.keySet().toArray();
-    Arrays.sort(readKey);
-    
-    for (Object fId : readKey ) {
-      buff.append(fId+"\t");
-      List<Float> cnts = featureReadCount.get(fId);
-      for(int i=0; i<cnts.size(); i++)
-        buff.append(df.format(cnts.get(i)) + (i<cnts.size()-1 ? "\t" : ""));
-      buff.append("\n");
-    }
-
-    FileViewer viewer;
-    if(mappedReads != null)
-      viewer = new FileViewer ("RPKM", true, false, true);
-    else
-      viewer = new FileViewer ("Read Count", true, false, true);
-    viewer.getTextPane().setText(buff.toString());
-  }
-
-  private static float getFeatureLength(Feature f)
+  protected static float getFeatureLength(Feature f)
   {
     FeatureSegmentVector segs = f.getSegments();
     int len = 0;
@@ -174,7 +64,7 @@ class BamUtils
    * @param contained
    * @return
    */
-  private static int getCount(
+  protected static int getCount(
       final int start,
       final int end,
       final String bam,
@@ -226,82 +116,7 @@ class BamUtils
     return cnt;
   }
 
-  /**
-   * Calculate the total number of mapped reads.
-   * @param refName
-   * @param samFileReaderHash
-   * @param bamList
-   * @param seqNames
-   * @param offsetLengths
-   * @param concatSequences
-   * @param seqLengths
-   * @param sequenceLength
-   * @return
-   */
-  protected static int[] getTotalMappedReads(
-      final String refName,
-      final Hashtable<String, SAMFileReader> samFileReaderHash,
-      final List<String> bamList, 
-      final Vector<String> seqNames,
-      final Hashtable<String, Integer> offsetLengths,
-      final boolean concatSequences, 
-      final Hashtable<String, Integer> seqLengths,
-      final int sequenceLength,
-      final SAMRecordPredicate samRecordFlagPredicate, 
-      SAMRecordMapQPredicate samRecordMapQPredicate)
-  {
-    int MAX_BASE_CHUNK = 2000*60;
-    int mapped[] = new int[bamList.size()];
-    boolean contained = false;
-
-    for (int i = 0; i < sequenceLength; i += MAX_BASE_CHUNK)
-    {
-      int sbegc = i;
-      int sendc = i + MAX_BASE_CHUNK - 1;
-
-      for (int j=0; j<bamList.size(); j++)
-      {
-        String bam = bamList.get(j);
-        if (concatSequences)
-        {
-          int len = 0;
-          int lastLen = 1;
-          for (String name : seqNames)
-          {
-            int thisLength = seqLengths.get(name);
-            len += thisLength;
-
-            if ((lastLen >= sbegc && lastLen < sendc)
-                || (len >= sbegc && len < sendc)
-                || (sbegc >= lastLen && sbegc < len)
-                || (sendc >= lastLen && sendc < len))
-            {
-              int offset = offsetLengths.get(name);
-              int thisStart = sbegc - offset;
-              if (thisStart < 1)
-                thisStart = 1;
-              int thisEnd = sendc - offset;
-              if (thisEnd > thisLength)
-                thisEnd = thisLength;
-
-              mapped[j] += count(bam, samFileReaderHash, name, thisStart, thisEnd,
-                  samRecordFlagPredicate, samRecordMapQPredicate, contained);
-
-            }
-            lastLen = len;
-          }
-        }
-        else
-        {
-          mapped[j] += count(bam, samFileReaderHash, refName, sbegc, sendc,
-              samRecordFlagPredicate, samRecordMapQPredicate, contained);
-        }
-      }
-    }
-    return mapped;
-  }
-  
-  private static int count(String bam, 
+  protected static int count(String bam, 
                     Hashtable<String, SAMFileReader> samFileReaderHash, 
                     String refName, 
                     int start, 
@@ -330,18 +145,6 @@ class BamUtils
     it.close();
     return cnt;
   }
-  
-  protected static Container getBamContainer(BamView bamView)
-  {
-    Frame fs[] = JFrame.getFrames();
-    for(Frame f: fs)
-    {
-      if( f instanceof JFrame && 
-         ((JFrame)f) instanceof EntryEdit ||
-         ((JFrame)f) instanceof MultiComparator)
-        return ((JFrame)f).getContentPane();
-    }
-    return bamView;
-  }
+
 }
 
