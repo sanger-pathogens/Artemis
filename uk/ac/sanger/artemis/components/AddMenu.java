@@ -40,6 +40,7 @@ import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
 import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
+import uk.ac.sanger.artemis.io.InvalidRelationException;
 import uk.ac.sanger.artemis.io.Key;
 import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.io.RangeVector;
@@ -750,7 +751,9 @@ public class AddMenu extends SelectionMenu
         final Feature selection_feature =
           selected_features.elementAt (feature_index);
 
-        if (!selection_feature.isProteinFeature ()) {
+        if (!(selection_feature.isProteinFeature () ||
+              selection_feature.getKey().equals("5'UTR") ||
+              selection_feature.getKey().equals("3'UTR"))) {
           continue;
         }
 
@@ -814,6 +817,19 @@ public class AddMenu extends SelectionMenu
             new Location (intron_ranges, cds_location.isComplement ());
           final QualifierVector qualifiers = new QualifierVector ();
 
+          try {
+            StringVector sysNames = Options.getOptions().getSystematicQualifierNames();
+            for(int i=0; i<sysNames.size(); i++) {
+              Qualifier qual = selection_feature.getQualifierByName((String) sysNames.get(i));
+              if(qual != null && qual.getValues() != null && qual.getValues().size() > 0) {
+                qualifiers.addQualifierValues(qual);
+                break;
+              }
+            }
+          } catch (InvalidRelationException e) {
+            throw new Error ("internal error - unexpected exception: " + e);
+          }
+          
           try {
             selection_feature.getEntry ().createFeature (intron_key,
                                                          intron_location,
