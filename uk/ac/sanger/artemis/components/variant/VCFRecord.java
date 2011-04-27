@@ -122,6 +122,8 @@ class VCFRecord
   
   protected String getFormatValue(String key)
   {
+    if(getFormat() == null)
+      return null;
     String fmts[] = COLON_PATTERN.split(getFormat());
     for(int i=0; i<fmts.length; i++)
     {
