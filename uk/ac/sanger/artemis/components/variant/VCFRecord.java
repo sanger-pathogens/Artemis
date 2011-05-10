@@ -32,7 +32,7 @@ import uk.ac.sanger.artemis.io.RangeVector;
 import uk.ac.sanger.artemis.sequence.AminoAcidSequence;
 import uk.ac.sanger.artemis.sequence.Bases;
 
-class VCFRecord
+public class VCFRecord
 {
   private String chrom;
   private int pos;
