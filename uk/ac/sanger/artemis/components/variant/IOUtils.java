@@ -30,13 +30,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
 import java.net.URL;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Vector;
 
 import javax.swing.Box;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 import uk.ac.sanger.artemis.Entry;
 import uk.ac.sanger.artemis.EntryGroup;
@@ -591,12 +598,11 @@ class IOUtils
   {
     boolean vcf_v4 = reader.isVcf_v4();
     int len = basesStr.length();
-    
-    if (reader instanceof BCFReader)
+
+    try
     {
-      BCFReaderIterator it = ((BCFReader) reader).query(chr, sbeg, send);
       VCFRecord record;
-      while ((record = it.next()) != null)
+      while ((record = reader.getNextRecord(chr, sbeg, send)) != null)
       {
         int basePosition = record.getPos() + vcfView.getSequenceOffset(record.getChrom());
         if(vcfView.showVariant(record, features, basePosition, vcf_v4) )
@@ -609,7 +615,7 @@ class IOUtils
           basesStr = basesStr.substring(0, position) + 'n' +
                      basesStr.substring(position+1);
         }
-          
+        
         if(basesStr.length() > len) // adjust for insertions
         {
           sbeg -= (basesStr.length()-len);
@@ -617,41 +623,133 @@ class IOUtils
         }
       }
     }
-    else
+    catch(NullPointerException e)
     {
-      try
+      System.err.println(chr+":"+sbeg+"-"+send+"\n"+e.getMessage());
+    }
+
+    return basesStr;
+  }
+  
+
+  protected static void countVariants(final VCFview vcfView,
+                                      final FeatureVector features) throws IOException
+  {
+    String[] columnNames = { 
+        "VCF", "Name", "Variant", "Non-variant", "Deletion", "Insertion", "Synonymous", "Non-synonymous"};
+    Vector<String> columnData = new Vector<String>();
+    for(String col: columnNames)
+      columnData.add(col);
+    Vector<Vector<Object>> rowData = new Vector<Vector<Object>>();
+    
+    AbstractVCFReader vcfReaders[] = vcfView.getVcfReaders();
+    for (AbstractVCFReader reader: vcfReaders)
+    {
+      
+      for (int j = 0; j < features.size(); j++)
       {
-        TabixReader.Iterator iter = 
-          (((TabixReader) reader).query(chr+":"+sbeg+"-"+send)); // get the iterator
-        String s;
-        while (iter != null && (s = iter.next()) != null)
+        int count[] = new int[6];
+        for(int c: count)
+          c = 0;
+        
+        Feature f = features.elementAt(j);
+        FeatureSegmentVector segs = f.getSegments();
+        
+        for(int k=0; k<segs.size(); k++)
         {
-          VCFRecord record = VCFRecord.parse(s);
-          int basePosition = record.getPos() + vcfView.getSequenceOffset(record.getChrom());
-          if(vcfView.showVariant(record, features, basePosition, vcf_v4) )
-            basesStr = getSeqsVariation(record, basesStr, sbeg, isFwd, vcf_v4);
-          else if(useNs && isSNPorNonVariant(record))
+          FeatureSegment seg = segs.elementAt(k);
+          int sbeg = seg.getRawRange().getStart();
+          int send = seg.getRawRange().getEnd();
+
+          if(vcfView.isConcatenate())
           {
-            int position = record.getPos()-sbeg;
-            if(!isFwd)
-              position = basesStr.length()-position-1;
-            basesStr = basesStr.substring(0, position) + 'n' +
-                       basesStr.substring(position+1);
+            String[] contigs = reader.getSeqNames();
+            for(int i=0; i<contigs.length; i++)
+            {
+              int offset = vcfView.getSequenceOffset(contigs[i]);
+              int nextOffset;
+              if(i<contigs.length-1)
+                nextOffset = vcfView.getSequenceOffset(contigs[i+1]);
+              else
+                nextOffset = vcfView.seqLength;
+              
+              if( (offset >= sbeg && offset < send) ||
+                  (offset < sbeg && sbeg < nextOffset) )
+              {
+                int thisStart = sbeg - offset;
+                if(thisStart < 1)
+                  thisStart = 1;
+                int thisEnd   = send - offset;
+              
+                VCFRecord record;
+                while ((record = reader.getNextRecord(vcfView.getChr(), thisStart, thisEnd)) != null)
+                  count(record, count, features, reader);
+              }
+            }
           }
-          
-          if(basesStr.length() > len) // adjust for insertions
+          else
           {
-            sbeg -= (basesStr.length()-len);
-            len = basesStr.length();
+            VCFRecord record;
+            while ((record = reader.getNextRecord(vcfView.getChr(), sbeg, send)) != null)
+              count(record, count, features, reader);
           }
         }
-      }
-      catch(NullPointerException e)
-      {
-        System.err.println(chr+":"+sbeg+"-"+send+"\n"+e.getMessage());
+
+        Object row[] = { 
+            reader.getName(), f.getSystematicName(), count[0], count[1], count[2], count[3], count[4], count[5] };
+
+        Vector<Object> thisRow = new Vector<Object>();
+        for(Object obj: row)
+          thisRow.add(obj);
+        rowData.add(thisRow);
       }
     }
-    return basesStr;
+    
+    JTable variantData = new JTable(rowData, columnData);
+    TableRowSorter<TableModel> sorter = 
+      new TableRowSorter<TableModel>(variantData.getModel());
+    variantData.setRowSorter(sorter);
+    
+    Comparator<Integer> comparator = new Comparator<Integer>() {
+      public int compare(Integer i1, Integer i2) {
+          return i1.compareTo(i2);
+      }
+    };
+    
+    for(int i=2; i< columnData.size(); i++)
+      sorter.setComparator(i, comparator);
+    
+    JScrollPane jsp = new JScrollPane(variantData);
+    JFrame f = new JFrame("Variant Overview");
+    f.getContentPane().add(jsp);
+    f.pack();
+    f.setVisible(true);
+  }
+  
+  private static void count(VCFRecord record, int count[], FeatureVector features, AbstractVCFReader reader)
+  {
+    if(record.getAlt().isNonVariant())
+    {
+      count[1]++;
+      return;
+    }
+    else
+      count[0]++;
+   
+    if(record.getAlt().isDeletion(reader.isVcf_v4()))
+      count[2]++;
+    else if(record.getAlt().isInsertion(reader.isVcf_v4()))
+      count[3]++;
+    
+    if(record.getAlt().length() == 1 && record.getRef().length() == 1)
+    {
+      short synFlag = record.getSynFlag(features, record.getPos());
+      switch(synFlag)
+      {
+        case 1:  count[4]++; break;  // synonymous
+        default: count[5]++; break;  // non-synonymous
+      }
+    }  
   }
   
   private static boolean isSNPorNonVariant(VCFRecord record)
@@ -876,33 +974,18 @@ class IOUtils
   {
     boolean vcf_v4 = reader.isVcf_v4();
     Key variantKey = new Key("misc_difference");
-    if (reader instanceof BCFReader)
+    try
     {
-      BCFReaderIterator it = ((BCFReader) reader).query(chr, sbegc, sendc);
       VCFRecord record;
-      while ((record = it.next()) != null)
+      while( (record = reader.getNextRecord(chr, sbegc, sendc)) != null)
       {
         makeFeature(record, reader.getName(), vcfView, features, bases, entry, variantKey, vcf_v4);
       }
     }
-    else
+    catch (NullPointerException e)
     {
-      try
-      {
-        TabixReader.Iterator iter = (((TabixReader) reader).query(chr + ":"
-            + sbegc + "-" + sendc)); // get the iterator
-        String s;
-        while (iter != null && (s = iter.next()) != null)
-        {
-          VCFRecord record = VCFRecord.parse(s);
-          makeFeature(record, reader.getName(), vcfView, features, bases, entry, variantKey, vcf_v4);
-        }
-      }
-      catch (NullPointerException e)
-      {
-        System.err.println(chr + ":" + sbegc + "-" + sendc + "\n"
-            + e.getMessage());
-      }
+      System.err.println(chr + ":" + sbegc + "-" + sendc + "\n"
+          + e.getMessage());
     }
   }
 

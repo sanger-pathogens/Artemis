@@ -666,6 +666,24 @@ public class VCFview extends JPanel
       }
     });
     
+    final JMenuItem snpOverview = new JMenuItem("Overview");
+    popup.add(snpOverview);
+    snpOverview.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        try
+        {
+          IOUtils.countVariants(VCFview.this, selection.getAllFeatures());
+        }
+        catch (IOException e1)
+        {
+          // TODO Auto-generated catch block
+          e1.printStackTrace();
+        }
+      }
+    });
+    
     final JCheckBoxMenuItem labels = new JCheckBoxMenuItem("Show Labels", showLabels);
     labels.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e)
@@ -1017,43 +1035,17 @@ public class VCFview extends JPanel
                           float pixPerBase, 
                           FeatureVector features) 
   {
-    String s;
     cacheVariantLines = new Vector<Integer>(5);
-    if(vcfReaders[i] instanceof BCFReader)
+    try
     {
-      try
-      {
-        BCFReader bcfReader = (BCFReader)vcfReaders[i];
-        BCFReaderIterator it = bcfReader.query(chr, sbeg, send);
-        VCFRecord bcfRecord;
-        while((bcfRecord = it.next()) != null)
-          drawVariantCall(g, bcfRecord, start, i, pixPerBase, features, vcfReaders[i].isVcf_v4());
-      }
-      catch (IOException e)
-      {
-        logger4j.warn(e.getMessage());
-        e.printStackTrace();
-      }
-      
+      VCFRecord record;
+      while((record = vcfReaders[i].getNextRecord(chr, sbeg, send)) != null)
+        drawVariantCall(g, record, start, i, pixPerBase, features, vcfReaders[i].isVcf_v4());
     }
-    else
+    catch (IOException e)
     {
-      try
-      {
-        TabixReader.Iterator iter = 
-          ((TabixReader)vcfReaders[i]).query(chr+":"+sbeg+"-"+send); // get the iterator
-        if (iter == null)
-          return;
-        while (iter != null && (s = iter.next()) != null)
-        {
-          VCFRecord vcfRecord = VCFRecord.parse(s);
-          drawVariantCall(g, vcfRecord, start, i, pixPerBase, features, vcfReaders[i].isVcf_v4());
-        }
-      }
-      catch (Exception e)
-      {
-        logger4j.warn(chr+":"+sbeg+"-"+send+"\n"+e.getMessage());
-      }
+      logger4j.warn(chr+":"+sbeg+"-"+send+"\n"+e.getMessage());
+      e.printStackTrace();
     }
   }
   
@@ -1387,41 +1379,16 @@ public class VCFview extends JPanel
                             Point mousePoint, FeatureVector features,
                             int start, float pixPerBase) 
   {
-    if(vcfReaders[i] instanceof BCFReader)
+    try
     {
-      try
-      {
-        BCFReader bcfReader = (BCFReader)vcfReaders[i];
-        BCFReaderIterator it = bcfReader.query(chr, sbeg, send);
-        VCFRecord bcfRecord;
-        while((bcfRecord = it.next()) != null)
-          isMouseOver(mousePoint, bcfRecord, features, i, start, pixPerBase, vcfReaders[i].isVcf_v4());
-      }
-      catch (IOException e)
-      {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      }
+      VCFRecord bcfRecord;
+      while((bcfRecord = vcfReaders[i].getNextRecord(chr, sbeg, send)) != null)
+        isMouseOver(mousePoint, bcfRecord, features, i, start, pixPerBase, vcfReaders[i].isVcf_v4());
     }
-    else
+    catch (IOException e)
     {
-      try
-      {
-        TabixReader.Iterator iter = 
-          ((TabixReader)vcfReaders[i]).query(chr+":"+sbeg+"-"+send); // get the iterator
-        if (iter == null)
-          return;
-        String s;
-        while ((s = iter.next()) != null)
-        {
-          VCFRecord vcfRecord = VCFRecord.parse(s);
-          isMouseOver(mousePoint, vcfRecord, features, i, start, pixPerBase, vcfReaders[i].isVcf_v4());
-        }
-      }
-      catch (Exception e)
-      {
-        logger4j.warn(chr+":"+sbeg+"-"+send+"\n"+e.getMessage());
-      }
+      logger4j.warn(chr+":"+sbeg+"-"+send+"\n"+e.getMessage());
+      e.printStackTrace();
     }
   }
   

@@ -30,11 +30,58 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
+import uk.ac.sanger.artemis.components.variant.BCFReader.BCFReaderIterator;
+
 public abstract class AbstractVCFReader
 {
   private boolean vcf_v4 = false;
   protected abstract String[] getSeqNames();
   protected abstract String getFileName();
+  
+  private BCFReaderIterator bcfIterator = null;
+  private TabixReader.Iterator tabixIterator = null;
+  
+  /**
+   * Read and return the next record.
+   * @param chr     sequence name
+   * @param sbeg    start base
+   * @param send    end base
+   * @return
+   * @throws IOException
+   */
+  public VCFRecord getNextRecord(String chr, int sbeg, int send) throws IOException
+  {
+    VCFRecord record;
+    if(this instanceof BCFReader)
+    {
+      if(bcfIterator == null)
+        bcfIterator = ((BCFReader)this).query(chr, sbeg, send);
+
+      record = bcfIterator.next();
+      if(record == null)
+        bcfIterator = null;
+    }
+    else
+    {
+      if(tabixIterator == null)
+        tabixIterator = ((TabixReader)this).query(chr+":"+sbeg+"-"+send);
+      if(tabixIterator == null)
+        return null;
+
+      String s = tabixIterator.next();
+      if(s == null)
+      {
+        tabixIterator = null;
+        return null;
+      }
+      record = VCFRecord.parse(s);
+      
+      if(record == null)
+        tabixIterator = null;
+    }
+    return record;
+  }
+  
   
   protected static int readInt(final InputStream is) throws IOException {
     byte[] buf = new byte[4];
