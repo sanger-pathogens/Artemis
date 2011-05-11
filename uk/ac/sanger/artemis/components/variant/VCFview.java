@@ -103,7 +103,6 @@ import uk.ac.sanger.artemis.components.FileViewer;
 import uk.ac.sanger.artemis.components.MessageDialog;
 import uk.ac.sanger.artemis.components.MultiComparator;
 import uk.ac.sanger.artemis.components.alignment.FileSelectionDialog;
-import uk.ac.sanger.artemis.components.variant.BCFReader.BCFReaderIterator;
 import uk.ac.sanger.artemis.editor.MultiLineToolTipUI;
 import uk.ac.sanger.artemis.io.EntryInformation;
 import uk.ac.sanger.artemis.io.Key;
@@ -666,20 +665,25 @@ public class VCFview extends JPanel
       }
     });
     
-    final JMenuItem snpOverview = new JMenuItem("Overview");
+    final JMenuItem snpOverview = new JMenuItem("Overview for selected features");
     popup.add(snpOverview);
     snpOverview.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
       {
+        Container f = getVcfContainer();
         try
         {
+          f.setCursor(new Cursor(Cursor.WAIT_CURSOR));
           IOUtils.countVariants(VCFview.this, selection.getAllFeatures());
         }
         catch (IOException e1)
         {
-          // TODO Auto-generated catch block
-          e1.printStackTrace();
+          JOptionPane.showMessageDialog(null, e1.getMessage());
+        }
+        finally
+        {
+          f.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         }
       }
     });
