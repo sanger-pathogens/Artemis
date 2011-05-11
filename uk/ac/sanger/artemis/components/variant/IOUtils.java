@@ -30,7 +30,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
 import java.net.URL;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Vector;
 
@@ -38,12 +37,7 @@ import javax.swing.Box;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
 
 import uk.ac.sanger.artemis.Entry;
 import uk.ac.sanger.artemis.EntryGroup;
@@ -59,7 +53,6 @@ import uk.ac.sanger.artemis.components.FileViewer;
 import uk.ac.sanger.artemis.components.MessageDialog;
 import uk.ac.sanger.artemis.components.SequenceViewer;
 import uk.ac.sanger.artemis.components.StickyFileChooser;
-import uk.ac.sanger.artemis.components.variant.BCFReader.BCFReaderIterator;
 import uk.ac.sanger.artemis.io.DocumentEntry;
 import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.Key;
@@ -635,6 +628,14 @@ class IOUtils
   protected static void countVariants(final VCFview vcfView,
                                       final FeatureVector features) throws IOException
   {
+    if(features.size () < 1)
+    {
+      JOptionPane.showMessageDialog(null, 
+          "No features selected.", 
+          "Warning", JOptionPane.WARNING_MESSAGE);
+      return;  
+    }
+    
     String[] columnNames = { 
         "VCF", "Name", "Variant", "Non-variant", "Deletion", "Insertion", "Synonymous", "Non-synonymous"};
     Vector<String> columnData = new Vector<String>();
@@ -704,26 +705,10 @@ class IOUtils
         rowData.add(thisRow);
       }
     }
-    
-    JTable variantData = new JTable(rowData, columnData);
-    TableRowSorter<TableModel> sorter = 
-      new TableRowSorter<TableModel>(variantData.getModel());
-    variantData.setRowSorter(sorter);
-    
-    Comparator<Integer> comparator = new Comparator<Integer>() {
-      public int compare(Integer i1, Integer i2) {
-          return i1.compareTo(i2);
-      }
-    };
-    
+   
+    TableViewer tab = new TableViewer(rowData, columnData, "Variant Overview");
     for(int i=2; i< columnData.size(); i++)
-      sorter.setComparator(i, comparator);
-    
-    JScrollPane jsp = new JScrollPane(variantData);
-    JFrame f = new JFrame("Variant Overview");
-    f.getContentPane().add(jsp);
-    f.pack();
-    f.setVisible(true);
+      tab.setIntegerRowSorter(i);
   }
   
   private static void count(VCFRecord record, int count[], FeatureVector features, AbstractVCFReader reader)
