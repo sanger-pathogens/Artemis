@@ -109,7 +109,7 @@ public class VariantBase
 
   protected boolean isNonVariant()
   {
-    if (alt.equals(".") && record.getRef().length() == 1)
+    if ((alt.equals(".") ||  alt.equals("X")) && record.getRef().length() == 1)
       return true;
     return false;
   }
