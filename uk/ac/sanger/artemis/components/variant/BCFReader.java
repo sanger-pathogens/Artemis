@@ -49,6 +49,8 @@ class BCFReader extends AbstractVCFReader
   private int nsamples;
   private String metaData;
   private String fileName;
+  
+  private boolean longSP = true;
 
   private static org.apache.log4j.Logger logger4j = 
     org.apache.log4j.Logger.getLogger(BCFReader.class);
@@ -106,7 +108,14 @@ class BCFReader extends AbstractVCFReader
         if(bcfRecord.getPos() >= beg && bcfRecord.getPos() <= end)
           return bcfRecord;
       }
-    } 
+    }
+    catch(ArrayIndexOutOfBoundsException ae)
+    {
+      if(longSP)
+        longSP = false;
+      else
+        throw ae;
+    }
     catch(Exception e)
     {
       if(is.read() != -1)  // eof
@@ -213,7 +222,7 @@ class BCFReader extends AbstractVCFReader
       int n_alleles = bcfRecord.getAlt().getNumAlleles();
       int nc  = (int) (n_alleles * ((float)(((float)n_alleles+1.f)/2.f)));
 
-      if(bcfRecord.getAlt().isNonVariant())
+      if(bcfRecord.getAlt().isNonVariant() && bcfRecord.getAlt().equals("."))
         nc = 1;
 
       String fmts[] = VCFRecord.COLON_PATTERN.split( bcfRecord.getFormat() );
@@ -325,7 +334,12 @@ class BCFReader extends AbstractVCFReader
     else if(tag.equals("PL"))   // Phred-scaled likelihood
       return nsamples*nc;       // uint8_t[n*x]
     else if(tag.equals("SP"))   // 
-      return nsamples;          // uint8_t[n]
+    {
+      if(longSP)                // type changed in bcftools
+        return 4*nsamples;      // uint32_t[n]
+      else
+        return nsamples;        // uint8_t[n]
+    }
     else                        // misc
       return 4*nsamples;        // uint32_t+char*
   }
