@@ -684,7 +684,7 @@ class IOUtils
               
                 VCFRecord record;
                 while ((record = reader.getNextRecord(vcfView.getChr(), thisStart, thisEnd)) != null)
-                  count(record, count, features, reader);
+                  count(record, count, features, reader, vcfView);
               }
             }
           }
@@ -692,7 +692,7 @@ class IOUtils
           {
             VCFRecord record;
             while ((record = reader.getNextRecord(vcfView.getChr(), sbeg, send)) != null)
-              count(record, count, features, reader);
+              count(record, count, features, reader, vcfView);
           }
         }
 
@@ -711,8 +711,12 @@ class IOUtils
       tab.setIntegerRowSorter(i);
   }
   
-  private static void count(VCFRecord record, int count[], FeatureVector features, AbstractVCFReader reader)
+  private static void count(VCFRecord record, int count[], FeatureVector features, AbstractVCFReader reader, VCFview vcfView)
   {
+    int basePosition = record.getPos() + vcfView.getSequenceOffset(record.getChrom());
+    if(!vcfView.showVariant(record, features, basePosition, reader.isVcf_v4()) )
+      return;
+    
     if(record.getAlt().isNonVariant())
     {
       count[1]++;
