@@ -33,6 +33,8 @@ import java.util.List;
 import java.util.Vector;
 import java.util.regex.Pattern;
 
+import uk.ac.sanger.artemis.util.FTPSeekableStream;
+
 import net.sf.samtools.util.BlockCompressedInputStream;
 
 class BCFReader extends AbstractVCFReader
@@ -65,6 +67,14 @@ class BCFReader extends AbstractVCFReader
     {
       URL bcfURL = new URL(bcf);
       is = new BlockCompressedInputStream(bcfURL);
+      indexFileStream = new URL(bcf+".bci").openStream();
+      fileName = bcfURL.getFile();
+    }
+    else if(bcf.startsWith("ftp"))
+    {
+      URL bcfURL = new URL(bcf);
+      FTPSeekableStream fss = new FTPSeekableStream(bcfURL);
+      is = new BlockCompressedInputStream(fss);
       indexFileStream = new URL(bcf+".bci").openStream();
       fileName = bcfURL.getFile();
     }
