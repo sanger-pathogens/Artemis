@@ -23,6 +23,7 @@
  */
 package uk.ac.sanger.artemis.components.alignment;
 
+
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
@@ -124,6 +125,7 @@ import uk.ac.sanger.artemis.sequence.MarkerRange;
 import uk.ac.sanger.artemis.sequence.NoSequenceException;
 import uk.ac.sanger.artemis.util.Document;
 import uk.ac.sanger.artemis.util.DocumentFactory;
+import uk.ac.sanger.artemis.util.FTPSeekableStream;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
 
 public class BamView extends JPanel
@@ -354,7 +356,7 @@ public class BamView extends JPanel
   private File getBamIndexFile(String bam) throws IOException
   {
     File bamIndexFile = null;
-    if (bam.startsWith("http"))
+    if (bam.startsWith("http") || bam.startsWith("ftp"))
     {
       final URL urlBamIndexFile = new URL(bam + ".bai");
       InputStream is = urlBamIndexFile.openStream();
@@ -390,10 +392,16 @@ public class BamView extends JPanel
   {  
     if(samFileReaderHash.containsKey(bam))
       return samFileReaderHash.get(bam);
-    
+
     File bamIndexFile = getBamIndexFile(bam);
     final SAMFileReader samFileReader;
-    if(!bam.startsWith("http"))
+    
+    if(bam.startsWith("ftp"))
+    {
+      FTPSeekableStream fss = new FTPSeekableStream(new URL(bam));
+      samFileReader = new SAMFileReader(fss, bamIndexFile, false);
+    }
+    else if(!bam.startsWith("http"))
     {
       File bamFile = new File(bam);
       samFileReader = new SAMFileReader(bamFile, bamIndexFile);
@@ -498,7 +506,7 @@ public class BamView extends JPanel
     boolean multipleBAM = false;
     if(bamList.size() > 1)
       multipleBAM = true;
-    
+
     CloseableIterator<SAMRecord> it = inputSam.queryOverlapping(refName, start, end);
     MemoryMXBean memory = ManagementFactory.getMemoryMXBean();
     int checkMemAfter = 8000;
@@ -512,7 +520,6 @@ public class BamView extends JPanel
       {
         cnt++;
         SAMRecord samRecord = it.next();
-
         if( samRecordFlagPredicate == null ||
            !samRecordFlagPredicate.testPredicate(samRecord))
         {
