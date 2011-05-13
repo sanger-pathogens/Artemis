@@ -16,5 +16,6 @@
 	<classpathentry kind="lib" path="lib/postgresql-8.4-701.jdbc3.jar"/>
 	<classpathentry kind="lib" path="lib/picard/picard.jar"/>
 	<classpathentry kind="lib" path="lib/picard/sam.jar"/>
+	<classpathentry kind="lib" path="lib/commons-net-2.2.jar"/>
 	<classpathentry kind="output" path="ant-build/classes/main"/>
 </classpath>
