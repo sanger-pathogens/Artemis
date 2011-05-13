@@ -28,8 +28,10 @@ package uk.ac.sanger.artemis.components.variant;
 /* Contact: Heng Li <hengli@broadinstitute.org> */
 
 import net.sf.samtools.util.BlockCompressedInputStream;
+import net.sf.samtools.util.SeekableStream;
 
 import java.io.*;
+import java.net.URL;
 import java.nio.*;
 import java.util.HashMap;
 import java.util.ArrayList;
@@ -91,6 +93,18 @@ public class TabixReader extends AbstractVCFReader
 		mFn = fn;
 		mFp = new BlockCompressedInputStream(new File(fn));
 		readIndex();
+	}
+	
+	public TabixReader(final String fn, final SeekableStream ins) throws IOException {
+	    mFn = fn;
+	    mFp = new BlockCompressedInputStream(ins);
+	    readIndex();
+    }
+	
+	public TabixReader(final String fn, final URL url) throws IOException {
+	    mFn = fn;
+	    mFp = new BlockCompressedInputStream(url);
+	    readIndex();
 	}
 
 	private static int reg2bins(final int beg, final int _end, final int[] list) {
