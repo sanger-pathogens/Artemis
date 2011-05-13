@@ -1042,7 +1042,7 @@ class IOUtils
   protected static boolean isBCF(String fileName) throws IOException
   {
     InputStream ins;
-    if(fileName.startsWith("http:"))
+    if(fileName.startsWith("http:") || fileName.startsWith("ftp:"))
     {
       final URL urlBamIndexFile = new URL(fileName);
       ins = urlBamIndexFile.openStream();
