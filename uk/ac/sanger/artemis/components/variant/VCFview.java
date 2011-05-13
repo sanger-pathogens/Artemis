@@ -113,6 +113,7 @@ import uk.ac.sanger.artemis.sequence.MarkerRange;
 import uk.ac.sanger.artemis.sequence.NoSequenceException;
 import uk.ac.sanger.artemis.util.Document;
 import uk.ac.sanger.artemis.util.DocumentFactory;
+import uk.ac.sanger.artemis.util.FTPSeekableStream;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
 
 
@@ -750,23 +751,13 @@ public class VCFview extends JPanel
    */
   private String testForURL(String fileName, boolean isBCF)
   {
-    if(!fileName.startsWith("http:"))
+    if(!fileName.startsWith("http:") && !fileName.startsWith("ftp:"))
       return fileName;
 
-    if(isBCF)
-    {
-      String newFileName = download(fileName, null, ".bcf");
-      download(fileName+".bci", newFileName, ".bci");
-      return newFileName;
-    }
-
-    String newFileName = download(fileName, null, ".vcf.gz");
-    download(fileName+".tbi", newFileName, ".tbi");
-
-    return newFileName;
+    return download(fileName+".tbi", ".tbi");
   }
   
-  protected String download(String f, String newName, String suffix)
+  protected String download(String f, String suffix)
   {
     try
     {
@@ -774,17 +765,12 @@ public class VCFview extends JPanel
       InputStream is = urlFile.openStream();
 
       // Create temp file.
-      File bcfFile;
-      if(newName != null)
-        bcfFile = new File(newName+suffix);
-      else
-      { 
-        String name = urlFile.getFile();
-        int ind = name.lastIndexOf('/');
-        if(ind > -1)
-          name = name.substring(ind+1);
-        bcfFile = File.createTempFile(name.replaceAll("[\\/\\s]", "_"), suffix);
-      }
+      String name = urlFile.getFile();
+      int ind = name.lastIndexOf('/');
+      if(ind > -1)
+        name = name.substring(ind+1);
+      File bcfFile = File.createTempFile(name.replaceAll("[\\/\\s]", "_"), suffix);
+      
       bcfFile.deleteOnExit();
 
       FileOutputStream out = new FileOutputStream(bcfFile);
@@ -819,17 +805,29 @@ public class VCFview extends JPanel
       if(IOUtils.isBCF(fileName))
       {
         vcfReaders[index] = new BCFReader(fileName);
-  
         String hdr = ((BCFReader)vcfReaders[index]).headerToString();
         if(hdr.indexOf("VCFv4") > -1)
           vcfReaders[index].setVcf_v4(true);
         return hdr;
       }
 
-      fileName = testForURL(fileName, false);
-      BlockCompressedInputStream is = 
-        new BlockCompressedInputStream(new FileInputStream(fileName));
-      vcfReaders[index] = new TabixReader(fileName);
+      String indexfileName = testForURL(fileName, false);
+      BlockCompressedInputStream is;
+      if(fileName.startsWith("http")|| fileName.startsWith("ftp"))
+      {
+        URL url = new URL(fileName);
+        if(fileName.startsWith("ftp"))
+          vcfReaders[index] = new TabixReader(indexfileName.substring(0, indexfileName.length()-4), new FTPSeekableStream(url));
+        else
+          vcfReaders[index] = new TabixReader(indexfileName.substring(0, indexfileName.length()-4), url);
+        is = new BlockCompressedInputStream(url);
+      }
+      else
+      {
+        vcfReaders[index] = new TabixReader(fileName);
+        is = new BlockCompressedInputStream(new FileInputStream(fileName));
+      }
+
       String line;
       while( (line = TabixReader.readLine(is) ) != null )
       {
@@ -838,9 +836,9 @@ public class VCFview extends JPanel
         
         if(line.indexOf("VCFv4") > -1)
           vcfReaders[index].setVcf_v4(true);
-        
         buff.append(line+"\n");
       }
+      is.close();
     }
     catch (IOException e)
     {
