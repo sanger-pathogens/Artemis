@@ -126,7 +126,7 @@ public class FTPSeekableStream extends SeekableStream {
     }
 
     @Override
-    synchronized public int read(byte[] bytes, int offset, int length)
+    public int read(byte[] bytes, int offset, int length)
             throws IOException {
 
         InputStream in = initStream();
@@ -199,7 +199,7 @@ public class FTPSeekableStream extends SeekableStream {
     }
 
     @Override
-    synchronized public int read() throws IOException {
+    public int read() throws IOException {
         logger.info("read");
 
         InputStream in = initStream();
