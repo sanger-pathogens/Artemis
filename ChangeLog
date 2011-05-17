@@ -26,7 +26,7 @@ Version 13
 	It is now possible to add BAM, VCF and BCF files from the command line using the 
 	JVM bam option, e.g. art -Dbam=/pathToFile/file.bam 
 	and for multiple BAM's/VCF's this is comma separated
-	art -Duserplot='/pathToFile/file1.bam,/pathToFile/file2.bam', it
+	art -Dbam='/pathToFile/file1.bam,/pathToFile/file2.bam', it
 	can also read the BAM's from URL's.
 	
 	Added option to display orientation of reads in BamView.
