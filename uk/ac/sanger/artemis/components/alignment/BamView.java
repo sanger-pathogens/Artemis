@@ -1952,6 +1952,35 @@ public class BamView extends JPanel
       });
       bottomPanel.add(scrollBar, BorderLayout.SOUTH);
     }
+    else
+    {
+      if(!concatSequences)
+      {
+        int seqLen = seqLengths.get((String) combo.getSelectedItem());
+        int artemisSeqLen = feature_display.getSequenceLength();
+        if(seqLen != artemisSeqLen)
+        {
+          int newIndex = -1;
+          for(int i=0; i<seqNames.size(); i++)
+          {
+            if(seqLengths.get(seqNames.get(i)) == artemisSeqLen)
+            {
+              // this looks like the correct sequence
+              combo.setSelectedIndex(i);
+              newIndex = i;
+            }
+          }
+
+          JOptionPane.showMessageDialog(null, 
+              "The length of the sequence loaded does not match the length of\n"+
+              "the default reference sequence in the BAM ("+seqNames.get(0)+").\n"+
+              (newIndex == -1 ? "" : "The length does match the reference "+
+                  seqNames.get(newIndex)+" so this has been\nset as the default."), 
+                  "Check the reference is correctly selected", 
+                  JOptionPane.WARNING_MESSAGE);
+        }
+      }
+    }
 
     mainPanel.add(bottomPanel, BorderLayout.SOUTH);
     coveragePanel.setPreferredSize(new Dimension(900, 100));
