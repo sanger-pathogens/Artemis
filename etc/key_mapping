@@ -20,3 +20,4 @@ match_part                                 misc_feature    note=match_part
 direct_repeat                              repeat_region   rpt_type=direct
 polypeptide_domain                         misc_feature
 centromere                                 misc_feature    note=centromere
+modified_amino_acid_feature                misc_feature    note=modified_amino_acid_feature
