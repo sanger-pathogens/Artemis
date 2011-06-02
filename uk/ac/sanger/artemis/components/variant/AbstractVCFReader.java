@@ -64,7 +64,16 @@ public abstract class AbstractVCFReader
     else
     {
       if(tabixIterator == null)
-        tabixIterator = ((TabixReader)this).query(chr+":"+sbeg+"-"+send);
+      {
+        try
+        {
+          tabixIterator = ((TabixReader)this).query(chr+":"+sbeg+"-"+send);
+        }
+        catch(ArrayIndexOutOfBoundsException aob)
+        {
+          System.err.println(chr+":"+sbeg+"-"+send+" not found in "+((TabixReader)this).getFileName());
+        }
+      }
       if(tabixIterator == null)
         return null;
 
