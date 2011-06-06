@@ -32,6 +32,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
+import javax.swing.JComboBox;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
@@ -42,7 +43,7 @@ import org.gmod.schema.cv.CvTerm;
   public class AutoCompleteComboDocument extends PlainDocument 
   {
     private static final long serialVersionUID = 1L;
-    private JExtendedComboBox comboBox;
+    private JComboBox comboBox;
 
     private JTextComponent editor;
     // flag to indicate if setSelectedItem has been called
@@ -53,7 +54,7 @@ import org.gmod.schema.cv.CvTerm;
     boolean hitBackspaceOnSelection;
 
     
-    public AutoCompleteComboDocument(final JExtendedComboBox comboBox)
+    public AutoCompleteComboDocument(final JComboBox comboBox)
     {
       this.comboBox = comboBox;
 
