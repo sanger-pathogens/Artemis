@@ -125,6 +125,8 @@ public class VCFview extends JPanel
   private JPanel vcfPanel;
   private AbstractVCFReader vcfReaders[];
   private List<String> vcfFiles;
+  private List<Integer> hideVcfList = new Vector<Integer>();
+  
   private String header[];
   private FeatureDisplay feature_display;
   private Selection selection;
@@ -140,6 +142,7 @@ public class VCFview extends JPanel
 //record of where a mouse drag starts
   private int dragStart = -1;
   private JPopupMenu popup;
+  private JMenu vcfFilesMenu = new JMenu("VCF files");
   private int LINE_HEIGHT = 15;
   
   protected boolean showSynonymous = true;
@@ -445,6 +448,9 @@ public class VCFview extends JPanel
         
         for (int i = 0; i < vcfFileList.size(); i++)
           header[i+oldSize] = readHeader(vcfFileList.get(i), i+oldSize);
+        
+        for(int i=0; i<vcfFileList.size(); i++)
+          addToViewMenu(i+oldSize);
 
         setDisplay();
         repaint();
@@ -452,6 +458,11 @@ public class VCFview extends JPanel
       }
     });
     popup.add(addVCFMenu);
+    popup.add(vcfFilesMenu);
+    
+    for(int i=0; i<vcfFiles.size(); i++)
+      addToViewMenu(i);
+    
     popup.addSeparator();
     
 
@@ -699,6 +710,25 @@ public class VCFview extends JPanel
     });
     popup.add(new JSeparator());
     popup.add(labels);
+  }
+  
+  
+  private void addToViewMenu(final int thisBamIndex)
+  {
+    final JCheckBoxMenuItem cbBam = new JCheckBoxMenuItem(
+        getLabel(thisBamIndex), true);
+    vcfFilesMenu.add(cbBam);
+    cbBam.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        if(cbBam.isSelected())
+          hideVcfList.remove(new Integer(thisBamIndex));
+        else
+          hideVcfList.add(new Integer(thisBamIndex));
+        repaint();
+      } 
+    });
   }
 
   private static EntryGroup getReference(String reference)
@@ -956,6 +986,9 @@ public class VCFview extends JPanel
     FeatureVector features = getCDSFeaturesInRange(start, end);
     for (int i = 0; i < vcfReaders.length; i++)
     {
+      if(hideVcfList.contains(i))
+        continue;
+      
       if(concatSequences) 
       {
         String[] contigs = vcfReaders[0].getSeqNames();
@@ -1002,7 +1035,7 @@ public class VCFview extends JPanel
       String lab[] = new String[vcfReaders.length];
       for (int i = 0; i < vcfReaders.length; i++)
       {
-        lab[i] = vcfReaders[i].getName().replaceAll(FILE_SUFFIX, "");
+        lab[i] = getLabel(i);
         int width = fm.stringWidth(lab[i]);
         if(max < width)
          max = width;
@@ -1018,8 +1051,17 @@ public class VCFview extends JPanel
       g2d.setColor(Color.black);
       g2d.drawLine(max+1, 0, max+1, getHeight());
       for (int i = 0; i < vcfReaders.length; i++)
+      {
+        if(hideVcfList.contains(i))
+          continue;
         g.drawString(lab[i], 1, getYPostion(i));
+      }
     }
+  }
+  
+  private String getLabel(int index)
+  {
+    return vcfReaders[index].getName().replaceAll(FILE_SUFFIX, "");
   }
   
   private AlphaComposite makeComposite(float alpha) 
@@ -1332,7 +1374,12 @@ public class VCFview extends JPanel
   
   private int getYPostion(int vcfFileIndex)
   {
-    return getHeight() - 15 - (vcfFileIndex*(LINE_HEIGHT+5));
+    int pos = 0;
+    for(int i=0; i<vcfFileIndex; i++)
+      if(!hideVcfList.contains(i))
+        pos++;
+
+    return getHeight() - 15 - (pos*(LINE_HEIGHT+5));
   }
   
   private void findVariantAtPoint(Point mousePoint)
