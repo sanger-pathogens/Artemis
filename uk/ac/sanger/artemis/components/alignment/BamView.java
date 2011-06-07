@@ -90,6 +90,7 @@ import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
+import javax.swing.text.JTextComponent;
 
 import org.apache.log4j.Level;
 
@@ -116,6 +117,7 @@ import uk.ac.sanger.artemis.components.FeatureDisplay;
 import uk.ac.sanger.artemis.components.FileViewer;
 import uk.ac.sanger.artemis.components.MessageDialog;
 import uk.ac.sanger.artemis.components.SwingWorker;
+import uk.ac.sanger.artemis.components.genebuilder.AutoCompleteComboDocument;
 import uk.ac.sanger.artemis.components.variant.FeatureContigPredicate;
 import uk.ac.sanger.artemis.editor.MultiLineToolTipUI;
 import uk.ac.sanger.artemis.io.EntryInformation;
@@ -2510,7 +2512,9 @@ public class BamView extends JPanel
     addMouseMotionListener(mouseMotionListener);
 
     combo = new JComboBox(seqNames);
-    combo.setEditable(false);
+    JTextComponent editor = (JTextComponent) combo.getEditor().getEditorComponent();
+    editor.setDocument(new AutoCompleteComboDocument(combo));
+    combo.setEditable(true);
     combo.setMaximumRowCount(20);
     
     combo.addItemListener(new ItemListener()

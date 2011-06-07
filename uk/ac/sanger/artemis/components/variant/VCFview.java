@@ -79,6 +79,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
+import javax.swing.text.JTextComponent;
 
 import net.sf.samtools.util.BlockCompressedInputStream;
 
@@ -103,6 +104,7 @@ import uk.ac.sanger.artemis.components.FileViewer;
 import uk.ac.sanger.artemis.components.MessageDialog;
 import uk.ac.sanger.artemis.components.MultiComparator;
 import uk.ac.sanger.artemis.components.alignment.FileSelectionDialog;
+import uk.ac.sanger.artemis.components.genebuilder.AutoCompleteComboDocument;
 import uk.ac.sanger.artemis.editor.MultiLineToolTipUI;
 import uk.ac.sanger.artemis.io.EntryInformation;
 import uk.ac.sanger.artemis.io.Key;
@@ -360,6 +362,9 @@ public class VCFview extends JPanel
     }
     
     final JComboBox combo = new JComboBox(vcfReaders[0].getSeqNames());
+    combo.setEditable(true);
+    JTextComponent editor = (JTextComponent) combo.getEditor().getEditorComponent();
+    editor.setDocument(new AutoCompleteComboDocument(combo));
     
     if(vcfReaders[0].getSeqNames().length > 1)
       combo.addItem("Combine References");
@@ -368,7 +373,6 @@ public class VCFview extends JPanel
       this.chr = vcfReaders[0].getSeqNames()[0];
 
     combo.setSelectedItem(this.chr);
-    combo.setEditable(false);
     combo.setMaximumRowCount(20);
     
     combo.addItemListener(new ItemListener()
