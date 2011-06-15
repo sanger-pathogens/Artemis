@@ -69,7 +69,8 @@ public class MappedReads
       final SAMRecordPredicate samRecordFlagPredicate,
       SAMRecordMapQPredicate samRecordMapQPredicate,
       final boolean contained, 
-      final boolean useIntrons)
+      final boolean useIntrons,
+      final boolean allRefSeqs)
   {
     this.features = features;
     this.refName = refName;
@@ -100,7 +101,7 @@ public class MappedReads
     dialog.pack();
     centerDialog();
 
-    CalculateTotalMappedReads cmr = new CalculateTotalMappedReads();
+    CalculateTotalMappedReads cmr = new CalculateTotalMappedReads(allRefSeqs);
     cmr.start();
     dialog.setVisible(true);
   }
@@ -263,10 +264,40 @@ public class MappedReads
   
   class CalculateTotalMappedReads extends SwingWorker
   {
+    private boolean useAllRefSeqs;
+    CalculateTotalMappedReads(boolean useAllRefSeqs)
+    {
+      this.useAllRefSeqs = useAllRefSeqs;
+    }
+    
     public Object construct()
     {
-      int MAX_BASE_CHUNK = 2000 * 60;
       mappedReads = new int[bamList.size()];
+      if(concatSequences || !useAllRefSeqs)
+        calc(refName, sequenceLength);
+      else
+      {
+        for (String name : seqNames)
+        {
+          progressTxt.setText(name);
+          int thisLength = seqLengths.get(name);
+          progressBar.setValue(0);
+          progressBar.setMaximum(thisLength);
+          calc(name, thisLength);
+        }
+      }
+      
+      progressBar.setValue(0);
+      progressBar.setMaximum(features.size());
+      progressTxt.setText("RPKM values for "+features.size()+" features");
+      CalculateMappedReads cmr = new CalculateMappedReads();
+      cmr.start();
+      return null;
+    }
+    
+    private void calc(String refName, int sequenceLength)
+    {
+      int MAX_BASE_CHUNK = 2000 * 60;
       boolean contained = false;
       for (int i = 0; i < sequenceLength; i += MAX_BASE_CHUNK)
       {
@@ -315,13 +346,6 @@ public class MappedReads
           }
         }
       }
-      
-      progressBar.setValue(0);
-      progressBar.setMaximum(features.size());
-      progressTxt.setText("RPKM values for "+features.size()+" features");
-      CalculateMappedReads cmr = new CalculateMappedReads();
-      cmr.start();
-      return null;
-    } 
+    }
   }
 }

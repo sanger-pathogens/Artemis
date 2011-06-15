@@ -2082,9 +2082,15 @@ public class BamView extends JPanel
         JCheckBox overlap = new JCheckBox("Include all overlapping reads", true);
         overlap.setToolTipText("Include reads that partially overlap the feature");
         JCheckBox spliced = new JCheckBox("Introns included", true);
+        JCheckBox allRefSeqs = new JCheckBox("Use reads mapped to all reference sequences", false);
+        
         Box yBox = Box.createVerticalBox();
         yBox.add(overlap);
         yBox.add(spliced);
+        
+        if(seqLengths.size() > 1)
+          yBox.add(allRefSeqs);
+        
         JOptionPane.showMessageDialog(null, yBox, "Read Count Option", JOptionPane.INFORMATION_MESSAGE);
         
         int seqlen = 0;
@@ -2095,8 +2101,8 @@ public class BamView extends JPanel
         
         new MappedReads(features, (String)combo.getSelectedItem(),
             samFileReaderHash, bamList, seqNames, offsetLengths, concatSequences, 
-            offsetLengths, seqlen, samRecordFlagPredicate, samRecordMapQPredicate,
-            !overlap.isSelected(), spliced.isSelected());
+            seqLengths, seqlen, samRecordFlagPredicate, samRecordMapQPredicate,
+            !overlap.isSelected(), spliced.isSelected(), allRefSeqs.isSelected());
       } 
     });
 
