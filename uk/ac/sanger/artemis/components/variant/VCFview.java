@@ -1295,13 +1295,15 @@ public class VCFview extends JPanel
       return getVariantColour(record.getAlt().toString());
     else if(colourScheme == SYN_COLOUR_SCHEME)  // synonymous / non-synonymous
     {
-      short synFlag = record.getSynFlag(features, basePosition);
-      if(synFlag == 1)
-        return Color.red;
-      else if(synFlag == 0 || synFlag == 2)
-        return Color.blue;
-      else
-        return getVariantColour(record.getAlt().toString());
+      if(!record.getAlt().isNonVariant())
+      {
+        short synFlag = record.getSynFlag(features, basePosition);
+        if(synFlag == 1)
+          return Color.red;
+        else if(synFlag == 0 || synFlag == 2)
+          return Color.blue;
+      }
+      return getVariantColour(record.getAlt().toString());
     }
     else // score
       return getQualityColour(record);
