@@ -210,7 +210,7 @@ class IOUtils
     StringBuffer buffSeq = null;
     try
     {
-      JCheckBox useNs = new JCheckBox("Use N for filtered out sites", false);
+      JCheckBox useNs = new JCheckBox("Use N for filtered out sites", true);
       Box yBox = Box.createVerticalBox();
       yBox.add(useNs);
       if(writer == null)
@@ -301,7 +301,7 @@ class IOUtils
 
     JCheckBox single = new JCheckBox("Single FASTA", true);
     JCheckBox combineFeats = new JCheckBox("Combine feature sequences", true);
-    JCheckBox useNs = new JCheckBox("Use N for filtered out sites", false);
+    JCheckBox useNs = new JCheckBox("Use N for filtered out sites", true);
     Box yBox = Box.createVerticalBox();
     if(!view && vcfReaders.length > 1)
       yBox.add(single);
