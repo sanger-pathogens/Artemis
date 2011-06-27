@@ -88,9 +88,10 @@ synonymous or non-synonymous or by their quality score (the lower the quality th
 more faded the variant appears).
         </PARA>
         <PARA>
-Filtered data can be exported in VCF format, or the reconstructed DNA sequences of variants 
-can be exported in FASTA format for selected features or selected regions for further analyses.
-These sequences can be used as input for multiple sequence alignment tools. 
+There is an option to provide an overview of the variant types (e.g. synonymous, non-synonymous,
+insertion, deletion) for selected features. Also, filtered data can be exported in VCF format, or
+the reconstructed DNA sequences of variants can be exported in FASTA format for selected features or
+regions for further analyses. These sequences can be used as input for multiple sequence alignment tools.
         </PARA>
   </SECT2>
 
