@@ -995,7 +995,8 @@ public class MultiComparator extends JFrame
             MultiComparator.this.validate();
           }
 
-          List<String> vcfFiles = fileChooser.getFiles(".*\\.vcf(\\.gz)*$");
+          //List<String> vcfFiles = fileChooser.getFiles(".*\\.vcf(\\.gz)*$");
+          List<String> vcfFiles = fileChooser.getFiles(VCFview.VCFFILE_SUFFIX);
           if (vcfFiles.size() > 0)
           {
             thisVCFPanel.removeAll();
