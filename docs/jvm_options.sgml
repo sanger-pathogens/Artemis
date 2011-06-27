@@ -32,7 +32,7 @@ This sets the base position that &prog; opens at, e.g. 10000.
        <TITLE><LITERAL>-Duserplot=pathToFile</LITERAL></TITLE>
       <PARA>
 This can be used to open userplots from the command line. The paths are comma
-separated to open multiple plots (-Duserplot=-Duserplot='/pathToFile/userPlot1,/pathToFile/userPlot2').
+separated to open multiple plots (-Duserplot='/pathToFile/userPlot1,/pathToFile/userPlot2').
       </PARA>
     </SECT2>
 
