@@ -17,7 +17,7 @@ path names to the BAM files. The BAM files can be read from a local file system 
 from an HTTP server.
       </PARA>
       <PARA>
-BamView will look to match the length of the sequence in Artemis with the reference sequence lengths
+BamView will look to match the length of the sequence in &prog; with the reference sequence lengths
 in the BAM file header. It will display a warning when it opens if it finds a matching reference sequence
 (from these lengths) and changes to displaying the reads for that. The reference sequence for the mapped
 reads can be changed manually in the drop down list in the toolbar at the top of the BamView. 
@@ -25,7 +25,7 @@ reads can be changed manually in the drop down list in the toolbar at the top of
       <PARA>
 In the case when the reference sequences are concatenated together into one (e.g. in a multiple
 FASTA sequence) and the sequence length matches the sum of sequence lengths given in the
-header of the BAM, Artemis will try to match the names (e.g. locus_tag or label) of the
+header of the BAM, &prog; will try to match the names (e.g. locus_tag or label) of the
 features (e.g. contig or chromosome) against the reference sequence names in the BAM. It will
 then adjust the read positions accordingly using the start position of the feature.
       </PARA>
@@ -35,7 +35,7 @@ BamView panel. The 'View' menu allows the reads to be displayed in a number of v
 strand-stack, paired-stack, inferred size and coverage.
       </PARA>
       <PARA>
-In Artemis the BamView display can be used to calculate the number of reads mapped to the
+In &prog; the BamView display can be used to calculate the number of reads mapped to the
 regions covered by selected features. In addition the reads per kilobase per million mapped reads (RPKM) 
 values for selected features can be calculated on the fly. Note this calculation can take
 a while to complete.
