@@ -3,7 +3,8 @@
      <PARA>
 &prog; can read in and visualise BAM, VCF and BCF files. These files need
 to be indexed as described below. They require &prog; to be run with at least
-Java 1.6.
+Java 1.6. Some examples can be found on the 
+<ULINK URL="http://www.sanger.ac.uk/resources/software/artemis/ngs/">Artemis homepage</ULINK>.
      </PARA>
      <PARA>
 <ULINK URL="http://samtools.sourceforge.net/">BAM</ULINK> files need to be sorted and indexed using <ULINK
@@ -12,7 +13,32 @@ the same directory as the BAM file. This provides an integrated
 <ULINK URL="http://bamview.sourceforge.net/">BamView</ULINK> panel in &prog;, displaying
 sequence alignment mappings to a reference sequence. Multiple BAM files can be loaded
 in from here either by selecting each file individually or by selecting a file of
-path names to the BAM files.
+path names to the BAM files. The BAM files can be read from a local file system or remotely
+from an HTTP server.
+      </PARA>
+      <PARA>
+BamView will look to match the length of the sequence in Artemis with the reference sequence lengths
+in the BAM file header. It will display a warning when it opens if it finds a matching reference sequence
+(from these lengths) and changes to displaying the reads for that. The reference sequence for the mapped
+reads can be changed manually in the drop down list in the toolbar at the top of the BamView. 
+      </PARA>
+      <PARA>
+In the case when the reference sequences are concatenated together into one (e.g. in a multiple
+FASTA sequence) and the sequence length matches the sum of sequence lengths given in the
+header of the BAM, Artemis will try to match the names (e.g. locus_tag or label) of the
+features (e.g. contig or chromosome) against the reference sequence names in the BAM. It will
+then adjust the read positions accordingly using the start position of the feature.
+      </PARA>
+      <PARA>
+When open the BamView can be configured via the popup menu which is activated by clicking on the 
+BamView panel. The 'View' menu allows the reads to be displayed in a number of views: stack,
+strand-stack, paired-stack, inferred size and coverage.
+      </PARA>
+      <PARA>
+In Artemis the BamView display can be used to calculate the number of reads mapped to the
+regions covered by selected features. In addition the reads per kilobase per million mapped reads (RPKM) 
+values for selected features can be calculated on the fly. Note this calculation can take
+a while to complete.
       </PARA>
       <PARA>
 Variant Call Format (<ULINK
@@ -60,6 +86,11 @@ menu to show the details for that variation in a separate window. There are also
 alternative colouring schemes. It is possible to colour the variants by whether they are
 synonymous or non-synonymous or by their quality score (the lower the quality the
 more faded the variant appears).
+        </PARA>
+        <PARA>
+Filtered data can be exported in VCF format, or the reconstructed DNA sequences of variants 
+can be exported in FASTA format for selected features or selected regions for further analyses.
+These sequences can be used as input for multiple sequence alignment tools. 
         </PARA>
   </SECT2>
 
