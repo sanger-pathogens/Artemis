@@ -348,84 +348,88 @@ public class VCFRecord
   private short isSynonymous(FeatureVector features, int basePosition)
   {
     char variant = getAlt().toString().toLowerCase().charAt(0);
-    int intronlength = 0;
-    Range lastRange = null;
-    
     for(int i = 0; i<features.size(); i++)
     {
       Feature feature = features.elementAt(i);
-      if(feature.getRawFirstBase() < basePosition && feature.getRawLastBase() > basePosition)
+      short isSyn = checkSyn(new CDSFeature(feature), basePosition, variant);
+      if(isSyn > - 1)
+    	return isSyn;
+    }
+
+    return 3;
+  }
+  
+  protected static short checkSyn(CDSFeature gfeat, int basePosition, char variant)
+  {
+    if(gfeat.firstBase < basePosition && gfeat.lastBase > basePosition)
+    {
+      RangeVector ranges = gfeat.ranges;
+      for(int j=0; j< ranges.size(); j++)
       {
-        RangeVector ranges = feature.getLocation().getRanges();
-        intronlength = 0;
-        for(int j=0; j< ranges.size(); j++)
+        Range range = (Range) ranges.get(j);
+        if(j > 0)
         {
-          Range range = (Range) ranges.get(j);
-          if(j > 0)
-          {
-            if(feature.isForwardFeature())
-              intronlength+=range.getStart()-lastRange.getEnd()-1;
-            else
-              intronlength+=lastRange.getStart()-range.getEnd()-1;
+          if(gfeat.isFwd)
+            gfeat.intronlength+=range.getStart()-gfeat.lastRange.getEnd()-1;
+          else
+            gfeat.intronlength+=gfeat.lastRange.getStart()-range.getEnd()-1;
             
-            if(intronlength < 0)
-              intronlength = 0;
-          }
-          
-          if(range.getStart() < basePosition && range.getEnd() > basePosition)
-          {
-            int mod;
-            int codonStart;
-            
-            if(feature.isForwardFeature())
-            {
-              mod = (basePosition-feature.getRawFirstBase()-intronlength)%3;
-              codonStart = basePosition-feature.getRawFirstBase()-intronlength-mod;
-            }
-            else
-            {
-              mod = (feature.getRawLastBase()-basePosition-intronlength)%3;
-              codonStart = feature.getRawLastBase()-basePosition-intronlength-mod;
-            }
-            
-            try
-            {
-              if(codonStart+3 > feature.getBases().length())
-                return 0;
-              char codon[] = feature.getBases().substring(codonStart,
-                  codonStart + 3).toLowerCase().toCharArray();
-
-              char aaRef = AminoAcidSequence.getCodonTranslation(codon[0],
-                  codon[1], codon[2]);
-
-              if(!feature.isForwardFeature())
-                variant = Bases.complement(variant);
-              codon[mod] = variant;
-              char aaNew = AminoAcidSequence.getCodonTranslation(codon[0],
-                  codon[1], codon[2]);
-
-              if (aaNew == aaRef) 
-                return 1;
-              else if(AminoAcidSequence.isStopCodon(aaNew))
-                return 2;
-              else
-                return 0;
-            }
-            catch(Exception e)
-            {
-              for(int k=0; k<ranges.size(); k++)
-                System.out.println(k+" "+ ((Range)ranges.get(k)).getStart() );
-              
-              System.out.println(feature.getIDString()+"  "+codonStart+" "+intronlength+" basePosition="+basePosition+" segment="+range.getStart()+".."+range.getEnd()+" mod="+mod);
-              throw new RuntimeException(e);
-            }
-          }
-
-          lastRange = range;
+          if(gfeat.intronlength < 0)
+            gfeat.intronlength = 0;
         }
+          
+        if(range.getStart() < basePosition && range.getEnd() > basePosition)
+        {
+          int mod;
+          int codonStart;
+            
+          if(gfeat.isFwd)
+          {
+            mod = (basePosition-gfeat.firstBase-gfeat.intronlength)%3;
+            codonStart = basePosition-gfeat.firstBase-gfeat.intronlength-mod;
+          }
+          else
+          {
+            mod = (gfeat.lastBase-basePosition-gfeat.intronlength)%3;
+            codonStart = gfeat.lastBase-basePosition-gfeat.intronlength-mod;
+          }
+            
+          try
+          {
+            if(codonStart+3 > gfeat.bases.length())
+              return 0;
+            char codon[] = gfeat.bases.substring(codonStart,
+                codonStart + 3).toLowerCase().toCharArray();
+
+            char aaRef = AminoAcidSequence.getCodonTranslation(codon[0],
+                  codon[1], codon[2]);
+
+            if(!gfeat.isFwd)
+              variant = Bases.complement(variant);
+            codon[mod] = variant;
+            char aaNew = AminoAcidSequence.getCodonTranslation(codon[0],
+                codon[1], codon[2]);
+
+            if (aaNew == aaRef) 
+              return 1;
+            else if(AminoAcidSequence.isStopCodon(aaNew))
+              return 2;
+            else
+              return 0;
+          }
+          catch(Exception e)
+          {
+            for(int k=0; k<ranges.size(); k++)
+              System.out.println(k+" "+ ((Range)ranges.get(k)).getStart() );
+              
+            System.out.println(gfeat.id+"  "+codonStart+" "+gfeat.intronlength+" basePosition="+basePosition+" segment="+range.getStart()+".."+range.getEnd()+" mod="+mod);
+            throw new RuntimeException(e);
+          }
+        }
+
+        gfeat.lastRange = range;
       }
     }
-    
-    return 3;
+    return -1;
   }
 }
