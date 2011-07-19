@@ -358,6 +358,10 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
         location =
           new Location(ranges, feature.getLocation().isComplement());
       }
+
+      int ntranscripts = gene.getTranscripts().size();
+      if(ntranscripts == 1)
+    	  transcriptName = gene.getGeneUniqueName();
       qualifiers.setQualifier(new Qualifier("locus_tag", transcriptName));
       qualifiers.removeQualifierByName("ID");
     }
