@@ -750,10 +750,19 @@ public class TransferAnnotationTool extends JFrame
     {
       StringVector newValues =  qualifier.getValues();
       StringVector valuesToAdd = new StringVector();
+
       for (int k = 0; k < newValues.size(); k++)
       {
         if(!values.contains(newValues.get(k)))
-          valuesToAdd.add(newValues.get(k));
+        {
+          if(qualifier.getName().equals("history"))
+          {
+        	if(!uk.ac.sanger.artemis.components.genebuilder.cv.HistoryBox.contains(values, (String)newValues.get(k)))
+        	  valuesToAdd.add(newValues.get(k));
+          }
+          else
+            valuesToAdd.add(newValues.get(k));
+        }
       }
 
       if(valuesToAdd.size() == 0)
