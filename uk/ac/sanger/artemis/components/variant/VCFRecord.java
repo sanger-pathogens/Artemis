@@ -46,6 +46,18 @@ public class VCFRecord
   private String format;
   private String data[][];
   private short synFlag = -1;
+  private boolean markAsNewStop = false;
+  
+  public boolean isMarkAsNewStop() 
+  {
+	  return markAsNewStop;
+  }
+
+  public void setMarkAsNewStop(boolean markAsNewStop) 
+  {
+	  this.markAsNewStop = markAsNewStop;
+  }
+
   protected static Pattern MULTI_ALLELE_PATTERN = Pattern.compile("^[AGCTagct]+,[AGCTacgt,]+$");
   protected static Pattern COLON_PATTERN = Pattern.compile(":");
   protected static Pattern SEMICOLON_PATTERN = Pattern.compile(";");
