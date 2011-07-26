@@ -601,11 +601,7 @@ public class FeatureEdit extends JPanel
     {
       public void actionPerformed(ActionEvent e) 
       {
-      	java.util.List geneNames = null;
-      	if(matchForm != null)
-      		geneNames = matchForm.getGeneNameList();
-      	
-        new TransferAnnotationTool(getFeature(), entry_group, geneNames);
+      	new TransferAnnotationTool(getFeature(), entry_group, matchForm);
       }
     });
 

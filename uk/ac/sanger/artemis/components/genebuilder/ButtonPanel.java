@@ -100,12 +100,8 @@ public class ButtonPanel extends JToolBar
     transferAnnotationBbutton.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e) 
-      {
-        java.util.List geneNames = null;
-        if(gbFrame.getMatchForm() != null)
-            geneNames = gbFrame.getMatchForm().getGeneNameList();
-        
-        new TransferAnnotationTool(getFeature(), entry_group, geneNames);
+      {      
+        new TransferAnnotationTool(getFeature(), entry_group, gbFrame.getMatchForm());
       }
     });
 
