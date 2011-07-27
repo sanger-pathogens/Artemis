@@ -1173,7 +1173,7 @@ public class VCFview extends JPanel
   
   protected boolean showVariant(VCFRecord record, FeatureVector features, int basePosition, boolean vcf_v4)
   { 
-    logger.debug(String.format("%s : %s", record.getID(), basePosition));
+    logger.debug(String.format("%s : %s", record, basePosition));
     if(!showDeletions && record.getAlt().isDeletion(vcf_v4))
       return false;
     
