@@ -84,6 +84,7 @@ import javax.swing.text.JTextComponent;
 import net.sf.samtools.util.BlockCompressedInputStream;
 
 import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 import uk.ac.sanger.artemis.Entry;
 import uk.ac.sanger.artemis.EntryGroup;
@@ -122,6 +123,7 @@ import uk.ac.sanger.artemis.util.OutOfRangeException;
 public class VCFview extends JPanel
              implements DisplayAdjustmentListener, SelectionChangeListener
 {
+  private static Logger logger = Logger.getLogger(VCFview.class);
   private static final long serialVersionUID = 1L;
   private JScrollBar scrollBar;
   private JPanel vcfPanel;
@@ -1170,7 +1172,8 @@ public class VCFview extends JPanel
 
   
   protected boolean showVariant(VCFRecord record, FeatureVector features, int basePosition, boolean vcf_v4)
-  {  
+  { 
+    logger.debug(String.format("%s : %s", record.getID(), basePosition));
     if(!showDeletions && record.getAlt().isDeletion(vcf_v4))
       return false;
     
