@@ -1089,6 +1089,19 @@ public class VCFview extends JPanel
     try
     {
       VCFRecord record;
+      logger.debug(
+              String.format(
+              "%s-%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s",
+              sbeg, 
+              send,
+              this.showSynonymous, 
+              this.showNonSynonymous, 
+              this.showDeletions, 
+              this.showInsertions, 
+              this.showMultiAlleles, 
+              this.showNonOverlappings,
+              this.showNonVariants));
+      
       while((record = vcfReaders[i].getNextRecord(chr, sbeg, send)) != null)
         drawVariantCall(g, record, start, i, pixPerBase, features, vcfReaders[i].isVcf_v4());
     }
