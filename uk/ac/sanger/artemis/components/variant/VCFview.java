@@ -1173,7 +1173,7 @@ public class VCFview extends JPanel
   
   protected boolean showVariant(VCFRecord record, FeatureVector features, int basePosition, boolean vcf_v4)
   { 
-    logger.debug(String.format("%s : %s", record, basePosition));
+    
     if(!showDeletions && record.getAlt().isDeletion(vcf_v4))
       return false;
     
@@ -1245,7 +1245,9 @@ public class VCFview extends JPanel
       float pixPerBase, FeatureVector features, boolean vcf_v4)
   {
     int basePosition = record.getPos() + getSequenceOffset(record.getChrom());
-    if( !showVariant(record, features, basePosition, vcf_v4) )
+    boolean show = showVariant(record, features, basePosition, vcf_v4);
+    logger.debug(String.format("%s : %s", (show) ? "SHOW" : "HIDE", record));
+    if( !show )
       return;
     
     int pos[] = getScreenPosition(basePosition, pixPerBase, start, index);
