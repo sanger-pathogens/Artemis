@@ -23,6 +23,7 @@
 
 package uk.ac.sanger.artemis.components.variant;
 
+import java.util.List;
 import java.util.regex.Pattern;
 
 import uk.ac.sanger.artemis.Feature;
@@ -347,6 +348,13 @@ public class VCFRecord
       this.synFlag = isSynonymous(features, basePosition);
     return synFlag;
   }
+  
+  protected short getSynFlag(List<CDSFeature> features, int basePosition)
+  {
+    if(synFlag == -1)
+      this.synFlag = isSynonymous(features, basePosition);
+    return synFlag;
+  }
 
   /**
    * @param features
@@ -369,6 +377,20 @@ public class VCFRecord
     }
 
     return 3;
+  }
+  
+  private short isSynonymous(List<CDSFeature> features, int basePosition) 
+  {
+      char variant = getAlt().toString().toLowerCase().charAt(0);
+      for(int i = 0; i<features.size(); i++)
+      {
+        CDSFeature feature = features.get(i);
+        short isSyn = checkSyn(feature, basePosition, variant);
+        if(isSyn > - 1)
+          return isSyn;
+      }
+
+      return 3;
   }
   
   protected static short checkSyn(CDSFeature gfeat, int basePosition, char variant)
