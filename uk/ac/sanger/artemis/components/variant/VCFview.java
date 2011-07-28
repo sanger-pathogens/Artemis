@@ -1211,6 +1211,7 @@ public class VCFview extends JPanel
         record.getRef().length() == 1)
     {
       isSyn = record.getSynFlag(features, basePosition);
+      logger.info("isSynonymous0 :: " + isSyn);
       if(isSyn == 2)
         markAsNewStop = true;
     }
@@ -1223,12 +1224,12 @@ public class VCFview extends JPanel
     {
       if(isSyn == -1)
         isSyn = record.getSynFlag(features, basePosition);
-      
+      logger.info("isSynonymous1 :: " + isSyn);
       if( (!showSynonymous && isSyn == 1) ||
           (!showNonSynonymous && (isSyn == 0 || isSyn == 2) ) )
         return false;
     }
-    
+    logger.info("isSynonymous2 :: " + isSyn);
     if(!showMultiAlleles && record.getAlt().isMultiAllele())
       return false;
     
