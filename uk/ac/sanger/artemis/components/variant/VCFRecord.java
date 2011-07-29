@@ -398,8 +398,8 @@ public class VCFRecord
   
   protected static short checkSyn(CDSFeature gfeat, int basePosition, char variant)
   {
-    logger.warn(gfeat);
-    logger.warn(basePosition + "\t" + variant);
+    logger.info(gfeat);
+    logger.info(basePosition + "\t" + variant);
     if(gfeat.firstBase < basePosition && gfeat.lastBase > basePosition)
     {
       RangeVector ranges = gfeat.ranges;
