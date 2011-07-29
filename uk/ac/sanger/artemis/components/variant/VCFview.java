@@ -1089,7 +1089,7 @@ public class VCFview extends JPanel
     try
     {
       VCFRecord record;
-      System.out.println(
+      logger.info(
               String.format(
               "FILTER\t%s-%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s",
               sbeg, 
@@ -1204,7 +1204,7 @@ public class VCFview extends JPanel
     
     short isSyn = -1;
     isSyn = record.getSynFlag(features, basePosition);
-    System.out.println("ISSYNONYMOUS\t"+record.getPos() +"\t" + isSyn);
+    logger.info("ISSYNONYMOUS\t"+record.getPos() +"\t" + isSyn);
     markAsNewStop = false;
     if(markNewStops.isSelected() &&
        !record.getAlt().isDeletion(vcf_v4) && 
@@ -1261,7 +1261,7 @@ public class VCFview extends JPanel
   {
     int basePosition = record.getPos() + getSequenceOffset(record.getChrom());
     boolean show = showVariant(record, features, basePosition, vcf_v4);
-    System.out.println(String.format("%s\t%s", (show) ? "SHOW" : "HIDE", record));
+    logger.info(String.format("%s\t%s", (show) ? "SHOW" : "HIDE", record));
     if( !show )
       return;
     
