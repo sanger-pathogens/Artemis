@@ -1204,7 +1204,7 @@ public class VCFview extends JPanel
     
     short isSyn = -1;
     isSyn = record.getSynFlag(features, basePosition);
-    logger.info(record.getPos() +" isSynonymous :: " + isSyn);
+    logger.info("!\t"+record.getPos() +"\tisSynonymous\t" + isSyn);
     markAsNewStop = false;
     if(markNewStops.isSelected() &&
        !record.getAlt().isDeletion(vcf_v4) && 
@@ -1261,7 +1261,7 @@ public class VCFview extends JPanel
   {
     int basePosition = record.getPos() + getSequenceOffset(record.getChrom());
     boolean show = showVariant(record, features, basePosition, vcf_v4);
-    logger.debug(String.format("%s : %s", (show) ? "SHOW" : "HIDE", record));
+    System.out.println(String.format("%s\t%s", (show) ? "SHOW" : "HIDE", record));
     if( !show )
       return;
     
