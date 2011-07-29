@@ -51,12 +51,14 @@ class CDSFeature
       if (b.length() > 10) 
           b = b.substring(0, 10);
       sb.append(b);
+      sb.append(sep);
+      sb.append(ranges.size());
+      sb.append(sep);
       for (int i = 0; i < ranges.size(); i++) {
           Range r = (Range) ranges.get(i);
-          sb.append(b);
+          sb.append(r.getStart()+"-"+r.getEnd());
           sb.append(sep);
       }
-      
       return sb.toString();
   }
 }
