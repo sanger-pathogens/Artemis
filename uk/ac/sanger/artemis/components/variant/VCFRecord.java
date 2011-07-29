@@ -354,7 +354,7 @@ public class VCFRecord
   
   protected short getSynFlag(List<CDSFeature> features, int basePosition)
   {
-    logger.info("getSynFlag(List<CDSFeature>) current syn : " + synFlag + " size? " + features.size());
+    //logger.info("getSynFlag(List<CDSFeature>) current syn : " + synFlag + " size? " + features.size());
     if(synFlag == -1)
       this.synFlag = isSynonymous(features, basePosition);
     return synFlag;
