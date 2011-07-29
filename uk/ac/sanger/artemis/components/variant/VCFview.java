@@ -1114,6 +1114,7 @@ public class VCFview extends JPanel
   
   protected FeatureVector getCDSFeaturesInRange(int start, int end)
   {
+    logger.info("getting cds features in range " + start + "-" + end);
     if(entryGroup == null)
       return null;
     try
