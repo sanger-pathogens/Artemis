@@ -37,4 +37,26 @@ class CDSFeature
     this.bases     = feature.getBases();
     this.id        = feature.getIDString();
   } 
+  
+  public String toString() {
+      StringBuilder sb = new StringBuilder();
+      final String sep = "\t";
+      sb.append(isFwd);
+      sb.append(sep);
+      sb.append(firstBase);
+      sb.append(sep);
+      sb.append(lastBase);
+      sb.append(sep);
+      String b = bases;
+      if (b.length() > 10) 
+          b = b.substring(0, 10);
+      sb.append(b);
+      for (int i = 0; i < ranges.size(); i++) {
+          Range r = (Range) ranges.get(i);
+          sb.append(b);
+          sb.append(sep);
+      }
+      
+      return sb.toString();
+  }
 }

@@ -26,6 +26,8 @@ package uk.ac.sanger.artemis.components.variant;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import org.apache.log4j.Logger;
+
 import uk.ac.sanger.artemis.Feature;
 import uk.ac.sanger.artemis.FeatureVector;
 import uk.ac.sanger.artemis.io.Range;
@@ -35,6 +37,7 @@ import uk.ac.sanger.artemis.sequence.Bases;
 
 public class VCFRecord
 {
+  private static Logger logger = Logger.getLogger(VCFRecord.class);
   private String chrom;
   private int pos;
   private String ID;
@@ -395,6 +398,8 @@ public class VCFRecord
   
   protected static short checkSyn(CDSFeature gfeat, int basePosition, char variant)
   {
+    logger.warn(gfeat);
+    logger.warn(basePosition + "\t" + variant);
     if(gfeat.firstBase < basePosition && gfeat.lastBase > basePosition)
     {
       RangeVector ranges = gfeat.ranges;
