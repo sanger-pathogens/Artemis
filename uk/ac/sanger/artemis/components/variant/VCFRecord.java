@@ -354,6 +354,7 @@ public class VCFRecord
   
   protected short getSynFlag(List<CDSFeature> features, int basePosition)
   {
+    logger.info("getSynFlag(List<CDSFeature>)");
     if(synFlag == -1)
       this.synFlag = isSynonymous(features, basePosition);
     return synFlag;
@@ -370,6 +371,7 @@ public class VCFRecord
    */
   private short isSynonymous(FeatureVector features, int basePosition)
   {
+      
     char variant = getAlt().toString().toLowerCase().charAt(0);
     for(int i = 0; i<features.size(); i++)
     {
@@ -385,9 +387,9 @@ public class VCFRecord
   private short isSynonymous(List<CDSFeature> features, int basePosition) 
   {
       char variant = getAlt().toString().toLowerCase().charAt(0);
-      for(int i = 0; i<features.size(); i++)
+      for(CDSFeature feature : features)
       {
-        CDSFeature feature = features.get(i);
+        logger.info("isSynonymous()\t"+ feature);
         short isSyn = checkSyn(feature, basePosition, variant);
         if(isSyn > - 1)
           return isSyn;

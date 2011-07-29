@@ -88,6 +88,7 @@ class BCFReader extends AbstractVCFReader
     idx = loadIndex();
     readHeader();
     logger4j.debug(bcf);
+    logger4j.debug("read!");
   }
 
   protected void seek(long off) throws IOException
