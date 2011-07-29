@@ -389,7 +389,6 @@ public class VCFRecord
       char variant = getAlt().toString().toLowerCase().charAt(0);
       for(CDSFeature feature : features)
       {
-        logger.info("isSynonymous()\t"+ feature);
         short isSyn = checkSyn(feature, basePosition, variant);
         if(isSyn > - 1)
           return isSyn;
