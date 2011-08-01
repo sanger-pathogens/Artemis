@@ -1130,11 +1130,16 @@ public class BamView extends JPanel
           if(samRecord.getAlignmentEnd() < samNextRecord.getAlignmentStart() && 
               (samNextRecord.getAlignmentStart()-samRecord.getAlignmentEnd())*pixPerBase > 2.f)
           {
-            g2.setColor(Color.LIGHT_GRAY);
+        	g2.setColor(Color.LIGHT_GRAY);
 
+            int offset1 = getSequenceOffset(samRecord.getReferenceName());
+            int end1   = samRecord.getAlignmentEnd()+offset1-baseAtStartOfView;
+            
+            int offset2 = getSequenceOffset(samNextRecord.getReferenceName());
+            int start2  = samNextRecord.getAlignmentStart()+offset2-baseAtStartOfView;
+            
             drawTranslucentLine(g2, 
-                   (int)((samRecord.getAlignmentEnd()-getBaseAtStartOfView())*pixPerBase), 
-                   (int)((samNextRecord.getAlignmentStart()-getBaseAtStartOfView())*pixPerBase), ypos);
+                   (int)(end1*pixPerBase), (int)(start2*pixPerBase), ypos);
           }
           
           if(colourByCoverageColour.isSelected())

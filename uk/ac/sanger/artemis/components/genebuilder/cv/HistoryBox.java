@@ -44,7 +44,7 @@ import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.util.StringVector;
 
-class HistoryBox extends AbstractCvBox
+public class HistoryBox extends AbstractCvBox
 {
   private Box xBox;
   private int value_index;
@@ -162,6 +162,35 @@ class HistoryBox extends AbstractCvBox
     if(!old.equals(curatorNameField.getText()))
       return true;
     
+    return false;
+  }
+  
+  public static boolean contains(StringVector oldQualValues, String newQualString)
+  {
+	for(int i=0; i<oldQualValues.size(); i++)
+	{
+	  String oldQualString = (String) oldQualValues.get(i);
+      String oldStr = getField("term=", oldQualString);
+      String newStr = getField("term=", newQualString);
+      if(!oldStr.equals(newStr))
+        continue;
+    
+      oldStr = getFieldIgnoreSeparator("qualifier", oldQualString);
+      newStr = getFieldIgnoreSeparator("qualifier", newQualString);
+      if(!oldStr.equals(newStr))
+        continue;
+    
+      oldStr = getField("date=", oldQualString);
+      newStr = getField("date=", newQualString);
+      if(!oldStr.equals(newStr))
+        continue;
+    
+      oldStr = getField("curatorName=", oldQualString);
+      newStr = getField("curatorName=", newQualString);
+      if(oldStr.equals(newStr))
+        return true;
+	}
+	
     return false;
   }
 
