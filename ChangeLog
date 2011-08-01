@@ -1,4 +1,4 @@
-Version XX
+Version 13.2.0
 	Added option to provide overview of the variation sites.
 
 	Change BamView filter to enable filtering in and out based on
