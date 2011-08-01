@@ -443,10 +443,11 @@ public class VCFRecord
 
             char aaRef = AminoAcidSequence.getCodonTranslation(codon[0],
                   codon[1], codon[2]);
-
+            logger.info(String.format("%d %d %s%s%s", mod, codonStart, codon[0],codon[1],codon[2]));
             if(!gfeat.isFwd)
               variant = Bases.complement(variant);
             codon[mod] = variant;
+            logger.info(String.format("%d %d %s%s%s", mod, codonStart, codon[0],codon[1],codon[2]));
             char aaNew = AminoAcidSequence.getCodonTranslation(codon[0],
                 codon[1], codon[2]);
 
