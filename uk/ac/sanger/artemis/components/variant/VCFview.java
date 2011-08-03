@@ -1255,6 +1255,21 @@ public class VCFview extends JPanel
     return false;
   }
   
+  protected static boolean isOverlappingFeature(List<CDSFeature> cdsFeatures, int basePosition) {
+      for (CDSFeature cdsFeature : cdsFeatures) {
+          if (cdsFeature.firstBase < basePosition && cdsFeature.lastBase > basePosition) {
+              for(int i = 0 ; i < cdsFeature.ranges.size()  ; ++i) 
+              {
+                   Range range = (Range)cdsFeature.ranges.elementAt(i);
+                   if (range.getStart() < basePosition && range.getEnd() > basePosition) {
+                       return true;
+                   }
+              }
+          }
+      }
+      return false;
+  }
+  
   private void drawVariantCall(Graphics2D g, VCFRecord record, int start, int index, 
       float pixPerBase, FeatureVector features, boolean vcf_v4)
   {
