@@ -34,7 +34,6 @@ import java.util.Set;
 import java.util.Vector;
 import java.util.Hashtable;
 import java.util.Enumeration;
-import javax.swing.JOptionPane;
 
 /**
  *  This class contains the methods common to all DocumentEntry objects.
@@ -169,7 +168,7 @@ abstract public class SimpleDocumentEntry
     last_change_time = null;
 
     final Sequence sequence = getSequence();
-    Hashtable contig_ranges = null;
+    Hashtable<String, Range> contig_ranges = null;
 
     if(sequence != null && sequence instanceof FastaStreamSequence) 
     {
@@ -185,7 +184,8 @@ abstract public class SimpleDocumentEntry
         final int[] header_positions =
                       fasta_sequence.getFastaHeaderPositions();
 
-        final FeatureTable feature_table = getFeatureTable();
+        //final FeatureTable feature_table = 
+        getFeatureTable();
 
         for(int i = 0 ; i < header_strings.length ; ++i) 
         {
@@ -235,7 +235,7 @@ abstract public class SimpleDocumentEntry
             if(isGFF)
             {
               if(contig_ranges == null)
-                contig_ranges = new Hashtable();           
+                contig_ranges = new Hashtable<String, Range>();           
 
               // find the sequence id from the header
               String thisHeader[] = header_strings[i].split("\\s");
@@ -269,7 +269,7 @@ abstract public class SimpleDocumentEntry
             {
               try
               {
-                Range new_range = (Range)contig_ranges.get(name);
+                Range new_range = contig_ranges.get(name);
                 final Location loc = feature.getLocation();
                 int start = feature.getFirstBase()+new_range.getStart()-1;
                 int end   = feature.getLastBase()+new_range.getStart()-1;
@@ -340,7 +340,7 @@ abstract public class SimpleDocumentEntry
 
     final FeatureEnumeration feature_enum = new_entry.features();
 
-    Set failed = null;
+    Set<String> failed = null;
     while(feature_enum.hasMoreFeatures()) 
     {
       final Feature new_feature = feature_enum.nextFeature();
@@ -356,7 +356,7 @@ abstract public class SimpleDocumentEntry
             if(forcedAdd(f) == null)
             {
               if(failed == null)
-                failed = new HashSet();
+                failed = new HashSet<String>();
               failed.add(new_feature.getKey().getKeyString());
             }
           }
@@ -381,14 +381,7 @@ abstract public class SimpleDocumentEntry
     }
 
     if(failed != null)
-    {
-//      JOptionPane.showMessageDialog(null, 
-//          "Failed to use the following keys\n"+
-//          failed.toString(),
-//          "Warning - unknown keys",
-//          JOptionPane.WARNING_MESSAGE);
       UI.warn("Failed to use the following keys\n"+failed.toString(), "Warning - unknown keys");
-    }
     
     final Sequence new_sequence = new_entry.getSequence();
 
