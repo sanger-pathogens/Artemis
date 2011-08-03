@@ -399,8 +399,8 @@ public class VCFRecord
   
   protected static short checkSyn(CDSFeature gfeat, int basePosition, char variant)
   {
-    logger.info("CDSFEATURE\t"+gfeat);
-    logger.info("BASEANDVARIANT\t"+basePosition + "\t" + variant);
+    //logger.info("CDSFEATURE\t"+gfeat);
+    //logger.info("BASEANDVARIANT\t"+basePosition + "\t" + variant);
     if(gfeat.firstBase < basePosition && gfeat.lastBase > basePosition)
     {
       RangeVector ranges = gfeat.ranges;
@@ -443,11 +443,11 @@ public class VCFRecord
 
             char aaRef = AminoAcidSequence.getCodonTranslation(codon[0],
                   codon[1], codon[2]);
-            logger.info(String.format("%d %d %s%s%s", mod, codonStart, codon[0],codon[1],codon[2]));
+            //logger.info(String.format("%d %d %s%s%s", mod, codonStart, codon[0],codon[1],codon[2]));
             if(!gfeat.isFwd)
               variant = Bases.complement(variant);
             codon[mod] = variant;
-            logger.info(String.format("%d %d %s%s%s", mod, codonStart, codon[0],codon[1],codon[2]));
+            //logger.info(String.format("%d %d %s%s%s", mod, codonStart, codon[0],codon[1],codon[2]));
             char aaNew = AminoAcidSequence.getCodonTranslation(codon[0],
                 codon[1], codon[2]);
 
