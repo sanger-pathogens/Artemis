@@ -84,7 +84,6 @@ import javax.swing.text.JTextComponent;
 import net.sf.samtools.util.BlockCompressedInputStream;
 
 import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 
 import uk.ac.sanger.artemis.Entry;
 import uk.ac.sanger.artemis.EntryGroup;
@@ -158,7 +157,7 @@ public class VCFview extends JPanel
   protected boolean showNonOverlappings = true;
   protected boolean showNonVariants = false;
   
-  private boolean markAsNewStop = false;
+  //private boolean markAsNewStop = false;
   
   private boolean showLabels = false;
   
@@ -475,8 +474,9 @@ public class VCFview extends JPanel
     markNewStops.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e)
       {
-        if(!markNewStops.isSelected())
-          markAsNewStop = false;
+        // gv1 - not needed as this is re-verified inside showVariant()
+        // if(!markNewStops.isSelected())
+            // markAsNewStop = false;
         repaint();
       }
     });
@@ -1204,7 +1204,7 @@ public class VCFview extends JPanel
     
     short isSyn = -1;
     
-    markAsNewStop = false;
+    record.setMarkAsNewStop(false);
     if(markNewStops.isSelected() &&
        !record.getAlt().isDeletion(vcf_v4) && 
        !record.getAlt().isInsertion(vcf_v4) && 
@@ -1213,7 +1213,7 @@ public class VCFview extends JPanel
     {
       isSyn = record.getSynFlag(features, basePosition);
       if(isSyn == 2)
-        markAsNewStop = true;
+        record.setMarkAsNewStop(true);
     }
     
     if( (!showSynonymous || !showNonSynonymous) &&
@@ -1306,7 +1306,7 @@ public class VCFview extends JPanel
     else
       g.setColor(Color.pink);
 
-    if(markAsNewStop)
+    if(record.isMarkAsNewStop())
       g.fillArc(pos[0]-3, pos[1]-(LINE_HEIGHT/2)-3, 6, 6, 0, 360);
 
     if(cacheVariantLines.size() == 5)
