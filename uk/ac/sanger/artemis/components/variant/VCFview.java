@@ -122,6 +122,7 @@ import uk.ac.sanger.artemis.util.OutOfRangeException;
 public class VCFview extends JPanel
              implements DisplayAdjustmentListener, SelectionChangeListener
 {
+  
   private static final long serialVersionUID = 1L;
   private JScrollBar scrollBar;
   private JPanel vcfPanel;
@@ -156,7 +157,7 @@ public class VCFview extends JPanel
   protected boolean showNonOverlappings = true;
   protected boolean showNonVariants = false;
   
-  private boolean markAsNewStop = false;
+  //private boolean markAsNewStop = false;
   
   private boolean showLabels = false;
   
@@ -473,8 +474,9 @@ public class VCFview extends JPanel
     markNewStops.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e)
       {
-        if(!markNewStops.isSelected())
-          markAsNewStop = false;
+        // gv1 - not needed as this is re-verified inside showVariant()
+        // if(!markNewStops.isSelected())
+            // markAsNewStop = false;
         repaint();
       }
     });
@@ -1087,6 +1089,19 @@ public class VCFview extends JPanel
     try
     {
       VCFRecord record;
+      /*logger4j.info(
+              String.format(
+              "FILTER\t%s-%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s",
+              sbeg, 
+              send,
+              this.showSynonymous, 
+              this.showNonSynonymous, 
+              this.showDeletions, 
+              this.showInsertions, 
+              this.showMultiAlleles, 
+              this.showNonOverlappings,
+              this.showNonVariants));*/
+      
       while((record = vcfReaders[i].getNextRecord(chr, sbeg, send)) != null)
         drawVariantCall(g, record, start, i, pixPerBase, features, vcfReaders[i].isVcf_v4());
     }
@@ -1170,7 +1185,8 @@ public class VCFview extends JPanel
 
   
   protected boolean showVariant(VCFRecord record, FeatureVector features, int basePosition, boolean vcf_v4)
-  {  
+  { 
+    
     if(!showDeletions && record.getAlt().isDeletion(vcf_v4))
       return false;
     
@@ -1187,7 +1203,8 @@ public class VCFview extends JPanel
       return false;
     
     short isSyn = -1;
-    markAsNewStop = false;
+    
+    record.setMarkAsNewStop(false);
     if(markNewStops.isSelected() &&
        !record.getAlt().isDeletion(vcf_v4) && 
        !record.getAlt().isInsertion(vcf_v4) && 
@@ -1196,7 +1213,7 @@ public class VCFview extends JPanel
     {
       isSyn = record.getSynFlag(features, basePosition);
       if(isSyn == 2)
-        markAsNewStop = true;
+        record.setMarkAsNewStop(true);
     }
     
     if( (!showSynonymous || !showNonSynonymous) &&
@@ -1238,11 +1255,28 @@ public class VCFview extends JPanel
     return false;
   }
   
+  protected static boolean isOverlappingFeature(List<CDSFeature> cdsFeatures, int basePosition) {
+      for (CDSFeature cdsFeature : cdsFeatures) {
+          if (cdsFeature.firstBase < basePosition && cdsFeature.lastBase > basePosition) 
+          {
+              for(int i = 0 ; i < cdsFeature.ranges.size()  ; ++i) 
+              {
+                   Range range = (Range)cdsFeature.ranges.elementAt(i);
+                   if (range.getStart() < basePosition && range.getEnd() > basePosition) 
+                       return true;
+              }
+          }
+      }
+      return false;
+  }
+  
   private void drawVariantCall(Graphics2D g, VCFRecord record, int start, int index, 
       float pixPerBase, FeatureVector features, boolean vcf_v4)
   {
     int basePosition = record.getPos() + getSequenceOffset(record.getChrom());
-    if( !showVariant(record, features, basePosition, vcf_v4) )
+    boolean show = showVariant(record, features, basePosition, vcf_v4);
+    // logger4j.info(String.format("%s\t%s", (show) ? "SHOW" : "HIDE", record));
+    if( !show )
       return;
     
     int pos[] = getScreenPosition(basePosition, pixPerBase, start, index);
@@ -1272,7 +1306,7 @@ public class VCFview extends JPanel
     else
       g.setColor(Color.pink);
 
-    if(markAsNewStop)
+    if(record.isMarkAsNewStop())
       g.fillArc(pos[0]-3, pos[1]-(LINE_HEIGHT/2)-3, 6, 6, 0, 360);
 
     if(cacheVariantLines.size() == 5)

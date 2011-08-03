@@ -23,7 +23,10 @@
 
 package uk.ac.sanger.artemis.components.variant;
 
+import java.util.List;
 import java.util.regex.Pattern;
+
+import org.apache.log4j.Logger;
 
 import uk.ac.sanger.artemis.Feature;
 import uk.ac.sanger.artemis.FeatureVector;
@@ -34,6 +37,7 @@ import uk.ac.sanger.artemis.sequence.Bases;
 
 public class VCFRecord
 {
+  private static Logger logger = Logger.getLogger(VCFRecord.class);
   private String chrom;
   private int pos;
   private String ID;
@@ -46,6 +50,18 @@ public class VCFRecord
   private String format;
   private String data[][];
   private short synFlag = -1;
+  private boolean markAsNewStop = false;
+  
+  public boolean isMarkAsNewStop() 
+  {
+	  return markAsNewStop;
+  }
+
+  public void setMarkAsNewStop(boolean markAsNewStop) 
+  {
+	  this.markAsNewStop = markAsNewStop;
+  }
+
   protected static Pattern MULTI_ALLELE_PATTERN = Pattern.compile("^[AGCTagct]+,[AGCTacgt,]+$");
   protected static Pattern COLON_PATTERN = Pattern.compile(":");
   protected static Pattern SEMICOLON_PATTERN = Pattern.compile(";");
@@ -335,6 +351,14 @@ public class VCFRecord
       this.synFlag = isSynonymous(features, basePosition);
     return synFlag;
   }
+  
+  protected short getSynFlag(List<CDSFeature> features, int basePosition)
+  {
+    //logger.info("getSynFlag(List<CDSFeature>) current syn : " + synFlag + " size? " + features.size());
+    if(synFlag == -1)
+      this.synFlag = isSynonymous(features, basePosition);
+    return synFlag;
+  }
 
   /**
    * @param features
@@ -347,6 +371,7 @@ public class VCFRecord
    */
   private short isSynonymous(FeatureVector features, int basePosition)
   {
+      
     char variant = getAlt().toString().toLowerCase().charAt(0);
     for(int i = 0; i<features.size(); i++)
     {
@@ -359,8 +384,23 @@ public class VCFRecord
     return 3;
   }
   
+  private short isSynonymous(List<CDSFeature> features, int basePosition) 
+  {
+      char variant = getAlt().toString().toLowerCase().charAt(0);
+      for(CDSFeature feature : features)
+      {
+        short isSyn = checkSyn(feature, basePosition, variant);
+        if(isSyn > - 1)
+          return isSyn;
+      }
+
+      return 3;
+  }
+  
   protected static short checkSyn(CDSFeature gfeat, int basePosition, char variant)
   {
+    //logger.info("CDSFEATURE\t"+gfeat);
+    //logger.info("BASEANDVARIANT\t"+basePosition + "\t" + variant);
     if(gfeat.firstBase < basePosition && gfeat.lastBase > basePosition)
     {
       RangeVector ranges = gfeat.ranges;
@@ -403,10 +443,11 @@ public class VCFRecord
 
             char aaRef = AminoAcidSequence.getCodonTranslation(codon[0],
                   codon[1], codon[2]);
-
+            //logger.info(String.format("%d %d %s%s%s", mod, codonStart, codon[0],codon[1],codon[2]));
             if(!gfeat.isFwd)
               variant = Bases.complement(variant);
             codon[mod] = variant;
+            //logger.info(String.format("%d %d %s%s%s", mod, codonStart, codon[0],codon[1],codon[2]));
             char aaNew = AminoAcidSequence.getCodonTranslation(codon[0],
                 codon[1], codon[2]);
 
