@@ -3139,7 +3139,7 @@ public class BamView extends JPanel
             public void actionPerformed(ActionEvent e) 
             {
               FileViewer viewDetail = new FileViewer(thisSAMRecord.getReadName(), true, false, false);
-              appendToDetailView(thisSAMRecord, viewDetail);
+              appendToDetailView(thisSAMRecord, getMate(thisSAMRecord), viewDetail);
             }  
           });
           popup.add(showDetails);
@@ -3150,7 +3150,7 @@ public class BamView extends JPanel
     }
   }
   
-  private void appendToDetailView(SAMRecord thisSAMRecord, FileViewer viewDetail)
+  private void appendToDetailView(SAMRecord thisSAMRecord, SAMRecord thisSAMRecordMate, FileViewer viewDetail)
   {
     viewDetail.appendString("Read Name             "+thisSAMRecord.getReadName()+"\n", Level.INFO);
     viewDetail.appendString("Coordinates           "+thisSAMRecord.getAlignmentStart()+".."+
@@ -3159,22 +3159,34 @@ public class BamView extends JPanel
     viewDetail.appendString("Reference Name        "+thisSAMRecord.getReferenceName()+"\n", Level.DEBUG);
     viewDetail.appendString("Inferred Size         "+thisSAMRecord.getInferredInsertSize()+"\n", Level.DEBUG);
     viewDetail.appendString("Mapping Quality       "+thisSAMRecord.getMappingQuality()+"\n", Level.DEBUG);
+    viewDetail.appendString("Cigar String          "+thisSAMRecord.getCigarString()+"\n", Level.DEBUG);
+    viewDetail.appendString("Strand                "+
+        (thisSAMRecord.getReadNegativeStrandFlag() ? "-\n\n" : "+\n\n"), Level.DEBUG);
     
-    if(thisSAMRecord.getReadPairedFlag() && thisSAMRecord.getProperPairFlag() && !thisSAMRecord.getMateUnmappedFlag())
-    {
-      viewDetail.appendString("Mate Reference Name   "+thisSAMRecord.getMateReferenceName()+"\n", Level.DEBUG);
-      viewDetail.appendString("Mate Start Coordinate "+thisSAMRecord.getMateAlignmentStart()+"\n", Level.DEBUG);
-      viewDetail.appendString("Strand (read/mate)    "+
-        (thisSAMRecord.getReadNegativeStrandFlag() ? "-" : "+")+" / "+
-        (thisSAMRecord.getMateNegativeStrandFlag() ? "-" : "+"), Level.DEBUG);
+    if(!thisSAMRecord.getMateUnmappedFlag())
+    {     
+      if(thisSAMRecordMate != null)
+      {
+        viewDetail.appendString("Mate Coordinates      "+thisSAMRecordMate.getAlignmentStart()+".."+
+            thisSAMRecordMate.getAlignmentEnd()+"\n", Level.DEBUG);
+        viewDetail.appendString("Mate Length           "+thisSAMRecordMate.getReadLength()+"\n", Level.DEBUG);
+        viewDetail.appendString("Mate Reference Name   "+thisSAMRecordMate.getReferenceName()+"\n", Level.DEBUG);
+        viewDetail.appendString("Mate Inferred Size    "+thisSAMRecordMate.getInferredInsertSize()+"\n", Level.DEBUG);
+        viewDetail.appendString("Mate Mapping Quality  "+thisSAMRecordMate.getMappingQuality()+"\n", Level.DEBUG);
+        viewDetail.appendString("Mate Cigar String     "+thisSAMRecordMate.getCigarString()+"\n", Level.DEBUG);
+      }
+      else
+      {
+        viewDetail.appendString("Mate Start Coordinate "+thisSAMRecord.getMateAlignmentStart()+"\n", Level.DEBUG);
+        viewDetail.appendString("Mate Reference Name   "+thisSAMRecord.getMateReferenceName()+"\n", Level.DEBUG);
+      }
+      viewDetail.appendString("Mate Strand           "+
+          (thisSAMRecord.getMateNegativeStrandFlag() ? "-" : "+"), Level.DEBUG);
     }
     else
     {
-      viewDetail.appendString("Strand (read)         "+
-          (thisSAMRecord.getReadNegativeStrandFlag() ? "-" : "+"), Level.DEBUG);
+      viewDetail.appendString("Mate Unmapped ", Level.DEBUG);
     }
-    
-    viewDetail.appendString("\n\nCigar String          "+thisSAMRecord.getCigarString(), Level.DEBUG);
     
     viewDetail.appendString("\n\nFlags:", Level.INFO);
     viewDetail.appendString("\nDuplicate Read    "+
@@ -3201,9 +3213,43 @@ public class BamView extends JPanel
         (thisSAMRecord.getSecondOfPairFlag() ? "yes" : "no"), Level.DEBUG);
     
     viewDetail.appendString("\n\nRead Bases:\n", Level.INFO);
-    viewDetail.appendString(new String(thisSAMRecord.getReadBases()), Level.DEBUG);
+    
+    // wrap the read bases
+    String seq = new String(thisSAMRecord.getReadBases());
+    int MAX_SEQ_LINE_LENGTH = 100;
+    for(int i=0; i<=seq.length(); i+=MAX_SEQ_LINE_LENGTH)
+    {
+      int iend = i+MAX_SEQ_LINE_LENGTH;
+      if(iend > seq.length())
+    	iend = seq.length();
+      viewDetail.appendString(seq.substring(i, iend)+"\n", Level.DEBUG);
+    }
   }
 
+  /**
+   * Query for the mate of a read
+   * @param mate
+   * @return
+   */
+  private SAMRecord getMate(SAMRecord thisSAMRecord)
+  {
+    SAMRecord mate = null;
+    try
+    {
+      int fileIndex = 0;
+      if(bamList.size()>1)
+        fileIndex = (Integer) thisSAMRecord.getAttribute("FL");
+      String bam = bamList.get(fileIndex);  
+      final SAMFileReader inputSam = getSAMFileReader(bam);
+      mate = inputSam.queryMate(thisSAMRecord);
+    }
+    catch (Exception e)
+    {
+      e.printStackTrace();
+    }
+    return mate;
+  }
+  
   protected SAMRecordPredicate getSamRecordFlagPredicate()
   {
     return samRecordFlagPredicate;
