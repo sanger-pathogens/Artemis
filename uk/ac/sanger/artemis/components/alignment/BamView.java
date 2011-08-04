@@ -2363,6 +2363,16 @@ public class BamView extends JPanel
           filterFrame.setVisible(true);
       } 
     });
+    
+    JMenuItem readList = new JMenuItem("List Reads ...");
+    menu.add(readList);
+    readList.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        new SAMRecordList(readsInView);
+      }
+    });
 
     final JMenuItem bamSplitter = new JMenuItem("Clone window");
     bamSplitter.addActionListener(new ActionListener()
