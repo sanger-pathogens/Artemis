@@ -2366,7 +2366,7 @@ public class BamView extends JPanel
       } 
     });
     
-    JMenuItem readList = new JMenuItem("List Reads ...");
+/*    JMenuItem readList = new JMenuItem("List Reads ...");
     menu.add(readList);
     readList.addActionListener(new ActionListener()
     {
@@ -2374,7 +2374,7 @@ public class BamView extends JPanel
       {
         new SAMRecordList(readsInView);
       }
-    });
+    });*/
 
     final JMenuItem bamSplitter = new JMenuItem("Clone window");
     bamSplitter.addActionListener(new ActionListener()
