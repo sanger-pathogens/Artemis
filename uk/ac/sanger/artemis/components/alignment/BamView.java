@@ -1144,8 +1144,10 @@ public class BamView extends JPanel
           
           if(colourByCoverageColour.isSelected())
             g2.setColor(getColourByCoverageColour(samRecord));
-          else if( samRecord.getReadNegativeStrandFlag() && // strand of the query (1 for reverse)
-              samNextRecord.getReadNegativeStrandFlag() )
+          else if( (samRecord.getReadNegativeStrandFlag() && // strand of the query (1 for reverse)
+                    samNextRecord.getReadNegativeStrandFlag()) ||
+                   (!samRecord.getReadNegativeStrandFlag() && 
+                    !samNextRecord.getReadNegativeStrandFlag()))
             g2.setColor(Color.red);
           else
             g2.setColor(Color.blue);
