@@ -26,8 +26,6 @@ package uk.ac.sanger.artemis.components.variant;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Logger;
-
 import uk.ac.sanger.artemis.Feature;
 import uk.ac.sanger.artemis.FeatureVector;
 import uk.ac.sanger.artemis.io.Range;
@@ -37,7 +35,7 @@ import uk.ac.sanger.artemis.sequence.Bases;
 
 public class VCFRecord
 {
-  private static Logger logger = Logger.getLogger(VCFRecord.class);
+  //private static Logger logger = Logger.getLogger(VCFRecord.class);
   private String chrom;
   private int pos;
   private String ID;
@@ -51,16 +49,6 @@ public class VCFRecord
   private String data[][];
   private short synFlag = -1;
   private boolean markAsNewStop = false;
-  
-  public boolean isMarkAsNewStop() 
-  {
-	  return markAsNewStop;
-  }
-
-  public void setMarkAsNewStop(boolean markAsNewStop) 
-  {
-	  this.markAsNewStop = markAsNewStop;
-  }
 
   protected static Pattern MULTI_ALLELE_PATTERN = Pattern.compile("^[AGCTagct]+,[AGCTacgt,]+$");
   protected static Pattern COLON_PATTERN = Pattern.compile(":");
@@ -472,5 +460,15 @@ public class VCFRecord
       }
     }
     return -1;
+  }
+  
+  protected boolean isMarkAsNewStop() 
+  {
+      return markAsNewStop;
+  }
+
+  protected void setMarkAsNewStop(boolean markAsNewStop) 
+  {
+      this.markAsNewStop = markAsNewStop;
   }
 }
