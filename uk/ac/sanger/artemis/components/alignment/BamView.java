@@ -2372,7 +2372,7 @@ public class BamView extends JPanel
     {
       public void actionPerformed(ActionEvent e)
       {
-        new SAMRecordList(readsInView);
+        new SAMRecordList(BamView.this);
       }
     });*/
 
@@ -2922,6 +2922,16 @@ public class BamView extends JPanel
   protected int getBasesInView()
   {
     return nbasesInView;
+  }
+  
+  protected void setHighlightSAMRecord(SAMRecord highlightSAMRecord)
+  {
+    this.highlightSAMRecord = highlightSAMRecord;
+  }
+  
+  protected SAMRecord getHighlightSAMRecord()
+  {
+    return highlightSAMRecord;
   }
   
   private String getVersion()
