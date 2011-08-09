@@ -166,7 +166,7 @@ public class FileSelectionDialog extends JDialog
    */
   public static boolean isListOfFiles(String filename) 
   {
-    if(filename.startsWith("http"))
+    if(filename.startsWith("http") || filename.startsWith("ftp"))
     {
       try
       {
@@ -178,7 +178,7 @@ public class FileSelectionDialog extends JDialog
         is.close();
         reader.close();
         
-        if(s != null && s.trim().startsWith("http"))
+        if(s != null && (s.trim().startsWith("http") || s.trim().startsWith("ftp")))
           return true;
       }
       catch (IOException e){}
@@ -195,7 +195,13 @@ public class FileSelectionDialog extends JDialog
         DataInputStream in = new DataInputStream(fstream);
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
 
-        f = new File(br.readLine().trim());
+        String line = br.readLine().trim();
+        br.close();
+        fstream.close();
+        
+        if(line.startsWith("http") || line.startsWith("ftp"))
+          return true;
+        f = new File(line);
         if (f.exists())
           return true;
       }
@@ -204,6 +210,7 @@ public class FileSelectionDialog extends JDialog
     {
       return false;
     }
+    
     return false;
   }
   

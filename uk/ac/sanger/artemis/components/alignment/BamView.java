@@ -1144,8 +1144,10 @@ public class BamView extends JPanel
           
           if(colourByCoverageColour.isSelected())
             g2.setColor(getColourByCoverageColour(samRecord));
-          else if( samRecord.getReadNegativeStrandFlag() && // strand of the query (1 for reverse)
-              samNextRecord.getReadNegativeStrandFlag() )
+          else if( (samRecord.getReadNegativeStrandFlag() && // strand of the query (1 for reverse)
+                    samNextRecord.getReadNegativeStrandFlag()) ||
+                   (!samRecord.getReadNegativeStrandFlag() && 
+                    !samNextRecord.getReadNegativeStrandFlag()))
             g2.setColor(Color.red);
           else
             g2.setColor(Color.blue);
@@ -2363,6 +2365,16 @@ public class BamView extends JPanel
           filterFrame.setVisible(true);
       } 
     });
+    
+/*    JMenuItem readList = new JMenuItem("List Reads ...");
+    menu.add(readList);
+    readList.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        new SAMRecordList(readsInView);
+      }
+    });*/
 
     final JMenuItem bamSplitter = new JMenuItem("Clone window");
     bamSplitter.addActionListener(new ActionListener()
