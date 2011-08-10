@@ -782,7 +782,7 @@ public class FeatureDisplay extends EntryGroupPanel
    *  adjustment change events from this object.
    *  @param l the event change listener.
    **/
-  protected void removeDisplayAdjustmentListener(DisplayAdjustmentListener l) 
+  public void removeDisplayAdjustmentListener(DisplayAdjustmentListener l) 
   {
     adjustment_listener_list.removeElement(l);
   }
