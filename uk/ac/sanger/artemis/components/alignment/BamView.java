@@ -2366,7 +2366,7 @@ public class BamView extends JPanel
       } 
     });
     
-/*    JMenuItem readList = new JMenuItem("List Reads ...");
+    JMenuItem readList = new JMenuItem("List Reads ...");
     menu.add(readList);
     readList.addActionListener(new ActionListener()
     {
@@ -2374,7 +2374,7 @@ public class BamView extends JPanel
       {
         new SAMRecordList(BamView.this);
       }
-    });*/
+    });
 
     final JMenuItem bamSplitter = new JMenuItem("Clone window");
     bamSplitter.addActionListener(new ActionListener()
@@ -2934,6 +2934,11 @@ public class BamView extends JPanel
     return highlightSAMRecord;
   }
   
+  protected FeatureDisplay getFeatureDisplay()
+  {
+    return feature_display;
+  }
+  
   private String getVersion()
   {
     final ClassLoader cl = this.getClass().getClassLoader();
@@ -3160,9 +3165,8 @@ public class BamView extends JPanel
           {
             public void actionPerformed(ActionEvent e) 
             {
-              FileViewer viewDetail = new FileViewer(thisSAMRecord.getReadName(), true, false, false);
-              appendToDetailView(thisSAMRecord, getMate(thisSAMRecord), viewDetail);
-            }  
+              openFileViewer(thisSAMRecord, getMate(thisSAMRecord));
+            }
           });
           popup.add(showDetails);
         }
@@ -3172,7 +3176,13 @@ public class BamView extends JPanel
     }
   }
   
-  private void appendToDetailView(SAMRecord thisSAMRecord, SAMRecord thisSAMRecordMate, FileViewer viewDetail)
+  protected static void openFileViewer(SAMRecord readRecord, SAMRecord mateRecord)
+  {
+    FileViewer viewDetail = new FileViewer(readRecord.getReadName(), true, false, false);
+    appendToDetailView(readRecord, mateRecord, viewDetail);
+  }
+  
+  private static void appendToDetailView(SAMRecord thisSAMRecord, SAMRecord thisSAMRecordMate, FileViewer viewDetail)
   {
     viewDetail.appendString("Read Name             "+thisSAMRecord.getReadName()+"\n", Level.INFO);
     viewDetail.appendString("Coordinates           "+thisSAMRecord.getAlignmentStart()+".."+
@@ -3253,7 +3263,7 @@ public class BamView extends JPanel
    * @param mate
    * @return
    */
-  private SAMRecord getMate(SAMRecord thisSAMRecord)
+  protected SAMRecord getMate(SAMRecord thisSAMRecord)
   {
     SAMRecord mate = null;
     try
