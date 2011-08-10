@@ -398,7 +398,8 @@ public class MultiComparator extends JFrame
   }
   
   /**
-   * Load NAM/VCF files using the system properties flag -Dbam1
+   * Load BAM/VCF files using the system properties flag -Dbam1, -Dbam2
+   * for sequences 1, 2...
    * @param index the feature display to associate the files with
    */
   private void loadFromProperty(final int index)
