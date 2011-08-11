@@ -451,7 +451,7 @@ public class FeatureEdit extends JPanel
                                  new java.text.FieldPosition(java.text.DateFormat.DATE_FIELD));
             
               final String go_string = "aspect=; term=; GOid=GO:; "+
-                                       "evidence=ISS; db_xref=GOC:unpublished; " +
+                                       "evidence=ISS; db_xref=GO_REF:0000001; " +
                                        "with=UniProtKB:; date=" + result_buffer;
               qualifier_text_area.append("=\"" + go_string + "\"");
             } 
