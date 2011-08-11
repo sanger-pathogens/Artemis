@@ -1,3 +1,14 @@
+Version XX
+	BAM record list option added to display as a list the reads and their
+	properties.
+	
+	Add options for loading graph, BAM and VCF files into ACT from the 
+	command line. Numbers are used to associate the file with a particular
+	sequence. e.g. add a BAM to the first (top) sequence in ACT:
+	act -Dbam1=/pathToFile/file.bam 
+	or, to add a userplot to the second sequence:
+	act -Duserplot2=/pathToFile/userPlot
+
 Version 13.2.0
 	Added option to provide overview of the variation sites.
 
