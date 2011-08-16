@@ -107,7 +107,8 @@ public class GraphMenu extends JMenu
                     final BasePlotGroup base_plot_group,
                     final FeatureDisplay feature_display,
                     final String menu_name, 
-                    final JSplitPane splitPane) 
+                    final JSplitPane splitPane,
+                    final int index) 
   {
     super (menu_name);
     this.frame = frame;
@@ -244,9 +245,9 @@ public class GraphMenu extends JMenu
     }
     
     // add user plots from the command line JVM option
-    if(System.getProperty("userplot") != null)
+    if(System.getProperty("userplot"+ (index > 0 ? index : "")) != null)
     {
-      String plots[] = System.getProperty("userplot").split("[\\s,]");
+      String plots[] = System.getProperty("userplot"+ (index > 0 ? index : "")).split("[\\s,]");
       try
       {
         for(int i=0;i<plots.length; i++)
@@ -294,7 +295,7 @@ public class GraphMenu extends JMenu
                     final FeatureDisplay feature_display,
                     final JSplitPane splitPane) 
   {
-    this (frame, entry_group, base_plot_group, feature_display, "Graph",splitPane);
+    this (frame, entry_group, base_plot_group, feature_display, "Graph",splitPane, -1);
   }
 
   /**

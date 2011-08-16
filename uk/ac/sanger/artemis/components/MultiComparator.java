@@ -711,13 +711,6 @@ public class MultiComparator extends JFrame
                       sub_menu_name);
         create_menu.add(this_create_menu);
 
-        /*final WriteMenu this_write_menu =
-          new WriteMenu(this,
-                         getSelectionArray()[i],
-                         getEntryGroupArray()[i],
-                         sub_menu_name);
-        write_menu.add(this_write_menu);*/
-
         if(Options.isUnixHost()) 
         {
           final RunMenu this_run_menu =
@@ -733,7 +726,7 @@ public class MultiComparator extends JFrame
                        getEntryGroupArray()[i],
                        getBasePlotGroupArray()[i],
                        getFeatureDisplayArray()[i],
-                       sub_menu_name, null);
+                       sub_menu_name, null, i+1);
       graph_menu.add(this_graph_menu);
     }
 
