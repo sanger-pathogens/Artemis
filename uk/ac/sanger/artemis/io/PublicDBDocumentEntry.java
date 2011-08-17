@@ -250,6 +250,13 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
     	addNewQualifier(qualifiers, newIDQualifier);
     	geneQualifiers.removeQualifierByName("ID");
       }
+      else if(ntranscripts == 1)
+      {
+        if(qualifiers.getQualifierByName("isFminPartial") != null)
+          addNewQualifier(qualifiers, qualifiers.getQualifierByName("isFminPartial"));
+        if(qualifiers.getQualifierByName("isFmaxPartial") != null)
+          addNewQualifier(qualifiers, qualifiers.getQualifierByName("isFmaxPartial"));
+      }
       combineQualifiers(qualifiers, geneQualifiers, true);
     }
     else if(GeneUtils.isNonCodingTranscripts(key))
@@ -266,6 +273,7 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
     
     try
     {
+      location = handlePartials(qualifiers, location);
       for(int i=0; i<DATABASE_QUALIFIERS_TO_MAP.length; i++)
       {
         if(!getEntryInformation().isValidQualifier(DATABASE_QUALIFIERS_TO_MAP[i][0]))
@@ -355,6 +363,8 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
         if(start != feature.getLocation().getTotalRange().getStart())
           return null;
         
+        if(feature.getLocation().isComplement())
+          ranges.reverse();
         location =
           new Location(ranges, feature.getLocation().isComplement());
       }
@@ -741,6 +751,40 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
         n++;
       }
     }
+  }
+  
+  /**
+   * Use '<' and '>' signs in the location descriptors to
+   * indicate that the sequence is partial.
+   * @param qualifiers
+   * @param location
+   * @return
+   */
+  private Location handlePartials(QualifierVector qualifiers, Location location)
+  {
+    if(qualifiers.getQualifierByName("isFminPartial") != null)
+    {
+      try
+      {
+        location = new Location(location.toString().replaceFirst("(\\d)", "<$1"));
+      }
+      catch (LocationParseException e)
+      {
+        e.printStackTrace();
+      }
+    }
+    else if(qualifiers.getQualifierByName("isFmaxPartial") != null)
+    {
+      try
+      {
+        location = new Location(location.toString().replaceAll("^(.*)(\\.)(.*)$","$1$2>$3"));
+      }
+      catch (LocationParseException e)
+      {
+        e.printStackTrace();
+      }
+    }
+    return location;
   }
   
   /**

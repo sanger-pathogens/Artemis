@@ -1915,7 +1915,7 @@ public class BamView extends JPanel
     }
     catch (OutOfRangeException e)
     {
-      e.printStackTrace();
+      System.err.println(thisRead.getReadName()+" "+e.getMessage());
     }
   }
   
