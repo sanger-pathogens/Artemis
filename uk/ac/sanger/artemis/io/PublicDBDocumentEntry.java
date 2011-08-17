@@ -273,7 +273,8 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
     
     try
     {
-      location = handlePartials(qualifiers, location);
+      if(key.getKeyString().equals(DatabaseDocument.EXONMODEL))
+        location = handlePartials(qualifiers, location);
       for(int i=0; i<DATABASE_QUALIFIERS_TO_MAP.length; i++)
       {
         if(!getEntryInformation().isValidQualifier(DATABASE_QUALIFIERS_TO_MAP[i][0]))
@@ -766,7 +767,7 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
     {
       try
       {
-        location = new Location(location.toString().replaceFirst("(\\d)", "<$1"));
+        location = new Location(location.toStringShort().replaceFirst("(\\d)", "<$1"));
       }
       catch (LocationParseException e)
       {
@@ -777,7 +778,7 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
     {
       try
       {
-        location = new Location(location.toString().replaceAll("^(.*)(\\.)(.*)$","$1$2>$3"));
+        location = new Location(location.toStringShort().replaceAll("^(.*)(\\.)(.*)$","$1$2>$3"));
       }
       catch (LocationParseException e)
       {
