@@ -1987,7 +1987,7 @@ public class BamView extends JPanel
                 "The length of the sequence loaded does not match the length of",
                 "the default reference sequence in the BAM ("+seqNames.get(0)+").",
                 (newIndex == -1 ? "" : "The length does match the reference "+
-                    seqNames.get(newIndex)+" so this has been\nset as the default.") 
+                    seqNames.get(newIndex)+" so this has been set as the default.") 
             };
             new NonModalDialog(frame, label);
           }
