@@ -273,8 +273,7 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
     
     try
     {
-      if(key.getKeyString().equals(DatabaseDocument.EXONMODEL))
-        location = handlePartials(qualifiers, location);
+      location = handlePartials(qualifiers, location);
       for(int i=0; i<DATABASE_QUALIFIERS_TO_MAP.length; i++)
       {
         if(!getEntryInformation().isValidQualifier(DATABASE_QUALIFIERS_TO_MAP[i][0]))
