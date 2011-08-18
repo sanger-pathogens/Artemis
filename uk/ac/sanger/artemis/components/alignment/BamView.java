@@ -116,6 +116,7 @@ import uk.ac.sanger.artemis.components.EntryFileDialog;
 import uk.ac.sanger.artemis.components.FeatureDisplay;
 import uk.ac.sanger.artemis.components.FileViewer;
 import uk.ac.sanger.artemis.components.MessageDialog;
+import uk.ac.sanger.artemis.components.NonModalDialog;
 import uk.ac.sanger.artemis.components.SwingWorker;
 import uk.ac.sanger.artemis.components.genebuilder.AutoCompleteComboDocument;
 import uk.ac.sanger.artemis.components.variant.FeatureContigPredicate;
@@ -1980,13 +1981,16 @@ public class BamView extends JPanel
             }
           }
 
-          JOptionPane.showMessageDialog(null, 
-              "The length of the sequence loaded does not match the length of\n"+
-              "the default reference sequence in the BAM ("+seqNames.get(0)+").\n"+
-              (newIndex == -1 ? "" : "The length does match the reference "+
-                  seqNames.get(newIndex)+" so this has been\nset as the default."), 
-                  "Check the reference is correctly selected", 
-                  JOptionPane.WARNING_MESSAGE);
+          if(!Options.isBlackBeltMode())
+          {
+            String label[] = {
+                "The length of the sequence loaded does not match the length of",
+                "the default reference sequence in the BAM ("+seqNames.get(0)+").",
+                (newIndex == -1 ? "" : "The length does match the reference "+
+                    seqNames.get(newIndex)+" so this has been\nset as the default.") 
+            };
+            new NonModalDialog(frame, label);
+          }
         }
       }
     }

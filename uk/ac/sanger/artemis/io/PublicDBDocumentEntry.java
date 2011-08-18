@@ -766,7 +766,7 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
     {
       try
       {
-        location = new Location(location.toString().replaceFirst("(\\d)", "<$1"));
+        location = new Location(location.toStringShort().replaceFirst("(\\d)", "<$1"));
       }
       catch (LocationParseException e)
       {
@@ -777,7 +777,7 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
     {
       try
       {
-        location = new Location(location.toString().replaceAll("^(.*)(\\.)(.*)$","$1$2>$3"));
+        location = new Location(location.toStringShort().replaceAll("^(.*)(\\.)(.*)$","$1$2>$3"));
       }
       catch (LocationParseException e)
       {
