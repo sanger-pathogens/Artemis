@@ -72,7 +72,18 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
     super(new GFFEntryInformation(), document, listener);
     super.in_constructor = true;
     // join the separate exons into one feature (if appropriate)
-    combineGeneFeatures();
+    final FeatureVector original_features = getAllFeatures();
+    if(original_features.size() > 0 && ((GFFStreamFeature)original_features.get(0)).isGTF())
+    {
+      // GTF
+      mergeGtfFeatures(original_features, "CDS");
+      mergeGtfFeatures(original_features, "exon");
+    }
+    else 
+    {
+      // GFF
+      combineGeneFeatures(original_features);
+    }
     super.in_constructor = false;
     finished_constructor = true;
   }
@@ -163,10 +174,8 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
     return new FastaStreamSequence(sequence);
   }
 
-  private void combineGeneFeatures()
+  private void combineGeneFeatures(FeatureVector original_features)
   {
-    final FeatureVector original_features = getAllFeatures();
-    
     Feature this_feature;
     Hashtable chado_gene = new Hashtable();
     try
@@ -816,6 +825,67 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
         merge_qualifier_vector.setQualifier(qual);
     }
     return merge_qualifier_vector;
+  }
+  
+  /**
+   * Merge function for GTF features
+   * @param original_features
+   * @param keyStr
+   * @throws ReadOnlyException
+   */
+  private void mergeGtfFeatures(FeatureVector original_features, String keyStr) throws ReadOnlyException
+  {
+    Hashtable<String, Vector<GFFStreamFeature>> group = new Hashtable<String, Vector<GFFStreamFeature>>();
+    for(int i=0; i<original_features.size(); i++)
+    {
+      GFFStreamFeature feature = (GFFStreamFeature)original_features.get(i);
+      if(!feature.getKey().getKeyString().equals(keyStr))
+        continue;
+      String transcriptId = 
+          ((String) feature.getQualifierByName("transcript_id").getValues().get(0)).replaceAll("'", "");
+      if(group.containsKey(transcriptId))
+        group.get(transcriptId).add(feature);
+      else
+      {
+        Vector<GFFStreamFeature> this_group = new Vector<GFFStreamFeature>();
+        this_group.add(feature);
+        group.put(transcriptId, this_group);
+      }
+    }
+    
+    Enumeration<String> enumGroup = group.keys();
+    while(enumGroup.hasMoreElements())
+    {
+      String transcriptId = enumGroup.nextElement();
+      Vector<GFFStreamFeature> this_group = group.get(transcriptId);
+      QualifierVector qualifier_vector = new QualifierVector();
+      final RangeVector new_range_vector = new RangeVector();
+      
+      for(GFFStreamFeature this_feature: this_group)
+      {
+        removeInternal(this_feature);
+        qualifier_vector.addAll(this_feature.getQualifiers());
+        
+        final Range new_range = (Range) this_feature.getLocation().getRanges().elementAt(0);
+        if(this_feature.getLocation().isComplement())
+          new_range_vector.insertElementAt(this_feature.getLocation().getTotalRange(), 0);
+        else
+          new_range_vector.add(new_range);
+      }
+      final GFFStreamFeature old_feature = (GFFStreamFeature)this_group.get(0);
+
+      final Location new_location = new Location(new_range_vector,
+          old_feature.getLocation().isComplement());
+      
+      qualifier_vector = mergeQualifiers(qualifier_vector, new_location.isComplement());
+      if(qualifier_vector.getQualifierByName("gene_id") != null)
+        qualifier_vector.addQualifierValues(new Qualifier("ID",
+            keyStr+":"+qualifier_vector.getQualifierByName("gene_id").getValues().get(0)));
+      
+      final GFFStreamFeature new_feature = new GFFStreamFeature(old_feature
+          .getKey(), new_location, qualifier_vector);
+      forcedAdd(new_feature);
+    }
   }
 
 }
