@@ -1,4 +1,6 @@
 Version XX
+	More support for GTF format to show CDS and exons as joined features.
+
 	BAM record list option added to display as a list the reads and their
 	properties.
 	
