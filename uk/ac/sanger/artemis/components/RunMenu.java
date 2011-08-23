@@ -115,8 +115,8 @@ public class RunMenu extends SelectionMenu
         if(features.size() != 1)
         {
           JOptionPane.showMessageDialog(RunMenu.this,
-              "Selected a single feature to send to NCBI for searching.", 
-              "NCBI Search", JOptionPane.INFORMATION_MESSAGE);
+              "Selected a single feature to send to Pfam for searching.", 
+              "Pfam Search", JOptionPane.INFORMATION_MESSAGE);
           return; 
         }
         final String residues = features.elementAt(0).getTranslation().toString().toUpperCase();

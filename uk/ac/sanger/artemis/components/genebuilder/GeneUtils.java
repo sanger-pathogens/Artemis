@@ -90,8 +90,7 @@ import uk.ac.sanger.artemis.Selection;
 
 public class GeneUtils
 {
-  private static final long serialVersionUID = 1L;
-  private static Vector hideFeatures = new Vector();
+  private static Vector<String> hideFeatures = new Vector<String>();
   private static JCheckBox showObsolete = new JCheckBox("Show Obsolete Features",false);
   private static String nonCodingTranscripts[] =
                                 { "tRNA", "rRNA", "snRNA", "snoRNA", "ncRNA", "scRNA" };
@@ -1002,6 +1001,40 @@ public class GeneUtils
       deleteFeature((uk.ac.sanger.artemis.Feature) embl_feature.getUserData());
       chado_gene.deleteFeature(embl_feature);
     }
+  }
+  
+  /**
+   * Check gene model strands for any inconsistencies
+   * @param chado_gene
+   * @return true is gene model ranges are correct
+   */
+  protected static boolean isStrandOK(final ChadoCanonicalGene chado_gene)
+  {
+    boolean isRev = chado_gene.getGene().getLocation().isComplement();
+    final List<Feature> transcripts = chado_gene.getTranscripts();
+    
+    for(int i=0; i<transcripts.size(); i++)
+    {
+      final Feature transcript = (Feature)transcripts.get(i);
+      
+      if(isRev ^ transcript.getLocation().isComplement())
+        return false;
+      
+      final Feature protein = 
+        chado_gene.getProteinOfTranscript(GeneUtils.getUniqueName(transcript));
+      if(protein != null && (isRev ^ protein.getLocation().isComplement()))
+        return false;
+      
+      final Set<Feature> children = chado_gene.getChildren(transcript);
+      final Iterator<Feature> it = children.iterator();
+      while(it.hasNext())
+      {
+        final Feature feature = it.next();
+        if(isRev ^ feature.getLocation().isComplement())
+          return false;
+      }
+    }
+    return true;
   }
 
   /**
