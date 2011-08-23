@@ -67,12 +67,14 @@ public class EntryGroupDisplay extends JPanel
    *  A vector containing one JCheckBox or Label for each Entry in the
    *  EntryGroup object.
    **/
-  private Vector entry_components = new Vector();
+  private Vector<JCheckBox> entry_components = new Vector<JCheckBox>();
 
   /**
    *  A label containing the message "Entry:".
    **/
   private JLabel label;
+  
+  private JComboBox indexFastaCombo;
 
   /**
    *  Create a new EntryGroupDisplay object.
@@ -146,7 +148,7 @@ public class EntryGroupDisplay extends JPanel
     removeAll();
     add(label);
 
-    entry_components = new Vector();
+    entry_components = new Vector<JCheckBox>();
 
     if(entry_group == null) 
       return;
@@ -156,7 +158,7 @@ public class EntryGroupDisplay extends JPanel
         add(entry_group.elementAt(i));
     }
 
-    doLayout();
+    validate();
   }
 
   /**
@@ -166,7 +168,7 @@ public class EntryGroupDisplay extends JPanel
   {
     for(int i = 0 ; i < entry_group.size() ; ++i) 
     {
-      final JCheckBox menu_item = (JCheckBox)entry_components.elementAt(i);
+      final JCheckBox menu_item = entry_components.elementAt(i);
       menu_item.setSelected(entry_group.isActive(entry_group.elementAt(i)));
     }
   }
@@ -218,33 +220,36 @@ public class EntryGroupDisplay extends JPanel
     
     if(entry.getEMBLEntry().getSequence() instanceof IndexFastaStream)
     {
-      FastaSequenceIndex indexFasta = 
-        ((IndexFastaStream)entry.getEMBLEntry().getSequence()).getFastaIndex();
-      Iterator it = indexFasta.iterator();
-      Vector contigs = new Vector();
-      while(it.hasNext())
+      if(indexFastaCombo == null)
       {
-        String contig = it.next().toString().split(";")[0];
-        if(contig.startsWith("contig "))
-          contig = contig.substring(6);
-        contigs.add(  contig );
-      }
-      
-      final JComboBox cb = new JComboBox(contigs);
-      add(cb);
-      cb.addActionListener(new ActionListener()
-      {
-        public void actionPerformed(ActionEvent e)
+        FastaSequenceIndex indexFasta = 
+          ((IndexFastaStream)entry.getEMBLEntry().getSequence()).getFastaIndex();
+        Iterator it = indexFasta.iterator();
+        Vector<String> contigs = new Vector<String>();
+        while(it.hasNext())
         {
-          IndexFastaStream is = (IndexFastaStream)entry.getEMBLEntry().getSequence();
-          is.setContigByIndex(cb.getSelectedIndex());
-          
-          owning_component.resetScrolls();
-          owning_component.getFeatureDisplay().getBases().clearCodonCache();
-          owning_component.repaint();
+          String contig = it.next().toString().split(";")[0];
+          if(contig.startsWith("contig "))
+            contig = contig.substring(6);
+          contigs.add(  contig );
         }
+
+        indexFastaCombo = new JComboBox(contigs);
+        indexFastaCombo.addActionListener(new ActionListener()
+        {
+          public void actionPerformed(ActionEvent e)
+          {
+            IndexFastaStream is = (IndexFastaStream)entry.getEMBLEntry().getSequence();
+            is.setContigByIndex(indexFastaCombo.getSelectedIndex());
+          
+            owning_component.resetScrolls();
+            owning_component.getFeatureDisplay().getBases().clearCodonCache();
+            owning_component.repaint();
+          }
         
-      });
+        });
+      }
+      add(indexFastaCombo);
     }
   }
 
@@ -258,8 +263,7 @@ public class EntryGroupDisplay extends JPanel
 
     for(int i = 0 ; i < entry_group.size() ; ++i) 
     {
-      final JCheckBox check_box =(JCheckBox) entry_components.elementAt(i);
-      
+      final JCheckBox check_box = entry_components.elementAt(i);
       setEntryHighlight(entry_group.elementAt(i), check_box);
     }
   }

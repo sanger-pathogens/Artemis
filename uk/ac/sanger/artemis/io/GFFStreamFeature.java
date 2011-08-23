@@ -1348,6 +1348,28 @@ public class GFFStreamFeature extends SimpleDocumentFeature
     this.chadoLazyFeature = chadoLazyFeature;
   }
   
+  protected boolean isGTF()
+  {
+    final String names[] = { "ID", "Name", "Alias", "Parent",
+        "Derives_from",
+        "Target", "Gap", "Note", 
+        "Dbxref", "Ontology_term" };
+    
+    for(String name: names)
+    {
+      if(getQualifiers().getQualifierByName(name) != null)
+        return false;
+    }
+    
+    if(getQualifiers().getQualifierByName("gene_id") != null && 
+       getQualifiers().getQualifierByName("transcript_id") != null)
+    {
+      logger4j.debug(getEntry().getName()+" is in GTF format");
+      return true;
+    }
+    return false;
+  }
+  
   public static void main(String args[])
   {
     Key key = new Key("region");
