@@ -73,7 +73,7 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
     super.in_constructor = true;
     // join the separate exons into one feature (if appropriate)
     final FeatureVector original_features = getAllFeatures();
-    if(original_features.size() > 0 && ((GFFStreamFeature)original_features.get(0)).isGTF())
+    if(original_features.size() > 0 && GFFStreamFeature.isGTF((Feature)original_features.get(0)))
     {
       // GTF
       mergeGtfFeatures(original_features, "CDS");
