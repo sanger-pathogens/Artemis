@@ -1350,6 +1350,9 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   
   protected static boolean isGTF(Feature feature)
   {
+    if(!(feature instanceof GFFStreamFeature))
+      return false;
+    
     final String names[] = { "ID", "Name", "Alias", "Parent",
         "Derives_from",
         "Target", "Gap", "Note", 
