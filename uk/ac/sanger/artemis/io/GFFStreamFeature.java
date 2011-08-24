@@ -1348,7 +1348,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
     this.chadoLazyFeature = chadoLazyFeature;
   }
   
-  protected boolean isGTF()
+  protected static boolean isGTF(Feature feature)
   {
     final String names[] = { "ID", "Name", "Alias", "Parent",
         "Derives_from",
@@ -1357,14 +1357,14 @@ public class GFFStreamFeature extends SimpleDocumentFeature
     
     for(String name: names)
     {
-      if(getQualifiers().getQualifierByName(name) != null)
+      if(feature.getQualifiers().getQualifierByName(name) != null)
         return false;
     }
     
-    if(getQualifiers().getQualifierByName("gene_id") != null && 
-       getQualifiers().getQualifierByName("transcript_id") != null)
+    if(feature.getQualifiers().getQualifierByName("gene_id") != null && 
+       feature.getQualifiers().getQualifierByName("transcript_id") != null)
     {
-      logger4j.debug(getEntry().getName()+" is in GTF format");
+      logger4j.debug(feature.getEntry().getName()+" is in GTF format");
       return true;
     }
     return false;
