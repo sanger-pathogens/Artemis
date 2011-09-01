@@ -356,6 +356,7 @@ public class ArtemisMain extends Splash
                              new_entry_name + " has an out of range " +
                              "location: " + e.getMessage());
         }
+        seen_plus = false; // reset
       }
       else if(System.getProperty("chado") != null && new_entry_name.indexOf(':')>-1)
       {
