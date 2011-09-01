@@ -3675,13 +3675,13 @@ public class FeatureDisplay extends EntryGroupPanel
     int count = 0;
     if((event.getModifiers() & InputEvent.BUTTON1_MASK) > 0) 
       ++count;
-    
-    if((event.getModifiers() & InputEvent.BUTTON2_MASK) > 0) 
+
+    if((event.getModifiers() & InputEvent.BUTTON2_DOWN_MASK) > 0) 
       ++count;
-    
+
     if((event.getModifiers() & InputEvent.BUTTON3_MASK) > 0) 
       ++count;
-    
+
     return count;
   }
 
@@ -3885,11 +3885,12 @@ public class FeatureDisplay extends EntryGroupPanel
 
     final Selectable clicked_thing = getThingAtPoint(event.getPoint());
 
-    // treate alt modifier like pressing button 2
-    if(clicked_thing == null ||
-       (event.getModifiers() & InputEvent.BUTTON2_MASK) != 0) 
+    // note: ALT_MASK and BUTTON2_MASK are the same value
+    // so check this is not BUTTON1 to allow BUTTON1+ALT to drag
+    if(  clicked_thing == null ||
+       ((event.getModifiers() & InputEvent.BUTTON1_MASK) == 0 && 
+        (event.getModifiers() & InputEvent.BUTTON2_MASK) != 0)) 
     {
-
       // if the user presses the mouse button 2 on feature or segment we treat
       // it like the feature/segment isn't there
 
@@ -4033,24 +4034,50 @@ public class FeatureDisplay extends EntryGroupPanel
         {
           final FeatureSegment this_segment = segments.elementAt(i);
 
-          if(new_click_range.getStart().equals(this_segment.getStart()) &&
-              this_segment.canDirectEdit()) 
+          if(this_segment.getStart().getStrand() ==  new_click_range.getStrand() &&
+             this_segment.canDirectEdit())
           {
-            click_segment_marker = this_segment.getStart();
-            click_segment_marker_is_start_marker = true;
-            other_end_of_segment_marker = this_segment.getEnd();
-            getEntryGroup().getActionController().startAction();
-            break;
-          }
+            if(event.isAltDown())
+            {
+              if(new_click_range.getStart().getPosition() >= this_segment.getStart().getPosition() &&
+                 new_click_range.getStart().getPosition() <= this_segment.getStart().getPosition()+60)
+              {
+                click_segment_marker = this_segment.getStart();
+                click_segment_marker_is_start_marker = true;
+                other_end_of_segment_marker = this_segment.getEnd();
+                getEntryGroup().getActionController().startAction();
+                break;
+              }
+              else if(new_click_range.getEnd().getPosition() <= this_segment.getEnd().getPosition() &&
+                      new_click_range.getEnd().getPosition() >= this_segment.getEnd().getPosition()-60)
+              {
+                click_segment_marker = this_segment.getEnd();
+                click_segment_marker_is_start_marker = false;
+                other_end_of_segment_marker = this_segment.getStart();
+                getEntryGroup().getActionController().startAction();
+                break;
+              }
+            }
+            else
+            {
+              if (new_click_range.getStart().equals(this_segment.getStart()))
+              {
+                click_segment_marker = this_segment.getStart();
+                click_segment_marker_is_start_marker = true;
+                other_end_of_segment_marker = this_segment.getEnd();
+                getEntryGroup().getActionController().startAction();
+                break;
+              }
 
-          if(new_click_range.getEnd().equals(this_segment.getEnd()) &&
-              this_segment.canDirectEdit()) 
-          {
-            click_segment_marker = this_segment.getEnd();
-            click_segment_marker_is_start_marker = false;
-            other_end_of_segment_marker = this_segment.getStart();
-            getEntryGroup().getActionController().startAction();
-            break;
+              if (new_click_range.getEnd().equals(this_segment.getEnd()))
+              {
+                click_segment_marker = this_segment.getEnd();
+                click_segment_marker_is_start_marker = false;
+                other_end_of_segment_marker = this_segment.getStart();
+                getEntryGroup().getActionController().startAction();
+                break;
+              }
+            }
           }
         }
       }
