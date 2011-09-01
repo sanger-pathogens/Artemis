@@ -3887,9 +3887,8 @@ public class FeatureDisplay extends EntryGroupPanel
 
     // note: ALT_MASK and BUTTON2_MASK are the same value
     // so check this is not BUTTON1 to allow BUTTON1+ALT to drag
-    if(  clicked_thing == null ||
-       ((event.getModifiers() & InputEvent.BUTTON1_MASK) == 0 && 
-        (event.getModifiers() & InputEvent.BUTTON2_MASK) != 0)) 
+    if( clicked_thing == null ||
+       (event.getModifiers() & InputEvent.BUTTON2_MASK) != 0)
     {
       // if the user presses the mouse button 2 on feature or segment we treat
       // it like the feature/segment isn't there
@@ -4037,7 +4036,7 @@ public class FeatureDisplay extends EntryGroupPanel
           if(this_segment.getStart().getStrand() ==  new_click_range.getStrand() &&
              this_segment.canDirectEdit())
           {
-            if(event.isAltDown())
+            if(event.isShiftDown())
             {
               if(new_click_range.getStart().getPosition() >= this_segment.getStart().getPosition() &&
                  new_click_range.getStart().getPosition() <= this_segment.getStart().getPosition()+60)
