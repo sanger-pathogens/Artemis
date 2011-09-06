@@ -52,7 +52,13 @@ class BCFReader extends AbstractVCFReader
   private String metaData;
   private String fileName;
   
-  private boolean longSP = true;
+  //
+  // Nasty work around for backward compatibility with old BCF files.
+  // Assume new BCF file unless ArrayIndexOutOfBoundsException thrown. 
+  // The have newer BCF files have:
+  // 1. SP type of long 
+  // 2. PL values for non-variant do not set n_alleles to 1
+  private boolean newBCF = true; 
 
   private static org.apache.log4j.Logger logger4j = 
     org.apache.log4j.Logger.getLogger(BCFReader.class);
@@ -121,8 +127,11 @@ class BCFReader extends AbstractVCFReader
     }
     catch(ArrayIndexOutOfBoundsException ae)
     {
-      if(longSP)
-        longSP = false;
+      if(newBCF)
+      {
+        newBCF = false;
+        logger4j.debug("This looks like an old style BCF.");
+      }
       else
         throw ae;
     }
@@ -230,10 +239,9 @@ class BCFReader extends AbstractVCFReader
     if(formatPattern.matcher(bcfRecord.getFormat()).matches())
     {
       int n_alleles = bcfRecord.getAlt().getNumAlleles();
+      if(!newBCF && bcfRecord.getAlt().toString().equals("."))
+        n_alleles = 1;
       int nc  = (int) (n_alleles * ((float)(((float)n_alleles+1.f)/2.f)));
-
-      if(bcfRecord.getAlt().isNonVariant() && bcfRecord.getAlt().equals("."))
-        nc = 1;
 
       String fmts[] = VCFRecord.COLON_PATTERN.split( bcfRecord.getFormat() );
       bcfRecord.setData( new String[nsamples][fmts.length] );
@@ -345,7 +353,7 @@ class BCFReader extends AbstractVCFReader
       return nsamples*nc;       // uint8_t[n*x]
     else if(tag.equals("SP"))   // 
     {
-      if(longSP)                // type changed in bcftools
+      if(newBCF)                // type changed in bcftools
         return 4*nsamples;      // uint32_t[n]
       else
         return nsamples;        // uint8_t[n]

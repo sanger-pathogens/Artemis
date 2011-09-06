@@ -76,9 +76,6 @@ public class VariantBase
 
   protected int getNumAlleles()
   {
-    if (alt.equals("."))
-      return 1;
-
     return alt.split(",").length + 1;
   }
 
