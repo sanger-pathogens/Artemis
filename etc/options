@@ -394,6 +394,8 @@ draw_feature_borders = yes
 # feature.  if set to no, no arrows will be drawn.
 draw_feature_arrows = yes
 
+# if yes then shortcut changed in Preferences are saved between sessions
+shortcut_cache = yes
 
 # the number of levels of undo to save or 0 if undo is disabled.  more undo
 # levels will require more memory.
