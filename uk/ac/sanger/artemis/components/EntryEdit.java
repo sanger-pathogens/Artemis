@@ -1546,9 +1546,7 @@ public class EntryEdit extends JFrame
         {
           JMenu menu = EntryEdit.super.getJMenuBar().getMenu(i);
           if(menu instanceof SelectionMenu &&
-             ( menu instanceof SelectMenu ||
-               menu instanceof EditMenu ||
-               menu instanceof ViewMenu ))
+            ((SelectionMenu)menu).isEditableShortCutMenu() )
             shortcut_pane.add(menu.getText()+" Menu", ((SelectionMenu)menu).getShortCuts());
         }
         

@@ -30,6 +30,7 @@ import uk.ac.sanger.artemis.*;
 
 import java.awt.event.*;
 import javax.swing.*;
+
 import java.awt.*;
 import java.util.Vector;
 
@@ -49,7 +50,7 @@ public class SelectionMenu extends JMenu
   private static final long serialVersionUID = 1L;
 
   /** The Selection that was passed to the constructor. */
-  /* final */ private Selection selection;
+  private Selection selection;
 
   /** The JFrame reference that was passed to the constructor. */
   private JFrame frame = null;
@@ -405,34 +406,25 @@ public class SelectionMenu extends JMenu
     else
     {
       char c[] = ((String)combo.getSelectedItem()).toCharArray();
-      int modifier = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
-
-      if( ((String)mod_combo.getSelectedItem()).equals("Alt") )
-        modifier = InputEvent.ALT_MASK;
-      else if( ((String)mod_combo.getSelectedItem()).equals("Ctrl") )
-        modifier = InputEvent.CTRL_MASK;
-      else if( ((String)mod_combo.getSelectedItem()).equals("Shift") )
-        modifier = InputEvent.SHIFT_MASK;
-
+      int modifier = getModifierFromString((String)mod_combo.getSelectedItem()); 
       mi.setAccelerator(KeyStroke.getKeyStroke(c[0], modifier));
-      mi.setText(mi.getText());
-      mi.revalidate();
-      mi.repaint();
     }
-  }
 
-/*  public void getAccelerators()
+    if(ShortCut.usingCache())
+      new ShortCut(getText(), mi.getText(), mi.getAccelerator());
+  }
+  
+  private int getModifierFromString(String modStr)
   {
-    Hashtable keyStrokeHash = new Hashtable();
-    Component menus[] = getMenuComponents();
-    for(int i = 0; i < menus.length; i++)
-    {
-      JMenuItem menu = (JMenuItem)menus[i];
-      KeyStroke ks = menu.getAccelerator();
-      if(ks != null)
-        keyStrokeHash.put(menu.getText(), ks);
-    }
-  }*/
+    int modifier = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+    if( modStr.equals("Alt") )
+      modifier = InputEvent.ALT_MASK;
+    else if( modStr.equals("Ctrl") )
+      modifier = InputEvent.CTRL_MASK;
+    else if( modStr.equals("Shift") )
+      modifier = InputEvent.SHIFT_MASK;
+    return modifier;
+  }
   
   public static String getKeyText(int keyCode)
   {
@@ -461,5 +453,30 @@ public class SelectionMenu extends JMenu
     
     return "unknown(0x" + Integer.toString(keyCode, 16) + ")";
   }
+  
+  /**
+   * True if this menu has editable shortcuts
+   * @return
+   */
+  protected boolean isEditableShortCutMenu()
+  {
+    if(this instanceof SelectMenu ||
+       this instanceof EditMenu ||
+       this instanceof ViewMenu )
+      return true;
+    return false;
+  }
+  
+  /**
+   * Override to apply any cached shortcuts
+   */
+  public JMenuItem add(JMenuItem menuItem)
+  {
+    JMenuItem mi = super.add(menuItem);
+    if(isEditableShortCutMenu() && ShortCut.usingCache())
+      ShortCut.applyShortCutFromCache(getText(), menuItem);
+    return mi;
+  }
+  
 }
 
