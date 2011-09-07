@@ -521,7 +521,7 @@ public class DatabaseJPanel extends JPanel
         doc = entry_source.getDatabaseDocument();
         final DatabaseTreeNode top = new DatabaseTreeNode("");
 
-        File cacheFile = new File(DatabaseTreeNode.CACHE_PATH+
+        File cacheFile = new File(Options.CACHE_PATH+
             ((String)doc.getLocation()).replaceAll("[/:=\\?]", "_"));
         
         if(System.getProperty("database_manager_cache_off") == null &&
