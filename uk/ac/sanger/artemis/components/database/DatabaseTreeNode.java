@@ -37,6 +37,7 @@ import org.gmod.schema.organism.Organism;
 import org.gmod.schema.organism.OrganismProp;
 import org.gmod.schema.sequence.Feature;
 
+import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.components.Splash;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
 
@@ -58,9 +59,6 @@ import java.util.Set;
 public class DatabaseTreeNode extends DefaultMutableTreeNode 
                  implements Transferable, Serializable
 {
-  public static String CACHE_PATH = 
-    System.getProperty("user.home") + File.separatorChar +
-    ".artemis" + File.separatorChar + "cache" + File.separatorChar;
   private static final long serialVersionUID = 1L;
   public static final DataFlavor DATABASETREENODE = 
           new DataFlavor(DatabaseTreeNode.class, "Work Package");
@@ -232,10 +230,10 @@ public class DatabaseTreeNode extends DefaultMutableTreeNode
   {
     try
     {
-      File dir = new File(CACHE_PATH);
+      File dir = new File(Options.CACHE_PATH);
       if(!dir.exists())
         dir.mkdirs();
-      FileOutputStream fos = new FileOutputStream(CACHE_PATH +
+      FileOutputStream fos = new FileOutputStream(Options.CACHE_PATH +
           ((String)dbDoc.getLocation()).replaceAll("[/:=\\?]", "_"));
       
       ObjectOutputStream out = new ObjectOutputStream(fos);

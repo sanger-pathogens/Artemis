@@ -23,7 +23,6 @@ package uk.ac.sanger.artemis.components.filetree;
 
 import uk.ac.sanger.artemis.components.database.DatabaseEntrySource;
 import uk.ac.sanger.artemis.components.database.DatabaseJPanel;
-import uk.ac.sanger.artemis.components.database.DatabaseTreeNode;
 import uk.ac.sanger.artemis.j2ssh.SshLogin;
 import uk.ac.sanger.artemis.j2ssh.SshFileManager;
 import uk.ac.sanger.artemis.util.StringVector;
@@ -601,7 +600,7 @@ public class LocalAndRemoteFileManager extends JFrame
 
         public void actionPerformed(ActionEvent e)
         {
-          File cacheDir = new File(DatabaseTreeNode.CACHE_PATH);
+          File cacheDir = new File(Options.CACHE_PATH);
           
           if(cacheDir.exists())
           {
