@@ -42,6 +42,7 @@ public class FileSelectionDialog extends JDialog
   private int row = 0;
   private List<JTextField> bamFields = new Vector<JTextField>(30);
   private JTextField referenceField = new JTextField(30);
+  private boolean statusOK = false;
   
   public FileSelectionDialog(String fileNames[])
   {
@@ -50,6 +51,7 @@ public class FileSelectionDialog extends JDialog
       JTextField bamField = new JTextField(fileNames[i]);
       bamFields.add(bamField);
     }
+    statusOK = true;
   }
   
   /**
@@ -97,6 +99,7 @@ public class FileSelectionDialog extends JDialog
     okButton.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e)
       {
+        statusOK = true;
         FileSelectionDialog.this.dispose();
       }
     });
@@ -277,6 +280,8 @@ public class FileSelectionDialog extends JDialog
    */
   public List<String> getFiles(String patternStr)
   {
+    if(!statusOK)
+      return new Vector<String>();
     Pattern p = Pattern.compile(patternStr);
     
     List<String> files = new Vector<String>();
