@@ -112,6 +112,7 @@ import uk.ac.sanger.artemis.SelectionChangeListener;
 import uk.ac.sanger.artemis.SimpleEntryGroup;
 import uk.ac.sanger.artemis.components.DisplayAdjustmentEvent;
 import uk.ac.sanger.artemis.components.DisplayAdjustmentListener;
+import uk.ac.sanger.artemis.components.EntryEdit;
 import uk.ac.sanger.artemis.components.EntryFileDialog;
 import uk.ac.sanger.artemis.components.FeatureDisplay;
 import uk.ac.sanger.artemis.components.FileViewer;
@@ -162,6 +163,7 @@ public class BamView extends JPanel
   private boolean isCoverage = false;
   private boolean isSNPplot = false;
   
+  private EntryEdit entry_edit;
   private FeatureDisplay feature_display;
   private Selection selection;
   private JPanel mainPanel = new JPanel();
@@ -226,6 +228,19 @@ public class BamView extends JPanel
   
   public static org.apache.log4j.Logger logger4j = 
     org.apache.log4j.Logger.getLogger(BamView.class);
+  
+  public BamView(List<String> bamList, 
+                String reference,
+                int nbasesInView,
+                final EntryEdit entry_edit,
+                final FeatureDisplay feature_display,
+                final Bases bases,
+                final JPanel containerPanel,
+                final JFrame frame)
+  {
+    this(bamList, reference, nbasesInView, feature_display, bases, containerPanel, frame);
+    this.entry_edit = entry_edit;
+  }
   
   public BamView(List<String> bamList, 
                  String reference,
@@ -2385,7 +2400,7 @@ public class BamView extends JPanel
     {
       public void actionPerformed(ActionEvent e)
       {
-        BamView bamView = new BamView(bamList, null, nbasesInView, 
+        BamView bamView = new BamView(bamList, null, nbasesInView, entry_edit,
             feature_display, bases, (JPanel) mainPanel.getParent(), null);
         bamView.getJspView().getVerticalScrollBar().setValue(
             bamView.getJspView().getVerticalScrollBar().getMaximum());
@@ -2415,9 +2430,9 @@ public class BamView extends JPanel
     final JComponent topPanel;
     if(frame == null)
     {
-      if(feature_display != null)
-        this.selection = feature_display.getSelection();
       topPanel = new JPanel(new FlowLayout(FlowLayout.LEADING, 0, 0));
+      if(feature_display != null)
+        this.selection = feature_display.getSelection(); 
     }
     else
     { 
@@ -2609,6 +2624,32 @@ public class BamView extends JPanel
     }
     
     topPanel.add(buttonAutoHide);
+    
+    if(feature_display != null)
+    {
+      JButton close = new JButton("Close");
+      topPanel.add(close);
+      close.addActionListener(new ActionListener()
+      {
+        public void actionPerformed(ActionEvent e)
+        {
+          final JPanel containerPanel = (JPanel) mainPanel.getParent();
+          feature_display.removeDisplayAdjustmentListener(BamView.this);
+          feature_display.getSelection().removeSelectionChangeListener(BamView.this);
+          containerPanel.remove(mainPanel);
+          
+          if(containerPanel.getComponentCount() > 0)
+            containerPanel.revalidate();
+          else
+          {
+            if(entry_edit != null)
+              entry_edit.setNGDivider();
+            else
+              containerPanel.setVisible(false);
+          }
+        }
+      });
+    }
     return topPanel;
   }
   
