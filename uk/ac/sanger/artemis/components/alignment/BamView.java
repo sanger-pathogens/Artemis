@@ -2400,7 +2400,8 @@ public class BamView extends JPanel
     {
       public void actionPerformed(ActionEvent e)
       {
-        BamView bamView = new BamView(bamList, null, nbasesInView, entry_edit,
+        BamView bamView = new BamView(new Vector<String>(bamList), 
+            null, nbasesInView, entry_edit,
             feature_display, bases, (JPanel) mainPanel.getParent(), null);
         bamView.getJspView().getVerticalScrollBar().setValue(
             bamView.getJspView().getVerticalScrollBar().getMaximum());
