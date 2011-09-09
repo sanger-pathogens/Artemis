@@ -1873,7 +1873,7 @@ public class EntryEdit extends JFrame
       vcfPanel.removeAll();
       vcfView = new VCFview(null, vcfPanel, vcfFiles,
           feature_display.getMaxVisibleBases(), 1, null, null,
-          feature_display);
+          this, feature_display);
 
       feature_display.addDisplayAdjustmentListener(vcfView);
       feature_display.getSelection().addSelectionChangeListener(vcfView);

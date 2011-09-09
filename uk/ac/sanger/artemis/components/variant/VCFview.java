@@ -191,6 +191,7 @@ public class VCFview extends JPanel
                  final int seqLength,
                  final String chr,
                  final String reference,
+                 final EntryEdit entry_edit,
                  final FeatureDisplay feature_display)
   {
     super();
@@ -198,6 +199,7 @@ public class VCFview extends JPanel
     this.nbasesInView = nbasesInView;
     this.seqLength = seqLength;
     this.chr = chr;
+
     this.feature_display = feature_display;
     this.vcfPanel = vcfPanel;
     this.vcfFiles = vcfFiles;
@@ -266,7 +268,8 @@ public class VCFview extends JPanel
     addMouseListener(new PopupListener());
     
     //
-    createMenus(frame, jspView);
+    createTopPanel(frame, jspView, entry_edit);
+    createMenus(jspView);
     setDisplay();
     
     if(feature_display == null)
@@ -282,151 +285,8 @@ public class VCFview extends JPanel
     }
   }
   
-  private void createMenus(final JFrame frame, final JScrollPane jspView)
-  {
-    final JComponent topPanel;
-    if(feature_display != null)
-      topPanel = new JPanel(new FlowLayout(FlowLayout.LEADING, 0, 0));
-    else
-    {
-      markNewStops.setSelected(false);
-      markNewStops.setEnabled(false);
-      topPanel = new JMenuBar();
-      
-      if(frame != null)
-        frame.setJMenuBar((JMenuBar)topPanel);
-      
-      JMenu fileMenu = new JMenu("File");
-      topPanel.add(fileMenu);
-    
-      JMenuItem printImage = new JMenuItem("Save As Image Files (png/jpeg)...");
-      printImage.addActionListener(new ActionListener()
-      {
-        public void actionPerformed(ActionEvent e)
-        {
-          PrintVCFview part = new PrintVCFview(VCFview.this);
-          part.print();
-        }
-      });
-      fileMenu.add(printImage);
-      
-      JMenuItem printPS = new JMenuItem("Print...");
-      printPS.addActionListener(new ActionListener()
-      {
-        public void actionPerformed(ActionEvent e)
-        {
-          PrintVCFview part = new PrintVCFview(VCFview.this);
-          part.validate();
-          part.doPrintActions();
-        }
-      });
-      fileMenu.add(printPS);
-      
-
-      JMenuItem close = new JMenuItem("Close");
-      fileMenu.add(close);
-      close.addActionListener(new ActionListener()
-      {
-        public void actionPerformed(ActionEvent e)
-        {
-          VCFview.this.setVisible(false);
-          Component comp = VCFview.this;
-          
-          while( !(comp instanceof JFrame) )
-            comp = comp.getParent();
-          ((JFrame)comp).dispose();
-        } 
-      });
-      
-      JButton zoomIn = new JButton("-");
-      Insets ins = new Insets(1,1,1,1);
-      zoomIn.setMargin(ins);
-      zoomIn.addActionListener(new ActionListener()
-      {
-        public void actionPerformed(ActionEvent e)
-        {
-          setZoomLevel((int) (VCFview.this.nbasesInView * 1.1));
-        }
-      });
-      topPanel.add(zoomIn);
-
-      JButton zoomOut = new JButton("+");
-      zoomOut.setMargin(ins);
-      zoomOut.addActionListener(new ActionListener()
-      {
-        public void actionPerformed(ActionEvent e)
-        {
-          setZoomLevel((int) (VCFview.this.nbasesInView * .9));
-        }
-      });
-      topPanel.add(zoomOut);
-    }
-    
-    final JComboBox combo = new JComboBox(vcfReaders[0].getSeqNames());
-    combo.setEditable(true);
-    JTextComponent editor = (JTextComponent) combo.getEditor().getEditorComponent();
-    editor.setDocument(new AutoCompleteComboDocument(combo));
-    
-    if(vcfReaders[0].getSeqNames().length > 1)
-      combo.addItem("Combine References");
-    
-    if(chr == null)
-      this.chr = vcfReaders[0].getSeqNames()[0];
-
-    combo.setSelectedItem(this.chr);
-    combo.setMaximumRowCount(20);
-    
-    combo.addItemListener(new ItemListener()
-    {
-      public void itemStateChanged(ItemEvent e)
-      {
-        if(combo.getSelectedItem().equals("Combine References"))
-          concatSequences = true;
-        else 
-        {
-          VCFview.this.chr = (String) combo.getSelectedItem();
-          concatSequences = false;
-        }
-        repaint();
-      }
-    });
-    topPanel.add(combo);
-    if(topPanel instanceof JPanel)
-      vcfPanel.add(topPanel, BorderLayout.NORTH);
-    
-    // auto hide top panel
-    final JCheckBox buttonAutoHide = new JCheckBox("Hide", true);
-    buttonAutoHide.setToolTipText("Auto-Hide");
-    topPanel.add(buttonAutoHide);
-    final MouseMotionListener mouseMotionListener = new MouseMotionListener()
-    {
-      public void mouseDragged(MouseEvent event)
-      {
-        handleCanvasMouseDrag(event);
-      }
-      
-      public void mouseMoved(MouseEvent e)
-      {
-        findVariantAtPoint(e.getPoint());
-
-        int thisHgt = HEIGHT;
-        if (thisHgt < 5)
-          thisHgt = 15;
-
-        int y = (int) (e.getY() - jspView.getViewport().getViewRect().getY());
-        if (y < thisHgt)
-          topPanel.setVisible(true);
-        else
-        {
-          if (buttonAutoHide.isSelected())
-            topPanel.setVisible(false);
-        }
-
-      }
-    };
-    addMouseMotionListener(mouseMotionListener);
-
-    
+  private void createMenus(final JScrollPane jspView)
+  { 
     // popup menu
     popup = new JPopupMenu();
     
@@ -718,6 +578,167 @@ public class VCFview extends JPanel
     popup.add(labels);
   }
   
+  private void createTopPanel(final JFrame frame, final JScrollPane jspView, final EntryEdit entry_edit)
+  {
+    final JComponent topPanel;
+    if(feature_display != null)
+      topPanel = new JPanel(new FlowLayout(FlowLayout.LEADING, 0, 0));
+    else
+    {
+      markNewStops.setSelected(false);
+      markNewStops.setEnabled(false);
+      topPanel = new JMenuBar();
+      if(frame != null)
+        frame.setJMenuBar((JMenuBar)topPanel);
+      
+      JMenu fileMenu = new JMenu("File");
+      topPanel.add(fileMenu);
+    
+      JMenuItem printImage = new JMenuItem("Save As Image Files (png/jpeg)...");
+      printImage.addActionListener(new ActionListener()
+      {
+        public void actionPerformed(ActionEvent e)
+        {
+          PrintVCFview part = new PrintVCFview(VCFview.this);
+          part.print();
+        }
+      });
+      fileMenu.add(printImage);
+      
+      JMenuItem printPS = new JMenuItem("Print...");
+      printPS.addActionListener(new ActionListener()
+      {
+        public void actionPerformed(ActionEvent e)
+        {
+          PrintVCFview part = new PrintVCFview(VCFview.this);
+          part.validate();
+          part.doPrintActions();
+        }
+      });
+      fileMenu.add(printPS);
+      
+
+      JMenuItem close = new JMenuItem("Close");
+      fileMenu.add(close);
+      close.addActionListener(new ActionListener()
+      {
+        public void actionPerformed(ActionEvent e)
+        {
+          VCFview.this.setVisible(false);
+          Component comp = VCFview.this;
+          
+          while( !(comp instanceof JFrame) )
+            comp = comp.getParent();
+          ((JFrame)comp).dispose();
+        } 
+      });
+      
+      JButton zoomIn = new JButton("-");
+      Insets ins = new Insets(1,1,1,1);
+      zoomIn.setMargin(ins);
+      zoomIn.addActionListener(new ActionListener()
+      {
+        public void actionPerformed(ActionEvent e)
+        {
+          setZoomLevel((int) (VCFview.this.nbasesInView * 1.1));
+        }
+      });
+      topPanel.add(zoomIn);
+
+      JButton zoomOut = new JButton("+");
+      zoomOut.setMargin(ins);
+      zoomOut.addActionListener(new ActionListener()
+      {
+        public void actionPerformed(ActionEvent e)
+        {
+          setZoomLevel((int) (VCFview.this.nbasesInView * .9));
+        }
+      });
+      topPanel.add(zoomOut);
+    }
+    
+    final JComboBox combo = new JComboBox(vcfReaders[0].getSeqNames());
+    combo.setEditable(true);
+    JTextComponent editor = (JTextComponent) combo.getEditor().getEditorComponent();
+    editor.setDocument(new AutoCompleteComboDocument(combo));
+    
+    if(vcfReaders[0].getSeqNames().length > 1)
+      combo.addItem("Combine References");
+    
+    if(chr == null)
+      this.chr = vcfReaders[0].getSeqNames()[0];
+
+    combo.setSelectedItem(this.chr);
+    combo.setMaximumRowCount(20);
+    
+    combo.addItemListener(new ItemListener()
+    {
+      public void itemStateChanged(ItemEvent e)
+      {
+        if(combo.getSelectedItem().equals("Combine References"))
+          concatSequences = true;
+        else 
+        {
+          VCFview.this.chr = (String) combo.getSelectedItem();
+          concatSequences = false;
+        }
+        repaint();
+      }
+    });
+    topPanel.add(combo);
+    if(topPanel instanceof JPanel)
+      vcfPanel.add(topPanel, BorderLayout.NORTH);
+    
+    // auto hide top panel
+    final JCheckBox buttonAutoHide = new JCheckBox("Hide", true);
+    buttonAutoHide.setToolTipText("Auto-Hide");
+    topPanel.add(buttonAutoHide);
+    final MouseMotionListener mouseMotionListener = new MouseMotionListener()
+    {
+      public void mouseDragged(MouseEvent event)
+      {
+        handleCanvasMouseDrag(event);
+      }
+      
+      public void mouseMoved(MouseEvent e)
+      {
+        findVariantAtPoint(e.getPoint());
+
+        int thisHgt = HEIGHT;
+        if (thisHgt < 5)
+          thisHgt = 15;
+
+        int y = (int) (e.getY() - jspView.getViewport().getViewRect().getY());
+        if (y < thisHgt)
+          topPanel.setVisible(true);
+        else
+        {
+          if (buttonAutoHide.isSelected())
+            topPanel.setVisible(false);
+        }
+
+      }
+    };
+    addMouseMotionListener(mouseMotionListener);
+    
+    
+    if(feature_display != null)
+    {
+      JButton close = new JButton("Close");
+      topPanel.add(close);
+      close.addActionListener(new ActionListener()
+      {
+        public void actionPerformed(ActionEvent e)
+        {
+          setVisible(false);
+          if(entry_edit != null)
+            entry_edit.setNGDivider();
+          else
+            vcfPanel.setVisible(false);
+        }
+      });
+    }
+  }
   
   private void addToViewMenu(final int thisBamIndex)
   {
@@ -1825,7 +1846,8 @@ public class VCFview extends JPanel
     
     JFrame f = new JFrame();
     new VCFview(f, (JPanel) f.getContentPane(), vcfFileList, 
-          nbasesInView, 100000000, null, reference, null);
+          nbasesInView, 100000000, null, reference, null, null);
+    
     f.pack();
     f.setVisible(true);
   }
