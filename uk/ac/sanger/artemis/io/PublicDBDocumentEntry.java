@@ -773,7 +773,7 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
         e.printStackTrace();
       }
     }
-    else if(qualifiers.getQualifierByName("isFmaxPartial") != null)
+    if(qualifiers.getQualifierByName("isFmaxPartial") != null)
     {
       try
       {
