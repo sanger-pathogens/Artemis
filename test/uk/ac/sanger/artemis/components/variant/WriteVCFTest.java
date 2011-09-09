@@ -544,7 +544,7 @@ public class WriteVCFTest
     vcfView = new VCFview(null, new JPanel(), 
         vcfFileList, 
         5000, 100000000, null, 
-        ref.getFile(), null);
+        ref.getFile(), null, null);
     
     // load BCF
     ref = WriteVCFTest.class.getResource("/data/MAL1.embl.gz");
@@ -555,7 +555,7 @@ public class WriteVCFTest
     bcfView = new VCFview(null, new JPanel(), 
         bcfFileList, 
         5000, 100000000, null, 
-        ref.getFile(), null);
+        ref.getFile(), null, null);
   }
 
 }
