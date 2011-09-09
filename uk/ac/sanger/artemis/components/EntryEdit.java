@@ -1847,8 +1847,8 @@ public class EntryEdit extends JFrame
       bamPanel.removeAll();
       try
       {
-        bamView = new BamView(listBams, null, feature_display.getMaxVisibleBases(), feature_display, 
-            getEntryGroup().getBases(), bamPanel, null);
+        bamView = new BamView(listBams, null, feature_display.getMaxVisibleBases(), this,
+            feature_display, getEntryGroup().getBases(), bamPanel, null);
       }
       catch (Exception ex)
       {
@@ -1873,7 +1873,7 @@ public class EntryEdit extends JFrame
       vcfPanel.removeAll();
       vcfView = new VCFview(null, vcfPanel, vcfFiles,
           feature_display.getMaxVisibleBases(), 1, null, null,
-          feature_display);
+          this, feature_display);
 
       feature_display.addDisplayAdjustmentListener(vcfView);
       feature_display.getSelection().addSelectionChangeListener(vcfView);
@@ -1884,7 +1884,7 @@ public class EntryEdit extends JFrame
   /**
    * Handle the split panes divider positions for BamView and VcfView.
    */
-  private void setNGDivider() 
+  public void setNGDivider() 
   {
     if( (bamPanel.getComponents().length > 0 && bamPanel.isVisible()) &&
         (vcfPanel.getComponents().length > 0 && vcfView.isVisible()))

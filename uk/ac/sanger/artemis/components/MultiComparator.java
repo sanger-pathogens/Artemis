@@ -1067,7 +1067,7 @@ public class MultiComparator extends JFrame
       
       VCFview vcfView = new VCFview(null, thisVCFPanel, vcfFiles,
           feature_display.getMaxVisibleBases(), 1, null, null,
-          feature_display);
+          null, feature_display);
       
       feature_display.addDisplayAdjustmentListener(vcfView);
       feature_display.getSelection().addSelectionChangeListener(vcfView);
