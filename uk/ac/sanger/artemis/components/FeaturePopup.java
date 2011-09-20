@@ -281,7 +281,9 @@ public class FeaturePopup extends JPopupMenu
     final JMenuItem[] feature_display_menus;
     
     final boolean isDatabaseGroup = GeneUtils.isDatabaseEntry( getEntryGroup() );
-    if(isDatabaseGroup)
+    final boolean isGFFGroup      = GeneUtils.isGFFEntry( getEntryGroup() );
+    
+    if(isDatabaseGroup || isGFFGroup)
       feature_display_menus = new JMenuItem[21];
     else
       feature_display_menus = new JMenuItem[20];
@@ -606,7 +608,7 @@ public class FeaturePopup extends JPopupMenu
     });
 
     
-    if(isDatabaseGroup)
+    if(isDatabaseGroup || isGFFGroup)
     {
       feature_display_menus[20] = new JMenuItem("Show/Hide Features ...");
       feature_display_menus[20].addActionListener(new ActionListener()
