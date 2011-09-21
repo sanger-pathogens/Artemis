@@ -61,6 +61,7 @@ import uk.ac.sanger.artemis.io.DatabaseInferredFeature;
 import uk.ac.sanger.artemis.io.DocumentEntry;
 import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.Feature;
+import uk.ac.sanger.artemis.io.GFFDocumentEntry;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.io.InvalidRelationException;
 import uk.ac.sanger.artemis.io.Key;
@@ -952,6 +953,23 @@ public class GeneUtils
     for(int i=0; i<entries.size(); i++)
     {
       if( entries.elementAt(i).getEMBLEntry() instanceof DatabaseDocumentEntry )
+        return true;
+    }
+    return false;
+  }
+  
+  /**
+   * Given an group of entries determine if they contain a GFF entry
+   * @param entryGroup
+   * @return
+   */
+  public static boolean isGFFEntry(final EntryGroup entryGroup)
+  {
+    final EntryVector entries = entryGroup.getActiveEntries();
+    
+    for(int i=0; i<entries.size(); i++)
+    {
+      if( entries.elementAt(i).getEMBLEntry() instanceof GFFDocumentEntry )
         return true;
     }
     return false;

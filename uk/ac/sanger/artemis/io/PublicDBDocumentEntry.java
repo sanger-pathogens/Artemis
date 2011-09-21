@@ -830,7 +830,12 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
       nbases += seglen;
     }
     
-    String pos = sequenceloc+".."+(sequenceloc+2);   
+    String pos;
+    if(f.isForwardFeature())
+      pos = sequenceloc+".."+(sequenceloc+2);
+    else
+      pos = (sequenceloc-2)+".."+sequenceloc;
+    
     qualifiers.add(new Qualifier("transl_except","(pos:"+pos+",aa:Sec)"));
   }
 
