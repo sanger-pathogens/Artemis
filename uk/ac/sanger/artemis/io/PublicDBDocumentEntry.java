@@ -834,7 +834,7 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
     if(f.isForwardFeature())
       pos = sequenceloc+".."+(sequenceloc+2);
     else
-      pos = (sequenceloc-2)+".."+sequenceloc;
+      pos = sequenceloc+".."+(sequenceloc-2);
     
     qualifiers.add(new Qualifier("transl_except","(pos:"+pos+",aa:Sec)"));
   }
