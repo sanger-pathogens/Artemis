@@ -818,7 +818,7 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
     for(int i=0; i<segments.size(); i++)
     {
       int seglen = segments.elementAt(i).getBases().length();
-      if(nbases+seglen > translatedBasePosion)
+      if(nbases+seglen > translatedBasePosion && sequenceloc == 0)
       {
         Bases bases = f.getStrand().getBases();
         sequenceloc = segments.elementAt(i).getStart().getPosition() +
