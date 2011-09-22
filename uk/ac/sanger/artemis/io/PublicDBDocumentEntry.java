@@ -818,7 +818,7 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
     for(int i=0; i<segments.size(); i++)
     {
       int seglen = segments.elementAt(i).getBases().length();
-      if(nbases+seglen > translatedBasePosion)
+      if(nbases+seglen > translatedBasePosion && sequenceloc == 0)
       {
         Bases bases = f.getStrand().getBases();
         sequenceloc = segments.elementAt(i).getStart().getPosition() +
@@ -834,7 +834,7 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
     if(f.isForwardFeature())
       pos = sequenceloc+".."+(sequenceloc+2);
     else
-      pos = (sequenceloc-2)+".."+sequenceloc;
+      pos = sequenceloc+".."+(sequenceloc-2);
     
     qualifiers.add(new Qualifier("transl_except","(pos:"+pos+",aa:Sec)"));
   }
