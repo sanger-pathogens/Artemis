@@ -2454,7 +2454,7 @@ public class BamView extends JPanel
       {
         public void actionPerformed(ActionEvent e)
         {
-          String[] s = new String[0];
+          String[] s = { "NEW-BAMVIEW" };
           BamView.main(s);
         } 
       });
@@ -2604,6 +2604,7 @@ public class BamView extends JPanel
       topPanel.add(baseText);
 
       JButton zoomIn = new JButton("-");
+      zoomIn.setToolTipText("Zoom in");
       Insets ins = new Insets(1,1,1,1);
       zoomIn.setMargin(ins);
       zoomIn.addActionListener(new ActionListener()
@@ -2616,6 +2617,7 @@ public class BamView extends JPanel
       topPanel.add(zoomIn);
 
       JButton zoomOut = new JButton("+");
+      zoomOut.setToolTipText("Zoom out");
       zoomOut.setMargin(ins);
       zoomOut.addActionListener(new ActionListener()
       {
@@ -3381,7 +3383,7 @@ public class BamView extends JPanel
       
     List<String> bam = new Vector<String>();
     String reference = null;
-    if(args.length == 0)
+    if(args.length == 0 || args[0].equals("NEW-BAMVIEW"))
     {
       System.setProperty("default_directory", System.getProperty("user.dir"));
       FileSelectionDialog fileSelection = new FileSelectionDialog(
@@ -3393,6 +3395,8 @@ public class BamView extends JPanel
       
       if(bam == null || bam.size() < 1)
       {
+        if(args.length > 0 && args[0].equals("NEW-BAMVIEW"))
+          return;
         System.err.println("No files found.");
         System.exit(0);
       }
