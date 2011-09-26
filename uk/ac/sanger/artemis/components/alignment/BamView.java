@@ -1973,6 +1973,11 @@ public class BamView extends JPanel
         public void adjustmentValueChanged(AdjustmentEvent e)
         {
           repaint();
+
+          if(isSNPplot)
+            snpPanel.repaint();
+          if(isCoverage)
+            coveragePanel.repaint();
         }
       });
       bottomPanel.add(scrollBar, BorderLayout.SOUTH);
