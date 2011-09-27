@@ -983,7 +983,8 @@ public class GeneUtils
    */
   public static boolean isDatabaseEntry(final Feature feature)
   {
-    if( feature.getEntry() instanceof DatabaseDocumentEntry )
+    if( feature.getEntry() instanceof DatabaseDocumentEntry &&
+        ((GFFStreamFeature)feature).getDocumentEntry().getDocument() instanceof DatabaseDocument)
       return true;
 
     return false;

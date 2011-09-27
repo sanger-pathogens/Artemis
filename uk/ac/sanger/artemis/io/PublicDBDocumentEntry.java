@@ -419,10 +419,14 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
           String val = (String)newValues.get(j);
           
           int ind = 0;
-          if((ind=val.indexOf(";db_xref="))>-1)
+          
+          if((ind=val.indexOf(";db_xref="))>-1 && this instanceof EmblDocumentEntry)
             val = val.substring(0,ind);
           
-          if((ind=val.indexOf(";evidence="))>-1)
+          if((ind=val.indexOf(";evidence="))>-1 && this instanceof EmblDocumentEntry)
+            val = val.substring(0,ind);
+          
+          if((ind=val.indexOf(";with="))>-1 && this instanceof EmblDocumentEntry)
             val = val.substring(0,ind);
           
           if(val.startsWith("term="))
