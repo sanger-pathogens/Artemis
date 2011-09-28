@@ -50,8 +50,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowFocusListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -2604,7 +2602,7 @@ public class BamView extends JPanel
       topPanel.add(baseText);
 
       JButton zoomIn = new JButton("-");
-      zoomIn.setToolTipText("Zoom in");
+      zoomIn.setToolTipText("Zoom out (up arrow)");
       Insets ins = new Insets(1,1,1,1);
       zoomIn.setMargin(ins);
       zoomIn.addActionListener(new ActionListener()
@@ -2617,7 +2615,7 @@ public class BamView extends JPanel
       topPanel.add(zoomIn);
 
       JButton zoomOut = new JButton("+");
-      zoomOut.setToolTipText("Zoom out");
+      zoomOut.setToolTipText("Zoom in (down arrow)");
       zoomOut.setMargin(ins);
       zoomOut.addActionListener(new ActionListener()
       {
@@ -3406,7 +3404,7 @@ public class BamView extends JPanel
       for(int i=0; i< args.length; i++)
         bam.add(args[i]);
     }
-    int nbasesInView = 1000;
+    int nbasesInView = 2000;
     String chr = null;
     String vw  = null;
     boolean orientation = false;
@@ -3497,14 +3495,14 @@ public class BamView extends JPanel
 
     // translucent
     //frame.getRootPane().putClientProperty("Window.alpha", new Float(0.9f));
-    frame.addWindowFocusListener(new WindowFocusListener()
+    /*frame.addWindowFocusListener(new WindowFocusListener()
     {
       public void windowGainedFocus(WindowEvent e)
       {
         view.requestFocus();
       }
       public void windowLostFocus(WindowEvent e){}
-    });
+    });*/
 
     frame.pack();
 
