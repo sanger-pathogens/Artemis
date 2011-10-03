@@ -70,8 +70,11 @@ class ControlledCurationBox extends AbstractCvBox
     //xBox.add(cclabel);
     
     final String term = getField("term=", qualifierString);
-    final CvTerm cvTerm = DatabaseDocument.getCvTermByCvPartAndCvTerm(term,"CC");
+    final String cvName = getField("cv=", qualifierString);
 
+    CvTerm cvTerm = DatabaseDocument.getCvTermByCvPartAndCvTerm(term,cvName);
+    if(cvTerm == null)
+      cvTerm = DatabaseDocument.getCvTermByCvPartAndCvTerm(term,"CC");
     termTextField = new WrapTextArea(term, go_dimension, dimension.width);
     termTextField.setOpaque(false);
     termTextField.setEditable(false);

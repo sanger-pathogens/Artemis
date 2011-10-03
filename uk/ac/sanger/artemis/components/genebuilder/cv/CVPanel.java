@@ -678,46 +678,46 @@ public class CVPanel extends JPanel
        !cv_type.equals("product") &&
        !cv_type.equals("class"))
       cv_type = "controlled_curation";
+
+    cvQualifiers = getCvQualifiers();
+    Qualifier cv_qualifier = cvQualifiers.getQualifierByName(cv_type);
      
-     cvQualifiers = getCvQualifiers();
-     Qualifier cv_qualifier = cvQualifiers.getQualifierByName(cv_type);
+    final int index;
+    if(cv_qualifier == null)
+    {
+      cv_qualifier = new Qualifier(cv_type);
+      index = -1;
+    }
+    else
+     index = cvQualifiers.indexOf(cv_qualifier);
+    
+    if(cv_type.equals("GO"))
+      cv_qualifier.addValue("GOid=GO:"+cvterm.getDbXRef().getAccession()+";"+
+          "aspect="+go_name+";"+
+          "term="+cvterm.getName()+";"+
+          "evidence="+ evidenceCode+";"+
+          "date="+ DatePanel.getDate());
+    else if(cv_type.equals("controlled_curation"))
+      cv_qualifier.addValue("term="+cvterm.getName()+";cv="+cvterm.getCv().getName());
+    else if(cv_type.equals("product"))
+      cv_qualifier.addValue("term="+cvterm.getName());
+    else if(cv_type.equals("class"))
+      cv_qualifier.addValue(cvterm.getDbXRef().getAccession()+
+                            "::"+cvterm.getCvTermId());
      
-     final int index;
-     if(cv_qualifier == null)
-     {
-       cv_qualifier = new Qualifier(cv_type);
-       index = -1;
-     }
-     else
-      index = cvQualifiers.indexOf(cv_qualifier);
+    if(index > -1)
+    {
+      cvQualifiers.remove(index);
+      cvQualifiers.add(index, cv_qualifier);
+    }
+    else
+      cvQualifiers.add(cv_qualifier);
      
-     if(cv_type.equals("GO"))
-       cv_qualifier.addValue("GOid=GO:"+cvterm.getDbXRef().getAccession()+";"+
-           "aspect="+go_name+";"+
-           "term="+cvterm.getName()+";"+
-           "evidence="+ evidenceCode+";"+
-           "date="+ DatePanel.getDate());
-     else if(cv_type.equals("controlled_curation"))
-       cv_qualifier.addValue("term="+cvterm.getName());
-     else if(cv_type.equals("product"))
-       cv_qualifier.addValue("term="+cvterm.getName());
-     else if(cv_type.equals("class"))
-       cv_qualifier.addValue(cvterm.getDbXRef().getAccession()+
-                             "::"+cvterm.getCvTermId());
-     
-     if(index > -1)
-     {
-       cvQualifiers.remove(index);
-       cvQualifiers.add(index, cv_qualifier);
-     }
-     else
-       cvQualifiers.add(cv_qualifier);
-     
-     removeAll();
-     add(createCVQualifiersComponent(),
-         BorderLayout.CENTER);
-     revalidate();
-     repaint();
+    removeAll();
+    add(createCVQualifiersComponent(),
+        BorderLayout.CENTER);
+    revalidate();
+    repaint();
   }
 
   private void removeCvTerm(final String qualifier_name, 
