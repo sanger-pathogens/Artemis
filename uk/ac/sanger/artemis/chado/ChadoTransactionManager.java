@@ -2381,7 +2381,18 @@ public class ChadoTransactionManager
     
     String cvName = null; 
     if(qualifier_name.equals("controlled_curation"))
+    {
       cvName = "CC_";
+      if(qualifier_string.indexOf("cv=") > -1) // get actual cv name
+      {
+        for(int i=0; i<strings.size(); i++)
+        {
+          String qual = ((String)strings.get(i)).trim();
+          if(qual.startsWith("cv="))
+            cvName = qual.substring(3);
+        }
+      }
+    }
     else if(qualifier_name.equals("product"))
       cvName = PRODUCT_CV;
     else if(qualifier_name.equals("history"))
