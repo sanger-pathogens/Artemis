@@ -759,14 +759,14 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
         // prediction tool
         new_feature.removeQualifierByName("codon_start");
       }
-      else
+/*      else
       {
         final Qualifier old_codon_start_qualifier = first_old_feature
             .getQualifierByName("codon_start");
 
         if(old_codon_start_qualifier != null)
           new_feature.setQualifier(old_codon_start_qualifier);
-      }
+      }*/
       forcedAdd(new_feature);
       //gene.addExon(transcript_id, new_feature, true );
       new_set.add(new_feature);
