@@ -1,8 +1,9 @@
 Version XX
+
 	Shortcut changes made in the 'Preferences' menu are saved between sessions (the 
 	shortcut_cache flag in the options file can be used to turn this on/off).
 	
-	More support for GTF format to show CDS and exons as joined features.
+	More support for GTF format to show CDS and exons as joined features. 
 
 	BAM record list option added to display as a list the reads and their
 	properties.

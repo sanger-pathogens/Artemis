@@ -12,10 +12,7 @@ LINKEND="VIEWS-OTHERMOUSE"> and <XREF LINKEND="VIEWS-POPUPMENU"> for more).
     <PARA>
 The following images show a breakdown of the main &prog; window taken from a
 <ULINK URL="act_user_manual_screen_shot.gif" TYPE="external">screen
-shot</ULINK> of a two sequence comparison.  To see examples of comparing three
-or more sequences see the <ULINK
-URL="http://www.sanger.ac.uk/Software/ACT/Examples/">&prog; examples
-page</ULINK>.
+shot</ULINK> of a two sequence comparison.
     </PARA>
 
     <ORDEREDLIST ID="MAINWINDOW-BREAKDOWN-LIST">
