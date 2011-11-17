@@ -454,7 +454,7 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
         if(tmpNewValues.size() == 0)
           continue;
         
-        Pattern p = Pattern.compile("\\w+:link=\\w+");
+        Pattern p = Pattern.compile("\\w+[ :]link=\\w+");
         for(int j=0; j<tmpNewValues.size(); j++)
         {
           String valueStr = (String)tmpNewValues.get(j);

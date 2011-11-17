@@ -55,9 +55,8 @@ class BCFReader extends AbstractVCFReader
   //
   // Nasty work around for backward compatibility with old BCF files.
   // Assume new BCF file unless ArrayIndexOutOfBoundsException thrown. 
-  // The have newer BCF files have:
-  // 1. SP type of long 
-  // 2. PL values for non-variant do not set n_alleles to 1
+  // The have newer BCF files has:
+  // SP type of long 
   private boolean newBCF = true; 
 
   private static org.apache.log4j.Logger logger4j = 
@@ -130,7 +129,7 @@ class BCFReader extends AbstractVCFReader
       if(newBCF)
       {
         newBCF = false;
-        logger4j.debug("This looks like an old style BCF.");
+        logger4j.debug("This looks like an old style BCF: "+fileName);
       }
       else
         throw ae;
@@ -183,6 +182,7 @@ class BCFReader extends AbstractVCFReader
   {
     StringBuffer head = new StringBuffer();
     head.append("##fileformat=VCFv4.0\n");
+    head.append(metaData);
     head.append("#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\t");
     
     for(int i=0; i<sampleNames.length; i++)
@@ -239,8 +239,11 @@ class BCFReader extends AbstractVCFReader
     if(formatPattern.matcher(bcfRecord.getFormat()).matches())
     {
       int n_alleles = bcfRecord.getAlt().getNumAlleles();
-      if(!newBCF && bcfRecord.getAlt().toString().equals("."))
+      if(bcfRecord.getAlt().toString().equals(":")) // non-variant
+      {
         n_alleles = 1;
+        bcfRecord.setAlt(".");
+      }
       int nc  = (int) (n_alleles * ((float)(((float)n_alleles+1.f)/2.f)));
 
       String fmts[] = VCFRecord.COLON_PATTERN.split( bcfRecord.getFormat() );
@@ -292,8 +295,8 @@ class BCFReader extends AbstractVCFReader
     {
       if(i == 0 && b[i] == 0)
         buff.append(". ");
-      else if(b[i] == 0 && b[i-1] == 0)
-        buff.append(" . ");
+      else if(b[i] == 0 && b[i-1] == 0)  // this looks like a non-variant site
+        buff.append(" : ");
       else if(b[i] == 0)
         buff.append(" ");
       else
