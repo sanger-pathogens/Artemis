@@ -1680,14 +1680,19 @@ public class VCFview extends JPanel
   
   private Container getVcfContainer()
   {
-    Frame fs[] = JFrame.getFrames();
-    for(Frame f: fs)
+    try
     {
-      if( f instanceof JFrame && 
-         ((JFrame)f) instanceof EntryEdit ||
-         ((JFrame)f) instanceof MultiComparator)
-        return ((JFrame)f).getContentPane();
+      Frame fs[] = JFrame.getFrames();
+      for(Frame f: fs)
+      {
+        if( f instanceof JFrame &&
+           ((JFrame)f) instanceof EntryEdit ||
+           ((JFrame)f) instanceof MultiComparator)
+          return ((JFrame)f).getContentPane();
+      }
     }
+    catch(Exception e){}
+
     return VCFview.this;
   }
   
