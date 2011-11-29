@@ -94,7 +94,7 @@ class IOUtils
       FileWriter writer = new FileWriter(filterFile);
       if(IOUtils.isBCF(vcfFileName))
       {
-        BCFReader.writeVCF(writer, vcfFileName);
+        BCFReader.writeVCF(writer, vcfFileName, vcfView, features);
         return filterFile;
       }
       

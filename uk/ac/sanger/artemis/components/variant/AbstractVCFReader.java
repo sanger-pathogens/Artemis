@@ -24,11 +24,16 @@
 
 package uk.ac.sanger.artemis.components.variant;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Vector;
 
 import uk.ac.sanger.artemis.components.variant.BCFReader.BCFReaderIterator;
 
@@ -40,6 +45,7 @@ public abstract class AbstractVCFReader
   
   private BCFReaderIterator bcfIterator = null;
   private TabixReader.Iterator tabixIterator = null;
+  private String header;
   
   /**
    * Read and return the next record.
@@ -133,5 +139,82 @@ public abstract class AbstractVCFReader
   protected void setVcf_v4(boolean vcfV4)
   {
     vcf_v4 = vcfV4;
+  }
+  
+  protected void setHeader(String header)
+  {
+    this.header = header;
+  }
+  
+  protected String getHeader()
+  {
+    return header;
+  }
+  
+  protected List<Hashtable<String, String>> getINFO()
+  {
+    return getListOfLines("INFO");
+  }
+  
+  private List<Hashtable<String, String>> getListOfLines(String lineType)
+  {
+    List<Hashtable<String, String>> listOfType = 
+        new Vector<Hashtable<String, String>>();
+
+    try
+    {
+      BufferedReader reader = new BufferedReader(new StringReader(getHeader()));
+      String str;
+      while ((str = reader.readLine()) != null)
+      {
+        if (str.startsWith("##"+lineType))
+        {
+          System.out.println(str);
+          Hashtable<String, String> hash = new Hashtable<String, String>();
+          str = str.substring(lineType.length() + 4, str.length()-1);
+
+          String parts[] = str.split(","); 
+          for(int i=0; i<parts.length; i++)
+          {
+            if(!parts[i].startsWith("Description"))
+            {
+              String thisPart[] = parts[i].split("=");
+              if(thisPart.length == 2)
+              {
+                hash.put(thisPart[0], thisPart[1]);
+              }
+            }
+            else if(parts[i].startsWith("Description"))
+            {
+              String thisPart[] = parts[i].split("=");
+              
+              if(thisPart.length == 2)
+              {
+                //search for closing quote
+                while(thisPart[0].equals("Description") &&
+                      thisPart[1].startsWith("\"") &&
+                      thisPart[1].indexOf("\"",2) == -1 &&
+                      i+1 < parts.length)
+                {
+                  thisPart[1] = thisPart[1] + "," + parts[++i];
+                }
+
+                if(thisPart[1].startsWith("\""))
+                  thisPart[1] = thisPart[1].substring(1);
+                if(thisPart[1].endsWith("\""))
+                  thisPart[1] = thisPart[1].substring(0,thisPart[1].length()-1);
+                hash.put(thisPart[0], thisPart[1]);
+              }
+            }
+          }
+          listOfType.add(hash);
+        }
+      }
+    }
+    catch (IOException ioe)
+    {
+      ioe.printStackTrace();
+    }
+    return listOfType;
   }
 }

@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Vector;
 import java.util.regex.Pattern;
 
+import uk.ac.sanger.artemis.FeatureVector;
 import uk.ac.sanger.artemis.util.FTPSeekableStream;
 
 import net.sf.samtools.util.BlockCompressedInputStream;
@@ -408,7 +409,8 @@ class BCFReader extends AbstractVCFReader
     return (int)(b & 0xFF);
   }
   
-  protected static void writeVCF(Writer writer, String vcfFileName) throws IOException
+  protected static void writeVCF(Writer writer, String vcfFileName, final VCFview vcfView,
+      final FeatureVector features) throws IOException
   {
     BCFReader reader = new BCFReader(vcfFileName);
     writer.write( reader.headerToString()+"\n" );
@@ -418,7 +420,13 @@ class BCFReader extends AbstractVCFReader
     VCFRecord record;
     
     while( (record = reader.nextRecord(null, sbeg, send)) != null)
+    {
+      int basePosition = record.getPos() + vcfView.getSequenceOffset(record.getChrom());
+      if( !vcfView.showVariant(record, features, basePosition, false) )
+        continue;
+
       writer.write(record.toString()+"\n");
+    }
     writer.close();
     reader.close();
   }

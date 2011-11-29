@@ -130,7 +130,6 @@ public class VCFview extends JPanel
   private List<String> vcfFiles;
   private List<Integer> hideVcfList = new Vector<Integer>();
   
-  private String header[];
   private FeatureDisplay feature_display;
   private Selection selection;
   private int nbasesInView;
@@ -172,6 +171,7 @@ public class VCFview extends JPanel
   private Color colMap[] = makeColours(Color.RED, 255);
   private Color lighterGrey = new Color(220,220,220);
 
+  private VCFFilter filter;
   Hashtable<String, Integer> offsetLengths = null;
   private boolean concatSequences = false;
   protected static Pattern tabPattern = Pattern.compile("\t");
@@ -220,11 +220,10 @@ public class VCFview extends JPanel
     try
     {
       vcfReaders = new AbstractVCFReader[vcfFiles.size()];
-      header = new String[vcfFiles.size()];
       
       for(int i=0; i<vcfFiles.size(); i++)
       {
-        header[i] = readHeader(vcfFiles.get(i), i);
+        readHeader(vcfFiles.get(i), i);
       }
     }
     catch(java.lang.UnsupportedClassVersionError err)
@@ -307,12 +306,8 @@ public class VCFview extends JPanel
         System.arraycopy(vcfReaders, 0, trTmp, 0, vcfReaders.length);
         vcfReaders = trTmp;
         
-        String[] hdTmp = new String[count + vcfReaders.length];
-        System.arraycopy(header, 0, hdTmp, 0, header.length);
-        header = hdTmp;
-        
         for (int i = 0; i < vcfFileList.size(); i++)
-          header[i+oldSize] = readHeader(vcfFileList.get(i), i+oldSize);
+          readHeader(vcfFileList.get(i), i+oldSize);
         
         for(int i=0; i<vcfFileList.size(); i++)
           addToViewMenu(i+oldSize);
@@ -344,10 +339,13 @@ public class VCFview extends JPanel
     
     
     final JMenuItem byQuality = new JMenuItem("Filter ...");
+
     byQuality.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e)
       {
-        new VCFFilter(VCFview.this);
+        if(filter == null)
+          filter = new VCFFilter(VCFview.this);
+        filter.setVisible(true);
       }
     });
     popup.add(byQuality);
@@ -853,10 +851,10 @@ public class VCFview extends JPanel
    * @param fileName
    * @return
    */
-  private String readHeader(String fileName, int index)
+  private void readHeader(String fileName, int index)
   {
     StringBuffer buff = new StringBuffer();
-    buff.append(fileName+"\n");
+    //buff.append(fileName+"\n");
     try
     {
       if(IOUtils.isBCF(fileName))
@@ -865,7 +863,9 @@ public class VCFview extends JPanel
         String hdr = ((BCFReader)vcfReaders[index]).headerToString();
         if(hdr.indexOf("VCFv4") > -1)
           vcfReaders[index].setVcf_v4(true);
-        return hdr;
+        
+        vcfReaders[index].setHeader(hdr);
+        return;
       }
 
       String indexfileName = testForURL(fileName, false);
@@ -902,7 +902,8 @@ public class VCFview extends JPanel
       e.printStackTrace();
     }
     
-    return buff.toString();
+    vcfReaders[index].setHeader(buff.toString());
+    return;
   }
   
   /**
@@ -1678,6 +1679,7 @@ public class VCFview extends JPanel
     return vcfReaders;
   }
   
+  
   private Container getVcfContainer()
   {
     try
@@ -1685,14 +1687,13 @@ public class VCFview extends JPanel
       Frame fs[] = JFrame.getFrames();
       for(Frame f: fs)
       {
-        if( f instanceof JFrame &&
+        if( f instanceof JFrame && 
            ((JFrame)f) instanceof EntryEdit ||
            ((JFrame)f) instanceof MultiComparator)
           return ((JFrame)f).getContentPane();
       }
     }
     catch(Exception e){}
-
     return VCFview.this;
   }
   
@@ -1745,7 +1746,7 @@ public class VCFview extends JPanel
                FileViewer viewDetail = new FileViewer(
                    mouseVCF.getChrom()+":"+mouseVCF.getPos()+" "+mouseVCF.getID(), true, false, true);
                
-               viewDetail.appendString(header[mouseOverIndex]+"\n", Level.INFO);
+               viewDetail.appendString(vcfReaders[mouseOverIndex].getHeader()+"\n", Level.INFO);
                
                viewDetail.appendString("Seq   : "+mouseVCF.getChrom()+"\n", Level.DEBUG);
                viewDetail.appendString("Pos   : "+mouseVCF.getPos()+"\n", Level.DEBUG);

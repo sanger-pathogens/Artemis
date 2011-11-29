@@ -124,6 +124,21 @@ public class VCFRecord
     return null;
   }
   
+  /**
+   * Test if a INFO flag key is present
+   * @param key
+   * @return
+   */
+  protected boolean containsInfoFlag(String key)
+  {
+    if(infos == null)
+      infos = SEMICOLON_PATTERN.split(info);
+    for(int i=0; i<infos.length; i++)
+      if(infos[i].equals(key))
+        return true;
+    return false;
+  }
+  
   protected String getFormatValue(String key)
   {
     if(getFormat() == null)
