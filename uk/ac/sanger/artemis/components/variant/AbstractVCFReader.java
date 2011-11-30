@@ -29,12 +29,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.io.Writer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
+import uk.ac.sanger.artemis.FeatureVector;
 import uk.ac.sanger.artemis.components.variant.BCFReader.BCFReaderIterator;
 
 public abstract class AbstractVCFReader
@@ -123,6 +125,52 @@ public abstract class AbstractVCFReader
       return null;
     File f = new File(getFileName());
     return f.getName();
+  }
+  
+  /**
+   * Export VCF file
+   * @param writer
+   * @param vcfView
+   * @param features
+   * @throws IOException
+   */
+  protected void write(Writer writer, VCFview vcfView, FeatureVector features) throws IOException
+  {
+    writer.write( getHeader()+"\n" );
+    if(this instanceof BCFReader)
+    {
+      BCFReader reader = new BCFReader(getFileName());
+      int sbeg = 0;
+      int send = Integer.MAX_VALUE;
+      VCFRecord record;
+      
+      while( (record = reader.nextRecord(null, sbeg, send)) != null)
+      {
+        int basePosition = record.getPos() + vcfView.getSequenceOffset(record.getChrom());
+        if( !vcfView.showVariant(record, features, basePosition, false) )
+          continue;
+
+        writer.write(record.toString()+"\n");
+      }
+      writer.close();
+      reader.close();
+      return;
+    }
+    
+    TabixReader tr = new TabixReader(getFileName());
+    String line;
+    while ((line = tr.readLine()) != null)
+    {
+      if(line.startsWith("#"))
+        continue;
+      
+      VCFRecord record = VCFRecord.parse(line);
+      int basePosition = record.getPos() + vcfView.getSequenceOffset(record.getChrom());
+      if( !vcfView.showVariant(record, features, basePosition, tr.isVcf_v4()) )
+        continue;
+      writer.write(line+'\n');
+    }
+    writer.close();
   }
   
   /**

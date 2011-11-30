@@ -92,29 +92,11 @@ class IOUtils
     {
       File filterFile = getFile(vcfFileName, nfiles, ".filter", null);
       FileWriter writer = new FileWriter(filterFile);
-      if(IOUtils.isBCF(vcfFileName))
-      {
-        BCFReader.writeVCF(writer, vcfFileName, vcfView, features);
-        return filterFile;
-      }
       
-      TabixReader tr = new TabixReader(vcfFileName);
-      String line;
-      while ((line = tr.readLine()) != null)
-      {
-        if(line.startsWith("#"))
-        {
-          writer.write(line+'\n');
-          continue;
-        }
-        
-        VCFRecord record = VCFRecord.parse(line);
-        int basePosition = record.getPos() + vcfView.getSequenceOffset(record.getChrom());
-        if( !vcfView.showVariant(record, features, basePosition, tr.isVcf_v4()) )
-          continue;
-        writer.write(line+'\n');
-      }
-      writer.close();
+      AbstractVCFReader readers[] = vcfView.getVcfReaders();
+      for(AbstractVCFReader reader: readers)
+        reader.write(writer, vcfView, features);
+
       return filterFile;
     }
     catch (IOException e)

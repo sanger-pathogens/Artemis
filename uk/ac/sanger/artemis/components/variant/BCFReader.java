@@ -27,13 +27,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Writer;
 import java.net.URL;
 import java.util.List;
 import java.util.Vector;
 import java.util.regex.Pattern;
 
-import uk.ac.sanger.artemis.FeatureVector;
 import uk.ac.sanger.artemis.util.FTPSeekableStream;
 
 import net.sf.samtools.util.BlockCompressedInputStream;
@@ -407,28 +405,6 @@ class BCFReader extends AbstractVCFReader
   private int byteToInt(byte b)
   {
     return (int)(b & 0xFF);
-  }
-  
-  protected static void writeVCF(Writer writer, String vcfFileName, final VCFview vcfView,
-      final FeatureVector features) throws IOException
-  {
-    BCFReader reader = new BCFReader(vcfFileName);
-    writer.write( reader.headerToString()+"\n" );
-    
-    int sbeg = 0;
-    int send = Integer.MAX_VALUE;
-    VCFRecord record;
-    
-    while( (record = reader.nextRecord(null, sbeg, send)) != null)
-    {
-      int basePosition = record.getPos() + vcfView.getSequenceOffset(record.getChrom());
-      if( !vcfView.showVariant(record, features, basePosition, false) )
-        continue;
-
-      writer.write(record.toString()+"\n");
-    }
-    writer.close();
-    reader.close();
   }
   
   protected List<BCFIndex> loadIndex() throws IOException
