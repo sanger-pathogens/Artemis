@@ -413,8 +413,10 @@ public class BamView extends JPanel
     File bamIndexFile = getBamIndexFile(bam);
     if(!bamIndexFile.exists())
     {
-      System.out.println("Index file not found so using picard to index the BAM...");
-      System.out.println("(requires BAM to be sorted by coordinate and for the sort order to be in the header line, HD)");
+      System.out.println("Index file not found so using picard to index the BAM.");
+      System.out.println("This requires BAM to be sorted by coordinate and for the\n"+
+                         "sort order to be in the header line, HD.");
+      System.out.println("If this does not work run:\nsamtools index "+bam);
       // Use Picard to index the file
       // requires reads to be sorted by coordinate
       new BuildBamIndex().instanceMain(
