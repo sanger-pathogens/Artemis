@@ -92,6 +92,7 @@ import javax.swing.text.JTextComponent;
 
 import org.apache.log4j.Level;
 
+import net.sf.picard.sam.BuildBamIndex;
 import net.sf.samtools.AlignmentBlock;
 import net.sf.samtools.SAMFileHeader;
 import net.sf.samtools.SAMFileReader;
@@ -410,6 +411,16 @@ public class BamView extends JPanel
       return samFileReaderHash.get(bam);
 
     File bamIndexFile = getBamIndexFile(bam);
+    if(!bamIndexFile.exists())
+    {
+      System.out.println("Index file not found so using picard to index the BAM...");
+      System.out.println("(requires BAM to be sorted by coordinate and for the sort order to be in the header line, HD)");
+      // Use Picard to index the file
+      // requires reads to be sorted by coordinate
+      new BuildBamIndex().instanceMain(
+          new String[]{ "I="+bam, "O="+bamIndexFile.getAbsolutePath() });  
+    }
+    
     final SAMFileReader samFileReader;
     
     if(bam.startsWith("ftp"))
@@ -1487,7 +1498,7 @@ public class BamView extends JPanel
         continue;
       
       g2.setStroke(originalStroke);
-      g2.setColor(Color.LIGHT_GRAY);
+      g2.setColor(Color.gray);
       
       if(pr.sam2 != null)
       {
