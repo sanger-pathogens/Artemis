@@ -420,7 +420,7 @@ public class BamView extends JPanel
       // Use Picard to index the file
       // requires reads to be sorted by coordinate
       new BuildBamIndex().instanceMain(
-          new String[]{ "I="+bam, "O="+bamIndexFile.getAbsolutePath() });  
+          new String[]{ "I="+bam, "O="+bamIndexFile.getAbsolutePath(), "MAX_RECORDS_IN_RAM=50000" });  
     }
     
     final SAMFileReader samFileReader;
