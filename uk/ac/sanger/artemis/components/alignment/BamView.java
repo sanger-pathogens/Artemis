@@ -94,6 +94,7 @@ import org.apache.log4j.Level;
 
 import net.sf.picard.sam.BuildBamIndex;
 import net.sf.samtools.AlignmentBlock;
+import net.sf.samtools.SAMException;
 import net.sf.samtools.SAMFileHeader;
 import net.sf.samtools.SAMFileReader;
 import net.sf.samtools.SAMRecord;
@@ -413,14 +414,25 @@ public class BamView extends JPanel
     File bamIndexFile = getBamIndexFile(bam);
     if(!bamIndexFile.exists())
     {
-      System.out.println("Index file not found so using picard to index the BAM.");
-      System.out.println("This requires BAM to be sorted by coordinate and for the\n"+
-                         "sort order to be in the header line, HD.");
-      System.out.println("If this does not work run:\nsamtools index "+bam);
-      // Use Picard to index the file
-      // requires reads to be sorted by coordinate
-      new BuildBamIndex().instanceMain(
-          new String[]{ "I="+bam, "O="+bamIndexFile.getAbsolutePath(), "MAX_RECORDS_IN_RAM=50000" });  
+      try
+      {
+        logger4j.warn("Index file not found so using picard to index the BAM.");
+        // Use Picard to index the file
+        // requires reads to be sorted by coordinate
+        new BuildBamIndex().instanceMain(
+          new String[]{ "I="+bam, "O="+bamIndexFile.getAbsolutePath(), "MAX_RECORDS_IN_RAM=50000" });
+      }
+      catch(SAMException e)
+      {
+        String ls = System.getProperty("line.separator");
+        String msg = 
+            "BAM index file is missing. The BAM file needs to be sorted and indexed"+ls+
+            "This can be done using samtools (http://samtools.sf.net/):"+ls+ls+
+            "samtools sort <in.bam> <out.prefix>"+ls+
+            "samtools index <sorted.bam>";
+        
+        throw new SAMException(msg);
+      }
     }
     
     final SAMFileReader samFileReader;
