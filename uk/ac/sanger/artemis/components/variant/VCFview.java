@@ -701,7 +701,6 @@ public class VCFview extends JPanel
       public void mouseMoved(MouseEvent e)
       {
         findVariantAtPoint(e.getPoint());
-
         int thisHgt = HEIGHT;
         if (thisHgt < 5)
           thisHgt = 15;
@@ -1204,11 +1203,8 @@ public class VCFview extends JPanel
       return scrollBar.getValue();
   }
   
-
-  
   protected boolean showVariant(VCFRecord record, FeatureVector features, int basePosition, boolean vcf_v4)
   { 
-    
     if(!showDeletions && record.getAlt().isDeletion(vcf_v4))
       return false;
     
@@ -1447,12 +1443,18 @@ public class VCFview extends JPanel
   private void findVariantAtPoint(Point mousePoint)
   {
     float pixPerBase = getPixPerBaseByWidth();
-    int start = getBaseAtStartOfView();
-    int end   = start+nbasesInView;
+    int startBase = getBaseAtStartOfView();
+    int start = startBase + (int)(mousePoint.getX()/pixPerBase) - 20;
+    int end   = start+20;
     FeatureVector features = getCDSFeaturesInRange(start, end);
     
     for (int i = 0; i < vcfReaders.length; i++)
     {
+      int ypos = getYPostion(i);
+      if(mousePoint.getY() > ypos &&
+         mousePoint.getY() < ypos-LINE_HEIGHT)
+        continue;
+
       if(concatSequences) 
       {
         String[] contigs = vcfReaders[0].getSeqNames();
@@ -1472,7 +1474,7 @@ public class VCFview extends JPanel
             if(thisStart < 1)
               thisStart = 1;
             int thisEnd   = end - offset;
-            searchRegion(contigs[j], thisStart, thisEnd, i, mousePoint, features, start, pixPerBase);
+            searchRegion(contigs[j], thisStart, thisEnd, i, mousePoint, features, startBase, pixPerBase);
           }
         }
       } 
@@ -1481,7 +1483,7 @@ public class VCFview extends JPanel
         int thisStart = start;
         if(thisStart < 1)
           thisStart = 1;
-        searchRegion(chr, thisStart, end, i, mousePoint, features, start, pixPerBase);
+        searchRegion(chr, thisStart, end, i, mousePoint, features, startBase, pixPerBase);
       }
     }
   }
@@ -1494,7 +1496,9 @@ public class VCFview extends JPanel
     {
       VCFRecord bcfRecord;
       while((bcfRecord = vcfReaders[i].getNextRecord(chr, sbeg, send)) != null)
+      {
         isMouseOver(mousePoint, bcfRecord, features, i, start, pixPerBase, vcfReaders[i].isVcf_v4());
+      }
     }
     catch (IOException e)
     {
