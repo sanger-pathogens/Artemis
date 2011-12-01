@@ -1,10 +1,13 @@
 
 package uk.ac.sanger.artemis.components.variant;
 
+import java.util.regex.Pattern;
+
 public class VariantBase
 {
   private VCFRecord record;
   private String alt;
+  protected static Pattern COMMA_PATTERN = Pattern.compile(",");
 
   public VariantBase(VCFRecord record, String alt)
   {
@@ -76,7 +79,8 @@ public class VariantBase
 
   protected int getNumAlleles()
   {
-    return alt.split(",").length + 1;
+    return COMMA_PATTERN.split(alt).length + 1;
+    //return alt.split(",").length + 1;
   }
 
   protected int getNumberOfIndels(boolean vcf_v4)
