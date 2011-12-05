@@ -1254,7 +1254,7 @@ public class VCFview extends JPanel
     return true;
   }
   
-  private boolean isOverlappingFeature(FeatureVector features, int basePosition)
+  protected boolean isOverlappingFeature(FeatureVector features, int basePosition)
   {
     for(int i = 0; i<features.size(); i++)
     {
