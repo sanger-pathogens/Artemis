@@ -139,7 +139,15 @@ public class VCFRecord
     return false;
   }
   
-  protected String getFormatValue(String key)
+  protected String getFormatValueForSample(String key, int sampleIndex)
+  {
+    String fmtStr[] = getFormatValues(key);
+    if(fmtStr == null)
+      return null;
+    return fmtStr[sampleIndex];
+  }
+
+  protected String[] getFormatValues(String key)
   {
     if(getFormat() == null)
       return null;
@@ -148,9 +156,15 @@ public class VCFRecord
     {
       if(fmts[i].equals(key))
       {
-        String vals[] = COLON_PATTERN.split(getSampleDataString());
-        if(vals.length == fmts.length)
-          return vals[i];
+        String samplesData[] = getSampleDataString().split("\\t");
+        String keyData[] = new String[samplesData.length];
+        for(int j=0; j<samplesData.length; j++)
+        {
+          String vals[] = COLON_PATTERN.split(samplesData[j]);
+          if(vals.length == fmts.length)
+            keyData[j] = vals[i];
+        }
+        return keyData;
       }
     }
     return null;

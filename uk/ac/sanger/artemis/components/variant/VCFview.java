@@ -887,7 +887,7 @@ public class VCFview extends JPanel
       String line;
       while( (line = TabixReader.readLine(is) ) != null )
       {
-        if(!line.startsWith("##"))
+        if(!line.startsWith("#"))
           break;
         
         if(line.indexOf("VCFv4") > -1)
@@ -935,9 +935,10 @@ public class VCFview extends JPanel
     msg += "ID:  "+mouseVCF.getID()+"\n";
     msg += "Variant: "+mouseVCF.getRef()+" -> "+mouseVCF.getAlt().toString()+"\n";
     msg += "Qual: "+mouseVCF.getQuality()+"\n";
-    String pl;
-    if((pl = mouseVCF.getFormatValue("PL")) != null && pl.split(",").length > 1)
-      msg += "Genotype likelihood (PL): "+pl+"\n";
+    String pl[];
+    if((pl = mouseVCF.getFormatValues("PL")) != null)
+      for(String p: pl)
+        msg += "Genotype likelihood (PL): "+p+"\n";
     return msg;
   }
   
@@ -1124,7 +1125,7 @@ public class VCFview extends JPanel
               this.showNonVariants));*/
       
       while((record = vcfReaders[i].getNextRecord(chr, sbeg, send)) != null)
-        drawVariantCall(g, record, start, i, pixPerBase, features, vcfReaders[i].isVcf_v4());
+        drawVariantCall(g, record, start, i, pixPerBase, features, vcfReaders[i]);
     }
     catch (IOException e)
     {
@@ -1203,15 +1204,16 @@ public class VCFview extends JPanel
       return scrollBar.getValue();
   }
   
-  protected boolean showVariant(VCFRecord record, FeatureVector features, int basePosition, boolean vcf_v4)
+  protected boolean showVariant(VCFRecord record, FeatureVector features, int basePosition, AbstractVCFReader vcfReader)
   { 
+    boolean vcf_v4 = vcfReader.isVcf_v4();
     if(!showDeletions && record.getAlt().isDeletion(vcf_v4))
       return false;
     
     if(!showInsertions && record.getAlt().isInsertion(vcf_v4))
       return false;
 
-    if(!VCFFilter.passFilter(record))
+    if(!VCFFilter.passFilter(record, vcfReader))
       return false;
     
     if(!showNonOverlappings && !isOverlappingFeature(features, basePosition))
@@ -1289,10 +1291,10 @@ public class VCFview extends JPanel
   }
   
   private void drawVariantCall(Graphics2D g, VCFRecord record, int start, int index, 
-      float pixPerBase, FeatureVector features, boolean vcf_v4)
+      float pixPerBase, FeatureVector features, AbstractVCFReader vcfReader)
   {
     int basePosition = record.getPos() + getSequenceOffset(record.getChrom());
-    boolean show = showVariant(record, features, basePosition, vcf_v4);
+    boolean show = showVariant(record, features, basePosition, vcfReader);
     // logger4j.info(String.format("%s\t%s", (show) ? "SHOW" : "HIDE", record));
     if( !show )
       return;
@@ -1306,9 +1308,9 @@ public class VCFview extends JPanel
       g.setColor(Color.orange);
       g.fillArc(pos[0]-3, pos[1]-LINE_HEIGHT-3, 6, 6, 0, 360);
     }
-    else if(record.getAlt().isDeletion(vcf_v4))
+    else if(record.getAlt().isDeletion(vcfReader.isVcf_v4()))
       g.setColor(Color.gray);
-    else if(record.getAlt().isInsertion(vcf_v4))
+    else if(record.getAlt().isInsertion(vcfReader.isVcf_v4()))
       g.setColor(Color.magenta);
     else if(record.getAlt().length() == 1 && record.getRef().length() == 1)
     {
@@ -1497,7 +1499,7 @@ public class VCFview extends JPanel
       VCFRecord bcfRecord;
       while((bcfRecord = vcfReaders[i].getNextRecord(chr, sbeg, send)) != null)
       {
-        isMouseOver(mousePoint, bcfRecord, features, i, start, pixPerBase, vcfReaders[i].isVcf_v4());
+        isMouseOver(mousePoint, bcfRecord, features, i, start, pixPerBase, vcfReaders[i]);
       }
     }
     catch (IOException e)
@@ -1511,11 +1513,11 @@ public class VCFview extends JPanel
                            VCFRecord record, 
                            FeatureVector features, 
                            int i, 
-                           int start, float pixPerBase, boolean vcf_v4)
+                           int start, float pixPerBase, AbstractVCFReader vcfReader)
   {
     int basePosition = record.getPos() + getSequenceOffset(record.getChrom());
 
-    if( !showVariant(record, features, basePosition, vcf_v4) )
+    if( !showVariant(record, features, basePosition, vcfReader) )
       return;
     
     int pos[] = getScreenPosition(basePosition, pixPerBase, start, i);

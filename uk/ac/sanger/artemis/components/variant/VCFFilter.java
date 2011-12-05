@@ -36,13 +36,13 @@ public class VCFFilter extends JFrame
 {
   private static final long serialVersionUID = 1L;
   private static float MIN_QUALITY = 0;
+  private static float MAX_QUALITY = 100000;
   private static int MIN_DP = 0;
   private static float MIN_MQ = 0;
   private static float MIN_AF1 = 0;
   private static float MAX_CI95 = 10;
   
   private static Pattern COMMA_PATTERN = Pattern.compile(",");
-  
   private static Hashtable<String, RecordFilter> filters = null;
   
   /**
@@ -183,13 +183,22 @@ public class VCFFilter extends JFrame
     propPanel.add(propLabel, c);
     
     // min quality
+    c.gridy = c.gridy + 1;
+    c.gridx = 1;
+    propPanel.add(new JLabel("MIN"), c);
+    c.gridx = c.gridx + 1;
+    propPanel.add(new JLabel("MAX"), c);;
+    
     c.gridy = c.gridy+1;
     c.gridx = 0;
     c.anchor = GridBagConstraints.WEST;
-    propPanel.add(new JLabel("Minimum quality score (QUAL):"), c);
+    propPanel.add(new JLabel("Quality score (QUAL):"), c);
     final JTextField minQuality = new JTextField(Float.toString(MIN_QUALITY), 8);
     c.gridx = 1;
-    propPanel.add(minQuality, c);    
+    propPanel.add(minQuality, c); 
+    final JTextField maxQuality = new JTextField(Float.toString(MAX_QUALITY), 8);
+    c.gridx += 1;
+    propPanel.add(maxQuality, c); 
 
     final JTextField minDP = new JTextField(Integer.toString(MIN_DP), 8);
     final JTextField minMQ = new JTextField(Float.toString(MIN_MQ),8);
@@ -233,20 +242,20 @@ public class VCFFilter extends JFrame
     else
     {
       //
-      createPanel(propPanel, c, info, "INFO:");
+      createPanel(propPanel, c, info, "INFO FIELDS:");
     }
 
     ////
     ////
-    //// FORMAT
-   /* final List<HeaderLine> format = vcfView.getVcfReaders()[0].getFORMAT();
+    //// FORMAT - Genotype Filter
+    final List<HeaderLine> format = vcfView.getVcfReaders()[0].getFORMAT();
     
     JPanel formatPanel = new JPanel(new GridBagLayout());
     formatPanel.setBorder(BorderFactory.createLineBorder(Color.gray));
     cMain.gridy = cMain.gridy+1;
     yBox.add(formatPanel, cMain);
     
-    createPanel(formatPanel, c, format, "FORMAT:");*/
+    createPanel(formatPanel, c, format, "GENOTYPE FIELDS:");
     
     ////
     ////
@@ -292,7 +301,7 @@ public class VCFFilter extends JFrame
         try
         {
           MIN_QUALITY = Float.parseFloat(minQuality.getText());
-          
+          MAX_QUALITY = Float.parseFloat(maxQuality.getText());
           if(info.size() == 0)
           {
             MIN_DP = Integer.parseInt(minDP.getText());
@@ -320,6 +329,7 @@ public class VCFFilter extends JFrame
       public void actionPerformed(ActionEvent e)
       {
         MIN_QUALITY = Float.parseFloat(minQuality.getText());
+        MAX_QUALITY = Float.parseFloat(maxQuality.getText());
         vcfView.repaint();
         setVisible(false);
       }
@@ -437,7 +447,7 @@ public class VCFFilter extends JFrame
    * @param record
    * @return
    */
-  protected static boolean passFilter(VCFRecord record)
+  protected static boolean passFilter(final VCFRecord record, final AbstractVCFReader vcfReader)
   {
     try
     {
@@ -447,7 +457,8 @@ public class VCFFilter extends JFrame
       else
         return false;
 
-      if(record.getQuality() < VCFFilter.MIN_QUALITY)
+      if(record.getQuality() < VCFFilter.MIN_QUALITY ||
+         record.getQuality() > VCFFilter.MAX_QUALITY)
         return false;
 
       if(filters != null)
@@ -458,22 +469,30 @@ public class VCFFilter extends JFrame
           String id = enumFilter.nextElement();
           RecordFilter filter = filters.get(id);
           
-          switch (filter.hLine.getHeaderTypeInt()) 
+          switch (filter.hLine.getHeaderType()) 
           {
-            case 0:  // INFO line
+            case HeaderLine.INFO_LINE:  // INFO line
               if (filter.hLine.isFlag())
               {
-                if (record.containsInfoFlag(id))
+                if(record.containsInfoFlag(id))
                   return false;
                 continue;
               }
-              else if ( record.getInfoValue(id) == null || 
-                       !filter.pass(record.getInfoValue(id).split(",")))
-                return false;       
+              else if( record.getInfoValue(id) == null || 
+                       !filter.passFormat(record, record.getInfoValue(id).split(","), vcfReader))
+                return false;
               break;
-            case 1:  // FORMAT
+            case HeaderLine.FORMAT_LINE:  // FORMAT Genotype line
+              String samples[] = record.getFormatValues(id);
+              if(samples == null)
+                return false;
+
+              for(int i=0; i<samples.length; i++)
+                if( !filter.passFormat(record, samples[i].split(","), vcfReader))
+                  return false;  
+
               break;
-            case 2:  // FILTER
+            case HeaderLine.FILTER_LINE:  // FILTER
               break;
             default:
               break;
@@ -535,10 +554,12 @@ public class VCFFilter extends JFrame
       final int basePosition, final FeatureVector features, final boolean vcf_v4)
   {
     record.setFilter("");
+
     try
     {
       // TYPE
-      if(record.getQuality() < VCFFilter.MIN_QUALITY)
+      if(record.getQuality() < VCFFilter.MIN_QUALITY &&
+         record.getQuality() > VCFFilter.MAX_QUALITY)
         record.appendFilter("QUAL");
 
       if(!vcfView.showDeletions && record.getAlt().isDeletion(vcf_v4))
@@ -575,9 +596,9 @@ public class VCFFilter extends JFrame
           String id = enumFilter.nextElement();
           RecordFilter filter = filters.get(id);
           
-          switch (filter.hLine.getHeaderTypeInt()) 
+          switch (filter.hLine.getHeaderType()) 
           {
-            case 0:  // INFO line
+            case HeaderLine.INFO_LINE:  // INFO line
               if (filter.hLine.isFlag())
               {
                 if (filter.hLine.isFlag())
@@ -590,9 +611,9 @@ public class VCFFilter extends JFrame
                        !filter.pass(record.getInfoValue(id).split(",")))
                 record.appendFilter(id);
               break;
-            case 1:  // FORMAT
+            case HeaderLine.FORMAT_LINE:  // FORMAT
               break;
-            case 2:  // FILTER
+            case HeaderLine.FILTER_LINE:  // FILTER
               break;
             default:
               break;
@@ -698,10 +719,10 @@ public class VCFFilter extends JFrame
       else
         filter.maxIVal[index] = field.getValue();
       
-/*      if( filter.minIVal == Integer.MIN_VALUE && 
-          filter.maxIVal == Integer.MAX_VALUE)
+      if( filter.minIVal[index] == Integer.MIN_VALUE && 
+          filter.maxIVal[index] == Integer.MAX_VALUE)
         filters.remove(ID);
-      else*/
+      else
         filters.put(ID, filter);
     }
     
@@ -727,10 +748,10 @@ public class VCFFilter extends JFrame
       else
         filter.maxFVal[index] = (float) field.getValue();
       
-/*      if( filter.minFVal == Float.MIN_VALUE && 
-          filter.maxFVal == Float.MAX_VALUE)
+      if( filter.minFVal[index] == Float.MIN_VALUE && 
+          filter.maxFVal[index] == Float.MAX_VALUE)
         filters.remove(ID);
-      else*/
+      else
         filters.put(ID, filter);
     }
   }
@@ -774,7 +795,51 @@ public class VCFFilter extends JFrame
       }
     }
     
-    private boolean pass(String valStr[])
+    private boolean passFormat(final VCFRecord record, final String valStr[], final AbstractVCFReader vcfReader)
+    {
+      String numStr = hLine.getNumberString();
+      if(numStr == null)
+        return pass(valStr);
+      
+      // numStr - if this is not a number it can be:
+      // '.' - number of possible values varies, is unknown, or is unbounded
+      // 'A' - one value per alternate allele
+      // 'G' - one value for each possible genotype
+      
+/*      int nvals = 0;
+      if (numStr.equals("A"))
+        nvals = record.getAlt().getNumAlleles();
+      else if(numStr.equals("G"))
+        nvals = vcfReader.getNumberOfSamples();
+      else
+        nvals = valStr.length;*/
+      
+      for (int i = 0; i < valStr.length; i++)
+      {
+        if (hLine.getType().equals("Integer"))
+        {
+          int val = Integer.parseInt(valStr[i]);
+          if (val < minIVal[0] || val > maxIVal[0])
+            return false;
+        }
+        else if (hLine.getType().equals("Float"))
+        {
+          float val = Float.parseFloat(valStr[i]);
+          if (val < minFVal[0] || val > maxFVal[0])
+            return false;
+        }
+      }
+      
+      return true;
+    }
+    
+    /**
+     * For a fixed number of values check the min and max
+     * values.
+     * @param valStr
+     * @return
+     */
+    private boolean pass(final String valStr[])
     {
       for (int i = 0; i < NUMBER; i++)
       {

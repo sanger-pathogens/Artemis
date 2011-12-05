@@ -580,7 +580,7 @@ class IOUtils
       while ((record = reader.getNextRecord(chr, sbeg, send)) != null)
       {
         int basePosition = record.getPos() + vcfView.getSequenceOffset(record.getChrom());
-        if(vcfView.showVariant(record, features, basePosition, vcf_v4) )
+        if(vcfView.showVariant(record, features, basePosition, reader) )
           basesStr = getSeqsVariation(record, basesStr, sbeg, isFwd, vcf_v4);
         else if(useNs && isSNPorNonVariant(record))
         {
@@ -696,7 +696,7 @@ class IOUtils
   private static void count(VCFRecord record, int count[], FeatureVector features, AbstractVCFReader reader, VCFview vcfView)
   {
     int basePosition = record.getPos() + vcfView.getSequenceOffset(record.getChrom());
-    if(!vcfView.showVariant(record, features, basePosition, reader.isVcf_v4()) )
+    if(!vcfView.showVariant(record, features, basePosition, reader) )
       return;
     
     if(record.getAlt().isNonVariant())
@@ -943,14 +943,13 @@ class IOUtils
       final Bases bases, 
       final Entry entry) throws IOException, OutOfRangeException
   {
-    boolean vcf_v4 = reader.isVcf_v4();
     Key variantKey = new Key("misc_difference");
     try
     {
       VCFRecord record;
       while( (record = reader.getNextRecord(chr, sbegc, sendc)) != null)
       {
-        makeFeature(record, reader.getName(), vcfView, features, bases, entry, variantKey, vcf_v4);
+        makeFeature(record, reader.getName(), vcfView, features, bases, entry, variantKey, reader);
       }
     }
     catch (NullPointerException e)
@@ -968,10 +967,10 @@ class IOUtils
       final Bases bases, 
       final Entry entry, 
       final Key variantKey, 
-      final boolean vcf_v4) throws OutOfRangeException, ReadOnlyException
+      final AbstractVCFReader vcfReader) throws OutOfRangeException, ReadOnlyException
   {
     int basePosition = record.getPos() + vcfView.getSequenceOffset(record.getChrom());
-    if (vcfView.showVariant(record, features, basePosition, vcf_v4))
+    if (vcfView.showVariant(record, features, basePosition, vcfReader))
     {
       MarkerRange marker = new MarkerRange(bases.getForwardStrand(),
           basePosition, basePosition);
@@ -981,9 +980,9 @@ class IOUtils
                             "; "+vcfFileName+"; score="+record.getQuality();
       if(record.getAlt().isMultiAllele())
         qualifierStr += "; MULTI-ALLELE";
-      else if(record.getAlt().isDeletion(vcf_v4))
+      else if(record.getAlt().isDeletion(vcfReader.isVcf_v4()))
         qualifierStr += "; DELETION";
-      else if(record.getAlt().isInsertion(vcf_v4))
+      else if(record.getAlt().isInsertion(vcfReader.isVcf_v4()))
         qualifierStr += "; INSERTION";
       else if(record.getAlt().isNonVariant())
         return;
