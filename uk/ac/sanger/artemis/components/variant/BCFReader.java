@@ -172,7 +172,12 @@ class BCFReader extends AbstractVCFReader
 
     StringBuffer buff = new StringBuffer();
     for(int i=0; i<meta.length; i++)
+    {
+      // expecting null terminated
+      if(meta[i] == 0 && i == meta.length-1)
+        continue;
       buff.append((char)meta[i]);
+    }
 
     metaData = buff.toString();
   }
