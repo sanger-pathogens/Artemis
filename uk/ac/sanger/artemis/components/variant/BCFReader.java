@@ -47,7 +47,7 @@ class BCFReader extends AbstractVCFReader
   // header information and names
   private String[] seqNames;
   private String[] sampleNames;
-  private int nsamples;
+
   private String metaData;
   private String fileName;
   
