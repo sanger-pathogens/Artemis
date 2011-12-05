@@ -288,7 +288,18 @@ public class VCFRecord
    */
   protected void setFilter(String filter)
   {
-    this.filter = filter;
+    if(filter.equals(":"))
+      this.filter = ".";
+    else
+      this.filter = filter;
+  }
+  
+  protected void appendFilter(String filter)
+  {
+    if(getFilter().length() == 0)
+      this.filter = filter;
+    else
+      this.filter += ";" + filter;
   }
 
   /**
