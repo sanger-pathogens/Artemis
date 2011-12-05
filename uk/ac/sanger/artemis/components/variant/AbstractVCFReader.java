@@ -137,6 +137,7 @@ public abstract class AbstractVCFReader
   protected void write(Writer writer, VCFview vcfView, FeatureVector features) throws IOException
   {
     writer.write( getHeader()+"\n" );
+    
     if(this instanceof BCFReader)
     {
       BCFReader reader = new BCFReader(getFileName());
@@ -147,9 +148,8 @@ public abstract class AbstractVCFReader
       while( (record = reader.nextRecord(null, sbeg, send)) != null)
       {
         int basePosition = record.getPos() + vcfView.getSequenceOffset(record.getChrom());
-        if( !vcfView.showVariant(record, features, basePosition, false) )
-          continue;
-
+        
+        VCFFilter.setFilterString(record, vcfView, basePosition, features, isVcf_v4());
         writer.write(record.toString()+"\n");
       }
       writer.close();
@@ -166,9 +166,8 @@ public abstract class AbstractVCFReader
       
       VCFRecord record = VCFRecord.parse(line);
       int basePosition = record.getPos() + vcfView.getSequenceOffset(record.getChrom());
-      if( !vcfView.showVariant(record, features, basePosition, tr.isVcf_v4()) )
-        continue;
-      writer.write(line+'\n');
+      VCFFilter.setFilterString(record, vcfView, basePosition, features, isVcf_v4());
+      writer.write(record.toString()+'\n');
     }
     writer.close();
   }
@@ -198,16 +197,31 @@ public abstract class AbstractVCFReader
   {
     return header;
   }
+
+  protected List<HeaderLine> getFORMAT()
+  {
+    return getListOfLines("FORMAT");
+  }
   
-  protected List<Hashtable<String, String>> getINFO()
+  protected List<HeaderLine> getFILTER()
+  {
+    return getListOfLines("FILTER");
+  }
+  
+  protected List<HeaderLine> getINFO()
   {
     return getListOfLines("INFO");
   }
   
-  private List<Hashtable<String, String>> getListOfLines(String lineType)
+  /**
+   * Return a list of the lines in the header. Each line is represented as a hash of
+   * the key value pairs.
+   * @param lineType
+   * @return
+   */
+  private List<HeaderLine> getListOfLines(String lineType)
   {
-    List<Hashtable<String, String>> listOfType = 
-        new Vector<Hashtable<String, String>>();
+    List<HeaderLine> listOfType = new Vector<HeaderLine>();
 
     try
     {
@@ -217,8 +231,8 @@ public abstract class AbstractVCFReader
       {
         if (str.startsWith("##"+lineType))
         {
-          System.out.println(str);
           Hashtable<String, String> hash = new Hashtable<String, String>();
+          hash.put("lineType", lineType);
           str = str.substring(lineType.length() + 4, str.length()-1);
 
           String parts[] = str.split(","); 
@@ -255,7 +269,8 @@ public abstract class AbstractVCFReader
               }
             }
           }
-          listOfType.add(hash);
+          
+          listOfType.add(new HeaderLine(lineType, hash));
         }
       }
     }
