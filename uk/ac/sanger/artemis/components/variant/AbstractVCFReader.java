@@ -44,11 +44,12 @@ public abstract class AbstractVCFReader
   private boolean vcf_v4 = false;
   protected abstract String[] getSeqNames();
   protected abstract String getFileName();
+  protected int nsamples = -1;
   
   private BCFReaderIterator bcfIterator = null;
   private TabixReader.Iterator tabixIterator = null;
   private String header;
-  
+
   /**
    * Read and return the next record.
    * @param chr     sequence name
@@ -196,6 +197,32 @@ public abstract class AbstractVCFReader
   protected String getHeader()
   {
     return header;
+  }
+  
+  protected int getNumberOfSamples()
+  {
+    if(nsamples < 1)
+    {
+      BufferedReader reader = new BufferedReader(new StringReader(header));
+      try
+      {
+        String ln;
+        while ((ln = reader.readLine()) != null)
+        {
+          if (ln.startsWith("#CHROM"))
+          {
+            int index = ln.indexOf("FORMAT");
+            if(index > -1)
+              nsamples = ln.substring(index+7).split(" ").length;
+          }
+        }
+      }
+      catch (IOException e)
+      {
+        System.err.println("Problem calculating the number of samples.");
+      }
+    }
+    return nsamples;
   }
 
   protected List<HeaderLine> getFORMAT()
