@@ -135,13 +135,22 @@ public abstract class AbstractVCFReader
    * @param features
    * @throws IOException
    */
-  protected void write(Writer writer, VCFview vcfView, FeatureVector features) throws IOException
+  protected static void write(final String vcfFileName, Writer writer, VCFview vcfView, FeatureVector features) throws IOException
   {
-    writer.write( getHeader()+"\n" );
-    
-    if(this instanceof BCFReader)
+    if(IOUtils.isBCF(vcfFileName))
     {
-      BCFReader reader = new BCFReader(getFileName());
+      BCFReader reader = new BCFReader(vcfFileName);
+      
+      // FIX for old style BAM files
+      AbstractVCFReader readers[] = vcfView.getVcfReaders();
+      for(int i=0; i<readers.length; i++)
+      {
+        if(readers[i].getFileName().equals(vcfFileName))
+          reader.newBCF = ((BCFReader)readers[i]).newBCF;
+      }
+      
+      writer.write( reader.headerToString()+"\n" );
+      
       int sbeg = 0;
       int send = Integer.MAX_VALUE;
       VCFRecord record;
@@ -149,8 +158,7 @@ public abstract class AbstractVCFReader
       while( (record = reader.nextRecord(null, sbeg, send)) != null)
       {
         int basePosition = record.getPos() + vcfView.getSequenceOffset(record.getChrom());
-        
-        VCFFilter.setFilterString(record, vcfView, basePosition, features, isVcf_v4());
+        VCFFilter.setFilterString(record, vcfView, basePosition, features, reader.isVcf_v4());
         writer.write(record.toString()+"\n");
       }
       writer.close();
@@ -158,16 +166,19 @@ public abstract class AbstractVCFReader
       return;
     }
     
-    TabixReader tr = new TabixReader(getFileName());
+    TabixReader tr = new TabixReader(vcfFileName);
     String line;
     while ((line = tr.readLine()) != null)
     {
       if(line.startsWith("#"))
+      {
+        writer.write(line+'\n');
         continue;
+      }
       
       VCFRecord record = VCFRecord.parse(line);
       int basePosition = record.getPos() + vcfView.getSequenceOffset(record.getChrom());
-      VCFFilter.setFilterString(record, vcfView, basePosition, features, isVcf_v4());
+      VCFFilter.setFilterString(record, vcfView, basePosition, features, tr.isVcf_v4());
       writer.write(record.toString()+'\n');
     }
     writer.close();

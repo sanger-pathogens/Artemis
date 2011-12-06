@@ -92,10 +92,7 @@ class IOUtils
     {
       File filterFile = getFile(vcfFileName, nfiles, ".filter", null);
       FileWriter writer = new FileWriter(filterFile);
-      
-      AbstractVCFReader readers[] = vcfView.getVcfReaders();
-      for(AbstractVCFReader reader: readers)
-        reader.write(writer, vcfView, features);
+      AbstractVCFReader.write(vcfFileName, writer, vcfView, features);
 
       return filterFile;
     }
