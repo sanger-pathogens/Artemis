@@ -54,9 +54,9 @@ class BCFReader extends AbstractVCFReader
   //
   // Nasty work around for backward compatibility with old BCF files.
   // Assume new BCF file unless ArrayIndexOutOfBoundsException thrown. 
-  // The have newer BCF files has:
+  // The newer BCF files have:
   // SP type of long 
-  private boolean newBCF = true; 
+  protected boolean newBCF = true; 
 
   private static org.apache.log4j.Logger logger4j = 
     org.apache.log4j.Logger.getLogger(BCFReader.class);
