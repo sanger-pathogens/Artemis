@@ -33,6 +33,7 @@ public class HeaderLine
   private String description;
   private int number = 1;
   private String numberString = null;
+  private String headerTypeStr;
   private boolean isFlag = false;
   
   protected static final int INFO_LINE   = 0;
@@ -44,6 +45,7 @@ public class HeaderLine
     this.ID = lineHash.get("ID");
     this.type = lineHash.get("Type");
     this.description = lineHash.get("Description");
+    this.headerTypeStr = headerTypeStr;
     
     if(headerTypeStr.equals("INFO"))
       headerType = INFO_LINE;
@@ -80,6 +82,11 @@ public class HeaderLine
   protected int getHeaderType()
   {
     return headerType;
+  }
+  
+  protected String getHeaderTypeStr()
+  {
+    return headerTypeStr;
   }
   
   protected String getID()
