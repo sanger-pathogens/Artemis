@@ -267,6 +267,7 @@ public abstract class AbstractVCFReader
       String str;
       while ((str = reader.readLine()) != null)
       {
+        String origLine = new String(str);
         if (str.startsWith("##"+lineType))
         {
           Hashtable<String, String> hash = new Hashtable<String, String>();
@@ -308,7 +309,7 @@ public abstract class AbstractVCFReader
             }
           }
           
-          listOfType.add(new HeaderLine(lineType, hash));
+          listOfType.add(new HeaderLine(origLine, lineType, hash));
         }
       }
     }

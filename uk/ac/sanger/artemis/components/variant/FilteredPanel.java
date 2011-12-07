@@ -151,4 +151,15 @@ import javax.swing.border.Border;
     {
       return hdrFltLines;
     }
+    
+    protected String getHeader()
+    {
+      StringBuffer buff = new StringBuffer();
+      
+      for(HeaderLine ln: hdrFltLines)
+      {
+        buff.append(ln.toString());
+      }
+      return buff.toString();
+    }
   }

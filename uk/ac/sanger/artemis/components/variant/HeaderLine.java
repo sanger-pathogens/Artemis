@@ -34,14 +34,16 @@ public class HeaderLine
   private int number = 1;
   private String numberString = null;
   private String headerTypeStr;
+  private String origLine;
   private boolean isFlag = false;
   
   protected static final int INFO_LINE   = 0;
   protected static final int FORMAT_LINE = 1;
   protected static final int FILTER_LINE = 2;
   
-  public HeaderLine(String headerTypeStr, Hashtable<String, String> lineHash)
+  public HeaderLine(final String origLine, String headerTypeStr, Hashtable<String, String> lineHash)
   {
+    this.origLine = origLine;
     this.ID = lineHash.get("ID");
     this.type = lineHash.get("Type");
     this.description = lineHash.get("Description");
@@ -121,5 +123,10 @@ public class HeaderLine
   protected String getNumberString()
   {
     return numberString;
+  }
+  
+  public String toString()
+  {
+    return origLine;
   }
 }

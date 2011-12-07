@@ -466,8 +466,9 @@ public class VCFFilter extends JFrame
         Enumeration<String> enumFilter = filters.keys();
         while(enumFilter.hasMoreElements())
         {
-          String id = enumFilter.nextElement();
-          RecordFilter recFilter = filters.get(id);
+          String recid = enumFilter.nextElement();
+          RecordFilter recFilter = filters.get(recid);
+          String id = recFilter.getHeaderLine().getID();
           
           switch (recFilter.getHeaderLine().getHeaderType()) 
           {
@@ -599,8 +600,10 @@ public class VCFFilter extends JFrame
         Enumeration<String> enumFilter = filters.keys();
         while(enumFilter.hasMoreElements())
         {
-          String id = enumFilter.nextElement();
-          RecordFilter recFilter = filters.get(id);
+          String recid = enumFilter.nextElement();
+          RecordFilter recFilter = filters.get(recid);
+          String id = recFilter.getHeaderLine().getID();
+
           switch (recFilter.getHeaderLine().getHeaderType()) 
           {
             case HeaderLine.INFO_LINE:  // INFO line
