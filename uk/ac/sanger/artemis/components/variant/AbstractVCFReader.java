@@ -158,7 +158,7 @@ public abstract class AbstractVCFReader
       while( (record = reader.nextRecord(null, sbeg, send)) != null)
       {
         int basePosition = record.getPos() + vcfView.getSequenceOffset(record.getChrom());
-        VCFFilter.setFilterString(record, vcfView, basePosition, features, reader.isVcf_v4());
+        VCFFilter.setFilterString(record, vcfView, basePosition, features, reader);
         writer.write(record.toString()+"\n");
       }
       writer.close();
@@ -178,7 +178,7 @@ public abstract class AbstractVCFReader
       
       VCFRecord record = VCFRecord.parse(line);
       int basePosition = record.getPos() + vcfView.getSequenceOffset(record.getChrom());
-      VCFFilter.setFilterString(record, vcfView, basePosition, features, tr.isVcf_v4());
+      VCFFilter.setFilterString(record, vcfView, basePosition, features, tr);
       writer.write(record.toString()+'\n');
     }
     writer.close();
