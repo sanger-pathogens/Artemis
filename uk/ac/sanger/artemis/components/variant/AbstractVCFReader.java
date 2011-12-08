@@ -270,46 +270,7 @@ public abstract class AbstractVCFReader
         String origLine = new String(str);
         if (str.startsWith("##"+lineType))
         {
-          Hashtable<String, String> hash = new Hashtable<String, String>();
-          hash.put("lineType", lineType);
-          str = str.substring(lineType.length() + 4, str.length()-1);
-
-          String parts[] = str.split(","); 
-          for(int i=0; i<parts.length; i++)
-          {
-            if(!parts[i].startsWith("Description"))
-            {
-              String thisPart[] = parts[i].split("=");
-              if(thisPart.length == 2)
-              {
-                hash.put(thisPart[0], thisPart[1]);
-              }
-            }
-            else if(parts[i].startsWith("Description"))
-            {
-              String thisPart[] = parts[i].split("=");
-              
-              if(thisPart.length == 2)
-              {
-                //search for closing quote
-                while(thisPart[0].equals("Description") &&
-                      thisPart[1].startsWith("\"") &&
-                      thisPart[1].indexOf("\"",2) == -1 &&
-                      i+1 < parts.length)
-                {
-                  thisPart[1] = thisPart[1] + "," + parts[++i];
-                }
-
-                if(thisPart[1].startsWith("\""))
-                  thisPart[1] = thisPart[1].substring(1);
-                if(thisPart[1].endsWith("\""))
-                  thisPart[1] = thisPart[1].substring(0,thisPart[1].length()-1);
-                hash.put(thisPart[0], thisPart[1]);
-              }
-            }
-          }
-          
-          listOfType.add(new HeaderLine(origLine, lineType, hash));
+          listOfType.add(new HeaderLine(origLine, lineType, getLineHash(lineType, str)));
         }
       }
     }
@@ -318,5 +279,48 @@ public abstract class AbstractVCFReader
       ioe.printStackTrace();
     }
     return listOfType;
+  }
+  
+  protected static Hashtable<String, String> getLineHash(String lineType, String str)
+  {
+    Hashtable<String, String> hash = new Hashtable<String, String>();
+    hash.put("lineType", lineType);
+    str = str.substring(lineType.length() + 4, str.length()-1);
+
+    String parts[] = str.split(","); 
+    for(int i=0; i<parts.length; i++)
+    {
+      if(!parts[i].startsWith("Description"))
+      {
+        String thisPart[] = parts[i].split("=");
+        if(thisPart.length == 2)
+        {
+          hash.put(thisPart[0], thisPart[1]);
+        }
+      }
+      else if(parts[i].startsWith("Description"))
+      {
+        String thisPart[] = parts[i].split("=");
+        
+        if(thisPart.length == 2)
+        {
+          //search for closing quote
+          while(thisPart[0].equals("Description") &&
+                thisPart[1].startsWith("\"") &&
+                thisPart[1].indexOf("\"",2) == -1 &&
+                i+1 < parts.length)
+          {
+            thisPart[1] = thisPart[1] + "," + parts[++i];
+          }
+
+          if(thisPart[1].startsWith("\""))
+            thisPart[1] = thisPart[1].substring(1);
+          if(thisPart[1].endsWith("\""))
+            thisPart[1] = thisPart[1].substring(0,thisPart[1].length()-1);
+          hash.put(thisPart[0], thisPart[1]);
+        }
+      }
+    }
+    return hash;
   }
 }

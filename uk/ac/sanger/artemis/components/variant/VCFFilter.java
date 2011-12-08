@@ -57,8 +57,7 @@ import uk.ac.sanger.artemis.components.Utilities;
 public class VCFFilter extends JFrame
 {
   private static final long serialVersionUID = 1L;
-  private static float MIN_QUALITY = 0;
-  private static float MAX_QUALITY = 100000;
+
   private static int MIN_DP = 0;
   private static float MIN_MQ = 0;
   private static float MIN_AF1 = 0;
@@ -222,10 +221,12 @@ public class VCFFilter extends JFrame
     c.gridx = 0;
     c.anchor = GridBagConstraints.WEST;
     propPanel.add(new JLabel("Quality score (QUAL):"), c);
-    final JTextField minQuality = new JTextField(Float.toString(MIN_QUALITY), 8);
+    final TextFieldFloat minQuality = new TextFieldFloat();
+    minQuality.setColumns(8);
     c.gridx = 1;
     propPanel.add(minQuality, c); 
-    final JTextField maxQuality = new JTextField(Float.toString(MAX_QUALITY), 8);
+    final TextFieldFloat maxQuality = new TextFieldFloat();
+    maxQuality.setColumns(8);
     c.gridx += 1;
     propPanel.add(maxQuality, c); 
 
@@ -297,8 +298,8 @@ public class VCFFilter extends JFrame
       {
         try
         {
-          MIN_QUALITY = Float.parseFloat(minQuality.getText());
-          MAX_QUALITY = Float.parseFloat(maxQuality.getText());
+          checkQualityFiltering(minQuality, maxQuality);
+
           if(info.size() == 0)
           {
             MIN_DP = Integer.parseInt(minDP.getText());
@@ -325,8 +326,7 @@ public class VCFFilter extends JFrame
     {
       public void actionPerformed(ActionEvent e)
       {
-        MIN_QUALITY = Float.parseFloat(minQuality.getText());
-        MAX_QUALITY = Float.parseFloat(maxQuality.getText());
+        checkQualityFiltering(minQuality, maxQuality);
         vcfView.repaint();
         setVisible(false);
       }
@@ -338,8 +338,41 @@ public class VCFFilter extends JFrame
     setVisible(true);
   }
   
+  /**
+   * Check the values in the quality (QUAL) filtering fields and update the filter panel.
+   * @param minQuality
+   * @param maxQuality
+   */
+  private void checkQualityFiltering(final TextFieldFloat minQuality, final TextFieldFloat maxQuality)
+  {
+    Hashtable<String, RecordFilter> filters = FilteredPanel.getFilters();
+    String ID = "QUAL:QUAL";
+    if (minQuality.getText().equals("") && maxQuality.getText().equals(""))
+      filters.remove(ID);
+    else
+    {
+      String hdrLine = "##Filter=<ID=QUAL,Type=Float,Number=1,Description=\"QUAL "
+          + (minQuality.getText().equals("") ? "" : " < " + minQuality.getValue() + " ")
+          + (maxQuality.getText().equals("") ? "" : " > " + maxQuality.getValue() + " ") + "\">";
+      HeaderLine hLine = new HeaderLine(hdrLine, "QUAL",
+          AbstractVCFReader.getLineHash("FILTER", hdrLine));
+
+      RecordFilter filter = new RecordFilter(hLine, 1);
+      if (minQuality.getText().equals(""))
+        filter.minFVal[0] = Float.MIN_VALUE;
+      else
+        filter.minFVal[0] = (float) minQuality.getValue();
+
+      if (maxQuality.getText().equals(""))
+        filter.maxFVal[0] = Float.MAX_VALUE;
+      else
+        filter.maxFVal[0] = (float) maxQuality.getValue();
+      filters.put(hLine.getHeaderTypeStr() + ":" + hLine.getID(), filter);
+    }
+    filterPanel.updateFilters();
+  }
   
-  protected void createPanel(JPanel panel, GridBagConstraints c, List<HeaderLine> headerLineList, String name)
+  private void createPanel(JPanel panel, GridBagConstraints c, List<HeaderLine> headerLineList, String name)
   {
     c.gridx = 0;
     c.gridy = c.gridy+1;
@@ -390,9 +423,9 @@ public class VCFFilter extends JFrame
           {
             final String ID = hLine.getHeaderTypeStr()+":"+hLine.getID();
             if(flag.isSelected()) 
-              FilteredPanel.getFilters().put(ID, new RecordFilter(hLine, 0));
+              filterPanel.addFilter(ID, hLine, 0);
             else
-              FilteredPanel.getFilters().remove(ID);
+              filterPanel.removeFilter(ID);
             filterPanel.updateFilters();
           }
         });
@@ -455,10 +488,6 @@ public class VCFFilter extends JFrame
       else
         return false;
 
-      if(record.getQuality() < VCFFilter.MIN_QUALITY ||
-         record.getQuality() > VCFFilter.MAX_QUALITY)
-        return false;
-
       if(FilteredPanel.getFilters().size() > 0)
       {
         Hashtable<String, RecordFilter> filters = FilteredPanel.getFilters();
@@ -498,6 +527,10 @@ public class VCFFilter extends JFrame
 
               break;
             case HeaderLine.FILTER_LINE:  // FILTER
+              break;
+            case HeaderLine.FILTER_QUAL:  // FILTER by quality score
+              if( !recFilter.pass(record, new String[] { Float.toString(record.getQuality()) }, vcfReader))
+                return false;
               break;
             default:
               break;
@@ -564,9 +597,9 @@ public class VCFFilter extends JFrame
     try
     {
       // TYPE
-      if(record.getQuality() < VCFFilter.MIN_QUALITY &&
+/*      if(record.getQuality() < VCFFilter.MIN_QUALITY &&
          record.getQuality() > VCFFilter.MAX_QUALITY)
-        record.appendFilter("QUAL");
+        record.appendFilter("QUAL");*/
 
       if(!vcfView.showDeletions && record.getAlt().isDeletion(vcf_v4))
         record.appendFilter("DEL");
@@ -622,6 +655,10 @@ public class VCFFilter extends JFrame
             case HeaderLine.FORMAT_LINE:  // FORMAT
               break;
             case HeaderLine.FILTER_LINE:  // FILTER
+              break;
+            case HeaderLine.FILTER_QUAL:  // FILTER by quality score
+              if( !recFilter.pass(record, new String[] { Float.toString(record.getQuality()) }, vcfReader))
+                record.appendFilter(id);
               break;
             default:
               break;

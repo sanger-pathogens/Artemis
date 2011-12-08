@@ -100,11 +100,7 @@ package uk.ac.sanger.artemis.components.variant;
       return true;
     }
     
-    protected HeaderLine getHeaderLine()
-    {
-      return hLine;
-    }
-    
+   
     /**
      * For a fixed number of values check the min and max
      * values.
@@ -129,6 +125,11 @@ package uk.ac.sanger.artemis.components.variant;
         }
       }
       return true;
+    }
+    
+    protected HeaderLine getHeaderLine()
+    {
+      return hLine;
     }
     
     public String toString()

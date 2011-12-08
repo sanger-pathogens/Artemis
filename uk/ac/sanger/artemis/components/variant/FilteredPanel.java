@@ -138,14 +138,6 @@ import javax.swing.border.Border;
       revalidate();
       repaint();
     }
-
-    /**
-     * @return the filters
-     */
-    protected static Hashtable<String, RecordFilter> getFilters()
-    {
-      return filters;
-    }
     
     protected static List<HeaderLine> getHeaderLineFilters()
     {
@@ -161,5 +153,20 @@ import javax.swing.border.Border;
         buff.append(ln.toString());
       }
       return buff.toString();
+    }
+    
+    protected void addFilter(final String ID, final HeaderLine hLine, final int number)
+    {
+      filters.put(ID, new RecordFilter(hLine, number));
+    }
+    
+    protected void removeFilter(final String ID)
+    {
+      filters.remove(ID);
+    }
+    
+    protected static Hashtable<String, RecordFilter> getFilters()
+    {
+      return filters;
     }
   }

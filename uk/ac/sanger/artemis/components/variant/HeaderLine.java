@@ -40,6 +40,7 @@ public class HeaderLine
   protected static final int INFO_LINE   = 0;
   protected static final int FORMAT_LINE = 1;
   protected static final int FILTER_LINE = 2;
+  protected static final int FILTER_QUAL = 3;
   
   public HeaderLine(final String origLine, String headerTypeStr, Hashtable<String, String> lineHash)
   {
@@ -55,6 +56,8 @@ public class HeaderLine
       headerType = FORMAT_LINE;
     else if(headerTypeStr.equals("FILTER"))
       headerType = FILTER_LINE;
+    else if(headerTypeStr.equals("QUAL"))
+      headerType = FILTER_QUAL;
     
     if(type !=null && type.equals("Flag"))
       isFlag = true;
