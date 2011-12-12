@@ -339,12 +339,10 @@ public class VCFview extends JPanel
     
     
     final JMenuItem byQuality = new JMenuItem("Filter ...");
-
+    filter = new VCFFilter(VCFview.this);
     byQuality.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e)
       {
-        if(filter == null)
-          filter = new VCFFilter(VCFview.this);
         filter.setVisible(true);
       }
     });
@@ -755,49 +753,6 @@ public class VCFview extends JPanel
     });
   }
 
-  private static EntryGroup getReference(String reference)
-  {
-    EntryGroup entryGroup = new SimpleEntryGroup();
-    final Document entry_document = DocumentFactory.makeDocument(reference);
-    final EntryInformation artemis_entry_information =
-      Options.getArtemisEntryInformation();
-
-    final uk.ac.sanger.artemis.io.Entry new_embl_entry =
-      EntryFileDialog.getEntryFromFile(null, entry_document,
-                                       artemis_entry_information,
-                                       false);
-    if(new_embl_entry != null) // the read failed
-    {
-      Entry entry = null;
-      Bases bases = null;
-      try
-      {
-        if (entryGroup.getSequenceEntry() != null)
-          bases = entryGroup.getSequenceEntry().getBases();
-        if (bases == null)
-        {
-          entry = new Entry(new_embl_entry);
-          bases = entry.getBases();
-        }
-        else
-          entry = new Entry(bases, new_embl_entry);
-        entryGroup.add(entry);
-      }
-      catch (OutOfRangeException e)
-      {
-        new MessageDialog(null, "read failed: one of the features in "
-            + reference + " has an out of range " + "location: "
-            + e.getMessage());
-      }
-      catch (NoSequenceException e)
-      {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      }
-    }
-    return entryGroup;
-  }
-  
   /**
    * Test and download if on a http server
    * @param fileName
@@ -845,6 +800,49 @@ public class VCFview extends JPanel
     return null;
   }
   
+  private static EntryGroup getReference(String reference)
+  {
+    EntryGroup entryGroup = new SimpleEntryGroup();
+    final Document entry_document = DocumentFactory.makeDocument(reference);
+    final EntryInformation artemis_entry_information =
+      Options.getArtemisEntryInformation();
+  
+    final uk.ac.sanger.artemis.io.Entry new_embl_entry =
+      EntryFileDialog.getEntryFromFile(null, entry_document,
+                                       artemis_entry_information,
+                                       false);
+    if(new_embl_entry != null) // the read failed
+    {
+      Entry entry = null;
+      Bases bases = null;
+      try
+      {
+        if (entryGroup.getSequenceEntry() != null)
+          bases = entryGroup.getSequenceEntry().getBases();
+        if (bases == null)
+        {
+          entry = new Entry(new_embl_entry);
+          bases = entry.getBases();
+        }
+        else
+          entry = new Entry(bases, new_embl_entry);
+        entryGroup.add(entry);
+      }
+      catch (OutOfRangeException e)
+      {
+        new MessageDialog(null, "read failed: one of the features in "
+            + reference + " has an out of range " + "location: "
+            + e.getMessage());
+      }
+      catch (NoSequenceException e)
+      {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+    }
+    return entryGroup;
+  }
+
   /**
    * Read the vcf header
    * @param fileName
@@ -1207,23 +1205,9 @@ public class VCFview extends JPanel
   protected boolean showVariant(VCFRecord record, FeatureVector features, int basePosition, AbstractVCFReader vcfReader)
   { 
     boolean vcf_v4 = vcfReader.isVcf_v4();
-    if(!showDeletions && record.getAlt().isDeletion(vcf_v4))
-      return false;
-    
-    if(!showInsertions && record.getAlt().isInsertion(vcf_v4))
+    if(!VCFFilter.passFilter(record, vcfReader, features, basePosition))
       return false;
 
-    if(!VCFFilter.passFilter(record, vcfReader))
-      return false;
-    
-    if(!showNonOverlappings && !isOverlappingFeature(features, basePosition))
-      return false;
-    
-    if(!showNonVariants && record.getAlt().isNonVariant())
-      return false;
-    
-    short isSyn = -1;
-    
     record.setMarkAsNewStop(false);
     if(markNewStops.isSelected() &&
        !record.getAlt().isDeletion(vcf_v4) && 
@@ -1231,32 +1215,15 @@ public class VCFview extends JPanel
         record.getAlt().length() == 1 && 
         record.getRef().length() == 1)
     {
-      isSyn = record.getSynFlag(features, basePosition);
+      short isSyn = record.getSynFlag(features, basePosition);
       if(isSyn == 2)
         record.setMarkAsNewStop(true);
     }
     
-    if( (!showSynonymous || !showNonSynonymous) &&
-         !record.getAlt().isDeletion(vcf_v4) && 
-         !record.getAlt().isInsertion(vcf_v4) && 
-         record.getAlt().length() == 1 && 
-         record.getRef().length() == 1)
-    {
-      if(isSyn == -1)
-        isSyn = record.getSynFlag(features, basePosition);
-      
-      if( (!showSynonymous && isSyn == 1) ||
-          (!showNonSynonymous && (isSyn == 0 || isSyn == 2) ) )
-        return false;
-    }
-    
-    if(!showMultiAlleles && record.getAlt().isMultiAllele())
-      return false;
-    
     return true;
   }
   
-  protected boolean isOverlappingFeature(FeatureVector features, int basePosition)
+  protected static boolean isOverlappingFeature(FeatureVector features, int basePosition)
   {
     for(int i = 0; i<features.size(); i++)
     {

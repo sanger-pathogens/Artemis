@@ -79,7 +79,7 @@ import javax.swing.border.Border;
       if(hdrFltLines.size() > 0)
       {
         JLabel lab = new JLabel("");
-        Dimension d = new Dimension(100, lab.getPreferredSize().height);
+        Dimension d = new Dimension(150, lab.getPreferredSize().height);
         
         // SHOW CURRENT FILTERS
         for (int i = 0; i < hdrFltLines.size(); i++)
@@ -120,7 +120,7 @@ import javax.swing.border.Border;
       userFilterBox.removeAll();
       final Enumeration<String> enumFilter = filters.keys();
       JLabel lab = new JLabel("");
-      Dimension d = new Dimension(100, lab.getPreferredSize().height);
+      Dimension d = new Dimension(150, lab.getPreferredSize().height);
       while(enumFilter.hasMoreElements())
       {
         String id = enumFilter.nextElement();

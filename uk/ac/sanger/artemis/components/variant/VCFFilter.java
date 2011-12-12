@@ -116,6 +116,7 @@ public class VCFFilter extends JFrame
     showSyn.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e)
       {
+        setFlagFilter(HeaderLine.FILTER_SYN, "SYN", showSyn.getText(), showSyn.isSelected());
         vcfView.showSynonymous = showSyn.isSelected();
         vcfView.repaint();
       }
@@ -127,6 +128,7 @@ public class VCFFilter extends JFrame
     showNonSyn.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e)
       {
+        setFlagFilter(HeaderLine.FILTER_NONSYN, "NONSYN", showNonSyn.getText(), showNonSyn.isSelected());
         vcfView.showNonSynonymous = showNonSyn.isSelected();
         vcfView.repaint();
       }
@@ -138,6 +140,7 @@ public class VCFFilter extends JFrame
     showDeletionsMenu.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e)
       {
+        setFlagFilter(HeaderLine.FILTER_DEL, "DEL", showDeletionsMenu.getText(), showDeletionsMenu.isSelected());
         vcfView.showDeletions = showDeletionsMenu.isSelected();
         vcfView.repaint();
       }
@@ -149,6 +152,7 @@ public class VCFFilter extends JFrame
     showInsertionsMenu.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e)
       {
+        setFlagFilter(HeaderLine.FILTER_INS, "INS", showInsertionsMenu.getText(), showInsertionsMenu.isSelected());
         vcfView.showInsertions = showInsertionsMenu.isSelected();
         vcfView.repaint();
       }
@@ -160,6 +164,7 @@ public class VCFFilter extends JFrame
     showMultiAllelesMenu.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e)
       {
+        setFlagFilter(HeaderLine.FILTER_MULTALL_FLAG, "MULTI_ALLELLES", "Multiple alleles", showMultiAllelesMenu.isSelected());
         vcfView.showMultiAlleles = showMultiAllelesMenu.isSelected();
         vcfView.repaint();
       }
@@ -171,6 +176,7 @@ public class VCFFilter extends JFrame
     showNonOverlappingsMenu.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e)
       {
+        setFlagFilter(HeaderLine.FILTER_OVERLAP_FLAG, "NO-OVERLAP", showNonOverlappingsMenu.getText(), showNonOverlappingsMenu.isSelected());
         vcfView.showNonOverlappings = showNonOverlappingsMenu.isSelected();
         vcfView.repaint();
       }
@@ -182,10 +188,12 @@ public class VCFFilter extends JFrame
     showNonVariantMenu.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e)
       {
+        setFlagFilter(HeaderLine.FILTER_NV_FLAG, "NV", showNonVariantMenu.getText(), showNonVariantMenu.isSelected());
         vcfView.showNonVariants = showNonVariantMenu.isSelected();
         vcfView.repaint();
       }
     });
+    setFlagFilter(HeaderLine.FILTER_NV_FLAG, "NV", showNonVariantMenu.getText(), showNonVariantMenu.isSelected());
     
     if(vcfView.getEntryGroup() == null || vcfView.getEntryGroup().getAllFeaturesCount() == 0)
     {
@@ -233,7 +241,7 @@ public class VCFFilter extends JFrame
     String hdrLine = "##Filter=<ID=QUAL,Type=Float,Number=1,Description=\"QUAL "
         + (minQuality.getText().equals("") ? "" : " < " + minQuality.getValue() + " ")
         + (maxQuality.getText().equals("") ? "" : " > " + maxQuality.getValue() + " ") + "\">";
-    HeaderLine hLine = new HeaderLine(hdrLine, "QUAL",
+    HeaderLine hLine = new HeaderLine(hdrLine, "FILTER_QUAL",
         AbstractVCFReader.getLineHash("FILTER", hdrLine));
     
     maxQuality.addKeyListener(new FilterListener(hLine, false, 0, 1));
@@ -344,9 +352,22 @@ public class VCFFilter extends JFrame
     
     pack();
     Utilities.centreFrame(this);
-    setVisible(true);
   }
 
+  private void setFlagFilter(final int hdrIndex, final String id, final String descr, final boolean isSelected)
+  {
+    final String ID = id+"_FLAG";
+    if(!isSelected) 
+    {
+      String hdrLine = "##Filter=<ID="+id+",Type=Flag,Number=0,Description=\""+descr+"\">";
+      HeaderLine hLine = new HeaderLine(hdrLine, HeaderLine.filterFlagStr[hdrIndex],
+          AbstractVCFReader.getLineHash("FILTER", hdrLine));
+      filterPanel.addFilter(ID, hLine, 0);
+    }
+    else
+      filterPanel.removeFilter(ID);
+    filterPanel.updateFilters();  
+  }
   
   private void createPanel(JPanel panel, GridBagConstraints c, List<HeaderLine> headerLineList, String name)
   {
@@ -454,7 +475,7 @@ public class VCFFilter extends JFrame
    * @param record
    * @return
    */
-  protected static boolean passFilter(final VCFRecord record, final AbstractVCFReader vcfReader)
+  protected static boolean passFilter(final VCFRecord record, final AbstractVCFReader vcfReader, FeatureVector features, int basePosition)
   {
     try
     {
@@ -474,9 +495,25 @@ public class VCFFilter extends JFrame
           String recid = enumFilter.nextElement();
           RecordFilter recFilter = filters.get(recid);
           String id = recFilter.getHeaderLine().getID();
-          
+
           switch (recFilter.getHeaderLine().getHeaderType()) 
           {
+            case HeaderLine.FILTER_NV_FLAG:  // FILTER non-variant
+              if( record.getAlt().isNonVariant() )
+                return false;
+              break;
+            case HeaderLine.FILTER_INS:
+              if( record.getAlt().isInsertion(vcfReader.isVcf_v4()) )
+                return false;
+              break;
+            case HeaderLine.FILTER_DEL:
+              if( record.getAlt().isDeletion(vcfReader.isVcf_v4()) )
+                return false;
+              break;
+            case HeaderLine.FILTER_OVERLAP_FLAG:  // FILTER no overlap
+              if( !VCFview.isOverlappingFeature(features, basePosition) )
+                return false;
+              break;
             case HeaderLine.INFO_LINE:  // INFO line
               if (recFilter.getHeaderLine().isFlag())
               {
@@ -508,6 +545,32 @@ public class VCFFilter extends JFrame
               if( !recFilter.pass(record, new String[] { Float.toString(record.getQuality()) }, vcfReader))
                 return false;
               break;
+              
+            case HeaderLine.FILTER_MULTALL_FLAG:  // FILTER by quality score
+              if( record.getAlt().isMultiAllele() )
+                return false;
+              break;
+            case HeaderLine.FILTER_NONSYN:
+              if( !record.getAlt().isDeletion(vcfReader.isVcf_v4()) && 
+                  !record.getAlt().isInsertion(vcfReader.isVcf_v4()) && 
+                  record.getAlt().length() == 1 && 
+                  record.getRef().length() == 1)
+             {
+               short isSyn = record.getSynFlag(features, basePosition);
+               if( (isSyn == 0 || isSyn == 2) )
+                 return false;
+             }
+              break;
+            case HeaderLine.FILTER_SYN:
+              if( !record.getAlt().isDeletion(vcfReader.isVcf_v4()) && 
+                  !record.getAlt().isInsertion(vcfReader.isVcf_v4()) && 
+                  record.getAlt().length() == 1 && 
+                  record.getRef().length() == 1)
+             {
+               short isSyn = record.getSynFlag(features, basePosition);
+               if(isSyn == 1)
+                 return false;
+             }
             default:
               break;
           }
@@ -567,37 +630,10 @@ public class VCFFilter extends JFrame
   protected static void setFilterString(final VCFRecord record, final VCFview vcfView, 
       final int basePosition, final FeatureVector features, final AbstractVCFReader vcfReader)
   {
-    boolean vcf_v4 = vcfReader.isVcf_v4();
     record.setFilter("");
 
     try
-    {
-      // TYPE
-      if(!vcfView.showDeletions && record.getAlt().isDeletion(vcf_v4))
-        record.appendFilter("DEL");
-      if(!vcfView.showInsertions && record.getAlt().isInsertion(vcf_v4))
-        record.appendFilter("IN");
-      if(!vcfView.showNonOverlappings && !vcfView.isOverlappingFeature(features, basePosition))
-        record.appendFilter("OVERLAP");
-      if(!vcfView.showNonVariants && record.getAlt().isNonVariant())
-        record.appendFilter("NV");
-      if(!vcfView.showMultiAlleles && record.getAlt().isMultiAllele())
-        record.appendFilter("MA");
-
-      if( (!vcfView.showSynonymous || !vcfView.showNonSynonymous) &&
-           !record.getAlt().isDeletion(vcf_v4) && 
-           !record.getAlt().isInsertion(vcf_v4) && 
-           record.getAlt().length() == 1 && 
-           record.getRef().length() == 1)
-      {
-        short isSyn = record.getSynFlag(features, basePosition);
-
-        if(!vcfView.showSynonymous && isSyn == 1) 
-          record.appendFilter("SYN");
-        if(!vcfView.showNonSynonymous && (isSyn == 0 || isSyn == 2))
-          record.appendFilter("NONSYN");
-      }
-      
+    {  
       // INFO, FORMAT
       if(FilteredPanel.getFilters().size() > 0)
       {
@@ -611,6 +647,22 @@ public class VCFFilter extends JFrame
 
           switch (recFilter.getHeaderLine().getHeaderType()) 
           {
+            case HeaderLine.FILTER_NV_FLAG:  // FILTER non-variant
+              if( record.getAlt().isNonVariant() )
+                record.appendFilter(id);
+              break;
+            case HeaderLine.FILTER_INS:
+              if( record.getAlt().isInsertion(vcfReader.isVcf_v4()) )
+                record.appendFilter(id);
+              break;
+            case HeaderLine.FILTER_DEL:
+              if( record.getAlt().isDeletion(vcfReader.isVcf_v4()) )
+                record.appendFilter(id);
+              break;
+            case HeaderLine.FILTER_OVERLAP_FLAG:  // FILTER no overlap
+              if( !VCFview.isOverlappingFeature(features, basePosition) )
+                record.appendFilter(id);
+            break;
             case HeaderLine.INFO_LINE:  // INFO line
               if (recFilter.getHeaderLine().isFlag())
               {
@@ -632,6 +684,31 @@ public class VCFFilter extends JFrame
               if( !recFilter.pass(record, new String[] { Float.toString(record.getQuality()) }, vcfReader))
                 record.appendFilter(id);
               break;
+            case HeaderLine.FILTER_MULTALL_FLAG:  // FILTER by quality score
+              if( record.getAlt().isMultiAllele() )
+                record.appendFilter(id);
+              break;
+            case HeaderLine.FILTER_NONSYN:
+              if( !record.getAlt().isDeletion(vcfReader.isVcf_v4()) && 
+                  !record.getAlt().isInsertion(vcfReader.isVcf_v4()) && 
+                  record.getAlt().length() == 1 && 
+                  record.getRef().length() == 1)
+             {
+               short isSyn = record.getSynFlag(features, basePosition);
+               if( (isSyn == 0 || isSyn == 2) )
+                 record.appendFilter(id);
+             }
+              break;
+            case HeaderLine.FILTER_SYN:
+              if( !record.getAlt().isDeletion(vcfReader.isVcf_v4()) && 
+                  !record.getAlt().isInsertion(vcfReader.isVcf_v4()) && 
+                  record.getAlt().length() == 1 && 
+                  record.getRef().length() == 1)
+             {
+               short isSyn = record.getSynFlag(features, basePosition);
+               if(isSyn == 1)
+                 record.appendFilter(id);
+             }
             default:
               break;
           }

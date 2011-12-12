@@ -37,10 +37,22 @@ public class HeaderLine
   private String origLine;
   private boolean isFlag = false;
   
+  protected static final String[] filterFlagStr = new String[]{
+    "INFO", "FORMAT", "FILTER", "FILTER_QUAL", "FILTER_NV_FLAG",
+    "FILTER_OVERLAP_FLAG", "FILTER_MULTALL_FLAG", 
+    "FILTER_INS", "FILTER_DEL",
+    "FILTER_NONSYN", "FILTER_SYN"};
   protected static final int INFO_LINE   = 0;
   protected static final int FORMAT_LINE = 1;
   protected static final int FILTER_LINE = 2;
   protected static final int FILTER_QUAL = 3;
+  protected static final int FILTER_NV_FLAG = 4;
+  protected static final int FILTER_OVERLAP_FLAG = 5;
+  protected static final int FILTER_MULTALL_FLAG = 6;
+  protected static final int FILTER_INS = 7;
+  protected static final int FILTER_DEL = 8;
+  protected static final int FILTER_NONSYN = 9;
+  protected static final int FILTER_SYN = 10;
   
   public HeaderLine(final String origLine, String headerTypeStr, Hashtable<String, String> lineHash)
   {
@@ -50,15 +62,12 @@ public class HeaderLine
     this.description = lineHash.get("Description");
     this.headerTypeStr = headerTypeStr;
     
-    if(headerTypeStr.equals("INFO"))
-      headerType = INFO_LINE;
-    else if(headerTypeStr.equals("FORMAT"))
-      headerType = FORMAT_LINE;
-    else if(headerTypeStr.equals("FILTER"))
-      headerType = FILTER_LINE;
-    else if(headerTypeStr.equals("QUAL"))
-      headerType = FILTER_QUAL;
-    
+    for(int i=0; i<filterFlagStr.length; i++)
+    {
+      if(headerTypeStr.equals(filterFlagStr[i]))
+        headerType = i;
+    }
+
     if(type !=null && type.equals("Flag"))
       isFlag = true;
     
