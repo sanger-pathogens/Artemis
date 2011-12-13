@@ -137,10 +137,10 @@ public abstract class AbstractVCFReader
    */
   protected static void write(final String vcfFileName, Writer writer, VCFview vcfView, FeatureVector features) throws IOException
   {
+    // FILTER LINES
     if(IOUtils.isBCF(vcfFileName))
     {
       BCFReader reader = new BCFReader(vcfFileName);
-      
       // FIX for old style BAM files
       AbstractVCFReader readers[] = vcfView.getVcfReaders();
       for(int i=0; i<readers.length; i++)
@@ -149,7 +149,9 @@ public abstract class AbstractVCFReader
           reader.newBCF = ((BCFReader)readers[i]).newBCF;
       }
       
-      writer.write( reader.headerToString()+"\n" );
+      // add header
+      String hdr = replaceFilterLines(reader.headerToString(), FilteredPanel.getHeader());
+      writer.write( hdr );
       
       int sbeg = 0;
       int send = Integer.MAX_VALUE;
@@ -168,8 +170,21 @@ public abstract class AbstractVCFReader
     
     TabixReader tr = new TabixReader(vcfFileName);
     String line;
+    boolean headerEnd = true;
     while ((line = tr.readLine()) != null)
     {
+      if(line.startsWith("##"))
+      {
+        if(!line.startsWith("##FILTER"))
+          writer.write(line+'\n');
+        continue;
+      }
+      else if(headerEnd)
+      {
+        writer.write(FilteredPanel.getHeader()+"\n");
+        headerEnd = false;
+      }
+      
       if(line.startsWith("#"))
       {
         writer.write(line+'\n');
@@ -182,6 +197,41 @@ public abstract class AbstractVCFReader
       writer.write(record.toString()+'\n');
     }
     writer.close();
+  }
+  
+  /**
+   * Return the header with the new Filter lines.
+   * @param hdrLines
+   * @param filterLines
+   * @return
+   */
+  private static String replaceFilterLines(final String hdrLines, final String filterLines)
+  {
+    final StringBuffer buff = new StringBuffer();
+    final BufferedReader readerStr = new BufferedReader(new StringReader(hdrLines));
+    String str;
+    try
+    {
+      while ((str = readerStr.readLine()) != null)
+      {
+        if (!str.startsWith("##Filter="))
+        {
+          if(str.startsWith("#CHROM"))
+          {
+            buff.append(filterLines+"\n");
+            buff.append(str+"\n");
+          }
+          else
+            buff.append(str+"\n");
+        }
+      }
+    }
+    catch (IOException e)
+    {
+      e.printStackTrace();
+    }
+
+    return buff.toString();
   }
   
   /**

@@ -31,6 +31,7 @@ import java.awt.event.ActionListener;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -44,6 +45,8 @@ import javax.swing.border.Border;
     private static final long serialVersionUID = 1L;
     private static Hashtable<String, RecordFilter> filters = new Hashtable<String, RecordFilter>();
     private static List<HeaderLine> hdrFltLines;
+    private static List<String> hdrFltLinesIDs;
+    
     private Box hdrFilterBox = Box.createVerticalBox();
     private Box userFilterBox = Box.createVerticalBox();
     
@@ -102,6 +105,7 @@ import javax.swing.border.Border;
             {
               hdrFilterBox.remove(hdrFilterLine);
               hdrFltLines.remove(line);
+              hdrFltLinesIDs = null;
               repaint();
             }
           });
@@ -144,13 +148,28 @@ import javax.swing.border.Border;
       return hdrFltLines;
     }
     
-    protected String getHeader()
+    protected static List<String> getHeaderLineFiltersIDs()
+    {
+      if(hdrFltLinesIDs == null)
+      {
+        hdrFltLinesIDs = new Vector<String>();
+        for(HeaderLine ln: hdrFltLines)
+          hdrFltLinesIDs.add(ln.getID());
+      }
+      return hdrFltLinesIDs;
+    }
+    
+    protected static String getHeader()
     {
       StringBuffer buff = new StringBuffer();
-      
       for(HeaderLine ln: hdrFltLines)
+        buff.append(ln.toString()+"\n");
+
+      Enumeration<String> filterStr = filters.keys();
+      while(filterStr.hasMoreElements())
       {
-        buff.append(ln.toString());
+        RecordFilter recFilter = filters.get(filterStr.nextElement());
+        buff.append(recFilter.getHeaderLine().toString());
       }
       return buff.toString();
     }

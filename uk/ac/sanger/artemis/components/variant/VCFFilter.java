@@ -63,6 +63,7 @@ public class VCFFilter extends JFrame
   private static float MIN_AF1 = 0;
   private static float MAX_CI95 = 10;
   private static Pattern COMMA_PATTERN = Pattern.compile(",");
+  private static Pattern SEMICOLON_PATTERN = Pattern.compile(";");
   private FilteredPanel filterPanel;
 
   /**
@@ -238,7 +239,7 @@ public class VCFFilter extends JFrame
     c.gridx += 1;
     propPanel.add(maxQuality, c);
     
-    String hdrLine = "##Filter=<ID=QUAL,Type=Float,Number=1,Description=\"QUAL "
+    String hdrLine = "##FILTER=<ID=QUAL,Type=Float,Number=1,Description=\"QUAL "
         + (minQuality.getText().equals("") ? "" : " < " + minQuality.getValue() + " ")
         + (maxQuality.getText().equals("") ? "" : " > " + maxQuality.getValue() + " ") + "\">";
     HeaderLine hLine = new HeaderLine(hdrLine, "FILTER_QUAL",
@@ -359,7 +360,7 @@ public class VCFFilter extends JFrame
     final String ID = id+"_FLAG";
     if(!isSelected) 
     {
-      String hdrLine = "##Filter=<ID="+id+",Type=Flag,Number=0,Description=\""+descr+"\">";
+      String hdrLine = "##FILTER=<ID="+id+",Type=Flag,Number=0,Description=\""+descr+"\">";
       HeaderLine hLine = new HeaderLine(hdrLine, HeaderLine.filterFlagStr[hdrIndex],
           AbstractVCFReader.getLineHash("FILTER", hdrLine));
       filterPanel.addFilter(ID, hLine, 0);
@@ -483,7 +484,15 @@ public class VCFFilter extends JFrame
       {
       }
       else
-        return false;
+      {
+        // check if filter still being applied
+        final String filterStr[] = SEMICOLON_PATTERN.split(record.getFilter());
+        for(String s: filterStr)
+        {
+          if(FilteredPanel.getHeaderLineFiltersIDs().contains(s))
+            return false;
+        }
+      }
 
       if(FilteredPanel.getFilters().size() > 0)
       {
@@ -630,7 +639,21 @@ public class VCFFilter extends JFrame
   protected static void setFilterString(final VCFRecord record, final VCFview vcfView, 
       final int basePosition, final FeatureVector features, final AbstractVCFReader vcfReader)
   {
-    record.setFilter("");
+    if(record.getFilter().equals(".") || record.getFilter().equals("PASS"))
+    {
+    }
+    else
+    {
+      record.setFilter("");
+      // check if filter still being applied
+      final List<String> ids = FilteredPanel.getHeaderLineFiltersIDs();
+      for(int i=0; i<ids.size(); i++)
+      {
+        record.appendFilter(ids.get(i));
+        if(i<ids.size()-1)
+          record.appendFilter(";");
+      }
+    }
 
     try
     {  
