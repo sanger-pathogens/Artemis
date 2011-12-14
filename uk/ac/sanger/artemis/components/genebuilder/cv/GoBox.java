@@ -280,7 +280,7 @@ public class GoBox extends AbstractCvBox
             if(e.getClickCount() == 1)
             {
               goTermField.setCursor(cbusy);
-              BrowserControl.displayURL(AMIGOURL+goTermField.getText());
+              BrowserControl.displayURL((AMIGOURL+goTermField.getText()).replaceFirst("GO:GO:", "GO:"));
               goTermField.setCursor(cdone);
             }
             return null;
