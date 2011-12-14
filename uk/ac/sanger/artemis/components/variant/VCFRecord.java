@@ -147,11 +147,16 @@ public class VCFRecord
     return fmtStr[sampleIndex];
   }
 
-  protected String[] getFormatValues(String key)
+  /**
+   * Get genotype values for a given key
+   * @param key
+   * @return
+   */
+  protected String[] getFormatValues(final String key)
   {
     if(getFormat() == null)
       return null;
-    String fmts[] = COLON_PATTERN.split(getFormat());
+    final String fmts[] = COLON_PATTERN.split(getFormat());
     for(int i=0; i<fmts.length; i++)
     {
       if(fmts[i].equals(key))
