@@ -136,6 +136,7 @@ public class VCFview extends JPanel
   protected int seqLength;
   private EntryGroup entryGroup;
   private String chr;
+  private Point lastMousePoint;
   private VCFRecord mouseVCF;
   private int mouseOverIndex = -1;
   
@@ -698,7 +699,8 @@ public class VCFview extends JPanel
       
       public void mouseMoved(MouseEvent e)
       {
-        findVariantAtPoint(e.getPoint());
+        lastMousePoint = e.getPoint();
+
         int thisHgt = HEIGHT;
         if (thisHgt < 5)
           thisHgt = 15;
@@ -924,6 +926,10 @@ public class VCFview extends JPanel
   
   public String getToolTipText()
   {
+    if(vcfReaders == null)
+      return null;
+    
+    findVariantAtPoint(lastMousePoint);
     if(mouseVCF == null)
       return null;
 
@@ -1204,14 +1210,15 @@ public class VCFview extends JPanel
   
   protected boolean showVariant(VCFRecord record, FeatureVector features, int basePosition, AbstractVCFReader vcfReader)
   { 
-    boolean vcf_v4 = vcfReader.isVcf_v4();
-    if(!VCFFilter.passFilter(record, vcfReader, features, basePosition))
-      return false;
-
-    record.setMarkAsNewStop(false);
-    if(markNewStops.isSelected() &&
-       !record.getAlt().isDeletion(vcf_v4) && 
-       !record.getAlt().isInsertion(vcf_v4) && 
+    return VCFFilter.passFilter(record, vcfReader, features, basePosition);
+  }
+  
+  private void setAsStop(VCFRecord record, FeatureVector features, int basePosition, AbstractVCFReader vcfReader)
+  {
+    if(!record.isMarkAsNewStop() &&
+        markNewStops.isSelected() &&
+       !record.getAlt().isDeletion(vcfReader.isVcf_v4()) && 
+       !record.getAlt().isInsertion(vcfReader.isVcf_v4()) && 
         record.getAlt().length() == 1 && 
         record.getRef().length() == 1)
     {
@@ -1219,8 +1226,6 @@ public class VCFview extends JPanel
       if(isSyn == 2)
         record.setMarkAsNewStop(true);
     }
-    
-    return true;
   }
   
   protected static boolean isOverlappingFeature(FeatureVector features, int basePosition)
@@ -1262,23 +1267,25 @@ public class VCFview extends JPanel
   {
     int basePosition = record.getPos() + getSequenceOffset(record.getChrom());
     boolean show = showVariant(record, features, basePosition, vcfReader);
+        
     // logger4j.info(String.format("%s\t%s", (show) ? "SHOW" : "HIDE", record));
     if( !show )
       return;
     
+    setAsStop(record, features, basePosition, vcfReader);
     int pos[] = getScreenPosition(basePosition, pixPerBase, start, index);
 
     if(colourScheme == QUAL_COLOUR_SCHEME)
       g.setColor(getQualityColour(record));
+    else if(record.getAlt().isDeletion(vcfReader.isVcf_v4()))
+      g.setColor(Color.gray);
+    else if(record.getAlt().isInsertion(vcfReader.isVcf_v4()))
+      g.setColor(Color.magenta);
     else if(record.getAlt().isMultiAllele())
     {
       g.setColor(Color.orange);
       g.fillArc(pos[0]-3, pos[1]-LINE_HEIGHT-3, 6, 6, 0, 360);
     }
-    else if(record.getAlt().isDeletion(vcfReader.isVcf_v4()))
-      g.setColor(Color.gray);
-    else if(record.getAlt().isInsertion(vcfReader.isVcf_v4()))
-      g.setColor(Color.magenta);
     else if(record.getAlt().length() == 1 && record.getRef().length() == 1)
     {
       g.setColor(getColourForSNP(record, features, basePosition));
@@ -1708,6 +1715,7 @@ public class VCFview extends JPanel
          if(showDetails != null)
            popup.remove(showDetails);
          
+         findVariantAtPoint(e.getPoint());
          if( mouseVCF != null )
          {
            showDetails = new JMenuItem("Show details of : "+
