@@ -58,6 +58,7 @@ public class VCFFilter extends JFrame
 {
   private static final long serialVersionUID = 1L;
 
+  private static boolean useHeader = true;
   private static int MIN_DP = 0;
   private static float MIN_MQ = 0;
   private static float MIN_AF1 = 0;
@@ -258,6 +259,7 @@ public class VCFFilter extends JFrame
     
     if(info.size() == 0)
     {
+      useHeader = false;
       // min DP
       c.gridy = c.gridy+1;
       c.gridx = 0;
@@ -494,7 +496,7 @@ public class VCFFilter extends JFrame
         }
       }
 
-      if(FilteredPanel.getFilters().size() > 0)
+      if(useHeader)
       {
         Hashtable<String, RecordFilter> filters = FilteredPanel.getFilters();
         
@@ -530,9 +532,12 @@ public class VCFFilter extends JFrame
                   return false;
                 continue;
               }
-              else if( record.getInfoValue(id) == null || 
-                       !recFilter.pass(record, record.getInfoValue(id).split(","), vcfReader))
-                return false;
+              else
+              {
+                String inf = record.getInfoValue(id);
+                if(inf == null || !recFilter.pass(record, inf.split(","), vcfReader))
+                  return false;
+              }
               break;
             case HeaderLine.FORMAT_LINE:  // FORMAT Genotype line
               String samples[] = record.getFormatValues(id);
