@@ -42,6 +42,8 @@ import uk.ac.sanger.artemis.components.variant.BCFReader.BCFReaderIterator;
 public abstract class AbstractVCFReader
 {
   private boolean vcf_v4 = false;
+  
+  protected String[] sampleNames;
   protected abstract String[] getSeqNames();
   protected abstract String getFileName();
   protected int nsamples = -1;
@@ -264,6 +266,7 @@ public abstract class AbstractVCFReader
   {
     if(nsamples < 1)
     {
+      nsamples = 1;
       BufferedReader reader = new BufferedReader(new StringReader(header));
       try
       {
@@ -274,7 +277,10 @@ public abstract class AbstractVCFReader
           {
             int index = ln.indexOf("FORMAT");
             if(index > -1)
-              nsamples = ln.substring(index+7).split(" ").length;
+            {
+              sampleNames = ln.substring(index+7).split(" ");
+              nsamples = sampleNames.length;
+            }
           }
         }
       }
@@ -284,6 +290,11 @@ public abstract class AbstractVCFReader
       }
     }
     return nsamples;
+  }
+  
+  protected String[] getSampleNames()
+  {
+    return sampleNames;
   }
 
   protected List<HeaderLine> getFORMAT()
