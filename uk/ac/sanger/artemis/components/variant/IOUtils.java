@@ -577,7 +577,7 @@ class IOUtils
       while ((record = reader.getNextRecord(chr, sbeg, send)) != null)
       {
         int basePosition = record.getPos() + vcfView.getSequenceOffset(record.getChrom());
-        if(vcfView.showVariant(record, features, basePosition, reader) )
+        if(vcfView.showVariant(record, features, basePosition, reader, -1) )
           basesStr = getSeqsVariation(record, basesStr, sbeg, isFwd, vcf_v4);
         else if(useNs && isSNPorNonVariant(record))
         {
@@ -693,7 +693,7 @@ class IOUtils
   private static void count(VCFRecord record, int count[], FeatureVector features, AbstractVCFReader reader, VCFview vcfView)
   {
     int basePosition = record.getPos() + vcfView.getSequenceOffset(record.getChrom());
-    if(!vcfView.showVariant(record, features, basePosition, reader) )
+    if(!vcfView.showVariant(record, features, basePosition, reader, -1) )
       return;
     
     if(record.getAlt().isNonVariant())
@@ -825,7 +825,7 @@ class IOUtils
       if(isFwd)
         position+=(vcfRecord.getRef().toString().length()-1);
     }
-    else if(vcfRecord.getAlt().isMultiAllele())
+    else if(vcfRecord.getAlt().isMultiAllele(-1))
     {
       String base = MultipleAlleleVariant.getIUBCode(vcfRecord);
       if(base != null)
@@ -967,7 +967,7 @@ class IOUtils
       final AbstractVCFReader vcfReader) throws OutOfRangeException, ReadOnlyException
   {
     int basePosition = record.getPos() + vcfView.getSequenceOffset(record.getChrom());
-    if (vcfView.showVariant(record, features, basePosition, vcfReader))
+    if (vcfView.showVariant(record, features, basePosition, vcfReader, -1))
     {
       MarkerRange marker = new MarkerRange(bases.getForwardStrand(),
           basePosition, basePosition);
@@ -975,7 +975,7 @@ class IOUtils
       QualifierVector qualifiers = new QualifierVector();
       String qualifierStr = record.getRef()+"->"+record.getAlt().toString()+
                             "; "+vcfFileName+"; score="+record.getQuality();
-      if(record.getAlt().isMultiAllele())
+      if(record.getAlt().isMultiAllele(-1))
         qualifierStr += "; MULTI-ALLELE";
       else if(record.getAlt().isDeletion(vcfReader.isVcf_v4()))
         qualifierStr += "; DELETION";

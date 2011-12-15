@@ -139,6 +139,7 @@ public class VCFview extends JPanel
   private Point lastMousePoint;
   private VCFRecord mouseVCF;
   private int mouseOverIndex = -1;
+  private int mouseOverSampleIndex = -1;
   
   private GraphPanel graphPanel;
 
@@ -175,6 +176,8 @@ public class VCFview extends JPanel
   private VCFFilter filter;
   Hashtable<String, Integer> offsetLengths = null;
   private boolean concatSequences = false;
+  private boolean splitSamples = true;
+  
   protected static Pattern tabPattern = Pattern.compile("\t");
   
   public static String VCFFILE_SUFFIX = ".*\\.[bv]{1}cf(\\.gz)*$";
@@ -941,12 +944,17 @@ public class VCFview extends JPanel
     msg += "Qual: "+mouseVCF.getQuality()+"\n";
     String pl[];
     if((pl = mouseVCF.getFormatValues("PL")) != null)
-      for(String p: pl)
-        msg += "Genotype likelihood (PL): "+p+"\n";
+    {
+      msg += "Genotype likelihood (PL):\n";
+      if(mouseOverSampleIndex < 0)
+        for(String p: pl)
+          msg += p+"\n";
+      else
+        msg += pl[mouseOverSampleIndex]+"\n";
+    }
     return msg;
   }
-  
-  
+
   
   /**
    * For VCF files with multiple references sequences, calculate
@@ -1015,6 +1023,7 @@ public class VCFview extends JPanel
     
     drawSelectionRange((Graphics2D)g, pixPerBase, start, end);
 
+    int sumSamples = 0;
     FeatureVector features = getCDSFeaturesInRange(start, end);
     for (int i = 0; i < vcfReaders.length; i++)
     {
@@ -1041,7 +1050,8 @@ public class VCFview extends JPanel
               thisStart = 1;
             int thisEnd   = end - offset;
             
-            drawRegion(g2d, contigs[j], thisStart, thisEnd, i, start, pixPerBase, features); 
+            drawRegion(g2d, contigs[j], thisStart, thisEnd, i, sumSamples, start, pixPerBase, features);
+            
           }
         }
 
@@ -1051,8 +1061,9 @@ public class VCFview extends JPanel
         int thisStart = start;
         if(thisStart < 1)
           thisStart = 1;
-        drawRegion(g2d, chr, thisStart, end, i, start, pixPerBase, features); 
+        drawRegion(g2d, chr, thisStart, end, i, sumSamples, start, pixPerBase, features); 
       }
+      sumSamples += vcfReaders[i].getNumberOfSamples();
     }
 
     if(feature_display == null)
@@ -1060,34 +1071,75 @@ public class VCFview extends JPanel
     
     // show labels for each VCF
     if(showLabels)
+       showLabels(g2d);
+  }
+  
+  private void showLabels(Graphics2D g2d)
+  {
+    int max = 0;
+    final FontMetrics fm = getFontMetrics(getFont());
+    
+    for (int i = 0; i < vcfReaders.length; i++)
     {
-      g.setColor(Color.black);
-      int max = 0;
-      FontMetrics fm = getFontMetrics(getFont());
-      String lab[] = new String[vcfReaders.length];
-      for (int i = 0; i < vcfReaders.length; i++)
-      {
-        lab[i] = getLabel(i);
-        int width = fm.stringWidth(lab[i]);
-        if(max < width)
-         max = width;
-      }
+      if(hideVcfList.contains(i))
+        continue;
       
-      Rectangle square = new Rectangle(0, 0, max, getHeight());
-      Composite originalComposite = g2d.getComposite();
-      g2d.setPaint(Color.lightGray);
-      g2d.setComposite(makeComposite(0.75f));
-      g2d.fill(square);
-      g2d.setComposite(originalComposite);
-
-      g2d.setColor(Color.black);
-      g2d.drawLine(max+1, 0, max+1, getHeight());
-      for (int i = 0; i < vcfReaders.length; i++)
+      if(splitSamples)
       {
-        if(hideVcfList.contains(i))
-          continue;
-        g.drawString(lab[i], 1, getYPostion(i));
+        for(int sampleIdx = 0; sampleIdx < vcfReaders[i].getNumberOfSamples(); sampleIdx++)
+        {
+          if(vcfReaders[i].sampleNames == null)
+          {
+            int width = fm.stringWidth(getLabel(i));
+            if (max < width)
+              max = width;
+            break;
+          }
+         
+          String labStr = vcfReaders[i].sampleNames[sampleIdx];
+          int width = fm.stringWidth(labStr);
+          if (max < width)
+            max = width;
+        }
       }
+      else
+      {
+        String labStr = getLabel(i);
+        int width = fm.stringWidth(labStr);
+        if (max < width)
+          max = width;
+      }
+    }
+    
+    Rectangle square = new Rectangle(0, 0, max, getHeight());
+    Composite originalComposite = g2d.getComposite();
+    g2d.setPaint(Color.lightGray);
+    g2d.setComposite(makeComposite(0.75f));
+    g2d.fill(square);
+    g2d.setComposite(originalComposite);
+
+    g2d.setColor(Color.black);
+    g2d.drawLine(max+1, 0, max+1, getHeight());
+    
+    int sumSample = 0;
+    for (int i = 0; i < vcfReaders.length; i++)
+    {
+      if(hideVcfList.contains(i))
+        continue;
+      
+      if(splitSamples)
+      {
+        for(int sampleIdx=0; sampleIdx < vcfReaders[i].getNumberOfSamples(); sampleIdx++)
+        {
+          if(vcfReaders[i].sampleNames == null)
+            g2d.drawString(getLabel(i), 1, getYPostion(sumSample+sampleIdx));
+          else
+            g2d.drawString(vcfReaders[i].sampleNames[sampleIdx], 1, getYPostion(sumSample+sampleIdx));
+        }
+        sumSample += vcfReaders[i].getNumberOfSamples();
+      }
+      else
+        g2d.drawString(getLabel(i), 1, getYPostion(i));
     }
   }
   
@@ -1102,14 +1154,15 @@ public class VCFview extends JPanel
   }
 
   
-  private void drawRegion(Graphics2D g,
-                          String chr,
-                          int sbeg,
-                          int send,
-                          int i, 
-                          int start, 
-                          float pixPerBase, 
-                          FeatureVector features) 
+  private void drawRegion(final Graphics2D g,
+                          final String chr,
+                          final int sbeg,
+                          final int send,
+                          final int vcfFileIndex,
+                          final int sumSamples,
+                          final int start, 
+                          final float pixPerBase, 
+                          final FeatureVector features) 
   {
     cacheVariantLines = new Vector<Integer>(5);
     try
@@ -1128,8 +1181,21 @@ public class VCFview extends JPanel
               this.showNonOverlappings,
               this.showNonVariants));*/
       
-      while((record = vcfReaders[i].getNextRecord(chr, sbeg, send)) != null)
-        drawVariantCall(g, record, start, i, pixPerBase, features, vcfReaders[i]);
+      while((record = vcfReaders[vcfFileIndex].getNextRecord(chr, sbeg, send)) != null)
+      {
+        int basePosition = record.getPos() + getSequenceOffset(record.getChrom());
+        
+        if(!splitSamples)
+        {
+          drawVariantCall(g, record, start, vcfFileIndex, -1, -1, pixPerBase, features, 
+              vcfReaders[vcfFileIndex], basePosition);
+          continue;
+        }
+        
+        for(int sampleIndex = 0; sampleIndex < vcfReaders[vcfFileIndex].getNumberOfSamples(); sampleIndex++)
+          drawVariantCall(g, record, start, vcfFileIndex, sampleIndex, sumSamples, pixPerBase, features, 
+              vcfReaders[vcfFileIndex], basePosition);
+      }
     }
     catch (IOException e)
     {
@@ -1208,9 +1274,10 @@ public class VCFview extends JPanel
       return scrollBar.getValue();
   }
   
-  protected boolean showVariant(VCFRecord record, FeatureVector features, int basePosition, AbstractVCFReader vcfReader)
+  protected boolean showVariant(final VCFRecord record, final FeatureVector features, final int basePosition, 
+      final AbstractVCFReader vcfReader, final int nsample)
   { 
-    return VCFFilter.passFilter(record, vcfReader, features, basePosition);
+    return VCFFilter.passFilter(record, vcfReader, features, basePosition, nsample);
   }
   
   private void setAsStop(VCFRecord record, FeatureVector features, int basePosition, AbstractVCFReader vcfReader)
@@ -1262,52 +1329,74 @@ public class VCFview extends JPanel
       return false;
   }
   
-  private void drawVariantCall(Graphics2D g, VCFRecord record, int start, int index, 
-      float pixPerBase, FeatureVector features, AbstractVCFReader vcfReader)
+  /**
+   * Draw the VCF record
+   * @param g
+   * @param record
+   * @param start
+   * @param vcfIndex
+   * @param sampleIndex
+   * @param sumSamples
+   * @param pixPerBase
+   * @param features
+   * @param vcfReader
+   * @param basePosition
+   */
+  private void drawVariantCall(final Graphics2D g, 
+                               final VCFRecord record, 
+                               final int start, 
+                               final int vcfIndex,
+                               final int sampleIndex,
+                               final int sumSamples,
+                               final float pixPerBase, 
+                               final FeatureVector features, 
+                               final AbstractVCFReader vcfReader,
+                               final int basePosition)
   {
-    int basePosition = record.getPos() + getSequenceOffset(record.getChrom());
-    boolean show = showVariant(record, features, basePosition, vcfReader);
-        
-    // logger4j.info(String.format("%s\t%s", (show) ? "SHOW" : "HIDE", record));
+    boolean show = showVariant(record, features, basePosition, vcfReader, sampleIndex);
     if( !show )
       return;
     
     setAsStop(record, features, basePosition, vcfReader);
-    int pos[] = getScreenPosition(basePosition, pixPerBase, start, index);
+    final int pos[];
+    if(sampleIndex < 0)
+      pos = getScreenPosition(basePosition, pixPerBase, start, vcfIndex);
+    else
+      pos = getScreenPosition(basePosition, pixPerBase, start, sampleIndex+sumSamples);
 
-    if(colourScheme == QUAL_COLOUR_SCHEME)
+    if (colourScheme == QUAL_COLOUR_SCHEME)
       g.setColor(getQualityColour(record));
-    else if(record.getAlt().isDeletion(vcfReader.isVcf_v4()))
+    else if (record.getAlt().isDeletion(vcfReader.isVcf_v4()))
       g.setColor(Color.gray);
-    else if(record.getAlt().isInsertion(vcfReader.isVcf_v4()))
+    else if (record.getAlt().isInsertion(vcfReader.isVcf_v4()))
       g.setColor(Color.magenta);
-    else if(record.getAlt().isMultiAllele())
+    else if (record.getAlt().isMultiAllele(sampleIndex))
     {
       g.setColor(Color.orange);
-      g.fillArc(pos[0]-3, pos[1]-LINE_HEIGHT-3, 6, 6, 0, 360);
+      g.fillArc(pos[0] - 3, pos[1] - LINE_HEIGHT - 3, 6, 6, 0, 360);
     }
-    else if(record.getAlt().length() == 1 && record.getRef().length() == 1)
+    else if (record.getAlt().length() == 1 && record.getRef().length() == 1)
     {
       g.setColor(getColourForSNP(record, features, basePosition));
-      if(record.getAlt().isNonVariant())
+      if (record.getAlt().isNonVariant())
       {
         // use the cache to avoid drawing over a variant with a non-variant
-        if(!cacheVariantLines.contains(pos[0]))
-          g.drawLine(pos[0], pos[1], pos[0], pos[1]-LINE_HEIGHT+6);
+        if (!cacheVariantLines.contains(pos[0]))
+          g.drawLine(pos[0], pos[1], pos[0], pos[1] - LINE_HEIGHT + 6);
         return;
       }
     }
     else
       g.setColor(Color.pink);
 
-    if(record.isMarkAsNewStop())
-      g.fillArc(pos[0]-3, pos[1]-(LINE_HEIGHT/2)-3, 6, 6, 0, 360);
+    if (record.isMarkAsNewStop())
+      g.fillArc(pos[0] - 3, pos[1] - (LINE_HEIGHT / 2) - 3, 6, 6, 0, 360);
 
-    if(cacheVariantLines.size() == 5)
+    if (cacheVariantLines.size() == 5)
       cacheVariantLines.clear();
     cacheVariantLines.add(pos[0]);
 
-    g.drawLine(pos[0], pos[1], pos[0], pos[1]-LINE_HEIGHT);
+    g.drawLine(pos[0], pos[1], pos[0], pos[1] - LINE_HEIGHT);
   }
   
   /**
@@ -1423,57 +1512,85 @@ public class VCFview extends JPanel
     int start = startBase + (int)(mousePoint.getX()/pixPerBase) - 20;
     int end   = start+20;
     FeatureVector features = getCDSFeaturesInRange(start, end);
+    int sumSamples = 0;
     
     for (int i = 0; i < vcfReaders.length; i++)
     {
-      int ypos = getYPostion(i);
-      if(mousePoint.getY() > ypos &&
-         mousePoint.getY() < ypos-LINE_HEIGHT)
-        continue;
 
-      if(concatSequences) 
-      {
-        String[] contigs = vcfReaders[0].getSeqNames();
-        for(int j=0; j<contigs.length; j++)
+
+
+        if(concatSequences) 
         {
-          int offset = getSequenceOffset(contigs[j]);
-          int nextOffset;
-          if(j<contigs.length-1)
-            nextOffset = getSequenceOffset(contigs[j+1]);
-          else
-            nextOffset = seqLength;
-          
-          if( (offset >= start && offset < end) ||
-              (offset < start && start < nextOffset) )
+          String[] contigs = vcfReaders[0].getSeqNames();
+          for(int k=0; k<contigs.length; k++)
           {
-            int thisStart = start - offset;
-            if(thisStart < 1)
-              thisStart = 1;
-            int thisEnd   = end - offset;
-            searchRegion(contigs[j], thisStart, thisEnd, i, mousePoint, features, startBase, pixPerBase);
+            int offset = getSequenceOffset(contigs[k]);
+            int nextOffset;
+            if(k<contigs.length-1)
+              nextOffset = getSequenceOffset(contigs[k+1]);
+            else
+              nextOffset = seqLength;
+            
+            if( (offset >= start && offset < end) ||
+                (offset < start && start < nextOffset) )
+            {
+              int thisStart = start - offset;
+              if(thisStart < 1)
+                thisStart = 1;
+              int thisEnd   = end - offset;
+              searchRegion(contigs[k], thisStart, thisEnd, i, sumSamples, mousePoint, features, startBase, pixPerBase);
+            }
           }
+        } 
+        else
+        {
+          int thisStart = start;
+          if(thisStart < 1)
+            thisStart = 1;
+          searchRegion(chr, thisStart, end, i, sumSamples, mousePoint, features, startBase, pixPerBase);
         }
-      } 
-      else
-      {
-        int thisStart = start;
-        if(thisStart < 1)
-          thisStart = 1;
-        searchRegion(chr, thisStart, end, i, mousePoint, features, startBase, pixPerBase);
-      }
+
+
+      sumSamples += vcfReaders[i].getNumberOfSamples();
     }
   }
   
-  private void searchRegion(String chr, int sbeg, int send, int i, 
-                            Point mousePoint, FeatureVector features,
+  private void searchRegion(final String chr, 
+                            final int sbeg, final int send, 
+                            final int fileIndex, 
+                            final int sumSamples,
+                            final Point mousePoint, FeatureVector features,
                             int start, float pixPerBase) 
   {
     try
     {
       VCFRecord bcfRecord;
-      while((bcfRecord = vcfReaders[i].getNextRecord(chr, sbeg, send)) != null)
+      while((bcfRecord = vcfReaders[fileIndex].getNextRecord(chr, sbeg, send)) != null)
       {
-        isMouseOver(mousePoint, bcfRecord, features, i, start, pixPerBase, vcfReaders[i]);
+        
+        if(splitSamples)
+        {
+          for(int sampleIndex=0; sampleIndex<vcfReaders[fileIndex].getNumberOfSamples(); sampleIndex++)
+          {
+            int ypos = getYPostion(sampleIndex+sumSamples);
+            if(mousePoint.getY() > ypos &&
+               mousePoint.getY() < ypos-LINE_HEIGHT)
+              continue;
+            
+            isMouseOver(mousePoint, bcfRecord, features, fileIndex, sampleIndex, sumSamples, start, pixPerBase, vcfReaders[fileIndex]); 
+          }
+        }
+        else
+        {
+          int ypos = getYPostion(fileIndex);
+          if(mousePoint.getY() > ypos &&
+             mousePoint.getY() < ypos-LINE_HEIGHT)
+            continue;
+          
+          isMouseOver(mousePoint, bcfRecord, features, fileIndex, -1, sumSamples, start, pixPerBase, vcfReaders[fileIndex]);
+        }
+        
+        
       }
     }
     catch (IOException e)
@@ -1483,18 +1600,25 @@ public class VCFview extends JPanel
     }
   }
   
-  private void isMouseOver(Point mousePoint, 
-                           VCFRecord record, 
-                           FeatureVector features, 
-                           int i, 
-                           int start, float pixPerBase, AbstractVCFReader vcfReader)
+  private void isMouseOver(final Point mousePoint, 
+                           final VCFRecord record, 
+                           final FeatureVector features, 
+                           final int vcfFileIndex, 
+                           final int sampleIndex,
+                           final int sumSamples,
+                           final int start, final float pixPerBase, 
+                           final AbstractVCFReader vcfReader)
   {
     int basePosition = record.getPos() + getSequenceOffset(record.getChrom());
-
-    if( !showVariant(record, features, basePosition, vcfReader) )
+    if( !showVariant(record, features, basePosition, vcfReader, sampleIndex) )
       return;
-    
-    int pos[] = getScreenPosition(basePosition, pixPerBase, start, i);
+
+    int pos[];
+    if(!splitSamples)
+      pos = getScreenPosition(basePosition, pixPerBase, start, vcfFileIndex);
+    else
+      pos = getScreenPosition(basePosition, pixPerBase, start, sampleIndex+sumSamples);
+
     if(mousePoint != null &&
        mousePoint.getY() < pos[1] &&
        mousePoint.getY() > pos[1]-LINE_HEIGHT &&
@@ -1502,7 +1626,8 @@ public class VCFview extends JPanel
        mousePoint.getX() < pos[0]+3)
      {
        mouseVCF = record;
-       mouseOverIndex = i;
+       mouseOverIndex = vcfFileIndex;
+       mouseOverSampleIndex = sampleIndex;
      }
   }
   

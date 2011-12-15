@@ -478,7 +478,8 @@ public class VCFFilter extends JFrame
    * @param record
    * @return
    */
-  protected static boolean passFilter(final VCFRecord record, final AbstractVCFReader vcfReader, FeatureVector features, int basePosition)
+  protected static boolean passFilter(final VCFRecord record, final AbstractVCFReader vcfReader, 
+      final FeatureVector features, final int basePosition, final int sampleIndex)
   {
     try
     {
@@ -546,12 +547,20 @@ public class VCFFilter extends JFrame
 
               if (recFilter.getHeaderLine().isFlag())
                 return true;
-              for(int i=0; i<samples.length; i++)
+              
+              if(sampleIndex > -1) // look at a specific sample
               {
-                if( !recFilter.pass(record, samples[i].split(","), vcfReader))
+                if( !recFilter.pass(record, samples[sampleIndex].split(","), vcfReader))
                   return false;
               }
-
+              else                 // look at all samples
+              {
+                for(int i=0; i<samples.length; i++)
+                {
+                  if( !recFilter.pass(record, samples[i].split(","), vcfReader))
+                    return false;
+                }
+              }
               break;
             case HeaderLine.FILTER_LINE:  // FILTER
               break;
@@ -561,7 +570,7 @@ public class VCFFilter extends JFrame
               break;
               
             case HeaderLine.FILTER_MULTALL_FLAG:  // FILTER by quality score
-              if( record.getAlt().isMultiAllele() )
+              if( record.getAlt().isMultiAllele(sampleIndex) )
                 return false;
               break;
             case HeaderLine.FILTER_NONSYN:
@@ -713,7 +722,7 @@ public class VCFFilter extends JFrame
                 record.appendFilter(id);
               break;
             case HeaderLine.FILTER_MULTALL_FLAG:  // FILTER by quality score
-              if( record.getAlt().isMultiAllele() )
+              if( record.getAlt().isMultiAllele(-1) )
                 record.appendFilter(id);
               break;
             case HeaderLine.FILTER_NONSYN:

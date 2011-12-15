@@ -60,13 +60,15 @@ public class VariantBase
     return false;
   }
 
-  protected boolean isMultiAllele()
+  protected boolean isMultiAllele(int sampleIndex)
   {
     if (VCFRecord.MULTI_ALLELE_PATTERN.matcher(alt).matches())
       return true;
 
     // look at probability of each genotype (PL) information as well
-    String pl = record.getFormatValueForSample("PL", 0);
+    if(sampleIndex < 0)
+      sampleIndex = 0;
+    String pl = record.getFormatValueForSample("PL", sampleIndex);
     if(pl != null)
     {
       String pls[] = COMMA_PATTERN.split(pl);
