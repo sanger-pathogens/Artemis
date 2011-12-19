@@ -278,7 +278,7 @@ public abstract class AbstractVCFReader
             int index = ln.indexOf("FORMAT");
             if(index > -1)
             {
-              sampleNames = ln.substring(index+7).split(" ");
+              sampleNames = ln.substring(index+7).trim().split("[ \\t]");
               nsamples = sampleNames.length;
             }
           }
