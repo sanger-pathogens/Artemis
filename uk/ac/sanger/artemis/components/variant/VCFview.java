@@ -124,6 +124,9 @@ public class VCFview extends JPanel
 {
   
   private static final long serialVersionUID = 1L;
+  
+  private JScrollPane jspView;
+  
   private JScrollBar scrollBar;
   private JPanel vcfPanel;
   private AbstractVCFReader vcfReaders[];
@@ -208,6 +211,10 @@ public class VCFview extends JPanel
     this.vcfPanel = vcfPanel;
     this.vcfFiles = vcfFiles;
  
+    jspView = new JScrollPane(this, 
+        JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+        JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+    
     setBackground(Color.white);
     MultiLineToolTipUI.initialize();
     setToolTipText("");
@@ -237,10 +244,6 @@ public class VCFview extends JPanel
           "Check Java Version", JOptionPane.WARNING_MESSAGE);
     }
 
-    final JScrollPane jspView = new JScrollPane(this, 
-        JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-        JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-    
     vcfPanel.setLayout(new BorderLayout());
     vcfPanel.add(jspView, BorderLayout.CENTER);
     
@@ -271,8 +274,8 @@ public class VCFview extends JPanel
     addMouseListener(new PopupListener());
     
     //
-    createTopPanel(frame, jspView, entry_edit);
-    createMenus(jspView);
+    createTopPanel(frame, entry_edit);
+    createMenus();
     setDisplay();
     
     if(feature_display == null)
@@ -288,7 +291,7 @@ public class VCFview extends JPanel
     }
   }
   
-  private void createMenus(final JScrollPane jspView)
+  private void createMenus()
   { 
     // popup menu
     popup = new JPopupMenu();
@@ -591,7 +594,7 @@ public class VCFview extends JPanel
     popup.add(labels);
   }
   
-  private void createTopPanel(final JFrame frame, final JScrollPane jspView, final EntryEdit entry_edit)
+  private void createTopPanel(final JFrame frame, final EntryEdit entry_edit)
   {
     final JComponent topPanel;
     if(feature_display != null)
@@ -1038,10 +1041,11 @@ public class VCFview extends JPanel
 
     int sumSamples = 0;
     FeatureVector features = getCDSFeaturesInRange(start, end);
+
     for (int i = 0; i < vcfReaders.length; i++)
     {
       if(hideVcfList.contains(i))
-        continue;
+        continue;      
       
       if(concatSequences) 
       {
@@ -1181,23 +1185,14 @@ public class VCFview extends JPanel
     try
     {
       VCFRecord record;
-      /*logger4j.info(
-              String.format(
-              "FILTER\t%s-%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s",
-              sbeg, 
-              send,
-              this.showSynonymous, 
-              this.showNonSynonymous, 
-              this.showDeletions, 
-              this.showInsertions, 
-              this.showMultiAlleles, 
-              this.showNonOverlappings,
-              this.showNonVariants));*/
+
+      // viewport position and height
+      int viewIndex = getHeight()/(LINE_HEIGHT+5) - jspView.getViewport().getViewPosition().y/(LINE_HEIGHT+5);
+      int viewHgt = jspView.getViewport().getExtentSize().height/(LINE_HEIGHT+5);
       
       while((record = vcfReaders[vcfFileIndex].getNextRecord(chr, sbeg, send)) != null)
       {
         int basePosition = record.getPos() + getSequenceOffset(record.getChrom());
-        
         if(!splitSamples)
         {
           drawVariantCall(g, record, start, vcfFileIndex, -1, -1, pixPerBase, features, 
@@ -1206,8 +1201,13 @@ public class VCFview extends JPanel
         }
         
         for(int sampleIndex = 0; sampleIndex < vcfReaders[vcfFileIndex].getNumberOfSamples(); sampleIndex++)
-          drawVariantCall(g, record, start, vcfFileIndex, sampleIndex, sumSamples, pixPerBase, features, 
+        {
+          if(sampleIndex <= viewIndex+2 && sampleIndex >= viewIndex-viewHgt-2)
+          {
+            drawVariantCall(g, record, start, vcfFileIndex, sampleIndex, sumSamples, pixPerBase, features, 
               vcfReaders[vcfFileIndex], basePosition);
+          }
+        }
       }
     }
     catch (IOException e)
