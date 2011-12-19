@@ -176,7 +176,7 @@ public class VCFview extends JPanel
   private VCFFilter filter;
   Hashtable<String, Integer> offsetLengths = null;
   private boolean concatSequences = false;
-  private boolean splitSamples = true;
+  private boolean splitSamples = false;
   
   protected static Pattern tabPattern = Pattern.compile("\t");
   
@@ -340,6 +340,19 @@ public class VCFview extends JPanel
       }
     });
     popup.add(markNewStops);
+    
+    
+    final JCheckBoxMenuItem split = new JCheckBoxMenuItem("Separate out into samples", splitSamples);
+    split.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        splitSamples = split.isSelected();
+        setDisplay();
+        revalidate();
+      }
+    });
+    popup.add(split);
     
     
     final JMenuItem byQuality = new JMenuItem("Filter ...");
@@ -1884,7 +1897,16 @@ public class VCFview extends JPanel
    private void setDisplay()
    {
      Dimension d = new Dimension();
-     d.setSize(nbasesInView*getPixPerBaseByWidth(), (vcfReaders.length+1)*(LINE_HEIGHT+5));
+     
+     if(splitSamples)
+     {
+       int count = 0;
+       for(int i=0; i<vcfReaders.length; i++)
+         count += vcfReaders[i].getNumberOfSamples();
+       d.setSize(nbasesInView*getPixPerBaseByWidth(), (count+1)*(LINE_HEIGHT+5));
+     }
+     else
+       d.setSize(nbasesInView*getPixPerBaseByWidth(), (vcfReaders.length+1)*(LINE_HEIGHT+5));
      setPreferredSize(d);
    }
    
