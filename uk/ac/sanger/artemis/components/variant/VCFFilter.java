@@ -550,7 +550,7 @@ public class VCFFilter extends JFrame
               
               if(sampleIndex > -1) // look at a specific sample
               {
-                if( !recFilter.pass(record, samples[sampleIndex].split(","), vcfReader))
+                if(samples[sampleIndex] == null || !recFilter.pass(record, samples[sampleIndex].split(","), vcfReader))
                   return false;
               }
               else                 // look at all samples
