@@ -1511,9 +1511,14 @@ public class VCFview extends JPanel
   private int getYPostion(int vcfFileIndex)
   {
     int pos = 0;
-    for(int i=0; i<vcfFileIndex; i++)
-      if(!hideVcfList.contains(i))
-        pos++;
+    if(hideVcfList.size() == 0)
+      pos = vcfFileIndex;
+    else
+    {
+      for(int i=0; i<vcfFileIndex; i++)
+        if(!hideVcfList.contains(i))
+          pos++; 
+    }
 
     return getHeight() - 15 - (pos*(LINE_HEIGHT+5));
   }

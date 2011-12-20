@@ -73,8 +73,8 @@ public class VCFRecord
    */
   protected static VCFRecord parse(String line)
   {
-    VCFRecord rec = new VCFRecord();
-    String parts[] = line.split("\\t");
+    final VCFRecord rec = new VCFRecord();
+    final String parts[] = TAB_PATTERN.split(line);
 
     rec.chrom = parts[0];
     rec.pos   = Integer.parseInt(parts[1]);
@@ -97,15 +97,12 @@ public class VCFRecord
     if(parts.length > 9)
     {
       rec.format  = parts[8].trim();
-      int nsamples = parts.length-9;
-      int nfmt = rec.format.split(":").length;
+      final int nsamples = parts.length-9;
+      final int nfmt = rec.format.split(":").length;
       
       rec.genotypeData = new String[nsamples][nfmt];
       for(int i=0; i<nsamples; i++)
-      {
-        final String data[] = COLON_PATTERN.split(parts[9+i]);
-        rec.genotypeData[i] = data;
-      }
+        rec.genotypeData[i] = COLON_PATTERN.split(parts[9+i]);
     }
     return rec;
   }
