@@ -170,9 +170,10 @@ public abstract class AbstractVCFReader
       return;
     }
     
-    TabixReader tr = new TabixReader(vcfFileName);
+    final TabixReader tr = new TabixReader(vcfFileName);
     String line;
     boolean headerEnd = true;
+
     while ((line = tr.readLine()) != null)
     {
       if(line.startsWith("##"))
@@ -183,7 +184,7 @@ public abstract class AbstractVCFReader
       }
       else if(headerEnd)
       {
-        writer.write(FilteredPanel.getHeader()+"\n");
+        writer.write(FilteredPanel.getHeader());
         headerEnd = false;
       }
       
@@ -220,7 +221,7 @@ public abstract class AbstractVCFReader
         {
           if(str.startsWith("#CHROM"))
           {
-            buff.append(filterLines+"\n");
+            buff.append(filterLines);
             buff.append(str+"\n");
           }
           else

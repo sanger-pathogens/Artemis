@@ -169,7 +169,11 @@ import javax.swing.border.Border;
       while(filterStr.hasMoreElements())
       {
         RecordFilter recFilter = filters.get(filterStr.nextElement());
-        buff.append(recFilter.getHeaderLine().toString());
+        buff.append("##FILTER=<ID=");
+        buff.append(recFilter.getHeaderLine().getID());
+        buff.append(",Description=\"");
+        buff.append(recFilter.toString());
+        buff.append("\">\n");
       }
       return buff.toString();
     }
