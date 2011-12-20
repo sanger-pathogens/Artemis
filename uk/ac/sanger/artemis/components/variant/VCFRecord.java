@@ -46,13 +46,14 @@ public class VCFRecord
   private String info;
   private String infos[];
   private String format;
-  private String data[][];
+  private String genotypeData[][];
   private short synFlag = -1;
   private boolean markAsNewStop = false;
 
   protected static Pattern MULTI_ALLELE_PATTERN = Pattern.compile("^[AGCTagct]+,[AGCTacgt,]+$");
   protected static Pattern COLON_PATTERN = Pattern.compile(":");
   protected static Pattern SEMICOLON_PATTERN = Pattern.compile(";");
+  protected static Pattern TAB_PATTERN = Pattern.compile("\\t");
 
   /**
    * Return the string representation of the VCF record as a
@@ -99,11 +100,11 @@ public class VCFRecord
       int nsamples = parts.length-9;
       int nfmt = rec.format.split(":").length;
       
-      rec.data = new String[nsamples][nfmt];
+      rec.genotypeData = new String[nsamples][nfmt];
       for(int i=0; i<nsamples; i++)
       {
-        String data[] = COLON_PATTERN.split(parts[9+i]);
-        rec.data[i] = data;
+        final String data[] = COLON_PATTERN.split(parts[9+i]);
+        rec.genotypeData[i] = data;
       }
     }
     return rec;
@@ -141,7 +142,7 @@ public class VCFRecord
   
   protected String getFormatValueForSample(String key, int sampleIndex)
   {
-    String fmtStr[] = getFormatValues(key);
+    final String fmtStr[] = getFormatValues(key);
     if(fmtStr == null)
       return null;
     return fmtStr[sampleIndex];
@@ -157,17 +158,16 @@ public class VCFRecord
     if(getFormat() == null)
       return null;
     final String fmts[] = COLON_PATTERN.split(getFormat());
+
     for(int i=0; i<fmts.length; i++)
     {
       if(fmts[i].equals(key))
       {
-        String samplesData[] = getSampleDataString().split("\\t");
-        String keyData[] = new String[samplesData.length];
-        for(int j=0; j<samplesData.length; j++)
+        final String keyData[] = new String[genotypeData.length];
+        for(int j=0; j<genotypeData.length; j++)
         {
-          String vals[] = COLON_PATTERN.split(samplesData[j]);
-          if(vals.length == fmts.length)
-            keyData[j] = vals[i];
+          if(genotypeData[j].length == fmts.length)
+            keyData[j] = genotypeData[j][i];
         }
         return keyData;
       }
@@ -181,18 +181,18 @@ public class VCFRecord
    */
   protected String getSampleDataString()
   {
-    if(data == null)
+    if(genotypeData == null)
       return "";
     StringBuffer buff = new StringBuffer();
-    for(int i=0; i<data.length; i++)       // loop over samples
+    for(int i=0; i<genotypeData.length; i++)       // loop over samples
     {
-      for(int j=0; j<data[i].length; j++)  // loop over values
+      for(int j=0; j<genotypeData[i].length; j++)  // loop over values
       {
-        buff.append(data[i][j]);
-        if(j<data[i].length-1)
+        buff.append(genotypeData[i][j]);
+        if(j<genotypeData[i].length-1)
           buff.append(":");
       }
-      if(i<data.length-1)
+      if(i<genotypeData.length-1)
         buff.append("\t");
     }
     return buff.toString();
@@ -356,17 +356,17 @@ public class VCFRecord
   /**
    * @return the data
    */
-  protected String[][] getData()
+  protected String[][] getGenoTypeData()
   {
-    return data;
+    return genotypeData;
   }
 
   /**
    * @param data the data to set
    */
-  protected void setData(String[][] data)
+  protected void setGenoTypeData(String[][] data)
   {
-    this.data = data;
+    this.genotypeData = data;
   }
 
 
