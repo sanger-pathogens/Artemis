@@ -250,7 +250,7 @@ class BCFReader extends AbstractVCFReader
       int nc  = (int) (n_alleles * ((float)(((float)n_alleles+1.f)/2.f)));
 
       String fmts[] = VCFRecord.COLON_PATTERN.split( bcfRecord.getFormat() );
-      bcfRecord.setData( new String[nsamples][fmts.length] );
+      bcfRecord.setGenoTypeData( new String[nsamples][fmts.length] );
 
       for(int i=0; i<fmts.length; i++)
       {
@@ -261,22 +261,22 @@ class BCFReader extends AbstractVCFReader
         if(fmts[i].equals("GT"))
         {
           for(int j=0; j<nsamples; j++)
-            bcfRecord.getData()[j][i] = getGTString(str[j]);
+            bcfRecord.getGenoTypeData()[j][i] = getGTString(str[j]);
         }
         else if(fmts[i].equals("PL"))
         {
           String pls[] = getPLString(str, nsamples);
           for(int j=0; j<nsamples; j++)
-            bcfRecord.getData()[j][i] = pls[j];
+            bcfRecord.getGenoTypeData()[j][i] = pls[j];
         }
         else if(fmts[i].equals("DP")||fmts[i].equals("SP")||fmts[i].equals("GQ"))
         {
           for(int j=0; j<nsamples; j++)
-            bcfRecord.getData()[j][i] = Integer.toString(byteToInt(str[j]));
+            bcfRecord.getGenoTypeData()[j][i] = Integer.toString(byteToInt(str[j]));
         }
         else
         {
-          bcfRecord.getData()[0][i] = new String(str);
+          bcfRecord.getGenoTypeData()[0][i] = new String(str);
         }
      }
    }
