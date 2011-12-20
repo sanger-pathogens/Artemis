@@ -751,7 +751,8 @@ public class VCFFilter extends JFrame
           }
         }
 
-        if(record.getFilter().length() == 0)
+        if(  record.getFilter().length() == 0 ||
+            (record.getFilter().length() == 1 && record.getFilter().equals(".")) )
           record.setFilter("PASS");
         return;
       }
