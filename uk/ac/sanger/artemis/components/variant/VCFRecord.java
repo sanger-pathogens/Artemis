@@ -312,7 +312,7 @@ public class VCFRecord
   
   protected void appendFilter(String filter)
   {
-    if(getFilter().length() == 0)
+    if(getFilter().length() == 0 || (getFilter().length() == 1 && getFilter().equals(".")))
       this.filter = filter;
     else
       this.filter += ";" + filter;
