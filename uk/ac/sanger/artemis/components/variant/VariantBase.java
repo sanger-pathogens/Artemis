@@ -68,10 +68,10 @@ public class VariantBase
     // look at probability of each genotype (PL) information as well
     if(sampleIndex < 0)
       sampleIndex = 0;
-    String pl = record.getFormatValueForSample("PL", sampleIndex);
+    final String pl = record.getFormatValueForSample("PL", sampleIndex);
     if(pl != null)
     {
-      String pls[] = COMMA_PATTERN.split(pl);
+      final String pls[] = COMMA_PATTERN.split(pl);
       if(pls.length == 3 && pls[1].equals("0")) // middle value is zero, e.g.
         return true;
     }
