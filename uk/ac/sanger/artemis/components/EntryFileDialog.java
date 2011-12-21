@@ -402,6 +402,20 @@ public class EntryFileDialog extends StickyFileChooser
         if(useAccessory)
           setAccessory(yBox);
 
+        switch(destination_type) // provide a suffix
+        {
+          case DocumentEntryFactory.EMBL_FORMAT:
+            super.setSelectedFile(new File(".embl"));
+            break;
+          case DocumentEntryFactory.GENBANK_FORMAT:
+            super.setSelectedFile(new File(".gbk"));
+            break;
+          case DocumentEntryFactory.GFF_FORMAT:
+            super.setSelectedFile(new File(".gff"));
+            break;
+          default:
+            break;
+        }
         int status = showSaveDialog(owner);
 
         if(status != JFileChooser.APPROVE_OPTION ||
