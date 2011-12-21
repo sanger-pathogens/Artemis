@@ -819,9 +819,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
        source_str = source;
 
       String key = getKey().getKeyString();
-      if(key.equals("CDS"))
-        key = "exon";
-      
+
       String translation = getTranslation();
       if(translation != null)
         attribute_string = attribute_string + ";" + translation;

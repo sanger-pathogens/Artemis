@@ -92,7 +92,9 @@ import javax.swing.text.JTextComponent;
 
 import org.apache.log4j.Level;
 
+import net.sf.picard.sam.BuildBamIndex;
 import net.sf.samtools.AlignmentBlock;
+import net.sf.samtools.SAMException;
 import net.sf.samtools.SAMFileHeader;
 import net.sf.samtools.SAMFileReader;
 import net.sf.samtools.SAMRecord;
@@ -410,6 +412,29 @@ public class BamView extends JPanel
       return samFileReaderHash.get(bam);
 
     File bamIndexFile = getBamIndexFile(bam);
+    if(!bamIndexFile.exists())
+    {
+      try
+      {
+        logger4j.warn("Index file not found so using picard to index the BAM.");
+        // Use Picard to index the file
+        // requires reads to be sorted by coordinate
+        new BuildBamIndex().instanceMain(
+          new String[]{ "I="+bam, "O="+bamIndexFile.getAbsolutePath(), "MAX_RECORDS_IN_RAM=50000" });
+      }
+      catch(SAMException e)
+      {
+        String ls = System.getProperty("line.separator");
+        String msg = 
+            "BAM index file is missing. The BAM file needs to be sorted and indexed"+ls+
+            "This can be done using samtools (http://samtools.sf.net/):"+ls+ls+
+            "samtools sort <in.bam> <out.prefix>"+ls+
+            "samtools index <sorted.bam>";
+        
+        throw new SAMException(msg);
+      }
+    }
+    
     final SAMFileReader samFileReader;
     
     if(bam.startsWith("ftp"))
@@ -1487,7 +1512,7 @@ public class BamView extends JPanel
         continue;
       
       g2.setStroke(originalStroke);
-      g2.setColor(Color.LIGHT_GRAY);
+      g2.setColor(Color.gray);
       
       if(pr.sam2 != null)
       {

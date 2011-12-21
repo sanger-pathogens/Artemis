@@ -229,7 +229,7 @@ public class GraphPanel extends JPanel
       AbstractVCFReader reader, int windowSize, int nBins, int snpCount[], int max)
   {
     int pos = record.getPos() + vcfView.getSequenceOffset(record.getChrom());
-    if(!vcfView.showVariant(record, features, pos, reader.isVcf_v4()))
+    if(!vcfView.showVariant(record, features, pos, reader, -1))
       return max;
     
     int bin = (int)((pos-vcfView.getBaseAtStartOfView()) / windowSize);
