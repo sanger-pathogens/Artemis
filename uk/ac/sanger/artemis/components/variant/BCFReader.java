@@ -27,7 +27,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Writer;
 import java.net.URL;
 import java.util.List;
 import java.util.Vector;
@@ -47,17 +46,16 @@ class BCFReader extends AbstractVCFReader
   
   // header information and names
   private String[] seqNames;
-  private String[] sampleNames;
-  private int nsamples;
+
   private String metaData;
   private String fileName;
   
   //
   // Nasty work around for backward compatibility with old BCF files.
   // Assume new BCF file unless ArrayIndexOutOfBoundsException thrown. 
-  // The have newer BCF files has:
+  // The newer BCF files have:
   // SP type of long 
-  private boolean newBCF = true; 
+  protected boolean newBCF = true; 
 
   private static org.apache.log4j.Logger logger4j = 
     org.apache.log4j.Logger.getLogger(BCFReader.class);
@@ -173,7 +171,12 @@ class BCFReader extends AbstractVCFReader
 
     StringBuffer buff = new StringBuffer();
     for(int i=0; i<meta.length; i++)
+    {
+      // expecting null terminated
+      if(meta[i] == 0 && i == meta.length-1)
+        continue;
       buff.append((char)meta[i]);
+    }
 
     metaData = buff.toString();
   }
@@ -247,7 +250,7 @@ class BCFReader extends AbstractVCFReader
       int nc  = (int) (n_alleles * ((float)(((float)n_alleles+1.f)/2.f)));
 
       String fmts[] = VCFRecord.COLON_PATTERN.split( bcfRecord.getFormat() );
-      bcfRecord.setData( new String[nsamples][fmts.length] );
+      bcfRecord.setGenoTypeData( new String[nsamples][fmts.length] );
 
       for(int i=0; i<fmts.length; i++)
       {
@@ -258,22 +261,22 @@ class BCFReader extends AbstractVCFReader
         if(fmts[i].equals("GT"))
         {
           for(int j=0; j<nsamples; j++)
-            bcfRecord.getData()[j][i] = getGTString(str[j]);
+            bcfRecord.getGenoTypeData()[j][i] = getGTString(str[j]);
         }
         else if(fmts[i].equals("PL"))
         {
           String pls[] = getPLString(str, nsamples);
           for(int j=0; j<nsamples; j++)
-            bcfRecord.getData()[j][i] = pls[j];
+            bcfRecord.getGenoTypeData()[j][i] = pls[j];
         }
         else if(fmts[i].equals("DP")||fmts[i].equals("SP")||fmts[i].equals("GQ"))
         {
           for(int j=0; j<nsamples; j++)
-            bcfRecord.getData()[j][i] = Integer.toString(byteToInt(str[j]));
+            bcfRecord.getGenoTypeData()[j][i] = Integer.toString(byteToInt(str[j]));
         }
         else
         {
-          bcfRecord.getData()[0][i] = new String(str);
+          bcfRecord.getGenoTypeData()[0][i] = new String(str);
         }
      }
    }
@@ -406,21 +409,6 @@ class BCFReader extends AbstractVCFReader
   private int byteToInt(byte b)
   {
     return (int)(b & 0xFF);
-  }
-  
-  protected static void writeVCF(Writer writer, String vcfFileName) throws IOException
-  {
-    BCFReader reader = new BCFReader(vcfFileName);
-    writer.write( reader.headerToString()+"\n" );
-    
-    int sbeg = 0;
-    int send = Integer.MAX_VALUE;
-    VCFRecord record;
-    
-    while( (record = reader.nextRecord(null, sbeg, send)) != null)
-      writer.write(record.toString()+"\n");
-    writer.close();
-    reader.close();
   }
   
   protected List<BCFIndex> loadIndex() throws IOException

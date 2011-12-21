@@ -1,10 +1,13 @@
 
 package uk.ac.sanger.artemis.components.variant;
 
+import java.util.regex.Pattern;
+
 public class VariantBase
 {
   private VCFRecord record;
   private String alt;
+  protected static Pattern COMMA_PATTERN = Pattern.compile(",");
 
   public VariantBase(VCFRecord record, String alt)
   {
@@ -57,16 +60,18 @@ public class VariantBase
     return false;
   }
 
-  protected boolean isMultiAllele()
+  protected boolean isMultiAllele(int sampleIndex)
   {
     if (VCFRecord.MULTI_ALLELE_PATTERN.matcher(alt).matches())
       return true;
 
     // look at probability of each genotype (PL) information as well
-    String pl = record.getFormatValue("PL");
+    if(sampleIndex < 0)
+      sampleIndex = 0;
+    final String pl = record.getFormatValueForSample("PL", sampleIndex);
     if(pl != null)
     {
-      String pls[] = pl.split(",");
+      final String pls[] = COMMA_PATTERN.split(pl);
       if(pls.length == 3 && pls[1].equals("0")) // middle value is zero, e.g.
         return true;
     }
@@ -76,7 +81,8 @@ public class VariantBase
 
   protected int getNumAlleles()
   {
-    return alt.split(",").length + 1;
+    return COMMA_PATTERN.split(alt).length + 1;
+    //return alt.split(",").length + 1;
   }
 
   protected int getNumberOfIndels(boolean vcf_v4)

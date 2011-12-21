@@ -64,7 +64,7 @@ public class MultipleAlleleVariant
     String alt = record.getAlt().toString();
     String alleles[] = alt.toLowerCase().split(",");
     String pl;
-    if ((pl = record.getFormatValue("PL")) != null && pl.split(",").length == 3 &&
+    if ((pl = record.getFormatValueForSample("PL", 0)) != null && pl.split(",").length == 3 &&
          pl.split(",")[1].equals("0")) 
     {
       // include ref
