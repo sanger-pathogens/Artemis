@@ -333,12 +333,10 @@ public class VCFview extends JPanel
     popup.addSeparator();
     
 
-    markNewStops.addActionListener(new ActionListener(){
+    markNewStops.addActionListener(new ActionListener()
+    {
       public void actionPerformed(ActionEvent e)
       {
-        // gv1 - not needed as this is re-verified inside showVariant()
-        // if(!markNewStops.isSelected())
-            // markAsNewStop = false;
         repaint();
       }
     });

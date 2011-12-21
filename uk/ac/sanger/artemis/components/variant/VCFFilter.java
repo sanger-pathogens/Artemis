@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
@@ -47,7 +48,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
+import javax.swing.JTabbedPane;
 
 import uk.ac.sanger.artemis.FeatureVector;
 import uk.ac.sanger.artemis.circular.TextFieldFloat;
@@ -59,11 +60,11 @@ public class VCFFilter extends JFrame
   private static final long serialVersionUID = 1L;
 
   private static boolean useHeader = true;
-  private static int MIN_DP = 0;
+/*  private static int MIN_DP = 0;
   private static float MIN_MQ = 0;
   private static float MIN_AF1 = 0;
   private static float MAX_CI95 = 10;
-  private static Pattern COMMA_PATTERN = Pattern.compile(",");
+  private static Pattern COMMA_PATTERN = Pattern.compile(",");*/
   private static Pattern SEMICOLON_PATTERN = Pattern.compile(";");
   private FilteredPanel filterPanel;
 
@@ -75,13 +76,11 @@ public class VCFFilter extends JFrame
   public VCFFilter(final VCFview vcfView)
   {
     super("Variant Filter");
-    GridBagConstraints c = new GridBagConstraints();
-    GridBagConstraints cMain = new GridBagConstraints();
-    JPanel mainPanel = (JPanel)getContentPane();
-    JPanel btmPanel = new JPanel(new GridBagLayout());
-    JPanel yBox = new JPanel(new GridBagLayout());
-    JScrollPane jsp = new JScrollPane(yBox);
-    
+
+    final JPanel mainPanel = (JPanel)getContentPane();
+    final JPanel btmPanel = new JPanel(new GridBagLayout());
+    final JTabbedPane tabPane = new JTabbedPane();
+
     final List<HeaderLine> filterHdrLines = vcfView.getVcfReaders()[0].getFILTER();
     
     filterPanel = new FilteredPanel(filterHdrLines);
@@ -89,32 +88,22 @@ public class VCFFilter extends JFrame
     ftrScroll.setPreferredSize( new Dimension(ftrScroll.getPreferredSize().width, 150) );
     
     final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-    jsp.setPreferredSize(new Dimension(screen.width*9/20, screen.height/2));
-    mainPanel.add(jsp, BorderLayout.NORTH);
+    tabPane.setPreferredSize(new Dimension(screen.width*9/20, screen.height/2));
+    mainPanel.add(tabPane, BorderLayout.NORTH);
     mainPanel.add(ftrScroll, BorderLayout.CENTER);
     mainPanel.add(btmPanel, BorderLayout.SOUTH);
-    
-    c.gridx = 0;
-    c.gridy = 0;
-    c.anchor = GridBagConstraints.WEST;
 
     ////
     ////
     //// Filter by type
-    JPanel typePanel = new JPanel(new GridBagLayout());
-    typePanel.setBorder(BorderFactory.createLineBorder(Color.gray));
-    cMain.gridx = 0;
-    cMain.gridy = 0;
-    cMain.insets = new Insets(2, 2, 2, 2);
-    cMain.anchor = GridBagConstraints.WEST;
-    yBox.add(typePanel, cMain);
-    JLabel typeLabel = new JLabel("TYPE:");
+    final Box typeBox = Box.createVerticalBox();
+    tabPane.addTab("Type", typeBox);
+    JLabel typeLabel = new JLabel("VARIANT TYPE");
     typeLabel.setFont(typeLabel.getFont().deriveFont(Font.BOLD));
-    typePanel.add(typeLabel, c);
-    
-    c.gridy = c.gridy + 1;
+    typeBox.add(typeLabel);
+
     final JCheckBox showSyn = new JCheckBox("Synonymous", vcfView.showSynonymous);
-    typePanel.add(showSyn, c);
+    typeBox.add(showSyn);
     showSyn.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e)
       {
@@ -124,9 +113,8 @@ public class VCFFilter extends JFrame
       }
     });
 
-    c.gridy = c.gridy + 1;
     final JCheckBox showNonSyn = new JCheckBox("Non-synonymous", vcfView.showNonSynonymous);
-    typePanel.add(showNonSyn, c);
+    typeBox.add(showNonSyn);
     showNonSyn.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e)
       {
@@ -135,10 +123,9 @@ public class VCFFilter extends JFrame
         vcfView.repaint();
       }
     });
-    
-    c.gridy = c.gridy + 1;
+
     final JCheckBox showDeletionsMenu = new JCheckBox("Deletions", vcfView.showDeletions);
-    typePanel.add(showDeletionsMenu, c);
+    typeBox.add(showDeletionsMenu);
     showDeletionsMenu.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e)
       {
@@ -148,9 +135,8 @@ public class VCFFilter extends JFrame
       }
     });
 
-    c.gridy = c.gridy + 1;
     final JCheckBox showInsertionsMenu = new JCheckBox("Insertions", vcfView.showInsertions);
-    typePanel.add(showInsertionsMenu, c);
+    typeBox.add(showInsertionsMenu);
     showInsertionsMenu.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e)
       {
@@ -159,10 +145,9 @@ public class VCFFilter extends JFrame
         vcfView.repaint();
       }
     });
-    
-    c.gridy = c.gridy + 1;
+
     final JCheckBox showMultiAllelesMenu = new JCheckBox("Multiple alleles", vcfView.showMultiAlleles);
-    typePanel.add(showMultiAllelesMenu, c);
+    typeBox.add(showMultiAllelesMenu);
     showMultiAllelesMenu.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e)
       {
@@ -172,9 +157,8 @@ public class VCFFilter extends JFrame
       }
     });
     
-    c.gridy = c.gridy + 1;
     final JCheckBox showNonOverlappingsMenu = new JCheckBox("Variants not overlapping CDS", vcfView.showNonOverlappings);
-    typePanel.add(showNonOverlappingsMenu, c);
+    typeBox.add(showNonOverlappingsMenu);
     showNonOverlappingsMenu.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e)
       {
@@ -184,9 +168,8 @@ public class VCFFilter extends JFrame
       }
     });
     
-    c.gridy = c.gridy + 1;
     final JCheckBox showNonVariantMenu = new JCheckBox("Non-Variants", vcfView.showNonVariants);
-    typePanel.add(showNonVariantMenu, c);
+    typeBox.add(showNonVariantMenu);
     showNonVariantMenu.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e)
       {
@@ -196,6 +179,8 @@ public class VCFFilter extends JFrame
       }
     });
     setFlagFilter(HeaderLine.FILTER_NV_FLAG, "NV", showNonVariantMenu.getText(), showNonVariantMenu.isSelected());
+    
+    typeBox.add(Box.createVerticalGlue());
     
     if(vcfView.getEntryGroup() == null || vcfView.getEntryGroup().getAllFeaturesCount() == 0)
     {
@@ -207,29 +192,34 @@ public class VCFFilter extends JFrame
     ////
     ////
     //// Filter by property
-    final List<HeaderLine> info = vcfView.getVcfReaders()[0].getINFO();
+    final GridBagConstraints c = new GridBagConstraints();
+    c.gridx = 0;
+    c.gridy = 0;
+    c.anchor = GridBagConstraints.NORTHWEST;
     
-    JPanel propPanel = new JPanel(new GridBagLayout());
+    final List<HeaderLine> info = vcfView.getVcfReaders()[0].getINFO();
+
+    final JPanel propPanel = new JPanel(new GridBagLayout());
+    final JScrollPane jspProp = new JScrollPane(propPanel);
     propPanel.setBorder(BorderFactory.createLineBorder(Color.gray));
-    cMain.gridy = cMain.gridy+1;
-    yBox.add(propPanel, cMain);
-    c.gridy = c.gridy+1;
+
+    tabPane.addTab("Info", jspProp);
+    c.gridy += 1;
     propPanel.add(new JLabel(" "), c);
-    c.gridy = c.gridy+1;
-    JLabel propLabel = new JLabel("PROPERTY:");
+    c.gridy += 1;
+    JLabel propLabel = new JLabel("VARIANT PROPERTY:");
     propLabel.setFont(propLabel.getFont().deriveFont(Font.BOLD));
     propPanel.add(propLabel, c);
     
     // min quality
-    c.gridy = c.gridy + 1;
+    c.gridy += 1;
     c.gridx = 1;
     propPanel.add(new JLabel("MIN"), c);
-    c.gridx = c.gridx + 1;
+    c.gridx += 1;
     propPanel.add(new JLabel("MAX"), c);;
     
-    c.gridy = c.gridy+1;
+    c.gridy += 1;
     c.gridx = 0;
-    c.anchor = GridBagConstraints.WEST;
     propPanel.add(new JLabel("Quality score (QUAL):"), c);
     final TextFieldFloat minQuality = new TextFieldFloat();
     minQuality.setColumns(8);
@@ -252,15 +242,15 @@ public class VCFFilter extends JFrame
 
     ////
     ////
-    final JTextField minDP = new JTextField(Integer.toString(MIN_DP), 8);
+/*    final JTextField minDP = new JTextField(Integer.toString(MIN_DP), 8);
     final JTextField minMQ = new JTextField(Float.toString(MIN_MQ),8);
     final JTextField minAF1 = new JTextField(Float.toString(MIN_AF1),8);
-    final JTextField maxCI95 = new JTextField(Float.toString(MAX_CI95),8);
+    final JTextField maxCI95 = new JTextField(Float.toString(MAX_CI95),8);*/
     
     if(info.size() == 0)
     {
       useHeader = false;
-      // min DP
+/*      // min DP
       c.gridy = c.gridy+1;
       c.gridx = 0;
       propPanel.add(new JLabel("Minimum combined depth across samples (DP):"), c);
@@ -290,7 +280,7 @@ public class VCFFilter extends JFrame
       propPanel.add(new JLabel("Maximum 95% confidence interval variation from AF (CI95):"), c);
 
       c.gridx = 1;
-      propPanel.add(maxCI95, c);
+      propPanel.add(maxCI95, c);*/
     }
     else
     {
@@ -302,12 +292,11 @@ public class VCFFilter extends JFrame
     ////
     //// FORMAT - Genotype Filter
     final List<HeaderLine> format = vcfView.getVcfReaders()[0].getFORMAT();
-    
-    JPanel formatPanel = new JPanel(new GridBagLayout());
+
+    final JPanel formatPanel = new JPanel(new GridBagLayout());
     formatPanel.setBorder(BorderFactory.createLineBorder(Color.gray));
-    cMain.gridy = cMain.gridy+1;
-    yBox.add(formatPanel, cMain);
-    
+
+    tabPane.addTab("Genotype", formatPanel);
     createPanel(formatPanel, c, format, "GENOTYPE FIELDS:");
 
     //
@@ -321,13 +310,13 @@ public class VCFFilter extends JFrame
       {
         try
         {
-          if(info.size() == 0)
+/*          if(info.size() == 0)
           {
             MIN_DP = Integer.parseInt(minDP.getText());
             MIN_MQ = Float.parseFloat(minMQ.getText());
             MIN_AF1 = Float.parseFloat(minAF1.getText());
             MAX_CI95 = Float.parseFloat(maxCI95.getText());
-          }
+          }*/
           vcfView.repaint();
         }
         catch(NumberFormatException ex)
@@ -372,21 +361,26 @@ public class VCFFilter extends JFrame
     filterPanel.updateFilters();  
   }
   
-  private void createPanel(JPanel panel, GridBagConstraints c, List<HeaderLine> headerLineList, String name)
+  private void createPanel(final JPanel panel, 
+                           final GridBagConstraints c, 
+                           final List<HeaderLine> headerLineList, 
+                           final String name)
   {
     c.gridx = 0;
-    c.gridy = c.gridy+1;
+    c.gridy += 1;
+    c.weightx = 1.d;
+    c.weighty = 1.d;
+
     panel.add(new JLabel(" "), c);
-    c.gridy = c.gridy+1;
+    c.gridy += 1;
     JLabel nameLabel = new JLabel(name);
     nameLabel.setFont(panel.getFont().deriveFont(Font.BOLD));
     panel.add(nameLabel, c);
     
-    c.gridy = c.gridy+1;
+    c.gridy += 1;
     panel.add(new JLabel(" "), c);
-    c.gridy = c.gridy+1;
+    c.gridy += 1;
 
-    
     for (int i = 0; i < headerLineList.size(); i++)
     {
       final HeaderLine hLine = headerLineList.get(i);
@@ -396,18 +390,18 @@ public class VCFFilter extends JFrame
 
       int num = hLine.getNumber();
 
-      c.gridy = c.gridy + 1;
+      c.gridy += 1;
       c.gridx = 0;
       for (int j = 0; j < num; j++)
       {
-        c.gridx = c.gridx + 1;
+        c.gridx += 1;
         panel.add(new JLabel("MIN"), c);
-        c.gridx = c.gridx + 1;
+        c.gridx += 1;
         panel.add(new JLabel("MAX"), c);
-        c.gridx = c.gridx + 1;
+        c.gridx += 1;
       }
       
-      c.gridy = c.gridy + 1;
+      c.gridy += 1;
       c.gridx = 0;
       
       JLabel lab = new JLabel(hLine.getID() + " (" + type + ")");
@@ -429,7 +423,7 @@ public class VCFFilter extends JFrame
             filterPanel.updateFilters();
           }
         });
-        c.gridx = c.gridx + 1;
+        c.gridx += 1;
         panel.add(flag, c);
       }
 
@@ -441,9 +435,9 @@ public class VCFFilter extends JFrame
           min.setColumns(8);
           final TextFieldInt max = new TextFieldInt();
           max.setColumns(8);
-          c.gridx = c.gridx + 1;
+          c.gridx += 1;
           panel.add(min, c);
-          c.gridx = c.gridx + 1;
+          c.gridx += 1;
           panel.add(max, c);
           
           max.addKeyListener(new FilterListener(hLine, false, j, num));
@@ -455,9 +449,9 @@ public class VCFFilter extends JFrame
           min.setColumns(8);
           TextFieldFloat max = new TextFieldFloat();
           max.setColumns(8);
-          c.gridx = c.gridx + 1;
+          c.gridx += 1;
           panel.add(min, c);
-          c.gridx = c.gridx + 1;
+          c.gridx += 1;
           panel.add(max, c);
           
           max.addKeyListener(new FilterListener(hLine, false, j, num));
@@ -466,11 +460,22 @@ public class VCFFilter extends JFrame
         
         if(j<num-1)
         {
-          c.gridx = c.gridx + 1;
+          c.gridx += 1;
           panel.add(new JLabel(":"), c);
         }
       }
     }
+    
+    
+    c.gridx = 100;
+    c.weightx = 200.d;
+    c.fill = GridBagConstraints.HORIZONTAL;
+    panel.add(new JLabel(""), c);
+    c.gridy += 1;
+    c.weighty = 200.d;
+    c.fill = GridBagConstraints.VERTICAL;
+    panel.add(new JLabel(""), c);
+    c.fill = GridBagConstraints.NONE;
   }
   
   /**
@@ -541,7 +546,7 @@ public class VCFFilter extends JFrame
               }
               break;
             case HeaderLine.FORMAT_LINE:  // FORMAT Genotype line
-              String samples[] = record.getFormatValues(id);
+              final String samples[] = record.getFormatValues(id);
               if(samples == null)
                 return false;
 
@@ -557,7 +562,7 @@ public class VCFFilter extends JFrame
               {
                 for(int i=0; i<samples.length; i++)
                 {
-                  if( !recFilter.pass(record, samples[i].split(","), vcfReader))
+                  if( samples[i] == null || !recFilter.pass(record, samples[i].split(","), vcfReader))
                     return false;
                 }
               }
@@ -601,7 +606,7 @@ public class VCFFilter extends JFrame
         return true;
       }
       
-      try
+/*      try
       {
         if(VCFFilter.MIN_DP > 0 && Integer.parseInt(record.getInfoValue("DP")) < VCFFilter.MIN_DP)
           return false;
@@ -632,7 +637,7 @@ public class VCFFilter extends JFrame
             return false;
         }
       }
-      catch(NullPointerException npe){}
+      catch(NullPointerException npe){}*/
     }
     catch(NumberFormatException e)
     {
@@ -758,7 +763,7 @@ public class VCFFilter extends JFrame
       }
 
       // OTHERS
-      try
+/*      try
       {
         if(VCFFilter.MIN_DP > 0 && Integer.parseInt(record.getInfoValue("DP")) < VCFFilter.MIN_DP)
           record.appendFilter("DP");
@@ -789,7 +794,7 @@ public class VCFFilter extends JFrame
             record.appendFilter("CI95");
         }
       }
-      catch(NullPointerException npe){}
+      catch(NullPointerException npe){}*/
     }
     catch(NumberFormatException e)
     {
