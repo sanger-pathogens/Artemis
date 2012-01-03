@@ -720,6 +720,8 @@ public class VCFFilter extends JFrame
               
             case HeaderLine.FORMAT_LINE:  // FORMAT Genotype line
               final String samples[] = record.getFormatValues(id);
+              
+              id = "sample" + recFilter.getHeaderLine().getID();
               if(samples == null)
               {
                 record.appendFilter(id);

@@ -137,7 +137,14 @@ package uk.ac.sanger.artemis.components.variant;
       if(hLine.isFlag())
         return hLine.getDescription();
       
-      StringBuffer buff = new StringBuffer(hLine.getHeaderTypeStr()+" ");
+      StringBuffer buff = new StringBuffer(hLine.getHeaderTypeStr());
+      buff.append(": ");
+      buff.append(hLine.getDescription());
+      buff.append(", ");
+      
+      final String id = (hLine.getHeaderType() == HeaderLine.FORMAT_LINE ? "sample" : "") +
+          hLine.getID();
+      
       for(int i=0; i<NUMBER; i++)
       {
         if(i > 0)
@@ -146,23 +153,23 @@ package uk.ac.sanger.artemis.components.variant;
         {
           if(minIVal[i] > Integer.MIN_VALUE) 
           {  
-            buff.append(hLine.getID()+" < "+minIVal[i]);
+            buff.append(id+" < "+minIVal[i]);
             if(maxIVal[i] < Integer.MAX_VALUE)
               buff.append(" ");
           }
           if(maxIVal[i] < Integer.MAX_VALUE)
-            buff.append(hLine.getID()+" > "+maxIVal[i]);
+            buff.append(id+" > "+maxIVal[i]);
         }
         else if (hLine.getType().equals("Float"))
         {
           if(minFVal[i] > Float.MIN_VALUE)
           {
-            buff.append(hLine.getID()+" < "+minFVal[i]);
+            buff.append(id+" < "+minFVal[i]);
             if(maxFVal[i] < Float.MAX_VALUE)
               buff.append(" ");
           }
           if(maxFVal[i] < Float.MAX_VALUE)
-            buff.append(hLine.getID()+" > "+maxFVal[i]);;
+            buff.append(id+" > "+maxFVal[i]);;
         }
       }
       return buff.toString();
