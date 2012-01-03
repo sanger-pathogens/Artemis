@@ -137,7 +137,7 @@ package uk.ac.sanger.artemis.components.variant;
       if(hLine.isFlag())
         return hLine.getDescription();
       
-      StringBuffer buff = new StringBuffer();
+      StringBuffer buff = new StringBuffer(hLine.getHeaderTypeStr()+" ");
       for(int i=0; i<NUMBER; i++)
       {
         if(i > 0)
