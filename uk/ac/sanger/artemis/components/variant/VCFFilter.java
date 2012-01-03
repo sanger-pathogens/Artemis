@@ -28,7 +28,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -718,7 +717,29 @@ public class VCFFilter extends JFrame
                        !recFilter.pass(record, record.getInfoValue(id).split(","), vcfReader))
                 record.appendFilter(id);
               break;
-            case HeaderLine.FORMAT_LINE:  // FORMAT
+              
+            case HeaderLine.FORMAT_LINE:  // FORMAT Genotype line
+              final String samples[] = record.getFormatValues(id);
+              if(samples == null)
+              {
+                record.appendFilter(id);
+                break;
+              }
+
+              //if (recFilter.getHeaderLine().isFlag())
+              //{
+              //  return true;
+              //}
+              
+              for(int i=0; i<samples.length; i++)
+              {
+                if( samples[i] == null || !recFilter.pass(record, samples[i].split(","), vcfReader))
+                {
+                  record.appendFilter(id);
+                  break;
+                }
+              }
+              
               break;
             case HeaderLine.FILTER_LINE:  // FILTER
               break;
