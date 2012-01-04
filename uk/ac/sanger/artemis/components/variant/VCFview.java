@@ -179,7 +179,7 @@ public class VCFview extends JPanel
   private VCFFilter filter;
   Hashtable<String, Integer> offsetLengths = null;
   private boolean concatSequences = false;
-  private boolean splitSamples = false;
+  private boolean splitSamples = true;
   
   protected static Pattern tabPattern = Pattern.compile("\t");
   
@@ -946,6 +946,7 @@ public class VCFview extends JPanel
     if(vcfReaders == null)
       return null;
     
+    mouseVCF = null;
     findVariantAtPoint(lastMousePoint);
     if(mouseVCF == null)
       return null;
@@ -957,7 +958,15 @@ public class VCFview extends JPanel
     msg += "Variant: "+mouseVCF.getRef()+" -> "+mouseVCF.getAlt().toString()+"\n";
     msg += "Qual: "+mouseVCF.getQuality()+"\n";
     String pl[];
-    if((pl = mouseVCF.getFormatValues("PL")) != null)
+    
+    if(splitSamples && mouseOverSampleIndex >= 0)
+    {
+      msg += "Genotype ";
+      msg += mouseVCF.getFormat();
+      msg += "\n";
+      msg += mouseVCF.getFormatValueForSample(mouseOverSampleIndex);
+    }
+    else if((pl = mouseVCF.getFormatValues("PL")) != null)
     {
       msg += "Genotype likelihood (PL):\n";
       if(mouseOverSampleIndex < 0)
@@ -1533,8 +1542,6 @@ public class VCFview extends JPanel
     for (int i = 0; i < vcfReaders.length; i++)
     {
 
-
-
         if(concatSequences) 
         {
           String[] contigs = vcfReaders[0].getSeqNames();
@@ -1856,6 +1863,7 @@ public class VCFview extends JPanel
          if(showDetails != null)
            popup.remove(showDetails);
          
+         mouseVCF = null;
          findVariantAtPoint(e.getPoint());
          if( mouseVCF != null )
          {
