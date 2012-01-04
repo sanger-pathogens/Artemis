@@ -26,10 +26,13 @@ package uk.ac.sanger.artemis.components.variant;
   {
     /** associated header line */
     private HeaderLine hLine;
+    /** number of possible values */
     private int NUMBER;
+    /** min/max filter values (for integer) */
     protected int minIVal[];
     protected int maxIVal[];
     
+    /** min/max filter values (for float) */
     protected float minFVal[];
     protected float maxFVal[];
     
@@ -67,12 +70,12 @@ package uk.ac.sanger.artemis.components.variant;
       String numStr = hLine.getNumberString();
       if(numStr == null)
         return pass(valStr);
-      
+
       // numStr - if this is not a number it can be:
       // '.' - number of possible values varies, is unknown, or is unbounded
       // 'A' - one value per alternate allele
       // 'G' - one value for each possible genotype
-      
+
 /*      int nvals = 0;
       if (numStr.equals("A"))
         nvals = record.getAlt().getNumAlleles();
@@ -83,17 +86,24 @@ package uk.ac.sanger.artemis.components.variant;
       
       for (int i = 0; i < valStr.length; i++)
       {
-        if (hLine.getType().equals("Integer"))
+        try
         {
-          int val = Integer.parseInt(valStr[i]);
-          if (val < minIVal[0] || val > maxIVal[0])
-            return false;
+          if (hLine.getType().equals("Integer"))
+          {
+            int val = Integer.parseInt(valStr[i]);
+            if (val < minIVal[0] || val > maxIVal[0])
+              return false;
+          }
+          else if (hLine.getType().equals("Float"))
+          {
+            float val = Float.parseFloat(valStr[i]);
+            if (val < minFVal[0] || val > maxFVal[0])
+              return false;
+          }
         }
-        else if (hLine.getType().equals("Float"))
+        catch(NumberFormatException nfe)
         {
-          float val = Float.parseFloat(valStr[i]);
-          if (val < minFVal[0] || val > maxFVal[0])
-            return false;
+          return false;
         }
       }
       
