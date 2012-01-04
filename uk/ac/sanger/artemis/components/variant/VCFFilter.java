@@ -87,7 +87,7 @@ public class VCFFilter extends JFrame
     ftrScroll.setPreferredSize( new Dimension(ftrScroll.getPreferredSize().width, 150) );
     
     final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-    tabPane.setPreferredSize(new Dimension(screen.width*9/20, screen.height/2));
+    tabPane.setPreferredSize(new Dimension(screen.width*9/22, screen.height*2/5));
     mainPanel.add(tabPane, BorderLayout.NORTH);
     mainPanel.add(ftrScroll, BorderLayout.CENTER);
     mainPanel.add(btmPanel, BorderLayout.SOUTH);
