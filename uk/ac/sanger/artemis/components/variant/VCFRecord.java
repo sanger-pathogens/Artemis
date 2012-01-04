@@ -137,6 +137,31 @@ public class VCFRecord
     return false;
   }
   
+  /**
+   * Get genotype values for a given sample.
+   * @param sampleIndex
+   * @return
+   */
+  protected String getFormatValueForSample(int sampleIndex)
+  {
+    if(getFormat() == null)
+      return null;
+    final StringBuffer buff = new StringBuffer();
+    for(int i=0; i<genotypeData[sampleIndex].length; i++)  // loop over values
+    {
+      buff.append(genotypeData[sampleIndex][i]);
+      if(i<genotypeData[sampleIndex].length-1)
+        buff.append(":");
+    }
+    return buff.toString();
+  }
+  
+  /**
+   * Get genotype values for a given key within a given sample.
+   * @param key
+   * @param sampleIndex
+   * @return
+   */
   protected String getFormatValueForSample(String key, int sampleIndex)
   {
     final String fmtStr[] = getFormatValues(key);
