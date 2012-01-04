@@ -71,7 +71,7 @@ public class VCFRecord
    * @param line
    * @return
    */
-  protected static VCFRecord parse(String line)
+  protected static VCFRecord parse(final String line)
   {
     final VCFRecord rec = new VCFRecord();
     final String parts[] = TAB_PATTERN.split(line);
@@ -520,7 +520,7 @@ public class VCFRecord
             for(int k=0; k<ranges.size(); k++)
               System.out.println(k+" "+ ((Range)ranges.get(k)).getStart() );
               
-            System.out.println(gfeat.id+"  "+codonStart+" "+gfeat.intronlength+" basePosition="+basePosition+" segment="+range.getStart()+".."+range.getEnd()+" mod="+mod);
+            System.out.println(gfeat.feature.getIDString()+"  "+codonStart+" "+gfeat.intronlength+" basePosition="+basePosition+" segment="+range.getStart()+".."+range.getEnd()+" mod="+mod);
             throw new RuntimeException(e);
           }
         }
