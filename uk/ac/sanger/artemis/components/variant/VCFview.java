@@ -957,7 +957,7 @@ public class VCFview extends JPanel
     msg += "ID:  "+mouseVCF.getID()+"\n";
     msg += "Variant: "+mouseVCF.getRef()+" -> "+mouseVCF.getAlt().toString()+"\n";
     msg += "Qual: "+mouseVCF.getQuality()+"\n";
-    String pl[];
+    String dp;
     
     if(splitSamples && mouseOverSampleIndex >= 0)
     {
@@ -966,14 +966,9 @@ public class VCFview extends JPanel
       msg += "\n";
       msg += mouseVCF.getFormatValueForSample(mouseOverSampleIndex);
     }
-    else if((pl = mouseVCF.getFormatValues("PL")) != null)
+    else if((dp = mouseVCF.getInfoValue("DP")) != null)
     {
-      msg += "Genotype likelihood (PL):\n";
-      if(mouseOverSampleIndex < 0)
-        for(String p: pl)
-          msg += p+"\n";
-      else
-        msg += pl[mouseOverSampleIndex]+"\n";
+      msg += "DP:"+dp;
     }
     return msg;
   }
