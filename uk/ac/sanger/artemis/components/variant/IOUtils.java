@@ -91,6 +91,8 @@ class IOUtils
     try
     {
       File filterFile = getFile(vcfFileName, nfiles, ".filter", null);
+      if(filterFile == null)
+        return null;
       FileWriter writer = new FileWriter(filterFile);
       AbstractVCFReader.write(vcfFileName, writer, vcfView, features);
 
@@ -150,6 +152,8 @@ class IOUtils
     for(int i=0; i<vcfFiles.size(); i++)
     {
       File filterFile = IOUtils.writeVCF(vcfFiles.get(i), vcfView, features, vcfFiles.size());
+      if(filterFile == null)
+        return;
       filterFiles += filterFile.getAbsolutePath()+"\n";
     }
 
