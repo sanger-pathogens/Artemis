@@ -94,7 +94,7 @@ public abstract class AbstractVCFReader
         tabixIterator = null;
         return null;
       }
-      record = VCFRecord.parse(s);
+      record = VCFRecord.parse(s, getNumberOfSamples());
       
       if(record == null)
         tabixIterator = null;
@@ -173,6 +173,7 @@ public abstract class AbstractVCFReader
     final TabixReader tr = new TabixReader(vcfFileName);
     String line;
     boolean headerEnd = true;
+    final StringBuffer buffHeader = new StringBuffer();
 
     while ((line = tr.readLine()) != null)
     {
@@ -180,6 +181,7 @@ public abstract class AbstractVCFReader
       {
         if(!line.startsWith("##FILTER"))
           writer.write(line+'\n');
+        buffHeader.append(line+'\n');
         continue;
       }
       else if(headerEnd)
@@ -191,10 +193,12 @@ public abstract class AbstractVCFReader
       if(line.startsWith("#"))
       {
         writer.write(line+'\n');
+        buffHeader.append(line+'\n');
+        tr.setHeader(buffHeader.toString());
         continue;
       }
       
-      VCFRecord record = VCFRecord.parse(line);
+      VCFRecord record = VCFRecord.parse(line, tr.getNumberOfSamples());
       int basePosition = record.getPos() + vcfView.getSequenceOffset(record.getChrom());
       VCFFilter.setFilterString(record, vcfView, basePosition, features, tr);
       writer.write(record.toString()+'\n');
