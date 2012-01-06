@@ -95,7 +95,7 @@ public class VCFRecord
     rec.filter  = parts[6];
     rec.info    = parts[7];
     
-    if(parts.length > 10)
+    if(parts.length > 9)
     {
       rec.format  = (parts[8]).trim();
       final int nfmt = countOccurrences(rec.format, ':')+1; //rec.format.split(":").length;
