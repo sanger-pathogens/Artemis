@@ -1191,7 +1191,7 @@ public class VCFview extends JPanel
       // viewport position and height
       int viewIndex = getHeight()/(LINE_HEIGHT+5) - jspView.getViewport().getViewPosition().y/(LINE_HEIGHT+5);
       int viewHgt = jspView.getViewport().getExtentSize().height/(LINE_HEIGHT+5);
-      
+
       while((record = vcfReaders[vcfFileIndex].getNextRecord(chr, sbeg, send)) != null)
       {
         int basePosition = record.getPos() + getSequenceOffset(record.getChrom());
@@ -1204,7 +1204,7 @@ public class VCFview extends JPanel
         
         for(int sampleIndex = 0; sampleIndex < vcfReaders[vcfFileIndex].getNumberOfSamples(); sampleIndex++)
         {
-          if(sampleIndex <= viewIndex+2 && sampleIndex >= viewIndex-viewHgt-2)
+          if(sampleIndex+sumSamples <= viewIndex+2 && sampleIndex+sumSamples >= viewIndex-viewHgt-2)
           {
             drawVariantCall(g, record, start, vcfFileIndex, sampleIndex, sumSamples, pixPerBase, features, 
               vcfReaders[vcfFileIndex], basePosition);
