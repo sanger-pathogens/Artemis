@@ -111,7 +111,7 @@ public class VCFRecord
     return rec;
   }
   
-  private static int countOccurrences(final String str, final char search)
+  protected static int countOccurrences(final String str, final char search)
   {
     int count = 0;
     for(int i=0; i < str.length(); i++)
@@ -129,7 +129,7 @@ public class VCFRecord
    * @param nsize
    * @return
    */
-  private static String[] split(final String argStr, final String splitChar, final int nsize)
+  protected static String[] split(final String argStr, final String splitChar, final int nsize)
   {
     final String str[] = new String[nsize];
     String value;
