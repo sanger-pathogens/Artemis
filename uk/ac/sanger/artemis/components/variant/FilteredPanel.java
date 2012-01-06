@@ -170,6 +170,8 @@ import javax.swing.border.Border;
       {
         RecordFilter recFilter = filters.get(filterStr.nextElement());
         buff.append("##FILTER=<ID=");
+        if(recFilter.getHeaderLine().getHeaderType() == HeaderLine.FORMAT_LINE)
+          buff.append("sample");
         buff.append(recFilter.getHeaderLine().getID());
         buff.append(",Description=\"");
         buff.append(recFilter.toString());

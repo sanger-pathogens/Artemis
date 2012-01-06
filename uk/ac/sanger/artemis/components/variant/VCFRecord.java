@@ -71,11 +71,12 @@ public class VCFRecord
    * @param line
    * @return
    */
-  protected static VCFRecord parse(String line)
+  protected static VCFRecord parse(final String line, int nsamples)
   {
     final VCFRecord rec = new VCFRecord();
-    final String parts[] = TAB_PATTERN.split(line);
-
+    final String parts[] = split(line, "\t", 9+nsamples);
+    //final String parts[] = TAB_PATTERN.split(line);
+    
     rec.chrom = parts[0];
     rec.pos   = Integer.parseInt(parts[1]);
     rec.ID    = parts[2];
@@ -94,17 +95,78 @@ public class VCFRecord
     rec.filter  = parts[6];
     rec.info    = parts[7];
     
-    if(parts.length > 9)
+    if(parts.length > 10)
     {
-      rec.format  = parts[8].trim();
-      final int nsamples = parts.length-9;
-      final int nfmt = rec.format.split(":").length;
-      
+      rec.format  = (parts[8]).trim();
+      final int nfmt = countOccurrences(rec.format, ':')+1; //rec.format.split(":").length;
+      nsamples = parts.length-9;
+          
       rec.genotypeData = new String[nsamples][nfmt];
       for(int i=0; i<nsamples; i++)
-        rec.genotypeData[i] = COLON_PATTERN.split(parts[9+i]);
+      {
+        //rec.genotypeData[i] = COLON_PATTERN.split(parts[9+i]);
+        rec.genotypeData[i] = split(parts[9+i], ":", nfmt);
+      }
     }
     return rec;
+  }
+  
+  private static int countOccurrences(final String str, final char search)
+  {
+    int count = 0;
+    for(int i=0; i < str.length(); i++)
+    {
+      if(str.charAt(i) == search)
+        count++;
+    }
+    return count;
+  }
+
+  /**
+   * Split a string into an array
+   * @param arg
+   * @param splitChar
+   * @param nsize
+   * @return
+   */
+  private static String[] split(final String argStr, final String splitChar, final int nsize)
+  {
+    final String str[] = new String[nsize];
+    String value;
+
+    int ind1 = 0;
+    int ind2;
+    int count = 0;
+    int argLen = argStr.length();
+
+    while(ind1 < argLen)
+    {
+      ind2 = argStr.indexOf(splitChar,ind1);
+      if(ind2 == ind1)
+      {
+        ind1++;
+        continue;
+      }
+
+      if(ind2 < 0)
+        ind2 = argLen;
+ 
+      value = argStr.substring(ind1,ind2);
+      ind1 = ind2+1;
+
+      str[count] = value;
+      count++;
+    }
+    
+    // shrink array if there are fewer elements
+    if(count < nsize)
+    {
+      String tmp[] = new String[count];
+      System.arraycopy( str, 0, tmp, 0, count );
+      return tmp;
+    }
+   
+    return str;
   }
 
   /**
@@ -137,6 +199,31 @@ public class VCFRecord
     return false;
   }
   
+  /**
+   * Get genotype values for a given sample.
+   * @param sampleIndex
+   * @return
+   */
+  protected String getFormatValueForSample(int sampleIndex)
+  {
+    if(getFormat() == null)
+      return null;
+    final StringBuffer buff = new StringBuffer();
+    for(int i=0; i<genotypeData[sampleIndex].length; i++)  // loop over values
+    {
+      buff.append(genotypeData[sampleIndex][i]);
+      if(i<genotypeData[sampleIndex].length-1)
+        buff.append(":");
+    }
+    return buff.toString();
+  }
+  
+  /**
+   * Get genotype values for a given key within a given sample.
+   * @param key
+   * @param sampleIndex
+   * @return
+   */
   protected String getFormatValueForSample(String key, int sampleIndex)
   {
     final String fmtStr[] = getFormatValues(key);
@@ -495,7 +582,7 @@ public class VCFRecord
             for(int k=0; k<ranges.size(); k++)
               System.out.println(k+" "+ ((Range)ranges.get(k)).getStart() );
               
-            System.out.println(gfeat.id+"  "+codonStart+" "+gfeat.intronlength+" basePosition="+basePosition+" segment="+range.getStart()+".."+range.getEnd()+" mod="+mod);
+            System.out.println(gfeat.feature.getIDString()+"  "+codonStart+" "+gfeat.intronlength+" basePosition="+basePosition+" segment="+range.getStart()+".."+range.getEnd()+" mod="+mod);
             throw new RuntimeException(e);
           }
         }

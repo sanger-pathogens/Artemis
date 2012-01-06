@@ -179,7 +179,7 @@ public class VCFview extends JPanel
   private VCFFilter filter;
   Hashtable<String, Integer> offsetLengths = null;
   private boolean concatSequences = false;
-  private boolean splitSamples = false;
+  private boolean splitSamples = true;
   
   protected static Pattern tabPattern = Pattern.compile("\t");
   
@@ -946,6 +946,7 @@ public class VCFview extends JPanel
     if(vcfReaders == null)
       return null;
     
+    mouseVCF = null;
     findVariantAtPoint(lastMousePoint);
     if(mouseVCF == null)
       return null;
@@ -956,15 +957,18 @@ public class VCFview extends JPanel
     msg += "ID:  "+mouseVCF.getID()+"\n";
     msg += "Variant: "+mouseVCF.getRef()+" -> "+mouseVCF.getAlt().toString()+"\n";
     msg += "Qual: "+mouseVCF.getQuality()+"\n";
-    String pl[];
-    if((pl = mouseVCF.getFormatValues("PL")) != null)
+    String dp;
+    
+    if(splitSamples && mouseOverSampleIndex >= 0)
     {
-      msg += "Genotype likelihood (PL):\n";
-      if(mouseOverSampleIndex < 0)
-        for(String p: pl)
-          msg += p+"\n";
-      else
-        msg += pl[mouseOverSampleIndex]+"\n";
+      msg += "Genotype ";
+      msg += mouseVCF.getFormat();
+      msg += "\n";
+      msg += mouseVCF.getFormatValueForSample(mouseOverSampleIndex);
+    }
+    else if((dp = mouseVCF.getInfoValue("DP")) != null)
+    {
+      msg += "DP:"+dp;
     }
     return msg;
   }
@@ -1187,7 +1191,7 @@ public class VCFview extends JPanel
       // viewport position and height
       int viewIndex = getHeight()/(LINE_HEIGHT+5) - jspView.getViewport().getViewPosition().y/(LINE_HEIGHT+5);
       int viewHgt = jspView.getViewport().getExtentSize().height/(LINE_HEIGHT+5);
-      
+
       while((record = vcfReaders[vcfFileIndex].getNextRecord(chr, sbeg, send)) != null)
       {
         int basePosition = record.getPos() + getSequenceOffset(record.getChrom());
@@ -1200,7 +1204,7 @@ public class VCFview extends JPanel
         
         for(int sampleIndex = 0; sampleIndex < vcfReaders[vcfFileIndex].getNumberOfSamples(); sampleIndex++)
         {
-          if(sampleIndex <= viewIndex+2 && sampleIndex >= viewIndex-viewHgt-2)
+          if(sampleIndex+sumSamples <= viewIndex+2 && sampleIndex+sumSamples >= viewIndex-viewHgt-2)
           {
             drawVariantCall(g, record, start, vcfFileIndex, sampleIndex, sumSamples, pixPerBase, features, 
               vcfReaders[vcfFileIndex], basePosition);
@@ -1533,8 +1537,6 @@ public class VCFview extends JPanel
     for (int i = 0; i < vcfReaders.length; i++)
     {
 
-
-
         if(concatSequences) 
         {
           String[] contigs = vcfReaders[0].getSeqNames();
@@ -1856,6 +1858,7 @@ public class VCFview extends JPanel
          if(showDetails != null)
            popup.remove(showDetails);
          
+         mouseVCF = null;
          findVariantAtPoint(e.getPoint());
          if( mouseVCF != null )
          {
