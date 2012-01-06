@@ -213,7 +213,7 @@ public class GraphPanel extends JPanel
         String s;
         while ((s = iter.next()) != null)
         {
-          VCFRecord record = VCFRecord.parse(s);
+          VCFRecord record = VCFRecord.parse(s, reader.getNumberOfSamples());
           max = calc(record, features, reader, windowSize, nBins, snpCount, max);
         }
       }

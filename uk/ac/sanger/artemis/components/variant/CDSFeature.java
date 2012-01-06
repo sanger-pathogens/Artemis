@@ -12,7 +12,7 @@ class CDSFeature
   protected int lastBase;
   protected int intronlength = 0;
   protected String bases;
-  protected String id;
+  protected Feature feature;
   protected Range lastRange = null;
 
   public CDSFeature(boolean isFwd,
@@ -35,7 +35,7 @@ class CDSFeature
     this.firstBase = feature.getRawFirstBase();
     this.lastBase  = feature.getRawLastBase();
     this.bases     = feature.getBases();
-    this.id        = feature.getIDString();
+    this.feature   = feature;
   } 
   
   public String toString() {
