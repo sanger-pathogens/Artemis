@@ -81,7 +81,8 @@ public class VariantBase
 
   protected int getNumAlleles()
   {
-    return COMMA_PATTERN.split(alt).length + 1;
+    return VCFRecord.countOccurrences(alt, ',')+2;
+    //return COMMA_PATTERN.split(alt).length + 1;
     //return alt.split(",").length + 1;
   }
 
