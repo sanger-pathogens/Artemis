@@ -241,15 +241,21 @@ class BCFReader extends AbstractVCFReader
 
     if(formatPattern.matcher(bcfRecord.getFormat()).matches())
     {
-      int n_alleles = bcfRecord.getAlt().getNumAlleles();
+      int n_alleles;
       if(bcfRecord.getAlt().toString().equals(":")) // non-variant
       {
         n_alleles = 1;
         bcfRecord.setAlt(".");
       }
+      else
+        n_alleles = bcfRecord.getAlt().getNumAlleles();
       int nc  = (int) (n_alleles * ((float)(((float)n_alleles+1.f)/2.f)));
 
-      String fmts[] = VCFRecord.COLON_PATTERN.split( bcfRecord.getFormat() );
+      //String fmts[] = VCFRecord.COLON_PATTERN.split( bcfRecord.getFormat() );
+      
+      final int nfmt = VCFRecord.countOccurrences(bcfRecord.getFormat(), ':')+1;
+      final String fmts[] = VCFRecord.split(bcfRecord.getFormat() , ":", nfmt);
+      
       bcfRecord.setGenoTypeData( new String[nsamples][fmts.length] );
 
       for(int i=0; i<fmts.length; i++)
@@ -291,9 +297,9 @@ class BCFReader extends AbstractVCFReader
    * @param b
    * @return
    */
-  private void getParts(byte[] b, VCFRecord bcfRecord)
+  private void getParts(final byte[] b, final VCFRecord bcfRecord)
   {
-    StringBuffer buff = new StringBuffer();
+    final StringBuilder buff = new StringBuilder();
     for(int i=0; i<b.length; i++)
     {
       if(i == 0 && b[i] == 0)
@@ -309,6 +315,8 @@ class BCFReader extends AbstractVCFReader
     int ind = 0;
     int lastInd = 0;
     int i = 0;
+    final int len = buff.length();
+    
     while((ind = buff.indexOf(" ", ind)) > -1)
     {
       switch( i )
@@ -323,7 +331,7 @@ class BCFReader extends AbstractVCFReader
       }
 
       ind++;
-      if(ind < buff.length() && buff.charAt(ind) == ' ')
+      if(ind < len && buff.charAt(ind) == ' ')
         ind++;
       lastInd = ind;
       i++;
