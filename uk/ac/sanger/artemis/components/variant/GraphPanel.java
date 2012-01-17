@@ -100,7 +100,7 @@ public class GraphPanel extends JPanel
     FeatureVector features = vcfView.getCDSFeaturesInRange(sbeg, send);
     for(int i=0; i<readers.length; i++)
     {
-      max = countAll(readers[i], sbeg, send, windowSize, nBins, features, snpCount, max);
+      max = countAll(i, readers[i], sbeg, send, windowSize, nBins, features, snpCount, max);
     }
     
     g2.setColor(Color.red);
@@ -149,7 +149,7 @@ public class GraphPanel extends JPanel
     g2.drawString(maxStr, xpos, fm.getHeight());
   }
   
-  private int countAll(AbstractVCFReader reader, int sbeg, int send, int windowSize, 
+  private int countAll(int vcfIndex, AbstractVCFReader reader, int sbeg, int send, int windowSize, 
       int nBins, FeatureVector features, int snpCount[], int max)
   {
     if(vcfView.isConcatenate())
@@ -172,16 +172,16 @@ public class GraphPanel extends JPanel
             thisStart = 1;
           int thisEnd   = send - offset;
           
-          max = count(reader, contigs[j], thisStart, thisEnd, windowSize, nBins, features, snpCount, max);
+          max = count(vcfIndex, reader, contigs[j], thisStart, thisEnd, windowSize, nBins, features, snpCount, max);
         }
       }
       return max;
     }
     else
-      return count(reader, vcfView.getChr(), sbeg, send, windowSize, nBins, features, snpCount, max);
+      return count(vcfIndex, reader, vcfView.getChr(), sbeg, send, windowSize, nBins, features, snpCount, max);
   }
   
-  private int count(AbstractVCFReader reader, String chr, int sbeg, int send, int windowSize, 
+  private int count(int vcfIndex, AbstractVCFReader reader, String chr, int sbeg, int send, int windowSize, 
       int nBins, FeatureVector features, int snpCount[], int max)
   {
     if(reader instanceof BCFReader)
@@ -194,7 +194,7 @@ public class GraphPanel extends JPanel
         VCFRecord record;
         while((record = it.next()) != null)
         {
-          max = calc(record, features, reader, windowSize, nBins, snpCount, max);
+          max = calc(vcfIndex, record, features, reader, windowSize, nBins, snpCount, max);
         }
       }
       catch (IOException e)
@@ -214,7 +214,7 @@ public class GraphPanel extends JPanel
         while ((s = iter.next()) != null)
         {
           VCFRecord record = VCFRecord.parse(s, reader.getNumberOfSamples());
-          max = calc(record, features, reader, windowSize, nBins, snpCount, max);
+          max = calc(vcfIndex, record, features, reader, windowSize, nBins, snpCount, max);
         }
       }
       catch (IOException e)
@@ -225,11 +225,11 @@ public class GraphPanel extends JPanel
     return max;
   }
   
-  private int calc(VCFRecord record, FeatureVector features,
+  private int calc(int vcfIndex, VCFRecord record, FeatureVector features,
       AbstractVCFReader reader, int windowSize, int nBins, int snpCount[], int max)
   {
     int pos = record.getPos() + vcfView.getSequenceOffset(record.getChrom());
-    if(!vcfView.showVariant(record, features, pos, reader, -1))
+    if(!vcfView.showVariant(record, features, pos, reader, -1, vcfIndex))
       return max;
     
     int bin = (int)((pos-vcfView.getBaseAtStartOfView()) / windowSize);
