@@ -36,6 +36,8 @@ import java.awt.FontMetrics;
 import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -54,12 +56,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -67,12 +72,14 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JRadioButton;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
@@ -103,6 +110,7 @@ import uk.ac.sanger.artemis.components.FeatureDisplay;
 import uk.ac.sanger.artemis.components.FileViewer;
 import uk.ac.sanger.artemis.components.MessageDialog;
 import uk.ac.sanger.artemis.components.MultiComparator;
+import uk.ac.sanger.artemis.components.Utilities;
 import uk.ac.sanger.artemis.components.alignment.FileSelectionDialog;
 import uk.ac.sanger.artemis.components.genebuilder.AutoCompleteComboDocument;
 import uk.ac.sanger.artemis.editor.MultiLineToolTipUI;
@@ -160,6 +168,8 @@ public class VCFview extends JPanel
   // show variants that do not overlap CDS
   protected boolean showNonOverlappings = true;
   protected boolean showNonVariants = false;
+  
+  private Map<String, Boolean> manualHash = new HashMap<String, Boolean>();
   
   //private boolean markAsNewStop = false;
   
@@ -445,7 +455,7 @@ public class VCFview extends JPanel
         try
         {
           f.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-          IOUtils.export(vcfFiles, VCFview.this);
+          IOUtils.export(manualHash, vcfFiles, VCFview.this);
         }
         finally
         {
@@ -1290,9 +1300,9 @@ public class VCFview extends JPanel
   }
   
   protected boolean showVariant(final VCFRecord record, final FeatureVector features, final int basePosition, 
-      final AbstractVCFReader vcfReader, final int nsample)
+      final AbstractVCFReader vcfReader, final int nsample, final int vcfIndex)
   { 
-    return VCFFilter.passFilter(record, vcfReader, features, basePosition, nsample);
+    return VCFFilter.passFilter(manualHash, record, vcfReader, features, basePosition, nsample, vcfIndex);
   }
   
   private void setAsStop(VCFRecord record, FeatureVector features, int basePosition, AbstractVCFReader vcfReader)
@@ -1368,7 +1378,7 @@ public class VCFview extends JPanel
                                final AbstractVCFReader vcfReader,
                                final int basePosition)
   {
-    boolean show = showVariant(record, features, basePosition, vcfReader, sampleIndex);
+    boolean show = showVariant(record, features, basePosition, vcfReader, sampleIndex, vcfIndex);
     if( !show )
       return;
     
@@ -1628,7 +1638,7 @@ public class VCFview extends JPanel
                            final AbstractVCFReader vcfReader)
   {
     int basePosition = record.getPos() + getSequenceOffset(record.getChrom());
-    if( !showVariant(record, features, basePosition, vcfReader, sampleIndex) )
+    if( !showVariant(record, features, basePosition, vcfReader, sampleIndex, vcfFileIndex) )
       return;
 
     int pos[];
@@ -1826,6 +1836,7 @@ public class VCFview extends JPanel
    class PopupListener extends MouseAdapter
    {
      JMenuItem showDetails;
+     JMenuItem annotate;
      
      public void mouseClicked(MouseEvent e)
      {
@@ -1856,43 +1867,58 @@ public class VCFview extends JPanel
        if(e.isPopupTrigger())
        {
          if(showDetails != null)
+         {
            popup.remove(showDetails);
+           popup.remove(annotate);
+         }
          
          mouseVCF = null;
          findVariantAtPoint(e.getPoint());
-         if( mouseVCF != null )
+         final VCFRecord thisMouseVCF = mouseVCF;
+         final int thisMouseOverIndex = mouseOverIndex;
+         if( thisMouseVCF != null )
          {
            showDetails = new JMenuItem("Show details of : "+
-               mouseVCF.getChrom()+":"+mouseVCF.getPos()+" "+mouseVCF.getID());
+               thisMouseVCF.getChrom()+":"+thisMouseVCF.getPos()+" "+thisMouseVCF.getID());
            showDetails.addActionListener(new ActionListener()
            {
              public void actionPerformed(ActionEvent e) 
              {
                FileViewer viewDetail = new FileViewer(
-                   mouseVCF.getChrom()+":"+mouseVCF.getPos()+" "+mouseVCF.getID(), true, false, true);
+                   thisMouseVCF.getChrom()+":"+thisMouseVCF.getPos()+" "+thisMouseVCF.getID(), true, false, true);
                
                viewDetail.appendString(vcfReaders[mouseOverIndex].getHeader()+"\n", Level.INFO);
                
-               viewDetail.appendString("Seq   : "+mouseVCF.getChrom()+"\n", Level.DEBUG);
-               viewDetail.appendString("Pos   : "+mouseVCF.getPos()+"\n", Level.DEBUG);
-               viewDetail.appendString("ID    : "+mouseVCF.getID()+"\n", Level.DEBUG);
-               viewDetail.appendString("Ref   : "+mouseVCF.getRef()+"\n", Level.DEBUG);
-               viewDetail.appendString("Alt   : "+mouseVCF.getAlt().toString()+"\n", Level.DEBUG);
-               viewDetail.appendString("Qual  : "+mouseVCF.getQuality()+"\n", Level.DEBUG);
-               viewDetail.appendString("Filter: "+mouseVCF.getFilter()+"\n", Level.DEBUG);
-               viewDetail.appendString("Info  : "+mouseVCF.getInfo()+"\n", Level.DEBUG);
+               viewDetail.appendString("Seq   : "+thisMouseVCF.getChrom()+"\n", Level.DEBUG);
+               viewDetail.appendString("Pos   : "+thisMouseVCF.getPos()+"\n", Level.DEBUG);
+               viewDetail.appendString("ID    : "+thisMouseVCF.getID()+"\n", Level.DEBUG);
+               viewDetail.appendString("Ref   : "+thisMouseVCF.getRef()+"\n", Level.DEBUG);
+               viewDetail.appendString("Alt   : "+thisMouseVCF.getAlt().toString()+"\n", Level.DEBUG);
+               viewDetail.appendString("Qual  : "+thisMouseVCF.getQuality()+"\n", Level.DEBUG);
+               viewDetail.appendString("Filter: "+thisMouseVCF.getFilter()+"\n", Level.DEBUG);
+               viewDetail.appendString("Info  : "+thisMouseVCF.getInfo()+"\n", Level.DEBUG);
                
-               if(mouseVCF.getFormat() != null)
+               if(thisMouseVCF.getFormat() != null)
                {
                  viewDetail.appendString("\nGenotype information:\n", Level.INFO);
-                 viewDetail.appendString("Format: "+mouseVCF.getFormat()+"\n", Level.DEBUG);
-                 viewDetail.appendString(mouseVCF.getSampleDataString()+"\n", Level.DEBUG);
+                 viewDetail.appendString("Format: "+thisMouseVCF.getFormat()+"\n", Level.DEBUG);
+                 viewDetail.appendString(thisMouseVCF.getSampleDataString()+"\n", Level.DEBUG);
                }
                
                viewDetail.getTextPane().setCaretPosition(0);
              }  
            });
            popup.add(showDetails);
+           
+           annotate = new JMenuItem("Manual PASS / FAIL");
+           annotate.addActionListener(new ActionListener()
+           {
+             public void actionPerformed(ActionEvent e) 
+             {
+               new ManualAnnotation(thisMouseVCF, thisMouseOverIndex);
+             }
+           });
+          popup.add(annotate);
          }
          popup.show(e.getComponent(),
              e.getX(), e.getY());
@@ -1926,6 +1952,98 @@ public class VCFview extends JPanel
    public void selectionChanged(SelectionChangeEvent event)
    {
      repaint();
+   }
+   
+   /**
+    * Manual annotation of a variant record.
+    */
+   class ManualAnnotation extends JFrame
+   {
+     private static final long serialVersionUID = 1L;
+
+    ManualAnnotation(final VCFRecord thisMouseVCF, final int thisMouseOverIndex)
+     {
+       super("Manual PASS / FAIL");
+       final JPanel pane = (JPanel) getContentPane();
+       pane.setLayout(new BorderLayout());
+       final JPanel panel = new JPanel(new GridBagLayout());
+       final JScrollPane jsp = new JScrollPane(panel);
+       jsp.setPreferredSize(new Dimension(350, 180));
+       pane.add(jsp, BorderLayout.NORTH);
+       
+       final GridBagConstraints c = new GridBagConstraints();
+       c.gridx = 0;
+       c.gridy = 0;
+       c.gridwidth = 3;
+       c.anchor = GridBagConstraints.NORTHWEST;
+       panel.add(new JLabel("Seq   : "+thisMouseVCF.getChrom()), c);
+       c.gridy++;
+       panel.add(new JLabel("Pos   : "+thisMouseVCF.getPos()), c);
+       c.gridy++;
+       panel.add(new JLabel("ID    : "+thisMouseVCF.getPos()), c);
+       c.gridy++;
+       panel.add(new JLabel("Ref   : "+thisMouseVCF.getRef()), c);
+       c.gridy++;
+       panel.add(new JLabel("Alt   : "+thisMouseVCF.getAlt().toString()), c);
+       c.gridy++;
+       panel.add(new JLabel("Qual  : "+thisMouseVCF.getQuality()), c);
+       c.gridy++;
+       panel.add(new JLabel("Filter: "+thisMouseVCF.getFilter()), c);
+       c.gridy++;
+       panel.add(new JLabel("Info  : "+thisMouseVCF.getInfo()), c);
+       
+       final JRadioButton passB = new JRadioButton("PASS");
+       final JRadioButton failB = new JRadioButton("FAIL");
+       final JRadioButton noManualB = new JRadioButton("NO MANUAL FILTER", true);
+
+       final ButtonGroup group = new ButtonGroup();
+       group.add(passB);
+       group.add(failB);
+       group.add(noManualB);
+
+       int res = VCFFilter.checkManualHash(manualHash, thisMouseVCF, thisMouseOverIndex, false);
+       switch(res)
+       {
+         case 1:  passB.setSelected(true);
+                  break;
+         case 2:  failB.setSelected(true);
+                  break;
+         default: noManualB.setSelected(true);
+                  break;
+       }
+       
+       c.gridy++;
+       panel.add(Box.createVerticalStrut(10), c);
+       
+       c.gridwidth = 1;
+       c.gridy++;
+       panel.add(passB, c);
+       c.gridx++;
+       panel.add(failB, c);
+       c.gridx++;
+       panel.add(noManualB, c);
+
+       final JButton apply = new JButton("Apply");
+       apply.addActionListener(new ActionListener()
+       {
+         public void actionPerformed(ActionEvent arg0)
+         {
+           setVisible(false);
+           if(passB.isSelected())
+             manualHash.put(thisMouseVCF.getPos()+":"+thisMouseVCF.getChrom()+":"+thisMouseOverIndex, true);
+           else if(failB.isSelected())
+             manualHash.put(thisMouseVCF.getPos()+":"+thisMouseVCF.getChrom()+":"+thisMouseOverIndex, false);
+           else
+             manualHash.remove(thisMouseVCF.getPos()+":"+thisMouseVCF.getChrom()+":"+thisMouseOverIndex);
+           VCFview.this.repaint();
+           ManualAnnotation.this.dispose();
+         }
+       });
+       pane.add(apply, BorderLayout.SOUTH);
+       pack();
+       Utilities.centreFrame(this);
+       setVisible(true);
+     }
    }
    
   public static void main(String args[])

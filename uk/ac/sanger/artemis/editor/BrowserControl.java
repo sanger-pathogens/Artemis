@@ -80,7 +80,7 @@ public class BrowserControl
 
       	String[] browsers = 
         {
-      	  "mozilla", "firefox", "opera", "konqueror", 
+      	  "x-www-browser", "mozilla", "firefox", "opera", "konqueror", 
           "epiphany", "netscape" 
         };
         String browser = null;

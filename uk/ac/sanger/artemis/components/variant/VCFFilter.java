@@ -36,6 +36,7 @@ import java.awt.event.KeyEvent;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
@@ -66,6 +67,7 @@ public class VCFFilter extends JFrame
   private static Pattern COMMA_PATTERN = Pattern.compile(",");*/
   private static Pattern SEMICOLON_PATTERN = Pattern.compile(";");
   private FilteredPanel filterPanel;
+  protected static boolean manualFilter = false; // show manual filtering
 
   /**
    * Filter VCF records by the variant type and/or by different values in 
@@ -179,6 +181,19 @@ public class VCFFilter extends JFrame
     });
     setFlagFilter(HeaderLine.FILTER_NV_FLAG, "NV", showNonVariantMenu.getText(), showNonVariantMenu.isSelected());
     
+    typeBox.add(Box.createVerticalStrut(20));
+    final JCheckBox manualMenu = new JCheckBox("Manual Annotation", manualFilter);
+    typeBox.add(manualMenu);
+    manualMenu.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e)
+      {
+        manualFilter = manualMenu.isSelected();
+        setFlagFilter(HeaderLine.FILTER_MANUAL, "MANUAL", manualMenu.getText(), manualMenu.isSelected());
+        vcfView.repaint();
+      }
+    });
+    setFlagFilter(HeaderLine.FILTER_MANUAL, "MANUAL", manualMenu.getText(), manualMenu.isSelected());
+
     typeBox.add(Box.createVerticalGlue());
     
     if(vcfView.getEntryGroup() == null || vcfView.getEntryGroup().getAllFeaturesCount() == 0)
@@ -353,7 +368,7 @@ public class VCFFilter extends JFrame
       String hdrLine = "##FILTER=<ID="+id+",Type=Flag,Number=0,Description=\""+descr+"\">";
       HeaderLine hLine = new HeaderLine(hdrLine, HeaderLine.filterFlagStr[hdrIndex],
           AbstractVCFReader.getLineHash("FILTER", hdrLine));
-      filterPanel.addFilter(ID, hLine, 0);
+      FilteredPanel.addFilter(ID, hLine, 0);
     }
     else
       filterPanel.removeFilter(ID);
@@ -416,7 +431,7 @@ public class VCFFilter extends JFrame
           {
             final String ID = hLine.getHeaderTypeStr()+":"+hLine.getID();
             if(flag.isSelected()) 
-              filterPanel.addFilter(ID, hLine, 0);
+              FilteredPanel.addFilter(ID, hLine, 0);
             else
               filterPanel.removeFilter(ID);
             filterPanel.updateFilters();
@@ -478,13 +493,69 @@ public class VCFFilter extends JFrame
   }
   
   /**
+   * Check a VCF record against the hash of manually annotated variants
+   * @param manualHash - hash containing manually annotated variants
+   * @param record     - a VCF record
+   * @param vcfIndex   - the file index for the VCF record
+   * @return 0 - if no manual annotation
+   *         1 - if manually passed
+   *         2 - if manually failed
+   */
+  protected static int checkManualHash(final Map<String, Boolean> manualHash, 
+                                       final VCFRecord record,
+                                       final int vcfIndex, 
+                                       final boolean applyManualFilter)
+  {
+    if(applyManualFilter || manualHash.size() == 0)
+      return 0;
+    
+    final StringBuilder keyName = new StringBuilder();
+    keyName.append(record.getPos());
+    keyName.append(":");
+    keyName.append(record.getChrom());
+    keyName.append(":");
+    keyName.append(vcfIndex);
+    final String keyStr = keyName.toString();
+
+    if(manualHash.containsKey(keyStr))
+    {
+      if(manualHash.get(keyStr))
+        return 1;
+      else
+        return 2;
+    }
+    return 0;
+  }
+  
+  protected static int checkManualHash(final Map<String, Boolean> manualHash, final VCFRecord record, final int vcfIndex)
+  {
+    return checkManualHash(manualHash, record, vcfIndex, manualFilter);
+  }
+  
+  /**
    * Test for a given VCF record to see if it passes the filters.
+   * @param manualHash
    * @param record
+   * @param vcfReader
+   * @param features
+   * @param basePosition
+   * @param sampleIndex
    * @return
    */
-  protected static boolean passFilter(final VCFRecord record, final AbstractVCFReader vcfReader, 
-      final FeatureVector features, final int basePosition, final int sampleIndex)
+  protected static boolean passFilter(final Map<String, Boolean> manualHash, 
+                                      final VCFRecord record, 
+                                      final AbstractVCFReader vcfReader, 
+                                      final FeatureVector features, 
+                                      final int basePosition, 
+                                      final int sampleIndex,
+                                      final int vcfIndex)
   {
+    final int manual = checkManualHash(manualHash, record, vcfIndex);
+    if(manual == 1)
+      return true;
+    else if(manual == 2)
+      return false;
+    
     try
     {
       if(record.getFilter().equals(".") || record.getFilter().equals("PASS"))
@@ -648,15 +719,30 @@ public class VCFFilter extends JFrame
   
   /**
    * Test for a given VCF record to see if it passes the filters.
+   * @param manualHash
    * @param record
    * @param vcfView
    * @param basePosition
    * @param features
-   * @param vcf_v4
+   * @param vcfReader
    */
-  protected static void setFilterString(final VCFRecord record, final VCFview vcfView, 
-      final int basePosition, final FeatureVector features, final AbstractVCFReader vcfReader)
+  protected static void setFilterString(final Map<String, Boolean> manualHash, 
+                                        final VCFRecord record, 
+                                        final VCFview vcfView, 
+                                        final int basePosition, 
+                                        final FeatureVector features, 
+                                        final AbstractVCFReader vcfReader,
+                                        final int vcfIndex)
   {
+    
+    
+    final int manual = checkManualHash(manualHash, record, vcfIndex);
+    if(manual == 1)
+    {
+      record.setFilter("PASS");
+      return;
+    }
+
     if(record.getFilter().equals(".") || record.getFilter().equals("PASS"))
     {
     }
@@ -774,6 +860,9 @@ public class VCFFilter extends JFrame
                if(isSyn == 1)
                  record.appendFilter(id);
              }
+            case HeaderLine.FILTER_MANUAL:
+              if(manual == 2)
+                record.appendFilter(id);
             default:
               break;
           }
