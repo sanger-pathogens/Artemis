@@ -299,6 +299,50 @@ class BCFReader extends AbstractVCFReader
    */
   private void getParts(final byte[] b, final VCFRecord bcfRecord)
   {
+    int index = 0;
+    final StringBuilder buff = new StringBuilder();
+    
+    for(int i=0; i<b.length; i++)
+    {
+      if(b[i] == 0 && (i == 0 || b[i-1] == 0) )
+      {
+        switch( index )
+        {
+          case 0:  bcfRecord.setID("."); break;
+          case 1:  bcfRecord.setRef("."); break;
+          case 2:  bcfRecord.setAlt(":"); break; // this looks like a non-variant site
+          case 3:  bcfRecord.setFilter("."); break;
+          case 4:  bcfRecord.setInfo("."); break;
+          case 5:  bcfRecord.setFormat("."); break;
+          default: return;
+        }
+        index++;
+      }
+      if(b[i] == 0)
+        continue;
+      
+      buff.setLength(0);
+      buff.append((char)b[i]);
+      while(i < b.length-1 && b[i+1] != 0)
+        buff.append((char)b[++i]);
+
+      switch( index )
+      {
+        case 0:  bcfRecord.setID(buff.toString()); break;
+        case 1:  bcfRecord.setRef(buff.toString()); break;
+        case 2:  bcfRecord.setAlt(buff.toString()); break;
+        case 3:  bcfRecord.setFilter(buff.toString()); break;
+        case 4:  bcfRecord.setInfo(buff.toString()); break;
+        case 5:  bcfRecord.setFormat(buff.toString()); break;
+        default: return;
+      }
+      index++;
+    }
+  }
+  
+
+  /*private void getParts(final byte[] b, final VCFRecord bcfRecord)
+  {
     final StringBuilder buff = new StringBuilder();
     for(int i=0; i<b.length; i++)
     {
@@ -336,7 +380,7 @@ class BCFReader extends AbstractVCFReader
       lastInd = ind;
       i++;
     }
-  }
+  }*/
   
   /**
    * DP uint16 t[n] Read depth
