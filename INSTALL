@@ -18,12 +18,16 @@ menus.  From the File menu you can open a flat file containing an
 entry.  If it reads the entry successfully a new window will open,
 which shows the sequence and features for the entry.
 
-An alternative way to run it is:
+====================================================================
 
-   cd /some/directory/artemis/
-   java -classpath .:lib/biojava.jar:lib/jobcontrol.jar uk.ac.sanger.artemis.components.ArtemisMain & 
+Installation instructions for GitHub download
 
-ACT can be run in this way:
-
-   cd /some/directory/artemis/
-   java -classpath .:lib/biojava.jar:lib/jobcontrol.jar uk.ac.sanger.artemis.components.ActMain &
+   1. Download:
+      git clone http://github.com/sanger-pathogens/Artemis.git
+   2. Compile the code:
+      cd Artemis
+      make
+   3. Run Artemis:
+      ./art
+      or ACT:
+      ./act
