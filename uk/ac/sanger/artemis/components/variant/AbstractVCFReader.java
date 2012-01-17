@@ -34,6 +34,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import uk.ac.sanger.artemis.FeatureVector;
@@ -132,12 +133,19 @@ public abstract class AbstractVCFReader
   
   /**
    * Export VCF file
+   * @param manualHash
+   * @param vcfFileName
    * @param writer
    * @param vcfView
    * @param features
    * @throws IOException
    */
-  protected static void write(final String vcfFileName, Writer writer, VCFview vcfView, FeatureVector features) throws IOException
+  protected static void write(final Map<String, Boolean> manualHash, 
+                              final String vcfFileName,
+                              final int vcfIndex,
+                              Writer writer, 
+                              VCFview vcfView, 
+                              FeatureVector features) throws IOException
   {
     // FILTER LINES
     if(IOUtils.isBCF(vcfFileName))
@@ -162,7 +170,7 @@ public abstract class AbstractVCFReader
       while( (record = reader.nextRecord(null, sbeg, send)) != null)
       {
         int basePosition = record.getPos() + vcfView.getSequenceOffset(record.getChrom());
-        VCFFilter.setFilterString(record, vcfView, basePosition, features, reader);
+        VCFFilter.setFilterString(manualHash, record, vcfView, basePosition, features, reader, vcfIndex);
         writer.write(record.toString()+"\n");
       }
       writer.close();
@@ -200,7 +208,7 @@ public abstract class AbstractVCFReader
       
       VCFRecord record = VCFRecord.parse(line, tr.getNumberOfSamples());
       int basePosition = record.getPos() + vcfView.getSequenceOffset(record.getChrom());
-      VCFFilter.setFilterString(record, vcfView, basePosition, features, tr);
+      VCFFilter.setFilterString(manualHash, record, vcfView, basePosition, features, tr, vcfIndex);
       writer.write(record.toString()+'\n');
     }
     writer.close();

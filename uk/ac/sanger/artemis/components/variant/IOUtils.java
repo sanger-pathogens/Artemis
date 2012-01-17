@@ -31,6 +31,7 @@ import java.io.InputStream;
 import java.io.Writer;
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.swing.Box;
@@ -79,11 +80,16 @@ class IOUtils
   /**
    * Write filtered uncompressed VCF. Uses the filter in VCFview to
    * determine if variants are written.
+   * @param manualHash
    * @param vcfFileName
    * @param vcfView
    * @param features
+   * @param nfiles
+   * @return
    */
-  protected static File writeVCF(final String vcfFileName, 
+  protected static File writeVCF(final Map<String, Boolean> manualHash,
+                                 final String vcfFileName,
+                                 final int vcfIndex,
                                  final VCFview vcfView,
                                  final FeatureVector features,
                                  final int nfiles)
@@ -94,7 +100,7 @@ class IOUtils
       if(filterFile == null)
         return null;
       FileWriter writer = new FileWriter(filterFile);
-      AbstractVCFReader.write(vcfFileName, writer, vcfView, features);
+      AbstractVCFReader.write(manualHash, vcfFileName, vcfIndex, writer, vcfView, features);
 
       return filterFile;
     }
@@ -137,11 +143,12 @@ class IOUtils
   
   /**
    * Export as a VCF based on the filtering applied in the VCFview.
-   * @param entryGroup
+   * @param manualHash
    * @param vcfFiles
    * @param vcfView
    */
-  protected static void export(final List<String> vcfFiles,
+  protected static void export(final Map<String, Boolean> manualHash,
+                               final List<String> vcfFiles,
                                final VCFview vcfView)
   {
     // get all CDS features that do not have the /pseudo qualifier
@@ -151,7 +158,7 @@ class IOUtils
     String filterFiles = "";
     for(int i=0; i<vcfFiles.size(); i++)
     {
-      File filterFile = IOUtils.writeVCF(vcfFiles.get(i), vcfView, features, vcfFiles.size());
+      File filterFile = IOUtils.writeVCF(manualHash, vcfFiles.get(i), i, vcfView, features, vcfFiles.size());
       if(filterFile == null)
         return;
       filterFiles += filterFile.getAbsolutePath()+"\n";
@@ -216,12 +223,12 @@ class IOUtils
 
       Bases bases = entryGroup.getSequenceEntry().getBases();
       // reference
-      writeOrViewRange(null, sbeg, send, writer, buffSeq, 
+      writeOrViewRange(null, -1, sbeg, send, writer, buffSeq, 
           marker, bases, name, vcfView, entryGroup, useNs.isSelected());
 
       // vcf sequences
       for (int i = 0; i < vcfReaders.length; i++)
-        writeOrViewRange(vcfReaders[i], sbeg, send, writer, buffSeq,
+        writeOrViewRange(vcfReaders[i], i, sbeg, send, writer, buffSeq,
             marker, bases, name, vcfView, entryGroup, useNs.isSelected());
 
       if(writer != null)
@@ -346,7 +353,7 @@ class IOUtils
             FeatureSegment seg = segs.elementAt(k);
             int sbeg = seg.getRawRange().getStart();
             int send = seg.getRawRange().getEnd();
-            buff.append( getAllBasesInRegion(vcfReaders[i], sbeg, send, seg.getBases(),
+            buff.append( getAllBasesInRegion(vcfReaders[i], i, sbeg, send, seg.getBases(),
                   features, vcfView, f.isForwardFeature(), useNs.isSelected()) );
           }
 
@@ -390,6 +397,7 @@ class IOUtils
   }
   
   private static void writeOrViewRange(AbstractVCFReader reader,
+                                       final int vcfIndex,
                                        int sbeg, int send,
                                        Writer writer, StringBuffer buffSeq, 
                                        MarkerRange marker, Bases bases, 
@@ -425,7 +433,7 @@ class IOUtils
       FeatureVector features = entryGroup.getFeaturesInRange(m.getRange());
       //System.out.println((reader == null ? "" : reader.getName())+" "+sbegc+".."+sendc);
       if(reader != null)
-        basesStr = getAllBasesInRegion(reader, sbegc_raw, sendc_raw, basesStr,
+        basesStr = getAllBasesInRegion(reader, vcfIndex, sbegc_raw, sendc_raw, basesStr,
                        features, vcfView, marker.isForwardMarker(), useNs);
       else
         basesStr = basesStr.toUpperCase();
@@ -509,6 +517,7 @@ class IOUtils
    * @throws IOException
    */
   private static String getAllBasesInRegion(final AbstractVCFReader reader,
+      final int vcfIndex,
       final int sbeg,
       final int send,
       String basesStr,
@@ -536,13 +545,13 @@ class IOUtils
           if(thisStart < 1)
             thisStart = 1;
           int thisEnd   = send - offset;
-          basesStr = getBasesInRegion(reader, contigs[j], thisStart, thisEnd, 
+          basesStr = getBasesInRegion(reader, vcfIndex, contigs[j], thisStart, thisEnd, 
               basesStr, features, vcfView, isFwd, useNs);
         }
       }
     }
     else
-      basesStr = getBasesInRegion(reader, vcfView.getChr(), sbeg, send, 
+      basesStr = getBasesInRegion(reader, vcfIndex, vcfView.getChr(), sbeg, send, 
           basesStr, features, vcfView, isFwd, useNs);
 
     return basesStr;
@@ -563,6 +572,7 @@ class IOUtils
    * @throws IOException
    */
   private static String getBasesInRegion(final AbstractVCFReader reader,
+                                         final int vcfIndex,
                                          final String chr,
                                          int sbeg,
                                          final int send,
@@ -581,7 +591,7 @@ class IOUtils
       while ((record = reader.getNextRecord(chr, sbeg, send)) != null)
       {
         int basePosition = record.getPos() + vcfView.getSequenceOffset(record.getChrom());
-        if(vcfView.showVariant(record, features, basePosition, reader, -1) )
+        if(vcfView.showVariant(record, features, basePosition, reader, -1, vcfIndex) )
           basesStr = getSeqsVariation(record, basesStr, sbeg, isFwd, vcf_v4);
         else if(useNs && isSNPorNonVariant(record))
         {
@@ -627,9 +637,9 @@ class IOUtils
     Vector<Vector<Object>> rowData = new Vector<Vector<Object>>();
     
     AbstractVCFReader vcfReaders[] = vcfView.getVcfReaders();
-    for (AbstractVCFReader reader: vcfReaders)
+    for(int vcfIndex=0; vcfIndex<vcfReaders.length; vcfIndex++)
     {
-      
+      AbstractVCFReader reader = vcfReaders[vcfIndex];
       for (int j = 0; j < features.size(); j++)
       {
         int count[] = new int[6];
@@ -667,7 +677,7 @@ class IOUtils
               
                 VCFRecord record;
                 while ((record = reader.getNextRecord(vcfView.getChr(), thisStart, thisEnd)) != null)
-                  count(record, count, features, reader, vcfView);
+                  count(record, count, features, reader, vcfIndex, vcfView);
               }
             }
           }
@@ -675,7 +685,7 @@ class IOUtils
           {
             VCFRecord record;
             while ((record = reader.getNextRecord(vcfView.getChr(), sbeg, send)) != null)
-              count(record, count, features, reader, vcfView);
+              count(record, count, features, reader, vcfIndex, vcfView);
           }
         }
 
@@ -694,10 +704,10 @@ class IOUtils
       tab.setIntegerRowSorter(i);
   }
   
-  private static void count(VCFRecord record, int count[], FeatureVector features, AbstractVCFReader reader, VCFview vcfView)
+  private static void count(VCFRecord record, int count[], FeatureVector features, AbstractVCFReader reader, int vcfIndex, VCFview vcfView)
   {
     int basePosition = record.getPos() + vcfView.getSequenceOffset(record.getChrom());
-    if(!vcfView.showVariant(record, features, basePosition, reader, -1) )
+    if(!vcfView.showVariant(record, features, basePosition, reader, -1, vcfIndex) )
       return;
     
     if(record.getAlt().isNonVariant())
@@ -912,15 +922,16 @@ class IOUtils
         FeatureVector features = entryGroup.getFeaturesInRange(range);
         String chr = vcfView.getChr();
         AbstractVCFReader vcfReaders[] = vcfView.getVcfReaders();
-        for(AbstractVCFReader reader: vcfReaders)
+        for(int vcfIndex=0; vcfIndex<vcfReaders.length; vcfIndex++)
         {
+          AbstractVCFReader reader = vcfReaders[vcfIndex];
           if(vcfView.isConcatenate())
           {
             for(String contig: reader.getSeqNames())
-              makeFeatures(reader, contig, sbegc, sendc, features, vcfView, bases, newEntry);
+              makeFeatures(reader, vcfIndex, contig, sbegc, sendc, features, vcfView, bases, newEntry);
           }
           else
-            makeFeatures(reader, chr, sbegc, sendc, features, vcfView, bases, newEntry);
+            makeFeatures(reader, vcfIndex, chr, sbegc, sendc, features, vcfView, bases, newEntry);
         }
       }
       catch (IOException ioe)
@@ -935,7 +946,8 @@ class IOUtils
   }
   
   private static void makeFeatures(
-      final AbstractVCFReader reader, 
+      final AbstractVCFReader reader,
+      final int vcfIndex,
       final String chr, 
       final int sbegc, 
       final int sendc, 
@@ -950,7 +962,7 @@ class IOUtils
       VCFRecord record;
       while( (record = reader.getNextRecord(chr, sbegc, sendc)) != null)
       {
-        makeFeature(record, reader.getName(), vcfView, features, bases, entry, variantKey, reader);
+        makeFeature(record, reader.getName(), vcfView, features, bases, entry, variantKey, reader, vcfIndex);
       }
     }
     catch (NullPointerException e)
@@ -968,10 +980,11 @@ class IOUtils
       final Bases bases, 
       final Entry entry, 
       final Key variantKey, 
-      final AbstractVCFReader vcfReader) throws OutOfRangeException, ReadOnlyException
+      final AbstractVCFReader vcfReader,
+      final int vcfIndex) throws OutOfRangeException, ReadOnlyException
   {
     int basePosition = record.getPos() + vcfView.getSequenceOffset(record.getChrom());
-    if (vcfView.showVariant(record, features, basePosition, vcfReader, -1))
+    if (vcfView.showVariant(record, features, basePosition, vcfReader, -1, vcfIndex))
     {
       MarkerRange marker = new MarkerRange(bases.getForwardStrand(),
           basePosition, basePosition);
