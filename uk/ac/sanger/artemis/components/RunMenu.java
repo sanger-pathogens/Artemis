@@ -31,6 +31,7 @@ import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.InvalidKeyException;
 
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.Hashtable;
 import java.awt.event.*;
 
@@ -159,19 +160,24 @@ public class RunMenu extends SelectionMenu
                 "NCBI Search", JOptionPane.INFORMATION_MESSAGE);
             return; 
           }
-          final String residues;
           
-          if(program.getType() == ExternalProgram.AA_PROGRAM)
-            residues = features.elementAt(0).getTranslation().toString().toUpperCase();
-          else
-            residues = features.elementAt(0).getBases();
-          
-          String data = RunBlastAtNCBI.setData(programName, residues);
-          if(data != null)
+          final StringWriter writer = new StringWriter();
+          try
           {
-            RunBlastAtNCBI blastSearch = new RunBlastAtNCBI(data);
-            blastSearch.start();
+            if(program.getType() == ExternalProgram.AA_PROGRAM)
+              features.elementAt(0).writeAminoAcidsOfFeature(writer);
+            else
+              features.elementAt(0).writeBasesOfFeature(writer);
+            
+            writer.close();
+            final String data = RunBlastAtNCBI.setData(programName, writer.toString());
+            if(data != null)
+            {
+              RunBlastAtNCBI blastSearch = new RunBlastAtNCBI(data);
+              blastSearch.start();
+            }
           }
+          catch(IOException ioe){}
           //BrowserControl.displayURL(program.getProgramOptions()+residues);
         }
       });

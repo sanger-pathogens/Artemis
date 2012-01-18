@@ -367,7 +367,9 @@ public class VCFview extends JPanel
     
     
     final JMenuItem byQuality = new JMenuItem("Filter ...");
-    filter = new VCFFilter(VCFview.this);
+    if(!Options.getOptions().getPropertyTruthValue("java.awt.headless"))
+      filter = new VCFFilter(VCFview.this);
+    
     byQuality.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e)
       {
