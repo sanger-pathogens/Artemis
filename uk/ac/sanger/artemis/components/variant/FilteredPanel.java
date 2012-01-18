@@ -180,7 +180,7 @@ import javax.swing.border.Border;
       return buff.toString();
     }
     
-    protected static void addFilter(final String ID, final HeaderLine hLine, final int number)
+    protected void addFilter(final String ID, final HeaderLine hLine, final int number)
     {
       filters.put(ID, new RecordFilter(hLine, number));
     }
