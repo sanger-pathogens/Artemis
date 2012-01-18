@@ -200,12 +200,16 @@ class IOUtils
     StringBuffer buffSeq = null;
     try
     {
-      JCheckBox useNs = new JCheckBox("Use N for filtered out sites", true);
+      final JCheckBox useNs = new JCheckBox("Use N for filtered out sites", true);
+      final JCheckBox useMask = new JCheckBox("Use N for sites without non-variant", true);
       Box yBox = Box.createVerticalBox();
       yBox.add(useNs);
+      yBox.add(useMask);
       if(writer == null)
-        JOptionPane.showMessageDialog(null, yBox, "Option", JOptionPane.INFORMATION_MESSAGE);
-      
+        JOptionPane.showMessageDialog(null, yBox, "Options", JOptionPane.INFORMATION_MESSAGE);
+      else
+        useMask.setSelected(false);
+
       if(!view && writer == null)
       {
         File newfile = new File(
@@ -224,12 +228,12 @@ class IOUtils
       Bases bases = entryGroup.getSequenceEntry().getBases();
       // reference
       writeOrViewRange(null, -1, sbeg, send, writer, buffSeq, 
-          marker, bases, name, vcfView, entryGroup, useNs.isSelected());
+          marker, bases, name, vcfView, entryGroup, useNs.isSelected(), useMask.isSelected());
 
       // vcf sequences
       for (int i = 0; i < vcfReaders.length; i++)
         writeOrViewRange(vcfReaders[i], i, sbeg, send, writer, buffSeq,
-            marker, bases, name, vcfView, entryGroup, useNs.isSelected());
+            marker, bases, name, vcfView, entryGroup, useNs.isSelected(), useMask.isSelected());
 
       if(writer != null)
         writer.close();
@@ -289,14 +293,19 @@ class IOUtils
     String fastaFiles = "";
     AbstractVCFReader vcfReaders[] = vcfView.getVcfReaders();
 
-    JCheckBox single = new JCheckBox("Single FASTA", true);
-    JCheckBox combineFeats = new JCheckBox("Combine feature sequences", true);
-    JCheckBox useNs = new JCheckBox("Use N for filtered out sites", true);
+    final JCheckBox single = new JCheckBox("Single FASTA", true);
+    final JCheckBox combineFeats = new JCheckBox("Combine feature sequences", true);
+    final JCheckBox useNs = new JCheckBox("Use N for filtered out sites", true);
+    final JCheckBox useMask = new JCheckBox("Mask sites without non-variant", true);
+    if(writer != null)
+      useMask.setSelected(false);
+    
     Box yBox = Box.createVerticalBox();
     if(!view && vcfReaders.length > 1)
       yBox.add(single);
     yBox.add(combineFeats);
     yBox.add(useNs);
+    yBox.add(useMask);
     
     String name = vcfView.getEntryGroup().getActiveEntries().elementAt(0).getName();
     try
@@ -354,7 +363,7 @@ class IOUtils
             int sbeg = seg.getRawRange().getStart();
             int send = seg.getRawRange().getEnd();
             buff.append( getAllBasesInRegion(vcfReaders[i], i, sbeg, send, seg.getBases(),
-                  features, vcfView, f.isForwardFeature(), useNs.isSelected()) );
+                  features, vcfView, f.isForwardFeature(), useNs.isSelected(), useMask.isSelected()) );
           }
 
           if(!combineFeats.isSelected())
@@ -404,7 +413,8 @@ class IOUtils
                                        String name,
                                        VCFview vcfView,
                                        final EntryGroup entryGroup, 
-                                       final boolean useNs) throws IOException, OutOfRangeException
+                                       final boolean useNs,
+                                       final boolean useMask) throws IOException, OutOfRangeException
   {
     int direction = ( marker.isForwardMarker() ? Bases.FORWARD : Bases.REVERSE);
     int length = send-sbeg+1;
@@ -434,7 +444,7 @@ class IOUtils
       //System.out.println((reader == null ? "" : reader.getName())+" "+sbegc+".."+sendc);
       if(reader != null)
         basesStr = getAllBasesInRegion(reader, vcfIndex, sbegc_raw, sendc_raw, basesStr,
-                       features, vcfView, marker.isForwardMarker(), useNs);
+                       features, vcfView, marker.isForwardMarker(), useNs, useMask);
       else
         basesStr = basesStr.toUpperCase();
 
@@ -507,12 +517,15 @@ class IOUtils
    * For a given VCF file change the sequence in a range and return the
    * base sequence as a string.
    * @param reader
+   * @param vcfIndex
    * @param sbeg
    * @param send
    * @param basesStr
    * @param features
    * @param vcfView
    * @param isFwd
+   * @param useNs
+   * @param useMask
    * @return
    * @throws IOException
    */
@@ -524,7 +537,8 @@ class IOUtils
       final FeatureVector features,
       final VCFview vcfView,
       final boolean isFwd,
-      final boolean useNs) throws IOException
+      final boolean useNs,
+      final boolean useMask) throws IOException
   {
     if(vcfView.isConcatenate())
     {
@@ -546,13 +560,13 @@ class IOUtils
             thisStart = 1;
           int thisEnd   = send - offset;
           basesStr = getBasesInRegion(reader, vcfIndex, contigs[j], thisStart, thisEnd, 
-              basesStr, features, vcfView, isFwd, useNs);
+              basesStr, features, vcfView, isFwd, useNs, useMask);
         }
       }
     }
     else
       basesStr = getBasesInRegion(reader, vcfIndex, vcfView.getChr(), sbeg, send, 
-          basesStr, features, vcfView, isFwd, useNs);
+          basesStr, features, vcfView, isFwd, useNs, useMask);
 
     return basesStr;
   }
@@ -561,6 +575,7 @@ class IOUtils
    * For a given VCF file change the sequence in a range and return the
    * base sequence as a string.
    * @param reader
+   * @param vcfIndex
    * @param chr
    * @param sbeg
    * @param send
@@ -568,6 +583,8 @@ class IOUtils
    * @param features
    * @param vcfView
    * @param isFwd
+   * @param useNs
+   * @param useMask
    * @return
    * @throws IOException
    */
@@ -580,16 +597,23 @@ class IOUtils
                                          final FeatureVector features,
                                          final VCFview vcfView,
                                          final boolean isFwd,
-                                         final boolean useNs) throws IOException
+                                         final boolean useNs, 
+                                         final boolean useMask) throws IOException
   {
     boolean vcf_v4 = reader.isVcf_v4();
     int len = basesStr.length();
-
+    int baseNum = sbeg;
     try
     {
       VCFRecord record;
       while ((record = reader.getNextRecord(chr, sbeg, send)) != null)
       {
+        //
+        // mask regions with N where there are no records
+        if(useMask && baseNum < record.getPos())
+          basesStr = maskSites(sbeg, record.getPos(), baseNum, isFwd, basesStr);
+        baseNum = record.getPos()+1;
+
         int basePosition = record.getPos() + vcfView.getSequenceOffset(record.getChrom());
         if(vcfView.showVariant(record, features, basePosition, reader, -1, vcfIndex) )
           basesStr = getSeqsVariation(record, basesStr, sbeg, isFwd, vcf_v4);
@@ -601,8 +625,9 @@ class IOUtils
           basesStr = basesStr.substring(0, position) + 'n' +
                      basesStr.substring(position+1);
         }
-        
-        if(basesStr.length() > len) // adjust for insertions
+
+        // adjust for insertions
+        if(basesStr.length() > len) 
         {
           sbeg -= (basesStr.length()-len);
           len = basesStr.length();
@@ -614,6 +639,32 @@ class IOUtils
       System.err.println(chr+":"+sbeg+"-"+send+"\n"+e.getMessage());
     }
 
+    if(useMask && baseNum-sbeg < len)
+      basesStr = maskSites(sbeg, len+sbeg, baseNum, isFwd, basesStr);
+
+    return basesStr;
+  }
+  
+  /**
+   * Mask sequence sites
+   * @param sbeg
+   * @param endMask
+   * @param baseNum
+   * @param isFwd
+   * @param basesStr
+   * @return
+   */
+  private static String maskSites(final int sbeg, final int endMask, 
+      final int baseNum, final boolean isFwd, String basesStr)
+  {
+    for(int i=baseNum; i<endMask; i++)
+    {
+      int position = i-sbeg;
+      if(!isFwd)
+        position = basesStr.length()-position-1;
+      basesStr = basesStr.substring(0, position) + 'n' +
+                 basesStr.substring(position+1);
+    }
     return basesStr;
   }
   

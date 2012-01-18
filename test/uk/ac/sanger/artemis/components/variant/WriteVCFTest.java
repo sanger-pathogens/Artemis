@@ -391,7 +391,7 @@ public class WriteVCFTest
     basesBuff.append("aagaaaggatataaaattgatatatttttaaatttttcttatatgaataatgaatataat");
     basesBuff.append("gacaaatttaattttattcaattagttactgaaatttttaataaaaataataatgtaatg");
     basesBuff.append("tttagaaatgaaaaattatatatgaataataataattatgaatttataaagaaattacat");
-    basesBuff.append("ttatttttaaatgctcctttttatttttttaatatgtttaataataacacaaaagaaatt");
+    basesBuff.append("ttatttttaaatgctcctttttatttttttaatatgtttaataataakacaaaagaaatt"); // multi-allele
     basesBuff.append("cgattagtacatgattataaatatacgacgaatttttataaaattcaaatatatatatac");
     basesBuff.append("ccaccgatacaaatacataaagcttctatcgttattcttgtctacgttaattttatatat");
     basesBuff.append("tattacatgtataattatccttttgtgttcttttatatttttgtttttttcttgagcttc");
@@ -424,17 +424,17 @@ public class WriteVCFTest
     basesBuff.append("gataataataatagtaataatagcaataataataataataataataataataatagtaat");
     basesBuff.append("gaatatacaaaaagaaagaatacacataaaaaacatttaaatgaacactataaaaatgag");
     basesBuff.append("agtaataagaaaaaggttaatgaaaagaaatacaataatagtgtgtatgttaataataat");
-    basesBuff.append("ataaagaaaaatcatgtaaacaaaaataaaaatgaaaattatttacaaaatgtgtggtta");
-    basesBuff.append("tttttattcgataatgaagttagaaaagaaaatgaacaatgtgttggaaaaattatatca");
+    basesBuff.append("ataaagaaaaatcatgtmaacaaaaataaaaatgaaaattatttacaaaatgtgtggtta"); // multi-allele m = A or C
+    basesBuff.append("tttttattcgataatgaagttagaaaagaaaatgamcaatgtgttggaaaaattatatca"); // multi-allele
     basesBuff.append("ctggatactttcaataccatagaaaaattttacaagaactataaatatatgaaatcgcct");
-    basesBuff.append("tcagccattaaggaatactacaacatttatctttttaaacataattttagacccctcttt");
+    basesBuff.append("tcagccattaaggaawamtacaacatttatctttttaaacawaattttagacccctcttt"); // multi-allele
     basesBuff.append("gacgaatatccaaatggttttatttgtaccgttaaaaatgccaatcattttaaaaatgac");
     basesBuff.append("agcgttgatataatatgggaaaaaatggttcttttggctataggagaagaatttagctta");
     basesBuff.append("atcgacttatgtggtttacaattatgcataagagataatgaaatgttttttaaaatatgg");
     basesBuff.append("atgaaaaattattcaaattatctaaaaaatatattgatgaaaaaattaagggacgcctac");
     basesBuff.append("aatgtatacaataacaaaaaaaatcaacaaggaaagggaaaaaatgaaaaggctaaaaag");
     basesBuff.append("aattacaataaaaataataagggcgcagaatttgtagctagtaaaaaggattctttaaaa");
-    basesBuff.append("atgcataattatccaaacatagtaccaccaccaaattatttaggaaattactatgtttac");
+    basesBuff.append("atgcataattatccaaacatagtaccaccaccaaattatttaggaaattacwatgtttac"); // multi-allele
     basesBuff.append("aaatacaacctagatatgaatttgttttatttatataataatcaaaatatgcctaacccg");
     basesBuff.append("tatatatacattcctgtcaatgtacccaataatcaatataataatatttatccagattat");
     basesBuff.append("atgtacgacagtaatacgagctatcctatagatataattaataataatttattaagtaat");
