@@ -59,7 +59,7 @@ public class VCFFilter extends JFrame
 {
   private static final long serialVersionUID = 1L;
 
-  private static boolean useHeader = true;
+  //private static boolean useHeader = true;
 /*  private static int MIN_DP = 0;
   private static float MIN_MQ = 0;
   private static float MIN_AF1 = 0;
@@ -263,7 +263,7 @@ public class VCFFilter extends JFrame
     
     if(info.size() == 0)
     {
-      useHeader = false;
+      //useHeader = false;
 /*      // min DP
       c.gridy = c.gridy+1;
       c.gridx = 0;
@@ -368,7 +368,7 @@ public class VCFFilter extends JFrame
       String hdrLine = "##FILTER=<ID="+id+",Type=Flag,Number=0,Description=\""+descr+"\">";
       HeaderLine hLine = new HeaderLine(hdrLine, HeaderLine.filterFlagStr[hdrIndex],
           AbstractVCFReader.getLineHash("FILTER", hdrLine));
-      FilteredPanel.addFilter(ID, hLine, 0);
+      filterPanel.addFilter(ID, hLine, 0);
     }
     else
       filterPanel.removeFilter(ID);
@@ -431,7 +431,7 @@ public class VCFFilter extends JFrame
           {
             final String ID = hLine.getHeaderTypeStr()+":"+hLine.getID();
             if(flag.isSelected()) 
-              FilteredPanel.addFilter(ID, hLine, 0);
+              filterPanel.addFilter(ID, hLine, 0);
             else
               filterPanel.removeFilter(ID);
             filterPanel.updateFilters();
@@ -572,110 +572,105 @@ public class VCFFilter extends JFrame
         }
       }
 
-      if(useHeader)
+      final Hashtable<String, RecordFilter> filters = FilteredPanel.getFilters();
+      final Enumeration<String> enumFilter = filters.keys();
+      while(enumFilter.hasMoreElements())
       {
-        Hashtable<String, RecordFilter> filters = FilteredPanel.getFilters();
-        
-        Enumeration<String> enumFilter = filters.keys();
-        while(enumFilter.hasMoreElements())
+        final String recid = enumFilter.nextElement();
+        final RecordFilter recFilter = filters.get(recid);
+        final String id = recFilter.getHeaderLine().getID();
+
+        switch (recFilter.getHeaderLine().getHeaderType()) 
         {
-          String recid = enumFilter.nextElement();
-          RecordFilter recFilter = filters.get(recid);
-          String id = recFilter.getHeaderLine().getID();
-
-          switch (recFilter.getHeaderLine().getHeaderType()) 
-          {
-            case HeaderLine.FILTER_NV_FLAG:  // FILTER non-variant
-              if( record.getAlt().isNonVariant() )
+          case HeaderLine.FILTER_NV_FLAG:  // FILTER non-variant
+            if( record.getAlt().isNonVariant() )
+              return false;
+            break;
+          case HeaderLine.FILTER_INS:
+            if( record.getAlt().isInsertion(vcfReader.isVcf_v4()) )
+              return false;
+            break;
+          case HeaderLine.FILTER_DEL:
+            if( record.getAlt().isDeletion(vcfReader.isVcf_v4()) )
+              return false;
+            break;
+          case HeaderLine.FILTER_OVERLAP_FLAG:  // FILTER no overlap
+            if( !VCFview.isOverlappingFeature(features, basePosition) )
+              return false;
+            break;
+          case HeaderLine.INFO_LINE:  // INFO line
+            if (recFilter.getHeaderLine().isFlag())
+            {
+              if(record.containsInfoFlag(id))
                 return false;
-              break;
-            case HeaderLine.FILTER_INS:
-              if( record.getAlt().isInsertion(vcfReader.isVcf_v4()) )
+              continue;
+            }
+            else
+            {
+              String inf = record.getInfoValue(id);
+              if(inf == null || !recFilter.pass(record, inf.split(","), vcfReader))
                 return false;
-              break;
-            case HeaderLine.FILTER_DEL:
-              if( record.getAlt().isDeletion(vcfReader.isVcf_v4()) )
-                return false;
-              break;
-            case HeaderLine.FILTER_OVERLAP_FLAG:  // FILTER no overlap
-              if( !VCFview.isOverlappingFeature(features, basePosition) )
-                return false;
-              break;
-            case HeaderLine.INFO_LINE:  // INFO line
-              if (recFilter.getHeaderLine().isFlag())
-              {
-                if(record.containsInfoFlag(id))
-                  return false;
-                continue;
-              }
-              else
-              {
-                String inf = record.getInfoValue(id);
-                if(inf == null || !recFilter.pass(record, inf.split(","), vcfReader))
-                  return false;
-              }
-              break;
-            case HeaderLine.FORMAT_LINE:  // FORMAT Genotype line
-              final String samples[] = record.getFormatValues(id);
-              if(samples == null)
-                return false;
-
-              if (recFilter.getHeaderLine().isFlag())
-                return true;
+            }
+            break;
+          case HeaderLine.FORMAT_LINE:  // FORMAT Genotype line
+            final String samples[] = record.getFormatValues(id);
+            if(samples == null)
+              return false;
+             if (recFilter.getHeaderLine().isFlag())
+              return true;
               
-              if(sampleIndex > -1) // look at a specific sample
+            if(sampleIndex > -1) // look at a specific sample
+            {
+              if(samples[sampleIndex] == null || !recFilter.pass(record, samples[sampleIndex].split(","), vcfReader))
+                return false;
+            }
+            else                 // look at all samples
+            {
+              for(int i=0; i<samples.length; i++)
               {
-                if(samples[sampleIndex] == null || !recFilter.pass(record, samples[sampleIndex].split(","), vcfReader))
+                if( samples[i] == null || !recFilter.pass(record, samples[i].split(","), vcfReader))
                   return false;
               }
-              else                 // look at all samples
-              {
-                for(int i=0; i<samples.length; i++)
-                {
-                  if( samples[i] == null || !recFilter.pass(record, samples[i].split(","), vcfReader))
-                    return false;
-                }
-              }
-              break;
-            case HeaderLine.FILTER_LINE:  // FILTER
-              break;
-            case HeaderLine.FILTER_QUAL:  // FILTER by quality score
-              if( !recFilter.pass(record, new String[] { Float.toString(record.getQuality()) }, vcfReader))
-                return false;
-              break;
-              
-            case HeaderLine.FILTER_MULTALL_FLAG:  // FILTER by quality score
-              if( record.getAlt().isMultiAllele(sampleIndex) )
-                return false;
-              break;
-            case HeaderLine.FILTER_NONSYN:
-              if( !record.getAlt().isDeletion(vcfReader.isVcf_v4()) && 
-                  !record.getAlt().isInsertion(vcfReader.isVcf_v4()) && 
-                  record.getAlt().length() == 1 && 
-                  record.getRef().length() == 1)
-             {
-               short isSyn = record.getSynFlag(features, basePosition);
-               if( (isSyn == 0 || isSyn == 2) )
-                 return false;
-             }
-              break;
-            case HeaderLine.FILTER_SYN:
-              if( !record.getAlt().isDeletion(vcfReader.isVcf_v4()) && 
-                  !record.getAlt().isInsertion(vcfReader.isVcf_v4()) && 
-                  record.getAlt().length() == 1 && 
-                  record.getRef().length() == 1)
-             {
-               short isSyn = record.getSynFlag(features, basePosition);
-               if(isSyn == 1)
-                 return false;
-             }
-            default:
-              break;
-          }
+            }
+            break;
+          case HeaderLine.FILTER_LINE:  // FILTER
+            break;
+          case HeaderLine.FILTER_QUAL:  // FILTER by quality score
+            if( !recFilter.pass(record, new String[] { Float.toString(record.getQuality()) }, vcfReader))
+              return false;
+            break;
+            
+          case HeaderLine.FILTER_MULTALL_FLAG:  // FILTER by quality score
+            if( record.getAlt().isMultiAllele(sampleIndex) )
+              return false;
+            break;
+          case HeaderLine.FILTER_NONSYN:
+            if( !record.getAlt().isDeletion(vcfReader.isVcf_v4()) && 
+                !record.getAlt().isInsertion(vcfReader.isVcf_v4()) && 
+                record.getAlt().length() == 1 && 
+                record.getRef().length() == 1)
+           {
+             short isSyn = record.getSynFlag(features, basePosition);
+             if( (isSyn == 0 || isSyn == 2) )
+               return false;
+           }
+           break;
+          case HeaderLine.FILTER_SYN:
+            if( !record.getAlt().isDeletion(vcfReader.isVcf_v4()) && 
+                !record.getAlt().isInsertion(vcfReader.isVcf_v4()) && 
+                record.getAlt().length() == 1 && 
+                record.getRef().length() == 1)
+           {
+             short isSyn = record.getSynFlag(features, basePosition);
+             if(isSyn == 1)
+               return false;
+           }
+          default:
+            break;
         }
-        return true;
       }
-      
+      return true;
+
 /*      try
       {
         if(VCFFilter.MIN_DP > 0 && Integer.parseInt(record.getInfoValue("DP")) < VCFFilter.MIN_DP)
