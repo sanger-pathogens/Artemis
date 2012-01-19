@@ -201,7 +201,9 @@ class IOUtils
     try
     {
       final JCheckBox useNs = new JCheckBox("Use N for filtered out sites", true);
+      useNs.setToolTipText("Mask filtered sites.");
       final JCheckBox useMask = new JCheckBox("Use N for sites without non-variant", true);
+      useMask.setToolTipText("Mask sites that are not confirmed by a non-variant record.");
       Box yBox = Box.createVerticalBox();
       yBox.add(useNs);
       yBox.add(useMask);
@@ -291,12 +293,15 @@ class IOUtils
       suffix = "."+features.elementAt(0).getIDString()+suffix;
 
     String fastaFiles = "";
-    AbstractVCFReader vcfReaders[] = vcfView.getVcfReaders();
+    final AbstractVCFReader vcfReaders[] = vcfView.getVcfReaders();
 
     final JCheckBox single = new JCheckBox("Single FASTA", true);
     final JCheckBox combineFeats = new JCheckBox("Combine feature sequences", true);
     final JCheckBox useNs = new JCheckBox("Use N for filtered out sites", true);
-    final JCheckBox useMask = new JCheckBox("Mask sites without non-variant", true);
+    useNs.setToolTipText("Mask filtered sites.");
+    final JCheckBox useMask = new JCheckBox("Use N for sites without non-variant", true);
+    useMask.setToolTipText("Mask sites that are not confirmed by a non-variant record.");
+    
     if(writer != null)
       useMask.setSelected(false);
     
@@ -307,7 +312,7 @@ class IOUtils
     yBox.add(useNs);
     yBox.add(useMask);
     
-    String name = vcfView.getEntryGroup().getActiveEntries().elementAt(0).getName();
+    final String name = vcfView.getEntryGroup().getActiveEntries().elementAt(0).getName();
     try
     {
       if(!view && writer == null)
