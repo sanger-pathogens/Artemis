@@ -76,7 +76,8 @@ genetic_codes = \
      - \
      Trematode_Mitochondrial \
      Scenedesmus_Obliquus_Mitochondrial \
-     Thraustochytrium_Mitochondrial
+     Thraustochytrium_Mitochondrial \
+     Pterobranchia_mitochondrial
 
 # The translation_table option is used to lookup codon translations.  The
 # table must have exactly 64 entries, and there is one entry for each codon.
@@ -221,6 +222,12 @@ translation_table_23 = \
       tta*
 
 start_codons_23 = att atg gtg
+
+# 24. Pterobranchia mitochondrial
+translation_table_24 = \
+      agas aggk tgaw
+
+start_codons_24 = ttg ctg atg gtg
 
 # the sequence of colour numbers must not have any gaps - if for example
 # colour_5 is missing then all colours with higher numbers will be ignored
