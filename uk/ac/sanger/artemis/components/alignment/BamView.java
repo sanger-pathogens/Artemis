@@ -802,11 +802,12 @@ public class BamView extends JPanel
 	    drawStrandStackView(g2, seqLength, pixPerBase, start, end);
 	  else
 	    drawLineView(g2, seqLength, pixPerBase, start, end);
-	  if(isCoverage)
-	    coveragePanel.repaint();
-	  if(isSNPplot)
-	    snpPanel.repaint();
 	}
+    
+    if(isCoverage)
+      coveragePanel.repaint();
+    if(isSNPplot)
+      snpPanel.repaint();
 
 	if(waitingFrame.isVisible())
       waitingFrame.hideFrame();
