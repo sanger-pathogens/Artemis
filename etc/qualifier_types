@@ -53,6 +53,7 @@ experiment               no        "text"
 focus                    yes        none
 frequency                yes        real    0.0  1.0
 function                 no        "text"
+gap_type                 yes        list    "between scaffolds" "within scaffold" "telomere" "centromere" "short arm" "heterochromatin" "repeat within scaffold" "repeat between scaffolds"
 gene                     yes       "text"
 gene_synonym             no        "text"
 germline                 yes        none
@@ -65,6 +66,7 @@ isolate                  no        "text"
 isolation_source         yes       "text"
 lab_host                 no        "text"
 lat_lon                  yes       "text"
+linkage_evidence         no         list    "paired-ends" "align genus" "align xgenus" "align trnscpt" "within clone" "clone contig" "map" "strobe" "unspecified"
 locus_tag                yes       "text"
 macronuclear             yes        none
 map                      no        "text"
