@@ -518,7 +518,7 @@ public class AminoAcidSequence
    *    first base, otherwise first to last.
    *  @return The index of the match or -1 if there is no match.
    **/
-  public int searchFor(final String bases_string,
+  private int searchFor(final String bases_string,
                        final int start_index,
                        final boolean search_backwards) 
   {
@@ -537,7 +537,7 @@ public class AminoAcidSequence
    *    should start.
    *  @return The index of the match or -1 if there is no match.
    **/
-  public int searchForwardFor(final String bases_string,
+  private int searchForwardFor(final String bases_string,
                               final int start_index) 
   {
     final int pattern_base_length = length() * 3;
@@ -583,7 +583,7 @@ public class AminoAcidSequence
    *    should start.
    *  @return The index of the match or -1 if there is no match.
    **/
-  public int searchBackwardFor(final String bases_string,
+  private int searchBackwardFor(final String bases_string,
                                int start_index) 
   {
     if(bases_string.length() - start_index < length() * 3) 
@@ -631,7 +631,7 @@ public class AminoAcidSequence
    *    first base, otherwise first to last.
    *  @return The index of the match or -1 if there is no match.
    **/
-  public int reverseComplementSearchFor(final String bases_string,
+  private int reverseComplementSearchFor(final String bases_string,
                                         final int start_index,
                                         final boolean search_backwards) 
   {
@@ -651,7 +651,7 @@ public class AminoAcidSequence
    *    should start.
    *  @return The index of the match or -1 if there is no match.
    **/
-  public int reverseComplementSearchForwardFor(final String bases_string,
+  private int reverseComplementSearchForwardFor(final String bases_string,
                                                final int start_index) 
   {
     final int pattern_base_length = length() * 3;
@@ -703,7 +703,7 @@ public class AminoAcidSequence
    *    should start.
    *  @return The index of the match or -1 if there is no match.
    **/
-  public int reverseComplementSearchBackwardFor(final String bases_string,
+  private int reverseComplementSearchBackwardFor(final String bases_string,
                                                 int start_index) 
   {
     if(bases_string.length() - start_index < length() * 3) 
