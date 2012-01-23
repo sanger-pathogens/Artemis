@@ -252,7 +252,7 @@ dist :
 	mkdir tar_build
 	mkdir tar_build/artemis
 	rm -f artemis_compiled_latest.tar.gz
-	tar cf - $(OTHER_FILES) act art Makefile etc | (cd tar_build/artemis; tar xf -)
+	tar cf - $(OTHER_FILES) act art Makefile corba etc | (cd tar_build/artemis; tar xf -)
 	tar cf - artemis_sqlmap dnaplotter uk org nsdb type seqdb lib | (cd tar_build/artemis; tar xf -)
 	(cd tar_build; find . -name 'CVS' -print | xargs rm -rf; find . -name '.svn' -print | xargs rm -rf; tar cvf ../artemis_compiled.tar artemis)
 
