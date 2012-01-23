@@ -476,7 +476,7 @@ public class Navigator extends JFrame
    *    first base, otherwise first to last.
    *  @return The range that matches the pattern or null if there is no match.
    **/
-  public static MarkerRange findBasePattern (final BasePattern pattern,
+  private static MarkerRange findBasePattern (final BasePattern pattern,
                                              final EntryGroup entry_group,
                                              final Selection selection,
                                              final boolean start_at_end,
@@ -520,14 +520,11 @@ public class Navigator extends JFrame
    *    first base, otherwise first to last.
    *  @return The range that matches the pattern or null if there is no match.
    **/
-  public static MarkerRange findAminoAcidSequence (final AminoAcidSequence
-                                                     sequence,
-                                                   final EntryGroup
-                                                     entry_group,
+  private static MarkerRange findAminoAcidSequence (final AminoAcidSequence sequence,
+                                                   final EntryGroup entry_group,
                                                    final Selection selection,
                                                    final boolean start_at_end,
-                                                   final boolean
-                                                     search_backwards) {
+                                                   final boolean search_backwards) {
     // if start_at_end is false we want to start the search at the selection
     final Marker selection_base = selection.getLowestBaseOfSelection ();
 
