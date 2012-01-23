@@ -405,6 +405,54 @@ public class ViewMenu extends SelectionMenu
                                        base_plot_group);
       }
     });
+    
+    final JMenuItem all_filters_item =
+        new JMenuItem("Apply All Filters Above ...");
+    all_filters_item.addActionListener(new ActionListener()
+      {
+        public void actionPerformed(ActionEvent event) 
+        {
+          if(!checkEntryGroupSize(MAX_FILTER_FEATURE_COUNT))
+            return;
+          
+          showBadStartCodons(getParentFrame(), selection, 
+              entry_group, goto_event_source,
+              base_plot_group);
+          
+          showBadStopCodons(getParentFrame(), selection,
+              entry_group, goto_event_source,
+              base_plot_group);
+          
+          showStopsInTranslation(getParentFrame(), selection,
+              entry_group, goto_event_source,
+              base_plot_group);
+          
+          showNonEMBLKeys(getParentFrame(), selection,
+              entry_group, goto_event_source,
+              base_plot_group);
+          
+          showDuplicatedFeatures(getParentFrame(), selection,
+              entry_group, goto_event_source,
+              base_plot_group);
+          
+          showOverlappingCDSs(getParentFrame(), selection,
+              entry_group, goto_event_source,
+              base_plot_group);
+          
+          showFeaturesWithSameStopCodons(getParentFrame(), 
+              selection, entry_group,
+              goto_event_source,
+              base_plot_group);
+          
+          showMissingQualifierFeatures(getParentFrame(), selection,
+              entry_group, goto_event_source,
+              base_plot_group);
+          
+          showFilterByMultipleID(getParentFrame(), selection,
+              entry_group, goto_event_source,
+              base_plot_group);
+        }
+      });
 
     final JMenuItem filter_by_key_item =
       new JMenuItem("Filter By Key ...");
@@ -454,6 +502,8 @@ public class ViewMenu extends SelectionMenu
     feature_filters_menu.add(same_stop_cds_features_item);
     feature_filters_menu.add(missing_qualifier_features_item);
     feature_filters_menu.add(filter_by_multiple_sys_id);
+    feature_filters_menu.addSeparator();
+    feature_filters_menu.add(all_filters_item);
     feature_filters_menu.addSeparator();
     feature_filters_menu.add(filter_by_key_item);
     feature_filters_menu.add(filter_by_selection_item);
