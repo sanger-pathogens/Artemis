@@ -268,6 +268,12 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
         qualifiers.removeQualifierByName("ID");
         QualifierVector geneQualifiers = chadoGene.getGene().getQualifiers().copy();
         combineQualifiers(qualifiers, geneQualifiers, true);
+        
+        if(qualifiers.getQualifierByName("product") != null)
+        {
+          Qualifier newQualifier = new Qualifier("product", processProductValues(qualifiers.getQualifierByName("product")));
+          qualifiers.setQualifier(newQualifier);
+        }
       }
     }
     
@@ -412,33 +418,7 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
       
       if(newQualifier.getName().equals("product"))
       {
-        final StringVector newValues = newQualifier.getValues();
-        final StringVector tmpNewValues = new StringVector();
-        for(int j=0; j<newValues.size(); j++)
-        {
-          String val = (String)newValues.get(j);
-          
-          int ind = 0;
-          
-          if((ind=val.indexOf(";db_xref="))>-1 && this instanceof EmblDocumentEntry)
-            val = val.substring(0,ind);
-          
-          if((ind=val.indexOf(";evidence="))>-1 && this instanceof EmblDocumentEntry)
-            val = val.substring(0,ind);
-          
-          if((ind=val.indexOf(";with="))>-1 && this instanceof EmblDocumentEntry)
-            val = val.substring(0,ind);
-          
-          if(val.startsWith("term="))
-            val = val.substring(5,  val.length());
-          
-          if(val.endsWith(";"))
-            val = val.substring(0,  val.length()-1);
-          
-          tmpNewValues.add(val);
-        }
- 
-        newQualifier = new Qualifier("product", tmpNewValues);
+        newQualifier = new Qualifier("product", processProductValues(newQualifier));
       }
       
       if(newQualifier.getName().equals("orthologous_to") ||
@@ -481,6 +461,41 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
       
       addNewQualifier(qualifiers, newQualifier);
     }
+  }
+  
+  /**
+   * Process product qualifier
+   * @param productQualifier
+   * @return
+   */
+  private StringVector processProductValues(Qualifier productQualifier)
+  {
+    final StringVector values = productQualifier.getValues();
+    final StringVector tmpNewValues = new StringVector();
+    for(int j=0; j<values.size(); j++)
+    {
+      String val = (String)values.get(j);
+      
+      int ind = 0;
+      
+      if((ind=val.indexOf(";db_xref="))>-1 && this instanceof EmblDocumentEntry)
+        val = val.substring(0,ind);
+      
+      if((ind=val.indexOf(";evidence="))>-1 && this instanceof EmblDocumentEntry)
+        val = val.substring(0,ind);
+      
+      if((ind=val.indexOf(";with="))>-1 && this instanceof EmblDocumentEntry)
+        val = val.substring(0,ind);
+      
+      if(val.startsWith("term="))
+        val = val.substring(5,  val.length());
+      
+      if(val.endsWith(";"))
+        val = val.substring(0,  val.length()-1);
+      
+      tmpNewValues.add(val);
+    }
+    return tmpNewValues;
   }
   
   /**
