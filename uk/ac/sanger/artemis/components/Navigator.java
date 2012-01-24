@@ -25,6 +25,8 @@
 
 package uk.ac.sanger.artemis.components;
 
+import uk.ac.sanger.artemis.io.Range;
+import uk.ac.sanger.artemis.io.RangeVector;
 import uk.ac.sanger.artemis.sequence.*;
 import uk.ac.sanger.artemis.*;
 
@@ -47,99 +49,68 @@ public class Navigator extends JFrame
 {
   private static final long serialVersionUID = 1L;
 
-  /**
-   *  The JRadioButton that selects the goto base function.
-   **/
+  /** The JRadioButton that selects the goto base function. */
   final JRadioButton goto_base_button;
 
-  /**
-   *  The JRadioButton that selects the goto base pattern function.
-   **/
+  /** The JRadioButton that selects the goto base pattern function. */
   final JRadioButton goto_base_pattern_button;
 
-  /**
-   *  The JRadioButton that selects the find amino acid sequence function.
-   **/
+  /** The JRadioButton that selects the find amino acid sequence function. */
   final JRadioButton goto_aa_pattern_button;
 
-  /**
-   *  The JRadioButton that selects the goto feature qualifier value function.
-   **/
+  /** The JRadioButton that selects the goto feature qualifier value function. */
   final JRadioButton goto_qualifier_button;
 
-  /**
-   *  The JRadioButton that selects the goto gene name function.
-   **/
+  /** The JRadioButton that selects the goto gene name function. */
   final JRadioButton goto_gene_name_button;
 
-  /**
-   *  The JRadioButton that selects the goto feature key function.
-   **/
+  /** The JRadioButton that selects the goto feature key function. */
   final JRadioButton goto_key_button;
 
-  /**
-   *  This contains the pattern to search for if the user has selected the
-   *  goto base function.
-   **/
+  /** This contains the pattern to search for if the user has selected the
+      goto base function. */
   final JTextField goto_base_text;
 
-  /**
-   *  This contains the pattern to search for if the user has selected the
-   *  goto base pattern function.
-   **/
+  /** This contains the pattern to search for if the user has selected the
+      goto base pattern function. */
   final JTextField goto_base_pattern_text;
 
-  /**
-   *  This contains the pattern to search for if the user has selected the
-   *  goto amino acid function.
-   **/
+  /** This contains the pattern to search for if the user has selected the
+      goto amino acid function. */
   final JTextField goto_aa_pattern_text;
 
-  /**
-   *  This contains the pattern to search for if the user has selected the
-   *  goto qualifier value function.
-   **/
+  /** This contains the pattern to search for if the user has selected the
+      goto qualifier value function. */
   final JTextField goto_qualifier_textfield;
 
-  /**
-   *  This contains the pattern to search for if the user has selected the
-   *  goto gene name function.
-   **/
+  /** This contains the pattern to search for if the user has selected the
+      goto gene name function. */
   final JTextField goto_gene_name_textfield;
 
-  /**
-   *  This contains the key to search for if the user has selected the
-   *  goto key function.
-   **/
+  /** This contains the key to search for if the user has selected the
+      goto key function. */
   final JTextField goto_feature_key_textfield;
 
-  /**
-   *  The user selects this JRadioButton if the search should start at first/last
-   *  base or first/last feature (depending on the search type).
-   **/
+  /** The user selects this JRadioButton if the search should start at first/last
+      base or first/last feature (depending on the search type). */
   JRadioButton start_at_an_end_button;
 
-  /**
-   *  The user selects this JRadioButton if the search should start at the
-   *  position of the current selection.
-   **/
+  /** The user selects this JRadioButton if the search should start at the
+      position of the current selection. */
   final JRadioButton start_at_selection_button;
 
-  /**
-   *  If checked the search will go backwards.
-   **/
+  /** If checked the search will go backwards. */
   final JCheckBox search_backward_button;
 
-  /**
-   *  If checked the search will ignore the case of the query and subject.
-   **/
+  /** If checked the search will ignore the case of the query and subject. */
   final JCheckBox ignore_case_button;
 
-  /**
-   *  If checked the search text is allowed to match a substring of a
-   *  qualifier value.
-   **/
+  /** If checked the search text is allowed to match a substring of a
+      qualifier value. */
   final JCheckBox partial_match_button;
+  
+  /** Check whether the match overlaps selected range */
+  final JCheckBox overlaps_with_selection;
 
   /**
    *  The GotoEventSource object that was passed to the constructor.
@@ -194,8 +165,7 @@ public class Navigator extends JFrame
 
     button_group.add (goto_base_button);
 
-    final JPanel goto_base_panel = new JPanel ();
-    goto_base_panel.setLayout (new FlowLayout (FlowLayout.LEFT));
+    final JPanel goto_base_panel = new JPanel (new FlowLayout (FlowLayout.LEFT));
     goto_base_panel.add (goto_base_button);
     c.gridwidth = 2;
     gridbag.setConstraints (goto_base_panel, c);
@@ -221,8 +191,7 @@ public class Navigator extends JFrame
 
     button_group.add (goto_gene_name_button);
 
-    final JPanel goto_gene_name_panel = new JPanel ();
-    goto_gene_name_panel.setLayout (new FlowLayout (FlowLayout.LEFT));
+    final JPanel goto_gene_name_panel = new JPanel (new FlowLayout (FlowLayout.LEFT));
     goto_gene_name_panel.add (goto_gene_name_button);
     c.gridwidth = 2;
     gridbag.setConstraints (goto_gene_name_panel, c);
@@ -247,8 +216,7 @@ public class Navigator extends JFrame
       new JRadioButton ("Goto Feature With This Qualifier Value:", true);
     button_group.add (goto_qualifier_button);
 
-    final JPanel goto_qualifier_panel = new JPanel ();
-    goto_qualifier_panel.setLayout (new FlowLayout (FlowLayout.LEFT));
+    final JPanel goto_qualifier_panel = new JPanel (new FlowLayout (FlowLayout.LEFT));
     goto_qualifier_panel.add (goto_qualifier_button);
     c.gridwidth = 2;
     gridbag.setConstraints (goto_qualifier_panel, c);
@@ -273,8 +241,7 @@ public class Navigator extends JFrame
       new JRadioButton ("Goto Feature With This Key:", true);
     button_group.add (goto_key_button);
 
-    final JPanel goto_key_panel = new JPanel ();
-    goto_key_panel.setLayout (new FlowLayout (FlowLayout.LEFT));
+    final JPanel goto_key_panel = new JPanel (new FlowLayout (FlowLayout.LEFT));
     goto_key_panel.add (goto_key_button);
     c.gridwidth = 2;
     gridbag.setConstraints (goto_key_panel, c);
@@ -299,8 +266,7 @@ public class Navigator extends JFrame
       new JRadioButton ("Find Base Pattern:", true);
     button_group.add (goto_base_pattern_button);
 
-    final JPanel goto_base_pattern_panel = new JPanel ();
-    goto_base_pattern_panel.setLayout (new FlowLayout (FlowLayout.LEFT));
+    final JPanel goto_base_pattern_panel = new JPanel (new FlowLayout (FlowLayout.LEFT));
     goto_base_pattern_panel.add (goto_base_pattern_button);
     c.gridwidth = 2;
     gridbag.setConstraints (goto_base_pattern_panel, c);
@@ -324,8 +290,7 @@ public class Navigator extends JFrame
       new JRadioButton ("Find Amino Acid String:", true);
     button_group.add (goto_aa_pattern_button);
 
-    final JPanel goto_aa_pattern_panel = new JPanel ();
-    goto_aa_pattern_panel.setLayout (new FlowLayout (FlowLayout.LEFT));
+    final JPanel goto_aa_pattern_panel = new JPanel (new FlowLayout (FlowLayout.LEFT));
     goto_aa_pattern_panel.add (goto_aa_pattern_button);
     c.gridwidth = 2;
     gridbag.setConstraints (goto_aa_pattern_panel, c);
@@ -344,7 +309,6 @@ public class Navigator extends JFrame
         }
       }
     });
-
 
     goto_base_button.setSelected (true);
 
@@ -365,6 +329,12 @@ public class Navigator extends JFrame
 
     start_at_selection_button =
       new JRadioButton ("selection", false);
+    start_at_selection_button.addItemListener(new ItemListener() {
+      public void itemStateChanged(ItemEvent e) {
+        overlaps_with_selection.setEnabled(start_at_selection_button.isSelected());
+      }
+    });
+
     start_position_button_group.add (start_at_selection_button);
 
     start_at_an_end_panel.add (start_at_selection_button);
@@ -374,10 +344,14 @@ public class Navigator extends JFrame
     getContentPane ().add (start_at_an_end_panel, c);
 
 
-    final JPanel option_button_panel = new JPanel ();
+    final JPanel select_within_button_panel = new JPanel (new FlowLayout (FlowLayout.LEFT));
+    overlaps_with_selection = new JCheckBox("Overlaps With Selection", false);
+    overlaps_with_selection.setEnabled(start_at_selection_button.isSelected());
+    select_within_button_panel.add(overlaps_with_selection);
+    getContentPane ().add (select_within_button_panel, c);
 
-    option_button_panel.setLayout (new FlowLayout (FlowLayout.LEFT));
 
+    final JPanel option_button_panel = new JPanel (new FlowLayout (FlowLayout.LEFT));
     search_backward_button = new JCheckBox ("Search Backward", false);
     ignore_case_button = new JCheckBox ("Ignore Case", true);
     partial_match_button = new JCheckBox ("Allow Substring Matches", true);
@@ -386,7 +360,6 @@ public class Navigator extends JFrame
     option_button_panel.add (ignore_case_button);
     option_button_panel.add (partial_match_button);
 
-    getContentPane ().add (Box.createVerticalStrut(5), c);
     getContentPane ().add (option_button_panel, c);
 
 
@@ -549,11 +522,7 @@ public class Navigator extends JFrame
                                         false);
     }
 
-    if (match_range == null) {
-      return null;
-    } else {
-      return match_range;
-    }
+    return match_range;
   }
 
   /**
@@ -663,8 +632,6 @@ public class Navigator extends JFrame
 
       final boolean start_at_an_end = start_at_an_end_button.isSelected ();
 
-      start_at_selection_button.setSelected (true);
-
       final MarkerRange match_range =
         findBasePattern (pattern,
                          getEntryGroup (),
@@ -675,12 +642,22 @@ public class Navigator extends JFrame
       if (match_range == null) {
         new MessageDialog (this, "reached the end of sequence");
       } else {
+        
+        if(start_at_selection_button.isSelected() && overlaps_with_selection.isSelected()) {
+          if(!overlapsRange(getSelection().getSelectionRanges(), match_range)) {
+            new MessageDialog (this, "Next match ("+ 
+               match_range.getRawRange().toString()+") outside selection.");
+            return;
+          }
+        }
+        
         getSelection ().setMarkerRange (match_range);
 
         final Marker first_selected_base =
           getSelection ().getLowestBaseOfSelection ();
 
         goto_event_source.gotoBase (first_selected_base);
+        start_at_selection_button.setSelected (true);
       }
     } catch (BasePatternFormatException e) {
       new MessageDialog (this,
@@ -705,9 +682,6 @@ public class Navigator extends JFrame
     final AminoAcidSequence pattern = new AminoAcidSequence (pattern_string);
 
     final boolean start_at_an_end = start_at_an_end_button.isSelected ();
-
-    start_at_selection_button.setSelected (true);
-
     final boolean search_backwards = search_backward_button.isSelected ();
 
     final MarkerRange match_range =
@@ -717,15 +691,45 @@ public class Navigator extends JFrame
                              start_at_an_end,
                              search_backwards);
 
-    if (match_range == null) {
+    if (match_range == null)
       new MessageDialog (this, "reached the end of sequence");
-    } else {
+    else {
+      
+      if(start_at_selection_button.isSelected() && overlaps_with_selection.isSelected()) {
+        if(!overlapsRange(getSelection().getSelectionRanges(), match_range)) {
+          new MessageDialog (this, "Next match ("+ 
+             match_range.getRawRange().toString()+") outside selection.");
+          return;
+        }
+      }
+      
+      start_at_selection_button.setSelected (true);
       getSelection ().setMarkerRange (match_range);
-
       goto_event_source.gotoBase (getSelection ().getLowestBaseOfSelection ());
     }
   }
 
+  /**
+   * Check if a MarkerRange is contained in a RangeVector
+   * @param ranges
+   * @param match_range
+   * @return
+   */
+  private boolean overlapsRange(final RangeVector ranges,
+                                final MarkerRange match_range)
+  {
+    for(int i=0; i<ranges.size(); i++) {
+      Range r = (Range)ranges.get(i);
+
+      if( ( match_range.getRawStart().getRawPosition() >=  r.getStart() && 
+            match_range.getRawStart().getRawPosition() <= r.getEnd() ) ||
+          ( match_range.getRawEnd().getRawPosition() >=  r.getStart() && 
+            match_range.getRawEnd().getRawPosition() <= r.getEnd() ))
+        return true;
+    }  
+    return false;
+  }
+  
   /**
    *  Select the next feature that contains the text given by the user in the
    *  goto_qualifier_textfield TextArea.
