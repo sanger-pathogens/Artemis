@@ -271,7 +271,7 @@ public class BasePattern {
    *    should start.
    *  @return The index of the match or -1 if there is no match.
    **/
-  public int searchFor (final String bases_string,
+  private int searchFor (final String bases_string,
                         final int start_index) {
     return searchFor (bases_string, pattern_string, start_index, false);
   }
@@ -336,6 +336,7 @@ public class BasePattern {
         for (int pattern_index = 0 ;
              pattern_index < pattern_string.length () ;
              ++pattern_index) {
+          
           if (charMatch (bases_string.charAt (i + pattern_index),
                          pattern_string.charAt (pattern_index))) {
             // OK, so continue with the inner loop
