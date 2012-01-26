@@ -50,82 +50,90 @@ public class Navigator extends JFrame
   private static final long serialVersionUID = 1L;
 
   /** The JRadioButton that selects the goto base function. */
-  final JRadioButton goto_base_button;
+  private final JRadioButton goto_base_button;
 
   /** The JRadioButton that selects the goto base pattern function. */
-  final JRadioButton goto_base_pattern_button;
+  private final JRadioButton goto_base_pattern_button =
+      new JRadioButton ("Find Base Pattern:", true);;
 
   /** The JRadioButton that selects the find amino acid sequence function. */
-  final JRadioButton goto_aa_pattern_button;
+  private final JRadioButton goto_aa_pattern_button =
+      new JRadioButton ("Find Amino Acid String:", true);;
 
   /** The JRadioButton that selects the goto feature qualifier value function. */
-  final JRadioButton goto_qualifier_button;
+  private final JRadioButton goto_qualifier_button;
 
   /** The JRadioButton that selects the goto gene name function. */
-  final JRadioButton goto_gene_name_button;
+  private final JRadioButton goto_gene_name_button;
 
   /** The JRadioButton that selects the goto feature key function. */
-  final JRadioButton goto_key_button;
+  private final JRadioButton goto_key_button;
 
   /** This contains the pattern to search for if the user has selected the
       goto base function. */
-  final JTextField goto_base_text;
+  private final JTextField goto_base_text;
 
   /** This contains the pattern to search for if the user has selected the
       goto base pattern function. */
-  final JTextField goto_base_pattern_text;
+  private final JTextField goto_base_pattern_text;
 
   /** This contains the pattern to search for if the user has selected the
       goto amino acid function. */
-  final JTextField goto_aa_pattern_text;
+  private final JTextField goto_aa_pattern_text;
 
   /** This contains the pattern to search for if the user has selected the
       goto qualifier value function. */
-  final JTextField goto_qualifier_textfield;
+  private final JTextField goto_qualifier_textfield;
 
   /** This contains the pattern to search for if the user has selected the
       goto gene name function. */
-  final JTextField goto_gene_name_textfield;
+  private final JTextField goto_gene_name_textfield;
 
   /** This contains the key to search for if the user has selected the
       goto key function. */
-  final JTextField goto_feature_key_textfield;
+  private final JTextField goto_feature_key_textfield;
 
   /** The user selects this JRadioButton if the search should start at first/last
       base or first/last feature (depending on the search type). */
-  JRadioButton start_at_an_end_button;
+  private JRadioButton start_at_an_end_button;
 
   /** The user selects this JRadioButton if the search should start at the
       position of the current selection. */
-  final JRadioButton start_at_selection_button;
+  private final JRadioButton start_at_selection_button;
 
   /** If checked the search will go backwards. */
-  final JCheckBox search_backward_button;
+  private final JCheckBox search_backward_button;
 
   /** If checked the search will ignore the case of the query and subject. */
-  final JCheckBox ignore_case_button;
+  private final JCheckBox ignore_case_button;
 
   /** If checked the search text is allowed to match a substring of a
       qualifier value. */
-  final JCheckBox partial_match_button;
+  private final JCheckBox partial_match_button;
   
   /** Check whether the match overlaps selected range */
-  final JCheckBox overlaps_with_selection;
+  private final JCheckBox overlaps_with_selection;
+  
+  /** Search fwd strand */
+  private final JCheckBox fwd_strand = new JCheckBox("Forward Strand ", true);;
+  
+  /** Search bwd strand */
+  private final JCheckBox rev_strand = new JCheckBox("Reverse Strand", true);;
 
   /**
    *  The GotoEventSource object that was passed to the constructor.
    **/
-  final GotoEventSource goto_event_source;
+  private final GotoEventSource goto_event_source;
 
   /**
    *  The EntryGroup object that was passed to the constructor.
    **/
-  final EntryGroup entry_group;
+  private final EntryGroup entry_group;
 
   /**
    *  This is the Selection that was passed to the constructor.
    **/
-  final private Selection selection;
+  private final Selection selection;
   
   /**
    *  Create a new Navigator component.
@@ -262,8 +270,14 @@ public class Navigator extends JFrame
     });
 
 
-    goto_base_pattern_button =
-      new JRadioButton ("Find Base Pattern:", true);
+    goto_base_pattern_button.addItemListener(new ItemListener() {
+      public void itemStateChanged(ItemEvent arg0) {
+        rev_strand.setEnabled(goto_aa_pattern_button.isSelected() || 
+            goto_base_pattern_button.isSelected());
+        fwd_strand.setEnabled(goto_aa_pattern_button.isSelected() || 
+            goto_base_pattern_button.isSelected());
+      }
+    });
     button_group.add (goto_base_pattern_button);
 
     final JPanel goto_base_pattern_panel = new JPanel (new FlowLayout (FlowLayout.LEFT));
@@ -286,8 +300,15 @@ public class Navigator extends JFrame
       }
     });
 
-    goto_aa_pattern_button =
-      new JRadioButton ("Find Amino Acid String:", true);
+
+    goto_aa_pattern_button.addItemListener(new ItemListener() {
+      public void itemStateChanged(ItemEvent arg0) {
+        rev_strand.setEnabled(goto_aa_pattern_button.isSelected() || 
+            goto_base_pattern_button.isSelected());
+        fwd_strand.setEnabled(goto_aa_pattern_button.isSelected() || 
+            goto_base_pattern_button.isSelected());
+      }
+    });
     button_group.add (goto_aa_pattern_button);
 
     final JPanel goto_aa_pattern_panel = new JPanel (new FlowLayout (FlowLayout.LEFT));
@@ -312,9 +333,7 @@ public class Navigator extends JFrame
 
     goto_base_button.setSelected (true);
 
-    final ButtonGroup start_position_button_group =
-      new ButtonGroup ();
-
+    final ButtonGroup start_position_button_group = new ButtonGroup ();
     final JPanel start_at_an_end_panel = new JPanel (new FlowLayout(FlowLayout.LEFT));
 
     start_at_an_end_button =
@@ -350,7 +369,21 @@ public class Navigator extends JFrame
     select_within_button_panel.add(overlaps_with_selection);
     getContentPane ().add (select_within_button_panel, c);
 
+    //
+    // STRAND SELECTION
+    final JPanel strand_panel = new JPanel (new FlowLayout (FlowLayout.LEFT));
+    fwd_strand.setEnabled(goto_aa_pattern_button.isSelected() || 
+        goto_base_pattern_button.isSelected());
+    strand_panel.add(fwd_strand);
 
+    rev_strand.setEnabled(goto_aa_pattern_button.isSelected() || 
+        goto_base_pattern_button.isSelected());
+    strand_panel.add(rev_strand);
+    getContentPane ().add (strand_panel, c);
+
+
+    //
+    // OTHER OPTIONS
     final JPanel option_button_panel = new JPanel (new FlowLayout (FlowLayout.LEFT));
     search_backward_button = new JCheckBox ("Search Backward", false);
     ignore_case_button = new JCheckBox ("Ignore Case", true);
@@ -364,7 +397,6 @@ public class Navigator extends JFrame
 
 
     final JButton goto_button = new JButton ("Goto");
-
     goto_button.addActionListener (new ActionListener () {
       public void actionPerformed (ActionEvent e) {
         doGoto ();
@@ -373,7 +405,6 @@ public class Navigator extends JFrame
 
 
     final JButton clear_button = new JButton ("Clear");
-
     clear_button.addActionListener (new ActionListener () {
       public void actionPerformed (ActionEvent e) {
         clear ();
@@ -382,7 +413,6 @@ public class Navigator extends JFrame
 
 
     final JButton close_button = new JButton ("Close");
-
     close_button.addActionListener (new ActionListener () {
       public void actionPerformed (ActionEvent e) {
         Navigator.this.dispose ();
@@ -390,10 +420,8 @@ public class Navigator extends JFrame
     });
 
 
-    final FlowLayout flow_layout =
-      new FlowLayout (FlowLayout.CENTER, 15, 5);
-
-    final JPanel close_and_goto_panel = new JPanel (flow_layout);
+    final JPanel close_and_goto_panel = new JPanel (
+        new FlowLayout (FlowLayout.CENTER, 15, 5));
 
     close_and_goto_panel.add (goto_button);
     close_and_goto_panel.add (clear_button);
@@ -413,11 +441,7 @@ public class Navigator extends JFrame
     getEntryGroup ().addEntryGroupChangeListener (this);
 
     pack ();
-
-    final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-    setLocation (new Point ((screen.width - getSize ().width) / 2,
-                            (screen.height - getSize ().height) / 2));
-
+    Utilities.centreFrame(this);
     setVisible (true);
   }
 
@@ -453,7 +477,9 @@ public class Navigator extends JFrame
                                              final EntryGroup entry_group,
                                              final Selection selection,
                                              final boolean start_at_end,
-                                             final boolean search_backwards) {
+                                             final boolean search_backwards,
+                                             final boolean search_fwd_strand,
+                                             final boolean search_bwd_strand) {
     // if start_at_end is false we want to start the search at the selection
     final Marker selection_base = selection.getLowestBaseOfSelection ();
 
@@ -470,7 +496,8 @@ public class Navigator extends JFrame
       pattern.findMatch (entry_group.getBases (),
                          start_position,
                          entry_group.getSequenceLength (),
-                         search_backwards);
+                         search_backwards,
+                         search_fwd_strand, search_bwd_strand);
 
     if (match_range == null) {
       return null;
@@ -497,7 +524,9 @@ public class Navigator extends JFrame
                                                    final EntryGroup entry_group,
                                                    final Selection selection,
                                                    final boolean start_at_end,
-                                                   final boolean search_backwards) {
+                                                   final boolean search_backwards,
+                                                   final boolean search_fwd_strand,
+                                                   final boolean search_bwd_strand) {
     // if start_at_end is false we want to start the search at the selection
     final Marker selection_base = selection.getLowestBaseOfSelection ();
 
@@ -510,19 +539,9 @@ public class Navigator extends JFrame
       start_position = selection_base;
     }
 
-    final MarkerRange match_range;
-
-    if (search_backwards) {
-      match_range = sequence.findMatch (entry_group.getBases (),
-                                        start_position,
-                                        true);
-    } else {
-      match_range = sequence.findMatch (entry_group.getBases (),
-                                        start_position,
-                                        false);
-    }
-
-    return match_range;
+    return sequence.findMatch (entry_group.getBases (),
+                               start_position, search_backwards, 
+                               search_fwd_strand, search_bwd_strand);
   }
 
   /**
@@ -530,17 +549,23 @@ public class Navigator extends JFrame
    **/
   private void doGoto () {
     if (goto_base_button.isSelected ()) {
-      doGotoBase ();
+        doGotoBase ();
       return;
     }
 
     if (goto_base_pattern_button.isSelected ()) {
-      doGotoBasePattern ();
+      if(!rev_strand.isSelected() && !fwd_strand.isSelected())
+        new MessageDialog (this, "Select a strand to search.");
+      else
+        doGotoBasePattern ();
       return;
     }
 
     if (goto_aa_pattern_button.isSelected ()) {
-      doGotoAAPattern ();
+      if(!rev_strand.isSelected() && !fwd_strand.isSelected())
+        new MessageDialog (this, "Select a strand to search.");
+      else
+        doGotoAAPattern ();
       return;
     }
 
@@ -633,11 +658,10 @@ public class Navigator extends JFrame
       final boolean start_at_an_end = start_at_an_end_button.isSelected ();
 
       final MarkerRange match_range =
-        findBasePattern (pattern,
-                         getEntryGroup (),
-                         getSelection (),
-                         start_at_an_end,
-                         search_backward_button.isSelected ());
+        findBasePattern (pattern, getEntryGroup (),
+                         getSelection (), start_at_an_end,
+                         search_backward_button.isSelected (),
+                         fwd_strand.isSelected(), rev_strand.isSelected());
 
       if (match_range == null) {
         new MessageDialog (this, "reached the end of sequence");
@@ -685,11 +709,10 @@ public class Navigator extends JFrame
     final boolean search_backwards = search_backward_button.isSelected ();
 
     final MarkerRange match_range =
-      findAminoAcidSequence (pattern,
-                             getEntryGroup (),
-                             getSelection (),
-                             start_at_an_end,
-                             search_backwards);
+      findAminoAcidSequence (pattern, getEntryGroup (),
+                             getSelection (), start_at_an_end,
+                             search_backwards,
+                             fwd_strand.isSelected(), rev_strand.isSelected());
 
     if (match_range == null)
       new MessageDialog (this, "reached the end of sequence");

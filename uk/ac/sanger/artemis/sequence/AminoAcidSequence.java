@@ -371,7 +371,9 @@ public class AminoAcidSequence
    **/
   public MarkerRange findMatch(final Bases bases,
                                final Marker search_start_marker,
-                               final boolean search_backwards) 
+                               final boolean search_backwards,
+                               final boolean search_fwd_strand,
+                               final boolean search_bwd_strand) 
   {
     final String bases_string = bases.toString();
 
@@ -432,15 +434,21 @@ public class AminoAcidSequence
       }
     }
 
-    final int forward_search_result =
-      searchFor(bases_string,
-                forward_search_start_index,
-                search_backwards);
+    final int forward_search_result;
+    if(search_fwd_strand)
+      forward_search_result = searchFor(bases_string,
+                                        forward_search_start_index,
+                                        search_backwards);
+    else
+      forward_search_result = -1;
 
-    final int complement_search_result =
-       reverseComplementSearchFor(bases_string,
-                                  complement_search_start_index,
-                                  search_backwards);
+    final int complement_search_result;
+    if(search_bwd_strand)
+      complement_search_result = reverseComplementSearchFor(bases_string,
+                                       complement_search_start_index,
+                                       search_backwards);
+    else
+      complement_search_result = -1;
 
     final int match_first_base;
     final int match_last_base;
