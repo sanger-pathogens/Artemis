@@ -1,4 +1,10 @@
 Version XX
+	Add options in the navigator for searching the forward and 
+	reverse strands individually for base / amino acid patterns.
+	
+	Add an option to the navigator for searching for matches that
+	overlap a seleted region or feature.
+	
 	New translation table 24 (Pterobranchia mitochondrial) added.
 
 	Variant (VCF / BCF) filtering now uses the meta-data in the header to
