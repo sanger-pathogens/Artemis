@@ -1192,11 +1192,13 @@ public class EntryEdit extends JFrame
           bamView.setDisplay(feature_display.getFirstVisibleForwardBase(),
                              feature_display.getLastVisibleForwardBase(), null);
           bamView.revalidate();
+          one_line_per_entry_display.addDisplayAdjustmentListener(bamView);
           feature_display.addDisplayAdjustmentListener(bamView);
           feature_display.getSelection().addSelectionChangeListener(bamView);
         }
         else
         {
+          one_line_per_entry_display.removeDisplayAdjustmentListener(bamView);
           feature_display.removeDisplayAdjustmentListener(bamView);
           feature_display.getSelection().removeSelectionChangeListener(bamView);
           bamPanel.setVisible(false);
@@ -1861,6 +1863,8 @@ public class EntryEdit extends JFrame
           bamView.getJspView().getVerticalScrollBar().getMaximum());
       bamView.setDisplay(feature_display.getFirstVisibleForwardBase(),
           feature_display.getLastVisibleForwardBase(), null);
+      
+      one_line_per_entry_display.addDisplayAdjustmentListener(bamView);
       feature_display.addDisplayAdjustmentListener(bamView);
       feature_display.getSelection().addSelectionChangeListener(bamView);
 
