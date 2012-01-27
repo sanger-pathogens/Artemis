@@ -24,6 +24,7 @@ S_region        allele citation db_xref experiment gene gene_synonym inference l
 TATA_signal     allele citation db_xref experiment gene gene_synonym inference locus_tag map note old_locus_tag partial
 V_region        allele citation db_xref experiment gene gene_synonym inference locus_tag map note old_locus_tag partial product pseudo standard_name
 V_segment       allele citation db_xref experiment gene gene_synonym inference locus_tag map note old_locus_tag partial product pseudo standard_name
+assembly_gap    @gap_type @estimated_length linkage_evidence
 attenuator      allele citation db_xref experiment gene gene_synonym inference locus_tag map note old_locus_tag operon partial phenotype
 enhancer        allele bound_moiety citation db_xref experiment gene gene_synonym inference locus_tag map note old_locus_tag partial standard_name
 exon            EC_number allele citation db_xref experiment function gene gene_synonym inference locus_tag map note number old_locus_tag partial product pseudo standard_name
