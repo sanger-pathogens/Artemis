@@ -94,7 +94,7 @@ public class MultipleAlleleVariant
 
     if(isSNP && alleles.length == 3)
     {
-      System.out.println(record.toString());
+      //System.out.println(record.toString());
       for(int i=0; i<IUB_3.length; i++)
       {
         if( (IUB_3[i][1].equals(alleles[0]) && IUB_3[i][2].equals(alleles[1]) && IUB_3[i][3].equals(alleles[2])) ||
