@@ -34,7 +34,7 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.net.URL;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -181,12 +181,13 @@ class IOUtils
     final EntryGroup entryGroup = vcfView.getEntryGroup();
     final int length = entryGroup.getSequenceLength();
     final Bases bases = entryGroup.getBases();
-    FeatureVector features = entryGroup.getAllFeatures();
-    
+    final FeatureVector features = entryGroup.getAllFeatures();
+
     final String name = entryGroup.getActiveEntries().elementAt(0).getName();
     final File newfile = new File( 
         getBaseDirectoryFromEntry(entryGroup.getActiveEntries().elementAt(0)),
             name);
+
     try
     {
       final File f = getFile(newfile.getAbsolutePath(), 1, ".fasta", null);
@@ -197,39 +198,44 @@ class IOUtils
       for (int i = 0; i < vcfView.getVcfReaders().length; i++)
         ntotalSamples += vcfView.getVcfReaders()[i].getNumberOfSamples();
       
-      final Writer[] writer = new Writer[ntotalSamples];
-      final File[] tmpFiles = new File[ntotalSamples];
+      final Writer[] writer = new Writer[ntotalSamples+1];
+      final File[] tmpFiles = new File[ntotalSamples+1];
       
       for (int i = 0; i < vcfView.getVcfReaders().length; i++)
       {
         final String names[] = vcfView.getVcfReaders()[i].sampleNames;
         for(int j=0; j<names.length; j++)
         {
-          tmpFiles[i] = File.createTempFile(names[j].replaceAll("[/\\:]", "_"), "art");
-          writer[i] = new FileWriter( tmpFiles[i] );
-          writer[i].write(">"+names[j]);
+          tmpFiles[i+j] = File.createTempFile(names[j].replaceAll("[/\\:]", "_"), "art");
+          writer[i+j] = new FileWriter( tmpFiles[i+j] );
+          writer[i+j].write(">"+names[j]);
         }
       }
+      
+      // include reference bases
+      tmpFiles[ntotalSamples] = File.createTempFile("ref", "art");
+      writer[ntotalSamples] = new FileWriter( tmpFiles[ntotalSamples] );
+      writer[ntotalSamples].write(">reference");
 
-      int MAX_BASE_CHUNK = (10000/ntotalSamples)*SEQUENCE_LINE_BASE_COUNT;
-      //System.out.println("MAX_BASE_CHUNK "+MAX_BASE_CHUNK);
 
-      final Hashtable<Integer, VCFRecord> records[] = new Hashtable[MAX_BASE_CHUNK];
+      final int MAX_BASE_CHUNK = (10000/ntotalSamples)*SEQUENCE_LINE_BASE_COUNT;
+      final HashMap<Integer, VCFRecord> records[] = new HashMap[MAX_BASE_CHUNK];
       int baseCount = 0;
       
-      // write variant sites to temp files
+      // write variant sites to tmp files
       for(int i=0; i<length; i+=MAX_BASE_CHUNK)
       {
-        int end = i+MAX_BASE_CHUNK;
         int start = i+1;
+        int end = i+MAX_BASE_CHUNK;
         if(end > length)
           end = length;
 
         storeVCFRecords(vcfView, records, start, end);
-        baseCount = writeVariants(vcfView, records, writer, features, ntotalSamples, start, end, baseCount);
+        baseCount = writeVariants(vcfView, records, writer, features, 
+                        ntotalSamples, start, end, bases, baseCount);
       }
 
-      for(int i=0; i<ntotalSamples; i++)
+      for(int i=0; i<writer.length; i++)
         writer[i].close();
       
       // concatenate the single fasta files into a multiple fasta file
@@ -249,6 +255,10 @@ class IOUtils
     { 
       e.printStackTrace();
     }
+    catch (OutOfRangeException e)
+    {
+      e.printStackTrace();
+    }
   }
   
   /**
@@ -260,13 +270,13 @@ class IOUtils
    * @throws IOException
    */
   private static void storeVCFRecords(final VCFview vcfView, 
-                                      final Hashtable<Integer, VCFRecord> records[], 
+                                      final HashMap<Integer, VCFRecord> records[], 
                                       final int start, 
                                       final int end) throws IOException
   {
     
     for (int i = 0; i < vcfView.getVcfReaders().length; i++)
-      records[i] = new Hashtable<Integer, VCFRecord> ();
+      records[i] = new HashMap<Integer, VCFRecord> ();
     
     for (int i = 0; i < vcfView.getVcfReaders().length; i++)
     {
@@ -298,7 +308,7 @@ class IOUtils
     }
   }
   
-  private static void loadRecords(Hashtable<Integer, VCFRecord> records,
+  private static void loadRecords(HashMap<Integer, VCFRecord> records,
                                   final AbstractVCFReader reader, 
                                   final String contig, 
                                   final int start, 
@@ -309,25 +319,43 @@ class IOUtils
     while((record = reader.getNextRecord(contig, start, end)) != null)
     {
       if(records == null)
-        records = new Hashtable<Integer, VCFRecord> ();
+        records = new HashMap<Integer, VCFRecord> ();
       records.put(record.getPos()+offset, record);
     }
   }
   
+  /**
+   * Write variant positions.
+   * @param vcfView
+   * @param records
+   * @param writer
+   * @param features
+   * @param ntotalSamples
+   * @param start
+   * @param end
+   * @param bases
+   * @param bc
+   * @return
+   * @throws IOException
+   * @throws OutOfRangeException
+   */
   private static int writeVariants(final VCFview vcfView,
-                                    final Hashtable<Integer, VCFRecord> records[],
-                                    final Writer writer[],
-                                    final FeatureVector features,
-                                    final int ntotalSamples,
-                                    final int start, 
-                                    final int end,
-                                    int bc) throws IOException
+                                   final HashMap<Integer, VCFRecord> records[],
+                                   final Writer writer[],
+                                   final FeatureVector features,
+                                   final int ntotalSamples,
+                                   final int start, 
+                                   final int end,
+                                   final Bases bases,
+                                   int bc) throws IOException, OutOfRangeException
   {
+    final char basesC[] = bases.getSubSequenceC(new Range(start, end), Bases.FORWARD);
     for (int i = start; i < end; i++)
     {
       int basePosition = i;
       int thisSample   = 0;
-      final String[] thisBase = new String[ntotalSamples];
+      final String[] thisBase = new String[ntotalSamples+1];
+
       boolean seenSNP     = false;
       int insertionLength = 0;
       
@@ -387,6 +415,9 @@ class IOUtils
       
       if(seenSNP)
       {
+        // look-up reference base
+        thisBase[ntotalSamples] = String.valueOf( basesC[i-start] );
+
         int remainder = 0;
         for(int j=0; j<thisBase.length; j++)
         {
@@ -395,10 +426,6 @@ class IOUtils
             for(int k=0; k<thisBase[j].length(); k++)
             {
               remainder = (bc+k)%SEQUENCE_LINE_BASE_COUNT;
-
-              /*if(j==0 && k==0 && bc>3299 && bc<3365)
-                System.out.println("HERE "+thisBase[j]+" "+bc+" "+basePosition+" "+remainder);*/
-
               if(remainder == 0)
                 writer[j].write(System.getProperty("line.separator"));
               writer[j].write(thisBase[j].charAt(k));
@@ -430,7 +457,7 @@ class IOUtils
             }
           } 
         }
-        
+
         if(insertionLength > 0)
           bc+=insertionLength;
         else
