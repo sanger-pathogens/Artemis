@@ -179,7 +179,7 @@ class IOUtils
   protected static void exportVariantFasta(final VCFview vcfView)
   {
     final EntryGroup entryGroup = vcfView.getEntryGroup();
-    final int length = entryGroup.getSequenceLength();
+    int length = entryGroup.getSequenceLength();
     final Bases bases = entryGroup.getBases();
     final FeatureVector features = entryGroup.getAllFeatures();
 
@@ -223,6 +223,7 @@ class IOUtils
       int baseCount = 0;
       
       // write variant sites to tmp files
+      //length =  2172095;
       for(int i=0; i<length; i+=MAX_BASE_CHUNK)
       {
         int start = i+1;
@@ -352,13 +353,12 @@ class IOUtils
     final char basesC[] = bases.getSubSequenceC(new Range(start, end), Bases.FORWARD);
     for (int i = start; i < end; i++)
     {
-      int basePosition = i;
-      int thisSample   = 0;
+      int thisSample = 0;
       final String[] thisBase = new String[ntotalSamples+1];
 
       boolean seenSNP     = false;
       int insertionLength = 0;
-      
+
       // loop over each VCF file
       for (int j = 0; j < vcfView.getVcfReaders().length; j++)
       {
@@ -368,13 +368,14 @@ class IOUtils
         if(record == null)
           continue;
         
+        
         boolean vcf_v4 = reader.isVcf_v4();
         int nsamples = reader.getNumberOfSamples();
         // loop over each sample
         for(int k=0; k<nsamples; k++)
         {
           // look at each type of variant
-          if(vcfView.showVariant(record, features, basePosition, reader, k, j) )
+          if(vcfView.showVariant(record, features, i, reader, k, j) )
           {
             if(record.getAlt().isDeletion(vcf_v4))
             {
@@ -402,13 +403,21 @@ class IOUtils
               thisBase[thisSample] = ".";
             else
             {
-              thisBase[thisSample] = record.getAlt().toString();
-              seenSNP = true;
+              if(record.getAlt().toString().length() > 1 && 
+                 record.getAlt().toString().length() == record.getRef().length() )
+              {
+                thisBase[thisSample] = record.getAlt().toString();
+                seenSNP = true;
+                
+                if(thisBase[ntotalSamples] == null || 
+                   thisBase[ntotalSamples].length() < record.getRef().length())
+                  thisBase[ntotalSamples]  = record.getRef();
+              }
             }
           }
           else
             thisBase[thisSample] = "N"; // filtered out
-          
+
           thisSample++;
         }
       }
@@ -416,11 +425,12 @@ class IOUtils
       if(seenSNP)
       {
         // look-up reference base
-        thisBase[ntotalSamples] = String.valueOf( basesC[i-start] );
+        if(thisBase[ntotalSamples] == null)
+          thisBase[ntotalSamples] = String.valueOf( basesC[i-start] );
 
         int remainder = 0;
         for(int j=0; j<thisBase.length; j++)
-        {
+        {         
           if(thisBase[j] != null)
           {
             for(int k=0; k<thisBase[j].length(); k++)
@@ -455,7 +465,7 @@ class IOUtils
                 writer[j].write(System.getProperty("line.separator"));
               writer[j].write("-");
             }
-          } 
+          }
         }
 
         if(insertionLength > 0)
