@@ -179,10 +179,6 @@ class IOUtils
   protected static void exportVariantFasta(final VCFview vcfView)
   {
     final EntryGroup entryGroup = vcfView.getEntryGroup();
-    int length = entryGroup.getSequenceLength();
-    final Bases bases = entryGroup.getBases();
-    final FeatureVector features = entryGroup.getAllFeatures();
-
     final String name = entryGroup.getActiveEntries().elementAt(0).getName();
     final File newfile = new File( 
         getBaseDirectoryFromEntry(entryGroup.getActiveEntries().elementAt(0)),
@@ -194,6 +190,30 @@ class IOUtils
       if(f == null)
         return;
 
+      exportVariantFasta(vcfView, 
+          new PrintWriter(new FileOutputStream(f)), 
+          entryGroup.getSequenceLength(), 
+          entryGroup.getAllFeatures(), 
+          entryGroup.getBases());
+    }
+    catch(IOException ioe)
+    {
+      ioe.printStackTrace();
+    }
+  }
+  
+  /**
+   * Export all variant sites to a multiple fasta file.
+   * @param vcfView
+   */
+  protected static void exportVariantFasta(final VCFview vcfView, 
+                                           final PrintWriter pw, 
+                                           final int length, 
+                                           final FeatureVector features, 
+                                           final Bases bases)
+  {
+    try
+    {
       int ntotalSamples = 0;
       for (int i = 0; i < vcfView.getVcfReaders().length; i++)
         ntotalSamples += vcfView.getVcfReaders()[i].getNumberOfSamples();
@@ -206,16 +226,18 @@ class IOUtils
         final String names[] = vcfView.getVcfReaders()[i].sampleNames;
         for(int j=0; j<names.length; j++)
         {
-          tmpFiles[i+j] = File.createTempFile(names[j].replaceAll("[/\\:]", "_"), "art");
+          final String fn = (names[j].equals("") ? (j+1)+"_sample" : names[j].replaceAll("[/\\:]", "_"));
+          tmpFiles[i+j] = File.createTempFile(fn, "art");
           writer[i+j] = new FileWriter( tmpFiles[i+j] );
-          writer[i+j].write(">"+names[j]);
+          writer[i+j].write(">"+fn);
         }
       }
       
       // include reference bases
+      final String refName = vcfView.getEntryGroup().getActiveEntries().elementAt(0).getName();
       tmpFiles[ntotalSamples] = File.createTempFile("ref", "art");
       writer[ntotalSamples] = new FileWriter( tmpFiles[ntotalSamples] );
-      writer[ntotalSamples].write(">reference");
+      writer[ntotalSamples].write(">"+refName);
 
 
       final int MAX_BASE_CHUNK = (10000/ntotalSamples)*SEQUENCE_LINE_BASE_COUNT;
@@ -223,7 +245,6 @@ class IOUtils
       int baseCount = 0;
       
       // write variant sites to tmp files
-      //length =  2172095;
       for(int i=0; i<length; i+=MAX_BASE_CHUNK)
       {
         int start = i+1;
@@ -240,7 +261,6 @@ class IOUtils
         writer[i].close();
       
       // concatenate the single fasta files into a multiple fasta file
-      final PrintWriter pw = new PrintWriter(new FileOutputStream(f));
       for (int i = 0; i < tmpFiles.length; i++) 
       {
         final BufferedReader br = new BufferedReader(new FileReader(tmpFiles[i].getPath()));
@@ -367,8 +387,7 @@ class IOUtils
 
         if(record == null)
           continue;
-        
-        
+
         boolean vcf_v4 = reader.isVcf_v4();
         int nsamples = reader.getNumberOfSamples();
         // loop over each sample
@@ -379,7 +398,22 @@ class IOUtils
           {
             if(record.getAlt().isDeletion(vcf_v4))
             {
+              // note: do not write out if just deletion
               thisBase[thisSample] = "-";
+              
+              /*if( thisBase[ntotalSamples] == null || 
+                  thisBase[ntotalSamples].length() < record.getRef().length() )
+              {
+                thisBase[ntotalSamples] = record.getRef();
+                if(!record.getAlt().toString().equals("."))
+                  thisBase[thisSample] = record.getAlt().toString();
+                else
+                  thisBase[thisSample] = "";
+                
+                int padLength = thisBase[ntotalSamples].length() - thisBase[thisSample].length();
+                for(int ipad=0; ipad<padLength; ipad++)
+                  thisBase[thisSample] += "-";
+              }*/
             }
             else if(record.getAlt().isInsertion(vcf_v4))
             {
@@ -389,6 +423,12 @@ class IOUtils
               thisBase[thisSample] = in;
               if(in.length() > insertionLength)
                 insertionLength = in.length();
+              seenSNP = true;
+              
+              if( (thisBase[ntotalSamples] == null || 
+                   thisBase[ntotalSamples].length() < record.getRef().length()) &&
+                   in.toLowerCase().startsWith(record.getRef().toLowerCase()))
+                thisBase[ntotalSamples] = record.getRef();
             }
             else if(record.getAlt().isMultiAllele(k))
             {
@@ -400,11 +440,12 @@ class IOUtils
               }
             }
             else if(record.getAlt().isNonVariant()) 
+            {
               thisBase[thisSample] = ".";
+            }
             else
             {
-              if(record.getAlt().toString().length() > 1 && 
-                 record.getAlt().toString().length() == record.getRef().length() )
+              if(record.getAlt().toString().length() == record.getRef().length() )
               {
                 thisBase[thisSample] = record.getAlt().toString();
                 seenSNP = true;
