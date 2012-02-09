@@ -50,7 +50,8 @@ public class VCFRecord
   private short synFlag = -1;
   private boolean markAsNewStop = false;
 
-  protected static Pattern MULTI_ALLELE_PATTERN = Pattern.compile("^[AGCTagct]+,[AGCTacgt,]+$");
+  protected static Pattern MULTI_ALLELE_PATTERN = Pattern.compile(
+      "^[AGCTNMRWSYKBDHVagctnmrwsykbdhv]+,[AGCTNMRWSYKBDHVagctnmrwsykbdhv,]+$");
   protected static Pattern COLON_PATTERN = Pattern.compile(":");
   protected static Pattern SEMICOLON_PATTERN = Pattern.compile(";");
   protected static Pattern TAB_PATTERN = Pattern.compile("\\t");

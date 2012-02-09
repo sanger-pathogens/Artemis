@@ -466,6 +466,7 @@ public class VCFview extends JPanel
       }
     });
     export.add(exportVCF);
+    
     export.add(new JSeparator());
     
     final JMenuItem exportFastaSelected = new JMenuItem("FASTA of selected feature(s) ...");
@@ -504,6 +505,26 @@ public class VCFview extends JPanel
     });
     export.add(exportFasta);
     
+    final JMenuItem viewMinimalFasta = new JMenuItem("FASTA of variant sites only ...");
+    viewMinimalFasta.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e)
+      {
+        Container f = getVcfContainer();
+        try
+        {
+          f.setCursor(new Cursor(Cursor.WAIT_CURSOR));
+          IOUtils.exportVariantFasta(VCFview.this);
+        }
+        finally
+        {
+          f.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+        }
+      }
+    });
+    export.addSeparator();
+    export.add(viewMinimalFasta);
+    
+    
     final JMenu view = new JMenu("View");
     popup.add(view);
     final JMenuItem viewFastaSelected = new JMenuItem("FASTA of selected feature(s) ...");
@@ -541,7 +562,8 @@ public class VCFview extends JPanel
       }
     });
     view.add(viewFasta);
-    
+
+
     JMenu graph = new JMenu("Graph");
     popup.add(graph);
     
