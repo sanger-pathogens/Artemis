@@ -290,7 +290,7 @@ public class SequenceViewer extends FileViewer {
       StyleConstants.setBackground(style, colourHash.get(aa));
     }
     
-    final String seq = getText();
+    final String seq = getText().toUpperCase();
     int seqStart = 0;
     if(seq.startsWith(">"))
     {

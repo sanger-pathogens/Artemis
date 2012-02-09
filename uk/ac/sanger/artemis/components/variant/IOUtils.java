@@ -23,13 +23,18 @@
  */
 package uk.ac.sanger.artemis.components.variant;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.io.Writer;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -167,6 +172,360 @@ class IOUtils
     new MessageDialog (null, "Saved Files", filterFiles, false);
   }
 
+  /**
+   * Export all variant sites to a multiple fasta file.
+   * @param vcfView
+   */
+  protected static void exportVariantFasta(final VCFview vcfView)
+  {
+    final EntryGroup entryGroup = vcfView.getEntryGroup();
+    final String name = entryGroup.getActiveEntries().elementAt(0).getName();
+    final File newfile = new File( 
+        getBaseDirectoryFromEntry(entryGroup.getActiveEntries().elementAt(0)),
+            name);
+
+    try
+    {
+      final File f = getFile(newfile.getAbsolutePath(), 1, ".fasta", null);
+      if(f == null)
+        return;
+
+      final FileOutputStream fos = new FileOutputStream(f);
+      exportVariantFasta(vcfView, 
+          new PrintWriter(fos), 
+          entryGroup.getSequenceLength(), 
+          entryGroup.getAllFeatures(), 
+          entryGroup.getBases());
+      fos.close();
+    }
+    catch(IOException ioe)
+    {
+      ioe.printStackTrace();
+    }
+  }
+  
+  /**
+   * Export all variant sites to a multiple fasta file.
+   * @param vcfView
+   * @param pw
+   * @param length
+   * @param features
+   * @param bases
+   */
+  protected static void exportVariantFasta(final VCFview vcfView, 
+                                           final PrintWriter pw, 
+                                           final int length, 
+                                           final FeatureVector features, 
+                                           final Bases bases)
+  {
+    try
+    {
+      int ntotalSamples = 0;
+      for (int i = 0; i < vcfView.getVcfReaders().length; i++)
+        ntotalSamples += vcfView.getVcfReaders()[i].getNumberOfSamples();
+      
+      final Writer[] writer = new Writer[ntotalSamples+1];
+      final File[] tmpFiles = new File[ntotalSamples+1];
+      
+      for (int i = 0; i < vcfView.getVcfReaders().length; i++)
+      {
+        final String names[] = vcfView.getVcfReaders()[i].sampleNames;
+        for(int j=0; j<names.length; j++)
+        {
+          final String fn = (names[j].equals("") ? (j+1)+"_sample" : names[j].replaceAll("[/\\:]", "_"));
+          tmpFiles[i+j] = File.createTempFile(fn, "art");
+          writer[i+j] = new FileWriter( tmpFiles[i+j] );
+          writer[i+j].write(">"+fn);
+        }
+      }
+      
+      // include reference bases
+      final String refName = vcfView.getEntryGroup().getActiveEntries().elementAt(0).getName();
+      tmpFiles[ntotalSamples] = File.createTempFile("ref", "art");
+      writer[ntotalSamples] = new FileWriter( tmpFiles[ntotalSamples] );
+      writer[ntotalSamples].write(">"+refName);
+
+
+      final int MAX_BASE_CHUNK = (10000/ntotalSamples)*SEQUENCE_LINE_BASE_COUNT;
+      final HashMap<Integer, VCFRecord> records[] = new HashMap[MAX_BASE_CHUNK];
+      int baseCount = 0;
+      
+      // write variant sites to tmp files
+      for(int i=0; i<length; i+=MAX_BASE_CHUNK)
+      {
+        int start = i+1;
+        int end = i+MAX_BASE_CHUNK;
+        if(end > length)
+          end = length;
+
+        storeVCFRecords(vcfView, records, start, end);
+        baseCount = writeVariants(vcfView, records, writer, features, 
+                        ntotalSamples, start, end, bases, baseCount);
+      }
+
+      for(int i=0; i<writer.length; i++)
+        writer[i].close();
+      
+      // concatenate the single fasta files into a multiple fasta file
+      for (int i = 0; i < tmpFiles.length; i++) 
+      {
+        final BufferedReader br = new BufferedReader(new FileReader(tmpFiles[i].getPath()));
+        String line;
+        while ( (line = br.readLine()) != null) 
+          pw.println(line);      
+        br.close();
+        tmpFiles[i].delete();
+      }
+      pw.close();
+    }
+    catch(IOException e)
+    { 
+      e.printStackTrace();
+    }
+    catch (OutOfRangeException e)
+    {
+      e.printStackTrace();
+    }
+  }
+  
+  /**
+   * For a given range store the VFFRecord in a Hashtable.
+   * @param vcfView
+   * @param records
+   * @param start
+   * @param end
+   * @throws IOException
+   */
+  private static void storeVCFRecords(final VCFview vcfView, 
+                                      final HashMap<Integer, VCFRecord> records[], 
+                                      final int start, 
+                                      final int end) throws IOException
+  {
+    
+    for (int i = 0; i < vcfView.getVcfReaders().length; i++)
+      records[i] = new HashMap<Integer, VCFRecord> ();
+    
+    for (int i = 0; i < vcfView.getVcfReaders().length; i++)
+    {
+      AbstractVCFReader reader = vcfView.getVcfReaders()[i];
+      if(vcfView.isConcatenate())
+      {
+        String[] contigs = reader.getSeqNames();
+        for(int j=0; j<contigs.length; j++)
+        {
+          int offset = vcfView.getSequenceOffset(contigs[j]);
+          int nextOffset;
+          if(j<contigs.length-1)
+            nextOffset = vcfView.getSequenceOffset(contigs[j+1]);
+          else
+            nextOffset = vcfView.seqLength;
+          
+          if( (start >= offset && start <= nextOffset) ||
+              (end   >= offset && end <= nextOffset) )
+          {
+            int thisStart = start - offset;
+            if(thisStart < 1)
+              thisStart = 1;
+            loadRecords(records[i], reader, contigs[j], thisStart, end - offset, offset);
+          }
+        }
+      }
+      else
+        loadRecords(records[i], reader, vcfView.getChr(), start, end, 0);
+    }
+  }
+  
+  private static void loadRecords(HashMap<Integer, VCFRecord> records,
+                                  final AbstractVCFReader reader, 
+                                  final String contig, 
+                                  final int start, 
+                                  final int end,
+                                  final int offset) throws IOException
+  {
+    VCFRecord record;
+    while((record = reader.getNextRecord(contig, start, end)) != null)
+    {
+      if(records == null)
+        records = new HashMap<Integer, VCFRecord> ();
+      records.put(record.getPos()+offset, record);
+    }
+  }
+  
+  /**
+   * Write variant positions.
+   * @param vcfView
+   * @param records
+   * @param writer
+   * @param features
+   * @param ntotalSamples
+   * @param start
+   * @param end
+   * @param bases
+   * @param bc
+   * @return
+   * @throws IOException
+   * @throws OutOfRangeException
+   */
+  private static int writeVariants(final VCFview vcfView,
+                                   final HashMap<Integer, VCFRecord> records[],
+                                   final Writer writer[],
+                                   final FeatureVector features,
+                                   final int ntotalSamples,
+                                   final int start, 
+                                   final int end,
+                                   final Bases bases,
+                                   int bc) throws IOException, OutOfRangeException
+  {
+    final char basesC[] = bases.getSubSequenceC(new Range(start, end), Bases.FORWARD);
+    for (int i = start; i < end; i++)
+    {
+      int thisSample = 0;
+      final String[] thisBase = new String[ntotalSamples+1];
+
+      boolean seenSNP     = false;
+      int insertionLength = 0;
+
+      // loop over each VCF file
+      for (int j = 0; j < vcfView.getVcfReaders().length; j++)
+      {
+        AbstractVCFReader reader = vcfView.getVcfReaders()[j];
+        VCFRecord record = records[j].get(i);
+
+        if(record == null)
+          continue;
+
+        boolean vcf_v4 = reader.isVcf_v4();
+        int nsamples = reader.getNumberOfSamples();
+        // loop over each sample
+        for(int k=0; k<nsamples; k++)
+        {
+          // look at each type of variant
+          if(vcfView.showVariant(record, features, i, reader, k, j) )
+          {
+            if(record.getAlt().isDeletion(vcf_v4))
+            {
+              // note: do not write out if just deletion
+              thisBase[thisSample] = "-";
+              
+              /*if( thisBase[ntotalSamples] == null || 
+                  thisBase[ntotalSamples].length() < record.getRef().length() )
+              {
+                thisBase[ntotalSamples] = record.getRef();
+                if(!record.getAlt().toString().equals("."))
+                  thisBase[thisSample] = record.getAlt().toString();
+                else
+                  thisBase[thisSample] = "";
+                
+                int padLength = thisBase[ntotalSamples].length() - thisBase[thisSample].length();
+                for(int ipad=0; ipad<padLength; ipad++)
+                  thisBase[thisSample] += "-";
+              }*/
+            }
+            else if(record.getAlt().isInsertion(vcf_v4))
+            {
+              String in = record.getAlt().toString();
+              if(in.startsWith("I"))
+                in = in.substring(1);
+              thisBase[thisSample] = in;
+              if(in.length() > insertionLength)
+                insertionLength = in.length();
+              seenSNP = true;
+              
+              if( (thisBase[ntotalSamples] == null || 
+                   thisBase[ntotalSamples].length() < record.getRef().length()) &&
+                   in.toLowerCase().startsWith(record.getRef().toLowerCase()))
+                thisBase[ntotalSamples] = record.getRef();
+            }
+            else if(record.getAlt().isMultiAllele(k))
+            {
+              String base = MultipleAlleleVariant.getIUBCode(record);
+              if(base != null)
+              {
+                thisBase[thisSample] = base;
+                seenSNP = true;
+              }
+            }
+            else if(record.getAlt().isNonVariant()) 
+            {
+              thisBase[thisSample] = ".";
+            }
+            else
+            {
+              if(record.getAlt().toString().length() == record.getRef().length() )
+              {
+                thisBase[thisSample] = record.getAlt().toString();
+                seenSNP = true;
+                
+                if(thisBase[ntotalSamples] == null || 
+                   thisBase[ntotalSamples].length() < record.getRef().length())
+                  thisBase[ntotalSamples]  = record.getRef();
+              }
+            }
+          }
+          else
+            thisBase[thisSample] = "N"; // filtered out
+
+          thisSample++;
+        }
+      }
+      
+      if(seenSNP)
+      {
+        // look-up reference base
+        if(thisBase[ntotalSamples] == null)
+          thisBase[ntotalSamples] = String.valueOf( basesC[i-start] );
+
+        int remainder = 0;
+        for(int j=0; j<thisBase.length; j++)
+        {         
+          if(thisBase[j] != null)
+          {
+            for(int k=0; k<thisBase[j].length(); k++)
+            {
+              remainder = (bc+k)%SEQUENCE_LINE_BASE_COUNT;
+              if(remainder == 0)
+                writer[j].write(System.getProperty("line.separator"));
+              writer[j].write(thisBase[j].charAt(k));
+            }
+          }
+          else
+          {
+            remainder = bc%SEQUENCE_LINE_BASE_COUNT;
+            if(remainder == 0)
+              writer[j].write(System.getProperty("line.separator"));
+            writer[j].write("N");
+          }
+          
+          if(insertionLength > 0)
+          {
+            int ins;
+            if(thisBase[j] != null)
+              ins = insertionLength-thisBase[j].length();
+            else
+              ins = insertionLength-1;
+            
+            int rem = remainder+1;
+            for(int k=0; k<ins; k++)
+            {
+              remainder = (rem+k)%SEQUENCE_LINE_BASE_COUNT;
+              if(remainder == 0)
+                writer[j].write(System.getProperty("line.separator"));
+              writer[j].write("-");
+            }
+          }
+        }
+
+        if(insertionLength > 0)
+          bc+=insertionLength;
+        else
+          bc++;
+      }
+    }
+    
+    return bc;
+  }
+  
+  
   /**
    * Write out FASTA for a selected base range
    * @param vcfView
@@ -406,7 +765,8 @@ class IOUtils
       header.append(reader.getName()).append(" ");
     header.append(seqName).append(" ");
     header.append(sbeg).append(":").append(send);
-    header.append((marker.isForwardMarker() ? "" : " reverse"));
+    if(marker != null)
+      header.append((marker.isForwardMarker() ? "" : " reverse"));
     return header;
   }
   

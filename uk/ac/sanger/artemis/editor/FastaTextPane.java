@@ -61,6 +61,7 @@ public class FastaTextPane extends JScrollPane
   protected static int MAX_HITS = 70;
   private static boolean remoteMfetch = false;
   private static boolean forceUrl = false;
+  private boolean blastPlus = false;
   
   static 
   {
@@ -159,6 +160,8 @@ public class FastaTextPane extends JScrollPane
         if(line.startsWith("BLASTP"))
         {
           format = "blastp";
+          if(line.indexOf("+") > -1)
+            blastPlus = true;
           break;
         }
         else if(line.indexOf("FASTA") > -1)
@@ -339,25 +342,42 @@ public class FastaTextPane extends JScrollPane
         else if(line.startsWith("Query="))
         {
           int ind2 = 0;
-          ind1 = line.indexOf(" letters)");
-          if(ind1 == -1)
+          if(blastPlus)
           {
-            String nextLine = null;
-            while((nextLine = buffReader.readLine()).indexOf(" letters)") < 0)
+            ind2 = line.indexOf("Length=");
+            if(ind2 == -1)
             {
-              len += nextLine.length()+1;
-              sbuff.append(nextLine+"\n");
+              while((line = buffReader.readLine()).indexOf("Length=") < 0)
+              {
+                len += line.length()+1;
+                sbuff.append(line+"\n");
+              }
+              ind2 = line.indexOf("Length=");
             }
-            line = nextLine;
-            ind1 = nextLine.indexOf(" letters)");
-            ind2 = nextLine.indexOf("(");
+            ind1 = line.length();
+            qlen = Integer.parseInt(line.substring(ind2+7,ind1).trim());
           }
           else
-            ind2 = line.indexOf("(");
+          {
+            ind1 = line.indexOf(" letters)");
+            if(ind1 == -1)
+            {
+              String nextLine = null;
+              while((nextLine = buffReader.readLine()).indexOf(" letters)") < 0)
+              {
+                len += nextLine.length()+1;
+                sbuff.append(nextLine+"\n");
+              }
+              line = nextLine;
+              ind1 = nextLine.indexOf(" letters)");
+              ind2 = nextLine.indexOf("(");
+            }
+            else
+              ind2 = line.indexOf("(");
 
-          qlen = Integer.parseInt(line.substring(ind2+1,ind1).trim());
+            qlen = Integer.parseInt(line.substring(ind2+1,ind1).trim());
+          }
         }
-
         textPosition += len;
       }
 
