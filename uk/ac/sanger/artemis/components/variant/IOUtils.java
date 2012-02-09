@@ -190,11 +190,13 @@ class IOUtils
       if(f == null)
         return;
 
+      final FileOutputStream fos = new FileOutputStream(f);
       exportVariantFasta(vcfView, 
-          new PrintWriter(new FileOutputStream(f)), 
+          new PrintWriter(fos), 
           entryGroup.getSequenceLength(), 
           entryGroup.getAllFeatures(), 
           entryGroup.getBases());
+      fos.close();
     }
     catch(IOException ioe)
     {
@@ -205,6 +207,10 @@ class IOUtils
   /**
    * Export all variant sites to a multiple fasta file.
    * @param vcfView
+   * @param pw
+   * @param length
+   * @param features
+   * @param bases
    */
   protected static void exportVariantFasta(final VCFview vcfView, 
                                            final PrintWriter pw, 
