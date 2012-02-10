@@ -2748,6 +2748,8 @@ public class BamView extends JPanel
       if(!isStrandStackView())
         jspView.getVerticalScrollBar().setValue(
             jspView.getVerticalScrollBar().getMaximum());
+      else
+        setViewportMidPoint();
       showBaseAlignment = false;
       baseQualityColour.setEnabled(false);
       markInsertions.setEnabled(false);
