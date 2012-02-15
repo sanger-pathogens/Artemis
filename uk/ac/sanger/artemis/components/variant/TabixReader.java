@@ -408,7 +408,7 @@ public class TabixReader extends AbstractVCFReader
 		}
 	}
 	
-	  protected String[] getSeqNames()
+	  public String[] getSeqNames()
 	  {
 	    return mSeq;
 	  }
