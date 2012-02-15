@@ -27,6 +27,10 @@ package uk.ac.sanger.artemis.util;
 
 import java.io.*;
 
+import uk.ac.sanger.artemis.io.IndexedGFFDocumentEntry;
+
+import net.sf.samtools.util.BlockCompressedInputStream;
+
 /**
  *  Objects of this class are Documents created from a file.
  *
@@ -111,6 +115,8 @@ public class FileDocument extends Document {
                                getProgressListeners ());;
     
     if (read_file.getName ().endsWith (".gz")) {
+      if(IndexedGFFDocumentEntry.isIndexed(read_file))
+        return new BlockCompressedInputStream(read_file);
       // assume this file is gzipped
       return new WorkingGZIPInputStream (file_input_stream);
     } else {
