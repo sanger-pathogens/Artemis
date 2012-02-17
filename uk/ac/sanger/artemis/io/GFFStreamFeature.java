@@ -765,7 +765,15 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       if(seqname == null && ((GFFDocumentEntry)getEntry()).getDocument() != null) 
         seqname = ((GFFDocumentEntry)getEntry()).getDocument().getName();
       if(seqname == null)
-        seqname = "gff_seqname";
+      {
+        try
+        {
+          seqname = ((GFFStreamFeature)(getEntry().getAllFeatures().elementAt(0))).getGffSeqName();
+        }
+        catch(Exception e) {}
+        if(seqname == null)
+          seqname = "gff_seqname";
+      }
       
       if(source == null) 
         source = "artemis";
