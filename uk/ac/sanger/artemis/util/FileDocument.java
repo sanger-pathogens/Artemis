@@ -27,6 +27,10 @@ package uk.ac.sanger.artemis.util;
 
 import java.io.*;
 
+import uk.ac.sanger.artemis.io.IndexedGFFDocumentEntry;
+
+import net.sf.samtools.util.BlockCompressedInputStream;
+
 /**
  *  Objects of this class are Documents created from a file.
  *

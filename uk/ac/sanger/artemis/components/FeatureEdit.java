@@ -222,7 +222,7 @@ public class FeatureEdit extends JPanel
   
   private boolean isPartialSequence()
   {
-    return edit_feature.getEmblFeature().getEntry().getSequence() instanceof PartialSequence;
+    return entry_group.getSequenceEntry().getBases().getSequence() instanceof PartialSequence;
   }
   
   /**

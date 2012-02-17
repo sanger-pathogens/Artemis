@@ -1086,7 +1086,7 @@ abstract public class SimpleDocumentEntry
    *  @return a FeatureTable object for this Entry.  the returned object is
    *    not a copy - changes to it will change the Entry object itself
    **/
-  FeatureTable getFeatureTable() 
+  private FeatureTable getFeatureTable() 
   {
     final FeatureTable found_feature_table = findFeatureTable();
 

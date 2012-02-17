@@ -104,7 +104,7 @@ public class FeatureSegment
         end.setRawPosition (end_position);
       }
     } catch (OutOfRangeException e) {
-      throw new Error ("internal error - " +
+      throw new Error (getFeature().getIDString()+ " internal error - " +
                        "unexpected OutOfRangeException for position: " +
                        start_position);
     }
