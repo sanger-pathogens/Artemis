@@ -115,6 +115,8 @@ public class FileDocument extends Document {
                                getProgressListeners ());;
     
     if (read_file.getName ().endsWith (".gz")) {
+      if(IndexedGFFDocumentEntry.isIndexed(read_file))
+        return new BlockCompressedInputStream(read_file);
       // assume this file is gzipped
       return new WorkingGZIPInputStream (file_input_stream);
     } else {
