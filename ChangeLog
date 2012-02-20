@@ -1,11 +1,14 @@
-Version XX
+Version 14
 	Add options in the navigator for searching the forward and 
 	reverse strands individually for base / amino acid patterns.
 	
 	Add an option to the navigator for searching for matches that
-	overlap a seleted region or feature.
+	overlap a selected region or feature.
 	
 	New translation table 24 (Pterobranchia mitochondrial) added.
+	
+	If the BAM index file is missing then Artemis uses the picard library to
+	attempt to create the index.
 
 	Variant (VCF / BCF) filtering now uses the meta-data in the header to
 	enable filtering based on INFO, FILTER and FORMAT columns.
