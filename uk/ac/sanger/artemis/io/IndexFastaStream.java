@@ -257,6 +257,11 @@ public class IndexFastaStream extends StreamSequence
     return fastaIndex;
   }
   
+  public String getContig()
+  {
+    return contig;
+  }
+  
   public static void main(String args[])
   {
     EntryInformation new_entry_information =
