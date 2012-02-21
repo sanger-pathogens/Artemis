@@ -291,7 +291,7 @@ artemis.jar : $(CLASSES)
 	                     artemis_sqlmap org uk com net nsdb type seqdb LICENSE.Apache j2ssh.properties; \
         echo "Main-Class: uk.ac.sanger.artemis.circular.DNADraw" > manifest-circular; \
         jar cmf manifest-circular DNAPlotter.jar images/PSUlogo.gif README etc \
-                             uk org/gmod org/apache org/biojava/bio/ com/ibatis/common/jdbc/ LICENSE.Apache j2ssh.properties; \
+                             uk org/gmod org/apache org/biojava/bio/ com/ibatis/common/jdbc/ net/sf/samtools/ LICENSE.Apache j2ssh.properties; \
 	echo "Main-Class: uk.ac.sanger.artemis.components.alignment.BamView" > manifest-bamview; \
 	jar cmf manifest-bamview BamView.jar etc uk org net/sf com/ibatis; \
 	echo "Main-Class: uk.ac.sanger.artemis.components.ActMain" > manifest-act; \
