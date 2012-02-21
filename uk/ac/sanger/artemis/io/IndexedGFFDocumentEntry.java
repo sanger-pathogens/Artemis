@@ -14,6 +14,7 @@ import java.util.Vector;
 
 import net.sf.samtools.util.BlockCompressedInputStream;
 
+import uk.ac.sanger.artemis.EntryGroup;
 import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 import uk.ac.sanger.artemis.components.variant.TabixReader;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
@@ -28,11 +29,17 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
 {
    private TabixReader reader;
    private String sequenceNames[];
-   private Hashtable<String, Contig> offsetLengths;
+   private Hashtable<String, Contig> contigHash;
    private String name;
+   
+   private String contig;
+   private boolean combinedReference = false;
    
    private Document document;
    private EntryInformation entryInfo;
+   private EntryGroup entryGroup;
+   private int featureCount = -1;
+   
    public static org.apache.log4j.Logger logger4j = 
        org.apache.log4j.Logger.getLogger(IndexedGFFDocumentEntry.class);
    
@@ -46,11 +53,11 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
    *  @exception IOException thrown if there is a problem reading the entry -
    *    most likely ReadFormatException.
    **/
-  public IndexedGFFDocumentEntry(final Document document)
+  public IndexedGFFDocumentEntry(final Document document) 
   {
     this.document = document;
     entryInfo = new GFFEntryInformation();
-    
+
     try
     {
       final File gffFile = ((FileDocument)getDocument()).getFile();
@@ -63,22 +70,20 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
            (BlockCompressedInputStream) getDocument().getInputStream();
       String ln;
       StringBuilder hdr = new StringBuilder();
-      offsetLengths = new Hashtable<String, Contig>(sequenceNames.length);
+      contigHash = new Hashtable<String, Contig>(sequenceNames.length);
       int offset = 0;
-      
+      int cnt = 0;
       while( (ln = in.readLine()) != null && ln.startsWith("#"))
       {
         hdr.append(ln);
         
         if(ln.startsWith("##sequence-region "))
         {
-          System.out.println(ln);
+          logger4j.debug(ln);
           final String parts[] = ln.split(" ");
 
-          if( sequenceIndex(parts[1]) > -1)
-          {
-            offsetLengths.put(parts[1], new Contig(parts[1], offset+1, offset+=Integer.parseInt(parts[3])));
-          }
+          sequenceNames[cnt++] = parts[1];
+          contigHash.put(parts[1], new Contig(parts[1], offset+1, offset+=Integer.parseInt(parts[3])));
         }
       }
       in.close();
@@ -87,28 +92,25 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
     {
       e.printStackTrace();
     }
-    
   }
-  
-  private int sequenceIndex(String s)
-  {
-    for(int i=0; i<sequenceNames.length; i++)
-    {  
-      if(sequenceNames[i].equals(s))
-        return i;
-    }
-    return -1;
-  }
+ 
   
   private List<Contig> getChr(Range range)
   {
-    List<Contig> list = new Vector<Contig>();
-    Enumeration<String> seqs = offsetLengths.keys();
-
+    final List<Contig> list = new Vector<Contig>();
+    if(!combinedReference)
+    {
+      if(contig != null)
+        list.add(contigHash.get(contig));
+      else
+        list.add(contigHash.get(sequenceNames[0]));
+      return list;
+    }
+    
+    Enumeration<String> seqs = contigHash.keys();
     while(seqs.hasMoreElements())
     {
-      Contig contig = offsetLengths.get(seqs.nextElement());
-      
+      Contig contig = contigHash.get(seqs.nextElement());
       if( (range.getStart() >= contig.start && range.getStart() <= contig.end) ||
           (range.getEnd()   >= contig.start && range.getEnd()   <= contig.end))
       {
@@ -118,7 +120,7 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
     }
     return list;
   }
-  
+
   /**
    *  Return a vector containing the references of the Feature objects within
    *  the given range.
@@ -131,14 +133,16 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
    **/
   public FeatureVector getFeaturesInRange(Range range) 
   {
-    final FeatureVector features = new FeatureVector();
+    if(contig == null)
+      initContig();
+    
+    final FeatureVector featuresInRange = new FeatureVector();
     final List<Contig> contigs = getChr(range);
-
     for(Contig c: contigs)
     { 
       try
       {
-        getFeaturesInRange(c, range, features);
+        getFeaturesInRange(c, range, featuresInRange);
       }
       catch(IOException ioe)
       {
@@ -146,8 +150,8 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
       }
     }
 
-    combineGeneFeatures(features);
-    return features;
+    combineGeneFeatures(featuresInRange);
+    return featuresInRange;
   }
   
   private void getFeaturesInRange(Contig c, Range range, FeatureVector features) throws NumberFormatException, IOException
@@ -155,46 +159,64 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
     int start = range.getStart()-c.start+1;
     if(start<1)
       start = 1;
-    int end = range.getEnd()-c.start+1;
+    int end = range.getEnd(); 
+    if(combinedReference)
+      end-=c.start+1;
     String r = c.chr+":"+start+"-"+end;
 
     TabixReader.Iterator tabixIterator = reader.query(r);
     if(tabixIterator == null)
       return;
-    int pos[] = iterate(c, range, tabixIterator, features);
+    int pos[] = iterate(c, range.getStart(), range.getEnd(), tabixIterator, features);
 
     if(pos[0] < start || pos[1] > end)
     {
       r = c.chr+":"+pos[0]+"-"+pos[1];
       tabixIterator = reader.query(r);
+      if(tabixIterator == null)
+        return;
       features.clear();
-      iterate(c, range, tabixIterator, features);
+
+      iterate(c, pos[0], pos[1], tabixIterator, features);
     }
   }
   
-  private int[] iterate(Contig c, Range range, TabixReader.Iterator tabixIterator, FeatureVector features) throws NumberFormatException, ReadFormatException, IOException
+  private int[] iterate(final Contig c, 
+                        int min,
+                        int max,
+                        final TabixReader.Iterator tabixIterator, 
+                        final FeatureVector features) throws NumberFormatException, ReadFormatException, IOException
   {
     String ln;
-    int min = range.getStart();
-    int max = range.getEnd();
+
     while( (ln = tabixIterator.next()) != null )
     {
       final StringVector parts = StringVector.getStrings(ln, "\t", true);
-      final int sbeg = Integer.parseInt(((String)parts.elementAt(3)).trim()) + c.start - 1;
-      final int send = Integer.parseInt(((String)parts.elementAt(4)).trim()) + c.start - 1;
-      final StringBuffer newLn = new StringBuffer();
-      for(int i=0; i<parts.size(); i++)
+      int sbeg = Integer.parseInt(((String)parts.elementAt(3)).trim());
+      int send = Integer.parseInt(((String)parts.elementAt(4)).trim());
+
+      if( (sbeg < min && send < min) || (sbeg > max && send > max) )
+        continue;
+      
+      if(combinedReference)
       {
-        if(i==3)
-          newLn.append(sbeg);
-        else if(i==4)
-          newLn.append(send);
-        else
-          newLn.append((String)parts.elementAt(i));
-        newLn.append("\t");
+        sbeg += c.start - 1;
+        send += c.start - 1;
+        final StringBuffer newLn = new StringBuffer();
+        for(int i=0; i<parts.size(); i++)
+        {
+          if(i==3)
+            newLn.append(sbeg);
+          else if(i==4)
+            newLn.append(send);
+          else
+            newLn.append((String)parts.elementAt(i));
+          newLn.append("\t");
+        }
+        ln = newLn.toString();
       }
-      GFFStreamFeature f = new GFFStreamFeature(newLn.toString());
-      features.add(f);
+      
+      features.add(new GFFStreamFeature(ln));
 
       if( ((String)parts.elementAt(2)).equals("gene") )
       {
@@ -204,7 +226,6 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
           max = send;
       }
     }
-
     return new int[]{min, max};
   }
   
@@ -507,8 +528,8 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
     }
   }
 
-  private QualifierVector mergeQualifiers(QualifierVector qualifier_vector,
-      boolean complement)
+  private QualifierVector mergeQualifiers(final QualifierVector qualifier_vector,
+                                          final boolean complement)
   {
     QualifierVector merge_qualifier_vector = new QualifierVector();
     boolean seen = false;
@@ -516,7 +537,6 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
     for (int i = 0; i < qualifier_vector.size(); ++i)
     {
       Qualifier qual = (Qualifier) qualifier_vector.elementAt(i);
-
       if (qual.getName().equals("codon_start"))
       {
         if (!complement && !seen)
@@ -530,7 +550,6 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
       else if (qual.getName().equals("Alias"))
       {
         final Qualifier id_qualifier = merge_qualifier_vector.getQualifierByName("Alias");
-
         if (id_qualifier == null)
           merge_qualifier_vector.addElement(qual);
         else
@@ -547,8 +566,6 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
     }
     return merge_qualifier_vector;
   }
-
-
 
 
   public boolean hasUnsavedChanges()
@@ -593,7 +610,25 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
 
   public int getFeatureCount()
   {
-    return 0;
+    if(contig == null)
+      initContig();
+ 
+    if(featureCount > -1)
+      return featureCount;
+    
+    final String r = contig+":"+1+"-"+Integer.MAX_VALUE;
+    TabixReader.Iterator tabixIterator = reader.query(r);
+    if(tabixIterator == null)
+      return 0;
+
+    try
+    {
+      while( (tabixIterator.next()) != null )
+        featureCount++;
+    }
+    catch(IOException ioe){}
+
+    return featureCount;
   }
 
   public Feature add(Feature feature) throws EntryInformationException,
@@ -605,25 +640,36 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
 
   public Feature forcedAdd(Feature feature) throws ReadOnlyException
   {
-    // TODO Auto-generated method stub
     return null;
   }
 
   public boolean remove(Feature feature) throws ReadOnlyException
   {
-    // TODO Auto-generated method stub
     return false;
   }
 
   public Feature getFeatureAtIndex(int i)
   {
-    System.out.println("HERE getFeatureAtIndex()");
+    String r = contig+":"+1+"-"+Integer.MAX_VALUE;
+    TabixReader.Iterator tabixIterator = reader.query(r);
+    if(tabixIterator == null)
+      return null;
+    try
+    {
+      int cnt = 0;
+      String ln;
+      while( (ln = tabixIterator.next()) != null )
+      {
+        if(i == cnt++)
+          return new GFFStreamFeature(ln.toString());
+      }
+    }
+    catch(IOException ioe){}
     return null;
   }
 
   public int indexOf(Feature feature)
   {
-    // TODO Auto-generated method stub
     return 0;
   }
 
@@ -655,28 +701,32 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
 
   public Sequence getSequence()
   {
-    // TODO Auto-generated method stub
     return null;
   }
 
 
-
   public void dispose()
   {
-    // TODO Auto-generated method stub
-    
+    // TODO Auto-generated method stub 
   }
 
   public void save() throws IOException
   {
-    // TODO Auto-generated method stub
-    
+    save(getDocument());
   }
 
   public void save(Document document) throws IOException
   {
-    // TODO Auto-generated method stub
-    
+    try
+    {
+      final Writer out = document.getWriter();
+      writeToStream(out);
+      out.close();
+    }
+    catch(NullPointerException npe)
+    {
+      return;
+    }
   }
 
   public void writeToStream(Writer writer) throws IOException
@@ -688,7 +738,6 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
   public void setDirtyFlag()
   {
     // TODO Auto-generated method stub
-    
   }
 
   public Date getLastChangeTime()
@@ -737,6 +786,42 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
     }
   }
 
+  public void updateReference(String contig, boolean combinedReference)
+  {
+    // TODO Auto-generated method stub
+    this.contig = contig;
+    this.combinedReference = combinedReference;
+  }
 
+  public void setEntryGroup(EntryGroup entryGroup)
+  {
+    this.entryGroup = entryGroup;
+  }
   
+  private void initContig()
+  {
+    Entry entry = entryGroup.getSequenceEntry().getEMBLEntry();
+    if(entry.getSequence() instanceof IndexFastaStream)
+      updateReference(((IndexFastaStream)entry.getSequence()).getContig(), false);
+    else
+    {
+      int len = 0;
+      Enumeration<Contig> contigs = contigHash.elements();
+
+      while(contigs.hasMoreElements())
+      {
+        Contig contig = contigs.nextElement();
+        int clen = contig.end;
+        if(clen > len)
+          len = clen;
+      }
+
+      if(contigHash.size() > 1 && len == entry.getSequence().length())
+      {
+        updateReference(sequenceNames[0], true);
+      }
+      else
+        updateReference(sequenceNames[0], false);
+    }
+  }
 }
