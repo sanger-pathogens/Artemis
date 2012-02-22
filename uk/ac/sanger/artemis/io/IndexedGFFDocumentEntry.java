@@ -129,7 +129,9 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
   
   private void getFeaturesInRange(IndexContig c, Range range, FeatureVector features) throws NumberFormatException, IOException
   {
-    int start = range.getStart()-c.start+1;
+    int start = range.getStart();
+    if(combinedReference)
+      start=-c.start+1;
     if(start<1)
       start = 1;
     int end = range.getEnd(); 
