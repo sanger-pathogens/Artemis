@@ -4,10 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.Vector;
@@ -29,7 +29,7 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
 {
    private TabixReader reader;
    private String sequenceNames[];
-   private Hashtable<String, Contig> contigHash;
+   private LinkedHashMap<String, IndexContig> contigHash;
    private String name;
    
    private String contig;
@@ -70,7 +70,7 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
            (BlockCompressedInputStream) getDocument().getInputStream();
       String ln;
       StringBuilder hdr = new StringBuilder();
-      contigHash = new Hashtable<String, Contig>(sequenceNames.length);
+      contigHash = new LinkedHashMap<String, IndexContig>(sequenceNames.length);
       int offset = 0;
       int cnt = 0;
       while( (ln = in.readLine()) != null && ln.startsWith("#"))
@@ -83,7 +83,7 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
           final String parts[] = ln.split(" ");
 
           sequenceNames[cnt++] = parts[1];
-          contigHash.put(parts[1], new Contig(parts[1], offset+1, offset+=Integer.parseInt(parts[3])));
+          contigHash.put(parts[1], new IndexContig(parts[1], offset+1, offset+=Integer.parseInt(parts[3])));
         }
       }
       in.close();
@@ -92,33 +92,6 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
     {
       e.printStackTrace();
     }
-  }
- 
-  
-  private List<Contig> getChr(Range range)
-  {
-    final List<Contig> list = new Vector<Contig>();
-    if(!combinedReference)
-    {
-      if(contig != null)
-        list.add(contigHash.get(contig));
-      else
-        list.add(contigHash.get(sequenceNames[0]));
-      return list;
-    }
-    
-    Enumeration<String> seqs = contigHash.keys();
-    while(seqs.hasMoreElements())
-    {
-      Contig contig = contigHash.get(seqs.nextElement());
-      if( (range.getStart() >= contig.start && range.getStart() <= contig.end) ||
-          (range.getEnd()   >= contig.start && range.getEnd()   <= contig.end))
-      {
-        //System.out.println(chr+" getChr() "+r.toString()+" RANGE "+range.toString());
-        list.add(contig);
-      }
-    }
-    return list;
   }
 
   /**
@@ -137,9 +110,9 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
       initContig();
     
     final FeatureVector featuresInRange = new FeatureVector();
-    final List<Contig> contigs = getChr(range);
-    for(Contig c: contigs)
-    { 
+    final List<IndexContig> contigs = getContigsInRange(range);
+    for(IndexContig c: contigs)
+    {
       try
       {
         getFeaturesInRange(c, range, featuresInRange);
@@ -154,7 +127,7 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
     return featuresInRange;
   }
   
-  private void getFeaturesInRange(Contig c, Range range, FeatureVector features) throws NumberFormatException, IOException
+  private void getFeaturesInRange(IndexContig c, Range range, FeatureVector features) throws NumberFormatException, IOException
   {
     int start = range.getStart()-c.start+1;
     if(start<1)
@@ -181,7 +154,7 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
     }
   }
   
-  private int[] iterate(final Contig c, 
+  private int[] iterate(final IndexContig c, 
                         int min,
                         int max,
                         final TabixReader.Iterator tabixIterator, 
@@ -191,32 +164,19 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
 
     while( (ln = tabixIterator.next()) != null )
     {
-      final StringVector parts = StringVector.getStrings(ln, "\t", true);
+      StringVector parts = StringVector.getStrings(ln, "\t", true);
+      ln = getGffInArtemisCoordinates(ln, parts, c);
+      parts = StringVector.getStrings(ln, "\t", true);
+      
       int sbeg = Integer.parseInt(((String)parts.elementAt(3)).trim());
       int send = Integer.parseInt(((String)parts.elementAt(4)).trim());
 
       if( (sbeg < min && send < min) || (sbeg > max && send > max) )
         continue;
-      
-      if(combinedReference)
-      {
-        sbeg += c.start - 1;
-        send += c.start - 1;
-        final StringBuffer newLn = new StringBuffer();
-        for(int i=0; i<parts.size(); i++)
-        {
-          if(i==3)
-            newLn.append(sbeg);
-          else if(i==4)
-            newLn.append(send);
-          else
-            newLn.append((String)parts.elementAt(i));
-          newLn.append("\t");
-        }
-        ln = newLn.toString();
-      }
-      
-      features.add(new GFFStreamFeature(ln));
+
+      GFFStreamFeature gff = new GFFStreamFeature(ln);
+      gff.setReadOnlyFeature(true);
+      features.add(gff);
 
       if( ((String)parts.elementAt(2)).equals("gene") )
       {
@@ -229,6 +189,95 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
     return new int[]{min, max};
   }
   
+  
+  private List<IndexContig> getContigsInRange(Range range)
+  {
+    final List<IndexContig> list = new Vector<IndexContig>();
+    if(!combinedReference)
+    {
+      if(contig != null)
+        list.add(contigHash.get(contig));
+      else
+        list.add(contigHash.get(sequenceNames[0]));
+      return list;
+    }
+    
+    for (String key : contigHash.keySet())
+    {
+      IndexContig contig = contigHash.get(key);
+      if( (range.getStart() >= contig.start && range.getStart() <= contig.end) ||
+          (range.getEnd()   >= contig.start && range.getEnd()   <= contig.end))
+      {
+        //System.out.println(chr+" getChr() "+r.toString()+" RANGE "+range.toString());
+        list.add(contig);
+      }
+    }
+    return list;
+  }
+  
+  /**
+   * Get the list of contigs in the feature display.
+   * @return
+   */
+  private List<IndexContig> getListOfContigs()
+  {
+    List<IndexContig> contigs = new Vector<IndexContig>();
+    for (String key : contigHash.keySet())
+    {
+      IndexContig c = contigHash.get(key);
+      if(combinedReference || c.chr.equals(contig))
+        contigs.add(c);
+    }
+    return contigs;
+  }
+  
+  /**
+   * Get the features start coordinate.
+   * @param gffParts
+   * @param c
+   * @return
+   */
+  private int getStartInArtemisCoordinates(final StringVector gffParts, final IndexContig c)
+  {
+    int sbeg = Integer.parseInt(((String)gffParts.elementAt(3)).trim());
+    if(combinedReference)
+      sbeg += c.start - 1;
+    return sbeg;
+  }
+  
+  /**
+   * Get the GFF line for this feature, adjusting the coordinates if contigs
+   * are concatenated.
+   * @param ln
+   * @param gffParts
+   * @param c
+   * @return
+   */
+  private String getGffInArtemisCoordinates(String gffLine, final StringVector gffParts, final IndexContig c)
+  {
+    if(combinedReference)
+    {
+      int sbeg = Integer.parseInt(((String)gffParts.elementAt(3)).trim());
+      int send = Integer.parseInt(((String)gffParts.elementAt(4)).trim());
+      
+      sbeg += c.start - 1;
+      send += c.start - 1;
+      final StringBuffer newLn = new StringBuffer();
+      for(int i=0; i<gffParts.size(); i++)
+      {
+        if(i==3)
+          newLn.append(sbeg);
+        else if(i==4)
+          newLn.append(send);
+        else
+          newLn.append((String)gffParts.elementAt(i));
+        newLn.append("\t");
+      }
+      gffLine = newLn.toString();
+    }
+    return gffLine;
+  }
+
   private boolean isTranscript(Key key)
   {
     if(key.getKeyString().equals("mRNA") || key.getKeyString().equals("transcript"))
@@ -237,7 +286,6 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
       return true;
     return false;
   }
-  
   
   private void combineGeneFeatures(FeatureVector original_features)
   {
@@ -469,7 +517,8 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
     new_feature.setSegmentRangeStore(id_range_store);
     new_feature.setGffSource(first_old_feature.getGffSource());
     new_feature.setGffSeqName(first_old_feature.getGffSeqName());
-
+    new_feature.setReadOnlyFeature(first_old_feature.isReadOnly());
+    
     // set the ID
     String ID;
     try
@@ -615,18 +664,23 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
  
     if(featureCount > -1)
       return featureCount;
-    
-    final String r = contig+":"+1+"-"+Integer.MAX_VALUE;
-    TabixReader.Iterator tabixIterator = reader.query(r);
-    if(tabixIterator == null)
-      return 0;
 
-    try
+    featureCount = 0;
+    List<IndexContig> contigs = getListOfContigs();
+    for(int i=0; i<contigs.size(); i++)
     {
-      while( (tabixIterator.next()) != null )
-        featureCount++;
+      final String r = contigs.get(i).chr+":"+1+"-"+Integer.MAX_VALUE;
+      TabixReader.Iterator tabixIterator = reader.query(r);
+      if(tabixIterator == null)
+        continue;
+
+      try
+      {
+        while( tabixIterator.next() != null )
+          featureCount++;
+      }
+      catch(IOException ioe){}      
     }
-    catch(IOException ioe){}
 
     return featureCount;
   }
@@ -650,38 +704,73 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
 
   public Feature getFeatureAtIndex(int i)
   {
-    String r = contig+":"+1+"-"+Integer.MAX_VALUE;
-    TabixReader.Iterator tabixIterator = reader.query(r);
-    if(tabixIterator == null)
-      return null;
-    try
+    List<IndexContig> contigs = getListOfContigs();
+    int cnt = 0;
+    for(IndexContig c: contigs)
     {
-      int cnt = 0;
-      String ln;
-      while( (ln = tabixIterator.next()) != null )
+      String r = c.chr+":"+1+"-"+Integer.MAX_VALUE;
+      TabixReader.Iterator tabixIterator = reader.query(r);
+      if(tabixIterator == null)
+        return null;
+      try
       {
-        if(i == cnt++)
-          return new GFFStreamFeature(ln.toString());
+        String ln;
+        while( (ln = tabixIterator.next()) != null )
+        {
+          if(i == cnt++)
+          {
+            final StringVector parts = StringVector.getStrings(ln, "\t", true);
+            ln = getGffInArtemisCoordinates(ln, parts, c);
+            return new GFFStreamFeature(ln);
+          }
+        }
+        
       }
+      catch(IOException ioe){}
     }
-    catch(IOException ioe){}
+ 
     return null;
   }
 
   public int indexOf(Feature feature)
   {
-    return 0;
+    List<IndexContig> contigs = getListOfContigs();
+    int cnt = 0;
+    for(IndexContig c: contigs)
+    {
+      String r = c.chr+":"+1+"-"+Integer.MAX_VALUE;
+      TabixReader.Iterator tabixIterator = reader.query(r);
+      if(tabixIterator == null)
+        continue;
+      try
+      {
+        String keyStr = feature.getKey().getKeyString();
+        int sbeg1 = feature.getFirstBase();
+      
+        String ln;
+        while( (ln = tabixIterator.next()) != null )
+        { 
+          final StringVector parts = StringVector.getStrings(ln, "\t", true);
+          int sbeg2 = getStartInArtemisCoordinates(parts, c);
+
+          if(sbeg1 == sbeg2 && parts.get(2).equals(keyStr))
+            return cnt;
+          cnt++;
+        }
+      }
+      catch(IOException ioe){}
+    }
+    
+    return -1;
   }
 
   public boolean contains(Feature feature)
   {
-    // TODO Auto-generated method stub
-    return false;
+    return (indexOf(feature)>-1);
   }
 
   public FeatureEnumeration features()
   {
-    System.out.println("HERE features()");
     return new FeatureEnumeration() {
       public boolean hasMoreFeatures() {
         return false;
@@ -695,7 +784,6 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
 
   public FeatureVector getAllFeatures()
   {
-    System.out.println("HERE getAllFeatures()");
     return null;
   }
 
@@ -756,41 +844,22 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
     return entryInfo;
   }
   
+  /**
+   * Test if the tabix (.tbi) index is present.
+   * @param f
+   * @return
+   */
   public static boolean isIndexed(File f)
   {
     File index = new File(f.getAbsolutePath() + ".tbi");
     return index.exists();
   }
-  
-  class Contig
-  {
-    protected String chr;
-    protected int start;
-    protected int end;
-    protected int offset;
-
-    Contig(String chr, int s, int e)
-    {
-      this.chr = chr;
-      this.start = s;
-      this.end = e;
-      this.offset = s;
-    }
-    
-    public boolean equals(Object obj)
-    {
-      Contig c = (Contig)obj;
-      if(chr.equals(c.chr) && start == c.start && end == c.end)
-        return true;
-      return false;
-    }
-  }
 
   public void updateReference(String contig, boolean combinedReference)
   {
-    // TODO Auto-generated method stub
     this.contig = contig;
     this.combinedReference = combinedReference;
+    featureCount = -1;
   }
 
   public void setEntryGroup(EntryGroup entryGroup)
@@ -806,22 +875,61 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
     else
     {
       int len = 0;
-      Enumeration<Contig> contigs = contigHash.elements();
-
-      while(contigs.hasMoreElements())
+      for (String key : contigHash.keySet())
       {
-        Contig contig = contigs.nextElement();
+        IndexContig contig = contigHash.get(key);
         int clen = contig.end;
         if(clen > len)
           len = clen;
       }
 
       if(contigHash.size() > 1 && len == entry.getSequence().length())
-      {
         updateReference(sequenceNames[0], true);
-      }
       else
         updateReference(sequenceNames[0], false);
+    }
+  }
+  
+  public static boolean contains(final uk.ac.sanger.artemis.Feature f, final uk.ac.sanger.artemis.FeatureVector fs)
+  {
+    final String id = f.getIDString();
+    final String keyStr = f.getKey().toString();
+
+    for(int i=0; i<fs.size(); i++)
+      if(contains(fs.elementAt(i), id, keyStr))
+        return true;
+    return false;
+  }
+  
+  private static boolean contains(final uk.ac.sanger.artemis.Feature f, String id, String keyStr)
+  {
+    if(f.getIDString().equals(id) && 
+       keyStr.equals(f.getKey().toString()))
+      return true;
+    return false;
+  }
+  
+  class IndexContig
+  {
+    protected String chr;
+    protected int start;
+    protected int end;
+    protected int offset;
+
+    IndexContig(String chr, int s, int e)
+    {
+      this.chr = chr;
+      this.start = s;
+      this.end = e;
+      this.offset = s;
+    }
+    
+    public boolean equals(Object obj)
+    {
+      IndexContig c = (IndexContig)obj;
+      if(chr.equals(c.chr) && start == c.start && end == c.end)
+        return true;
+      return false;
     }
   }
 }
