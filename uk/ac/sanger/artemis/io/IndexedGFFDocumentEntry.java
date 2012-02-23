@@ -129,14 +129,8 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
   
   private void getFeaturesInRange(IndexContig c, Range range, FeatureVector features) throws NumberFormatException, IOException
   {
-    int start = range.getStart();
-    if(combinedReference)
-      start=-c.start+1;
-    if(start<1)
-      start = 1;
-    int end = range.getEnd(); 
-    if(combinedReference)
-      end-=c.start+1;
+    int start = getStartInContigCoords(range.getStart(), c);
+    int end = getEndInContigCoords(range.getEnd(), c);
     String r = c.chr+":"+start+"-"+end;
 
     TabixReader.Iterator tabixIterator = reader.query(r);
@@ -144,9 +138,12 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
       return;
     int pos[] = iterate(c, range.getStart(), range.getEnd(), tabixIterator, features);
 
-    if(pos[0] < start || pos[1] > end)
+    if(pos[0] < range.getStart() || pos[1] > range.getEnd())
     {
-      r = c.chr+":"+pos[0]+"-"+pos[1];
+      start = getStartInContigCoords(pos[0], c);
+      end = getEndInContigCoords(pos[1], c);
+      r = c.chr+":"+start+"-"+end;
+
       tabixIterator = reader.query(r);
       if(tabixIterator == null)
         return;
@@ -239,12 +236,42 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
    * @param c
    * @return
    */
-  private int getStartInArtemisCoordinates(final StringVector gffParts, final IndexContig c)
+  private int getStartInArtemisCoords(final StringVector gffParts, final IndexContig c)
   {
     int sbeg = Integer.parseInt(((String)gffParts.elementAt(3)).trim());
     if(combinedReference)
       sbeg += c.start - 1;
     return sbeg;
+  }
+  
+  /**
+   * Get the features start coordinate.
+   * @param gffParts
+   * @param c
+   * @return
+   */
+  private int getEndInArtemisCoords(final StringVector gffParts, final IndexContig c)
+  {
+    int send = Integer.parseInt(((String)gffParts.elementAt(4)).trim());
+    if(combinedReference)
+      send += c.start - 1;
+    return send;
+  }
+  
+  private int getStartInContigCoords(int start, final IndexContig c)
+  {
+    if(combinedReference)
+      start+=-c.start+1;
+    if(start<1)
+      start = 1;
+    return start;
+  }
+  
+  private int getEndInContigCoords(int end, final IndexContig c)
+  {
+    if(combinedReference)
+      end+=-c.start+1;
+    return end;
   }
   
   /**
@@ -748,14 +775,16 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
       {
         String keyStr = feature.getKey().getKeyString();
         int sbeg1 = feature.getFirstBase();
+        int send1 = feature.getLastBase();
       
         String ln;
         while( (ln = tabixIterator.next()) != null )
         { 
           final StringVector parts = StringVector.getStrings(ln, "\t", true);
-          int sbeg2 = getStartInArtemisCoordinates(parts, c);
-
-          if(sbeg1 == sbeg2 && parts.get(2).equals(keyStr))
+          int sbeg2 = getStartInArtemisCoords(parts, c);
+          int send2 = getEndInArtemisCoords(parts, c);
+          
+          if(sbeg1 == sbeg2 && send1 == send2 && parts.get(2).equals(keyStr))
             return cnt;
           cnt++;
         }
