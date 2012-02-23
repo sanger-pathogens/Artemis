@@ -695,9 +695,10 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
 
     featureCount = 0;
     List<IndexContig> contigs = getListOfContigs();
-    for(int i=0; i<contigs.size(); i++)
+    for(IndexContig c: contigs)
     {
-      final String r = contigs.get(i).chr+":"+1+"-"+Integer.MAX_VALUE;
+      int nfeatures = 0;
+      final String r = c.chr+":"+1+"-"+Integer.MAX_VALUE;
       TabixReader.Iterator tabixIterator = reader.query(r);
       if(tabixIterator == null)
         continue;
@@ -705,7 +706,11 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
       try
       {
         while( tabixIterator.next() != null )
+        {
           featureCount++;
+          nfeatures++;
+        }
+        c.nfeatures = nfeatures;
       }
       catch(IOException ioe){}      
     }
@@ -736,6 +741,12 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
     int cnt = 0;
     for(IndexContig c: contigs)
     {
+      int nfeatures = c.nfeatures;
+      if(i > cnt+nfeatures)
+      {
+        cnt+=nfeatures;
+        continue;
+      }
       String r = c.chr+":"+1+"-"+Integer.MAX_VALUE;
       TabixReader.Iterator tabixIterator = reader.query(r);
       if(tabixIterator == null)
@@ -756,41 +767,50 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
       }
       catch(IOException ioe){}
     }
- 
+
     return null;
   }
 
   public int indexOf(Feature feature)
   {
-    List<IndexContig> contigs = getListOfContigs();
+    final List<IndexContig> contigs = getListOfContigs();
     int cnt = 0;
+    
+    final String keyStr = feature.getKey().getKeyString();
+    final int sbeg1 = feature.getFirstBase();
+    final int send1 = feature.getLastBase();
+
     for(IndexContig c: contigs)
     {
+      if(combinedReference && sbeg1 > c.end && send1 > c.start)
+      {
+        cnt+=c.nfeatures;
+        continue;
+      }
+      
       String r = c.chr+":"+1+"-"+Integer.MAX_VALUE;
       TabixReader.Iterator tabixIterator = reader.query(r);
       if(tabixIterator == null)
         continue;
       try
       {
-        String keyStr = feature.getKey().getKeyString();
-        int sbeg1 = feature.getFirstBase();
-        int send1 = feature.getLastBase();
-      
         String ln;
         while( (ln = tabixIterator.next()) != null )
         { 
           final StringVector parts = StringVector.getStrings(ln, "\t", true);
           int sbeg2 = getStartInArtemisCoords(parts, c);
           int send2 = getEndInArtemisCoords(parts, c);
-          
-          if(sbeg1 == sbeg2 && send1 == send2 && parts.get(2).equals(keyStr))
-            return cnt;
+
+          if(sbeg1 == sbeg2 && parts.get(2).equals(keyStr))
+          {
+            if(send1 == send2 || feature.getLocation().getRanges().size() > 1)
+              return cnt;
+          }
           cnt++;
         }
       }
       catch(IOException ioe){}
     }
-    
     return -1;
   }
 
@@ -945,6 +965,7 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
     protected int start;
     protected int end;
     protected int offset;
+    protected int nfeatures = 0;
 
     IndexContig(String chr, int s, int e)
     {
