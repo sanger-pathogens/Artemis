@@ -1,3 +1,26 @@
+/* IndexedGFFDocumentEntry.java
+ *
+ * created: 2012
+ *
+ * This file is part of Artemis
+ *
+ * Copyright(C) 2012  Genome Research Limited
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or(at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ **/
 package uk.ac.sanger.artemis.io;
 
 import java.io.File;
@@ -17,6 +40,7 @@ import net.sf.samtools.util.BlockCompressedInputStream;
 import uk.ac.sanger.artemis.EntryGroup;
 import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 import uk.ac.sanger.artemis.components.variant.TabixReader;
+import uk.ac.sanger.artemis.util.CacheHashMap;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.util.Document;
 import uk.ac.sanger.artemis.util.FileDocument;
@@ -39,6 +63,9 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
    private EntryInformation entryInfo;
    private EntryGroup entryGroup;
    private int featureCount = -1;
+   
+   // cache used by getFeatureAtIndex() and indexOf()
+   private CacheHashMap gffCache = new CacheHashMap(150,5);
    
    public static org.apache.log4j.Logger logger4j = 
        org.apache.log4j.Logger.getLogger(IndexedGFFDocumentEntry.class);
@@ -735,14 +762,19 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
     return false;
   }
 
-  public Feature getFeatureAtIndex(int i)
+
+  public Feature getFeatureAtIndex(int idx)
   {
-    List<IndexContig> contigs = getListOfContigs();
+    Object cachedGFF = gffCache.get(idx);
+    if(cachedGFF != null)
+      return (GFFStreamFeature)cachedGFF;
+    
+    final List<IndexContig> contigs = getListOfContigs();
     int cnt = 0;
     for(IndexContig c: contigs)
     {
       int nfeatures = c.nfeatures;
-      if(i > cnt+nfeatures)
+      if(idx > cnt+nfeatures)
       {
         cnt+=nfeatures;
         continue;
@@ -756,14 +788,16 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
         String ln;
         while( (ln = tabixIterator.next()) != null )
         {
-          if(i == cnt++)
+          if(idx == cnt++)
           {
             final StringVector parts = StringVector.getStrings(ln, "\t", true);
-            ln = getGffInArtemisCoordinates(ln, parts, c);
-            return new GFFStreamFeature(ln);
+            final GFFStreamFeature gff = new GFFStreamFeature(
+                getGffInArtemisCoordinates(ln, parts, c));
+            
+            gffCache.put(idx, gff);
+            return gff;
           }
         }
-        
       }
       catch(IOException ioe){}
     }
@@ -773,6 +807,17 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
 
   public int indexOf(Feature feature)
   {
+    if(gffCache.containsValue(feature))
+    {
+      // retrieve from GFF cache
+      for (Object key : gffCache.keySet())
+      {
+        Feature f = (Feature)gffCache.get(key);
+        if(f.equals(feature))
+          return (Integer)key;
+      }
+    }
+
     final List<IndexContig> contigs = getListOfContigs();
     int cnt = 0;
     
@@ -834,7 +879,17 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
 
   public FeatureVector getAllFeatures()
   {
-    return null;
+    return new FeatureVector(){
+      public int size() 
+      {
+        return getFeatureCount();
+      }
+      
+      public Feature featureAt(int index) 
+      {
+        return getFeatureAtIndex(index);
+      }
+    };
   }
 
   public Sequence getSequence()
@@ -953,9 +1008,17 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
   
   private static boolean contains(final uk.ac.sanger.artemis.Feature f, String id, String keyStr)
   {
-    if(f.getIDString().equals(id) && 
-       keyStr.equals(f.getKey().toString()))
-      return true;
+    if(keyStr.equals(f.getKey().toString()))
+    {
+      if(f.getIDString().equals(id))
+        return true;
+      else if(id.indexOf("{")>-1)
+      {
+        int ind = f.getIDString().lastIndexOf(":");
+        if(ind > -1 && id.startsWith(f.getIDString().substring(0, ind)))
+          return true;
+      }
+    }
     return false;
   }
   
@@ -983,4 +1046,5 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
       return false;
     }
   }
+
 }
