@@ -97,13 +97,14 @@ abstract public class DocumentEntryFactory
    *    EntryInformation object cannot contain the Key, Qualifier or
    *    Key/Qualifier combination of one of the features in the Document.
    **/
-  public static DocumentEntry makeDocumentEntry (final EntryInformation
-                                                   entry_information,
+  public static DocumentEntry makeDocumentEntry (final EntryInformation entry_information,
                                                  final Document document,
                                                  final ReadListener listener)
       throws IOException, EntryInformationException 
   {
-
+    if(document.getInputStream() instanceof net.sf.samtools.util.BlockCompressedInputStream)
+      return new IndexedGFFDocumentEntry(document);
+    
     final LinePushBackReader document_reader =
                         document.getLinePushBackReader();
 
