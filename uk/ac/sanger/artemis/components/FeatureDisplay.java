@@ -1366,8 +1366,13 @@ public class FeatureDisplay extends EntryGroupPanel
     {
       final Feature new_feature = real_visible_features.elementAt(i);
       if(!visible_features.contains(new_feature) &&
-         selection_features.contains(new_feature)) 
-        new_visible_features.addElementAtEnd(new_feature);
+         selection_features.contains(new_feature))
+      {
+        try
+        {
+          new_visible_features.addElementAtEnd(new_feature);
+        }catch(Error e){}
+      }
     }
 
     visible_features = new_visible_features;
