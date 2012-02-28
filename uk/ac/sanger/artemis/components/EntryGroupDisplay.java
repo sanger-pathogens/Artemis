@@ -27,6 +27,7 @@ package uk.ac.sanger.artemis.components;
 
 import uk.ac.sanger.artemis.*;
 import uk.ac.sanger.artemis.io.IndexFastaStream;
+import uk.ac.sanger.artemis.io.IndexedGFFDocumentEntry;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -242,6 +243,13 @@ public class EntryGroupDisplay extends JPanel
             IndexFastaStream is = (IndexFastaStream)entry.getEMBLEntry().getSequence();
             is.setContigByIndex(indexFastaCombo.getSelectedIndex());
           
+            EntryVector entries = entry_group.getActiveEntries();
+            for(int i=0; i<entries.size(); i++)
+            {
+              Entry entry = entries.elementAt(i);
+              if(entry.getEMBLEntry() instanceof IndexedGFFDocumentEntry)
+                ((IndexedGFFDocumentEntry)entry.getEMBLEntry()).updateReference(is.getContig(), false);
+            }
             owning_component.resetScrolls();
             owning_component.getFeatureDisplay().getBases().clearCodonCache();
             owning_component.repaint();
