@@ -26,6 +26,7 @@ package uk.ac.sanger.artemis.io;
 import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -39,6 +40,7 @@ import net.sf.samtools.util.BlockCompressedInputStream;
 
 import uk.ac.sanger.artemis.EntryGroup;
 import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
+import uk.ac.sanger.artemis.components.variant.FeatureContigPredicate;
 import uk.ac.sanger.artemis.components.variant.TabixReader;
 import uk.ac.sanger.artemis.util.CacheHashMap;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
@@ -103,14 +105,16 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
       while( (ln = in.readLine()) != null && ln.startsWith("#"))
       {
         hdr.append(ln);
-        
         if(ln.startsWith("##sequence-region "))
         {
           logger4j.debug(ln);
           final String parts[] = ln.split(" ");
 
           sequenceNames[cnt++] = parts[1];
-          contigHash.put(parts[1], new IndexContig(parts[1], offset+1, offset+=Integer.parseInt(parts[3])));
+          
+          contigHash.put(parts[1], new IndexContig(parts[1], 1, Integer.parseInt(parts[3]), offset));
+          offset+=Integer.parseInt(parts[3]);
+          
         }
       }
       in.close();
@@ -231,8 +235,8 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
     for (String key : contigHash.keySet())
     {
       IndexContig contig = contigHash.get(key);
-      if( (range.getStart() >= contig.start && range.getStart() <= contig.end) ||
-          (range.getEnd()   >= contig.start && range.getEnd()   <= contig.end))
+      if( (range.getStart() >= contig.getOffsetStart() && range.getStart() <= contig.getOffsetEnd()) ||
+          (range.getEnd()   >= contig.getOffsetStart() && range.getEnd()   <= contig.getOffsetEnd()))
       {
         //System.out.println(chr+" getChr() "+r.toString()+" RANGE "+range.toString());
         list.add(contig);
@@ -267,7 +271,7 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
   {
     int sbeg = Integer.parseInt(((String)gffParts.elementAt(3)).trim());
     if(combinedReference)
-      sbeg += c.start - 1;
+      sbeg += c.getOffsetStart() - 1;
     return sbeg;
   }
   
@@ -281,7 +285,7 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
   {
     int send = Integer.parseInt(((String)gffParts.elementAt(4)).trim());
     if(combinedReference)
-      send += c.start - 1;
+      send += c.getOffsetStart() - 1;
     return send;
   }
   
@@ -294,7 +298,7 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
   private int getCoordInContigCoords(int coord, final IndexContig c)
   {
     if(combinedReference)
-      coord+=-c.start+1;
+      coord+=-c.getOffsetStart()+1;
     if(coord<1)
       coord = 1;
     return coord;
@@ -315,8 +319,8 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
       int sbeg = Integer.parseInt(((String)gffParts.elementAt(3)).trim());
       int send = Integer.parseInt(((String)gffParts.elementAt(4)).trim());
       
-      sbeg += c.start - 1;
-      send += c.start - 1;
+      sbeg += c.getOffsetStart() - 1;
+      send += c.getOffsetStart() - 1;
       final StringBuffer newLn = new StringBuffer();
       for(int i=0; i<gffParts.size(); i++)
       {
@@ -827,7 +831,7 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
 
     for(IndexContig c: contigs)
     {
-      if(combinedReference && sbeg1 > c.end && send1 > c.start)
+      if(combinedReference && sbeg1 > c.getOffsetEnd() && send1 > c.getOffsetStart())
       {
         cnt+=c.nfeatures;
         continue;
@@ -983,16 +987,55 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
       for (String key : contigHash.keySet())
       {
         IndexContig contig = contigHash.get(key);
-        int clen = contig.end;
+        int clen = contig.getOffsetEnd();
         if(clen > len)
           len = clen;
       }
 
       if(contigHash.size() > 1 && len == entry.getSequence().length())
+      {
+        // check the order of the contigs/chromosomes
+        checkOffset();
         updateReference(sequenceNames[0], true);
+      }
       else
         updateReference(sequenceNames[0], false);
     }
+  }
+  
+  /**
+   * For concatenated sequences check the offset is the same as that in
+   * the header of the GFF.
+   */
+  private void checkOffset()
+  {
+    if(entryGroup.getSequenceEntry().getFeatureCount() == sequenceNames.length)
+    {
+      final List<IndexContig> list = new Vector<IndexContig>();
+      uk.ac.sanger.artemis.FeatureVector features = entryGroup.getSequenceEntry().getAllFeatures();
+      
+      for (String key : contigHash.keySet())
+      {
+        IndexContig contig = contigHash.get(key);
+        list.add(contig);
+        FeatureContigPredicate predicate = new FeatureContigPredicate(contig.chr);
+        for(int j=0; j<features.size(); j++)
+        {
+          if(predicate.testPredicate(features.elementAt(j)))
+          {
+            // correct offset
+            if(contig.getOffsetStart() != features.elementAt(j).getFirstBase())
+              contig.offset = features.elementAt(j).getFirstBase()-1;
+            break;
+          }
+        }
+      }
+      // sort the list by the contig offset
+/*      Collections.sort(list, new ContigCompare());
+      contigHash = new LinkedHashMap<String, IndexContig>(sequenceNames.length);
+      for(IndexContig c: list)
+        contigHash.put(c.chr, c);*/
+    }  
   }
   
   public static boolean contains(final uk.ac.sanger.artemis.Feature f, final uk.ac.sanger.artemis.FeatureVector fs)
@@ -1022,20 +1065,21 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
     return false;
   }
   
+
   class IndexContig
   {
-    protected String chr;
-    protected int start;
-    protected int end;
-    protected int offset;
-    protected int nfeatures = 0;
+    private String chr;
+    private int start;
+    private int end;
+    private int offset;
+    private int nfeatures = 0;
 
-    IndexContig(String chr, int s, int e)
+    IndexContig(String chr, int s, int e, int off)
     {
       this.chr = chr;
       this.start = s;
       this.end = e;
-      this.offset = s;
+      this.offset = off;
     }
     
     public boolean equals(Object obj)
@@ -1045,6 +1089,28 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
         return true;
       return false;
     }
+    
+    private int getOffsetStart()
+    {
+      return start+offset;
+    }
+    
+    private int getOffsetEnd()
+    {
+      return end+offset;
+    }
   }
 
+  class ContigCompare implements Comparator<IndexContig>
+  {
+    public int compare(IndexContig c1, IndexContig c2)
+    {
+      if(c1.offset < c2.offset)
+        return -1;
+      else if(c2.offset > c1.offset)
+        return 1;
+      return 0;
+    }
+    
+  }
 }
