@@ -33,6 +33,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.Vector;
 
@@ -98,23 +99,19 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
       final BlockCompressedInputStream in = 
            (BlockCompressedInputStream) getDocument().getInputStream();
       String ln;
-      StringBuilder hdr = new StringBuilder();
       contigHash = new LinkedHashMap<String, IndexContig>(sequenceNames.length);
       int offset = 0;
       int cnt = 0;
       while( (ln = in.readLine()) != null && ln.startsWith("#"))
       {
-        hdr.append(ln);
         if(ln.startsWith("##sequence-region "))
         {
           logger4j.debug(ln);
           final String parts[] = ln.split(" ");
 
           sequenceNames[cnt++] = parts[1];
-          
           contigHash.put(parts[1], new IndexContig(parts[1], 1, Integer.parseInt(parts[3]), offset));
           offset+=Integer.parseInt(parts[3]);
-          
         }
       }
       in.close();
@@ -712,7 +709,7 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
       QualifierVector qualifiers) throws EntryInformationException,
       ReadOnlyException, OutOfRangeException
   {
-    // TODO Auto-generated method stub
+    // not for read only entry
     return null;
   }
 
@@ -870,15 +867,7 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
 
   public FeatureEnumeration features()
   {
-    return new FeatureEnumeration() {
-      public boolean hasMoreFeatures() {
-        return false;
-      }
-
-      public Feature nextFeature() {
-        return null;
-      }
-    };
+    return new IndexGFFFeatureEnumeration();
   }
 
   public FeatureVector getAllFeatures()
@@ -1111,6 +1100,71 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
         return 1;
       return 0;
     }
+  }
+  
+  class IndexGFFFeatureEnumeration implements FeatureEnumeration
+  {
+    private Iterator<IndexContig> contigIterator = getListOfContigs().iterator();
+    private TabixReader.Iterator tabixIterator;
+    private IndexContig c;
+    private String gffLine;
     
+    public boolean hasMoreFeatures()
+    {
+      try
+      {
+        if(tabixIterator == null && !hasNextTabixIterator())
+          return false;
+        
+        gffLine = tabixIterator.next();
+        if(gffLine != null)
+          return true;
+        
+        if(!hasNextTabixIterator())
+          return false;
+        gffLine = tabixIterator.next();
+        if(gffLine != null)
+          return true;
+      }
+      catch (IOException e){}
+
+      return false;
+    }
+
+    public Feature nextFeature() throws NoSuchElementException
+    {
+      try
+      {
+        final StringVector parts = StringVector.getStrings(gffLine, "\t", true);
+        gffLine = getGffInArtemisCoordinates(gffLine, parts, c);
+        return new GFFStreamFeature(gffLine);
+      }
+      catch (IOException e)
+      {
+        e.printStackTrace();
+      }
+      return null;
+    }
+    
+    private boolean hasNextTabixIterator()
+    {
+      if(!contigIterator.hasNext())
+      {
+        tabixIterator = null;
+        return false;
+      }
+      c = contigIterator.next();
+      
+      Range range = null;
+      try
+      {
+        range = new Range(1, Integer.MAX_VALUE);
+      } catch (OutOfRangeException e){}
+      int start = getCoordInContigCoords(range.getStart(), c);
+      int end = getCoordInContigCoords(range.getEnd(), c);
+
+      tabixIterator = reader.query( c.chr+":"+start+"-"+end );
+      return true;
+    }
   }
 }
