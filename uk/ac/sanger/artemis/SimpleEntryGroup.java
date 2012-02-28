@@ -26,6 +26,7 @@
 package uk.ac.sanger.artemis;
 
 import uk.ac.sanger.artemis.sequence.*;
+import uk.ac.sanger.artemis.io.IndexedGFFDocumentEntry;
 import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.io.StreamSequence;
 import uk.ac.sanger.artemis.io.SimpleDocumentEntry;
@@ -460,7 +461,6 @@ public class SimpleEntryGroup extends EntryVector
     if(index < 0) 
       throw new Error("internal error - index out of range: " + index);
 
-    int feature_count_of_previous_entries = 0;
     final int active_entries_size = active_entries.size();
 
     for(int entry_index = 0; entry_index < active_entries_size; 
@@ -642,6 +642,9 @@ public class SimpleEntryGroup extends EntryVector
    **/
   public void add(final Entry entry) 
   {
+    if(entry.getEMBLEntry() instanceof IndexedGFFDocumentEntry)
+      ((IndexedGFFDocumentEntry)entry.getEMBLEntry()).setEntryGroup(this);
+
     addElement(entry);
   }
 
@@ -871,7 +874,7 @@ public class SimpleEntryGroup extends EntryVector
       targets = (Vector)listeners.clone();
     }
 
-    boolean seen_chado_manager = false;
+    //boolean seen_chado_manager = false;
     final int targets_size = targets.size();
     for(int i = 0; i < targets_size; ++i) 
     {
