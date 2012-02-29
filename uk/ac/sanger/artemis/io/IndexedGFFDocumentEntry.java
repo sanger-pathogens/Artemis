@@ -685,7 +685,6 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
 
   public String getHeaderText()
   {
-    // TODO Auto-generated method stub
     return null;
   }
 
@@ -749,7 +748,6 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
   public Feature add(Feature feature) throws EntryInformationException,
       ReadOnlyException
   {
-    // TODO Auto-generated method stub
     return null;
   }
 
@@ -893,7 +891,6 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
 
   public void dispose()
   {
-    // TODO Auto-generated method stub 
   }
 
   public void save() throws IOException
@@ -917,18 +914,14 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
 
   public void writeToStream(Writer writer) throws IOException
   {
-    // TODO Auto-generated method stub
-    
   }
 
   public void setDirtyFlag()
   {
-    // TODO Auto-generated method stub
   }
 
   public Date getLastChangeTime()
   {
-    // TODO Auto-generated method stub
     return null;
   }
 
@@ -1031,18 +1024,19 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
   {
     final String id = f.getIDString();
     final String keyStr = f.getKey().toString();
+    final int start = f.getFirstBase();
 
     for(int i=0; i<fs.size(); i++)
-      if(contains(fs.elementAt(i), id, keyStr))
+      if(contains(fs.elementAt(i), id, keyStr, start))
         return true;
     return false;
   }
   
-  private static boolean contains(final uk.ac.sanger.artemis.Feature f, String id, String keyStr)
+  private static boolean contains(final uk.ac.sanger.artemis.Feature f, String id, String keyStr, int start)
   {
     if(keyStr.equals(f.getKey().toString()))
     {
-      if(f.getIDString().equals(id))
+      if(f.getIDString().equals(id) && f.getFirstBase() == start)
         return true;
       else if(id.indexOf("{")>-1)
       {
