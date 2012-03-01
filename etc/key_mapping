@@ -23,3 +23,4 @@ centromere                                 misc_feature    note=centromere
 modified_amino_acid_feature                misc_feature    note=modified_amino_acid_feature
 snRNA                                      ncRNA           ncRNA_class="snRNA"
 snoRNA                                     ncRNA           ncRNA_class="snoRNA"
+nucleotide_match                           misc_feature    note=nucleotide_match
