@@ -4820,7 +4820,7 @@ public class FeatureDisplay extends EntryGroupPanel
    *  Arrange for updateVisibleFeatureVector() to be called in the next call
    *  to paint()
    **/
-  private void needVisibleFeatureVectorUpdate() 
+  protected void needVisibleFeatureVectorUpdate() 
   {
     update_visible_features = true;
   }
