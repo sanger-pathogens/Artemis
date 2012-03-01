@@ -252,6 +252,7 @@ public class EntryGroupDisplay extends JPanel
             }
             owning_component.resetScrolls();
             owning_component.getFeatureDisplay().getBases().clearCodonCache();
+            owning_component.getFeatureDisplay().needVisibleFeatureVectorUpdate();
             owning_component.repaint();
           }
         
