@@ -109,12 +109,21 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
           logger4j.debug(ln);
           final String parts[] = ln.split(" ");
 
-          sequenceNames[cnt++] = parts[1];
+          //sequenceNames[cnt++] = parts[1];
           contigHash.put(parts[1], new IndexContig(parts[1], 1, Integer.parseInt(parts[3]), offset));
           offset+=Integer.parseInt(parts[3]);
+          cnt++;
         }
       }
       in.close();
+      
+      // no GFF header found
+      if(cnt < 1)
+      {
+        logger4j.debug("No GFF header found for "+gffFile.getAbsolutePath());
+        for(int i=0; i<sequenceNames.length; i++)
+          contigHash.put(sequenceNames[i], new IndexContig(sequenceNames[i], 1, Integer.MAX_VALUE, 0));
+      }
     }
     catch (IOException e)
     {
@@ -161,7 +170,13 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
     int end = getCoordInContigCoords(range.getEnd(), c);
     String r = c.chr+":"+start+"-"+end;
 
-    TabixReader.Iterator tabixIterator = reader.query(r);
+    TabixReader.Iterator tabixIterator = null;
+    try
+    {
+      tabixIterator = reader.query(r);
+    }
+    catch(NullPointerException npe){}
+     
     if(tabixIterator == null)
       return;
     int pos[] = iterate(c, range.getStart(), range.getEnd(), tabixIterator, features);
@@ -235,7 +250,7 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
       if( (range.getStart() >= contig.getOffsetStart() && range.getStart() <= contig.getOffsetEnd()) ||
           (range.getEnd()   >= contig.getOffsetStart() && range.getEnd()   <= contig.getOffsetEnd()))
       {
-        //System.out.println(chr+" getChr() "+r.toString()+" RANGE "+range.toString());
+        //System.out.println(contig.chr+" getChr() RANGE "+range.toString());
         list.add(contig);
       }
     }
@@ -336,7 +351,8 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
 
   private boolean isTranscript(Key key)
   {
-    if(key.getKeyString().equals("mRNA") || key.getKeyString().equals("transcript"))
+    if(key.getKeyString().indexOf("RNA") > -1 || 
+       key.getKeyString().indexOf("transcript") > -1)
       return true;
     if(GeneUtils.isNonCodingTranscripts(key))
       return true;
@@ -966,15 +982,17 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
     else
     {
       int len = 0;
+      int off = 0;
       for (String key : contigHash.keySet())
       {
         IndexContig contig = contigHash.get(key);
         int clen = contig.getOffsetEnd();
         if(clen > len)
           len = clen;
+        off = contig.offset;
       }
 
-      if(contigHash.size() > 1 && len == entry.getSequence().length())
+      if(contigHash.size() > 1 && (len == entry.getSequence().length() || off == 0))
       {
         // check the order of the contigs/chromosomes
         checkOffset();
@@ -1006,8 +1024,15 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
           if(predicate.testPredicate(features.elementAt(j)))
           {
             // correct offset
-            if(contig.getOffsetStart() != features.elementAt(j).getFirstBase())
+            if(contig.getOffsetStart() != features.elementAt(j).getFirstBase() ||
+               contig.offset == 0)
+            {
               contig.offset = features.elementAt(j).getFirstBase()-1;
+              
+              // this needs to be set when the GFF header is missing
+              contig.end = features.elementAt(j).getLastBase()-contig.offset;
+            }
+            
             break;
           }
         }
