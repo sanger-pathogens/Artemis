@@ -742,6 +742,7 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
     {
       int nfeatures = 0;
       final String r = c.chr+":"+1+"-"+Integer.MAX_VALUE;
+
       TabixReader.Iterator tabixIterator = reader.query(r);
       if(tabixIterator == null)
         continue;
@@ -779,13 +780,16 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
 
 
   public Feature getFeatureAtIndex(int idx)
-  {
+  {    
     Object cachedGFF = gffCache.get(idx);
     if(cachedGFF != null)
       return (GFFStreamFeature)cachedGFF;
-    
-    final List<IndexContig> contigs = getListOfContigs();
+
     int cnt = 0;
+    int start = 1;
+
+    final List<IndexContig> contigs = getListOfContigs();
+
     for(IndexContig c: contigs)
     {
       int nfeatures = c.nfeatures;
@@ -794,7 +798,8 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
         cnt+=nfeatures;
         continue;
       }
-      String r = c.chr+":"+1+"-"+Integer.MAX_VALUE;
+      String r = c.chr+":"+start+"-"+Integer.MAX_VALUE;
+
       TabixReader.Iterator tabixIterator = reader.query(r);
       if(tabixIterator == null)
         return null;
@@ -805,11 +810,26 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
         {
           if(idx == cnt++)
           {
-            final StringVector parts = StringVector.getStrings(ln, "\t", true);
+            StringVector parts = StringVector.getStrings(ln, "\t", true);
             final GFFStreamFeature gff = new GFFStreamFeature(
                 getGffInArtemisCoordinates(ln, parts, c));
-            
+
             gffCache.put(idx, gff);
+            
+            // see if the following line is cached and if not cache the
+            // next block of lines - this speeds up the generation of the
+            // feature list
+            if(gffCache.get(idx+1) == null)
+            {
+              cnt = 1;
+              while(cnt < 32 && (ln = tabixIterator.next()) != null) 
+              {
+                parts = StringVector.getStrings(ln, "\t", true);
+                gffCache.put(idx+cnt, new GFFStreamFeature(
+                  getGffInArtemisCoordinates(ln, parts, c)));
+                cnt++;
+              }
+            }
             return gff;
           }
         }
@@ -864,7 +884,16 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
           if(sbeg1 == sbeg2 && parts.get(2).equals(keyStr))
           {
             if(send1 == send2 || feature.getLocation().getRanges().size() > 1)
+            {
+              if(gffCache.get(cnt) == null)
+              {
+                // add to cache
+                final GFFStreamFeature gff = new GFFStreamFeature(
+                  getGffInArtemisCoordinates(ln, parts, c));
+                gffCache.put(cnt, gff);
+              }
               return cnt;
+            }
           }
           cnt++;
         }
