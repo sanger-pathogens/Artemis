@@ -710,6 +710,58 @@ public class ChadoCanonicalGene
   }
   
   /**
+   * Utility to determine if this is the first or only UTR, so that
+   * partial qualifiers can be added to the correct UTR feature.
+   * @param utrName
+   * @param isFwd
+   * @return
+   */
+  public boolean isFirstUtr(final String utrName, final boolean isFwd)
+  {
+    try
+    {
+      Feature this5Utr = getFeatureFromHash(utrName, five_prime_utr);
+      if (this5Utr != null)
+      {
+        String transcript_name = getQualifier(this5Utr, "Parent");
+        List<Feature> utrs = get5UtrOfTranscript(transcript_name);
+        if (utrs.size() == 1)
+          return true;
+
+        for (Feature utr : utrs)
+        {
+          if (isFwd && utr.getFirstBase() < this5Utr.getFirstBase())
+            return false;
+          else if (!isFwd && utr.getLastBase() > this5Utr.getLastBase())
+            return false;
+        }
+        return true;
+      }
+      
+      
+      Feature this3Utr = getFeatureFromHash(utrName, three_prime_utr);
+      if (this3Utr != null)
+      {
+        String transcript_name = getQualifier(this3Utr, "Parent");
+        List<Feature> utrs = get3UtrOfTranscript(transcript_name);
+        if (utrs.size() == 1)
+          return true;
+
+        for (Feature utr : utrs)
+        {
+          if (!isFwd && utr.getFirstBase() < this3Utr.getFirstBase())
+            return false;
+          else if (isFwd && utr.getLastBase() > this3Utr.getLastBase())
+            return false;
+        }
+        return true;
+      }
+    }
+    catch(InvalidRelationException ire){}
+    return false;
+  }
+  
+  /**
    * Return the other child features of a transcriot as a <code>List</code>.
    * @param transcript_name
    * @return
@@ -1177,7 +1229,7 @@ public class ChadoCanonicalGene
    * @return
    * @throws InvalidRelationException
    */
-  private String getQualifier(final Feature feature,
+  public String getQualifier(final Feature feature,
                               final String name) 
           throws InvalidRelationException
   {
@@ -1247,6 +1299,10 @@ public class ChadoCanonicalGene
     int start = proteinFeature.getLocation().getFirstBase();
     int fmin = start+(featureLocToProtein.getFmin()*3)+1;
     int fmax = start+(featureLocToProtein.getFmax()*3);
+
+    int len = proteinFeature.getEntry().getSequence().length();
+    if(fmax > len)
+      fmax = len;
 
     if(ranges.size()>1)
     {
