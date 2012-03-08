@@ -57,6 +57,7 @@ import uk.ac.sanger.artemis.chado.ChadoTransactionManager;
 import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 import uk.ac.sanger.artemis.components.genebuilder.JExtendedComboBox;
 import uk.ac.sanger.artemis.editor.MultiLineToolTipUI;
+import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.QualifierVector;
@@ -706,12 +707,11 @@ public class PropertiesPanel extends JPanel
       return;
     Qualifier fminQualifier = gffFeature.getQualifierByName("isFminPartial");
     Qualifier fmaxQualifier = gffFeature.getQualifierByName("isFmaxPartial");
-    Set<uk.ac.sanger.artemis.io.Feature> children =
-        gffFeature.getChadoGene().getChildren(gffFeature);
+    ChadoCanonicalGene chadoGene = gffFeature.getChadoGene();
+    Set<uk.ac.sanger.artemis.io.Feature> children = chadoGene.getChildren(gffFeature);
 
     if(children.size() > 0)
     {
-      Qualifier idQualifier = gffFeature.getQualifierByName("ID");
       int select = JOptionPane.showConfirmDialog(null, 
           "Update partial setting on child features?", 
           "Update Children", JOptionPane.YES_NO_OPTION);
@@ -722,17 +722,43 @@ public class PropertiesPanel extends JPanel
         Iterator<uk.ac.sanger.artemis.io.Feature> it = children.iterator();
         while(it.hasNext())
         {
-          GFFStreamFeature gffChildFeature = (GFFStreamFeature)it.next();
-          Feature f = (Feature)gffChildFeature.getUserData();
+          final GFFStreamFeature f = (GFFStreamFeature)it.next();
+          final String keyStr = f.getKey().getKeyString();
           
-          if(fminQualifier != null)
-            f.setQualifier(new Qualifier("isFminPartial"));
+          if(keyStr.equals("five_prime_UTR") || keyStr.equals("three_prime_UTR"))
+          {
+            String fName = chadoGene.getQualifier(f, "ID");
+            boolean isFwd = !f.getLocation().isComplement();
+            if(fName != null && !chadoGene.isFirstUtr(fName, isFwd))
+              continue;
+            
+            if( (keyStr.equals("five_prime_UTR")  &&  isFwd) ||
+                (keyStr.equals("three_prime_UTR") && !isFwd) )
+            {
+              if(fminQualifier != null)
+                f.setQualifier(new Qualifier("isFminPartial"));
+              else
+                f.removeQualifierByName("isFminPartial");
+            }
+            else
+            {
+              if(fmaxQualifier != null)
+                f.setQualifier(new Qualifier("isFmaxPartial"));
+              else
+                f.removeQualifierByName("isFmaxPartial");
+            }
+          }
           else
-            f.removeQualifierByName("isFminPartial");
-          if(fmaxQualifier != null)
-            f.setQualifier(new Qualifier("isFmaxPartial"));
-          else
-            f.removeQualifierByName("isFmaxPartial");
+          {
+            if(fminQualifier != null)
+              f.setQualifier(new Qualifier("isFminPartial"));
+            else
+              f.removeQualifierByName("isFminPartial");
+            if(fmaxQualifier != null)
+              f.setQualifier(new Qualifier("isFmaxPartial"));
+            else
+              f.removeQualifierByName("isFmaxPartial");
+          }
         }
       }
       catch(Exception e)
