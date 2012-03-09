@@ -627,7 +627,11 @@ public class AddMenu extends SelectionMenu
       if (default_entry == null) {
         new MessageDialog (frame, "There is no default entry");
         return;
+      } else if(default_entry.isReadOnly()) {
+        new MessageDialog (frame, "The default entry is read only");
+        return;
       }
+        
 
       try {
         final Location new_location = range.createLocation ();
