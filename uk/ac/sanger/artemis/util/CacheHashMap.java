@@ -63,6 +63,11 @@ public class CacheHashMap extends HashMap<Object, Object>
     updateAccessList(key);
     return super.get(key);
   }
+
+  public Object getLastKey()
+  {
+    return accessList.getLast();
+  }
   
   private void shrink() 
   {
