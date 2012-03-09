@@ -1288,6 +1288,9 @@ public class ChadoCanonicalGene
     String transcriptName = getTranscriptFromName(
                          GeneUtils.getUniqueName(proteinFeature));
     List<Feature> spliced = getSplicedFeaturesOfTranscript(transcriptName);
+    if(spliced == null)
+      return null;
+    
     RangeVector ranges = new RangeVector();
     for(int i=0; i<spliced.size(); i++)
     {

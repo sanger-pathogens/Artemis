@@ -523,7 +523,7 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
     try
     {
       int start = queryFeature.getLocation().getFirstBase();
-      Location location;
+      Location location = null;
       
       ChadoCanonicalGene chadoGene = ((GFFStreamFeature)queryFeature).getChadoGene();
       if(chadoGene != null)
@@ -531,7 +531,7 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
       else if(queryFeature.getLocation().isComplement())
         location = new Location("complement("+
             (start+(featureLoc.getFmin()*3)+1)+".."+(start+(featureLoc.getFmax()*3))+")");
-      else
+      if(location == null)
         location = new Location(
             (start+(featureLoc.getFmin()*3)+1)+".."+(start+(featureLoc.getFmax()*3)));
    
