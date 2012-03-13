@@ -71,7 +71,7 @@ abstract public class DocumentEntryFactory
    *  on the possible keys and qualifiers.
    *  @param listener The object that will listen for ReadEvents.
    **/
-  public static DocumentEntry makeDocumentEntry (final Document document,
+/*  private static DocumentEntry makeDocumentEntry (final Document document,
                                                  final ReadListener listener)
       throws IOException 
   {
@@ -86,7 +86,7 @@ abstract public class DocumentEntryFactory
     {
       throw new Error ("internal error - unexpected exception: " + e);
     }
-  }
+  }*/
 
   /**
    *  Read a DocumentEntry object from the given Document.
@@ -165,7 +165,7 @@ abstract public class DocumentEntryFactory
    *    cannot contain the Key, Qualifier or Key/Qualifier combination of one
    *    of the features in the source Entry.
    **/
-  public static DocumentEntry makeDocumentEntry (final Entry entry,
+/*  public static DocumentEntry makeDocumentEntry (final Entry entry,
                                                  final int destination_type)
       throws EntryInformationException
   {
@@ -174,7 +174,7 @@ abstract public class DocumentEntryFactory
 
     return makeDocumentEntry (entry_information, entry, destination_type,
                               false);
-  }
+  }*/
 
   /**
    *  Make a new (nameless) DocumentEntry from the given Entry.
