@@ -130,6 +130,34 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
       e.printStackTrace();
     }
   }
+  
+  /**
+   * Used when editing a subsequence and features.
+   * @param constraint  base range to edit
+   * @param entry       new entry to add features to
+   */
+  public void truncate(final Range constraint, final uk.ac.sanger.artemis.Entry entry)
+  {
+    final FeatureVector features = getFeaturesInRange(constraint);
+    try
+    {
+      for(int i=0; i<features.size(); i++)
+      {
+        final GFFStreamFeature f = (GFFStreamFeature)features.get(i);
+        f.setLocation(f.getLocation().truncate(constraint));
+        f.setReadOnlyFeature(false);
+        entry.getEMBLEntry().forcedAdd(f);
+      }
+    }
+    catch (ReadOnlyException e)
+    {
+      e.printStackTrace();
+    }
+    catch (OutOfRangeException e)
+    {
+      e.printStackTrace();
+    }
+  }
 
   /**
    *  Return a vector containing the references of the Feature objects within
