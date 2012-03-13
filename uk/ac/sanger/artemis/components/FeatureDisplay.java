@@ -4476,7 +4476,6 @@ public class FeatureDisplay extends EntryGroupPanel
       if((maxOverlaps+3)*2 != MAX_LINES_ONELINE_PER_FEATURE)
       {
         MAX_LINES_ONELINE_PER_FEATURE = (maxOverlaps+3)*2;
-        System.out.println("MAX_LINES_ONELINE_PER_FEATURE "+MAX_LINES_ONELINE_PER_FEATURE);
         fixCanvasSize();
       }
     }
@@ -5378,6 +5377,9 @@ public class FeatureDisplay extends EntryGroupPanel
       if(((MouseEvent)ie).isPopupTrigger())
         return;
 
+    if(getFeatureStackViewFlag() || getEntryGroup().isReadOnly())
+      return;
+    
     final Vector contig_keys = getContigKeys();
     final FeatureVector selected_features = getSelection().getAllFeatures();
     if(selected_features.size() == 1 &&
