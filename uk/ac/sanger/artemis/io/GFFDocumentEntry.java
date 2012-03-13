@@ -888,4 +888,68 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
     }
   }
 
+  /**
+   * Adjust feature coordinates to match the contig positions when loaded
+   * with a multiple fasta. 
+   * @param sequenceEntry   sequence entry
+   */
+  public void adjustCoordinates(uk.ac.sanger.artemis.Entry sequenceEntry)
+  {
+    final Entry entry;
+    if(sequenceEntry != null)
+      entry = sequenceEntry.getEMBLEntry();
+    else
+      entry = this;
+    if(entry instanceof SimpleDocumentEntry)
+    {
+      // adjust feature coordinates to match contig positions
+      final Hashtable<String, Range> contig_ranges = ((SimpleDocumentEntry)entry).contig_ranges;
+      if(contig_ranges != null)
+      {
+        final FeatureVector gff_regions = getAllFeatures();
+        final Enumeration gff_features  = gff_regions.elements();
+        
+        while(gff_features.hasMoreElements())
+        {
+          final Feature f = (Feature) gff_features.nextElement();
+          if( !(f instanceof GFFStreamFeature) )
+            continue;
+          
+          final String name = ((GFFStreamFeature)f).getGffSeqName();
+          if(name == null)
+            continue;
+          if(contig_ranges.containsKey(name))
+          {
+            
+            try
+            {
+              final Range new_range = contig_ranges.get(name);
+              final RangeVector new_ranges = new RangeVector();
+              final RangeVector ranges = f.getLocation().getRanges();
+              for(int i = 0 ; i<ranges.size () ; ++i) 
+              {
+                final Range r = (Range)ranges.elementAt(i);
+
+                new_ranges.add(new Range(r.getStart()+new_range.getStart()-1, 
+                                         r.getEnd()+new_range.getStart()-1));
+              }
+
+              f.setLocation(new Location(new_ranges, f.getLocation().isComplement()));
+            }
+            catch(OutOfRangeException e)
+            {
+              throw new Error("internal error - unexpected exception: " + e);
+            }
+            catch (ReadOnlyException e)
+            {
+              e.printStackTrace();
+            }
+          }
+        }
+        // store so these can be used when writing out
+        GFFStreamFeature.contig_ranges = contig_ranges;
+      }
+    }
+  }
+
 }

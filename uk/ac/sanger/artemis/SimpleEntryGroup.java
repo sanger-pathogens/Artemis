@@ -26,6 +26,7 @@
 package uk.ac.sanger.artemis;
 
 import uk.ac.sanger.artemis.sequence.*;
+import uk.ac.sanger.artemis.io.GFFDocumentEntry;
 import uk.ac.sanger.artemis.io.IndexedGFFDocumentEntry;
 import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.io.StreamSequence;
@@ -644,6 +645,8 @@ public class SimpleEntryGroup extends EntryVector
   {
     if(entry.getEMBLEntry() instanceof IndexedGFFDocumentEntry)
       ((IndexedGFFDocumentEntry)entry.getEMBLEntry()).setEntryGroup(this);
+    else if(entry.getEMBLEntry() instanceof GFFDocumentEntry)
+      ((GFFDocumentEntry)entry.getEMBLEntry()).adjustCoordinates( getSequenceEntry() );
 
     addElement(entry);
   }
