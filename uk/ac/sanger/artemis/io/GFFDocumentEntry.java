@@ -229,7 +229,9 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
             ((GFFStreamFeature)this_feature).setChadoGene(gene);
             
             // store the transcript ID with its ChadoCanonicalGene object
-            transcripts_lookup.put((String)this_feature.getQualifierByName("ID").getValues().get(0),
+            
+            if(this_feature.getQualifierByName("ID") != null)
+              transcripts_lookup.put((String)this_feature.getQualifierByName("ID").getValues().get(0),
                                    gene);
             continue;
           }
@@ -594,25 +596,28 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
    **/
   private void combineChadoExons(ChadoCanonicalGene gene) 
   {
-    final Vector transcripts = (Vector)gene.getTranscripts();
+    final List<Feature> transcripts = gene.getTranscripts();
     gene.correctSpliceSiteAssignments();
     
     for(int i=0; i<transcripts.size(); i++)
     {
       GFFStreamFeature transcript = (GFFStreamFeature)transcripts.get(i);
       String transcript_id = null;
+      
+      if(transcript.getQualifierByName("ID") == null)
+        continue;
       transcript_id = (String)(transcript.getQualifierByName("ID").getValues().get(0));
       
-      Set splicedSiteTypes = gene.getSpliceTypes(transcript_id);
+      Set<String> splicedSiteTypes = gene.getSpliceTypes(transcript_id);
       if(splicedSiteTypes == null)
         continue;
       
-      Iterator it = splicedSiteTypes.iterator();
-      Vector new_set = new Vector();
+      Iterator<String> it = splicedSiteTypes.iterator();
+      Vector<Feature> new_set = new Vector<Feature>();
       while(it.hasNext())
       {
-        String type = (String)it.next();
-        List splicedSites = gene.getSpliceSitesOfTranscript(transcript_id, type);
+        String type = it.next();
+        List<Feature> splicedSites = gene.getSpliceSitesOfTranscript(transcript_id, type);
            
         if(splicedSites == null)
           continue;
@@ -625,22 +630,22 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
       {
         if(j == 0)
           gene.addSplicedFeatures(transcript_id, 
-                (Feature)new_set.get(j), true );
+                new_set.get(j), true );
         else
           gene.addSplicedFeatures(transcript_id, 
-                (Feature)new_set.get(j));
+                new_set.get(j));
       }
       
     }   
   }
   
   
-  private void mergeFeatures(final List gffFeatures,
-                             final List new_set, 
+  private void mergeFeatures(final List<Feature> gffFeatures,
+                             final List<Feature> new_set, 
                              final String transcript_id)
   {
-    final Hashtable feature_relationship_rank_store = new Hashtable();
-    final Hashtable id_range_store = new Hashtable();
+    final Hashtable<String, Integer> feature_relationship_rank_store = new Hashtable<String, Integer>();
+    final Hashtable<String, Range> id_range_store = new Hashtable<String, Range>();
     final RangeVector new_range_vector = new RangeVector();
     QualifierVector qualifier_vector = new QualifierVector();
     Timestamp lasttimemodified = null;
@@ -759,14 +764,7 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
         // prediction tool
         new_feature.removeQualifierByName("codon_start");
       }
-/*      else
-      {
-        final Qualifier old_codon_start_qualifier = first_old_feature
-            .getQualifierByName("codon_start");
 
-        if(old_codon_start_qualifier != null)
-          new_feature.setQualifier(old_codon_start_qualifier);
-      }*/
       forcedAdd(new_feature);
       //gene.addExon(transcript_id, new_feature, true );
       new_set.add(new_feature);
