@@ -731,7 +731,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
     throw new ReadOnlyException();
   }
 
-  protected static Hashtable contig_ranges;
+  protected static Hashtable<String, Range> contig_ranges;
 
   /**
    *  Write this Feature to the given stream.
@@ -762,18 +762,13 @@ public class GFFStreamFeature extends SimpleDocumentFeature
         source_str = getDbxrefGFFSource(getQualifierByName("Dbxref"));
       }
       
+      int start = this_range.getStart();
+      int end   = this_range.getEnd();
+      
       if(seqname == null && ((GFFDocumentEntry)getEntry()).getDocument() != null) 
         seqname = ((GFFDocumentEntry)getEntry()).getDocument().getName();
       if(seqname == null)
-      {
-        try
-        {
-          seqname = ((GFFStreamFeature)(getEntry().getAllFeatures().elementAt(0))).getGffSeqName();
-        }
-        catch(Exception e) {}
-        if(seqname == null)
-          seqname = "gff_seqname";
-      }
+        seqname = deriveSeqName(start);
       
       if(source == null) 
         source = "artemis";
@@ -781,8 +776,6 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       if(score == null) 
         score = new Qualifier("score", ".");
 
-      int start = this_range.getStart();
-      int end   = this_range.getEnd();
       if(seqname != null && contig_ranges != null &&
          contig_ranges.containsKey(seqname))
       {
@@ -845,32 +838,40 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   }
 
   /**
-   * Get the GFF_source value of a Dbxref qualifier.
-   * @param qualifier
-   * @return  the gff_source value or NULL
+   * If the seqname is not set for this feature try to derive the contig/chromosome
+   * it is located on
+   * @param start
+   * @return
    */
-  /*
-  private String getDbxrefGFFSource(final Qualifier qualifier)
+  private String deriveSeqName(int start)
   {
-    StringVector qualifier_strings =
-      StreamQualifier.toStringVector(null, qualifier);
-    
-    for(int i=0; i<qualifier_strings.size(); i++)
+    String seqname = null;
+    if(contig_ranges != null)
     {
-      String qualifier_string = (String)qualifier_strings.elementAt(i);
-      
-      if(qualifier_string.indexOf("GFF_source:") >-1)
+      final Enumeration<String> contigEnum = contig_ranges.keys();
+      while(contigEnum.hasMoreElements())
       {
-        int index = qualifier_string.indexOf(":")+1;
-        int len = qualifier_string.length();
-        if(qualifier_string.endsWith("\""))
-          len--;
-        return qualifier_string.substring(index, len);
+        final String key = contigEnum.nextElement();
+        final Range r = contig_ranges.get(key);
+        if(r.getStart() > start)
+          continue;
+        if(r.getEnd() > start)
+          return key;
       }
     }
-    return null;
+    else
+    {
+      try
+      {
+        seqname = ((GFFStreamFeature)(getEntry().getAllFeatures().elementAt(0))).getGffSeqName();
+      }
+      catch(Exception e) {}
+    }
+    
+    if(seqname == null)
+      seqname = "gff_seqname";
+    return seqname;
   }
-  */
   
   /**
    *  Return a String containing the qualifiers of this feature in a form
