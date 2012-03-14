@@ -802,6 +802,8 @@ abstract public class SimpleDocumentEntry
       new_feature = new EmblStreamFeature(key, location, qualifiers);
     else if(this instanceof DatabaseDocumentEntry)
       new_feature = new DatabaseStreamFeature(key, location, qualifiers);
+    else if(this instanceof GFFDocumentEntry)
+      new_feature = new GFFStreamFeature(key, location, qualifiers);
     else
       new_feature = new GenbankStreamFeature(key, location, qualifiers);
 
