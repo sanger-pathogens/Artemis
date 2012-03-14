@@ -27,6 +27,8 @@ package uk.ac.sanger.artemis.io;
 
 import uk.ac.sanger.artemis.util.Document;
 import uk.ac.sanger.artemis.util.LinePushBackReader;
+
+import java.io.File;
 import java.io.IOException;
 
 
@@ -103,7 +105,10 @@ abstract public class DocumentEntryFactory
       throws IOException, EntryInformationException 
   {
     if(document.getInputStream() instanceof net.sf.samtools.util.BlockCompressedInputStream)
-      return new IndexedGFFDocumentEntry(document);
+    {
+      if(IndexedGFFDocumentEntry.isIndexed( ((File)document.getLocation()) ))
+        return new IndexedGFFDocumentEntry(document);
+    }
     
     final LinePushBackReader document_reader =
                         document.getLinePushBackReader();
