@@ -1,3 +1,14 @@
+Version XX
+	Improved support for matching GFF feature coordinates to the correct
+	contig in a multiple FASTA sequences. This works now whether
+	the sequence is part of the GFF file or a separate multiple-FASTA file.
+
+	Add 'Feature Stack View' to visualise overlapping gene features.
+
+	Add support for read-only indexed GFF. Features in GFF format are
+	sorted and indexed with tabix:
+	http://samtools.sourceforge.net/tabix.shtml
+
 Version 14
 	Add options in the navigator for searching the forward and 
 	reverse strands individually for base / amino acid patterns.

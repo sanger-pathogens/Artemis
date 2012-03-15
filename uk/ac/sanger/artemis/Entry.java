@@ -33,6 +33,8 @@ import uk.ac.sanger.artemis.io.EmblStreamFeature;
 import uk.ac.sanger.artemis.io.DocumentEntry;
 import uk.ac.sanger.artemis.io.EmblDocumentEntry;
 import uk.ac.sanger.artemis.io.GFFDocumentEntry;
+import uk.ac.sanger.artemis.io.GFFStreamFeature;
+import uk.ac.sanger.artemis.io.IndexedGFFDocumentEntry;
 import uk.ac.sanger.artemis.io.PartialSequence;
 import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.io.RangeVector;
@@ -850,8 +852,13 @@ public class Entry implements FeatureChangeListener, Selectable
    **/
   public Entry truncate(final Bases new_bases, final Range constraint) 
   {
-    final uk.ac.sanger.artemis.io.Entry new_embl_entry =
-      new EmblDocumentEntry(getEntryInformation());
+    final uk.ac.sanger.artemis.io.Entry new_embl_entry;
+
+    if(getEMBLEntry() instanceof GFFDocumentEntry || 
+       getEMBLEntry() instanceof IndexedGFFDocumentEntry)
+      new_embl_entry = new GFFDocumentEntry(getEntryInformation());
+    else
+      new_embl_entry = new EmblDocumentEntry(getEntryInformation());
 
     final Entry new_entry;
 
@@ -863,6 +870,12 @@ public class Entry implements FeatureChangeListener, Selectable
     {
       throw new Error("internal error - unexpected exception: " + e);
     }
+    
+    if(getEMBLEntry() instanceof IndexedGFFDocumentEntry)
+    {
+      ((IndexedGFFDocumentEntry)getEMBLEntry()).truncate(constraint, new_entry);
+      return new_entry;
+    }
 
     final FeatureEnumeration feature_enum = features();
 
@@ -873,23 +886,23 @@ public class Entry implements FeatureChangeListener, Selectable
 
       final Location new_location =
         current_feature_location.truncate(constraint);
-
+      
       if(new_location != null) 
       {
         final Key current_key = current_feature.getKey();
         final QualifierVector current_qualifiers =
           current_feature.getQualifiers();
-
         try 
         {
-          final uk.ac.sanger.artemis.io.Feature new_embl_feature =
-            new EmblStreamFeature(current_key,
-                                   new_location,
-                                   current_qualifiers);
+          final uk.ac.sanger.artemis.io.Feature new_feature; 
+          if(current_feature.getEmblFeature() instanceof GFFStreamFeature)
+            new_feature = new GFFStreamFeature(current_key, new_location,
+                                                    current_qualifiers);
+          else
+            new_feature = new EmblStreamFeature(current_key, new_location,
+                                                    current_qualifiers);
 
-          final Feature new_feature = new Feature(new_embl_feature);
-
-          new_entry.add(new_feature, false);
+          new_entry.add(new Feature(new_feature), true);
         }
         catch(EntryInformationException e) 
         {

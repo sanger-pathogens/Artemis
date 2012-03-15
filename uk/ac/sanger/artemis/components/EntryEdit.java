@@ -1086,16 +1086,36 @@ public class EntryEdit extends JFrame
 
     final JCheckBoxMenuItem show_one_line =
       new JCheckBoxMenuItem("Show One Line Per Entry View", false);
+    final JCheckBoxMenuItem show_feature_stack =
+        new JCheckBoxMenuItem("Show Feature Stack View", false);
+    
     show_one_line.setState(one_line_per_entry_display.isVisible());
     show_one_line.addItemListener(new ItemListener() 
     {
       public void itemStateChanged(ItemEvent event) 
       {
+        if(show_one_line.getState())
+          show_feature_stack.setState(false);
+        one_line_per_entry_display.setFeatureStackViewFlag(false);
         one_line_per_entry_display.setVisible(show_one_line.getState());
         validate();
       }
     });
     display_menu.add(show_one_line);
+    
+    show_feature_stack.setState(one_line_per_entry_display.isVisible());
+    show_feature_stack.addItemListener(new ItemListener() 
+    {
+      public void itemStateChanged(ItemEvent event) 
+      {
+        if(show_feature_stack.getState())
+          show_one_line.setState(false);
+        one_line_per_entry_display.setFeatureStackViewFlag(true);
+        one_line_per_entry_display.setVisible(show_feature_stack.getState());
+        validate();
+      }
+    });
+    display_menu.add(show_feature_stack);
 
     final JCheckBoxMenuItem show_base_display_item =
                                 new JCheckBoxMenuItem("Show Base View");

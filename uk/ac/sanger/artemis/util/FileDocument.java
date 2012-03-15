@@ -112,13 +112,20 @@ public class FileDocument extends Document {
 
     final InputStream file_input_stream =
       new ProgressInputStream (new FileInputStream (read_file),
-                               getProgressListeners ());;
+                               getProgressListeners ());
     
     if (read_file.getName ().endsWith (".gz")) {
-      if(IndexedGFFDocumentEntry.isIndexed(read_file))
-        return new BlockCompressedInputStream(read_file);
-      // assume this file is gzipped
-      return new WorkingGZIPInputStream (file_input_stream);
+      final BufferedInputStream ins = new BufferedInputStream(file_input_stream);
+      // BGZIP
+      if(BlockCompressedInputStream.isValidFile(ins))
+        return new BlockCompressedInputStream(ins);
+      ins.close();
+      file_input_stream.close();
+
+      // assume GZIP
+      return new WorkingGZIPInputStream (
+          new ProgressInputStream (new FileInputStream (read_file),
+          getProgressListeners ()));
     } else {
       return file_input_stream;      
     }

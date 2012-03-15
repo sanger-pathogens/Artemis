@@ -837,7 +837,9 @@ public class GeneUtils
     String id = null;
     
     if(default_entry.getEMBLEntry() instanceof 
-        uk.ac.sanger.artemis.io.DatabaseDocumentEntry)
+        uk.ac.sanger.artemis.io.DatabaseDocumentEntry ||
+       default_entry.getEMBLEntry() instanceof 
+        uk.ac.sanger.artemis.io.GFFDocumentEntry)
     {  
       while(id == null ||
             id.equals("") ||
@@ -1130,8 +1132,8 @@ public class GeneUtils
       if(protein != null)
       {
         final Range proteinRange = protein.getLocation().getTotalRange();
-        if(proteinRange.getStart() != ppStart ||
-           proteinRange.getEnd()   != ppEnd)
+        if((proteinRange.getStart() != ppStart && ppStart < Integer.MAX_VALUE) ||
+           (proteinRange.getEnd()   != ppEnd   && ppEnd   > -1))
           return false;
       }
     }
