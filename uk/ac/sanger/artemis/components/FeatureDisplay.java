@@ -2351,6 +2351,22 @@ public class FeatureDisplay extends EntryGroupPanel
   }
   
   /**
+   * Return true if the feature is a CDS, pseudogenic_exon or an exon
+   * that has been added as a frame line feature. This defines what
+   * feature types get stacked in the feature stack view.
+   * @param f       feature
+   * @param keyStr  feature key
+   * @return
+   */
+  private boolean isStackingFeature(final Feature f, final String keyStr)
+  {
+    if(  keyStr.equals("CDS") || keyStr.equals("pseudogenic_exon") ||
+        (keyStr.equals("exon") && isProteinFeature(f)) )
+      return true;
+    return false;
+  }
+  
+  /**
    *  Return the line on the canvas where this feature segment should be drawn.
    *  @param segment The segment in question.
    *  @return The line to draw into.
@@ -2362,7 +2378,7 @@ public class FeatureDisplay extends EntryGroupPanel
       String keyStr = segment.getFeature().getKey().toString();
       if(keyStr.equals("gene") || keyStr.equals("pseudogene"))
         return getLineCount()-2;
-      if(segment.getFeature().isCDS() || keyStr.equals("pseudogenic_exon"))
+      if( isStackingFeature(segment.getFeature(), keyStr) )
       {
         return getLineCount()-4-(getCDSLine(segment.getFeature())*2);
       }
@@ -2376,7 +2392,7 @@ public class FeatureDisplay extends EntryGroupPanel
           for(int i=0; i<visibleFeatures.size(); i++)
           {
             Feature f = visibleFeatures.elementAt(i);
-            if(f.isCDS() || keyStr.equals("pseudogenic_exon"))
+            if(isStackingFeature(f, f.getKey().getKeyString()))
             {
               if(parentId.equals( getParentQualifier(f) ))
                 return getLineCount()-4-(getCDSLine(f)*2);
