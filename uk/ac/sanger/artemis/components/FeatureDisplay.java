@@ -33,6 +33,7 @@ import uk.ac.sanger.artemis.util.FileDocument;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
 import uk.ac.sanger.artemis.util.StringVector;
 import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
+import uk.ac.sanger.artemis.io.InvalidRelationException;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.io.EntryInformation;
@@ -185,6 +186,10 @@ public class FeatureDisplay extends EntryGroupPanel
    *  separate line.
    **/
   private boolean one_line_per_entry = false;
+  
+  private boolean feature_stack_view = false;
+  
+  private int MAX_LINES_ONELINE_PER_FEATURE = 12;
 
   /**
    *  If true the there will never be a gap between the left edge of the
@@ -343,6 +348,9 @@ public class FeatureDisplay extends EntryGroupPanel
 
     one_line_per_entry =
       Options.getOptions().getPropertyTruthValue("one_line_per_entry");
+    
+    feature_stack_view =
+      Options.getOptions().getPropertyTruthValue("feature_stack_view");
 
     show_labels =
       Options.getOptions().getPropertyTruthValue("feature_labels");
@@ -553,6 +561,29 @@ public class FeatureDisplay extends EntryGroupPanel
   protected boolean getOneLinePerEntryFlag() 
   {
     return one_line_per_entry;
+  }
+  
+  
+  /**
+   *  Set value of the feature stack view flag.
+   *  @param feature_stack_view If true then each CDS will be shown on a
+   *    different line, instead of showing frame lines.
+   **/
+  protected void setFeatureStackViewFlag(final boolean feature_stack_view)
+  {
+    if(this.feature_stack_view != feature_stack_view) 
+    {
+      this.feature_stack_view = feature_stack_view;
+      fixCanvasSize();
+    }
+  }
+
+  /**
+   *  Get the value of the "one line per entry" flag.
+   **/
+  protected boolean getFeatureStackViewFlag() 
+  {
+    return feature_stack_view;
   }
 
   /**
@@ -1366,8 +1397,13 @@ public class FeatureDisplay extends EntryGroupPanel
     {
       final Feature new_feature = real_visible_features.elementAt(i);
       if(!visible_features.contains(new_feature) &&
-         selection_features.contains(new_feature)) 
-        new_visible_features.addElementAtEnd(new_feature);
+         selection_features.contains(new_feature))
+      {
+        try
+        {
+          new_visible_features.addElementAtEnd(new_feature);
+        }catch(Error e){}
+      }
     }
 
     visible_features = new_visible_features;
@@ -1377,7 +1413,7 @@ public class FeatureDisplay extends EntryGroupPanel
   /**
    *  This is used by getSortedFeaturesInRange().
    **/
-  final private static Comparator feature_comparator = new Comparator() 
+  final private static Comparator<Feature> feature_comparator = new Comparator<Feature>() 
   {
     /**
      *  Compare two Objects with respect to ordering.
@@ -1385,12 +1421,9 @@ public class FeatureDisplay extends EntryGroupPanel
      *    feature2_object ; a positive number if feature1_object is greater
      *    than feature2_object; else 0
      **/
-    public int compare(final Object feature1_object,
-                       final Object feature2_object) 
+    public int compare(final Feature feature1,
+                       final Feature feature2) 
     {
-      final Feature feature1 =(Feature) feature1_object;
-      final Feature feature2 =(Feature) feature2_object;
-
       final int feature1_size = feature1.getBaseCount();
       final int feature2_size = feature2.getBaseCount();
 
@@ -1581,7 +1614,11 @@ public class FeatureDisplay extends EntryGroupPanel
     final int last_visible_base_coord =
       getHighXPositionOfBase(getLastVisibleForwardBase());
 
-    if(getOneLinePerEntryFlag()) 
+    if(getFeatureStackViewFlag())
+    {
+      
+    }
+    else if(getOneLinePerEntryFlag()) 
     {
       final int group_size = getEntryGroup().size();
       for(int i = 0 ; i < group_size; ++i) 
@@ -1850,18 +1887,18 @@ public class FeatureDisplay extends EntryGroupPanel
    **/
   private void drawCodons(Graphics g) 
   {
+    if(getOneLinePerEntryFlag() || getFeatureStackViewFlag()) 
+      return;
+    
     g.setColor(Color.black);
 
     if(getScaleFactor() == 0)  
     {
-      if(!getOneLinePerEntryFlag()) 
-      {
-        if(show_forward_lines) 
-          drawForwardCodonLetters(g);
+      if(show_forward_lines) 
+        drawForwardCodonLetters(g);
         
-        if(show_reverse_lines) 
-          drawReverseCodonLetters(g);
-      }
+      if(show_reverse_lines) 
+        drawReverseCodonLetters(g);
     }
     else 
     {
@@ -1869,14 +1906,11 @@ public class FeatureDisplay extends EntryGroupPanel
       if((show_stop_codons || show_start_codons) &&
           getScaleFactor() <= MAX_STOP_CODON_SCALE_FACTOR) 
       {
-        if(!getOneLinePerEntryFlag()) 
-        {
-          if(show_forward_lines) 
-            drawCodons(g,true);
+        if(show_forward_lines) 
+          drawCodons(g,true);
 
-          if(show_reverse_lines) 
-            drawCodons(g,false);
-        }
+        if(show_reverse_lines) 
+          drawCodons(g,false);
       }
     }
   }
@@ -2278,7 +2312,60 @@ public class FeatureDisplay extends EntryGroupPanel
     g.setColor(getColourOfBase(base_char));
     g.drawLine(x_pos, y_pos, x_pos, y_pos + getFontHeight() - 1);
   }
-
+  
+  private int getCDSLine(Feature thisCDSFeature)
+  {
+    final String sysName = thisCDSFeature.getSystematicName();
+    final Range range = thisCDSFeature.getLocation().getTotalRange();
+    final String keyStr = thisCDSFeature.getKey().getKeyString();
+    final FeatureVector visibleFeatures = getVisibleFeatures().sort(feature_comparator);
+    int cnt = 0;
+    for(int i=0; i<visibleFeatures.size(); i++)
+    {
+      Feature f = visibleFeatures.elementAt(i);
+      if(f.getSystematicName().equals(sysName))
+        break;
+      else if((f.isCDS() || keyStr.equals("pseudogenic_exon"))
+          && range.overlaps(f.getLocation().getTotalRange()))
+        cnt++;
+    }
+    return cnt;
+  }
+  
+  /**
+   * Return locus_tag or Parent qualifier
+   * @param f
+   * @return
+   */
+  private String getParentQualifier(Feature f)
+  {
+    try
+    {
+      if(f.getQualifierByName("locus_tag") != null)
+        return (String) f.getQualifierByName("locus_tag").getValues().get(0);
+      else if(f.getQualifierByName("Parent") != null)
+        return (String) f.getQualifierByName("Parent").getValues().get(0);
+    }
+    catch (InvalidRelationException e){}
+    return null;
+  }
+  
+  /**
+   * Return true if the feature is a CDS, pseudogenic_exon or an exon
+   * that has been added as a frame line feature. This defines what
+   * feature types get stacked in the feature stack view.
+   * @param f       feature
+   * @param keyStr  feature key
+   * @return
+   */
+  private boolean isStackingFeature(final Feature f, final String keyStr)
+  {
+    if(  keyStr.equals("CDS") || keyStr.equals("pseudogenic_exon") ||
+        (keyStr.equals("exon") && isProteinFeature(f)) )
+      return true;
+    return false;
+  }
+  
   /**
    *  Return the line on the canvas where this feature segment should be drawn.
    *  @param segment The segment in question.
@@ -2286,7 +2373,39 @@ public class FeatureDisplay extends EntryGroupPanel
    **/
   private int getSegmentDisplayLine(FeatureSegment segment)
   {
-    if(getOneLinePerEntryFlag()) 
+    if(getFeatureStackViewFlag())
+    {
+      String keyStr = segment.getFeature().getKey().toString();
+      if(keyStr.equals("gene") || keyStr.equals("pseudogene"))
+        return getLineCount()-2;
+      if( isStackingFeature(segment.getFeature(), keyStr) )
+      {
+        return getLineCount()-4-(getCDSLine(segment.getFeature())*2);
+      }
+      if(segment.getFeature().getKey().toString().toLowerCase().indexOf("utr") > -1)
+      {
+        try
+        {
+          // try to identify with associated CDS and return same line
+          String parentId = getParentQualifier(segment.getFeature());
+          final FeatureVector visibleFeatures = getVisibleFeatures().sort(feature_comparator);
+          for(int i=0; i<visibleFeatures.size(); i++)
+          {
+            Feature f = visibleFeatures.elementAt(i);
+            if(isStackingFeature(f, f.getKey().getKeyString()))
+            {
+              if(parentId.equals( getParentQualifier(f) ))
+                return getLineCount()-4-(getCDSLine(f)*2);
+            }
+          }
+        }
+        catch (Exception e){}
+        return 6;
+      }
+
+      return 2;
+    }
+    else if(getOneLinePerEntryFlag()) 
     {
       final Feature feature = segment.getFeature();
       if((isProteinFeature(feature) || frame_features_flag) &&
@@ -2522,6 +2641,10 @@ public class FeatureDisplay extends EntryGroupPanel
    **/
   private int getFrameDisplayLine(int frame_id) 
   {
+    if(getFeatureStackViewFlag()) 
+    {
+      return 0;
+    }
     if(getOneLinePerEntryFlag()) 
     {
       int return_value;
@@ -2687,7 +2810,9 @@ public class FeatureDisplay extends EntryGroupPanel
 
     int extra_line_count;
 
-    if(getOneLinePerEntryFlag())  // some number of entry lines
+    if(getFeatureStackViewFlag())
+      return MAX_LINES_ONELINE_PER_FEATURE;
+    else if(getOneLinePerEntryFlag())  // some number of entry lines
       extra_line_count = getEntryGroup().size();
     else    // three frame line
       extra_line_count = 3;
@@ -2709,7 +2834,7 @@ public class FeatureDisplay extends EntryGroupPanel
    *  The returned value will be the y-coordinate of the top of the lane that
    *  this feature should be draw into.
    **/
-  public int getSegmentVerticalOffset(FeatureSegment segment) 
+  private int getSegmentVerticalOffset(FeatureSegment segment) 
   {
     // one "line" is font_height pixels high,(the number of lines times the
     // font_height is the height of the height of canvas)
@@ -3015,7 +3140,7 @@ public class FeatureDisplay extends EntryGroupPanel
    *  @param feature The feature to draw.
    **/
   private void drawFeature(final Graphics g,
-                           final Vector segment_borders,
+                           final Vector<SegmentBorder> segment_borders,
                            final Feature feature,
                            final boolean draw_feature_fill,
                            final FeatureVector selected_features,
@@ -4017,6 +4142,9 @@ public class FeatureDisplay extends EntryGroupPanel
       if(Options.getOptions().canDirectEdit() &&
          !clicked_feature.isReadOnly()) 
       {
+        if(getFeatureStackViewFlag())
+          return;
+        
         // check to see if the click was on a marker, the second argument is
         // false because we want the range to cover just one base
 
@@ -4298,6 +4426,8 @@ public class FeatureDisplay extends EntryGroupPanel
           }
 
           needVisibleFeatureVectorUpdate();
+          updateOneLinePerFeatureFlag();
+          
           fireAdjustmentEvent(DisplayAdjustmentEvent.SCROLL_ADJUST_EVENT);
           repaint();
         }
@@ -4314,6 +4444,57 @@ public class FeatureDisplay extends EntryGroupPanel
       add(box, "North");
     else 
       add(box, "South");
+  }
+  
+  private void updateOneLinePerFeatureFlag()
+  {
+    if(getFeatureStackViewFlag())
+    {
+      final Range visRange;
+      if(isRevCompDisplay())
+      {
+        final int first_visible_base = getFirstVisibleReverseBase();
+        final int last_visible_base  = getLastVisibleReverseBase();
+        visRange = newRange(first_visible_base, last_visible_base);
+      } 
+      else 
+        visRange = getVisibleRange();
+      final FeatureVector visFeatures = getSortedFeaturesInRange(visRange);
+      
+      int maxOverlaps = 3;
+      for(int i=0; i<visFeatures.size(); i++)
+      {
+        final Feature f = visFeatures.elementAt(i);
+        if(!f.isCDS())
+          continue;
+        
+        final Range r = f.getMaxRawRange();
+        try
+        {
+          final FeatureVector overlaps = getEntryGroup().getFeaturesInRange(r);
+          if(overlaps.size() > maxOverlaps)
+          {
+            int cnt = 0;
+            for(int j=0; j<overlaps.size(); j++)
+              if(overlaps.elementAt(j).isCDS())
+                cnt++;
+            
+            if(cnt > maxOverlaps)
+              maxOverlaps = cnt;
+          }
+        }
+        catch (OutOfRangeException e1)
+        {
+          e1.printStackTrace();
+        }
+      }
+      
+      if((maxOverlaps+3)*2 != MAX_LINES_ONELINE_PER_FEATURE)
+      {
+        MAX_LINES_ONELINE_PER_FEATURE = (maxOverlaps+3)*2;
+        fixCanvasSize();
+      }
+    }
   }
 
   /**
@@ -4471,6 +4652,7 @@ public class FeatureDisplay extends EntryGroupPanel
         scrollbar.setValue(new_position);
       
       needVisibleFeatureVectorUpdate();
+      updateOneLinePerFeatureFlag();
       repaint();
     }
   }
@@ -4815,7 +4997,7 @@ public class FeatureDisplay extends EntryGroupPanel
    *  Arrange for updateVisibleFeatureVector() to be called in the next call
    *  to paint()
    **/
-  private void needVisibleFeatureVectorUpdate() 
+  protected void needVisibleFeatureVectorUpdate() 
   {
     update_visible_features = true;
   }
@@ -5211,6 +5393,9 @@ public class FeatureDisplay extends EntryGroupPanel
       if(((MouseEvent)ie).isPopupTrigger())
         return;
 
+    if(getFeatureStackViewFlag() || getEntryGroup().isReadOnly())
+      return;
+    
     final Vector contig_keys = getContigKeys();
     final FeatureVector selected_features = getSelection().getAllFeatures();
     if(selected_features.size() == 1 &&

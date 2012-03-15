@@ -922,7 +922,7 @@ public class FeatureEdit extends JPanel
             stopListening();
             
             if(propertiesPanel != null)
-              propertiesPanel.updateObsoleteSettings();
+              propertiesPanel.updateSettings();
             
             frame.dispose();
           }
@@ -983,7 +983,7 @@ public class FeatureEdit extends JPanel
             stopListening();
             
             if(propertiesPanel != null)
-              propertiesPanel.updateObsoleteSettings();
+              propertiesPanel.updateSettings();
             
             frame.dispose();
             System.setProperty("basic", "true");

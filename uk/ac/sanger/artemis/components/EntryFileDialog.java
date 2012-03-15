@@ -381,7 +381,7 @@ public class EntryFileDialog extends StickyFileChooser
         }
 
         final JCheckBox flattenGeneModel = new JCheckBox("Flatten Gene Model",
-                                                          true);
+                                                          false);
         final JCheckBox ignoreObsoleteFeatures = new JCheckBox(
                               "Ignore obsolete features", true);
         if(((DocumentEntry)entry.getEMBLEntry()).getDocument() 
@@ -406,9 +406,11 @@ public class EntryFileDialog extends StickyFileChooser
         {
           case DocumentEntryFactory.EMBL_FORMAT:
             super.setSelectedFile(new File(".embl"));
+            flattenGeneModel.setSelected(true);
             break;
           case DocumentEntryFactory.GENBANK_FORMAT:
             super.setSelectedFile(new File(".gbk"));
+            flattenGeneModel.setSelected(true);
             break;
           case DocumentEntryFactory.GFF_FORMAT:
             super.setSelectedFile(new File(".gff"));

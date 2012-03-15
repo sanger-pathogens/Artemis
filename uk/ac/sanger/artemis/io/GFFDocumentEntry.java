@@ -229,7 +229,9 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
             ((GFFStreamFeature)this_feature).setChadoGene(gene);
             
             // store the transcript ID with its ChadoCanonicalGene object
-            transcripts_lookup.put((String)this_feature.getQualifierByName("ID").getValues().get(0),
+            
+            if(this_feature.getQualifierByName("ID") != null)
+              transcripts_lookup.put((String)this_feature.getQualifierByName("ID").getValues().get(0),
                                    gene);
             continue;
           }
@@ -523,7 +525,7 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
     try
     {
       int start = queryFeature.getLocation().getFirstBase();
-      Location location;
+      Location location = null;
       
       ChadoCanonicalGene chadoGene = ((GFFStreamFeature)queryFeature).getChadoGene();
       if(chadoGene != null)
@@ -531,7 +533,7 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
       else if(queryFeature.getLocation().isComplement())
         location = new Location("complement("+
             (start+(featureLoc.getFmin()*3)+1)+".."+(start+(featureLoc.getFmax()*3))+")");
-      else
+      if(location == null)
         location = new Location(
             (start+(featureLoc.getFmin()*3)+1)+".."+(start+(featureLoc.getFmax()*3)));
    
@@ -594,25 +596,28 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
    **/
   private void combineChadoExons(ChadoCanonicalGene gene) 
   {
-    final Vector transcripts = (Vector)gene.getTranscripts();
+    final List<Feature> transcripts = gene.getTranscripts();
     gene.correctSpliceSiteAssignments();
     
     for(int i=0; i<transcripts.size(); i++)
     {
       GFFStreamFeature transcript = (GFFStreamFeature)transcripts.get(i);
       String transcript_id = null;
+      
+      if(transcript.getQualifierByName("ID") == null)
+        continue;
       transcript_id = (String)(transcript.getQualifierByName("ID").getValues().get(0));
       
-      Set splicedSiteTypes = gene.getSpliceTypes(transcript_id);
+      Set<String> splicedSiteTypes = gene.getSpliceTypes(transcript_id);
       if(splicedSiteTypes == null)
         continue;
       
-      Iterator it = splicedSiteTypes.iterator();
-      Vector new_set = new Vector();
+      Iterator<String> it = splicedSiteTypes.iterator();
+      Vector<Feature> new_set = new Vector<Feature>();
       while(it.hasNext())
       {
-        String type = (String)it.next();
-        List splicedSites = gene.getSpliceSitesOfTranscript(transcript_id, type);
+        String type = it.next();
+        List<Feature> splicedSites = gene.getSpliceSitesOfTranscript(transcript_id, type);
            
         if(splicedSites == null)
           continue;
@@ -625,22 +630,22 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
       {
         if(j == 0)
           gene.addSplicedFeatures(transcript_id, 
-                (Feature)new_set.get(j), true );
+                new_set.get(j), true );
         else
           gene.addSplicedFeatures(transcript_id, 
-                (Feature)new_set.get(j));
+                new_set.get(j));
       }
       
     }   
   }
   
   
-  private void mergeFeatures(final List gffFeatures,
-                             final List new_set, 
+  private void mergeFeatures(final List<Feature> gffFeatures,
+                             final List<Feature> new_set, 
                              final String transcript_id)
   {
-    final Hashtable feature_relationship_rank_store = new Hashtable();
-    final Hashtable id_range_store = new Hashtable();
+    final Hashtable<String, Integer> feature_relationship_rank_store = new Hashtable<String, Integer>();
+    final Hashtable<String, Range> id_range_store = new Hashtable<String, Range>();
     final RangeVector new_range_vector = new RangeVector();
     QualifierVector qualifier_vector = new QualifierVector();
     Timestamp lasttimemodified = null;
@@ -759,14 +764,7 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
         // prediction tool
         new_feature.removeQualifierByName("codon_start");
       }
-/*      else
-      {
-        final Qualifier old_codon_start_qualifier = first_old_feature
-            .getQualifierByName("codon_start");
 
-        if(old_codon_start_qualifier != null)
-          new_feature.setQualifier(old_codon_start_qualifier);
-      }*/
       forcedAdd(new_feature);
       //gene.addExon(transcript_id, new_feature, true );
       new_set.add(new_feature);
@@ -885,6 +883,70 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
       final GFFStreamFeature new_feature = new GFFStreamFeature(old_feature
           .getKey(), new_location, qualifier_vector);
       forcedAdd(new_feature);
+    }
+  }
+
+  /**
+   * Adjust feature coordinates to match the contig positions when loaded
+   * with a multiple fasta. 
+   * @param sequenceEntry   sequence entry
+   */
+  public void adjustCoordinates(uk.ac.sanger.artemis.Entry sequenceEntry)
+  {
+    final Entry entry;
+    if(sequenceEntry != null)
+      entry = sequenceEntry.getEMBLEntry();
+    else
+      entry = this;
+    if(entry instanceof SimpleDocumentEntry)
+    {
+      // adjust feature coordinates to match contig positions
+      final Hashtable<String, Range> contig_ranges = ((SimpleDocumentEntry)entry).contig_ranges;
+      if(contig_ranges != null)
+      {
+        final FeatureVector gff_regions = getAllFeatures();
+        final Enumeration gff_features  = gff_regions.elements();
+        
+        while(gff_features.hasMoreElements())
+        {
+          final Feature f = (Feature) gff_features.nextElement();
+          if( !(f instanceof GFFStreamFeature) )
+            continue;
+          
+          final String name = ((GFFStreamFeature)f).getGffSeqName();
+          if(name == null)
+            continue;
+          if(contig_ranges.containsKey(name))
+          {
+            
+            try
+            {
+              final Range new_range = contig_ranges.get(name);
+              final RangeVector new_ranges = new RangeVector();
+              final RangeVector ranges = f.getLocation().getRanges();
+              for(int i = 0 ; i<ranges.size () ; ++i) 
+              {
+                final Range r = (Range)ranges.elementAt(i);
+
+                new_ranges.add(new Range(r.getStart()+new_range.getStart()-1, 
+                                         r.getEnd()+new_range.getStart()-1));
+              }
+
+              f.setLocation(new Location(new_ranges, f.getLocation().isComplement()));
+            }
+            catch(OutOfRangeException e)
+            {
+              throw new Error("internal error - unexpected exception: " + e);
+            }
+            catch (ReadOnlyException e)
+            {
+              e.printStackTrace();
+            }
+          }
+        }
+        // store so these can be used when writing out
+        GFFStreamFeature.contig_ranges = contig_ranges;
+      }
     }
   }
 
