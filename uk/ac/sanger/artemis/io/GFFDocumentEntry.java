@@ -675,8 +675,15 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
 
       if(this_feature_location.getRanges().size() > 1)
       {
+        String id= "";
+        try
+        {
+          id = (String)this_feature.getQualifierByName("ID").getValues().get(0);
+        }
+        catch(Exception e){}
         throw new Error("internal error - new location should have "
-            + "exactly one range");
+            + "exactly one range (there may be non-unique ID's):\n"+
+            this_feature_location.toStringShort()+"\n"+id);
       }
 
       final Range new_range = (Range) this_feature_location.getRanges()
