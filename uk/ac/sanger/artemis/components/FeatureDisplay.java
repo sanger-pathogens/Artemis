@@ -4484,29 +4484,20 @@ public class FeatureDisplay extends EntryGroupPanel
       int maxOverlaps = 3;
       for(int i=0; i<visFeatures.size(); i++)
       {
-        final Feature f = visFeatures.elementAt(i);
-        if(!f.isCDS())
+        final Feature f1 = visFeatures.elementAt(i);
+        if(!f1.isCDS())
           continue;
         
-        final Range r = f.getMaxRawRange();
-        try
+        final Range r = f1.getMaxRawRange();
+        int cnt = 0;
+        for(int j=0; j<visFeatures.size(); j++)
         {
-          final FeatureVector overlaps = getEntryGroup().getFeaturesInRange(r);
-          if(overlaps.size() > maxOverlaps)
-          {
-            int cnt = 0;
-            for(int j=0; j<overlaps.size(); j++)
-              if(overlaps.elementAt(j).isCDS())
-                cnt++;
-            
-            if(cnt > maxOverlaps)
-              maxOverlaps = cnt;
-          }
+          final Feature f2 = visFeatures.elementAt(j);
+          if(f2.isCDS() && r.overlaps(f2.getMaxRawRange()))
+            cnt++;
         }
-        catch (OutOfRangeException e1)
-        {
-          e1.printStackTrace();
-        }
+        if(cnt > maxOverlaps)
+          maxOverlaps = cnt;
       }
       
       if((maxOverlaps+3)*2 != MAX_LINES_ONELINE_PER_FEATURE)
