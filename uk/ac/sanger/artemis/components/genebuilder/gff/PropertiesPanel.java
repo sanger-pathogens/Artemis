@@ -722,12 +722,13 @@ public class PropertiesPanel extends JPanel
         Iterator<uk.ac.sanger.artemis.io.Feature> it = children.iterator();
         while(it.hasNext())
         {
-          final GFFStreamFeature f = (GFFStreamFeature)it.next();
+          final GFFStreamFeature gffChildFeature = (GFFStreamFeature)it.next();
+          final Feature f = (Feature)gffChildFeature.getUserData();
           final String keyStr = f.getKey().getKeyString();
           
           if(keyStr.equals("five_prime_UTR") || keyStr.equals("three_prime_UTR"))
           {
-            String fName = chadoGene.getQualifier(f, "ID");
+            String fName = chadoGene.getQualifier(gffChildFeature, "ID");
             boolean isFwd = !f.getLocation().isComplement();
             if(fName != null && !chadoGene.isFirstUtr(fName, isFwd))
               continue;
