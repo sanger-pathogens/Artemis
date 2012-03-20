@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -40,6 +41,7 @@ import java.util.Vector;
 import net.sf.samtools.util.BlockCompressedInputStream;
 
 import uk.ac.sanger.artemis.EntryGroup;
+import uk.ac.sanger.artemis.components.FeatureDisplay;
 import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 import uk.ac.sanger.artemis.components.variant.FeatureContigPredicate;
 import uk.ac.sanger.artemis.components.variant.TabixReader;
@@ -187,8 +189,29 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
         ioe.printStackTrace();
       }
     }
+    
+    
+    if(featuresInRange.size() > 0 && GFFStreamFeature.isGTF((Feature)featuresInRange.get(0)))
+    {
+      // GTF
+      try
+      {
+        mergeGtfFeatures(featuresInRange, "CDS");
+        mergeGtfFeatures(featuresInRange, "exon");
+      }
+      catch (ReadOnlyException e)
+      {
+        e.printStackTrace();
+      }
+      
+    }
+    else 
+    {
+      // GFF
+      combineGeneFeatures(featuresInRange);
+    }
 
-    combineGeneFeatures(featuresInRange);
+    //combineGeneFeatures(featuresInRange);
     return featuresInRange;
   }
   
@@ -716,6 +739,67 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
     return merge_qualifier_vector;
   }
 
+  /**
+   * Merge function for GTF features
+   * @param original_features
+   * @param keyStr
+   * @throws ReadOnlyException
+   */
+  private void mergeGtfFeatures(FeatureVector original_features, String keyStr) throws ReadOnlyException
+  {
+    Hashtable<String, Vector<GFFStreamFeature>> group = new Hashtable<String, Vector<GFFStreamFeature>>();
+    for(int i=0; i<original_features.size(); i++)
+    {
+      GFFStreamFeature feature = (GFFStreamFeature)original_features.get(i);
+      if(!feature.getKey().getKeyString().equals(keyStr))
+        continue;
+      String transcriptId = 
+          ((String) feature.getQualifierByName("transcript_id").getValues().get(0)).replaceAll("'", "");
+      if(group.containsKey(transcriptId))
+        group.get(transcriptId).add(feature);
+      else
+      {
+        Vector<GFFStreamFeature> this_group = new Vector<GFFStreamFeature>();
+        this_group.add(feature);
+        group.put(transcriptId, this_group);
+      }
+    }
+    
+    Enumeration<String> enumGroup = group.keys();
+    while(enumGroup.hasMoreElements())
+    {
+      String transcriptId = enumGroup.nextElement();
+      Vector<GFFStreamFeature> this_group = group.get(transcriptId);
+      QualifierVector qualifier_vector = new QualifierVector();
+      final RangeVector new_range_vector = new RangeVector();
+      
+      for(GFFStreamFeature this_feature: this_group)
+      {
+        qualifier_vector.addAll(this_feature.getQualifiers());
+        
+        final Range new_range = (Range) this_feature.getLocation().getRanges().elementAt(0);
+        if(this_feature.getLocation().isComplement())
+          new_range_vector.insertElementAt(this_feature.getLocation().getTotalRange(), 0);
+        else
+          new_range_vector.add(new_range);
+        
+        original_features.remove(this_feature);
+      }
+      final GFFStreamFeature old_feature = (GFFStreamFeature)this_group.get(0);
+
+      final Location new_location = new Location(new_range_vector,
+          old_feature.getLocation().isComplement());
+      
+      qualifier_vector = mergeQualifiers(qualifier_vector, new_location.isComplement());
+      if(qualifier_vector.getQualifierByName("gene_id") != null)
+        qualifier_vector.addQualifierValues(new Qualifier("ID",
+            keyStr+":"+qualifier_vector.getQualifierByName("gene_id").getValues().get(0)));
+      
+      final GFFStreamFeature new_feature = new GFFStreamFeature(old_feature
+          .getKey(), new_location, qualifier_vector);
+      original_features.add(new_feature);
+    }
+  }
 
   public boolean hasUnsavedChanges()
   {
@@ -1102,28 +1186,44 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
     }  
   }
   
+  /**
+   *  Return true if the FeatureVector contains the given Feature.
+   **/
   public static boolean contains(final uk.ac.sanger.artemis.Feature f, final uk.ac.sanger.artemis.FeatureVector fs)
   {
     final String id = f.getIDString();
     final String keyStr = f.getKey().toString();
-    final int start = f.getFirstBase();
+    final String pId = FeatureDisplay.getParentQualifier(f);
 
     for(int i=0; i<fs.size(); i++)
-      if(contains(fs.elementAt(i), id, keyStr, start))
+      if(contains(fs.elementAt(i), id, keyStr, pId))
         return true;
     return false;
   }
   
-  private static boolean contains(final uk.ac.sanger.artemis.Feature f, String id, String keyStr, int start)
+  private static boolean contains(final uk.ac.sanger.artemis.Feature f, 
+                                  final String id, 
+                                  final String keyStr, 
+                                  final String pId)
   {
-    if(keyStr.equals(f.getKey().toString()))
+    if(keyStr.equals(f.getKey().getKeyString()))
     {
-      if(f.getIDString().equals(id) && f.getFirstBase() == start)
+      final String thisParentId = FeatureDisplay.getParentQualifier(f);
+      if( f.getIDString().equals(id) &&
+          (pId == null || thisParentId.equals(pId)) )
         return true;
       else if(id.indexOf("{")>-1)
       {
         int ind = f.getIDString().lastIndexOf(":");
-        if(ind > -1 && id.startsWith(f.getIDString().substring(0, ind)))
+        if( ind > -1 && id.startsWith(f.getIDString().substring(0, ind)) && 
+           (pId == null || thisParentId.equals(pId)) )
+          return true;
+      }
+      else if(f.getIDString().indexOf("{")>-1)
+      {
+        int ind = id.lastIndexOf(":");
+        if( ind > -1 && f.getIDString().startsWith(id.substring(0, ind)) && 
+           (pId == null || thisParentId.equals(pId)) )
           return true;
       }
     }

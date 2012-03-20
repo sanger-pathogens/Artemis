@@ -645,7 +645,9 @@ public class FeatureList extends EntryGroupPanel
                BOX_WIDTH, BOX_WIDTH - 1);
 
     g.setColor(Color.black);
-    if(getSelection().contains(feature)) 
+    
+    final FeatureVector selected_features = getSelection().getAllFeatures();
+    if(selected_features.contains(feature)) 
     {
       // draw in reverse
       g.fillRect(BOX_WIDTH + 4, y_pos,
@@ -653,7 +655,7 @@ public class FeatureList extends EntryGroupPanel
                  getLineHeight());
       g.setColor(background_colour);
     } 
-    
+
     if( feature.getEmblFeature() instanceof GFFStreamFeature &&
         !getSelection().contains(feature) &&
         !((GFFStreamFeature)feature.getEmblFeature()).isVisible() )

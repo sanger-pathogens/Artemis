@@ -140,7 +140,7 @@ public class ZipFileDocument extends FileDocument
   public boolean readable() 
   {
     if(getFile().exists() && 
-       getFile ().canWrite() && 
+       getFile ().canRead() && 
        zipFile.getName().endsWith(".zip")) 
     {
       if(containsEntry())

@@ -2313,20 +2313,31 @@ public class FeatureDisplay extends EntryGroupPanel
     g.drawLine(x_pos, y_pos, x_pos, y_pos + getFontHeight() - 1);
   }
   
-  private int getCDSLine(Feature thisCDSFeature)
+  /**
+   * Get the 'feature stack view' line number for a frame line feature.
+   * @param thisCDSFeature
+   * @param parentId
+   * @return
+   */
+  private int getCDSLine(final Feature thisCDSFeature, final String parentId)
   {
     final String sysName = thisCDSFeature.getSystematicName();
-    final Range range = thisCDSFeature.getLocation().getTotalRange();
-    final String keyStr = thisCDSFeature.getKey().getKeyString();
+    final Location loc = thisCDSFeature.getLocation();
+    final Range range = loc.getTotalRange();
     final FeatureVector visibleFeatures = getVisibleFeatures().sort(feature_comparator);
     int cnt = 0;
     for(int i=0; i<visibleFeatures.size(); i++)
     {
       Feature f = visibleFeatures.elementAt(i);
       if(f.getSystematicName().equals(sysName))
-        break;
-      else if((f.isCDS() || keyStr.equals("pseudogenic_exon"))
-          && range.overlaps(f.getLocation().getTotalRange()))
+      {
+        if(range.getStart() == f.getLocation().getTotalRange().getStart() &&
+           parentId.equals(getParentQualifier(f)))
+          break;
+      }
+      
+      if(isStackingFeature(f, f.getKey().getKeyString()) && 
+         range.overlaps(f.getLocation().getTotalRange()))
         cnt++;
     }
     return cnt;
@@ -2337,7 +2348,7 @@ public class FeatureDisplay extends EntryGroupPanel
    * @param f
    * @return
    */
-  private String getParentQualifier(Feature f)
+  public static String getParentQualifier(final Feature f)
   {
     try
     {
@@ -2345,6 +2356,8 @@ public class FeatureDisplay extends EntryGroupPanel
         return (String) f.getQualifierByName("locus_tag").getValues().get(0);
       else if(f.getQualifierByName("Parent") != null)
         return (String) f.getQualifierByName("Parent").getValues().get(0);
+      else if(f.getQualifierByName("transcript_id") != null)
+        return (String) f.getQualifierByName("transcript_id").getValues().get(0);
     }
     catch (InvalidRelationException e){}
     return null;
@@ -2380,22 +2393,29 @@ public class FeatureDisplay extends EntryGroupPanel
         return getLineCount()-2;
       if( isStackingFeature(segment.getFeature(), keyStr) )
       {
-        return getLineCount()-4-(getCDSLine(segment.getFeature())*2);
+        final String parentId = getParentQualifier(segment.getFeature());
+        return getLineCount()-4-(getCDSLine(segment.getFeature(), parentId)*2);
       }
       if(segment.getFeature().getKey().toString().toLowerCase().indexOf("utr") > -1)
       {
         try
         {
           // try to identify with associated CDS and return same line
-          String parentId = getParentQualifier(segment.getFeature());
+          final String parentId = getParentQualifier(segment.getFeature());
           final FeatureVector visibleFeatures = getVisibleFeatures().sort(feature_comparator);
           for(int i=0; i<visibleFeatures.size(); i++)
           {
-            Feature f = visibleFeatures.elementAt(i);
+            final Feature f = visibleFeatures.elementAt(i);
             if(isStackingFeature(f, f.getKey().getKeyString()))
             {
               if(parentId.equals( getParentQualifier(f) ))
-                return getLineCount()-4-(getCDSLine(f)*2);
+              {
+                int ln = getLineCount()-4-(getCDSLine(f, parentId)*2);
+                if(ln < 1)
+                  ln = 2;
+
+                return ln;
+              }
             }
           }
         }
@@ -4464,29 +4484,20 @@ public class FeatureDisplay extends EntryGroupPanel
       int maxOverlaps = 3;
       for(int i=0; i<visFeatures.size(); i++)
       {
-        final Feature f = visFeatures.elementAt(i);
-        if(!f.isCDS())
+        final Feature f1 = visFeatures.elementAt(i);
+        if(!f1.isCDS())
           continue;
         
-        final Range r = f.getMaxRawRange();
-        try
+        final Range r = f1.getMaxRawRange();
+        int cnt = 0;
+        for(int j=0; j<visFeatures.size(); j++)
         {
-          final FeatureVector overlaps = getEntryGroup().getFeaturesInRange(r);
-          if(overlaps.size() > maxOverlaps)
-          {
-            int cnt = 0;
-            for(int j=0; j<overlaps.size(); j++)
-              if(overlaps.elementAt(j).isCDS())
-                cnt++;
-            
-            if(cnt > maxOverlaps)
-              maxOverlaps = cnt;
-          }
+          final Feature f2 = visFeatures.elementAt(j);
+          if(f2.isCDS() && r.overlaps(f2.getMaxRawRange()))
+            cnt++;
         }
-        catch (OutOfRangeException e1)
-        {
-          e1.printStackTrace();
-        }
+        if(cnt > maxOverlaps)
+          maxOverlaps = cnt;
       }
       
       if((maxOverlaps+3)*2 != MAX_LINES_ONELINE_PER_FEATURE)

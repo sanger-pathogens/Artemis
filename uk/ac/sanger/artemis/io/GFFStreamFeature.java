@@ -1374,7 +1374,8 @@ public class GFFStreamFeature extends SimpleDocumentFeature
     if(feature.getQualifiers().getQualifierByName("gene_id") != null && 
        feature.getQualifiers().getQualifierByName("transcript_id") != null)
     {
-      logger4j.debug(feature.getEntry().getName()+" is in GTF format");
+      if(feature.getEntry() != null)
+        logger4j.debug(feature.getEntry().getName()+" is in GTF format");
       return true;
     }
     return false;
