@@ -41,6 +41,7 @@ import java.util.Vector;
 import net.sf.samtools.util.BlockCompressedInputStream;
 
 import uk.ac.sanger.artemis.EntryGroup;
+import uk.ac.sanger.artemis.components.FeatureDisplay;
 import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 import uk.ac.sanger.artemis.components.variant.FeatureContigPredicate;
 import uk.ac.sanger.artemis.components.variant.TabixReader;
@@ -1185,28 +1186,44 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
     }  
   }
   
+  /**
+   *  Return true if the FeatureVector contains the given Feature.
+   **/
   public static boolean contains(final uk.ac.sanger.artemis.Feature f, final uk.ac.sanger.artemis.FeatureVector fs)
   {
     final String id = f.getIDString();
     final String keyStr = f.getKey().toString();
-    final int start = f.getFirstBase();
+    final String pId = FeatureDisplay.getParentQualifier(f);
 
     for(int i=0; i<fs.size(); i++)
-      if(contains(fs.elementAt(i), id, keyStr, start))
+      if(contains(fs.elementAt(i), id, keyStr, pId))
         return true;
     return false;
   }
   
-  private static boolean contains(final uk.ac.sanger.artemis.Feature f, String id, String keyStr, int start)
+  private static boolean contains(final uk.ac.sanger.artemis.Feature f, 
+                                  final String id, 
+                                  final String keyStr, 
+                                  final String pId)
   {
-    if(keyStr.equals(f.getKey().toString()))
+    if(keyStr.equals(f.getKey().getKeyString()))
     {
-      if(f.getIDString().equals(id) && f.getFirstBase() == start)
+      final String thisParentId = FeatureDisplay.getParentQualifier(f);
+      if( f.getIDString().equals(id) &&
+          (pId == null || thisParentId.equals(pId)) )
         return true;
       else if(id.indexOf("{")>-1)
       {
         int ind = f.getIDString().lastIndexOf(":");
-        if(ind > -1 && id.startsWith(f.getIDString().substring(0, ind)))
+        if( ind > -1 && id.startsWith(f.getIDString().substring(0, ind)) && 
+           (pId == null || thisParentId.equals(pId)) )
+          return true;
+      }
+      else if(f.getIDString().indexOf("{")>-1)
+      {
+        int ind = id.lastIndexOf(":");
+        if( ind > -1 && f.getIDString().startsWith(id.substring(0, ind)) && 
+           (pId == null || thisParentId.equals(pId)) )
           return true;
       }
     }
