@@ -2348,7 +2348,7 @@ public class FeatureDisplay extends EntryGroupPanel
    * @param f
    * @return
    */
-  private String getParentQualifier(final Feature f)
+  public static String getParentQualifier(final Feature f)
   {
     try
     {
