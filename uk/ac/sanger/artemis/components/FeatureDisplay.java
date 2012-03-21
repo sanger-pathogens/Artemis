@@ -2331,9 +2331,13 @@ public class FeatureDisplay extends EntryGroupPanel
       Feature f = visibleFeatures.elementAt(i);
       if(f.getSystematicName().equals(sysName))
       {
-        if(range.getStart() == f.getLocation().getTotalRange().getStart() &&
-           parentId.equals(getParentQualifier(f)))
-          break;
+        if( range.getStart() == f.getLocation().getTotalRange().getStart() )
+        {
+          if(parentId != null && parentId.equals(getParentQualifier(f)))
+            break;
+          else if(thisCDSFeature == f)
+            break;
+        }
       }
       
       if(isStackingFeature(f, f.getKey().getKeyString()) && 
@@ -2344,7 +2348,8 @@ public class FeatureDisplay extends EntryGroupPanel
   }
   
   /**
-   * Return locus_tag or Parent qualifier
+   * Return locus_tag, Parent (GFF) or transcript_id (GTF) qualifier or
+   * null.
    * @param f
    * @return
    */
