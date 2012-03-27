@@ -1410,6 +1410,22 @@ public class EditMenu extends SelectionMenu
             if(!thisChadoGene.equals(chadoGeneName))
               chadoGene2 = thisChadoGene;
           }
+          
+          //
+          // merge qualifiers
+          try
+          {
+            final uk.ac.sanger.artemis.io.Feature transcript1 = chadoGene.getTranscripts().get(0);
+            final uk.ac.sanger.artemis.io.Feature transcript2 = chadoGene2.getTranscripts().get(0);
+            mergeQualifiers(transcript1, transcript2);
+            
+            final uk.ac.sanger.artemis.io.Feature protein1 = 
+              chadoGene.getProteinOfTranscript(GeneUtils.getUniqueName(transcript1));
+            final uk.ac.sanger.artemis.io.Feature protein2 = 
+              chadoGene2.getProteinOfTranscript(GeneUtils.getUniqueName(transcript2));
+            mergeQualifiers(protein1, protein2);
+          }
+          catch(Exception e){ logger4j.warn(e.getMessage()); }
         }
         else
         {
@@ -1532,6 +1548,37 @@ public class EditMenu extends SelectionMenu
       }
     }
     return geneModels;
+  }
+  
+  /**
+   * Merge qualifiers from two features avoiding duplication of their values.
+   * @param f1  first feature that results in having the merged qualifiers
+   * @param f2  second feature
+   * @throws ReadOnlyException
+   * @throws EntryInformationException
+   */
+  private static void mergeQualifiers(final uk.ac.sanger.artemis.io.Feature f1, 
+                                      final uk.ac.sanger.artemis.io.Feature f2) throws ReadOnlyException, EntryInformationException
+  {
+    if(f1 != null && f2 != null)
+    {
+      final QualifierVector qualifiers = f2.getQualifiers();
+      for(int i=0;i<qualifiers.size(); i++)
+      {
+        Qualifier qualifier = (Qualifier) qualifiers.get(i);
+        if(!TransferAnnotationTool.isNonTransferable(qualifier.getName()))
+        {
+          final Qualifier oldQualifier = f1.getQualifiers().getQualifierByName(qualifier.getName());
+          StringVector oldValues = null;
+          if(oldQualifier != null)
+            oldValues = oldQualifier.getValues();
+          
+          final Qualifier newQualifier =
+              TransferAnnotationTool.getQualifierWithoutDuplicateValues(qualifier, oldValues);
+          ((Feature)f1.getUserData()).addQualifierValues(newQualifier);
+        }
+      }
+    }
   }
   
   /**
