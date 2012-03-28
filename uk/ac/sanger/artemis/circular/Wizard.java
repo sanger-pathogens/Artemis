@@ -26,6 +26,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -63,6 +64,7 @@ import uk.ac.sanger.artemis.sequence.NoSequenceException;
 import uk.ac.sanger.artemis.util.Document;
 import uk.ac.sanger.artemis.util.DocumentFactory;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
+import uk.ac.sanger.artemis.util.WorkingGZIPInputStream;
 
 
 /**
@@ -856,10 +858,18 @@ public class Wizard
     {
       try
       {
-        FileReader reader = new FileReader(fileTemplate);
-        inputStream = new BufferedReader(reader);
+        if(templateName.endsWith(".gz"))
+          inputStream = new BufferedReader(
+              new InputStreamReader(new WorkingGZIPInputStream( 
+                  new FileInputStream(fileTemplate) )));
+        else
+          inputStream = new BufferedReader(new FileReader(fileTemplate));
       }
       catch(FileNotFoundException e)
+      {
+        e.printStackTrace();
+      }
+      catch (IOException e)
       {
         e.printStackTrace();
       }
