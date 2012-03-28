@@ -739,7 +739,7 @@ public class TransferAnnotationTool extends JFrame
    * @return
    * @throws InvalidRelationException
    */
-  private static Qualifier getQualifierWithoutDuplicateValues( 
+  protected static Qualifier getQualifierWithoutDuplicateValues( 
       final Qualifier qualifier,
       final StringVector values) throws InvalidRelationException
   {

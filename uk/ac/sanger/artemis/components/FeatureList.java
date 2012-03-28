@@ -720,13 +720,25 @@ public class FeatureList extends EntryGroupPanel
     {
       try
       { 
-        StringVector sv = StringVector.getStrings(user_defined_qualifier);
+        final StringVector sv = StringVector.getStrings(user_defined_qualifier);
         for(int i=0; i<sv.size(); i++)
         {
-          final String user_defined_qualifier_string = 
-            feature.getValueOfQualifier((String)sv.get(i));
-          if(user_defined_qualifier_string != null)
-            description_string_buffer.append("/"+sv.get(i)+"="+user_defined_qualifier_string+" ");
+          final Qualifier q = feature.getQualifierByName((String)sv.get(i));
+          if(q != null)
+          {
+            final StringVector values = q.getValues();
+            if(values != null)
+            {
+              if(values.size() == 0)
+                description_string_buffer.append("/"+sv.get(i)+" ");
+              else
+                for(int j=0; j<values.size(); j++)  // show multiple values
+                  description_string_buffer.append("/"+sv.get(i)+
+                    (values.get(j) == null ? "" : "="+values.get(j))+" ");
+            }
+            else
+              description_string_buffer.append("/"+sv.get(i)+" ");
+          }
         }
       }
       catch(InvalidRelationException ire){}
