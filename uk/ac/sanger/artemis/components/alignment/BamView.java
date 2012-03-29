@@ -58,11 +58,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
+import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -92,6 +95,7 @@ import javax.swing.text.JTextComponent;
 
 import org.apache.log4j.Level;
 
+import net.sf.picard.reference.ReferenceSequenceFile;
 import net.sf.picard.sam.BuildBamIndex;
 import net.sf.samtools.AlignmentBlock;
 import net.sf.samtools.SAMException;
@@ -140,8 +144,8 @@ public class BamView extends JPanel
   private List<SAMRecord> readsInView;
   private Hashtable<String, SAMFileReader> samFileReaderHash = new Hashtable<String, SAMFileReader>();
 
-  private Hashtable<String, Integer> seqLengths = new Hashtable<String, Integer>();
-  private Hashtable<String, Integer> offsetLengths;
+  private HashMap<String, Integer> seqLengths = new HashMap<String, Integer>();
+  private HashMap<String, Integer> offsetLengths;
   private Vector<String> seqNames = new Vector<String>();
   protected List<String> bamList;
   private List<Integer> hideBamList = new Vector<Integer>();
@@ -266,6 +270,7 @@ public class BamView extends JPanel
     
     if(reference != null)
     {
+      System.setProperty("reference", reference); // for CRAM
       EntryGroup entryGroup = new SimpleEntryGroup();
       try
       {
@@ -395,7 +400,11 @@ public class BamView extends JPanel
       logger4j.debug("create... " + bamIndexFile.getAbsolutePath());
     }
     else
+    {
       bamIndexFile = new File(bam + ".bai");
+      if(!bamIndexFile.exists())
+        bamIndexFile = new File(bam + ".crai");
+    }
 
     return bamIndexFile;
   }
@@ -436,6 +445,46 @@ public class BamView extends JPanel
     }
     
     final SAMFileReader samFileReader;
+    
+    if(feature_display != null && bam.endsWith("cram"))
+    {
+      final CRAMReferenceSequenceFile ref = new CRAMReferenceSequenceFile(
+        feature_display.getEntryGroup().getSequenceEntry(), this);
+      
+      final Map<Object, ReferenceSequenceFile> referenceFactory = 
+          new HashMap<Object, ReferenceSequenceFile>();
+      referenceFactory.put(bamIndexFile, ref);
+
+      try
+      {
+        Class cls = getClass().getClassLoader().loadClass("net.sf.samtools.ReferenceDiscovery");
+        Field f = cls.getDeclaredField("referenceFactory");
+        f.set(null, referenceFactory);
+      }
+      catch (ClassNotFoundException e)
+      {
+        System.err.println("Check cramtools.jar is in the CLASSPATH. "+e.getMessage());
+      }
+      catch (SecurityException e)
+      {
+        e.printStackTrace();
+      }
+      catch (NoSuchFieldException e)
+      {
+        e.printStackTrace();
+      }
+      catch (IllegalArgumentException e)
+      {
+        e.printStackTrace();
+      }
+      catch (IllegalAccessException e)
+      {
+        e.printStackTrace();
+      }
+
+      
+      //net.sf.samtools.ReferenceDiscovery.referenceFactory.put(bamIndexFile, ref);
+    }
     
     if(bam.startsWith("ftp"))
     {
@@ -492,7 +541,7 @@ public class BamView extends JPanel
     //final SAMFileReader inputSam = new SAMFileReader(bamFile, indexFile);
 
 
-    if(concatSequences)
+    if(isConcatSequences())
     {
       int len = 0;
       int lastLen = 1;
@@ -514,7 +563,7 @@ public class BamView extends JPanel
           if(thisEnd > thisLength)
             thisEnd = thisLength;
           
-          //System.out.println("READ "+seqNames.get(i)+"  "+thisStart+".."+thisEnd);
+          //System.out.println("READ "+seqNames.get(i)+"  "+thisStart+".."+thisEnd+" "+start+" --- "+offset);
           iterateOverBam(inputSam, seqNames.get(i), thisStart, thisEnd, bamIndex, pixPerBase, bam);
         }
         lastLen = len;
@@ -561,6 +610,7 @@ public class BamView extends JPanel
       {
         cnt++;
         SAMRecord samRecord = it.next();
+
         if( samRecordFlagPredicate == null ||
            !samRecordFlagPredicate.testPredicate(samRecord))
         {
@@ -619,7 +669,7 @@ public class BamView extends JPanel
 
   private int getSequenceLength()
   {
-    if(concatSequences)
+    if(isConcatSequences())
     {
       int len = 0;
       for(int i=0; i<seqNames.size(); i++)
@@ -639,7 +689,7 @@ public class BamView extends JPanel
    */
   protected int getSequenceOffset(String refName)
   {
-    if(!concatSequences)
+    if(!isConcatSequences())
       return 0;
     
     if(offsetLengths == null)
@@ -653,11 +703,19 @@ public class BamView extends JPanel
         offset += seqLengths.get(combo.getItemAt(i));
       }*/
 
-      FeatureVector features = feature_display.getEntryGroup().getAllFeatures();
-      offsetLengths = new Hashtable<String, Integer>(seqNames.size());
+      final FeatureVector features = feature_display.getEntryGroup().getAllFeatures();
+      final HashMap<String, Integer> lookup = new HashMap<String, Integer>();
+      for(int i=0; i<features.size(); i++)
+        lookup.put(features.elementAt(i).getIDString(), features.elementAt(i).getFirstBase());
+        
+      offsetLengths = new HashMap<String, Integer>(seqNames.size());
       for(int i=0; i<seqNames.size(); i++)
       {
-        FeatureContigPredicate predicate = new FeatureContigPredicate(seqNames.get(i).trim());
+        final Integer pos = lookup.get(seqNames.get(i));
+        if(pos != null)
+          offsetLengths.put(seqNames.get(i), pos-1);
+        
+       /*final FeatureContigPredicate predicate = new FeatureContigPredicate(seqNames.get(i).trim());
         for(int j=0; j<features.size(); j++)
         {
           if(predicate.testPredicate(features.elementAt(j)))
@@ -665,7 +723,7 @@ public class BamView extends JPanel
             offsetLengths.put(seqNames.get(i), features.elementAt(j).getFirstBase()-1);
             break;
           }
-        }
+        }*/
       }
       
       if(offsetLengths.size() != seqNames.size())
@@ -677,8 +735,16 @@ public class BamView extends JPanel
             "on the reference features do not match those in the in\n"+
             "the BAM file.", 
             "Problem Found", JOptionPane.WARNING_MESSAGE);
-        concatSequences = false;
-        return 0;
+        //concatSequences = false;
+        
+        int offset = 0;
+        for(int i=0; i<combo.getItemCount(); i++)
+        {
+          String thisSeqName = (String) combo.getItemAt(i);
+          offsetLengths.put(thisSeqName, offset);
+          offset += seqLengths.get(combo.getItemAt(i));
+        }
+        //return 0;
       }
     }
     return offsetLengths.get(refName);
@@ -1291,7 +1357,7 @@ public class BamView extends JPanel
         else
           g2.setColor(Color.blue);
         
-        if(maxEnd < recordStart)
+        if(maxEnd < recordStart || ypos < 0)
         {
           ypos = (getHeight() - scaleHeight)-ydiff;
           maxEnd = recordEnd+2;
@@ -1359,7 +1425,8 @@ public class BamView extends JPanel
                           float pixPerBase,
                           Stroke stroke)
   {
-    int ypos = (getHeight() - scaleHeight);
+    int hgt = getHeight();
+    int ypos = (hgt - scaleHeight);
     int maxEnd = 0;
     int lstStart = 0;
     int lstEnd = 0;
@@ -1388,7 +1455,7 @@ public class BamView extends JPanel
           else
             g2.setColor(Color.blue);
         
-          if(maxEnd < recordStart)
+          if(maxEnd < recordStart || ypos < 0 || ypos > hgt)
           {
             ypos = ymid + ystep;
             maxEnd = recordEnd+2;
@@ -2008,7 +2075,7 @@ public class BamView extends JPanel
     }
     else
     {
-      if(!concatSequences)
+      if(!isConcatSequences())
       {
         int seqLen = seqLengths.get((String) combo.getSelectedItem());
         int artemisSeqLen = feature_display.getSequenceLength();
@@ -2081,10 +2148,10 @@ public class BamView extends JPanel
       {
         FileSelectionDialog bamFileSelection = new FileSelectionDialog(
             null, false, "BamView", "BAM");
-        List<String> bamFiles = bamFileSelection.getFiles(".*\\.bam$");
+        List<String> bamFiles = bamFileSelection.getFiles(".*\\.(bam|cram)$");
         int count = bamList.size();
        
-        bamList.addAll(bamFileSelection.getFiles(".*\\.bam$"));
+        bamList.addAll(bamFileSelection.getFiles(".*\\.(bam|cram)$"));
         
         for(int i=0; i<bamFiles.size(); i++)
           addToViewMenu(i+count);
@@ -3387,6 +3454,14 @@ public class BamView extends JPanel
     this.samRecordMapQPredicate = samRecordMapQPredicate;
   }
   
+  /**
+   * @return the concatSequences
+   */
+  protected boolean isConcatSequences()
+  {
+    return concatSequences;
+  }
+
   class PairedRead
   {
     SAMRecord sam1;
@@ -3414,7 +3489,7 @@ public class BamView extends JPanel
       System.setProperty("default_directory", System.getProperty("user.dir"));
       FileSelectionDialog fileSelection = new FileSelectionDialog(
           null, true, "BamView", "BAM");
-      bam = fileSelection.getFiles(".*\\.bam$");
+      bam = fileSelection.getFiles(".*\\.(bam|cram)$"); 
       reference = fileSelection.getReferenceFile();
       if(reference == null || reference.equals(""))
         reference = null;
