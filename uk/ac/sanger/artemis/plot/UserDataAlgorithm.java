@@ -236,7 +236,7 @@ public class UserDataAlgorithm extends BaseAlgorithm
         } 
         catch (NumberFormatException e) 
         {
-          throw new ReadFormatException ("cannot understand this number: " +
+          throw new ReadFormatException ("at line number: "+(count+1)+" cannot understand this number: "+
                                          tokens[i] + " - " +e.getMessage ());
         }
       }
