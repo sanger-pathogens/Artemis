@@ -23,6 +23,7 @@
  */
 package uk.ac.sanger.artemis.components.alignment;
 
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -71,9 +72,9 @@ class BamUtils
       final String refName,
       final Hashtable<String, SAMFileReader> samFileReaderHash,
       final Vector<String> seqNames,
-      final Hashtable<String, Integer> offsetLengths,
+      final HashMap<String, Integer> offsetLengths,
       final boolean concatSequences, 
-      final Hashtable<String, Integer> seqLengths,
+      final HashMap<String, Integer> seqLengths,
       final SAMRecordPredicate samRecordFlagPredicate,
       final SAMRecordMapQPredicate samRecordMapQPredicate,
       final boolean contained)
@@ -91,7 +92,7 @@ class BamUtils
         if( (lastLen >= start && lastLen < end) ||
             (len >= start && len < end) ||
             (start >= lastLen && start < len) ||
-            (end >= lastLen && end < len) )
+            (end > lastLen && end < len) )
         {
           int offset = offsetLengths.get(name); 
           int thisStart = start - offset;

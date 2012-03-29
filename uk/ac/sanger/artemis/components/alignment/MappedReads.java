@@ -6,6 +6,7 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.text.DecimalFormat;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
@@ -33,9 +34,9 @@ public class MappedReads
   private Hashtable<String, SAMFileReader> samFileReaderHash;
   private List<String> bamList;
   private Vector<String> seqNames;
-  private Hashtable<String, Integer> offsetLengths;
+  private HashMap<String, Integer> offsetLengths;
   private boolean concatSequences;
-  private Hashtable<String, Integer> seqLengths;
+  private HashMap<String, Integer> seqLengths;
   private int sequenceLength;
   private SAMRecordPredicate samRecordFlagPredicate;
   private SAMRecordMapQPredicate samRecordMapQPredicate;
@@ -62,9 +63,9 @@ public class MappedReads
       final Hashtable<String, SAMFileReader> samFileReaderHash,
       final List<String> bamList, 
       final Vector<String> seqNames,
-      final Hashtable<String, Integer> offsetLengths,
+      final HashMap<String, Integer> offsetLengths,
       final boolean concatSequences,
-      final Hashtable<String, Integer> seqLengths, 
+      final HashMap<String, Integer> seqLengths, 
       final int sequenceLength,
       final SAMRecordPredicate samRecordFlagPredicate,
       SAMRecordMapQPredicate samRecordMapQPredicate,
@@ -127,9 +128,9 @@ public class MappedReads
       final Hashtable<String, SAMFileReader> samFileReaderHash,
       final List<String> bamList, 
       final Vector<String> seqNames,
-      final Hashtable<String, Integer> offsetLengths,
+      final HashMap<String, Integer> offsetLengths,
       final boolean concatSequences,
-      final Hashtable<String, Integer> seqLengths,
+      final HashMap<String, Integer> seqLengths,
       final SAMRecordPredicate samRecordFlagPredicate,
       final SAMRecordMapQPredicate samRecordMapQPredicate,
       final boolean contained, 
@@ -295,7 +296,7 @@ public class MappedReads
       return null;
     }
     
-    private void calc(String refName, int sequenceLength)
+    private void calc(final String refName, final int sequenceLength)
     {
       int MAX_BASE_CHUNK = 2000 * 60;
       boolean contained = false;
