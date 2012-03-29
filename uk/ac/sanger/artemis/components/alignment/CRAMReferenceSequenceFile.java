@@ -74,7 +74,7 @@ import uk.ac.sanger.artemis.util.OutOfRangeException;
     {
       try
       {
-        //if(bamView.isConcatSequences())
+        if(bamView.isConcatSequences())
         {
           int offset = bamView.getSequenceOffset(contig);
           start += offset;
