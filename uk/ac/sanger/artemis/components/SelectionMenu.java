@@ -480,3 +480,23 @@ public class SelectionMenu extends JMenu
   
 }
 
+/**
+ * Editable shortcut sub-menu
+ */
+class SelectionSubMenu extends JMenu
+{
+  private String parentMenuStr;
+  public SelectionSubMenu(SelectionMenu parentMenu, String str)
+  {
+    super(str);
+    parentMenuStr = parentMenu.getText();
+  }
+
+  public JMenuItem add(JMenuItem menuItem)
+  {
+    JMenuItem mi = super.add(menuItem);
+    if(ShortCut.usingCache())
+      ShortCut.applyShortCutFromCache(parentMenuStr, menuItem);
+    return mi;
+  }
+}
