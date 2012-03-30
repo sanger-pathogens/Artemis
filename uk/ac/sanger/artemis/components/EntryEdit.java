@@ -491,7 +491,7 @@ public class EntryEdit extends JFrame
           EntryEdit.this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
           String ngs[] = System.getProperty("bam").split("[\\s,]");
           FileSelectionDialog fileChooser = new FileSelectionDialog(ngs);
-          List<String> listBams = fileChooser.getFiles(".*\\.bam$");
+          List<String> listBams = fileChooser.getFiles(".*\\.(bam|cram)$");
           List<String> vcfFiles = fileChooser.getFiles(VCFview.VCFFILE_SUFFIX);
           loadBamAndVcf(listBams, vcfFiles);
           EntryEdit.this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
@@ -1361,7 +1361,7 @@ public class EntryEdit extends JFrame
         {
           FileSelectionDialog fileChooser = new FileSelectionDialog(
               null, false, "BAM / VCF View", "BAM / VCF");
-          List<String> listBams = fileChooser.getFiles(".*\\.bam$");
+          List<String> listBams = fileChooser.getFiles(".*\\.(bam|cram)$");
           List<String> vcfFiles = fileChooser.getFiles(VCFview.VCFFILE_SUFFIX);
           loadBamAndVcf(listBams, vcfFiles);
         }
@@ -1874,6 +1874,7 @@ public class EntryEdit extends JFrame
       }
       catch (Exception ex)
       {
+        logger4j.warn("EntryEdit.loadBamAndVcf() "+ex.getMessage());
         JOptionPane.showMessageDialog(null, ex.getMessage(), "Error",
             JOptionPane.ERROR_MESSAGE);
         return;

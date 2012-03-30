@@ -350,7 +350,8 @@ public class EditMenu extends SelectionMenu
       }
     });
 
-    final JMenu qualifier_menu = new JMenu("Qualifier of Selected Feature(s)");
+    final SelectionSubMenu qualifier_menu = 
+        new SelectionSubMenu(this,"Qualifier of Selected Feature(s)");
     final JMenuItem add_qualifiers_item = new JMenuItem("Change ...");
     add_qualifiers_item.addActionListener(new ActionListener() 
     {
@@ -390,7 +391,8 @@ public class EditMenu extends SelectionMenu
     });
     
 
-    final JMenu feature_menu = new JMenu("Selected Feature(s)");
+    final SelectionSubMenu feature_menu = new SelectionSubMenu(
+        this, "Selected Feature(s)");
     final JMenuItem merge_features_item = new JMenuItem("Merge");
     merge_features_item.setAccelerator(MERGE_FEATURES_KEY);
     merge_features_item.addActionListener(new ActionListener() 
@@ -529,7 +531,8 @@ public class EditMenu extends SelectionMenu
       }
     }
 
-    final JMenu trim_menu = new JMenu("Trim Selected Features");
+    final SelectionSubMenu trim_menu = 
+        new SelectionSubMenu(this, "Trim Selected Features");
     final JMenuItem trim_to_any_item = new JMenuItem("To Any");
     trim_to_any_item.addActionListener(new ActionListener() 
     {
@@ -572,7 +575,8 @@ public class EditMenu extends SelectionMenu
       }
     });
 
-    final JMenu extend_menu = new JMenu("Extend Selected Features");
+    final SelectionSubMenu extend_menu = 
+        new SelectionSubMenu(this, "Extend Selected Features");
     final JMenuItem extend_to_prev_stop_item =
       new JMenuItem("To Previous Stop Codon");
     extend_to_prev_stop_item.setAccelerator(EXTEND_TO_PREVIOUS_STOP_CODON_KEY);
@@ -694,7 +698,8 @@ public class EditMenu extends SelectionMenu
       }
     });
 
-    final JMenu bases_item = new JMenu("Bases");
+    final SelectionSubMenu bases_item = 
+        new SelectionSubMenu(this, "Bases");
     
     final JMenuItem delete_bases_item = new JMenuItem("Delete Selected Bases");
     delete_bases_item.addActionListener(new ActionListener() 
