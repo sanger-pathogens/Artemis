@@ -241,7 +241,7 @@ public class ViewMenu extends SelectionMenu
 
     JMenu search_results_menu = null;
 
-    search_results_menu = new JMenu("Search Results");
+    search_results_menu = new SelectionSubMenu(this, "Search Results");
 
     final boolean sanger_options =
       Options.getOptions().getPropertyTruthValue("sanger_options");
@@ -289,7 +289,7 @@ public class ViewMenu extends SelectionMenu
 
     final int MAX_FILTER_FEATURE_COUNT = 10000;
 
-    final JMenu feature_filters_menu = new JMenu("Feature Filters");
+    final JMenu feature_filters_menu = new SelectionSubMenu(this, "Feature Filters");
 
     final JMenuItem bad_start_codons_item =
       new JMenuItem("Suspicious Start Codons ...");
