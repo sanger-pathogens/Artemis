@@ -161,9 +161,16 @@ public class ReadAndWriteEntry
         entry.getHeaderText().startsWith("#")))
     {
       String name = file.getName();
-      int ind = name.lastIndexOf(".");
+      int ind = name.lastIndexOf(".embl.gz");
       if(ind > -1)
         name = name.substring(0, ind);
+      else
+      {
+        ind = name.lastIndexOf(".embl");
+        if(ind > -1)
+          name = name.substring(0, ind);
+        
+      }
       
       int length = entry.getBases().getLength();
       String header = "ID   "+name+"; SV ; ; ; ; ; "+length+" BP.";
