@@ -66,7 +66,7 @@ class ShortCut implements Serializable
       if(!dir.exists())
         dir.mkdirs();
       FileOutputStream fos = new FileOutputStream(SHORTCUT_CACHE_PATH +
-          File.separatorChar + menuName + ":" + shortCutName.replaceAll(REGEXP_REPLACE, "_"));
+          File.separatorChar + menuName + "#" + shortCutName.replaceAll(REGEXP_REPLACE, "_"));
       ObjectOutputStream out = new ObjectOutputStream(fos);
       out.writeObject(ShortCut.this);
       out.close();
@@ -102,7 +102,8 @@ class ShortCut implements Serializable
       String shortCutName = menuItem.getText();
       for(int i=0; i<shorts.length; i++)
       {
-        if(shorts[i].getName().equals(menuName + ":" + shortCutName.replaceAll(REGEXP_REPLACE, "_")))
+        if(shorts[i].getName().equals(menuName + "#" + shortCutName.replaceAll(REGEXP_REPLACE, "_")) ||
+           shorts[i].getName().equals(menuName + ":" + shortCutName.replaceAll(REGEXP_REPLACE, "_")))
         {
           try
           {
