@@ -1113,6 +1113,7 @@ public class EntryEdit extends JFrame
         one_line_per_entry_display.setFeatureStackViewFlag(true);
         one_line_per_entry_display.setVisible(show_feature_stack.getState());
         validate();
+        one_line_per_entry_display.updateOneLinePerFeatureFlag();
       }
     });
     display_menu.add(show_feature_stack);
