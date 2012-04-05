@@ -456,7 +456,7 @@ public class BamView extends JPanel
 
       try
       {
-        Class cls = getClass().getClassLoader().loadClass("net.sf.samtools.ReferenceDiscovery");
+        Class<?> cls = getClass().getClassLoader().loadClass("net.sf.samtools.ReferenceDiscovery");
         Field f = cls.getDeclaredField("referenceFactory");
         f.set(null, referenceFactory);
       }
