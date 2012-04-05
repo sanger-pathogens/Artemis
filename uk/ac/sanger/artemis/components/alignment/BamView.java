@@ -124,7 +124,6 @@ import uk.ac.sanger.artemis.components.MessageDialog;
 import uk.ac.sanger.artemis.components.NonModalDialog;
 import uk.ac.sanger.artemis.components.SwingWorker;
 import uk.ac.sanger.artemis.components.genebuilder.AutoCompleteComboDocument;
-import uk.ac.sanger.artemis.components.variant.FeatureContigPredicate;
 import uk.ac.sanger.artemis.editor.MultiLineToolTipUI;
 import uk.ac.sanger.artemis.io.EntryInformation;
 import uk.ac.sanger.artemis.io.Range;
@@ -3341,7 +3340,7 @@ public class BamView extends JPanel
     viewDetail.appendString("Strand                "+
         (thisSAMRecord.getReadNegativeStrandFlag() ? "-\n\n" : "+\n\n"), Level.DEBUG);
     
-    if(!thisSAMRecord.getMateUnmappedFlag())
+    if(thisSAMRecord.getReadPairedFlag() && !thisSAMRecord.getMateUnmappedFlag())
     {     
       if(thisSAMRecordMate != null)
       {
@@ -3411,6 +3410,10 @@ public class BamView extends JPanel
    */
   protected SAMRecord getMate(SAMRecord thisSAMRecord)
   {
+    if(!thisSAMRecord.getReadPairedFlag() ||  // read is not paired in sequencing
+        thisSAMRecord.getMateUnmappedFlag())
+      return null;
+    
     SAMRecord mate = null;
     try
     {
