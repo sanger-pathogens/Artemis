@@ -33,7 +33,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
 import java.util.Hashtable;
-import java.util.Enumeration;
 
 /**
  *  This class contains the methods common to all DocumentEntry objects.
