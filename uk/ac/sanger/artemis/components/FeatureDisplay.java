@@ -288,7 +288,8 @@ public class FeatureDisplay extends EntryGroupPanel
 
   private final int scrollbar_style;
   
-  private static Vector contigKeys;
+  private static Vector<String> contigKeys;
+  private static Vector<String> allPossibleContigKeys;
 
   private Object[] protein_keys = { "CDS", 
                                     "BLASTCDS",
@@ -1439,6 +1440,33 @@ public class FeatureDisplay extends EntryGroupPanel
         return 1;
     }
   };
+  
+  final private static Comparator<Feature> feature_position_comparator = new Comparator<Feature>() 
+  {
+    /**
+     *  Compare two Objects with respect to ordering.
+     *  @return a negative number if feature1_object is less than
+     *    feature2_object ; a positive number if feature1_object is greater
+     *    than feature2_object; else 0
+     **/
+    public int compare(final Feature f1,
+                       final Feature f2) 
+    {
+      final int pos1 = f1.getFirstBase();
+      final int pos2 = f2.getFirstBase();
+
+      if(pos1 > pos2) 
+        return -1;
+      else if(pos1 < pos2)
+        return 1;
+      else if(f1.hashCode() < f2.hashCode())  // use hash value as a last resort
+        return -1;
+      else if(f1.hashCode() == f2.hashCode())
+        return 0;
+      else
+        return 1;
+    }
+  };
 
   /**
    *  Return a vector containing the references of the Feature objects in the
@@ -1794,6 +1822,9 @@ public class FeatureDisplay extends EntryGroupPanel
   {
     if(getScaleFactor() > 1 ||
        getScaleFactor() == 1 && !show_base_colours) 
+      return;
+    
+    if(getFeatureStackViewFlag())
       return;
 
     final Strand forward_strand;
@@ -2313,35 +2344,44 @@ public class FeatureDisplay extends EntryGroupPanel
     g.drawLine(x_pos, y_pos, x_pos, y_pos + getFontHeight() - 1);
   }
   
+ 
   /**
-   * Get the 'feature stack view' line number for a frame line feature.
+   * Get the 'feature stack view' line number for a feature.
    * @param thisCDSFeature
    * @param parentId
+   * @param predicate
+   * @param comparator
    * @return
    */
-  private int getCDSLine(final Feature thisCDSFeature, final String parentId)
+  private int getFeatureStackLineNumber(final Feature thisCDSFeature, 
+                                        final String parentId, 
+                                        final FeaturePredicate predicate, 
+                                        final Comparator<Feature> comparator)
   {
     final String sysName = thisCDSFeature.getSystematicName();
     final Location loc = thisCDSFeature.getLocation();
     final Range range = loc.getTotalRange();
-    final FeatureVector visibleFeatures = getVisibleFeatures().sort(feature_comparator);
+    final FeatureVector visibleFeatures = getVisibleFeatures().sort(comparator);
     int cnt = 0;
     for(int i=0; i<visibleFeatures.size(); i++)
     {
-      Feature f = visibleFeatures.elementAt(i);
+      final Feature f = visibleFeatures.elementAt(i);
       if(f.getSystematicName().equals(sysName))
       {
-        if( range.getStart() == f.getLocation().getTotalRange().getStart() )
+        if(f.getKey().equals(thisCDSFeature.getKey()))
         {
-          if(parentId != null && parentId.equals(getParentQualifier(f)))
-            break;
-          else if(thisCDSFeature == f)
-            break;
+          if( range.getStart() == f.getLocation().getTotalRange().getStart() )
+          {
+            if(parentId != null && parentId.equals(getParentQualifier(f)))
+              break;
+            else if(thisCDSFeature == f)
+              break;
+          }
         }
       }
       
-      if(isStackingFeature(f, f.getKey().getKeyString()) && 
-         range.overlaps(f.getLocation().getTotalRange()))
+      if(predicate.testPredicate(f) && 
+         range.fuzzyOverlaps(f.getLocation().getTotalRange(), 10))
         cnt++;
     }
     return cnt;
@@ -2393,15 +2433,25 @@ public class FeatureDisplay extends EntryGroupPanel
   {
     if(getFeatureStackViewFlag())
     {
+      final FeaturePredicate predicate = new FeaturePredicate(){
+        public boolean testPredicate(Feature f)
+        {
+          if(isStackingFeature(f, f.getKey().getKeyString()))
+            return true;
+          return false;
+        }
+      };
+      
       String keyStr = segment.getFeature().getKey().toString();
       if(keyStr.equals("gene") || keyStr.equals("pseudogene"))
         return getLineCount()-2;
-      if( isStackingFeature(segment.getFeature(), keyStr) )
+      else if( isStackingFeature(segment.getFeature(), keyStr) )
       {
         final String parentId = getParentQualifier(segment.getFeature());
-        return getLineCount()-4-(getCDSLine(segment.getFeature(), parentId)*2);
+        return getLineCount()-4-( getFeatureStackLineNumber(
+            segment.getFeature(), parentId, predicate, feature_comparator)*2);
       }
-      if(segment.getFeature().getKey().toString().toLowerCase().indexOf("utr") > -1)
+      else if(keyStr.toLowerCase().indexOf("utr") > -1)
       {
         try
         {
@@ -2415,20 +2465,48 @@ public class FeatureDisplay extends EntryGroupPanel
             {
               if(parentId.equals( getParentQualifier(f) ))
               {
-                int ln = getLineCount()-4-(getCDSLine(f, parentId)*2);
+                int ln = getLineCount()-4-( getFeatureStackLineNumber(
+                    f, parentId, predicate, feature_comparator)*2);
+
                 if(ln < 1)
                   ln = 2;
 
+                ln--;
                 return ln;
               }
             }
           }
         }
         catch (Exception e){}
-        return 6;
+        return MAX_LINES_ONELINE_PER_FEATURE-5;
       }
+      else if(getAllPossibleContigKeys().contains(keyStr))
+      {
+        if(keyStr.equals("gap"))
+          return 1;
+        return 2;
+      }
+ 
+      ///
+      ///
+      final FeaturePredicate predicate2 = new FeaturePredicate(){
+        public boolean testPredicate(Feature f)
+        {
+          final String thisKeyStr = f.getKey().getKeyString();
+          if( !thisKeyStr.equals("gene") && !thisKeyStr.equals("pseudogene") &&
+              !isStackingFeature(f, thisKeyStr) &&
+              thisKeyStr.toLowerCase().indexOf("utr") == -1 &&
+              !getAllPossibleContigKeys().contains(thisKeyStr) )
+            return true;
+          return false;
+        }
+      };
+      int ln = getFeatureStackLineNumber(segment.getFeature(), null, predicate2, 
+          feature_position_comparator);
+      if(ln % 2 == 0)
+        return 3;
 
-      return 2;
+      return 4;
     }
     else if(getOneLinePerEntryFlag()) 
     {
@@ -4471,7 +4549,7 @@ public class FeatureDisplay extends EntryGroupPanel
       add(box, "South");
   }
   
-  private void updateOneLinePerFeatureFlag()
+  protected void updateOneLinePerFeatureFlag()
   {
     if(getFeatureStackViewFlag())
     {
@@ -4504,10 +4582,10 @@ public class FeatureDisplay extends EntryGroupPanel
         if(cnt > maxOverlaps)
           maxOverlaps = cnt;
       }
-      
-      if((maxOverlaps+3)*2 != MAX_LINES_ONELINE_PER_FEATURE)
+
+      if((maxOverlaps+4)*2 != MAX_LINES_ONELINE_PER_FEATURE)
       {
-        MAX_LINES_ONELINE_PER_FEATURE = (maxOverlaps+3)*2;
+        MAX_LINES_ONELINE_PER_FEATURE = (maxOverlaps+4)*2;
         fixCanvasSize();
       }
     }
@@ -5098,11 +5176,11 @@ public class FeatureDisplay extends EntryGroupPanel
     entryWorker.start();
   }
 
-  protected static Vector getContigKeys()
+  protected static Vector<String> getContigKeys()
   {
     if(contigKeys == null)
     {
-      contigKeys = new Vector(3);
+      contigKeys = new Vector<String>(3);
       contigKeys.add("fasta_record");
       contigKeys.add("contig");
       contigKeys.add("insertion_gap");
@@ -5111,15 +5189,18 @@ public class FeatureDisplay extends EntryGroupPanel
     return contigKeys;
   }
   
-  protected static Vector getAllPossibleContigKeys()
+  protected static Vector<String> getAllPossibleContigKeys()
   {
-    Vector allPossibleContigKeys = new Vector();
-    allPossibleContigKeys.add("fasta_record");
-    allPossibleContigKeys.add("contig");
-    allPossibleContigKeys.add("insertion_gap");
-    allPossibleContigKeys.add("gap");
-    allPossibleContigKeys.add("scaffold");
-    allPossibleContigKeys.add("source");
+    if(allPossibleContigKeys == null)
+    {
+      allPossibleContigKeys = new Vector<String>();
+      allPossibleContigKeys.add("fasta_record");
+      allPossibleContigKeys.add("contig");
+      allPossibleContigKeys.add("insertion_gap");
+      allPossibleContigKeys.add("gap");
+      allPossibleContigKeys.add("scaffold");
+      allPossibleContigKeys.add("source");
+    }
     return allPossibleContigKeys;
   }
 
