@@ -212,6 +212,25 @@ public class Range {
     }
     return true;
   }
+  
+  
+  /**
+   *  Return true if and only if there is an overlap between this Range and the
+   *  given Range.
+   **/
+  public boolean fuzzyOverlaps (final Range r2, int nbases) {
+     
+    if (getStart () < r2.getStart () - nbases &&
+        getEnd () < r2.getStart () - nbases) {
+      return false;
+    }
+    if (getStart () > r2.getEnd () + nbases &&
+        getEnd () > r2.getEnd () + nbases) {
+      return false;
+    }
+    return true;
+  }
+  
 
   /**
    *  The is the start value that was passed to the constructor

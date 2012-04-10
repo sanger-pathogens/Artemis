@@ -33,7 +33,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
 import java.util.Hashtable;
-import java.util.Enumeration;
 
 /**
  *  This class contains the methods common to all DocumentEntry objects.
@@ -209,12 +208,12 @@ abstract public class SimpleDocumentEntry
                                     header_positions[i+1]);
             }
 
+            String thisHeader[] = header_strings[i].split("\\s");
             final QualifierVector qualifiers = new QualifierVector();
 
             qualifiers.setQualifier(new Qualifier("note",
                                                     header_strings[i]));
-            qualifiers.setQualifier(new Qualifier("label",
-                                                    header_strings[i]));
+            qualifiers.setQualifier(new Qualifier("label", thisHeader[0]));
             if(i % 2 == 0) 
               qualifiers.setQualifier(new Qualifier("colour", "10"));
             else 
@@ -233,7 +232,6 @@ abstract public class SimpleDocumentEntry
               contig_ranges = new Hashtable<String, Range>();           
 
             // find the sequence id from the header
-            String thisHeader[] = header_strings[i].split("\\s");
             contig_ranges.put(thisHeader[0], new_range);
           }
           catch(InvalidRelationException e) 

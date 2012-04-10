@@ -285,6 +285,8 @@ abstract public class Splash extends JFrame
    */
   private void registerForMacOSXEvents()
   {
+    if(isWindows())
+      setWorkingDirectory();
     if(isMac()) 
     {
       setWorkingDirectory();
@@ -314,6 +316,13 @@ abstract public class Splash extends JFrame
   private boolean isMac() 
   {
     return System.getProperty("mrj.version") != null;
+  }
+  
+  private boolean isWindows() 
+  {  
+    String os = System.getProperty("os.name").toLowerCase();
+    logger4j.info("os.name "+os);
+    return (os.indexOf("win") >= 0);
   }
  
   protected void about()
