@@ -42,7 +42,7 @@ import uk.ac.sanger.artemis.EntryGroup;
 import uk.ac.sanger.artemis.io.GFFDocumentEntry;
 import uk.ac.sanger.artemis.io.Key;
 
-class ListSelectionPanel extends JPanel
+public class ListSelectionPanel extends JPanel
 {
 
   /** */
