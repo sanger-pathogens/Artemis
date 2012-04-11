@@ -365,9 +365,15 @@ public class SelectionMenu extends JMenu
       final JComboBox mod_combo = new JComboBox(mod_list);
       final KeyStroke ks = mi.getAccelerator();
       if(ks != null)
+      {
         combo.setSelectedItem( getKeyText(ks.getKeyCode()) );
+        mod_combo.setSelectedItem( getModifierFromInt(ks.getModifiers()) );
+      }
       else
+      {
         combo.setSelectedItem("--");
+        mod_combo.setSelectedItem("Default");
+      }
 
       Dimension dim = combo.getPreferredSize();
       dim = new Dimension(100, dim.height);
@@ -383,7 +389,6 @@ public class SelectionMenu extends JMenu
       });
 
 // modifier
-      mod_combo.setSelectedItem("Default");
       mod_combo.setPreferredSize(dim);
       mod_combo.setMaximumSize(dim);
       mod_combo.addItemListener(new ItemListener()
@@ -436,6 +441,17 @@ public class SelectionMenu extends JMenu
     else if( modStr.equals("Shift") )
       modifier = InputEvent.SHIFT_MASK;
     return modifier;
+  }
+  
+  private String getModifierFromInt(int mod)
+  {
+    if( (InputEvent.ALT_MASK & mod) == InputEvent.ALT_MASK)
+      return "Alt";
+    else if( (InputEvent.CTRL_MASK & mod) == InputEvent.CTRL_MASK)
+      return "Ctrl";
+    else if( (InputEvent.SHIFT_MASK & mod) == InputEvent.SHIFT_MASK)
+      return "Shift";
+    return "Default";
   }
   
   public static String getKeyText(int keyCode)
