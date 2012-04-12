@@ -1565,12 +1565,21 @@ public class EntryEdit extends JFrame
         int nmenus = EntryEdit.super.getJMenuBar().getMenuCount();
         final JTabbedPane shortcut_pane = new JTabbedPane();
         
+        Vector<String> sc = new Vector<String>();
         for(int i=0; i<nmenus; i++)
         {
           JMenu menu = EntryEdit.super.getJMenuBar().getMenu(i);
           if(menu instanceof SelectionMenu &&
             ((SelectionMenu)menu).isEditableShortCutMenu() )
-            shortcut_pane.add(menu.getText()+" Menu", ((SelectionMenu)menu).getShortCuts());
+            sc.addAll( ((SelectionMenu)menu).getUsedShortCutKeys() );
+        }
+        
+        for(int i=0; i<nmenus; i++)
+        {
+          JMenu menu = EntryEdit.super.getJMenuBar().getMenu(i);
+          if(menu instanceof SelectionMenu &&
+            ((SelectionMenu)menu).isEditableShortCutMenu() )
+            shortcut_pane.add(menu.getText()+" Menu", ((SelectionMenu)menu).getShortCuts(sc));
         }
         
         shortcut_pane.setPreferredSize(new Dimension(

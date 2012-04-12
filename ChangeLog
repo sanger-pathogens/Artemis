@@ -1,4 +1,10 @@
 Version XX
+	Fix for saving user defined shortcuts between sessions on windows.
+	
+	Add preliminary support for the CRAM format:
+	http://www.ebi.ac.uk/ena/about/cram_toolkit
+	This requires the cramtools.jar to be added to the start of the CLASSPATH.
+
 	Improved support for matching GFF feature coordinates to the correct
 	contig in a multiple FASTA sequences. This works now whether
 	the sequence is part of the GFF file or a separate multiple-FASTA file.

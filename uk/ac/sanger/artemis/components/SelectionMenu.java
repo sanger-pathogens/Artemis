@@ -297,64 +297,83 @@ public class SelectionMenu extends JMenu
                   Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()); //InputEvent.CTRL_MASK);
   }
 
-  private void getJMenuItems(JMenu menu, Vector menu_items)
+  private void getJMenuItems(JMenu menu, Vector<JMenuItem> menu_items)
   {
     final Component menus[] = menu.getMenuComponents();
     for(int i=0; i<menus.length; i++)
     {
       if(menus[i] instanceof JMenuItem)
-        menu_items.add(menus[i]);
+        menu_items.add((JMenuItem) menus[i]);
     }
   }
-
-  protected JScrollPane getShortCuts()
+  
+  private Vector<JMenuItem> getSelectionMenuItems()
   {
-    final Vector menu_items = new Vector();
+    final Vector<JMenuItem> menu_items = new Vector<JMenuItem>();
     final Component menus[] = getMenuComponents();
     for(int i=0; i<menus.length; i++)
     {
       if(menus[i] instanceof JMenu)
       {
-        menu_items.add(menus[i]);
+        menu_items.add((JMenu)menus[i]);
         getJMenuItems((JMenu)menus[i], menu_items);
       }
       else if(menus[i] instanceof JMenuItem)
-        menu_items.add(menus[i]);
+        menu_items.add((JMenuItem)menus[i]);
     }
+    return menu_items;
+  }
 
-    Box bdown = Box.createVerticalBox();
-    String alist[] = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K",
-                       "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V",
-                       "W", "X", "Y", "Z", "--"};
-
-    String mod_list[] = { "Default", "Alt", "Ctrl", "Shift" };
-
-    for(int i=0; i<menu_items.size(); i++)
+  protected Vector<String> getUsedShortCutKeys()
+  {
+    final Vector<String> sc = new Vector<String>();
+    final Vector<JMenuItem> menu_items = getSelectionMenuItems();
+    for(JMenuItem mi : menu_items)
+      if(mi.getAccelerator() != null)
+        sc.add(getKeyText(mi.getAccelerator().getKeyCode()));
+    return sc;
+  }
+  
+  protected JScrollPane getShortCuts(Vector<String> usedShortCutKeys)
+  {
+    usedShortCutKeys.add("C"); // Create menu
+    usedShortCutKeys.add("G"); // Goto menu
+    final Vector<JMenuItem> menu_items = getSelectionMenuItems();
+    final Box bdown = Box.createVerticalBox();
+    final String alist[] = 
+             { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K",
+               "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V",
+               "W", "X", "Y", "Z", "--"};
+    final String mod_list[] = { "Default", "Alt", "Ctrl", "Shift" };
+    
+    for(final JMenuItem mi : menu_items)
     {
-      Box bacross = Box.createHorizontalBox();
-      if(menu_items.get(i) instanceof JMenu)
+      final Box bacross = Box.createHorizontalBox();
+      if(mi instanceof JMenu)
       {
-        bacross.add(new JLabel( ((JMenu)menu_items.get(i)).getText() ));
+        bacross.add(new JLabel( mi.getText() ));
         bacross.add(Box.createHorizontalGlue());
         bdown.add(bacross);
         continue;
       }
 
-      final JMenuItem mi = (JMenuItem)menu_items.get(i);
-      
       bacross.add(new JLabel(mi.getText()));
 
 // short cut
       final JComboBox combo = new JComboBox(alist);
+      combo.setRenderer(new ComboBoxRenderer(usedShortCutKeys));
       final JComboBox mod_combo = new JComboBox(mod_list);
-      KeyStroke ks = mi.getAccelerator();
+      final KeyStroke ks = mi.getAccelerator();
       if(ks != null)
       {
-        String keystroke = getKeyText(ks.getKeyCode());
         combo.setSelectedItem( getKeyText(ks.getKeyCode()) );
+        mod_combo.setSelectedItem( getModifierFromInt(ks.getModifiers()) );
       }
       else
+      {
         combo.setSelectedItem("--");
+        mod_combo.setSelectedItem("Default");
+      }
 
       Dimension dim = combo.getPreferredSize();
       dim = new Dimension(100, dim.height);
@@ -370,7 +389,6 @@ public class SelectionMenu extends JMenu
       });
 
 // modifier
-      mod_combo.setSelectedItem("Default");
       mod_combo.setPreferredSize(dim);
       mod_combo.setMaximumSize(dim);
       mod_combo.addItemListener(new ItemListener()
@@ -394,7 +412,6 @@ public class SelectionMenu extends JMenu
     final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
     jsp.setPreferredSize(new Dimension(jsp.getPreferredSize().width,
                          screen.height/2));
-
     return jsp;
   }
 
@@ -424,6 +441,17 @@ public class SelectionMenu extends JMenu
     else if( modStr.equals("Shift") )
       modifier = InputEvent.SHIFT_MASK;
     return modifier;
+  }
+  
+  private String getModifierFromInt(int mod)
+  {
+    if( (InputEvent.ALT_MASK & mod) == InputEvent.ALT_MASK)
+      return "Alt";
+    else if( (InputEvent.CTRL_MASK & mod) == InputEvent.CTRL_MASK)
+      return "Ctrl";
+    else if( (InputEvent.SHIFT_MASK & mod) == InputEvent.SHIFT_MASK)
+      return "Shift";
+    return "Default";
   }
   
   public static String getKeyText(int keyCode)
@@ -480,11 +508,32 @@ public class SelectionMenu extends JMenu
   
 }
 
+class ComboBoxRenderer implements ListCellRenderer 
+{
+  protected DefaultListCellRenderer defaultRenderer = new DefaultListCellRenderer();
+  private Vector<String> usedShortCutKeys;
+  public ComboBoxRenderer(Vector<String> usedShortCutKeys)
+  {
+    this.usedShortCutKeys = usedShortCutKeys;
+  }
+  
+  public Component getListCellRendererComponent(JList list, Object value, int index,
+      boolean isSelected, boolean cellHasFocus) 
+  {
+    JLabel renderer = (JLabel) defaultRenderer.getListCellRendererComponent(list, value, index,
+        isSelected, cellHasFocus);
+    if (usedShortCutKeys.contains(value)) 
+      renderer.setBackground(Color.lightGray);
+    return renderer;
+  }
+}
+
 /**
  * Editable shortcut sub-menu
  */
 class SelectionSubMenu extends JMenu
 {
+  private static final long serialVersionUID = 1L;
   private String parentMenuStr;
   public SelectionSubMenu(SelectionMenu parentMenu, String str)
   {
