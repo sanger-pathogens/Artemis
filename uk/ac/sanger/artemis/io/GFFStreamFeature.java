@@ -69,10 +69,10 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   StringVector gff_lines = null;
 
   /** store for spliced features containing id and range of each segment */
-  private Hashtable id_range_store;
+  private Hashtable<String, Range> id_range_store;
   
   /** store a record of the new and old uniquenames that have been changed */
-  private Hashtable newIdMapToOldId;
+  private Hashtable<String, String> newIdMapToOldId;
 
   /** store the Timestamp for the feature */
   private Timestamp timelastmodified;
@@ -82,7 +82,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   private boolean visible = true;
   
   /** combined feature_relationship.rank store for exons */
-  private Hashtable feature_relationship_rank_store;
+  private Hashtable<String, Integer> feature_relationship_rank_store;
   
   /** first tabbed parameter  */
   private String gffSeqName;
@@ -231,18 +231,22 @@ public class GFFStreamFeature extends SimpleDocumentFeature
             duplicatePrefix = "DUP";
           if(id_range_store != null)
           {
-            final Hashtable new_id_range_store = new Hashtable(id_range_store.size());
-            final Enumeration enumIdRangeStore = id_range_store.keys();
+            final Hashtable<String, Range> new_id_range_store = new Hashtable<String, Range>(id_range_store.size());
+            final Enumeration<String> enumIdRangeStore = id_range_store.keys();
             while(enumIdRangeStore.hasMoreElements())
             {
-              final String keyId = (String)enumIdRangeStore.nextElement();
-              final Range range  = (Range)id_range_store.get(keyId);
+              final String keyId = enumIdRangeStore.nextElement();
+              final Range range  = id_range_store.get(keyId);
               new_id_range_store.put(duplicatePrefix+keyId, range);
             }
             id_range_store.clear();
             this.id_range_store = (Hashtable) new_id_range_store.clone();
             
-            uniquename = getSegmentID(getLocation().getRanges());
+
+            if(getLocation().getRanges().size() > 1)
+              uniquename = getSegmentID(getLocation().getRanges());
+            else
+              uniquename = duplicatePrefix+ (String)getQualifierByName("ID").getValues().get(0);
           }
           else
             uniquename = duplicatePrefix+ (String)getQualifierByName("ID").getValues().get(0);
@@ -347,24 +351,20 @@ public class GFFStreamFeature extends SimpleDocumentFeature
         final String rest_of_line = (String)line_bits.elementAt(8); 
 
         // parse the rest of the line as ACeDB format attributes
-        final Hashtable attributes = parseAttributes(rest_of_line);
-//      final String type = (String)line_bits.elementAt(2);
-
-        for(final java.util.Enumeration attribute_enum = attributes.keys();
+        final Hashtable<String, StringVector> attributes = parseAttributes(rest_of_line);
+        for(final Enumeration<String> attribute_enum = attributes.keys();
             attribute_enum.hasMoreElements();)
         {
-          String name = (String)attribute_enum.nextElement();
-
-          final StringVector values = (StringVector)attributes.get(name);
+          String name = attribute_enum.nextElement();
+          final StringVector values = attributes.get(name);
 
           if(MatchPanel.isClusterTag(name))
           {
-            List lazyValues = new Vector();
+            List<ClusterLazyQualifierValue> lazyValues = new Vector<ClusterLazyQualifierValue>();
             for(int i=0; i<values.size(); i++)
               lazyValues.add(
                   new ClusterLazyQualifierValue( (String)values.get(i), name,
                                          this ));
-            
             setQualifier(new QualifierLazyLoading(name, lazyValues));
           }
           else
@@ -455,23 +455,23 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   * Store for spliced regions of segments ID's and ranges.
   *
   */
-  public void setSegmentRangeStore(Hashtable id_range_store)
+  public void setSegmentRangeStore(Hashtable<String, Range> id_range_store)
   {
     this.id_range_store = id_range_store;
   }
 
-  public Hashtable getSegmentRangeStore()
+  public Hashtable<String, Range> getSegmentRangeStore()
   {
     if(id_range_store == null)
     {
-      id_range_store = new Hashtable();
+      id_range_store = new Hashtable<String, Range>();
       id_range_store.put((String)this.getQualifierByName("ID").getValues().get(0), 
                          this.getLocation().getTotalRange());
     }
     return id_range_store;
   }
   
-  public Hashtable getNewIdMapToOldId()
+  public Hashtable<String, String> getNewIdMapToOldId()
   {
     return newIdMapToOldId;
   }
@@ -480,7 +480,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
    * Used when changing spliced feature uniquenames
    * @param newIdMapToOldId
    */
-  public void setNewIdMapToOldId(Hashtable newIdMapToOldId)
+  public void setNewIdMapToOldId(Hashtable<String, String> newIdMapToOldId)
   {
     this.newIdMapToOldId = newIdMapToOldId;
   }
@@ -490,7 +490,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
    * @param feature_relationship_rank_store
    */
   public void setFeature_relationship_rank_store(
-      Hashtable feature_relationship_rank_store)
+      Hashtable<String, Integer> feature_relationship_rank_store)
   {
     this.feature_relationship_rank_store = feature_relationship_rank_store;
   }
@@ -499,7 +499,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
    * Store for ID's and CHADO feature_relationship.rank
    * @return
    */
-  public Hashtable getFeature_relationship_rank_store()
+  public Hashtable<String, Integer> getFeature_relationship_rank_store()
   {
     return feature_relationship_rank_store;
   }
@@ -514,13 +514,13 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   {
     if(id_range_store != null)
     {
-      Enumeration enum_ranges = id_range_store.keys();
+      Enumeration<String> enum_ranges = id_range_store.keys();
       //Iterator it = id_range_store.values().iterator();
       while(enum_ranges.hasMoreElements())
       //while(it.hasNext())
       {
-        String key  = (String)enum_ranges.nextElement();
-        Range range = (Range)id_range_store.get(key);
+        String key  = enum_ranges.nextElement();
+        Range range = id_range_store.get(key);
         if(range.getStart() == r.getStart() &&
            range.getEnd()   == r.getEnd())
           return key;
@@ -963,9 +963,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
     if (chadoGene != null)
     {
       if(getUserData() == null)
-      {
-        uk.ac.sanger.artemis.Feature f = new uk.ac.sanger.artemis.Feature(this);
-      }
+        new uk.ac.sanger.artemis.Feature(this);
       // the above line constructs the appropriate userData within this current GFFStreamFeature object, 
       // which is required by the following GeneUtils.deriveResidues()     
       String residues = GeneUtils.deriveResidues(this);
@@ -1072,9 +1070,9 @@ public class GFFStreamFeature extends SimpleDocumentFeature
    *    If the attribute has no value then the Hashtable value will be a zero
    *    length vector.
    **/
-  private Hashtable parseAttributes(final String att_val_list) 
+  private Hashtable<String, StringVector> parseAttributes(final String att_val_list) 
   {
-    Hashtable attributes = new Hashtable();
+    Hashtable<String, StringVector> attributes = new Hashtable<String, StringVector>();
 
 //  StringTokenizer tokeniser = new StringTokenizer(att_val_list, ";", false);
 //  while(tokeniser.hasMoreTokens()) 
@@ -1136,7 +1134,8 @@ public class GFFStreamFeature extends SimpleDocumentFeature
             if(quote_index < 0) 
             {
               // no closing quote - panic
-              final Hashtable panic_attributes = new Hashtable();
+              final Hashtable<String, StringVector> panic_attributes =
+                  new Hashtable<String, StringVector>();
               final StringVector notes = new StringVector();
               notes.add(att_val_list);
               panic_attributes.put("note", notes);
