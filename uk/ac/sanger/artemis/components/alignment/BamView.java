@@ -2181,7 +2181,12 @@ public class BamView extends JPanel
         Box yBox = Box.createVerticalBox();
         yBox.add(overlap);
         yBox.add(spliced);
-        JOptionPane.showMessageDialog(null, yBox, "Read Count Option", JOptionPane.INFORMATION_MESSAGE);
+        
+        final ReadCountDialog opts = new ReadCountDialog(new JFrame(),
+            "Read Count Options", feature_display, yBox);
+        if(opts.getStatus() == -1)
+          return;
+        //JOptionPane.showMessageDialog(null, yBox, "Read Count Option", JOptionPane.INFORMATION_MESSAGE);
         
         new MappedReads(features, (String)combo.getSelectedItem(), samFileReaderHash, bamList,
             seqNames, offsetLengths, concatSequences, seqLengths, 
@@ -2211,9 +2216,12 @@ public class BamView extends JPanel
         
         if(seqLengths.size() > 1)
           yBox.add(allRefSeqs);
-        
-        JOptionPane.showMessageDialog(null, yBox, "Read Count Option", JOptionPane.INFORMATION_MESSAGE);
-        
+     
+        final ReadCountDialog opts = new ReadCountDialog(new JFrame(),
+            "RPKM Options", feature_display, yBox);
+        if(opts.getStatus() == -1)
+          return;
+
         int seqlen = 0;
         if(feature_display != null)
           seqlen = feature_display.getSequenceLength();

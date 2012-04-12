@@ -220,7 +220,7 @@ public class MappedReads
 
           sampleCounts.add(cnt);
         }
-        featureReadCount.put(f.getSystematicName(), sampleCounts);
+        featureReadCount.put(ReadCountDialog.getFeatureName(f), sampleCounts);
       }
       return null;
     }
