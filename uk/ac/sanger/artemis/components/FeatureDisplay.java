@@ -2418,8 +2418,7 @@ public class FeatureDisplay extends EntryGroupPanel
    */
   private boolean isStackingFeature(final Feature f, final String keyStr)
   {
-    if(  keyStr.equals("CDS") || keyStr.equals("pseudogenic_exon") ||
-        (keyStr.equals("exon") && isProteinFeature(f)) )
+    if( isProteinFeature(f) )
       return true;
     return false;
   }
@@ -4568,7 +4567,7 @@ public class FeatureDisplay extends EntryGroupPanel
       for(int i=0; i<visFeatures.size(); i++)
       {
         final Feature f1 = visFeatures.elementAt(i);
-        if(!f1.isCDS())
+        if(!isProteinFeature(f1))
           continue;
         
         final Range r = f1.getMaxRawRange();
@@ -4576,7 +4575,7 @@ public class FeatureDisplay extends EntryGroupPanel
         for(int j=0; j<visFeatures.size(); j++)
         {
           final Feature f2 = visFeatures.elementAt(j);
-          if(f2.isCDS() && r.overlaps(f2.getMaxRawRange()))
+          if(isProteinFeature(f2) && r.overlaps(f2.getMaxRawRange()))
             cnt++;
         }
         if(cnt > maxOverlaps)
