@@ -372,12 +372,9 @@ public class ArtemisMain extends Splash
           entry_source.setReadOnly(true);
         }
         
-        if(!entry_source.setLocation(promptUser))
+        last_entry_edit = dbLogin(entry_source, promptUser, new_entry_name);
+        if(last_entry_edit == null)
           return;
-        
-        last_entry_edit =
-          DatabaseJPanel.show(entry_source, this,
-              getInputStreamProgressListener(), new_entry_name);
       }
       else
       {
@@ -452,7 +449,41 @@ public class ArtemisMain extends Splash
     }
   }
   
+  /**
+   * Handle database connection and construction of EntryEdit
+   * @param entry_source
+   * @param promptUser
+   * @param new_entry_name
+   * @return
+   */
+  private EntryEdit dbLogin(final DatabaseEntrySource entry_source, 
+                            final boolean promptUser, 
+                            final String new_entry_name)
+  {
+    EntryEdit last_entry_edit = null;
+    
+    // allow 3 attempts to login
+    for(int i = 0; i < 3; i++)
+    {
+      if (!entry_source.setLocation(promptUser))
+        return null;
 
+      try
+      {
+        last_entry_edit = DatabaseJPanel.show(entry_source, this,
+            getInputStreamProgressListener(), new_entry_name);
+        break;
+      }
+      catch (Exception e)
+      {
+        new MessageDialog(this, e.getMessage());
+        entry_source.getDatabaseDocument().reset();
+      }
+    }
+    
+    return last_entry_edit;
+  }
+  
   /**
    *
    *  Handle the -biojava option
