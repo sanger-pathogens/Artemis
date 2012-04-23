@@ -1670,10 +1670,13 @@ public class EditMenu extends SelectionMenu
             final ChadoCanonicalGene orig_chado_gene = orig_feature.getChadoGene();
             final String prevId = GeneUtils.getUniqueName(orig_chado_gene.getGene());
 
-            // add prev_sys_id
-            final Qualifier synonymQualifier =
+            if(!prevId.startsWith("DUP"))
+            {
+              // add prev_sys_id
+              final Qualifier synonymQualifier =
                 new Qualifier("previous_systematic_id", prevId+";current=false");
-            orig_chado_gene.getGene().getQualifiers().add(synonymQualifier);
+              orig_chado_gene.getGene().getQualifiers().add(synonymQualifier);
+            }
           }
           catch(Exception e){}
           
