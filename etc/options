@@ -783,16 +783,14 @@ feature_protein_programs = \
     fasta %kineto_aa \
     sigcleave 0 \
     pepstats - \
-    blastp %uniprot \
-    blastp %uniprot_archaea \
-    blastp %uniprot_bacteria \
-    blastp %uniprot_eukaryota \
-    blastp %uniprot_viruses \
-    blastp %uniprot_rest \
-    blastp psu/Kineto_aa \
+    blastp uniprot \
+    blastp uniprot_archaea \
+    blastp uniprot_bacteria \
+    blastp uniprot_eukaryota \
+    blastp uniprot_viruses \
+    blastp uniprot_rest \
+    blastp /lustre/scratch101/blastdb/Pathogen/Kineto_aa \
     tblastn %embl_other \
-    blastp+go psu/go_all \
-    blastp+go /nfs/pathsoft/databases/GO/new/go_all \
     hth - \
     smart - \
     clustalx PROTEIN \
