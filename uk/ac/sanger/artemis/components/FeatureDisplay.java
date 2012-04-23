@@ -189,7 +189,12 @@ public class FeatureDisplay extends EntryGroupPanel
   
   private boolean feature_stack_view = false;
   
-  private int MAX_LINES_ONELINE_PER_FEATURE = 12;
+  private short MAX_LINES_FEATURE_STACK = 10;
+  
+  /** visible features sorted by size */
+  private FeatureVector visibleFeaturesSortBySize;
+  /** visible features sorted by position */
+  private FeatureVector visibleFeaturesSortByPosition;
 
   /**
    *  If true the there will never be a gap between the left edge of the
@@ -1560,7 +1565,11 @@ public class FeatureDisplay extends EntryGroupPanel
     }
 
     if(update_visible_features) 
+    {
       updateVisibleFeatureVector();
+      visibleFeaturesSortBySize = null;
+      visibleFeaturesSortByPosition = null;
+    }
 
     fillBackground(g);
 
@@ -2344,46 +2353,66 @@ public class FeatureDisplay extends EntryGroupPanel
     g.drawLine(x_pos, y_pos, x_pos, y_pos + getFontHeight() - 1);
   }
   
- 
   /**
    * Get the 'feature stack view' line number for a feature.
    * @param thisCDSFeature
    * @param parentId
    * @param predicate
-   * @param comparator
+   * @param sortByPosition
    * @return
    */
   private int getFeatureStackLineNumber(final Feature thisCDSFeature, 
                                         final String parentId, 
                                         final FeaturePredicate predicate, 
-                                        final Comparator<Feature> comparator)
+                                        final boolean sortByPosition)
   {
     final String sysName = thisCDSFeature.getSystematicName();
     final Location loc = thisCDSFeature.getLocation();
     final Range range = loc.getTotalRange();
-    final FeatureVector visibleFeatures = getVisibleFeatures().sort(comparator);
-    int cnt = 0;
-    for(int i=0; i<visibleFeatures.size(); i++)
+    final FeatureVector features;
+    
+    if(sortByPosition)
     {
-      final Feature f = visibleFeatures.elementAt(i);
-      if(f.getSystematicName().equals(sysName))
+      if(visibleFeaturesSortByPosition == null)
+        visibleFeaturesSortByPosition = getVisibleFeatures().sort(feature_position_comparator);
+      features = visibleFeaturesSortByPosition;
+    }
+    else
+    {
+      if(visibleFeaturesSortBySize == null)
+        visibleFeaturesSortBySize = getVisibleFeatures().sort(feature_comparator);
+      features = visibleFeaturesSortBySize;
+    }
+    
+    int cnt = 0;
+    for(int i=0; i<features.size(); i++)
+    {
+      final Feature f = features.elementAt(i);
+
+      if( range.getStart() == f.getLocation().getTotalRange().getStart() )
       {
-        if(f.getKey().equals(thisCDSFeature.getKey()))
+        if(f.getSystematicName().equals(sysName))
         {
-          if( range.getStart() == f.getLocation().getTotalRange().getStart() )
+          if(f.getKey().equals(thisCDSFeature.getKey()))
           {
             if(parentId != null && parentId.equals(getParentQualifier(f)))
               break;
             else if(thisCDSFeature == f)
-              break;
+              break; 
           }
         }
       }
-      
+
       if(predicate.testPredicate(f) && 
          range.fuzzyOverlaps(f.getLocation().getTotalRange(), 10))
         cnt++;
+
+      if(cnt > MAX_LINES_FEATURE_STACK)
+        break;
     }
+
+    if((cnt+4)*2  > MAX_LINES_FEATURE_STACK)
+      cnt = (MAX_LINES_FEATURE_STACK-8)/2;
     return cnt;
   }
   
@@ -2416,7 +2445,7 @@ public class FeatureDisplay extends EntryGroupPanel
    * @param keyStr  feature key
    * @return
    */
-  private boolean isStackingFeature(final Feature f, final String keyStr)
+  private boolean isStackingFeature(final Feature f)
   {
     if( isProteinFeature(f) )
       return true;
@@ -2435,7 +2464,7 @@ public class FeatureDisplay extends EntryGroupPanel
       final FeaturePredicate predicate = new FeaturePredicate(){
         public boolean testPredicate(Feature f)
         {
-          if(isStackingFeature(f, f.getKey().getKeyString()))
+          if(isStackingFeature(f))
             return true;
           return false;
         }
@@ -2444,13 +2473,13 @@ public class FeatureDisplay extends EntryGroupPanel
       String keyStr = segment.getFeature().getKey().toString();
       if(keyStr.equals("gene") || keyStr.equals("pseudogene"))
         return getLineCount()-2;
-      else if( isStackingFeature(segment.getFeature(), keyStr) )
+      else if( isStackingFeature(segment.getFeature()) )
       {
         final String parentId = getParentQualifier(segment.getFeature());
         return getLineCount()-4-( getFeatureStackLineNumber(
-            segment.getFeature(), parentId, predicate, feature_comparator)*2);
+            segment.getFeature(), parentId, predicate, false)*2);
       }
-      else if(keyStr.toLowerCase().indexOf("utr") > -1)
+      else if(keyStr.indexOf("utr") > -1 || keyStr.indexOf("UTR") > -1 )
       {
         try
         {
@@ -2460,12 +2489,12 @@ public class FeatureDisplay extends EntryGroupPanel
           for(int i=0; i<visibleFeatures.size(); i++)
           {
             final Feature f = visibleFeatures.elementAt(i);
-            if(isStackingFeature(f, f.getKey().getKeyString()))
+            if(isStackingFeature(f))
             {
               if(parentId.equals( getParentQualifier(f) ))
               {
                 int ln = getLineCount()-4-( getFeatureStackLineNumber(
-                    f, parentId, predicate, feature_comparator)*2);
+                    f, parentId, predicate, false)*2);
 
                 if(ln < 1)
                   ln = 2;
@@ -2477,7 +2506,7 @@ public class FeatureDisplay extends EntryGroupPanel
           }
         }
         catch (Exception e){}
-        return MAX_LINES_ONELINE_PER_FEATURE-5;
+        return MAX_LINES_FEATURE_STACK-5;
       }
       else if(getAllPossibleContigKeys().contains(keyStr))
       {
@@ -2493,15 +2522,14 @@ public class FeatureDisplay extends EntryGroupPanel
         {
           final String thisKeyStr = f.getKey().getKeyString();
           if( !thisKeyStr.equals("gene") && !thisKeyStr.equals("pseudogene") &&
-              !isStackingFeature(f, thisKeyStr) &&
-              thisKeyStr.toLowerCase().indexOf("utr") == -1 &&
+              !isStackingFeature(f) &&
+              (thisKeyStr.indexOf("utr") == -1 || thisKeyStr.indexOf("UTR") == -1 ) &&
               !getAllPossibleContigKeys().contains(thisKeyStr) )
             return true;
           return false;
         }
       };
-      int ln = getFeatureStackLineNumber(segment.getFeature(), null, predicate2, 
-          feature_position_comparator);
+      int ln = getFeatureStackLineNumber(segment.getFeature(), null, predicate2, true);
       if(ln % 2 == 0)
         return 3;
 
@@ -2913,7 +2941,7 @@ public class FeatureDisplay extends EntryGroupPanel
     int extra_line_count;
 
     if(getFeatureStackViewFlag())
-      return MAX_LINES_ONELINE_PER_FEATURE;
+      return MAX_LINES_FEATURE_STACK;
     else if(getOneLinePerEntryFlag())  // some number of entry lines
       extra_line_count = getEntryGroup().size();
     else    // three frame line
@@ -4563,7 +4591,7 @@ public class FeatureDisplay extends EntryGroupPanel
         visRange = getVisibleRange();
       final FeatureVector visFeatures = getSortedFeaturesInRange(visRange);
       
-      int maxOverlaps = 3;
+      short maxOverlaps = 2;
       for(int i=0; i<visFeatures.size(); i++)
       {
         final Feature f1 = visFeatures.elementAt(i);
@@ -4571,10 +4599,13 @@ public class FeatureDisplay extends EntryGroupPanel
           continue;
         
         final Range r = f1.getMaxRawRange();
-        int cnt = 0;
+        short cnt = 0;
         for(int j=0; j<visFeatures.size(); j++)
         {
           final Feature f2 = visFeatures.elementAt(j);
+          if( f1 == f2 )
+            break;
+
           if(isProteinFeature(f2) && r.overlaps(f2.getMaxRawRange()))
             cnt++;
         }
@@ -4582,9 +4613,11 @@ public class FeatureDisplay extends EntryGroupPanel
           maxOverlaps = cnt;
       }
 
-      if((maxOverlaps+4)*2 != MAX_LINES_ONELINE_PER_FEATURE)
+      if((maxOverlaps+5)*2 != MAX_LINES_FEATURE_STACK)
       {
-        MAX_LINES_ONELINE_PER_FEATURE = (maxOverlaps+4)*2;
+        MAX_LINES_FEATURE_STACK = (short) ((maxOverlaps+5)*2);
+        if(MAX_LINES_FEATURE_STACK > 42)
+          MAX_LINES_FEATURE_STACK = 42;
         fixCanvasSize();
       }
     }
