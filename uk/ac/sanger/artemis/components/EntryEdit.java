@@ -328,6 +328,13 @@ public class EntryEdit extends JFrame
         options.getPropertyTruthValue("overview_one_line_per_entry");
       feature_display.setOneLinePerEntry(option_value);
     }
+    
+    if(options.getProperty("overview_feature_stack_view") != null) 
+    {
+      final boolean option_value =
+        options.getPropertyTruthValue("overview_feature_stack_view");
+      feature_display.setFeatureStackViewFlag(option_value);
+    }
 
     feature_display.addDisplayAdjustmentListener(base_plot_group);
     feature_display.addDisplayAdjustmentListener(one_line_per_entry_display);
