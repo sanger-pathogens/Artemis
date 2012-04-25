@@ -4296,21 +4296,26 @@ public class FeatureDisplay extends EntryGroupPanel
           {
             if(event.isShiftDown())
             {
-              if(new_click_range.getStart().getPosition() >= this_segment.getStart().getPosition() &&
-                 new_click_range.getStart().getPosition() <= this_segment.getStart().getPosition()+60)
+              if( (new_click_range.getStart().getPosition() >= this_segment.getStart().getPosition() &&
+                   new_click_range.getStart().getPosition() <= this_segment.getStart().getPosition()+60) ||
+                  (new_click_range.getEnd().getPosition() <= this_segment.getEnd().getPosition() &&
+                   new_click_range.getEnd().getPosition() >= this_segment.getEnd().getPosition()-60) )
               {
-                click_segment_marker = this_segment.getStart();
-                click_segment_marker_is_start_marker = true;
-                other_end_of_segment_marker = this_segment.getEnd();
-                getEntryGroup().getActionController().startAction();
-                break;
-              }
-              else if(new_click_range.getEnd().getPosition() <= this_segment.getEnd().getPosition() &&
-                      new_click_range.getEnd().getPosition() >= this_segment.getEnd().getPosition()-60)
-              {
-                click_segment_marker = this_segment.getEnd();
-                click_segment_marker_is_start_marker = false;
-                other_end_of_segment_marker = this_segment.getStart();
+                int distFromBeg = new_click_range.getStart().getPosition()-this_segment.getStart().getPosition();
+                int distFromEnd = this_segment.getEnd().getPosition()-new_click_range.getEnd().getPosition();
+                if(distFromBeg < distFromEnd)
+                {
+                  click_segment_marker = this_segment.getStart();
+                  click_segment_marker_is_start_marker = true;
+                  other_end_of_segment_marker = this_segment.getEnd();
+                }
+                else
+                {
+                  click_segment_marker = this_segment.getEnd();
+                  click_segment_marker_is_start_marker = false;
+                  other_end_of_segment_marker = this_segment.getStart();
+                }
+
                 getEntryGroup().getActionController().startAction();
                 break;
               }
