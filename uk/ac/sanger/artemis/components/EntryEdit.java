@@ -1892,8 +1892,12 @@ public class EntryEdit extends JFrame
       catch (Exception ex)
       {
         logger4j.warn("EntryEdit.loadBamAndVcf() "+ex.getMessage());
-        JOptionPane.showMessageDialog(null, ex.getMessage(), "Error",
+        
+        if(ex.getMessage() != null)
+          JOptionPane.showMessageDialog(null, ex.getMessage(), "Error",
             JOptionPane.ERROR_MESSAGE);
+        else
+          ex.printStackTrace();
         return;
       }
 
