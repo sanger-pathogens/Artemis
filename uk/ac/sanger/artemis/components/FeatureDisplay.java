@@ -191,6 +191,9 @@ public class FeatureDisplay extends EntryGroupPanel
   
   private short MAX_LINES_FEATURE_STACK = 10;
   
+  /** expand / collapse stack view, 2 or 1 respectively */
+  private int STACK_EXPAND_FACTOR = 1;
+  
   /** visible features sorted by size */
   private FeatureVector visibleFeaturesSortBySize;
   /** visible features sorted by position */
@@ -1624,7 +1627,7 @@ public class FeatureDisplay extends EntryGroupPanel
  
 // draw drag and drop line
     if(highlight_drop_base > 0)
-    {   
+    { 
       g.setColor(Color.red);
       final int draw_x_position = getLowXPositionOfBase(highlight_drop_base);
       int nlines = 16;
@@ -1638,6 +1641,16 @@ public class FeatureDisplay extends EntryGroupPanel
                  draw_x_position, (nlines*getFontHeight()));
     }
 //  Thread.yield();
+
+    if(getFeatureStackViewFlag())
+    {
+      int w = fm.charWidth('+');
+      g.setColor(Color.RED);
+      if(STACK_EXPAND_FACTOR == 1)
+        g.drawString("+", getDisplayWidth()-w-2, 10);
+      else
+        g.drawString("-", getDisplayWidth()-w-2, 10);
+    }
   }
 
   /**
@@ -2411,8 +2424,8 @@ public class FeatureDisplay extends EntryGroupPanel
         break;
     }
 
-    if((cnt+4)*2  > MAX_LINES_FEATURE_STACK)
-      cnt = (MAX_LINES_FEATURE_STACK-8)/2;
+    if(((cnt*STACK_EXPAND_FACTOR)+8)  > MAX_LINES_FEATURE_STACK)
+      cnt = (MAX_LINES_FEATURE_STACK-8)/STACK_EXPAND_FACTOR;
     return cnt;
   }
   
@@ -2477,7 +2490,7 @@ public class FeatureDisplay extends EntryGroupPanel
       {
         final String parentId = getParentQualifier(segment.getFeature());
         return getLineCount()-4-( getFeatureStackLineNumber(
-            segment.getFeature(), parentId, predicate, false)*2);
+            segment.getFeature(), parentId, predicate, false) * STACK_EXPAND_FACTOR);
       }
       else if(keyStr.indexOf("utr") > -1 || keyStr.indexOf("UTR") > -1 )
       {
@@ -2494,12 +2507,12 @@ public class FeatureDisplay extends EntryGroupPanel
               if(parentId.equals( getParentQualifier(f) ))
               {
                 int ln = getLineCount()-4-( getFeatureStackLineNumber(
-                    f, parentId, predicate, false)*2);
+                    f, parentId, predicate, false) * STACK_EXPAND_FACTOR );
 
                 if(ln < 1)
-                  ln = 2;
-
-                ln--;
+                  ln = STACK_EXPAND_FACTOR;
+                if(STACK_EXPAND_FACTOR == 2)
+                  ln--;
                 return ln;
               }
             }
@@ -4136,6 +4149,21 @@ public class FeatureDisplay extends EntryGroupPanel
    **/
   private void handleCanvasSingleClick(MouseEvent event) 
   {
+    if(getFeatureStackViewFlag())
+    {
+      if(event.getPoint().y < 10 &&
+         event.getPoint().x > getDisplayWidth()-10)
+      {
+        if(STACK_EXPAND_FACTOR == 1) // expand/collapse
+          STACK_EXPAND_FACTOR = 2;
+        else
+          STACK_EXPAND_FACTOR = 1;
+        
+        updateOneLinePerFeatureFlag();
+        return;
+      }
+    }
+    
     click_segment_marker = null;
 
     final Selectable clicked_thing = getThingAtPoint(event.getPoint());
@@ -4296,21 +4324,26 @@ public class FeatureDisplay extends EntryGroupPanel
           {
             if(event.isShiftDown())
             {
-              if(new_click_range.getStart().getPosition() >= this_segment.getStart().getPosition() &&
-                 new_click_range.getStart().getPosition() <= this_segment.getStart().getPosition()+60)
+              if( (new_click_range.getStart().getPosition() >= this_segment.getStart().getPosition() &&
+                   new_click_range.getStart().getPosition() <= this_segment.getStart().getPosition()+60) ||
+                  (new_click_range.getEnd().getPosition() <= this_segment.getEnd().getPosition() &&
+                   new_click_range.getEnd().getPosition() >= this_segment.getEnd().getPosition()-60) )
               {
-                click_segment_marker = this_segment.getStart();
-                click_segment_marker_is_start_marker = true;
-                other_end_of_segment_marker = this_segment.getEnd();
-                getEntryGroup().getActionController().startAction();
-                break;
-              }
-              else if(new_click_range.getEnd().getPosition() <= this_segment.getEnd().getPosition() &&
-                      new_click_range.getEnd().getPosition() >= this_segment.getEnd().getPosition()-60)
-              {
-                click_segment_marker = this_segment.getEnd();
-                click_segment_marker_is_start_marker = false;
-                other_end_of_segment_marker = this_segment.getStart();
+                int distFromBeg = new_click_range.getStart().getPosition()-this_segment.getStart().getPosition();
+                int distFromEnd = this_segment.getEnd().getPosition()-new_click_range.getEnd().getPosition();
+                if(distFromBeg < distFromEnd)
+                {
+                  click_segment_marker = this_segment.getStart();
+                  click_segment_marker_is_start_marker = true;
+                  other_end_of_segment_marker = this_segment.getEnd();
+                }
+                else
+                {
+                  click_segment_marker = this_segment.getEnd();
+                  click_segment_marker_is_start_marker = false;
+                  other_end_of_segment_marker = this_segment.getStart();
+                }
+
                 getEntryGroup().getActionController().startAction();
                 break;
               }
@@ -4576,6 +4609,7 @@ public class FeatureDisplay extends EntryGroupPanel
       add(box, "South");
   }
   
+
   protected void updateOneLinePerFeatureFlag()
   {
     if(getFeatureStackViewFlag())
@@ -4613,9 +4647,9 @@ public class FeatureDisplay extends EntryGroupPanel
           maxOverlaps = cnt;
       }
 
-      if((maxOverlaps+5)*2 != MAX_LINES_FEATURE_STACK)
+      if(((maxOverlaps*STACK_EXPAND_FACTOR)+10) != MAX_LINES_FEATURE_STACK)
       {
-        MAX_LINES_FEATURE_STACK = (short) ((maxOverlaps+5)*2);
+        MAX_LINES_FEATURE_STACK = (short) ((maxOverlaps*STACK_EXPAND_FACTOR)+10);
         if(MAX_LINES_FEATURE_STACK > 42)
           MAX_LINES_FEATURE_STACK = 42;
         fixCanvasSize();
