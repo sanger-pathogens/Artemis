@@ -160,6 +160,7 @@ public class EntryGroupDisplay extends JPanel
     }
 
     validate();
+    repaint();
   }
 
   /**
