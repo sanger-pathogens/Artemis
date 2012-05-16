@@ -22,16 +22,22 @@ package uk.ac.sanger.artemis.components;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.Vector;
@@ -42,6 +48,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JList;
@@ -55,6 +62,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.DocumentEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -73,7 +81,9 @@ import uk.ac.sanger.artemis.util.FileDocument;
 public class ProjectProperty extends JFrame
 {
   private static final long serialVersionUID = 1L;
-  private HashMap<String, HashMap<String, String>> projects;
+  private static HashMap<String, HashMap<String, String>> centralProjects;
+  private static HashMap<String, HashMap<String, String>> userProjects;
+  private Splash splash;
   
   private final static int REFERENCE = 1;
   private final static int ANNOTATION = 2;
@@ -87,7 +97,13 @@ public class ProjectProperty extends JFrame
   
   public ProjectProperty()
   {
+    this(null);
+  }
+  
+  public ProjectProperty(Splash splash)
+  {
     super("Project File Manager");
+    this.splash = splash;
     InputStream ins = 
         this.getClass().getClassLoader().getResourceAsStream("etc/project.properties");
     
@@ -108,6 +124,8 @@ public class ProjectProperty extends JFrame
     {
       e.printStackTrace();
     }
+    centralProjects = getProjectMap(projectProps);
+    projectProps.clear();
     
     final String [] propFiles = 
     {
@@ -135,7 +153,7 @@ public class ProjectProperty extends JFrame
       }
     }
 
-    projects = getProjectMap(projectProps);
+    userProjects = getProjectMap(projectProps);
     createProjectViewer((JPanel) getContentPane());
     pack();
     setVisible(true);
@@ -147,7 +165,13 @@ public class ProjectProperty extends JFrame
     
     final JList projectList = new JList(model);
     final JScrollPane jspList = new JScrollPane(projectList);
-    Object[] items = projects.keySet().toArray();
+    Object[] items = centralProjects.keySet().toArray();
+    Arrays.sort(items);
+    for (int i=0; i<items.length; i++)
+      model.add(i, items[i]);
+    
+    items = userProjects.keySet().toArray();
+    Arrays.sort(items);
     for (int i=0; i<items.length; i++)
       model.add(i, items[i]);
 
@@ -163,18 +187,25 @@ public class ProjectProperty extends JFrame
     setJMenuBar(menuBar);
     final JMenu fileMenu = new JMenu("File");
     menuBar.add(fileMenu);
-    final JMenuItem exitMenu = new JMenuItem("Exit");
+    
+    final JMenuItem exitMenu = new JMenuItem(splash == null ? "Exit" : "Close");
     fileMenu.add(exitMenu);
     exitMenu.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent arg0)
       {
-        int status = JOptionPane.showConfirmDialog(
-            ProjectProperty.this, "Exit?", "Exit", JOptionPane.YES_NO_OPTION);
-        if(status == JOptionPane.YES_OPTION)
-          Splash.exitApp();
+        if (splash == null)
+        {
+          int status = JOptionPane.showConfirmDialog(ProjectProperty.this,
+              "Exit?", "Exit", JOptionPane.YES_NO_OPTION);
+          if (status == JOptionPane.YES_OPTION)
+            Splash.exitApp();
+        }
+        else
+          dispose();
       }
     });
+
 
     final JMenu editMenu = new JMenu("Edit");
     menuBar.add(editMenu);
@@ -187,9 +218,10 @@ public class ProjectProperty extends JFrame
                 "Project Name", "New Project", JOptionPane.QUESTION_MESSAGE);
         if(projName == null)
           return;
-        projects.put(projName, new HashMap<String, String>());
+        userProjects.put(projName, new HashMap<String, String>());
         model.add(model.getSize(), projName);
         projectList.repaint();
+        projectList.setSelectedIndex(model.getSize()-1);
       }
     });
     editMenu.add(addProject);
@@ -197,7 +229,14 @@ public class ProjectProperty extends JFrame
     removeProject.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent arg0)
       {
-        projects.remove(projectList.getSelectedValue());
+        if(projectList.getSelectedValue() == null)
+          return;
+        int status = JOptionPane.showConfirmDialog(
+            ProjectProperty.this, "Remove "+projectList.getSelectedValue()+"?",
+            "Remove Project", JOptionPane.YES_NO_OPTION);
+        if(status != JOptionPane.YES_OPTION)
+          return;
+        userProjects.remove(projectList.getSelectedValue());
         model.remove(projectList.getSelectedIndex());
         projectList.repaint();
         yBox.removeAll();
@@ -208,13 +247,27 @@ public class ProjectProperty extends JFrame
     
     
     //
-    panel.setPreferredSize(new Dimension(650,400));
+    final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+    panel.setPreferredSize(new Dimension(screen.width/2,400));
     panel.setBackground(Color.WHITE);
     
     final JButton openArt = new JButton("OPEN");
-    
     openArt.addActionListener(listener);
-    panel.add(openArt, BorderLayout.SOUTH);
+    final JButton closeButton = new JButton("CLOSE");
+    closeButton .addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent arg0)
+      {
+        dispose();
+      }
+    });
+    
+    Box xBox = Box.createHorizontalBox();
+    xBox.add(openArt);
+    xBox.add(closeButton);
+    xBox.add(Box.createHorizontalGlue());
+    
+    panel.add(xBox, BorderLayout.SOUTH);
     
     final GridBagConstraints c = new GridBagConstraints();
     c.anchor = GridBagConstraints.NORTHWEST;
@@ -246,7 +299,12 @@ public class ProjectProperty extends JFrame
   {
     yBox.removeAll();
     
-    final HashMap<String, String> projProps = projects.get(projectList.getSelectedValue());
+    final HashMap<String, String> projProps;
+    if(centralProjects.containsKey(projectList.getSelectedValue()))
+      projProps = centralProjects.get(projectList.getSelectedValue());
+    else
+      projProps = userProjects.get(projectList.getSelectedValue());
+
     final HashMap<Integer, QualifierTextArea> settings = new HashMap<Integer, QualifierTextArea>();
     for(final String key: projProps.keySet())
     {
@@ -261,11 +319,18 @@ public class ProjectProperty extends JFrame
 
       qta.setText(projProps.get(key));
       qta.getDocument().addDocumentListener(
-          new TextAreaDocumentListener(qta));
+          new TextAreaDocumentListener(qta) {
+            public void updateSize(DocumentEvent e)
+            {
+              projProps.put(key, qta.getText());
+              setQualifierTextAreaSize();
+            }
+          });
 
       xBox.add(qta);
       
       // REMOVE PROPERTY
+      Box yButtons = Box.createVerticalBox();
       final JButton removeProperty = new JButton("X");
       removeProperty.setOpaque(false);
       Font font = removeProperty.getFont().deriveFont(Font.BOLD);
@@ -276,14 +341,46 @@ public class ProjectProperty extends JFrame
       removeProperty.addActionListener(new ActionListener()
       {
         public void actionPerformed(ActionEvent e)
-        {
+        {        
           projProps.remove(key);
           refreshProperties(projectList, yBox, listener);
         }
       });
-      xBox.add(removeProperty);
+      yButtons.add(removeProperty);
       //
+      if(!key.equals("title") && !key.equals("ref"))
+      {
+        final JCheckBox useProperty = new JCheckBox("",true);
+        useProperty.addActionListener(new ActionListener(){
+          public void actionPerformed(ActionEvent arg0)
+          {
+            qta.setEnabled(useProperty.isSelected());
+          }
+        });
+        yButtons.add(useProperty);
+      }
+      
+      if (!key.equals("title"))
+      {
+        final JButton selectButton = new JButton("Add file");
+        selectButton.addActionListener(new ActionListener()
+        {
+          public void actionPerformed(ActionEvent e)
+          {
+            StickyFileChooser fileChooser = new StickyFileChooser();
+            int status = fileChooser.showOpenDialog(ProjectProperty.this);
 
+            if(status == StickyFileChooser.APPROVE_OPTION)
+            {
+              qta.append(System.getProperty("line.separator")+
+                  fileChooser.getSelectedFile().getAbsolutePath());
+            }
+          }
+        });
+        yButtons.add(selectButton);
+      }
+      
+      xBox.add(yButtons);
       yBox.add(xBox);
       
       if(key.equals("ref"))
@@ -294,7 +391,6 @@ public class ProjectProperty extends JFrame
         settings.put(ProjectProperty.NEXT_GEN_DATA, qta);
       else if(key.equals("chado"))
         settings.put(ProjectProperty.CHADO, qta);
-     
     }
     
     // ADD property
@@ -363,10 +459,61 @@ public class ProjectProperty extends JFrame
     return projects;
   }
   
+  /**
+  * Write or re-write properties and insert/update the user.dir property
+  * @param jemProp      properties file
+  * @param uHome        user working directory
+  */
+  protected static void writeProperties()
+  {
+    if(userProjects == null)
+      return;
+    final String prop = System.getProperty("user.home") + File.separator + ".project.properties";
+    File propFile = new File(prop);
+    try
+    {
+      if(userProjects.size() > 0)
+      {
+        propFile.delete();
+        final BufferedWriter bufferedwriter = new BufferedWriter(new FileWriter(propFile));
+        for (String project: userProjects.keySet())
+        {
+          bufferedwriter.write("#");
+          bufferedwriter.newLine();
+          
+          HashMap<String, String> projProps = userProjects.get(project);
+          for(final String key: projProps.keySet())
+          {
+            bufferedwriter.write("project."+project+"."+key+"="+projProps.get(key));
+            bufferedwriter.newLine();
+          }
+        }
+
+        bufferedwriter.close();
+      }
+      else
+        propFile.delete();
+    }
+    catch (FileNotFoundException filenotfoundexception)
+    {
+      System.err.println(prop+" read error");
+    }
+    catch (IOException e)
+    {
+      System.err.println(prop+" i/o error");
+    }
+  }
+  
   class LaunchActionListener implements ActionListener
   {
-    private String args[] = new String[]{};
+    private HashMap<Integer, QualifierTextArea> settings;
+    
     private void setSettings(HashMap<Integer, QualifierTextArea> settings)
+    {
+      this.settings = settings;
+    }
+    
+    private String[] getArgs()
     {
       try
       {
@@ -380,24 +527,27 @@ public class ProjectProperty extends JFrame
       final Vector<String> vann = new Vector<String>();
       for(Integer key: keys)
       {
+        final QualifierTextArea qta = settings.get(key);
+        if(!qta.isEnabled())
+          continue;
         switch(key)
         {
           case ProjectProperty.REFERENCE:
-            vargs.add( settings.get(key).getText() );
+            vargs.add( qta.getText().trim() );
             break;
           case ProjectProperty.ANNOTATION:
-            vann.add( settings.get(key).getText() );
+            vann.add( qta.getText().trim() );
             break;
           case ProjectProperty.NEXT_GEN_DATA:
-            System.setProperty("bam", settings.get(key).getText().replaceAll("\\s+", ","));
+            System.setProperty("bam", qta.getText().trim().replaceAll("\\s+", ","));
             break;
           case ProjectProperty.CHADO:
-            System.setProperty("chado", settings.get(key).getText().trim());
+            System.setProperty("chado", qta.getText().trim());
             break;
         }
       }
       
-      args = new String[vargs.size()+(vann.size()*2)];
+      String[] args = new String[vargs.size()+(vann.size()*2)];
       for(int i=0; i<vargs.size(); i++)
         args[i] = vargs.get(i);
       for(int i=0; i<vann.size(); i++)
@@ -405,6 +555,7 @@ public class ProjectProperty extends JFrame
         args[vargs.size()+(i*2)] = "+";
         args[vargs.size()+(i*2)+1] = vann.get(i);
       }
+      return args;
     }
     
     public void actionPerformed(ActionEvent arg0)
@@ -413,9 +564,24 @@ public class ProjectProperty extends JFrame
       {
         public void run() 
         {
-          final ArtemisMain main_window = new ArtemisMain(args);
-          main_window.setVisible(true);
-          main_window.readArgsAndOptions(args);
+          setCursor(new Cursor(Cursor.WAIT_CURSOR));
+          try
+          {
+            String[] args = getArgs();
+            final ArtemisMain main_window;
+            if (splash == null)
+            {
+              main_window = new ArtemisMain(args);
+              main_window.setVisible(true);
+            }
+            else
+              main_window = (ArtemisMain) splash;
+            main_window.readArgsAndOptions(args);
+          } 
+          finally
+          {
+            setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+          }
         }
       });
     }
