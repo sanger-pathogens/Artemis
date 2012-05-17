@@ -89,11 +89,12 @@ public class ProjectProperty extends JFrame
   private final static int ANNOTATION = 2;
   private final static int NEXT_GEN_DATA = 3;
   private final static int CHADO = 4;
+  private final static int USERPLOT = 5;
   private static org.apache.log4j.Logger logger4j = 
       org.apache.log4j.Logger.getLogger(ProjectProperty.class);
   
   private final static String[] TYPES = 
-    { "title", "ref", "annotation", "bam", "vcf", "chado" };
+    { "title", "ref", "annotation", "bam", "vcf", "userplot", "chado" };
   
   public ProjectProperty()
   {
@@ -230,7 +231,12 @@ public class ProjectProperty extends JFrame
       public void actionPerformed(ActionEvent arg0)
       {
         if(projectList.getSelectedValue() == null)
+        {
+          JOptionPane.showMessageDialog(ProjectProperty.this, 
+              "Select a project from the list to be removed.", 
+              "Remove", JOptionPane.INFORMATION_MESSAGE);
           return;
+        }
         int status = JOptionPane.showConfirmDialog(
             ProjectProperty.this, "Remove "+projectList.getSelectedValue()+"?",
             "Remove Project", JOptionPane.YES_NO_OPTION);
@@ -298,7 +304,7 @@ public class ProjectProperty extends JFrame
                                  final LaunchActionListener listener)
   {
     yBox.removeAll();
-    
+
     final HashMap<String, String> projProps;
     if(centralProjects.containsKey(projectList.getSelectedValue()))
       projProps = centralProjects.get(projectList.getSelectedValue());
@@ -391,6 +397,8 @@ public class ProjectProperty extends JFrame
         settings.put(ProjectProperty.NEXT_GEN_DATA, qta);
       else if(key.equals("chado"))
         settings.put(ProjectProperty.CHADO, qta);
+      else if(key.equals("userplot"))
+        settings.put(ProjectProperty.USERPLOT, qta);
     }
     
     // ADD property
@@ -474,7 +482,7 @@ public class ProjectProperty extends JFrame
     {
       if(userProjects.size() > 0)
       {
-        propFile.delete();
+        propFile.renameTo(new File(propFile.getAbsolutePath()+".bak"));
         final BufferedWriter bufferedwriter = new BufferedWriter(new FileWriter(propFile));
         for (String project: userProjects.keySet())
         {
@@ -484,9 +492,17 @@ public class ProjectProperty extends JFrame
           HashMap<String, String> projProps = userProjects.get(project);
           for(final String key: projProps.keySet())
           {
-            bufferedwriter.write("project."+project+"."+key+"="+projProps.get(key));
+            bufferedwriter.write("project."+project+"."+key+"="+projProps.get(key).trim().replaceAll("\\s+", " ") );
             bufferedwriter.newLine();
           }
+          
+          // unfortunately Properties.store() adds a timestamp as a comment
+          /*myProps.clear();
+          HashMap<String, String> projProps = userProjects.get(project);
+          for(final String key: projProps.keySet())
+            myProps.setProperty("project."+project+"."+key, 
+                projProps.get(key).trim().replaceAll("\\s+", " "));
+          myProps.store(bufferedwriter, null);*/
         }
 
         bufferedwriter.close();
@@ -536,10 +552,15 @@ public class ProjectProperty extends JFrame
             vargs.add( qta.getText().trim() );
             break;
           case ProjectProperty.ANNOTATION:
-            vann.add( qta.getText().trim() );
+            String anns[] = qta.getText().trim().split("\\s+");
+            for(String ann: anns)
+              vann.add( ann );
             break;
           case ProjectProperty.NEXT_GEN_DATA:
             System.setProperty("bam", qta.getText().trim().replaceAll("\\s+", ","));
+            break;
+          case ProjectProperty.USERPLOT:
+            System.setProperty("userplot", qta.getText().trim().replaceAll("\\s+", ","));
             break;
           case ProjectProperty.CHADO:
             System.setProperty("chado", qta.getText().trim());
