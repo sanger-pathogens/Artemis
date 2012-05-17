@@ -58,6 +58,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JToolBar;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
@@ -184,7 +185,7 @@ public class ProjectProperty extends JFrame
     panel.add(yBox, BorderLayout.CENTER);
     
     // menus
-    final JMenuBar menuBar = new JMenuBar();
+/*    final JMenuBar menuBar = new JMenuBar();
     setJMenuBar(menuBar);
     final JMenu fileMenu = new JMenu("File");
     menuBar.add(fileMenu);
@@ -214,15 +215,7 @@ public class ProjectProperty extends JFrame
     addProject.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent arg0)
       {
-        String projName = 
-            JOptionPane.showInputDialog(ProjectProperty.this,
-                "Project Name", "New Project", JOptionPane.QUESTION_MESSAGE);
-        if(projName == null)
-          return;
-        userProjects.put(projName, new HashMap<String, String>());
-        model.add(model.getSize(), projName);
-        projectList.repaint();
-        projectList.setSelectedIndex(model.getSize()-1);
+        addProject(projectList);
       }
     });
     editMenu.add(addProject);
@@ -230,32 +223,46 @@ public class ProjectProperty extends JFrame
     removeProject.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent arg0)
       {
-        if(projectList.getSelectedValue() == null)
-        {
-          JOptionPane.showMessageDialog(ProjectProperty.this, 
-              "Select a project from the list to be removed.", 
-              "Remove", JOptionPane.INFORMATION_MESSAGE);
-          return;
-        }
-        int status = JOptionPane.showConfirmDialog(
-            ProjectProperty.this, "Remove "+projectList.getSelectedValue()+"?",
-            "Remove Project", JOptionPane.YES_NO_OPTION);
-        if(status != JOptionPane.YES_OPTION)
-          return;
-        userProjects.remove(projectList.getSelectedValue());
-        model.remove(projectList.getSelectedIndex());
-        projectList.repaint();
-        yBox.removeAll();
-        yBox.repaint();
+        removeProject(projectList, yBox);
       }
     });
-    editMenu.add(removeProject);
+    editMenu.add(removeProject);*/
     
     
-    //
+    // Add / remove project buttons
+    
+    final JToolBar toolBar = new JToolBar();
+    panel.add(toolBar, BorderLayout.PAGE_START);
     final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
     panel.setPreferredSize(new Dimension(screen.width/2,400));
     panel.setBackground(Color.WHITE);
+    final JButton addProjectButton = new JButton("+");
+    addProjectButton.setOpaque(false);
+    Font font = addProjectButton.getFont().deriveFont(Font.BOLD);
+    addProjectButton.setFont(font);
+    addProjectButton.setToolTipText("ADD PROJECT");
+    addProjectButton.setForeground(new Color(35, 149, 35));
+    addProjectButton.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent arg0)
+      {
+        addProject(projectList);
+      }
+    });
+    toolBar.add(addProjectButton);
+    
+    final JButton removeProjectButton = new JButton("-");
+    removeProjectButton.setOpaque(false);
+    removeProjectButton.setFont(font);
+    removeProjectButton.setToolTipText("REMOVE PROJECT");
+    removeProjectButton.setForeground(new Color(149, 35, 35));
+    removeProjectButton.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent arg0)
+      {
+        removeProject(projectList, yBox);
+      }
+    });
+    toolBar.add(removeProjectButton);
+    
     
     final JButton openArt = new JButton("OPEN");
     openArt.addActionListener(listener);
@@ -291,6 +298,43 @@ public class ProjectProperty extends JFrame
           refreshProperties(projectList, yBox, listener);
       }
     });
+  }
+  
+  private void addProject(final JList projectList)
+  {
+    DefaultListModel model = (DefaultListModel) projectList.getModel();
+    
+    String projName = 
+        JOptionPane.showInputDialog(ProjectProperty.this,
+            "Project Name", "New Project", JOptionPane.QUESTION_MESSAGE);
+    if(projName == null)
+      return;
+    userProjects.put(projName, new HashMap<String, String>());
+    model.add(model.getSize(), projName);
+    projectList.repaint();
+    projectList.setSelectedIndex(model.getSize()-1);
+  }
+  
+  private void removeProject(final JList projectList, final Box yBox)
+  {
+    if(projectList.getSelectedValue() == null)
+    {
+      JOptionPane.showMessageDialog(ProjectProperty.this, 
+          "Select a project from the list to be removed.", 
+          "Remove", JOptionPane.INFORMATION_MESSAGE);
+      return;
+    }
+    DefaultListModel model = (DefaultListModel) projectList.getModel();
+    int status = JOptionPane.showConfirmDialog(
+        ProjectProperty.this, "Remove "+projectList.getSelectedValue()+"?",
+        "Remove Project", JOptionPane.YES_NO_OPTION);
+    if(status != JOptionPane.YES_OPTION)
+      return;
+    userProjects.remove(projectList.getSelectedValue());
+    model.remove(projectList.getSelectedIndex());
+    projectList.repaint();
+    yBox.removeAll();
+    yBox.repaint();
   }
   
   /**
