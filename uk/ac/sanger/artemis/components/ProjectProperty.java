@@ -52,9 +52,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JList;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -366,8 +363,8 @@ public class ProjectProperty extends JFrame
       title.setTitlePosition(TitledBorder.ABOVE_TOP);
 
       qta.setBorder(title);
-
       qta.setText(projProps.get(key));
+
       qta.getDocument().addDocumentListener(
           new TextAreaDocumentListener(qta) {
             public void updateSize(DocumentEvent e)
@@ -596,15 +593,16 @@ public class ProjectProperty extends JFrame
             vargs.add( qta.getText().trim() );
             break;
           case ProjectProperty.ANNOTATION:
-            String anns[] = qta.getText().trim().split("\\s+");
+            // split on un-escaped spaces
+            String anns[] = qta.getText().trim().split("[^(\\)]\\s+");
             for(String ann: anns)
               vann.add( ann );
             break;
           case ProjectProperty.NEXT_GEN_DATA:
-            System.setProperty("bam", qta.getText().trim().replaceAll("\\s+", ","));
+            System.setProperty("bam", qta.getText().trim().replaceAll("[^(\\)]\\s+", ","));
             break;
           case ProjectProperty.USERPLOT:
-            System.setProperty("userplot", qta.getText().trim().replaceAll("\\s+", ","));
+            System.setProperty("userplot", qta.getText().trim().replaceAll("[^(\\)]\\s+", ","));
             break;
           case ProjectProperty.CHADO:
             System.setProperty("chado", qta.getText().trim());
