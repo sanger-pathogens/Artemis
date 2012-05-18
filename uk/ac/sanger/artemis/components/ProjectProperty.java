@@ -26,6 +26,7 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -38,6 +39,7 @@ import java.io.InputStream;
 import java.net.URISyntaxException;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.Vector;
@@ -55,16 +57,17 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import uk.ac.sanger.artemis.components.genebuilder.TextAreaDocumentListener;
 import uk.ac.sanger.artemis.util.Document;
 import uk.ac.sanger.artemis.util.FileDocument;
 
@@ -92,7 +95,7 @@ public class ProjectProperty extends JFrame
       org.apache.log4j.Logger.getLogger(ProjectProperty.class);
   
   private final static String[] TYPES = 
-    { "title", "ref", "annotation", "bam", "vcf", "userplot", "chado" };
+    { "title", "sequence", "annotation", "bam", "vcf", "userplot", "chado" };
   
   public ProjectProperty()
   {
@@ -175,57 +178,13 @@ public class ProjectProperty extends JFrame
       model.add(i, items[i]);
 
     final Box yBox = Box.createVerticalBox();
+    final JScrollPane jspProp = new JScrollPane(yBox);
     final LaunchActionListener listener = new LaunchActionListener();
     projectList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     projectList.setVisibleRowCount(-1);
     panel.add(jspList, BorderLayout.WEST);
-    panel.add(yBox, BorderLayout.CENTER);
-    
-    // menus
-/*    final JMenuBar menuBar = new JMenuBar();
-    setJMenuBar(menuBar);
-    final JMenu fileMenu = new JMenu("File");
-    menuBar.add(fileMenu);
-    
-    final JMenuItem exitMenu = new JMenuItem(splash == null ? "Exit" : "Close");
-    fileMenu.add(exitMenu);
-    exitMenu.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent arg0)
-      {
-        if (splash == null)
-        {
-          int status = JOptionPane.showConfirmDialog(ProjectProperty.this,
-              "Exit?", "Exit", JOptionPane.YES_NO_OPTION);
-          if (status == JOptionPane.YES_OPTION)
-            Splash.exitApp();
-        }
-        else
-          dispose();
-      }
-    });
+    panel.add(jspProp, BorderLayout.CENTER);
 
-
-    final JMenu editMenu = new JMenu("Edit");
-    menuBar.add(editMenu);
-    final JMenuItem addProject = new JMenuItem("Add Project");
-    addProject.addActionListener(new ActionListener(){
-      public void actionPerformed(ActionEvent arg0)
-      {
-        addProject(projectList);
-      }
-    });
-    editMenu.add(addProject);
-    final JMenuItem removeProject = new JMenuItem("Remove Project");
-    removeProject.addActionListener(new ActionListener(){
-      public void actionPerformed(ActionEvent arg0)
-      {
-        removeProject(projectList, yBox);
-      }
-    });
-    editMenu.add(removeProject);*/
-    
-    
     // Add / remove project buttons
     
     final JToolBar toolBar = new JToolBar();
@@ -352,63 +311,37 @@ public class ProjectProperty extends JFrame
     else
       projProps = userProjects.get(projectList.getSelectedValue());
 
-    final HashMap<Integer, QualifierTextArea> settings = new HashMap<Integer, QualifierTextArea>();
-    for(final String key: projProps.keySet())
+    final HashMap<Integer, Vector<JTextField>> settings = new HashMap<Integer, Vector<JTextField>>();
+    // order the keys
+    Object keys[] = projProps.keySet().toArray();
+    Arrays.sort(keys, new TypeComparator());
+
+    for(final Object key: keys)
     {
-      Box xBox = Box.createHorizontalBox();
-      final QualifierTextArea qta = new QualifierTextArea();
-      Border loweredbevel = BorderFactory.createLoweredBevelBorder();
+      final String keyStr = (String) key;
+      final Vector<JTextField> vText = new Vector<JTextField>();
+      
+      Border lineBorder = BorderFactory.createLineBorder(Color.DARK_GRAY);
       TitledBorder title = BorderFactory.createTitledBorder(
-          loweredbevel, key);
+          lineBorder, keyStr);
       title.setTitlePosition(TitledBorder.ABOVE_TOP);
 
-      qta.setBorder(title);
-      qta.setText(projProps.get(key));
-
-      qta.getDocument().addDocumentListener(
-          new TextAreaDocumentListener(qta) {
-            public void updateSize(DocumentEvent e)
-            {
-              projProps.put(key, qta.getText());
-              setQualifierTextAreaSize();
-            }
-          });
-
-      xBox.add(qta);
+      final JPanel propPanel = new JPanel(new GridBagLayout());
+      GridBagConstraints c = new GridBagConstraints();
+      c.gridx = 0;
+      c.gridy = 0;
       
-      // REMOVE PROPERTY
-      Box yButtons = Box.createVerticalBox();
-      final JButton removeProperty = new JButton("X");
-      removeProperty.setOpaque(false);
-      Font font = removeProperty.getFont().deriveFont(Font.BOLD);
-      removeProperty.setFont(font);
-      removeProperty.setToolTipText("REMOVE");
-      removeProperty.setForeground(new Color(139, 35, 35));
-
-      removeProperty.addActionListener(new ActionListener()
-      {
-        public void actionPerformed(ActionEvent e)
-        {        
-          projProps.remove(key);
-          refreshProperties(projectList, yBox, listener);
-        }
-      });
-      yButtons.add(removeProperty);
-      //
-      if(!key.equals("title") && !key.equals("ref"))
-      {
-        final JCheckBox useProperty = new JCheckBox("",true);
-        useProperty.addActionListener(new ActionListener(){
-          public void actionPerformed(ActionEvent arg0)
-          {
-            qta.setEnabled(useProperty.isSelected());
-          }
-        });
-        yButtons.add(useProperty);
-      }
+      c.fill = GridBagConstraints.BOTH;
+      propPanel.setBorder(title);
+      propPanel.setBackground(Color.WHITE);
       
-      if (!key.equals("title"))
+      final String anns[] = projProps.get(keyStr).trim().split("\\s+");
+      for (int i=0; i<anns.length; i++)
+        addProperyToPanel(projectList, propPanel, vText, c, i, anns[i], projProps, keyStr, yBox, listener);
+      
+      if (!keyStr.equals("title") && !keyStr.startsWith("seq") && !keyStr.equals("chado"))
       {
+        Box xBox = Box.createHorizontalBox();
         final JButton selectButton = new JButton("Add file");
         selectButton.addActionListener(new ActionListener()
         {
@@ -419,27 +352,31 @@ public class ProjectProperty extends JFrame
 
             if(status == StickyFileChooser.APPROVE_OPTION)
             {
-              qta.append(System.getProperty("line.separator")+
-                  fileChooser.getSelectedFile().getAbsolutePath());
+              projProps.put(keyStr, projProps.get(keyStr)+" "+
+                            fileChooser.getSelectedFile().getAbsolutePath());
+              refreshProperties(projectList, yBox, listener);
             }
           }
         });
-        yButtons.add(selectButton);
+        c.gridy = c.gridy+1;
+        
+        xBox.add(selectButton);
+        xBox.add(Box.createHorizontalGlue());
+        propPanel.add(xBox, c);
       }
       
-      xBox.add(yButtons);
-      yBox.add(xBox);
+      yBox.add(propPanel);
       
-      if(key.equals("ref"))
-        settings.put(ProjectProperty.REFERENCE, qta);
-      else if(key.equals("annotation"))
-        settings.put(ProjectProperty.ANNOTATION, qta);
-      else if(key.equals("bam") || key.equals("vcf") || key.equals("bcf"))
-        settings.put(ProjectProperty.NEXT_GEN_DATA, qta);
-      else if(key.equals("chado"))
-        settings.put(ProjectProperty.CHADO, qta);
-      else if(key.equals("userplot"))
-        settings.put(ProjectProperty.USERPLOT, qta);
+      if(keyStr.startsWith("seq"))
+        settings.put(ProjectProperty.REFERENCE, vText);
+      else if(keyStr.equals("annotation"))
+        settings.put(ProjectProperty.ANNOTATION, vText);
+      else if(keyStr.equals("bam") || keyStr.equals("vcf") || keyStr.equals("bcf"))
+        settings.put(ProjectProperty.NEXT_GEN_DATA, vText);
+      else if(keyStr.equals("chado"))
+        settings.put(ProjectProperty.CHADO, vText);
+      else if(keyStr.equals("userplot"))
+        settings.put(ProjectProperty.USERPLOT, vText);
     }
     
     // ADD property
@@ -470,6 +407,98 @@ public class ProjectProperty extends JFrame
     listener.setSettings(settings);
   }
 
+  private void addProperyToPanel(final JList projectList,
+                                 final JPanel propPanel,
+                                 final Vector<JTextField> vText,
+                                 final GridBagConstraints c,
+                                 final int index,
+                                 final String ann, 
+                                 final HashMap<String, String> projProps, 
+                                 final String key,
+                                 final Box yBox, 
+                                 final LaunchActionListener listener)
+  {
+    final JTextField qta = new JTextField(45);
+    vText.add(qta);
+    
+    qta.setText(ann);
+    qta.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
+    qta.getDocument().addDocumentListener(new DocumentListener()
+    {
+      private void update()
+      {
+        final String anns[] = projProps.get(key).trim().split("\\s+");
+        String value = "";
+        for(int i=0;i<anns.length;i++)
+        {
+          if(i == index)
+            value += " "+qta.getText();
+          else
+            value += " "+anns[i];
+        }
+        projProps.put(key, value);
+      }
+      
+      public void changedUpdate(DocumentEvent e)
+      {
+        update();
+      }
+      public void insertUpdate(DocumentEvent e)
+      {
+        update();
+      }
+      public void removeUpdate(DocumentEvent e)
+      {
+        update();
+      }
+    });
+    
+    // REMOVE PROPERTY
+    Box xButtons = Box.createHorizontalBox();
+    final JButton removeProperty = new JButton("X");
+    removeProperty.setOpaque(false);
+    Font font = removeProperty.getFont().deriveFont(Font.BOLD);
+    removeProperty.setFont(font);
+    removeProperty.setToolTipText("REMOVE");
+    removeProperty.setForeground(new Color(139, 35, 35));
+    removeProperty.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        final String anns[] = projProps.get(key).trim().split("\\s+");
+        String value = "";
+        for(int i=0;i<anns.length;i++)
+        {
+          if(i != index)
+            value += " "+anns[i];
+        }
+        if(value.equals(""))
+          projProps.remove(key);
+        else
+          projProps.put(key, value.trim());
+        refreshProperties(projectList, yBox, listener);
+      }
+    });
+    xButtons.add(removeProperty);
+    //
+    if(!key.equals("title") && !key.startsWith("seq") && !key.equals("chado"))
+    {
+      final JCheckBox useProperty = new JCheckBox("",true);
+      useProperty.addActionListener(new ActionListener(){
+        public void actionPerformed(ActionEvent arg0)
+        {
+          qta.setEnabled(useProperty.isSelected());
+        }
+      });
+      xButtons.add(useProperty);
+    }
+    xButtons.add(Box.createHorizontalGlue());
+    
+    c.gridy = c.gridy+1;
+    propPanel.add(qta, c);
+    c.gridy = c.gridy+1;
+    propPanel.add(xButtons, c);
+  }
 
   /**
    * Create a project hash of the properties.
@@ -500,7 +529,7 @@ public class ProjectProperty extends JFrame
           else
             thisProj = new HashMap<String, String>();
           thisProj.put(key, value);
-          
+
           projects.put(projName, thisProj);
         }
       }
@@ -563,9 +592,9 @@ public class ProjectProperty extends JFrame
   
   class LaunchActionListener implements ActionListener
   {
-    private HashMap<Integer, QualifierTextArea> settings;
+    private HashMap<Integer, Vector<JTextField>> settings;
     
-    private void setSettings(HashMap<Integer, QualifierTextArea> settings)
+    private void setSettings(HashMap<Integer, Vector<JTextField>> settings)
     {
       this.settings = settings;
     }
@@ -584,28 +613,39 @@ public class ProjectProperty extends JFrame
       final Vector<String> vann = new Vector<String>();
       for(Integer key: keys)
       {
-        final QualifierTextArea qta = settings.get(key);
-        if(!qta.isEnabled())
-          continue;
+        final Vector<JTextField> vText = settings.get(key);
         switch(key)
         {
           case ProjectProperty.REFERENCE:
-            vargs.add( qta.getText().trim() );
+            vargs.add( vText.get(0).getText().trim() );
             break;
           case ProjectProperty.ANNOTATION:
-            // split on un-escaped spaces
-            String anns[] = qta.getText().trim().split("[^(\\)]\\s+");
-            for(String ann: anns)
-              vann.add( ann );
+            for(JTextField ann: vText)
+              if(ann.isEnabled())
+                vann.add( ann.getText().trim() );
             break;
           case ProjectProperty.NEXT_GEN_DATA:
-            System.setProperty("bam", qta.getText().trim().replaceAll("[^(\\)]\\s+", ","));
+            String bam = "";
+            for(JTextField ann: vText)
+              if(ann.isEnabled())
+                bam += ","+ann.getText().trim();
+            if(!bam.equals(""))
+              System.setProperty("bam", bam.replaceFirst(",", ""));
             break;
           case ProjectProperty.USERPLOT:
-            System.setProperty("userplot", qta.getText().trim().replaceAll("[^(\\)]\\s+", ","));
+            String userplot = "";
+            for(JTextField ann: vText)
+            {
+              if(ann.isEnabled())
+                userplot += ","+ann.getText().trim();
+            }
+            if(!userplot.equals(""))
+              System.setProperty("userplot", userplot.replaceFirst(",", ""));
+                
+                
             break;
           case ProjectProperty.CHADO:
-            System.setProperty("chado", qta.getText().trim());
+            System.setProperty("chado", vText.get(0).getText().trim());
             break;
         }
       }
@@ -647,6 +687,21 @@ public class ProjectProperty extends JFrame
           }
         }
       });
+    }
+  }
+  
+  class TypeComparator implements Comparator<Object> 
+  {
+    public int compare(Object o1, Object o2)
+    {
+      String s1 = (String)o1;
+      String s2 = (String)o2;
+      if( s1.equals("title") )
+        return -1;
+      else if(s2.equals("title"))
+        return 1;
+      
+      return s1.compareTo(s2);
     }
   }
   
