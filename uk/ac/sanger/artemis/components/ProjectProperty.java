@@ -45,6 +45,8 @@ import java.util.Properties;
 import java.util.Vector;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -70,12 +72,13 @@ import javax.swing.event.ListSelectionListener;
 
 import uk.ac.sanger.artemis.util.Document;
 import uk.ac.sanger.artemis.util.FileDocument;
+import uk.ac.sanger.artemis.util.StringVector;
 
 /**
  * Project file management system using a properties file.
  * 
  * Example of the syntax for defining a project in the property file:
- * project.Pknowlsei.ref = Pknowlsei:Pk_strainH_chr01
+ * project.Pknowlsei.sequence = Pknowlsei:Pk_strainH_chr01
  * project.Pknowlsei.chado =  genedb-db.sanger.ac.uk:5432/snapshot?genedb_ro
  * project.Pknowlsei.title = Pknowlsei
  */
@@ -190,7 +193,7 @@ public class ProjectProperty extends JFrame
     final JToolBar toolBar = new JToolBar();
     panel.add(toolBar, BorderLayout.PAGE_START);
     final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-    panel.setPreferredSize(new Dimension(screen.width/2,400));
+    panel.setPreferredSize(new Dimension((int)(screen.width/2.5),screen.height/3));
     panel.setBackground(Color.WHITE);
     final JButton addProjectButton = new JButton("+");
     addProjectButton.setOpaque(false);
@@ -324,25 +327,29 @@ public class ProjectProperty extends JFrame
       Border lineBorder = BorderFactory.createLineBorder(Color.DARK_GRAY);
       TitledBorder title = BorderFactory.createTitledBorder(
           lineBorder, keyStr);
-      title.setTitlePosition(TitledBorder.ABOVE_TOP);
+      //title.setTitlePosition(TitledBorder.LEFT);
 
       final JPanel propPanel = new JPanel(new GridBagLayout());
       GridBagConstraints c = new GridBagConstraints();
-      c.gridx = 0;
       c.gridy = 0;
       
       c.fill = GridBagConstraints.BOTH;
       propPanel.setBorder(title);
       propPanel.setBackground(Color.WHITE);
       
-      final String anns[] = projProps.get(keyStr).trim().split("\\s+");
-      for (int i=0; i<anns.length; i++)
-        addProperyToPanel(projectList, propPanel, vText, c, i, anns[i], projProps, keyStr, yBox, listener);
+      //final String anns[] = projProps.get(keyStr).trim().split("\\s+");
+      final Vector<String> anns = splitLine(projProps.get(keyStr).trim());
+      for (int i=0; i<anns.size(); i++)
+      {
+        c.gridx = 0;
+        addProperyToPanel(projectList, propPanel, vText, c, i, anns.get(i), projProps, keyStr, yBox, listener);
+      }
       
-      if (!keyStr.equals("title") && !keyStr.startsWith("seq") && !keyStr.equals("chado"))
+      if (!keyStr.equals("title") && !keyStr.equals("chado"))
       {
         Box xBox = Box.createHorizontalBox();
-        final JButton selectButton = new JButton("Add file");
+        final JButton selectButton = new JButton(
+            keyStr.startsWith("seq") ? "Select " : "Add file");
         selectButton.addActionListener(new ActionListener()
         {
           public void actionPerformed(ActionEvent e)
@@ -352,9 +359,14 @@ public class ProjectProperty extends JFrame
 
             if(status == StickyFileChooser.APPROVE_OPTION)
             {
-              projProps.put(keyStr, projProps.get(keyStr)+" "+
+              if(keyStr.startsWith("seq"))
+                vText.get(0).setText(fileChooser.getSelectedFile().getAbsolutePath());
+              else
+              {
+                projProps.put(keyStr, projProps.get(keyStr)+" "+
                             fileChooser.getSelectedFile().getAbsolutePath());
-              refreshProperties(projectList, yBox, listener);
+                refreshProperties(projectList, yBox, listener);
+              }
             }
           }
         });
@@ -407,6 +419,33 @@ public class ProjectProperty extends JFrame
     listener.setSettings(settings);
   }
 
+  private Vector<String> splitLine(String line)
+  {
+    Vector<String> parts = new Vector<String>();
+    int index = line.indexOf(" ");
+    if(index < 0)
+      parts.add(line);
+    else
+    {
+      int startIndex = 0;
+      line = line.replaceAll("\\s+", " ");
+      while((index = line.indexOf(" ", startIndex)) > -1)
+      {
+        if(line.charAt(index-1) == '\\')
+        {
+          startIndex = index+1;
+          continue;
+        }
+        parts.add(line.substring(0, index));
+        line = line.substring(index+1);
+        startIndex = 0;
+      }
+      parts.add(line);
+    }
+    
+    return parts;
+  }
+  
   private void addProperyToPanel(final JList projectList,
                                  final JPanel propPanel,
                                  final Vector<JTextField> vText,
@@ -418,7 +457,7 @@ public class ProjectProperty extends JFrame
                                  final Box yBox, 
                                  final LaunchActionListener listener)
   {
-    final JTextField qta = new JTextField(45);
+    final JTextField qta = new JTextField(67);
     vText.add(qta);
     
     qta.setText(ann);
@@ -496,7 +535,7 @@ public class ProjectProperty extends JFrame
     
     c.gridy = c.gridy+1;
     propPanel.add(qta, c);
-    c.gridy = c.gridy+1;
+    c.gridx = c.gridx+1;
     propPanel.add(xButtons, c);
   }
 
