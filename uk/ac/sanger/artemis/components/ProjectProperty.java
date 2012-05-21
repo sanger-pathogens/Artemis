@@ -30,6 +30,8 @@ import java.awt.GridBagLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -45,8 +47,6 @@ import java.util.Properties;
 import java.util.Vector;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -63,6 +63,7 @@ import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
@@ -70,9 +71,9 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.util.Document;
 import uk.ac.sanger.artemis.util.FileDocument;
-import uk.ac.sanger.artemis.util.StringVector;
 
 /**
  * Project file management system using a properties file.
@@ -103,6 +104,17 @@ public class ProjectProperty extends JFrame
   public ProjectProperty()
   {
     this(null);
+    
+    final javax.swing.plaf.FontUIResource font_ui_resource =
+        Options.getOptions().getFontUIResource();
+    java.util.Enumeration<Object> keys = UIManager.getDefaults().keys();
+    while(keys.hasMoreElements()) 
+    {
+      Object key = keys.nextElement();
+      Object value = UIManager.get(key);
+      if(value instanceof javax.swing.plaf.FontUIResource) 
+        UIManager.put(key, font_ui_resource);
+    }
   }
   
   public ProjectProperty(Splash splash)
@@ -135,7 +147,7 @@ public class ProjectProperty extends JFrame
     final String [] propFiles = 
     {
       "project.properties",
-      System.getProperty("user.home") + File.separator + ".project.properties"
+      System.getProperty("user.home") + File.separator + ".artemis.project.properties"
     };
     
     for(int i=0; i<propFiles.length; i++)
@@ -197,7 +209,7 @@ public class ProjectProperty extends JFrame
     panel.setBackground(Color.WHITE);
     final JButton addProjectButton = new JButton("+");
     addProjectButton.setOpaque(false);
-    Font font = addProjectButton.getFont().deriveFont(Font.BOLD);
+    Font font = addProjectButton.getFont().deriveFont(Font.BOLD).deriveFont(14.f);
     addProjectButton.setFont(font);
     addProjectButton.setToolTipText("ADD PROJECT");
     addProjectButton.setForeground(new Color(35, 149, 35));
@@ -337,12 +349,23 @@ public class ProjectProperty extends JFrame
       propPanel.setBorder(title);
       propPanel.setBackground(Color.WHITE);
       
-      //final String anns[] = projProps.get(keyStr).trim().split("\\s+");
+      //
+      final Vector<JCheckBox> checkBoxes = new Vector<JCheckBox>();
+      final JButton toggle = new JButton("Toggle");
+      toggle.setToolTipText("toggle "+keyStr+" selection");
+      toggle.addActionListener(new ActionListener(){
+        public void actionPerformed(ActionEvent arg0)
+        {
+           for(JCheckBox cb: checkBoxes)
+             cb.setSelected(!cb.isSelected());
+        }
+      });
+               
       final Vector<String> anns = splitLine(projProps.get(keyStr).trim());
       for (int i=0; i<anns.size(); i++)
       {
         c.gridx = 0;
-        addProperyToPanel(projectList, propPanel, vText, c, i, anns.get(i), projProps, keyStr, yBox, listener);
+        addProperyToPanel(projectList, propPanel, vText, c, i, anns.get(i), projProps, keyStr, yBox, listener, checkBoxes);
       }
       
       if (!keyStr.equals("title") && !keyStr.equals("chado"))
@@ -372,9 +395,15 @@ public class ProjectProperty extends JFrame
         });
         c.gridy = c.gridy+1;
         
+        c.gridx = 0;
         xBox.add(selectButton);
         xBox.add(Box.createHorizontalGlue());
+        if(checkBoxes.size() > 1) // add toggle option
+          xBox.add(toggle, c);
+        
+        c.gridwidth = 2;
         propPanel.add(xBox, c);
+        c.gridwidth = 1;
       }
       
       yBox.add(propPanel);
@@ -455,7 +484,8 @@ public class ProjectProperty extends JFrame
                                  final HashMap<String, String> projProps, 
                                  final String key,
                                  final Box yBox, 
-                                 final LaunchActionListener listener)
+                                 final LaunchActionListener listener,
+                                 final Vector<JCheckBox> cbs)
   {
     final JTextField qta = new JTextField(67);
     vText.add(qta);
@@ -504,6 +534,11 @@ public class ProjectProperty extends JFrame
     {
       public void actionPerformed(ActionEvent e)
       {
+        int status = JOptionPane.showConfirmDialog(
+            ProjectProperty.this, "Remove "+key+"?",
+            "Remove", JOptionPane.YES_NO_OPTION);
+        if(status != JOptionPane.YES_OPTION)
+          return;
         final String anns[] = projProps.get(key).trim().split("\\s+");
         String value = "";
         for(int i=0;i<anns.length;i++)
@@ -523,13 +558,15 @@ public class ProjectProperty extends JFrame
     if(!key.equals("title") && !key.startsWith("seq") && !key.equals("chado"))
     {
       final JCheckBox useProperty = new JCheckBox("",true);
-      useProperty.addActionListener(new ActionListener(){
-        public void actionPerformed(ActionEvent arg0)
+      useProperty.addItemListener(new ItemListener(){
+        public void itemStateChanged(ItemEvent arg0)
         {
           qta.setEnabled(useProperty.isSelected());
         }
       });
+
       xButtons.add(useProperty);
+      cbs.add(useProperty);
     }
     xButtons.add(Box.createHorizontalGlue());
     
@@ -585,7 +622,7 @@ public class ProjectProperty extends JFrame
   {
     if(userProjects == null)
       return;
-    final String prop = System.getProperty("user.home") + File.separator + ".project.properties";
+    final String prop = System.getProperty("user.home") + File.separator + ".artemis.project.properties";
     File propFile = new File(prop);
     try
     {
