@@ -329,6 +329,19 @@ public class ViewMenu extends SelectionMenu
                                  base_plot_group);
       }
     });
+    
+    
+    final JMenuItem intronsSpliceSite =
+        new JMenuItem("Introns without GT/GC start and AG end ...");
+    intronsSpliceSite.addActionListener(new ActionListener() 
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        if(checkEntryGroupSize(MAX_FILTER_FEATURE_COUNT)) 
+          showIntrons(selection, entry_group, goto_event_source,
+              base_plot_group);
+      }
+    });
 
     final JMenuItem bad_feature_keys_item =
       new JMenuItem("Non EMBL Keys ...");
@@ -496,6 +509,7 @@ public class ViewMenu extends SelectionMenu
     feature_filters_menu.add(bad_start_codons_item);
     feature_filters_menu.add(bad_stop_codons_item);
     feature_filters_menu.add(stop_codons_in_translation);
+    feature_filters_menu.add(intronsSpliceSite);
     feature_filters_menu.add(bad_feature_keys_item);
     feature_filters_menu.add(duplicated_keys_item);
     feature_filters_menu.add(overlapping_cds_features_item);
@@ -856,6 +870,33 @@ public class ViewMenu extends SelectionMenu
     feature_list_frame.setVisible (true);
   }
 
+  /**
+   *  Popup a FeatureListFrame containing the features that contains 
+   *  introns without GT/GC start and AG end.
+   *  @param selection The Selection to pass to the FeatureList.
+   *  @param entry_group The EntryGroup to pass to the FilteredEntryGroup.
+   *  @param goto_source The GotoEventSource to pass to the FeatureList.
+   *  @param base_plot_group The BasePlotGroup associated with this JMenu -
+   *    needed to call getCodonUsageAlgorithm()
+   **/
+  protected static void showIntrons(final Selection selection,
+                                    final EntryGroup entry_group,
+                                    final GotoEventSource goto_source,
+                                    final BasePlotGroup base_plot_group)
+  {
+    final FeaturePredicate feature_predicate = Selector.getIntronPredicate();
+    final String filter_name = "Contains introns without GT/GC start and AG end";
+    final FilteredEntryGroup filtered_entry_group =
+        new FilteredEntryGroup (entry_group, feature_predicate, filter_name);
+
+      final FeatureListFrame feature_list_frame =
+        new FeatureListFrame (filter_name,
+                              selection, goto_source, filtered_entry_group,
+                              base_plot_group);
+
+    feature_list_frame.setVisible (true);
+  }
+  
   /**
    *  Popup a FeatureListFrame containing the features that have non-EMBL keys.
    *  @param parent_frame The parent JFrame.
