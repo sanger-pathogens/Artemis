@@ -229,7 +229,7 @@ public class ProjectProperty extends JFrame
     removeProjectButton.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent arg0)
       {
-        removeProject(projectList, yBox);
+        removeProject(projectList, yBox, listener);
       }
     });
     toolBar.add(removeProjectButton);
@@ -289,7 +289,7 @@ public class ProjectProperty extends JFrame
     projectList.setSelectedIndex(model.getSize()-1);
   }
   
-  private void removeProject(final JList projectList, final Box yBox)
+  private void removeProject(final JList projectList, final Box yBox, final LaunchActionListener listener)
   {
     if(projectList.getSelectedValue() == null)
     {
@@ -309,6 +309,7 @@ public class ProjectProperty extends JFrame
     projectList.repaint();
     yBox.removeAll();
     yBox.repaint();
+    listener.setSettings(null);
   }
   
   /**
@@ -716,6 +717,7 @@ public class ProjectProperty extends JFrame
       }
       catch(Exception e){ e.printStackTrace(); }
       
+      boolean seenSequence  = false;
       final Set<Integer> keys = settings.keySet();
       final Vector<String> vargs = new Vector<String>();
       final Vector<String> vann = new Vector<String>();
@@ -725,7 +727,10 @@ public class ProjectProperty extends JFrame
         switch(key)
         {
           case ProjectProperty.REFERENCE:
-            vargs.add( vText.get(0).getText().trim() );
+            String ref = vText.get(0).getText().trim();
+            if(!ref.equals(""))
+              seenSequence = true;
+            vargs.add( ref );
             break;
           case ProjectProperty.ANNOTATION:
             for(JTextField ann: vText)
@@ -753,10 +758,16 @@ public class ProjectProperty extends JFrame
                 
             break;
           case ProjectProperty.CHADO:
+            seenSequence = true;
             System.setProperty("chado", vText.get(0).getText().trim());
             break;
         }
       }
+      
+      if(!seenSequence)
+        JOptionPane.showMessageDialog(ProjectProperty.this, 
+            "No sequence file entered for this project.", 
+            "Sequence Entry Missing", JOptionPane.WARNING_MESSAGE);
       
       String[] args = new String[vargs.size()+(vann.size()*2)];
       for(int i=0; i<vargs.size(); i++)
@@ -771,6 +782,12 @@ public class ProjectProperty extends JFrame
     
     public void actionPerformed(ActionEvent arg0)
     {
+      if(settings == null)
+      {
+        JOptionPane.showMessageDialog(ProjectProperty.this, 
+            "Select a project.", "No Project", JOptionPane.INFORMATION_MESSAGE);
+        return;
+      }
       SwingUtilities.invokeLater(new Runnable() 
       {
         public void run() 
