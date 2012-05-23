@@ -784,6 +784,9 @@ abstract public class Splash extends JFrame
     if(save_wd_properties    || save_display_name || save_systematic_names || 
        Options.getOptions().getProperty("artemis.user.dir.prompt") != null)
       saveProperties();
+    
+    // write the user project properties
+    ProjectProperty.writeProperties();
     System.exit(0);
   }
 

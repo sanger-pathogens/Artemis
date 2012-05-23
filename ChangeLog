@@ -1,4 +1,9 @@
 Version XX
+	Addition of a Project File Manager for grouping files together for
+	launching in Artemis. When a project has been added or updated the details 
+	are saved at the end of each session in '.artemis.project.properties' 
+	in the user's home directory. 
+
 	Fix for saving user defined shortcuts between sessions on windows.
 	
 	Add preliminary support for the CRAM format:
