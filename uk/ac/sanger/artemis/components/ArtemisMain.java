@@ -79,6 +79,13 @@ public class ArtemisMain extends Splash
   {
     super("Artemis", "Artemis", version);
 
+    makeMenuItem(file_menu, "Open Project Manager ...", new ActionListener(){
+      public void actionPerformed(ActionEvent e)
+      {
+        new ProjectProperty(ArtemisMain.this);
+      }
+    });
+    
     ActionListener menu_listener = new ActionListener()
     {
       public void actionPerformed(ActionEvent event)

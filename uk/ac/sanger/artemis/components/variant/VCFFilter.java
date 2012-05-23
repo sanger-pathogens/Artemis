@@ -558,6 +558,13 @@ public class VCFFilter extends JFrame
     
     try
     {
+      if(sampleIndex > -1)      // look at a specific sample and ignore
+      {                         // those without values
+        final String sample = record.getFormatValueForSample(sampleIndex);
+        if(sample == null || sample.equals("."))
+          return false;
+      }
+      
       if(record.getFilter().equals(".") || record.getFilter().equals("PASS"))
       {
       }
