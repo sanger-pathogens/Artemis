@@ -490,13 +490,20 @@ public class ProjectProperty extends JFrame
     final JTextField qta = new JTextField(67);
     vText.add(qta);
     
-    qta.setText(ann);
+    if(key.equals("title"))
+      qta.setText(removeSpaceEscape(ann));
+    else
+      qta.setText(ann);
     qta.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
     qta.getDocument().addDocumentListener(new DocumentListener()
     {
       private void update()
       {
-        final String anns[] = projProps.get(key).trim().split("\\s+");
+        final String anns[];
+        if(key.equals("title")) // only takes one value
+          anns = new String[]{ escapeSpace(projProps.get(key).trim()) };
+        else
+          anns = projProps.get(key).trim().split("\\s{2,}");
         String value = "";
         for(int i=0;i<anns.length;i++)
         {
@@ -638,7 +645,13 @@ public class ProjectProperty extends JFrame
           HashMap<String, String> projProps = userProjects.get(project);
           for(final String key: projProps.keySet())
           {
-            bufferedwriter.write("project."+project+"."+key+"="+projProps.get(key).trim().replaceAll("\\s+", " ") );
+            final String val;
+            if(key.equals("title"))
+              val = escapeSpace(projProps.get(key).trim());
+            else
+              val = projProps.get(key).trim().replaceAll("\\s{2,}", " ");
+
+            bufferedwriter.write("project."+project+"."+key+"="+val );
             bufferedwriter.newLine();
           }
           
@@ -664,6 +677,22 @@ public class ProjectProperty extends JFrame
     {
       System.err.println(prop+" i/o error");
     }
+  }
+  
+  /**
+   * Escape the spaces with a double backslash (i.e. '\\ ').
+   * @param s
+   * @return
+   */
+  private static String escapeSpace(String s)
+  {
+    s = removeSpaceEscape(s).replace(" ", "\\\\ ");
+    return s;
+  }
+  
+  private static String removeSpaceEscape(String s)
+  {
+    return s.replace("\\ ", " ");
   }
   
   class LaunchActionListener implements ActionListener
