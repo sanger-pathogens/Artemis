@@ -280,7 +280,10 @@ public class ProjectProperty extends JFrame
             "Project Name", "New Project", JOptionPane.QUESTION_MESSAGE);
     if(projName == null)
       return;
-    userProjects.put(projName, new HashMap<String, String>());
+    
+    final HashMap<String, String> hMap = new HashMap<String, String>();
+    hMap.put("sequence", "");
+    userProjects.put(projName, hMap);
     model.add(model.getSize(), projName);
     projectList.repaint();
     projectList.setSelectedIndex(model.getSize()-1);
