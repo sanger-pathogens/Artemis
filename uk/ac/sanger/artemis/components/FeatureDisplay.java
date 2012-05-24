@@ -90,10 +90,12 @@ public class FeatureDisplay extends EntryGroupPanel
   private int highlight_drop_base = -1;
 
   /** Key code for calling zoomToSelection(). */
-  final static public int ZOOM_TO_SELECTION_KEY = KeyEvent.VK_Z;
+  private final static int ZOOM_TO_SELECTION_KEY = KeyEvent.VK_Z;
+  private final static int ARROW_LEFT = KeyEvent.VK_LEFT;
+  private final static int ARROW_RIGHT = KeyEvent.VK_RIGHT;
 
-  final static public int SCROLLBAR_AT_TOP = 1;
-  final static public int SCROLLBAR_AT_BOTTOM = 2;
+  protected final static int SCROLLBAR_AT_TOP = 1;
+  protected final static int SCROLLBAR_AT_BOTTOM = 2;
 
   private final static int FORWARD = Bases.FORWARD;
   private final static int REVERSE = Bases.REVERSE;
@@ -842,6 +844,16 @@ public class FeatureDisplay extends EntryGroupPanel
     {
       case ZOOM_TO_SELECTION_KEY:
         FeaturePopup.zoomToSelection(feature_display);
+        break;
+      case ARROW_LEFT:
+        feature_display.setFirstBase(
+            feature_display.getFirstVisibleForwardBase()-
+            feature_display.scrollbar.getUnitIncrement());
+        break;
+      case ARROW_RIGHT:
+        feature_display.setFirstBase(
+            feature_display.getFirstVisibleForwardBase()+
+            feature_display.scrollbar.getUnitIncrement());
         break;
       default:
         break;
@@ -3955,6 +3967,12 @@ public class FeatureDisplay extends EntryGroupPanel
     {
       private FeaturePopup popup = null;
 
+      public void mouseEntered(MouseEvent event)
+      {
+        // grab focus to enable scrolling with ARROW_LEFT/RIGHT
+        requestFocus(); 
+      }
+      
       /**
        *  Listen for mouse press events so that we can do popup menus and
        *  selection.
