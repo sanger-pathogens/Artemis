@@ -1029,7 +1029,7 @@ public class GeneUtils
    * @param chado_gene
    * @return true is gene model ranges are correct
    */
-  protected static boolean isStrandOK(final ChadoCanonicalGene chado_gene)
+  public static boolean isStrandOK(final ChadoCanonicalGene chado_gene)
   {
     boolean isRev = chado_gene.getGene().getLocation().isComplement();
     final List<Feature> transcripts = chado_gene.getTranscripts();

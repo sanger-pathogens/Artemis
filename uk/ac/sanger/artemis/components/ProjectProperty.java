@@ -229,7 +229,7 @@ public class ProjectProperty extends JFrame
     removeProjectButton.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent arg0)
       {
-        removeProject(projectList, yBox);
+        removeProject(projectList, yBox, listener);
       }
     });
     toolBar.add(removeProjectButton);
@@ -280,13 +280,16 @@ public class ProjectProperty extends JFrame
             "Project Name", "New Project", JOptionPane.QUESTION_MESSAGE);
     if(projName == null)
       return;
-    userProjects.put(projName, new HashMap<String, String>());
+    
+    final HashMap<String, String> hMap = new HashMap<String, String>();
+    hMap.put("sequence", "");
+    userProjects.put(projName, hMap);
     model.add(model.getSize(), projName);
     projectList.repaint();
     projectList.setSelectedIndex(model.getSize()-1);
   }
   
-  private void removeProject(final JList projectList, final Box yBox)
+  private void removeProject(final JList projectList, final Box yBox, final LaunchActionListener listener)
   {
     if(projectList.getSelectedValue() == null)
     {
@@ -306,6 +309,7 @@ public class ProjectProperty extends JFrame
     projectList.repaint();
     yBox.removeAll();
     yBox.repaint();
+    listener.setSettings(null);
   }
   
   /**
@@ -490,13 +494,20 @@ public class ProjectProperty extends JFrame
     final JTextField qta = new JTextField(67);
     vText.add(qta);
     
-    qta.setText(ann);
+    if(key.equals("title"))
+      qta.setText(removeSpaceEscape(ann));
+    else
+      qta.setText(ann);
     qta.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
     qta.getDocument().addDocumentListener(new DocumentListener()
     {
       private void update()
       {
-        final String anns[] = projProps.get(key).trim().split("\\s+");
+        final String anns[];
+        if(key.equals("title")) // only takes one value
+          anns = new String[]{ escapeSpace(projProps.get(key).trim()) };
+        else
+          anns = projProps.get(key).trim().split("\\s{2,}");
         String value = "";
         for(int i=0;i<anns.length;i++)
         {
@@ -638,7 +649,13 @@ public class ProjectProperty extends JFrame
           HashMap<String, String> projProps = userProjects.get(project);
           for(final String key: projProps.keySet())
           {
-            bufferedwriter.write("project."+project+"."+key+"="+projProps.get(key).trim().replaceAll("\\s+", " ") );
+            final String val;
+            if(key.equals("title"))
+              val = escapeSpace(projProps.get(key).trim());
+            else
+              val = projProps.get(key).trim().replaceAll("\\s{2,}", " ");
+
+            bufferedwriter.write("project."+project+"."+key+"="+val );
             bufferedwriter.newLine();
           }
           
@@ -666,6 +683,22 @@ public class ProjectProperty extends JFrame
     }
   }
   
+  /**
+   * Escape the spaces with a double backslash (i.e. '\\ ').
+   * @param s
+   * @return
+   */
+  private static String escapeSpace(String s)
+  {
+    s = removeSpaceEscape(s).replace(" ", "\\\\ ");
+    return s;
+  }
+  
+  private static String removeSpaceEscape(String s)
+  {
+    return s.replace("\\ ", " ");
+  }
+  
   class LaunchActionListener implements ActionListener
   {
     private HashMap<Integer, Vector<JTextField>> settings;
@@ -684,6 +717,7 @@ public class ProjectProperty extends JFrame
       }
       catch(Exception e){ e.printStackTrace(); }
       
+      boolean seenSequence  = false;
       final Set<Integer> keys = settings.keySet();
       final Vector<String> vargs = new Vector<String>();
       final Vector<String> vann = new Vector<String>();
@@ -693,7 +727,10 @@ public class ProjectProperty extends JFrame
         switch(key)
         {
           case ProjectProperty.REFERENCE:
-            vargs.add( vText.get(0).getText().trim() );
+            String ref = vText.get(0).getText().trim();
+            if(!ref.equals(""))
+              seenSequence = true;
+            vargs.add( ref );
             break;
           case ProjectProperty.ANNOTATION:
             for(JTextField ann: vText)
@@ -721,10 +758,16 @@ public class ProjectProperty extends JFrame
                 
             break;
           case ProjectProperty.CHADO:
+            seenSequence = true;
             System.setProperty("chado", vText.get(0).getText().trim());
             break;
         }
       }
+      
+      if(!seenSequence)
+        JOptionPane.showMessageDialog(ProjectProperty.this, 
+            "No sequence file entered for this project.", 
+            "Sequence Entry Missing", JOptionPane.WARNING_MESSAGE);
       
       String[] args = new String[vargs.size()+(vann.size()*2)];
       for(int i=0; i<vargs.size(); i++)
@@ -739,6 +782,12 @@ public class ProjectProperty extends JFrame
     
     public void actionPerformed(ActionEvent arg0)
     {
+      if(settings == null)
+      {
+        JOptionPane.showMessageDialog(ProjectProperty.this, 
+            "Select a project.", "No Project", JOptionPane.INFORMATION_MESSAGE);
+        return;
+      }
       SwingUtilities.invokeLater(new Runnable() 
       {
         public void run() 
