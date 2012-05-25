@@ -55,7 +55,6 @@ import java.awt.*;
 import java.lang.Math;
 import java.util.Vector;
 import java.util.Comparator;
-import java.util.Enumeration;
 import javax.swing.border.Border;
 import javax.swing.border.BevelBorder;
 
@@ -91,10 +90,12 @@ public class FeatureDisplay extends EntryGroupPanel
   private int highlight_drop_base = -1;
 
   /** Key code for calling zoomToSelection(). */
-  final static public int ZOOM_TO_SELECTION_KEY = KeyEvent.VK_Z;
+  private final static int ZOOM_TO_SELECTION_KEY = KeyEvent.VK_Z;
+  private final static int ARROW_LEFT = KeyEvent.VK_LEFT;
+  private final static int ARROW_RIGHT = KeyEvent.VK_RIGHT;
 
-  final static public int SCROLLBAR_AT_TOP = 1;
-  final static public int SCROLLBAR_AT_BOTTOM = 2;
+  protected final static int SCROLLBAR_AT_TOP = 1;
+  protected final static int SCROLLBAR_AT_BOTTOM = 2;
 
   private final static int FORWARD = Bases.FORWARD;
   private final static int REVERSE = Bases.REVERSE;
@@ -843,6 +844,16 @@ public class FeatureDisplay extends EntryGroupPanel
     {
       case ZOOM_TO_SELECTION_KEY:
         FeaturePopup.zoomToSelection(feature_display);
+        break;
+      case ARROW_LEFT:
+        feature_display.setFirstBase(
+            feature_display.getFirstVisibleForwardBase()-
+            feature_display.scrollbar.getUnitIncrement());
+        break;
+      case ARROW_RIGHT:
+        feature_display.setFirstBase(
+            feature_display.getFirstVisibleForwardBase()+
+            feature_display.scrollbar.getUnitIncrement());
         break;
       default:
         break;
@@ -1593,13 +1604,13 @@ public class FeatureDisplay extends EntryGroupPanel
 
     // we draw the feature backgrounds first then the visible indication
     // that there is a MarkerRange selected, then the feature outlines.
-    Vector segment_borders = new Vector(num_visible_features);
+    final Vector<SegmentBorder> segment_borders = 
+        new Vector<SegmentBorder>(num_visible_features);
 
     for(int i = 0; i < num_visible_features; ++i)
       drawFeature(g, segment_borders, getVisibleFeatures().elementAt(i),
                   true, selected_features, selected_segments,
                   segment_height, seq_length, fm);
-
 
 //  System.out.println("4 "+ System.currentTimeMillis());
     drawBaseSelection(g);
@@ -1611,14 +1622,9 @@ public class FeatureDisplay extends EntryGroupPanel
 
     // draw the segment borders
     g.setColor(Color.black);
-
     final int arrowWidth = getFontWidth() * 8 / 10;
-    Enumeration enumSegmentBorder = segment_borders.elements();
-    while(enumSegmentBorder.hasMoreElements())
-    {
-      SegmentBorder fb = (SegmentBorder)enumSegmentBorder.nextElement();
-      fb.drawSegmentBorder(g, segment_height, arrowWidth);
-    } 
+    for(SegmentBorder sb: segment_borders)
+      sb.drawSegmentBorder(g, segment_height, arrowWidth);
 
 //  System.out.println("6 "+ System.currentTimeMillis());
 
@@ -3703,9 +3709,9 @@ public class FeatureDisplay extends EntryGroupPanel
    *    segment.
    **/
   private SegmentBorder drawSegment(Graphics g, FeatureSegment segment,
-                                    boolean highlight_feature,
-                                    boolean highlight_segment,
-                                    boolean draw_arrow,
+                                    final boolean highlight_feature,
+                                    final boolean highlight_segment,
+                                    final boolean draw_arrow,
                                     final int segment_height) 
   {
     // not on screen
@@ -3713,7 +3719,6 @@ public class FeatureDisplay extends EntryGroupPanel
       return null;
 
     final Feature segment_feature = segment.getFeature();
-
     final int vertical_offset = getSegmentVerticalOffset(segment) + 1;
 
     int segment_start_coord = getSegmentStartCoord(segment);
@@ -3962,6 +3967,12 @@ public class FeatureDisplay extends EntryGroupPanel
     {
       private FeaturePopup popup = null;
 
+      public void mouseEntered(MouseEvent event)
+      {
+        // grab focus to enable scrolling with ARROW_LEFT/RIGHT
+        requestFocus(); 
+      }
+      
       /**
        *  Listen for mouse press events so that we can do popup menus and
        *  selection.
@@ -5277,13 +5288,13 @@ public class FeatureDisplay extends EntryGroupPanel
   {
     final FeatureVector tmpContigFeatures = new FeatureVector();
     // find all fasta_record features
-    Vector contigKeys = getContigKeys();
+    final Vector<String> contigKeys = getContigKeys();
     final FeaturePredicate key_predicate_contig[]
            =  new FeatureKeyQualifierPredicate[contigKeys.size()];
 
     for(int i=0; i<contigKeys.size(); i++)
       key_predicate_contig[i] = new FeatureKeyQualifierPredicate(
-                                             new Key((String)contigKeys.get(i)),
+                                             new Key(contigKeys.get(i)),
                                              null, // match any qialifier
                                              false);
 
@@ -5452,7 +5463,7 @@ public class FeatureDisplay extends EntryGroupPanel
     FeatureVector features_from_entry = getVisibleFeatures();   
     int first;
     int last;
-    Vector contig_keys = getContigKeys();
+    Vector<String> contig_keys = getContigKeys();
 
     for(int i = 0; i < features_from_entry.size(); i++)
     {
@@ -5559,7 +5570,7 @@ public class FeatureDisplay extends EntryGroupPanel
     if(getFeatureStackViewFlag() || getEntryGroup().isReadOnly())
       return;
     
-    final Vector contig_keys = getContigKeys();
+    final Vector<String> contig_keys = getContigKeys();
     final FeatureVector selected_features = getSelection().getAllFeatures();
     if(selected_features.size() == 1 &&
        contig_keys.contains(selected_features.elementAt(0).getKey()))

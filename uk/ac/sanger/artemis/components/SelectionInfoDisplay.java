@@ -192,6 +192,25 @@ public class SelectionInfoDisplay extends CanvasPanel
             new_text.append ("bases " + base_total);
             if(!saw_a_non_cds) 
               new_text.append ("  amino acids " + aa_total);
+
+            try 
+            {
+              final Feature thisFeature = features.elementAt(0);
+              final FeatureSegmentVector this_feature_segments = thisFeature.getSegments();
+              if ( (!saw_a_non_cds || thisFeature.getKey().equals("exon") ) &&
+                    this_feature_segments.size() > 1)
+              {
+                // show the exon number
+                final FeatureSegmentVector selected_segments = selection.getSelectedSegments();
+                for (int i = 0; i < this_feature_segments.size(); ++i)
+                {
+                  FeatureSegment current_segment = this_feature_segments.elementAt(i);
+                  if (selected_segments.indexOf(current_segment) != -1)
+                    new_text.append(" exon no. " + (i + 1));
+                }
+              }
+            }
+            catch (Exception e){}
           }
         }
       }
