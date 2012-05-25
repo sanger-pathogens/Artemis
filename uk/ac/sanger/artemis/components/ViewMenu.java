@@ -33,7 +33,9 @@ import uk.ac.sanger.artemis.components.filetree.FileList;
 import uk.ac.sanger.artemis.components.filetree.RemoteFileNode;
 import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 
+import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
 import uk.ac.sanger.artemis.io.DocumentEntry;
+import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.io.InvalidRelationException;
 import uk.ac.sanger.artemis.io.Key;
 import uk.ac.sanger.artemis.io.Qualifier;
@@ -342,6 +344,20 @@ public class ViewMenu extends SelectionMenu
               base_plot_group);
       }
     });
+    
+    
+    final JMenuItem geneModelCheck =
+        new JMenuItem("Gene model boundary check ...");
+    geneModelCheck.addActionListener(new ActionListener() 
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        if(checkEntryGroupSize(MAX_FILTER_FEATURE_COUNT)) 
+          geneBoundaryCheck(selection, entry_group, goto_event_source,
+              base_plot_group);
+      }
+    });
+    
 
     final JMenuItem bad_feature_keys_item =
       new JMenuItem("Non EMBL Keys ...");
@@ -510,6 +526,9 @@ public class ViewMenu extends SelectionMenu
     feature_filters_menu.add(bad_stop_codons_item);
     feature_filters_menu.add(stop_codons_in_translation);
     feature_filters_menu.add(intronsSpliceSite);
+    if(GeneUtils.isGFFEntry( getEntryGroup() ))
+      feature_filters_menu.add(geneModelCheck);
+    
     feature_filters_menu.add(bad_feature_keys_item);
     feature_filters_menu.add(duplicated_keys_item);
     feature_filters_menu.add(overlapping_cds_features_item);
@@ -890,6 +909,53 @@ public class ViewMenu extends SelectionMenu
         new FilteredEntryGroup (entry_group, feature_predicate, filter_name);
 
       final FeatureListFrame feature_list_frame =
+        new FeatureListFrame (filter_name,
+                              selection, goto_source, filtered_entry_group,
+                              base_plot_group);
+
+    feature_list_frame.setVisible (true);
+  }
+  
+
+  /**
+   *  Popup a FeatureListFrame containing the gene models with boundaries that
+   *  need fixing.
+   *  @param selection The Selection to pass to the FeatureList.
+   *  @param entry_group The EntryGroup to pass to the FilteredEntryGroup.
+   *  @param goto_source The GotoEventSource to pass to the FeatureList.
+   *  @param base_plot_group The BasePlotGroup associated with this JMenu -
+   *    needed to call getCodonUsageAlgorithm()
+   **/
+  protected static void geneBoundaryCheck(
+                                    final Selection selection,
+                                    final EntryGroup entry_group,
+                                    final GotoEventSource goto_source,
+                                    final BasePlotGroup base_plot_group)
+  {
+    final FeaturePredicate feature_predicate = new FeaturePredicate() {
+      // return true if boundary need fixing
+      public boolean testPredicate(Feature feature)
+      {
+        if(!GeneUtils.isGFFEntry(entry_group) ||
+           !feature.getKey().equals("gene"))
+          return false;
+        ChadoCanonicalGene chadoGene =
+            ((GFFStreamFeature)feature.getEmblFeature()).getChadoGene();
+        
+        if(chadoGene == null)
+          return false;
+        if(!GeneUtils.isBoundaryOK(chadoGene))
+          return true;
+        
+        return !GeneUtils.isStrandOK(chadoGene);
+      }
+    };
+    
+    final String filter_name = "Gene Model Boundary";
+    final FilteredEntryGroup filtered_entry_group =
+        new FilteredEntryGroup (entry_group, feature_predicate, filter_name);
+
+    final FeatureListFrame feature_list_frame =
         new FeatureListFrame (filter_name,
                               selection, goto_source, filtered_entry_group,
                               base_plot_group);
