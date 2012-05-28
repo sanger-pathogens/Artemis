@@ -1425,6 +1425,7 @@ public class GeneUtils
       for(int j=0; j<exons.size(); j++)
       {
         final uk.ac.sanger.artemis.Feature exon = (uk.ac.sanger.artemis.Feature)((Feature)exons.get(j)).getUserData();
+        exon.resetColour();
         if(convertToPseudogene)
           exon.set(new Key("pseudogenic_exon"), exon.getLocation(), exon.getQualifiers());
         else
