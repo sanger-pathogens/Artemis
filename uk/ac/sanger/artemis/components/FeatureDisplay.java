@@ -3970,7 +3970,7 @@ public class FeatureDisplay extends EntryGroupPanel
       public void mouseEntered(MouseEvent event)
       {
         // grab focus to enable scrolling with ARROW_LEFT/RIGHT
-        requestFocus(); 
+        requestFocusInWindow(); 
       }
       
       /**

@@ -90,6 +90,7 @@ public class GotoMenu extends SelectionMenu {
     });
 
     goto_feature_start_item = new JMenuItem ("Feature Start");
+    goto_feature_start_item.setAccelerator(START_OF_FEATURE_KEY);
     goto_feature_start_item.addActionListener(new ActionListener () {
       public void actionPerformed (ActionEvent event) {
         gotoFeatureStart ();
@@ -97,6 +98,7 @@ public class GotoMenu extends SelectionMenu {
     });
 
     goto_feature_end_item = new JMenuItem ("Feature End");
+    goto_feature_end_item.setAccelerator(END_OF_FEATURE_KEY);
     goto_feature_end_item.addActionListener(new ActionListener () {
       public void actionPerformed (ActionEvent event) {
         gotoFeatureEnd ();
@@ -151,36 +153,44 @@ public class GotoMenu extends SelectionMenu {
    **/
   final static KeyStroke NAVIGATOR_KEY =
     KeyStroke.getKeyStroke (KeyEvent.VK_G, 
-                            Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()); //InputEvent.CTRL_MASK);
+                            Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()); 
 
   /**
    *  The shortcut to go to the start of the selection.
    **/
   final static KeyStroke START_OF_SELECTION_KEY =
     KeyStroke.getKeyStroke (KeyEvent.VK_LEFT, 
-                            Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()); //InputEvent.CTRL_MASK);
+                            Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
 
   /**
    *  The shortcut to go to the end of the selection.
    **/
   final static KeyStroke END_OF_SELECTION_KEY =
     KeyStroke.getKeyStroke (KeyEvent.VK_RIGHT, 
-                            Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()); //InputEvent.CTRL_MASK);
+                            Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()); 
 
   /**
    *  The shortcut to go to the start of the sequence.
    **/
   final static KeyStroke START_OF_SEQUENCE_KEY =
     KeyStroke.getKeyStroke (KeyEvent.VK_UP, 
-                            Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()); //InputEvent.CTRL_MASK);
+                            Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()); 
 
   /**
    *  The shortcut to go to the end of the sequence.
    **/
   final static KeyStroke END_OF_SEQUENCE_KEY =
     KeyStroke.getKeyStroke (KeyEvent.VK_DOWN, 
-                            Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()); //InputEvent.CTRL_MASK);
+                            Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()); 
 
+  /** The shortcut to go to the start of the sequence. **/
+  final static KeyStroke START_OF_FEATURE_KEY =
+    KeyStroke.getKeyStroke (KeyEvent.VK_COMMA, KeyEvent.SHIFT_MASK); 
+  
+  /** The shortcut to go to the start of the sequence. **/
+  final static KeyStroke END_OF_FEATURE_KEY =
+    KeyStroke.getKeyStroke (KeyEvent.VK_PERIOD, KeyEvent.SHIFT_MASK); 
+  
   /**
    *  Create a new GotoMenu object.
    *  @param frame The JFrame that owns this JMenu.
