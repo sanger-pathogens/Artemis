@@ -1569,7 +1569,12 @@ public class BamView extends JPanel
         continue;
       
       g2.setStroke(originalStroke);
-      g2.setColor(Color.gray);
+      
+      if(highlightSAMRecord != null && 
+          highlightSAMRecord.getReadName().equals(pr.sam1.getReadName()))
+        g2.setColor(Color.black);
+      else
+        g2.setColor(Color.gray);
       
       if(pr.sam2 != null)
       {
@@ -1590,7 +1595,7 @@ public class BamView extends JPanel
         if(pr.sam1.getAlignmentStart() > pr.sam1.getMateAlignmentStart())
         {
           prStart = pr.sam1.getMateAlignmentStart();
-          prEnd = pr.sam1.getAlignmentEnd();
+          prEnd = pr.sam1.getAlignmentStart();
         }
         else
         {
