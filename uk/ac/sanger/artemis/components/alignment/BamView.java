@@ -1476,13 +1476,7 @@ public class BamView extends JPanel
   }
   
   /**
-   * Draw the reads as lines in vertical stacks. The reads are colour 
-   * coded as follows:
-   * 
-   * blue  - reads are unique and are paired with a mapped mate
-   * black - reads are unique and are not paired or have an unmapped mate
-   * green - reads are duplicates
-   * 
+   * Draw paired reads as lines in a vertical stacks. 
    * @param g2
    * @param seqLength
    * @param pixPerBase
@@ -1498,12 +1492,11 @@ public class BamView extends JPanel
     drawSelectionRange(g2, pixPerBase,start, end);
     if(isShowScale())
       drawScale(g2, start, end, pixPerBase, getHeight());
-    
-    Vector<PairedRead> pairedReads = new Vector<PairedRead>();
+
+    final Vector<PairedRead> pairedReads = new Vector<PairedRead>();   
     for(int i=0; i<readsInView.size(); i++)
     {
       SAMRecord samRecord = readsInView.get(i);
-
       if( !samRecord.getReadPairedFlag() ||  // read is not paired in sequencing
           samRecord.getMateUnmappedFlag() )  // mate is unmapped
         continue;
@@ -1512,8 +1505,9 @@ public class BamView extends JPanel
       if(i < readsInView.size()-1)
       {
         samNextRecord = readsInView.get(++i);
-        PairedRead pr = new PairedRead();
-        if(samRecord.getReadName().equals(samNextRecord.getReadName()))
+        final PairedRead pr = new PairedRead();
+        if(samRecord.getReadName().equals(samNextRecord.getReadName()) && 
+           isFromSameBamFile(samRecord, samNextRecord, bamList))
         { 
           if(samRecord.getAlignmentStart() < samNextRecord.getAlignmentStart())
           {
@@ -1525,7 +1519,6 @@ public class BamView extends JPanel
             pr.sam2 = samRecord;
             pr.sam1 = samNextRecord;
           }
-          
         }
         else
         {
@@ -1533,6 +1526,7 @@ public class BamView extends JPanel
           pr.sam1 = samRecord;
           pr.sam2 = null;
         }
+        
         pairedReads.add(pr);
       }
     }
@@ -1556,19 +1550,15 @@ public class BamView extends JPanel
     int lastEnd = 0;
     int baseAtStartOfView = getBaseAtStartOfView();
     Rectangle r = jspView.getViewport().getViewRect();
-    
+
     for(int i=0; i<pairedReads.size(); i++)
     {
       PairedRead pr = pairedReads.get(i);
-      
       if(pr.sam1.getAlignmentStart() > lastEnd)
       {
         ypos = getHeight() - scaleHeight - ydiff;
-        
         if(pr.sam2 != null)
-        {  
           lastEnd = pr.sam2.getAlignmentEnd();
-        }
         else
           lastEnd = pr.sam1.getAlignmentEnd();
       }
@@ -1583,35 +1573,41 @@ public class BamView extends JPanel
       
       if(pr.sam2 != null)
       {
-        int offset1 = getSequenceOffset(pr.sam1.getReferenceName());
-        int offset2 = getSequenceOffset(pr.sam2.getReferenceName());
-        drawTranslucentJointedLine(g2, 
-                (int)((pr.sam1.getAlignmentEnd()+offset1-getBaseAtStartOfView())*pixPerBase),
-                (int)((pr.sam2.getAlignmentStart()+offset2-getBaseAtStartOfView())*pixPerBase), ypos);
-      }
-      else
-      {
-        if(!pr.sam1.getMateUnmappedFlag() &&
-            pr.sam1.getMateReferenceName().equals(pr.sam1.getReferenceName()))
+        if(!readsOverlap(pr.sam1, pr.sam2))
         {
-          int prStart;
-          
-          if(pr.sam1.getAlignmentStart() > pr.sam1.getMateAlignmentStart())
-            prStart = pr.sam1.getAlignmentEnd();
-          else
-            prStart = pr.sam1.getAlignmentStart();
-          
-          int offset = getSequenceOffset(pr.sam1.getReferenceName());
+          int offset1 = getSequenceOffset(pr.sam1.getReferenceName());
+          int offset2 = getSequenceOffset(pr.sam2.getReferenceName());
           drawTranslucentJointedLine(g2, 
-              (int)( (prStart+offset-getBaseAtStartOfView())*pixPerBase),
-              (int)( (pr.sam1.getMateAlignmentStart()+offset-getBaseAtStartOfView())*pixPerBase), ypos);
+              (int)((pr.sam1.getAlignmentEnd()+offset1-getBaseAtStartOfView())*pixPerBase),
+              (int)((pr.sam2.getAlignmentStart()+offset2-getBaseAtStartOfView())*pixPerBase), ypos);
         }
+      }
+      else if(!pr.sam1.getMateUnmappedFlag() &&
+               pr.sam1.getProperPairFlag() &&
+               pr.sam1.getMateReferenceName().equals(pr.sam1.getReferenceName()))
+      {
+        final int prStart, prEnd;
+        if(pr.sam1.getAlignmentStart() > pr.sam1.getMateAlignmentStart())
+        {
+          prStart = pr.sam1.getMateAlignmentStart();
+          prEnd = pr.sam1.getAlignmentEnd();
+        }
+        else
+        {
+          prStart = pr.sam1.getAlignmentEnd();
+          prEnd = pr.sam1.getMateAlignmentStart();
+        }
+
+        int offset = getSequenceOffset(pr.sam1.getReferenceName());
+        drawTranslucentJointedLine(g2, 
+              (int)( (prStart+offset-getBaseAtStartOfView())*pixPerBase),
+              (int)( (prEnd  +offset-getBaseAtStartOfView())*pixPerBase), ypos);
       }
       
       if(colourByCoverageColour.isSelected())
         g2.setColor(getColourByCoverageColour(pr.sam1));
-      else if( pr.sam1.getReadNegativeStrandFlag() && // strand of the query (1 for reverse)
-          ( pr.sam2 != null && pr.sam2.getReadNegativeStrandFlag() ) )
+      else if(   pr.sam2 != null && 
+              !( pr.sam1.getReadNegativeStrandFlag() ^ pr.sam2.getReadNegativeStrandFlag() ) )
         g2.setColor(Color.red);
       else
         g2.setColor(Color.blue);
@@ -1621,6 +1617,53 @@ public class BamView extends JPanel
       if(pr.sam2 != null)
         drawRead(g2, pr.sam2, pixPerBase, ypos, baseAtStartOfView);
     }
+  }
+  
+  /**
+   * Check if two records are from the same BAM file
+   * @param sam1
+   * @param sam2
+   * @param bamList
+   * @return
+   */
+  private boolean isFromSameBamFile(final SAMRecord sam1, 
+                                    final SAMRecord sam2, 
+                                    final List<String> bamList)
+  {
+    if(bamList == null || bamList.size()<2)
+      return true;
+
+    final Object o1 = sam1.getAttribute("FL");
+    final Object o2 = sam2.getAttribute("FL");
+    if(o1 != null && o2 != null)
+      if( (Integer)o1 != (Integer)o2 )
+        return false;
+    
+    return true;
+  }
+  
+  
+  /**
+   * Check if two records overlap
+   * @param s1
+   * @param s2
+   * @return true id the two reads overlap
+   */
+  private boolean readsOverlap(final SAMRecord s1, 
+                               final SAMRecord s2)
+  {
+    if( (s2.getAlignmentStart() >= s1.getAlignmentStart() &&
+         s2.getAlignmentStart() <= s1.getAlignmentEnd()) ||
+        (s2.getAlignmentEnd()   >= s1.getAlignmentStart() &&
+         s2.getAlignmentEnd()   <= s1.getAlignmentEnd()) )
+      return true;
+    
+    if( (s1.getAlignmentStart() >= s2.getAlignmentStart() &&
+         s1.getAlignmentStart() <= s2.getAlignmentEnd()) ||
+        (s1.getAlignmentEnd()   >= s2.getAlignmentStart() &&
+         s1.getAlignmentEnd()   <= s2.getAlignmentEnd()) )
+     return true;
+    return false;
   }
   
   /**
@@ -3318,7 +3361,7 @@ public class BamView extends JPanel
           {
             public void actionPerformed(ActionEvent e) 
             {
-              openFileViewer(thisSAMRecord, getMate(thisSAMRecord));
+              openFileViewer(thisSAMRecord, getMate(thisSAMRecord), bamList);
             }
           });
           popup.add(showDetails);
@@ -3329,14 +3372,24 @@ public class BamView extends JPanel
     }
   }
   
-  protected static void openFileViewer(SAMRecord readRecord, SAMRecord mateRecord)
+  protected static void openFileViewer(SAMRecord readRecord, SAMRecord mateRecord, List<String> bamList)
   {
     FileViewer viewDetail = new FileViewer(readRecord.getReadName(), true, false, false);
-    appendToDetailView(readRecord, mateRecord, viewDetail);
+    appendToDetailView(readRecord, mateRecord, viewDetail, bamList);
   }
   
-  private static void appendToDetailView(SAMRecord thisSAMRecord, SAMRecord thisSAMRecordMate, FileViewer viewDetail)
+  private static void appendToDetailView(final SAMRecord thisSAMRecord, 
+                                         final SAMRecord thisSAMRecordMate, 
+                                         final FileViewer viewDetail, 
+                                         final List<String> bamList)
   {
+    if(bamList.size() > 1 && thisSAMRecord.getAttribute("FL") != null)
+    {
+      int bamIndex = (Integer)thisSAMRecord.getAttribute("FL");
+      if(bamIndex < bamList.size())
+        viewDetail.appendString("File                  "+bamList.get(bamIndex)+"\n\n", Level.INFO);
+    }
+    
     viewDetail.appendString("Read Name             "+thisSAMRecord.getReadName()+"\n", Level.INFO);
     viewDetail.appendString("Coordinates           "+thisSAMRecord.getAlignmentStart()+".."+
                                                      thisSAMRecord.getAlignmentEnd()+"\n", Level.DEBUG);
