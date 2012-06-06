@@ -920,19 +920,14 @@ public class BamView extends JPanel
   {
     ruler.start = start;
     ruler.end = end;
-    ruler.repaint();
-    
-    int ypos = 0;
 
+    int ypos = 0;
     String refSeq = null;
     int refSeqStart = start;
     
     end = start + ( mainPanel.getWidth() * ALIGNMENT_PIX_PER_BASE );
     if(bases != null)
     {
-      // draw the reference sequence
-      ypos+=11;
-
       try
       {
         int seqEnd = end+2;
@@ -944,19 +939,15 @@ public class BamView extends JPanel
         refSeq = 
           bases.getSubSequence(new Range(refSeqStart, seqEnd), Bases.FORWARD).toUpperCase();
         
-        g2.setColor(LIGHT_GREY);
-        g2.fillRect(0, ypos-11, mainPanel.getWidth(), 11);
-        drawSelectionRange(g2, ALIGNMENT_PIX_PER_BASE, start, end);
-        g2.setColor(Color.black);
-        g2.drawString(refSeq, 0, ypos);
+        ruler.refSeq = refSeq;
       }
       catch (OutOfRangeException e)
       {
         e.printStackTrace();
       }
     }
-    else
-      drawSelectionRange(g2, ALIGNMENT_PIX_PER_BASE, start, end);
+    ruler.repaint();
+    drawSelectionRange(g2, ALIGNMENT_PIX_PER_BASE, start, end, Color.PINK);
 
     g2.setStroke(new BasicStroke (2.f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
     
@@ -1039,7 +1030,7 @@ public class BamView extends JPanel
     else
       g2.setColor(Color.blue);
     
-    Color col = g2.getColor();
+    final Color col = g2.getColor();
     int xpos;
     int len    = 0;
     int refPos = 0;
@@ -1077,7 +1068,8 @@ public class BamView extends JPanel
         g2.drawString(readSeq.substring(readPos, readPos+1), 
                       refPos*ALIGNMENT_PIX_PER_BASE, ypos);
         
-
+        if(isSNPs)
+          g2.setColor(col);
       }
           
       // look for insertions
@@ -1184,7 +1176,7 @@ public class BamView extends JPanel
    */
   private void drawLineView(Graphics2D g2, int seqLength, float pixPerBase, int start, int end)
   {
-    drawSelectionRange(g2, pixPerBase,start, end);
+    drawSelectionRange(g2, pixPerBase,start, end, Color.PINK);
     if(isShowScale())
       drawScale(g2, start, end, pixPerBase, getHeight());
     
@@ -1310,7 +1302,7 @@ public class BamView extends JPanel
                              int start, 
                              int end)
   {
-    drawSelectionRange(g2, pixPerBase,start, end);
+    drawSelectionRange(g2, pixPerBase,start, end, Color.PINK);
     if(isShowScale())
       drawScale(g2, start, end, pixPerBase, getHeight());
 
@@ -1396,7 +1388,7 @@ public class BamView extends JPanel
                                    int start, 
                                    int end)
   {
-    drawSelectionRange(g2, pixPerBase,start, end);   
+    drawSelectionRange(g2, pixPerBase,start, end, Color.PINK);   
     BasicStroke stroke = new BasicStroke(
         1.3f,
         BasicStroke.CAP_BUTT, 
@@ -1489,7 +1481,7 @@ public class BamView extends JPanel
                                    int start, 
                                    int end)
   {
-    drawSelectionRange(g2, pixPerBase,start, end);
+    drawSelectionRange(g2, pixPerBase,start, end, Color.PINK);
     if(isShowScale())
       drawScale(g2, start, end, pixPerBase, getHeight());
 
@@ -1965,7 +1957,7 @@ public class BamView extends JPanel
    * @param start
    * @param end
    */
-  private void drawSelectionRange(Graphics2D g2, float pixPerBase, int start, int end)
+  private void drawSelectionRange(Graphics2D g2, float pixPerBase, int start, int end, Color c)
   {
     if(getSelection() != null)
     {
@@ -1982,7 +1974,7 @@ public class BamView extends JPanel
         int x = (int) (pixPerBase*(rangeStart-getBaseAtStartOfView()));
         int width = (int) (pixPerBase*(rangeEnd-rangeStart+1));
         
-        g2.setColor(Color.pink);
+        g2.setColor(c);
         g2.fillRect(x, 0, width, getHeight());
       }
     }
@@ -3240,15 +3232,15 @@ public class BamView extends JPanel
   private class Ruler extends JPanel
   {
     private static final long serialVersionUID = 1L;
-    int start;
-    int end;
+    protected int start;
+    protected int end;
+    protected String refSeq;
 
     public Ruler()
     {
       super();
-      setPreferredSize(new Dimension(mainPanel.getWidth(), 15));
+      setPreferredSize(new Dimension(mainPanel.getWidth(), 26));
       setBackground(Color.white);
-      setFont(getFont().deriveFont(11.f));
     }
 
     public void paintComponent(Graphics g)
@@ -3261,17 +3253,33 @@ public class BamView extends JPanel
     private void drawBaseScale(Graphics2D g2, int start, int end, int ypos)
     {
       int startMark = (((int)(start/10))*10)+1;
-
       if(end > getSequenceLength())
         end = getSequenceLength();
-      
-      for(int i=startMark; i<end; i+=10)
+
+      for(int i=startMark; i<end; i+=20)
       {
         int xpos = (i-start)*ALIGNMENT_PIX_PER_BASE;
         g2.drawString(Integer.toString(i), xpos, ypos);
+      }
         
+      for(int i=startMark; i<end; i+=10)
+      {
+        int xpos = (i-start)*ALIGNMENT_PIX_PER_BASE;
         xpos+=(ALIGNMENT_PIX_PER_BASE/2);
         g2.drawLine(xpos, ypos+1, xpos, ypos+5);
+      }
+      
+      if(refSeq != null)
+      {
+        ypos+=15;
+        g2.setColor(LIGHT_GREY);
+        g2.fillRect(0, ypos-11, getWidth(), 11);
+
+        g2.translate(0, 16);
+        drawSelectionRange(g2, ALIGNMENT_PIX_PER_BASE, start, end, Color.yellow);
+        g2.translate(0, -16);
+        g2.setColor(Color.black);
+        g2.drawString(refSeq, 0, ypos-2);
       }
     }
   }
