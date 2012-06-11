@@ -127,7 +127,6 @@ public class EntryEdit extends JFrame
 
   private SelectionInfoDisplay selection_info;
  
-  private ChadoTransactionManager ctm = new ChadoTransactionManager();
   private CommitButton commitButton;
   private static org.apache.log4j.Logger logger4j = 
     org.apache.log4j.Logger.getLogger(EntryEdit.class);
@@ -168,7 +167,9 @@ public class EntryEdit extends JFrame
         setTitle("Artemis Entry Edit: " + name);
 
       if(getEntryGroup().getDefaultEntry().getEMBLEntry() instanceof DatabaseDocumentEntry)
-      {       
+      {
+        ChadoTransactionManager ctm = getDatabaseDocumentEntry().getChadoTransactionManager();
+        
         getEntryGroup().addFeatureChangeListener(ctm);
         getEntryGroup().addEntryChangeListener(ctm);
         getEntryGroup().getBases().addSequenceChangeListener(ctm, 0);
@@ -676,6 +677,18 @@ public class EntryEdit extends JFrame
   {
     return entry_group;
   }
+  
+  /**
+   * Return the database document entry if present or null.
+   * @return
+   */
+  private DatabaseDocumentEntry getDatabaseDocumentEntry() 
+  {
+    for(int i=0; i<entry_group.size(); i++)
+      if(entry_group.elementAt(i).getEMBLEntry() instanceof DatabaseDocumentEntry)
+        return (DatabaseDocumentEntry) entry_group.elementAt(i).getEMBLEntry();
+    return null;
+  }
 
   /**
    *  Returns a Selection object containing the selected features/exons.
@@ -724,8 +737,12 @@ public class EntryEdit extends JFrame
     setVisible(false);
    
     // chado transaction manager
-    getEntryGroup().removeFeatureChangeListener(ctm);
-    getEntryGroup().removeEntryChangeListener(ctm);
+    if(getDatabaseDocumentEntry() != null)
+    {
+      ChadoTransactionManager ctm = getDatabaseDocumentEntry().getChadoTransactionManager();
+      getEntryGroup().removeFeatureChangeListener(ctm);
+      getEntryGroup().removeEntryChangeListener(ctm);
+    }
     
     if(commitButton != null)
     {
@@ -1293,7 +1310,8 @@ public class EntryEdit extends JFrame
         {
           public void actionPerformed(ActionEvent event)
           {
-            commitToDatabase(entry_group, ctm, EntryEdit.this, 
+            commitToDatabase(entry_group,
+                getDatabaseDocumentEntry().getChadoTransactionManager(), EntryEdit.this, 
                 selection, goto_event_source, base_plot_group);
           }
         });
@@ -2072,7 +2090,7 @@ public class EntryEdit extends JFrame
    * @param getGotoEventSource
    * @param base_plot_group
    * @param force force the commit - i.e. commit everything that doesn't
-   * trow an exception
+   * throw an exception
    * @return
    */
   private static boolean commitToDatabase(final EntryGroup entry_group,
@@ -2296,11 +2314,13 @@ public class EntryEdit extends JFrame
     private static final long serialVersionUID = 1L;
     private Color DEFAULT_FOREGROUND;
     private CommitFrame commitFrame;
+    private final ChadoTransactionManager ctm;
     
     public CommitButton()
     {
       super("Commit");
       
+      ctm = getDatabaseDocumentEntry().getChadoTransactionManager();
       setBackground(EntryGroupDisplay.background_colour);
       addActionListener(new ActionListener()
       {
