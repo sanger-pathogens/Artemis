@@ -25,6 +25,7 @@
 package uk.ac.sanger.artemis.io;
 
 import uk.ac.sanger.artemis.Options;
+import uk.ac.sanger.artemis.chado.ChadoTransactionManager;
 import uk.ac.sanger.artemis.util.*;
 
 import java.io.*;
@@ -38,6 +39,7 @@ public class DatabaseDocumentEntry extends GFFDocumentEntry
     implements DocumentEntry 
 {
   private PartialSequence sequence;
+  private ChadoTransactionManager ctm = new ChadoTransactionManager();
   
   public DatabaseDocumentEntry(final Document doc, 
                                final ReadListener listener)
@@ -120,4 +122,17 @@ public class DatabaseDocumentEntry extends GFFDocumentEntry
     return sequence;
   }
   
+  /**
+   *  Returns true if and only if there have been some changes to this Entry
+   *  since the last save.
+   **/
+  public boolean hasUnsavedChanges() 
+  {
+    return ctm.hasTransactions();
+  }
+  
+  public ChadoTransactionManager getChadoTransactionManager()
+  {
+    return ctm;
+  }
 }

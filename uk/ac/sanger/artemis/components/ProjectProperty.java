@@ -507,7 +507,7 @@ public class ProjectProperty extends JFrame
         if(key.equals("title")) // only takes one value
           anns = new String[]{ escapeSpace(projProps.get(key).trim()) };
         else
-          anns = projProps.get(key).trim().split("\\s{2,}");
+          anns = projProps.get(key).trim().split("\\s+");
         String value = "";
         for(int i=0;i<anns.length;i++)
         {
@@ -516,6 +516,10 @@ public class ProjectProperty extends JFrame
           else
             value += " "+anns[i];
         }
+        
+        if(index == anns.length)
+          value += " "+qta.getText();
+        
         projProps.put(key, value);
       }
       

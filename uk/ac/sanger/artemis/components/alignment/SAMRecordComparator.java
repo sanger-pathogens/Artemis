@@ -38,6 +38,16 @@ import net.sf.samtools.SAMRecord;
       int cmp = pr1.getReadName().compareTo(pr2.getReadName());
       if(cmp == 0)
       {
+        Object fl1 = pr1.getAttribute("FL"); // bam file index
+        Object fl2 = pr2.getAttribute("FL");
+        if(fl1 != null && fl2 != null)
+        {
+          if((Integer)fl1 < (Integer)fl2)
+            return -1;
+          else if((Integer)fl1 > (Integer)fl2)
+            return 1;
+        }
+        
         if(pr1.getAlignmentStart() < pr2.getAlignmentStart())
           return -1;
         else
