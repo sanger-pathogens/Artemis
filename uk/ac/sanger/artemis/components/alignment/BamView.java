@@ -402,7 +402,11 @@ public class BamView extends JPanel
     {
       bamIndexFile = new File(bam + ".bai");
       if(!bamIndexFile.exists())
-        bamIndexFile = new File(bam + ".crai");
+      {
+        final File cramIndexFile = new File(bam + ".crai");
+        if(cramIndexFile.exists())
+          return cramIndexFile;
+      }
     }
 
     return bamIndexFile;
