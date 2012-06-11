@@ -113,7 +113,8 @@ public class SAMRecordList extends JPanel
         {
           setCursor(new Cursor(Cursor.WAIT_CURSOR));
           BamView.openFileViewer(bamView.getHighlightSAMRecord(),
-            bamView.getMate(bamView.getHighlightSAMRecord()));
+            bamView.getMate(bamView.getHighlightSAMRecord()),
+            bamView.bamList);
           setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         }
       }
