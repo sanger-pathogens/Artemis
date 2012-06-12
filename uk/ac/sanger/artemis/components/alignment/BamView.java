@@ -50,6 +50,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -72,6 +73,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
@@ -2162,9 +2164,11 @@ public class BamView extends JPanel
   
   private void addToViewMenu(final int thisBamIndex)
   {
-    File f = new File(bamList.get(thisBamIndex));
+    final File f = new File(bamList.get(thisBamIndex));
     final JCheckBoxMenuItem cbBam = new JCheckBoxMenuItem(
-                                     f.getName(), true);
+                                     f.getName(), 
+                                     getImageIcon(getColourByCoverageColour(thisBamIndex)), 
+                                     true);
     bamFilesMenu.add(cbBam);
     cbBam.addActionListener(new ActionListener()
     {
@@ -2179,8 +2183,48 @@ public class BamView extends JPanel
       } 
     });
   }
-
   
+  /**
+   * Refresh the colour of the icons used to identify the
+   * BAM files.
+   */
+  protected void refreshColourOfBamMenu()
+  {
+    final Component cs[] = bamFilesMenu.getMenuComponents();
+    for(Component c : cs)
+    {
+      if(c instanceof JCheckBoxMenuItem)
+      {
+        final JCheckBoxMenuItem cbBam = (JCheckBoxMenuItem) c;
+        final String bam = cbBam.getText();
+        
+        for(int i=0; i<bamList.size(); i++)
+        {
+          final File f = new File(bamList.get(i));
+          if(f.getName().equals(bam))
+          {
+            cbBam.setIcon(getImageIcon(getColourByCoverageColour(i)));
+            break;
+          }
+        }
+      }
+    }
+  }
+  
+  /**
+   * Create an icon of a box using the given colour.
+   * @param c
+   * @return
+   */
+  private ImageIcon getImageIcon(Color c)
+  {
+    BufferedImage image = (BufferedImage)this.createImage(10, 10);
+    Graphics2D g2 = image.createGraphics();
+    g2.setColor(c);
+    g2.fillRect(0, 0, 10, 10);
+    return new ImageIcon(image);
+  }
+
   private void createMenus(JComponent menu)
   {
     final JMenuItem addBam = new JMenuItem("Add BAM ...");
@@ -3042,12 +3086,18 @@ public class BamView extends JPanel
    */
   private Color getColourByCoverageColour(SAMRecord samRecord)
   {
-    LineAttributes lines[] = CoveragePanel.getLineAttributes(bamList.size());
     int fileIndex = 0;
     if(bamList.size()>1)
       fileIndex = (Integer) samRecord.getAttribute("FL");
+    return getColourByCoverageColour(fileIndex); 
+  }
+  
+  private Color getColourByCoverageColour(final int fileIndex)
+  {
+    LineAttributes lines[] = CoveragePanel.getLineAttributes(bamList.size());
     return lines[fileIndex].getLineColour(); 
   }
+  
 
   protected int getMaxBases()
   {
