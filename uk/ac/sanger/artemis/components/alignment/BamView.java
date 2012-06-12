@@ -765,8 +765,6 @@ public class BamView extends JPanel
 
 	mouseOverSAMRecord = null;
     int seqLength = getSequenceLength();
-	float pixPerBase = getPixPerBaseByWidth();
-	
     int start;
     int end;
     
@@ -782,8 +780,12 @@ public class BamView extends JPanel
       end   = start + nbasesInView - 1;
       if(end > seqLength)
         end = seqLength;
+      
+      if(feature_display != null && nbasesInView < feature_display.getMaxVisibleBases())
+        nbasesInView = feature_display.getMaxVisibleBases();
     }
 
+    float pixPerBase = getPixPerBaseByWidth();
     boolean changeToStackView = false;
     MemoryMXBean memory = ManagementFactory.getMemoryMXBean();
     if(laststart != start ||
