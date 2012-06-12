@@ -130,6 +130,7 @@ public class ProjectProperty extends JFrame
           this.getClass().getClassLoader().getResource("etc/project.properties").toURI());
     }
     catch (URISyntaxException e1){}
+    catch (NullPointerException e2) {}
 
     final Properties projectProps = new Properties();
     try
@@ -141,6 +142,8 @@ public class ProjectProperty extends JFrame
     {
       e.printStackTrace();
     }
+    catch (NullPointerException e2) {}
+    
     centralProjects = getProjectMap(projectProps);
     projectProps.clear();
     
