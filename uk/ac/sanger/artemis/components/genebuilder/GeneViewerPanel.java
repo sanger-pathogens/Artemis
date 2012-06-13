@@ -44,6 +44,7 @@ import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.Selection;
 import uk.ac.sanger.artemis.FeatureVector;
 
+import uk.ac.sanger.artemis.components.SegmentBorder;
 import uk.ac.sanger.artemis.io.DatabaseInferredFeature;
 import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.Feature;
@@ -932,152 +933,7 @@ public class GeneViewerPanel extends MapPanel
     
     return null;
   }
-  
-  /**
-   * Draw the features on frame lines.
-   * @param g2d
-   * @param embl_transcript
-   * @param start
-   * @param end
-   * @param ypos
-   * @param fraction
-   */
-  /*private void drawTranscriptOnFrameLine(Graphics2D g2d, Feature embl_transcript, 
-                                         int start, int end, int ypos, 
-                                         float fraction)
-  {
 
-    uk.ac.sanger.artemis.Feature transcript = 
-       (uk.ac.sanger.artemis.Feature)embl_transcript.getUserData();
-    
-    int t_start = border+(int)((embl_transcript.getFirstBase()-start)*fraction);
-    int t_end   = border+(int)((embl_transcript.getLastBase()-start)*fraction);
-    
-    g2d.setColor( transcript.getColour() );
-    int nframe;
-    if(!embl_transcript.getLocation().isComplement())
-      nframe = (3 * getFontHeight() * 2) ;
-    else
-      nframe = (4 * getFontHeight() * 2) ;
-    
-    g2d.drawString(transcript.getIDString(), border, ypos+nframe);
-    drawFeature(g2d, t_start, t_end, 
-                ypos+nframe, transcript.getColour(), 1, 
-                selection.contains(transcript), 2.f);
-    
-    List exons = chado_gene.getSpliceSitesOfTranscript(
-          getQualifier( embl_transcript, "ID" ), "exon");
-        //(String)embl_transcript.getQualifierByName("ID").getValues().get(0));
-    
-    if(exons == null)
-    {
-      if(!overlay_transcripts)
-        ypos += 9 * getFontHeight() * 2;
-      return;
-    }
-    
-    int offset = 0;
-    boolean last_segment = false;
-    
-    if(exons.get(0) instanceof org.gmod.schema.sequence.Feature)
-    {
-      int last_ex_start = 0;
-      int last_ex_end   = 0;
-      int last_ypos     = 0;
-      
-      org.gmod.schema.sequence.Feature start_exon = 
-        (org.gmod.schema.sequence.Feature)exons.get(0);
-      FeatureLoc loc = uk.ac.sanger.artemis.util.DatabaseDocument.getFeatureLoc(
-           new Vector(start_exon.getFeatureLocsForFeatureId()), chado_gene.getSrcfeature_id());
-      
-      if(loc.getStrand().shortValue() == -1)
-      {
-        FeatureLoc loc_last = uk.ac.sanger.artemis.util.DatabaseDocument.getFeatureLoc(
-            new Vector(((org.gmod.schema.sequence.Feature)exons.get(exons.size()-1)).getFeatureLocsForFeatureId()),
-            chado_gene.getSrcfeature_id());
-            
-        if(loc.getFmin().intValue() < loc_last.getFmin().intValue())
-          Collections.reverse(exons);
-      }
-      
-      for(int j=0; j<exons.size(); j++)
-      {           
-        org.gmod.schema.sequence.Feature exon = 
-          (org.gmod.schema.sequence.Feature)exons.get(j);
-        loc = uk.ac.sanger.artemis.util.DatabaseDocument.getFeatureLoc(
-            new Vector(exon.getFeatureLocsForFeatureId()), chado_gene.getSrcfeature_id());
-        
-        int ex_start = border+(int)((loc.getFmin().intValue()+1-start)*fraction);
-        int ex_end   = border+(int)((loc.getFmax().intValue()-start)*fraction);
-           
-        Color exon_col = getColorFromAttributes(exon);
-     
-        offset = getFrameID(chado_gene, loc, j, exons) * getFontHeight() * 2;
-        
-        boolean isForward = false;
-        if(loc.getStrand().shortValue() == 1)
-          isForward = true;
-        
-        if(j == exons.size()-1)
-          last_segment = true;
-        
-        drawExons(g2d, ex_start, ex_end, 
-                  last_ex_start, last_ex_end, last_ypos,
-                  offset, ypos, exon_col,
-                  1, isForward, last_segment, false, 2.f);
-        
-        last_ex_end   = ex_end;
-        last_ex_start = ex_start;
-        last_ypos   = ypos+offset;
-      }
-
-      return;
-    }
-    
-    
-    // build from artemis objects
-    for(int j=0; j<exons.size(); j++)
-    {
-      int last_ex_start = 0;
-      int last_ex_end   = 0;
-      int last_ypos     = 0;
-      
-      Feature embl_exon = (Feature)exons.get(j);
-      
-      uk.ac.sanger.artemis.Feature exon = 
-        (uk.ac.sanger.artemis.Feature)embl_exon.getUserData();
-        
-      FeatureSegmentVector segments = exon.getSegments();
-
-      for(int k=0; k<segments.size(); k++)
-      {
-        FeatureSegment segment = segments.elementAt(k);
-        
-        Range range = segment.getRawRange();
-        offset = segment.getFrameID() * getFontHeight() * 2;
-        
-        int ex_start = border+(int)((range.getStart()-start)*fraction);
-        int ex_end   = border+(int)((range.getEnd()-start)*fraction);
-
-        if(exon.getColour() != null)
-          g2d.setColor( exon.getColour() );
-             
-
-        if(k == segments.size()-1)
-          last_segment = true;
-        
-        drawExons(g2d, ex_start, ex_end, 
-                 last_ex_start, last_ex_end, last_ypos,
-                 offset, ypos, exon.getColour(),
-                 1, segment.isForwardSegment(), last_segment,
-                 selection.contains(exon), 2.f);
-        
-        last_ex_end   = ex_end;
-        last_ex_start = ex_start;
-        last_ypos   = ypos+offset; 
-      }
-    }
-  }*/
   
   /**
    * Draw the transcript and child features.
@@ -1171,6 +1027,7 @@ public class GeneViewerPanel extends MapPanel
               last_segment = true;
 
             selected_size = 2.f;
+            Color borderColor = Color.BLACK;
             if(segments != null)
             {
               for(int k = 0; k < segments.size(); k++)
@@ -1178,12 +1035,15 @@ public class GeneViewerPanel extends MapPanel
                 FeatureSegment segment = segments.elementAt(k);
                 if(range.equals(segment.getRawRange())
                     && selection.contains(segment))
+                {
                   selected_size = 4.f;
+                  borderColor = SegmentBorder.HIGHLIGHT_BORDER_COLOUR;
+                }
               }
             }
 
             drawExons(g2d, ex_start, ex_end, last_ex_start, last_ex_end,
-                last_ypos, 0, ypos, exon.getColour(), 1.5f, exon
+                last_ypos, 0, ypos, exon.getColour(), borderColor, 1.5f, exon
                     .isForwardFeature(), last_segment,
                 selection.contains(exon), selected_size, fontHeight);
 
@@ -1298,12 +1158,12 @@ public class GeneViewerPanel extends MapPanel
   private static void drawExons(Graphics2D g2d, int ex_start, int ex_end, 
                          int last_ex_start, int last_ex_end, int last_ypos,
                          int offset, int ypos, Color exon_colour,
-                         float size,
+                         Color borderColor, float size,
                          boolean isForward, boolean last_segment,
                          boolean selected, float selected_size, int fontHeight)
   {   
-    drawFeature(g2d, ex_start, ex_end, 
-                ypos+offset, exon_colour, size, selected, selected_size, fontHeight);
+    drawFeature(g2d, ex_start, ex_end, ypos+offset, exon_colour, borderColor,
+        size, selected, selected_size, fontHeight);
     
     // draw connections
     if(last_ex_end != 0 ||
