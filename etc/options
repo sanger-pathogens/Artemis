@@ -854,7 +854,8 @@ hyperlinks = \
   PDB http://www.rcsb.org/pdb/explore.do?structureId= \
   AID http://pubchem.ncbi.nlm.nih.gov/assay/assay.cgi?aid= \
   GeneID http://www.ncbi.nlm.nih.gov/sites/entrez?db=gene&cmd=Retrieve&dopt=full_report&list_uids= \
-  Rfam http://rfam.sanger.ac.uk/family/
+  Rfam http://rfam.sanger.ac.uk/family/ \
+  GI http://www.ncbi.nlm.nih.gov/entrez/sutils/girevhist.cgi?val=
 
 # Lookseq url
 #lookseq = http://www.sanger.ac.uk/cgi-bin/teams/team112/lookseq/get_data.pl?
