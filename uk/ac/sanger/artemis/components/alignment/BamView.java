@@ -2172,10 +2172,8 @@ public class BamView extends JPanel
                                      getImageIcon(getColourByCoverageColour(thisBamIndex)), 
                                      true);
     bamFilesMenu.add(cbBam);
-    cbBam.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent e)
-      {
+    cbBam.addItemListener(new ItemListener() {
+      public void itemStateChanged(ItemEvent e) {
         if(cbBam.isSelected())
           hideBamList.remove(new Integer(thisBamIndex));
         else
@@ -2198,19 +2196,23 @@ public class BamView extends JPanel
       if(c instanceof JCheckBoxMenuItem)
       {
         final JCheckBoxMenuItem cbBam = (JCheckBoxMenuItem) c;
-        final String bam = cbBam.getText();
-        
-        for(int i=0; i<bamList.size(); i++)
-        {
-          final File f = new File(bamList.get(i));
-          if(f.getName().equals(bam))
-          {
-            cbBam.setIcon(getImageIcon(getColourByCoverageColour(i)));
-            break;
-          }
-        }
+        final Color col = getColorByJCheckBoxMenuItem(cbBam);
+        if(col != null)
+          cbBam.setIcon(getImageIcon(col));
       }
     }
+  }
+  
+  protected Color getColorByJCheckBoxMenuItem(JCheckBoxMenuItem cbBam)
+  {
+    final String bam = cbBam.getText();
+    for(int i=0; i<bamList.size(); i++)
+    {
+      final File f = new File(bamList.get(i));
+      if(f.getName().equals(bam))
+        return getColourByCoverageColour(i);
+    }
+    return null;
   }
   
   /**
@@ -2218,7 +2220,7 @@ public class BamView extends JPanel
    * @param c
    * @return
    */
-  private ImageIcon getImageIcon(Color c)
+  protected ImageIcon getImageIcon(Color c)
   {
     BufferedImage image = (BufferedImage)this.createImage(10, 10);
     Graphics2D g2 = image.createGraphics();
@@ -2250,6 +2252,17 @@ public class BamView extends JPanel
     });
     
     bamFilesMenu.setFont(addBam.getFont());
+    
+    final JMenuItem groupBams = new JMenuItem("Group BAMs ...");
+    final GroupBamFrame groupsFrame = new GroupBamFrame(this, bamFilesMenu);
+    groupBams.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent arg0)
+      {
+        groupsFrame.updateAndDisplay();
+      }
+    });
+    bamFilesMenu.add(groupBams);
+    bamFilesMenu.addSeparator();
     menu.add(bamFilesMenu);
     
     
