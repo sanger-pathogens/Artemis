@@ -38,6 +38,7 @@ public class SegmentBorder
   private int y;
   private int width;
   private int feature_direction;
+  public static Color HIGHLIGHT_BORDER_COLOUR = new Color(140,25,25);
  
   /**
   * Information stored in this object is used to draw the feature
@@ -78,7 +79,7 @@ public class SegmentBorder
 
       if(highlight_segment)
       {
-        g2d.setColor(new Color(140,25,25));
+        g2d.setColor(HIGHLIGHT_BORDER_COLOUR);
         g2d.setStroke(new BasicStroke(4.f));
       }
       else

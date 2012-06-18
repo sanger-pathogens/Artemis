@@ -58,6 +58,24 @@ public class MapPanel extends JPanel
                            boolean selected, float selected_size,
                            int fontHeight)
   {
+    drawFeature(g2d, start, end, ypos, colour, Color.BLACK, size,
+        selected, selected_size, fontHeight);
+  }
+  
+  /**
+   * Draw rectangular box for a feature.
+   * @param g2d
+   * @param start   start of feature
+   * @param end     end of feature
+   * @param ypos    y position
+   * @param colour  feature colour
+   * @param size    parameter to control the height of the feature
+   */
+  protected static void drawFeature(Graphics2D g2d, int start, int end, 
+                           int ypos, Color colour, Color borderColor, float size,
+                           boolean selected, float selected_size,
+                           int fontHeight)
+  {
     RoundRectangle2D e = new RoundRectangle2D.Float(start, ypos, 
         end-start,
         fontHeight*size, 0, ypos);
@@ -78,7 +96,7 @@ public class MapPanel extends JPanel
       g2d.setStroke(new BasicStroke(1.f));
     
     // draw boundary
-    g2d.setColor(Color.BLACK);
+    g2d.setColor(borderColor);
     g2d.draw(e);
   }
   

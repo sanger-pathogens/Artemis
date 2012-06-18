@@ -87,6 +87,7 @@ import net.sf.samtools.SAMRecord;
           lines =
             LineAttributes.configurePlots(bamView.bamList, 
                 getLineAttributes(size), CoveragePanel.this);
+          bamView.refreshColourOfBamMenu();
         }
       });
       menu.add(configure);

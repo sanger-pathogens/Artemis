@@ -83,7 +83,36 @@ else
     if [ "$1" = "-h" -o "$1" = "--help" -o "$1" = "-help" ]
     then
         cat <<EOF
-usage: $0 [-options options_file] [EMBL/GENBANK/SEQUENCE_FILE [+FEATURE_FILE] [+FEATURE_FILE] ...] ...
+
+SYNOPSIS
+        Artemis: Genome Browser and Annotation Tool
+USAGE
+        $0 [options] <SEQUENCE_FILE> [+FEATURE_FILE ...]
+OPTIONS
+        SEQUENCE_FILE           An EMBL, GenBank, FASTA, or GFF3 file
+        FEATURE_FILE            An Artemis TAB file, or GFF file
+
+        -quiet                  Suppress normal info messages while running
+        -options FILE           Read a text file of options from FILE
+        -debug                  Run using the debugging JVM instead
+        -fast | -fast64         Use the FastVM (hp Tru64 UNIX) with 32/64 bit pointers
+
+        -Dblack_belt_mode=?     Keep warning messages to a minimum [true,false]
+        -Doffset=XXX            Open viewer at base position XXX [integer >= 1]
+        -Duserplot=FILE[,FILE2] Open one or more userplots
+        -Dbam=FILE[,FILE2,...]  Open one or more BAM, VCF or BCF files
+        -Dshow_forward_lines=?  Hide/show forward frame lines [true,false]
+        -Dshow_reverse_lines=?  Hide/show reverse frame lines [true,false]
+        -Dchado="h:p/d?u"       Get Artemis to open this CHADO database
+        -Dread_only             Open CHADO database read-only
+EXAMPLES
+        % art AJ006275.embl
+        % art contigs.fa +annotation.gff +islands.tab
+        % art -Dblack_belt_mode=true -Dbam=ecoli_hiseq.bam E_coli_K12.gbk
+        % art -Duserplot=repeatmap.plot,geecee.plot Plasmid.gff3
+HOMEPAGE
+        http://www.sanger.ac.uk/resources/software/artemis/
+
 EOF
         exit 0
     fi

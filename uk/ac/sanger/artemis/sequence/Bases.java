@@ -478,7 +478,7 @@ public class Bases
     if (start_codon_cache == null) 
     { 
       final int nbytes = getLength() >> 1 >> 1;
-      start_codon_cache = new byte[nbytes];
+      start_codon_cache = new byte[nbytes+1];
     }
 
     return start_codon_cache;
@@ -553,7 +553,7 @@ public class Bases
     range_end_index--;
 
     // whether a codon is a stop codon or not is cached in
-    // 2 bit chuncks (i.e. 4 per byte)
+    // 2 bit chunks (i.e. 4 per byte)
     int ncurrent_byte;
     int bit_position;
     byte bitty;
@@ -713,7 +713,7 @@ public class Bases
     char[] sequence_string = null;
 
     // whether a codon is a stp codon or not is cached in
-    // 2 bit chuncks (i.e. 4 per byte)
+    // 2 bit chunks (i.e. 4 per byte)
     int ncurrent_byte;
     int bit_position;
     int nframe = 0;

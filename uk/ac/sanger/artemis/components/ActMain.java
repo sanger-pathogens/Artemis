@@ -256,7 +256,12 @@ public class ActMain extends Splash
             entry = dbEntrySource.getEntry(dbNode.getFeatureId(), 
                 dbNode.getUserName(), progress_listener);
             
-            boolean readOnly = DatabaseTreeNode.setOrganismProps(dbNode.getOrganism().getOrganismProps());
+            boolean isMitochondrial = false;
+            if(dbNode.getFeatureType() != null &&
+               dbNode.getFeatureType().startsWith("mitochondrial_"))
+              isMitochondrial = true;
+            boolean readOnly = DatabaseTreeNode.setOrganismProps(
+                dbNode.getOrganism().getOrganismProps(), isMitochondrial);
             embl_entry = (DatabaseDocumentEntry)entry.getEMBLEntry();
             ((DatabaseDocumentEntry)embl_entry).setReadOnly(readOnly);
           }
