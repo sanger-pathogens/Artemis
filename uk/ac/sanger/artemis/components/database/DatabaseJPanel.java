@@ -183,7 +183,12 @@ public class DatabaseJPanel extends JPanel
       final String id = seq_node.getFeatureId();
       if(id != null)
       {
-    	boolean readOnly = DatabaseTreeNode.setOrganismProps(seq_node.getOrganism().getOrganismProps());
+        boolean isMitochondrial = false;
+        if(seq_node.getFeatureType() != null &&
+           seq_node.getFeatureType().startsWith("mitochondrial_"))
+          isMitochondrial = true;
+    	boolean readOnly = DatabaseTreeNode.setOrganismProps(
+    	    seq_node.getOrganism().getOrganismProps(), isMitochondrial);
         getEntryEditFromDatabase(id, entry_source, tree, 
             status_line, stream_progress_listener, 
             splitGFFEntry, splash_main, 
@@ -276,7 +281,11 @@ public class DatabaseJPanel extends JPanel
       f = it.next().getFeatureBySrcFeatureId();
     }
     
-    boolean readOnly = DatabaseTreeNode.setOrganismProps(f.getOrganism().getOrganismProps());
+    boolean isMitochondrial = false;
+    if(f.getCvTerm().getName().startsWith("mitochondrial_"))
+      isMitochondrial = true;
+    boolean readOnly = DatabaseTreeNode.setOrganismProps(
+        f.getOrganism().getOrganismProps(), isMitochondrial);
     // warn when opening duplicate entries at the same time
     if(opening.contains(f.getUniqueName()))
     {

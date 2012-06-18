@@ -52,9 +52,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
-*
 * File node for local file tree manager
-*
 */
 public class DatabaseTreeNode extends DefaultMutableTreeNode 
                  implements Transferable, Serializable
@@ -68,6 +66,7 @@ public class DatabaseTreeNode extends DefaultMutableTreeNode
          { DATABASETREENODE, DataFlavor.stringFlavor };
   
   private String featureId;
+  private String featureType;  // e.g. chromosome, mitochondrial_chromosome
   private transient Organism organism;
   private String organismCommonName;
   private boolean isLeaf = false;
@@ -75,12 +74,12 @@ public class DatabaseTreeNode extends DefaultMutableTreeNode
   private static transient DatabaseDocument dbDoc;
   private boolean explored = false;
    
-  public DatabaseTreeNode(final String name)
+  protected DatabaseTreeNode(final String name)
   { 
     super(name);
   }
   
-  public DatabaseTreeNode(final String name, 
+  private DatabaseTreeNode(final String name, 
                           final boolean isLeaf)
   {
     super(name);
@@ -95,7 +94,7 @@ public class DatabaseTreeNode extends DefaultMutableTreeNode
    * @param userName
    * @param dbDoc
    */
-  public DatabaseTreeNode(final String name, 
+  protected DatabaseTreeNode(final String name, 
                           final boolean isLeaf,
                           final Organism organism,
                           final String userName,
@@ -116,14 +115,16 @@ public class DatabaseTreeNode extends DefaultMutableTreeNode
    * @param featureId
    * @param userName
    */
-  public DatabaseTreeNode(final String name,
+  private DatabaseTreeNode(final String name,
                           final Organism organism,
                           final String featureId,
+                          final String featureType,
                           final String userName)
   { 
     super(name);
     this.organism  = organism;
     this.featureId = featureId;
+    this.featureType = featureType;
     this.userName  = userName;
     if(getOrganism() != null)
       setOrganismCommonName();
@@ -147,7 +148,7 @@ public class DatabaseTreeNode extends DefaultMutableTreeNode
    * @param op
    * @return
    */
-  public static boolean setOrganismProps(Set<OrganismProp> op)
+  public static boolean setOrganismProps(Set<OrganismProp> op, final boolean isMitochondrial)
   {
     Splash splash = getSplash();
     boolean readOnly = false;
@@ -155,9 +156,14 @@ public class DatabaseTreeNode extends DefaultMutableTreeNode
     while (it.hasNext()) 
     {
       OrganismProp organismProp = it.next();
-      if(splash != null &&
-         organismProp.getCvTerm().getName().equals("translationTable"))
-        splash.setTranslationTable(organismProp.getValue());
+      if(splash != null)
+      {
+        if( (isMitochondrial && 
+             organismProp.getCvTerm().getName().equals("mitochondrialTranslationTable")) ||
+            (!isMitochondrial && 
+             organismProp.getCvTerm().getName().equals("translationTable")))
+          splash.setTranslationTable(organismProp.getValue());
+      }
       
      if(organismProp.getCvTerm().getName().equals("frozen") &&
         organismProp.getValue().equals("yes"))
@@ -211,7 +217,9 @@ public class DatabaseTreeNode extends DefaultMutableTreeNode
         typeNode = (DatabaseTreeNode) sequenceNode.get(f.getCvTerm().getName());
       
       DatabaseTreeNode seqNode = new DatabaseTreeNode(
-          f.getUniqueName(), getOrganism(), Integer.toString(f.getFeatureId()), getUserName());
+          f.getUniqueName(), getOrganism(), 
+          Integer.toString(f.getFeatureId()),
+          f.getCvTerm().getName(), getUserName());
 
       seqNode.isLeaf = true;
       typeNode.add(seqNode);
@@ -266,7 +274,7 @@ public class DatabaseTreeNode extends DefaultMutableTreeNode
     if(d.equals(DATABASETREENODE))
       return new DatabaseTreeNode((String)getUserObject(), 
                                   organism,
-                                  getFeatureId(), getUserName());
+                                  getFeatureId(), getFeatureType(), getUserName());
     else if(d.equals(DataFlavor.stringFlavor))
     {
       String name = getOrganism().getCommonName();
@@ -277,10 +285,14 @@ public class DatabaseTreeNode extends DefaultMutableTreeNode
     else throw new UnsupportedFlavorException(d);
   }
 
-
   public String getFeatureId()
   {
     return featureId;
+  }
+  
+  public String getFeatureType()
+  {
+    return featureType;
   }
 
   protected void setDbDoc(DatabaseDocument dbDoc)
