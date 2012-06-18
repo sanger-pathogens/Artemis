@@ -56,7 +56,6 @@ import net.sf.samtools.SAMRecord;
     private Hashtable<String, int[]> plots;
     private int combinedCoverage[];
 
-    private int nBins;
     private static boolean redraw = false;
     private boolean setMaxBases = false;
     
@@ -113,6 +112,8 @@ import net.sf.samtools.SAMRecord;
       Graphics2D g2 = (Graphics2D)g;
       if(plots == null)
         return;
+
+      drawSelectionRange(g2, pixPerBase, start, end, Color.PINK);
       drawPlot(g2);
       drawMax(g2);
     }

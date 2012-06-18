@@ -218,7 +218,7 @@ public class BamView extends JPanel
   private SAMRecord highlightSAMRecord = null;
   private String mouseOverInsertion;
   // record of where a mouse drag starts
-  private int dragStart = -1;
+  protected int dragStart = -1;
   
   private static int MAX_BASES = 26000;
   private int maxHeight = 800;
@@ -3062,7 +3062,7 @@ public class BamView extends JPanel
    * @param event
    * @param onmask
    */
-  private void highlightRange(MouseEvent event, int onmask)
+  protected void highlightRange(MouseEvent event, int onmask)
   {
     int seqLength = getSequenceLength();
     float pixPerBase = getPixPerBaseByWidth();
@@ -3171,7 +3171,7 @@ public class BamView extends JPanel
     return cbCoverageView;
   }
   
-  private Selection getSelection()
+  protected Selection getSelection()
   {
     return selection;
   }

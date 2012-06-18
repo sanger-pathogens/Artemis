@@ -50,7 +50,6 @@ import net.sf.samtools.SAMRecord;
     private static final long serialVersionUID = 1L;
     private Bases bases;
     private float minBaseQualityFilter = 0;
-    private int nBins;
     private int snpCount[];
        
     public SnpPanel(final BamView bamView, Bases bases)
@@ -97,6 +96,8 @@ import net.sf.samtools.SAMRecord;
 
       if(bases == null || nBins == 0 || snpCount == null)
         return;
+
+      drawSelectionRange(g2, pixPerBase, start, end, Color.PINK);
       draw(g2);
       drawMax(g2);
     }
