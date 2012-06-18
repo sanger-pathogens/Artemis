@@ -4,7 +4,7 @@
 # be left in the same directory as the rest of the Artemis
 # distribution, so that the java class files can be found.  If
 # necessary a symbolic link can be made to this script from
-# /usr/local/bin/ or elsewhere.
+# /usr/local/bin/ or elsewhere. 
 
 # $Header: //tmp/pathsoft/artemis/art,v 1.26 2009-09-21 15:45:47 tjc Exp $
 
