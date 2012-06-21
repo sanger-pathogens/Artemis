@@ -32,6 +32,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import java.text.DecimalFormat;
 
 import javax.swing.BorderFactory;
@@ -44,12 +45,15 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 
+import uk.ac.sanger.artemis.io.Range;
+
 public class AbstractGraphPanel extends JPanel
 {
   private static final long serialVersionUID = 1L;
   protected int start;
   protected int end;
   protected float pixPerBase;
+  protected int nBins;
   
   protected BamView bamView;
   protected int windowSize;
@@ -63,6 +67,27 @@ public class AbstractGraphPanel extends JPanel
     super();
     setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.gray));
     setBackground(Color.white);
+
+    final MouseMotionListener mouseMotionListener = new MouseMotionListener()
+    {
+      public void mouseDragged(MouseEvent e)
+      {
+        if(e.getButton() == MouseEvent.BUTTON3) 
+          return;
+
+        if(e.getClickCount() > 1)
+        {
+          bamView.getSelection().clear();
+          repaint();
+          return;  
+        }
+        bamView.highlightRange(e, 
+            MouseEvent.BUTTON1_DOWN_MASK & MouseEvent.BUTTON2_DOWN_MASK);
+      }
+
+      public void mouseMoved(MouseEvent e){}
+    };
+    addMouseMotionListener(mouseMotionListener);
   }
   
   protected void initPopupMenu(JComponent menu)
@@ -135,6 +160,33 @@ public class AbstractGraphPanel extends JPanel
                bamView.getJspView().getVerticalScrollBar().getWidth();
     g2.drawString(maxStr, xpos, fm.getHeight());
   }
+  
+  protected void drawSelectionRange(final Graphics2D g2,
+                                    final float pixPerBase, 
+                                    final int start,
+                                    final int end,
+                                    final int hgt,
+                                    final Color c)
+  {
+    if(bamView.getSelection() != null)
+    {
+      final Range selectedRange = bamView.getSelection().getSelectionRange();
+      if(selectedRange != null)
+      {
+        int rangeStart = selectedRange.getStart();
+        int rangeEnd   = selectedRange.getEnd();
+
+        if(end < rangeStart || start > rangeEnd)
+          return;
+
+        int x = (int) (pixPerBase*(rangeStart-bamView.getBaseAtStartOfView()));
+        int width = (int) (pixPerBase*(rangeEnd-rangeStart+1));
+
+        g2.setColor(c);
+        g2.fillRect(x, 0, width, hgt);
+      }
+    }
+  }
 
   protected void setStartAndEnd(int start, int end)
   {
@@ -157,6 +209,8 @@ public class AbstractGraphPanel extends JPanel
      
      public void mouseClicked(MouseEvent e)
      {
+       if(e.getClickCount() > 1)
+         bamView.getSelection().clear(); 
      }
      
      public void mousePressed(MouseEvent e)
@@ -167,6 +221,7 @@ public class AbstractGraphPanel extends JPanel
      public void mouseReleased(MouseEvent e)
      {
        maybeShowPopup(e);
+       bamView.dragStart = -1;
      }
 
      private void maybeShowPopup(MouseEvent e)

@@ -4333,12 +4333,16 @@ public class FeatureDisplay extends EntryGroupPanel
           if(this_segment.getStart().getStrand() ==  new_click_range.getStrand() &&
              this_segment.canDirectEdit())
           {
-            if(event.isShiftDown())
+            if(event.isShiftDown() && getSelection().getSelectedSegments().size() == 0)
             {
+              int baseGrab = 15;
+              if(getScaleFactor() > 2)
+                baseGrab = 30;
+
               if( (new_click_range.getStart().getPosition() >= this_segment.getStart().getPosition() &&
-                   new_click_range.getStart().getPosition() <= this_segment.getStart().getPosition()+60) ||
+                   new_click_range.getStart().getPosition() <= this_segment.getStart().getPosition()+baseGrab) ||
                   (new_click_range.getEnd().getPosition() <= this_segment.getEnd().getPosition() &&
-                   new_click_range.getEnd().getPosition() >= this_segment.getEnd().getPosition()-60) )
+                   new_click_range.getEnd().getPosition() >= this_segment.getEnd().getPosition()-baseGrab) )
               {
                 int distFromBeg = new_click_range.getStart().getPosition()-this_segment.getStart().getPosition();
                 int distFromEnd = this_segment.getEnd().getPosition()-new_click_range.getEnd().getPosition();
@@ -4355,6 +4359,7 @@ public class FeatureDisplay extends EntryGroupPanel
                   other_end_of_segment_marker = this_segment.getStart();
                 }
 
+                getSelection().add(this_segment);
                 getEntryGroup().getActionController().startAction();
                 break;
               }
@@ -4450,8 +4455,9 @@ public class FeatureDisplay extends EntryGroupPanel
    **/
   private void handleCanvasMouseDrag(final MouseEvent event)
   {
-    if(event.isShiftDown() &&
-       getSelection().getAllFeatures().size() > 0) 
+    if( event.isShiftDown() &&
+       (getSelection().getAllFeatures().size() > 1 ||
+        getSelection().getSelectedSegments().size() > 1)) 
       return;
 
     if(click_segment_marker != null) 

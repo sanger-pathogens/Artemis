@@ -38,6 +38,7 @@ import java.util.Hashtable;
 import java.util.List;
 
 import javax.swing.JCheckBox;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
@@ -53,12 +54,13 @@ import net.sf.samtools.SAMRecord;
     private static final long serialVersionUID = 1L;
     private static LineAttributes lines[];
     private boolean includeCombined = false;
-    private Hashtable<String, int[]> plots;
-    private int combinedCoverage[];
+    private Hashtable<String, int[][]> plots;
+    private int combinedCoverage[][];
 
-    private int nBins;
     private static boolean redraw = false;
     private boolean setMaxBases = false;
+    
+    private boolean plotByStrand = false;
     
     protected CoveragePanel(final BamView bamView)
     {
@@ -76,7 +78,7 @@ import net.sf.samtools.SAMRecord;
     
     protected void createMenus(JComponent menu)
     {
-      JMenuItem configure = new JMenuItem("Configure Line(s)...");
+      final JMenuItem configure = new JMenuItem("Configure Line(s)...");
       configure.addActionListener(new ActionListener()
       {
         public void actionPerformed(ActionEvent e)
@@ -92,7 +94,7 @@ import net.sf.samtools.SAMRecord;
       });
       menu.add(configure);
       
-      JMenuItem optMenu = new JMenuItem("Options...");
+      final JMenuItem optMenu = new JMenuItem("Options...");
       optMenu.addActionListener(new ActionListener()
       {
         public void actionPerformed(ActionEvent e)
@@ -102,6 +104,18 @@ import net.sf.samtools.SAMRecord;
         }
       });
       menu.add(optMenu);
+      
+      final JCheckBoxMenuItem strandMenu = new JCheckBoxMenuItem("Plot by strand", plotByStrand);
+      strandMenu.addActionListener(new ActionListener()
+      {
+        public void actionPerformed(ActionEvent e)
+        {
+          plotByStrand = strandMenu.isSelected();
+          redraw = true;
+          bamView.repaint();
+        }
+      });
+      menu.add(strandMenu);
     }
     
     /**
@@ -113,6 +127,8 @@ import net.sf.samtools.SAMRecord;
       Graphics2D g2 = (Graphics2D)g;
       if(plots == null)
         return;
+
+      drawSelectionRange(g2, pixPerBase, start, end, getHeight(), Color.PINK);
       drawPlot(g2);
       drawMax(g2);
     }
@@ -139,13 +155,14 @@ import net.sf.samtools.SAMRecord;
         windowSize = 1;
       nBins = Math.round((end-start+1.f)/windowSize);
 
-      plots = new Hashtable<String, int[]>();
+      plots = new Hashtable<String, int[][]>();
       combinedCoverage = null;
       if(includeCombined)
       {
-        combinedCoverage = new int[nBins];
+        combinedCoverage = new int[nBins][2];
         for(int k=0; k<combinedCoverage.length; k++)
-          combinedCoverage[k] = 0;
+          for(int l=0; l<2; l++)
+            combinedCoverage[k][l] = 0;
         plots.put("-1", combinedCoverage);
       }
       max = 0;
@@ -158,25 +175,39 @@ import net.sf.samtools.SAMRecord;
       while(plotEum.hasMoreElements())
       {
         String fileName = (String) plotEum.nextElement();
-        int[] thisPlot = plots.get(fileName);
+        int[][] thisPlot = plots.get(fileName);
         for(int i=1; i<thisPlot.length; i++)
-          if(max < thisPlot[i])
-            max = thisPlot[i];
+        {
+          if(plotByStrand)
+          {
+            for(int j=0; j<2; j++)
+              if(max < thisPlot[i][j])
+                max = thisPlot[i][j];
+          }
+          else if(max < thisPlot[i][0])
+            max = thisPlot[i][0];
+        }
       }
       draw(g2, getWidth(), getHeight());
     }
     
     protected void addRecord(SAMRecord thisRead, int offset, String fileName)
     {
-      int coverage[] = plots.get(fileName);
+      int coverage[][] = plots.get(fileName);
       if(coverage == null)
       {
-        coverage = new int[nBins];
-        for(int k=0; k<coverage.length; k++)
-          coverage[k] = 0;
+        coverage = new int[nBins][2];
+        for(int k=0; k<nBins; k++)
+          for(int l=0; l<2; l++)
+            coverage[k][l] = 0; 
         plots.put(fileName, coverage);
       }
 
+      final int col;
+      if(plotByStrand && thisRead.getReadNegativeStrandFlag())
+        col = 1;
+      else
+        col = 0;
       List<AlignmentBlock> blocks = thisRead.getAlignmentBlocks();
       for(int j=0; j<blocks.size(); j++)
       {
@@ -189,15 +220,15 @@ import net.sf.samtools.SAMRecord;
           if(bin < 0 || bin > nBins-1)
             continue;
 
-          coverage[bin]+=1;
-          if(coverage[bin] > max)
-            max = coverage[bin];
+          coverage[bin][col]+=1;
+          if(coverage[bin][col] > max)
+            max = coverage[bin][col];
 
           if(includeCombined)
           {
-            combinedCoverage[bin]+=1;
-            if(combinedCoverage[bin] > max)
-              max = combinedCoverage[bin];
+            combinedCoverage[bin][col]+=1;
+            if(combinedCoverage[bin][col] > max)
+              max = combinedCoverage[bin][col];
           }
         } 
       }
@@ -214,11 +245,13 @@ import net.sf.samtools.SAMRecord;
       else
         lines = getLineAttributes(size);
 
+      int hgt2 = hgt/2;
+
       Enumeration<String> plotEum = plots.keys();
       while(plotEum.hasMoreElements())
       {
         String fileName = (String) plotEum.nextElement();
-        int[] thisPlot = plots.get(fileName);
+        int[][] thisPlot = plots.get(fileName);
 
         int index;
         if(fileName.equals("-1"))
@@ -233,29 +266,82 @@ import net.sf.samtools.SAMRecord;
           for(int i=1; i<thisPlot.length; i++)
           {
             int x0 = (int) ((((i-1)*(windowSize)) - windowSize/2.f)*pixPerBase);
-            int y0 = (int) (hgt - (((float)thisPlot[i-1]/(float)max)*hgt));
             int x1 = (int) (((i*(windowSize)) - windowSize/2.f)*pixPerBase);
-            int y1 = (int) (hgt - (((float)thisPlot[i]/(float)max)*hgt));
-
-            g2.drawLine(x0, y0, x1, y1);
+            int y0, y1;
+            if(plotByStrand)
+            {
+              for(int col=0; col<2; col++)
+              {
+                final int factor;
+                if(col == 0)
+                  factor = 1;   // fwd strand
+                else
+                  factor = -1;  // reverse strand
+                
+                y0 = (int) (hgt2 - (factor)*(((float)thisPlot[i-1][col]/(float)max)*hgt2));
+                y1 = (int) (hgt2 - (factor)*(((float)thisPlot[i][col]/(float)max)*hgt2));
+                
+                g2.drawLine(x0, y0, x1, y1);
+              }
+            }
+            else
+            {
+              y0 = (int) (hgt - (((float)(thisPlot[i-1][0])/(float)max)*hgt));
+              y1 = (int) (hgt - (((float)(thisPlot[i][0])/(float)max)*hgt));
+              g2.drawLine(x0, y0, x1, y1);
+            }
           }
         }
         else // filled plots
         {
           g2.setComposite(makeComposite(0.75f));
 
-          GeneralPath shape = new GeneralPath();
-          shape.moveTo(0,hgt);
-          for(int i=0; i<thisPlot.length; i++)
+          if(plotByStrand)
           {
-            float xpos = ((i*(windowSize)) - windowSize/2.f)*pixPerBase;
-            shape.lineTo(xpos,
-                hgt - (((float)thisPlot[i]/(float)max)*hgt));
-          }
+            final GeneralPath shapeFwd = new GeneralPath();
+            shapeFwd.moveTo(0,hgt2);
+            final  GeneralPath shapeBwd = new GeneralPath();
+            shapeBwd.moveTo(0,hgt2);
+          
+            for(int i=0; i<thisPlot.length; i++)
+            {
+              float xpos = ((i*(windowSize)) - windowSize/2.f)*pixPerBase;
+              for(int col=0; col<2; col++)
+              {
+                if(col == 0)
+                  shapeFwd.lineTo(xpos,
+                    hgt2 - (((float)thisPlot[i][col]/(float)max)*hgt2));
+                else
+                  shapeBwd.lineTo(xpos,
+                    hgt2 + (((float)thisPlot[i][col]/(float)max)*hgt2));
+              }
+            }
 
-          shape.lineTo(wid,hgt);
-          g2.fill(shape);
+            shapeBwd.lineTo(wid,hgt2);
+            shapeFwd.lineTo(wid,hgt2);
+            g2.fill(shapeBwd);
+            g2.fill(shapeFwd);
+          }
+          else
+          {
+            final GeneralPath shape = new GeneralPath();
+            shape.moveTo(0,hgt);
+            for(int i=0; i<thisPlot.length; i++)
+            {
+              float xpos = ((i*(windowSize)) - windowSize/2.f)*pixPerBase;
+              shape.lineTo(xpos,
+                  hgt - (((float)thisPlot[i][0]/(float)max)*hgt));
+            }
+            shape.lineTo(wid,hgt);
+            g2.fill(shape);
+          }
         }
+      }
+
+      if(plotByStrand)
+      {
+        g2.setColor(Color.GRAY);
+        g2.drawLine(0, hgt2, wid+1, hgt2);
       }
     }
     
@@ -334,12 +420,17 @@ import net.sf.samtools.SAMRecord;
       c.gridwidth = GridBagConstraints.REMAINDER;
       opts.add(autoSet, c);
 
-      final JCheckBox showCombined = new JCheckBox("Show Combined Plot", includeCombined);
+      final JCheckBox showCombined = new JCheckBox("Show combined plot", includeCombined);
       if(bamView.bamList.size() == 1)
         showCombined.setEnabled(false);
       c.gridy = c.gridy+1;
       opts.add(showCombined, c);
-          
+      
+      
+      final JCheckBox byStrand = new JCheckBox("Plot by strand", plotByStrand);
+      c.gridy = c.gridy+1;
+      opts.add(byStrand, c);
+      
       String window_options[] = { "OK", "Cancel" };
       int select = JOptionPane.showOptionDialog(null, opts, "Coverage Options",
           JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null,
@@ -351,6 +442,7 @@ import net.sf.samtools.SAMRecord;
       redraw = true;
       autoWinSize = autoSet.isSelected();
       includeCombined = showCombined.isSelected();
+      plotByStrand = byStrand.isSelected();
       try
       {
         userWinSize = Integer.parseInt(newWinSize.getText().trim());

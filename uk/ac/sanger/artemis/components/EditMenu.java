@@ -2241,106 +2241,121 @@ public class EditMenu extends SelectionMenu
       entry_group.getActionController ().startAction ();
 
       final FeatureVector features_to_delete = selection.getAllFeatures ();
-      final String feature_count_string;
-      if (features_to_delete.size () == 1)
-        feature_count_string = "the selected feature";
-      else
-        feature_count_string = features_to_delete.size () + " features";
+      final String feature_count_str = ( (features_to_delete.size () == 1) ?
+          "the selected feature" :  features_to_delete.size () + " features");
+
+      if (!checkForSelectionFeatures (frame, selection, 0,
+          "really delete " + feature_count_str + "?")) 
+        return;
+
+      // clear the selection now so it doesn't need updating as each
+      // feature is deleted
+      selection.clear ();
 
       if (Options.getOptions ().isNoddyMode ()) 
       {
       	if(GeneUtils.isDatabaseEntry(entry_group))
       	{
-      		Box boption = Box.createVerticalBox();
-      		JCheckBox delete = new JCheckBox("permanently delete", 
+      	  Box boption = Box.createVerticalBox();
+      	  final JCheckBox delete = new JCheckBox("permanently delete", 
       		  !Options.getOptions().getPropertyTruthValue("set_obsolete_on_delete"));
-      		boption.add(new JLabel("Make "+feature_count_string+" obsolete?"));
-      		boption.add(delete);
-      		int res = JOptionPane.showConfirmDialog(frame, 
-      				boption, "Make obsolete", JOptionPane.OK_CANCEL_OPTION, 
-      				JOptionPane.QUESTION_MESSAGE);
-      		if(res == JOptionPane.CANCEL_OPTION)
-      			return;
-      		
-      		// make obsolete rather than permanently delete
-      		if(!delete.isSelected())
-      		{
-      			for(int i=0; i<features_to_delete.size(); i++)
-      			{
-      				final Feature currentFeature = features_to_delete.elementAt(i);
-      				try
-							{
-								currentFeature.setQualifier(new Qualifier("isObsolete", "true"));
-	              PropertiesPanel.updateObsoleteSettings(
-	      						(GFFStreamFeature)currentFeature.getEmblFeature());
-							} 
-      				catch (Exception e)
-							{
-								e.printStackTrace();
-							} 	
-      			}
-      			return;
-      		}
-      	}
-      	if (!checkForSelectionFeatures (frame, selection, 0,
-                                        "really delete " +
-                                        feature_count_string + "?")) 
-      	{
+      	  boption.add(new JLabel("Make "+feature_count_str+" obsolete?"));
+      	  boption.add(delete);
+      	  final int res = JOptionPane.showConfirmDialog(frame, 
+      			boption, "Make obsolete", JOptionPane.OK_CANCEL_OPTION, 
+      			JOptionPane.QUESTION_MESSAGE);
+      	  if(res == JOptionPane.CANCEL_OPTION)
       		return;
-      	}
-      }
 
-      // clear the selection now so that it doesn't need to be updated as each
-      // feature is deleted
-      selection.clear ();
+      	  for(int i=0; i<features_to_delete.size(); i++)
+      	  {
+      		try
+      		{
+			  GFFStreamFeature gffFeat = 
+			       (GFFStreamFeature)features_to_delete.elementAt(i).getEmblFeature();
+			  
+			  // if a CDS the delete / obsolete the entire gene model
+			  if(gffFeat.getKey().equals(Key.CDS) && 
+			     gffFeat.getChadoGene() != null && 
+			     gffFeat.getChadoGene().getGene() != null)
+			    gffFeat = (GFFStreamFeature) gffFeat.getChadoGene().getGene();
+			  final Feature f = (Feature) gffFeat.getUserData();
+
+			  if(!delete.isSelected())
+		      {
+			    // make obsolete rather than permanently delete
+				f.setQualifier(new Qualifier("isObsolete", "true"));
+	            PropertiesPanel.updateObsoleteSettings(gffFeat);
+		      }
+			  else if(gffFeat.getChadoGene() != null)
+				GeneUtils.deleteAllFeature(f, gffFeat.getChadoGene());
+			  else
+			  {
+			    if(!deleteFeature(frame, f, selection, features_to_delete))
+			      return;
+			  }
+			} 
+      		catch (Exception e)
+			{
+			  e.printStackTrace();
+			} 	
+      	  }
+      	  return;
+      	}
+      }      
 
       while (features_to_delete.size () > 0) 
       {
         // delete in reverse order for speed
-
         final Feature current_selection_feature =
           features_to_delete.lastElement ();
-
         features_to_delete.removeElementAt (features_to_delete.size () - 1);
 
-        try 
-        {
-          current_selection_feature.removeFromEntry ();
-        } 
-        catch (ReadOnlyException e) 
-        {
-          selection.set (current_selection_feature);
-
-          if (features_to_delete.size () == 1) 
-          {
-            final String message =
-              "the selected feature (" +
-              current_selection_feature.getIDString () +
-              ") is read only - cannot continue";
-            new MessageDialog (frame, message);
-          } 
-          else 
-          {
-            final String message =
-              "one of the selected features (" +
-              current_selection_feature.getIDString () +
-              ") is read only - cannot continue";
-            new MessageDialog (frame, message);
-          }
-
-          features_to_delete.add (current_selection_feature);
-
-          // reset the select so that the user can see what it was
-          selection.set (features_to_delete);
-
+        if(!deleteFeature(frame, current_selection_feature, selection, features_to_delete))
           return;
-        }
       }
     } 
     finally 
     {
       entry_group.getActionController ().endAction ();
     }
+  }
+  
+  private static boolean deleteFeature(final JFrame frame,
+                                    final Feature current_selection_feature, 
+                                    final Selection selection, 
+                                    final FeatureVector features_to_delete)
+  {
+    try 
+    {
+      current_selection_feature.removeFromEntry ();
+    } 
+    catch (ReadOnlyException e) 
+    {
+      selection.set (current_selection_feature);
+      if (features_to_delete.size () == 1) 
+      {
+        final String message =
+          "the selected feature (" +
+          current_selection_feature.getIDString () +
+          ") is read only - cannot continue";
+        new MessageDialog (frame, message);
+      } 
+      else 
+      {
+        final String message =
+          "one of the selected features (" +
+          current_selection_feature.getIDString () +
+          ") is read only - cannot continue";
+        new MessageDialog (frame, message);
+      }
+
+      features_to_delete.add (current_selection_feature);
+      // reset the select so that the user can see what it was
+      selection.set (features_to_delete);
+      return false;
+    }
+    return true;
   }
 
   /**

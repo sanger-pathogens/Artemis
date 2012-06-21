@@ -552,6 +552,7 @@ public abstract class Graph extends JPanel
                               final ActionListener okListener,
                               final JColorChooser colorChooser)
   { 
+    button.setOpaque(true);
     button.setBackground(col);
     button.setBorderPainted(false);
     button.setMargin(new Insets(0,0,0,0));
