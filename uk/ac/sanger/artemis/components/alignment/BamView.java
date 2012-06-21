@@ -665,7 +665,7 @@ public class BamView extends JPanel
       }
       catch(Exception e)
       {
-        System.out.println(e.getMessage());
+        System.err.println(e.getMessage());
       }
     }
 
@@ -1689,6 +1689,7 @@ public class BamView extends JPanel
 
     int hgt = jspView.getVisibleRect().height-scaleHeight;
     g2.translate(0, getHeight()-hgt-scaleHeight);
+    coverageView.drawSelectionRange(g2, pixPerBase, start, end, getHeight(), Color.PINK);
     coverageView.draw(g2, getWidth(), hgt);
     coverageView.drawMax(g2);  
   }

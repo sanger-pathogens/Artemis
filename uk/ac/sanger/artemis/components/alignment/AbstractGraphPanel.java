@@ -163,8 +163,9 @@ public class AbstractGraphPanel extends JPanel
   
   protected void drawSelectionRange(final Graphics2D g2,
                                     final float pixPerBase, 
-                                    final int start, 
-                                    final int end, 
+                                    final int start,
+                                    final int end,
+                                    final int hgt,
                                     final Color c)
   {
     if(bamView.getSelection() != null)
@@ -182,7 +183,7 @@ public class AbstractGraphPanel extends JPanel
         int width = (int) (pixPerBase*(rangeEnd-rangeStart+1));
 
         g2.setColor(c);
-        g2.fillRect(x, 0, width, getHeight());
+        g2.fillRect(x, 0, width, hgt);
       }
     }
   }
