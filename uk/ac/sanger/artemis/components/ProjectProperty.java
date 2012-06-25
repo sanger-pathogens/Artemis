@@ -72,6 +72,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import uk.ac.sanger.artemis.Options;
+import uk.ac.sanger.artemis.components.database.DatabaseEntrySource;
+import uk.ac.sanger.artemis.components.database.DatabaseJPanel;
 import uk.ac.sanger.artemis.util.Document;
 import uk.ac.sanger.artemis.util.FileDocument;
 
@@ -89,6 +91,7 @@ public class ProjectProperty extends JFrame
   private static HashMap<String, HashMap<String, String>> centralProjects;
   private static HashMap<String, HashMap<String, String>> userProjects;
   private Splash splash;
+  private DatabaseEntrySource entry_source;
   
   private final static int REFERENCE = 1;
   private final static int ANNOTATION = 2;
@@ -691,6 +694,36 @@ public class ProjectProperty extends JFrame
   }
   
   /**
+   * Open a database entry
+   * @param splash
+   * @param featureName gene or sequence ID
+   */
+  private void openDatabase(final Splash splash, final String featureName)
+  {
+    String loc = System.getProperty("chado");
+    int idx;
+    if((idx = loc.indexOf("?")) > -1 && loc.indexOf("?user=") == -1)
+      loc = loc.substring(0, idx+1) + "user=" + loc.substring(idx+1);
+
+    if( entry_source == null || 
+       !entry_source.getLocation().endsWith(loc) )
+    {
+      entry_source = new DatabaseEntrySource();
+      boolean promptUser = true;
+      if(System.getProperty("read_only") != null)
+      {
+        promptUser = false;
+        entry_source.setReadOnly(true);
+      }
+      if(!entry_source.setLocation(promptUser))
+        return;
+    }
+    DatabaseJPanel.getEntryEditFromDatabase(
+        entry_source, splash, ProjectProperty.this, featureName);
+  }
+  
+  
+  /**
    * Escape the spaces with a double backslash (i.e. '\\ ').
    * @param s
    * @return
@@ -799,10 +832,19 @@ public class ProjectProperty extends JFrame
       {
         public void run() 
         {
+          final String[] args = getArgs();
+          if(System.getProperty("chado") != null &&
+             args != null &&
+             args.length == 1 &&
+             args[0].indexOf(":") == -1)
+          {
+            openDatabase(splash, args[0]);
+            return;
+          }
+          
           setCursor(new Cursor(Cursor.WAIT_CURSOR));
           try
           {
-            String[] args = getArgs();
             final ArtemisMain main_window;
             if (splash == null)
             {

@@ -65,6 +65,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.Cursor;
@@ -79,8 +80,8 @@ public class DatabaseJPanel extends JPanel
 {
   /** */
   private static final long serialVersionUID = 1L;
-  private JLabel status_line = new JLabel("");
-  private boolean splitGFFEntry = false;
+  private static JLabel status_line = new JLabel("");
+  private static boolean splitGFFEntry = false;
   private JTree tree;
   private DatabaseDocument doc;
   private static Vector<String> opening = new Vector<String>();
@@ -140,7 +141,7 @@ public class DatabaseJPanel extends JPanel
       public void keyPressed(KeyEvent e) 
       {
         if (e.getKeyCode() == KeyEvent.VK_ENTER)
-          getEntryEditFromDatabase(entry_source, splash_main,
+          getEntryEditFromDatabase(entry_source, splash_main, DatabaseJPanel.this,
               openGeneText.getText().trim());
       } 
     });
@@ -150,7 +151,7 @@ public class DatabaseJPanel extends JPanel
     {
       public void actionPerformed(ActionEvent e)
       {
-        getEntryEditFromDatabase(entry_source, splash_main,
+        getEntryEditFromDatabase(entry_source, splash_main, DatabaseJPanel.this,
             openGeneText.getText().trim());
       }
     });
@@ -238,7 +239,7 @@ public class DatabaseJPanel extends JPanel
    * @throws Exception 
    */
   private static EntryEdit show(final DatabaseEntrySource entry_source,
-                          final JComponent srcComponent,
+                          final Component srcComponent,
                           final JLabel status_line,
                           final Splash splash_main,
                           final InputStreamProgressListener stream_progress_listener,
@@ -393,8 +394,9 @@ public class DatabaseJPanel extends JPanel
    * @param splash_main
    * @param featureName
    */
-  private void getEntryEditFromDatabase(final DatabaseEntrySource entry_source,
+  public static void getEntryEditFromDatabase(final DatabaseEntrySource entry_source,
                          final Splash splash_main,
+                         final Component comp,
                          final String featureName)
   {
     SwingWorker entryWorker = new SwingWorker()
@@ -405,10 +407,10 @@ public class DatabaseJPanel extends JPanel
         Cursor cdone = new Cursor(Cursor.DEFAULT_CURSOR);
         try
         {
-          DatabaseJPanel.this.setCursor(cbusy);
+          comp.setCursor(cbusy);
           
           EntryEdit ee = show(entry_source, 
-             DatabaseJPanel.this, status_line, splash_main,
+             comp, status_line, splash_main,
              stream_progress_listener, ":" + featureName,
              true, splitGFFEntry);
           goTo(ee, featureName);
@@ -416,14 +418,14 @@ public class DatabaseJPanel extends JPanel
         catch (Exception npe)
         {
           //npe.printStackTrace();
-          JOptionPane.showMessageDialog(DatabaseJPanel.this, 
+          JOptionPane.showMessageDialog(comp, 
               featureName + " not opened/found!", 
               "Failed to Open", JOptionPane.WARNING_MESSAGE);
           logger4j.debug(featureName + " not found!");
         }
         finally
         {
-          DatabaseJPanel.this.setCursor(cdone);
+          comp.setCursor(cdone);
         }
         return null;
       }
@@ -448,7 +450,7 @@ public class DatabaseJPanel extends JPanel
   private static EntryEdit openEntry(
       final String srcfeatureId,
       final DatabaseEntrySource entry_source, 
-      final JComponent srcComponent,
+      final Component srcComponent,
       final JLabel status_line,
       final InputStreamProgressListener stream_progress_listener,
       final boolean splitGFFEntry,
@@ -596,7 +598,7 @@ public class DatabaseJPanel extends JPanel
    * An InputStreamProgressListener used to update the error label with the
    * current number of chars read.
    */
-  private final InputStreamProgressListener stream_progress_listener =
+  private static final InputStreamProgressListener stream_progress_listener =
     new InputStreamProgressListener() 
   {
     public void progressMade(final InputStreamProgressEvent event) 
