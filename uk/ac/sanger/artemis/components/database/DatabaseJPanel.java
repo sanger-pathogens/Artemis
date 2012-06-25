@@ -209,11 +209,12 @@ public class DatabaseJPanel extends JPanel
    * @param entryName                 e.g. Pfalciparum:Pf3D7_09 or 
    *                                  Pfalciparum:Pf3D7_09:20050..40000
    * @return
+   * @throws Exception 
    */
   public static EntryEdit show(final DatabaseEntrySource entry_source,
                           final Splash splash_main,
                           final InputStreamProgressListener stream_progress_listener,
-                          final String entryName)
+                          final String entryName) throws Exception
   {
     return show(entry_source,
         (splash_main == null ? null : splash_main.getCanvas()), 
@@ -234,6 +235,7 @@ public class DatabaseJPanel extends JPanel
    *                          Pfalciparum:Pf3D7_09:20050..40000
    * @param isNotSrcFeature true is the entry name may not be a source feature
    * @return
+   * @throws Exception 
    */
   private static EntryEdit show(final DatabaseEntrySource entry_source,
                           final JComponent srcComponent,
@@ -242,7 +244,7 @@ public class DatabaseJPanel extends JPanel
                           final InputStreamProgressListener stream_progress_listener,
                           final String entryName,
                           final boolean isNotSrcFeature,
-                          final boolean splitGFFEntry)
+                          final boolean splitGFFEntry) throws Exception
   {
     final String entry[] = entryName.split(":");
     String url = (String)entry_source.getLocation();
@@ -280,6 +282,9 @@ public class DatabaseJPanel extends JPanel
       Iterator<FeatureLoc> it = f.getFeatureLocsForFeatureId().iterator();
       f = it.next().getFeatureBySrcFeatureId();
     }
+    
+    if(f == null)
+      throw new Exception(entryName+" not found!");
     
     boolean isMitochondrial = false;
     if(f.getCvTerm().getName().startsWith("mitochondrial_"))
@@ -408,7 +413,7 @@ public class DatabaseJPanel extends JPanel
              true, splitGFFEntry);
           goTo(ee, featureName);
         }
-        catch (NullPointerException npe)
+        catch (Exception npe)
         {
           //npe.printStackTrace();
           JOptionPane.showMessageDialog(DatabaseJPanel.this, 

@@ -1495,6 +1495,11 @@ public class EditMenu extends SelectionMenu
       
       if(chadoGene2 != null)
       {
+        // add prev_sys_id
+        Qualifier q = new Qualifier("previous_systematic_id", 
+            chadoGene2.getGeneUniqueName()+";current=false");
+        ((Feature)chadoGene.getGene().getUserData()).addQualifierValues(q);
+        
         logger4j.debug("Now DELETE "+chadoGene2.getGeneUniqueName());
         GeneUtils.deleteAllFeature((Feature)chadoGene2.getGene().getUserData(), chadoGene2);
       }
