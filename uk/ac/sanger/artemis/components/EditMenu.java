@@ -1668,23 +1668,6 @@ public class EditMenu extends SelectionMenu
         final Feature new_feature;
         if(segment_feature.getEmblFeature() instanceof GFFStreamFeature)
         {
-          // add previous sys_id
-          try
-          {
-            final GFFStreamFeature orig_feature = (GFFStreamFeature)segment_feature.getEmblFeature();
-            final ChadoCanonicalGene orig_chado_gene = orig_feature.getChadoGene();
-            final String prevId = GeneUtils.getUniqueName(orig_chado_gene.getGene());
-
-            if(!prevId.startsWith("DUP"))
-            {
-              // add prev_sys_id
-              final Qualifier synonymQualifier =
-                new Qualifier("previous_systematic_id", prevId+";current=false");
-              orig_chado_gene.getGene().getQualifiers().add(synonymQualifier);
-            }
-          }
-          catch(Exception e){}
-          
           final FeatureVector chadoGenes = new FeatureVector();
           chadoGenes.add(segment_feature);
           final Vector duplicateGenes = duplicateGeneFeatures(frame, chadoGenes, entry_group);
@@ -1728,12 +1711,28 @@ public class EditMenu extends SelectionMenu
           
           final GFFStreamFeature orig_feature = (GFFStreamFeature)segment_feature.getEmblFeature();
           final ChadoCanonicalGene orig_chado_gene = orig_feature.getChadoGene();
+          final String prevId = GeneUtils.getUniqueName(orig_chado_gene.getGene());
           GeneUtils.deleteAllFeature(
               ((uk.ac.sanger.artemis.Feature)orig_chado_gene.getGene().getUserData()), orig_chado_gene);
-          
-          GeneUtils.checkGeneBoundary((ChadoCanonicalGene)duplicateGenes.get(0));
-          GeneUtils.checkGeneBoundary(
-              ((GFFStreamFeature)new_feature.getEmblFeature()).getChadoGene());
+
+          final ChadoCanonicalGene gene1 = (ChadoCanonicalGene)duplicateGenes.get(0);
+          final ChadoCanonicalGene gene2 = ((GFFStreamFeature)new_feature.getEmblFeature()).getChadoGene();
+          if(!prevId.startsWith("DUP"))
+          {
+            // add prev_sys_id
+            final Qualifier synQualifier =
+              new Qualifier("previous_systematic_id", prevId+";current=false");
+            
+            try
+            {
+              ((Feature)gene1.getGene().getUserData()).addQualifierValues(synQualifier);
+              ((Feature)gene2.getGene().getUserData()).addQualifierValues(synQualifier);
+            }
+            catch (Exception e){}
+          }
+
+          GeneUtils.checkGeneBoundary(gene1);
+          GeneUtils.checkGeneBoundary(gene2);
         }
         else
           selection.set (segment_feature.getSegments ().lastElement ());
