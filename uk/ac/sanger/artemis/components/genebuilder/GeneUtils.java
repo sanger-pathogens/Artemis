@@ -676,11 +676,13 @@ public class GeneUtils
   }
   
   
-  private static List duplicateFeatures(final List featuresOfTranscript,
+  private static List<uk.ac.sanger.artemis.Feature> duplicateFeatures(
+                                 final List<Feature> featuresOfTranscript,
                                  final ChadoCanonicalGene chadoGene) 
           throws ReadOnlyException
   {
-    final List newFeatures = new Vector();
+    final List<uk.ac.sanger.artemis.Feature> newFeatures = 
+        new Vector<uk.ac.sanger.artemis.Feature>();
     
     if(featuresOfTranscript == null)
       return newFeatures;
@@ -688,7 +690,6 @@ public class GeneUtils
     for(int i=0; i<featuresOfTranscript.size(); i++)
       newFeatures.add(duplicateFeature(
           (GFFStreamFeature)featuresOfTranscript.get(i), chadoGene));
-  
     return newFeatures;
   }
   

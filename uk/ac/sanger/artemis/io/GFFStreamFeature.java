@@ -246,7 +246,12 @@ public class GFFStreamFeature extends SimpleDocumentFeature
             if(getLocation().getRanges().size() > 1)
               uniquename = getSegmentID(getLocation().getRanges());
             else
-              uniquename = duplicatePrefix+ (String)getQualifierByName("ID").getValues().get(0);
+            {
+              if( ((String)getQualifierByName("ID").getValues().get(0)).endsWith("}") )
+                uniquename = id_range_store.keys().nextElement();
+              else
+                uniquename = duplicatePrefix+ (String)getQualifierByName("ID").getValues().get(0);
+            }
           }
           else
             uniquename = duplicatePrefix+ (String)getQualifierByName("ID").getValues().get(0);
