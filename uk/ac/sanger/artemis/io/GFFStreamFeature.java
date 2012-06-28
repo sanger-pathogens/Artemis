@@ -804,7 +804,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
 
       final Qualifier codon_start = getQualifierByName("codon_start");
 
-      if(codon_start != null && i == 0) 
+      if(codon_start != null) 
       {
         frame = (String)(codon_start.getValues()).elementAt(0);
 
@@ -817,6 +817,10 @@ public class GFFStreamFeature extends SimpleDocumentFeature
         else
           frame = ".";
       }
+      
+      // phase is REQUIRED for all CDS features
+      if(getKey().equals("CDS") && frame.equals("."))
+        frame = "0";
 
       final String myId = getSegmentID(this_range);
       String attribute_string = unParseAttributes(myId);
