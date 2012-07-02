@@ -1108,6 +1108,8 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
     this.contig = contig;
     this.combinedReference = combinedReference;
     featureCount = -1;
+    
+    gffCache.clear();
   }
 
   public void setEntryGroup(EntryGroup entryGroup)
