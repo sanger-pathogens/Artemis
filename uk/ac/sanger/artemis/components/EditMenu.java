@@ -1725,8 +1725,15 @@ public class EditMenu extends SelectionMenu
             
             try
             {
-              ((Feature)gene1.getGene().getUserData()).addQualifierValues(synQualifier);
-              ((Feature)gene2.getGene().getUserData()).addQualifierValues(synQualifier);
+              Qualifier originalQualifier =
+                  ((Feature)gene1.getGene().getUserData()).getQualifierByName("previous_systematic_id");
+              if( originalQualifier == null ||
+                 !originalQualifier.getValues().contains(prevId+";current=false"))
+              {
+                ((Feature)gene1.getGene().getUserData()).addQualifierValues(synQualifier);
+                ((Feature)gene2.getGene().getUserData()).addQualifierValues(synQualifier);
+              }
+
             }
             catch (Exception e){}
           }
