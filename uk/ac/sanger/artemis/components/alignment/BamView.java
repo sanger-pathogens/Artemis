@@ -545,34 +545,28 @@ public class BamView extends JPanel
     final SAMFileReader inputSam = getSAMFileReader(bam);
     
     //final SAMFileReader inputSam = new SAMFileReader(bamFile, indexFile);
-
-
     if(isConcatSequences())
     {
-      int len = 0;
-      int lastLen = 1;
       for(int i=0; i<seqNames.size(); i++)
       {
-        int thisLength = seqLengths.get(seqNames.get(i));
-        len += thisLength;
+        int sLen = seqLengths.get(seqNames.get(i));
+        int offset = getSequenceOffset(seqNames.get(i)); 
+        int sBeg = offset+1;
+        int sEnd = sBeg+sLen-1;
 
-        if( (lastLen >= start && lastLen < end) ||
-            (len >= start && len < end) ||
-            (start >= lastLen && start < len) ||
-            (end >= lastLen && end < len) )
+        if( (sBeg >= start && sBeg <= end) ||
+            (sBeg <= start && sEnd >= start) )
         {
-          int offset = getSequenceOffset(seqNames.get(i)); 
           int thisStart = start - offset;
           if(thisStart < 1)
             thisStart = 1;
           int thisEnd   = end - offset;
-          if(thisEnd > thisLength)
-            thisEnd = thisLength;
-          
-          //System.out.println("READ "+seqNames.get(i)+"  "+thisStart+".."+thisEnd+" "+start+" --- "+offset);
+          if(thisEnd > sLen)
+            thisEnd = sLen;
+
           iterateOverBam(inputSam, seqNames.get(i), thisStart, thisEnd, bamIndex, pixPerBase, bam);
+          //System.out.println("READ "+seqNames.get(i)+"  "+thisStart+".."+thisEnd+" "+start+" --- "+offset);
         }
-        lastLen = len;
       }
     }
     else
@@ -582,8 +576,6 @@ public class BamView extends JPanel
     }
     
     //inputSam.close();
-    //System.out.println("readFromBamPicard "+start+".."+end);
-    //System.out.println("Reads in view ... "+readsInView.size());
   }
   
   /**
@@ -720,7 +712,6 @@ public class BamView extends JPanel
         final Integer pos = lookup.get(seqNames.get(i));
         if(pos != null)
           offsetLengths.put(seqNames.get(i), pos-1);
-        
        /*final FeatureContigPredicate predicate = new FeatureContigPredicate(seqNames.get(i).trim());
         for(int j=0; j<features.size(); j++)
         {
