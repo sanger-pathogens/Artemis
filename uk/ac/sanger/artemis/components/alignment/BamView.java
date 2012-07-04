@@ -90,6 +90,7 @@ import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
@@ -734,14 +735,20 @@ public class BamView extends JPanel
       if(offsetLengths.size() != seqNames.size())
       {
         System.err.println("Found: "+offsetLengths.size() +" of "+ seqNames.size());
-        JOptionPane.showMessageDialog(this, 
-            "There is a problem matching the reference sequences\n"+
-            "to the names in the BAM file. This may mean the labels\n"+
-            "on the reference features do not match those in the in\n"+
-            "the BAM file.", 
-            "Problem Found", JOptionPane.WARNING_MESSAGE);
-        //concatSequences = false;
+        SwingUtilities.invokeLater(new Runnable() 
+        {
+          public void run() 
+          {
+            JOptionPane.showMessageDialog(BamView.this, 
+                "There is a problem matching the reference sequences\n"+
+                "to the names in the BAM file. This may mean the labels\n"+
+                "on the reference features do not match those in the in\n"+
+                "the BAM file.", 
+                "Problem Found", JOptionPane.WARNING_MESSAGE);
+          }
+        });
         
+        //concatSequences = false;
         int offset = 0;
         for(int i=0; i<combo.getItemCount(); i++)
         {
