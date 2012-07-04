@@ -1,4 +1,9 @@
 Version XX
+	Option included for defining groups of BAM files so that they can be
+	switched on and off by their group.
+	
+	Coverage plots from read alignments (BAM) can be plotted by their strand.
+
 	Addition of a Project File Manager for grouping files together for
 	launching in Artemis. When a project has been added or updated the details 
 	are saved at the end of each session in '.artemis.project.properties' 
