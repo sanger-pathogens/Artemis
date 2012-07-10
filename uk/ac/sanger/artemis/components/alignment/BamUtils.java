@@ -25,8 +25,10 @@ package uk.ac.sanger.artemis.components.alignment;
 
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Vector;
 
+import net.sf.samtools.AlignmentBlock;
 import net.sf.samtools.SAMFileReader;
 import net.sf.samtools.SAMRecord;
 import net.sf.samtools.util.CloseableIterator;
@@ -117,14 +119,14 @@ class BamUtils
     return cnt;
   }
 
-  protected static int count(String bam, 
-                    Hashtable<String, SAMFileReader> samFileReaderHash, 
-                    String refName, 
-                    int start, 
-                    int end,
-                    SAMRecordPredicate samRecordFlagPredicate,
-                    SAMRecordPredicate samRecordMapQPredicate,
-                    boolean contained)
+  protected static int count(final String bam, 
+                    final Hashtable<String, SAMFileReader> samFileReaderHash, 
+                    final String refName, 
+                    final int start, 
+                    final int end,
+                    final SAMRecordPredicate samRecordFlagPredicate,
+                    final SAMRecordPredicate samRecordMapQPredicate,
+                    final boolean contained)
   {
     int cnt = 0;
     SAMFileReader inputSam = samFileReaderHash.get(bam);
@@ -139,7 +141,7 @@ class BamUtils
          if(samRecordMapQPredicate == null ||
             samRecordMapQPredicate.testPredicate(samRecord))
          {
-            cnt++;
+           cnt++;
          }
        }
     }
@@ -147,5 +149,70 @@ class BamUtils
     return cnt;
   }
 
+  /**
+   * Return the coverage for each base in a range for the forward and
+   * reverse strand.
+   * @param bamFile
+   * @param samFileReaderHash
+   * @param refName
+   * @param start
+   * @param end
+   * @param samRecordFlagPredicate
+   * @param samRecordMapQPredicate
+   * @return
+   */
+  protected static int[][] countOverRange(final String bamFile,
+                                          final Hashtable<String, SAMFileReader> samFileReaderHash, 
+                                          final String refName,
+                                          final int start, 
+                                          final int end, 
+                                          final SAMRecordPredicate samRecordFlagPredicate,
+                                          final SAMRecordPredicate samRecordMapQPredicate)
+  {
+    final int cnt[][] = new int[end-start+1][2];
+
+    for (int i = 0; i < cnt.length; i++)
+      for (int j = 0; j < 2; j++)
+        cnt[i][j] = 0;
+
+    SAMFileReader inputSam = samFileReaderHash.get(bamFile);
+    final CloseableIterator<SAMRecord> it = 
+        inputSam.query(refName, start, end, false);
+
+    while (it.hasNext())
+    {
+      SAMRecord samRecord = it.next();
+      if (samRecordFlagPredicate == null
+          || !samRecordFlagPredicate.testPredicate(samRecord))
+      {
+        if (samRecordMapQPredicate == null
+            || samRecordMapQPredicate.testPredicate(samRecord))
+        {
+          List<AlignmentBlock> blocks = samRecord.getAlignmentBlocks();
+          boolean isFwd = !samRecord.getReadNegativeStrandFlag();
+          
+          for(int j=0; j<blocks.size(); j++)
+          {
+            AlignmentBlock block = blocks.get(j);
+            int refStart = block.getReferenceStart();
+            for(int i=0; i<block.getLength(); i++)
+            {
+              int pos = refStart + i;
+              int bin = pos - start;
+              if(bin < 0 || bin > cnt.length-1)
+                continue;
+              
+              if(isFwd)
+                cnt[bin][0]++;
+              else
+                cnt[bin][1]++;
+            } 
+          }
+        }
+      }
+    }
+    it.close();
+    return cnt;
+  }
 }
 

@@ -2305,7 +2305,7 @@ public class BamView extends JPanel
     {
       public void actionPerformed(ActionEvent e)
       {
-        FeatureVector features = feature_display.getSelection().getAllFeatures();
+        final FeatureVector features = feature_display.getSelection().getAllFeatures();
 
         JCheckBox overlap = new JCheckBox("Include all overlapping reads", true);
         overlap.setToolTipText("Include reads that partially overlap the feature");
@@ -2334,6 +2334,24 @@ public class BamView extends JPanel
             samFileReaderHash, bamList, seqNames, offsetLengths, concatSequences, 
             seqLengths, seqlen, samRecordFlagPredicate, samRecordMapQPredicate,
             !overlap.isSelected(), spliced.isSelected(), allRefSeqs.isSelected());
+      } 
+    });
+    
+    
+    
+    final JMenuItem createFeatures = new JMenuItem("Create features from coverage peaks ...");
+    analyse.add(createFeatures);
+    createFeatures.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        if(feature_display == null)
+          return;
+        
+        new MappedReads(feature_display, (String)combo.getSelectedItem(),
+            samFileReaderHash, bamList, seqNames, offsetLengths,
+            concatSequences, seqLengths, samRecordFlagPredicate, samRecordMapQPredicate,
+            true);
       } 
     });
 

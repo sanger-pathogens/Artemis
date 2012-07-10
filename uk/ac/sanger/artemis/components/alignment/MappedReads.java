@@ -17,10 +17,20 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 
+import uk.ac.sanger.artemis.Entry;
+import uk.ac.sanger.artemis.EntryGroup;
 import uk.ac.sanger.artemis.Feature;
 import uk.ac.sanger.artemis.FeatureVector;
+import uk.ac.sanger.artemis.components.FeatureDisplay;
 import uk.ac.sanger.artemis.components.FileViewer;
 import uk.ac.sanger.artemis.components.SwingWorker;
+import uk.ac.sanger.artemis.io.EntryInformationException;
+import uk.ac.sanger.artemis.io.Key;
+import uk.ac.sanger.artemis.io.Range;
+import uk.ac.sanger.artemis.sequence.Bases;
+import uk.ac.sanger.artemis.sequence.MarkerRange;
+import uk.ac.sanger.artemis.util.OutOfRangeException;
+import uk.ac.sanger.artemis.util.ReadOnlyException;
 
 import net.sf.samtools.SAMFileReader;
 
@@ -164,6 +174,68 @@ public class MappedReads
     centerDialog();
     
     CalculateMappedReads cmr = new CalculateMappedReads();
+    cmr.start();
+    dialog.setVisible(true);
+  }
+  
+  
+
+  /**
+   * Search for new features based on a threshold of read counts in the intergenic 
+   * and anti-sense regions of existing annotations. This should exclude rRNA and 
+   * tRNA regions. If two or more BAM files are loaded it should create features 
+   * based on the combined read peak span.
+   * @param feature_display
+   * @param refName
+   * @param samFileReaderHash
+   * @param bamList
+   * @param seqNames
+   * @param offsetLengths
+   * @param concatSequences
+   * @param seqLengths
+   * @param samRecordFlagPredicate
+   * @param samRecordMapQPredicate
+   * @param contained
+   */
+  public MappedReads(
+      final FeatureDisplay feature_display,
+      final String refName,
+      final Hashtable<String, SAMFileReader> samFileReaderHash,
+      final List<String> bamList, 
+      final Vector<String> seqNames,
+      final HashMap<String, Integer> offsetLengths,
+      final boolean concatSequences,
+      final HashMap<String, Integer> seqLengths,
+      final SAMRecordPredicate samRecordFlagPredicate,
+      final SAMRecordMapQPredicate samRecordMapQPredicate,
+      final boolean contained)
+  {
+    this.refName = refName;
+    this.samFileReaderHash = samFileReaderHash;
+    this.bamList = bamList;
+    this.seqNames = seqNames;
+    this.offsetLengths = offsetLengths;
+    this.concatSequences = concatSequences;
+    this.seqLengths = seqLengths;
+    this.samRecordFlagPredicate = samRecordFlagPredicate;
+    this.samRecordMapQPredicate = samRecordMapQPredicate;
+    this.contained = contained;
+    
+    progressBar = new JProgressBar(0, feature_display.getSequenceLength());
+    progressBar.setValue(0);
+    progressBar.setStringPainted(true);
+
+    JPanel panel = new JPanel(new BorderLayout());
+    progressTxt.setText("Search for new features");
+    panel.add(progressTxt, BorderLayout.NORTH);
+    panel.add(progressBar, BorderLayout.CENTER);
+
+    panel.setOpaque(true);
+    dialog.setContentPane(panel);
+    dialog.pack();
+    centerDialog();
+    
+    CalculateNewFeatures cmr = new CalculateNewFeatures(feature_display, refName);
     cmr.start();
     dialog.setVisible(true);
   }
@@ -347,6 +419,248 @@ public class MappedReads
           }
         }
       }
+    }
+  }
+  
+  class CalculateNewFeatures extends SwingWorker
+  {
+    private EntryGroup entryGroup;
+    private Bases bases;
+    private String refSeq;
+    
+    CalculateNewFeatures(final FeatureDisplay feature_display, final String refSeq)
+    {
+      entryGroup = feature_display.getEntryGroup();
+      bases = feature_display.getBases();
+      this.refSeq = refSeq;
+    }
+    
+    public Object construct()
+    {
+      int MAX_BASE_CHUNK = 2000 * 60;
+      
+      final int threshold = 4;
+      final int minSize = 10;
+      
+      Key excluseKeys[] = { new Key("rRNA"), new Key("tRNA") };      
+      int seqlen = bases.getLength();
+
+      final int beg = 1;
+      final int end = seqlen;
+      
+      int offset = 0;
+      
+      int fwdStart = -1;
+      int revStart = -1;
+      final List<MarkerRange> fwdMarkers = new Vector<MarkerRange>();
+      final List<MarkerRange> revMarkers = new Vector<MarkerRange>();
+      for (int i = 0; i < bamList.size(); i++)
+      {
+        for(int j=beg; j<end; j+=MAX_BASE_CHUNK)
+        {
+          progressBar.setValue((j + (i*end)) / bamList.size());
+          if(j > end)
+            continue;
+          int start = j;
+          int stop  = j+MAX_BASE_CHUNK;
+
+          try
+          {
+            int cnt[][] = null;
+            if (concatSequences)
+            {
+              for (String name : seqNames)
+              {
+                int len = seqLengths.get(name);
+                offset = offsetLengths.get(name);
+                
+                if( (start >= offset && start <= offset+len) ||
+                    (stop >= offset  && start <= offset+len) )
+                {
+                  cnt =
+                    BamUtils.countOverRange(bamList.get(i), samFileReaderHash, 
+                        name, start-offset, stop-offset, 
+                        samRecordFlagPredicate, samRecordMapQPredicate);
+                }
+              }
+            }
+            else
+            {
+              cnt =
+                BamUtils.countOverRange(bamList.get(i), samFileReaderHash, 
+                    refSeq, start, stop, 
+                    samRecordFlagPredicate, samRecordMapQPredicate);
+            }
+            
+            for(int k=0; k<cnt.length; k++)
+            {
+              final Range r = new Range(start+k, start+k+1);
+              
+              fwdStart = findFeatures(cnt[k][0], true, threshold, fwdStart, j+k,
+                r, minSize, excluseKeys, fwdMarkers, entryGroup);
+            
+              revStart = findFeatures(cnt[k][1], false, threshold, revStart, j+k,
+                r, minSize, excluseKeys, revMarkers, entryGroup);
+            }
+            
+          }
+          catch (OutOfRangeException e1)
+          {
+            e1.printStackTrace();
+          }
+        }
+      }
+      
+      System.out.println("No. of features="+fwdMarkers.size());
+      final Entry newEntry = entryGroup.createEntry ("BAM_CDS");
+      createFeatures(fwdMarkers, true, newEntry);
+      createFeatures(revMarkers, false, newEntry);
+      return null;
+    }
+    
+    
+    private void createFeatures(final List<MarkerRange> markers, final boolean isFwd, final Entry newEntry)
+    {
+      // merge overlapping markers
+      List<MarkerRange> featureMarkers = new Vector<MarkerRange>();
+      List<Integer> ignoreMarkers = new Vector<Integer>();
+      for(int i=0; i<markers.size(); i++)
+      {
+        if(ignoreMarkers.contains(i))
+          continue;
+        MarkerRange mi = markers.get(i);
+        for(int j=i+1; j<markers.size(); j++)
+        {
+          if(ignoreMarkers.contains(j))
+            continue;
+          MarkerRange mj = markers.get(j);
+          if(mi.overlaps(mj))
+          {
+            mi = mi.combineRanges(mj, false);
+            ignoreMarkers.add(j);
+          }
+        }
+        featureMarkers.add(mi);
+      }
+      
+      for(MarkerRange r: featureMarkers)
+      {
+        try
+        {
+          newEntry.createFeature(Key.CDS, 
+              ( isFwd ? r.createLocation() : r.createLocation().getComplement()), null);
+        }
+        catch (ReadOnlyException e1)
+        {
+          e1.printStackTrace();
+        }
+        catch (EntryInformationException e1)
+        {
+          e1.printStackTrace();
+        }
+        catch (OutOfRangeException e1)
+        {
+          e1.printStackTrace();
+        }
+      }
+    }
+    
+    /**
+     * Search for new features based on read counts.
+     * @param cnt             read count
+     * @param isFwd           strand to find features on is the forward strand if true
+     * @param threshold       read count minimum threshold 
+     * @param fStart          start of a new feature or -1 if not identified yet
+     * @param pos             current base position
+     * @param range           current base range
+     * @param minSize         minimum feature size
+     * @param excluseKeys     feature keys of regions to avoid looking in
+     * @param markers         list of new features
+     * @param entryGroup      entry group
+     * @return
+     */
+    private int findFeatures(final int cnt,
+                             final boolean isFwd,
+                             final int threshold, 
+                             int fStart, 
+                             final int pos,
+                             final Range range,  
+                             final int minSize,
+                             final Key excluseKeys[],
+                             final List<MarkerRange> markers,
+                             final EntryGroup entryGroup)
+    {
+      if(cnt > threshold && fStart == -1)  // START FEATURE
+      {
+        boolean exclude = false;
+        try
+        {
+          final FeatureVector features =
+              entryGroup.getFeaturesInRange(range);
+          for(int k=0; k<features.size(); k++)
+          {
+            Feature f = features.elementAt(k);
+            if( f.isProteinFeature() && ! (isFwd ^ f.isForwardFeature()) ) // on same strand
+              return fStart;
+            
+            for(int l=0; l<excluseKeys.length; l++)
+              if(f.getKey().equals(excluseKeys[l]))
+                exclude = true;
+          }
+        }
+        catch (OutOfRangeException e1){ }
+
+        if(!exclude)
+          fStart = range.getStart();
+      }
+      else if(cnt < threshold && fStart != -1)
+      {
+        try
+        {
+          if((range.getStart()-fStart) >= minSize)
+          {
+            final MarkerRange marker = new MarkerRange(
+              bases.getForwardStrand(), fStart, range.getStart());
+            markers.add( marker );
+          }
+        }
+        catch (OutOfRangeException e1){}
+        
+        return -1;
+      }
+      else if (fStart != -1)
+      {
+        try
+        {
+          FeatureVector features = entryGroup.getFeaturesInRange(range);
+          for(int k=0; k<features.size(); k++)
+          {
+            Feature f = features.elementAt(k);
+            if( f.isProteinFeature() && ! (isFwd ^ f.isForwardFeature()) ) // on same strand
+            {
+              if((f.getFirstBase()-fStart) >= minSize)
+              {
+                final MarkerRange marker = new MarkerRange(
+                  bases.getForwardStrand(), fStart, f.getRawFirstBase() );
+                markers.add( marker );
+              }
+              return -1;
+            }
+          }
+        }
+        catch (OutOfRangeException e)
+        {
+          e.printStackTrace();
+        }
+        
+      }
+      return fStart;
+    }
+    
+    
+    public void finished() 
+    {
+      dialog.dispose();
     }
   }
 }
