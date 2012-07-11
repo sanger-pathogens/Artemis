@@ -80,6 +80,7 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -117,6 +118,7 @@ import uk.ac.sanger.artemis.Selection;
 import uk.ac.sanger.artemis.SelectionChangeEvent;
 import uk.ac.sanger.artemis.SelectionChangeListener;
 import uk.ac.sanger.artemis.SimpleEntryGroup;
+import uk.ac.sanger.artemis.circular.TextFieldInt;
 import uk.ac.sanger.artemis.components.DisplayAdjustmentEvent;
 import uk.ac.sanger.artemis.components.DisplayAdjustmentListener;
 import uk.ac.sanger.artemis.components.EntryEdit;
@@ -2348,10 +2350,26 @@ public class BamView extends JPanel
         if(feature_display == null)
           return;
         
+        final Box yBox = Box.createVerticalBox();
+        final TextFieldInt threshold = new TextFieldInt();
+        final TextFieldInt minSize = new TextFieldInt();
+        threshold.setValue(6);
+        minSize.setValue(6);
+        yBox.add(new JLabel("Minimum number of reads:"));
+        yBox.add(threshold);
+        yBox.add(new JLabel("Minimum feature size:"));
+        yBox.add(minSize);
+
+        int status =
+            JOptionPane.showConfirmDialog(BamView.this, yBox, 
+                "Options", JOptionPane.OK_CANCEL_OPTION);
+        if(status == JOptionPane.CANCEL_OPTION)
+          return;
+
         new MappedReads(feature_display, (String)combo.getSelectedItem(),
             samFileReaderHash, bamList, seqNames, offsetLengths,
             concatSequences, seqLengths, samRecordFlagPredicate, samRecordMapQPredicate,
-            true);
+            threshold.getValue(), minSize.getValue(), true);
       } 
     });
 

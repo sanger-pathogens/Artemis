@@ -165,15 +165,12 @@ class BamUtils
                                           final Hashtable<String, SAMFileReader> samFileReaderHash, 
                                           final String refName,
                                           final int start, 
-                                          final int end, 
+                                          final int end,
+                                          final int cnt[][],
                                           final SAMRecordPredicate samRecordFlagPredicate,
                                           final SAMRecordPredicate samRecordMapQPredicate)
   {
-    final int cnt[][] = new int[end-start+1][2];
 
-    for (int i = 0; i < cnt.length; i++)
-      for (int j = 0; j < 2; j++)
-        cnt[i][j] = 0;
 
     SAMFileReader inputSam = samFileReaderHash.get(bamFile);
     final CloseableIterator<SAMRecord> it = 
