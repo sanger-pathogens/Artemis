@@ -104,7 +104,8 @@ abstract public class DocumentEntryFactory
                                                  final ReadListener listener)
       throws IOException, EntryInformationException 
   {
-    if(document.getInputStream() instanceof net.sf.samtools.util.BlockCompressedInputStream)
+    if(!System.getProperty("java.version").startsWith("1.5.") &&
+        document.getInputStream() instanceof net.sf.samtools.util.BlockCompressedInputStream)
     {
       if(IndexedGFFDocumentEntry.isIndexed( ((File)document.getLocation()) ))
         return new IndexedGFFDocumentEntry(document);
