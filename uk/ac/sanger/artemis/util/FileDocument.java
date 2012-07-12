@@ -27,10 +27,6 @@ package uk.ac.sanger.artemis.util;
 
 import java.io.*;
 
-import uk.ac.sanger.artemis.io.IndexedGFFDocumentEntry;
-
-import net.sf.samtools.util.BlockCompressedInputStream;
-
 /**
  *  Objects of this class are Documents created from a file.
  *
@@ -116,9 +112,13 @@ public class FileDocument extends Document {
     
     if (read_file.getName ().endsWith (".gz")) {
       final BufferedInputStream ins = new BufferedInputStream(file_input_stream);
-      // BGZIP
-      if(BlockCompressedInputStream.isValidFile(ins))
-        return new BlockCompressedInputStream(ins);
+      
+      if (! System.getProperty("java.version").startsWith("1.5.")) 
+      {
+        if(DocumentBlockCompressed.isValidFile(ins)) // BGZIP
+          return DocumentBlockCompressed.getBlockCompressedInputStream(ins);
+      }
+      
       ins.close();
       file_input_stream.close();
 
@@ -126,9 +126,8 @@ public class FileDocument extends Document {
       return new WorkingGZIPInputStream (
           new ProgressInputStream (new FileInputStream (read_file),
           getProgressListeners ()));
-    } else {
+    } else
       return file_input_stream;      
-    }
   }
 
   /**
@@ -156,5 +155,22 @@ public class FileDocument extends Document {
    **/
   public File getFile () {
     return (File) getLocation ();
+  }
+  
+}
+
+/**
+ * Requires Java 1.6
+ */
+class DocumentBlockCompressed
+{
+  protected static boolean isValidFile(BufferedInputStream ins) throws IOException
+  {
+    return net.sf.samtools.util.BlockCompressedInputStream.isValidFile(ins);
+  }
+  
+  protected static InputStream getBlockCompressedInputStream(BufferedInputStream ins) throws IOException
+  {
+    return new net.sf.samtools.util.BlockCompressedInputStream(ins);
   }
 }
