@@ -166,6 +166,7 @@ class BamUtils
                                           final String refName,
                                           final int start, 
                                           final int end,
+                                          final int concatShift,
                                           final int cnt[][],
                                           final SAMRecordPredicate samRecordFlagPredicate,
                                           final SAMRecordPredicate samRecordMapQPredicate)
@@ -194,7 +195,7 @@ class BamUtils
             int refStart = block.getReferenceStart();
             for(int i=0; i<block.getLength(); i++)
             {
-              int pos = refStart + i;
+              int pos = refStart + i + concatShift;
               int bin = pos - start;
               if(bin < 0 || bin > cnt.length-1)
                 continue;

@@ -487,9 +487,20 @@ public class MappedReads
                 if( (start >= offset && start <= offset+len) ||
                     (stop >= offset  && start <= offset+len) )
                 {
+                  int thisStart = start-offset;
+                  if(thisStart < 1)
+                    thisStart = 1;
+                  int thisEnd = stop-offset;
+                  if(thisEnd > len)
+                    thisEnd = len;
+                  
+                  int concatShift = 0;
+                  if(offset > start)
+                    concatShift = offset-start;
+                  
                   cnt =
                     BamUtils.countOverRange(bamList.get(i), samFileReaderHash, 
-                        name, start-offset, stop-offset, cnt,
+                        name, thisStart, thisEnd, concatShift, cnt,
                         samRecordFlagPredicate, samRecordMapQPredicate);
                 }
               }
@@ -498,7 +509,7 @@ public class MappedReads
             {
               cnt =
                 BamUtils.countOverRange(bamList.get(i), samFileReaderHash, 
-                    refSeq, start, stop, cnt,
+                    refSeq, start, stop, 0, cnt,
                     samRecordFlagPredicate, samRecordMapQPredicate);
             }
             
