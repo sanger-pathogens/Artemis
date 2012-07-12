@@ -1,4 +1,7 @@
 Version XX
+	Option added to create features from BAM peaks, i.e. above a threshold of the 
+	number aligned reads.
+
 	Option included for defining groups of BAM files so that they can be
 	switched on and off by their group.
 	
