@@ -754,6 +754,7 @@ public class ProjectProperty extends JFrame
       {
         System.getProperties().remove("bam");
         System.getProperties().remove("chado");
+        System.getProperties().remove("userplot");
       }
       catch(Exception e){ e.printStackTrace(); }
       
