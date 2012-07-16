@@ -168,7 +168,7 @@ public class AbstractGraphPanel extends JPanel
                                     final int hgt,
                                     final Color c)
   {
-    if(bamView.getSelection() != null)
+    if(bamView != null && bamView.getSelection() != null)
     {
       final Range selectedRange = bamView.getSelection().getSelectionRange();
       if(selectedRange != null)
