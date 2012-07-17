@@ -210,6 +210,7 @@ public class BamView extends JPanel
   
   private CoveragePanel coverageView = new CoveragePanel();
   
+  protected static String BAM_SUFFIX = ".*\\.(bam|cram)$";
   /** Used to colour the frames. */
   private static Color LIGHT_GREY = new Color(200, 200, 200);
   private static Color DARK_GREEN = new Color(0, 150, 0);
@@ -2240,10 +2241,10 @@ public class BamView extends JPanel
       {
         FileSelectionDialog bamFileSelection = new FileSelectionDialog(
             null, false, "BamView", "BAM");
-        List<String> bamFiles = bamFileSelection.getFiles(".*\\.(bam|cram)$");
+        List<String> bamFiles = bamFileSelection.getFiles(BAM_SUFFIX);
         int count = bamList.size();
        
-        bamList.addAll(bamFileSelection.getFiles(".*\\.(bam|cram)$"));
+        bamList.addAll(bamFileSelection.getFiles(BAM_SUFFIX));
         
         for(int i=0; i<bamFiles.size(); i++)
           addToViewMenu(i+count);
@@ -3670,7 +3671,7 @@ public class BamView extends JPanel
       System.setProperty("default_directory", System.getProperty("user.dir"));
       FileSelectionDialog fileSelection = new FileSelectionDialog(
           null, true, "BamView", "BAM");
-      bam = fileSelection.getFiles(".*\\.(bam|cram)$"); 
+      bam = fileSelection.getFiles(BAM_SUFFIX); 
       reference = fileSelection.getReferenceFile();
       if(reference == null || reference.equals(""))
         reference = null;
