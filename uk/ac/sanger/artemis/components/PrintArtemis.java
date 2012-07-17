@@ -134,10 +134,12 @@ public class PrintArtemis extends ScrollPanel implements Printable
     {
       FeatureList flist = entry.getFeatureList();
       Point ploc = flist.getViewport().getViewPosition();
-      //flist.setOpaque(false);
-      g2d.translate(0,-ploc.y);
-      flist.paintComponent(g2d);
-      //flist.setOpaque(true);
+      BufferedImage offScreen = new BufferedImage(flist.getViewport().getWidth(), 
+          flist.getViewport().getHeight(), BufferedImage.TYPE_INT_RGB);
+      Graphics og = offScreen.getGraphics();
+      og.translate(0,-ploc.y);
+      flist.paintComponent(og);
+      g2d.drawImage(offScreen, 0, 0, null);
     }
   }
 
