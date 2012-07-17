@@ -977,6 +977,10 @@ public abstract class Plot extends JPanel
                                     final float min_value,
                                     final float max_value) 
   {
+    // if a heatmap do not show the average
+    if(lines != null && lines[0].getPlotType().equals(LineAttributes.PLOT_TYPES[2]))
+        return;
+    
     final Float average = getAlgorithm().getAverage();
 
     if(average != null) 
