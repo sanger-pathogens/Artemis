@@ -29,6 +29,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import uk.ac.sanger.artemis.components.StickyFileChooser;
+import uk.ac.sanger.artemis.components.variant.VCFview;
 
 /**
  * File selection panel to allow input of DNA sequences
@@ -66,14 +67,14 @@ public class FileSelectionDialog extends JDialog
   {
     super(f, program+" :: Select Files", true);
 
-    addBamField(fileType);
+    addBamField(fileType, null);
     
     JButton addMoreFiles = new JButton("Add More");
     addMoreFiles.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
       {
-        addBamField(fileType);
+        addBamField(fileType, null);
       }
     });
     
@@ -90,7 +91,7 @@ public class FileSelectionDialog extends JDialog
       c.gridy = ++row;
       dialog.add(referenceField, c);
       JButton selectReference = new JButton("Select...");
-      addActionListener(selectReference, referenceField);
+      addActionListener(selectReference, referenceField, fileType);
       c.gridx = 1;
       dialog.add(selectReference, c);
     }
@@ -120,11 +121,13 @@ public class FileSelectionDialog extends JDialog
    * Add a text field to the dialog for adding in a path
    * to a BAM file.
    */
-  private void addBamField(String fileType)
+  private void addBamField(String fileType, String fileName)
   {
     JTextField bamField = new JTextField(30);
     bamFields.add(bamField);
     
+    if(fileName != null)
+      bamField.setText(fileName);
     bamField.setPreferredSize(
         new Dimension(200,bamField.getPreferredSize().height));
     c.gridy = row;
@@ -135,7 +138,7 @@ public class FileSelectionDialog extends JDialog
     dialog.add(bamField, c);
     c.gridx = 1;
     JButton selectBam = new JButton("Select...");
-    addActionListener(selectBam, bamField);
+    addActionListener(selectBam, bamField, fileType);
     dialog.add(selectBam, c);
     
     pack();
@@ -145,19 +148,51 @@ public class FileSelectionDialog extends JDialog
    * Add action listener to a button.
    * @param fileSelectionButton
    * @param tfield
+   * @param fileType
    */
   private void addActionListener(final JButton fileSelectionButton, 
-                                 final JTextField tfield)
+                                 final JTextField tfield,
+                                 final String fileType)
   {
+    final javax.swing.filechooser.FileFilter filter =
+        new javax.swing.filechooser.FileFilter()
+    {
+      public boolean accept(final File file) 
+      {
+        if(file.isDirectory() ||
+           file.getName().matches(VCFview.VCFFILE_SUFFIX) ||
+           file.getName().matches(BamView.BAM_SUFFIX))
+          return true;
+        return false;
+      }
+
+      public String getDescription() 
+      {
+        return "BAM / VCF files";
+      }
+    };
+    
     fileSelectionButton.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
       {
         StickyFileChooser fileChooser = new StickyFileChooser();
+        fileChooser.setMultiSelectionEnabled(true);
+        fileChooser.setFileFilter(filter);
+        
         int status = fileChooser.showOpenDialog(null);
         if(status == StickyFileChooser.CANCEL_OPTION)
           return;
-        tfield.setText(fileChooser.getSelectedFile().getAbsolutePath());
+        
+        
+        File[] files = fileChooser.getSelectedFiles();
+        tfield.setText(files[0].getAbsolutePath());
+        
+        if(files.length > 1)
+        {
+          for(int i=1; i<files.length; i++)
+            addBamField(fileType, files[i].getAbsolutePath());
+        }
       }
     });
   }
@@ -319,4 +354,5 @@ public class FileSelectionDialog extends JDialog
   {
     return referenceField.getText();
   }
+      
 }
