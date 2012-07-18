@@ -107,7 +107,7 @@ OPTIONS
         -Dchado="h:p/d?u"          Get Artemis to open this CHADO database
         -Dread_only                Open CHADO database read-only
 EXAMPLES
-        % art AJ006275.embl
+        % art AJ006275.embl 
         % art contigs.fa +annotation.gff +islands.tab
         % art -Dblack_belt_mode=true -Dbam=ecoli_hiseq.bam E_coli_K12.gbk
         % art -Duserplot=repeatmap.plot,geecee.plot Plasmid.gff3
