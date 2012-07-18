@@ -98,11 +98,12 @@ public class ProjectProperty extends JFrame
   private final static int NEXT_GEN_DATA = 3;
   private final static int CHADO = 4;
   private final static int USERPLOT = 5;
+  private final static int LOGUSERPLOT = 6;
   private static org.apache.log4j.Logger logger4j = 
       org.apache.log4j.Logger.getLogger(ProjectProperty.class);
   
   private final static String[] TYPES = 
-    { "title", "sequence", "annotation", "bam", "vcf", "userplot", "chado" };
+    { "title", "sequence", "annotation", "bam", "vcf", "userplot", "log_userplot", "chado" };
   
   public ProjectProperty()
   {
@@ -428,6 +429,8 @@ public class ProjectProperty extends JFrame
         settings.put(ProjectProperty.CHADO, vText);
       else if(keyStr.equals("userplot"))
         settings.put(ProjectProperty.USERPLOT, vText);
+      else if(keyStr.equals("log_userplot"))
+        settings.put(ProjectProperty.LOGUSERPLOT, vText);
     }
     
     // ADD property
@@ -754,6 +757,8 @@ public class ProjectProperty extends JFrame
       {
         System.getProperties().remove("bam");
         System.getProperties().remove("chado");
+        System.getProperties().remove("userplot");
+        System.getProperties().remove("loguserplot");
       }
       catch(Exception e){ e.printStackTrace(); }
       
@@ -793,9 +798,17 @@ public class ProjectProperty extends JFrame
                 userplot += ","+ann.getText().trim();
             }
             if(!userplot.equals(""))
-              System.setProperty("userplot", userplot.replaceFirst(",", ""));
-                
-                
+              System.setProperty("userplot", userplot.replaceFirst(",", "")); 
+            break;
+          case ProjectProperty.LOGUSERPLOT:
+            String loguserplot = "";
+            for(JTextField ann: vText)
+            {
+              if(ann.isEnabled())
+                loguserplot += ","+ann.getText().trim();
+            }
+            if(!loguserplot.equals(""))
+              System.setProperty("loguserplot", loguserplot.replaceFirst(",", "")); 
             break;
           case ProjectProperty.CHADO:
             seenSequence = true;
