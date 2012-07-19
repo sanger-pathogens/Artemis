@@ -55,7 +55,7 @@ UNIX the command is:
             </PARA>
             <PARA>
               <COMMAND>
-gzip -d &lt; artemis_compiled.tar.gz | tar xf -
+tar zxf artemis_compiled.tar.gz
               </COMMAND>
             </PARA>
           </LISTITEM>
