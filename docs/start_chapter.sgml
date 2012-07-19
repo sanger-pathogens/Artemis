@@ -6,7 +6,7 @@
     <PARA>
 On Unix and GNU/Linux the easiest way to run the program is to run the script
 called <COMMAND>art</COMMAND> in the &prog; installation directory (see <XREF
-LINKEND="INSTALLATION">) like this:
+LINKEND="INSTALLATION">), like this:
     </PARA>
 
     <PARA>
@@ -14,7 +14,7 @@ LINKEND="INSTALLATION">) like this:
     </PARA>
 
     <PARA>
-If all goes well you will be presented with a small window with two
+If all goes well you will be presented with a small window with three
 menus.  See <XREF LINKEND="LAUNCH-WINDOW"> to find out what to do next.
     </PARA>
 
@@ -45,8 +45,13 @@ plus sign.  The "+" must be surrounded by spaces.
     </PARA>
 
     <PARA>
-See <XREF LINKEND="UNIXARGS"> for a list of the other possible arguments.
+See <XREF LINKEND="UNIXARGS"> for a list of the other possible arguments. Also
+to see a summary of the options type:
     </PARA>
+
+   <PARA>
+      <COMMAND>artemis/art -help</COMMAND>
+   </PARA>
 
     <PARA>
 Here is an alternative way to run &prog; if the <COMMAND>art</COMMAND> script
