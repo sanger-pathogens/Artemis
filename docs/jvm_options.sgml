@@ -36,6 +36,14 @@ separated to open multiple plots (-Duserplot='/pathToFile/userPlot1,/pathToFile/
       </PARA>
     </SECT2>
 
+    <SECT2 ID="JVM-LOGUSERPLOT">
+       <TITLE><LITERAL>-Dloguserplot=pathToFile</LITERAL></TITLE>
+      <PARA>
+This is the same as the above userplot option except that the log transform of the data is plotted.
+      </PARA>
+    </SECT2>
+
+
     <SECT2 ID="JVM-NG">
        <TITLE><LITERAL>-Dbam=pathToFile</LITERAL></TITLE>
       <PARA>
