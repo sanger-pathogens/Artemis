@@ -48,7 +48,7 @@ is:
       </PARA>
       <PARA>
          <COMMAND>
-gzip -d &lt; act_compiled.tar.gz | tar xf -
+tar zxf act_compiled.tar.gz
          </COMMAND>
       </PARA>
       <PARA>
