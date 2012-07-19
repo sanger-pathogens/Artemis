@@ -27,7 +27,7 @@ This function only reads the feature section of the input file - the sequence
       </LISTITEM>
       <LISTITEM>
         <PARA>
-          <ULINK URL="http://www.sanger.ac.uk/Software/formats/GFF/">GFF files</ULINK>
+          <ULINK URL="http://www.sequenceontology.org/resources/gff3.html">GFF files</ULINK>
         </PARA>
       </LISTITEM>
       <LISTITEM>
@@ -152,7 +152,7 @@ made in the &art; window will be immediately visible in the &prog; window and
 vice versa.
     </PARA>
     <PARA>
-See <ULINK URL="http://www.sanger.ac.uk/Software/Artemis/stable/manual/">the
+See <ULINK URL="ftp://ftp.sanger.ac.uk/pub4/resources/software/artemis/artemis.pdf">the
 &art; manual</ULINK> for more about &art;.
     </PARA>
   </SECT2>
