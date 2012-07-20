@@ -3,6 +3,7 @@
 <!ENTITY start SYSTEM "start_chapter.sgml">
 <!ENTITY mainwindow SYSTEM "main_window_chapter.sgml">
 <!ENTITY ssh SYSTEM "ssh_chapter.sgml">
+<!ENTITY proj SYSTEM "project_manager.sgml">
 <!ENTITY options SYSTEM "options.sgml">
 <!ENTITY filemenu SYSTEM "file_menu.sgml">
 <!ENTITY menus SYSTEM "menus.sgml">
@@ -82,6 +83,7 @@ sequence annotation tool.
   &intro;
   &start;
   &mainwindow;
+  &proj;
   &ssh;
   &options;
 </BOOK>
