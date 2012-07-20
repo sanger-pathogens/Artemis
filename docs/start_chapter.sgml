@@ -112,6 +112,15 @@ top of this window allow you to read a new sequence or embl entry.
     <SECT2 ID="LAUNCH-WINDOW-FILE-MENU">
       <TITLE>The File Menu</TITLE>
 
+      <SECT3 ID="LAUNCH-WINDOW-PROJMANAGER">
+        <TITLE>Open Project Manager ...</TITLE>
+        <PARA>
+This opens up the Project File Manager which can be used to facilitate launching
+of groups of files (annotation, userplot, BAM, VCF) with a particular sequence.
+See <XREF LINKEND="PROJ-MANAGER-CHAPTER">.
+        </PARA>
+      </SECT3>
+
       <SECT3 ID="LAUNCH-WINDOW-FILEMANAGER">
         <TITLE>Open File Manager ...</TITLE>
         <PARA>
