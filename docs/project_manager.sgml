@@ -45,7 +45,7 @@ for a 'project.properties' file in the local directory as well as for the '.arte
 file in the home directory. 
    </PARA>
    <PARA>
-Before opening a project the optional files can be toggled on and off in the
+Before opening a project the files can be toggled on and off in the
 Project File Manager so that each can optionally be deselected and not opened.
 Once a project has been set up it can be selected from the list and clicking 'OPEN' will
 open the main Artemis window. 
