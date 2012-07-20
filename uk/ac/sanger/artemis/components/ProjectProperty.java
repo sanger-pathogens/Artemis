@@ -287,6 +287,14 @@ public class ProjectProperty extends JFrame
             "Project Name", "New Project", JOptionPane.QUESTION_MESSAGE);
     if(projName == null)
       return;
+
+    if(model.contains(projName))
+    {
+      JOptionPane.showMessageDialog(ProjectProperty.this, 
+          projName+" is already a project. Please provide a unique project name.", 
+          "Project Name", JOptionPane.WARNING_MESSAGE);
+      return;
+    }
     
     final HashMap<String, String> hMap = new HashMap<String, String>();
     hMap.put("sequence", "");
