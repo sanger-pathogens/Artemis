@@ -80,7 +80,7 @@ public class FileViewer extends JFrame
 
   private Hashtable<Level, MutableAttributeSet> fontAttributes;
 
-  private static Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+  private final static Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
   
   /**
    *  The size of the last FileViewer JFrame to be resized.  When a new
@@ -141,16 +141,12 @@ public class FileViewer extends JFrame
     };
     
     final JScrollPane scroller = new JScrollPane(textPane);
-    Dimension d = new Dimension((int)screen.getWidth()/2,
-        (int)screen.getHeight()/2);
-    scroller.setPreferredSize(d);
     scroller.getViewport().setBackground(Color.white);
 
     textPane.setEditable(false);
     textPane.setFont(font);
     textPane.setBackground(Color.white);
-    textPane.setMinimumSize(d);
-    
+
     getContentPane().add(scroller, "Center");
 
     button_panel = new JPanel(new FlowLayout());
@@ -206,26 +202,11 @@ public class FileViewer extends JFrame
       }
     });
 
-    addComponentListener(new ComponentAdapter() 
-    {
-      public void componentResized(ComponentEvent e) 
-      {
-        saved_size = FileViewer.this.getSize();
-        saved_position = FileViewer.this.getLocation();
-      }
-      public void componentMoved(ComponentEvent e) 
-      {
-        saved_size = FileViewer.this.getSize();
-        saved_position = FileViewer.this.getLocation();
-      }
-    });
-
-    pack();
-
-
     if(saved_position == null) 
     {
-      Utilities.centreFrame(this);
+      Dimension d = new Dimension((int)screen.getWidth()/2,
+          (int)screen.getHeight()/2);
+      scroller.setPreferredSize(d);
     } 
     else
     {
@@ -242,12 +223,30 @@ public class FileViewer extends JFrame
         saved_size.height = 50;
       
       setLocation(saved_position);
-      setSize(saved_size);
+      scroller.setPreferredSize(saved_size);
     }
+    
+    pack();
+    if(saved_position == null) 
+      Utilities.centreFrame(this);
     
     if(visible)
       setVisible(true);
     createDefaultFontAttributes();
+    
+    addComponentListener(new ComponentAdapter() 
+    {
+      public void componentResized(ComponentEvent e) 
+      {
+        saved_size = scroller.getSize();
+        saved_position = FileViewer.this.getLocation();
+      }
+      public void componentMoved(ComponentEvent e) 
+      {
+        saved_size = scroller.getSize();
+        saved_position = FileViewer.this.getLocation();
+      }
+    });
   }
 
   

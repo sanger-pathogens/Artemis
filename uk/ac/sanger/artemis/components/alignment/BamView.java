@@ -2446,6 +2446,12 @@ public class BamView extends JPanel
       {
         laststart = -1;
         logMenuItem.setEnabled(isIsizeStackView());
+        if(cbCoverageView.isSelected())
+        {
+          Point p = jspView.getViewport().getLocation();
+          p.y = getHeight();
+          jspView.getViewport().setViewPosition(p);
+        }
         repaint();
       }
     });

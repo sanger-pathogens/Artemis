@@ -49,55 +49,55 @@ public class Navigator extends JFrame
 {
   private static final long serialVersionUID = 1L;
 
-  /** The JRadioButton that selects the goto base function. */
+  /** selects the goto base function. */
   private final JRadioButton goto_base_button;
 
-  /** The JRadioButton that selects the goto base pattern function. */
+  /** selects the goto base pattern function. */
   private final JRadioButton goto_base_pattern_button =
       new JRadioButton ("Find Base Pattern:", true);;
 
-  /** The JRadioButton that selects the find amino acid sequence function. */
+  /** selects the find amino acid sequence function. */
   private final JRadioButton goto_aa_pattern_button =
       new JRadioButton ("Find Amino Acid String:", true);;
 
-  /** The JRadioButton that selects the goto feature qualifier value function. */
+  /** selects the goto feature qualifier value function. */
   private final JRadioButton goto_qualifier_button;
 
-  /** The JRadioButton that selects the goto gene name function. */
+  /** selects the goto gene name function. */
   private final JRadioButton goto_gene_name_button;
 
-  /** The JRadioButton that selects the goto feature key function. */
+  /** selects the goto feature key function. */
   private final JRadioButton goto_key_button;
 
-  /** This contains the pattern to search for if the user has selected the
+  /** pattern to search for if the user has selected the
       goto base function. */
   private final JTextField goto_base_text;
 
-  /** This contains the pattern to search for if the user has selected the
+  /** pattern to search for if the user has selected the
       goto base pattern function. */
   private final JTextField goto_base_pattern_text;
 
-  /** This contains the pattern to search for if the user has selected the
+  /** pattern to search for if the user has selected the
       goto amino acid function. */
   private final JTextField goto_aa_pattern_text;
 
-  /** This contains the pattern to search for if the user has selected the
+  /** pattern to search for if the user has selected the
       goto qualifier value function. */
   private final JTextField goto_qualifier_textfield;
 
-  /** This contains the pattern to search for if the user has selected the
+  /** pattern to search for if the user has selected the
       goto gene name function. */
   private final JTextField goto_gene_name_textfield;
 
-  /** This contains the key to search for if the user has selected the
+  /** key to search for if the user has selected the
       goto key function. */
   private final JTextField goto_feature_key_textfield;
 
-  /** The user selects this JRadioButton if the search should start at first/last
+  /** selects if the search should start at first/last
       base or first/last feature (depending on the search type). */
   private JRadioButton start_at_an_end_button;
 
-  /** The user selects this JRadioButton if the search should start at the
+  /** selects if the search should start at the
       position of the current selection. */
   private final JRadioButton start_at_selection_button;
 
@@ -134,6 +134,8 @@ public class Navigator extends JFrame
    *  This is the Selection that was passed to the constructor.
    **/
   private final Selection selection;
+  
+  private boolean disposeOnClose = false;
   
   /**
    *  Create a new Navigator component.
@@ -415,7 +417,7 @@ public class Navigator extends JFrame
     final JButton close_button = new JButton ("Close");
     close_button.addActionListener (new ActionListener () {
       public void actionPerformed (ActionEvent e) {
-        Navigator.this.dispose ();
+        onClose();
       }
     });
 
@@ -433,8 +435,7 @@ public class Navigator extends JFrame
 
     addWindowListener (new WindowAdapter () {
       public void windowClosing (WindowEvent event) {
-        getEntryGroup ().removeEntryGroupChangeListener (Navigator.this);
-        Navigator.this.dispose ();
+        onClose();
       }
     });
 
@@ -458,6 +459,22 @@ public class Navigator extends JFrame
       dispose ();
       break;
     }
+  }
+  
+  private void onClose()
+  {
+    if(disposeOnClose)
+    {
+      getEntryGroup().removeEntryGroupChangeListener(Navigator.this);
+      dispose();
+    }
+    else
+      setVisible(false);
+  }
+  
+  protected void setDisposeOnClose(boolean disposeOnClose)
+  {
+    this.disposeOnClose = disposeOnClose;
   }
 
   /**
@@ -918,7 +935,7 @@ public class Navigator extends JFrame
    *  Returns true if and only if the given feature has search_key_string as
    *  it's Key.
    **/
-  public boolean keyMatches (final Feature test_feature,
+  private boolean keyMatches (final Feature test_feature,
                              final String search_key_string) {
     final String feature_key_string;
 
@@ -948,6 +965,5 @@ public class Navigator extends JFrame
   private EntryGroup getEntryGroup () {
     return entry_group;
   }
-
 
 }
