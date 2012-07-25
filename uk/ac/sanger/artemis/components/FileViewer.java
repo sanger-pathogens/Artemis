@@ -42,6 +42,9 @@ import java.util.Hashtable;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -124,6 +127,23 @@ public class FileViewer extends JFrame
   {
     super(label);
 
+    final JMenuBar mBar = new JMenuBar();
+    setJMenuBar(mBar);
+    final JMenu fileMenu = new JMenu("File");
+    final JMenuItem close = new JMenuItem("Close");
+    close.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent arg0)
+      {
+        if(isHideOnClose())
+          setVisible(false);
+        else
+          dispose();
+      }
+    });
+    fileMenu.add(close);
+    mBar.add(fileMenu);
+    
     getContentPane().setLayout(new BorderLayout());
     final Font font = Options.getOptions().getFont();
     setFont(font);
