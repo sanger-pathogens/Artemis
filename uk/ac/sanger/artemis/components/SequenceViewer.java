@@ -71,8 +71,7 @@ public class SequenceViewer extends FileViewer {
   
   private void initMenu()
   {
-    final JMenuBar mBar = new JMenuBar();
-    setJMenuBar(mBar);
+    final JMenuBar mBar = getJMenuBar();
     final JMenu viewMenu = new JMenu("View");
     mBar.add(viewMenu);
     
