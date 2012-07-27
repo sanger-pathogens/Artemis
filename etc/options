@@ -857,11 +857,6 @@ hyperlinks = \
   Rfam http://rfam.sanger.ac.uk/family/ \
   GI http://www.ncbi.nlm.nih.gov/entrez/sutils/girevhist.cgi?val=
 
-# Lookseq url
-#lookseq = http://www.sanger.ac.uk/cgi-bin/teams/team112/lookseq/get_data.pl?
-#lookseq_chr  = MAL1
-#lookseq_lane = sample_7a
-
 #
 # CHADO DATABASE OPTIONS 
 #
