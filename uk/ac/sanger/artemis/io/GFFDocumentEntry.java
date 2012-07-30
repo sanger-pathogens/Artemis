@@ -714,8 +714,7 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
     final Location new_location = new Location(new_range_vector,
         first_old_feature.getLocation().isComplement());
 
-    qualifier_vector = mergeQualifiers(qualifier_vector, first_old_feature
-        .getLocation().isComplement());
+    qualifier_vector = mergeQualifiers(qualifier_vector);
 
     final GFFStreamFeature new_feature = new GFFStreamFeature(first_old_feature
         .getKey(), new_location, qualifier_vector);
@@ -790,8 +789,7 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
     }
   }
 
-  private QualifierVector mergeQualifiers(QualifierVector qualifier_vector,
-                                          boolean complement)
+  private QualifierVector mergeQualifiers(QualifierVector qualifier_vector)
   {
     QualifierVector merge_qualifier_vector = new QualifierVector();
     boolean seen = false;
@@ -802,13 +800,11 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
  
       if(qual.getName().equals("codon_start"))
       {
-        if(!complement && !seen)
+        if(!seen)
         {
           merge_qualifier_vector.addElement(qual);
           seen = true;
         }
-        else if(complement)
-          merge_qualifier_vector.setQualifier(qual);
       }
       else if(qual.getName().equals("Alias"))
       { 
@@ -882,7 +878,7 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
       final Location new_location = new Location(new_range_vector,
           old_feature.getLocation().isComplement());
       
-      qualifier_vector = mergeQualifiers(qualifier_vector, new_location.isComplement());
+      qualifier_vector = mergeQualifiers(qualifier_vector);
       if(qualifier_vector.getQualifierByName("gene_id") != null)
         qualifier_vector.addQualifierValues(new Qualifier("ID",
             keyStr+":"+qualifier_vector.getQualifierByName("gene_id").getValues().get(0)));

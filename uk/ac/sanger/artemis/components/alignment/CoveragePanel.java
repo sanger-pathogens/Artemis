@@ -38,7 +38,6 @@ import java.util.Hashtable;
 import java.util.List;
 
 import javax.swing.JCheckBox;
-import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
@@ -61,7 +60,7 @@ import net.sf.samtools.SAMRecord;
     private boolean setMaxBases = false;
     
     private boolean plotByStrand = false;
-    
+
     protected CoveragePanel(final BamView bamView)
     {
       this();
@@ -104,18 +103,6 @@ import net.sf.samtools.SAMRecord;
         }
       });
       menu.add(optMenu);
-      
-      final JCheckBoxMenuItem strandMenu = new JCheckBoxMenuItem("Plot by strand", plotByStrand);
-      strandMenu.addActionListener(new ActionListener()
-      {
-        public void actionPerformed(ActionEvent e)
-        {
-          plotByStrand = strandMenu.isSelected();
-          redraw = true;
-          bamView.repaint();
-        }
-      });
-      menu.add(strandMenu);
     }
     
     /**
@@ -378,6 +365,15 @@ import net.sf.samtools.SAMRecord;
       return redraw;
     }
     
+    /**
+     * @param plotByStrand the plotByStrand to set
+     */
+    protected void setPlotByStrand(boolean plotByStrand)
+    {
+      redraw = true;
+      this.plotByStrand = plotByStrand;
+    }
+    
     private void defineOpts()
     {
       final JPanel opts = new JPanel(new GridBagLayout());
@@ -425,12 +421,7 @@ import net.sf.samtools.SAMRecord;
         showCombined.setEnabled(false);
       c.gridy = c.gridy+1;
       opts.add(showCombined, c);
-      
-      
-      final JCheckBox byStrand = new JCheckBox("Plot by strand", plotByStrand);
-      c.gridy = c.gridy+1;
-      opts.add(byStrand, c);
-      
+
       String window_options[] = { "OK", "Cancel" };
       int select = JOptionPane.showOptionDialog(null, opts, "Coverage Options",
           JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null,
@@ -442,7 +433,7 @@ import net.sf.samtools.SAMRecord;
       redraw = true;
       autoWinSize = autoSet.isSelected();
       includeCombined = showCombined.isSelected();
-      plotByStrand = byStrand.isSelected();
+      
       try
       {
         userWinSize = Integer.parseInt(newWinSize.getText().trim());

@@ -763,7 +763,11 @@ public class FeatureList extends EntryGroupPanel
       {
         try
         {
-          note = feature.getValueOfQualifier("comment");
+          if(feature.getValueOfQualifier("isObsolete") != null &&
+             feature.getValueOfQualifier("isObsolete").equals("true"))
+            note = "obsolete";
+          else
+            note = feature.getValueOfQualifier("comment");
         }
         catch(InvalidRelationException e){}
       }
@@ -786,9 +790,9 @@ public class FeatureList extends EntryGroupPanel
         description_string_buffer.append(getQualifierString(feature));
     }
 
-    final String low_pos;
-    final String high_pos;
 
+    String low_pos;
+    String high_pos;
     if(low_marker == null || high_marker == null) 
     {
       low_pos  = "unknown";
@@ -805,6 +809,36 @@ public class FeatureList extends EntryGroupPanel
       {
         low_pos = String.valueOf(high_marker.getRawPosition());
         high_pos = String.valueOf(low_marker.getRawPosition());
+      }
+    }
+    
+
+    if(isDatabaseGroup)
+    {
+      try
+      {
+        if(feature.getQualifierByName("isFminPartial") != null)
+          low_pos = "<"+low_pos;
+        if(feature.getQualifierByName("isFmaxPartial") != null)
+          high_pos = ">"+high_pos;
+      }
+      catch (InvalidRelationException e){}
+    }
+    else
+    {
+      if(feature.getLocation().isPartial(true)) // 5prime
+      {
+        if(feature.isForwardFeature()) 
+          low_pos = "<"+low_pos;
+        else
+          high_pos = ">"+high_pos;
+      }
+      if(feature.getLocation().isPartial(false)) // 3prime
+      {
+        if(feature.isForwardFeature())
+          high_pos = ">"+high_pos;
+        else
+          low_pos = "<"+low_pos;
       }
     }
 
