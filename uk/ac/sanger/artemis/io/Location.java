@@ -205,6 +205,52 @@ public class Location
   }
 
   /**
+   * If lookAt5prime is set to true then only return true if the 5' end is 
+   * partial otherwise only return true if the 3' end is partial.
+   * @param lookAt5prime
+   * @return
+   */
+  public boolean isPartial(final boolean lookAt5prime)
+  {
+    try
+    {
+      LocationParseNode top = getParsedLocation();
+      if (top.getType() == LocationParseNode.COMPLEMENT)
+          top = top.getComplementChild();
+
+      if (top.getType() == LocationParseNode.JOIN || 
+          top.getType() == LocationParseNode.ORDER)
+      {
+        LocationParseNodeVector nodes = top.getChildren();
+        LocationParseNode node = nodes.elementAt( 
+            (lookAt5prime ? 0 : nodes.size()-1));
+        if (node.getType() == LocationParseNode.COMPLEMENT)
+        {
+          node = node.getComplementChild();
+          if (node.getType() == LocationParseNode.RANGE
+              && node.getRange() instanceof FuzzyRange)
+            top = node;
+        }
+        else
+          top = nodes.elementAt(0);
+      }
+
+      if (top.getType() == LocationParseNode.RANGE && 
+          top.getRange() instanceof FuzzyRange)
+      {
+        final FuzzyRange fuzz = (FuzzyRange) top.getRange();
+        if (fuzz.getStartObject() instanceof LowerInteger && (isComplement() ^ lookAt5prime))
+          return true;
+        if (fuzz.getEndObject() instanceof UpperInteger && !(isComplement() ^ lookAt5prime))
+          return true;
+      }
+    }
+    catch (Exception e){}
+    return false;
+  }
+
+  
+  /**
    *  Returns the value of this Location as a string with the complement (if
    *  any) as the top node and the join or order (if any) below it.
    *  eg. "complement(join(..." not "join(complement(..."

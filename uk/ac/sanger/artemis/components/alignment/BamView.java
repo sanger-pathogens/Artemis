@@ -198,6 +198,7 @@ public class BamView extends JPanel
   private JCheckBoxMenuItem cbStrandStackView = new JCheckBoxMenuItem("Strand Stack");
   private JCheckBoxMenuItem cbIsizeStackView = new JCheckBoxMenuItem("Inferred Size", false);
   private JCheckBoxMenuItem cbCoverageView = new JCheckBoxMenuItem("Coverage", false);
+  private JCheckBoxMenuItem cbCoverageStrandView = new JCheckBoxMenuItem("Coverage by Strand", false);
   private JCheckBoxMenuItem cbLastSelected;
   
   private ButtonGroup buttonGroup = new ButtonGroup();
@@ -328,6 +329,7 @@ public class BamView extends JPanel
     buttonGroup.add(cbStrandStackView);
     buttonGroup.add(cbIsizeStackView);
     buttonGroup.add(cbCoverageView);
+    buttonGroup.add(cbCoverageStrandView);
     addMouseListener(new PopupListener());
 
     jspView = new JScrollPane(this, 
@@ -2385,6 +2387,7 @@ public class BamView extends JPanel
     cbPairedStackView.setFont(viewMenu.getFont());
     cbStrandStackView.setFont(viewMenu.getFont());
     cbCoverageView.setFont(viewMenu.getFont());
+    cbCoverageStrandView.setFont(viewMenu.getFont());
     
     baseQualityColour.setFont(viewMenu.getFont());
     colourByCoverageColour.setFont(viewMenu.getFont());
@@ -2431,9 +2434,8 @@ public class BamView extends JPanel
       {
         laststart = -1;
         if(isStrandStackView())
-        {
           setViewportMidPoint();
-        }
+
         logMenuItem.setEnabled(isIsizeStackView());
         repaint();
       }
@@ -2448,14 +2450,29 @@ public class BamView extends JPanel
         logMenuItem.setEnabled(isIsizeStackView());
         if(cbCoverageView.isSelected())
         {
-          Point p = jspView.getViewport().getLocation();
-          p.y = getHeight();
-          jspView.getViewport().setViewPosition(p);
+          coverageView.setPlotByStrand(false);
+          setViewportBtm();
         }
         repaint();
       }
     });
     viewMenu.add(cbCoverageView);
+    
+    cbCoverageStrandView.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        laststart = -1;
+        logMenuItem.setEnabled(isIsizeStackView());
+        if(cbCoverageStrandView.isSelected())
+        {
+          coverageView.setPlotByStrand(true);
+          setViewportBtm();
+        }
+        repaint();
+      }
+    });
+    viewMenu.add(cbCoverageStrandView);
     
     menu.add(viewMenu);
  
@@ -2542,7 +2559,9 @@ public class BamView extends JPanel
         isCoverage = !isCoverage;
         coveragePanel.setVisible(isCoverage);
         
-        if(isCoverage && !cbCoverageView.isSelected())
+        if( isCoverage && 
+            !cbCoverageView.isSelected() && 
+            !cbCoverageStrandView.isSelected() )
           laststart = -1;
         repaint();
       }
@@ -2917,6 +2936,12 @@ public class BamView extends JPanel
     jspView.getViewport().setViewPosition(p);
   }
   
+  private void setViewportBtm()
+  {
+    jspView.getVerticalScrollBar().setValue(
+        jspView.getVerticalScrollBar().getMaximum());
+  }
+  
   protected int getBaseAtStartOfView()
   {
     if(feature_display != null)
@@ -2951,12 +2976,13 @@ public class BamView extends JPanel
     }
     else if(jspView != null)
     {
-      if(!cbCoverageView.isSelected() && nbasesInView >= MAX_BASES)
+      if(!cbCoverageView.isSelected() && !cbCoverageStrandView.isSelected() && nbasesInView >= MAX_BASES)
       {
         cbLastSelected = getSelectedCheckBoxMenuItem();
         cbCoverageView.setSelected(true);
+        coverageView.setPlotByStrand(false);
       }
-      else if(cbCoverageView.isSelected() && nbasesInView < MAX_BASES && cbLastSelected != null)
+      else if((cbCoverageView.isSelected() || cbCoverageStrandView.isSelected()) && nbasesInView < MAX_BASES && cbLastSelected != null)
       {
         cbLastSelected.setSelected(true);
         cbLastSelected = null;
@@ -2965,8 +2991,7 @@ public class BamView extends JPanel
       jspView.setColumnHeaderView(null);
       
       if(!isStrandStackView())
-        jspView.getVerticalScrollBar().setValue(
-            jspView.getVerticalScrollBar().getMaximum());
+        setViewportBtm();
       else
         setViewportMidPoint();
       showBaseAlignment = false;
@@ -3185,7 +3210,7 @@ public class BamView extends JPanel
   {
     if(isBaseAlignmentView(pixPerBase))
       return false;
-    return cbCoverageView.isSelected();
+    return cbCoverageView.isSelected() || cbCoverageStrandView.isSelected();
   }
   
   private boolean isIsizeStackView()
@@ -3210,7 +3235,9 @@ public class BamView extends JPanel
       return cbStrandStackView;
     if(isIsizeStackView())
       return cbIsizeStackView;
-    return cbCoverageView;
+    if(cbCoverageView.isSelected())
+      return cbCoverageView;
+    return cbCoverageStrandView;
   }
   
   protected Selection getSelection()
