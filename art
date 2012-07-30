@@ -92,7 +92,6 @@ OPTIONS
         SEQUENCE_FILE              An EMBL, GenBank, FASTA, or GFF3 file
         FEATURE_FILE               An Artemis TAB file, or GFF file
 
-        -quiet                     Suppress normal info messages while running
         -options FILE              Read a text file of options from FILE
         -debug                     Run using the debugging JVM instead
         -fast | -fast64            Use the FastVM (hp Tru64 UNIX) with 32/64 bit pointers
