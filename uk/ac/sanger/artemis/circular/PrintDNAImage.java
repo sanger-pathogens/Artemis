@@ -106,35 +106,6 @@ public class PrintDNAImage extends ScrollPanel
     dna.drawAll(g2d,true);
   }
 
-
-  /**
-  *
-  * Print to a jpeg or png file
-  *
-  */
-/*  public void print()
-  {
-    if(format == null)
-      getFormatDialog();
-
-    try
-    {
-      File fsave = showOptions();
-
-      if(fsave == null)
-        return;
-
-      RenderedImage rendImage = createDNAImage(0);
-      writeImageToFile(rendImage,fsave,type);
-    }
-    catch(NoClassDefFoundError ex)
-    {
-      JOptionPane.showMessageDialog(this,
-            "This option requires Java 1.4 or higher.");
-    }
-  }*/
-
-
   /**
   *
   * Get a default page format
