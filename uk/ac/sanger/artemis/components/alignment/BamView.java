@@ -2356,10 +2356,16 @@ public class BamView extends JPanel
         final Box yBox = Box.createVerticalBox();
         final TextFieldInt threshold = new TextFieldInt();
         final TextFieldInt minSize = new TextFieldInt();
+        final TextFieldInt minBams = new TextFieldInt();
+        
         threshold.setValue(6);
         minSize.setValue(6);
+        minBams.setValue(bamList.size());
+        
         yBox.add(new JLabel("Minimum number of reads:"));
         yBox.add(threshold);
+        yBox.add(new JLabel("Minimum number of BAMs for reads to be present in:"));
+        yBox.add(minBams);
         yBox.add(new JLabel("Minimum feature size:"));
         yBox.add(minSize);
 
@@ -2368,11 +2374,14 @@ public class BamView extends JPanel
                 "Options", JOptionPane.OK_CANCEL_OPTION);
         if(status == JOptionPane.CANCEL_OPTION)
           return;
+        
+        if(minBams.getValue() > bamList.size())
+          minBams.setValue(bamList.size());
 
         new MappedReads(feature_display, (String)combo.getSelectedItem(),
             samFileReaderHash, bamList, seqNames, offsetLengths,
             concatSequences, seqLengths, samRecordFlagPredicate, samRecordMapQPredicate,
-            threshold.getValue(), minSize.getValue(), true);
+            threshold.getValue(), minSize.getValue(), minBams.getValue(), true);
       } 
     });
 

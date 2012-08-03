@@ -7,8 +7,10 @@ import java.awt.Toolkit;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 
 import javax.swing.JDialog;
@@ -195,6 +197,9 @@ public class MappedReads
    * @param seqLengths
    * @param samRecordFlagPredicate
    * @param samRecordMapQPredicate
+   * @param threshold
+   * @param minSize
+   * @param minBams
    * @param contained
    */
   public MappedReads(
@@ -210,6 +215,7 @@ public class MappedReads
       final SAMRecordMapQPredicate samRecordMapQPredicate,
       final int threshold,
       final int minSize,
+      final int minBams,
       final boolean contained)
   {
     this.refName = refName;
@@ -238,7 +244,8 @@ public class MappedReads
     dialog.pack();
     centerDialog();
     
-    CalculateNewFeatures cmr = new CalculateNewFeatures(feature_display, refName, threshold, minSize);
+    final CalculateNewFeatures cmr = new CalculateNewFeatures(
+        feature_display, refName, threshold, minSize, minBams);
     cmr.start();
     dialog.setVisible(true);
   }
@@ -435,16 +442,30 @@ public class MappedReads
     private String refSeq;
     private int threshold;
     private int minSize;
+    private int minBams;
     
     CalculateNewFeatures(final FeatureDisplay feature_display, 
         final String refSeq, final int threshold,
-        final int minSize)
+        final int minSize,
+        final int minBams)
     {
       entryGroup = feature_display.getEntryGroup();
       bases = feature_display.getBases();
       this.refSeq = refSeq;
       this.threshold = threshold;
       this.minSize = minSize;
+      this.minBams = minBams;
+    }
+    
+    class MarkerObj
+    {
+      MarkerRange r;
+      int bamIdx;
+      MarkerObj(MarkerRange r, int bamIdx)
+      {
+        this.r = r;
+        this.bamIdx = bamIdx;
+      }
     }
     
     public Object construct()
@@ -458,8 +479,8 @@ public class MappedReads
 
       int fwdStart = -1;
       int revStart = -1;
-      final List<MarkerRange> fwdMarkers = new Vector<MarkerRange>();
-      final List<MarkerRange> revMarkers = new Vector<MarkerRange>();
+      final List<MarkerObj> fwdMarkers = new Vector<MarkerObj>();
+      final List<MarkerObj> revMarkers = new Vector<MarkerObj>();
       for (int i = 0; i < bamList.size(); i++)
       {
         for(int j=beg; j<end; j+=MAX_BASE_CHUNK)
@@ -519,11 +540,11 @@ public class MappedReads
               
               // find forward strand potential features
               fwdStart = findFeatures(cnt[k][0], true, fwdStart, j+k,
-                r, excluseKeys, fwdMarkers, entryGroup);
+                r, excluseKeys, fwdMarkers, entryGroup, i);
             
               // find reverse strand potential features
               revStart = findFeatures(cnt[k][1], false, revStart, j+k,
-                r, excluseKeys, revMarkers, entryGroup);
+                r, excluseKeys, revMarkers, entryGroup, i);
             }
             
           }
@@ -534,62 +555,63 @@ public class MappedReads
         }
       }
 
-      final Entry newEntry = entryGroup.createEntry ("align_"+threshold+"_"+minSize);
+      final Entry newEntry = entryGroup.createEntry ("align_"+threshold+"_"+minBams+"_"+minSize);
       createFeatures(fwdMarkers, true, newEntry);
       createFeatures(revMarkers, false, newEntry);
       return null;
     }
     
     
-    private void createFeatures(final List<MarkerRange> markers, final boolean isFwd, final Entry newEntry)
+    private void createFeatures(final List<MarkerObj> markers, final boolean isFwd, final Entry newEntry)
     {
       final Key key = Key.CDS;
-/*      if(entryGroup.getDefaultEntry() != null &&
-         entryGroup.getDefaultEntry().getEMBLEntry() instanceof GFFDocumentEntry)
-        key = new Key("region");
-      else
-        key = new Key("misc_feature");*/
       
       // merge overlapping markers
-      List<MarkerRange> featureMarkers = new Vector<MarkerRange>();
-      List<Integer> ignoreMarkers = new Vector<Integer>();
+      final Set<Integer> ignoreMarkers = new HashSet<Integer>();
       for(int i=0; i<markers.size(); i++)
       {
         if(ignoreMarkers.contains(i))
           continue;
-        MarkerRange mi = markers.get(i);
+        
+        Set<Integer> bamIdxList = new HashSet<Integer>();
+        MarkerObj mi = markers.get(i);
+        MarkerRange mri = mi.r;
+        bamIdxList.add(mi.bamIdx);
         for(int j=i+1; j<markers.size(); j++)
         {
           if(ignoreMarkers.contains(j))
             continue;
-          MarkerRange mj = markers.get(j);
-          if(mi.overlaps(mj))
+          MarkerObj mj = markers.get(j);
+          MarkerRange mrj = mj.r;
+
+          if(mri.overlaps(mrj))
           {
-            mi = mi.combineRanges(mj, false);
+            bamIdxList.add(mj.bamIdx);
+            mri = mri.combineRanges(mrj, false);
             ignoreMarkers.add(j);
           }
         }
-        featureMarkers.add(mi);
-      }
-      
-      for(MarkerRange r: featureMarkers)
-      {
-        try
+        
+        if(bamIdxList.size() >= minBams)
         {
-          newEntry.createFeature(key, 
-              ( isFwd ? r.createLocation() : r.createLocation().getComplement()), null);
-        }
-        catch (ReadOnlyException e1)
-        {
-          e1.printStackTrace();
-        }
-        catch (EntryInformationException e1)
-        {
-          e1.printStackTrace();
-        }
-        catch (OutOfRangeException e1)
-        {
-          e1.printStackTrace();
+          // create a new feature
+          try
+          {
+            newEntry.createFeature(key, 
+                ( isFwd ? mri.createLocation() : mri.createLocation().getComplement()), null);
+          }
+          catch (ReadOnlyException e)
+          {
+            e.printStackTrace();
+          }
+          catch (EntryInformationException e)
+          {
+            e.printStackTrace();
+          }
+          catch (OutOfRangeException e)
+          {
+            e.printStackTrace();
+          }
         }
       }
     }
@@ -612,8 +634,9 @@ public class MappedReads
                              final int pos,
                              final Range range,  
                              final Key excluseKeys[],
-                             final List<MarkerRange> markers,
-                             final EntryGroup entryGroup)
+                             final List<MarkerObj> markers,
+                             final EntryGroup entryGroup,
+                             final int bamIdx)
     {
       if(cnt > threshold && fStart == -1)  // START FEATURE
       {
@@ -657,7 +680,7 @@ public class MappedReads
           {
             final MarkerRange marker = new MarkerRange(
               bases.getForwardStrand(), fStart, range.getStart());
-            markers.add( marker );
+            markers.add( new MarkerObj(marker, bamIdx) );
           }
         }
         catch (OutOfRangeException e1){}
@@ -684,7 +707,7 @@ public class MappedReads
               {
                 final MarkerRange marker = new MarkerRange(
                   bases.getForwardStrand(), fStart, f.getRawFirstBase() );
-                markers.add( marker );
+                markers.add( new MarkerObj(marker, bamIdx) );
               }
               return -1;
             }
