@@ -711,13 +711,13 @@ public class SimpleEntryGroup extends EntryVector
   public Entry createEntry() 
   {
     Entry new_entry = null;
-    uk.ac.sanger.artemis.io.Entry default_entry = 
-      getDefaultEntry().getEMBLEntry();
+    Entry default_entry = getDefaultEntry();
     if(default_entry != null &&
-       default_entry instanceof DatabaseDocumentEntry)
+       default_entry.getEMBLEntry() != null &&
+       default_entry.getEMBLEntry() instanceof DatabaseDocumentEntry)
     {
       DatabaseDocument doc =
-        (DatabaseDocument)((DocumentEntry)getDefaultEntry().getEMBLEntry()).getDocument();
+        (DatabaseDocument)((DocumentEntry)default_entry.getEMBLEntry()).getDocument();
       DatabaseDocument new_doc = doc.createDatabaseDocument();
       
       try
