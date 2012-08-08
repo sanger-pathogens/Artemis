@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.io.File;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -45,6 +46,7 @@ public class MappedReads
   private String refName;
   private Hashtable<String, SAMFileReader> samFileReaderHash;
   private List<String> bamList;
+  private List<Integer> hideBamList;
   private Vector<String> seqNames;
   private HashMap<String, Integer> offsetLengths;
   private boolean concatSequences;
@@ -187,32 +189,29 @@ public class MappedReads
    * and anti-sense regions of existing annotations. This should exclude rRNA and 
    * tRNA regions. If two or more BAM files are loaded it should create features 
    * based on the combined read peak span.
-   * @param feature_display
    * @param refName
+   * @param bamView
    * @param samFileReaderHash
    * @param bamList
    * @param seqNames
    * @param offsetLengths
    * @param concatSequences
    * @param seqLengths
-   * @param samRecordFlagPredicate
-   * @param samRecordMapQPredicate
+   * @param groupsFrame
    * @param threshold
    * @param minSize
    * @param minBams
    * @param contained
    */
-  public MappedReads(
-      final FeatureDisplay feature_display,
+  public MappedReads(  
       final String refName,
+      final BamView bamView,
       final Hashtable<String, SAMFileReader> samFileReaderHash,
-      final List<String> bamList, 
       final Vector<String> seqNames,
       final HashMap<String, Integer> offsetLengths,
       final boolean concatSequences,
       final HashMap<String, Integer> seqLengths,
-      final SAMRecordPredicate samRecordFlagPredicate,
-      final SAMRecordMapQPredicate samRecordMapQPredicate,
+      final GroupBamFrame groupsFrame,
       final int threshold,
       final int minSize,
       final int minBams,
@@ -220,15 +219,18 @@ public class MappedReads
   {
     this.refName = refName;
     this.samFileReaderHash = samFileReaderHash;
-    this.bamList = bamList;
+    this.bamList = bamView.bamList;
+    this.hideBamList = bamView.hideBamList;
     this.seqNames = seqNames;
     this.offsetLengths = offsetLengths;
     this.concatSequences = concatSequences;
     this.seqLengths = seqLengths;
-    this.samRecordFlagPredicate = samRecordFlagPredicate;
-    this.samRecordMapQPredicate = samRecordMapQPredicate;
+    this.samRecordFlagPredicate = bamView.getSamRecordFlagPredicate();
+    this.samRecordMapQPredicate = bamView.getSamRecordMapQPredicate();
+    
     this.contained = contained;
     
+    final FeatureDisplay feature_display = bamView.getFeatureDisplay();
     progressBar = new JProgressBar(0, feature_display.getSequenceLength());
     progressBar.setValue(0);
     progressBar.setStringPainted(true);
@@ -245,7 +247,7 @@ public class MappedReads
     centerDialog();
     
     final CalculateNewFeatures cmr = new CalculateNewFeatures(
-        feature_display, refName, threshold, minSize, minBams);
+        feature_display, refName, groupsFrame, threshold, minSize, minBams);
     cmr.start();
     dialog.setVisible(true);
   }
@@ -443,15 +445,19 @@ public class MappedReads
     private int threshold;
     private int minSize;
     private int minBams;
+    private GroupBamFrame groupsFrame;
     
-    CalculateNewFeatures(final FeatureDisplay feature_display, 
-        final String refSeq, final int threshold,
+    CalculateNewFeatures(final FeatureDisplay feature_display,
+        final String refSeq, 
+        final GroupBamFrame groupsFrame, 
+        final int threshold,
         final int minSize,
         final int minBams)
     {
       entryGroup = feature_display.getEntryGroup();
       bases = feature_display.getBases();
       this.refSeq = refSeq;
+      this.groupsFrame = groupsFrame;
       this.threshold = threshold;
       this.minSize = minSize;
       this.minBams = minBams;
@@ -470,12 +476,11 @@ public class MappedReads
     
     public Object construct()
     {
-      int MAX_BASE_CHUNK = 2000 * 60;
+      final int MAX_BASE_CHUNK = 2000 * 60;
       Key excluseKeys[] = { new Key("rRNA"), new Key("tRNA") };      
-      int seqlen = bases.getLength();
 
       final int beg = 1;
-      final int end = seqlen;
+      final int end = bases.getLength();
 
       int fwdStart = -1;
       int revStart = -1;
@@ -483,6 +488,9 @@ public class MappedReads
       final List<MarkerObj> revMarkers = new Vector<MarkerObj>();
       for (int i = 0; i < bamList.size(); i++)
       {
+        if(hideBamList.contains(i))
+          continue;
+        
         for(int j=beg; j<end; j+=MAX_BASE_CHUNK)
         {
           progressBar.setValue((j + (i*end)) / bamList.size());
@@ -594,6 +602,31 @@ public class MappedReads
         
         if(bamIdxList.size() >= minBams)
         {
+          if(groupsFrame != null && minBams > 1)
+          {
+            boolean foundMinBams = false;
+            Hashtable<String, Integer> groupCluster = new Hashtable<String, Integer>();
+            for(int j=0; j<bamIdxList.size(); j++)
+            {
+              File f = new File(bamList.get(j));
+              String grp = groupsFrame.getGroupName( f.getName() );
+              if(groupCluster.containsKey(grp))
+              {
+                int val = groupCluster.get(grp)+1;
+                if(val >= minBams)
+                {
+                  foundMinBams = true;
+                  break;
+                }
+                groupCluster.put(grp, val);
+              }
+              else
+                groupCluster.put(grp, 1);
+            }
+            if(!foundMinBams)
+              continue;
+          }
+          
           // create a new feature
           try
           {
@@ -638,7 +671,7 @@ public class MappedReads
                              final EntryGroup entryGroup,
                              final int bamIdx)
     {
-      if(cnt > threshold && fStart == -1)  // START FEATURE
+      if(cnt >= threshold && fStart == -1)  // START FEATURE
       {
         boolean exclude = false;
         try
