@@ -421,6 +421,10 @@ import net.sf.samtools.SAMRecord;
         showCombined.setEnabled(false);
       c.gridy = c.gridy+1;
       opts.add(showCombined, c);
+      
+      final JCheckBox byStrand = new JCheckBox("Plot by strand", plotByStrand);
+      c.gridy = c.gridy+1;
+      opts.add(byStrand, c);
 
       String window_options[] = { "OK", "Cancel" };
       int select = JOptionPane.showOptionDialog(null, opts, "Coverage Options",
@@ -433,6 +437,7 @@ import net.sf.samtools.SAMRecord;
       redraw = true;
       autoWinSize = autoSet.isSelected();
       includeCombined = showCombined.isSelected();
+      plotByStrand = byStrand.isSelected();
       
       try
       {

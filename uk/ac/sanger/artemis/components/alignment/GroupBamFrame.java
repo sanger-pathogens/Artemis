@@ -191,16 +191,71 @@ class GroupBamFrame extends JFrame
         bamPanel.add(new JLabel(bamView.getImageIcon(col)), c);
 
         c.gridx = 2;
-        JComboBox groupList = new JComboBox( groups );
-        bamPanel.add(groupList, c);
+        JComboBox groupCombo = new JComboBox( groups );
+        bamPanel.add(groupCombo, c);
         
         if(bamGroupMap.containsKey(cbBam))
-          groupList.setSelectedItem(
+          groupCombo.setSelectedItem(
               (String) bamGroupMap.get(cbBam).getSelectedItem());
 
-        bamGroupMap.put(cbBam, groupList);
+        bamGroupMap.put(cbBam, groupCombo);
       }
     }
+  }
+  
+  /**
+   * For a give BAM file return the group it belongs to.
+   * @param bamName
+   * @return
+   */
+  protected String getGroupName(final String bamName)
+  {
+    Iterator<JCheckBoxMenuItem> it = bamGroupMap.keySet().iterator();
+    while(it.hasNext())
+    {
+      JCheckBoxMenuItem cbs = it.next();
+      if(cbs.getText().equals(bamName))
+        return (String) bamGroupMap.get(cbs).getSelectedItem();
+    }
+    return null;
+  }
+  
+  protected int getNumberOfGroups()
+  {
+    return groups.length;
+  }
+  
+  /**
+   * Find the maximum number of BAM files found in the groups.
+   * @return
+   */
+  protected int getMaximumBamsInGroup()
+  {
+    int max = 1;
+    int grpMax[] = new int[getNumberOfGroups()];
+    for(int i=0; i<grpMax.length; i++)
+      grpMax[i] = 0;
+    Iterator<JCheckBoxMenuItem> it = bamGroupMap.keySet().iterator();
+    while(it.hasNext())
+    {
+      JCheckBoxMenuItem cbs = it.next();
+      String grp = (String) bamGroupMap.get(cbs).getSelectedItem();
+      for(int i=0; i<groups.length; i++)
+      {
+        if(grp.equals(groups[i]))
+        {
+          grpMax[i]++;
+          break;
+        }
+      }
+    }
+    
+    for(int i=0; i<grpMax.length; i++)
+    {
+      if(grpMax[i] > max)
+        max = grpMax[i];
+    }
+    return max;
   }
   
   private void updateGroupPanel()

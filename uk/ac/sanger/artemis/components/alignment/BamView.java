@@ -35,6 +35,8 @@ import java.awt.FlowLayout;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -87,6 +89,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
@@ -152,7 +155,7 @@ public class BamView extends JPanel
   private HashMap<String, Integer> offsetLengths;
   private Vector<String> seqNames = new Vector<String>();
   protected List<String> bamList;
-  private List<Integer> hideBamList = new Vector<Integer>();
+  protected List<Integer> hideBamList = new Vector<Integer>();
 
   private SAMRecordPredicate samRecordFlagPredicate;
   private SAMRecordMapQPredicate samRecordMapQPredicate;
@@ -2352,27 +2355,7 @@ public class BamView extends JPanel
       {
         if(feature_display == null)
           return;
-        
-        final Box yBox = Box.createVerticalBox();
-        final TextFieldInt threshold = new TextFieldInt();
-        final TextFieldInt minSize = new TextFieldInt();
-        threshold.setValue(6);
-        minSize.setValue(6);
-        yBox.add(new JLabel("Minimum number of reads:"));
-        yBox.add(threshold);
-        yBox.add(new JLabel("Minimum feature size:"));
-        yBox.add(minSize);
-
-        int status =
-            JOptionPane.showConfirmDialog(BamView.this, yBox, 
-                "Options", JOptionPane.OK_CANCEL_OPTION);
-        if(status == JOptionPane.CANCEL_OPTION)
-          return;
-
-        new MappedReads(feature_display, (String)combo.getSelectedItem(),
-            samFileReaderHash, bamList, seqNames, offsetLengths,
-            concatSequences, seqLengths, samRecordFlagPredicate, samRecordMapQPredicate,
-            threshold.getValue(), minSize.getValue(), true);
+        new CreateFeatures(groupsFrame);
       } 
     });
 
@@ -3681,7 +3664,101 @@ public class BamView extends JPanel
   {
     SAMRecord sam1;
     SAMRecord sam2;
-  } 
+  }
+  
+  class CreateFeatures
+  {
+    CreateFeatures(final GroupBamFrame groupsFrame)
+    {
+      final TextFieldInt threshold = new TextFieldInt();
+      final TextFieldInt minSize = new TextFieldInt();
+      final TextFieldInt minBams = new TextFieldInt();
+      
+      threshold.setValue(6);
+      minSize.setValue(6);
+      minBams.setValue( (groupsFrame.getNumberOfGroups() == 1 ?
+          bamList.size() : groupsFrame.getMaximumBamsInGroup()) );
+      
+      final JPanel gridPanel = new JPanel(new GridBagLayout());
+      GridBagConstraints c = new GridBagConstraints();
+      c.anchor = GridBagConstraints.WEST;
+      c.fill = GridBagConstraints.HORIZONTAL;
+      c.gridx = 0;
+      c.gridy = 0;
+      
+      gridPanel.add(new JLabel("Minimum number of reads:"), c);
+      c.gridy++;
+      gridPanel.add(threshold, c);
+      
+      c.gridy++;
+      gridPanel.add(new JSeparator(), c);
+      c.gridy++;
+      gridPanel.add(new JLabel("Minimum number of BAMs for reads to be present in:"), c);
+      c.gridy++;
+      gridPanel.add(minBams, c);
+      
+      JRadioButton useAllBams = new JRadioButton("out of all BAMs", (groupsFrame.getNumberOfGroups() == 1));
+      JRadioButton useGroup = new JRadioButton("within a group", (groupsFrame.getNumberOfGroups() != 1));
+      
+      if(groupsFrame.getNumberOfGroups() == 1)
+        useGroup.setEnabled(false);
+      
+      ButtonGroup group = new ButtonGroup();
+      group.add(useAllBams);
+      group.add(useGroup);
+
+      Box xBox = Box.createHorizontalBox();
+      xBox.add(useAllBams);
+      xBox.add(useGroup);
+      xBox.add(Box.createHorizontalGlue());
+      c.gridy++;
+      gridPanel.add(xBox, c);
+      
+      c.gridy++;
+      gridPanel.add(new JSeparator(), c);
+      c.gridy++;
+      gridPanel.add(new JLabel("Minimum feature size:"), c);
+      c.gridy++;
+      gridPanel.add(minSize, c);
+
+      int status =
+          JOptionPane.showConfirmDialog(feature_display, gridPanel, 
+              "Options", JOptionPane.OK_CANCEL_OPTION);
+      if(status == JOptionPane.CANCEL_OPTION)
+        return;
+      
+      if(!useGroup.isSelected() && minBams.getValue() > bamList.size())
+      {
+        status =
+            JOptionPane.showConfirmDialog(feature_display, 
+                "The minimum number of BAMs setting can not be\n"+
+                "greater than the total number of BAM files.\n"+
+                "Set this to the number of BAMs (i.e. "+bamList.size()+").",
+                "Options", JOptionPane.OK_CANCEL_OPTION);
+        if(status == JOptionPane.CANCEL_OPTION)
+          return;
+        minBams.setValue(bamList.size());
+      }
+      else if(useGroup.isSelected() && minBams.getValue() > groupsFrame.getMaximumBamsInGroup())
+      {
+        status =
+            JOptionPane.showConfirmDialog(feature_display, 
+                "Minimum number of BAMs setting can not be greater than\n"+
+                "the total number of BAM files found in any of the groups.\n"+
+                "Set this to the greatest number of BAM files in any\n"+
+                "group (i.e. "+groupsFrame.getMaximumBamsInGroup()+").",
+                "Options", JOptionPane.OK_CANCEL_OPTION);
+        if(status == JOptionPane.CANCEL_OPTION)
+          return;
+        minBams.setValue(groupsFrame.getMaximumBamsInGroup());
+      }
+
+      new MappedReads((String)combo.getSelectedItem(),BamView.this, samFileReaderHash,
+          seqNames, offsetLengths, concatSequences, seqLengths, 
+          (useGroup.isSelected() ? groupsFrame : null),
+          threshold.getValue(), minSize.getValue(), minBams.getValue(), true);
+    }
+  }
  
   public static void main(String[] args)
   {
