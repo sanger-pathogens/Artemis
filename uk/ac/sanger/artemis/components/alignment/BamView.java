@@ -2349,6 +2349,8 @@ public class BamView extends JPanel
     
     final JMenuItem createFeatures = new JMenuItem("Create features from coverage peaks ...");
     analyse.add(createFeatures);
+    if(feature_display == null)
+      createFeatures.setEnabled(false);
     createFeatures.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
