@@ -241,6 +241,17 @@ public class ProjectProperty extends JFrame
     });
     toolBar.add(removeProjectButton);
     
+    final JButton saveProperties = new JButton("SAVE");
+    saveProperties.setFont(font.deriveFont(Font.PLAIN));
+    saveProperties.setToolTipText("SAVE PROJECT PROPERTIES");
+    saveProperties.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent arg0)
+      {
+        writeProperties();
+      }
+    });
+    toolBar.add(Box.createHorizontalGlue());
+    toolBar.add(saveProperties);
     
     final JButton openArt = new JButton("OPEN");
     openArt.addActionListener(listener);
