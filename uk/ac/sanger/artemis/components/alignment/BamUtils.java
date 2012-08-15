@@ -67,7 +67,7 @@ class BamUtils
    * @param contained
    * @return
    */
-  protected static int getCount(
+  protected static float[] getCount(
       final int start,
       final int end,
       final String bam,
@@ -81,7 +81,9 @@ class BamUtils
       final SAMRecordMapQPredicate samRecordMapQPredicate,
       final boolean contained)
   {
-    int cnt = 0;
+    int cnt[] = new int[2];
+    cnt[0] = 0;
+    cnt[1] = 0;
     if(concatSequences)
     {
       int len = 0;
@@ -105,7 +107,7 @@ class BamUtils
             thisEnd = thisLength;
 
           cnt = count(bam, samFileReaderHash, name, thisStart, thisEnd, 
-              samRecordFlagPredicate, samRecordMapQPredicate, contained);
+              samRecordFlagPredicate, samRecordMapQPredicate, contained, true);
 
         }
         lastLen = len;
@@ -114,21 +116,29 @@ class BamUtils
     else
     {
       cnt = count(bam, samFileReaderHash, refName, start, end, 
-          samRecordFlagPredicate, samRecordMapQPredicate, contained);
+          samRecordFlagPredicate, samRecordMapQPredicate, contained, true);
     }
-    return cnt;
+    
+    float cntf[] = new float[2];
+    cntf[0] = cnt[0];
+    cntf[1] = cnt[1];
+    return cntf;
   }
 
-  protected static int count(final String bam, 
+  protected static int[] count(final String bam, 
                     final Hashtable<String, SAMFileReader> samFileReaderHash, 
                     final String refName, 
                     final int start, 
                     final int end,
                     final SAMRecordPredicate samRecordFlagPredicate,
                     final SAMRecordPredicate samRecordMapQPredicate,
-                    final boolean contained)
+                    final boolean contained,
+                    final boolean byStrand)
   {
-    int cnt = 0;
+    int cnt[] = new int[2];
+    cnt[0] = 0;
+    cnt[1] = 0;
+    
     SAMFileReader inputSam = samFileReaderHash.get(bam);
     final CloseableIterator<SAMRecord> it = inputSam.query(refName, start, end, contained);
 
@@ -141,7 +151,10 @@ class BamUtils
          if(samRecordMapQPredicate == null ||
             samRecordMapQPredicate.testPredicate(samRecord))
          {
-           cnt++;
+           if(byStrand && samRecord.getReadNegativeStrandFlag())
+             cnt[1]++;
+           else
+             cnt[0]++;
          }
        }
     }
@@ -171,8 +184,6 @@ class BamUtils
                                           final SAMRecordPredicate samRecordFlagPredicate,
                                           final SAMRecordPredicate samRecordMapQPredicate)
   {
-
-
     SAMFileReader inputSam = samFileReaderHash.get(bamFile);
     final CloseableIterator<SAMRecord> it = 
         inputSam.query(refName, start, end, false);

@@ -6,7 +6,7 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.io.File;
 import java.text.DecimalFormat;
-import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -265,10 +265,10 @@ public class MappedReads
   
   class CalculateMappedReads extends SwingWorker
   {
-    Hashtable<String, List<Float>> featureReadCount;
+    Hashtable<String, List<ReadCount>> featureReadCount;
     public Object construct()
     {
-      featureReadCount = new Hashtable<String, List<Float>>();
+      featureReadCount = new Hashtable<String, List<ReadCount>>();
       for (int i = 0; i < features.size(); i++)
       {
         Feature f = features.elementAt(i);
@@ -277,21 +277,25 @@ public class MappedReads
         int start = f.getRawFirstBase();
         int end = f.getRawLastBase();
         float fLen = BamUtils.getFeatureLength(f);
-        List<Float> sampleCounts = new Vector<Float>();
+        List<ReadCount> sampleCounts = new Vector<ReadCount>();
 
         for (int j = 0; j < bamList.size(); j++)
         {
           String bam = bamList.get(j);
-          float cnt = 0;
+          float cnt[] = new float[2];
+
           if (!useIntrons && f.getSegments().size() > 1)
           {
             for (int k = 0; k < f.getSegments().size(); k++)
             {
               start = f.getSegments().elementAt(k).getRawRange().getStart();
               end = f.getSegments().elementAt(k).getRawRange().getEnd();
-              cnt += BamUtils.getCount(start, end, bam, refName, samFileReaderHash,
+              float tmpcnt[] = new float[2];
+              tmpcnt = BamUtils.getCount(start, end, bam, refName, samFileReaderHash,
                   seqNames, offsetLengths, concatSequences, seqLengths,
                   samRecordFlagPredicate, samRecordMapQPredicate, contained);
+              cnt[0] += tmpcnt[0];
+              cnt[1] += tmpcnt[1];
             }
           }
           else
@@ -300,40 +304,76 @@ public class MappedReads
                 samRecordFlagPredicate, samRecordMapQPredicate, contained);
 
           if (mappedReads != null)
-            cnt = (cnt / (((float) mappedReads[j] / 1000000.f) * (fLen / 1000.f)));
+          {
+            cnt[0] = (cnt[0] / (((float) mappedReads[j] / 1000000.f) * (fLen / 1000.f)));
+            cnt[1] = (cnt[1] / (((float) mappedReads[j] / 1000000.f) * (fLen / 1000.f)));
+          }
 
-          sampleCounts.add(cnt);
+          sampleCounts.add( new ReadCount(cnt, f.isForwardFeature()) );
         }
+        
         featureReadCount.put(ReadCountDialog.getFeatureName(f), sampleCounts);
       }
       return null;
     }
-    
+       
     public void finished() 
     {
-      DecimalFormat df = new DecimalFormat("0.00##");
+      final DecimalFormat df;
+      if(mappedReads != null)
+        df = new DecimalFormat("0.000");
+      else
+        df = new DecimalFormat("0");
+
       StringBuffer buff = new StringBuffer();
       for (int j = 0; j < bamList.size(); j++)
       {
         String bam = bamList.get(j);
         buff.append("#BAM: " + bam);
         if (mappedReads != null)
+        {
+          final DecimalFormat df2 = new DecimalFormat("0.000000");
           buff.append(" Mapped Reads/million: "
-              + df.format(((float) mappedReads[j]) / 1000000.f));
+              + df2.format(((float) mappedReads[j]) / 1000000.f));
+        }
         buff.append("\n");
       }
       buff.append("\n");
 
-      Object[] readKey = featureReadCount.keySet().toArray();
-      Arrays.sort(readKey);
-
-      for (Object fId : readKey)
+      Enumeration<String> enumFeat = featureReadCount.keys();
+      int n = 0;
+      while (enumFeat.hasMoreElements())
       {
+        String fId = enumFeat.nextElement();
+        if(n == 0)
+        {
+          for (int i = 0; i < ((String)fId).length(); i++)
+            buff.append(" ");
+          buff.append("\t");
+          for (int j = 0; j < bamList.size(); j++)
+          {
+            if(mappedReads != null)
+              buff.append("      Sense   Antisense       Total\t");
+            else
+              buff.append("  Sense Antisense  Total\t");
+          }
+          buff.append("\n");
+        }
+        
         buff.append(fId + "\t");
-        List<Float> cnts = featureReadCount.get(fId);
-        for (int i = 0; i < cnts.size(); i++)
-          buff.append(df.format(cnts.get(i)) + (i < cnts.size() - 1 ? "\t" : ""));
+        List<ReadCount> cnts = featureReadCount.get(fId);
+        
+        for (ReadCount c: cnts)
+        {
+          pad(buff, c.senseCnt, df);
+          buff.append(" ");
+          pad(buff, c.antiCnt, df);
+          buff.append(" ");
+          pad(buff, c.senseCnt+c.antiCnt, df);
+          buff.append("\t");
+        }
         buff.append("\n");
+        n++;
       }
 
       FileViewer viewer;
@@ -345,6 +385,23 @@ public class MappedReads
       
       dialog.dispose();
     }
+  }
+  
+  private static void pad(StringBuffer buff, float f, final DecimalFormat df)
+  {
+    if(f < 10)
+      buff.append("      ");
+    else if(f < 100)
+      buff.append("     ");
+    else if(f < 1000)
+      buff.append("    ");
+    else if(f < 10000)
+      buff.append("   ");
+    else if(f < 100000)
+      buff.append("  ");
+    else if(f < 1000000)
+      buff.append(" ");
+    buff.append(df.format(f));
   }
   
   class CalculateTotalMappedReads extends SwingWorker
@@ -417,7 +474,7 @@ public class MappedReads
 
                 mappedReads[j] += BamUtils.count(bam, samFileReaderHash, name,
                     thisStart, thisEnd, samRecordFlagPredicate,
-                    samRecordMapQPredicate, contained);
+                    samRecordMapQPredicate, contained, false)[0];
 
               }
               lastLen = len;
@@ -427,7 +484,7 @@ public class MappedReads
           {
             mappedReads[j] += BamUtils.count(bam, samFileReaderHash, refName, sbegc,
                 sendc, samRecordFlagPredicate, samRecordMapQPredicate,
-                contained);
+                contained, false)[0];
           }
         }
       }
@@ -759,6 +816,25 @@ public class MappedReads
     public void finished() 
     {
       dialog.dispose();
+    }
+  }
+  
+  class ReadCount
+  {
+    private float senseCnt = 0;
+    private float antiCnt  = 0;
+    ReadCount(float[] cnt, boolean isFwd)
+    {
+      if(isFwd)
+      {
+        senseCnt = cnt[0];
+        antiCnt  = cnt[1];
+      }
+      else
+      {
+        senseCnt = cnt[1];
+        antiCnt  = cnt[0];
+      }
     }
   }
 }
