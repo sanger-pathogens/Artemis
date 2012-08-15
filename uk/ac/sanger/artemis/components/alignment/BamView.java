@@ -430,7 +430,11 @@ public class BamView extends JPanel
    * @throws IOException
    */
   private SAMFileReader getSAMFileReader(final String bam) throws IOException
-  {  
+  {
+    // parsing of the header happens during SAMFileReader construction, 
+    // so need to set the default stringency
+    SAMFileReader.setDefaultValidationStringency(ValidationStringency.LENIENT);
+    
     if(samFileReaderHash.containsKey(bam))
       return samFileReaderHash.get(bam);
 
