@@ -572,7 +572,7 @@ public class VCFview extends JPanel
     
     final JCheckBoxMenuItem graphSNP = new JCheckBoxMenuItem("SNP");
     final JCheckBoxMenuItem graphDP = new JCheckBoxMenuItem("Depth (DP)");
-    final JCheckBoxMenuItem graphSim = new JCheckBoxMenuItem("Base Similarity");
+    final JCheckBoxMenuItem graphSim = new JCheckBoxMenuItem("Base Similarity (%)");
     graph.add(graphSNP);
     graphSNP.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e)

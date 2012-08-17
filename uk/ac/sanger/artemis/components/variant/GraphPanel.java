@@ -124,20 +124,24 @@ public class GraphPanel extends JPanel
       plot(g2, Color.red, windowSize, plot, pixPerBase, max, -1);
     }
     
+    DecimalFormat df;
     final String maxStr;
     if(type == 2)
     {
       if(max == 0)
         return;
-      DecimalFormat df = new DecimalFormat("0.#");
+      df = new DecimalFormat("0.#");
       maxStr = df.format(100 - ((float)max/(float)windowSize *100.f));
     }
     else
-      maxStr = TYPES[type] + " : " + max;
+    {
+      df = new DecimalFormat("0.0###");
+      maxStr = TYPES[type] + ": " + df.format((float)max/(float)windowSize);
+    }
     FontMetrics fm = getFontMetrics(getFont());
     g2.setColor(Color.black);
 
-    int xpos = getWidth() - fm.stringWidth(maxStr) - 10;
+    int xpos = getWidth() - fm.stringWidth(maxStr) - 8;
     g2.drawString(maxStr, xpos, 
         (type == 2 ? getHeight()-fm.getHeight() : fm.getHeight()));
   }
