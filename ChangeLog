@@ -1,4 +1,8 @@
 Version XX
+	Base similarity graph for each VCF added to the VCF view.
+	
+	Sense and anti-sense read counts and RPKM values are now reported.
+	
 	Option added to create features from BAM peaks, i.e. above a threshold of the 
 	number aligned reads.
 
