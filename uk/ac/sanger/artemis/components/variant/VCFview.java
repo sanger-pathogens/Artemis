@@ -50,6 +50,7 @@ import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -66,6 +67,7 @@ import java.util.regex.Pattern;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
@@ -112,6 +114,7 @@ import uk.ac.sanger.artemis.components.MessageDialog;
 import uk.ac.sanger.artemis.components.MultiComparator;
 import uk.ac.sanger.artemis.components.Utilities;
 import uk.ac.sanger.artemis.components.alignment.FileSelectionDialog;
+import uk.ac.sanger.artemis.components.alignment.LineAttributes;
 import uk.ac.sanger.artemis.components.genebuilder.AutoCompleteComboDocument;
 import uk.ac.sanger.artemis.editor.MultiLineToolTipUI;
 import uk.ac.sanger.artemis.io.EntryInformation;
@@ -569,12 +572,14 @@ public class VCFview extends JPanel
     
     final JCheckBoxMenuItem graphSNP = new JCheckBoxMenuItem("SNP");
     final JCheckBoxMenuItem graphDP = new JCheckBoxMenuItem("Depth (DP)");
+    final JCheckBoxMenuItem graphSim = new JCheckBoxMenuItem("Base Similarity (%)");
     graph.add(graphSNP);
     graphSNP.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e)
       {
         graphPanel.setVisible(graphSNP.isSelected());
         graphDP.setSelected(false);
+        graphSim.setSelected(false);
         graphPanel.setType(0);
         graphPanel.repaint();
       }
@@ -586,7 +591,20 @@ public class VCFview extends JPanel
       {
         graphPanel.setVisible(graphDP.isSelected());
         graphSNP.setSelected(false);
+        graphSim.setSelected(false);
         graphPanel.setType(1);
+        graphPanel.repaint();
+      }
+    });
+    
+    graph.add(graphSim);
+    graphSim.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e)
+      {
+        graphPanel.setVisible(graphSim.isSelected());
+        graphSNP.setSelected(false);
+        graphDP.setSelected(false);
+        graphPanel.setType(2);
         graphPanel.repaint();
       }
     });
@@ -788,10 +806,28 @@ public class VCFview extends JPanel
     }
   }
   
+  /**
+   * Create an icon of a box using the given colour.
+   * @param c
+   * @return
+   */
+  protected ImageIcon getImageIcon(Color c)
+  {
+    BufferedImage image = (BufferedImage)this.createImage(10, 10);
+    Graphics2D g2 = image.createGraphics();
+    g2.setColor(c);
+    g2.fillRect(0, 0, 10, 10);
+    return new ImageIcon(image);
+  }
+  
   private void addToViewMenu(final int thisBamIndex)
   {
+    LineAttributes ln[] = GraphPanel.getLineAttributes(vcfReaders.length);
     final JCheckBoxMenuItem cbBam = new JCheckBoxMenuItem(
-        getLabel(thisBamIndex), true);
+        getLabel(thisBamIndex), 
+        getImageIcon(ln[thisBamIndex].getLineColour()), 
+        true);
+
     vcfFilesMenu.add(cbBam);
     cbBam.addActionListener(new ActionListener()
     {

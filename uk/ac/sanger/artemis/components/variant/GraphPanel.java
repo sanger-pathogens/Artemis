@@ -46,6 +46,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 
 import uk.ac.sanger.artemis.FeatureVector;
+import uk.ac.sanger.artemis.components.alignment.LineAttributes;
 import uk.ac.sanger.artemis.components.variant.BCFReader.BCFReaderIterator;
 
 public class GraphPanel extends JPanel
@@ -53,11 +54,12 @@ public class GraphPanel extends JPanel
   private static final long serialVersionUID = 1L; 
   protected boolean autoWinSize = true;
   protected int userWinSize = 1;
+  private static LineAttributes lines[];
   protected JPopupMenu popup = new JPopupMenu();
   private VCFview vcfView;
   
-  private static String TYPES[] = { "SNP", "DP" };
-  private int type = 0;  // 0 - SNP; 1 - DP
+  private static String TYPES[] = { "SNP", "DP", "SIMILARITY" };
+  private int type = 0;  // 0 - SNP; 1 - DP; 2 - SIM
   
   public GraphPanel(final VCFview vcfView)
   {
@@ -91,35 +93,95 @@ public class GraphPanel extends JPanel
       windowSize = 1;
 
     int nBins = Math.round((send-sbeg+1.f)/windowSize);
-    int snpCount[] = new int[nBins];
     int max = 0;
-    for(int i=0; i<snpCount.length; i++)
-      snpCount[i] = 0;
-    
+
     AbstractVCFReader readers[] = vcfView.getVcfReaders();
     FeatureVector features = vcfView.getCDSFeaturesInRange(sbeg, send);
-    for(int i=0; i<readers.length; i++)
+
+    if(type == 2) // base similarity
     {
-      max = countAll(i, readers[i], sbeg, send, windowSize, nBins, features, snpCount, max);
+      int plot[][] = new int[readers.length][nBins];
+      for (int i = 0; i < readers.length; i++)
+        for (int j = 0; j < nBins; j++)
+          plot[i][j] = 0;
+      
+      for(int i=0; i<readers.length; i++)
+        max = countAll(i, readers[i], sbeg, send, windowSize, nBins, features, plot[i], max);
+      lines = getLineAttributes(readers.length);
+
+      for(int i=0; i<readers.length; i++)
+        plot(g2, lines[i].getLineColour(), windowSize, plot[i], pixPerBase, max, i);
+    }
+    else
+    {
+      int plot[] = new int[nBins];
+      for(int i=0; i<plot.length; i++)
+        plot[i] = 0;
+
+      for(int i=0; i<readers.length; i++)
+        max = countAll(i, readers[i], sbeg, send, windowSize, nBins, features, plot, max);
+    
+      plot(g2, Color.red, windowSize, plot, pixPerBase, max, -1);
     }
     
-    g2.setColor(Color.red);
+    DecimalFormat df;
+    final String maxStr;
+    if(type == 2)
+    {
+      if(max == 0)
+        return;
+      df = new DecimalFormat("0.#");
+      maxStr = df.format(100 - ((float)max/(float)windowSize *100.f));
+    }
+    else
+    {
+      df = new DecimalFormat("0.0###");
+      maxStr = TYPES[type] + ": " + df.format((float)max/(float)windowSize);
+    }
+    FontMetrics fm = getFontMetrics(getFont());
+    g2.setColor(Color.black);
+
+    int xpos = getWidth() - fm.stringWidth(maxStr) - 8;
+    g2.drawString(maxStr, xpos, 
+        (type == 2 ? getHeight()-fm.getHeight() : fm.getHeight()));
+  }
+  
+  protected static LineAttributes[] getLineAttributes(int nsize)
+  {
+    if(lines == null)
+      lines = LineAttributes.init(nsize);
+    else if(lines.length < nsize)
+    {
+      LineAttributes tmpLines[] = LineAttributes.init(nsize);
+      for(int i=0;i<lines.length;i++)
+        tmpLines[i] = lines[i];
+      lines = tmpLines;
+    }
+    return lines;
+  }
+  
+  private void plot(Graphics2D g2, Color c, int windowSize, int plot[], float pixPerBase, int max, int vcfIndex)
+  {
+    g2.setColor(c);
     g2.setStroke(new BasicStroke(1.f));
     
-    if(windowSize == 1)
+    if(windowSize == 1 && type != 2)
     {
       GeneralPath shape = new GeneralPath();
       shape.moveTo(0,getHeight());
-      for(int i=0; i<snpCount.length; i++)
+      
+      for(int i=0; i<plot.length; i++)
       {
         float xpos1 = ((i*windowSize) )*pixPerBase;
         float xpos2 = ((i*windowSize) + windowSize)*pixPerBase;
+        if(xpos2-xpos1 < 1) // never less than a pixel wide
+          xpos2 = xpos1+1;
         
         shape.lineTo(xpos1,getHeight());
         shape.lineTo(xpos1,
-            getHeight() - (((float)snpCount[i]/(float)max)*getHeight()));
+            getHeight() - (((float)plot[i]/(float)max)*getHeight()));
         shape.lineTo(xpos2,
-            getHeight() - (((float)snpCount[i]/(float)max)*getHeight()));
+            getHeight() - (((float)plot[i]/(float)max)*getHeight()));
         
         shape.lineTo(xpos2,getHeight());
       }
@@ -129,28 +191,30 @@ public class GraphPanel extends JPanel
     }
     else
     {
-      for(int i=1; i<snpCount.length; i++)
+      float hgt = getHeight()*.95f;
+      g2.translate(0, (type == 2 ? 2 : hgt));
+      
+      for(int i=1; i<plot.length; i++)
       {
         int x0 = (int) (((i*windowSize) - windowSize/2.f)*pixPerBase);
-        int y0 = (int) (getHeight() - (((float)snpCount[i-1]/(float)max)*getHeight()));
         int x1 = (int) ((((i+1)*windowSize) - windowSize/2.f)*pixPerBase);
-        int y1 = (int) (getHeight() - (((float)snpCount[i]/(float)max)*getHeight()));
-      
+        int y0 = -(int) (((float)plot[i-1]/(float)max)*hgt*.95);
+        int y1 = -(int) (((float)plot[i]/(float)max)*hgt*.95);
+
+        if(type == 2)
+        {
+          y0 = -y0;
+          y1 = -y1;
+        }
         g2.drawLine(x0, y0, x1, y1);
       }
+      
+      g2.translate(0, (type == 2 ? -2 : -hgt));
     }
-
-    DecimalFormat df = new DecimalFormat("0.00##");
-    String maxStr = TYPES[type]+" : "+df.format((float)max/(float)windowSize);
-    FontMetrics fm = getFontMetrics(getFont());
-    g2.setColor(Color.black);
-    
-    int xpos = getWidth() - fm.stringWidth(maxStr) - 10;
-    g2.drawString(maxStr, xpos, fm.getHeight());
   }
   
   private int countAll(int vcfIndex, AbstractVCFReader reader, int sbeg, int send, int windowSize, 
-      int nBins, FeatureVector features, int snpCount[], int max)
+      int nBins, FeatureVector features, int plot[], int max)
   {
     if(vcfView.isConcatenate())
     {
@@ -172,17 +236,17 @@ public class GraphPanel extends JPanel
             thisStart = 1;
           int thisEnd   = send - offset;
           
-          max = count(vcfIndex, reader, contigs[j], thisStart, thisEnd, windowSize, nBins, features, snpCount, max);
+          max = count(vcfIndex, reader, contigs[j], thisStart, thisEnd, windowSize, nBins, features, plot, max);
         }
       }
       return max;
     }
     else
-      return count(vcfIndex, reader, vcfView.getChr(), sbeg, send, windowSize, nBins, features, snpCount, max);
+      return count(vcfIndex, reader, vcfView.getChr(), sbeg, send, windowSize, nBins, features, plot, max);
   }
   
   private int count(int vcfIndex, AbstractVCFReader reader, String chr, int sbeg, int send, int windowSize, 
-      int nBins, FeatureVector features, int snpCount[], int max)
+      int nBins, FeatureVector features, int plot[], int max)
   {
     if(reader instanceof BCFReader)
     {
@@ -194,7 +258,7 @@ public class GraphPanel extends JPanel
         VCFRecord record;
         while((record = it.next()) != null)
         {
-          max = calc(vcfIndex, record, features, reader, windowSize, nBins, snpCount, max);
+          max = calc(vcfIndex, record, features, reader, windowSize, nBins, plot, max);
         }
       }
       catch (IOException e)
@@ -214,7 +278,7 @@ public class GraphPanel extends JPanel
         while ((s = iter.next()) != null)
         {
           VCFRecord record = VCFRecord.parse(s, reader.getNumberOfSamples());
-          max = calc(vcfIndex, record, features, reader, windowSize, nBins, snpCount, max);
+          max = calc(vcfIndex, record, features, reader, windowSize, nBins, plot, max);
         }
       }
       catch (IOException e)
@@ -226,7 +290,7 @@ public class GraphPanel extends JPanel
   }
   
   private int calc(int vcfIndex, VCFRecord record, FeatureVector features,
-      AbstractVCFReader reader, int windowSize, int nBins, int snpCount[], int max)
+      AbstractVCFReader reader, int windowSize, int nBins, int plot[], int max)
   {
     int pos = record.getPos() + vcfView.getSequenceOffset(record.getChrom());
     if(!vcfView.showVariant(record, features, pos, reader, -1, vcfIndex))
@@ -236,21 +300,27 @@ public class GraphPanel extends JPanel
     if(bin < 0 || bin > nBins-1)
       return max;
 
-    if(type == 1)
+    switch (type)
     {
-      int dp = 0;
-      try
-      {
-        dp = Integer.parseInt(record.getInfoValue("DP"));
-      }
-      catch(Exception e){ e.printStackTrace(); }
-      snpCount[bin]+=dp;
+      case 0:
+        plot[bin]+=1;
+        break;
+      case 1:
+        int dp = 0;
+        try
+        {
+          dp = Integer.parseInt(record.getInfoValue("DP"));
+        }
+        catch(Exception e){ e.printStackTrace(); }
+        plot[bin]+=dp;
+        break;
+      case 2:
+        plot[bin]+=1;
+        break;
     }
-    else
-      snpCount[bin]+=1;
     
-    if(snpCount[bin] > max)
-      max = snpCount[bin];
+    if(plot[bin] > max)
+      max = plot[bin];
 
     return max;
   }
