@@ -1,4 +1,6 @@
 Version XX
+	Add Rfam sequence search from the RUN menu.
+	
 	Base similarity graph for each VCF added to the VCF view.
 	
 	Sense and anti-sense read counts and RPKM values are now reported.
