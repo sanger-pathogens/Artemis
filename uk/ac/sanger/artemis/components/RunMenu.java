@@ -74,6 +74,7 @@ public class RunMenu extends SelectionMenu
     addPfamSearches(selection);
     if(Options.isUnixHost())
     {
+      addSeparator();
       final ExternalProgramVector external_programs = Options.getOptions()
           .getExternalPrograms();
 
@@ -123,6 +124,30 @@ public class RunMenu extends SelectionMenu
         final String residues = features.elementAt(0).getTranslation().toString().toUpperCase();
 
         RunPfamSearchThread pfamSearch = new RunPfamSearchThread(residues);
+        pfamSearch.start();
+      }
+    });
+    
+    
+    final JMenuItem rfam = new JMenuItem("Rfam Search");
+    add(rfam);
+    rfam.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent arg0)
+      {
+        final FeatureVector features = selection.getAllFeatures();
+        
+        if(features.size() != 1)
+        {
+          JOptionPane.showMessageDialog(RunMenu.this,
+              "Selected a single feature to send to Rfam for searching.", 
+              "Rfam Search", JOptionPane.INFORMATION_MESSAGE);
+          return; 
+        }
+        final String residues = features.elementAt(0).getTranslationBases();
+
+        RunPfamSearchThread pfamSearch = new RunPfamSearchThread(
+            residues, RunPfamSearchThread.rfamUrl);
         pfamSearch.start();
       }
     });
