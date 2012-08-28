@@ -1086,7 +1086,7 @@ public class WriteMenu extends SelectionMenu
         if(tok.hasMoreTokens())
         {
           String ID = tok.nextToken();
-          if(ID.length() > 1 && ID.indexOf("\n") > -1 && ID.indexOf("\r") > -1)
+          if(ID.length() > 1 && !(ID.indexOf("\n") > -1) && !(ID.indexOf("\r") > -1))
             name = ID + " all_bases";
         }
       }
