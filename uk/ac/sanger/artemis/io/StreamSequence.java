@@ -237,7 +237,7 @@ public abstract class StreamSequence
    *  Set this sequence to hold the bases in the given byte array.
    *
    **/
-  public void setFromChar(final char dna[], int offset, 
+  private void setFromChar(final char dna[], int offset, 
                           final int bit_shift,
                           final int new_sequence_length)
   {
