@@ -53,6 +53,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.StringTokenizer;
+
 import javax.swing.Box;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
@@ -1068,8 +1070,30 @@ public class WriteMenu extends SelectionMenu
   {
     final String file_name = getSequenceFileName(output_type);
 
+    String name = "all_bases";
+    try
+    {
+      name = entry_group.getSequenceEntry().getName()+" all_bases";
+      if( entry_group.getSequenceEntry().getHeaderText() != null &&
+         (entry_group.getSequenceEntry().getHeaderText().startsWith("ID   ") ||
+          entry_group.getSequenceEntry().getHeaderText().startsWith("LOCUS       ")) )
+      {
+        StringTokenizer tok = new StringTokenizer(
+            entry_group.getSequenceEntry().getHeaderText(),
+            " ;");
+        tok.nextElement();
+
+        if(tok.hasMoreTokens())
+        {
+          String ID = tok.nextToken();
+          if(ID.length() > 1 && !(ID.indexOf("\n") > -1) && !(ID.indexOf("\r") > -1))
+            name = ID + " all_bases";
+        }
+      }
+    }
+    catch(Exception e){}
     writeBases(entry_group.getBases().toString(),
-               "all_bases", file_name, output_type);
+               name, file_name, output_type);
   }
 
   /**
