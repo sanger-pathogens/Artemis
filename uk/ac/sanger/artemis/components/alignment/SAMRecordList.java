@@ -50,6 +50,7 @@ import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.components.DisplayAdjustmentEvent;
 import uk.ac.sanger.artemis.components.DisplayAdjustmentListener;
 import uk.ac.sanger.artemis.components.SwingWorker;
+import uk.ac.sanger.artemis.components.alignment.BamViewRecord;
 
 
 import net.sf.samtools.SAMRecord;
@@ -166,7 +167,7 @@ public class SAMRecordList extends JPanel
   
   private void setHighlight()
   {
-    bamView.setHighlightSAMRecord( bamView.getReadsInView().get(highlight) );
+    bamView.setHighlightSAMRecord( bamView.getReadsInView().get(highlight).sam );
     bamView.repaint();
     repaint();
   }
@@ -176,7 +177,7 @@ public class SAMRecordList extends JPanel
     super.paintComponent(g);
 
     int nrecordsShown = getHeight()/font_size;
-    List<SAMRecord> readsInView = bamView.getReadsInView();
+    List<BamViewRecord> readsInView = bamView.getReadsInView();
     verticalScroll.setMaximum(readsInView.size());
     verticalScroll.setVisibleAmount(nrecordsShown);
 
@@ -192,7 +193,7 @@ public class SAMRecordList extends JPanel
     String fmt = getFormatString(fst, lst, readsInView);
     for(int i=fst; i<lst; i++)
     {
-      SAMRecord thisRead = readsInView.get(i);
+      SAMRecord thisRead = readsInView.get(i).sam;
       
       if(highlightedSAMRecord != null && highlightedSAMRecord.equals(thisRead.getReadName()))
       {
@@ -211,7 +212,7 @@ public class SAMRecordList extends JPanel
     }
   }
   
-  private String getFormatString(int fst, int lst, List<SAMRecord> readsInView)
+  private String getFormatString(int fst, int lst, List<BamViewRecord> readsInView)
   {
     int nameWidth  = 10;
     int coordWidth = 10;
@@ -220,7 +221,7 @@ public class SAMRecordList extends JPanel
     
     for(int i=fst; i<lst; i++)
     {
-      SAMRecord thisRead = readsInView.get(i);
+      SAMRecord thisRead = readsInView.get(i).sam;
       int thisWidth = thisRead.getReadName().length();
       if(thisWidth > nameWidth)
         nameWidth = thisWidth;
