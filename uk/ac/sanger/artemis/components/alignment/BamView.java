@@ -527,23 +527,17 @@ public class BamView extends JPanel
 
   private void readHeaderPicard() throws IOException
   {
-    String bam = bamList.get(0);
-    final SAMFileReader inputSam = getSAMFileReader(bam);
-    
-    //final SAMFileReader inputSam = new SAMFileReader(bamFile, indexFile);
-    SAMFileHeader header = inputSam.getFileHeader();
-    List<SAMSequenceRecord> readGroups = header.getSequenceDictionary().getSequences();
-    
-    for(int i=0; i<readGroups.size(); i++)
+    final SAMFileReader inputSam = getSAMFileReader(bamList.get(0));
+    final SAMFileHeader header = inputSam.getFileHeader();
+
+    for(SAMSequenceRecord seq: header.getSequenceDictionary().getSequences())
     {
-      seqLengths.put(readGroups.get(i).getSequenceName(),
-                     readGroups.get(i).getSequenceLength());
-      seqNames.add(readGroups.get(i).getSequenceName());
+      seqLengths.put(seq.getSequenceName(),
+                     seq.getSequenceLength());
+      seqNames.add(seq.getSequenceName());
     }
-    //inputSam.close();
   }
 
-  
   /**
    * Read a SAM or BAM file.
    * @throws IOException 
@@ -553,16 +547,16 @@ public class BamView extends JPanel
   {
     // Open the input file.  Automatically detects whether input is SAM or BAM
     // and delegates to a reader implementation for the appropriate format.
-    String bam = bamList.get(bamIndex);  
+    final String bam = bamList.get(bamIndex);  
     final SAMFileReader inputSam = getSAMFileReader(bam);
     
     //final SAMFileReader inputSam = new SAMFileReader(bamFile, indexFile);
     if(isConcatSequences())
     {
-      for(int i=0; i<seqNames.size(); i++)
+      for(String seq: seqNames)
       {
-        int sLen = seqLengths.get(seqNames.get(i));
-        int offset = getSequenceOffset(seqNames.get(i)); 
+        int sLen = seqLengths.get(seq);
+        int offset = getSequenceOffset(seq); 
         int sBeg = offset+1;
         int sEnd = sBeg+sLen-1;
 
@@ -576,8 +570,8 @@ public class BamView extends JPanel
           if(thisEnd > sLen)
             thisEnd = sLen;
 
-          iterateOverBam(inputSam, seqNames.get(i), thisStart, thisEnd, bamIndex, pixPerBase, bam);
-          //System.out.println("READ "+seqNames.get(i)+"  "+thisStart+".."+thisEnd+" "+start+" --- "+offset);
+          iterateOverBam(inputSam, seq, thisStart, thisEnd, bamIndex, pixPerBase, bam);
+          //System.out.println("READ "+seq+"  "+thisStart+".."+thisEnd+" "+start+" --- "+offset);
         }
       }
     }
@@ -586,7 +580,6 @@ public class BamView extends JPanel
       String refName = (String) combo.getSelectedItem();
       iterateOverBam(inputSam, refName, start, end, bamIndex, pixPerBase, bam);
     }
-    
     //inputSam.close();
   }
   
@@ -605,7 +598,7 @@ public class BamView extends JPanel
   { 
     final CloseableIterator<SAMRecord> it = inputSam.queryOverlapping(refName, start, end);
     MemoryMXBean memory = ManagementFactory.getMemoryMXBean();
-    int checkMemAfter = 8000;
+    final int checkMemAfter = 8000;
     int cnt = 0;
     final int seqOffset = getSequenceOffset(refName);
     final int offset = seqOffset- getBaseAtStartOfView();
@@ -676,8 +669,8 @@ public class BamView extends JPanel
     if(isConcatSequences())
     {
       int len = 0;
-      for(int i=0; i<seqNames.size(); i++)
-        len += seqLengths.get(seqNames.get(i));
+      for(String seq: seqNames)
+        len += seqLengths.get(seq);
       return len;
     }
     else
@@ -768,7 +761,7 @@ public class BamView extends JPanel
 	Graphics2D g2 = (Graphics2D)g;
 
 	mouseOverSAMRecord = null;
-    int seqLength = getSequenceLength();
+    final int seqLength = getSequenceLength();
     int start;
     int end;
     
@@ -789,7 +782,7 @@ public class BamView extends JPanel
         nbasesInView = feature_display.getMaxVisibleBases();
     }
 
-    float pixPerBase = getPixPerBaseByWidth();
+    final float pixPerBase = getPixPerBaseByWidth();
     boolean changeToStackView = false;
     MemoryMXBean memory = ManagementFactory.getMemoryMXBean();
     if(laststart != start ||
@@ -809,7 +802,6 @@ public class BamView extends JPanel
         {
           float heapFractionUsedBefore = (float) ((float) memory.getHeapMemoryUsage().getUsed() / 
                                                   (float) memory.getHeapMemoryUsage().getMax());
-
           if(readsInView == null)
             readsInView = new Vector<BamViewRecord>();
           else
@@ -1192,11 +1184,11 @@ public class BamView extends JPanel
     if(isShowScale())
       drawScale(g2, start, end, pixPerBase, getHeight());
     
-    Stroke stroke =
+    final Stroke stroke =
       new BasicStroke (1.3f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND);
     g2.setStroke(stroke);
     
-    int scaleHeight;
+    final int scaleHeight;
     if(isShowScale())
       scaleHeight = 15;
     else
@@ -1282,17 +1274,13 @@ public class BamView extends JPanel
   
   private int getYPos(int scaleHeight, int size)
   {
-    int ypos;
-    
     if(!logScale)
-      ypos = (getHeight() - scaleHeight) - size;
+      return (getHeight() - scaleHeight) - size;
     else
     {
       int logInfSize = (int)( Math.log(size) * 100);
-      ypos = (getHeight() - scaleHeight) - logInfSize;
+      return (getHeight() - scaleHeight) - logInfSize;
     }
-    
-    return ypos;
   }
  
   /**
@@ -1310,22 +1298,22 @@ public class BamView extends JPanel
    * @param end
    */
   private void drawStackView(Graphics2D g2, 
-                             int seqLength, 
-                             float pixPerBase, 
-                             int start, 
-                             int end)
+                             final int seqLength, 
+                             final float pixPerBase, 
+                             final int start, 
+                             final int end)
   {
     drawSelectionRange(g2, pixPerBase,start, end, Color.PINK);
     if(isShowScale())
       drawScale(g2, start, end, pixPerBase, getHeight());
 
-    BasicStroke stroke = new BasicStroke(
+    final BasicStroke stroke = new BasicStroke(
         1.3f,
         BasicStroke.CAP_BUTT, 
         BasicStroke.JOIN_MITER);
     g2.setStroke(stroke);
     
-    int scaleHeight;
+    final int scaleHeight;
     if(isShowScale())
       scaleHeight = 15;
     else
@@ -1338,13 +1326,12 @@ public class BamView extends JPanel
     int maxEnd = 0;
     int lstStart = 0;
     int lstEnd = 0;
-    int baseAtStartOfView = getBaseAtStartOfView();
+    final int baseAtStartOfView = getBaseAtStartOfView();
     g2.setColor(Color.blue);
-    Rectangle r = jspView.getViewport().getViewRect();
+    final Rectangle r = jspView.getViewport().getViewRect();
     
-    for(int i=0; i<readsInView.size(); i++)
+    for(BamViewRecord bamViewRecord: readsInView)
     {
-      BamViewRecord bamViewRecord = readsInView.get(i);
       SAMRecord samRecord = bamViewRecord.sam;
       int offset = getSequenceOffset(samRecord.getReferenceName());
 
@@ -1403,12 +1390,12 @@ public class BamView extends JPanel
                                    int end)
   {
     drawSelectionRange(g2, pixPerBase,start, end, Color.PINK);   
-    BasicStroke stroke = new BasicStroke(
+    final BasicStroke stroke = new BasicStroke(
         1.3f,
         BasicStroke.CAP_BUTT, 
         BasicStroke.JOIN_MITER);
     
-    int scaleHeight = 15;
+    final int scaleHeight = 15;
     drawScale(g2, start, end, pixPerBase, ((getHeight()+scaleHeight)/2));
 
     int ymid = (getHeight()/ 2);
@@ -1439,15 +1426,14 @@ public class BamView extends JPanel
     g2.setColor(Color.blue);
     Rectangle r = jspView.getViewport().getViewRect();
     
-    for(int i=0; i<readsInView.size(); i++)
+    for(BamViewRecord bamViewRecord: readsInView)
     {
-      BamViewRecord bamViewRecord = readsInView.get(i);
       SAMRecord samRecord = bamViewRecord.sam;
       if( samRecord.getReadNegativeStrandFlag() == isStrandNegative )
       {
-        int offset = getSequenceOffset(samRecord.getReferenceName());
-        int recordStart = samRecord.getAlignmentStart()+offset;
-        int recordEnd   = samRecord.getAlignmentEnd()+offset;
+        final int offset = getSequenceOffset(samRecord.getReferenceName());
+        final int recordStart = samRecord.getAlignmentStart()+offset;
+        final int recordEnd   = samRecord.getAlignmentEnd()+offset;
       
         if(colourByCoverageColour.isSelected() ||
             lstStart != recordStart || lstEnd != recordEnd)
@@ -1490,10 +1476,10 @@ public class BamView extends JPanel
    * @param end
    */
   private void drawPairedStackView(Graphics2D g2, 
-                                   int seqLength, 
-                                   float pixPerBase, 
-                                   int start, 
-                                   int end)
+                                   final int seqLength, 
+                                   final float pixPerBase, 
+                                   final int start, 
+                                   final int end)
   {
     drawSelectionRange(g2, pixPerBase,start, end, Color.PINK);
     if(isShowScale())
@@ -1546,7 +1532,7 @@ public class BamView extends JPanel
             new BasicStroke (1.3f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND);
     g2.setStroke(stroke);
     
-    int scaleHeight;
+    final int scaleHeight;
     if(isShowScale())
       scaleHeight = 15;
     else
@@ -1560,9 +1546,8 @@ public class BamView extends JPanel
     int baseAtStartOfView = getBaseAtStartOfView();
     Rectangle r = jspView.getViewport().getViewRect();
 
-    for(int i=0; i<pairedReads.size(); i++)
+    for(PairedRead pr: pairedReads)
     {
-      PairedRead pr = pairedReads.get(i);
       if(pr.sam1.sam.getAlignmentStart() > lastEnd)
       {
         ypos = getHeight() - scaleHeight - ydiff;
@@ -1869,10 +1854,11 @@ public class BamView extends JPanel
    * @param ypos
    * @param baseAtStartOfView
    */
-  private void drawRead(Graphics2D g2, SAMRecord thisRead,
-		                float pixPerBase,
-		                int ypos,
-		                int baseAtStartOfView)
+  private void drawRead(Graphics2D g2, 
+      final SAMRecord thisRead,
+      final float pixPerBase,
+      final int ypos,
+      final int baseAtStartOfView)
   {
     int offset = getSequenceOffset(thisRead.getReferenceName());
 
@@ -2048,7 +2034,6 @@ public class BamView extends JPanel
     
     // use alignment blocks of the contiguous alignment of
     // subsets of read bases to a reference sequence
-    List<AlignmentBlock> blocks = thisRead.getAlignmentBlocks();
     try
     {
       char[] refSeq = bases.getSubSequenceC(
@@ -2059,9 +2044,9 @@ public class BamView extends JPanel
       g2.setColor(Color.red);
 
       offset = offset - getBaseAtStartOfView();
-      for(int i=0; i<blocks.size(); i++)
+      final List<AlignmentBlock> blocks = thisRead.getAlignmentBlocks();
+      for(AlignmentBlock block: blocks)
       {
-        AlignmentBlock block = blocks.get(i);
         for(int j=0; j<block.getLength(); j++)
         {
           int readPos = block.getReadStart()-1+j;
@@ -2073,9 +2058,7 @@ public class BamView extends JPanel
                         (int) ((refPos+offset) * pixPerBase), ypos - 2);
           }
         }
-        
       }
-
       g2.setColor(col);
     }
     catch (OutOfRangeException e)
