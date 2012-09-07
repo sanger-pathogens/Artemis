@@ -70,6 +70,9 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -238,6 +241,8 @@ public class BamView extends JPanel
   private JPopupMenu popup;
   private PopupMessageFrame popFrame = new PopupMessageFrame();
   private PopupMessageFrame waitingFrame = new PopupMessageFrame("waiting...");
+  private ExecutorService bamReadTaskExecutor;
+  private int MAX_COVERAGE = Integer.MAX_VALUE;
   
   public static org.apache.log4j.Logger logger4j = 
     org.apache.log4j.Logger.getLogger(BamView.class);
@@ -291,6 +296,22 @@ public class BamView extends JPanel
       }
     }
     
+    if(Options.getOptions().getIntegerProperty("bam_read_thread") != null)
+    { 
+      logger4j.debug("BAM READ THREADS="+Options.getOptions().getIntegerProperty("bam_read_thread"));
+      bamReadTaskExecutor = Executors.newFixedThreadPool(
+          Options.getOptions().getIntegerProperty("bam_read_thread"));
+    }
+    else
+      bamReadTaskExecutor = Executors.newFixedThreadPool(1);
+    
+    
+    if(Options.getOptions().getIntegerProperty("bam_max_coverage") != null)
+    { 
+      logger4j.debug("BAM MAX COVERAGE="+Options.getOptions().getIntegerProperty("bam_max_coverage"));
+      MAX_COVERAGE = Options.getOptions().getIntegerProperty("bam_max_coverage");
+    }  
+
     try
     {
       readHeaderPicard();
@@ -537,6 +558,43 @@ public class BamView extends JPanel
       seqNames.add(seq.getSequenceName());
     }
   }
+  
+  class BamReadTask implements Runnable 
+  {
+    private int start; 
+    private int end; 
+    private short bamIndex; 
+    private float pixPerBase;
+    private CountDownLatch latch;
+    BamReadTask(int start, int end, short bamIndex, float pixPerBase, CountDownLatch latch)  
+    {
+      this.start = start;
+      this.end = end;
+      this.bamIndex = bamIndex;
+      this.pixPerBase = pixPerBase;
+      this.latch = latch;
+    }
+
+    public void run() 
+    {
+      try
+      {
+        readFromBamPicard(start, end, bamIndex, pixPerBase) ;
+      }
+      catch (OutOfMemoryError ome)
+      {
+        throw ome;
+      }
+      catch(IOException me)
+      {
+        me.printStackTrace();
+      }
+      finally
+      {
+        latch.countDown();
+      }
+    }
+  }
 
   /**
    * Read a SAM or BAM file.
@@ -592,76 +650,116 @@ public class BamView extends JPanel
    * @param end
    */
   private void iterateOverBam(final SAMFileReader inputSam, 
-                              final String refName, final int start, final int end,
-                              final short bamIndex, final float pixPerBase,
-                              final String bam)
-  { 
-    final CloseableIterator<SAMRecord> it = inputSam.queryOverlapping(refName, start, end);
-    MemoryMXBean memory = ManagementFactory.getMemoryMXBean();
+                             final String refName, final int start, final int end,
+                             final short bamIndex, final float pixPerBase,
+                             final String bam)
+  {
+    final MemoryMXBean memory = ManagementFactory.getMemoryMXBean();
     final int checkMemAfter = 8000;
-    int cnt = 0;
     final int seqOffset = getSequenceOffset(refName);
     final int offset = seqOffset- getBaseAtStartOfView();
     final boolean isCoverageView = isCoverageView(pixPerBase);
-    
-    while ( it.hasNext() )
-    {
-      try
-      {
-        cnt++;
-        SAMRecord samRecord = it.next();
 
-        if( samRecordFlagPredicate == null ||
-           !samRecordFlagPredicate.testPredicate(samRecord))
-        {
-          if(samRecordMapQPredicate == null ||
-             samRecordMapQPredicate.testPredicate(samRecord))
-          {
-            if(isCoverageView)
-              coverageView.addRecord(samRecord, offset, bam);
-            
-            if(isCoverage)
-              coveragePanel.addRecord(samRecord, offset, bam);
-            
-            if(isSNPplot)
-              snpPanel.addRecord(samRecord, seqOffset);
-            
-            if(!isCoverageView)
-              readsInView.add(new BamViewRecord(samRecord, bamIndex));
-          }
-        }
-        
-        if(cnt > checkMemAfter)
-        {
-          cnt = 0;
-          float heapFraction =
-            (float)((float)memory.getHeapMemoryUsage().getUsed()/
-                    (float)memory.getHeapMemoryUsage().getMax());
-          logger4j.debug("Heap memory usage (used/max): "+heapFraction);
-          
-          if(readsInView.size() > checkMemAfter*2 && !waitingFrame.isVisible())
-            waitingFrame.showWaiting("loading...", mainPanel);
-          
-          if(heapFraction > 0.90) 
-          {
-            popFrame.show(
-              "Using > 90 % of the maximum memory limit:"+
-              (memory.getHeapMemoryUsage().getMax()/1000000.f)+" Mb.\n"+
-              "Not all reads in this range have been read in. Zoom in or\n"+
-              "consider increasing the memory for this application.",
-              mainPanel,
-              15000);
-            break;
-          }
-        }
-      }
-      catch(Exception e)
+    int cnt = 0;
+
+    int nbins = 600;
+    int binSize = ((end-start)/nbins)+1;
+    if(binSize < 1)
+    {
+      binSize = 1;
+      nbins = end-start+1;
+    }
+    int max = MAX_COVERAGE*binSize;
+    if(max < 1)
+      max = Integer.MAX_VALUE;
+    final int cov[] = new int[nbins];
+    for(int i=0; i<nbins; i++)
+      cov[i] = 0;
+    
+    final CloseableIterator<SAMRecord> it = inputSam.queryOverlapping(refName, start, end);
+    try
+    {
+      while ( it.hasNext() )
       {
-        System.err.println(e.getMessage());
+        try
+        {
+          cnt++;
+          SAMRecord samRecord = it.next();
+
+          if( samRecordFlagPredicate == null ||
+             !samRecordFlagPredicate.testPredicate(samRecord))
+          {
+            if(samRecordMapQPredicate == null ||
+               samRecordMapQPredicate.testPredicate(samRecord))
+            {
+              int abeg = samRecord.getAlignmentStart();
+              int aend = samRecord.getAlignmentEnd();
+              boolean over = false;
+              
+              for(int i=abeg; i<aend; i++)
+              {
+                
+                int bin = ((i-start)/binSize)-1;
+                if(bin < 0)
+                  bin = 0;
+                else if(bin > nbins-1)
+                  bin = nbins-1;
+                cov[bin]++;
+                if(cov[bin] > max)
+                {
+                  over = true;
+                  break;
+                }
+              }
+             
+              if(over)
+                continue;
+
+              if(isCoverageView)
+                coverageView.addRecord(samRecord, offset, bam);
+              if(isCoverage)
+                coveragePanel.addRecord(samRecord, offset, bam);
+              if(isSNPplot)
+                snpPanel.addRecord(samRecord, seqOffset);
+              if(!isCoverageView)
+                readsInView.add(new BamViewRecord(samRecord, bamIndex));
+            }
+          }
+        
+          if(cnt > checkMemAfter)
+          {
+            cnt = 0;
+            float heapFraction =
+              (float)((float)memory.getHeapMemoryUsage().getUsed()/
+                      (float)memory.getHeapMemoryUsage().getMax());
+            logger4j.debug("Heap memory usage (used/max): "+heapFraction);
+          
+            if(readsInView.size() > checkMemAfter*2 && !waitingFrame.isVisible())
+              waitingFrame.showWaiting("loading...", mainPanel);
+
+            if(heapFraction > 0.90) 
+            {
+              popFrame.show(
+                "Using > 90 % of the maximum memory limit:"+
+                (memory.getHeapMemoryUsage().getMax()/1000000.f)+" Mb.\n"+
+                "Not all reads in this range have been read in. Zoom in or\n"+
+                "consider increasing the memory for this application.",
+                mainPanel,
+                15000);
+              break;
+            }
+          }
+        }
+        catch(Exception e)
+        {
+          System.err.println(e.getMessage());
+        }
       }
     }
-
-    it.close();
+    finally
+    {
+      it.close();
+    }
   }
 
   private int getSequenceLength()
@@ -751,7 +849,7 @@ public class BamView extends JPanel
     }
     return offsetLengths.get(refName);
   }
-  
+
   /**
    * Override
    */
@@ -807,11 +905,24 @@ public class BamView extends JPanel
           else
             readsInView.clear();
 
+          final CountDownLatch latch = new CountDownLatch(bamList.size());
+          //long ms = System.currentTimeMillis();
           for(short i=0; i<bamList.size(); i++)
           {
             if(!hideBamList.contains(i))
-              readFromBamPicard(start, end, i, pixPerBase);
+              bamReadTaskExecutor.execute(
+                  new BamReadTask(start, end, i, pixPerBase, latch));
           }
+
+          try 
+          {
+            latch.await();
+          }
+          catch (InterruptedException e) {} // TODO 
+
+          //System.out.println("===== NO. THREADS="+
+          //     ((java.util.concurrent.ThreadPoolExecutor)bamReadTaskExecutor).getPoolSize()+" TIME="+(System.currentTimeMillis()-ms));
+
           float heapFractionUsedAfter = (float) ((float) memory.getHeapMemoryUsage().getUsed() / 
                                                  (float) memory.getHeapMemoryUsage().getMax());
 
@@ -842,10 +953,6 @@ public class BamView extends JPanel
           JOptionPane.showMessageDialog(this, "Out of Memory");
           readsInView.clear();
           return;
-        }
-        catch(IOException me)
-        {
-          me.printStackTrace();
         }
         catch(net.sf.samtools.util.RuntimeIOException re)
         {
@@ -1171,7 +1278,7 @@ public class BamView extends JPanel
   }
   
   /**
-   * Draw zoomed-out view.
+   * Draw inferred size view.
    * @param g2
    * @param seqLength
    * @param pixPerBase
@@ -1682,6 +1789,14 @@ public class BamView extends JPanel
     }
 
     int hgt = jspView.getVisibleRect().height-scaleHeight;
+    if(!cbCoverageStrandView.isSelected())
+    {
+      int y = getHeight()-10-( (hgt* MAX_COVERAGE)/(coverageView.max/coverageView.windowSize) );
+      g2.setColor(Color.YELLOW);
+      // draw the threshold for the coverage max read cut-off
+      g2.fillRect(0, y, getWidth(), 10);
+    }
+
     g2.translate(0, getHeight()-hgt-scaleHeight);
     coverageView.drawSelectionRange(g2, pixPerBase, start, end, getHeight(), Color.PINK);
     coverageView.draw(g2, getWidth(), hgt);
@@ -2621,6 +2736,28 @@ public class BamView extends JPanel
           filterFrame = new SAMRecordFilter(BamView.this);
         else
           filterFrame.setVisible(true);
+      } 
+    });
+    
+    JMenuItem maxReadCoverage = new JMenuItem("Read Coverage Threshold ...");
+    menu.add(maxReadCoverage);
+    maxReadCoverage.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        final TextFieldInt maxRead = new TextFieldInt();
+        maxRead.setValue(MAX_COVERAGE);
+        int status = JOptionPane.showConfirmDialog(null, maxRead, 
+            "Read Coverage Threshold", JOptionPane.OK_CANCEL_OPTION);
+        if(status == JOptionPane.OK_OPTION &&
+           maxRead.getValue() != MAX_COVERAGE)
+        {
+          MAX_COVERAGE = maxRead.getValue();
+          if(MAX_COVERAGE < 1)
+            MAX_COVERAGE = Integer.MAX_VALUE;
+          laststart = -1;
+          repaint();
+        }
       } 
     });
     
