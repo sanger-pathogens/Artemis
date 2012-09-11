@@ -26,29 +26,29 @@ package uk.ac.sanger.artemis.components.alignment;
 
 import java.util.Comparator;
 
-import net.sf.samtools.SAMRecord;
+import uk.ac.sanger.artemis.components.alignment.BamViewRecord;
 
  class SAMRecordComparator implements Comparator<Object>
   {
     public int compare(Object o1, Object o2) 
     {
-      SAMRecord pr1 = (SAMRecord) o1;
-      SAMRecord pr2 = (SAMRecord) o2;
+      BamViewRecord pr1 = (BamViewRecord) o1;
+      BamViewRecord pr2 = (BamViewRecord) o2;
       
-      int cmp = pr1.getReadName().compareTo(pr2.getReadName());
+      int cmp = pr1.sam.getReadName().compareTo(pr2.sam.getReadName());
       if(cmp == 0)
       {
-        Object fl1 = pr1.getAttribute("FL"); // bam file index
-        Object fl2 = pr2.getAttribute("FL");
-        if(fl1 != null && fl2 != null)
+        short fl1 = pr1.bamIndex; // bam file index
+        short fl2 = pr2.bamIndex;
+        if(fl1 != -1 && fl2 != -1)
         {
-          if((Integer)fl1 < (Integer)fl2)
+          if(fl1 < fl2)
             return -1;
-          else if((Integer)fl1 > (Integer)fl2)
+          else if(fl1 > fl2)
             return 1;
         }
         
-        if(pr1.getAlignmentStart() < pr2.getAlignmentStart())
+        if(pr1.sam.getAlignmentStart() < pr2.sam.getAlignmentStart())
           return -1;
         else
           return 1;
