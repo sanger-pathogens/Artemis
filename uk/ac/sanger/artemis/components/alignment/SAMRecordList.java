@@ -113,7 +113,7 @@ public class SAMRecordList extends JPanel
         if(e.getClickCount() > 1)
         {
           setCursor(new Cursor(Cursor.WAIT_CURSOR));
-          BamView.openFileViewer(bamView.getHighlightSAMRecord(),
+          BamView.openFileViewer(bamView.getHighlightSAMRecord().sam,
             bamView.getMate(bamView.getHighlightSAMRecord()),
             bamView.bamList);
           setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
@@ -167,7 +167,7 @@ public class SAMRecordList extends JPanel
   
   private void setHighlight()
   {
-    bamView.setHighlightSAMRecord( bamView.getReadsInView().get(highlight).sam );
+    bamView.setHighlightSAMRecord( bamView.getReadsInView().get(highlight) );
     bamView.repaint();
     repaint();
   }
@@ -188,7 +188,7 @@ public class SAMRecordList extends JPanel
       lst = readsInView.size();
     
     String highlightedSAMRecord = (bamView.getHighlightSAMRecord() == null ? 
-        null : bamView.getHighlightSAMRecord().getReadName());
+        null : bamView.getHighlightSAMRecord().sam.getReadName());
     
     String fmt = getFormatString(fst, lst, readsInView);
     for(int i=fst; i<lst; i++)
