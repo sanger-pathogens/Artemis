@@ -195,7 +195,7 @@ import net.sf.samtools.SAMRecord;
         col = 1;
       else
         col = 0;
-      List<AlignmentBlock> blocks = thisRead.getAlignmentBlocks();
+      final List<AlignmentBlock> blocks = thisRead.getAlignmentBlocks();
       for(int j=0; j<blocks.size(); j++)
       {
         AlignmentBlock block = blocks.get(j);
