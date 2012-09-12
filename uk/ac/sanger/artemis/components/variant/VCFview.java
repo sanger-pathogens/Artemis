@@ -814,6 +814,8 @@ public class VCFview extends JPanel
   protected ImageIcon getImageIcon(Color c)
   {
     BufferedImage image = (BufferedImage)this.createImage(10, 10);
+    if(image == null)
+      return null;
     Graphics2D g2 = image.createGraphics();
     g2.setColor(c);
     g2.fillRect(0, 0, 10, 10);
