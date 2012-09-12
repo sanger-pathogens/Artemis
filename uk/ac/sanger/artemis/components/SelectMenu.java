@@ -279,14 +279,16 @@ public class SelectMenu extends SelectionMenu
     add(select_by_key_item);
 
     select_non_pseudo_cds_item =
-      new JMenuItem("CDS Features without /pseudo");
+      new JMenuItem("CDS Features without /pseudogene");
     select_non_pseudo_cds_item.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent event)
       {
-        // select all CDS features that do not have the /pseudo qualifier
-        final FeatureKeyQualifierPredicate predicate =
-          new FeatureKeyQualifierPredicate(Key.CDS, "pseudo", false);
+        // select all CDS features that do not have the /pseudo  or /pseudogene qualifier
+        final FeaturePredicateConjunction predicate = new FeaturePredicateConjunction(
+            new FeatureKeyQualifierPredicate(Key.CDS, "pseudo", false),
+            new FeatureKeyQualifierPredicate(Key.CDS, "pseudogene", false),
+            FeaturePredicateConjunction.AND);
 
         clearSelection();
 
