@@ -1313,7 +1313,7 @@ public class BamView extends JPanel
       BamViewRecord bamViewNextRecord = null;
       SAMRecord samNextRecord = null;      
 
-      ArrayList<Integer> snps = getSNPs(samRecord);
+      List<Integer> snps = getSNPs(samRecord);
       
       if( !samRecord.getReadPairedFlag() ||  // read is not paired in sequencing
           samRecord.getMateUnmappedFlag() )  // mate is unmapped
@@ -1451,7 +1451,7 @@ public class BamView extends JPanel
       int recordStart = samRecord.getAlignmentStart()+offset;
       int recordEnd = samRecord.getAlignmentEnd()+offset;
       
-      ArrayList<Integer> snps = getSNPs(samRecord);
+      List<Integer> snps = getSNPs(samRecord);
       
       if(colourByCoverageColour.isSelected() ||
          lstStart != recordStart || lstEnd != recordEnd || snps != null)
@@ -1554,7 +1554,7 @@ public class BamView extends JPanel
         final int offset = getSequenceOffset(samRecord.getReferenceName());
         final int recordStart = samRecord.getAlignmentStart()+offset;
         final int recordEnd   = samRecord.getAlignmentEnd()+offset;
-        ArrayList<Integer> snps = getSNPs(samRecord);
+        List<Integer> snps = getSNPs(samRecord);
         
         if(colourByCoverageColour.isSelected() ||
             lstStart != recordStart || lstEnd != recordEnd || snps != null)
@@ -1832,7 +1832,7 @@ public class BamView extends JPanel
    * @param stroke
    */
   private void drawLoneRead(Graphics2D g2, BamViewRecord bamViewRecord, int ypos, 
-      float pixPerBase, int baseAtStartOfView, int scaleHeight, ArrayList<Integer> snps)
+      float pixPerBase, int baseAtStartOfView, int scaleHeight, List<Integer> snps)
   {
     SAMRecord samRecord = bamViewRecord.sam;
     boolean offTheTop = false;
@@ -1994,7 +1994,7 @@ public class BamView extends JPanel
       final float pixPerBase,
       final int ypos,
       final int baseAtStartOfView,
-      final ArrayList<Integer> snps)
+      final List<Integer> snps)
   {
     SAMRecord thisRead = bamViewRecord.sam;
     int offset = getSequenceOffset(thisRead.getReferenceName());
@@ -2163,7 +2163,7 @@ public class BamView extends JPanel
    * @param pixPerBase
    * @param ypos
    */
-  private void showSNPsOnReads(final ArrayList<Integer> snps,
+  private void showSNPsOnReads(final List<Integer> snps,
                                final Graphics2D g2,
                                float pixPerBase, int ypos)
   {
@@ -2178,7 +2178,7 @@ public class BamView extends JPanel
    * Get the SNP positions
    * @param samRecord
    */
-  private ArrayList<Integer> getSNPs(final SAMRecord samRecord)
+  private List<Integer> getSNPs(final SAMRecord samRecord)
   {
     if(!isSNPs)  // return null if not displaying SNPs
       return null;

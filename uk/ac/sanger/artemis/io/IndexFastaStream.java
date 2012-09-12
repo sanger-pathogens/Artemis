@@ -90,7 +90,7 @@ public class IndexFastaStream extends StreamSequence
    * @param entry
    * @return
    */
-  public static boolean isIndexed(Entry entry)
+  protected static boolean isIndexed(Entry entry)
   {
     try
     {
@@ -125,6 +125,22 @@ public class IndexFastaStream extends StreamSequence
       e.printStackTrace();
     }
     return false;
+  }
+  
+  protected boolean useIndex()
+  {
+    if(fastaIndex.size() == 1)
+      return true;
+
+    Object[] possibleValues = { "Use index", "Concatenate Sequences" };
+    int sel = JOptionPane.showOptionDialog(null, 
+        "Use the FASTA index file (to increase the performance)\n"+ 
+        "or concatenate the sequences together?",
+        "Indexed FASTA Found", 
+        JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
+        null, possibleValues, possibleValues[0]);
+   
+    return sel == 0;
   }
   
   /**

@@ -729,7 +729,10 @@ public class ViewMenu extends SelectionMenu
       cds_predicate = new FeatureKeyPredicate(new Key(DatabaseDocument.EXONMODEL));
     else
       cds_predicate =
-        new FeatureKeyQualifierPredicate (Key.CDS, "pseudo", false);
+          new FeaturePredicateConjunction(
+              new FeatureKeyQualifierPredicate(Key.CDS, "pseudo", false),
+              new FeatureKeyQualifierPredicate(Key.CDS, "pseudogene", false),
+              FeaturePredicateConjunction.AND);
 
     final FeaturePredicate feature_predicate = new FeaturePredicate ()
     {
@@ -790,7 +793,10 @@ public class ViewMenu extends SelectionMenu
       cds_predicate = new FeatureKeyPredicate(new Key(DatabaseDocument.EXONMODEL));
     else
       cds_predicate =
-        new FeatureKeyQualifierPredicate (Key.CDS, "pseudo", false);
+          new FeaturePredicateConjunction(
+              new FeatureKeyQualifierPredicate(Key.CDS, "pseudo", false),
+              new FeatureKeyQualifierPredicate(Key.CDS, "pseudogene", false),
+              FeaturePredicateConjunction.AND);
 
     final FeaturePredicate feature_predicate =  new FeaturePredicate () 
     {
@@ -851,7 +857,10 @@ public class ViewMenu extends SelectionMenu
       cds_predicate = new FeatureKeyPredicate(new Key(DatabaseDocument.EXONMODEL));
     else
       cds_predicate =
-        new FeatureKeyQualifierPredicate(Key.CDS, "pseudo", false);
+          new FeaturePredicateConjunction(
+              new FeatureKeyQualifierPredicate(Key.CDS, "pseudo", false),
+              new FeatureKeyQualifierPredicate(Key.CDS, "pseudogene", false),
+              FeaturePredicateConjunction.AND);
 
     final FeaturePredicate feature_predicate = new FeaturePredicate () 
     {

@@ -949,25 +949,24 @@ public class Entry implements FeatureChangeListener, Selectable
    **/
   public FeatureVector checkFeatureStartCodons() 
   {
-    // get all the CDS features that do not have a /pseudo qualifier
-    final FeatureKeyQualifierPredicate predicate =
-      new FeatureKeyQualifierPredicate(Key.CDS, "pseudo", false);
+    // get all the CDS features that do not have a /pseudo or /pseudogene qualifier
+    final FeaturePredicateConjunction predicate = new FeaturePredicateConjunction(
+        new FeatureKeyQualifierPredicate(Key.CDS, "pseudo", false),
+        new FeatureKeyQualifierPredicate(Key.CDS, "pseudogene", false),
+        FeaturePredicateConjunction.AND);
 
     final FeatureVector non_embl_features = new FeatureVector();
-
     final FeatureEnumeration feature_enum = features();
 
     while(feature_enum.hasMoreFeatures()) 
     {
       final Feature current_feature = feature_enum.nextFeature();
-
       if(predicate.testPredicate(current_feature)) 
       {
         if(!current_feature.hasValidStartCodon()) 
           non_embl_features.add(current_feature);
       }
     }
-
     return non_embl_features;
   }
 
@@ -978,9 +977,11 @@ public class Entry implements FeatureChangeListener, Selectable
    **/
   public FeatureVector checkFeatureStopCodons() 
   {
-    // get all the CDS features that do not have a /pseudo qualifier
-    final FeatureKeyQualifierPredicate predicate =
-      new FeatureKeyQualifierPredicate(Key.CDS, "pseudo", false);
+    // get all the CDS features that do not have a /pseudo or /pseudogene qualifier
+    final FeaturePredicateConjunction predicate = new FeaturePredicateConjunction(
+        new FeatureKeyQualifierPredicate(Key.CDS, "pseudo", false),
+        new FeatureKeyQualifierPredicate(Key.CDS, "pseudogene", false),
+        FeaturePredicateConjunction.AND);
 
     final FeatureVector non_embl_features = new FeatureVector();
 
