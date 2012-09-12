@@ -531,6 +531,7 @@ extra_qualifiers = \
     previous_systematic_id "text" \
     primary_name "text" \
     prosite_match "text" \
+    pseudo none \
     psu_db_xref "text" \
     psu_domain "text" \
     reserved_name "text" \
@@ -648,6 +649,7 @@ invisible_qualifiers = \
     percent_id     \
     pfam_match     \
     prosite_match  \
+    pseudo         \
     psu_domain     \
     reserved_gene_name \
     query_id       \
