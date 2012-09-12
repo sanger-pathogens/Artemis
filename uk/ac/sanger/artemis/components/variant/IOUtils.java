@@ -51,6 +51,7 @@ import uk.ac.sanger.artemis.Feature;
 import uk.ac.sanger.artemis.FeatureEnumeration;
 import uk.ac.sanger.artemis.FeatureKeyQualifierPredicate;
 import uk.ac.sanger.artemis.FeaturePredicate;
+import uk.ac.sanger.artemis.FeaturePredicateConjunction;
 import uk.ac.sanger.artemis.FeatureSegment;
 import uk.ac.sanger.artemis.FeatureSegmentVector;
 import uk.ac.sanger.artemis.FeatureVector;
@@ -156,9 +157,12 @@ class IOUtils
                                final List<String> vcfFiles,
                                final VCFview vcfView)
   {
-    // get all CDS features that do not have the /pseudo qualifier
+    // get all CDS features that do not have the /pseudo or /pseudogene qualifier
     final FeatureVector features = getFeatures(
-        new FeatureKeyQualifierPredicate(Key.CDS, "pseudo", false), vcfView.getEntryGroup());
+        new FeaturePredicateConjunction(
+            new FeatureKeyQualifierPredicate(Key.CDS, "pseudo", false),
+            new FeatureKeyQualifierPredicate(Key.CDS, "pseudogene", false),
+            FeaturePredicateConjunction.AND), vcfView.getEntryGroup());
     
     String filterFiles = "";
     for(int i=0; i<vcfFiles.size(); i++)
