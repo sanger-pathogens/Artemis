@@ -90,7 +90,7 @@ pop_variant              no        "text"
 product                  no        "text"
 protein_id               yes       "text"
 proviral                 yes        none
-pseudo                   yes        none
+pseudogene               yes       "list"   "processed" "unprocessed" "unitary" "allelic" "unknown"
 rearranged               yes        none
 replace                  yes       "text"
 ribosomal_slippage       yes        text
