@@ -320,7 +320,7 @@ public class EntryGroupInfoDisplay
     int intron_count    = 0;
     int partial_count   = 0;
 
-    final Hashtable table = new Hashtable();
+    final Hashtable<String, Hashtable<String, Integer>> table = new Hashtable<String, Hashtable<String, Integer>>();
     final FeatureEnumeration feature_enumerator = entry_group.features();
 
     int index;
@@ -347,8 +347,8 @@ public class EntryGroupInfoDisplay
 
         if(table.containsKey(key_string)) 
         {
-          final Hashtable colour_table = (Hashtable)table.get(key_string);
-          final Integer colour_value   = (Integer)colour_table.get(colour);
+          final Hashtable<String, Integer> colour_table = table.get(key_string);
+          final Integer colour_value = colour_table.get(colour);
 
           if(colour_value == null) 
               colour_table.put(colour, new Integer(1));
@@ -360,7 +360,7 @@ public class EntryGroupInfoDisplay
         } 
         else
         {
-          final Hashtable colour_table = new Hashtable();
+          final Hashtable<String, Integer> colour_table = new Hashtable<String, Integer>();
           colour_table.put(colour, new Integer(1));
           table.put(key_string, colour_table);
         }
@@ -375,11 +375,12 @@ public class EntryGroupInfoDisplay
         cds_count++;
         cds_bases_count += this_feature.getBaseCount();
 
-        final Qualifier pseudo_qualifier;
-
+        Qualifier pseudo_qualifier;
         try 
         {
           pseudo_qualifier = this_feature.getQualifierByName("pseudo");
+          if(pseudo_qualifier == null) 
+            pseudo_qualifier = this_feature.getQualifierByName("pseudogene");
         } 
         catch(InvalidRelationException e) 
         {
@@ -391,7 +392,6 @@ public class EntryGroupInfoDisplay
           ++gene_count;
 
           final FeatureSegmentVector segments = this_feature.getSegments();
-
           if(segments.size() > 1)
           {
             ++spliced_gene_count;
@@ -400,9 +400,7 @@ public class EntryGroupInfoDisplay
           }
 
           exon_count += segments.size();
-
           gene_bases_buffer.append(this_feature.getBases());
-
           gene_bases_count_with_introns += this_feature.getRawLastBase() -
                                            this_feature.getRawFirstBase() + 1;
         }
@@ -427,7 +425,7 @@ public class EntryGroupInfoDisplay
     {
       if(gene_count > 0) 
       {
-        file_viewer.appendString("Genes (CDS features without a /pseudo qualifier):\n", Level.INFO);
+        file_viewer.appendString("Genes (CDS features without a /pseudo or /pseudogene qualifier):\n", Level.INFO);
 
         final int non_spliced_gene_count = gene_count - spliced_gene_count;
         final int non_spliced_gene_bases_count =
@@ -506,8 +504,7 @@ public class EntryGroupInfoDisplay
 
       if(pseudo_gene_count > 0)
       {
-        file_viewer.appendString("Pseudo genes (CDS features with a /pseudo " +
-                      "qualifier):\n", Level.INFO);
+        file_viewer.appendString("Pseudo genes (CDS features with a /pseudo or /pseudogene qualifier):\n", Level.INFO);
 
         file_viewer.appendString("   count: " + pseudo_gene_count + "\n");
         file_viewer.appendString("   bases: " + pseudo_gene_bases_count + "\n");
@@ -547,31 +544,10 @@ public class EntryGroupInfoDisplay
         }
         file_viewer.appendString("\n");
       }
-    /*else
-      {
-        if(none == null)
-          none = new Vector();
-        none.add(otherKeys[i]);
-      }*/
     }
-    
-    /*
-    if(none != null)
-    {
-      for(int i=0; i<none.size(); i++)
-      {
-        file_viewer.appendString((String) none.get(i), Level.INFO);
-        if(i<none.size()-1)
-          file_viewer.appendString(",", Level.INFO);
-        else
-          file_viewer.appendString(":", Level.INFO);
-      }
-      file_viewer.appendString(" none\n\n");
-    }
-    */
+
     
     final Strand strand;
-
     if(strand_flag == Bases.FORWARD || strand_flag == BOTH) 
       strand = entry_group.getBases().getForwardStrand();
     else
@@ -587,32 +563,27 @@ public class EntryGroupInfoDisplay
 
     file_viewer.appendString("\nSummary of the active entries:\n", Level.INFO);
 
-    final Enumeration e = table.keys();
+    final Enumeration<String> e = table.keys();
 
     while(e.hasMoreElements()) 
     {
-      final String this_key = (String)e.nextElement();
-      final Hashtable colour_table = (Hashtable)table.get(this_key);
+      final String this_key = e.nextElement();
+      final Hashtable<String, Integer> colour_table = table.get(this_key);
 
       file_viewer.appendString(this_key + ": ");
 
       final StringBuffer colour_string = new StringBuffer();
-
-      final Enumeration colour_enum = colour_table.keys();
+      final Enumeration<String> colour_enum = colour_table.keys();
 
       int total = 0;
-
       while(colour_enum.hasMoreElements()) 
       {
-        final String this_colour = (String) colour_enum.nextElement();
-
-        final int colour_count =
-          ((Integer) colour_table.get(this_colour)).intValue();
+        final String this_colour = colour_enum.nextElement();
+        final int colour_count = colour_table.get(this_colour);
 
         total += colour_count;
 
         final String end_string;
-
         if(this_colour.equals("no colour")) 
           end_string = "no colour";
         else
