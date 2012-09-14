@@ -99,6 +99,7 @@ public class ProjectProperty extends JFrame
   private final static int CHADO = 4;
   private final static int USERPLOT = 5;
   private final static int LOGUSERPLOT = 6;
+  private final static int VCF = 7;
   private static org.apache.log4j.Logger logger4j = 
       org.apache.log4j.Logger.getLogger(ProjectProperty.class);
   
@@ -442,8 +443,10 @@ public class ProjectProperty extends JFrame
         settings.put(ProjectProperty.REFERENCE, vText);
       else if(keyStr.equals("annotation"))
         settings.put(ProjectProperty.ANNOTATION, vText);
-      else if(keyStr.equals("bam") || keyStr.equals("vcf") || keyStr.equals("bcf"))
+      else if(keyStr.equals("bam"))
         settings.put(ProjectProperty.NEXT_GEN_DATA, vText);
+      else if(keyStr.equals("vcf") || keyStr.equals("bcf"))
+        settings.put(ProjectProperty.VCF, vText);
       else if(keyStr.equals("chado"))
         settings.put(ProjectProperty.CHADO, vText);
       else if(keyStr.equals("userplot"))
@@ -785,6 +788,7 @@ public class ProjectProperty extends JFrame
       final Set<Integer> keys = settings.keySet();
       final Vector<String> vargs = new Vector<String>();
       final Vector<String> vann = new Vector<String>();
+      
       for(Integer key: keys)
       {
         final Vector<JTextField> vText = settings.get(key);
@@ -801,13 +805,11 @@ public class ProjectProperty extends JFrame
               if(ann.isEnabled())
                 vann.add( ann.getText().trim() );
             break;
-          case ProjectProperty.NEXT_GEN_DATA:
-            String bam = "";
-            for(JTextField ann: vText)
-              if(ann.isEnabled())
-                bam += ","+ann.getText().trim();
-            if(!bam.equals(""))
-              System.setProperty("bam", bam.replaceFirst(",", ""));
+          case ProjectProperty.NEXT_GEN_DATA :
+            setBam(vText);
+            break;
+          case ProjectProperty.VCF :
+            setBam(vText);
             break;
           case ProjectProperty.USERPLOT:
             String userplot = "";
@@ -850,6 +852,20 @@ public class ProjectProperty extends JFrame
         args[vargs.size()+(i*2)+1] = vann.get(i);
       }
       return args;
+    }
+    
+    private void setBam(final Vector<JTextField> vText)
+    {
+      String bam = "";
+      for(JTextField ann: vText)
+        if(ann.isEnabled())
+          bam += ","+ann.getText().trim();
+      if(!bam.equals(""))
+      {
+        if(System.getProperty("bam") != null)
+          bam += ","+System.getProperty("bam");
+        System.setProperty("bam", bam.replaceFirst(",", ""));
+      }
     }
     
     public void actionPerformed(ActionEvent arg0)
