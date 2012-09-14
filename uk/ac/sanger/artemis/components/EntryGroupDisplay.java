@@ -25,7 +25,14 @@
 
 package uk.ac.sanger.artemis.components;
 
-import uk.ac.sanger.artemis.*;
+
+import uk.ac.sanger.artemis.Entry;
+import uk.ac.sanger.artemis.EntryChangeEvent;
+import uk.ac.sanger.artemis.EntryChangeListener;
+import uk.ac.sanger.artemis.EntryGroup;
+import uk.ac.sanger.artemis.EntryGroupChangeEvent;
+import uk.ac.sanger.artemis.EntryGroupChangeListener;
+import uk.ac.sanger.artemis.EntryVector;
 import uk.ac.sanger.artemis.io.IndexFastaStream;
 import uk.ac.sanger.artemis.io.IndexedGFFDocumentEntry;
 
@@ -37,12 +44,11 @@ import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import java.util.Iterator;
 import java.util.Vector;
 
-import javax.swing.*;
-
-import net.sf.picard.reference.FastaSequenceIndex;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 /**
  *  This component allows the user to change the "active" setting of the
@@ -55,6 +61,8 @@ import net.sf.picard.reference.FastaSequenceIndex;
 public class EntryGroupDisplay extends JPanel
     implements EntryGroupChangeListener, EntryChangeListener 
 {
+  private static final long serialVersionUID = 1L;
+
   final protected static Color background_colour = new Color(200, 200, 200);
 
   /**
@@ -65,22 +73,18 @@ public class EntryGroupDisplay extends JPanel
   private EntryEdit owning_component;
 
   /**
-   *  A vector containing the Entry objects that this EntryEdit object knows
+   *  Contains Entry objects that this EntryEdit object knows
    *  about.  This reference is obtained from owning_component.
    **/
   private EntryGroup entry_group;
 
-  /**
-   *  A vector containing one JCheckBox or Label for each Entry in the
+  /** 
+   * Contains one JCheckBox or Label for each Entry in the
    *  EntryGroup object.
    **/
   private Vector<JCheckBox> entry_components = new Vector<JCheckBox>();
 
-  /**
-   *  A label containing the message "Entry:".
-   **/
-  private JLabel label;
-  
+  private JLabel label = new JLabel("Entry: ");
   private SequenceComboBox indexFastaCombo;
 
   /**
@@ -96,13 +100,8 @@ public class EntryGroupDisplay extends JPanel
     entry_group.addEntryGroupChangeListener(this);
     entry_group.addEntryChangeListener(this);
 
-    final FlowLayout flow_layout = new FlowLayout(FlowLayout.LEFT,2,1); 
-
-    label = new JLabel("Entry: ");
-
-    setLayout(flow_layout);
+    setLayout(new FlowLayout(FlowLayout.LEFT,2,1));
     refreshButtons();
-    
     setBackground(background_colour);
   }
 
@@ -112,7 +111,6 @@ public class EntryGroupDisplay extends JPanel
     super.paintComponent(g);
     super.printChildren(g);
   }
-
 
   /**
    *  Implementation of the EntryGroupChangeListener interface.  We listen to
@@ -156,7 +154,6 @@ public class EntryGroupDisplay extends JPanel
     add(label);
 
     entry_components = new Vector<JCheckBox>();
-
     if(entry_group == null) 
       return;
     else 
@@ -200,13 +197,13 @@ public class EntryGroupDisplay extends JPanel
     {
       public void itemStateChanged(ItemEvent event) 
       {
-        final int button_index =
+        final int button_idx =
           entry_components.indexOf(event.getSource());
 
         if(event.getStateChange() == ItemEvent.SELECTED) 
-          entry_group.setIsActive(button_index, true);
+          entry_group.setIsActive(button_idx, true);
         else 
-          entry_group.setIsActive(button_index, false);
+          entry_group.setIsActive(button_idx, false);
       }
     });
 
@@ -223,24 +220,15 @@ public class EntryGroupDisplay extends JPanel
       }
     });
 
-    entry_components.addElement(new_component);
+    entry_components.add(new_component);
     add(new_component);
     
     if(entry.getEMBLEntry().getSequence() instanceof IndexFastaStream)
     {
       if(indexFastaCombo == null)
       {
-        FastaSequenceIndex indexFasta = 
-          ((IndexFastaStream)entry.getEMBLEntry().getSequence()).getFastaIndex();
-        Iterator it = indexFasta.iterator();
-        Vector<String> contigs = new Vector<String>();
-        while(it.hasNext())
-        {
-          String contig = it.next().toString().split(";")[0];
-          if(contig.startsWith("contig "))
-            contig = contig.substring(6).trim();
-          contigs.add(  contig );
-        }
+        final Vector<String> contigs = 
+            ((IndexFastaStream)entry.getEMBLEntry().getSequence()).getContigs();
 
         indexFastaCombo = new SequenceComboBox(contigs){
           private static final long serialVersionUID = 1L;
@@ -262,7 +250,6 @@ public class EntryGroupDisplay extends JPanel
             owning_component.repaint();
           }
         };
-        
       }
       add(indexFastaCombo);
     }
@@ -274,13 +261,8 @@ public class EntryGroupDisplay extends JPanel
    **/
   private void highlightDefaultEntry(final EntryGroupChangeEvent event) 
   {
-    final EntryGroup entry_group = owning_component.getEntryGroup();
-
     for(int i = 0 ; i < entry_group.size() ; ++i) 
-    {
-      final JCheckBox check_box = entry_components.elementAt(i);
-      setEntryHighlight(entry_group.elementAt(i), check_box);
-    }
+      setEntryHighlight(entry_group.elementAt(i), entry_components.elementAt(i));
   }
 
   /**
@@ -290,14 +272,11 @@ public class EntryGroupDisplay extends JPanel
   private void setEntryHighlight(final Entry entry,
                                   final JCheckBox component)
   {
-    //final String label = component.getText();
-
     if(entry_group.getDefaultEntry() == entry) 
       component.setBackground(Color.yellow);
     else 
       component.setBackground(background_colour);
   }
-
 
   /**
    * @return the indexFastaCombo
@@ -306,5 +285,4 @@ public class EntryGroupDisplay extends JPanel
   {
     return indexFastaCombo;
   }
-  
 }
