@@ -29,8 +29,14 @@ import uk.ac.sanger.artemis.*;
 import uk.ac.sanger.artemis.io.IndexFastaStream;
 import uk.ac.sanger.artemis.io.IndexedGFFDocumentEntry;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.Graphics;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -75,7 +81,7 @@ public class EntryGroupDisplay extends JPanel
    **/
   private JLabel label;
   
-  private JComboBox indexFastaCombo;
+  private SequenceComboBox indexFastaCombo;
 
   /**
    *  Create a new EntryGroupDisplay object.
@@ -232,14 +238,13 @@ public class EntryGroupDisplay extends JPanel
         {
           String contig = it.next().toString().split(";")[0];
           if(contig.startsWith("contig "))
-            contig = contig.substring(6);
+            contig = contig.substring(6).trim();
           contigs.add(  contig );
         }
 
-        indexFastaCombo = new JComboBox(contigs);
-        indexFastaCombo.addActionListener(new ActionListener()
-        {
-          public void actionPerformed(ActionEvent e)
+        indexFastaCombo = new SequenceComboBox(contigs){
+          private static final long serialVersionUID = 1L;
+          public void update(IndexReferenceEvent event)
           {
             IndexFastaStream is = (IndexFastaStream)entry.getEMBLEntry().getSequence();
             is.setContigByIndex(indexFastaCombo.getSelectedIndex());
@@ -256,8 +261,8 @@ public class EntryGroupDisplay extends JPanel
             owning_component.getFeatureDisplay().needVisibleFeatureVectorUpdate();
             owning_component.repaint();
           }
+        };
         
-        });
       }
       add(indexFastaCombo);
     }
@@ -291,6 +296,15 @@ public class EntryGroupDisplay extends JPanel
       component.setBackground(Color.yellow);
     else 
       component.setBackground(background_colour);
+  }
+
+
+  /**
+   * @return the indexFastaCombo
+   */
+  protected SequenceComboBox getIndexFastaCombo()
+  {
+    return indexFastaCombo;
   }
   
 }

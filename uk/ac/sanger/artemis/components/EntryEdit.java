@@ -582,7 +582,7 @@ public class EntryEdit extends JFrame
     return bamPanel;
   }
   
-  protected JPanel getJamView()
+  protected BamView getJamView()
   {
     return bamView;
   }
@@ -1906,6 +1906,15 @@ public class EntryEdit extends JFrame
       {
         bamView = new BamView(listBams, null, feature_display.getMaxVisibleBases(), this,
             feature_display, getEntryGroup().getBases(), bamPanel, null);
+        
+        
+        if(entry_group.getSequenceEntry().getEMBLEntry().getSequence() instanceof IndexFastaStream)
+        {
+          // add reference sequence selection listeners
+          getEntryGroupDisplay().getIndexFastaCombo().addIndexReferenceListener(bamView.getCombo());
+          bamView.getCombo().addIndexReferenceListener(getEntryGroupDisplay().getIndexFastaCombo());
+        }
+        
       }
       catch (Exception ex)
       {
