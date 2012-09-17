@@ -158,7 +158,7 @@ public class BamView extends JPanel
   private HashMap<String, Integer> offsetLengths;
   private Vector<String> seqNames = new Vector<String>();
   protected List<String> bamList;
-  protected List<Integer> hideBamList = new Vector<Integer>();
+  protected List<Short> hideBamList = new Vector<Short>();
 
   private SAMRecordPredicate samRecordFlagPredicate;
   private SAMRecordMapQPredicate samRecordMapQPredicate;
@@ -605,7 +605,7 @@ public class BamView extends JPanel
   {
     // Open the input file.  Automatically detects whether input is SAM or BAM
     // and delegates to a reader implementation for the appropriate format.
-    final String bam = bamList.get(bamIndex);  
+    final String bam = bamList.get(bamIndex);
     final SAMFileReader inputSam = getSAMFileReader(bam);
     
     //final SAMFileReader inputSam = new SAMFileReader(bamFile, indexFile);
@@ -905,7 +905,7 @@ public class BamView extends JPanel
           else
             readsInView.clear();
 
-          final CountDownLatch latch = new CountDownLatch(bamList.size());
+          final CountDownLatch latch = new CountDownLatch(bamList.size()-hideBamList.size());
           //long ms = System.currentTimeMillis();
           for(short i=0; i<bamList.size(); i++)
           {
@@ -2328,9 +2328,9 @@ public class BamView extends JPanel
     cbBam.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
         if(cbBam.isSelected())
-          hideBamList.remove(new Integer(thisBamIndex));
+          hideBamList.remove(new Short(thisBamIndex));
         else
-          hideBamList.add(new Integer(thisBamIndex));
+          hideBamList.add(new Short(thisBamIndex));
         laststart = -1;
         repaint();
       } 
