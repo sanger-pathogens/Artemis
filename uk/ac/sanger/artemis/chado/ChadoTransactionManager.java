@@ -1667,6 +1667,8 @@ public class ChadoTransactionManager
                                       qualifierName.toUpperCase()+ ": ID="+
                                       uniquename+" "+qualifierString);
            sql.add(tsn);
+           
+           //addHistory(tsn, qualifierName.toUpperCase(), feature_cvterm.getCvTerm().getName());
          }
          else if(isSynonymTag(qualifierName, feature))
          {
@@ -1862,6 +1864,9 @@ public class ChadoTransactionManager
                  feature.getKey().getKeyString(),
                  qualifierName.toUpperCase()+ ": ID="+uniquename+" "+qualifierString);
       sql.add(tsn);
+      
+      
+      //addHistory(tsn, qualifierName.toUpperCase(), feature_cvterm.getCvTerm().getName());
     }
     else if(isSynonymTag(qualifierName, feature))
     {
@@ -2729,9 +2734,9 @@ public class ChadoTransactionManager
   
 
 
-  public Vector getFeatureInsertUpdate()
+  public Vector<String> getFeatureInsertUpdate()
   {
-    Vector features = null;
+    Vector<String> features = null;
     
     for(int i=0; i<sql.size(); i++)
     {
@@ -2743,7 +2748,7 @@ public class ChadoTransactionManager
            org.gmod.schema.sequence.Feature)
         {
           if(features == null)
-            features = new Vector();
+            features = new Vector<String>();
           org.gmod.schema.sequence.Feature feature =
             (org.gmod.schema.sequence.Feature)transaction.getFeatureObject();
           features.add( feature.getUniqueName() );
@@ -2795,6 +2800,89 @@ public class ChadoTransactionManager
     }
     sqlCopy.clear();
   }
+  
+  /*private void addHistory(final ChadoTransaction tsn, final String qualifierName, String log)
+  {
+    if( qualifierName.equalsIgnoreCase("history") )
+      return;
+
+    Qualifier cv_qualifier = tsn.getGff_feature().getQualifierByName("history");
+    final int index;
+    if(cv_qualifier == null)
+    {
+      cv_qualifier = new Qualifier("history");
+      index = -1;
+    }
+    else
+      index = tsn.getGff_feature().getQualifiers().indexOf(cv_qualifier);
+
+    final String term;
+    if(HistoryBox.getCvTermStrings().contains("annotation"))
+      term = "annotation";
+    else
+      term = HistoryBox.getDefaultTerm().getName();
+    
+    String msg;
+    switch(tsn.getType())
+    {
+      case ChadoTransaction.INSERT:
+        msg = "added_";
+        break;
+      case ChadoTransaction.DELETE:
+        msg = "removed_";
+        break;
+      default:
+        msg = "update_";
+    }
+    
+    msg += qualifierName+"="+log;
+    final DatabaseDocument doc = 
+        (DatabaseDocument) (tsn.getGff_feature().getDocumentEntry().getDocument());
+    if(index > -1)
+    {
+      String dateStr = "date="+ DatePanel.getDate();
+      StringVector sv = cv_qualifier.getValues();
+      String qStr = null;
+      int ind = -1;
+      for(int i=0; i<sv.size(); i++)
+      {
+        String v = (String)sv.get(i);
+        if(v.indexOf(dateStr)> -1)
+        {
+          qStr = HistoryBox.getFieldIgnoreSeparator("qualifier", v);
+          ind = i;
+          break;
+        }
+      }
+      
+      if(ind > -1)
+      {
+        sv.remove(ind);
+        sv.add(ind, "term="+term+";"+
+            "curatorName="+doc.getUserName()+";"+
+            "date="+ DatePanel.getDate()+";"+
+            "qualifier="+msg+";qualifier="+qStr);
+      }
+      else
+        sv.add("term="+term+";"+
+            "curatorName="+doc.getUserName()+";"+
+            "date="+ DatePanel.getDate()+";"+
+            "qualifier="+msg);
+      
+      cv_qualifier = new Qualifier("history", sv);
+      tsn.getGff_feature().getQualifiers().remove(index);
+      tsn.getGff_feature().getQualifiers().add(cv_qualifier);
+    }
+    else
+    {
+      cv_qualifier.addValue(
+          "term="+term+";"+
+          "curatorName="+doc.getUserName()+";"+
+          "date="+ DatePanel.getDate()+";"+
+          "qualifier="+msg);
+      tsn.getGff_feature().getQualifiers().add(cv_qualifier);
+    }
+  }*/
   
   /**
    * Determines if there are transactions registered.
