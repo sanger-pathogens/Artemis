@@ -2129,7 +2129,7 @@ public class EntryEdit extends JFrame
                                     final BasePlotGroup  base_plot_group)
   {
     // only need to check if the Feature table has been changed
-    List changed_features = ctm.getFeatureInsertUpdate();
+    List<String> changed_features = ctm.getFeatureInsertUpdate();
     if(changed_features == null)
       return true;
     
