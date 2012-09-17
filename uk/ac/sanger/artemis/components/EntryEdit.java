@@ -38,7 +38,6 @@ import uk.ac.sanger.artemis.components.variant.VCFview;
 import uk.ac.sanger.artemis.editor.BigPane;
 import uk.ac.sanger.artemis.editor.FastaTextPane;
 import uk.ac.sanger.artemis.editor.HitInfo;
-import uk.ac.sanger.artemis.sequence.Marker;
 import uk.ac.sanger.artemis.sequence.SequenceChangeEvent;
 import uk.ac.sanger.artemis.sequence.SequenceChangeListener;
 
@@ -55,9 +54,28 @@ import uk.ac.sanger.artemis.io.GenbankTblOutputStream;
 import uk.ac.sanger.artemis.io.IndexFastaStream;
 import uk.ac.sanger.artemis.io.InvalidRelationException;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Image;
+import java.awt.Insets;
+import java.awt.MediaTracker;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
+import java.io.IOException;
 
 import javax.swing.*;
 
@@ -70,10 +88,8 @@ import java.util.Vector;
 
 /**
  *  Each object of this class is used to edit an EntryGroup object.
- *
  *  @author Kim Rutherford
  *  @version $Id: EntryEdit.java,v 1.82 2009-09-24 12:42:16 tjc Exp $
- *
  */
 public class EntryEdit extends JFrame
     implements EntryGroupChangeListener, EntryChangeListener
@@ -183,27 +199,13 @@ public class EntryEdit extends JFrame
           getEntryGroup().getBases().addSequenceChangeListener(commitButton, 0);
           xBox.add(commitButton);
         }
-        
+
         if(DatabaseDocument.CHADO_INFER_CDS)
           DatabaseInferredFeature.addListenersToEntryGroup(getEntryGroup());
       }
     }
 
-    //final int font_height;
-    //final int font_base_line;
     final Font default_font = getDefaultFont();
-
-    /*if(default_font != null) 
-    {
-      FontMetrics fm = getFontMetrics(default_font);
-      font_height    = fm.getHeight();
-      font_base_line = fm.getMaxAscent();
-    }
-    else 
-    {
-      font_height = -1;
-      font_base_line = -1;
-    }*/
 
     addWindowListener(new WindowAdapter() 
     {
@@ -458,7 +460,6 @@ public class EntryEdit extends JFrame
 
     if(icon != null) 
     {
-      //oolkit toolkit = Toolkit.getDefaultToolkit();
       final Image icon_image = icon.getImage();
       MediaTracker tracker = new MediaTracker(this);
       tracker.addImage(icon_image, 0);
@@ -521,11 +522,10 @@ public class EntryEdit extends JFrame
     final Box box_across = Box.createHorizontalBox();
     box_across.add(butt);
     box_across.add(Box.createHorizontalGlue());
-
     return box_across;
   }
   
-  public void resetScrolls()
+  protected void resetScrolls()
   {
     base_display.setFirstBase(1);
     base_display.fixScrollbar();
@@ -536,9 +536,7 @@ public class EntryEdit extends JFrame
   }
 
   /**
-  *
   * Retrieve the feature list object.
-  *
   */
   protected FeatureList getFeatureList()
   {
@@ -547,9 +545,7 @@ public class EntryEdit extends JFrame
 
 
   /**
-  *
   * Retrieve the base display object.
-  *
   */
   protected FeatureDisplay getBaseDisplay()
   {
@@ -557,9 +553,7 @@ public class EntryEdit extends JFrame
   }
 
   /**
-  *
   * Retrieve the one line per entry object.
-  *
   */
   protected FeatureDisplay getOneLinePerEntryDisplay()
   {
@@ -568,9 +562,7 @@ public class EntryEdit extends JFrame
 
 
   /**
-  *
   * Retrieve the base plot display object.
-  *
   */
   protected BasePlotGroup getBasePlotGroup()
   {
@@ -582,7 +574,7 @@ public class EntryEdit extends JFrame
     return bamPanel;
   }
   
-  protected JPanel getJamView()
+  protected BamView getJamView()
   {
     return bamView;
   }
@@ -599,9 +591,7 @@ public class EntryEdit extends JFrame
 
 
   /**
-  *
   * Retrieve the entry group display object.
-  *
   */
   protected EntryGroupDisplay getEntryGroupDisplay()
   {
@@ -610,9 +600,7 @@ public class EntryEdit extends JFrame
 
 
   /**
-  *
   * Retrieve the selection info display object.
-  *
   */
   protected SelectionInfoDisplay getSelectionInfoDisplay()
   {
@@ -621,9 +609,7 @@ public class EntryEdit extends JFrame
 
 
   /**
-  *
   * Retrieve the feature display object.
-  *
   */
   protected FeatureDisplay getFeatureDisplay()
   {
@@ -648,17 +634,6 @@ public class EntryEdit extends JFrame
     }
 
     entryEditFinished();
-  }
-
-  /**
-   *  This method sends an GotoEvent to all the GotoEvent listeners that will
-   *  make the start of the first selected Feature or FeatureSegment visible.
-   **/
-  public void makeSelectionVisible() 
-  {
-    final Marker first_base = getSelection().getStartBaseOfSelection();
-    final GotoEvent new_event = new GotoEvent(this, first_base);
-    getGotoEventSource().sendGotoEvent(new_event);
   }
 
   /**
@@ -861,32 +836,14 @@ public class EntryEdit extends JFrame
       file_dialog.saveEntry(entry, include_diana_extensions, ask_for_name,
                           keep_new_name, destination_type);
     }
-//  }
-//  else
-//    alphaBug(entry, include_diana_extensions, ask_for_name,
-//             keep_new_name, destination_type);
   }
 
-
-/*  private boolean isHeaderEMBL(String header)
-  {
-    StringReader reader = new StringReader(header);
-    BufferedReader buff_reader = new BufferedReader(reader);
- 
-    try
-    {   
-      if(!buff_reader.readLine().startsWith("ID"))
-        return false;
-    }
-    catch(IOException ioe){}
-    return true;
-  }*/
 
   /**
    *  Save the changes to all the Entry objects in the entry_group back to
    *  where the they came from.
    **/
-  public void saveAllEntries() 
+  private void saveAllEntries() 
   {
     SwingWorker worker = new SwingWorker()
     {
@@ -1017,11 +974,9 @@ public class EntryEdit extends JFrame
                                                 getGotoEventSource(),
                                                 base_plot_group);
         }
-
         return true;
       }
     }
-
     return false;
   }
 
@@ -1033,8 +988,6 @@ public class EntryEdit extends JFrame
                          final JScrollPane jspLookSeq, 
                          final LookSeqPanel lookseqPanel) 
   {
-    //final Font default_font = getDefaultFont();
-
     setJMenuBar(menu_bar);
     makeFileMenu();
     menu_bar.add(file_menu);
@@ -1729,18 +1682,17 @@ public class EntryEdit extends JFrame
         //
         // Contig ordering options
         //
-        final Vector contigKeys = FeatureDisplay.getContigKeys();
-        final Vector allPossibleContigKeys = FeatureDisplay.getAllPossibleContigKeys();
-        final Vector nonContigKeys = new Vector();
+        final Vector<String> contigKeys = FeatureDisplay.getContigKeys();
+        final Vector<String> allPossibleContigKeys = FeatureDisplay.getAllPossibleContigKeys();
+        final Vector<String> nonContigKeys = new Vector<String>();
         
         for(int i=0; i<allPossibleContigKeys.size(); i++)
         {
-          String keyStr = ((String)allPossibleContigKeys.get(i));
+          String keyStr = allPossibleContigKeys.get(i);
           if( !contigKeys.contains(keyStr) )
             nonContigKeys.add(keyStr);
         }
-        
-        
+
         final DefaultListModel showListModel = new DefaultListModel();
         for(int i=0; i<contigKeys.size(); i++)
           showListModel.addElement(contigKeys.get(i));
@@ -1906,6 +1858,15 @@ public class EntryEdit extends JFrame
       {
         bamView = new BamView(listBams, null, feature_display.getMaxVisibleBases(), this,
             feature_display, getEntryGroup().getBases(), bamPanel, null);
+        
+        
+        if(entry_group.getSequenceEntry().getEMBLEntry().getSequence() instanceof IndexFastaStream)
+        {
+          // add reference sequence selection listeners
+          getEntryGroupDisplay().getIndexFastaCombo().addIndexReferenceListener(bamView.getCombo());
+          bamView.getCombo().addIndexReferenceListener(getEntryGroupDisplay().getIndexFastaCombo());
+        }
+        
       }
       catch (Exception ex)
       {
@@ -1941,6 +1902,14 @@ public class EntryEdit extends JFrame
 
       feature_display.addDisplayAdjustmentListener(vcfView);
       feature_display.getSelection().addSelectionChangeListener(vcfView);
+
+      if(entry_group.getSequenceEntry().getEMBLEntry().getSequence() instanceof IndexFastaStream)
+      {
+        // add reference sequence selection listeners
+        getEntryGroupDisplay().getIndexFastaCombo().addIndexReferenceListener(vcfView.getCombo());
+        vcfView.getCombo().addIndexReferenceListener(getEntryGroupDisplay().getIndexFastaCombo());
+      }
+  
       setNGDivider();
     }
   }
@@ -2160,7 +2129,7 @@ public class EntryEdit extends JFrame
                                     final BasePlotGroup  base_plot_group)
   {
     // only need to check if the Feature table has been changed
-    List changed_features = ctm.getFeatureInsertUpdate();
+    List<String> changed_features = ctm.getFeatureInsertUpdate();
     if(changed_features == null)
       return true;
     
@@ -2261,43 +2230,6 @@ public class EntryEdit extends JFrame
     };
     entryWorker.start();
   }
-
-  /**
-  *
-  *  Read an entry from a remote file node (ssh)
-  *
-  **/ 
-/*  private void readAnEntryFromRemoteFileNode(final RemoteFileNode node)
-  {
-    SwingWorker entryWorker = new SwingWorker()
-    {
-      public Object construct()
-      {
-        try
-        {
-          EntryInformation new_entry_information =
-             new SimpleEntryInformation(Options.getArtemisEntryInformation());
-
-          final Entry entry =  new Entry(entry_group.getBases(),
-                           EntryFileDialog.getEntryFromFile(null,
-                           new RemoteFileDocument(node),
-                           new_entry_information, true));
-          if(entry != null)
-            getEntryGroup().add(entry);
-        }
-        catch(final OutOfRangeException e)
-        {
-          new MessageDialog(EntryEdit.this,
-                         "read failed: one of the features " +
-                         "in the entry has an out of " +
-                         "range location: " +
-                         e.getMessage());
-        }
-        return null;
-      }
-    };
-    entryWorker.start();
-  }*/
 
 
   /**

@@ -45,8 +45,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
@@ -71,7 +69,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -88,7 +85,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
-import javax.swing.text.JTextComponent;
 
 import net.sf.samtools.util.BlockCompressedInputStream;
 
@@ -110,12 +106,13 @@ import uk.ac.sanger.artemis.components.EntryEdit;
 import uk.ac.sanger.artemis.components.EntryFileDialog;
 import uk.ac.sanger.artemis.components.FeatureDisplay;
 import uk.ac.sanger.artemis.components.FileViewer;
+import uk.ac.sanger.artemis.components.IndexReferenceEvent;
 import uk.ac.sanger.artemis.components.MessageDialog;
 import uk.ac.sanger.artemis.components.MultiComparator;
+import uk.ac.sanger.artemis.components.SequenceComboBox;
 import uk.ac.sanger.artemis.components.Utilities;
 import uk.ac.sanger.artemis.components.alignment.FileSelectionDialog;
 import uk.ac.sanger.artemis.components.alignment.LineAttributes;
-import uk.ac.sanger.artemis.components.genebuilder.AutoCompleteComboDocument;
 import uk.ac.sanger.artemis.editor.MultiLineToolTipUI;
 import uk.ac.sanger.artemis.io.EntryInformation;
 import uk.ac.sanger.artemis.io.Key;
@@ -200,6 +197,7 @@ public class VCFview extends JPanel
   private static String FILE_SUFFIX = "\\.[bv]{1}cf(\\.gz)*$";
 
   private List<Integer> cacheVariantLines;
+  private SequenceComboBox combo;
 
   public static org.apache.log4j.Logger logger4j = 
     org.apache.log4j.Logger.getLogger(VCFview.class);
@@ -723,23 +721,9 @@ public class VCFview extends JPanel
       topPanel.add(zoomOut);
     }
     
-    final JComboBox combo = new JComboBox(vcfReaders[0].getSeqNames());
-    combo.setEditable(true);
-    JTextComponent editor = (JTextComponent) combo.getEditor().getEditorComponent();
-    editor.setDocument(new AutoCompleteComboDocument(combo));
-    
-    if(vcfReaders[0].getSeqNames().length > 1)
-      combo.addItem("Combine References");
-    
-    if(chr == null)
-      this.chr = vcfReaders[0].getSeqNames()[0];
-
-    combo.setSelectedItem(this.chr);
-    combo.setMaximumRowCount(20);
-    
-    combo.addItemListener(new ItemListener()
-    {
-      public void itemStateChanged(ItemEvent e)
+    combo = new SequenceComboBox(vcfReaders[0].getSeqNames()){
+      private static final long serialVersionUID = 1L;
+      public void update(IndexReferenceEvent event)
       {
         if(combo.getSelectedItem().equals("Combine References"))
           concatSequences = true;
@@ -750,7 +734,15 @@ public class VCFview extends JPanel
         }
         repaint();
       }
-    });
+    };
+    
+    if(vcfReaders[0].getSeqNames().length > 1)
+      combo.addItem("Combine References");
+    
+    if(chr == null)
+      this.chr = vcfReaders[0].getSeqNames()[0];
+    combo.setSelectedItem(this.chr);
+
     topPanel.add(combo);
     if(topPanel instanceof JPanel)
       vcfPanel.add(topPanel, BorderLayout.NORTH);
@@ -1864,6 +1856,14 @@ public class VCFview extends JPanel
   protected boolean isConcatenate()
   {
     return concatSequences;
+  }
+  
+  /**
+   * @return the combo
+   */
+  public SequenceComboBox getCombo()
+  {
+    return combo;
   }
   
   /**

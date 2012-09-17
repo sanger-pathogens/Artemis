@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Iterator;
+import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
@@ -212,6 +213,20 @@ public class IndexFastaStream extends StreamSequence
       i++;
     }
     return null;
+  }
+  
+  public Vector<String> getContigs()
+  {
+    Iterator it = fastaIndex.iterator();
+    Vector<String> contigs = new Vector<String>();
+    while(it.hasNext())
+    {
+      String contig = it.next().toString().split(";")[0];
+      if(contig.startsWith("contig "))
+        contig = contig.substring(6).trim();
+      contigs.add(  contig );
+    }
+    return contigs;
   }
   
   public ReferenceSequence getReferenceSequence(int seqIndex)
