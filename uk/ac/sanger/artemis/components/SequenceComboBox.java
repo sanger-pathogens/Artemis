@@ -26,6 +26,7 @@ package uk.ac.sanger.artemis.components;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Vector;
 
 import javax.swing.DefaultComboBoxModel;
@@ -54,6 +55,11 @@ public abstract class SequenceComboBox extends JComboBox implements IndexReferen
         fireAction(new IndexReferenceEvent(SequenceComboBox.this));
       }
     });
+  }
+  
+  public SequenceComboBox(String sequenceNames[])
+  {
+    this(new Vector<String>(Arrays.asList(sequenceNames)));
   }
   
   public void indexReferenceChanged(IndexReferenceEvent event)
