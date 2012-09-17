@@ -83,7 +83,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -102,7 +101,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
-import javax.swing.text.JTextComponent;
 
 import org.apache.log4j.Level;
 
@@ -132,10 +130,11 @@ import uk.ac.sanger.artemis.components.EntryEdit;
 import uk.ac.sanger.artemis.components.EntryFileDialog;
 import uk.ac.sanger.artemis.components.FeatureDisplay;
 import uk.ac.sanger.artemis.components.FileViewer;
+import uk.ac.sanger.artemis.components.IndexReferenceEvent;
 import uk.ac.sanger.artemis.components.MessageDialog;
 import uk.ac.sanger.artemis.components.NonModalDialog;
+import uk.ac.sanger.artemis.components.SequenceComboBox;
 import uk.ac.sanger.artemis.components.SwingWorker;
-import uk.ac.sanger.artemis.components.genebuilder.AutoCompleteComboDocument;
 import uk.ac.sanger.artemis.editor.MultiLineToolTipUI;
 import uk.ac.sanger.artemis.io.EntryInformation;
 import uk.ac.sanger.artemis.io.Range;
@@ -159,7 +158,7 @@ public class BamView extends JPanel
   private HashMap<String, Integer> offsetLengths;
   private Vector<String> seqNames = new Vector<String>();
   protected List<String> bamList;
-  protected List<Integer> hideBamList = new Vector<Integer>();
+  protected List<Short> hideBamList = new Vector<Short>();
 
   private SAMRecordPredicate samRecordFlagPredicate;
   private SAMRecordMapQPredicate samRecordMapQPredicate;
@@ -170,7 +169,7 @@ public class BamView extends JPanel
   private JScrollPane jspView;
   private JScrollBar scrollBar;
   
-  private JComboBox combo;
+  private SequenceComboBox combo;
   private boolean isOrientation = false;
   private boolean isSingle = false;
   private boolean isSNPs = false;
@@ -606,7 +605,7 @@ public class BamView extends JPanel
   {
     // Open the input file.  Automatically detects whether input is SAM or BAM
     // and delegates to a reader implementation for the appropriate format.
-    final String bam = bamList.get(bamIndex);  
+    final String bam = bamList.get(bamIndex);
     final SAMFileReader inputSam = getSAMFileReader(bam);
     
     //final SAMFileReader inputSam = new SAMFileReader(bamFile, indexFile);
@@ -906,7 +905,7 @@ public class BamView extends JPanel
           else
             readsInView.clear();
 
-          final CountDownLatch latch = new CountDownLatch(bamList.size());
+          final CountDownLatch latch = new CountDownLatch(bamList.size()-hideBamList.size());
           //long ms = System.currentTimeMillis();
           for(short i=0; i<bamList.size(); i++)
           {
@@ -1810,10 +1809,14 @@ public class BamView extends JPanel
     int hgt = jspView.getVisibleRect().height-scaleHeight;
     if(!cbCoverageStrandView.isSelected())
     {
-      int y = getHeight()-6-( (hgt* MAX_COVERAGE)/(coverageView.max/coverageView.windowSize) );
-      g2.setColor(Color.YELLOW);
-      // draw the threshold for the coverage max read cut-off
-      g2.fillRect(0, y, getWidth(), 8);
+      try
+      {
+        int y = getHeight()-6-( (hgt* MAX_COVERAGE)/(coverageView.max/coverageView.windowSize) );
+        g2.setColor(Color.YELLOW);
+        // draw the threshold for the coverage max read cut-off
+        g2.fillRect(0, y, getWidth(), 8);
+      }
+      catch(Exception e){}
     }
 
     g2.translate(0, getHeight()-hgt-scaleHeight);
@@ -2325,9 +2328,9 @@ public class BamView extends JPanel
     cbBam.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
         if(cbBam.isSelected())
-          hideBamList.remove(new Integer(thisBamIndex));
+          hideBamList.remove(new Short(thisBamIndex));
         else
-          hideBamList.add(new Integer(thisBamIndex));
+          hideBamList.add(new Short(thisBamIndex));
         laststart = -1;
         repaint();
       } 
@@ -2971,15 +2974,10 @@ public class BamView extends JPanel
     };
     addMouseMotionListener(mouseMotionListener);
 
-    combo = new JComboBox(seqNames);
-    JTextComponent editor = (JTextComponent) combo.getEditor().getEditorComponent();
-    editor.setDocument(new AutoCompleteComboDocument(combo));
-    combo.setEditable(true);
-    combo.setMaximumRowCount(20);
     
-    combo.addItemListener(new ItemListener()
-    {
-      public void itemStateChanged(ItemEvent e)
+    combo = new SequenceComboBox(seqNames){
+      private static final long serialVersionUID = 1L;
+      public void update(IndexReferenceEvent event)
       {
         laststart = -1;
         if(feature_display != null)
@@ -2987,7 +2985,7 @@ public class BamView extends JPanel
         else
           setZoomLevel(BamView.this.nbasesInView);
       }
-    });
+    };
     topPanel.add(combo);
 
     if(feature_display == null)
@@ -3418,6 +3416,14 @@ public class BamView extends JPanel
   protected FeatureDisplay getFeatureDisplay()
   {
     return feature_display;
+  }
+  
+  /**
+   * @return the combo
+   */
+  public SequenceComboBox getCombo()
+  {
+    return combo;
   }
   
   private String getVersion()

@@ -46,7 +46,7 @@ public class MappedReads
   private String refName;
   private Hashtable<String, SAMFileReader> samFileReaderHash;
   private List<String> bamList;
-  private List<Integer> hideBamList;
+  private List<Short> hideBamList;
   private Vector<String> seqNames;
   private HashMap<String, Integer> offsetLengths;
   private boolean concatSequences;
@@ -543,7 +543,7 @@ public class MappedReads
       int revStart = -1;
       final List<MarkerObj> fwdMarkers = new Vector<MarkerObj>();
       final List<MarkerObj> revMarkers = new Vector<MarkerObj>();
-      for (int i = 0; i < bamList.size(); i++)
+      for (short i = 0; i < bamList.size(); i++)
       {
         if(hideBamList.contains(i))
           continue;

@@ -161,7 +161,7 @@ import net.sf.samtools.SAMRecord;
       Enumeration<String> plotEum = plots.keys();
       while(plotEum.hasMoreElements())
       {
-        String fileName = (String) plotEum.nextElement();
+        String fileName = plotEum.nextElement();
         int[][] thisPlot = plots.get(fileName);
         for(int i=1; i<thisPlot.length; i++)
         {
