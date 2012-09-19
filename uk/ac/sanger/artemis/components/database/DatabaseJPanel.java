@@ -43,6 +43,7 @@ import uk.ac.sanger.artemis.io.Range;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JTree;
@@ -50,6 +51,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.BorderFactory;
+import javax.swing.ListSelectionModel;
 import javax.swing.border.Border;
 import javax.swing.tree.TreePath;
 
@@ -71,6 +73,7 @@ import java.awt.Toolkit;
 import java.awt.Cursor;
 import java.awt.FontMetrics;
 import java.io.*;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -276,12 +279,35 @@ public class DatabaseJPanel extends JPanel
     }
     
     Feature f = doc.getFeatureByUniquename(entry[1]);
-    
+
     if(isNotSrcFeature && f.getFeatureLocsForFeatureId() != null
                        && f.getFeatureLocsForFeatureId().size() > 0)
     {
-      Iterator<FeatureLoc> it = f.getFeatureLocsForFeatureId().iterator();
-      f = it.next().getFeatureBySrcFeatureId();
+      final Collection<FeatureLoc> flocs = f.getFeatureLocsForFeatureId();
+      if(flocs.size() > 1)
+      {
+        final Object flocsArr[] = flocs.toArray();
+        final String uniqueNames[] = new String[flocsArr.length];
+        for(int i=0; i<flocsArr.length; i++)
+        {
+          Feature thisF = ((FeatureLoc) flocsArr[i]).getFeatureBySrcFeatureId();
+          uniqueNames[i] = thisF.getUniqueName() + " (" + thisF.getCvTerm().getName() + ")";
+        }
+        final JList list = new JList(uniqueNames);
+        list.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+        list.setSelectedIndex(0);
+        int status = JOptionPane.showConfirmDialog(null,
+            new JScrollPane(list), "Choose", JOptionPane.OK_CANCEL_OPTION);
+        if(status == JOptionPane.CANCEL_OPTION)
+          return null;
+        f = ((FeatureLoc)flocsArr[list.getSelectedIndex()]).getFeatureBySrcFeatureId();
+        logger4j.debug("Opening... "+f.getUniqueName());
+      }
+      else
+      {
+        final Iterator<FeatureLoc> it = flocs.iterator();
+        f = it.next().getFeatureBySrcFeatureId();
+      }
     }
     
     if(f == null)
