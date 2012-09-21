@@ -165,6 +165,7 @@ public class VCFview extends JPanel
   protected boolean showDeletions = true;
   protected boolean showInsertions = true;
   protected boolean showMultiAlleles = true;
+  protected boolean showHomozygous = true;
   // show variants that do not overlap CDS
   protected boolean showNonOverlappings = true;
   protected boolean showNonVariants = false;
