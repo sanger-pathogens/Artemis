@@ -1578,7 +1578,7 @@ public class VCFview extends JPanel
   private int getYPostion(int vcfFileIndex)
   {
     int pos = 0;
-    if(hideVcfList.size() == 0)
+    if(hideVcfList.size() == 0 || splitSamples)
       pos = vcfFileIndex;
     else
     {
