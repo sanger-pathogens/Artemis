@@ -402,7 +402,8 @@ public class VCFFilter extends JFrame
     {
       final HeaderLine hLine = headerLineList.get(i);
       final String type = hLine.getType();
-      if (type.equals("String"))
+
+      if (type != null && type.equals("String"))
         continue;
 
       int num = hLine.getNumber();
@@ -446,7 +447,7 @@ public class VCFFilter extends JFrame
 
       for (int j = 0; j < num; j++)
       {
-        if (type.equals("Integer"))
+        if (type != null && type.equals("Integer"))
         {
           final TextFieldInt min = new TextFieldInt();
           min.setColumns(8);
@@ -460,7 +461,7 @@ public class VCFFilter extends JFrame
           max.addKeyListener(new FilterListener(hLine, false, j, num));
           min.addKeyListener(new FilterListener(hLine, true, j, num));
         }
-        else if (type.equals("Float"))
+        else if (type != null && type.equals("Float"))
         {
           TextFieldFloat min = new TextFieldFloat();
           min.setColumns(8);
