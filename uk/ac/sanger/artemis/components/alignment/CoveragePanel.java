@@ -268,8 +268,8 @@ import net.sf.samtools.SAMRecord;
         g2.setStroke(lines[index].getStroke());
         for(int i=1; i<thisPlot.length; i++)
         {
-          int x0 = (int) ((((i-1)*(windowSize)) - windowSize/2.f)*pixPerBase);
-          int x1 = (int) (((i*(windowSize)) - windowSize/2.f)*pixPerBase);
+          int x0 = (int) ((((i-1)*(windowSize)) + windowSize/2.f)*pixPerBase);
+          int x1 = (int) (((i*(windowSize)) + windowSize/2.f)*pixPerBase);
           int y0, y1;
           if(plotByStrand)
           {
@@ -308,7 +308,7 @@ import net.sf.samtools.SAMRecord;
         
           for(int i=0; i<thisPlot.length; i++)
           {
-            float xpos = ((i*(windowSize)) - windowSize/2.f)*pixPerBase;
+            float xpos = i*windowSize*pixPerBase;
             for(int col=0; col<2; col++)
             {
               if(col == 0)
@@ -331,7 +331,7 @@ import net.sf.samtools.SAMRecord;
           shape.moveTo(0,hgt);
           for(int i=0; i<thisPlot.length; i++)
           {
-            float xpos = ((i*(windowSize)) - windowSize/2.f)*pixPerBase;
+            float xpos = i*windowSize*pixPerBase;
             shape.lineTo(xpos,
                 hgt - ((getValue(thisPlot[i][0])/maxVal)*hgt));
           }
@@ -365,7 +365,7 @@ import net.sf.samtools.SAMRecord;
       float maxVal = getValue(max);
       for(int i=0; i<thisPlot.length; i++)
       {
-        int xpos = (int) ((((i-1)*(windowSize)) - windowSize/2.f)*pixPerBase);
+        int xpos = (int) (i*windowSize*pixPerBase);
 
         // this is a number between 0.0 and 1.0
         final float scaledValue = getValue(thisPlot[i][0]) / maxVal;
