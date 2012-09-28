@@ -161,6 +161,18 @@ public class AbstractGraphPanel extends JPanel
     g2.drawString(maxStr, xpos, fm.getHeight());
   }
   
+  /**
+   * Return the log value if the log scale is selected
+   * @param val
+   * @return
+   */
+  protected float getValue(int val)
+  {
+    if(val == 0)
+      return 0.f;
+    return (float) (bamView.logScale ? Math.log(val) : val);
+  }
+  
   protected void drawSelectionRange(final Graphics2D g2,
                                     final float pixPerBase, 
                                     final int start,

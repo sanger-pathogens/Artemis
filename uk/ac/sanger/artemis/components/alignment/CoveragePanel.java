@@ -45,6 +45,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import uk.ac.sanger.artemis.components.Plot;
+
 import net.sf.samtools.AlignmentBlock;
 import net.sf.samtools.SAMRecord;
 
@@ -60,6 +62,7 @@ import net.sf.samtools.SAMRecord;
     private boolean setMaxBases = false;
     
     private boolean plotByStrand = false;
+    private boolean plotHeatMap = false;
 
     protected CoveragePanel(final BamView bamView)
     {
@@ -115,7 +118,8 @@ import net.sf.samtools.SAMRecord;
       if(plots == null)
         return;
 
-      drawSelectionRange(g2, pixPerBase, start, end, getHeight(), Color.PINK);
+      if(!plotHeatMap)
+        drawSelectionRange(g2, pixPerBase, start, end, getHeight(), Color.PINK);
       drawPlot(g2);
       drawMax(g2);
     }
@@ -175,6 +179,7 @@ import net.sf.samtools.SAMRecord;
             max = thisPlot[i][0];
         }
       }
+      
       draw(g2, getWidth(), getHeight());
     }
     
@@ -232,7 +237,6 @@ import net.sf.samtools.SAMRecord;
       else
         lines = getLineAttributes(size);
 
-      int hgt2 = hgt/2;
 
       Enumeration<String> plotEum = plots.keys();
       while(plotEum.hasMoreElements())
@@ -245,90 +249,137 @@ import net.sf.samtools.SAMRecord;
           index = lines.length-1;
         else
           index = bamView.bamList.indexOf(fileName);
-        
-        g2.setColor(lines[index].getLineColour());
-        if(lines[index].getPlotType() == LineAttributes.PLOT_TYPES[0])
+
+        if(plotHeatMap)
+          drawHeatMap(g2, hgt, index, thisPlot);
+        else
+          drawLinePlot(g2, wid, hgt, index, thisPlot);
+      }
+    }
+    
+    private void drawLinePlot(final Graphics2D g2, int wid, int hgt, int index, int[][] thisPlot)
+    {
+      g2.setColor(lines[index].getLineColour());
+      int hgt2 = hgt/2;
+      float maxVal = getValue(max);
+      
+      if(lines[index].getPlotType() == LineAttributes.PLOT_TYPES[0])
+      {
+        g2.setStroke(lines[index].getStroke());
+        for(int i=1; i<thisPlot.length; i++)
         {
-          g2.setStroke(lines[index].getStroke());
-          for(int i=1; i<thisPlot.length; i++)
+          int x0 = (int) ((((i-1)*(windowSize)) - windowSize/2.f)*pixPerBase);
+          int x1 = (int) (((i*(windowSize)) - windowSize/2.f)*pixPerBase);
+          int y0, y1;
+          if(plotByStrand)
           {
-            int x0 = (int) ((((i-1)*(windowSize)) - windowSize/2.f)*pixPerBase);
-            int x1 = (int) (((i*(windowSize)) - windowSize/2.f)*pixPerBase);
-            int y0, y1;
-            if(plotByStrand)
+            for(int col=0; col<2; col++)
             {
-              for(int col=0; col<2; col++)
-              {
-                final int factor;
-                if(col == 0)
-                  factor = 1;   // fwd strand
-                else
-                  factor = -1;  // reverse strand
-                
-                y0 = (int) (hgt2 - (factor)*(((float)thisPlot[i-1][col]/(float)max)*hgt2));
-                y1 = (int) (hgt2 - (factor)*(((float)thisPlot[i][col]/(float)max)*hgt2));
-                
-                g2.drawLine(x0, y0, x1, y1);
-              }
-            }
-            else
-            {
-              y0 = (int) (hgt - (((float)(thisPlot[i-1][0])/(float)max)*hgt));
-              y1 = (int) (hgt - (((float)(thisPlot[i][0])/(float)max)*hgt));
+              final int factor;
+              if(col == 0)
+                factor = 1;   // fwd strand
+              else
+                factor = -1;  // reverse strand
+              
+              y0 = (int) (hgt2 - (factor)*((getValue(thisPlot[i-1][col])/maxVal)*hgt2));
+              y1 = (int) (hgt2 - (factor)*((getValue(thisPlot[i][col])/maxVal)*hgt2));
+              
               g2.drawLine(x0, y0, x1, y1);
             }
           }
-        }
-        else // filled plots
-        {
-          g2.setComposite(makeComposite(0.75f));
-
-          if(plotByStrand)
-          {
-            final GeneralPath shapeFwd = new GeneralPath();
-            shapeFwd.moveTo(0,hgt2);
-            final  GeneralPath shapeBwd = new GeneralPath();
-            shapeBwd.moveTo(0,hgt2);
-          
-            for(int i=0; i<thisPlot.length; i++)
-            {
-              float xpos = ((i*(windowSize)) - windowSize/2.f)*pixPerBase;
-              for(int col=0; col<2; col++)
-              {
-                if(col == 0)
-                  shapeFwd.lineTo(xpos,
-                    hgt2 - (((float)thisPlot[i][col]/(float)max)*hgt2));
-                else
-                  shapeBwd.lineTo(xpos,
-                    hgt2 + (((float)thisPlot[i][col]/(float)max)*hgt2));
-              }
-            }
-
-            shapeBwd.lineTo(wid,hgt2);
-            shapeFwd.lineTo(wid,hgt2);
-            g2.fill(shapeBwd);
-            g2.fill(shapeFwd);
-          }
           else
           {
-            final GeneralPath shape = new GeneralPath();
-            shape.moveTo(0,hgt);
-            for(int i=0; i<thisPlot.length; i++)
-            {
-              float xpos = ((i*(windowSize)) - windowSize/2.f)*pixPerBase;
-              shape.lineTo(xpos,
-                  hgt - (((float)thisPlot[i][0]/(float)max)*hgt));
-            }
-            shape.lineTo(wid,hgt);
-            g2.fill(shape);
+            y0 = (int) (hgt - ((getValue(thisPlot[i-1][0])/maxVal)*hgt));
+            y1 = (int) (hgt - ((getValue(thisPlot[i][0])/maxVal)*hgt));
+            g2.drawLine(x0, y0, x1, y1);
           }
         }
       }
+      else // filled plots
+      {
+        g2.setComposite(makeComposite(0.75f));
 
+        if(plotByStrand)
+        {
+          final GeneralPath shapeFwd = new GeneralPath();
+          shapeFwd.moveTo(0,hgt2);
+          final  GeneralPath shapeBwd = new GeneralPath();
+          shapeBwd.moveTo(0,hgt2);
+        
+          for(int i=0; i<thisPlot.length; i++)
+          {
+            float xpos = ((i*(windowSize)) - windowSize/2.f)*pixPerBase;
+            for(int col=0; col<2; col++)
+            {
+              if(col == 0)
+                shapeFwd.lineTo(xpos,
+                  hgt2 - ((getValue(thisPlot[i][col])/maxVal)*hgt2));
+              else
+                shapeBwd.lineTo(xpos,
+                  hgt2 + ((getValue(thisPlot[i][col])/maxVal)*hgt2));
+            }
+          }
+
+          shapeBwd.lineTo(wid,hgt2);
+          shapeFwd.lineTo(wid,hgt2);
+          g2.fill(shapeBwd);
+          g2.fill(shapeFwd);
+        }
+        else
+        {
+          final GeneralPath shape = new GeneralPath();
+          shape.moveTo(0,hgt);
+          for(int i=0; i<thisPlot.length; i++)
+          {
+            float xpos = ((i*(windowSize)) - windowSize/2.f)*pixPerBase;
+            shape.lineTo(xpos,
+                hgt - ((getValue(thisPlot[i][0])/maxVal)*hgt));
+          }
+          shape.lineTo(wid,hgt);
+          g2.fill(shape);
+        }
+      }
+      
       if(plotByStrand)
       {
         g2.setColor(Color.GRAY);
         g2.drawLine(0, hgt2, wid+1, hgt2);
+      }
+    }
+    
+    /**
+     * Draw as heat map
+     * @param g2
+     * @param hgt
+     * @param index
+     * @param thisPlot
+     */
+    private void drawHeatMap(final Graphics2D g2, int hgt, int index, int[][] thisPlot)
+    { // heat map
+      int NUMBER_OF_SHADES = 254;
+      int plotHgt = hgt/plots.size();
+      int plotPos = plotHgt * index;
+      Color definedColours[] = Plot.makeColours(lines[index].getLineColour(),
+          NUMBER_OF_SHADES);
+      
+      float maxVal = getValue(max);
+      for(int i=0; i<thisPlot.length; i++)
+      {
+        int xpos = (int) ((((i-1)*(windowSize)) - windowSize/2.f)*pixPerBase);
+
+        // this is a number between 0.0 and 1.0
+        final float scaledValue = getValue(thisPlot[i][0]) / maxVal;
+        // set color based on value
+        int colourIndex = 
+          (int)(definedColours.length * 0.999 * scaledValue);
+
+        if(colourIndex > definedColours.length - 1)
+          colourIndex = definedColours.length - 1;
+        else if (colourIndex < 0)
+          colourIndex = 0;
+        
+        g2.setColor(definedColours[ colourIndex ]);
+        g2.fillRect(xpos, plotPos, windowSize, plotHgt);
       }
     }
     
@@ -374,6 +425,14 @@ import net.sf.samtools.SAMRecord;
       this.plotByStrand = plotByStrand;
     }
     
+    /**
+     * @param plotHeatMap the plotHeatMap to set
+     */
+    protected void setPlotHeatMap(boolean plotHeatMap)
+    {
+      this.plotHeatMap = plotHeatMap;
+    }
+
     private void defineOpts()
     {
       final JPanel opts = new JPanel(new GridBagLayout());
