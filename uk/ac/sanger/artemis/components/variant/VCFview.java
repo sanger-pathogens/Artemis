@@ -165,6 +165,7 @@ public class VCFview extends JPanel
   protected boolean showDeletions = true;
   protected boolean showInsertions = true;
   protected boolean showMultiAlleles = true;
+  protected boolean showHomozygous = true;
   // show variants that do not overlap CDS
   protected boolean showNonOverlappings = true;
   protected boolean showNonVariants = false;
@@ -1577,7 +1578,7 @@ public class VCFview extends JPanel
   private int getYPostion(int vcfFileIndex)
   {
     int pos = 0;
-    if(hideVcfList.size() == 0)
+    if(hideVcfList.size() == 0 || splitSamples)
       pos = vcfFileIndex;
     else
     {
