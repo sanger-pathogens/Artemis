@@ -66,6 +66,8 @@ public class VCFFilter extends JFrame
   private static float MAX_CI95 = 10;
   private static Pattern COMMA_PATTERN = Pattern.compile(",");*/
   private static Pattern SEMICOLON_PATTERN = Pattern.compile(";");
+  
+  private static Pattern HOMOZYGOUS_PATTERN = Pattern.compile("^0(/0)*+|(\\|0)*+$");
   private FilteredPanel filterPanel;
   protected static boolean manualFilter = false; // show manual filtering
 
@@ -299,7 +301,7 @@ public class VCFFilter extends JFrame
     else
     {
       //
-      createPanel(propPanel, c, info, "INFO FIELDS:");
+      createPanel(vcfView, propPanel, c, info, "INFO FIELDS:");
     }
 
     ////
@@ -311,8 +313,8 @@ public class VCFFilter extends JFrame
     formatPanel.setBorder(BorderFactory.createLineBorder(Color.gray));
 
     tabPane.addTab("Genotype", formatPanel);
-    createPanel(formatPanel, c, format, "GENOTYPE FIELDS:");
-
+    createPanel(vcfView, formatPanel, c, format, "GENOTYPE FIELDS:");
+    
     //
     c.gridy = c.gridy+1;
     c.gridx = 0;
@@ -375,7 +377,8 @@ public class VCFFilter extends JFrame
     filterPanel.updateFilters();  
   }
   
-  private void createPanel(final JPanel panel, 
+  private void createPanel(final VCFview vcfView,
+                           final JPanel panel, 
                            final GridBagConstraints c, 
                            final List<HeaderLine> headerLineList, 
                            final String name)
@@ -399,7 +402,8 @@ public class VCFFilter extends JFrame
     {
       final HeaderLine hLine = headerLineList.get(i);
       final String type = hLine.getType();
-      if (type.equals("String"))
+
+      if (type != null && type.equals("String"))
         continue;
 
       int num = hLine.getNumber();
@@ -443,7 +447,7 @@ public class VCFFilter extends JFrame
 
       for (int j = 0; j < num; j++)
       {
-        if (type.equals("Integer"))
+        if (type != null && type.equals("Integer"))
         {
           final TextFieldInt min = new TextFieldInt();
           min.setColumns(8);
@@ -457,7 +461,7 @@ public class VCFFilter extends JFrame
           max.addKeyListener(new FilterListener(hLine, false, j, num));
           min.addKeyListener(new FilterListener(hLine, true, j, num));
         }
-        else if (type.equals("Float"))
+        else if (type != null && type.equals("Float"))
         {
           TextFieldFloat min = new TextFieldFloat();
           min.setColumns(8);
@@ -479,7 +483,22 @@ public class VCFFilter extends JFrame
         }
       }
     }
-    
+
+    // Filter out homozygous reference samples, GT - 0/0
+    final JCheckBox showHomozygousMenu = new JCheckBox("Homozygous sample (GT)", vcfView.showHomozygous);
+    c.gridx = 0;
+    c.gridy += 1;
+    c.gridwidth = 2;
+    panel.add(showHomozygousMenu, c);
+    showHomozygousMenu.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e)
+      {
+        setFlagFilter(HeaderLine.FILTER_HOMOZYG, "FILTER_HOMOZYG", "Homozygous", showHomozygousMenu.isSelected());
+        vcfView.showHomozygous = showHomozygousMenu.isSelected();
+        vcfView.repaint();
+      }
+    });
+    c.gridwidth = 1;
     
     c.gridx = 100;
     c.weightx = 200.d;
@@ -647,8 +666,16 @@ public class VCFFilter extends JFrame
               return false;
             break;
             
-          case HeaderLine.FILTER_MULTALL_FLAG:  // FILTER by quality score
+          case HeaderLine.FILTER_MULTALL_FLAG:
             if( record.getAlt().isMultiAllele(sampleIndex) )
+              return false;
+            break;
+          case HeaderLine.FILTER_HOMOZYG:
+            final String smpls[] = record.getFormatValues("GT");
+            // look at a specific sample
+            if(smpls != null && 
+               sampleIndex > -1 && smpls[sampleIndex] != null && 
+               HOMOZYGOUS_PATTERN.matcher(smpls[sampleIndex]).matches())
               return false;
             break;
           case HeaderLine.FILTER_NONSYN:

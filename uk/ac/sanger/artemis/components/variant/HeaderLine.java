@@ -41,7 +41,7 @@ public class HeaderLine
     "INFO", "FORMAT", "FILTER", "FILTER_QUAL", "FILTER_NV_FLAG",
     "FILTER_OVERLAP_FLAG", "FILTER_MULTALL_FLAG", 
     "FILTER_INS", "FILTER_DEL",
-    "FILTER_NONSYN", "FILTER_SYN", "FILTER_MANUAL"};
+    "FILTER_NONSYN", "FILTER_SYN", "FILTER_MANUAL", "FILTER_HOMOZYG"};
   protected static final int INFO_LINE   = 0;
   protected static final int FORMAT_LINE = 1;
   protected static final int FILTER_LINE = 2;
@@ -54,6 +54,7 @@ public class HeaderLine
   protected static final int FILTER_NONSYN = 9;
   protected static final int FILTER_SYN = 10;
   protected static final int FILTER_MANUAL = 11;
+  protected static final int FILTER_HOMOZYG = 12;
   
   public HeaderLine(final String origLine, String headerTypeStr, Hashtable<String, String> lineHash)
   {

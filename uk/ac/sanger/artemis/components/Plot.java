@@ -930,7 +930,7 @@ public abstract class Plot extends JPanel
    * @param NUMBER_OF_SHADES
    * @return
    */
-  protected Color[] makeColours(Color col, int NUMBER_OF_SHADES)
+  public static Color[] makeColours(Color col, int NUMBER_OF_SHADES)
   {
     Color definedColour[] = new Color[NUMBER_OF_SHADES];
     for(int i = 0; i < NUMBER_OF_SHADES; ++i)
