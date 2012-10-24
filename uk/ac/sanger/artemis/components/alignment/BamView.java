@@ -677,7 +677,7 @@ public class BamView extends JPanel
     final int cov[] = new int[nbins];
     for(int i=0; i<nbins; i++)
       cov[i] = 0;
-    
+
     final CloseableIterator<SAMRecord> it = inputSam.queryOverlapping(refName, start, end);
     try
     {
@@ -1809,7 +1809,7 @@ public class BamView extends JPanel
     }
 
     int hgt = jspView.getVisibleRect().height-scaleHeight;
-    if(!cbCoverageStrandView.isSelected() && !cbCoverageHeatMap.isSelected())
+    if(!cbCoverageStrandView.isSelected() && !coverageView.isPlotHeatMap())
     {
       try
       {
@@ -1824,7 +1824,7 @@ public class BamView extends JPanel
     g2.translate(0, getJspView().getViewport().getViewPosition().y);
 
     coverageView.drawSelectionRange(g2, pixPerBase, start, end, getHeight(), Color.PINK);
-    coverageView.draw(g2, getWidth(), hgt);
+    coverageView.draw(g2, getWidth(), hgt, hideBamList);
     coverageView.drawMax(g2);  
   }
   

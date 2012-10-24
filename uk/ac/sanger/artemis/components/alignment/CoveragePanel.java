@@ -180,7 +180,7 @@ import net.sf.samtools.SAMRecord;
         }
       }
       
-      draw(g2, getWidth(), getHeight());
+      draw(g2, getWidth(), getHeight(), null);
     }
     
     protected void addRecord(SAMRecord thisRead, int offset, String fileName)
@@ -196,7 +196,7 @@ import net.sf.samtools.SAMRecord;
       }
 
       final int col;
-      if(plotByStrand && thisRead.getReadNegativeStrandFlag())
+      if(plotByStrand && !isPlotHeatMap() && thisRead.getReadNegativeStrandFlag())
         col = 1;
       else
         col = 0;
@@ -226,7 +226,7 @@ import net.sf.samtools.SAMRecord;
       }
     }
     
-    protected void draw(Graphics2D g2, int wid, int hgt)
+    protected void draw(Graphics2D g2, int wid, int hgt, List<Short> hideBamList)
     {
       int size = bamView.bamList.size();
       if(includeCombined)
@@ -237,35 +237,43 @@ import net.sf.samtools.SAMRecord;
       else
         lines = getLineAttributes(size);
 
-
       Enumeration<String> plotEum = plots.keys();
       while(plotEum.hasMoreElements())
       {
         String fileName = (String) plotEum.nextElement();
         int[][] thisPlot = plots.get(fileName);
 
-        int index;
+        int idx;
         if(fileName.equals("-1"))
-          index = lines.length-1;
+          idx = lines.length-1;
         else
-          index = bamView.bamList.indexOf(fileName);
+          idx = bamView.bamList.indexOf(fileName);
 
+        final LineAttributes line = lines[idx];
         if(plotHeatMap)
-          drawHeatMap(g2, hgt, index, thisPlot);
+        {
+          if(hideBamList != null)
+          {
+            for(Short i: hideBamList)
+              if(idx > i)
+                idx--;
+          }
+          drawHeatMap(g2, hgt, line, idx, thisPlot);
+        }
         else
-          drawLinePlot(g2, wid, hgt, index, thisPlot);
+          drawLinePlot(g2, wid, hgt, line, thisPlot);
       }
     }
     
-    private void drawLinePlot(final Graphics2D g2, int wid, int hgt, int index, int[][] thisPlot)
+    private void drawLinePlot(final Graphics2D g2, int wid, int hgt, LineAttributes line, int[][] thisPlot)
     {
-      g2.setColor(lines[index].getLineColour());
+      g2.setColor(line.getLineColour());
       int hgt2 = hgt/2;
       float maxVal = getValue(max);
       
-      if(lines[index].getPlotType() == LineAttributes.PLOT_TYPES[0])
+      if(line.getPlotType() == LineAttributes.PLOT_TYPES[0])
       {
-        g2.setStroke(lines[index].getStroke());
+        g2.setStroke(line.getStroke());
         for(int i=1; i<thisPlot.length; i++)
         {
           int x0 = (int) ((((i-1)*(windowSize)) + windowSize/2.f)*pixPerBase);
@@ -351,34 +359,34 @@ import net.sf.samtools.SAMRecord;
      * Draw as heat map
      * @param g2
      * @param hgt
-     * @param index
+     * @param line
+     * @param idx
      * @param thisPlot
      */
-    private void drawHeatMap(final Graphics2D g2, int hgt, int index, int[][] thisPlot)
+    private void drawHeatMap(final Graphics2D g2, int hgt, LineAttributes line, int idx, int[][] thisPlot)
     { // heat map
-      int NUMBER_OF_SHADES = 254;
+      int NUMBER_OF_SHADES = 240;
       int plotHgt = hgt/plots.size();
-      int plotPos = plotHgt * index;
-      Color definedColours[] = Plot.makeColours(lines[index].getLineColour(),
+      int plotPos = plotHgt * idx;
+      Color definedColours[] = Plot.makeColours(line.getLineColour(),
           NUMBER_OF_SHADES);
-      
+
       float maxVal = getValue(max);
       for(int i=0; i<thisPlot.length; i++)
       {
         int xpos = (int) (i*windowSize*pixPerBase);
-
         // this is a number between 0.0 and 1.0
         final float scaledValue = getValue(thisPlot[i][0]) / maxVal;
         // set color based on value
-        int colourIndex = 
+        int colourIdx = 
           (int)(definedColours.length * 0.999 * scaledValue);
 
-        if(colourIndex > definedColours.length - 1)
-          colourIndex = definedColours.length - 1;
-        else if (colourIndex < 0)
-          colourIndex = 0;
-        
-        g2.setColor(definedColours[ colourIndex ]);
+        if(colourIdx > definedColours.length - 1)
+          colourIdx = definedColours.length - 1;
+        else if (colourIdx <= 0)
+          continue;
+
+        g2.setColor(definedColours[ colourIdx ]);
         g2.fillRect(xpos, plotPos, windowSize, plotHgt);
       }
     }
@@ -431,6 +439,14 @@ import net.sf.samtools.SAMRecord;
     protected void setPlotHeatMap(boolean plotHeatMap)
     {
       this.plotHeatMap = plotHeatMap;
+    }
+
+    /**
+     * @return the plotHeatMap
+     */
+    protected boolean isPlotHeatMap()
+    {
+      return plotHeatMap;
     }
 
     private void defineOpts()
