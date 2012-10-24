@@ -1509,15 +1509,14 @@ public class GeneUtils
     {
       String transcriptName =
         chadoGene.getTranscriptFromName(GeneUtils.getUniqueName(gffFeature));
-      
-      List splicedFeatures = 
-        chadoGene.getSplicedFeaturesOfTranscript(transcriptName);
 
-      for (int i = 0; i < splicedFeatures.size(); i++)
+      List<Feature> splicedFeatures = 
+        chadoGene.getSplicedFeaturesOfTranscript(transcriptName);
+      for (Feature emblFeature: splicedFeatures)
       {
-        Feature emblFeature = (Feature) splicedFeatures.get(i);
         if (emblFeature.getKey().getKeyString().equals(
-            DatabaseDocument.EXONMODEL))
+            DatabaseDocument.EXONMODEL) ||
+            emblFeature.getKey().getKeyString().equals("pseudogenic_exon"))
         {
           uk.ac.sanger.artemis.Feature f = 
             (uk.ac.sanger.artemis.Feature) emblFeature.getUserData();
