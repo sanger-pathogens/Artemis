@@ -938,8 +938,7 @@ public abstract class Plot extends JPanel
       int R = col.getRed();
       int G = col.getGreen();
       int B = col.getBlue();
-
-      float scale = ((float)(NUMBER_OF_SHADES-i) * (float)(255 / NUMBER_OF_SHADES )) ;
+      int scale = NUMBER_OF_SHADES-i;
       
       if((R+scale) <= 255)
         R += scale;
