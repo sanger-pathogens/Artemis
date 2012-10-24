@@ -387,7 +387,7 @@ import net.sf.samtools.SAMRecord;
           continue;
 
         g2.setColor(definedColours[ colourIdx ]);
-        g2.fillRect(xpos, plotPos, windowSize, plotHgt);
+        g2.fillRect(xpos, plotPos, (int) (windowSize*2*pixPerBase), plotHgt);
       }
     }
     
