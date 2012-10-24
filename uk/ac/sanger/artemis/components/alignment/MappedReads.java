@@ -201,6 +201,7 @@ public class MappedReads
    * @param threshold
    * @param minSize
    * @param minBams
+   * @param readsOnOppositeStrand assume reads are on the opposite strand if true.
    * @param contained
    */
   public MappedReads(  
@@ -215,6 +216,7 @@ public class MappedReads
       final int threshold,
       final int minSize,
       final int minBams,
+      final boolean readsOnOppositeStrand,
       final boolean contained)
   {
     this.refName = refName;
@@ -247,7 +249,7 @@ public class MappedReads
     centerDialog();
     
     final CalculateNewFeatures cmr = new CalculateNewFeatures(
-        feature_display, refName, groupsFrame, threshold, minSize, minBams);
+        feature_display, refName, groupsFrame, threshold, minSize, minBams, readsOnOppositeStrand);
     cmr.start();
     dialog.setVisible(true);
   }
@@ -502,6 +504,7 @@ public class MappedReads
     private int threshold;
     private int minSize;
     private int minBams;
+    private boolean readsOnOppositeStrand;
     private GroupBamFrame groupsFrame;
     
     CalculateNewFeatures(final FeatureDisplay feature_display,
@@ -509,7 +512,8 @@ public class MappedReads
         final GroupBamFrame groupsFrame, 
         final int threshold,
         final int minSize,
-        final int minBams)
+        final int minBams,
+        final boolean readsOnOppositeStrand)
     {
       entryGroup = feature_display.getEntryGroup();
       bases = feature_display.getBases();
@@ -518,6 +522,7 @@ public class MappedReads
       this.threshold = threshold;
       this.minSize = minSize;
       this.minBams = minBams;
+      this.readsOnOppositeStrand = readsOnOppositeStrand;
     }
     
     class MarkerObj
@@ -583,7 +588,7 @@ public class MappedReads
                   int concatShift = 0;
                   if(offset > start)
                     concatShift = offset-start;
-                  
+
                   cnt =
                     BamUtils.countOverRange(bamList.get(i), samFileReaderHash, 
                         name, thisStart, thisEnd, concatShift, cnt,
@@ -592,26 +597,24 @@ public class MappedReads
               }
             }
             else
-            {
               cnt =
                 BamUtils.countOverRange(bamList.get(i), samFileReaderHash, 
                     refSeq, start, stop, 0, cnt,
                     samRecordFlagPredicate, samRecordMapQPredicate);
-            }
-            
+
             for(int k=0; k<cnt.length; k++)
             {
               final Range r = new Range(start+k, start+k+1);
-              
               // find forward strand potential features
-              fwdStart = findFeatures(cnt[k][0], true, fwdStart, j+k,
-                r, excluseKeys, fwdMarkers, entryGroup, i);
-            
+              fwdStart = findFeatures( 
+                  (!readsOnOppositeStrand ? cnt[k][0] : cnt[k][1]), true, 
+                  fwdStart, j+k, r, excluseKeys, fwdMarkers, entryGroup, i);
+
               // find reverse strand potential features
-              revStart = findFeatures(cnt[k][1], false, revStart, j+k,
-                r, excluseKeys, revMarkers, entryGroup, i);
+              revStart = findFeatures( 
+                  (!readsOnOppositeStrand ? cnt[k][1] : cnt[k][0]), false, 
+                  revStart, j+k, r, excluseKeys, revMarkers, entryGroup, i);
             }
-            
           }
           catch (OutOfRangeException e1)
           {
@@ -620,7 +623,8 @@ public class MappedReads
         }
       }
 
-      final Entry newEntry = entryGroup.createEntry ("align_"+threshold+"_"+minBams+"_"+minSize);
+      final Entry newEntry = entryGroup.createEntry (
+          "align_"+threshold+"_"+minBams+"_"+minSize+(!readsOnOppositeStrand ? "":"_opp"));
       createFeatures(fwdMarkers, true, newEntry);
       createFeatures(revMarkers, false, newEntry);
       return null;

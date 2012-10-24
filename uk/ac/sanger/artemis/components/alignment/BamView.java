@@ -3916,23 +3916,28 @@ public class BamView extends JPanel
       if(groupsFrame.getNumberOfGroups() == 1)
         useGroup.setEnabled(false);
       
-      ButtonGroup group = new ButtonGroup();
+      final ButtonGroup group = new ButtonGroup();
       group.add(useAllBams);
       group.add(useGroup);
 
-      Box xBox = Box.createHorizontalBox();
+      final Box xBox = Box.createHorizontalBox();
       xBox.add(useAllBams);
       xBox.add(useGroup);
       xBox.add(Box.createHorizontalGlue());
       c.gridy++;
       gridPanel.add(xBox, c);
-      
+
       c.gridy++;
       gridPanel.add(new JSeparator(), c);
       c.gridy++;
       gridPanel.add(new JLabel("Minimum feature size:"), c);
       c.gridy++;
       gridPanel.add(minSize, c);
+
+      final JCheckBox cbOpposite = new JCheckBox("Assume reads on opposite strand", false);
+      cbOpposite.setToolTipText("for cDNA experiments when the reads are on the opposite strand");
+      c.gridy++;
+      gridPanel.add(cbOpposite, c);
 
       int status =
           JOptionPane.showConfirmDialog(feature_display, gridPanel, 
@@ -3968,8 +3973,8 @@ public class BamView extends JPanel
 
       new MappedReads((String)combo.getSelectedItem(),BamView.this, samFileReaderHash,
           seqNames, offsetLengths, concatSequences, seqLengths, 
-          (useGroup.isSelected() ? groupsFrame : null),
-          threshold.getValue(), minSize.getValue(), minBams.getValue(), true);
+          (useGroup.isSelected() ? groupsFrame : null), threshold.getValue(), 
+          minSize.getValue(), minBams.getValue(), cbOpposite.isSelected(), true);
     }
   }
  
