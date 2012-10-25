@@ -473,6 +473,8 @@ import net.sf.samtools.SAMRecord;
      */
     public String getToolTipText(int ypos)
     {
+      if(heatPlots == null)
+        return null;
       for(HeatMapLn h: heatPlots)
       {
         if(ypos > h.yTop && ypos < h.yBtm)
