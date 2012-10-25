@@ -372,6 +372,10 @@ public class BamView extends JPanel
   
   public String getToolTipText()
   {
+    if(isCoverageView(getPixPerBaseByWidth()) && lastMousePoint != null)
+      return coverageView.getToolTipText(
+          lastMousePoint.y-getJspView().getViewport().getViewPosition().y);
+    
     if(mouseOverSAMRecord == null)
       return null;
     

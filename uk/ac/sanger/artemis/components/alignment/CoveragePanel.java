@@ -33,9 +33,11 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.GeneralPath;
+import java.io.File;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Vector;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -63,6 +65,7 @@ import net.sf.samtools.SAMRecord;
     
     private boolean plotByStrand = false;
     private boolean plotHeatMap = false;
+    private List<HeatMapLn> heatPlots;
 
     protected CoveragePanel(final BamView bamView)
     {
@@ -237,32 +240,45 @@ import net.sf.samtools.SAMRecord;
       else
         lines = getLineAttributes(size);
 
+      if(plotHeatMap)
+        heatPlots = new Vector<HeatMapLn>();
       Enumeration<String> plotEum = plots.keys();
       while(plotEum.hasMoreElements())
       {
-        String fileName = (String) plotEum.nextElement();
-        int[][] thisPlot = plots.get(fileName);
+        String fName = plotEum.nextElement();
+        int[][] thisPlot = plots.get(fName);
 
         int idx;
-        if(fileName.equals("-1"))
+        if(fName.equals("-1"))
           idx = lines.length-1;
         else
-          idx = bamView.bamList.indexOf(fileName);
+          idx = bamView.bamList.indexOf(fName);
 
         final LineAttributes line = lines[idx];
         if(plotHeatMap)
         {
           if(hideBamList != null)
-          {
-            for(Short i: hideBamList)
-              if(idx > i)
-                idx--;
-          }
-          drawHeatMap(g2, hgt, line, idx, thisPlot);
+            idx = adjustIdx(idx, hideBamList);
+          drawHeatMap(g2, hgt, line, idx, thisPlot, fName);
         }
         else
           drawLinePlot(g2, wid, hgt, line, thisPlot);
       }
+    }
+    
+    /**
+     * Adjust for BAM's that have been hidden
+     * @param index
+     * @param hideBamList
+     * @return
+     */
+    private int adjustIdx(int index, List<Short> hideBamList)
+    {
+      int shiftIdx = index;
+      for(short i=0; i<index; i++)
+        if(hideBamList.contains(i))
+          shiftIdx--;
+      return shiftIdx;
     }
     
     private void drawLinePlot(final Graphics2D g2, int wid, int hgt, LineAttributes line, int[][] thisPlot)
@@ -363,14 +379,15 @@ import net.sf.samtools.SAMRecord;
      * @param idx
      * @param thisPlot
      */
-    private void drawHeatMap(final Graphics2D g2, int hgt, LineAttributes line, int idx, int[][] thisPlot)
+    private void drawHeatMap(final Graphics2D g2, int hgt, LineAttributes line, int idx, int[][] thisPlot, String fName)
     { // heat map
-      int NUMBER_OF_SHADES = 240;
+      int NSHADES = 240;
       int plotHgt = hgt/plots.size();
       int plotPos = plotHgt * idx;
-      Color definedColours[] = Plot.makeColours(line.getLineColour(),
-          NUMBER_OF_SHADES);
+      Color definedColours[] = Plot.makeColours(line.getLineColour(), NSHADES);
 
+      heatPlots.add(new HeatMapLn(plotPos, plotPos+plotHgt, idx, fName));
+      
       float maxVal = getValue(max);
       for(int i=0; i<thisPlot.length; i++)
       {
@@ -447,6 +464,22 @@ import net.sf.samtools.SAMRecord;
     protected boolean isPlotHeatMap()
     {
       return plotHeatMap;
+    }
+    
+    /**
+     * Return tooltip text for a given position
+     * @param e
+     * @return
+     */
+    public String getToolTipText(int ypos)
+    {
+      for(HeatMapLn h: heatPlots)
+      {
+        if(ypos > h.yTop && ypos < h.yBtm)
+          return h.toString();
+      }
+
+      return null;
     }
 
     private void defineOpts()
@@ -526,4 +559,22 @@ import net.sf.samtools.SAMRecord;
       }
     }
 
+    class HeatMapLn
+    {
+      int yTop, yBtm, idx;
+      String fName;
+      HeatMapLn(int yTop, int yBtm, int idx, String fName)
+      {
+        this.yTop = yTop;
+        this.yBtm = yBtm;
+        this.idx  = idx;
+        this.fName = fName;
+      }
+      
+      public String toString()
+      {
+        final File f = new File(fName);
+        return f.getName();
+      }
+    }
   }
