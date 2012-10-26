@@ -1829,7 +1829,8 @@ public class BamView extends JPanel
 
     coverageView.drawSelectionRange(g2, pixPerBase, start, end, getHeight(), Color.PINK);
     coverageView.draw(g2, getWidth(), hgt, hideBamList);
-    coverageView.drawMax(g2);  
+    if(!coverageView.isPlotHeatMap())
+      coverageView.drawMax(g2);  
   }
   
   /**
@@ -3627,8 +3628,10 @@ public class BamView extends JPanel
   */
   class PopupListener extends MouseAdapter
   {
-	JMenuItem gotoMateMenuItem;
-	JMenuItem showDetails;
+	private JMenuItem gotoMateMenuItem;
+	private JMenuItem showDetails;
+	private JMenu coverageMenu;
+	private JMenuItem createGroup;
 	
     public void mouseClicked(MouseEvent e)
     {
@@ -3641,7 +3644,13 @@ public class BamView extends JPanel
       if(e.getClickCount() > 1)
         getSelection().clear(); 
       else if(e.getButton() == MouseEvent.BUTTON1)
-        highlightSAMRecord = mouseOverSAMRecord;
+      {
+        if(isCoverageView(getPixPerBaseByWidth()))
+          coverageView.singleClick(e.isShiftDown(),
+              e.getPoint().y-getJspView().getViewport().getViewPosition().y);
+        else
+          highlightSAMRecord = mouseOverSAMRecord;
+      }
       else
         highlightRange(e, MouseEvent.BUTTON2_DOWN_MASK);
       repaint();
@@ -3661,19 +3670,53 @@ public class BamView extends JPanel
     private void maybeShowPopup(MouseEvent e)
     {
       if(e.isPopupTrigger())
-      {
+      {       
+        //
+        // main menu options
         if(popup == null)
         {
           popup = new JPopupMenu();
           createMenus(popup);
         }
-        
+
+        //
+        // coverage heatmap menu options
+        if(coverageMenu != null)
+          popup.remove(coverageMenu);
+        if(isCoverageView(getPixPerBaseByWidth()) && coverageView.isPlotHeatMap())
+        {
+          if(coverageMenu == null)
+          {
+            coverageMenu = new JMenu("Coverage HeatMap");
+            final JCheckBoxMenuItem coverageGrid = new JCheckBoxMenuItem("Heatmap grid", false);
+            coverageGrid.addActionListener(new ActionListener()
+            {
+              public void actionPerformed(ActionEvent e) 
+              {
+                coverageView.showLabels(coverageGrid.isSelected());
+              }
+            });
+            coverageMenu.add(coverageGrid);
+
+            createGroup = new JMenuItem("Create group from selected BAMs");
+            createGroup.addActionListener(new ActionListener()
+            {
+              public void actionPerformed(ActionEvent e) 
+              {
+                
+              }
+            });
+            coverageMenu.add(createGroup);
+          }
+          createGroup.setEnabled(coverageView.hasSelectedBams());
+          popup.add(coverageMenu);
+        }
+
         if(gotoMateMenuItem != null)
           popup.remove(gotoMateMenuItem);
-
         if(showDetails != null)
           popup.remove(showDetails);
-        
+
         if( mouseOverSAMRecord != null && 
             mouseOverSAMRecord.sam.getReadPairedFlag() &&
            !mouseOverSAMRecord.sam.getMateUnmappedFlag() )

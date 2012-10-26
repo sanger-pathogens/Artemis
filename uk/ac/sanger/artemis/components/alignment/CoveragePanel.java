@@ -25,11 +25,13 @@
 package uk.ac.sanger.artemis.components.alignment;
 
 import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Stroke;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.GeneralPath;
@@ -62,10 +64,12 @@ import net.sf.samtools.SAMRecord;
 
     private static boolean redraw = false;
     private boolean setMaxBases = false;
-    
+
     private boolean plotByStrand = false;
     private boolean plotHeatMap = false;
     private List<HeatMapLn> heatPlots;
+    private List<String> selected = new Vector<String>();
+    private boolean showGrid = false;
 
     protected CoveragePanel(final BamView bamView)
     {
@@ -259,7 +263,8 @@ import net.sf.samtools.SAMRecord;
         {
           if(hideBamList != null)
             idx = adjustIdx(idx, hideBamList);
-          drawHeatMap(g2, hgt, line, idx, thisPlot, fName);
+          drawHeatMap(g2, hgt, line, idx, thisPlot, fName, 
+              (idx == plots.size()-1));
         }
         else
           drawLinePlot(g2, wid, hgt, line, thisPlot);
@@ -379,14 +384,14 @@ import net.sf.samtools.SAMRecord;
      * @param idx
      * @param thisPlot
      */
-    private void drawHeatMap(final Graphics2D g2, int hgt, LineAttributes line, int idx, int[][] thisPlot, String fName)
+    private void drawHeatMap(final Graphics2D g2, int hgt, LineAttributes line, int idx, int[][] thisPlot, String fName, boolean lastPlot)
     { // heat map
-      int NSHADES = 240;
-      int plotHgt = hgt/plots.size();
-      int plotPos = plotHgt * idx;
-      Color definedColours[] = Plot.makeColours(line.getLineColour(), NSHADES);
+      final int NSHADES = 240;
+      final int plotHgt = hgt/plots.size();
+      final int plotPos = (hgt*idx)/plots.size();
+      final Color definedColours[] = Plot.makeColours(line.getLineColour(), NSHADES);
 
-      heatPlots.add(new HeatMapLn(plotPos, plotPos+plotHgt, idx, fName));
+      heatPlots.add(new HeatMapLn(plotPos, plotPos+plotHgt, fName));
       
       float maxVal = getValue(max);
       for(int i=0; i<thisPlot.length; i++)
@@ -405,6 +410,22 @@ import net.sf.samtools.SAMRecord;
 
         g2.setColor(definedColours[ colourIdx ]);
         g2.fillRect(xpos, plotPos, (int) (windowSize*2*pixPerBase), plotHgt);
+      }
+      
+      if(showGrid && !lastPlot)
+      {
+        g2.setColor(Color.darkGray);
+        g2.drawLine(0, plotPos+plotHgt-1, bamView.getWidth(), plotPos+plotHgt-1);
+      }
+      
+      if(selected.contains(fName))
+      {
+        g2.setColor(Color.darkGray);
+        Stroke stroke = g2.getStroke();
+        g2.setStroke(new BasicStroke(2.f));
+        g2.drawLine(0, plotPos+1, bamView.getWidth(), plotPos+1);
+        g2.drawLine(0, plotPos+plotHgt-1, bamView.getWidth(), plotPos+plotHgt-1);
+        g2.setStroke(stroke);
       }
     }
     
@@ -483,6 +504,13 @@ import net.sf.samtools.SAMRecord;
 
       return null;
     }
+    
+    protected void showLabels(boolean showLabel)
+    {
+      //
+      this.showGrid = showLabel;
+      bamView.repaint();
+    }
 
     private void defineOpts()
     {
@@ -560,16 +588,51 @@ import net.sf.samtools.SAMRecord;
         return;
       }
     }
+    
+    /**
+     * Click on heatmap
+     * @param y
+     */
+    protected void singleClick(boolean isShiftDown, int ypos)
+    {
+      if(!isPlotHeatMap())
+        return;
+      
+      String sel = null;
+      for(HeatMapLn h: heatPlots)
+      {
+        if(ypos > h.yTop && ypos < h.yBtm)
+          sel = h.fName;
+      }
+      
+      if(selected.contains(sel))
+      {
+        if(!isShiftDown)
+          selected.clear();
+        else
+          selected.remove(sel);
+      }
+      else
+      {
+        if(!isShiftDown)
+          selected.clear();
+        selected.add(sel);
+      }
+    }
+    
+    protected boolean hasSelectedBams()
+    {
+      return (selected.size() > 0);
+    }
 
     class HeatMapLn
     {
-      int yTop, yBtm, idx;
-      String fName;
-      HeatMapLn(int yTop, int yBtm, int idx, String fName)
+      private int yTop, yBtm;
+      private String fName;
+      HeatMapLn(int yTop, int yBtm, String fName)
       {
         this.yTop = yTop;
         this.yBtm = yBtm;
-        this.idx  = idx;
         this.fName = fName;
       }
       
