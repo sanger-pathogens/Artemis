@@ -624,6 +624,11 @@ import net.sf.samtools.SAMRecord;
     {
       return (selected.size() > 0);
     }
+    
+    protected List<String> getSelected()
+    {
+      return selected;
+    }
 
     class HeatMapLn
     {

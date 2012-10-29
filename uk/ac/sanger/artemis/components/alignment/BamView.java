@@ -216,6 +216,7 @@ public class BamView extends JPanel
   private AlphaComposite translucent = 
     AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f);
   
+  private GroupBamFrame groupsFrame = new GroupBamFrame(this, bamFilesMenu);
   private CoveragePanel coverageView = new CoveragePanel();
   
   protected static String BAM_SUFFIX = ".*\\.(bam|cram)$";
@@ -2413,9 +2414,8 @@ public class BamView extends JPanel
     });
     
     bamFilesMenu.setFont(addBam.getFont());
-    
+
     final JMenuItem groupBams = new JMenuItem("Group BAMs ...");
-    final GroupBamFrame groupsFrame = new GroupBamFrame(this, bamFilesMenu);
     groupBams.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent arg0)
       {
@@ -3688,7 +3688,7 @@ public class BamView extends JPanel
           if(coverageMenu == null)
           {
             coverageMenu = new JMenu("Coverage HeatMap");
-            final JCheckBoxMenuItem coverageGrid = new JCheckBoxMenuItem("Heatmap grid", false);
+            final JCheckBoxMenuItem coverageGrid = new JCheckBoxMenuItem("Show heatmap grid", false);
             coverageGrid.addActionListener(new ActionListener()
             {
               public void actionPerformed(ActionEvent e) 
@@ -3701,9 +3701,16 @@ public class BamView extends JPanel
             createGroup = new JMenuItem("Create group from selected BAMs");
             createGroup.addActionListener(new ActionListener()
             {
+              private int n = 1;
               public void actionPerformed(ActionEvent e) 
               {
-                
+                String groupName = "group_"+n;
+                groupsFrame.addGroup(groupName);
+                final List<String> selected = coverageView.getSelected();
+                for(String sel: selected)
+                  groupsFrame.addToGroup((new File(sel)).getName(), groupName);
+                groupsFrame.updateAndDisplay();
+                n++;
               }
             });
             coverageMenu.add(createGroup);
