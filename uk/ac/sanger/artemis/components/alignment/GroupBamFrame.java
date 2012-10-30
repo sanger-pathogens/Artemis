@@ -66,7 +66,7 @@ class GroupBamFrame extends JFrame
     newGroup.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e)
       {
-        addGroup(bamView, bamFilesMenu, newGroup, jsp);
+        addGroup(newGroup.getText().trim());
       }
     });
     newGroup.addFocusListener(new java.awt.event.FocusAdapter() {
@@ -92,7 +92,7 @@ class GroupBamFrame extends JFrame
               JOptionPane.INFORMATION_MESSAGE);
           return;
         }
-        addGroup(bamView, bamFilesMenu, newGroup, jsp);
+        addGroup(newGroup.getText().trim());
       }
     });
     xBox.add(Box.createHorizontalGlue());
@@ -148,18 +148,16 @@ class GroupBamFrame extends JFrame
     setVisible(true);
   }
   
-  private void addGroup(final BamView bamView, final JMenu bamFilesMenu,
-                        final JTextField newGroup, final JScrollPane jsp)
+  protected void addGroup(final String newGroup)
   {
     final String tmpGroups[] = new String[groups.length+1];
-    for(int i=0; i<groups.length; i++)
-      tmpGroups[i] = groups[i];
-    tmpGroups[tmpGroups.length-1] = newGroup.getText().trim();
+    System.arraycopy(groups, 0, tmpGroups, 0, groups.length);
+    tmpGroups[tmpGroups.length-1] = newGroup;
     groups = tmpGroups;
     
     updateGroupPanel();
     updateBamPanel();
-    jsp.validate();
+    validate();
   }
   
   private void updateBamPanel()
@@ -199,6 +197,29 @@ class GroupBamFrame extends JFrame
               (String) bamGroupMap.get(cbBam).getSelectedItem());
 
         bamGroupMap.put(cbBam, groupCombo);
+      }
+    }
+  }
+  
+  /**
+   * Add a BAM to a specified group
+   * @param bam
+   * @param group
+   */
+  protected void addToGroup(String bam, String group)
+  {
+    final Component cs[] = bamFilesMenu.getMenuComponents();
+    for(Component cp : cs)
+    {
+      if(cp instanceof JCheckBoxMenuItem)
+      {
+        final JCheckBoxMenuItem cbBam = (JCheckBoxMenuItem) cp;
+        final String thisBam = cbBam.getText();
+        if(bam.equals(thisBam))
+        {
+          bamGroupMap.get(cbBam).setSelectedItem(group);
+          return;
+        }
       }
     }
   }

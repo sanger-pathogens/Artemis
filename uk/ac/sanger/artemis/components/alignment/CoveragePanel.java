@@ -25,17 +25,21 @@
 package uk.ac.sanger.artemis.components.alignment;
 
 import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Stroke;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.GeneralPath;
+import java.io.File;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Vector;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -60,9 +64,12 @@ import net.sf.samtools.SAMRecord;
 
     private static boolean redraw = false;
     private boolean setMaxBases = false;
-    
+
     private boolean plotByStrand = false;
     private boolean plotHeatMap = false;
+    private List<HeatMapLn> heatPlots;
+    private List<String> selected = new Vector<String>();
+    private boolean showGrid = false;
 
     protected CoveragePanel(final BamView bamView)
     {
@@ -180,7 +187,7 @@ import net.sf.samtools.SAMRecord;
         }
       }
       
-      draw(g2, getWidth(), getHeight());
+      draw(g2, getWidth(), getHeight(), null);
     }
     
     protected void addRecord(SAMRecord thisRead, int offset, String fileName)
@@ -196,7 +203,7 @@ import net.sf.samtools.SAMRecord;
       }
 
       final int col;
-      if(plotByStrand && thisRead.getReadNegativeStrandFlag())
+      if(plotByStrand && !isPlotHeatMap() && thisRead.getReadNegativeStrandFlag())
         col = 1;
       else
         col = 0;
@@ -226,7 +233,7 @@ import net.sf.samtools.SAMRecord;
       }
     }
     
-    protected void draw(Graphics2D g2, int wid, int hgt)
+    protected void draw(Graphics2D g2, int wid, int hgt, List<Short> hideBamList)
     {
       int size = bamView.bamList.size();
       if(includeCombined)
@@ -237,35 +244,57 @@ import net.sf.samtools.SAMRecord;
       else
         lines = getLineAttributes(size);
 
-
+      if(plotHeatMap)
+        heatPlots = new Vector<HeatMapLn>();
       Enumeration<String> plotEum = plots.keys();
       while(plotEum.hasMoreElements())
       {
-        String fileName = (String) plotEum.nextElement();
-        int[][] thisPlot = plots.get(fileName);
+        String fName = plotEum.nextElement();
+        int[][] thisPlot = plots.get(fName);
 
-        int index;
-        if(fileName.equals("-1"))
-          index = lines.length-1;
+        int idx;
+        if(fName.equals("-1"))
+          idx = lines.length-1;
         else
-          index = bamView.bamList.indexOf(fileName);
+          idx = bamView.bamList.indexOf(fName);
 
+        final LineAttributes line = lines[idx];
         if(plotHeatMap)
-          drawHeatMap(g2, hgt, index, thisPlot);
+        {
+          if(hideBamList != null)
+            idx = adjustIdx(idx, hideBamList);
+          drawHeatMap(g2, hgt, line, idx, thisPlot, fName, 
+              (idx == plots.size()-1));
+        }
         else
-          drawLinePlot(g2, wid, hgt, index, thisPlot);
+          drawLinePlot(g2, wid, hgt, line, thisPlot);
       }
     }
     
-    private void drawLinePlot(final Graphics2D g2, int wid, int hgt, int index, int[][] thisPlot)
+    /**
+     * Adjust for BAM's that have been hidden
+     * @param index
+     * @param hideBamList
+     * @return
+     */
+    private int adjustIdx(int index, List<Short> hideBamList)
     {
-      g2.setColor(lines[index].getLineColour());
+      int shiftIdx = index;
+      for(short i=0; i<index; i++)
+        if(hideBamList.contains(i))
+          shiftIdx--;
+      return shiftIdx;
+    }
+    
+    private void drawLinePlot(final Graphics2D g2, int wid, int hgt, LineAttributes line, int[][] thisPlot)
+    {
+      g2.setColor(line.getLineColour());
       int hgt2 = hgt/2;
       float maxVal = getValue(max);
       
-      if(lines[index].getPlotType() == LineAttributes.PLOT_TYPES[0])
+      if(line.getPlotType() == LineAttributes.PLOT_TYPES[0])
       {
-        g2.setStroke(lines[index].getStroke());
+        g2.setStroke(line.getStroke());
         for(int i=1; i<thisPlot.length; i++)
         {
           int x0 = (int) ((((i-1)*(windowSize)) + windowSize/2.f)*pixPerBase);
@@ -351,35 +380,52 @@ import net.sf.samtools.SAMRecord;
      * Draw as heat map
      * @param g2
      * @param hgt
-     * @param index
+     * @param line
+     * @param idx
      * @param thisPlot
      */
-    private void drawHeatMap(final Graphics2D g2, int hgt, int index, int[][] thisPlot)
+    private void drawHeatMap(final Graphics2D g2, int hgt, LineAttributes line, int idx, int[][] thisPlot, String fName, boolean lastPlot)
     { // heat map
-      int NUMBER_OF_SHADES = 254;
-      int plotHgt = hgt/plots.size();
-      int plotPos = plotHgt * index;
-      Color definedColours[] = Plot.makeColours(lines[index].getLineColour(),
-          NUMBER_OF_SHADES);
+      final int NSHADES = 240;
+      final int plotHgt = hgt/plots.size();
+      final int plotPos = (hgt*idx)/plots.size();
+      final Color definedColours[] = Plot.makeColours(line.getLineColour(), NSHADES);
+
+      heatPlots.add(new HeatMapLn(plotPos, plotPos+plotHgt, fName));
       
       float maxVal = getValue(max);
       for(int i=0; i<thisPlot.length; i++)
       {
         int xpos = (int) (i*windowSize*pixPerBase);
-
         // this is a number between 0.0 and 1.0
         final float scaledValue = getValue(thisPlot[i][0]) / maxVal;
         // set color based on value
-        int colourIndex = 
+        int colourIdx = 
           (int)(definedColours.length * 0.999 * scaledValue);
 
-        if(colourIndex > definedColours.length - 1)
-          colourIndex = definedColours.length - 1;
-        else if (colourIndex < 0)
-          colourIndex = 0;
-        
-        g2.setColor(definedColours[ colourIndex ]);
-        g2.fillRect(xpos, plotPos, windowSize, plotHgt);
+        if(colourIdx > definedColours.length - 1)
+          colourIdx = definedColours.length - 1;
+        else if (colourIdx <= 0)
+          continue;
+
+        g2.setColor(definedColours[ colourIdx ]);
+        g2.fillRect(xpos, plotPos, (int) (windowSize*2*pixPerBase), plotHgt);
+      }
+      
+      if(showGrid && !lastPlot)
+      {
+        g2.setColor(Color.darkGray);
+        g2.drawLine(0, plotPos+plotHgt-1, bamView.getWidth(), plotPos+plotHgt-1);
+      }
+      
+      if(selected.contains(fName))
+      {
+        g2.setColor(Color.darkGray);
+        Stroke stroke = g2.getStroke();
+        g2.setStroke(new BasicStroke(2.f));
+        g2.drawLine(0, plotPos+1, bamView.getWidth(), plotPos+1);
+        g2.drawLine(0, plotPos+plotHgt-1, bamView.getWidth(), plotPos+plotHgt-1);
+        g2.setStroke(stroke);
       }
     }
     
@@ -431,6 +477,39 @@ import net.sf.samtools.SAMRecord;
     protected void setPlotHeatMap(boolean plotHeatMap)
     {
       this.plotHeatMap = plotHeatMap;
+    }
+
+    /**
+     * @return the plotHeatMap
+     */
+    protected boolean isPlotHeatMap()
+    {
+      return plotHeatMap;
+    }
+    
+    /**
+     * Return tooltip text for a given position
+     * @param e
+     * @return
+     */
+    public String getToolTipText(int ypos)
+    {
+      if(heatPlots == null)
+        return null;
+      for(HeatMapLn h: heatPlots)
+      {
+        if(ypos > h.yTop && ypos < h.yBtm)
+          return h.toString();
+      }
+
+      return null;
+    }
+    
+    protected void showLabels(boolean showLabel)
+    {
+      //
+      this.showGrid = showLabel;
+      bamView.repaint();
     }
 
     private void defineOpts()
@@ -509,5 +588,63 @@ import net.sf.samtools.SAMRecord;
         return;
       }
     }
+    
+    /**
+     * Click on heatmap
+     * @param y
+     */
+    protected void singleClick(boolean isShiftDown, int ypos)
+    {
+      if(!isPlotHeatMap())
+        return;
+      
+      String sel = null;
+      for(HeatMapLn h: heatPlots)
+      {
+        if(ypos > h.yTop && ypos < h.yBtm)
+          sel = h.fName;
+      }
+      
+      if(selected.contains(sel))
+      {
+        if(!isShiftDown)
+          selected.clear();
+        else
+          selected.remove(sel);
+      }
+      else
+      {
+        if(!isShiftDown)
+          selected.clear();
+        selected.add(sel);
+      }
+    }
+    
+    protected boolean hasSelectedBams()
+    {
+      return (selected.size() > 0);
+    }
+    
+    protected List<String> getSelected()
+    {
+      return selected;
+    }
 
+    class HeatMapLn
+    {
+      private int yTop, yBtm;
+      private String fName;
+      HeatMapLn(int yTop, int yBtm, String fName)
+      {
+        this.yTop = yTop;
+        this.yBtm = yBtm;
+        this.fName = fName;
+      }
+      
+      public String toString()
+      {
+        final File f = new File(fName);
+        return f.getName();
+      }
+    }
   }

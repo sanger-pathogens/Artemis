@@ -56,7 +56,7 @@ public class BasePattern {
   /**
    *  A return value of patternType () - illegal characters in the pattern.
    **/
-  private static int ILLEGAL_PATTERN = -1;
+  public static int ILLEGAL_PATTERN = -1;
 
   /**
    *  A return value of patternType () - the pattern contains only the
@@ -415,7 +415,7 @@ public class BasePattern {
    *  if the pattern contains only the characters a,t,g,c,r,y,k,m,s,w,n,b,d,h
    *  and v, ie IUC base codes.
    **/
-  private static int patternType (String pattern_string) {
+  public static int patternType (String pattern_string) {
     boolean seen_iuc = false;
 
     for (int i = 0 ; i < pattern_string.length () ; ++i) {
