@@ -155,9 +155,9 @@ public class LineAttributes
         new Color(0,200,0), 
         Color.blue,
         Color.magenta,
-        new Color(204, 204, 51),
-        new Color(50, 255, 255),
-        new Color(204, 51, 128),
+        new Color(100, 100, 0),
+        new Color(0, 100, 100),
+        new Color(50, 0, 50),
         new Color(255, 102, 0),
         Color.black };
     final LineAttributes lines[] = new LineAttributes[numPlots];
