@@ -3688,6 +3688,8 @@ public class BamView extends JPanel
           if(coverageMenu == null)
           {
             coverageMenu = new JMenu("Coverage HeatMap");
+            coverageView.createMenus(coverageMenu);
+            
             final JCheckBoxMenuItem coverageGrid = new JCheckBoxMenuItem("Show heatmap grid", false);
             coverageGrid.addActionListener(new ActionListener()
             {
