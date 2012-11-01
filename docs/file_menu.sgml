@@ -44,11 +44,34 @@ This function only reads the feature section of the input file - the sequence
       </LISTITEM>
       <LISTITEM>
         <PARA>
-          FASTA files and indexed FASTA files can be read. The files are indexed
-using <ULINK URL="http://samtools.sourceforge.net/">SAMtools</ULINK> (e.g. 
-<COMMAND>samtools faidx ref.fasta</COMMAND>). A drop down menu of the contigs or chromosomes
-is provided in the Entry toolbar to select the sequence. Using indexed FASTA files
-improves the memory management and enables large genomes to be viewed.
+          FASTA files 
+        </PARA>
+      </LISTITEM>
+      <LISTITEM>
+        <PARA>
+	  Indexed FASTA files can be read in. The files are indexed
+using <ULINK URL="http://samtools.sourceforge.net/">SAMtools</ULINK>:
+        </PARA>
+       <SYNOPSIS>
+samtools faidx ref.fasta
+        </SYNOPSIS>
+      </LISTITEM>
+      <LISTITEM>
+        <PARA>
+The indexed FASTA can be used with an indexed GFF to overlay annotation on the sequence. 
+To index the GFF first sort and bgzip the file and then use tabix with "-p gff" option (see the 
+<ULINK URL="http://samtools.sourceforge.net/tabix.shtml">tabix manual</ULINK>):
+        </PARA>
+       <SYNOPSIS>
+(grep ^"#" in.gff; grep -v ^"#" in.gff | sort -k1,1 -k4,4n) | bgzip > sorted.gff.gz; 
+tabix -p gff sorted.gff.gz
+        </SYNOPSIS>
+        <PARA>
+A drop down menu of the contigs or chromosomes sequences is provided in the Entry toolbar
+to select the sequence. Using indexed FASTA and indexed GFF files improves the memory management 
+and enables large genomes to be viewed. Note that as it is indexed the sequence and annotation are 
+read-only and cannot be edited. When there are many contigs to select from it can be easier
+to display the one of interest by typing the name into the drop down list.
         </PARA>
       </LISTITEM>
       <LISTITEM>
