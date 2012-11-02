@@ -411,12 +411,25 @@ public class PropertiesPanel extends JPanel
     Dimension d = calcPreferred(partialField5prime.getPreferredSize().width);
     partialField5prime.setPreferredSize(d);
     partialField5prime.setOpaque(false);
+    partialField5prime.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e)
+      {
+        checkPartial();
+      }
+    });
+    
     optionsBox.add(partialField5prime);
 
     partialField3prime = new JCheckBox("partial 3'", 
         ( isPartialQualfier3 != null ) ? true : false);
     partialField3prime.setPreferredSize(d);
     partialField3prime.setOpaque(false);
+    partialField3prime.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e)
+      {
+        checkPartial();
+      }
+    });
     optionsBox.add(partialField3prime);
 
     Qualifier obsoleteQualifier = gffQualifiers.getQualifierByName("isObsolete");
@@ -767,6 +780,25 @@ public class PropertiesPanel extends JPanel
         e.printStackTrace();
       }  
     }  
+  }
+  
+  /**
+   * Partial settings are made on the gene or transcript features.
+   * Provide a warning if this is not the case.
+   */
+  private void checkPartial()
+  {
+    String keyStr = feature.getKey().getKeyString();
+    if(keyStr.equals("polypeptide") || 
+       keyStr.equals("CDS") || 
+       keyStr.equals("pseudogenic_exon"))
+    {
+      JOptionPane.showMessageDialog(null, 
+          "Partial settings should be updated on the transcript\n"+
+          "or gene feature not a "+keyStr+". Please make this change\n"+
+          "on the transcript or gene feature now.", 
+          "Error", JOptionPane.WARNING_MESSAGE);
+    }
   }
   
   private boolean isSystematicId(final String synonymType)
