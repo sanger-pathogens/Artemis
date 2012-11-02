@@ -2210,17 +2210,30 @@ public class ChadoTransactionManager
     }
     else
       featureloc.setPhase(null);
-    
-    if(gffFeature.getQualifierByName("isFminPartial") != null)
+
+    final RangeVector ranges = gffFeature.getLocation().getRanges();
+    boolean firstSeg = true;
+    boolean lastSeg  = true;
+    if(ranges.size() > 1) // define if first/last segment
+    {
+      firstSeg = false;
+      lastSeg  = false;
+      if(range_new.getStart() == gffFeature.getFirstBase())
+        firstSeg = true;
+      if(range_new.getEnd() == gffFeature.getLastBase())
+        lastSeg = true;
+    }
+
+    if(firstSeg && gffFeature.getQualifierByName("isFminPartial") != null)
       featureloc.setFminPartial(true);
     else
       featureloc.setFminPartial(false);
     
-    if(gffFeature.getQualifierByName("isFmaxPartial") != null)
+    if(lastSeg && gffFeature.getQualifierByName("isFmaxPartial") != null)
       featureloc.setFmaxPartial(true);
     else
       featureloc.setFmaxPartial(false);
-    
+
     return featureloc;
   }
   
