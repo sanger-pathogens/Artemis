@@ -881,7 +881,7 @@ public class UserDataAlgorithm extends BaseAlgorithm
     
     /**
      * Return the values between a pair of bases
-     * @param beg
+     * @param start
      * @param end
      * @param values
      */
@@ -897,7 +897,7 @@ public class UserDataAlgorithm extends BaseAlgorithm
     
     /**
      * Get the sequence name
-     * @param seqEntry
+     * @param seqEntry - sequence entry
      * @return
      */
     private String getReferenceName(Entry seqEntry)
