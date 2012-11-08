@@ -722,6 +722,13 @@ public class BasePlot extends Plot
    **/
   public int drawMultiValueGraph(Graphics g, LineAttributes[] lines) 
   {
+    if( getAlgorithm() instanceof UserDataAlgorithm && 
+        ((UserDataAlgorithm)getAlgorithm()).FORMAT ==  UserDataAlgorithm.TABIX_INDEXED_FORMAT)
+    {
+      ((UserDataAlgorithm) getAlgorithm()).readIndexValues(
+          entryGroup.getSequenceEntry(), getStart(), getEnd());
+    }
+
     if(recalculate_flag)
       recalculateValues();
     

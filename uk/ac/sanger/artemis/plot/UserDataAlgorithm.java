@@ -1,10 +1,7 @@
 /* UserDataAlgorithm.java
- *
- * created: Wed May 10 2000
- *
  * This file is part of Artemis
  *
- * Copyright (C) 2000  Genome Research Limited
+ * Copyright (C) 2000-2012  Genome Research Limited
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,52 +16,56 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/UserDataAlgorithm.java,v 1.14 2009-07-22 12:51:54 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.plot;
 
+import uk.ac.sanger.artemis.Entry;
 import uk.ac.sanger.artemis.sequence.*;
-
-import uk.ac.sanger.artemis.util.*;
+import uk.ac.sanger.artemis.util.Document;
+import uk.ac.sanger.artemis.util.FileDocument;
+import uk.ac.sanger.artemis.util.LinePushBackReader;
+import uk.ac.sanger.artemis.util.StringVector;
+import uk.ac.sanger.artemis.components.variant.TabixReader;
+import uk.ac.sanger.artemis.io.IndexFastaStream;
 import uk.ac.sanger.artemis.io.ReadFormatException;
-
 import java.awt.Color;
 import java.awt.GridLayout;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.regex.Pattern;
-
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+
+import net.sf.samtools.util.BlockCompressedInputStream;
 
 /**
  *  Objects of this class have one useful method - getValues (), which takes a
  *  range of bases and returns a single floating point number.  The number is
  *  calculated by averaging the values from a data file.  The Strand to use is
  *  set in the constructor.
- *
- *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: UserDataAlgorithm.java,v 1.14 2009-07-22 12:51:54 tjc Exp $
+ *  @author Kim Rutherford
  **/
 
 public class UserDataAlgorithm extends BaseAlgorithm
 {
   /** A base per line file format */
   public static int BASE_PER_LINE_FORMAT  = 1;
-  
   /** Base position is specified in the first column file format */
   public static int BASE_SPECIFIED_FORMAT = 2;
-  
   /** Wiggle format */
   public static int WIGGLE_VARIABLE_STEP_FORMAT = 3;
-  public static int WIGGLE_FIXED_STEP_FORMAT = 4;
-  
-  public static int BLAST_FORMAT = 5;
-  public static int MSPCRUNCH_BLAST_FORMAT = 6;
+  public static int WIGGLE_FIXED_STEP_FORMAT    = 4;
+  public static int BLAST_FORMAT                = 5;
+  public static int MSPCRUNCH_BLAST_FORMAT      = 6;
+  public static int TABIX_INDEXED_FORMAT        = 7;
   
   /** The data read by the constructor - for BASE_PER_LINE_FORMAT */
   private float data[][] = null;
@@ -98,6 +99,11 @@ public class UserDataAlgorithm extends BaseAlgorithm
   
   public Wiggle wiggle[];
   
+  public TabixIdxGraph idxReader;
+  
+  private static org.apache.log4j.Logger logger4j = 
+      org.apache.log4j.Logger.getLogger(UserDataAlgorithm.class);
+  
   /**
    *  Create a new UserDataAlgorithm object. This reads a file
    *  which can be one of two types of formats:
@@ -109,51 +115,63 @@ public class UserDataAlgorithm extends BaseAlgorithm
    *  @param logTransform true if the log transformation is to be
    *  shown.
    **/
-  public UserDataAlgorithm (final Strand strand, final Document document, 
+  public UserDataAlgorithm (final Strand strand, final Document doc, 
                             final boolean logTransform)
       throws IOException 
   {
-    super (strand, "User algorithm from " + document.getName (), "user");
-
+    super (strand, 
+        (logTransform ? "User log plot " + doc.getName () : 
+                        "User plot " + doc.getName ()), "user");
     this.logTransform = logTransform;
-    final Reader document_reader = document.getReader ();
 
-    LinePushBackReader pushback_reader = new LinePushBackReader (document_reader);
-    String first_line = pushback_reader.readLine (); 
+    if(isIndexed(doc) && doc.getInputStream() instanceof BlockCompressedInputStream)
+    {
+      setAlgorithmName(
+          (logTransform ? "Indexed log plot " + doc.getName () :
+                          "Indexed plot " + doc.getName ()));
+      FORMAT = TABIX_INDEXED_FORMAT;
+      idxReader = new TabixIdxGraph(
+          ((FileDocument) doc).getFile().getAbsolutePath());
+      number_of_values = idxReader.getNumberOfValues();
+      return;
+    }
+    
+    final Reader doc_reader = doc.getReader ();
+    final LinePushBackReader pushback_reader = new LinePushBackReader (doc_reader);
+    String firstLn = pushback_reader.readLine (); 
 
-    Pattern dataPattern = Pattern.compile("^\\s*([\\d\\.-]+\\s*)+$");
-    Pattern blastPattern = Pattern.compile(
+    final Pattern dataPattern = Pattern.compile("^\\s*([\\d\\.-]+\\s*)+$");
+    final Pattern blastPattern = Pattern.compile(
       "^(\\S+\\t+){2}[\\d\\.]+\\t+(\\d+\\t+){7}\\S+\\t+(\\s*\\d+)$");
-    Pattern mspCrunchPattern = Pattern.compile(
+    final Pattern mspCrunchPattern = Pattern.compile(
         "^\\d+\\s[\\d\\.]+(\\s\\d+){2}\\s\\D\\S+(\\s\\d+){2}\\s\\D\\S+.*");
 
-    if(dataPattern.matcher(first_line).matches())
+    if(dataPattern.matcher(firstLn).matches())
       FORMAT = BASE_PER_LINE_FORMAT;
-    else if(blastPattern.matcher(first_line).matches())
+    else if(blastPattern.matcher(firstLn).matches())
       FORMAT = BLAST_FORMAT;
-    else if(mspCrunchPattern.matcher(first_line).matches())
+    else if(mspCrunchPattern.matcher(firstLn).matches())
       FORMAT = MSPCRUNCH_BLAST_FORMAT;
     else
     { 
-      StringBuffer header = new StringBuffer(first_line+"\n");
-
-      while(!dataPattern.matcher(first_line).matches())
+      StringBuffer header = new StringBuffer(firstLn+"\n");
+      while(!dataPattern.matcher(firstLn).matches())
       {
-        first_line = pushback_reader.readLine ().trim();
-        header.append(first_line+"\n");
+        firstLn = pushback_reader.readLine ().trim();
+        header.append(firstLn+"\n");
       }
       
       FORMAT = parseHeader(header);
     }
 
     final Pattern patt = Pattern.compile("\\s+");
-    String tokens[] = patt.split(first_line);
+    String tokens[] = patt.split(firstLn);
     
     if (tokens.length < 1) 
       throw new ReadFormatException ("unknown file type");
 
     this.number_of_values = tokens.length;
-    pushback_reader.pushBack (first_line);
+    pushback_reader.pushBack (firstLn);
     
     if(FORMAT == BASE_PER_LINE_FORMAT)
       data = new float [strand.getSequenceLength ()][tokens.length];
@@ -167,7 +185,23 @@ public class UserDataAlgorithm extends BaseAlgorithm
     else
       readWiggle(pushback_reader);
     pushback_reader.close();
-    document_reader.close();
+    doc_reader.close();
+  }
+  
+  /**
+   * Test if the tabix (.tbi) index is present.
+   * @param doc
+   * @return
+   */
+  private static boolean isIndexed(Document doc)
+  {
+    if(doc instanceof FileDocument)
+    {
+      final File idx = new File(
+          ((FileDocument)doc).getFile().getAbsolutePath() + ".tbi");
+      return idx.exists();
+    }
+    return false;
   }
 
   /**
@@ -373,8 +407,7 @@ public class UserDataAlgorithm extends BaseAlgorithm
       coordIndexStart = 2;
       coordIndexEnd   = 3;
     }
-    
-    
+
     while ((line = pushback_reader.readLine ()) != null)
     { 
       String tokens[] = patt.split(line.trim());
@@ -488,7 +521,6 @@ public class UserDataAlgorithm extends BaseAlgorithm
   public void getValues (int start, int end, final float [] values) 
   {
     final int value_count = getValueCount ();
-
     if(getStrand ().getDirection() == Bases.REVERSE)
     {
       int tstart = start;
@@ -521,6 +553,8 @@ public class UserDataAlgorithm extends BaseAlgorithm
           values[i] = values[i]/count;
       }
     }
+    else if(FORMAT == TABIX_INDEXED_FORMAT)
+      idxReader.getValues(start, end, values);
     else
     {
       for (int i = 0 ; i < value_count ; ++i) 
@@ -542,7 +576,6 @@ public class UserDataAlgorithm extends BaseAlgorithm
   private int parseHeader(StringBuffer headerText) throws ReadFormatException
   {
     FORMAT = BASE_SPECIFIED_FORMAT;
-    
     BufferedReader reader = new BufferedReader(
         new StringReader(headerText.toString()));
       
@@ -604,7 +637,7 @@ public class UserDataAlgorithm extends BaseAlgorithm
    *
    * @param trackLine
    */
-  private void parseTrackLine(String trackLine)
+  private void parseTrackLine(final String trackLine)
   {
     String colour = "0,0,0";
     int beginIndex = trackLine.indexOf(" color=");
@@ -618,9 +651,9 @@ public class UserDataAlgorithm extends BaseAlgorithm
     incrementLines(LineAttributes.parse(colour));
   }
   
-  private void incrementLines(Color colour)
+  private void incrementLines(final Color c)
   {
-    LineAttributes line = new LineAttributes(colour);
+    LineAttributes line = new LineAttributes(c);
     
     if(lines == null)
       lines = new LineAttributes[1];
@@ -800,7 +833,7 @@ public class UserDataAlgorithm extends BaseAlgorithm
     return wiggle[index].span;
   }
   
-  public boolean isWiggleFormat()
+  protected boolean isWiggleFormat()
   {
     if(FORMAT == WIGGLE_VARIABLE_STEP_FORMAT || 
        FORMAT == WIGGLE_FIXED_STEP_FORMAT)
@@ -808,10 +841,164 @@ public class UserDataAlgorithm extends BaseAlgorithm
     return false;
   }
   
+  public void readIndexValues(Entry seqEntry, int start, int end)
+  {
+    idxReader.readValuesForRange(seqEntry, start, end);
+  }
+  
   class Wiggle
   {
     int start;
     int step;
     int span = 0;
+  }
+  
+  class TabixIdxGraph
+  {
+    private TabixReader reader;
+    /** number of columns with values */
+    private int nValues = 1;
+    private float[][] rvalues;
+    private boolean startColIsEndCol = true;
+    private int sbeg, send;
+    
+    TabixIdxGraph(final String fName) throws IOException
+    {
+      this.reader = new TabixReader(fName);
+      if(getStartColumn() != getEndColumn())
+        startColIsEndCol = false;
+
+      final StringBuffer headerBuffer = new StringBuffer();
+      String metaChar = String.valueOf(reader.getCommentChar());
+      String hdr;
+      while( (hdr = reader.readLine() ) != null && hdr.startsWith(metaChar) )
+        headerBuffer.append(hdr + "\n");
+      //System.out.println("Header "+headerBuffer.toString());
+
+      // assume base end column is last column before columns of values
+      nValues = reader.readLine().split("\\t").length - getEndColumn();
+    }
+    
+    /**
+     * Return the values between a pair of bases
+     * @param beg
+     * @param end
+     * @param values
+     */
+    private void getValues(int start, int end, final float[] values)
+    {
+      for (int i = 0 ; i < getNumberOfValues() ; ++i) 
+      {
+        values [i] = 0;
+        for (int base = start ; base <= end ; ++base) 
+          values [i] += rvalues[base - this.sbeg][i] / (end - start + 1);
+      }
+    }
+    
+    /**
+     * Get the sequence name
+     * @param seqEntry
+     * @return
+     */
+    private String getReferenceName(Entry seqEntry)
+    {
+      String refStr = null;
+      if(seqEntry.getEMBLEntry().getSequence() instanceof IndexFastaStream)
+        refStr = 
+           ((IndexFastaStream)seqEntry.getEMBLEntry().getSequence()).getContig();
+      else if(seqEntry.getHeaderText() != null)
+      {
+        final String hdr = seqEntry.getHeaderText();
+        int idx = hdr.indexOf("ID   ");
+        if (idx == -1)
+        {
+          idx = hdr.indexOf("LOCUS       "); // genbank
+          if (idx > -1)
+            refStr = hdr.substring(idx + 12).split("[;\\s]")[0];
+        }
+        else
+          refStr = hdr.substring(idx + 5).split("[;\\s]")[0];
+      }
+
+      final String seqNames[] = reader.getSeqNames();
+      if(refStr == null || !Arrays.asList(seqNames).contains(refStr))
+      {
+        logger4j.debug(refStr+" NOT FOUND IN "+reader.getFileName()+
+            " SET TO DEFAULT "+seqNames[0]);
+        refStr = reader.getSeqNames()[0];
+      }
+      return refStr;
+    }
+
+    /**
+     * Read the values in a range
+     * @param seqEntry - sequence entry
+     * @param start - start base
+     * @param end   - end base
+     */
+    private void readValuesForRange(Entry seqEntry, int start, int end)
+    {
+      if(end <= start || (start == this.sbeg && end == this.send))
+        return;
+
+      this.sbeg = start;
+      this.send = end;
+      rvalues = new float[end-start+1][getNumberOfValues()];
+      final String r = getReferenceName(seqEntry)+":"+start+"-"+end;
+      try
+      {
+        final TabixReader.Iterator tbxIt = reader.query(r);
+        String ln;
+        while( tbxIt != null &&  (ln = tbxIt.next()) != null )
+        {
+          StringVector parts = StringVector.getStrings(ln, "\t", true);
+          final int base;
+          if(startColIsEndCol)
+            base = Integer.parseInt((String)parts.get(getStartColumn()-1)) - start;
+          else
+          {
+            int b = Integer.parseInt((String)parts.get(getStartColumn()-1));
+            int e = Integer.parseInt((String)parts.get(getEndColumn()-1));
+            base = b + ((b - e)/2) - start;
+          }
+          for(int i=0; i<rvalues[base].length; i++)
+          {
+            float val = Float.parseFloat( (String) parts.get(i+getEndColumn()) );
+            if(logTransform)
+              val = (float) Math.log(val+1);
+
+            if (val > data_max) 
+              data_max = val;
+            if (val < data_min)
+              data_min = val;
+            rvalues[base][i] = val;
+          }
+        }
+      }
+      catch (IOException e)
+      {
+        logger4j.debug("READ RANGE "+r+" FROM "+reader.getFileName());
+        e.printStackTrace();
+      }
+    }
+    
+    /**
+     * Number of columns with values
+     * @return
+     */
+    private int getNumberOfValues()
+    {
+      return nValues;
+    }
+    
+    private int getStartColumn()
+    {
+      return reader.getStartColumn();
+    }
+    
+    private int getEndColumn()
+    {
+      return reader.getEndColumn();
+    }
   }
 }
