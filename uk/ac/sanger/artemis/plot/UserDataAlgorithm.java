@@ -21,7 +21,8 @@
 package uk.ac.sanger.artemis.plot;
 
 import uk.ac.sanger.artemis.Entry;
-import uk.ac.sanger.artemis.sequence.*;
+import uk.ac.sanger.artemis.sequence.Bases;
+import uk.ac.sanger.artemis.sequence.Strand;
 import uk.ac.sanger.artemis.util.Document;
 import uk.ac.sanger.artemis.util.FileDocument;
 import uk.ac.sanger.artemis.util.LinePushBackReader;
@@ -77,7 +78,6 @@ public class UserDataAlgorithm extends BaseAlgorithm
   
   /** The maximum value in the data array. */
   private float data_max = Float.MIN_VALUE;
-
   /** The minimum value in the data array. */
   private float data_min = Float.MAX_VALUE;
   
@@ -96,11 +96,8 @@ public class UserDataAlgorithm extends BaseAlgorithm
   public int FORMAT = BASE_PER_LINE_FORMAT;
   
   private LineAttributes lines[];
-  
-  public Wiggle wiggle[];
-  
-  public TabixIdxGraph idxReader;
-  
+  private Wiggle wiggle[];
+  private TabixIdxGraph idxReader;
   private static org.apache.log4j.Logger logger4j = 
       org.apache.log4j.Logger.getLogger(UserDataAlgorithm.class);
   
@@ -196,11 +193,8 @@ public class UserDataAlgorithm extends BaseAlgorithm
   private static boolean isIndexed(Document doc)
   {
     if(doc instanceof FileDocument)
-    {
-      final File idx = new File(
-          ((FileDocument)doc).getFile().getAbsolutePath() + ".tbi");
-      return idx.exists();
-    }
+      return (new File(
+          ((FileDocument)doc).getFile().getAbsolutePath() + ".tbi")).exists();
     return false;
   }
 
