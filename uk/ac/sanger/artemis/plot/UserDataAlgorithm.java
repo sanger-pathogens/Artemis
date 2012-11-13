@@ -843,6 +843,8 @@ public class UserDataAlgorithm extends BaseAlgorithm
   
   public void readIndexValues(Entry seqEntry, int start, int end)
   {
+    if(start<1)
+      start = 1;
     idxReader.readValuesForRange(seqEntry, start, end);
   }
   
@@ -977,7 +979,12 @@ public class UserDataAlgorithm extends BaseAlgorithm
       }
       catch (IOException e)
       {
-        logger4j.debug("READ RANGE "+r+" FROM "+reader.getFileName());
+        logger4j.debug("IOException READING RANGE "+r+" FROM "+reader.getFileName());
+        e.printStackTrace();
+      }
+      catch (NumberFormatException e)
+      {
+        logger4j.debug("NumberFormatException READING RANGE "+r+" FROM "+reader.getFileName());
         e.printStackTrace();
       }
     }
