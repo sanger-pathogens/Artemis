@@ -1,4 +1,12 @@
 Version XX
+	Add support for indexed user graphs using tabix. For example file.plot is a tab
+	delimited file with column 1 containing the sequence name and column 2 the
+	positions:
+	(grep ^"#" file.plot; grep -v ^"#" file.plot | sort -k1,1 -k2,2n) | bgzip > sorted.plot.gz ;
+	tabix -s 1 -b 2 -e 2 sorted.plot.gz
+	
+	Option added to show or hide the average line in the graphs.
+	
 	BAM coverage heatmap view added.
 
 	Add Rfam sequence search from the RUN menu.
