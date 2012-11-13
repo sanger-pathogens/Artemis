@@ -31,7 +31,6 @@ import uk.ac.sanger.artemis.plot.*;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.GridLayout;
@@ -88,6 +87,8 @@ public abstract class Plot extends JPanel
    *  It is reset to false by recalculateValues().
    **/
   protected boolean recalculate_flag = true;
+  
+  private boolean showAverage = true;
 
   /**
    *  The x position of the last click or -1 if the user hasn't clicked
@@ -293,10 +294,9 @@ public abstract class Plot extends JPanel
         });
         popup.add(setScale);
 
-        final JCheckBoxMenuItem scaling_toggle =
-          new JCheckBoxMenuItem("Scaling");
 
-        scaling_toggle.setState(getAlgorithm().scalingFlag());
+        final JCheckBoxMenuItem scaling_toggle =
+          new JCheckBoxMenuItem("Scaling",getAlgorithm().scalingFlag());
         scaling_toggle.addItemListener(new ItemListener() 
         {
           public void itemStateChanged(ItemEvent _) 
@@ -306,10 +306,19 @@ public abstract class Plot extends JPanel
             repaint();
           }
         });
-
         popup.add(scaling_toggle);
-        
-        
+
+        final JCheckBoxMenuItem showAverageLn = new JCheckBoxMenuItem("Show average", showAverage);
+        showAverageLn.addItemListener(new ItemListener() 
+        {
+          public void itemStateChanged(ItemEvent _) 
+          {
+            showAverage = showAverageLn.isSelected();
+            repaint();
+          }
+        });
+        popup.add(showAverageLn);
+
         if(Plot.this instanceof BasePlot)
         {
           final JMenuItem showMinMaxValues =
@@ -450,8 +459,7 @@ public abstract class Plot extends JPanel
           {
             public void actionPerformed(ActionEvent e)
             {
-              Dimension d = getSize();
-              rescale((int) (d.height * 0.9f));
+              rescale((int) (getSize().height * 0.9f));
             }
           });
 
@@ -459,8 +467,7 @@ public abstract class Plot extends JPanel
           {
             public void actionPerformed(ActionEvent e)
             {
-              Dimension d = getSize();
-              rescale((int) (d.height * 1.1f));
+              rescale((int) (getSize().height * 1.1f));
             }
           });
 
@@ -478,12 +485,10 @@ public abstract class Plot extends JPanel
 
               if(select == 1)
                 return;
-
               try
               {
-                final int value = Integer
-                    .parseInt(newGraphHgt.getText().trim());
-                rescale(value);
+                rescale(Integer.parseInt(
+                    newGraphHgt.getText().trim()));
               }
               catch(NumberFormatException nfe)
               {
@@ -953,7 +958,8 @@ public abstract class Plot extends JPanel
                                     final float max_value) 
   {
     // if a heatmap do not show the average
-    if(lines != null && lines[0].getPlotType().equals(LineAttributes.PLOT_TYPES[2]))
+    if(!showAverage || (
+        lines != null && lines[0].getPlotType().equals(LineAttributes.PLOT_TYPES[2])))
         return;
     
     final Float average = getAlgorithm().getAverage();
