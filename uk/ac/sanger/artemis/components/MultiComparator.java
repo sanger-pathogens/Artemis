@@ -273,7 +273,7 @@ public class MultiComparator extends JFrame
             getEntryGroupArray().length == 2)) 
       {
         // put graph above the sequence in this case
-        c.weighty = 1;
+        c.weighty = 0;
         getContentPane().add(base_plot_group_array[i], c);
         c.weighty = 1;
         bamPanel[i].setVisible(false);
@@ -289,7 +289,7 @@ public class MultiComparator extends JFrame
             getEntryGroupArray().length == 2) 
       {
         // put graph below the sequence in this case
-        c.weighty = 1;
+        c.weighty = 0;
         getContentPane().add(base_plot_group_array[i], c);
         c.weighty = 1;
         bamPanel[i].setVisible(false);
