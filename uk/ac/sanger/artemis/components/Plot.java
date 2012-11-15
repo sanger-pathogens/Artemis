@@ -51,6 +51,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JScrollBar;
 import javax.swing.JPopupMenu;
 
+import org.apache.batik.svggen.SVGGraphics2D;
+
 /**
  *  This class implements a simple plot component.
  *  @author Kim Rutherford
@@ -682,11 +684,17 @@ public abstract class Plot extends JPanel
     if(offscreen == null || lastPaintHeight != height)
       offscreen = createImage(width, height);
 
-    Graphics og = offscreen.getGraphics();
-    og.setClip(0, 0, width, height);
-    og.setColor(Color.WHITE);
-    og.fillRect(0, 0, width, height);
-
+    final Graphics og;
+    if(g instanceof SVGGraphics2D)
+      og = g;
+    else
+    {
+      og = offscreen.getGraphics();
+      og.setClip(0, 0, width, height);
+      og.setColor(Color.WHITE);
+      og.fillRect(0, 0, width, height);
+    }
+    
     // Redraw the graph on the canvas using the algorithm from the
     // constructor.
 
@@ -703,8 +711,12 @@ public abstract class Plot extends JPanel
     
     numPlots = drawMultiValueGraph(og,lines);
     drawLabels(og,numPlots);
-    g.drawImage(offscreen, 0, 0, null);
-    og.dispose();
+    
+    if( !(g instanceof SVGGraphics2D) )
+    {
+      g.drawImage(offscreen, 0, 0, null);
+      og.dispose();
+    }
     lastPaintHeight = height;
   }
 
