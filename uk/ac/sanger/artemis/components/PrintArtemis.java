@@ -426,7 +426,7 @@ public class PrintArtemis extends ScrollPanel implements Printable
     f.setVisible(true);
   }
 
-  private String[] getImageFormats()
+  protected static String[] getImageFormats()
   {
     final String fmts[] = javax.imageio.ImageIO.getWriterFormatNames();
     final String tmpFmts[] = new String[fmts.length+1];
