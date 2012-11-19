@@ -1,4 +1,16 @@
 Version XX
+	Add SVG (scalable vector graphics) support for Artemis, ACT and DNAPlotter.
+	
+	Add support for indexed user graphs using tabix. For example file.plot is a tab
+	delimited file with column 1 containing the sequence name and column 2 the
+	positions:
+	(grep ^"#" file.plot; grep -v ^"#" file.plot | sort -k1,1 -k2,2n) | bgzip > sorted.plot.gz ;
+	tabix -s 1 -b 2 -e 2 sorted.plot.gz
+	
+	Option added to show or hide the average line in the graphs.
+	
+	BAM coverage heatmap view added.
+
 	Add Rfam sequence search from the RUN menu.
 	
 	Base similarity graph for each VCF added to the VCF view.
@@ -13,7 +25,7 @@ Version XX
 	
 	Coverage plots from read alignments (BAM) can be plotted by their strand.
 
-	Addition of a Project File Manager for grouping files together for
+	Addition of a Project File Manager used to group files together for
 	launching in Artemis. When a project has been added or updated the details 
 	are saved at the end of each session in '.artemis.project.properties' 
 	in the user's home directory. 

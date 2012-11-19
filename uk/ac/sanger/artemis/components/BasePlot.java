@@ -722,6 +722,13 @@ public class BasePlot extends Plot
    **/
   public int drawMultiValueGraph(Graphics g, LineAttributes[] lines) 
   {
+    if( getAlgorithm() instanceof UserDataAlgorithm && 
+        ((UserDataAlgorithm)getAlgorithm()).FORMAT ==  UserDataAlgorithm.TABIX_INDEXED_FORMAT)
+    {
+      ((UserDataAlgorithm) getAlgorithm()).readIndexValues(
+          entryGroup.getSequenceEntry(), getStart(), getEnd());
+    }
+
     if(recalculate_flag)
       recalculateValues();
     
@@ -735,10 +742,8 @@ public class BasePlot extends Plot
     final int window_size = getWindowSize();
 
     // the number of values to plot at each x position
-    final int get_values_return_count =
+    final int nvalues =
       getBaseAlgorithm().getValueCount();
-
-    final int number_of_values = value_array_array[0].length;
 
     boolean isWiggle = false;
     boolean isBlast  = false;
@@ -753,17 +758,16 @@ public class BasePlot extends Plot
         isBlast = true;
     }
     
-    if(number_of_values > 1 && !isWiggle) 
+    if(value_array_array[0].length > 1 && !isWiggle) 
       drawGlobalAverage(g, min_value, max_value);
 
     Stroke stroke = ((Graphics2D)g).getStroke();
-    for(int value_index = 0; value_index < get_values_return_count;
-        ++value_index)
+    for(int i = 0; i < nvalues; ++i)
     {
-      if(value_index < lines.length)
+      if(i < lines.length)
       {
-        g.setColor(lines[value_index].getLineColour());
-        ((Graphics2D)g).setStroke(lines[value_index].getStroke());
+        g.setColor(lines[i].getLineColour());
+        ((Graphics2D)g).setStroke(lines[i].getStroke());
       }
       else
         g.setColor(Color.black);
@@ -778,8 +782,8 @@ public class BasePlot extends Plot
       drawPoints(g, min_value, max_value, step_size, window_size,
                    getWidthInBases(),
                    offset,
-                   value_array_array[value_index], value_index, 
-                   get_values_return_count, isWiggle, isBlast);
+                   value_array_array[i], i, 
+                   nvalues, isWiggle, isBlast);
     }
     ((Graphics2D)g).setStroke(stroke);
     
@@ -870,7 +874,7 @@ public class BasePlot extends Plot
       }
     }
 
-    return get_values_return_count;
+    return nvalues;
   }
 
 

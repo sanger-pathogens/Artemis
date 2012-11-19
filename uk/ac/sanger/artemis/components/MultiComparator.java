@@ -39,8 +39,20 @@ import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.DocumentEntryFactory;
 import uk.ac.sanger.artemis.io.DocumentEntry;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Image;
+import java.awt.MediaTracker;
+import java.awt.Point;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.io.File;
 import java.net.URL;
@@ -58,9 +70,7 @@ import javax.swing.JPanel;
  *  This JFrame component contains an arbitrary number of AlignmentViewer
  *  components and FeatureDisplay components along with ComparatorGlue objects
  *  to keep them synchronized.
- *
- *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: MultiComparator.java,v 1.22 2008-09-03 10:58:33 tjc Exp $
+ *  @author Kim Rutherford
  **/
 
 public class MultiComparator extends JFrame 
@@ -132,9 +142,6 @@ public class MultiComparator extends JFrame
   /** Used to show the progress of loading file. */
   private InputStreamProgressListener progress_listener;
 
-  /** current group used for drag and drop */
-  private int current_group = -1;
-
   /**
    *  Initialise entry_group_array and comparison_data_array and create all
    *  the FeatureDisplay and AlignmentViewer components.
@@ -162,16 +169,10 @@ public class MultiComparator extends JFrame
     this.progress_listener = progress_listener;
     this.entry_sources = Utilities.getEntrySources(this, null);
 
-    final StringBuffer title_buffer = new StringBuffer();
-
-    title_buffer.append("ACT: ");
-
+    final StringBuffer title_buffer = new StringBuffer("ACT: ");
     for(int i = 0; i < entry_group_array.length - 1; ++i) 
-    {
-      final String sequence_name =
-        entry_group_array[i].getDefaultEntry().getName();
-      title_buffer.append(sequence_name).append(" vs ");
-    }
+      title_buffer.append(
+          entry_group_array[i].getDefaultEntry().getName()).append(" vs ");
 
     final EntryGroup last_entry_group =
       entry_group_array[entry_group_array.length - 1];
@@ -206,7 +207,6 @@ public class MultiComparator extends JFrame
                           getGotoEventSourceArray()[i]);
 
       final int scroll_bar_position;
-
       if(i == getEntryGroupArray().length - 1 &&
           getEntryGroupArray().length == 2) 
       {
@@ -255,17 +255,11 @@ public class MultiComparator extends JFrame
                             getAlignmentViewerArray()[i]);
     }
 
-    final Font default_font = getDefaultFont();
-
-    setFont(default_font);
-
+    setFont(getDefaultFont());
     makeMenus();
-
-    GridBagLayout gridbag = new GridBagLayout();
-    getContentPane().setLayout(gridbag);
+    getContentPane().setLayout(new GridBagLayout());
 
     GridBagConstraints c = new GridBagConstraints();
-
     c.gridwidth  = GridBagConstraints.REMAINDER;
     c.fill       = GridBagConstraints.BOTH;
     c.anchor     = GridBagConstraints.NORTH;
@@ -598,7 +592,7 @@ public class MultiComparator extends JFrame
    **/
   private void makeMenus() 
   {
-    final Font default_font = getDefaultFont();
+    //final Font default_font = getDefaultFont();
     final JMenuBar menu_bar = new JMenuBar();
 
     setJMenuBar(menu_bar);

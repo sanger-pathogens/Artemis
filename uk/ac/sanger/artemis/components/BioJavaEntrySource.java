@@ -25,29 +25,12 @@
 
 package uk.ac.sanger.artemis.components;
 
-import java.net.*;
 import java.io.*;
-import java.util.*;
-import java.lang.RuntimeException;
 
-import org.biojava.bio.program.das.*;
-import org.biojava.bio.BioException;
-import org.biojava.bio.seq.io.SequenceBuilderFactory;
-import org.biojava.bio.seq.io.EmblProcessor;
-import org.biojava.bio.seq.io.SmartSequenceBuilder;
-import org.biojava.bio.seq.io.SymbolTokenization;
-import org.biojava.bio.seq.io.StreamReader;
-import org.biojava.bio.seq.io.SequenceFormat;
 import org.biojava.bio.seq.io.EmblLikeFormat;
-import org.biojava.bio.seq.SequenceIterator;
-import org.biojava.bio.symbol.Alphabet;
-import org.biojava.bio.seq.DNATools;
 
 import uk.ac.sanger.artemis.util.*;
 import uk.ac.sanger.artemis.io.BioJavaEntry;
-import uk.ac.sanger.artemis.io.EntryInformation;
-import uk.ac.sanger.artemis.io.SimpleEntryInformation;
-
 import uk.ac.sanger.artemis.*;
 import uk.ac.sanger.artemis.sequence.*;
 
@@ -145,50 +128,6 @@ public class BioJavaEntrySource implements EntrySource
     public Entry getEntry (final boolean show_progress)
         throws OutOfRangeException, NoSequenceException, IOException
     {
-//       DASSequence dasSeq = null;
-
-//       try {
-//         final URL dbURL =
-//           new URL("http://genome.ornl.gov/das/das.cgi/ecoli");
-// //        new URL("http://genome.cse.ucsc.edu:80/cgi-bin/das/cb1");
-// //        new URL("http://servlet.sanger.ac.uk:8080/das/ens1131cds/");
-//         final DASSequenceDB dasDB = new DASSequenceDB (dbURL);
-        
-//         final Set ids = dasDB.ids();
-
-//         for (Iterator i = ids.iterator(); i.hasNext(); ) {
-//           System.out.println(i.next().toString());
-//         }
-        
-//         // dasSeq = (DASSequence) dasDB.getSequence((String) ids.iterator().next());
-        
-//         SequenceIterator si = dasDB.sequenceIterator();
-        
-//         if (si.hasNext()) {
-//           dasSeq = (DASSequence) si.nextSequence();
-          
-//           System.err.println("Got: " + dasSeq);
-
-//           final BioJavaEntry bioJavaEntry = new BioJavaEntry (dasSeq);
-
-//           return new Entry (bioJavaEntry);
-//         } else {
-//           System.err.println("No more sequences...");
-//         }
-
-        
-//         //       final BioJavaEntry emblEntry =
-//         //         new BioJavaEntry (document, new EmblLikeFormat ());
-        
-//         //      return new Entry (emblEntry);
-//       } catch (MalformedURLException mue) {
-//           mue.printStackTrace();
-//       } catch (BioException be) {
-//           be.printStackTrace();
-//       }
-
-//       return null;
-
       final String fileName = "/nfs/team81/kmr/pow/java2/AE002734.game";
       final FileDocument document = new FileDocument (new File (fileName));
       
@@ -196,14 +135,6 @@ public class BioJavaEntrySource implements EntrySource
         new BioJavaEntry (document, new EmblLikeFormat ());
       
       return new Entry (emblEntry);
-
-//       final String fileName = "/nfs/team81/kmr/pow/java2/AB000095.embl";
-//       final FileDocument document = new FileDocument (new File (fileName));
-      
-//       final BioJavaEntry emblEntry =
-//         new BioJavaEntry (document, new EmblLikeFormat ());
-      
-//       return new Entry (emblEntry);
     }
 
   /**

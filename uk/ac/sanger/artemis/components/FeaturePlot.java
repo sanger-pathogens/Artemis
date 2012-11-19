@@ -25,24 +25,30 @@
 
 package uk.ac.sanger.artemis.components;
 
-import uk.ac.sanger.artemis.sequence.*;
-import uk.ac.sanger.artemis.util.OutOfRangeException;
-import uk.ac.sanger.artemis.util.ReadOnlyException;
-import uk.ac.sanger.artemis.*;
-import uk.ac.sanger.artemis.io.EntryInformationException;
-import uk.ac.sanger.artemis.plot.*;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+
+import uk.ac.sanger.artemis.Feature;
+import uk.ac.sanger.artemis.FeatureChangeEvent;
+import uk.ac.sanger.artemis.FeatureChangeListener;
+import uk.ac.sanger.artemis.Options;
+import uk.ac.sanger.artemis.plot.FeatureAlgorithm;
+import uk.ac.sanger.artemis.plot.LineAttributes;
+import uk.ac.sanger.artemis.sequence.AminoAcidSequence;
+
 
 /**
  *  The components of this class display a plot of a FeatureAlgorithm for a
  *  particular feature.
- *
  *  @author Kim Rutherford
- *  @version $Id: FeaturePlot.java,v 1.11 2009-07-20 15:11:17 tjc Exp $
  **/
 
 public class FeaturePlot extends Plot
     implements DisplayAdjustmentListener, FeatureChangeListener {
+
+  private static final long serialVersionUID = 1L;
+
   /**
    *  Create a new FeatureDisplay object.
    *  @param algorithm The object that will generate the values we plot in
@@ -102,10 +108,9 @@ public class FeaturePlot extends Plot
   public void displayAdjustmentValueChanged (DisplayAdjustmentEvent event) {
     start_base = event.getStart ();
     end_base = event.getEnd ();
-    width_in_bases = event.getWidthInBases ();
+    //width_in_bases = event.getWidthInBases ();
 
     recalculate_flag = true;
-
     repaint();
   }
 
@@ -136,13 +141,6 @@ public class FeaturePlot extends Plot
    **/
   private int getEnd () {
     return end_base;
-  }
-
-  /**
-   *  Return the width in bases of the display, from the last event.
-   **/
-  private int getWidthInBases () {
-    return width_in_bases;
   }
 
   /**
@@ -385,12 +383,6 @@ public class FeaturePlot extends Plot
    *  The end base to plot, as obtained from the DisplayAdjustmentEvent.
    **/
   private int end_base;
-
-  /**
-   *  The width in bases of the display, as obtained from the
-   *  DisplayAdjustmentEvent.
-   **/
-  private int width_in_bases;
 
   protected void calculateFeatures(boolean fromPeak)
   {

@@ -68,6 +68,8 @@ import javax.swing.UIManager;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
+import org.apache.batik.svggen.SVGGraphics2D;
+
 /**
  *  This component is used for displaying an Entry.
  *
@@ -1890,8 +1892,19 @@ public class FeatureDisplay extends EntryGroupPanel
 
     // draw fwd bases
     if(getScaleFactor() == 0)
-      g.drawString(forward_visible_bases, offset * getFontWidth(),
-                   yposition + getFontAscent() + 1);
+    {
+      if(!(g instanceof SVGGraphics2D))
+        g.drawString(forward_visible_bases, offset * getFontWidth(),
+            yposition + getFontAscent() + 1);
+      else
+      {
+        // for svg graphics
+        for(int i=0;i<forward_visible_bases.length();i++)
+          g.drawString(String.valueOf(forward_visible_bases.charAt(i)), 
+              (offset+i)*getFontWidth(), 
+              yposition + getFontAscent() + 1);
+      }
+    }
     else
     {
       for(int base_index = 0; base_index < forward_sequence_length;
@@ -1914,8 +1927,19 @@ public class FeatureDisplay extends EntryGroupPanel
 
     // draw bwd bases
     if(getScaleFactor() == 0)
-      g.drawString(reverse_visible_bases, offset * getFontWidth(),
-                   yposition + getFontAscent() + 1);
+    {  
+      if(!(g instanceof SVGGraphics2D))
+        g.drawString(reverse_visible_bases, offset * getFontWidth(),
+            yposition + getFontAscent() + 1);
+      else
+      {
+        // for svg graphics
+        for(int i=0;i<reverse_visible_bases.length();i++)
+          g.drawString(String.valueOf(reverse_visible_bases.charAt(i)), 
+              (offset+i)*getFontWidth(), 
+              yposition + getFontAscent() + 1);
+      }
+    }
     else
     {
       for(int base_index = 0; base_index < reverse_sequence_length;
@@ -2200,8 +2224,15 @@ public class FeatureDisplay extends EntryGroupPanel
     else
        draw_x_position = (int)((offset + frame_start + 1) * getScaleValue());
 
-    g.drawString(codons, draw_x_position,
+    if(!(g instanceof SVGGraphics2D))
+      g.drawString(codons, draw_x_position,
                  draw_y_position + getFontAscent() + 1);
+    else
+    {
+      for(int i=0;i<codons.length();i++)
+        g.drawString(String.valueOf(codons.charAt(i)), draw_x_position+(i*getFontWidth() ), 
+          draw_y_position + getFontAscent() + 1);
+    }
   }
 
   /**
