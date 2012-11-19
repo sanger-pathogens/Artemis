@@ -143,6 +143,14 @@ public abstract class Algorithm {
   {
      return algorithm_name;
   }
+  
+  /**
+   *  Return the name of this algorithm.
+   **/
+  public void setAlgorithmName (String algorithm_name) 
+  {
+     this.algorithm_name = algorithm_name;
+  }
 
   /**
    *  Return the short (one word) name of this algorithm, as passed tp the

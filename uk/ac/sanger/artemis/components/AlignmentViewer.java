@@ -40,6 +40,9 @@ import java.util.Vector;
 import java.util.Comparator;
 import java.util.Arrays;
 import javax.swing.*;
+
+import org.apache.batik.svggen.SVGGraphics2D;
+
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -1172,14 +1175,25 @@ public class AlignmentViewer extends CanvasPanel
       if(offscreen == null)
         offscreen = createImage(canvas_width, canvas_height);
 
-      Graphics og = offscreen.getGraphics();
-      og.setClip(0,0,canvas_width,canvas_height);
+      final Graphics og;
+      if(!(g instanceof SVGGraphics2D))
+      {
+        og = offscreen.getGraphics();
+        og.setClip(0,0,canvas_width,canvas_height);
+      }
+      else
+        og = g;
+      
       og.setColor(Color.white);
       og.fillRect(0, 0, canvas_width, canvas_height);
       drawAlignments(og);
       drawLabels(og);
-      g.drawImage(offscreen, 0, 0, null);
-      og.dispose();
+       
+      if(!(g instanceof SVGGraphics2D))
+      {
+        g.drawImage(offscreen, 0, 0, null);
+        og.dispose();
+      }
     }
   }
 

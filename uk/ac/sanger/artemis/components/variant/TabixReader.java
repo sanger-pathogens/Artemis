@@ -413,8 +413,28 @@ public class TabixReader extends AbstractVCFReader
 	    return mSeq;
 	  }
 	  
-	  protected String getFileName()
+	  public int getStartColumn()
+	  {
+	    return mBc;
+	  }
+	  
+	  public int getEndColumn()
+	  {
+	    return mEc;
+	  }
+	  
+	  public int getSeqColumn()
+	  {
+	    return mSc;
+	  }
+	  
+	  public String getFileName()
 	  {
 	    return mFn;
 	  }
+	  
+      public char getCommentChar() 
+      {
+        return (char)mMeta;
+    }
 }
