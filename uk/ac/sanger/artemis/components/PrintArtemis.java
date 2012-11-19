@@ -36,6 +36,8 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.util.Arrays;
+import java.util.HashSet;
 
 import javax.swing.*;
 
@@ -426,12 +428,18 @@ public class PrintArtemis extends ScrollPanel implements Printable
     f.setVisible(true);
   }
 
-  protected static String[] getImageFormats()
+  public static String[] getImageFormats()
   {
     final String fmts[] = javax.imageio.ImageIO.getWriterFormatNames();
-    final String tmpFmts[] = new String[fmts.length+1];
-    System.arraycopy(fmts, 0, tmpFmts, 0, fmts.length);
+    final HashSet<String> list = new HashSet<String>();
+    for(int i=0; i<fmts.length; i++)
+      list.add(fmts[i].toLowerCase());
+
+    final String tmpFmts[] = new String[list.size()+1];
+    System.arraycopy(list.toArray(), 0, tmpFmts, 0, list.size());
     tmpFmts[tmpFmts.length-1] = "svg";
+    Arrays.sort(tmpFmts);
+
     return tmpFmts;
   }
   
