@@ -1,4 +1,6 @@
 Version XX
+	Add SVG (scalable vector graphics) support for Artemis, ACT and DNAPlotter.
+	
 	Add support for indexed user graphs using tabix. For example file.plot is a tab
 	delimited file with column 1 containing the sequence name and column 2 the
 	positions:
