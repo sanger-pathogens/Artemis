@@ -18,6 +18,7 @@
 	<classpathentry kind="lib" path="lib/picard/sam.jar"/>
 	<classpathentry kind="lib" path="lib/commons-net-2.2.jar"/>
 	<classpathentry kind="lib" path="lib/batik/batik-awt-util.jar"/>
+	<classpathentry kind="lib" path="lib/batik/batik-codec.jar"/>
 	<classpathentry kind="lib" path="lib/batik/batik-dom.jar"/>
 	<classpathentry kind="lib" path="lib/batik/batik-ext.jar"/>
 	<classpathentry kind="lib" path="lib/batik/batik-svggen.jar"/>
