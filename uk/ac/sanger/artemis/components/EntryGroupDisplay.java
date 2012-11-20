@@ -109,7 +109,10 @@ public class EntryGroupDisplay extends JPanel
   protected void printComponent(Graphics g)
   {
     super.paintComponent(g);
-    super.printChildren(g);
+    try
+    {
+      super.printChildren(g);
+    }catch(Exception e){}
   }
 
   /**
