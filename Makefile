@@ -275,6 +275,10 @@ artemis.jar : $(CLASSES)
             jar xvf $$fileJar; \
             rm -rf META-INF/MANIFEST.MF; \
           done; \
+          for fileJar in ../lib/batik/*.jar; do \
+            jar xvf $$fileJar; \
+            rm -rf META-INF/MANIFEST.MF; \
+          done; \
           for fileJar in ../lib/picard/*.jar; do \
             jar xvf $$fileJar; \
             rm -rf META-INF/MANIFEST.MF; \
