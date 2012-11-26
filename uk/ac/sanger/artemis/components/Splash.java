@@ -1,7 +1,5 @@
 /* Splash.java
  *
- * created: Wed May 10 2000
- *
  * This file is part of Artemis
  *
  * Copyright (C) 2000,2002  Genome Research Limited
@@ -19,8 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Splash.java,v 1.42 2009-02-05 11:43:23 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -34,61 +30,85 @@ import uk.ac.sanger.artemis.util.StringVector;
 import uk.ac.sanger.artemis.sequence.Bases;
 import uk.ac.sanger.artemis.sequence.AminoAcidSequence;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.management.ManagementFactory;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FontMetrics;
+import java.awt.Frame;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.MediaTracker;
+import java.awt.Point;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
-import javax.swing.border.Border;
+
+import java.util.Enumeration;
 import java.util.Properties;
-
-
 
 /**
  *  Base class that creates a generic "Splash Screen"
- *
- *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: Splash.java,v 1.42 2009-02-05 11:43:23 tjc Exp $
+ *  @author Kim Rutherford
  **/
 
 abstract public class Splash extends JFrame
 {
   private static final long serialVersionUID = 1L;
 
-  /**
-   *  Do any necessary cleanup then exit.
-   **/
+  /** Do any necessary cleanup then exit. */
   abstract protected void exit();
 
-  /**
-   *  A label for status and error messages.
-   **/
+  /** A label for status and error messages. */
   final private JLabel status_line = new JLabel("");
 
-  /**
-   *  The program name that was passed to the constructor.
-   **/
+  /** The program name that was passed to the constructor. */
   private String program_name;
 
-  /**
-   *  The program version that was passed to the constructor.
-   **/
+  /** program version passed to the constructor. */
   private String program_version;
 
-  /**
-   *  The JComponent to draw the main splash screen into
-   **/
+  /** JComponent to draw the main splash screen into */
   private JComponent helix_canvas;
 
-  /**
-   *  JMenu bar for the main window.
-   **/
   private JMenuBar menu_bar;
-
   protected JMenu file_menu;
-
   protected JMenu options_menu;
 
   private JCheckBoxMenuItem geneCode[];
@@ -172,7 +192,7 @@ abstract public class Splash extends JFrame
     final javax.swing.plaf.FontUIResource font_ui_resource =
       Options.getOptions().getFontUIResource();
 
-    java.util.Enumeration keys = UIManager.getDefaults().keys();
+    final Enumeration<Object> keys = UIManager.getDefaults().keys();
     while(keys.hasMoreElements()) 
     {
       Object key = keys.nextElement();
@@ -182,25 +202,17 @@ abstract public class Splash extends JFrame
     }
 
     getContentPane().setLayout(new BorderLayout());
-
     makeAllMenus();
-
     helix_canvas = makeHelixCanvas();
-
     status_line.setFont(Options.getOptions().getFont());
 
-    final FontMetrics fm =
-      this.getFontMetrics(status_line.getFont());
-
-    final int font_height = fm.getHeight()+10;
+    final int font_height = 
+        this.getFontMetrics(status_line.getFont()).getHeight()+10;
 
     status_line.setMinimumSize(new Dimension(100, font_height));
     status_line.setPreferredSize(new Dimension(100, font_height));
-
-    Border loweredbevel = BorderFactory.createLoweredBevelBorder();
-    Border raisedbevel = BorderFactory.createRaisedBevelBorder();
-    Border compound = BorderFactory.createCompoundBorder(raisedbevel,loweredbevel);
-    status_line.setBorder(compound);
+    status_line.setBorder(BorderFactory.createCompoundBorder(
+        BorderFactory.createRaisedBevelBorder(), BorderFactory.createLoweredBevelBorder()));
 
     getContentPane().add(helix_canvas, "Center");
     getContentPane().add(status_line, "South");
@@ -226,10 +238,7 @@ abstract public class Splash extends JFrame
     }
     
     pack();
-
-    final int x = 460;
-    final int y = 250;
-    setSize(x, y);
+    setSize(460, 250);
 
     final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
     setLocation(new Point((screen.width - getSize().width) / 2,
@@ -294,7 +303,7 @@ abstract public class Splash extends JFrame
       {
         // Generate and register the OSXAdapter, passing it a hash of all the methods we wish to
         // use as delegates for various com.apple.eawt.ApplicationListener methods
-        Class splashClass = Class.forName("uk.ac.sanger.artemis.components.Splash");
+        Class<?> splashClass = Class.forName("uk.ac.sanger.artemis.components.Splash");
         OSXAdapter.setQuitHandler(this, 
             splashClass.getDeclaredMethod("exitApp", (Class[])null));
         OSXAdapter.setAboutHandler(this, 
@@ -360,16 +369,6 @@ abstract public class Splash extends JFrame
         paint(g);
       }
 
-      // return the program name and the program mode in one String
-//    private String getNameString() 
-//    {
-//      if(Options.getOptions().isEukaryoticMode())
-//        return program_name + "  [Eukaryotic mode]";
-//      else
-//        return program_name + "  [Prokaryotic mode]";
-//      return geneticCode;
-//    }
-
       /**
        *  Draws the splash screen text.
        **/
@@ -388,7 +387,7 @@ abstract public class Splash extends JFrame
         g.drawString(geneticCode,
                      left_margin, yPos+(font_height * 3));
 
-        g.drawString("Copyright 1998 - 2012",
+        g.drawString("Copyright 1998 - 2013",
                      left_margin, yPos+(font_height * 9 / 2));
         g.drawString("Genome Research Limited",
                      left_margin, yPos+(font_height * 11 / 2));
@@ -408,7 +407,7 @@ abstract public class Splash extends JFrame
         if(helix == null) 
         {
           ClassLoader cl = this.getClass().getClassLoader();
-          ImageIcon helix_icon = new ImageIcon(cl.getResource("images/PSUlogo.gif"));  //"images/helix.gif"));
+          ImageIcon helix_icon = new ImageIcon(cl.getResource("images/PSUlogo.gif"));
           helix = helix_icon.getImage();
 
           tracker = new MediaTracker(this);
@@ -433,17 +432,13 @@ abstract public class Splash extends JFrame
         textPaint(g);
       }
 
-      MediaTracker tracker = null;
+      private MediaTracker tracker = null;
 
-      /**
-       *  The image of the Sanger DNA logo.  This is set in paint().
-       **/
+      /** Sanger DNA logo.  This is set in paint() */
       private Image helix = null;
 
 
-      /**
-       *  The height of the Sanger DNA logo.  This is set in paint().
-       **/
+      /** height of the Sanger DNA logo.  This is set in paint(). */
       private int helix_height;
 
     };
@@ -532,11 +527,7 @@ abstract public class Splash extends JFrame
     final JCheckBoxMenuItem j2ssh_option = new JCheckBoxMenuItem(
                                          "Send Searches via SSH");
 
-    if(System.getProperty("j2ssh") != null)
-      j2ssh_option.setState(true);
-    else
-      j2ssh_option.setState(false);
-
+    j2ssh_option.setState((System.getProperty("j2ssh") != null));
     j2ssh_option.addItemListener(new ItemListener() 
     {
       public void itemStateChanged(ItemEvent event) 
@@ -551,14 +542,10 @@ abstract public class Splash extends JFrame
     options_menu.add(j2ssh_option);
     options_menu.addSeparator();
     
-    
+
     final JCheckBoxMenuItem autohide_option = new JCheckBoxMenuItem(
                                          "Auto hide scrollbar");
-
-    if(System.getProperty("autohide") != null)
-      autohide_option.setState(true);
-    else
-      autohide_option.setState(false);
+    autohide_option.setState((System.getProperty("autohide") != null));
 
     autohide_option.addItemListener(new ItemListener()
     {
@@ -594,9 +581,8 @@ abstract public class Splash extends JFrame
     {
       final JCheckBoxMenuItem black_belt_mode_item =
         new JCheckBoxMenuItem("Black Belt Mode");
-      final boolean state =
-        Options.getOptions().isBlackBeltMode();
-      black_belt_mode_item.setState(state);
+
+      black_belt_mode_item.setState(Options.isBlackBeltMode());
       black_belt_mode_item.addItemListener(new ItemListener() 
       {
         public void itemStateChanged(ItemEvent event) 
@@ -811,7 +797,7 @@ abstract public class Splash extends JFrame
   * @param uHome        user working directory
   *
   */
-  private static void writeProperties(String prop)
+  private static void writeProperties(final String prop)
   {
      File file_txt = new File(prop);
      File file_tmp = new File(prop + ".tmp");
@@ -937,11 +923,11 @@ abstract public class Splash extends JFrame
      }
      catch (FileNotFoundException filenotfoundexception)
      {
-       System.err.println("jemboss.properties read error");
+       System.err.println(prop+" read error");
      }
      catch (IOException e)
      {
-       System.err.println("jemboss.properties i/o error");
+       System.err.println(prop+" i/o error");
      }
 
   }
@@ -973,7 +959,6 @@ abstract public class Splash extends JFrame
   private void makeGeneticCodeMenu(final JMenu options_menu)
   {
     // available genetic codes
-
     StringVector v_genetic_codes = Options.getOptions().getOptionValues("genetic_codes");
     String gcodes[] = (String[])v_genetic_codes.toArray(new String[v_genetic_codes.size()]);
 
@@ -1143,7 +1128,7 @@ abstract public class Splash extends JFrame
   /**
    *  Return a Logger for warnings/errors/messages.
    **/
-  public static Logger getLogger() 
+  protected static Logger getLogger() 
   {
     return logger;
   }
