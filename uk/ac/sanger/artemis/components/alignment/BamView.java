@@ -2917,6 +2917,18 @@ public class BamView extends JPanel
         } 
       });
       
+      
+      JMenuItem saveAs = new JMenuItem("Save As Image File (png/jpeg/svg) ...");
+      fileMenu.add(saveAs);
+      saveAs.addActionListener(new ActionListener()
+      {
+        public void actionPerformed(ActionEvent e)
+        {
+          PrintBamView.print((JPanel)mainPanel.getParent()); 
+        }
+      });
+
+      
       JMenuItem close = new JMenuItem("Close");
       fileMenu.add(close);
       close.addActionListener(new ActionListener()
