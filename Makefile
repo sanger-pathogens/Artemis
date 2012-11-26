@@ -275,6 +275,10 @@ artemis.jar : $(CLASSES)
             jar xvf $$fileJar; \
             rm -rf META-INF/MANIFEST.MF; \
           done; \
+          for fileJar in ../lib/batik/*.jar; do \
+            jar xvf $$fileJar; \
+            rm -rf META-INF/MANIFEST.MF; \
+          done; \
           for fileJar in ../lib/picard/*.jar; do \
             jar xvf $$fileJar; \
             rm -rf META-INF/MANIFEST.MF; \
@@ -291,9 +295,9 @@ artemis.jar : $(CLASSES)
 	                     artemis_sqlmap org uk com net nsdb type seqdb LICENSE.Apache j2ssh.properties; \
         echo "Main-Class: uk.ac.sanger.artemis.circular.DNADraw" > manifest-circular; \
         jar cmf manifest-circular DNAPlotter.jar images/PSUlogo.gif README etc \
-                             uk org/gmod org/apache org/biojava/bio/ com/ibatis/common/jdbc/ LICENSE.Apache j2ssh.properties; \
+                             uk org/gmod org/w3c org/apache org/biojava/bio/ com/ibatis/common/jdbc/ net/sf/samtools/ LICENSE.Apache j2ssh.properties; \
 	echo "Main-Class: uk.ac.sanger.artemis.components.alignment.BamView" > manifest-bamview; \
-	jar cmf manifest-bamview BamView.jar etc uk org net/sf com/ibatis; \
+	jar cmf manifest-bamview BamView.jar etc uk org/apache org/biojava org/biojavax org/gmod org/w3c net/sf com/ibatis; \
 	echo "Main-Class: uk.ac.sanger.artemis.components.ActMain" > manifest-act; \
 	jar cmf manifest-act act.jar images/PSUlogo.gif images/icon.gif README etc \
 	                     artemis_sqlmap org uk com net nsdb type seqdb LICENSE.Apache j2ssh.properties; \
