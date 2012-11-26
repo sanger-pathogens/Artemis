@@ -1,0 +1,59 @@
+<CHAPTER ID="PROJ-MANAGER-CHAPTER">
+  <TITLE>Project File Manager</TITLE>
+
+  <SECT1 ID="PROJ-OVERVIEW">
+    <TITLE>Overview</TITLE>
+    <PARA>
+The Project File Manager can be used to facilitate the launching of groups
+of files together. The project details are stored between sessions of &prog;,
+so that it is straightforward to return to a project and open up all the relevant
+files.
+
+     <SCREENSHOT>
+       <SCREENINFO>
+The Project File Manager window
+       </SCREENINFO>
+       <MEDIAOBJECT>
+         <IMAGEOBJECT>
+           <IMAGEDATA FORMAT="png" FILEREF="projMgr.png">
+         </IMAGEOBJECT>
+       </MEDIAOBJECT>
+     </SCREENSHOT>
+    </PARA>
+  </SECT1>
+
+  <SECT1 ID="PROJ-USING">
+     <TITLE>Using the Project File Manager</TITLE>
+    <PARA>
+The Project File Manager can be opened from the <EMPHASIS>File</EMPHASIS> menu in the Artemis launch window (see <XREF LINKEND="LAUNCH-WINDOW">).
+It opens with some example projects in the list on the left hand side of the panel.
+Selecting a project in the list shows the associated files in the right hand side of the
+window.
+   </PARA>
+   <PARA>
+To add a new project click on the green '+' button at the top of the Project File Manager
+window and enter a name for the project. The new project opens with a blank form with a 'sequence'
+field. <EMPHASIS>Note that each project has to have an associated sequence file (e.g. FASTA, EMBL, GenBank or GFF) that
+contains the nucleotide sequence for Artemis to open up.</EMPHASIS> New files can be added to the project 
+by selecting the type of file from the drop down list at the bottom and clicking the
+'NEW PROPERTY' button.
+   </PARA>
+   <PARA>
+The project list and details are saved between sessions when Artemis is closed down. This information is
+stored in the home directory in a file called '.artemis.project.properties'. When Artemis is run it looks
+for a 'project.properties' file in the local directory as well as for the '.artemis.project.properties'
+file in the home directory. 
+   </PARA>
+   <PARA>
+Before opening a project the files can be toggled on and off in the
+Project File Manager so that each can optionally be deselected and not opened.
+Once a project has been set up it can be selected from the list and clicking 'OPEN' will
+open the main Artemis window. 
+   </PARA>
+   <PARA>
+To remove a project from the list, select the project name and click the red '-' button
+at the top of the window.
+   </PARA>
+  </SECT1>
+
+</CHAPTER>

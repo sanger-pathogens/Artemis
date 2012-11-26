@@ -3,6 +3,7 @@
 <!ENTITY start SYSTEM "start_chapter.sgml">
 <!ENTITY mainwindow SYSTEM "main_window_chapter.sgml">
 <!ENTITY ssh SYSTEM "ssh_chapter.sgml">
+<!ENTITY proj SYSTEM "project_manager.sgml">
 <!ENTITY options SYSTEM "options.sgml">
 <!ENTITY filemenu SYSTEM "file_menu.sgml">
 <!ENTITY menus SYSTEM "menus.sgml">
@@ -46,7 +47,7 @@
     </PRODUCTNAME>
     <PUBDATE>22 February 1999</PUBDATE>
     <COPYRIGHT>
-      <YEAR>1999-2011</YEAR>
+      <YEAR>1999-2012</YEAR>
       <HOLDER>Genome Research Limited</HOLDER>
     </COPYRIGHT>
     <LEGALNOTICE>
@@ -73,7 +74,7 @@
     </LEGALNOTICE>
     <ABSTRACT>
       <PARA>
-This document describes release 13 of &art; a DNA sequence viewer and
+This document describes release 14 of &art; a DNA sequence viewer and
 sequence annotation tool.
       </PARA>
     </ABSTRACT>
@@ -82,6 +83,7 @@ sequence annotation tool.
   &intro;
   &start;
   &mainwindow;
+  &proj;
   &ssh;
   &options;
 </BOOK>

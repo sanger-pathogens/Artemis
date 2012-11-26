@@ -16,7 +16,7 @@ URL="http://www.java.com/">Oracle</ULINK>.
       <PARA>
 Windows users should get latest stable release from <ULINK
 URL="http://www.java.com/">Java version</ULINK> 
-from Sun.
+from Oracle.
 On some versions of Windows (such as Windows 2000) you will need be have
 administrator privileges for your machine to successfully install Java.
       </PARA>
@@ -26,8 +26,6 @@ administrator privileges for your machine to successfully install Java.
 Macintosh users with MacOS X should have java installed. You can get the 
 latest version from <ULINK URL="http://developer.apple.com/java/download/">Apple</ULINK>.
 
-Note, however, that Java on the older versions of MacOS X has irritating
-bugs so we recommend using the latest version of MacOS, which runs &prog; well.
 Macintosh users with older MacOS versions cannot use this release of &prog;.
       </PARA>
     </LISTITEM>

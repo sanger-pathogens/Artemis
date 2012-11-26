@@ -1593,7 +1593,39 @@ of the following possible graph file formats:
 
       </PARA>
       </LISTITEM>
+
       <LISTITEM ID="GRAPH-FORMAT-3">
+      <PARA>
+      indexed tab delimited file. For this tabix is used (see the 
+      <ULINK URL="http://samtools.sourceforge.net/tabix.shtml">tabix manual</ULINK>)
+      to create an index. This is especially useful for large data sets as it is memory 
+      efficient and only reads the data corresponding to the visible region in &prog;.
+      The first columns contain the sequence name and base position and this is then followed by
+      the values to be plotted. 
+      </PARA>
+      <PARA>
+      For example 'file.plot' is a tab delimited file with column 1 containing the sequence 
+      name and column 2 the positions, this is sorted and then indexed with tabix:
+
+<SYNOPSIS>
+(grep ^"#" file.plot; grep -v ^"#" file.plot | sort -k1,1 -k2,2n) | bgzip > sorted.plot.gz ;
+tabix -s 1 -b 2 -e 2 sorted.plot.gz
+</SYNOPSIS>
+
+Example extract:
+<SYNOPSIS>
+foo	1	5	5	129	5       5       239
+foo	2	1	10	124	12      10      234
+foo	3	5	16	129	12      15      229
+foo	4	0	23	124	20      20      414
+foo	5	5	22	121	28      25      419
+foo	6	30	36	124	32      30      412
+...
+</SYNOPSIS>
+      </PARA>
+      </LISTITEM>
+
+      <LISTITEM ID="GRAPH-FORMAT-4">
       <PARA>
       the next two formats are types of <ULINK
       URL="https://cgwb.nci.nih.gov/goldenPath/help/wiggle.html" TYPE="external">
@@ -1617,7 +1649,7 @@ variableStep chrom=chr19 span=10
       The plots can be displayed as histograms or as a heat map.
       </PARA>
       </LISTITEM>
-      <LISTITEM ID="GRAPH-FORMAT-4">
+      <LISTITEM ID="GRAPH-FORMAT-5">
       <PARA>
       the next format supported by &prog; is fixedStep and is again a Wiggle format. 
       </PARA>
@@ -1636,7 +1668,7 @@ fixedStep chrom=chr19 start=7401 step=300 span=200
  100
 </SYNOPSIS>
       </LISTITEM>
-      <LISTITEM ID="GRAPH-FORMAT-5">
+      <LISTITEM ID="GRAPH-FORMAT-6">
       <PARA>
       Blast tabular format. The blastall command must be run with the -m 8 flag which 
       generates one line of information per HSP. Alternatively the MSPcrunch file format
