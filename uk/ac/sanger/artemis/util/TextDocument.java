@@ -24,25 +24,28 @@
 
 package uk.ac.sanger.artemis.util;
 
-import java.io.*;
 import javax.swing.JOptionPane;
-import uk.ac.sanger.artemis.components.SwingWorker;
 import java.awt.Toolkit;
-import java.awt.datatransfer.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  *  Objects of this class are Documents created from a file.
- *
  **/
-
 public class TextDocument extends Document 
 {
   /**
-  *
   *  Create a new TextDocument from a String.
   *  @param location This should be a file or directory name. 
   *  @param remote_file File on server
-  *
   **/
   public TextDocument() 
   {
@@ -168,36 +171,5 @@ public class TextDocument extends Document
     else
       return file_output_stream;
   }
-
-  /**
-  *
-  * Save the entry back to the ssh server
-  *
-  */
-/*
-  public void saveEntry(final File local_file)
-  {
-    SwingWorker putWorker = new SwingWorker()
-    {
-      FileTransferProgressMonitor monitor;
-      public Object construct()
-      {
-        monitor = new FileTransferProgressMonitor(null);
-        FTProgress progress = monitor.add(local_file.getName());
-
-        getRemoteFileNode().put(local_file, progress);
-        monitor.close();
-        return null;
-      }
-
-      public void finished()
-      {
-        if(monitor != null)
-          monitor.close();
-      }
-    };
-    putWorker.start();
-  }
-*/
 
 }
