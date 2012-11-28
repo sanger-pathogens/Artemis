@@ -23,7 +23,7 @@ import javax.swing.JOptionPane;
         // methods we wish to
         // use as delegates for various com.apple.eawt.ApplicationListener
         // methods
-        Class bamClass = Class.forName("uk.ac.sanger.artemis.components.alignment.BamFrame");
+        Class<?> bamClass = Class.forName("uk.ac.sanger.artemis.components.alignment.BamFrame");
         BamOSXAdapter.setQuitHandler(this, bamClass.getDeclaredMethod(
             "exitApp", (Class[]) null));
         BamOSXAdapter.setAboutHandler(this, bamClass.getDeclaredMethod("about",
