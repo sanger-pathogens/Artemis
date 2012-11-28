@@ -1187,7 +1187,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
             new StringTokenizer((String)att_values.get(0), ",");
         StringVector str_values = new StringVector();
         while(stok.hasMoreTokens())
-          str_values.add(stok.nextElement());
+          str_values.add(stok.nextToken());
 
         att_values = str_values;
       }
