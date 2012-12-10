@@ -158,7 +158,7 @@ public class VCFview extends JPanel
   private int dragStart = -1;
   private JPopupMenu popup;
   private JMenu vcfFilesMenu = new JMenu("VCF files");
-  private int LINE_HEIGHT = 15;
+  private int LINE_HEIGHT = 14;
   
   protected boolean showSynonymous = true;
   protected boolean showNonSynonymous = true;
@@ -262,7 +262,6 @@ public class VCFview extends JPanel
     JPanel bottomPanel = new JPanel(new BorderLayout());
     graphPanel = new GraphPanel(this);
     graphPanel.setBorder(BorderFactory.createMatteBorder(1, 0, 1, 0, Color.gray));
-    graphPanel.setPreferredSize(new Dimension(900, 100));
     graphPanel.setVisible(false);
     
     bottomPanel.add(graphPanel, BorderLayout.CENTER);
@@ -342,8 +341,31 @@ public class VCFview extends JPanel
     for(int i=0; i<vcfFiles.size(); i++)
       addToViewMenu(i);
     
-    popup.addSeparator();
+    final JMenu lineHgt = new JMenu("Row Height");
+    popup.add(lineHgt);
+    final ButtonGroup groupLnHgt = new ButtonGroup();
+    for(int i=8; i<37; i+=2)
+    {
+      final int ii = i;
+      final JCheckBoxMenuItem hgtMenu = new JCheckBoxMenuItem(
+          Integer.toString(i), (i == LINE_HEIGHT));
+      groupLnHgt.add(hgtMenu);
+      hgtMenu.addActionListener(new ActionListener()
+      {
+        public void actionPerformed(ActionEvent e)
+        {
+          if(hgtMenu.isSelected())
+          {
+            LINE_HEIGHT = ii;
+            setDisplay();
+            revalidate();
+          }
+        }
+      });
+      lineHgt.add(hgtMenu);
+    }
     
+    popup.addSeparator();
 
     markNewStops.addActionListener(new ActionListener()
     {
@@ -580,7 +602,7 @@ public class VCFview extends JPanel
         graphDP.setSelected(false);
         graphSim.setSelected(false);
         graphPanel.setType(0);
-        graphPanel.repaint();
+        setGraphSize();
       }
     });
     
@@ -592,7 +614,7 @@ public class VCFview extends JPanel
         graphSNP.setSelected(false);
         graphSim.setSelected(false);
         graphPanel.setType(1);
-        graphPanel.repaint();
+        setGraphSize();
       }
     });
     
@@ -604,7 +626,7 @@ public class VCFview extends JPanel
         graphSNP.setSelected(false);
         graphDP.setSelected(false);
         graphPanel.setType(2);
-        graphPanel.repaint();
+        setGraphSize();
       }
     });
     
@@ -641,6 +663,19 @@ public class VCFview extends JPanel
     });
     popup.add(new JSeparator());
     popup.add(labels);
+  }
+  
+  private void setGraphSize()
+  {
+    repaint();
+    if(graphPanel.isVisible())
+      graphPanel.setPreferredSize(new Dimension(900, 70));
+    else
+      graphPanel.setPreferredSize(new Dimension(900, 1));
+
+    vcfPanel.setPreferredSize(new Dimension(900, 
+        graphPanel.getPreferredSize().height+getPreferredSize().height));
+    vcfPanel.revalidate();
   }
   
   private void createTopPanel(final JFrame frame, final EntryEdit entry_edit)
