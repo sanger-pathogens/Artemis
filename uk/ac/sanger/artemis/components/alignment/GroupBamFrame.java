@@ -180,13 +180,9 @@ class GroupBamFrame extends JFrame
         c.gridy += 1;
         c.gridx = 0;
         bamPanel.add(new JLabel(bam), c);
-        
-        Color col = bamView.getColorByJCheckBoxMenuItem(cbBam);
-        if(col == null)
-          col = Color.BLACK;
-        
+
         c.gridx = 1;
-        bamPanel.add(new JLabel(bamView.getImageIcon(col)), c);
+        bamPanel.add(new JLabel(cbBam.getIcon()), c);
 
         c.gridx = 2;
         JComboBox groupCombo = new JComboBox( groups );

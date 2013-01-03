@@ -25,6 +25,9 @@
 
 package uk.ac.sanger.artemis;
 
+import java.util.Collections;
+import java.util.Comparator;
+
 import uk.ac.sanger.artemis.util.FastVector;
 
 /**
@@ -36,6 +39,12 @@ import uk.ac.sanger.artemis.util.FastVector;
  **/
 
 public class FeatureSegmentVector {
+  
+  /**
+   *  Storage for FeatureSegment objects.
+   */
+  private FastVector vector = new FastVector ();
+  
   /**
    *  Create a new vector of FeatureSegment objects.
    **/
@@ -146,9 +155,17 @@ public class FeatureSegmentVector {
     return_vector.vector = (FastVector) vector.clone ();
     return return_vector;
   }
+  
+  public void sortByPosition() {
+    Collections.sort(vector, new PositionComparator());
+  }
+}
 
-  /**
-   *  Storage for FeatureSegment objects.
-   */
-  private FastVector vector = new FastVector ();
+class PositionComparator implements Comparator<FeatureSegment> {
+  public int compare(FeatureSegment s1, FeatureSegment s2) {
+    if(s1.getStart().getPosition() < s2.getStart().getPosition())
+      return -1;
+    else
+      return 1;
+  } 
 }

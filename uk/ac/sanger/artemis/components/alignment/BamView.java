@@ -2382,7 +2382,7 @@ public class BamView extends JPanel
    * @param c
    * @return
    */
-  protected ImageIcon getImageIcon(Color c)
+  private ImageIcon getImageIcon(Color c)
   {
     BufferedImage image = (BufferedImage)this.createImage(10, 10);
     Graphics2D g2 = image.createGraphics();

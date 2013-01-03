@@ -25,16 +25,16 @@
 
 package uk.ac.sanger.artemis.components;
 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
 import uk.ac.sanger.artemis.*;
-import java.awt.event.*;
 
 /**
- *  A component for viewing the bases of a feature.  Once created this
+ *  A component for viewing the bases of a feature. Once created this
  *  component listens for FeatureChange events to keep the the sequence up to
  *  date.
- *
  *  @author Kim Rutherford
- *  @version $Id: FeatureBaseViewer.java,v 1.2 2008-12-16 11:46:15 tjc Exp $
  **/
 
 public class FeatureBaseViewer
@@ -49,6 +49,8 @@ public class FeatureBaseViewer
   /** The Entry that contains the Feature this object is displaying.  */
   private Entry entry;
   
+  private FeatureSegmentVector segments;
+  
   /**
    *  Create a new FeatureBaseViewer component to display the bases of the
    *  given Feature.
@@ -58,10 +60,12 @@ public class FeatureBaseViewer
    *    sequence).
    **/
   public FeatureBaseViewer (final Feature feature,
-                            final boolean include_numbers) 
+                            final boolean include_numbers,
+                            final FeatureSegmentVector segments) 
   {
     this.feature = feature;
     this.entry = feature.getEntry ();
+    this.segments = segments;
 
     sequence_viewer =
       new SequenceViewer ("Feature base viewer for feature:" +
@@ -126,26 +130,33 @@ public class FeatureBaseViewer
    **/
   private void redisplay () 
   {
-    final StringBuffer header_buffer = new StringBuffer();
-
-    header_buffer.append(getFeature().getSystematicName());
-    header_buffer.append(" ");
-    header_buffer.append(getFeature().getIDString());
-    header_buffer.append(" ");
-
     final String product = getFeature().getProductString();
+    final StringBuilder hdr = new StringBuilder();
+    hdr.append(getFeature().getSystematicName()).append(" ");
+    hdr.append(getFeature().getIDString()).append(" ");
+    hdr.append(product == null ? "undefined product" : product);
+    
+    final String bases;
+    if(segments != null)  // display just for selected segments
+    {
+      final StringBuilder buffer = new StringBuilder();
+      segments.sortByPosition();
+      for(int i = 0; i < segments.size(); ++i) 
+      {
+        final FeatureSegment segment = segments.elementAt(i);
+        buffer.append(segment.getBases());
+        hdr.append(i == 0 ? " " : ",").append(segment.getRawRange().toString());
+      }
+      hdr.append(getFeature ().isForwardFeature() ? " forward" : " reverse");
+      bases = buffer.toString();
+    }
+    else
+    {
+      hdr.append(" ").append(getFeature().getWriteRange());
+      bases = getFeature ().getBases ();
+    }
 
-    if(product == null) 
-      header_buffer.append("undefined product");
-    else 
-      header_buffer.append(product);
-    
-    header_buffer.append(" ").append(getFeature().getWriteRange());
-    
-    final String comment = ">" + header_buffer.toString();
-      
-    final String bases = getFeature ().getBases ().toUpperCase ();
-    sequence_viewer.setSequence (comment, bases);
+    sequence_viewer.setSequence (">" + hdr.toString(), bases.toUpperCase ());
   }
 
   /**

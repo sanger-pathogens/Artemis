@@ -143,26 +143,42 @@ public class ViewMenu extends SelectionMenu
       }
     });
 
-    final JMenuItem view_bases_item = new JMenuItem("Bases Of Selection");
+    final JMenu view_bases = new JMenu("Bases");
+    final JMenuItem view_bases_item = new JMenuItem("Of Selection");
     view_bases_item.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent event) 
       {
-        viewSelectedBases(true);
+        viewSelectedBases(true, false);
       }
     });
+    view_bases.add(view_bases_item);
 
     final JMenuItem view_bases_as_fasta_item =
-      new JMenuItem("Bases Of Selection As FASTA");
+      new JMenuItem("Of Selection As FASTA");
     view_bases_as_fasta_item.addActionListener(new ActionListener() 
     {
       public void actionPerformed(ActionEvent event) 
       {
-        viewSelectedBases(false);
+        viewSelectedBases(false, false);
       }
     });
+    view_bases.add(view_bases_as_fasta_item);
+    view_bases.addSeparator();
 
-    final JMenuItem view_aa_item = new JMenuItem("Amino Acids Of Selection");
+    final JMenuItem view_exon_bases =
+        new JMenuItem("Of Selected Exons As FASTA");
+    view_exon_bases.addActionListener(new ActionListener() 
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        viewSelectedBases(false, true);
+      }
+    });
+    view_bases.add(view_exon_bases);
+
+    final JMenu view_aa = new JMenu("Amino Acids");
+    final JMenuItem view_aa_item = new JMenuItem("Of Selection");
     view_aa_item.addActionListener(new ActionListener() 
     {
       public void actionPerformed(ActionEvent event) 
@@ -170,9 +186,10 @@ public class ViewMenu extends SelectionMenu
         viewSelectedAminoAcids(true);
       }
     });
+    view_aa.add(view_aa_item);
 
     final JMenuItem view_aa_as_fasta_item =
-      new JMenuItem("Amino Acids Of Selection As FASTA");
+      new JMenuItem("Of Selection As FASTA");
     view_aa_as_fasta_item.addActionListener(new ActionListener() 
     {
       public void actionPerformed(ActionEvent event) 
@@ -180,6 +197,7 @@ public class ViewMenu extends SelectionMenu
         viewSelectedAminoAcids(false);
       }
     });
+    view_aa.add(view_aa_as_fasta_item);
 
     final JMenuItem overview_item = new JMenuItem("Overview");
     overview_item.setAccelerator(OVERVIEW_KEY);
@@ -554,10 +572,8 @@ public class ViewMenu extends SelectionMenu
     add(forward_overview_item);
     add(reverse_overview_item);
     addSeparator();
-    add(view_bases_item);
-    add(view_bases_as_fasta_item);
-    add(view_aa_item);
-    add(view_aa_as_fasta_item);
+    add(view_bases);
+    add(view_aa);
     addSeparator();
     add(feature_info_item);
     add(plot_features_item);
@@ -1712,32 +1728,36 @@ public class ViewMenu extends SelectionMenu
    *    (every second line of the display will be numbers rather than
    *    sequence).
    **/
-  private void viewSelectedBases (final boolean include_numbers) {
+  private void viewSelectedBases (final boolean include_numbers, final boolean selectedExonsOnly) {
     if (getSelection ().isEmpty ()) {
       new MessageDialog (getParentFrame (), "Nothing selected");
       return;
     }
 
-    final MarkerRange range = selection.getMarkerRange ();
+    if (selection.getMarkerRange () == null) {
+      final FeatureVector fs = getSelection ().getAllFeatures ();
 
-    if (range == null) {
-      final FeatureVector features_to_view = getSelection ().getAllFeatures ();
-
-      if (features_to_view.size () > MAXIMUM_SELECTED_FEATURES) {
-        new MessageDialog (getParentFrame (),
-                           "warning: only viewing bases for " +
-                           "the first " + MAXIMUM_SELECTED_FEATURES +
-                           " selected features");
+      if(selectedExonsOnly)
+      {
+        if (fs.size () > 1) 
+          new MessageDialog (getParentFrame (),
+               "warning: only viewing bases for the selected exons of one feature");
+        new FeatureBaseViewer (fs.elementAt(0), include_numbers, 
+            getSelection ().getSelectedSegments());
       }
-
-      for (int i = 0 ;
-           i < features_to_view.size () && i < MAXIMUM_SELECTED_FEATURES ;
-           ++i) {
-        final Feature this_feature = features_to_view.elementAt (i);
-
-        new FeatureBaseViewer (this_feature, include_numbers);
+      else
+      {
+        if (fs.size () > MAXIMUM_SELECTED_FEATURES) 
+          new MessageDialog (getParentFrame (),
+               "warning: only viewing bases for " +
+               "the first " + MAXIMUM_SELECTED_FEATURES +
+               " selected features");
+        for (int i = 0; i < fs.size () && i < MAXIMUM_SELECTED_FEATURES; ++i)
+          new FeatureBaseViewer (fs.elementAt (i), include_numbers, null);
       }
-    } else {
+    } 
+    else 
+    {
       final SequenceViewer sequence_viewer =
         new SequenceViewer ("Selected bases", include_numbers);
 
