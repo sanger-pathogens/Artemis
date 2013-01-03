@@ -140,7 +140,7 @@ import uk.ac.sanger.artemis.util.StringVector;
         qNames = new StringVector();
         Object objs[] = systematicListSelectionPanel.getResultArray();
         for(Object o: objs)
-          qNames.add(o);
+          qNames.add((String)o);
       }
       
       return pickName(f, qNames);

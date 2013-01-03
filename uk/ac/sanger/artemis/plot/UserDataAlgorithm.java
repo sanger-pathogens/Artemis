@@ -953,13 +953,13 @@ public class UserDataAlgorithm extends BaseAlgorithm
             base = Integer.parseInt((String)parts.get(getStartColumn()-1)) - start;
           else
           {
-            int b = Integer.parseInt((String)parts.get(getStartColumn()-1));
-            int e = Integer.parseInt((String)parts.get(getEndColumn()-1));
+            int b = Integer.parseInt(parts.get(getStartColumn()-1));
+            int e = Integer.parseInt(parts.get(getEndColumn()-1));
             base = b + ((b - e)/2) - start;
           }
           for(int i=0; i<rvalues[base].length; i++)
           {
-            float val = Float.parseFloat( (String) parts.get(i+getEndColumn()) );
+            float val = Float.parseFloat( parts.get(i+getEndColumn()) );
             if(logTransform)
               val = (float) Math.log(val+1);
 

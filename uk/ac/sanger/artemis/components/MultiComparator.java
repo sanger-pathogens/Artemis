@@ -301,7 +301,7 @@ public class MultiComparator extends JFrame
       if(i < getAlignmentViewerArray().length) 
       {
         c.fill = GridBagConstraints.BOTH;
-        c.weighty = 1;
+        c.weighty = 0.5;
         getContentPane().add(getAlignmentViewerArray()[i], c);
       }
     }
