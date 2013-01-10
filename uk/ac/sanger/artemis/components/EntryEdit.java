@@ -491,18 +491,40 @@ public class EntryEdit extends JFrame
 
     Utilities.centreFrame(this);
     
-    if(System.getProperty("bam") != null)
+    if(System.getProperty("bam") != null || System.getProperty("bam1") != null)
     {
       SwingWorker worker = new SwingWorker()
       {
         public Object construct()
         {
           EntryEdit.this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-          final String ngs[] = System.getProperty("bam").split("[\\s,]");
-          final FileSelectionDialog fileChooser = new FileSelectionDialog(ngs);
-          final List<String> listBams = fileChooser.getFiles(".*\\.(bam|cram)$");
+          final String ngs[];
+          final int idx;
+          
+          if(System.getProperty("bam") != null)
+          {
+            idx = 1;
+            ngs = System.getProperty("bam").split("[\\s,]");
+          }
+          else
+          {
+            idx = 2;
+            ngs = System.getProperty("bam1").split("[\\s,]");
+          }
+          FileSelectionDialog fileChooser = new FileSelectionDialog(ngs);
+          List<String> listBams = fileChooser.getFiles(".*\\.(bam|cram)$");
           final List<String> vcfFiles = fileChooser.getFiles(VCFview.VCFFILE_SUFFIX);
           loadBamAndVcf(listBams, vcfFiles);
+          
+          for(int i=idx; i<20; i++)
+          {
+            if(System.getProperty("bam"+i) != null)
+            {
+              fileChooser = new FileSelectionDialog(
+                  System.getProperty("bam"+i).split("[\\s,]"));
+              bamView.openBamView(fileChooser.getFiles(".*\\.(bam|cram)$"));
+            }
+          }
 
           if(System.getProperty("bamClone") != null)
           {
@@ -518,7 +540,7 @@ public class EntryEdit extends JFrame
                            System.getProperty("bamClone"));
             
             for(int i=1;i<nclone;i++)
-              bamView.cloneBamView();
+              bamView.openBamView(listBams);
           }
           
           EntryEdit.this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
