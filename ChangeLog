@@ -1,9 +1,12 @@
 Version XX
 
-	Multiple BAM panels can be opened using the bamClone flag this is 
-	used with the -Dbam flag:
+	Multiple BAM panels can be opened using the bamClone flag this is used with 
+	the -Dbam flag:
 	art -Dbam='/pathToFile/file1.bam,/pathToFile/file2.bam' -DbamClone=n  
-	(where n is an integer greater than 1)
+	(where n is an integer greater than 1). All BAM files are then shown in	each 
+	panel. Alternatively the following will open BAM files in separate panels
+	(using -Dbam[1,2,3...]):
+	art -Dbam1=fileA.bam -Dbam2=fileB.bam
 	
 	Add SVG (scalable vector graphics) support for Artemis, ACT and DNAPlotter.
 
