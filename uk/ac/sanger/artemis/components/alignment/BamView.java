@@ -2865,7 +2865,7 @@ public class BamView extends JPanel
     {
       public void actionPerformed(ActionEvent e)
       {
-        cloneBamView();
+        openBamView(new Vector<String>(bamList));
       } 
     });
     menu.add(new JSeparator());
@@ -3498,9 +3498,9 @@ public class BamView extends JPanel
   /**
    * Open another BamView window
    */
-  public void cloneBamView()
+  public void openBamView(final List<String> bamsList)
   {
-    BamView bamView = new BamView(new Vector<String>(bamList), 
+    BamView bamView = new BamView(bamsList, 
         null, nbasesInView, entry_edit,
         feature_display, bases, (JPanel) mainPanel.getParent(), null);
     bamView.getJspView().getVerticalScrollBar().setValue(
