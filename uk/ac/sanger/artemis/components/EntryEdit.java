@@ -510,6 +510,7 @@ public class EntryEdit extends JFrame
           {
             idx = 2;
             ngs = System.getProperty("bam1").split("[\\s,]");
+            System.setProperty("bam1", "");
           }
           FileSelectionDialog fileChooser = new FileSelectionDialog(ngs);
           List<String> listBams = fileChooser.getFiles(".*\\.(bam|cram)$");
@@ -522,7 +523,11 @@ public class EntryEdit extends JFrame
             {
               fileChooser = new FileSelectionDialog(
                   System.getProperty("bam"+i).split("[\\s,]"));
-              bamView.openBamView(fileChooser.getFiles(".*\\.(bam|cram)$"));
+              
+              List<String> lBams = fileChooser.getFiles(".*\\.(bam|cram)$");
+              if(lBams.size() > 0)
+                bamView.openBamView(fileChooser.getFiles(".*\\.(bam|cram)$"));
+              System.setProperty("bam"+i, "");
             }
           }
 
@@ -542,6 +547,7 @@ public class EntryEdit extends JFrame
             for(int i=1;i<nclone;i++)
               bamView.openBamView(listBams);
           }
+          System.setProperty("bam", "");
           
           EntryEdit.this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
           return null;
