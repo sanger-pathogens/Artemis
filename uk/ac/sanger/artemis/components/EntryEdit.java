@@ -498,11 +498,29 @@ public class EntryEdit extends JFrame
         public Object construct()
         {
           EntryEdit.this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-          String ngs[] = System.getProperty("bam").split("[\\s,]");
-          FileSelectionDialog fileChooser = new FileSelectionDialog(ngs);
-          List<String> listBams = fileChooser.getFiles(".*\\.(bam|cram)$");
-          List<String> vcfFiles = fileChooser.getFiles(VCFview.VCFFILE_SUFFIX);
+          final String ngs[] = System.getProperty("bam").split("[\\s,]");
+          final FileSelectionDialog fileChooser = new FileSelectionDialog(ngs);
+          final List<String> listBams = fileChooser.getFiles(".*\\.(bam|cram)$");
+          final List<String> vcfFiles = fileChooser.getFiles(VCFview.VCFFILE_SUFFIX);
           loadBamAndVcf(listBams, vcfFiles);
+
+          if(System.getProperty("bamClone") != null)
+          {
+            int nclone = 2;
+            try
+            {
+              nclone = Integer.parseInt(System.getProperty("bamClone"));
+            }
+            catch(NumberFormatException ne){}
+            if(nclone > 10)
+              nclone = 10;
+            logger4j.debug("No. BamView clones = "+nclone+" bamClone = "+
+                           System.getProperty("bamClone"));
+            
+            for(int i=1;i<nclone;i++)
+              bamView.cloneBamView();
+          }
+          
           EntryEdit.this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
           return null;
         }
