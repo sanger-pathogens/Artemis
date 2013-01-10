@@ -3169,7 +3169,7 @@ public class BamView extends JPanel
     }
     else if(jspView != null)
     {
-      if(isCoverageView(pixPerBase) && nbasesInView >= MAX_BASES)
+      if(!isCoverageView(pixPerBase) && nbasesInView >= MAX_BASES)
       {
         cbLastSelected = getSelectedCheckBoxMenuItem();
         cbCoverageView.setSelected(true);
