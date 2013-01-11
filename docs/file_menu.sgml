@@ -222,10 +222,19 @@ old and new window.
   </SECT2>
 
   <SECT2 ID="FILEMENU-IMAGE-WINDOW">
-    <TITLE>Save As Image Files (png/jpeg)</TITLE>
+    <TITLE>Save As Image Files (png/jpeg/svg)</TITLE>
     <PARA>
 Print out the contents of the current window. All or some of the
-window panels can be select  for printing to an image file. 
+window panels can be selected for printing to an image file. 
+    </PARA>
+    <PARA>
+SVG (scalable vector graphics) is an XML based vector image format.
+These images can be converted to a raster image (e.g. png, tiff) at any resolution by
+exporting it from applications such as Inkscape (http://inkscape.org/) or gimp (http://www.gimp.org/).
+Therfore the SVG format can be useful for creating publication quality figures.
+    </PARA>
+    <PARA>
+The other formats available (png, jpeg etc) and are raster or bitmap images.
     </PARA>
   </SECT2>
 
