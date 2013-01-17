@@ -1,6 +1,17 @@
 Version XX
-	Add SVG (scalable vector graphics) support for Artemis, ACT and DNAPlotter.
+
+	Multiple BAM panels can be opened using the bamClone flag this is used with 
+	the -Dbam flag:
+	art -Dbam='/pathToFile/file1.bam,/pathToFile/file2.bam' -DbamClone=n  
+	(where n is an integer greater than 1). All BAM files are then shown in	each 
+	panel. Alternatively the following will open BAM files in separate panels
+	(using -Dbam[1,2,3...]):
+	art -Dbam1=fileA.bam -Dbam2=fileB.bam
 	
+	Add SVG (scalable vector graphics) support for Artemis, ACT and DNAPlotter.
+
+	Option added to adjust VCF row height.
+		
 	Add support for indexed user graphs using tabix. For example file.plot is a tab
 	delimited file with column 1 containing the sequence name and column 2 the
 	positions:

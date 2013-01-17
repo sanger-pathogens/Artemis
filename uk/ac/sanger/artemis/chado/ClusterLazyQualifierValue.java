@@ -388,17 +388,23 @@ public class ClusterLazyQualifierValue implements LazyQualifierValue
     if(!subjectFeature.getCvTerm().getName().equals("gene") ||
        !subjectFeature.getCvTerm().getName().equals("pseudogene"))
     {
-      Feature parent = getParentFeature(subjectFeature);
-
-      if(parent.getCvTerm().getName().equals("gene") ||
-         parent.getCvTerm().getName().equals("pseudogene"))
-        geneName = parent.getUniqueName();
-      else if(parent != null)
+      Feature parent = getParentFeature(subjectFeature);  
+      try
       {
-        parent = getParentFeature(parent);
         if(parent.getCvTerm().getName().equals("gene") ||
            parent.getCvTerm().getName().equals("pseudogene"))
           geneName = parent.getUniqueName();
+        else if(parent != null)
+        {
+          parent = getParentFeature(parent);
+          if(parent.getCvTerm().getName().equals("gene") ||
+             parent.getCvTerm().getName().equals("pseudogene"))
+            geneName = parent.getUniqueName();
+        }
+      }
+      catch(NullPointerException npe)
+      {
+        System.err.println(geneName+" parent not found"); 
       }
     }
     return geneName;
