@@ -971,21 +971,25 @@ public class BamView extends JPanel
     laststart = start;
     lastend   = end;
     
-    if(showBaseAlignment)
-	  drawBaseAlignment(g2, seqLength, pixPerBase, start, end);
-	else
-	{
-	  if(isCoverageView(pixPerBase))
-	    drawCoverage(g2,start, end, pixPerBase);
-	  else if(isStackView())  
-	    drawStackView(g2, seqLength, pixPerBase, start, end);
-	  else if(isPairedStackView())
-	    drawPairedStackView(g2, seqLength, pixPerBase, start, end);
-	  else if(isStrandStackView())
-	    drawStrandStackView(g2, seqLength, pixPerBase, start, end);
+    // this needs to be synchronized when cloning BAM window
+    synchronized(this)
+    {
+      if(showBaseAlignment)
+	    drawBaseAlignment(g2, seqLength, pixPerBase, start, end);
 	  else
-	    drawLineView(g2, seqLength, pixPerBase, start, end);
-	}
+	  {
+	    if(isCoverageView(pixPerBase))
+	      drawCoverage(g2,start, end, pixPerBase);
+  	    else if(isStackView())  
+	      drawStackView(g2, seqLength, pixPerBase, start, end);
+	    else if(isPairedStackView())
+	      drawPairedStackView(g2, seqLength, pixPerBase, start, end);
+	    else if(isStrandStackView())
+	      drawStrandStackView(g2, seqLength, pixPerBase, start, end);
+	    else
+	      drawLineView(g2, seqLength, pixPerBase, start, end);
+	  }
+    }
     
     if(isCoverage)
       coveragePanel.repaint();
@@ -2861,21 +2865,7 @@ public class BamView extends JPanel
     {
       public void actionPerformed(ActionEvent e)
       {
-        BamView bamView = new BamView(new Vector<String>(bamList), 
-            null, nbasesInView, entry_edit,
-            feature_display, bases, (JPanel) mainPanel.getParent(), null);
-        bamView.getJspView().getVerticalScrollBar().setValue(
-            bamView.getJspView().getVerticalScrollBar().getMaximum());
-        getJspView().getVerticalScrollBar().setValue(
-            bamView.getJspView().getVerticalScrollBar().getMaximum());
-
-        int start = getBaseAtStartOfView();
-        setDisplay(start, nbasesInView+start, null);
-        if(feature_display != null)
-        {
-          feature_display.addDisplayAdjustmentListener(bamView);
-          feature_display.getSelection().addSelectionChangeListener(bamView);
-        }
+        openBamView(new Vector<String>(bamList));
       } 
     });
     menu.add(new JSeparator());
@@ -3179,7 +3169,7 @@ public class BamView extends JPanel
     }
     else if(jspView != null)
     {
-      if(isCoverageView(pixPerBase) && nbasesInView >= MAX_BASES)
+      if(!isCoverageView(pixPerBase) && nbasesInView >= MAX_BASES)
       {
         cbLastSelected = getSelectedCheckBoxMenuItem();
         cbCoverageView.setSelected(true);
@@ -3503,6 +3493,28 @@ public class BamView extends JPanel
     {
     }
     return null;
+  }
+  
+  /**
+   * Open another BamView window
+   */
+  public void openBamView(final List<String> bamsList)
+  {
+    BamView bamView = new BamView(bamsList, 
+        null, nbasesInView, entry_edit,
+        feature_display, bases, (JPanel) mainPanel.getParent(), null);
+    bamView.getJspView().getVerticalScrollBar().setValue(
+        bamView.getJspView().getVerticalScrollBar().getMaximum());
+    getJspView().getVerticalScrollBar().setValue(
+        bamView.getJspView().getVerticalScrollBar().getMaximum());
+
+    int start = getBaseAtStartOfView();
+    setDisplay(start, nbasesInView+start, null);
+    if(feature_display != null)
+    {
+      feature_display.addDisplayAdjustmentListener(bamView);
+      feature_display.getSelection().addSelectionChangeListener(bamView);
+    }
   }
   
   /**
