@@ -835,11 +835,11 @@ public class UserDataAlgorithm extends BaseAlgorithm
     return false;
   }
   
-  public void readIndexValues(Entry seqEntry, int start, int end)
+  public void readIndexValues(boolean recalculate_flag, Entry seqEntry, int start, int end)
   {
     if(start<1)
       start = 1;
-    idxReader.readValuesForRange(seqEntry, start, end);
+    idxReader.readValuesForRange(recalculate_flag, seqEntry, start, end);
   }
   
   class Wiggle
@@ -928,19 +928,21 @@ public class UserDataAlgorithm extends BaseAlgorithm
 
     /**
      * Read the values in a range
+     * @param recalculate_flag
      * @param seqEntry - sequence entry
      * @param start - start base
      * @param end   - end base
      */
-    private void readValuesForRange(Entry seqEntry, int start, int end)
+    private void readValuesForRange(boolean recalculate_flag, Entry seqEntry, int start, int end)
     {
-      if(end <= start || (start == this.sbeg && end == this.send))
+      if(!recalculate_flag && (end <= start || (start == this.sbeg && end == this.send)) )
         return;
 
       this.sbeg = start;
       this.send = end;
       rvalues = new float[end-start+1][getNumberOfValues()];
       final String r = getReferenceName(seqEntry)+":"+start+"-"+end;
+
       try
       {
         final TabixReader.Iterator tbxIt = reader.query(r);
