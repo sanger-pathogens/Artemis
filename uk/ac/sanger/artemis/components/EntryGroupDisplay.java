@@ -251,6 +251,16 @@ public class EntryGroupDisplay extends JPanel
             owning_component.getFeatureDisplay().getBases().clearCodonCache();
             owning_component.getFeatureDisplay().needVisibleFeatureVectorUpdate();
             owning_component.repaint();
+            owning_component.getBasePlotGroup().displayAdjustmentValueChanged(
+                new DisplayAdjustmentEvent(
+                    owning_component, 
+                    owning_component.getFeatureDisplay().getFirstVisibleForwardBase(), 
+                    owning_component.getFeatureDisplay().getLastVisibleForwardBase(),
+                    owning_component.getFeatureDisplay().getMaxVisibleBases(),
+                    owning_component.getFeatureDisplay().getDisplayWidth(),
+                    owning_component.getFeatureDisplay().getScaleFactor(),
+                    owning_component.getFeatureDisplay().isRevCompDisplay(),
+                    DisplayAdjustmentEvent.IDX_SEQUENCE_CHANGE));
           }
         };
       }
