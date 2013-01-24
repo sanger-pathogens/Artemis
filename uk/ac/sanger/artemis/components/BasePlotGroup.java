@@ -33,6 +33,7 @@ import java.awt.*;
 import java.util.Vector;
 
 import javax.swing.JComponent;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 /**
@@ -46,6 +47,8 @@ import javax.swing.JPanel;
 public class BasePlotGroup extends JPanel
                            implements DisplayAdjustmentListener 
 {
+  private static final long serialVersionUID = 1L;
+
   /**
    *  The EntryGroup that contains the sequence that this JComponent is
    *  displaying.
@@ -56,7 +59,7 @@ public class BasePlotGroup extends JPanel
    *  This array contains the Algorithm objects of the BasePlot components in
    *  this BasePlotGroup, as set by the constructor.
    **/
-  private final Vector plot_value_producers = new Vector ();
+  private final Vector<BaseAlgorithm> plot_value_producers = new Vector<BaseAlgorithm> ();
 
   /**
    *  The layout object used by this component.
@@ -203,12 +206,40 @@ public class BasePlotGroup extends JPanel
    **/
   public void displayAdjustmentValueChanged(DisplayAdjustmentEvent event) 
   {
+    final StringBuffer closingPlots = new StringBuffer();
     final Component[] children = getComponents();
-
     for(int i = 0 ; i<children.length ; ++i)
     {
       if(children[i] instanceof BasePlot) 
+      {
+        // if this is an indexed sequence change hide any
+        // userplots that are not indexed
+        if(event.getType() == DisplayAdjustmentEvent.IDX_SEQUENCE_CHANGE)
+        {
+          Algorithm alg = ((BasePlot)children[i]).getAlgorithm();
+          if(alg instanceof UserDataAlgorithm &&
+            ((UserDataAlgorithm)alg).FORMAT !=  UserDataAlgorithm.TABIX_INDEXED_FORMAT &&
+            findPlotByAlgorithm(alg).isVisible())
+          {
+            closingPlots.append(alg.getAlgorithmName()+"\n");
+            setVisibleByAlgorithm(alg, false);
+            continue;
+          }
+        }
+
         ((BasePlot)children[i]).displayAdjustmentValueChanged(event);
+      }
+    }
+    
+    if(event.getType() == DisplayAdjustmentEvent.IDX_SEQUENCE_CHANGE &&
+       closingPlots.length() > 0)
+    {
+      JOptionPane.showMessageDialog(this, 
+          closingPlots.toString()+
+          "\nAs the sequence is changing the above user plots are closing as they are\n"+
+          "not indexed with multiple sequences. You can load in the correponding plot\n"+
+          "for the new sequence.", 
+          "Closing Userplot", JOptionPane.INFORMATION_MESSAGE);
     }
   }
 
@@ -231,9 +262,7 @@ public class BasePlotGroup extends JPanel
   {
     for(int i = 0 ; i < plot_value_producers.size() ; ++i) 
     {
-      final BaseAlgorithm this_algorithm =
-        (BaseAlgorithm) plot_value_producers.elementAt(i);
-
+      final BaseAlgorithm this_algorithm = plot_value_producers.elementAt(i);
       if(this_algorithm instanceof CodonUsageAlgorithm) 
         return (CodonUsageAlgorithm) this_algorithm;
     }
@@ -252,8 +281,7 @@ public class BasePlotGroup extends JPanel
 
     for(int i = 0 ; i < plot_value_producers.size () ; ++i) 
     {
-      final BaseAlgorithm this_algorithm =
-        (BaseAlgorithm) plot_value_producers.elementAt (i);
+      final BaseAlgorithm this_algorithm = plot_value_producers.elementAt (i);
       return_array[i] = this_algorithm;
     }
 
@@ -346,14 +374,6 @@ public class BasePlotGroup extends JPanel
   private Selection getSelection() 
   {
     return selection;
-  }
-
-  /**
-   *  Return the EntryGroup object that was passed to the constructor.
-   **/
-  private EntryGroup getEntryGroup() 
-  {
-    return entry_group;
   }
 
   /**

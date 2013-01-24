@@ -100,6 +100,9 @@ public class DisplayAdjustmentEvent extends ChangeEvent
   final static public int CONTIG_REV_COMP_EVENT = 4;
 
   final static public int CONTIG_REORDER = 5;
+  
+  /** change tabix indexed sequence */
+  final static public int IDX_SEQUENCE_CHANGE = 6;
 
   public DisplayAdjustmentEvent(Object source,
                                 int start_base, int end_base,

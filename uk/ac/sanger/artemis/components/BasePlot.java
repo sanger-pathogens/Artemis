@@ -725,7 +725,7 @@ public class BasePlot extends Plot
     if( getAlgorithm() instanceof UserDataAlgorithm && 
         ((UserDataAlgorithm)getAlgorithm()).FORMAT ==  UserDataAlgorithm.TABIX_INDEXED_FORMAT)
     {
-      ((UserDataAlgorithm) getAlgorithm()).readIndexValues(
+      ((UserDataAlgorithm) getAlgorithm()).readIndexValues(recalculate_flag,
           entryGroup.getSequenceEntry(), getStart(), getEnd());
     }
 
