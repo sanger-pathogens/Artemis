@@ -260,7 +260,7 @@ public class EntryGroupDisplay extends JPanel
                     owning_component.getFeatureDisplay().getDisplayWidth(),
                     owning_component.getFeatureDisplay().getScaleFactor(),
                     owning_component.getFeatureDisplay().isRevCompDisplay(),
-                    DisplayAdjustmentEvent.ALL_CHANGE_ADJUST_EVENT));
+                    DisplayAdjustmentEvent.IDX_SEQUENCE_CHANGE));
           }
         };
       }
