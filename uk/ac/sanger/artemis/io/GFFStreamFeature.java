@@ -49,11 +49,8 @@ import uk.ac.sanger.artemis.util.StringVector;
 
 /**
  *  A StreamFeature that thinks it is a GFF feature.
- *
  *  @author Kim Rutherford
- *  @version $Id: GFFStreamFeature.java,v 1.72 2009-08-28 10:33:12 tjc Exp $
  **/
-
 public class GFFStreamFeature extends SimpleDocumentFeature
                        implements DocumentFeature, StreamFeature, ComparableFeature 
 {
@@ -83,6 +80,8 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   private String gffSource;
   /** duplication count */
   private short duplicate = 0;
+  
+  protected static Hashtable<String, Range> contig_ranges;
   private boolean lazyLoaded = false;
   private org.gmod.schema.sequence.Feature chadoLazyFeature;
   private boolean readOnlyFeature = false;
@@ -197,7 +196,6 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       this.setGffSeqName(((GFFStreamFeature)feature).getGffSeqName());
       this.setGffSource(((GFFStreamFeature)feature).getGffSource());
       
-      
       if(isDuplicatedInChado)
       {
         try
@@ -224,7 +222,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
             }
             id_range_store.clear();
             this.id_range_store = (Hashtable) new_id_range_store.clone();
-            
+         
 
             if(getLocation().getRanges().size() > 1)
               uniquename = getSegmentID(getLocation().getRanges());
@@ -291,7 +289,6 @@ public class GFFStreamFeature extends SimpleDocumentFeature
     super(null);
 
     final StringVector line_bits = StringVector.getStrings(line, "\t", true);
-
     if(line_bits.size() < 8) 
       throw new ReadFormatException("invalid GFF line: 8 fields needed " +
                                     "(got " + line_bits.size () +
@@ -302,7 +299,6 @@ public class GFFStreamFeature extends SimpleDocumentFeature
 
     final int start_base;
     final int end_base;
-
     try 
     {
       start_base = Integer.parseInt(start_base_str);
@@ -657,14 +653,13 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   protected static GFFStreamFeature readFromStream(LinePushBackReader stream)
       throws IOException, InvalidRelationException 
   {
-    String line = stream.readLine();
+    final String line = stream.readLine();
     if(line == null) 
       return null;
 
     try
     {
-      final GFFStreamFeature new_feature = new GFFStreamFeature(line);
-      return new_feature;
+      return new GFFStreamFeature(line);
     } 
     catch(ReadFormatException exception) 
     {
@@ -692,8 +687,6 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   {
     throw new ReadOnlyException();
   }
-
-  protected static Hashtable<String, Range> contig_ranges;
 
   /**
    *  Write this Feature to the given stream.
@@ -741,7 +734,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       if(seqname != null && contig_ranges != null &&
          contig_ranges.containsKey(seqname))
       {
-        Range offset_range = (Range)contig_ranges.get(seqname);
+        Range offset_range = contig_ranges.get(seqname);
         start = start-offset_range.getStart()+1;
         end   = end-offset_range.getStart()+1;
       }
@@ -758,7 +751,6 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       }
 
       String frame = ".";
-
       final Qualifier codon_start = getQualifierByName("codon_start");
 
       if(codon_start != null) 
@@ -785,14 +777,12 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       if(source_str == null && source != null)
        source_str = source;
 
-      String key = getKey().getKeyString();
-
-      String translation = getTranslation();
+      final String translation = getTranslation();
       if(translation != null)
         attribute_string = attribute_string + ";" + translation;
       writer.write(seqname + "\t" +
                    source_str + "\t" +
-                   key + "\t" +
+                   getKey().getKeyString() + "\t" +
                    start + "\t" +
                    end + "\t" +
                    score.getValues() .elementAt(0)+ "\t" +
@@ -972,14 +962,14 @@ public class GFFStreamFeature extends SimpleDocumentFeature
         final String this_value;
         if(name.equals("class"))
         {
-          int index = ((String)values.elementAt(value_index)).indexOf("::");
+          int index = values.elementAt(value_index).indexOf("::");
           if(index > -1)
-            this_value = encode(((String)values.elementAt(value_index)).substring(0,index));
+            this_value = encode(values.elementAt(value_index).substring(0,index));
           else
-            this_value = encode((String)values.elementAt(value_index));
+            this_value = encode(values.elementAt(value_index));
         }
         else
-          this_value = encode((String)values.elementAt(value_index));
+          this_value = encode(values.elementAt(value_index));
         
         if(value_index>0)
           buffer.append("%2C");
