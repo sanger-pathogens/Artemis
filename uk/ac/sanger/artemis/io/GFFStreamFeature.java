@@ -60,13 +60,6 @@ public class GFFStreamFeature extends SimpleDocumentFeature
 
   private static org.apache.log4j.Logger logger4j = 
     org.apache.log4j.Logger.getLogger(GFFStreamFeature.class);
-  
-  /**
-   *  This is the line of GFF input that was read to get this
-   *  GFFStreamFeature.  A GFFStreamFeature that was created from multiple GFF
-   *  lines will have a gff_lines variable that contains multiple line.
-   **/
-  StringVector gff_lines = null;
 
   /** store for spliced features containing id and range of each segment */
   private Hashtable<String, Range> id_range_store;
@@ -138,17 +131,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       setKey(key);
       setLocation(location);
       setQualifiers(qualifiers);
-      
-      /*
-      if(getQualifierByName("score") == null)
-        setQualifier(new Qualifier("score", "."));
-      
-      if(getQualifierByName("gff_source") == null)
-        setQualifier(new Qualifier("gff_source", "artemis"));
-      
-      if(getQualifierByName("gff_seqname") == null)
-        setQualifier(new Qualifier("gff_seqname", "."));
-      */
+
       if(getQualifierByName("ID") == null)
       {
         String idStr = null;
@@ -314,48 +297,41 @@ public class GFFStreamFeature extends SimpleDocumentFeature
                                     "(got " + line_bits.size () +
                                     " fields) from: " + line);
 
-    final String start_base_string = ((String)line_bits.elementAt(3)).trim();
-    final String end_base_string   = ((String)line_bits.elementAt(4)).trim();
+    final String start_base_str = line_bits.elementAt(3).trim();
+    final String end_base_str   = line_bits.elementAt(4).trim();
 
     final int start_base;
     final int end_base;
 
     try 
     {
-      start_base = Integer.parseInt(start_base_string);
-      end_base   = Integer.parseInt(end_base_string);
+      start_base = Integer.parseInt(start_base_str);
+      end_base   = Integer.parseInt(end_base_str);
     } 
     catch(NumberFormatException e)
     {
       throw new ReadFormatException("Could not understand the start or end base " +
-                                    "of a GFF feature: " + start_base_string + 
-                                    " " + end_base_string);
+                                    "of a GFF feature: " + start_base_str + 
+                                    " " + end_base_str);
     }
 
     // start of qualifier parsing and setting
     try 
     {
       final boolean complement_flag;
-
-      if(((String)line_bits.elementAt(6)).equals("+")) 
+      if(line_bits.elementAt(6).equals("+")) 
         complement_flag = false;
-      else if(((String)line_bits.elementAt(6)).equals("-"))
+      else if(line_bits.elementAt(6).equals("-"))
         complement_flag = true;
       else 
       {
         // must be unstranded
         complement_flag = false;
-
-        // best we can do
-        //final String note_string = "this feature is unstranded";
-        //setQualifier(new Qualifier("note", note_string));
       }
 
       if(line_bits.size() == 9) 
       {
-        final String rest_of_line = (String)line_bits.elementAt(8); 
-
-        // parse the rest of the line as ACeDB format attributes
+        final String rest_of_line = line_bits.elementAt(8);
         final Hashtable<String, StringVector> attributes = parseAttributes(rest_of_line);
         for(final Enumeration<String> attribute_enum = attributes.keys();
             attribute_enum.hasMoreElements();)
@@ -382,32 +358,20 @@ public class GFFStreamFeature extends SimpleDocumentFeature
         }
       }
 
-      /*if( !((String)line_bits.elementAt(0)).equals("null") )
-      {
-        final Qualifier gff_seqname =
-          new Qualifier("gff_seqname", decode((String)line_bits.elementAt(0)));
-
-        setQualifier(gff_seqname);
-      }*/
-      if( !((String)line_bits.elementAt(0)).equals("null") )
-        setGffSeqName( decode((String)line_bits.elementAt(0)) );
+      if( !line_bits.elementAt(0).equals("null") )
+        setGffSeqName( decode(line_bits.elementAt(0)) );
       
-      final Key key = new Key((String)line_bits.elementAt(2));
-      setKey(key);
-
-      /*final Qualifier source_qualifier =
-        new Qualifier("gff_source", (String)line_bits.elementAt(1));
-      setQualifier(source_qualifier);*/
-      this.setGffSource((String)line_bits.elementAt(1));
+      setKey(new Key(line_bits.elementAt(2)));
+      setGffSource(line_bits.elementAt(1));
       
-      if( !((String)line_bits.elementAt(5)).equals(".") )
+      if( !line_bits.elementAt(5).equals(".") )
       {
         final Qualifier score_qualifier =
-          new Qualifier("score", (String)line_bits.elementAt(5));
+          new Qualifier("score", line_bits.elementAt(5));
         setQualifier(score_qualifier);
       }
       
-      String frame = (String)line_bits.elementAt(7);
+      String frame = line_bits.elementAt(7);
 
       if(frame.equals ("0"))
         frame = "1";
@@ -452,7 +416,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       throw new Error("internal error - unexpected exception: " + e);
     }
 
-    this.gff_lines = new StringVector(line);
+    //this.gff_lines = new StringVector(line);
   }
 
   /**
@@ -520,9 +484,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
     if(id_range_store != null)
     {
       Enumeration<String> enum_ranges = id_range_store.keys();
-      //Iterator it = id_range_store.values().iterator();
       while(enum_ranges.hasMoreElements())
-      //while(it.hasNext())
       {
         String key  = enum_ranges.nextElement();
         Range range = id_range_store.get(key);
@@ -547,7 +509,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
    * @param rv
    * @return
    */
-  public String getSegmentID(RangeVector rv)
+  public String getSegmentID(final RangeVector rv)
   {
     String id = "";
     if(id_range_store != null)
@@ -628,11 +590,9 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   }
   
 
-  
   /**
   * For gff-version 3:
-  * http://song.sourceforge.net/gff3-jan04.shtml
-  *
+  * http://www.sequenceontology.org/gff3.shtml
   * Remove URL escaping rule (e.g. space="%20" or "+")
   */
   public static String decode(String s)
@@ -648,15 +608,13 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       while( (ind = s.indexOf(enc)) > -1)
         s = s.substring(0,ind) + dec + s.substring(ind+enc.length());
     }
-
     return s;
   }
 
   
   /**
   * For gff-version 3:
-  * http://song.sourceforge.net/gff3-jan04.shtml
-  *
+  * http://www.sequenceontology.org/gff3.shtml
   * Add URL escaping rule (e.g. space="%20" or "+")
   */
   public static String encode(String s)
@@ -672,11 +630,10 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       while( (ind = s.indexOf(dec)) > -1 )
         s = s.substring(0,ind) + enc + s.substring(ind+1);
     }
-
     return s;
   }
 
-   
+
   /**
    *  Return the reference of a new copy of this Feature.
    **/
@@ -843,7 +800,6 @@ public class GFFStreamFeature extends SimpleDocumentFeature
                    frame + "\t" +
                    attribute_string + "\n");
     }
-
   }
 
   /**
@@ -899,7 +855,6 @@ public class GFFStreamFeature extends SimpleDocumentFeature
                              "Target", "Gap", "Note", 
                              "Dbxref", "Ontology_term" };
     int count = 0;
-    Qualifier this_qualifier;
     final int names_length = names.length;
 
     if(myId != null)
@@ -911,13 +866,11 @@ public class GFFStreamFeature extends SimpleDocumentFeature
     
     for(int i=1; i<names_length; i++)
     {
-      this_qualifier = (Qualifier)qualifiers.getQualifierByName(names[i]);
+      Qualifier this_qualifier = qualifiers.getQualifierByName(names[i]);
       
       if(this_qualifier == null) 
         continue;
-      
-      // GSV :: see new getQualifierString signature
-      // this qualifier is one of the reserved qualifiers 
+
       final String this_qualifier_str = getQualifierString(this_qualifier, true);
       if(this_qualifier_str == null)
         continue;
@@ -929,11 +882,8 @@ public class GFFStreamFeature extends SimpleDocumentFeature
     }
     
     boolean lname;
-    final int qualifiers_size = qualifiers.size();
-    for(int i = 0; i < qualifiers_size; i++) 
+    for(Qualifier this_qualifier: qualifiers) 
     {
-      this_qualifier = (Qualifier)qualifiers.elementAt(i);
-
       lname = false;
       for(int j=0; j<names_length; j++)
         if(this_qualifier.getName().equals(names[j]))
@@ -946,9 +896,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
           (this_qualifier.getName().equals("history") && System.getProperty("nohistory") != null) )
         continue;
 
-      // GSV :: see new getQualifierString signature
-      // this qualifier is NOT one of the reserved qualifiers 
-      String this_qualifier_str = getQualifierString(this_qualifier, false);
+      final String this_qualifier_str = getQualifierString(this_qualifier, false);
       
       if(this_qualifier_str == null)
         continue;
@@ -987,9 +935,6 @@ public class GFFStreamFeature extends SimpleDocumentFeature
    * @param q the qualifier to represent as a <code>String</code>
    * @param reserved indicate if this is one of the reserved tags or not
    * @return  the <code>String</code> representation
-   * 
-   * GSV: modified the signature to force the caller to declare if this 
-   * qualifier is one of the reserved ones.
    */
   private String getQualifierString(Qualifier q, boolean reserved )
   {
@@ -1004,7 +949,6 @@ public class GFFStreamFeature extends SimpleDocumentFeature
     
     /* 
      * GSV :
-     * 
      * The Bio::FeatureIO perl module falls over if there are Uppercased 
      * attribute names for tags which aren't part of the standard reserved 
      * set. So we lowercase these, since in the specification it says :
@@ -1012,7 +956,6 @@ public class GFFStreamFeature extends SimpleDocumentFeature
      * "All attributes that begin with an uppercase letter are reserved for
      * later use.  Attributes that begin with a lowercase letter can be used
      * freely by applications."
-     * 
      * see http://www.sequenceontology.org/gff3.shtml
      */
     String nameToBuffer = encode(name);
@@ -1073,7 +1016,6 @@ public class GFFStreamFeature extends SimpleDocumentFeature
    *  Adapted from code by Matthew Pocock for the BioJava project.
    *
    *  Modified for gff-version 3.
-   *
    *  @return Return a Hashtable.  Each key is an attribute name and each value
    *    of the Hashtable is a StringVector containing the attribute values.
    *    If the attribute has no value then the Hashtable value will be a zero
@@ -1081,12 +1023,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
    **/
   private Hashtable<String, StringVector> parseAttributes(final String att_val_list) 
   {
-    Hashtable<String, StringVector> attributes = new Hashtable<String, StringVector>();
-
-//  StringTokenizer tokeniser = new StringTokenizer(att_val_list, ";", false);
-//  while(tokeniser.hasMoreTokens()) 
-//  {
-//    final String this_token = tokeniser.nextToken().trim();
+    final Hashtable<String, StringVector> attr = new Hashtable<String, StringVector>();
 
     int ind_start = 0;
     int ind_end;
@@ -1098,17 +1035,10 @@ public class GFFStreamFeature extends SimpleDocumentFeature
 
       final String this_token = decode(att_val_list.substring(ind_start, ind_end).trim());
       ind_start = ind_end+1;
-      
-      /*if(this_token.startsWith("feature_relationship_rank="))
-      {
-        setFeature_relationship_rank( 
-            Integer.parseInt(this_token.substring(26)) );
-        continue;
-      }*/
 
       int index_of_first_space = this_token.indexOf(" ");
        
-      String att_name;
+      final String att_name;
       StringVector att_values = new StringVector();
 
       if( this_token.indexOf("=") > -1 &&
@@ -1207,14 +1137,14 @@ public class GFFStreamFeature extends SimpleDocumentFeature
           att_values.set(0,(String)att_values.get(0));
         }
       }
-      
-      if(attributes.get(att_name) != null) 
-        ((StringVector)attributes.get(att_name)).add(att_values);
+
+      if(attr.get(att_name) != null) 
+        attr.get(att_name).add(att_values);
       else 
-        attributes.put(att_name, att_values);
+        attr.put(att_name, att_values);
     }
 
-    return attributes;
+    return attr;
   }
 
   /**
