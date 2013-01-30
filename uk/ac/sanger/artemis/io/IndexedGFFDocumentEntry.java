@@ -106,15 +106,24 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
       int cnt = 0;
       while( (ln = in.readLine()) != null && ln.startsWith("#"))
       {
+        // ##sequence-region seqid start end
         if(ln.startsWith("##sequence-region "))
         {
           logger4j.debug(ln);
           final String parts[] = ln.split(" ");
 
-          //sequenceNames[cnt++] = parts[1];
-          contigHash.put(parts[1], new IndexContig(parts[1], 1, Integer.parseInt(parts[3]), offset));
-          offset+=Integer.parseInt(parts[3]);
-          cnt++;
+          try
+          {
+            contigHash.put(parts[1], new IndexContig(parts[1], 1, Integer.parseInt(parts[3]), offset));
+            offset+=Integer.parseInt(parts[3]);
+            cnt++;
+          }
+          catch(Exception ae)
+          {
+            contigHash.clear();
+            cnt = 0;
+            break;
+          }
         }
       }
       in.close();
@@ -289,7 +298,12 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
     if(!combinedReference)
     {
       if(contig != null)
-        list.add(contigHash.get(contig));
+      {
+        if(contigHash.get(contig) == null)
+          System.err.println(contig+" not found in "+this.getName());
+        else
+          list.add(contigHash.get(contig));
+      }
       else
         list.add(contigHash.get(sequenceNames[0]));
       return list;
