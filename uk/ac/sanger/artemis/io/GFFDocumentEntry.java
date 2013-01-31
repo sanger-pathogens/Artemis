@@ -623,7 +623,8 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
           continue;
       
         mergeFeatures(splicedSites, new_set, 
-                      (String)(transcript.getQualifierByName("ID").getValues().get(0)));
+                      (String)(transcript.getQualifierByName("ID").getValues().get(0)),
+                      transcript.getLocation().isComplement());
       }
       
       for(int j=0; j<new_set.size(); j++)
@@ -642,14 +643,16 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
   
   private void mergeFeatures(final List<Feature> gffFeatures,
                              final List<Feature> new_set, 
-                             final String transcript_id)
+                             final String transcript_id,
+                             final boolean isComplement)
   {
     final Hashtable<String, Integer> feature_relationship_rank_store = new Hashtable<String, Integer>();
     final Hashtable<String, Range> id_range_store = new Hashtable<String, Range>();
     final RangeVector new_range_vector = new RangeVector();
-    QualifierVector qualifier_vector = new QualifierVector();
+    QualifierVector qualifiers = new QualifierVector();
     Timestamp lasttimemodified = null;
 
+    final Qualifier codon_start = getCodonStart(gffFeatures, isComplement);
     for(int j = 0; j < gffFeatures.size(); j++)
     {
       final GFFStreamFeature this_feature = (GFFStreamFeature)gffFeatures.get(j);
@@ -706,7 +709,7 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
         new_range_vector.add(new_range);
 
       removeInternal(this_feature);
-      qualifier_vector.addAll(this_feature.getQualifiers());
+      qualifiers.addAll(this_feature.getQualifiers());
     }
 
     final GFFStreamFeature first_old_feature = (GFFStreamFeature)gffFeatures.get(0);
@@ -714,10 +717,21 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
     final Location new_location = new Location(new_range_vector,
         first_old_feature.getLocation().isComplement());
 
-    qualifier_vector = mergeQualifiers(qualifier_vector);
+    if(codon_start != null)
+    {
+      QualifierVector tmp_qualifier_vector = new QualifierVector();
+
+      for(Qualifier q: qualifiers)
+        if(!q.getName().equals("codon_start"))
+          tmp_qualifier_vector.addElement(q);
+      qualifiers = tmp_qualifier_vector;
+      qualifiers.setQualifier(codon_start);
+    }
+
+    qualifiers = mergeQualifiers(qualifiers);
 
     final GFFStreamFeature new_feature = new GFFStreamFeature(first_old_feature
-        .getKey(), new_location, qualifier_vector);
+        .getKey(), new_location, qualifiers);
 
     if(lasttimemodified != null)
       new_feature.setLastModified(lasttimemodified);
@@ -887,6 +901,43 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
           .getKey(), new_location, qualifier_vector);
       forcedAdd(new_feature);
     }
+  }
+  
+  /**
+   * Get the phase/codon_start for the first feature segment
+   * @param gffFeatures
+   * @param isComplement
+   * @return
+   */
+  private Qualifier getCodonStart(final List<Feature> gffFeatures, final boolean isComplement)
+  {
+    int fstart = (isComplement ? 0 : Integer.MAX_VALUE);
+    Feature firstFeature = null;
+    for(Feature f: gffFeatures)
+    {
+      final GFFStreamFeature this_feature = (GFFStreamFeature)f;
+      if(isComplement && this_feature.getFirstBase() > fstart)
+      {
+        firstFeature = this_feature;
+        fstart = this_feature.getFirstBase();
+      }
+      else if(!isComplement && this_feature.getFirstBase() < fstart)
+      {
+        firstFeature = this_feature;
+        fstart = this_feature.getFirstBase();
+      }
+    }
+    
+    if(firstFeature == null)
+      return null;
+    try
+    {
+      Qualifier codon_start = firstFeature.getQualifierByName("codon_start");
+      if(codon_start != null)
+        return codon_start.copy();
+    }
+    catch (InvalidRelationException e){}
+    return null;
   }
 
   /**

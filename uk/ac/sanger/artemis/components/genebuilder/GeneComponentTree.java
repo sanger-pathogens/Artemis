@@ -181,6 +181,8 @@ public class GeneComponentTree extends JTree
       for(int j=0; j<utrs.size(); j++)
       {
         Feature utr = (Feature)utrs.get(j);
+        if(utr.getQualifierByName("ID") == null)
+          continue;
         String utr_id = (String)utr.getQualifierByName("ID").getValues().get(0);
         transcript_node.add(new DefaultMutableTreeNode(utr_id));
       }    
