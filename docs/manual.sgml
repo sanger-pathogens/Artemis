@@ -13,6 +13,7 @@
 <!ENTITY acknowledgments SYSTEM "acknowledgments.sgml">
 <!ENTITY copyright SYSTEM "copyright.sgml">
 <!ENTITY concepts SYSTEM "concepts.sgml">
+<!ENTITY filetypes SYSTEM "filetypes.sgml">
 <!ENTITY views-popup SYSTEM "views_popup.sgml">
 <!ENTITY views-scrolling SYSTEM "views_scrolling.sgml">
 <!ENTITY views-scale SYSTEM "views_scale.sgml">
@@ -47,7 +48,7 @@
     </PRODUCTNAME>
     <PUBDATE>22 February 1999</PUBDATE>
     <COPYRIGHT>
-      <YEAR>1999-2012</YEAR>
+      <YEAR>1999-2013</YEAR>
       <HOLDER>Genome Research Limited</HOLDER>
     </COPYRIGHT>
     <LEGALNOTICE>
@@ -74,7 +75,7 @@
     </LEGALNOTICE>
     <ABSTRACT>
       <PARA>
-This document describes release 14 of &art; a DNA sequence viewer and
+This document describes release 15 of &art; a DNA sequence viewer and
 sequence annotation tool.
       </PARA>
     </ABSTRACT>
