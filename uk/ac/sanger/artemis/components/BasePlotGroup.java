@@ -35,6 +35,7 @@ import java.util.Vector;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSplitPane;
 
 /**
  *  This is a super-component containing several BasePlot components, each of
@@ -208,6 +209,7 @@ public class BasePlotGroup extends JPanel
   {
     final StringBuffer closingPlots = new StringBuffer();
     final Component[] children = getComponents();
+    int nvis = 0;
     for(int i = 0 ; i<children.length ; ++i)
     {
       if(children[i] instanceof BasePlot) 
@@ -222,11 +224,13 @@ public class BasePlotGroup extends JPanel
             findPlotByAlgorithm(alg).isVisible())
           {
             closingPlots.append(alg.getAlgorithmName()+"\n");
-            setVisibleByAlgorithm(alg, false);
+            children[i].setVisible(false);
             continue;
           }
         }
 
+        if(children[i].isVisible())
+          nvis++;
         ((BasePlot)children[i]).displayAdjustmentValueChanged(event);
       }
     }
@@ -234,9 +238,16 @@ public class BasePlotGroup extends JPanel
     if(event.getType() == DisplayAdjustmentEvent.IDX_SEQUENCE_CHANGE &&
        closingPlots.length() > 0)
     {
+      if(nvis == 0 && getParent() instanceof JSplitPane)
+      {
+        JSplitPane splitPane = (JSplitPane) getParent();
+        splitPane.setDividerSize(0);
+        splitPane.setDividerLocation(0);
+      }
+
       JOptionPane.showMessageDialog(this, 
           closingPlots.toString()+
-          "\nAs the sequence is changing the above user plots are closing as they are\n"+
+          "\nAs the sequence is changing the above user plot(s) are closing as they are\n"+
           "not indexed with multiple sequences. You can load in the correponding plot\n"+
           "for the new sequence.", 
           "Closing Userplot", JOptionPane.INFORMATION_MESSAGE);
