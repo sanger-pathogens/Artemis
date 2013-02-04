@@ -825,7 +825,7 @@ public class EntryEdit extends JFrame
          destination_type, true); 
   }
   
-  void saveEntry(final Entry entry,
+  private void saveEntry(final Entry entry,
       final boolean include_diana_extensions,
       final boolean ask_for_name, final boolean keep_new_name,
       final int destination_type, final boolean useSwingWorker) 
@@ -2246,35 +2246,27 @@ public class EntryEdit extends JFrame
    **/
   private void readAnEntry(final EntrySource this_source)
   {
-    SwingWorker entryWorker = new SwingWorker()
+    try
     {
-      public Object construct()
-      {
-        try
-        {
-          final Entry new_entry = this_source.getEntry(entry_group.getBases(),
-                                                       true);
-          if(new_entry != null)
-            getEntryGroup().add(new_entry);
-        }
-        catch(final OutOfRangeException e)
-        {
-          new MessageDialog(EntryEdit.this,
-                         "read failed: one of the features " +
-                         "in the entry has an out of " +
-                         "range location: " +
-                         e.getMessage());
-        }
-        catch(final IOException e)
-        {
-          new MessageDialog(EntryEdit.this,
-                         "read failed due to an IO error: " +
-                         e.getMessage());
-        }
-        return null;
-      }
-    };
-    entryWorker.start();
+      final Entry new_entry = this_source.getEntry(entry_group.getBases(),
+                                                   true);
+      if(new_entry != null)
+        getEntryGroup().add(new_entry);
+    }
+    catch(final OutOfRangeException e)
+    {
+      new MessageDialog(EntryEdit.this,
+                     "read failed: one of the features " +
+                     "in the entry has an out of " +
+                     "range location: " +
+                     e.getMessage());
+    }
+    catch(final IOException e)
+    {
+      new MessageDialog(EntryEdit.this,
+                     "read failed due to an IO error: " +
+                     e.getMessage());
+    }
   }
 
 
