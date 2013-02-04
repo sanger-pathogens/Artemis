@@ -79,6 +79,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 
 import uk.ac.sanger.artemis.EntryGroup;
 import uk.ac.sanger.artemis.editor.BrowserControl;
@@ -1915,74 +1916,49 @@ public class DNADraw extends ScrollPanel
     userDraw.add(thisGraphDraw);
   }
   
-  public static void main(String arg[])
+  public static void main(final String arg[])
   {
-    final Wizard wiz;
-    
-    if(arg.length > 0 && arg[0].equals("-t"))
-      wiz = new Wizard(arg[1]);
-    else
-      wiz = new Wizard((DNADraw)null);
-    final DNADraw dna = wiz.getDNADraw();
-    
-    //
-    final String version = dna.getVersion();
-    final JFrame f = new JFrame();
-    if(version == null)
-      f.setTitle("DNAPlotter");
-    else
-      f.setTitle("DNAPlotter :: "+version);
-      
-    Dimension d = f.getToolkit().getScreenSize();
-
-    jsp.setViewportView(dna);
-    jsp.getViewport().setBackground(Color.white);
-    f.getContentPane().add(jsp);
-    f.setJMenuBar(dna.createMenuBar());
-    
-    //dna.add(new Graph(dna));
-    f.pack();
-    f.setLocation(((int)d.getWidth()-f.getWidth())/4,
-                  ((int)d.getHeight()-f.getHeight())/2);
-
-    
-    //dna.add(dna.new BlockPanel(dna));
-    f.setVisible(true);
-    
-    if(wiz.getWorkerGraph() != null)
-      wiz.getWorkerGraph().start();
-  }
-  
-  /*class BlockPanel extends JPanel
-  {
-    private DNADraw dna;
-    BlockPanel(DNADraw dna)
+    SwingUtilities.invokeLater(new Runnable() 
     {
-      super();
-      this.dna = dna;
-      setOpaque(false);
-      setPreferredSize(dna.getPreferredSize());
-    }
-    
-    protected void paintComponent(Graphics g)
-    {
-      Hashtable h = dna.getFeaturePoints();
-      Enumeration he = h.keys();
-      Graphics2D g2 = (Graphics2D)g;
-      g2.setTransform(original);
-      g2.setStroke(new BasicStroke(1.f));
-      while(he.hasMoreElements())
+      public void run() 
       {
-        String label = (String) he.nextElement();
-        Point[] p = (Point[])h.get(label);
+        final Wizard wiz;
         
-        g2.setColor(Color.DARK_GRAY);
-        g2.drawLine(p[0].x,p[0].y,p[1].x,p[1].y);
-        g2.drawLine(p[1].x,p[1].y,p[2].x,p[2].y);
-        //g2.drawString(label, p[0].x,p[0].y);
+        if(arg.length > 0 && arg[0].equals("-t"))
+          wiz = new Wizard(arg[1]);
+        else
+          wiz = new Wizard((DNADraw)null);
+        final DNADraw dna = wiz.getDNADraw();
+        
+        //
+        final String version = dna.getVersion();
+        final JFrame f = new JFrame();
+        if(version == null)
+          f.setTitle("DNAPlotter");
+        else
+          f.setTitle("DNAPlotter :: "+version);
+          
+        Dimension d = f.getToolkit().getScreenSize();
+
+        jsp.setViewportView(dna);
+        jsp.getViewport().setBackground(Color.white);
+        f.getContentPane().add(jsp);
+        f.setJMenuBar(dna.createMenuBar());
+        
+        //dna.add(new Graph(dna));
+        f.pack();
+        f.setLocation(((int)d.getWidth()-f.getWidth())/4,
+                      ((int)d.getHeight()-f.getHeight())/2);
+
+        
+        //dna.add(dna.new BlockPanel(dna));
+        f.setVisible(true);
+        
+        if(wiz.getWorkerGraph() != null)
+          wiz.getWorkerGraph().start();
       }
-    }
-  }*/
+    });
+  }
 
 }
 
