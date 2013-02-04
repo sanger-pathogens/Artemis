@@ -1075,35 +1075,27 @@ public class MultiComparator extends JFrame
   private void readAnEntry(final EntrySource this_source,
                            final EntryGroup entry_group)
   {
-    SwingWorker entryWorker = new SwingWorker()
+    try
     {
-      public Object construct()
-      {
-        try
-        {
-          final Entry new_entry = this_source.getEntry(entry_group.getBases(),
-                                                       true);
-          if(new_entry != null)
-            entry_group.add(new_entry);
-        }
-        catch(final OutOfRangeException e)
-        {
-          new MessageDialog(MultiComparator.this,
-                         "read failed: one of the features " +
-                         "in the entry has an out of " +
-                         "range location: " +
-                         e.getMessage());
-        }
-        catch(final IOException e)
-        {
-          new MessageDialog(MultiComparator.this,
-                         "read failed due to an IO error: " +
-                         e.getMessage());
-        }
-        return null;
-      }
-    };
-    entryWorker.start();
+      final Entry new_entry = this_source.getEntry(entry_group.getBases(),
+                                                   true);
+      if(new_entry != null)
+        entry_group.add(new_entry);
+    }
+    catch(final OutOfRangeException e)
+    {
+      new MessageDialog(MultiComparator.this,
+             "read failed: one of the features " +
+             "in the entry has an out of " +
+             "range location: " +
+             e.getMessage());
+    }
+    catch(final IOException e)
+    {
+      new MessageDialog(MultiComparator.this,
+             "read failed due to an IO error: " +
+             e.getMessage());
+    }
   }
 
   /**
