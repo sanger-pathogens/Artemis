@@ -358,7 +358,8 @@ public class GraphMenu extends JMenu
       splitPane.setDividerLocation(0);
     }
     else if( ( thisGraphOn && nvisible == 1 ) ||
-             (usageDisplayed && nvisible == 2) )
+             (usageDisplayed && nvisible == 2)  ||
+             (splitPane.getDividerLocation() == 0))
     {
       splitPane.setDividerSize(3);
       splitPane.setDividerLocation(0.2d);

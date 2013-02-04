@@ -742,47 +742,39 @@ public class ArtemisMain extends Splash
    **/
   private void getEntryEditFromEntrySource(final EntrySource entry_source) 
   {
-    SwingWorker entryWorker = new SwingWorker()
-    { 
-      EntryEdit entry_edit;
-      public Object construct()
+    try
+    {
+      final Entry entry = entry_source.getEntry(true);
+      if(entry == null)
+        return ;
+
+      final EntryGroup entry_group =
+           new SimpleEntryGroup(entry.getBases());
+      entry_group.add(entry);
+
+      SwingUtilities.invokeLater(new Runnable() 
       {
-        try
+        public void run() 
         {
-          final Entry entry = entry_source.getEntry(true);
-          if(entry == null)
-            return null;
-
-          final EntryGroup entry_group =
-              new SimpleEntryGroup(entry.getBases());
-
-          entry_group.add(entry);
-          entry_edit = new EntryEdit(entry_group);
-        }
-        catch(OutOfRangeException e)
-        {
-          new MessageDialog(ArtemisMain.this, "read failed: one of the features in " +
-                     " the entry has an out of range " +
-                     "location: " + e.getMessage());
-        }
-        catch(NoSequenceException e)
-        {
-          new MessageDialog(ArtemisMain.this, "read failed: entry contains no sequence");
-        }
-        catch(IOException e)
-        {
-          new MessageDialog(ArtemisMain.this, "read failed due to IO error: " + e);
-        }
-        return null;
-      }
-
-      public void finished()
-      {
-        if(entry_edit != null)
+          EntryEdit entry_edit = new EntryEdit(entry_group);
           entry_edit.setVisible(true);
-      }
-    };
-    entryWorker.start();
+        }
+      });
+    }
+    catch(OutOfRangeException e)
+    {
+      new MessageDialog(ArtemisMain.this, "read failed: one of the features in " +
+               " the entry has an out of range " +
+               "location: " + e.getMessage());
+    }
+    catch(NoSequenceException e)
+    {
+      new MessageDialog(ArtemisMain.this, "read failed: entry contains no sequence");
+    }
+    catch(IOException e)
+    {
+      new MessageDialog(ArtemisMain.this, "read failed due to IO error: " + e);
+    }
   }
   
   /**
