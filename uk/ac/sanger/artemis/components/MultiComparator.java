@@ -768,7 +768,7 @@ public class MultiComparator extends JFrame
    **/ 
   private void printMenu()
   {
-    JMenuItem printImage = new JMenuItem("Save As Image Files (png/jpeg)...");
+    JMenuItem printImage = new JMenuItem("Save As Image Files (png/svg)...");
     printImage.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
