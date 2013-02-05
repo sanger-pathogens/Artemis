@@ -621,13 +621,10 @@ public class MultiComparator extends JFrame
     /*final JMenu write_menu = new JMenu("Write");
     write_menu.setMnemonic(KeyEvent.VK_W);
     menu_bar.add(write_menu);*/
-    JMenu run_menu = null;
-    if(Options.isUnixHost()) 
-    {
-      run_menu = new JMenu("Run");
-      run_menu.setMnemonic(KeyEvent.VK_R);
-      menu_bar.add(run_menu);
-    }
+    JMenu run_menu = new JMenu("Run");
+    run_menu.setMnemonic(KeyEvent.VK_R);
+    menu_bar.add(run_menu);
+   
     final JMenu graph_menu = new JMenu("Graph");
     graph_menu.setMnemonic(KeyEvent.VK_G);
     menu_bar.add(graph_menu);
@@ -705,14 +702,10 @@ public class MultiComparator extends JFrame
                       sub_menu_name);
         create_menu.add(this_create_menu);
 
-        if(Options.isUnixHost()) 
-        {
-          final RunMenu this_run_menu =
-            new RunMenu(this,
-                         getSelectionArray()[i],
+        final RunMenu this_run_menu =
+            new RunMenu(this, getSelectionArray()[i],
                          sub_menu_name);
-          run_menu.add(this_run_menu);
-        }
+        run_menu.add(this_run_menu);
       }
 
       final GraphMenu this_graph_menu =
