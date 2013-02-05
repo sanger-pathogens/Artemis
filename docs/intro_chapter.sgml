@@ -116,6 +116,7 @@ LINKEND="RUNNINGPC"> .
     </SECT2>
   </SECT1>
 
+&filetypes;
 &concepts;
 
   <SECT1 ID="CONTRIBUTIONS">
