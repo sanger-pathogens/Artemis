@@ -69,6 +69,7 @@ import javax.swing.JOptionPane;
     
     protected static boolean isMac()
     {
-      return System.getProperty("mrj.version") != null;
+      return System.getProperty("mrj.version") != null ||
+             System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0;
     }
   }
