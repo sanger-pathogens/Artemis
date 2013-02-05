@@ -25,6 +25,7 @@ LINKEND="CONCEPTS-ACTIVEENTRY">) and will be the new default entry (see <XREF
 LINKEND="CONCEPTS-DEFAULTENTRY">).
     </PARA>
     <PARA>
+See <XREF LINKEND="FILETYPES">.
 This function only reads the feature section of the input file - the sequence
 (if any) is ignored.
     </PARA>
