@@ -324,7 +324,8 @@ abstract public class Splash extends JFrame
   
   private boolean isMac() 
   {
-    return System.getProperty("mrj.version") != null;
+    return System.getProperty("mrj.version") != null ||
+           System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0;
   }
   
   private boolean isWindows() 
