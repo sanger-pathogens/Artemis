@@ -1380,8 +1380,9 @@ called "ambiguous bases".
 This menu is primarily used for running external programs on UNIX.
 Additionally there are menu options to send sequences from selected
 features to the <ULINK URL="http://blast.ncbi.nlm.nih.gov/Blast.cgi"
-TYPE="external">NCBI web BLAST</ULINK> and <ULINK URL="http://pfam.sanger.ac.uk/"
-TYPE="external">Pfam</ULINK>.
+TYPE="external">NCBI web BLAST</ULINK>, <ULINK URL="http://pfam.sanger.ac.uk/"
+TYPE="external">Pfam</ULINK> and <ULINK URL="http://rfam.sanger.ac.uk/"
+TYPE="external">Rfam</ULINK>.
   </PARA>
   <PARA>
 Once configured correctly, running an external
