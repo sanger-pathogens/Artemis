@@ -1623,6 +1623,9 @@ foo	5	5	22	121	28      25      419
 foo	6	30	36	124	32      30      412
 ...
 </SYNOPSIS>
+Indexed user plots can be used with indexed FASTA sequences and indexed GFF files <![ %artemis-only; [ (see 
+<XREF LINKEND="FILETYPES">)]]>. The sequence can then be changed using the drop down menu in
+the Entry toolbar and this will change the graph data to the selected sequence. 
       </PARA>
       </LISTITEM>
 
