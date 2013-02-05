@@ -57,8 +57,8 @@ LINKEND="CONCEPTS-ACTIVEENTRY">.)
   <TITLE>The Select Menu</TITLE>
   <PARA>
 The items in this menu are used to modify the current selection (see <XREF
-LINKEND="CONCEPTS-SELECTION">).  &art;<![ %artemis-only; [ A short summary of
-the current selection is shown at the top of the main window (see <XREF
+LINKEND="CONCEPTS-SELECTION">).  &art;<![ %artemis-only; [ shows a short summary of
+the current selection at the top of the main window (see <XREF
 LINKEND="MAINWINDOW-BREAKDOWN-SELECTIONSTATUS"> for details).]]>.
   </PARA>
 
