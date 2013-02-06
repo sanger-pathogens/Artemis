@@ -144,7 +144,8 @@ public class DocumentEntryAutosaveThread extends Thread {
 
   private boolean isMac() 
   {
-    return System.getProperty("mrj.version") != null;
+    return System.getProperty("mrj.version") != null ||
+           System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0;
   }
   
   /**
