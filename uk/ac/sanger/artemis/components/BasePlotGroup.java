@@ -248,7 +248,7 @@ public class BasePlotGroup extends JPanel
       JOptionPane.showMessageDialog(this, 
           closingPlots.toString()+
           "\nAs the sequence is changing the above user plot(s) are closing as they are\n"+
-          "not indexed with multiple sequences. You can load in the correponding plot\n"+
+          "not indexed with multiple sequences. You can load in the corresponding plot\n"+
           "for the new sequence.", 
           "Closing Userplot", JOptionPane.INFORMATION_MESSAGE);
     }
