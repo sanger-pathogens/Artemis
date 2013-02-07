@@ -705,10 +705,9 @@ public class BamView extends JPanel
               
               for(int i=abeg; i<aend; i++)
               {
-                
                 int bin = ((i-start)/binSize)-1;
                 if(bin < 0)
-                  bin = 0;
+                  continue;
                 else if(bin > nbins-1)
                   bin = nbins-1;
                 cov[bin]++;
