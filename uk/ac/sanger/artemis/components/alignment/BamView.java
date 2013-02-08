@@ -3913,6 +3913,7 @@ public class BamView extends JPanel
     }
     catch (Exception e)
     {
+      logger4j.warn("WARN: BamView.getMate() :: "+e.getMessage());
       e.printStackTrace();
     }
     return mate;
