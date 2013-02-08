@@ -52,6 +52,7 @@ using these file types). This can take a path name to a file or an HTTP address.
       </PARA>
     </SECT2>
 
+<![ %artemis-only; [ 
     <SECT2 ID="JVM-NG2">
        <TITLE><LITERAL>-Dbam1=pathToFile1 -Dbam2=pathToFile2</LITERAL></TITLE>
       <PARA>
@@ -74,6 +75,7 @@ Multiple BAM panels can be opened using the bamClone flag this is used with the 
 (where n is an integer greater than 1). All BAM files are then shown in	each panel.
       </PARA>
     </SECT2>
+]]>
 
     <SECT2 ID="JVM-CHADO">
        <TITLE><LITERAL>-Dchado="hostname:port/database?username"</LITERAL></TITLE>
