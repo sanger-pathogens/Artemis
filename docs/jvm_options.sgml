@@ -34,6 +34,15 @@ This sets the base position that &prog; opens at, e.g. 10000.
 This can be used to open userplots from the command line. The paths are comma
 separated to open multiple plots (-Duserplot='/pathToFile/userPlot1,/pathToFile/userPlot2').
       </PARA>
+
+<![ %act-only; [
+      <PARA>
+In ACT numbers are used to associate the file with a particular sequence. For example to add a
+userplot to the second sequence:
+</PARA>
+<PARA><COMMAND>act -Duserplot2=/pathToFile/userPlot</COMMAND></PARA>
+
+]]>
     </SECT2>
 
     <SECT2 ID="JVM-LOGUSERPLOT">
@@ -44,6 +53,7 @@ This is the same as the above userplot option except that the log transform of t
     </SECT2>
 
 
+<![ %artemis-only; [ 
     <SECT2 ID="JVM-NG">
        <TITLE><LITERAL>-Dbam=pathToFile</LITERAL></TITLE>
       <PARA>
@@ -52,7 +62,6 @@ using these file types). This can take a path name to a file or an HTTP address.
       </PARA>
     </SECT2>
 
-<![ %artemis-only; [ 
     <SECT2 ID="JVM-NG2">
        <TITLE><LITERAL>-Dbam1=pathToFile1 -Dbam2=pathToFile2</LITERAL></TITLE>
       <PARA>
@@ -74,6 +83,19 @@ Multiple BAM panels can be opened using the bamClone flag this is used with the 
       <PARA>
 (where n is an integer greater than 1). All BAM files are then shown in	each panel.
       </PARA>
+    </SECT2>
+]]>
+
+<![ %act-only; [
+    <SECT2 ID="JVM-NG2">
+       <TITLE><LITERAL>-Dbam1=pathToFile1 -Dbam2=pathToFile2</LITERAL></TITLE>
+      <PARA>
+This can be used to open BAM files and/or VCF/BCF files (see <XREF LINKEND="FILEMENU-READ-BAM"> for more about the
+using these file types). This can take a path name to a file or an HTTP address.
+Numbers are used to associate the file with a particular sequence. For example to add a BAM to the 
+first (top) sequence in ACT:
+</PARA>
+<PARA><COMMAND>act -Dbam1=/pathToFile/file.bam </COMMAND></PARA>
     </SECT2>
 ]]>
 
