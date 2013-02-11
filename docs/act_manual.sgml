@@ -24,6 +24,7 @@
 <!ENTITY options-menu SYSTEM "options_menu.sgml">
 <!ENTITY nextgen SYSTEM "next_gen.sgml">
 
+<!ENTITY % act-only "INCLUDE">
 <!ENTITY % artemis-only "IGNORE">
 
 <!ENTITY prog "ACT">
