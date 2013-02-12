@@ -222,7 +222,7 @@ old and new window.
   </SECT2>
 
   <SECT2 ID="FILEMENU-IMAGE-WINDOW">
-    <TITLE>Save As Image Files (png/jpeg/svg)</TITLE>
+    <TITLE>Save As Image Files (png/svg)</TITLE>
     <PARA>
 Print out the contents of the current window. All or some of the
 window panels can be selected for printing to an image file. 
