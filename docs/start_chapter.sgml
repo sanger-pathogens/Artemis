@@ -98,7 +98,7 @@ lines that look like this:
   <SECT1 ID="RUNNINGPC">
     <TITLE>Running &prog; on Windows Systems</TITLE>
     <PARA>
-On systems with Java 1.5 (or above) installed &prog; can be
+On systems with Java 1.6 (or above) installed &prog; can be
 started by double clicking on the artemis.jar icon.
     </PARA>
   </SECT1>
