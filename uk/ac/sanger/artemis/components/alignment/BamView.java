@@ -444,7 +444,12 @@ public class BamView extends JPanel
       {
         final File cramIndexFile = new File(bam + ".crai");
         if(cramIndexFile.exists())
+        {
+          logger4j.debug(
+                 "ERROR: CRAM INDEX FILE ("+cramIndexFile.getName()+ 
+                 ") EXPECTING A BAM INDEX FILE (USE THIS OPTION --bam-style-index) ");
           return cramIndexFile;
+        }
       }
     }
 
@@ -494,6 +499,9 @@ public class BamView extends JPanel
     
     if(feature_display != null && bam.endsWith("cram"))
     {
+      // set log level
+      net.sf.picard.util.Log.setGlobalLogLevel( 
+          net.sf.picard.util.Log.LogLevel.ERROR);
       final CRAMReferenceSequenceFile ref = new CRAMReferenceSequenceFile(
         feature_display.getEntryGroup().getSequenceEntry(), this);
       
