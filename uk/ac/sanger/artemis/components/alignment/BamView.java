@@ -444,7 +444,12 @@ public class BamView extends JPanel
       {
         final File cramIndexFile = new File(bam + ".crai");
         if(cramIndexFile.exists())
+        {
+          logger4j.debug(
+                 "ERROR: CRAM INDEX FILE ("+cramIndexFile.getName()+ 
+                 ") EXPECTING A BAM INDEX FILE (USE THIS OPTION --bam-style-index) ");
           return cramIndexFile;
+        }
       }
     }
 
@@ -494,6 +499,9 @@ public class BamView extends JPanel
     
     if(feature_display != null && bam.endsWith("cram"))
     {
+      // set log level
+      net.sf.picard.util.Log.setGlobalLogLevel( 
+          net.sf.picard.util.Log.LogLevel.ERROR);
       final CRAMReferenceSequenceFile ref = new CRAMReferenceSequenceFile(
         feature_display.getEntryGroup().getSequenceEntry(), this);
       
@@ -1142,7 +1150,7 @@ public class BamView extends JPanel
    * @param pixPerBase
    * @param ypos
    */
-  private void drawSequence(Graphics2D g2, BamViewRecord bamViewRecord, 
+  private void drawSequence(final Graphics2D g2, final BamViewRecord bamViewRecord, 
                             int ypos, String refSeq, int refSeqStart)
   {
     SAMRecord samRecord = bamViewRecord.sam;
@@ -1156,8 +1164,8 @@ public class BamView extends JPanel
     int xpos;
     int len    = 0;
     int refPos = 0;
-    String readSeq = samRecord.getReadString();
-    int offset = getSequenceOffset(samRecord.getReferenceName());
+    final String readSeq = samRecord.getReadString();
+    final int offset = getSequenceOffset(samRecord.getReferenceName());
 
     byte[] phredQuality = null;
     if(baseQualityColour.isSelected())
@@ -1181,7 +1189,7 @@ public class BamView extends JPanel
 
         if(isSNPs && refSeq != null && refPos > 0 && refPos < refSeq.length())
         { 
-          if(readSeq.charAt(readPos) != refSeq.charAt(refPos))
+          if(Character.toUpperCase(readSeq.charAt(readPos)) != refSeq.charAt(refPos))
             g2.setColor(Color.red);
           else
             g2.setColor(col);
@@ -2221,7 +2229,7 @@ public class BamView extends JPanel
         {
           int readPos = readStart-1+j;
           int refPos  = refStart+j;
-          if (Character.toUpperCase(refSeq[refPos-rbeg]) != readSeq[readPos])
+          if (Character.toUpperCase(refSeq[refPos-rbeg]) != Character.toUpperCase( (char)readSeq[readPos]) )
           {
             if(snps == null)
               snps = new ArrayList<Integer>();
