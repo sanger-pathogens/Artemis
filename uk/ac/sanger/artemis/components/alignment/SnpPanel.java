@@ -169,7 +169,7 @@ import net.sf.samtools.SAMRecord;
      * @param pixPerBase
      * @param ypos
      */
-    protected void addRecord(SAMRecord thisRead, int offset)
+    protected void addRecord(final SAMRecord thisRead, int offset)
     {
       if(snpCount == null)
       {
@@ -178,13 +178,13 @@ import net.sf.samtools.SAMRecord;
           snpCount[i] = 0;
       }
 
-      int thisStart = thisRead.getAlignmentStart();
-      int thisEnd   = thisRead.getAlignmentEnd();
+      final int thisStart = thisRead.getAlignmentStart();
+      final int thisEnd   = thisRead.getAlignmentEnd();
 
       // use alignment blocks of the contiguous alignment of
       // subsets of read bases to a reference sequence
-      List<AlignmentBlock> blocks = thisRead.getAlignmentBlocks();
-      byte[] phredQuality = thisRead.getBaseQualities();
+      final List<AlignmentBlock> blocks = thisRead.getAlignmentBlocks();
+      final byte[] phredQuality = thisRead.getBaseQualities();
       try
       {
         char[] refSeq = bases.getSubSequenceC(
@@ -200,7 +200,7 @@ import net.sf.samtools.SAMRecord;
             int readPos = block.getReadStart()-1+j;
             int refPos  = block.getReferenceStart()+j;
 
-            if (Character.toUpperCase(refSeq[refPos-thisStart]) != readSeq[readPos])
+            if (Character.toUpperCase(refSeq[refPos-thisStart]) != Character.toUpperCase( (char)readSeq[readPos] ))
             {
               if(phredQuality[readPos] < minBaseQualityFilter)
                 continue;
