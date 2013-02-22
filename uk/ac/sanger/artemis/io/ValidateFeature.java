@@ -51,6 +51,7 @@ import uk.ac.sanger.artemis.components.FeatureListFrame;
 import uk.ac.sanger.artemis.components.FileViewer;
 import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 import uk.ac.sanger.artemis.sequence.AminoAcidSequence;
+import uk.ac.sanger.artemis.sequence.Marker;
 import uk.ac.sanger.artemis.sequence.NoSequenceException;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.util.Document;
@@ -76,7 +77,7 @@ public class ValidateFeature
       "GPI_anchor_cleavage_site", "GPI_anchored" };
   
   private EntryGroup entryGrp;
-  
+
   public ValidateFeature(EntryGroup entryGrp)
   {
     this.entryGrp = entryGrp;
@@ -112,14 +113,17 @@ public class ValidateFeature
    */
   public void testFeatures(final FeatureVector features)
   {
-    final FileViewer fv = new FileViewer("Validation Report");
+    final FileViewer fv = new FileViewer("Validation Report :: "+features.size()+" feature(s)");
     for(int i=0; i<features.size(); i++)
     {
       try
       {
-        testFeature((GFFStreamFeature)features.elementAt(i), fv);
+        testFeature((uk.ac.sanger.artemis.io.Feature)features.elementAt(i), fv);
       }
-      catch(ClassCastException e){}
+      catch(ClassCastException e)
+      {
+        e.printStackTrace();
+      }
     }
     
     fv.setVisible(true);
@@ -166,13 +170,14 @@ public class ValidateFeature
    * Check a single feature
    * @param gffFeature
    */
-  public void testFeature(final GFFStreamFeature gffFeature, final FileViewer fv)
+  public void testFeature(final uk.ac.sanger.artemis.io.Feature f, final FileViewer fv)
   {
-    fv.appendString("\n"+GeneUtils.getUniqueName(gffFeature)+":\n", Level.INFO);
-    
+    String fTxt = featureTxt(f);
     boolean isGFF = entryGrp == null || GeneUtils.isGFFEntry( entryGrp );
     if(isGFF)
     {
+      final GFFStreamFeature gffFeature = (GFFStreamFeature)f;
+      fv.appendString("\n"+GeneUtils.getUniqueName(gffFeature)+" ("+fTxt+"):\n", Level.INFO);
       if(isPartOfGene(gffFeature))
       {
         int compl = isCompleteGeneModelOK(gffFeature);
@@ -201,11 +206,14 @@ public class ValidateFeature
       final String attr = isAttributesOK(gffFeature);
       fv.appendString(attr, Level.FATAL);
     }
+    else
+      fv.appendString("\n"+((uk.ac.sanger.artemis.Feature)f.getUserData()).getIDString()+
+          " ("+fTxt+"):\n", Level.INFO);
 
-    if(isInternalStops(gffFeature))
+    if(isInternalStops(f))
       fv.appendString("Internal stop codon found\n", Level.FATAL);
     
-    if(!hasValidStop(gffFeature))
+    if(!hasValidStop(f))
       fv.appendString("No valid stop codon found\n", Level.FATAL);
   }
   
@@ -316,7 +324,7 @@ public class ValidateFeature
     
     if(feature.getUserData() == null)
       return false;
-    final Feature f = (Feature) feature.getUserData();
+    final uk.ac.sanger.artemis.Feature f = (uk.ac.sanger.artemis.Feature) feature.getUserData();
     if(!cds_predicate.testPredicate (f)) 
       return false;
 
@@ -341,7 +349,7 @@ public class ValidateFeature
     
     if(feature.getUserData() == null)
       return true;
-    final Feature f = (Feature) feature.getUserData();
+    final uk.ac.sanger.artemis.Feature f = (uk.ac.sanger.artemis.Feature) feature.getUserData();
     if(!cds_predicate.testPredicate (f)) 
       return true;
 
@@ -385,6 +393,73 @@ public class ValidateFeature
     return keyStr.equals("gene") || keyStr.equals("pseudogene");
   }
   
+  
+  private String featureTxt(final uk.ac.sanger.artemis.io.Feature f)
+  {
+    final Feature feature = (Feature) (f.getUserData());
+    if(feature == null)
+      return f.getLocation().toStringShort();
+    final Marker low_marker  = feature.getFirstBaseMarker();
+    final Marker high_marker = feature.getLastBaseMarker();
+    String low_pos, high_pos;
+    if(low_marker == null || high_marker == null) 
+    {
+      low_pos  = "unknown";
+      high_pos = "unknown";
+    }
+    else 
+    {
+      if(low_marker.getRawPosition() < high_marker.getRawPosition()) 
+      {
+        low_pos = String.valueOf(low_marker.getRawPosition());
+        high_pos = String.valueOf(high_marker.getRawPosition());
+      } 
+      else
+      {
+        low_pos = String.valueOf(high_marker.getRawPosition());
+        high_pos = String.valueOf(low_marker.getRawPosition());
+      }
+    }
+    
+    if(GeneUtils.isDatabaseEntry(entryGrp))
+    {
+      try
+      {
+        if(feature.getQualifierByName("isFminPartial") != null)
+          low_pos = "<"+low_pos;
+        if(feature.getQualifierByName("isFmaxPartial") != null)
+          high_pos = ">"+high_pos;
+      }
+      catch (InvalidRelationException e){}
+    }
+    else
+    {
+      if(feature.getLocation().isPartial(true)) // 5prime
+      {
+        if(feature.isForwardFeature()) 
+          low_pos = "<"+low_pos;
+        else
+          high_pos = ">"+high_pos;
+      }
+      if(feature.getLocation().isPartial(false)) // 3prime
+      {
+        if(feature.isForwardFeature())
+          high_pos = ">"+high_pos;
+        else
+          low_pos = "<"+low_pos;
+      }
+    }
+    
+    final StringBuilder txt = new StringBuilder();
+    txt.append(feature.getKey().getKeyString()).append(" ");
+    txt.append(low_pos).append("..").append(high_pos);
+
+    if(!feature.isForwardFeature()) 
+      txt.append(" c");
+    return txt.toString();
+  }
+  
+  
   private static String[] getGeneModelParts()
   {
     if(geneModelParts != null)
@@ -409,7 +484,7 @@ public class ValidateFeature
   
   private static FeaturePredicate ATTR_PREDICATE = new FeaturePredicate() 
   {
-    public boolean testPredicate(Feature feature)
+    public boolean testPredicate(uk.ac.sanger.artemis.Feature feature)
     {
       return isAttributesOK((GFFStreamFeature) feature.getEmblFeature()).length() > 0;
     }
@@ -417,7 +492,7 @@ public class ValidateFeature
   
   private static FeaturePredicate CDS_PHASE_PREDICATE = new FeaturePredicate() 
   {
-    public boolean testPredicate(Feature feature)
+    public boolean testPredicate(uk.ac.sanger.artemis.Feature feature)
     {
       return !isCDSPhaseOK((GFFStreamFeature) feature.getEmblFeature());
     }
@@ -425,7 +500,7 @@ public class ValidateFeature
 
   private static FeaturePredicate STRAND_PREDICATE = new FeaturePredicate() 
   {
-    public boolean testPredicate(Feature feature)
+    public boolean testPredicate(uk.ac.sanger.artemis.Feature feature)
     {
       return !isStrandOK((GFFStreamFeature) feature.getEmblFeature());
     }
@@ -433,7 +508,7 @@ public class ValidateFeature
   
   private static FeaturePredicate BOUNDARY_PREDICATE = new FeaturePredicate() 
   {
-    public boolean testPredicate(Feature feature)
+    public boolean testPredicate(uk.ac.sanger.artemis.Feature feature)
     {
       return isBoundaryOK((GFFStreamFeature) feature.getEmblFeature()) > 0;
     }
@@ -441,7 +516,7 @@ public class ValidateFeature
   
   private static FeaturePredicate COMPLETE_GENE_MODEL_PREDICATE = new FeaturePredicate() 
   {
-    public boolean testPredicate(Feature feature)
+    public boolean testPredicate(uk.ac.sanger.artemis.Feature feature)
     {
       if(!isPartOfGene((GFFStreamFeature) feature.getEmblFeature()))
         return false;
@@ -451,7 +526,7 @@ public class ValidateFeature
   
   private FeaturePredicate INTERNAL_STOP = new FeaturePredicate() 
   {
-    public boolean testPredicate(Feature feature)
+    public boolean testPredicate(uk.ac.sanger.artemis.Feature feature)
     {
       return isInternalStops(feature.getEmblFeature());
     }
@@ -460,7 +535,7 @@ public class ValidateFeature
   
   private FeaturePredicate NO_VALID_STOP = new FeaturePredicate() 
   {
-    public boolean testPredicate(Feature feature)
+    public boolean testPredicate(uk.ac.sanger.artemis.Feature feature)
     {
       return !hasValidStop(feature.getEmblFeature());
     }
