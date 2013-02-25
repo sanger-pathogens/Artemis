@@ -36,6 +36,7 @@ import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
 import uk.ac.sanger.artemis.io.DocumentEntry;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
+import uk.ac.sanger.artemis.io.ValidateFeature;
 import uk.ac.sanger.artemis.io.InvalidRelationException;
 import uk.ac.sanger.artemis.io.Key;
 import uk.ac.sanger.artemis.io.Qualifier;
@@ -376,6 +377,21 @@ public class ViewMenu extends SelectionMenu
       }
     });
     
+    
+    final JMenuItem validate =
+        new JMenuItem("Run validation ...");
+    validate.addActionListener(new ActionListener() 
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        if(checkEntryGroupSize(MAX_FILTER_FEATURE_COUNT))
+        {
+          ValidateFeature gffTest = new ValidateFeature(getEntryGroup());
+          gffTest.featureListErrors(entry_group, selection, goto_event_source, base_plot_group);
+        }
+      }
+    });
+    
 
     final JMenuItem bad_feature_keys_item =
       new JMenuItem("Non EMBL Keys ...");
@@ -546,6 +562,8 @@ public class ViewMenu extends SelectionMenu
     feature_filters_menu.add(intronsSpliceSite);
     if(GeneUtils.isGFFEntry( getEntryGroup() ))
       feature_filters_menu.add(geneModelCheck);
+
+    feature_filters_menu.add(validate);
     
     feature_filters_menu.add(bad_feature_keys_item);
     feature_filters_menu.add(duplicated_keys_item);
@@ -969,7 +987,7 @@ public class ViewMenu extends SelectionMenu
         
         if(chadoGene == null)
           return false;
-        if(!GeneUtils.isBoundaryOK(chadoGene))
+        if(GeneUtils.isBoundaryOK(chadoGene) > 0)
           return true;
         
         return !GeneUtils.isStrandOK(chadoGene);
