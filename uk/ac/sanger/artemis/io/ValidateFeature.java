@@ -61,6 +61,13 @@ import uk.ac.sanger.artemis.util.StringVector;
 
 public class ValidateFeature
 {
+  
+  // TODO   - auto-fix boundary option
+  //        - auto-fix by extending to next stop codon if no valid stop codon
+  //        - if all validations pass then report as "PASS"
+  //        -
+  
+  
   private static String[] geneModelParts;
   
   //##sequence-region seqid start end
@@ -74,7 +81,7 @@ public class ValidateFeature
 
   private static String[] OTHER_RESERVED_TAGS =
     { "GO", "EC_number", "EMBL_qualifier", "SignalP_prediction", 
-      "GPI_anchor_cleavage_site", "GPI_anchored" };
+      "GPI_anchor_cleavage_site", "GPI_anchored", "PlasmoAP_score" };
   
   private EntryGroup entryGrp;
 
@@ -118,7 +125,7 @@ public class ValidateFeature
     {
       try
       {
-        testFeature((uk.ac.sanger.artemis.io.Feature)features.elementAt(i), fv);
+        featureValidate((uk.ac.sanger.artemis.io.Feature)features.elementAt(i), fv);
       }
       catch(ClassCastException e)
       {
@@ -136,20 +143,20 @@ public class ValidateFeature
   {
     if(GeneUtils.isGFFEntry( grp ))
     {
-      showReport(ATTR_PREDICATE, "Attributes", grp, sel, gotoSrc, plotGrp);
+      showFeatureList(ATTR_PREDICATE, "Attributes", grp, sel, gotoSrc, plotGrp);
       if(!GeneUtils.isDatabaseEntry(grp))
-        showReport(CDS_PHASE_PREDICATE, "CDS phase", grp, sel, gotoSrc, plotGrp);
+        showFeatureList(CDS_PHASE_PREDICATE, "CDS phase", grp, sel, gotoSrc, plotGrp);
 
-      showReport(STRAND_PREDICATE, "Gene Strand Errors", grp, sel, gotoSrc, plotGrp);
-      showReport(BOUNDARY_PREDICATE, "Gene Boundary Errors", grp, sel, gotoSrc, plotGrp);
-      showReport(COMPLETE_GENE_MODEL_PREDICATE, "Incomplete Gene Model", grp, sel, gotoSrc, plotGrp);
+      showFeatureList(STRAND_PREDICATE, "Gene Strand Errors", grp, sel, gotoSrc, plotGrp);
+      showFeatureList(BOUNDARY_PREDICATE, "Gene Boundary Errors", grp, sel, gotoSrc, plotGrp);
+      showFeatureList(COMPLETE_GENE_MODEL_PREDICATE, "Incomplete Gene Model", grp, sel, gotoSrc, plotGrp);
     }
     
-    showReport(INTERNAL_STOP, "Internal Stop Codons", grp, sel, gotoSrc, plotGrp);
-    showReport(NO_VALID_STOP, "No Valid Stop Codons", grp, sel, gotoSrc, plotGrp);
+    showFeatureList(INTERNAL_STOP, "Internal Stop Codons", grp, sel, gotoSrc, plotGrp);
+    showFeatureList(NO_VALID_STOP, "No Valid Stop Codons", grp, sel, gotoSrc, plotGrp);
   }
   
-  private void showReport(final FeaturePredicate predicate,
+  private void showFeatureList(final FeaturePredicate predicate,
                           final String title,
                           final EntryGroup grp, 
                           final Selection sel,
@@ -170,7 +177,7 @@ public class ValidateFeature
    * Check a single feature
    * @param gffFeature
    */
-  public void testFeature(final uk.ac.sanger.artemis.io.Feature f, final FileViewer fv)
+  public void featureValidate(final uk.ac.sanger.artemis.io.Feature f, final FileViewer fv)
   {
     String fTxt = featureTxt(f);
     boolean isGFF = entryGrp == null || GeneUtils.isGFFEntry( entryGrp );
