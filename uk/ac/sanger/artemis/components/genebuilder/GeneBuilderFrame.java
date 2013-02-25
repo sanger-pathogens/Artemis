@@ -345,7 +345,7 @@ public class GeneBuilderFrame extends JFrame
     }
     else 
     {
-      if(!chado_gene.getGene().isReadOnly() && !GeneUtils.isBoundaryOK(chado_gene))
+      if(!chado_gene.getGene().isReadOnly() && GeneUtils.isBoundaryOK(chado_gene) > 0)
       {
         int result = JOptionPane.showConfirmDialog(this, 
           "Gene model boundary needs fixing.\nFix this now?", 

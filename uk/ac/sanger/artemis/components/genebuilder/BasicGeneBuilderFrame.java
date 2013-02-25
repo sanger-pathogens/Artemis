@@ -425,7 +425,7 @@ public class BasicGeneBuilderFrame extends JFrame
       new BasicGeneBuilderFrame((Feature) chadoGene.getGene().getUserData(), entry_group, 
                                 selection, chadoTransactionManager);
     }
-    else if(!GeneUtils.isBoundaryOK(chadoGene))
+    else if(GeneUtils.isBoundaryOK(chadoGene) > 0)
     {
       int result = JOptionPane.showConfirmDialog(this, 
           "Gene model boundary needs fixing.\nFix this now?", 
