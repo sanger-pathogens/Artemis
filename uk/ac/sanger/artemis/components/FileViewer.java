@@ -76,7 +76,7 @@ public class FileViewer extends JFrame
   private static final long serialVersionUID = 1L;
 
   /** A JPanel to hold the close button. */
-  private JPanel button_panel;
+  protected JPanel button_panel;
 
   /** The main component we use for displaying the file. */
   private JTextPane textPane = null;
