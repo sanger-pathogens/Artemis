@@ -44,14 +44,16 @@ class ValidateViewer extends FileViewer implements EntryGroupChangeListener
   private static final long serialVersionUID = 1L;
   private EntryGroup entryGrp;
   
-  public ValidateViewer(final String label, 
-                        final boolean visible, 
-                        final boolean showClearButton,
-                        final boolean showSaveButton, 
-                        final EntryGroup entryGrp,
+  /**
+   * Viewer to display validation results
+   * @param entryGrp
+   * @param features
+   */
+  public ValidateViewer(final EntryGroup entryGrp,
                         final FeatureVector features)
   {
-    super(label, visible, showClearButton, showSaveButton);
+    super("Validation Report :: "+features.size()+
+        " feature(s)", false, false, true);
     this.entryGrp = entryGrp;
 
     update(features);
