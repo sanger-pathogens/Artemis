@@ -1,4 +1,4 @@
-/* GFFTest
+/* ValidateFeature
  *
  * created: 2013
  *
