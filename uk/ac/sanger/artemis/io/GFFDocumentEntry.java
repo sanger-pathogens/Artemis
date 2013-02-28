@@ -911,17 +911,12 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
    */
   private Qualifier getCodonStart(final List<Feature> gffFeatures, final boolean isComplement)
   {
-    int fstart = (isComplement ? 0 : Integer.MAX_VALUE);
+    int fstart = Integer.MAX_VALUE;
     Feature firstFeature = null;
     for(Feature f: gffFeatures)
     {
       final GFFStreamFeature this_feature = (GFFStreamFeature)f;
-      if(isComplement && this_feature.getFirstBase() > fstart)
-      {
-        firstFeature = this_feature;
-        fstart = this_feature.getFirstBase();
-      }
-      else if(!isComplement && this_feature.getFirstBase() < fstart)
+      if(this_feature.getFirstBase() < fstart)
       {
         firstFeature = this_feature;
         fstart = this_feature.getFirstBase();
