@@ -26,14 +26,14 @@ package uk.ac.sanger.artemis.io;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
-import javax.swing.JOptionPane;
 
 import org.apache.log4j.Level;
 
-import uk.ac.sanger.artemis.Entry;
 import uk.ac.sanger.artemis.EntryGroup;
 import uk.ac.sanger.artemis.Feature;
 import uk.ac.sanger.artemis.FeatureKeyPredicate;
@@ -44,7 +44,6 @@ import uk.ac.sanger.artemis.FilteredEntryGroup;
 import uk.ac.sanger.artemis.GotoEventSource;
 import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.Selection;
-import uk.ac.sanger.artemis.SimpleEntryGroup;
 import uk.ac.sanger.artemis.components.BasePlotGroup;
 import uk.ac.sanger.artemis.components.EntryFileDialog;
 import uk.ac.sanger.artemis.components.FeatureListFrame;
@@ -52,11 +51,9 @@ import uk.ac.sanger.artemis.components.FileViewer;
 import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 import uk.ac.sanger.artemis.sequence.AminoAcidSequence;
 import uk.ac.sanger.artemis.sequence.Marker;
-import uk.ac.sanger.artemis.sequence.NoSequenceException;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.util.Document;
 import uk.ac.sanger.artemis.util.DocumentFactory;
-import uk.ac.sanger.artemis.util.OutOfRangeException;
 import uk.ac.sanger.artemis.util.StringVector;
 
 public class ValidateFeature
@@ -114,28 +111,7 @@ public class ValidateFeature
     }
   }
   
-  /**
-   * Check features
-   * @param features
-   */
-  public void testFeatures(final FeatureVector features)
-  {
-    final FileViewer fv = new FileViewer("Validation Report :: "+features.size()+" feature(s)");
-    for(int i=0; i<features.size(); i++)
-    {
-      try
-      {
-        featureValidate((uk.ac.sanger.artemis.io.Feature)features.elementAt(i), fv);
-      }
-      catch(ClassCastException e)
-      {
-        e.printStackTrace();
-      }
-    }
-    
-    fv.setVisible(true);
-  }
-  
+
   public void featureListErrors(final EntryGroup grp, 
                      final Selection sel,
                      final GotoEventSource gotoSrc,
@@ -171,57 +147,95 @@ public class ValidateFeature
         new FeatureListFrame (title, sel, gotoSrc, fltrGrp, plotGrp);
     featureList.setVisible(true);
   }
-  
-  
+
   /**
    * Check a single feature
-   * @param gffFeature
+   * @param f
+   * @param fv
+   * @param showOnlyFailures
+   * @return true if passed
    */
-  public void featureValidate(final uk.ac.sanger.artemis.io.Feature f, final FileViewer fv)
+  public boolean featureValidate(final uk.ac.sanger.artemis.io.Feature f, 
+                                 final FileViewer fv, 
+                                 final boolean showOnlyFailures)
   {
-    String fTxt = featureTxt(f);
-    boolean isGFF = entryGrp == null || GeneUtils.isGFFEntry( entryGrp );
+    boolean pass = true;
+    
+    final LinkedHashMap<String, Level> report = new LinkedHashMap<String, Level>();
+    final String fTxt = featureTxt(f);
+    final boolean isGFF = entryGrp == null || GeneUtils.isGFFEntry( entryGrp );
     if(isGFF)
     {
       final GFFStreamFeature gffFeature = (GFFStreamFeature)f;
-      fv.appendString("\n"+GeneUtils.getUniqueName(gffFeature)+" ("+fTxt+"):\n", Level.INFO);
+      report.put("\n"+GeneUtils.getUniqueName(gffFeature)+" ("+fTxt+"):", Level.INFO);
+      
       if(isPartOfGene(gffFeature))
       {
         int compl = isCompleteGeneModelOK(gffFeature);
         switch (compl)
         {
-          case 1: fv.appendString("No gene found\n", Level.FATAL); break;
-          case 2: fv.appendString("Missing transcript\n", Level.FATAL); break;
-          default: fv.appendString("Gene model is complete\n", Level.INFO); break;
+          case 1:  report.put("No gene found", Level.FATAL); pass = false; break;
+          case 2:  report.put("Missing transcript", Level.FATAL); pass = false; break;
+          default: report.put("Gene model is complete", Level.INFO); break;
         }
       
-        int gb = isBoundaryOK(gffFeature);
+        final int gb = isBoundaryOK(gffFeature);
         if(gb == 0)
-          fv.appendString(getGeneBoundaryMsg(gb)+"\n", Level.INFO);
+          report.put(getGeneBoundaryMsg(gb), Level.INFO);
         else
-          fv.appendString(getGeneBoundaryMsg(gb)+"\n", Level.FATAL);
+        {
+          pass = false;
+          report.put(getGeneBoundaryMsg(gb), Level.FATAL);
+        }
 
         if(isStrandOK(gffFeature))
-          fv.appendString("Gene features all on same strand\n", Level.INFO);
+          report.put("Gene features all on same strand", Level.INFO);
         else
-          fv.appendString("Gene features found on different strand\n", Level.FATAL);
+        {
+          pass = false;
+          report.put("Gene features found on different strand", Level.FATAL);
+        }
       }
     
-      if(!isCDSPhaseOK(gffFeature))
-        fv.appendString("CDS phase (codon_start) not set\n", Level.FATAL);
+      if( (entryGrp == null || !GeneUtils.isDatabaseEntry(entryGrp)) && !isCDSPhaseOK(gffFeature))
+      {
+        pass = false;
+        report.put("CDS phase (codon_start) not set", Level.FATAL);
+      }
 
       final String attr = isAttributesOK(gffFeature);
-      fv.appendString(attr, Level.FATAL);
+      if(!attr.equals(""))
+      {
+        pass = false;
+        report.put(attr, Level.FATAL);
+      }
     }
     else
-      fv.appendString("\n"+((uk.ac.sanger.artemis.Feature)f.getUserData()).getIDString()+
-          " ("+fTxt+"):\n", Level.INFO);
+      report.put("\n"+((uk.ac.sanger.artemis.Feature)f.getUserData()).getIDString()+
+          " ("+fTxt+"):", Level.INFO);
 
     if(isInternalStops(f))
-      fv.appendString("Internal stop codon found\n", Level.FATAL);
+    {
+      pass = false;
+      report.put("Internal stop codon found", Level.FATAL);
+    }
     
     if(!hasValidStop(f))
-      fv.appendString("No valid stop codon found\n", Level.FATAL);
+    {
+      pass = false;
+      report.put("No valid stop codon found", Level.FATAL);
+    }
+    
+    if(pass)
+      report.put("PASS", Level.INFO);
+
+    if(!pass || !showOnlyFailures)
+    {
+      for (Map.Entry<String, Level> entry : report.entrySet())
+        fv.appendString(entry.getKey()+"\n", entry.getValue());
+    }
+    
+    return pass;
   }
   
   /**
@@ -300,7 +314,7 @@ public class ValidateFeature
 
         if(!found)
         {
-          String msg = qualifier.getName()+" non-reserved attribute name begins with uppercase\n";
+          String msg = qualifier.getName()+" non-reserved attribute name begins with uppercase";
           str.append(msg);
         }
       }
@@ -310,7 +324,7 @@ public class ValidateFeature
       if(  values == null || values.size() < 1 ||
          ( values.size() == 1 && values.get(0).equals("")) )
       {
-        String msg = qualifier.getName()+" atribute has no value\n";
+        String msg = qualifier.getName()+" atribute has no value";
         str.append(msg);
       }
     }
@@ -318,20 +332,11 @@ public class ValidateFeature
   }
   
   public boolean isInternalStops(final uk.ac.sanger.artemis.io.Feature feature)
-  {
-    final FeaturePredicate cds_predicate;
-    if(entryGrp != null && GeneUtils.isDatabaseEntry( entryGrp ))
-      cds_predicate = new FeatureKeyPredicate(new Key(DatabaseDocument.EXONMODEL));
-    else
-      cds_predicate =
-          new FeaturePredicateConjunction(
-              new FeatureKeyQualifierPredicate(Key.CDS, "pseudo", false),
-              new FeatureKeyQualifierPredicate(Key.CDS, "pseudogene", false),
-              FeaturePredicateConjunction.AND);
-    
+  { 
     if(feature.getUserData() == null)
       return false;
     final uk.ac.sanger.artemis.Feature f = (uk.ac.sanger.artemis.Feature) feature.getUserData();
+    final FeaturePredicate cds_predicate = getCodingFeaturePredicate();
     if(!cds_predicate.testPredicate (f)) 
       return false;
 
@@ -344,16 +349,7 @@ public class ValidateFeature
   
   public boolean hasValidStop(final uk.ac.sanger.artemis.io.Feature feature)
   {
-    final FeaturePredicate cds_predicate;
-    if(entryGrp != null && GeneUtils.isDatabaseEntry( entryGrp ))
-      cds_predicate = new FeatureKeyPredicate(new Key(DatabaseDocument.EXONMODEL));
-    else
-      cds_predicate =
-          new FeaturePredicateConjunction(
-              new FeatureKeyQualifierPredicate(Key.CDS, "pseudo", false),
-              new FeatureKeyQualifierPredicate(Key.CDS, "pseudogene", false),
-              FeaturePredicateConjunction.AND);
-    
+    final FeaturePredicate cds_predicate = getCodingFeaturePredicate();
     if(feature.getUserData() == null)
       return true;
     final uk.ac.sanger.artemis.Feature f = (uk.ac.sanger.artemis.Feature) feature.getUserData();
@@ -363,7 +359,50 @@ public class ValidateFeature
     return f.hasValidStopCodon (true);
   }
   
+  private FeaturePredicate getCodingFeaturePredicate()
+  {
+    final FeaturePredicate cds_predicate;
+    if(entryGrp != null && GeneUtils.isDatabaseEntry( entryGrp ))
+    {
+      
+      final FeaturePredicate codingPredicate = new FeaturePredicate(){
+        private String nonCodingTranscripts[] = GeneUtils.getNonCodingTranscripts();
+        public boolean testPredicate(Feature feature)
+        {
+          try
+          {
+            final GFFStreamFeature gffF = (GFFStreamFeature)feature.getEmblFeature();
+            final ChadoCanonicalGene chadoGene = gffF.getChadoGene();
+            if(chadoGene != null)
+            {
+              uk.ac.sanger.artemis.io.Feature transcriptF =
+                chadoGene.getTranscriptFeatureFromName(GeneUtils.getUniqueName(gffF));
+              final String transcriptKey = transcriptF.getKey().getKeyString();
 
+              for(int i=0; i<nonCodingTranscripts.length; i++)
+                if(nonCodingTranscripts[i].equals(transcriptKey))
+                  return false;
+            }
+          }
+          catch(Exception e){}
+          return true;
+        };
+      };
+      cds_predicate =
+          new FeaturePredicateConjunction(
+              new FeatureKeyPredicate(new Key(DatabaseDocument.EXONMODEL)),
+              codingPredicate,
+              FeaturePredicateConjunction.AND);
+    }
+    else
+      cds_predicate =
+          new FeaturePredicateConjunction(
+              new FeatureKeyQualifierPredicate(Key.CDS, "pseudo", false),
+              new FeatureKeyQualifierPredicate(Key.CDS, "pseudogene", false),
+              FeaturePredicateConjunction.AND);
+    
+    return cds_predicate;
+  }
   
   private static String getGeneBoundaryMsg(int gb)
   {
@@ -561,40 +600,29 @@ public class ValidateFeature
       {
         System.out.println("\nTEST: "+args[i]);
         final Document entry_document = DocumentFactory.makeDocument(args[i]);
-
         final EntryInformation artemis_entry_information = 
             Options.getArtemisEntryInformation();
         final uk.ac.sanger.artemis.io.Entry entry = EntryFileDialog.getEntryFromFile(
             null, entry_document, artemis_entry_information, false);
         
         ValidateFeature gffTest = new ValidateFeature(null);
-        gffTest.testFeatures(entry.getAllFeatures());
-        System.out.println("Done");
-      }
-    }
-    else
-    {
-      uk.ac.sanger.artemis.components.FileDialogEntrySource entrySource = 
-          new uk.ac.sanger.artemis.components.FileDialogEntrySource(null, null);   
-      final EntryGroup entryGrp = new SimpleEntryGroup();
-      
-      try
-      {
-        final Entry entry = entrySource.getEntry(true);
-        entryGrp.add(entry);
+        FeatureVector features = entry.getAllFeatures();
+        final FileViewer fv = new FileViewer("Validation Report :: "+features.size()+" feature(s)");
+        for(int j=0; j<features.size();j++)
+        {
+          try
+          {
+            gffTest.featureValidate((uk.ac.sanger.artemis.io.Feature)features.elementAt(j), fv, true);
+          }
+          catch(ClassCastException e)
+          {
+            e.printStackTrace();
+          }
+        }
+        
+        fv.setVisible(true);
 
-        ValidateFeature gffTest = new ValidateFeature(entryGrp);
-        gffTest.testFeatures(entry.getEMBLEntry().getAllFeatures());
-        ValidateFeature.testHeader(entryGrp.getDefaultEntry().getHeaderText());
-      }
-      catch(OutOfRangeException e)
-      {
-        e.printStackTrace();
-      }
-      catch(NoSequenceException e)
-      {
-        JOptionPane.showMessageDialog(null, "No sequence found!", 
-          "Sequence Missing", JOptionPane.WARNING_MESSAGE);
+        System.out.println("Done");
       }
     }
   }

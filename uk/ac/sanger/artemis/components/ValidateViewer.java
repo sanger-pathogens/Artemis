@@ -25,8 +25,11 @@ package uk.ac.sanger.artemis.components;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 
 import uk.ac.sanger.artemis.EntryGroup;
 import uk.ac.sanger.artemis.EntryGroupChangeEvent;
@@ -43,6 +46,7 @@ class ValidateViewer extends FileViewer implements EntryGroupChangeListener
 {
   private static final long serialVersionUID = 1L;
   private EntryGroup entryGrp;
+  private JCheckBox showFailedFeatures = new JCheckBox("Show only failed features", true);
   
   /**
    * Viewer to display validation results
@@ -72,13 +76,21 @@ class ValidateViewer extends FileViewer implements EntryGroupChangeListener
         }
         finally
         {
-          //update(features);
           entryGrp.getActionController().endAction();
+          update(features);
         }
       }
     });
     button_panel.add(fixButton);
- 
+    
+    button_panel.add(showFailedFeatures);
+    showFailedFeatures.addItemListener(new ItemListener(){
+      public void itemStateChanged(ItemEvent arg0)
+      {
+        update(features);
+      }
+    });
+    
     entryGrp.addEntryGroupChangeListener(new EntryGroupChangeListener(){
       public void entryGroupChanged(EntryGroupChangeEvent event)
       {
@@ -97,8 +109,15 @@ class ValidateViewer extends FileViewer implements EntryGroupChangeListener
   {
     super.setText("");
     final ValidateFeature gffTest = new ValidateFeature(entryGrp);
+    int nfail = 0;
     for(int i=0; i<features.size(); i++)
-      gffTest.featureValidate(features.elementAt(i).getEmblFeature(), this);
+    {
+      if(!gffTest.featureValidate(features.elementAt(i).getEmblFeature(), 
+          this, showFailedFeatures.isSelected()))
+        nfail++;
+    }
+    setTitle("Validation Report :: "+features.size()+
+        " feature(s) Pass: "+(features.size()-nfail)+" Failed: "+nfail);
   }
   
   private void fixBoundary(final Feature feature)
