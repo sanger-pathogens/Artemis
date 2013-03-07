@@ -63,25 +63,28 @@ class ValidateViewer extends FileViewer implements EntryGroupChangeListener
     update(features);
     setVisible(true);
 
-    final JButton fixButton = new JButton("Auto-Fix");
-    fixButton.addActionListener(new ActionListener() 
+    if( entryGrp == null || GeneUtils.isGFFEntry( entryGrp ) )
     {
-      public void actionPerformed(ActionEvent e) 
+      final JButton fixButton = new JButton("Auto-Fix Boundaries");
+      fixButton.addActionListener(new ActionListener() 
       {
-        try
+        public void actionPerformed(ActionEvent e) 
         {
-          entryGrp.getActionController().startAction();
-          for(int i=0; i<features.size(); i++)
-            fixBoundary(features.elementAt(i));
+          try
+          {
+           entryGrp.getActionController().startAction();
+            for(int i=0; i<features.size(); i++)
+              fixBoundary(features.elementAt(i));
+          }
+          finally
+          {
+            entryGrp.getActionController().endAction();
+            update(features);
+          }
         }
-        finally
-        {
-          entryGrp.getActionController().endAction();
-          update(features);
-        }
-      }
-    });
-    button_panel.add(fixButton);
+      });
+      button_panel.add(fixButton);
+    }
     
     button_panel.add(showFailedFeatures);
     showFailedFeatures.addItemListener(new ItemListener(){
