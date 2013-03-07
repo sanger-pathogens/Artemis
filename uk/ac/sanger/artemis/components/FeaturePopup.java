@@ -150,7 +150,15 @@ public class FeaturePopup extends JPopupMenu
     miValidate.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent arg0)
       {
-        new ValidateViewer(getEntryGroup(), selection.getSelectedFeatures());
+        if(selection.getAllFeatures().size() < 1)
+        {
+          JOptionPane.showMessageDialog(
+              owner.getParentFrame(), 
+              "No features selected to validate.", "Select Features", 
+              JOptionPane.INFORMATION_MESSAGE);
+          return;
+        }
+        new ValidateViewer(getEntryGroup(), selection.getAllFeatures());
       }     
     });
     maybeAdd(miValidate);
