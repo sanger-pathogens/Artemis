@@ -3812,89 +3812,95 @@ public class BamView extends JPanel
     appendToDetailView(readRecord, mateRecord, viewDetail, bamList);
   }
   
-  private static void appendToDetailView(final SAMRecord thisSAMRecord, 
-                                         final SAMRecord thisSAMRecordMate, 
-                                         final FileViewer viewDetail, 
+  private static void appendToDetailView(final SAMRecord sam, 
+                                         final SAMRecord mate, 
+                                         final FileViewer viewer, 
                                          final List<String> bamList)
   {
-    if(bamList.size() > 1 && thisSAMRecord.getAttribute("FL") != null)
+    if(bamList.size() > 1 && sam.getAttribute("FL") != null)
     {
-      int bamIndex = (Integer)thisSAMRecord.getAttribute("FL");
-      if(bamIndex < bamList.size())
-        viewDetail.appendString("File                  "+bamList.get(bamIndex)+"\n\n", Level.INFO);
+      int bamIdx = (Integer)sam.getAttribute("FL");
+      if(bamIdx < bamList.size())
+        viewer.appendString("File                  "+bamList.get(bamIdx)+"\n\n", Level.INFO);
     }
     
-    viewDetail.appendString("Read Name             "+thisSAMRecord.getReadName()+"\n", Level.INFO);
-    viewDetail.appendString("Coordinates           "+thisSAMRecord.getAlignmentStart()+".."+
-                                                     thisSAMRecord.getAlignmentEnd()+"\n", Level.DEBUG);
-    viewDetail.appendString("Length                "+thisSAMRecord.getReadLength()+"\n", Level.DEBUG);
-    viewDetail.appendString("Reference Name        "+thisSAMRecord.getReferenceName()+"\n", Level.DEBUG);
-    viewDetail.appendString("Inferred Size         "+thisSAMRecord.getInferredInsertSize()+"\n", Level.DEBUG);
-    viewDetail.appendString("Mapping Quality       "+thisSAMRecord.getMappingQuality()+"\n", Level.DEBUG);
-    viewDetail.appendString("Cigar String          "+thisSAMRecord.getCigarString()+"\n", Level.DEBUG);
-    viewDetail.appendString("Strand                "+
-        (thisSAMRecord.getReadNegativeStrandFlag() ? "-\n\n" : "+\n\n"), Level.DEBUG);
+    viewer.appendString("Read Name             "+sam.getReadName()+"\n", Level.INFO);
+    viewer.appendString("Coordinates           "+sam.getAlignmentStart()+".."+
+                                                 sam.getAlignmentEnd()+"\n", Level.DEBUG);
+    viewer.appendString("Length                "+sam.getReadLength()+"\n", Level.DEBUG);
+    viewer.appendString("Reference Name        "+sam.getReferenceName()+"\n", Level.DEBUG);
+    viewer.appendString("Inferred Size         "+sam.getInferredInsertSize()+"\n", Level.DEBUG);
+    viewer.appendString("Mapping Quality       "+sam.getMappingQuality()+"\n", Level.DEBUG);
+    viewer.appendString("Cigar String          "+sam.getCigarString()+"\n", Level.DEBUG);
+    viewer.appendString("Strand                "+
+        (sam.getReadNegativeStrandFlag() ? "-\n\n" : "+\n\n"), Level.DEBUG);
     
-    if(thisSAMRecord.getReadPairedFlag() && !thisSAMRecord.getMateUnmappedFlag())
+    if(sam.getReadPairedFlag())
     {     
-      if(thisSAMRecordMate != null)
+      if(mate != null)
       {
-        viewDetail.appendString("Mate Coordinates      "+thisSAMRecordMate.getAlignmentStart()+".."+
-            thisSAMRecordMate.getAlignmentEnd()+"\n", Level.DEBUG);
-        viewDetail.appendString("Mate Length           "+thisSAMRecordMate.getReadLength()+"\n", Level.DEBUG);
-        viewDetail.appendString("Mate Reference Name   "+thisSAMRecordMate.getReferenceName()+"\n", Level.DEBUG);
-        viewDetail.appendString("Mate Inferred Size    "+thisSAMRecordMate.getInferredInsertSize()+"\n", Level.DEBUG);
-        viewDetail.appendString("Mate Mapping Quality  "+thisSAMRecordMate.getMappingQuality()+"\n", Level.DEBUG);
-        viewDetail.appendString("Mate Cigar String     "+thisSAMRecordMate.getCigarString()+"\n", Level.DEBUG);
+        viewer.appendString("Mate Coordinates      "+mate.getAlignmentStart()+".."+
+                                                     mate.getAlignmentEnd()+"\n", Level.DEBUG);
+        viewer.appendString("Mate Length           "+mate.getReadLength()+"\n", Level.DEBUG);
+        viewer.appendString("Mate Reference Name   "+mate.getReferenceName()+"\n", Level.DEBUG);
+        viewer.appendString("Mate Inferred Size    "+mate.getInferredInsertSize()+"\n", Level.DEBUG);
+        viewer.appendString("Mate Mapping Quality  "+mate.getMappingQuality()+"\n", Level.DEBUG);
+        viewer.appendString("Mate Cigar String     "+mate.getCigarString()+"\n", Level.DEBUG);
       }
       else
       {
-        viewDetail.appendString("Mate Start Coordinate "+thisSAMRecord.getMateAlignmentStart()+"\n", Level.DEBUG);
-        viewDetail.appendString("Mate Reference Name   "+thisSAMRecord.getMateReferenceName()+"\n", Level.DEBUG);
+        viewer.appendString("Mate Start Coordinate "+sam.getMateAlignmentStart()+"\n", Level.DEBUG);
+        viewer.appendString("Mate Reference Name   "+sam.getMateReferenceName()+"\n", Level.DEBUG);
       }
-      viewDetail.appendString("Mate Strand           "+
-          (thisSAMRecord.getMateNegativeStrandFlag() ? "-" : "+"), Level.DEBUG);
+      viewer.appendString("Mate Strand           "+
+          (sam.getMateNegativeStrandFlag() ? "-" : "+"), Level.DEBUG);
     }
-    else
+
+    viewer.appendString("\n\nFlags:", Level.INFO);
+    viewer.appendString("\nDuplicate Read    "+
+        (sam.getDuplicateReadFlag() ? "yes" : "no"), Level.DEBUG);
+    
+    viewer.appendString("\nRead Paired       "+
+        (sam.getReadPairedFlag() ? "yes" : "no"), Level.DEBUG);
+    if(sam.getReadPairedFlag())
     {
-      viewDetail.appendString("Mate Unmapped ", Level.DEBUG);
+      viewer.appendString("\nFirst of Pair     "+
+        (sam.getFirstOfPairFlag() ? "yes" : "no"), Level.DEBUG);
+      viewer.appendString("\nMate Unmapped     "+
+        (sam.getMateUnmappedFlag() ? "yes" : "no"), Level.DEBUG);  
+      viewer.appendString("\nProper Pair       "+
+        (sam.getProperPairFlag() ? "yes" : "no"), Level.DEBUG);
     }
+    viewer.appendString("\nRead Fails Vendor\nQuality Check     "+
+        (sam.getReadFailsVendorQualityCheckFlag() ? "yes" : "no"), Level.DEBUG);
+    viewer.appendString("\nRead Unmapped     "+
+        (sam.getReadUnmappedFlag() ? "yes" : "no"), Level.DEBUG);
     
-    viewDetail.appendString("\n\nFlags:", Level.INFO);
-    viewDetail.appendString("\nDuplicate Read    "+
-        (thisSAMRecord.getDuplicateReadFlag() ? "yes" : "no"), Level.DEBUG);
+    if(sam.getReadPairedFlag())
+      viewer.appendString("\nSecond Of Pair    "+
+        (sam.getSecondOfPairFlag() ? "yes" : "no"), Level.DEBUG);
     
-    viewDetail.appendString("\nRead Paired       "+
-        (thisSAMRecord.getReadPairedFlag() ? "yes" : "no"), Level.DEBUG);
-    if(thisSAMRecord.getReadPairedFlag())
+    viewer.appendString("\n\nRead Bases:\n", Level.INFO);
+    wrapReadBases(sam, viewer);
+    
+    if(sam.getReadPairedFlag() && mate != null)
     {
-      viewDetail.appendString("\nFirst of Pair     "+
-        (thisSAMRecord.getFirstOfPairFlag() ? "yes" : "no"), Level.DEBUG);
-      viewDetail.appendString("\nMate Unmapped     "+
-        (thisSAMRecord.getMateUnmappedFlag() ? "yes" : "no"), Level.DEBUG);  
-      viewDetail.appendString("\nProper Pair       "+
-        (thisSAMRecord.getProperPairFlag() ? "yes" : "no"), Level.DEBUG);
+      viewer.appendString("\nMate Read Bases:\n", Level.INFO);
+      wrapReadBases(mate, viewer);
     }
-    viewDetail.appendString("\nRead Fails Vendor\nQuality Check     "+
-        (thisSAMRecord.getReadFailsVendorQualityCheckFlag() ? "yes" : "no"), Level.DEBUG);
-    viewDetail.appendString("\nRead Unmapped     "+
-        (thisSAMRecord.getReadUnmappedFlag() ? "yes" : "no"), Level.DEBUG);
-    
-    if(thisSAMRecord.getReadPairedFlag())
-      viewDetail.appendString("\nSecond Of Pair    "+
-        (thisSAMRecord.getSecondOfPairFlag() ? "yes" : "no"), Level.DEBUG);
-    
-    viewDetail.appendString("\n\nRead Bases:\n", Level.INFO);
-    
-    // wrap the read bases
-    String seq = new String(thisSAMRecord.getReadBases());
-    int MAX_SEQ_LINE_LENGTH = 100;
+  }
+  
+  private static void wrapReadBases(final SAMRecord sam, 
+                             final FileViewer viewer)
+  {
+    final String seq = new String(sam.getReadBases());
+    final int MAX_SEQ_LINE_LENGTH = 100;
     for(int i=0; i<=seq.length(); i+=MAX_SEQ_LINE_LENGTH)
     {
       int iend = i+MAX_SEQ_LINE_LENGTH;
       if(iend > seq.length())
-    	iend = seq.length();
-      viewDetail.appendString(seq.substring(i, iend)+"\n", Level.DEBUG);
+        iend = seq.length();
+      viewer.appendString(seq.substring(i, iend)+"\n", Level.DEBUG);
     }
   }
 
@@ -3905,8 +3911,7 @@ public class BamView extends JPanel
    */
   protected SAMRecord getMate(BamViewRecord thisSAMRecord)
   {
-    if(!thisSAMRecord.sam.getReadPairedFlag() ||  // read is not paired in sequencing
-        thisSAMRecord.sam.getMateUnmappedFlag())
+    if(!thisSAMRecord.sam.getReadPairedFlag())  // read is not paired in sequencing
       return null;
     
     SAMRecord mate = null;
