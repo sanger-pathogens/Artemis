@@ -58,13 +58,7 @@ import uk.ac.sanger.artemis.util.StringVector;
 
 public class ValidateFeature
 {
-  
-  // TODO   - auto-fix boundary option
-  //        - auto-fix by extending to next stop codon if no valid stop codon
-  //        - if all validations pass then report as "PASS"
-  //        -
-  
-  
+
   private static String[] geneModelParts;
   
   //##sequence-region seqid start end
@@ -81,10 +75,12 @@ public class ValidateFeature
       "GPI_anchor_cleavage_site", "GPI_anchored", "PlasmoAP_score" };
   
   private EntryGroup entryGrp;
+  private FeaturePredicate cds_predicate;
 
   public ValidateFeature(EntryGroup entryGrp)
   {
     this.entryGrp = entryGrp;
+    this.cds_predicate = null;
   }
 
   public static void testHeader(final String headerTxt)
@@ -340,11 +336,8 @@ public class ValidateFeature
     if(!cds_predicate.testPredicate (f)) 
       return false;
 
-    final AminoAcidSequence amino_acids = f.getTranslation ();
-    if(amino_acids.containsStopCodon ())
-      return true;
-    else
-      return false;
+    final AminoAcidSequence aa = f.getTranslation ();
+    return aa.containsStopCodon ();
   }
   
   public boolean hasValidStop(final uk.ac.sanger.artemis.io.Feature feature)
@@ -361,7 +354,9 @@ public class ValidateFeature
   
   private FeaturePredicate getCodingFeaturePredicate()
   {
-    final FeaturePredicate cds_predicate;
+    if(cds_predicate != null)
+      return cds_predicate;
+
     if(entryGrp != null && GeneUtils.isDatabaseEntry( entryGrp ))
     {
       
