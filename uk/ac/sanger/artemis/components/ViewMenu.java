@@ -379,7 +379,7 @@ public class ViewMenu extends SelectionMenu
     
     
     final JMenuItem validate =
-        new JMenuItem("Run validation ...");
+        new JMenuItem("Validation checks ...");
     validate.addActionListener(new ActionListener() 
     {
       public void actionPerformed(ActionEvent event) 
@@ -563,14 +563,14 @@ public class ViewMenu extends SelectionMenu
     if(GeneUtils.isGFFEntry( getEntryGroup() ))
       feature_filters_menu.add(geneModelCheck);
 
-    feature_filters_menu.add(validate);
-    
     feature_filters_menu.add(bad_feature_keys_item);
     feature_filters_menu.add(duplicated_keys_item);
     feature_filters_menu.add(overlapping_cds_features_item);
     feature_filters_menu.add(same_stop_cds_features_item);
     feature_filters_menu.add(missing_qualifier_features_item);
     feature_filters_menu.add(filter_by_multiple_sys_id);
+    feature_filters_menu.add(validate);
+    
     feature_filters_menu.addSeparator();
     feature_filters_menu.add(all_filters_item);
     feature_filters_menu.addSeparator();
