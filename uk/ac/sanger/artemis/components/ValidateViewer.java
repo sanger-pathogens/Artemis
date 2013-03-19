@@ -23,6 +23,7 @@
  */
 package uk.ac.sanger.artemis.components;
 
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -30,67 +31,108 @@ import java.awt.event.ItemListener;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import uk.ac.sanger.artemis.EntryGroup;
 import uk.ac.sanger.artemis.EntryGroupChangeEvent;
 import uk.ac.sanger.artemis.EntryGroupChangeListener;
 import uk.ac.sanger.artemis.Feature;
+import uk.ac.sanger.artemis.FeatureChangeEvent;
+import uk.ac.sanger.artemis.FeatureChangeListener;
 import uk.ac.sanger.artemis.FeatureVector;
 import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.io.ValidateFeature;
+import uk.ac.sanger.artemis.util.ReadOnlyException;
 
 
 class ValidateViewer extends FileViewer implements EntryGroupChangeListener
 {
   private static final long serialVersionUID = 1L;
   private EntryGroup entryGrp;
+  private FeatureVector selectedFeatures;
   private JCheckBox showFailedFeatures = new JCheckBox("Show only failed features", true);
-  
+  private boolean inAutoFix = false;
   /**
    * Viewer to display validation results
    * @param entryGrp
    * @param features
    */
   public ValidateViewer(final EntryGroup entryGrp,
-                        final FeatureVector features)
+                        final FeatureVector selectedFeatures)
   {
-    super("Validation Report :: "+features.size()+
-        " feature(s)", false, false, true);
+    super("Validation Report :: ", false, false, true);
     this.entryGrp = entryGrp;
+    this.selectedFeatures = selectedFeatures;
+    
+    final boolean allFeatures = (selectedFeatures == null);
 
-    update(features);
+    update();
     setVisible(true);
 
-    if( entryGrp == null || GeneUtils.isGFFEntry( entryGrp ) )
+    final JButton fixButton = new JButton("Auto-Fix");
+    fixButton.addActionListener(new ActionListener() 
     {
-      final JButton fixButton = new JButton("Auto-Fix Boundaries");
-      fixButton.addActionListener(new ActionListener() 
+      public void actionPerformed(ActionEvent e) 
       {
-        public void actionPerformed(ActionEvent e) 
+        final JPanel options = new JPanel( new GridLayout(2,1) );
+        final JCheckBox extendToNextStop = new JCheckBox("Fix stop codon", true);
+        options.add(extendToNextStop);
+        final JCheckBox boundary = new JCheckBox("Gene Model boundaries", true);
+        options.add(boundary);
+        if( entryGrp != null && !GeneUtils.isGFFEntry( entryGrp ) )
         {
-          try
+          boundary.setSelected(false);
+          boundary.setEnabled(false);
+        }
+        
+        int status = 
+            JOptionPane.showConfirmDialog(ValidateViewer.this, options, 
+                "Auto-Fix", JOptionPane.OK_CANCEL_OPTION);
+        if(status == JOptionPane.CANCEL_OPTION)
+          return;
+          
+        try
+        {
+          ValidateFeature validate = new ValidateFeature(entryGrp);
+          entryGrp.getActionController().startAction();
+          inAutoFix = true;
+          final FeatureVector features = getFeatures();
+          for(int i=0; i<features.size(); i++)
           {
-           entryGrp.getActionController().startAction();
-            for(int i=0; i<features.size(); i++)
-              fixBoundary(features.elementAt(i));
-          }
-          finally
-          {
-            entryGrp.getActionController().endAction();
-            update(features);
+            final Feature f = features.elementAt(i);
+            if( extendToNextStop.isSelected() && 
+                !validate.hasValidStop(f.getEmblFeature()) )
+              f.fixStopCodon();
+            
+            if(boundary.isSelected())
+              fixBoundary(f);
           }
         }
-      });
-      button_panel.add(fixButton);
-    }
+        catch (ReadOnlyException e1)
+        {
+          JOptionPane.showMessageDialog(ValidateViewer.this, 
+              "Read only entry", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        finally
+        {
+          inAutoFix = false;
+          entryGrp.getActionController().endAction();
+          update();
+        }
+      }
+    });
+    button_panel.add(fixButton);
+
     
     button_panel.add(showFailedFeatures);
     showFailedFeatures.addItemListener(new ItemListener(){
       public void itemStateChanged(ItemEvent arg0)
       {
-        update(features);
+        update();
       }
     });
     
@@ -106,10 +148,31 @@ class ValidateViewer extends FileViewer implements EntryGroupChangeListener
         }
       }
     });
+    
+    entryGrp.addFeatureChangeListener(new FeatureChangeListener(){
+      public void featureChanged(FeatureChangeEvent event)
+      {
+        if(inAutoFix)
+          return;
+
+        inAutoFix = true;
+        ValidateViewer.this.selectedFeatures = null;
+
+        SwingUtilities.invokeLater(new Runnable() 
+        {
+          public void run() 
+          {
+            update();
+            inAutoFix = false;
+          }
+        });
+      }
+    });
   }
   
-  private void update(final FeatureVector features)
+  private void update()
   {
+    final FeatureVector features = getFeatures();
     super.setText("");
     final ValidateFeature gffTest = new ValidateFeature(entryGrp);
     int nfail = 0;
@@ -123,6 +186,13 @@ class ValidateViewer extends FileViewer implements EntryGroupChangeListener
         " feature(s) Pass: "+(features.size()-nfail)+" Failed: "+nfail);
   }
   
+  private FeatureVector getFeatures()
+  {
+    if(selectedFeatures == null)
+      selectedFeatures = entryGrp.getAllFeatures();
+    return selectedFeatures;
+  }
+
   private void fixBoundary(final Feature feature)
   {
     if( ! (feature.getEmblFeature() instanceof GFFStreamFeature) )
