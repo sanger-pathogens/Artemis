@@ -243,7 +243,12 @@ public class FileViewer extends JFrame
         saved_size.height = 50;
       
       setLocation(saved_position);
-      scroller.setPreferredSize(saved_size);
+      
+      if(this instanceof ValidateViewer)
+        scroller.setPreferredSize(new Dimension((int)screen.getWidth()/3,
+            (int)screen.getHeight()/3));
+      else
+        scroller.setPreferredSize(saved_size);
     }
     
     pack();
