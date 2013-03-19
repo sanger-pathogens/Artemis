@@ -146,6 +146,17 @@ public class ValidateFeature
 
   /**
    * Check a single feature
+   * 
+   * GFF - check complete gene model
+   *     - check boundaries are valid
+   *     - check all features are on the same strand
+   *     - check CDS features have a phase
+   *     - check attribute column 
+   *          - qualifiers have a value (not empty)
+   *          - only reserved tags start with uppercase
+   * - CDS have no internal stop codon
+   * - CDS have valid stop codon
+   * 
    * @param f
    * @param fv
    * @param showOnlyFailures
@@ -199,10 +210,12 @@ public class ValidateFeature
         report.put("CDS phase (codon_start) not set", Level.FATAL);
       }
 
-      final String attr = isAttributesOK(gffFeature);
+      String attr = isAttributesOK(gffFeature);
       if(!attr.equals(""))
       {
         pass = false;
+        if(attr.endsWith("\n"))
+          attr = attr.substring(0, attr.length()-1);
         report.put(attr, Level.FATAL);
       }
     }
@@ -310,7 +323,7 @@ public class ValidateFeature
 
         if(!found)
         {
-          String msg = qualifier.getName()+" non-reserved attribute name begins with uppercase";
+          String msg = qualifier.getName()+" non-reserved attribute name begins with uppercase\n";
           str.append(msg);
         }
       }
@@ -320,10 +333,10 @@ public class ValidateFeature
       if(  values == null || values.size() < 1 ||
          ( values.size() == 1 && values.get(0).equals("")) )
       {
-        String msg = qualifier.getName()+" atribute has no value";
+        String msg = qualifier.getName()+" atribute has no value\n";
         str.append(msg);
       }
-    }
+    }  
     return str.toString();
   }
   
