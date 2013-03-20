@@ -350,7 +350,7 @@ abstract public class Splash extends JFrame
   protected void loadFile(final String fileName)
   {
     if(this instanceof ArtemisMain)
-      ((ArtemisMain)this).readArgsAndOptions(new String[]{ fileName });
+      ((ArtemisMain)this).readArgsAndOptions(new String[]{ fileName }, this);
   }
 
 

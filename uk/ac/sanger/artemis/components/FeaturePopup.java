@@ -34,6 +34,7 @@ import java.io.*;
 import java.awt.Component;
 import java.awt.BorderLayout;
 import java.awt.event.*;
+
 import javax.swing.*;
 
 /**
@@ -143,6 +144,29 @@ public class FeaturePopup extends JPopupMenu
           maybeAdd(feature_list_menus[i]);
     }
     addSeparator();
+    
+
+    final JMenuItem miValidate = new JMenuItem("Validation report...");
+    miValidate.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent arg0)
+      {
+        FeatureVector features = null;
+        if(selection.getAllFeatures().size() < 1)
+        {
+          int status = JOptionPane.showConfirmDialog(owner.getParentFrame(), 
+              "No features selected. Validate all features.", "Select Features", 
+              JOptionPane.OK_CANCEL_OPTION);
+          if(status == JOptionPane.CANCEL_OPTION)
+            return;
+        }
+        else
+          features = selection.getAllFeatures();
+        new ValidateViewer(getEntryGroup(), features);
+      }     
+    });
+    maybeAdd(miValidate);
+    addSeparator();
+    
 
     for(int i = 0; i<action_menus.length; i++)
       maybeAdd(action_menus[i]);
