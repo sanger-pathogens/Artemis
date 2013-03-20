@@ -1062,18 +1062,22 @@ public class GeneUtils
   /**
    * Check gene model boundaries for any inconsistencies
    * @param chado_gene
-   * @return true is gene model ranges are correct
+   * @return 0 - if consisent
+   *         1 - if transcript start or end is outside gene range
+   *         2 - if child feature of a transcript is outside the transcript range
+   *         3 - if the span of the children features does not match start and end of the transcript
+   *         4 - if the protein range does not match CDS
+   *         5 - if the gene range does not match the largest transcript range
    */
-  public static boolean isBoundaryOK(final ChadoCanonicalGene chado_gene)
+  public static int isBoundaryOK(final ChadoCanonicalGene chado_gene)
   {
     final Range geneRange = chado_gene.getGene().getLocation().getTotalRange();
-    final List transcripts = chado_gene.getTranscripts();
+    final List<Feature> transcripts = chado_gene.getTranscripts();
     int geneStart = Integer.MAX_VALUE;
     int geneEnd = -1;
     
-    for(int i=0; i<transcripts.size(); i++)
+    for(Feature transcript: transcripts)
     {
-      final Feature transcript = (Feature)transcripts.get(i);
       final Range transcriptRange = transcript.getLocation().getTotalRange();
       int transcriptStart = Integer.MAX_VALUE;
       int transcriptEnd = -1;
@@ -1082,7 +1086,7 @@ public class GeneUtils
       
       if(transcriptRange.getStart() < geneRange.getStart() ||
          transcriptRange.getEnd()   > geneRange.getEnd())
-        return false;
+        return 1;
       
       if(transcriptRange.getStart() < geneStart)
         geneStart = transcriptRange.getStart();
@@ -1095,15 +1099,15 @@ public class GeneUtils
       if(protein != null)
         proteinName = GeneUtils.getUniqueName(protein);
       
-      final Set children = chado_gene.getChildren(transcript);
-      final Iterator it = children.iterator();
+      final Set<Feature> children = chado_gene.getChildren(transcript);
+      final Iterator<Feature> it = children.iterator();
       while(it.hasNext())
       {
-        final Feature feature = (Feature) it.next();
+        final Feature feature = it.next();
         final Range childRange = feature.getLocation().getTotalRange();
         if(childRange.getStart() < transcriptRange.getStart() ||
            childRange.getEnd()   > transcriptRange.getEnd())
-          return false;
+          return 2;
 
         if(proteinName != null &&
            GeneUtils.getUniqueName(feature).equals(proteinName))
@@ -1128,41 +1132,52 @@ public class GeneUtils
       
       if((transcriptRange.getStart() != transcriptStart && transcriptStart < Integer.MAX_VALUE) ||
          (transcriptRange.getEnd()   != transcriptEnd   && transcriptEnd   > -1))
-        return false;
+        return 3;
 
       if(protein != null)
       {
         final Range proteinRange = protein.getLocation().getTotalRange();
         if((proteinRange.getStart() != ppStart && ppStart < Integer.MAX_VALUE) ||
            (proteinRange.getEnd()   != ppEnd   && ppEnd   > -1))
-          return false;
+          return 4;
       }
     }
     
     // check gene range
     if((geneRange.getStart() != geneStart && geneStart < Integer.MAX_VALUE) ||
        (geneRange.getEnd()   != geneEnd   && geneEnd   > -1))
-      return false;
+      return 5;
     
-    return true;
+    return 0;
+  }
+  
+  public static void checkGeneBoundary(final ChadoCanonicalGene chado_gene)
+  {
+    checkGeneBoundary(chado_gene, true);
+  }
+  
+  protected static Range checkTranscriptBoundary(
+      final uk.ac.sanger.artemis.Feature transcript,
+      final ChadoCanonicalGene chado_gene)
+  {
+    return checkTranscriptBoundary(transcript, chado_gene, true);
   }
   
   /**
    * Adjust transcript and gene boundaries
    * @param chado_gene
    */
-  public static void checkGeneBoundary(final ChadoCanonicalGene chado_gene)
+  public static void checkGeneBoundary(final ChadoCanonicalGene chado_gene, final boolean changeEmblFeature)
   {
-    final List transcripts = chado_gene.getTranscripts();
+    final List<Feature> transcripts = chado_gene.getTranscripts();
     int gene_start = Integer.MAX_VALUE;
     int gene_end = -1;
     
     Range range;
-    for(int i=0; i<transcripts.size(); i++)
+    for(Feature transcript: transcripts)
     {
-      final Feature transcript = (Feature)transcripts.get(i);
       range = checkTranscriptBoundary(
-          (uk.ac.sanger.artemis.Feature)transcript.getUserData(), chado_gene);
+          (uk.ac.sanger.artemis.Feature)transcript.getUserData(), chado_gene, changeEmblFeature);
       if(range != null && range.getStart() < gene_start)
         gene_start = range.getStart();
       if(range != null && range.getEnd() > gene_end)
@@ -1172,24 +1187,26 @@ public class GeneUtils
     if(gene_end == -1 && gene_start == Integer.MAX_VALUE)
       return;
     
-    setLocation(chado_gene.getGene(), gene_start, gene_end);
+    setLocation(chado_gene.getGene(), gene_start, gene_end, changeEmblFeature);
   }
-  
   
   /**
    * Check and adjust transcript boundary
    * @param transcript
    * @param chado_gene
+   * @param changeEmblFeature
+   * @return
    */
-  public static Range checkTranscriptBoundary(
+  protected static Range checkTranscriptBoundary(
       final uk.ac.sanger.artemis.Feature transcript,
-      final ChadoCanonicalGene chado_gene)
+      final ChadoCanonicalGene chado_gene,
+      final boolean changeEmblFeature)
   {
     final List transcripts = chado_gene.getTranscripts();
 
     if(transcripts.contains(transcript.getEmblFeature()))
     {
-      checkProteinBoundary(transcript.getEmblFeature(), chado_gene);
+      checkProteinBoundary(transcript.getEmblFeature(), chado_gene, changeEmblFeature);
       
       final Set children = chado_gene.getChildren(transcript.getEmblFeature());
       int transcript_start = Integer.MAX_VALUE;
@@ -1211,7 +1228,7 @@ public class GeneUtils
         return null;
       
       return setLocation(transcript.getEmblFeature(), 
-                   transcript_start, transcript_end);
+            transcript_start, transcript_end, changeEmblFeature);
     }
     else
       JOptionPane.showMessageDialog(null,
@@ -1225,8 +1242,9 @@ public class GeneUtils
    * @param transcript
    * @param chado_gene
    */
-  public static void checkProteinBoundary(final Feature transcript,
-                                          final ChadoCanonicalGene chado_gene)
+  private static void checkProteinBoundary(final Feature transcript,
+                                          final ChadoCanonicalGene chado_gene,
+                                          final boolean changeEmblFeature)
   {
     final String transcriptName = getUniqueName(transcript);
     final Feature protein = chado_gene.getProteinOfTranscript(transcriptName);
@@ -1236,14 +1254,13 @@ public class GeneUtils
     int pp_start = Integer.MAX_VALUE;
     int pp_end = -1;
     
-    final List dnaFeatures = new Vector();
+    final List<Feature> dnaFeatures = new Vector<Feature>();
 /*    if(chado_gene.get3UtrOfTranscript(transcriptName) != null)
       dnaFeatures.addAll(chado_gene.get3UtrOfTranscript(transcriptName));
     if(chado_gene.get5UtrOfTranscript(transcriptName) != null)
       dnaFeatures.addAll(chado_gene.get5UtrOfTranscript(transcriptName));*/ 
     
-    List exons;
-    
+    List<Feature> exons;
     if(DatabaseDocument.CHADO_INFER_CDS)
       exons = chado_gene.getSpliceSitesOfTranscript(transcriptName, "CDS");
     else
@@ -1255,9 +1272,8 @@ public class GeneUtils
     if(exons != null)
       dnaFeatures.addAll(exons);
     
-    for(int i=0; i<dnaFeatures.size(); i++)
+    for(Feature dnaFeature: dnaFeatures)
     {
-      Feature dnaFeature = (Feature)dnaFeatures.get(i);
       final Range range = dnaFeature.getLocation().getTotalRange();
       if(range.getStart() < pp_start)
         pp_start = range.getStart();
@@ -1267,7 +1283,8 @@ public class GeneUtils
     
     if(pp_start == Integer.MAX_VALUE || pp_end == -1)
        return;
-    setLocation(protein, pp_start, pp_end);
+    
+    setLocation(protein, pp_start, pp_end, changeEmblFeature);
   }
   
   /**
@@ -1434,9 +1451,11 @@ public class GeneUtils
       }
     }
   }
-  
+
   private static Range setLocation(final Feature f, 
-                                   final int start, final int end)
+                                   final int start,
+                                   final int end,
+                                   final boolean changeEmblFeature)
   {
     try
     {
@@ -1445,23 +1464,27 @@ public class GeneUtils
       ranges.add(range);
 
       final Location new_location = new Location(ranges, 
-                        f.getLocation().isComplement());
-      f.setLocation(new_location);
+          f.getLocation().isComplement());
+      
+      if(changeEmblFeature)
+        f.setLocation(new_location);
+      else
+        ((uk.ac.sanger.artemis.Feature)f.getUserData()).setLocation(new_location);
       return range;
     }
-    catch(OutOfRangeException e)
+    catch (OutOfRangeException e)
     {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
-    catch(ReadOnlyException e)
+    catch (ReadOnlyException e)
     {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
     return null;
   }
-  
+
   public static String getUniqueName(final Feature feature)
   {
     try

@@ -285,7 +285,7 @@ public class ArtemisMain extends Splash
   /**
    *  Read the entries named in args and in the diana.ini file.
    **/
-  protected void readArgsAndOptions(final String [] args)
+  protected void readArgsAndOptions(final String [] args, final JFrame f)
   {
     if(args.length == 0) 
     {
@@ -342,7 +342,7 @@ public class ArtemisMain extends Splash
         entry_document.addInputStreamProgressListener(progress_listener);
 
         final uk.ac.sanger.artemis.io.Entry new_embl_entry =
-          EntryFileDialog.getEntryFromFile(this, entry_document,
+          EntryFileDialog.getEntryFromFile(f, entry_document,
                                            artemis_entry_information,
                                            false);
 
@@ -412,7 +412,7 @@ public class ArtemisMain extends Splash
         entry_document.addInputStreamProgressListener(getInputStreamProgressListener());
  
         final uk.ac.sanger.artemis.io.Entry new_embl_entry =
-          EntryFileDialog.getEntryFromFile(this, entry_document,
+          EntryFileDialog.getEntryFromFile(f, entry_document,
                                            artemis_entry_information,
                                            false);
 
@@ -814,7 +814,7 @@ public class ArtemisMain extends Splash
       {
         final ArtemisMain main_window = new ArtemisMain(args);
         main_window.setVisible(true);
-        main_window.readArgsAndOptions(args);
+        main_window.readArgsAndOptions(args, main_window);
       }
     });
   }

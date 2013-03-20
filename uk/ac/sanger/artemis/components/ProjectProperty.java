@@ -901,7 +901,7 @@ public class ProjectProperty extends JFrame
             }
             else
               main_window = (ArtemisMain) splash;
-            main_window.readArgsAndOptions(args);
+            main_window.readArgsAndOptions(args, ProjectProperty.this);
           } 
           finally
           {

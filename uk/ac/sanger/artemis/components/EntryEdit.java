@@ -858,7 +858,7 @@ public class EntryEdit extends JFrame
       return;
     }
     
-    if(useSwingWorker)
+/*    if(useSwingWorker)
     {
       SwingWorker worker = new SwingWorker()
       {
@@ -874,7 +874,7 @@ public class EntryEdit extends JFrame
       };
       worker.start();
     }
-    else
+    else*/
     {
       final EntryFileDialog file_dialog = new EntryFileDialog(this,
                                                               false);
