@@ -104,6 +104,9 @@ OPTIONS
         -Dbam=FILE[,FILE2,...]         Open one or more BAM, VCF or BCF files
         -DbamClone=n                   Open all BAMs in multiple (n > 1) panels
         -Dbam[1,2,..]=FILE[,FILE2,..]  Open BAMs in separate panels
+        -Dshow_snps                    Show SNP marks in BamView
+        -Dshow_snp_plot                Open SNP plot in BamView
+        -Dshow_cov_plot                Open coverage plot in BamView
         -Dshow_forward_lines=?         Hide/show forward frame lines [true,false]
         -Dshow_reverse_lines=?         Hide/show reverse frame lines [true,false]
         -Dchado="h:p/d?u"              Get Artemis to open this CHADO database
