@@ -144,8 +144,8 @@ public class ViewMenu extends SelectionMenu
       }
     });
 
-    final JMenu view_bases = new JMenu("Bases");
-    final JMenuItem view_bases_item = new JMenuItem("Of Selection");
+    final SelectionSubMenu view_bases = new SelectionSubMenu(this, "Bases");
+    final JMenuItem view_bases_item = new JMenuItem("Bases Of Selection");
     view_bases_item.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent event) 
@@ -156,7 +156,7 @@ public class ViewMenu extends SelectionMenu
     view_bases.add(view_bases_item);
 
     final JMenuItem view_bases_as_fasta_item =
-      new JMenuItem("Of Selection As FASTA");
+      new JMenuItem("Bases Of Selection As FASTA");
     view_bases_as_fasta_item.addActionListener(new ActionListener() 
     {
       public void actionPerformed(ActionEvent event) 
@@ -168,7 +168,7 @@ public class ViewMenu extends SelectionMenu
     view_bases.addSeparator();
 
     final JMenuItem view_exon_bases =
-        new JMenuItem("Of Selected Exons As FASTA");
+        new JMenuItem("Bases Of Selected Exons As FASTA");
     view_exon_bases.addActionListener(new ActionListener() 
     {
       public void actionPerformed(ActionEvent event) 
@@ -178,8 +178,8 @@ public class ViewMenu extends SelectionMenu
     });
     view_bases.add(view_exon_bases);
 
-    final JMenu view_aa = new JMenu("Amino Acids");
-    final JMenuItem view_aa_item = new JMenuItem("Of Selection");
+    final SelectionSubMenu view_aa = new SelectionSubMenu(this, "Amino Acids");
+    final JMenuItem view_aa_item = new JMenuItem("Amino Acids Of Selection");
     view_aa_item.addActionListener(new ActionListener() 
     {
       public void actionPerformed(ActionEvent event) 
@@ -190,7 +190,7 @@ public class ViewMenu extends SelectionMenu
     view_aa.add(view_aa_item);
 
     final JMenuItem view_aa_as_fasta_item =
-      new JMenuItem("Of Selection As FASTA");
+      new JMenuItem("Amino Acids Of Selection As FASTA");
     view_aa_as_fasta_item.addActionListener(new ActionListener() 
     {
       public void actionPerformed(ActionEvent event) 
