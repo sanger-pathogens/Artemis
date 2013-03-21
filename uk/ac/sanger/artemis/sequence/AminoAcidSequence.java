@@ -1056,7 +1056,7 @@ public class AminoAcidSequence
   /**
    *  The number of amino acid symbols, not including stop codons: 20.
    **/
-  public final static int amino_acid_symbol_count = 20;
+  //private final static int amino_acid_symbol_count = 20;
 
 
   public static void setGeneCode()
@@ -1072,8 +1072,8 @@ public class AminoAcidSequence
       {
         for(int i = 0 ; i < 64 ; ++i) 
         {
-          final char new_table_char =
-                      ((String)(options_file_table.elementAt(i))).charAt(0);
+          final char new_table_char = Character.toUpperCase(
+                      ((String)(options_file_table.elementAt(i))).charAt(0));
 
           if(isLegalCodon (new_table_char)) 
             codon_translation_array[i] = new_table_char;

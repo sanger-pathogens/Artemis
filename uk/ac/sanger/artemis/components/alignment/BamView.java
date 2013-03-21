@@ -279,7 +279,7 @@ public class BamView extends JPanel
 
     containerPanel.setLayout(new BoxLayout(containerPanel, BoxLayout.Y_AXIS));
     containerPanel.add(mainPanel);
-    
+
     // filter out unmapped reads by default
     setSamRecordFlagPredicate(
         new SAMRecordFlagPredicate(SAMRecordFlagPredicate.READ_UNMAPPED_FLAG));
@@ -369,6 +369,20 @@ public class BamView extends JPanel
     jspView.getVerticalScrollBar().setUnitIncrement(8);
 
     addBamToPanel(frame);
+
+    // apply command line options
+    if(System.getProperty("show_snps") != null)
+      isSNPs = true;
+    if(System.getProperty("show_snp_plot") != null)
+    {
+      isSNPplot = true;
+      snpPanel.setVisible(isSNPplot);
+    }
+    if(System.getProperty("show_cov_plot") != null)
+    {
+      isCoverage = true;
+      coveragePanel.setVisible(isCoverage);
+    }
   }
   
   public String getToolTipText()
@@ -2658,7 +2672,7 @@ public class BamView extends JPanel
     
     menu.add(viewMenu);
  
-    final JCheckBoxMenuItem checkBoxSNPs = new JCheckBoxMenuItem("SNP marks");
+    final JCheckBoxMenuItem checkBoxSNPs = new JCheckBoxMenuItem("SNP marks", isSNPs);
     // 
     JMenu colourMenu = new JMenu("Colour By");
     colourMenu.add(colourByCoverageColour);
@@ -2733,7 +2747,7 @@ public class BamView extends JPanel
     
     //
     JMenu graphMenu = new JMenu("Graph");
-    JCheckBoxMenuItem checkBoxCoverage = new JCheckBoxMenuItem("Coverage");
+    JCheckBoxMenuItem checkBoxCoverage = new JCheckBoxMenuItem("Coverage", isCoverage);
     checkBoxCoverage.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
@@ -2751,7 +2765,7 @@ public class BamView extends JPanel
     });
     graphMenu.add(checkBoxCoverage);
     
-    JCheckBoxMenuItem checkBoxSNP = new JCheckBoxMenuItem("SNP");
+    JCheckBoxMenuItem checkBoxSNP = new JCheckBoxMenuItem("SNP", isSNPplot);
     checkBoxSNP.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
