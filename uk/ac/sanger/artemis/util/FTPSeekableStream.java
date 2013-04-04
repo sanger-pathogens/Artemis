@@ -15,7 +15,7 @@ import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
 import org.apache.log4j.Logger;
 
-import net.sf.samtools.util.SeekableStream;
+import net.sf.samtools.seekablestream.SeekableStream;
 
 /**
  * Written independently to, but bugfixed by looking at the Savant
@@ -319,6 +319,13 @@ public class FTPSeekableStream extends SeekableStream {
 
         return index;
 
+    }
+
+    @Override
+    public long position() throws IOException
+    {
+      // TODO Auto-generated method stub
+      return 0;
     }
 
 }
