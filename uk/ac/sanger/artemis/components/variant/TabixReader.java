@@ -28,7 +28,7 @@ package uk.ac.sanger.artemis.components.variant;
 /* Contact: Heng Li <hengli@broadinstitute.org> */
 
 import net.sf.samtools.util.BlockCompressedInputStream;
-import net.sf.samtools.util.SeekableStream;
+import net.sf.samtools.seekablestream.SeekableStream;
 
 import java.io.*;
 import java.net.URL;
