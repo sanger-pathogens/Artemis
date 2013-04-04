@@ -151,15 +151,16 @@ public class LineAttributes
   public static LineAttributes[]  init(int numPlots)
   {
     final Color frameColour[] = { 
-        Color.red, 
-        new Color(0,200,0), 
+        Color.red,
         Color.blue,
+        Color.black,
+        new Color(0,200,0), 
         Color.magenta,
         new Color(100, 100, 0),
         new Color(0, 100, 100),
         new Color(50, 0, 50),
-        new Color(255, 102, 0),
-        Color.black };
+        new Color(255, 102, 0) };
+
     final LineAttributes lines[] = new LineAttributes[numPlots];
     
     if(numPlots == 1)
