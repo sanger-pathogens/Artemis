@@ -113,7 +113,7 @@ public class TransferAnnotationToolTest
   { 
     // append product
     TransferAnnotationTool.transferAnnotation(qPanel.getQualifierCheckBoxes(),
-        genesToTransferTo, originatingFeature, entryGroup, true, false,
+        genesToTransferTo, originatingFeature, entryGroup, true, false, false,
         new StringBuffer(), new StringBuffer());
 
     testTransferResult(entryGroup, 2, productStr);
@@ -137,7 +137,7 @@ public class TransferAnnotationToolTest
   { 
     // check it overwrites product
     TransferAnnotationTool.transferAnnotation(qPanel.getQualifierCheckBoxes(),
-        genesToTransferTo, originatingFeature, entryGroup, true, true,
+        genesToTransferTo, originatingFeature, entryGroup, true, true, false,
         new StringBuffer(), new StringBuffer());
 
     testTransferResult(entryGroup, 1, productStr);

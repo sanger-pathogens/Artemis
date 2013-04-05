@@ -26,6 +26,7 @@
 package uk.ac.sanger.artemis;
 
 import uk.ac.sanger.artemis.util.*;
+import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 import uk.ac.sanger.artemis.io.OutOfDateException;
 import uk.ac.sanger.artemis.io.LocationParseException;
 import uk.ac.sanger.artemis.io.Location;
@@ -556,11 +557,55 @@ public class Feature
    **/
   public String getWriteRange()
   {
+    String partial = " ";
+    if(isPartial(true))
+      partial += "partial 5' ";
+    if(isPartial(false))
+      partial += "partial 3' ";
+
     return (isForwardFeature() ?
        getFirstCodingBaseMarker().getRawPosition() + ":" +
-       getLastBaseMarker().getRawPosition() + " forward" :
+       getLastBaseMarker().getRawPosition() + partial + "forward" :
        getLastBaseMarker().getRawPosition() + ":" +
-       getFirstCodingBaseMarker().getRawPosition() + " reverse");
+       getFirstCodingBaseMarker().getRawPosition() + partial + "reverse");
+  }
+  
+  /**
+   * If lookAt5prime is set to true then only return true if the 5' end is 
+   * partial otherwise only return true if the 3' end is partial.
+   * @param lookAt5prime
+   * @return
+   */
+  private boolean isPartial(final boolean lookAt5prime)
+  {
+    try
+    {
+      boolean isDatabaseFeature = GeneUtils.isDatabaseEntry(getEmblFeature());
+      if(isDatabaseFeature)
+      {
+        if(lookAt5prime)
+        {
+          if(isForwardFeature())
+          {
+            if(getQualifierByName("isFminPartial") != null)
+              return true;
+          }
+          else if(getQualifierByName("isFmaxPartial") != null)
+              return true;
+        }
+        else
+        {
+          if(isForwardFeature())
+          {
+            if(getQualifierByName("isFmaxPartial") != null)
+              return true;
+          }
+          else if(getQualifierByName("isFminPartial") != null)
+              return true;
+        }
+      }
+    } catch (Exception e) {}
+    return getLocation().isPartial(lookAt5prime);
   }
 
   /**
