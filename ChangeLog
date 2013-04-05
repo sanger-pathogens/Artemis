@@ -1,5 +1,10 @@
 Version XX
 
+	Added the following flags:
+  		-Dshow_snps			Show SNP marks in BamView
+  		-Dshow_snp_plot		Open SNP plot in BamView
+  		-Dshow_cov_plot		Open coverage plot in BamView
+  
 	Add validation checks. This will check the following:
 		All file types:
 	    	- CDS have no internal stop codon
@@ -19,8 +24,7 @@ Version XX
 			2. selecting 'Validation report ...' option in the popup menu when right clicking 
 			on the feature display. This produces a report with an option to auto-fix gene 
 			boundaries and stop codons. 
-	    
-	
+
 Version 15
 
 	Multiple BAM panels can be opened using the bamClone flag this is used with 
