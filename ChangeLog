@@ -1,5 +1,4 @@
 Version XX
-
 	Added the following flags:
   		-Dshow_snps			Show SNP marks in BamView
   		-Dshow_snp_plot		Open SNP plot in BamView
