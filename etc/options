@@ -840,7 +840,7 @@ srs_url = http://srs.ebi.ac.uk/srsbin/cgi-bin/
 hyperlinks = \
   EMBL+SWALL+UniProt+UniProtKB srs_url \
   PubMed+PMID http://www.ncbi.nlm.nih.gov/sites/entrez?Db=pubmed&Cmd=ShowDetailView&TermToSearch= \
-  InterPro http://www.ebi.ac.uk/interpro/ISearch?query= \
+  InterPro http://www.ebi.ac.uk/interpro/entry/ \
   OrthoMCLDB http://www.orthomcl.org/cgi-bin/OrthoMclWeb.cgi?rm=groupList&type=ackeyword&in=Accession&q= \
   PlasmoDB http://plasmodb.org/plasmodb/servlet/sv?page=gene&source_id= \
   Pfam http://pfam.sanger.ac.uk/family?acc= \
