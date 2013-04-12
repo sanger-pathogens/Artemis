@@ -190,7 +190,26 @@ import net.sf.samtools.SAMRecord;
       draw(g2, getWidth(), getHeight(), null);
     }
     
-    protected void addRecord(SAMRecord thisRead, int offset, String fileName)
+    /**
+     * Return true is the read is on the negative strand or if using RNASeq strand 
+     * specific then return true if the XS tag is set to '-'
+     * @param thisRead
+     * @param useRNASeqStrand
+     * @return
+     */
+    private boolean isNegativeStrand(final SAMRecord thisRead, final boolean useRNASeqStrand)
+    {
+      if(useRNASeqStrand)
+      {
+        if( ((Character)thisRead.getAttribute("XS")).equals('-') )
+          return true;
+      }
+      else if(thisRead.getReadNegativeStrandFlag())
+        return true;
+      return false;
+    }
+    
+    protected void addRecord(SAMRecord thisRead, int offset, String fileName, boolean useRNASeqStrand)
     {
       int coverage[][] = plots.get(fileName);
       if(coverage == null)
@@ -203,7 +222,7 @@ import net.sf.samtools.SAMRecord;
       }
 
       final int col;
-      if(plotByStrand && !isPlotHeatMap() && thisRead.getReadNegativeStrandFlag())
+      if(plotByStrand && !isPlotHeatMap() && isNegativeStrand(thisRead, useRNASeqStrand))
         col = 1;
       else
         col = 0;
