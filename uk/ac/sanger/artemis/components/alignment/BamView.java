@@ -210,6 +210,7 @@ public class BamView extends JPanel
   
   private ButtonGroup buttonGroup = new ButtonGroup();
   
+  private JCheckBoxMenuItem colourByStrandTag = new JCheckBoxMenuItem("RNASeq Strand Specific Tag (XS)");
   private JCheckBoxMenuItem colourByCoverageColour = new JCheckBoxMenuItem("Coverage Plot Colours");
   private JCheckBoxMenuItem baseQualityColour = new JCheckBoxMenuItem("Base Quality");
   private JCheckBoxMenuItem markInsertions = new JCheckBoxMenuItem("Mark Insertions", true);
@@ -744,9 +745,9 @@ public class BamView extends JPanel
                 continue;
 
               if(isCoverageView)
-                coverageView.addRecord(samRecord, offset, bam);
+                coverageView.addRecord(samRecord, offset, bam, colourByStrandTag.isSelected());
               if(isCoverage)
-                coveragePanel.addRecord(samRecord, offset, bam);
+                coveragePanel.addRecord(samRecord, offset, bam, colourByStrandTag.isSelected());
               if(isSNPplot)
                 snpPanel.addRecord(samRecord, seqOffset);
               if(!isCoverageView)
@@ -1484,10 +1485,19 @@ public class BamView extends JPanel
       
       List<Integer> snps = getSNPs(samRecord);
       
-      if(colourByCoverageColour.isSelected() ||
+      if(colourByCoverageColour.isSelected() || colourByStrandTag.isSelected() ||
          lstStart != recordStart || lstEnd != recordEnd || snps != null)
-      { 
-        if(colourByCoverageColour.isSelected())
+      {
+        if(colourByStrandTag.isSelected())
+        {
+          if( ((Character)samRecord.getAttribute("XS")).equals('+') )
+            g2.setColor(Color.BLUE);
+          else if( ((Character)samRecord.getAttribute("XS")).equals('-') )
+            g2.setColor(Color.RED);
+          else 
+            g2.setColor(Color.BLACK); 
+        }
+        else if(colourByCoverageColour.isSelected())
           g2.setColor(getColourByCoverageColour(bamViewRecord));
         else if (!samRecord.getReadPairedFlag() ||   // read is not paired in sequencing
                   samRecord.getMateUnmappedFlag() )  // mate is unmapped )  // mate is unmapped 
@@ -1505,7 +1515,7 @@ public class BamView extends JPanel
       }
       else
         g2.setColor(DARK_GREEN);
-
+      
       if(snps != null)
         lstStart = -1;
       else
@@ -1587,10 +1597,19 @@ public class BamView extends JPanel
         final int recordEnd   = samRecord.getAlignmentEnd()+offset;
         List<Integer> snps = getSNPs(samRecord);
         
-        if(colourByCoverageColour.isSelected() ||
+        if(colourByCoverageColour.isSelected() || colourByStrandTag.isSelected() ||
             lstStart != recordStart || lstEnd != recordEnd || snps != null)
-        { 
-          if(colourByCoverageColour.isSelected())
+        {
+          if(colourByStrandTag.isSelected())
+          {
+            if( ((Character)samRecord.getAttribute("XS")).equals('+') )
+              g2.setColor(Color.BLUE);
+            else if( ((Character)samRecord.getAttribute("XS")).equals('-') )
+              g2.setColor(Color.RED);
+            else 
+              g2.setColor(Color.BLACK); 
+          }
+          else if(colourByCoverageColour.isSelected())
             g2.setColor(getColourByCoverageColour(bamViewRecord));
           else if (!samRecord.getReadPairedFlag() ||   // read is not paired in sequencing
                     samRecord.getMateUnmappedFlag() )  // mate is unmapped 
@@ -1763,6 +1782,15 @@ public class BamView extends JPanel
       
       if(colourByCoverageColour.isSelected())
         g2.setColor(getColourByCoverageColour(pr.sam1));
+      else if(colourByStrandTag.isSelected())
+      {
+        if( ((Character)pr.sam1.sam.getAttribute("XS")).equals('+') )
+          g2.setColor(Color.BLUE);
+        else if( ((Character)pr.sam1.sam.getAttribute("XS")).equals('-') )
+          g2.setColor(Color.RED);
+        else 
+          g2.setColor(Color.BLACK); 
+      }
       else if(   pr.sam2 != null && 
               !( pr.sam1.sam.getReadNegativeStrandFlag() ^ pr.sam2.sam.getReadNegativeStrandFlag() ) )
         g2.setColor(Color.red);
@@ -2556,6 +2584,7 @@ public class BamView extends JPanel
     
     baseQualityColour.setFont(viewMenu.getFont());
     colourByCoverageColour.setFont(viewMenu.getFont());
+    colourByStrandTag.setFont(viewMenu.getFont());
     markInsertions.setFont(viewMenu.getFont());
     
     cbIsizeStackView.addActionListener(new ActionListener()
@@ -2676,7 +2705,29 @@ public class BamView extends JPanel
     // 
     JMenu colourMenu = new JMenu("Colour By");
     colourMenu.add(colourByCoverageColour);
+    colourByCoverageColour.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        if(colourByCoverageColour.isSelected())
+          colourByStrandTag.setSelected(false);
+        repaint();
+      }
+    });
     
+    colourMenu.add(colourByStrandTag);
+    colourByStrandTag.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        if(colourByStrandTag.isSelected())
+          colourByCoverageColour.setSelected(false);
+        laststart = -1;
+        repaint();
+      }
+    });
+
+
     baseQualityColour.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
