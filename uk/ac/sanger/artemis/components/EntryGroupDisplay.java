@@ -294,7 +294,7 @@ public class EntryGroupDisplay extends JPanel
   /**
    * @return the indexFastaCombo
    */
-  protected SequenceComboBox getIndexFastaCombo()
+  public SequenceComboBox getIndexFastaCombo()
   {
     return indexFastaCombo;
   }
