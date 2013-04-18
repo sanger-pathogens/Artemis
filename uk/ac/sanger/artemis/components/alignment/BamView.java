@@ -3590,6 +3590,20 @@ public class BamView extends JPanel
     {
       feature_display.addDisplayAdjustmentListener(bamView);
       feature_display.getSelection().addSelectionChangeListener(bamView);
+      
+      if(feature_display.getEntryGroup().getSequenceEntry().getEMBLEntry().getSequence() 
+          instanceof uk.ac.sanger.artemis.io.IndexFastaStream)
+      {
+        if(SwingUtilities.getWindowAncestor(feature_display) instanceof EntryEdit)
+        {
+          final EntryEdit ee = (EntryEdit)SwingUtilities.getWindowAncestor(feature_display);
+          ee.getOneLinePerEntryDisplay().addDisplayAdjustmentListener(bamView);
+
+          // add reference sequence selection listeners
+          ee.getEntryGroupDisplay().getIndexFastaCombo().addIndexReferenceListener(bamView.getCombo());
+          bamView.getCombo().addIndexReferenceListener(ee.getEntryGroupDisplay().getIndexFastaCombo());
+        }
+      }
     }
   }
   
