@@ -1490,7 +1490,9 @@ public class BamView extends JPanel
       {
         if(colourByStrandTag.isSelected())
         {
-          if( ((Character)samRecord.getAttribute("XS")).equals('+') )
+          if(samRecord.getAttribute("XS") == null)
+            g2.setColor(Color.BLACK); 
+          else if( ((Character)samRecord.getAttribute("XS")).equals('+') )
             g2.setColor(Color.BLUE);
           else if( ((Character)samRecord.getAttribute("XS")).equals('-') )
             g2.setColor(Color.RED);
@@ -1602,7 +1604,9 @@ public class BamView extends JPanel
         {
           if(colourByStrandTag.isSelected())
           {
-            if( ((Character)samRecord.getAttribute("XS")).equals('+') )
+            if(samRecord.getAttribute("XS") == null)
+              g2.setColor(Color.BLACK); 
+            else if( ((Character)samRecord.getAttribute("XS")).equals('+') )
               g2.setColor(Color.BLUE);
             else if( ((Character)samRecord.getAttribute("XS")).equals('-') )
               g2.setColor(Color.RED);
