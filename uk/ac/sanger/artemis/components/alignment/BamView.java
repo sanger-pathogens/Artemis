@@ -1490,7 +1490,9 @@ public class BamView extends JPanel
       {
         if(colourByStrandTag.isSelected())
         {
-          if( ((Character)samRecord.getAttribute("XS")).equals('+') )
+          if(samRecord.getAttribute("XS") == null)
+            g2.setColor(Color.BLACK); 
+          else if( ((Character)samRecord.getAttribute("XS")).equals('+') )
             g2.setColor(Color.BLUE);
           else if( ((Character)samRecord.getAttribute("XS")).equals('-') )
             g2.setColor(Color.RED);
@@ -1570,6 +1572,7 @@ public class BamView extends JPanel
     drawStrand(g2, true, scaleHeight, ymid+(scaleHeight/2), ydiff, pixPerBase, stroke);
   }
   
+ 
   private void drawStrand(Graphics2D g2, 
                           boolean isStrandNegative, 
                           int scaleHeight,
@@ -1590,7 +1593,7 @@ public class BamView extends JPanel
     for(BamViewRecord bamViewRecord: readsInView)
     {
       SAMRecord samRecord = bamViewRecord.sam;
-      if( samRecord.getReadNegativeStrandFlag() == isStrandNegative )
+      if( isNegativeStrand(samRecord) == isStrandNegative )
       {
         final int offset = getSequenceOffset(samRecord.getReferenceName());
         final int recordStart = samRecord.getAlignmentStart()+offset;
@@ -1602,7 +1605,9 @@ public class BamView extends JPanel
         {
           if(colourByStrandTag.isSelected())
           {
-            if( ((Character)samRecord.getAttribute("XS")).equals('+') )
+            if(samRecord.getAttribute("XS") == null)
+              g2.setColor(Color.BLACK); 
+            else if( ((Character)samRecord.getAttribute("XS")).equals('+') )
               g2.setColor(Color.BLUE);
             else if( ((Character)samRecord.getAttribute("XS")).equals('-') )
               g2.setColor(Color.RED);
@@ -1801,6 +1806,26 @@ public class BamView extends JPanel
       if(pr.sam2 != null)
         drawRead(g2, pr.sam2, pixPerBase, ypos, baseAtStartOfView, getSNPs(pr.sam2.sam));
     }
+  }
+  
+  /**
+   * Check if a record is on the negative strand. If the RNA strand specific
+   * checkbox is set then use the RNA strand.
+   * @param samRecord
+   * @return
+   */
+  private boolean isNegativeStrand(final SAMRecord samRecord) 
+  {
+    if(colourByStrandTag.isSelected())
+    {
+      if(samRecord.getAttribute("XS") == null)
+        return samRecord.getReadNegativeStrandFlag();
+      if( ((Character)samRecord.getAttribute("XS")).equals('+') )
+        return false;
+      else
+        return true;
+    }
+    return samRecord.getReadNegativeStrandFlag();
   }
   
   /**
@@ -3586,6 +3611,18 @@ public class BamView extends JPanel
     {
       feature_display.addDisplayAdjustmentListener(bamView);
       feature_display.getSelection().addSelectionChangeListener(bamView);
+      
+      if(feature_display.getEntryGroup().getSequenceEntry().getEMBLEntry().getSequence() 
+          instanceof uk.ac.sanger.artemis.io.IndexFastaStream)
+      {
+        if(entry_edit != null)
+        {
+          entry_edit.getOneLinePerEntryDisplay().addDisplayAdjustmentListener(bamView);
+          // add reference sequence selection listeners
+          entry_edit.getEntryGroupDisplay().getIndexFastaCombo().addIndexReferenceListener(bamView.getCombo());
+          bamView.getCombo().addIndexReferenceListener(entry_edit.getEntryGroupDisplay().getIndexFastaCombo());
+        }
+      }
     }
   }
   

@@ -601,7 +601,7 @@ public class EntryEdit extends JFrame
   /**
   * Retrieve the one line per entry object.
   */
-  protected FeatureDisplay getOneLinePerEntryDisplay()
+  public FeatureDisplay getOneLinePerEntryDisplay()
   {
     return one_line_per_entry_display;
   }
@@ -639,7 +639,7 @@ public class EntryEdit extends JFrame
   /**
   * Retrieve the entry group display object.
   */
-  protected EntryGroupDisplay getEntryGroupDisplay()
+  public EntryGroupDisplay getEntryGroupDisplay()
   {
     return group_display;
   }

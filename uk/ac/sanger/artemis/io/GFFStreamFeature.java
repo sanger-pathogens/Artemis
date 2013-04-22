@@ -479,13 +479,22 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   {
     if(id_range_store != null)
     {
+      int offset = 0;
+      if(getGffSeqName() != null && contig_ranges != null &&
+         contig_ranges.containsKey(getGffSeqName()))
+      {
+        // adjust for coordinates in multi-sequence GFF
+        Range offset_range = contig_ranges.get(getGffSeqName());
+        offset = offset_range.getStart()-1;
+      }
+      
       Enumeration<String> enum_ranges = id_range_store.keys();
       while(enum_ranges.hasMoreElements())
       {
         String key  = enum_ranges.nextElement();
         Range range = id_range_store.get(key);
-        if(range.getStart() == r.getStart() &&
-           range.getEnd()   == r.getEnd())
+        if(range.getStart() == r.getStart()-offset &&
+           range.getEnd()   == r.getEnd()-offset)
           return key;
       }
     }
