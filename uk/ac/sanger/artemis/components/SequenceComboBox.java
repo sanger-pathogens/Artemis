@@ -100,7 +100,7 @@ public abstract class SequenceComboBox extends JComboBox implements IndexReferen
    *  change events from this object.
    *  @param l the event change listener.
    **/
-  protected void addIndexReferenceListener(IndexReferenceListener l)
+  public void addIndexReferenceListener(IndexReferenceListener l)
   {
     indexReferenceListeners.add(l);
   }

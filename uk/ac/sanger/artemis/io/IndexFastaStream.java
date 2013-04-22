@@ -193,8 +193,12 @@ public class IndexFastaStream extends StreamSequence
       Object obj = it.next();
       if(i == seqIndex)
       {
-        String size = obj.toString().split(";")[2].substring(5).trim();
-        return Integer.parseInt(size);
+        String parts[] = obj.toString().split(";");
+        for(String part: parts)
+        {
+          if(part.trim().startsWith("size"))
+            return Integer.parseInt(part.substring(5).trim());
+        }
       }
       i++;
     }
@@ -209,7 +213,12 @@ public class IndexFastaStream extends StreamSequence
     {
       Object obj = it.next();
       if(i == seqIndex)
-        return obj.toString().split(";")[0].substring(6).trim();
+      {
+        String c = obj.toString().split(" ")[1];
+        if(c.endsWith(";"))
+          c = c.substring(0, c.length()-1);
+        return c;
+      }
       i++;
     }
     return null;
