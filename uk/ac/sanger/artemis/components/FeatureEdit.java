@@ -72,6 +72,7 @@ import java.util.Set;
 import java.util.Vector;
 import java.util.Collections;
 import java.util.Comparator;
+
 import javax.swing.*;
 
 
@@ -1809,6 +1810,8 @@ public class FeatureEdit extends JPanel
       qualifiers =
         qualifier_text_area.getParsedQualifiers(getEntryInformation ());
       
+      updateGffIds(qualifiers);
+      
       // if using controlled vocab form
       if(cvForm != null)
       {
@@ -1916,6 +1919,53 @@ public class FeatureEdit extends JPanel
     return true;
   }
 
+  /**
+   * Propagate any changes to GFF ID qualifiers through the 
+   * gene model
+   * @param qualifiers
+   */
+  private void updateGffIds(QualifierVector qualifiers)
+  {
+    if( !GeneUtils.isDatabaseEntry(getFeature().getEmblFeature()) &&
+        getFeature().getEmblFeature() instanceof GFFStreamFeature )
+    {
+      final GFFStreamFeature gffFeature = (GFFStreamFeature)getFeature().getEmblFeature();
+      if(gffFeature.getChadoGene() != null)
+      {
+        try
+        {
+          final String newName = ((String) (qualifiers.getQualifierByName("ID").getValues().get(0))).trim();
+          final String oldName = ((String) (gffFeature.getQualifierByName("ID").getValues().get(0))).trim();
+         
+          if(!newName.equals(oldName))
+          {
+            int val = JOptionPane.showConfirmDialog(null, 
+                "Change name of children based on this ["+newName+"]?", 
+                "Name Change", JOptionPane.OK_CANCEL_OPTION);
+            if(val == JOptionPane.CANCEL_OPTION)
+              return;
+
+            final Set<uk.ac.sanger.artemis.io.Feature> children = 
+              gffFeature.getChadoGene().getChildren(gffFeature);
+            GeneUtils.propagateId(gffFeature, newName, children);
+            GeneUtils.fixParentQualifier(oldName, newName, children);
+            
+            final Iterator<uk.ac.sanger.artemis.io.Feature> it = children.iterator();
+            while(it.hasNext())
+            {
+              final GFFStreamFeature child = (GFFStreamFeature)it.next();
+              if( child.getSegmentRangeStore().size() == 1 && 
+                 !child.getKey().getKeyString().equals("CDS") &&
+                  child.getKey().getKeyString().indexOf("exon") == -1)
+                child.setSegmentRangeStore(null);
+            }
+          }
+        }
+        catch(Exception e){ }
+      }
+    }
+  }
+  
   /**
    *  Return the Feature we are editing as passed to the constructor.
    **/
