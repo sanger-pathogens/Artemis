@@ -110,6 +110,7 @@ import net.sf.samtools.AlignmentBlock;
 import net.sf.samtools.SAMException;
 import net.sf.samtools.SAMFileHeader;
 import net.sf.samtools.SAMFileReader;
+import net.sf.samtools.SAMReadGroupRecord;
 import net.sf.samtools.SAMRecord;
 import net.sf.samtools.SAMSequenceRecord;
 import net.sf.samtools.SAMFileReader.ValidationStringency;
@@ -153,6 +154,7 @@ public class BamView extends JPanel
 
   private List<BamViewRecord> readsInView;
   private Hashtable<String, SAMFileReader> samFileReaderHash = new Hashtable<String, SAMFileReader>();
+  private List<SAMReadGroupRecord> readGroups = new Vector<SAMReadGroupRecord>();
 
   private HashMap<String, Integer> seqLengths = new HashMap<String, Integer>();
   private HashMap<String, Integer> offsetLengths;
@@ -210,6 +212,7 @@ public class BamView extends JPanel
   
   private ButtonGroup buttonGroup = new ButtonGroup();
   
+  private JCheckBoxMenuItem colourByReadGrp = new JCheckBoxMenuItem("Read Group");
   private JCheckBoxMenuItem colourByStrandTag = new JCheckBoxMenuItem("RNASeq Strand Specific Tag (XS)");
   private JCheckBoxMenuItem colourByCoverageColour = new JCheckBoxMenuItem("Coverage Plot Colours");
   private JCheckBoxMenuItem baseQualityColour = new JCheckBoxMenuItem("Base Quality");
@@ -217,6 +220,7 @@ public class BamView extends JPanel
   private AlphaComposite translucent = 
     AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f);
   
+  private ReadGroupFrame readGrpFrame;
   private GroupBamFrame groupsFrame = new GroupBamFrame(this, bamFilesMenu);
   private CoveragePanel coverageView = new CoveragePanel();
   
@@ -398,10 +402,11 @@ public class BamView extends JPanel
     String msg = 
         mouseOverSAMRecord.sam.getReadName() + "\n" + 
         mouseOverSAMRecord.sam.getAlignmentStart() + ".." +
-        mouseOverSAMRecord.sam.getAlignmentEnd() + "\nisize=" +
-        mouseOverSAMRecord.sam.getInferredInsertSize() + "\nmapq=" +
-        mouseOverSAMRecord.sam.getMappingQuality()+"\nrname="+
-        mouseOverSAMRecord.sam.getReferenceName();
+        mouseOverSAMRecord.sam.getAlignmentEnd() + 
+       (mouseOverSAMRecord.sam.getReadGroup() != null ? "\nRG="+mouseOverSAMRecord.sam.getReadGroup().getId() : "") +
+        "\nisize=" + mouseOverSAMRecord.sam.getInferredInsertSize() + 
+        "\nmapq=" + mouseOverSAMRecord.sam.getMappingQuality()+
+        "\nrname="+ mouseOverSAMRecord.sam.getReferenceName();
 
     if( mouseOverSAMRecord.sam.getReadPairedFlag() && 
         mouseOverSAMRecord.sam.getProperPairFlag() && 
@@ -572,7 +577,8 @@ public class BamView extends JPanel
     }
     samFileReader.setValidationStringency(ValidationStringency.SILENT);
     samFileReaderHash.put(bam, samFileReader);
-    
+
+    readGroups.addAll(samFileReader.getFileHeader().getReadGroups());
     return samFileReader;
   }
 
@@ -716,6 +722,9 @@ public class BamView extends JPanel
           cnt++;
           SAMRecord samRecord = it.next();
 
+          if(readGrpFrame != null && !readGrpFrame.isReadGroupVisible(samRecord.getReadGroup()))
+            continue;
+          
           if( samRecordFlagPredicate == null ||
              !samRecordFlagPredicate.testPredicate(samRecord))
           {
@@ -1033,6 +1042,11 @@ public class BamView extends JPanel
 	}
   }
   
+  protected void repaintBamView()
+  {
+    laststart = -1;
+    repaint();
+  }
   
   private float getPixPerBaseByWidth()
   {
@@ -1485,7 +1499,9 @@ public class BamView extends JPanel
       
       List<Integer> snps = getSNPs(samRecord);
       
-      if(colourByCoverageColour.isSelected() || colourByStrandTag.isSelected() ||
+      if(colourByCoverageColour.isSelected() || 
+         colourByStrandTag.isSelected() ||
+         colourByReadGrp.isSelected() ||
          lstStart != recordStart || lstEnd != recordEnd || snps != null)
       {
         if(colourByStrandTag.isSelected())
@@ -1501,6 +1517,8 @@ public class BamView extends JPanel
         }
         else if(colourByCoverageColour.isSelected())
           g2.setColor(getColourByCoverageColour(bamViewRecord));
+        else if(colourByReadGrp.isSelected())
+          g2.setColor(getReadGroupFrame().getReadGroupColour(readGroups, samRecord.getReadGroup()));
         else if (!samRecord.getReadPairedFlag() ||   // read is not paired in sequencing
                   samRecord.getMateUnmappedFlag() )  // mate is unmapped )  // mate is unmapped 
           g2.setColor(Color.black);
@@ -1600,8 +1618,10 @@ public class BamView extends JPanel
         final int recordEnd   = samRecord.getAlignmentEnd()+offset;
         List<Integer> snps = getSNPs(samRecord);
         
-        if(colourByCoverageColour.isSelected() || colourByStrandTag.isSelected() ||
-            lstStart != recordStart || lstEnd != recordEnd || snps != null)
+        if(colourByCoverageColour.isSelected() || 
+           colourByStrandTag.isSelected() ||
+           colourByReadGrp.isSelected() ||
+           lstStart != recordStart || lstEnd != recordEnd || snps != null)
         {
           if(colourByStrandTag.isSelected())
           {
@@ -1616,6 +1636,8 @@ public class BamView extends JPanel
           }
           else if(colourByCoverageColour.isSelected())
             g2.setColor(getColourByCoverageColour(bamViewRecord));
+          else if(colourByReadGrp.isSelected())
+            g2.setColor(getReadGroupFrame().getReadGroupColour(readGroups, samRecord.getReadGroup()));
           else if (!samRecord.getReadPairedFlag() ||   // read is not paired in sequencing
                     samRecord.getMateUnmappedFlag() )  // mate is unmapped 
             g2.setColor(Color.black);
@@ -1796,6 +1818,8 @@ public class BamView extends JPanel
         else 
           g2.setColor(Color.BLACK); 
       }
+      else if(colourByReadGrp.isSelected())
+        g2.setColor(getReadGroupFrame().getReadGroupColour(readGroups, pr.sam1.sam.getReadGroup()));
       else if(   pr.sam2 != null && 
               !( pr.sam1.sam.getReadNegativeStrandFlag() ^ pr.sam2.sam.getReadNegativeStrandFlag() ) )
         g2.setColor(Color.red);
@@ -2460,7 +2484,7 @@ public class BamView extends JPanel
    * @param c
    * @return
    */
-  private ImageIcon getImageIcon(Color c)
+  ImageIcon getImageIcon(Color c)
   {
     BufferedImage image = (BufferedImage)this.createImage(10, 10);
     Graphics2D g2 = image.createGraphics();
@@ -2503,8 +2527,8 @@ public class BamView extends JPanel
     bamFilesMenu.add(groupBams);
     bamFilesMenu.addSeparator();
     menu.add(bamFilesMenu);
-    
-    
+
+  
     final JMenu analyse = new JMenu("Analyse");
     menu.add(analyse);
     final JMenuItem readCount = new JMenuItem("Read count of selected features ...");
@@ -2608,6 +2632,7 @@ public class BamView extends JPanel
     cbCoverageHeatMap.setFont(viewMenu.getFont());
     
     baseQualityColour.setFont(viewMenu.getFont());
+    colourByReadGrp.setFont(viewMenu.getFont());
     colourByCoverageColour.setFont(viewMenu.getFont());
     colourByStrandTag.setFont(viewMenu.getFont());
     markInsertions.setFont(viewMenu.getFont());
@@ -2728,15 +2753,39 @@ public class BamView extends JPanel
  
     final JCheckBoxMenuItem checkBoxSNPs = new JCheckBoxMenuItem("SNP marks", isSNPs);
     // 
-    JMenu colourMenu = new JMenu("Colour By");
+    final JMenu colourMenu = new JMenu("Colour By");
+    
+    final JCheckBoxMenuItem colourDefault = new JCheckBoxMenuItem ("Default", true);
+    final ButtonGroup grp = new ButtonGroup();
+    grp.add(colourByReadGrp);
+    grp.add(colourByCoverageColour);
+    grp.add(colourByStrandTag);
+    grp.add(colourDefault);
+    
+    colourMenu.add(colourDefault);
+    colourDefault.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        repaintBamView();
+      }
+    });
+    
+    colourMenu.add(colourByReadGrp);
+    colourByReadGrp.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        repaintBamView();
+      }
+    });
+    
     colourMenu.add(colourByCoverageColour);
     colourByCoverageColour.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
       {
-        if(colourByCoverageColour.isSelected())
-          colourByStrandTag.setSelected(false);
-        repaint();
+        repaintBamView();
       }
     });
     
@@ -2745,10 +2794,7 @@ public class BamView extends JPanel
     {
       public void actionPerformed(ActionEvent e)
       {
-        if(colourByStrandTag.isSelected())
-          colourByCoverageColour.setSelected(false);
-        laststart = -1;
-        repaint();
+        repaintBamView();
       }
     });
 
@@ -2765,6 +2811,7 @@ public class BamView extends JPanel
         repaint();
       }
     });
+    colourMenu.addSeparator();
     colourMenu.add(baseQualityColour);
     menu.add(colourMenu);
     
@@ -2912,6 +2959,16 @@ public class BamView extends JPanel
       }
     });
     
+    final JMenuItem readGroupsMenu = new JMenuItem("Read Groups ...");
+    readGroupsMenu.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent arg0)
+      {
+        ReadGroupFrame f = getReadGroupFrame();
+        f.setVisible(true);
+      }
+    });
+    menu.add(readGroupsMenu);
+    
     JMenuItem filter = new JMenuItem("Filter Reads ...");
     menu.add(filter);
     filter.addActionListener(new ActionListener()
@@ -2924,7 +2981,7 @@ public class BamView extends JPanel
           filterFrame.setVisible(true);
       } 
     });
-    
+      
     JMenuItem maxReadCoverage = new JMenuItem("Read Coverage Threshold ...");
     menu.add(maxReadCoverage);
     maxReadCoverage.addActionListener(new ActionListener()
@@ -2974,6 +3031,13 @@ public class BamView extends JPanel
     coverageView.createMenus(coverageMenu);
     viewMenu.add(new JSeparator());
     viewMenu.add(coverageMenu);
+  }
+  
+  private ReadGroupFrame getReadGroupFrame()
+  {
+    if(readGrpFrame == null)
+      readGrpFrame = new ReadGroupFrame(readGroups, BamView.this);
+    return readGrpFrame;
   }
   
   private JComponent bamTopPanel(final JFrame frame)
@@ -3612,12 +3676,13 @@ public class BamView extends JPanel
       feature_display.addDisplayAdjustmentListener(bamView);
       feature_display.getSelection().addSelectionChangeListener(bamView);
       
+      if(entry_edit != null)
+        entry_edit.getOneLinePerEntryDisplay().addDisplayAdjustmentListener(bamView);
       if(feature_display.getEntryGroup().getSequenceEntry().getEMBLEntry().getSequence() 
           instanceof uk.ac.sanger.artemis.io.IndexFastaStream)
       {
         if(entry_edit != null)
         {
-          entry_edit.getOneLinePerEntryDisplay().addDisplayAdjustmentListener(bamView);
           // add reference sequence selection listeners
           entry_edit.getEntryGroupDisplay().getIndexFastaCombo().addIndexReferenceListener(bamView.getCombo());
           bamView.getCombo().addIndexReferenceListener(entry_edit.getEntryGroupDisplay().getIndexFastaCombo());
@@ -3929,6 +3994,8 @@ public class BamView extends JPanel
     viewer.appendString("Read Name             "+sam.getReadName()+"\n", Level.INFO);
     viewer.appendString("Coordinates           "+sam.getAlignmentStart()+".."+
                                                  sam.getAlignmentEnd()+"\n", Level.DEBUG);
+    if(sam.getReadGroup() != null)
+      viewer.appendString("Read Group            "+sam.getReadGroup().getId()+"\n", Level.DEBUG);
     viewer.appendString("Length                "+sam.getReadLength()+"\n", Level.DEBUG);
     viewer.appendString("Reference Name        "+sam.getReferenceName()+"\n", Level.DEBUG);
     viewer.appendString("Inferred Size         "+sam.getInferredInsertSize()+"\n", Level.DEBUG);
