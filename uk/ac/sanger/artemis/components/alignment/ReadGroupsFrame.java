@@ -26,13 +26,13 @@ import javax.swing.SwingUtilities;
 
 import net.sf.samtools.SAMReadGroupRecord;
 
-class ReadGroupFrame extends JFrame
+class ReadGroupsFrame extends JFrame
 {
   private static final long serialVersionUID = 1L;
   private LineAttributes[] colours;
   private List<SAMReadGroupRecord> hideReadGroups = new Vector<SAMReadGroupRecord>();
   
-  ReadGroupFrame(List<SAMReadGroupRecord> readGroups, BamView bamView)
+  ReadGroupsFrame(List<SAMReadGroupRecord> readGroups, BamView bamView)
   {
     super("Read Groups");
     

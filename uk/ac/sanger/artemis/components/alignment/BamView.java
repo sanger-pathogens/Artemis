@@ -220,7 +220,7 @@ public class BamView extends JPanel
   private AlphaComposite translucent = 
     AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f);
   
-  private ReadGroupFrame readGrpFrame;
+  private ReadGroupsFrame readGrpFrame;
   private GroupBamFrame groupsFrame = new GroupBamFrame(this, bamFilesMenu);
   private CoveragePanel coverageView = new CoveragePanel();
   
@@ -2963,7 +2963,7 @@ public class BamView extends JPanel
     readGroupsMenu.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent arg0)
       {
-        ReadGroupFrame f = getReadGroupFrame();
+        ReadGroupsFrame f = getReadGroupFrame();
         f.setVisible(true);
       }
     });
@@ -3033,10 +3033,10 @@ public class BamView extends JPanel
     viewMenu.add(coverageMenu);
   }
   
-  private ReadGroupFrame getReadGroupFrame()
+  private ReadGroupsFrame getReadGroupFrame()
   {
     if(readGrpFrame == null)
-      readGrpFrame = new ReadGroupFrame(readGroups, BamView.this);
+      readGrpFrame = new ReadGroupsFrame(readGroups, BamView.this);
     return readGrpFrame;
   }
   
