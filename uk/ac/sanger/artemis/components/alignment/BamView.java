@@ -96,11 +96,14 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
+import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.apache.log4j.Level;
 
@@ -250,6 +253,8 @@ public class BamView extends JPanel
   private PopupMessageFrame waitingFrame = new PopupMessageFrame("waiting...");
   private ExecutorService bamReadTaskExecutor;
   private int MAX_COVERAGE = Integer.MAX_VALUE;
+  
+  private float readLnHgt = 2.0f;
   
   public static org.apache.log4j.Logger logger4j = 
     org.apache.log4j.Logger.getLogger(BamView.class);
@@ -1340,8 +1345,9 @@ public class BamView extends JPanel
       drawScale(g2, start, end, pixPerBase, getHeight());
     
     final Stroke stroke =
-      new BasicStroke (1.3f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND);
+      new BasicStroke (readLnHgt, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND);
     g2.setStroke(stroke);
+    int ydiff = (int) Math.round(1.5*readLnHgt);
     
     final int scaleHeight;
     if(isShowScale())
@@ -1371,7 +1377,7 @@ public class BamView extends JPanel
             continue;
           
           g2.setColor(Color.black);
-          drawRead(g2, bamViewRecord, pixPerBase, ypos, baseAtStartOfView, snps);
+          drawRead(g2, bamViewRecord, pixPerBase, ypos, baseAtStartOfView, snps, ydiff);
         }
         continue;
       }
@@ -1413,18 +1419,18 @@ public class BamView extends JPanel
           else
             g2.setColor(Color.blue);
 
-          drawRead(g2, bamViewRecord, pixPerBase, ypos, baseAtStartOfView, snps);
-          drawRead(g2, bamViewNextRecord, pixPerBase, ypos, baseAtStartOfView, getSNPs(samNextRecord));
+          drawRead(g2, bamViewRecord, pixPerBase, ypos, baseAtStartOfView, snps, ydiff);
+          drawRead(g2, bamViewNextRecord, pixPerBase, ypos, baseAtStartOfView, getSNPs(samNextRecord), ydiff);
         }
         else
         {
-          drawLoneRead(g2, bamViewRecord, ypos, pixPerBase, baseAtStartOfView, scaleHeight, snps);
+          drawLoneRead(g2, bamViewRecord, ypos, pixPerBase, baseAtStartOfView, scaleHeight, snps, ydiff);
           i--;
         }
       }
       else
       {
-        drawLoneRead(g2, bamViewRecord, ypos, pixPerBase, baseAtStartOfView, scaleHeight, snps);
+        drawLoneRead(g2, bamViewRecord, ypos, pixPerBase, baseAtStartOfView, scaleHeight, snps, ydiff);
       }
     }
     
@@ -1467,7 +1473,7 @@ public class BamView extends JPanel
       drawScale(g2, start, end, pixPerBase, getHeight());
 
     final BasicStroke stroke = new BasicStroke(
-        1.3f,
+        readLnHgt,
         BasicStroke.CAP_BUTT, 
         BasicStroke.JOIN_MITER);
     g2.setStroke(stroke);
@@ -1479,9 +1485,10 @@ public class BamView extends JPanel
       scaleHeight = 0;
     
     int ypos = (getHeight() - scaleHeight);
-    int ydiff = 2;
+    int ydiff = (int) Math.round(1.5*readLnHgt);
+
     if(isOrientation)
-      ydiff= 4;
+      ydiff= 2*ydiff;
     int maxEnd = 0;
     int lstStart = 0;
     int lstEnd = 0;
@@ -1546,7 +1553,7 @@ public class BamView extends JPanel
       
       if(ypos > r.getMaxY() || ypos < r.getMinY())
         continue;
-      drawRead(g2, bamViewRecord, pixPerBase, ypos, baseAtStartOfView, snps);
+      drawRead(g2, bamViewRecord, pixPerBase, ypos, baseAtStartOfView, snps, ydiff);
     }
   }
   
@@ -1572,7 +1579,7 @@ public class BamView extends JPanel
   {
     drawSelectionRange(g2, pixPerBase,start, end, Color.PINK);   
     final BasicStroke stroke = new BasicStroke(
-        1.3f,
+        readLnHgt,
         BasicStroke.CAP_BUTT, 
         BasicStroke.JOIN_MITER);
     
@@ -1580,14 +1587,16 @@ public class BamView extends JPanel
     drawScale(g2, start, end, pixPerBase, ((getHeight()+scaleHeight)/2));
 
     int ymid = (getHeight()/ 2);
-    int ydiff = 2;
+    int ydiff = (int) Math.round(1.5*readLnHgt);
     if(isOrientation)
-      ydiff= 4;
+      ydiff= 2*ydiff;
+    
+    g2.setStroke(stroke);
     // positive strand    
-    drawStrand(g2, false, scaleHeight, ymid-(scaleHeight/2), -ydiff, pixPerBase, stroke);
+    drawStrand(g2, false, scaleHeight, ymid-(scaleHeight/2), -ydiff, pixPerBase);
     
     // negative strand
-    drawStrand(g2, true, scaleHeight, ymid+(scaleHeight/2), ydiff, pixPerBase, stroke);
+    drawStrand(g2, true, scaleHeight, ymid+(scaleHeight/2), ydiff, pixPerBase);
   }
   
  
@@ -1596,8 +1605,7 @@ public class BamView extends JPanel
                           int scaleHeight,
                           int ymid,
                           int ystep,
-                          float pixPerBase,
-                          Stroke stroke)
+                          float pixPerBase)
   {
     int hgt = getHeight();
     int ypos = (hgt - scaleHeight);
@@ -1666,7 +1674,7 @@ public class BamView extends JPanel
         if(ypos > r.getMaxY() || ypos < r.getMinY())
           continue;
 
-        drawRead(g2, bamViewRecord, pixPerBase, ypos, baseAtStartOfView, snps);
+        drawRead(g2, bamViewRecord, pixPerBase, ypos, baseAtStartOfView, snps, ystep);
       }
     }
   }
@@ -1731,10 +1739,9 @@ public class BamView extends JPanel
     }
     Collections.sort(pairedReads, new PairedReadComparator());
     
-    Stroke originalStroke = new BasicStroke (1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND); 
-    Stroke stroke =
-            new BasicStroke (1.3f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND);
-    g2.setStroke(stroke);
+    Stroke originalStroke = new BasicStroke (readLnHgt, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND); 
+
+    g2.setStroke( new BasicStroke (1.3f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
     
     final int scaleHeight;
     if(isShowScale())
@@ -1742,9 +1749,9 @@ public class BamView extends JPanel
     else
       scaleHeight = 0;
     
-    int ydiff = 3;
+    int ydiff = (int) Math.round(2.3*readLnHgt);
     if(isOrientation)
-      ydiff= 5;
+      ydiff= 2*ydiff;
     int ypos = getHeight() - scaleHeight - ydiff;
     int lastEnd = 0;
     int baseAtStartOfView = getBaseAtStartOfView();
@@ -1826,9 +1833,9 @@ public class BamView extends JPanel
       else
         g2.setColor(Color.blue);
 
-      drawRead(g2, pr.sam1, pixPerBase, ypos, baseAtStartOfView, getSNPs(pr.sam1.sam));
+      drawRead(g2, pr.sam1, pixPerBase, ypos, baseAtStartOfView, getSNPs(pr.sam1.sam), ydiff);
       if(pr.sam2 != null)
-        drawRead(g2, pr.sam2, pixPerBase, ypos, baseAtStartOfView, getSNPs(pr.sam2.sam));
+        drawRead(g2, pr.sam2, pixPerBase, ypos, baseAtStartOfView, getSNPs(pr.sam2.sam), ydiff);
     }
   }
   
@@ -1946,7 +1953,7 @@ public class BamView extends JPanel
    * @param stroke
    */
   private void drawLoneRead(Graphics2D g2, BamViewRecord bamViewRecord, int ypos, 
-      float pixPerBase, int baseAtStartOfView, int scaleHeight, List<Integer> snps)
+      float pixPerBase, int baseAtStartOfView, int scaleHeight, List<Integer> snps, int ydiff)
   {
     SAMRecord samRecord = bamViewRecord.sam;
     boolean offTheTop = false;
@@ -1997,7 +2004,7 @@ public class BamView extends JPanel
     else
       g2.setColor(Color.blue);
  
-    drawRead(g2, bamViewRecord, pixPerBase, ypos, baseAtStartOfView, snps);
+    drawRead(g2, bamViewRecord, pixPerBase, ypos, baseAtStartOfView, snps, ydiff);
     
     /*if (isSNPs)
       showSNPsOnReads(g2, samRecord, pixPerBase, ypos, offset);*/
@@ -2108,7 +2115,8 @@ public class BamView extends JPanel
       final float pixPerBase,
       final int ypos,
       final int baseAtStartOfView,
-      final List<Integer> snps)
+      final List<Integer> snps,
+      final int ydiff)
   {
     SAMRecord thisRead = bamViewRecord.sam;
     int offset = getSequenceOffset(thisRead.getReferenceName());
@@ -2121,7 +2129,7 @@ public class BamView extends JPanel
     {
        Stroke originalStroke = g2.getStroke();
        Stroke stroke =
-         new BasicStroke (3.f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND);
+         new BasicStroke (readLnHgt*1.6f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND);
        g2.setStroke(stroke);
        Color c = g2.getColor();
        g2.setColor(Color.black);
@@ -2159,7 +2167,7 @@ public class BamView extends JPanel
     }
     
     if(isOrientation)
-      drawArrow(g2, thisRead, thisStart, thisEnd, pixPerBase, ypos);
+      drawArrow(g2, thisRead, thisStart, thisEnd, pixPerBase, ypos, ydiff);
 
     // test if the mouse is over this read
     if(lastMousePoint != null)
@@ -2185,22 +2193,28 @@ public class BamView extends JPanel
    * @param pixPerBase
    * @param ypos
    */
-  private void drawArrow(Graphics2D g2,
-                         SAMRecord thisRead, 
-                         int thisStart, 
-                         int thisEnd, 
-                         float pixPerBase, 
-                         int ypos)
+  private void drawArrow(final Graphics2D g2,
+      final SAMRecord thisRead, 
+      final int thisStart, 
+      final int thisEnd, 
+      final float pixPerBase, 
+      int ypos,
+      int ydiff)
   {
+    if(ydiff < 0)
+      ydiff = -ydiff;
+    
     if(thisRead.getReadNegativeStrandFlag())
     {
-      int apos = ypos + 2;
+      ypos-=readLnHgt/2;
+      int apos = ypos + ydiff - 1;
       g2.drawLine((int)( (thisStart+5) * pixPerBase), apos,
                   (int)( thisStart * pixPerBase), ypos);
     }
     else
     {
-      int apos = ypos - 2;
+      ypos+=readLnHgt/2;
+      int apos = ypos - ydiff + 1;
       g2.drawLine((int)( (thisEnd-5) * pixPerBase), apos,
                   (int)( thisEnd * pixPerBase), ypos);
     }  
@@ -2279,12 +2293,20 @@ public class BamView extends JPanel
    */
   private void showSNPsOnReads(final List<Integer> snps,
                                final Graphics2D g2,
-                               float pixPerBase, int ypos)
+                               float pixPerBase, final int ypos)
   {
+    final Stroke originalStroke = g2.getStroke();
+    final BasicStroke stroke = new BasicStroke(
+        1.3f,
+        BasicStroke.CAP_BUTT, 
+        BasicStroke.JOIN_MITER);
+    g2.setStroke(stroke);
+    
     g2.setColor(Color.red);
     for(int pos: snps)
       g2.drawLine((int) (pos * pixPerBase), ypos + 2,
                   (int) (pos * pixPerBase), ypos - 2);
+    g2.setStroke(originalStroke);
   }
   
   
@@ -3160,22 +3182,30 @@ public class BamView extends JPanel
       {
         lastMousePoint = e.getPoint();
         
-        int thisHgt = HEIGHT;
+        int thisHgt = HEIGHT-2;
         if (thisHgt < 5)
           thisHgt = 15;
 
         int y = (int) (e.getY() - jspView.getViewport().getViewRect().getY());
+        Point p = jspView.getViewport().getViewPosition();
+        boolean isVis = topPanel.isVisible();
+        
         if (y < thisHgt)
         {
           topPanel.setVisible(true);
+          if(!isVis)
+            p.y += topPanel.getHeight();
         }
         else
         {
           if (buttonAutoHide.isSelected())
-            topPanel.setVisible(false);
+            topPanel.setVisible(false); 
         }
+        
+        if(topPanel.isVisible())
+          jspView.getViewport().setViewPosition(p);
         mainPanel.repaint();
-        mainPanel.revalidate();
+        //mainPanel.revalidate();
       }
     };
     addMouseMotionListener(mouseMotionListener);
@@ -3249,6 +3279,18 @@ public class BamView extends JPanel
     
     topPanel.add(buttonAutoHide);
     
+    
+    final JSlider slider = new JSlider(13, 52, (int) (readLnHgt*10));
+    slider.addChangeListener(new ChangeListener(){
+      public void stateChanged(ChangeEvent arg0)
+      {
+        readLnHgt = (slider.getValue()/10.f);
+        repaintBamView();
+      }
+    });
+    topPanel.add(new JLabel(" Read Line Height:"));
+    topPanel.add(slider);
+    
     if(feature_display != null)
     {
       JButton close = new JButton("Close");
@@ -3257,6 +3299,12 @@ public class BamView extends JPanel
       {
         public void actionPerformed(ActionEvent e)
         {
+          int status = JOptionPane.showConfirmDialog(frame, 
+              "Close the BAM panel?", "Close", 
+              JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+          if(status == JOptionPane.CANCEL_OPTION)
+            return;
+          
           final JPanel containerPanel = (JPanel) mainPanel.getParent();
           feature_display.removeDisplayAdjustmentListener(BamView.this);
           feature_display.getSelection().removeSelectionChangeListener(BamView.this);
