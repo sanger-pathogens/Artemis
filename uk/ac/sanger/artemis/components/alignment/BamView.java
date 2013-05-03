@@ -3202,7 +3202,7 @@ public class BamView extends JPanel
             topPanel.setVisible(false); 
         }
         
-        if(topPanel.isVisible())
+        if(!showBaseAlignment && topPanel.isVisible())
           jspView.getViewport().setViewPosition(p);
         mainPanel.repaint();
         //mainPanel.revalidate();
@@ -3288,7 +3288,7 @@ public class BamView extends JPanel
         repaintBamView();
       }
     });
-    topPanel.add(new JLabel(" Read Line Height:"));
+    topPanel.add(new JLabel(" Read Height:"));
     topPanel.add(slider);
     
     if(feature_display != null)
