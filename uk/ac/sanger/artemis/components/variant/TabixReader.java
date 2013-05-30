@@ -231,7 +231,7 @@ public class TabixReader extends AbstractVCFReader
 		String chr;
 		int colon, hyphen;
 		int[] ret = new int[3];
-		colon = reg.indexOf(':'); hyphen = reg.indexOf('-');
+		colon = reg.indexOf(':'); hyphen = reg.lastIndexOf('-');
 		chr = colon >= 0? reg.substring(0, colon) : reg;
 		ret[1] = colon >= 0? Integer.parseInt(reg.substring(colon+1, hyphen)) - 1 : 0;
 		ret[2] = hyphen >= 0? Integer.parseInt(reg.substring(hyphen+1)) : 0x7fffffff;
