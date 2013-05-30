@@ -250,6 +250,9 @@ public class ArtemisUtils
       FeatureCvTermProp this_fcp = (FeatureCvTermProp)featureCvTermProps.get(i);
       if(this_fcp.getValue().equals(fcp.getValue()))
         return true;
+
+      if(this_fcp.getValue().equals(GFFStreamFeature.decode(fcp.getValue())))
+        return true;
     }
     return false;
   }
