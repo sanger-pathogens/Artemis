@@ -51,6 +51,8 @@ public class LocalAndRemoteFileManager extends JFrame
   private DatabaseEntrySource entry_source;
   public static JCheckBoxMenuItem lazyLoad = 
     new JCheckBoxMenuItem("Lazy load feature data", false);
+  private static JCheckBoxMenuItem automaticHistory =
+    new JCheckBoxMenuItem("Automatic History Annotation", false);
   
   public static JCheckBoxMenuItem domainLoad = 
     new JCheckBoxMenuItem("Display protein domains", false);
@@ -491,6 +493,19 @@ public class LocalAndRemoteFileManager extends JFrame
   }
 
   /**
+   * @return the automatic history
+   */
+  public static boolean isAutomaticHistory()
+  {
+    return automaticHistory.isSelected();
+  }
+  
+  public static void setAutomaticHistory(boolean flag)
+  {
+    automaticHistory.setSelected(flag);
+  }
+
+  /**
   *
   * Set up a menu and tool bar
   * @param pane   panel to add toolbar to
@@ -593,6 +608,10 @@ public class LocalAndRemoteFileManager extends JFrame
         domainLoad.setSelected(true);
       fileMenu.add(domainLoad);
       fileMenu.add(lazyLoad);
+      
+      if(Options.getOptions().getPropertyTruthValue("automatic_history_annotation"))
+        automaticHistory.setSelected(true);
+      fileMenu.add(automaticHistory);
       
       JMenuItem clearCache = new JMenuItem("Clear database manager cache");
       clearCache.addActionListener(new ActionListener()
