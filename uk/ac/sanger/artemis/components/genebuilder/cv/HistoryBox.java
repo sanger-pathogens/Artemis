@@ -313,7 +313,7 @@ public class HistoryBox extends AbstractCvBox
     return DatabaseDocument.getCvterms("", ChadoTransactionManager.HISTORY_CV, false);
   }
   
-  private static Vector<String> getCvTermStrings()
+  public static Vector<String> getCvTermStrings()
   {
     Vector<CvTerm> cvTerms = getCvTerms();
     Vector<String> cvTermStr = new Vector<String>();
@@ -325,7 +325,7 @@ public class HistoryBox extends AbstractCvBox
     return cvTermStr;
   }
   
-  protected static CvTerm getDefaultTerm()
+  public static CvTerm getDefaultTerm()
   {
     CvTerm cvterm =
       (CvTerm) DatabaseDocument.getCvterms("", ChadoTransactionManager.HISTORY_CV, false).get(0);
