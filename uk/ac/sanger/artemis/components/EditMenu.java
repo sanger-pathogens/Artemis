@@ -56,6 +56,8 @@ import javax.swing.*;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Set;
 import java.util.Vector;
 
 /**
@@ -290,10 +292,10 @@ public class EditMenu extends SelectionMenu
         
         if(contig_features == null || contig_features.size() < 1)
         {
-          final Vector contigKeys = FeatureDisplay.getContigKeys();
+          final Vector<String> contigKeys = FeatureDisplay.getContigKeys();
           String msg = "No contig feature keys found:\n";
           for(int i=0; i<contigKeys.size(); i++)
-            msg = msg+(String)contigKeys.get(i)+"\n";
+            msg = msg+contigKeys.get(i)+"\n";
           JOptionPane.showMessageDialog(display, 
               msg, "No Contigs Found", JOptionPane.ERROR_MESSAGE);
           return;
@@ -508,6 +510,7 @@ public class EditMenu extends SelectionMenu
         {
           public void actionPerformed(ActionEvent event) 
           {
+            addGeneModelFeaturesToSelection();
             // unselect, move, then reselect (for speed)
             final FeatureVector selected_features =
               getSelection().getAllFeatures();
@@ -524,6 +527,7 @@ public class EditMenu extends SelectionMenu
         {
           public void actionPerformed(ActionEvent event) 
           {
+            addGeneModelFeaturesToSelection();
             copyFeatures(getSelection().getAllFeatures(), this_entry);
           }
         });
@@ -840,6 +844,37 @@ public class EditMenu extends SelectionMenu
     addSeparator();
     add(edit_header_item);
 
+  }
+  
+  /**
+   * Add all GFF gene model features to the selection
+   * @param f
+   */
+  private void addGeneModelFeaturesToSelection()
+  {
+    if(!GeneUtils.isGFFEntry(getEntryGroup()))
+      return;
+    final FeatureVector selected_features =  getSelection().getAllFeatures();
+    for(int i=0; i<selected_features.size(); i++)
+    {
+      if(selected_features.elementAt(i).getEmblFeature() instanceof GFFStreamFeature)
+      {
+        GFFStreamFeature f = (GFFStreamFeature) selected_features.elementAt(i).getEmblFeature();
+        if(f.getChadoGene() != null)
+        {
+          try
+          {
+            final ChadoCanonicalGene g = f.getChadoGene();
+            Set<uk.ac.sanger.artemis.io.Feature> children = g.getChildren(g.getGene());
+            getSelection().add( (Feature) g.getGene().getUserData() );
+            Iterator<uk.ac.sanger.artemis.io.Feature>  it = children.iterator();
+            while(it.hasNext())
+              getSelection().add( (Feature) it.next().getUserData() );
+          }
+          catch(Exception e){}
+        }
+      }
+    }
   }
 
   /**
