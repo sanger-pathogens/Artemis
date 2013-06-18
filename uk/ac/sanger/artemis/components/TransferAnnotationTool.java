@@ -65,6 +65,7 @@ import uk.ac.sanger.artemis.FeaturePredicate;
 import uk.ac.sanger.artemis.FeatureVector;
 import uk.ac.sanger.artemis.SimpleEntryGroup;
 import uk.ac.sanger.artemis.chado.ChadoTransactionManager;
+import uk.ac.sanger.artemis.components.filetree.LocalAndRemoteFileManager;
 import uk.ac.sanger.artemis.components.genebuilder.GeneEdit;
 import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 import uk.ac.sanger.artemis.components.genebuilder.ortholog.MatchPanel;
@@ -424,35 +425,45 @@ public class TransferAnnotationTool extends JFrame
             return;
         }
         
-        setCursor(new Cursor(Cursor.WAIT_CURSOR));
-        StringBuffer buff = new StringBuffer();
+        final boolean autoHistorySetting = LocalAndRemoteFileManager.isAutomaticHistory();
         StringBuffer summary = new StringBuffer();
-        for(int i = 0; i < qualifierPanels.size(); i++)
+        try
         {
-          QualifierPanel qP = qualifierPanels.get(i);
-          int res = transferAnnotation(qP.getQualifierCheckBoxes(), 
+          LocalAndRemoteFileManager.setAutomaticHistory(false);
+          setCursor(new Cursor(Cursor.WAIT_CURSOR));
+          StringBuffer buff = new StringBuffer();
+        
+          for(int i = 0; i < qualifierPanels.size(); i++)
+          {
+            QualifierPanel qP = qualifierPanels.get(i);
+            int res = transferAnnotation(qP.getQualifierCheckBoxes(), 
               geneNameCheckBoxes, qP.getFeature(), entryGroup, 
               sameKeyCheckBox.isSelected(),
               overwriteCheckBox.isSelected(),
               cvCheckBox.isSelected(),
               buff, summary);
-          if(res == -1)
-            break;
+            if(res == -1)
+              break;
+          }
+        
+          if(buff.length() > 0)
+            logger4j.debug("TRANSFERRED ANNOTATION SUMMARY:\n"+buff.toString());
+          setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+          
+          if(summary.length()>0)
+          {
+            final JTextArea list = new JTextArea(summary.toString());
+            final JScrollPane jsp = new JScrollPane(list);
+            jsp.setPreferredSize(new Dimension(300,200));
+            JOptionPane.showMessageDialog(
+                TransferAnnotationTool.this, jsp, 
+                "Summary of Genes Changed",
+                JOptionPane.INFORMATION_MESSAGE);
+          }
         }
-        
-        if(buff.length() > 0)
-          logger4j.debug("TRANSFERRED ANNOTATION SUMMARY:\n"+buff.toString());
-        setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-        
-        if(summary.length()>0)
+        finally
         {
-          final JTextArea list = new JTextArea(summary.toString());
-          final JScrollPane jsp = new JScrollPane(list);
-          jsp.setPreferredSize(new Dimension(300,200));
-          JOptionPane.showMessageDialog(
-              TransferAnnotationTool.this, jsp, 
-              "Summary of Genes Changed",
-              JOptionPane.INFORMATION_MESSAGE);
+          LocalAndRemoteFileManager.setAutomaticHistory(autoHistorySetting);
         }
       }
     });
