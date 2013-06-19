@@ -165,7 +165,11 @@ public class GenbankTblOutputStream
         String qualifierStr = (String)qualifier_strings.get(k);
         int index = qualifierStr.indexOf("=");
         if(index < 1)
+        {
+          if(current_qualifier.getName().equals("pseudo"))
+            writer.write("\n\t\t\tpseudo");
           continue;
+        }
         qualifierStr = qualifierStr.substring(index+1);
         if(qualifierStr.startsWith("\""))
           qualifierStr = qualifierStr.substring(1);
