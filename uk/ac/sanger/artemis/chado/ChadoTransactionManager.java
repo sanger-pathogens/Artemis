@@ -29,9 +29,12 @@ import uk.ac.sanger.artemis.FeatureSegment;
 import uk.ac.sanger.artemis.FeatureSegmentVector;
 import uk.ac.sanger.artemis.sequence.SequenceChangeListener;
 import uk.ac.sanger.artemis.sequence.SequenceChangeEvent;
+import uk.ac.sanger.artemis.components.filetree.LocalAndRemoteFileManager;
 import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 import uk.ac.sanger.artemis.components.genebuilder.ProteinMapPanel;
+import uk.ac.sanger.artemis.components.genebuilder.cv.DatePanel;
 import uk.ac.sanger.artemis.components.genebuilder.cv.GoBox;
+import uk.ac.sanger.artemis.components.genebuilder.cv.HistoryBox;
 import uk.ac.sanger.artemis.components.genebuilder.ortholog.MatchPanel;
 import uk.ac.sanger.artemis.components.genebuilder.ortholog.OrthoParalogTable;
 import uk.ac.sanger.artemis.components.genebuilder.ortholog.SimilarityTable;
@@ -143,7 +146,7 @@ public class ChadoTransactionManager
          Options.getOptions().getProperty("product_cvname");
   public static String HISTORY_CV = 
           Options.getOptions().getProperty("history_cvname");
-  
+
   // number of SQL commands successfully processed during a commit
   public static int commitReturnValue = 0;
   
@@ -1668,7 +1671,8 @@ public class ChadoTransactionManager
                                       uniquename+" "+qualifierString);
            sql.add(tsn);
            
-           //addHistory(tsn, qualifierName.toUpperCase(), feature_cvterm.getCvTerm().getName());
+           if(LocalAndRemoteFileManager.isAutomaticHistory())
+             addHistory(tsn, qualifierName.toUpperCase(), feature_cvterm.getCvTerm().getName());
          }
          else if(isSynonymTag(qualifierName, feature))
          {
@@ -1865,8 +1869,8 @@ public class ChadoTransactionManager
                  qualifierName.toUpperCase()+ ": ID="+uniquename+" "+qualifierString);
       sql.add(tsn);
       
-      
-      //addHistory(tsn, qualifierName.toUpperCase(), feature_cvterm.getCvTerm().getName());
+      if(LocalAndRemoteFileManager.isAutomaticHistory())
+        addHistory(tsn, qualifierName.toUpperCase(), feature_cvterm.getCvTerm().getName());
     }
     else if(isSynonymTag(qualifierName, feature))
     {
@@ -2783,7 +2787,7 @@ public class ChadoTransactionManager
   {
 	  DatabaseDocument.initMDC(dbDoc);
     
-    final Vector sqlCopy = ctm.getSql();
+    final Vector<ChadoTransaction> sqlCopy = ctm.getSql();
     commitReturnValue = dbDoc.commit(sqlCopy, force);
     
     boolean nocommit = true;
@@ -2797,37 +2801,75 @@ public class ChadoTransactionManager
       {
         for(int i = 0; i < sqlCopy.size() && i < commitReturnValue; i++)
         {
-          ChadoTransaction tsn = (ChadoTransaction) sqlCopy.get(i);
+          ChadoTransaction tsn = sqlCopy.get(i);
           logger4j.debug("COMMIT DONE " + tsn.getLogComment());
         }
       }
       
       logger4j.debug("COMMIT SUCCESS");
       if(!nocommit)
-        ctm.setSql(new Vector());
+        ctm.setSql(new Vector<ChadoTransaction>());
     }
     else if(commitReturnValue > 0)
     {
-      ChadoTransaction tsn = (ChadoTransaction) sqlCopy.get(commitReturnValue);
+      ChadoTransaction tsn = sqlCopy.get(commitReturnValue);
       logger4j.warn("COMMIT FAILED AT " + tsn.getLogComment());
     }
     sqlCopy.clear();
   }
   
-  /*private void addHistory(final ChadoTransaction tsn, final String qualifierName, String log)
+  /**
+   * Add a history qualifier
+   * @param tsn
+   * @param qualifierName
+   * @param log
+   */
+  private void addHistory(final ChadoTransaction tsn, 
+                          final String qualifierName, final String log)
   {
     if( qualifierName.equalsIgnoreCase("history") )
       return;
-
-    Qualifier cv_qualifier = tsn.getGff_feature().getQualifierByName("history");
-    final int index;
+    
+    // append to event queue to be run after any other changes
+    java.awt.EventQueue.invokeLater(new Runnable() 
+    {
+      public void run() 
+      {
+        String msg;
+        switch(tsn.getType())
+        {
+          case ChadoTransaction.INSERT:
+            msg = "added_";
+            break;
+          case ChadoTransaction.DELETE:
+            msg = "removed_";
+            break;
+          default:
+            msg = "update_";
+        }
+        msg += qualifierName+"="+log;
+        
+        updateHistory(tsn.getGff_feature(), msg);
+      }
+    });
+  }
+  
+  /**
+   * Add a history qualifier
+   * @param f - GFF feature
+   * @param msg - history
+   */
+  private void updateHistory(final GFFStreamFeature f, final String msg)
+  {
+    Qualifier cv_qualifier = f.getQualifierByName("history");
+    final int idx;
     if(cv_qualifier == null)
     {
       cv_qualifier = new Qualifier("history");
-      index = -1;
+      idx = -1;
     }
     else
-      index = tsn.getGff_feature().getQualifiers().indexOf(cv_qualifier);
+      idx = f.getQualifiers().indexOf(cv_qualifier);
 
     final String term;
     if(HistoryBox.getCvTermStrings().contains("annotation"))
@@ -2835,23 +2877,12 @@ public class ChadoTransactionManager
     else
       term = HistoryBox.getDefaultTerm().getName();
     
-    String msg;
-    switch(tsn.getType())
-    {
-      case ChadoTransaction.INSERT:
-        msg = "added_";
-        break;
-      case ChadoTransaction.DELETE:
-        msg = "removed_";
-        break;
-      default:
-        msg = "update_";
-    }
-    
-    msg += qualifierName+"="+log;
-    final DatabaseDocument doc = 
-        (DatabaseDocument) (tsn.getGff_feature().getDocumentEntry().getDocument());
-    if(index > -1)
+    final String qual = 
+        "term="+term+";"+
+        "curatorName="+((DatabaseDocument) (f.getDocumentEntry().getDocument())).getUserName()+";"+
+        "date="+ DatePanel.getDate()+";"+
+        "qualifier="+msg;
+    if(idx > -1)
     {
       String dateStr = "date="+ DatePanel.getDate();
       StringVector sv = cv_qualifier.getValues();
@@ -2859,7 +2890,7 @@ public class ChadoTransactionManager
       int ind = -1;
       for(int i=0; i<sv.size(); i++)
       {
-        String v = (String)sv.get(i);
+        String v = sv.get(i);
         if(v.indexOf(dateStr)> -1)
         {
           qStr = HistoryBox.getFieldIgnoreSeparator("qualifier", v);
@@ -2867,35 +2898,33 @@ public class ChadoTransactionManager
           break;
         }
       }
-      
+
       if(ind > -1)
       {
         sv.remove(ind);
-        sv.add(ind, "term="+term+";"+
-            "curatorName="+doc.getUserName()+";"+
-            "date="+ DatePanel.getDate()+";"+
-            "qualifier="+msg+";qualifier="+qStr);
+        sv.add(ind, qual+";qualifier="+qStr);
       }
       else
-        sv.add("term="+term+";"+
-            "curatorName="+doc.getUserName()+";"+
-            "date="+ DatePanel.getDate()+";"+
-            "qualifier="+msg);
+        sv.add(qual);
       
       cv_qualifier = new Qualifier("history", sv);
-      tsn.getGff_feature().getQualifiers().remove(index);
-      tsn.getGff_feature().getQualifiers().add(cv_qualifier);
     }
     else
+      cv_qualifier.addValue(qual);
+    
+    try
     {
-      cv_qualifier.addValue(
-          "term="+term+";"+
-          "curatorName="+doc.getUserName()+";"+
-          "date="+ DatePanel.getDate()+";"+
-          "qualifier="+msg);
-      tsn.getGff_feature().getQualifiers().add(cv_qualifier);
+      ((Feature)f.getUserData()).setQualifier(cv_qualifier);
     }
-  }*/
+    catch (ReadOnlyException e)
+    {
+      e.printStackTrace();
+    }
+    catch (EntryInformationException e)
+    {
+      e.printStackTrace();
+    }
+  }
   
   /**
    * Determines if there are transactions registered.
@@ -2919,13 +2948,13 @@ public class ChadoTransactionManager
   }
 
 
-  public Vector getSql()
+  private Vector<ChadoTransaction> getSql()
   {
-    final Vector tmpSql = new Vector(sql.size());
+    final Vector<ChadoTransaction> tmpSql = new Vector<ChadoTransaction>(sql.size());
     
     for(int i=0;i<sql.size();i++)
     {
-      ChadoTransaction tsn = (ChadoTransaction) sql.get(i);
+      ChadoTransaction tsn = sql.get(i);
       tmpSql.add(tsn.copy());
     }
     
@@ -2933,13 +2962,13 @@ public class ChadoTransactionManager
   }
 
 
-  public void setSql(Vector sql)
+  private void setSql(Vector<ChadoTransaction> sql)
   {
     this.sql = sql;
   }
 
 
-  public int getCommitReturnValue()
+  protected int getCommitReturnValue()
   {
     return commitReturnValue;
   }
