@@ -67,7 +67,7 @@ abstract class AbstractCvBox
    * @param qualifierString
    * @return
    */
-  protected static String getFieldIgnoreSeparator(final String fieldName, final String qualifierString)
+  public static String getFieldIgnoreSeparator(final String fieldName, final String qualifierString)
   {
     String[] completeValues = qualifierString.split(";[\\S&&[^,;=]]+=");   
     StringBuffer buff = null;

@@ -888,6 +888,10 @@ synonym_cvname = genedb_synonym_type
 # cv containing annotation types for history qualifier
 history_cvname = annotation_change
 
+# automatically add a history qualifier when a new CV term (product, 
+# GO, controlled curation) term is added to the annotation
+automatic_history_annotation=yes
+
 # set default delete behaviour to make things obsolete, if
 # this is not provided the default is to permanently delete
 set_obsolete_on_delete=yes
