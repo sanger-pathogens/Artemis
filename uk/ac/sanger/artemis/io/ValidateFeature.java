@@ -171,7 +171,7 @@ public class ValidateFeature
     final LinkedHashMap<String, Level> report = new LinkedHashMap<String, Level>();
     final String fTxt = featureTxt(f);
     final boolean isGFF = entryGrp == null || GeneUtils.isGFFEntry( entryGrp );
-    if(isGFF)
+    if(isGFF && f instanceof GFFStreamFeature)
     {
       final GFFStreamFeature gffFeature = (GFFStreamFeature)f;
       report.put("\n"+GeneUtils.getUniqueName(gffFeature)+" ("+fTxt+"):", Level.INFO);
