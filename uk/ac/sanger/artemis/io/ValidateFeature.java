@@ -74,6 +74,9 @@ public class ValidateFeature
     { "GO", "EC_number", "EMBL_qualifier", "SignalP_prediction", 
       "GPI_anchor_cleavage_site", "GPI_anchored", "PlasmoAP_score" };
   
+  private static String[] ALLOWED_TAGS_WITH_NO_VALUE =
+    { "isFminPartial", "isFmaxPartial", "stop_codon_redefined_as_selenocysteine", "Name" };
+  
   private EntryGroup entryGrp;
   private FeaturePredicate cds_predicate;
 
@@ -333,8 +336,20 @@ public class ValidateFeature
       if(  values == null || values.size() < 1 ||
          ( values.size() == 1 && values.get(0).equals("")) )
       {
-        String msg = qualifier.getName()+" atribute has no value\n";
-        str.append(msg);
+        boolean allowed = false;
+        
+        if(GeneUtils.isDatabaseEntry(gffFeature))
+        {
+          for(String a: ALLOWED_TAGS_WITH_NO_VALUE)
+            if(qualifier.getName().equals(a))
+              allowed = true;
+        }
+        
+        if(!allowed)
+        {
+          String msg = qualifier.getName()+" atribute has no value\n";
+          str.append(msg);
+        }
       }
     }  
     return str.toString();
