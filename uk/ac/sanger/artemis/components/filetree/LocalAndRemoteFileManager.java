@@ -21,6 +21,7 @@
 
 package uk.ac.sanger.artemis.components.filetree;
 
+import uk.ac.sanger.artemis.components.SwingWorker;
 import uk.ac.sanger.artemis.components.database.DatabaseEntrySource;
 import uk.ac.sanger.artemis.components.database.DatabaseJPanel;
 import uk.ac.sanger.artemis.j2ssh.SshLogin;
@@ -586,18 +587,26 @@ public class LocalAndRemoteFileManager extends JFrame
       {
         public void actionPerformed(ActionEvent e)
         {
-          if(dbthread.getDatabaseJPanel() != null)
+          SwingWorker entryWorker = new SwingWorker()
           {
-            dbthread.getDatabaseJPanel().setCursor(new Cursor(Cursor.WAIT_CURSOR));
-            try
+            public Object construct()
             {
-              dbthread.getDatabaseJPanel().validate(entry_source);
+              if(dbthread.getDatabaseJPanel() != null)
+              {
+                dbthread.getDatabaseJPanel().setCursor(new Cursor(Cursor.WAIT_CURSOR));
+                try
+                {
+                  dbthread.getDatabaseJPanel().validate(entry_source);
+                }
+                finally
+                {
+                  dbthread.getDatabaseJPanel().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                }
+              }
+              return null;
             }
-            finally
-            {
-              dbthread.getDatabaseJPanel().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-            }
-          }
+          };
+          entryWorker.start();
         }
       });
       fileMenu.add(validate);
