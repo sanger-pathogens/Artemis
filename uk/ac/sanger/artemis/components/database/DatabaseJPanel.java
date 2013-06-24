@@ -281,22 +281,25 @@ public class DatabaseJPanel extends JPanel
   {
     try
     {
-      Entry entry = entrySrc.getEntry(srcFeatureId, userName,
+      final Entry entry = entrySrc.getEntry(srcFeatureId, userName,
           stream_progress_listener, null);
       ((DatabaseDocumentEntry)entry.getEMBLEntry()).setReadOnly(true);
       final EntryGroup entryGrp = new SimpleEntryGroup(entry.getBases());
       entryGrp.add(entry);
 
       final ValidateFeature gffTest = new ValidateFeature(entryGrp);
-      FeatureVector features = entry.getAllFeatures();
+      uk.ac.sanger.artemis.io.FeatureVector features = entry.getEMBLEntry().getAllFeatures();
+      
+      
       for(int i=0; i<features.size(); i++)
       {
-        if(!gffTest.featureValidate(features.elementAt(i).getEmblFeature(), 
+        if(!gffTest.featureValidate(features.featureAt(i), 
             fv, true))
           nfail++;
       }
 
       entry.dispose();
+      stream_progress_listener.progressMade("Validated: "+(String)node.getUserObject());
     }
     catch (OutOfRangeException e)
     {
