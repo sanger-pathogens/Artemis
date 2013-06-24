@@ -580,6 +580,28 @@ public class LocalAndRemoteFileManager extends JFrame
       });
       fileMenu.add(fileShow);
       
+      
+      JMenuItem validate = new JMenuItem("Validate selected sequence ...");
+      validate.addActionListener(new ActionListener()
+      {
+        public void actionPerformed(ActionEvent e)
+        {
+          if(dbthread.getDatabaseJPanel() != null)
+          {
+            dbthread.getDatabaseJPanel().setCursor(new Cursor(Cursor.WAIT_CURSOR));
+            try
+            {
+              dbthread.getDatabaseJPanel().validate(entry_source);
+            }
+            finally
+            {
+              dbthread.getDatabaseJPanel().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+            }
+          }
+        }
+      });
+      fileMenu.add(validate);
+      
       final JCheckBoxMenuItem splitGFF = new JCheckBoxMenuItem(
           "Split into entries ...", false);
       splitGFF.addActionListener(new ActionListener()
