@@ -46,9 +46,11 @@ import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Frame;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.MediaTracker;
 import java.awt.Point;
+import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -373,10 +375,15 @@ abstract public class Splash extends JFrame
       /**
        *  Draws the splash screen text.
        **/
-      public int textPaint(final Graphics g)
+      public int textPaint(final Graphics graphics)
       {
-        FontMetrics fm = this.getFontMetrics(g.getFont());
+        FontMetrics fm = this.getFontMetrics(graphics.getFont());
         final int font_height = fm.getHeight() + 3;
+        
+        Graphics2D g = (Graphics2D) graphics;
+        g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                           RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        
         g.setColor(Color.black);
         final int left_margin = 150;
         final int yPos = helix_height+5;
