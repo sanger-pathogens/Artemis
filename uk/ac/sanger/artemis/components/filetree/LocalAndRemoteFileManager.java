@@ -581,7 +581,7 @@ public class LocalAndRemoteFileManager extends JFrame
       fileMenu.add(fileShow);
       
       
-      JMenuItem validate = new JMenuItem("Validate selected sequence ...");
+      JMenuItem validate = new JMenuItem("Validate Selected Sequence ...");
       validate.addActionListener(new ActionListener()
       {
         public void actionPerformed(ActionEvent e)
