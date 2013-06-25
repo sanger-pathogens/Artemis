@@ -92,11 +92,21 @@ public class ValidateViewer extends FileViewer implements EntryGroupChangeListen
       {
         final JPanel options = new JPanel( new GridLayout(3,1) );
         final JCheckBox extendToNextStop = new JCheckBox("Fix stop codon", true);
+        extendToNextStop.setToolTipText(
+            "If the last codon is not a stop codon, but the next codon\n" +
+            "is, then the end of the feature is extended by 3 bases.");
         options.add(extendToNextStop);
+        
         final JCheckBox boundary = new JCheckBox("Gene Model boundaries", true);
+        boundary.setToolTipText(
+            "Adjust boundary coordinates so that parent and child\n" +
+            "features are consistent.");
         options.add(boundary);
+        
         final JCheckBox cdsPhase = new JCheckBox("CDS phase", true);
+        cdsPhase.setToolTipText("If no phase is set then set it to 0.");
         options.add(cdsPhase);
+
         if( entryGrp != null && !GeneUtils.isGFFEntry( entryGrp ) )
         {
           boundary.setSelected(false);
