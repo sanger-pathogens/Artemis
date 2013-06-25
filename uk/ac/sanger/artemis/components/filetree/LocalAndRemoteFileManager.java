@@ -570,7 +570,7 @@ public class LocalAndRemoteFileManager extends JFrame
     if(System.getProperty("chado") != null)
     {
       fileMenu.add(new JSeparator());
-      JMenuItem fileShow = new JMenuItem("Open Selected Database Sequence ...");
+      final JMenuItem fileShow = new JMenuItem("Open Selected Database Sequence ...");
       fileShow.addActionListener(new ActionListener()
       {
         public void actionPerformed(ActionEvent e)
@@ -580,37 +580,7 @@ public class LocalAndRemoteFileManager extends JFrame
         }
       });
       fileMenu.add(fileShow);
-      
-      
-      JMenuItem validate = new JMenuItem("Validate Selected Sequence ...");
-      validate.addActionListener(new ActionListener()
-      {
-        public void actionPerformed(ActionEvent e)
-        {
-          SwingWorker entryWorker = new SwingWorker()
-          {
-            public Object construct()
-            {
-              if(dbthread.getDatabaseJPanel() != null)
-              {
-                dbthread.getDatabaseJPanel().setCursor(new Cursor(Cursor.WAIT_CURSOR));
-                try
-                {
-                  dbthread.getDatabaseJPanel().validate(entry_source);
-                }
-                finally
-                {
-                  dbthread.getDatabaseJPanel().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-                }
-              }
-              return null;
-            }
-          };
-          entryWorker.start();
-        }
-      });
-      fileMenu.add(validate);
-      
+
       final JCheckBoxMenuItem splitGFF = new JCheckBoxMenuItem(
           "Split into entries ...", false);
       splitGFF.addActionListener(new ActionListener()
@@ -665,6 +635,37 @@ public class LocalAndRemoteFileManager extends JFrame
       });
       fileMenu.add(clearCache);
     }
+    
+    
+    final JMenuItem validate = new JMenuItem("Validate Selected Sequence / Organism ...");
+    validate.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        SwingWorker entryWorker = new SwingWorker()
+        {
+          public Object construct()
+          {
+            if(dbthread.getDatabaseJPanel() != null)
+            {
+              dbthread.getDatabaseJPanel().setCursor(new Cursor(Cursor.WAIT_CURSOR));
+              try
+              {
+                dbthread.getDatabaseJPanel().validate(entry_source);
+              }
+              finally
+              {
+                dbthread.getDatabaseJPanel().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+              }
+            }
+            return null;
+          }
+        };
+        entryWorker.start();
+      }
+    });
+    fileMenu.add(new JSeparator());
+    fileMenu.add(validate);
     
     JMenuItem fileMenuClose = new JMenuItem("Close");
     fileMenuClose.addActionListener(new ActionListener()
