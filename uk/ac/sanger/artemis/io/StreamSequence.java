@@ -148,7 +148,7 @@ public abstract class StreamSequence
       count++;
     }
 
-    for(int i=packStart; i <= packEnd && count < dst_length; i++) 
+    for(int i=packStart; i <= packEnd && count < dst_length && i < sequencePacked.length; i++) 
     {
       currStorageUnit = sequencePacked[i];
       index1 = (int)(currStorageUnit & 0x000F);
