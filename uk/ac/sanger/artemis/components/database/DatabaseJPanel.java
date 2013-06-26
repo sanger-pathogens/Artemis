@@ -224,7 +224,8 @@ public class DatabaseJPanel extends JPanel
         (DatabaseTreeNode)path.getLastPathComponent();
       final String userName = doc.getUserName();
       String id = node.getFeatureId();
-      final FileViewer fv = new FileViewer((String) node.getUserObject(), false, false, true);
+      final FileViewer fv = new FileViewer(
+          (String) node.getUserObject(), false, false, true);
       int nfail = 0;
       
       if(id != null)
@@ -236,8 +237,8 @@ public class DatabaseJPanel extends JPanel
         for(int i=0; i<node.getChildCount(); i++)
         {
           DatabaseTreeNode child = (DatabaseTreeNode)node.getChildAt(i);
-          id = node.getFeatureId();
-          
+          id = child.getFeatureId();
+
           if(id == null)
           {
             for(int j=0; j<child.getChildCount(); j++)
@@ -249,7 +250,7 @@ public class DatabaseJPanel extends JPanel
             }
           }
           else
-            nfail = openValidatePanel(fv, entrySrc, id, userName, node, nfail);
+            nfail = openValidatePanel(fv, entrySrc, id, userName, child, nfail);
         }
       }
       
@@ -281,6 +282,13 @@ public class DatabaseJPanel extends JPanel
   {
     try
     {
+      stream_progress_listener.progressMade("Validating... "+(String)node.getUserObject());
+      boolean isMitochondrial = false;
+      if(((String)node.getPreviousNode().getUserObject()).startsWith("mitochondrial_"))
+        isMitochondrial = true;
+      DatabaseTreeNode.setOrganismProps(
+          node.getOrganism().getOrganismProps(), isMitochondrial);
+      
       final Entry entry = entrySrc.getEntry(srcFeatureId, userName,
           stream_progress_listener, null);
       ((DatabaseDocumentEntry)entry.getEMBLEntry()).setReadOnly(true);
@@ -289,8 +297,7 @@ public class DatabaseJPanel extends JPanel
 
       final ValidateFeature gffTest = new ValidateFeature(entryGrp);
       uk.ac.sanger.artemis.io.FeatureVector features = entry.getEMBLEntry().getAllFeatures();
-      
-      
+
       for(int i=0; i<features.size(); i++)
       {
         if(!gffTest.featureValidate(features.featureAt(i), 
