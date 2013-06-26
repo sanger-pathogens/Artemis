@@ -55,7 +55,8 @@ public class GoBox extends AbstractCvBox
 {
   protected static String[][] evidenceCodes = 
   { 
-     {"EXP", "IC", "IDA", "IEA", "IEP", "IGC", "IGI", 
+     {"EXP", "IC", "IDA", "IEA", "IEP", "IGC", 
+       "IBA", "IBD", "IKR", "IRD", "IGI", 
       "IMP", "IPI", "ISA", "ISM", "ISO", "ISS", 
       "NAS", "ND", "RCA", "TAS", "NR" }, 
      {"EXP\t:: Inferred from Experiment",
@@ -64,6 +65,10 @@ public class GoBox extends AbstractCvBox
       "IEA\t:: Inferred from Electronic Annotation",
       "IEP\t:: Inferred from Expression Pattern",
       "IGC\t:: Inferred from Genomic Context",
+      "IBA\t:: Inferred from Biological aspect of Ancestor",
+      "IBD\t:: Inferred from Biological aspect of Descendent",
+      "IKR\t:: Inferred from Key Residues",
+      "IRD\t:: Inferred from Rapid Divergence",
       "IGI\t:: Inferred from Genetic Interaction",
       "IMP\t:: Inferred from Mutant Phenotype",
       "IPI\t:: Inferred from Physical Interaction",
@@ -82,6 +87,10 @@ public class GoBox extends AbstractCvBox
         "Inferred from Electronic Annotation",
         "Inferred from Expression Pattern",
         "Inferred from Genomic Context",
+        "Inferred from Biological aspect of Ancestor",
+        "Inferred from Biological aspect of Descendent",
+        "Inferred from Key Residues",
+        "Inferred from Rapid Divergence",
         "Inferred from Genetic Interaction",
         "Inferred from Mutant Phenotype",
         "Inferred from Physical Interaction",

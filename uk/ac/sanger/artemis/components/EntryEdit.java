@@ -181,7 +181,28 @@ public class EntryEdit extends JFrame
       final String name = getEntryGroup().getDefaultEntry().getName();
       if(name != null) 
         setTitle("Artemis Entry Edit: " + name);
-
+      
+      final JButton validate = new JButton("\u2713");
+      validate.setToolTipText("Validate selected entries");
+      validate.setFont(validate.getFont().deriveFont(20f));
+      validate.setPreferredSize(new Dimension(25,25));
+      validate.addActionListener(new ActionListener(){
+        public void actionPerformed(ActionEvent arg0)
+        {
+          SwingUtilities.invokeLater(new Runnable() 
+          {
+            public void run() 
+            {
+              setCursor(new Cursor(Cursor.WAIT_CURSOR));
+              new ValidateViewer(getEntryGroup(), 
+                    getEntryGroup().getAllFeatures());
+              setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+            }
+          });
+        }
+      });
+      xBox.add(validate);
+      
       if(getEntryGroup().getDefaultEntry().getEMBLEntry() instanceof DatabaseDocumentEntry)
       {
         ChadoTransactionManager ctm = getDatabaseDocumentEntry().getChadoTransactionManager();

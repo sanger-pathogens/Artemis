@@ -44,31 +44,43 @@ import uk.ac.sanger.artemis.FeatureChangeListener;
 import uk.ac.sanger.artemis.FeatureVector;
 import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
+import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
+import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.ValidateFeature;
 import uk.ac.sanger.artemis.util.ReadOnlyException;
 
 
-class ValidateViewer extends FileViewer implements EntryGroupChangeListener
+public class ValidateViewer extends FileViewer implements EntryGroupChangeListener
 {
   private static final long serialVersionUID = 1L;
   private EntryGroup entryGrp;
   private FeatureVector selectedFeatures;
   private JCheckBox showFailedFeatures = new JCheckBox("Show only failed features", true);
   private boolean inAutoFix = false;
+  private String seqName;
+  
+  public ValidateViewer(final EntryGroup entryGrp,
+                        final FeatureVector selectedFeatures)
+  {
+    this(entryGrp, selectedFeatures, null);
+  }
+  
   /**
    * Viewer to display validation results
    * @param entryGrp
    * @param features
    */
   public ValidateViewer(final EntryGroup entryGrp,
-                        final FeatureVector selectedFeatures)
+                        final FeatureVector selectedFeatures,
+                        final String seqName)
   {
-    super("Validation Report :: ", false, false, true);
+    super("Validation Report :: "+ (seqName!=null? seqName:""), false, false, true);
     this.entryGrp = entryGrp;
     this.selectedFeatures = selectedFeatures;
+    this.seqName = seqName;
     
-    final boolean allFeatures = (selectedFeatures == null);
+    //final boolean allFeatures = (selectedFeatures == null);
 
     update();
     setVisible(true);
@@ -78,15 +90,35 @@ class ValidateViewer extends FileViewer implements EntryGroupChangeListener
     {
       public void actionPerformed(ActionEvent e) 
       {
-        final JPanel options = new JPanel( new GridLayout(2,1) );
+        final JPanel options = new JPanel( new GridLayout(3,1) );
         final JCheckBox extendToNextStop = new JCheckBox("Fix stop codon", true);
+        extendToNextStop.setToolTipText(
+            "If the last codon is not a stop codon, but the next codon\n" +
+            "is, then the end of the feature is extended by 3 bases.");
         options.add(extendToNextStop);
+        
         final JCheckBox boundary = new JCheckBox("Gene Model boundaries", true);
+        boundary.setToolTipText(
+            "Adjust boundary coordinates so that parent and child\n" +
+            "features are consistent.");
         options.add(boundary);
+        
+        final JCheckBox cdsPhase = new JCheckBox("CDS phase", true);
+        cdsPhase.setToolTipText("If no phase is set then set it to 0.");
+        options.add(cdsPhase);
+
         if( entryGrp != null && !GeneUtils.isGFFEntry( entryGrp ) )
         {
           boundary.setSelected(false);
           boundary.setEnabled(false);
+          cdsPhase.setSelected(false);
+          cdsPhase.setEnabled(false);
+        }
+        
+        if(GeneUtils.isDatabaseEntry(entryGrp))
+        {
+          cdsPhase.setSelected(false);
+          cdsPhase.setEnabled(false);
         }
         
         int status = 
@@ -110,6 +142,9 @@ class ValidateViewer extends FileViewer implements EntryGroupChangeListener
             
             if(boundary.isSelected())
               fixBoundary(f);
+            
+            if(cdsPhase.isSelected())
+              fixCDSPhase(f);
           }
         }
         catch (ReadOnlyException e1)
@@ -125,6 +160,9 @@ class ValidateViewer extends FileViewer implements EntryGroupChangeListener
         }
       }
     });
+    
+    if(entryGrp.getDefaultEntry().isReadOnly())
+      fixButton.setEnabled(false);
     button_panel.add(fixButton);
 
     
@@ -182,7 +220,7 @@ class ValidateViewer extends FileViewer implements EntryGroupChangeListener
           this, showFailedFeatures.isSelected()))
         nfail++;
     }
-    setTitle("Validation Report :: "+features.size()+
+    setTitle("Validation Report :: "+ (seqName!=null? seqName:"")+ " :: "+features.size()+
         " feature(s) Pass: "+(features.size()-nfail)+" Failed: "+nfail);
   }
   
@@ -193,6 +231,28 @@ class ValidateViewer extends FileViewer implements EntryGroupChangeListener
     return selectedFeatures;
   }
 
+  private void fixCDSPhase(final Feature feature) throws ReadOnlyException
+  {
+    if( !(feature.getEmblFeature() instanceof GFFStreamFeature) ||
+        GeneUtils.isDatabaseEntry(entryGrp) ||
+        !feature.isCDS())
+      return;
+    
+    final GFFStreamFeature gffFeature = (GFFStreamFeature) feature.getEmblFeature();
+    if(ValidateFeature.isCDSPhaseOK(gffFeature))
+      return;
+    
+    Qualifier q = new Qualifier("codon_start", "1");
+    try
+    {
+      gffFeature.setQualifier(q);
+    }
+    catch (EntryInformationException e)
+    {
+      e.printStackTrace();
+    }
+  }
+  
   private void fixBoundary(final Feature feature)
   {
     if( ! (feature.getEmblFeature() instanceof GFFStreamFeature) )
