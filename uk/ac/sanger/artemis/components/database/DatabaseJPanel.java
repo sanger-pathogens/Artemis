@@ -28,9 +28,11 @@ package uk.ac.sanger.artemis.components.database;
 import uk.ac.sanger.artemis.components.*;
 
 import uk.ac.sanger.artemis.Entry;
+import uk.ac.sanger.artemis.EntryGroup;
 import uk.ac.sanger.artemis.FeatureVector;
 import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.Selection;
+import uk.ac.sanger.artemis.SimpleEntryGroup;
 import uk.ac.sanger.artemis.sequence.*;
 import uk.ac.sanger.artemis.util.InputStreamProgressEvent;
 import uk.ac.sanger.artemis.util.InputStreamProgressListener;
@@ -39,6 +41,7 @@ import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.util.StringVector;
 import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
 import uk.ac.sanger.artemis.io.Range;
+import uk.ac.sanger.artemis.io.ValidateFeature;
 
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -203,6 +206,121 @@ public class DatabaseJPanel extends JPanel
     {
       npe.printStackTrace();
     }
+  }
+  
+  
+  /**
+   * Validate the selected chromosome/genome
+   * @param entrySrc
+   */
+  public void validate(final DatabaseEntrySource entrySrc)
+  {
+    try
+    {
+      final TreePath path = tree.getLeadSelectionPath();
+      if(path == null)
+        return;
+      DatabaseTreeNode node = 
+        (DatabaseTreeNode)path.getLastPathComponent();
+      final String userName = doc.getUserName();
+      String id = node.getFeatureId();
+      final FileViewer fv = new FileViewer(
+          (String) node.getUserObject(), false, false, true);
+      int nfail = 0;
+      
+      if(id != null)
+        nfail = openValidatePanel(fv, entrySrc, id, userName, node, nfail);
+      else
+      {
+        if(!node.isExplored())
+          node.explore();
+        for(int i=0; i<node.getChildCount(); i++)
+        {
+          DatabaseTreeNode child = (DatabaseTreeNode)node.getChildAt(i);
+          id = child.getFeatureId();
+
+          if(id == null)
+          {
+            for(int j=0; j<child.getChildCount(); j++)
+            {
+              DatabaseTreeNode child2 = 
+                  (DatabaseTreeNode)child.getChildAt(j);
+              id = child2.getFeatureId();
+              nfail = openValidatePanel(fv, entrySrc, id, userName, child2, nfail);
+            }
+          }
+          else
+            nfail = openValidatePanel(fv, entrySrc, id, userName, child, nfail);
+        }
+      }
+      
+      fv.setTitle(fv.getTitle()+" ::: Failed: "+nfail);
+      fv.setVisible(true);
+    }
+    catch(NullPointerException npe)
+    {
+      npe.printStackTrace();
+    }
+  }
+  
+  /**
+   * Create entry and validate
+   * @param fv
+   * @param entrySrc
+   * @param srcFeatureId
+   * @param userName
+   * @param node
+   * @param nfail
+   * @return
+   */
+  private int openValidatePanel(final FileViewer fv,
+                                 final DatabaseEntrySource entrySrc, 
+                                 final String srcFeatureId,
+                                 final String userName,
+                                 final DatabaseTreeNode node,
+                                 int nfail)       
+  {
+    try
+    {
+      stream_progress_listener.progressMade("Validating... "+(String)node.getUserObject());
+      boolean isMitochondrial = false;
+      if(((String)node.getPreviousNode().getUserObject()).startsWith("mitochondrial_"))
+        isMitochondrial = true;
+      DatabaseTreeNode.setOrganismProps(
+          node.getOrganism().getOrganismProps(), isMitochondrial);
+      
+      final Entry entry = entrySrc.getEntry(srcFeatureId, userName,
+          stream_progress_listener, null);
+      ((DatabaseDocumentEntry)entry.getEMBLEntry()).setReadOnly(true);
+      final EntryGroup entryGrp = new SimpleEntryGroup(entry.getBases());
+      entryGrp.add(entry);
+
+      final ValidateFeature gffTest = new ValidateFeature(entryGrp);
+      uk.ac.sanger.artemis.io.FeatureVector features = entry.getEMBLEntry().getAllFeatures();
+
+      for(int i=0; i<features.size(); i++)
+      {
+        if(!gffTest.featureValidate(features.featureAt(i), 
+            fv, true))
+          nfail++;
+      }
+
+      entry.dispose();
+      stream_progress_listener.progressMade("Validated: "+(String)node.getUserObject());
+    }
+    catch (OutOfRangeException e)
+    {
+      e.printStackTrace();
+    }
+    catch (NoSequenceException e)
+    {
+      e.printStackTrace();
+    }
+    catch (IOException e)
+    {
+      e.printStackTrace();
+    }
+    return nfail;
   }
   
   /**
