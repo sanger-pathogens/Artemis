@@ -184,8 +184,9 @@ public class EntryEdit extends JFrame
       
       final JButton validate = new JButton("\u2713");
       validate.setToolTipText("Validate selected entries");
-      validate.setFont(validate.getFont().deriveFont(20f));
+      validate.setFont(validate.getFont().deriveFont(18f));
       validate.setPreferredSize(new Dimension(25,25));
+      validate.setMargin(new Insets(0, 0, 0, 0));
       validate.addActionListener(new ActionListener(){
         public void actionPerformed(ActionEvent arg0)
         {
