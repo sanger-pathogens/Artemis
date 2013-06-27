@@ -134,7 +134,8 @@ public abstract class Graph extends JPanel
       g2.setTransform(newOrig);
       
       float xA = value_array[i];
-       
+      if(xA == 0.f)
+        continue;
       if(value_array[i] >= gcAverage)
         g2.setColor(getPlusColour());
       else
