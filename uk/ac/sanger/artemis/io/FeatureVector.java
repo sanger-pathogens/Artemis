@@ -19,8 +19,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/FeatureVector.java,v 1.2 2004-11-24 11:55:52 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -29,14 +27,14 @@ import java.util.Vector;
 
 /**
  *  This class implements a Vector of Feature objects.
- *
  *  @author Kim Rutherford
  *  @version $Id: FeatureVector.java,v 1.2 2004-11-24 11:55:52 tjc Exp $
- *
  */
 
-public class FeatureVector extends Vector
+public class FeatureVector extends Vector<Feature>
 {
+  private static final long serialVersionUID = 1L;
+
   /**
    *  Create a new vector of Feature objects with an initial capacity of 100.
    **/
@@ -50,8 +48,7 @@ public class FeatureVector extends Vector
    **/
   public Feature featureAt(int index) 
   {
-    return (Feature)elementAt(index);
+    return elementAt(index);
   }
-
 }
 
