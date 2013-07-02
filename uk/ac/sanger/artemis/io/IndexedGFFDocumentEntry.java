@@ -1210,9 +1210,10 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
     final String id = f.getIDString();
     final String keyStr = f.getKey().toString();
     final String pId = FeatureDisplay.getParentQualifier(f);
+    final String loc = f.getLocation().toStringShort();
 
     for(int i=0; i<fs.size(); i++)
-      if(contains(fs.elementAt(i), id, keyStr, pId))
+      if(contains(fs.elementAt(i), id, keyStr, pId, loc))
         return true;
     return false;
   }
@@ -1220,13 +1221,14 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
   private static boolean contains(final uk.ac.sanger.artemis.Feature f, 
                                   final String id, 
                                   final String keyStr, 
-                                  final String pId)
+                                  final String pId,
+                                  final String loc)
   {
     if(keyStr.equals(f.getKey().getKeyString()))
     {
       final String thisParentId = FeatureDisplay.getParentQualifier(f);
       if( f.getIDString().equals(id) &&
-          (pId == null || thisParentId.equals(pId)) )
+          (pId != null && thisParentId.equals(pId)) )
         return true;
       else if(id.indexOf("{")>-1)
       {
@@ -1240,6 +1242,11 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
         int ind = id.lastIndexOf(":");
         if( ind > -1 && f.getIDString().startsWith(id.substring(0, ind)) && 
            (pId == null || thisParentId.equals(pId)) )
+          return true;
+      }
+      else if(id != null && id.equals(f.getIDString()))
+      {
+        if(loc.equals(f.getLocation().toStringShort()))
           return true;
       }
     }
