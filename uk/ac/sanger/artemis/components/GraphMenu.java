@@ -90,7 +90,7 @@ public class GraphMenu extends JMenu
    *  This list of the CheckboxMenuItems for the graphs is stored so that we
    *  can turn them all off with "Hide All Graphs".
    **/
-  private Vector algorithm_menu_items = new Vector ();
+  private Vector<JCheckBoxMenuItem> algorithm_menu_items = new Vector <JCheckBoxMenuItem>();
 
   private JSplitPane splitPane;
   
@@ -136,7 +136,7 @@ public class GraphMenu extends JMenu
           base_plot_group.setVisibleByAlgorithm (this_algorithm, false);
 
           final JCheckBoxMenuItem this_menu_item =
-            (JCheckBoxMenuItem) algorithm_menu_items.elementAt (i);
+             algorithm_menu_items.elementAt (i);
 
           this_menu_item.setState (false);
         }
@@ -340,7 +340,7 @@ public class GraphMenu extends JMenu
     for (int i = 0 ; i < current_algorithms.length ; ++i)
     {
       final JCheckBoxMenuItem this_menu_item =
-        (JCheckBoxMenuItem) algorithm_menu_items.elementAt (i);
+         algorithm_menu_items.elementAt (i);
 
        if(this_menu_item.isSelected())
        {
@@ -639,14 +639,6 @@ public class GraphMenu extends JMenu
       }
     
     frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-  }
-
-  /**
-   *  Return the JFrame that was passed to the constructor.
-   **/
-  private JFrame getParentFrame () 
-  {
-    return frame;
   }
 
   /**
