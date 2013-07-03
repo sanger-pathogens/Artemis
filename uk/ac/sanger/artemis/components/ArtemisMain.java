@@ -62,9 +62,6 @@ public class ArtemisMain extends Splash
   /** */
   private static final long serialVersionUID = 1L;
 
-  /** Version String use for banner messages and title bars. */
-  public static final String version = "Release 9";
-
   /** A vector containing all EntryEdit object we have created. */
   private Vector<EntryEdit> entry_edit_objects = new Vector<EntryEdit>();
 
@@ -78,7 +75,7 @@ public class ArtemisMain extends Splash
    **/
   public ArtemisMain(final String args[]) 
   {
-    super("Artemis", "Artemis", version);
+    super("Artemis", "Artemis", "15");
 
     makeMenuItem(file_menu, "Open Project Manager ...", new ActionListener(){
       public void actionPerformed(ActionEvent e)
