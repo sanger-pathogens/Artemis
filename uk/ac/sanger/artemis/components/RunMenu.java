@@ -55,8 +55,8 @@ public class RunMenu extends SelectionMenu
   private static final long serialVersionUID = 1L;
   private JMenu fastaMenu = null;
   private JMenu fastaMenuOptions = null;
-  private Hashtable blastMenu = null;
-  private Hashtable blastMenuOptions = null;
+  private Hashtable<String, JMenu> blastMenu = null;
+  private Hashtable<String, JMenu> blastMenuOptions = null;
 
   /**
    *  Create a new RunMenu object.
@@ -316,7 +316,7 @@ public class RunMenu extends SelectionMenu
     else if(program.getName().indexOf("blast")>-1)
     {
       if(blastMenu == null)
-        blastMenu = new Hashtable();
+        blastMenu = new Hashtable<String, JMenu>();
 
       if(!blastMenu.containsKey(program.getName()))
       {
@@ -326,7 +326,7 @@ public class RunMenu extends SelectionMenu
         add(topMenu);
       }
       
-      JMenu topMenu = (JMenu) blastMenu.get(program.getName());
+      JMenu topMenu = blastMenu.get(program.getName());
       topMenu.add(new_menu);
     }
     else
@@ -359,7 +359,7 @@ public class RunMenu extends SelectionMenu
     else if(program_name.indexOf("blast")>-1)
     {
       if(blastMenuOptions == null)
-        blastMenuOptions = new Hashtable();
+        blastMenuOptions = new Hashtable<String, JMenu>();
       
       String menuStr = "Set " + program_name + " options";
       if(!blastMenuOptions.containsKey(menuStr))
@@ -369,7 +369,7 @@ public class RunMenu extends SelectionMenu
         add(topMenu);
       }
       
-      JMenu topMenu = (JMenu) blastMenuOptions.get(menuStr);
+      JMenu topMenu = blastMenuOptions.get(menuStr);
       new_options_menu = new JMenuItem(program.getProgramOptions());
       topMenu.add(new_options_menu);
     }

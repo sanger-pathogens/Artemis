@@ -295,15 +295,12 @@ public class DatabaseJPanel extends JPanel
       final EntryGroup entryGrp = new SimpleEntryGroup(entry.getBases());
       entryGrp.add(entry);
 
-      final ValidateFeature gffTest = new ValidateFeature(entryGrp);
+      final ValidateFeature validate = new ValidateFeature(entryGrp);
       uk.ac.sanger.artemis.io.FeatureVector features = entry.getEMBLEntry().getAllFeatures();
 
-      for(int i=0; i<features.size(); i++)
-      {
-        if(!gffTest.featureValidate(features.featureAt(i), 
-            fv, true))
+      for(uk.ac.sanger.artemis.io.Feature f: features)
+        if(!validate.featureValidate(f, fv, true))
           nfail++;
-      }
 
       entry.dispose();
       stream_progress_listener.progressMade("Validated: "+(String)node.getUserObject());

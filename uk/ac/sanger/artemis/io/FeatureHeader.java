@@ -28,11 +28,9 @@ package uk.ac.sanger.artemis.io;
 import uk.ac.sanger.artemis.util.LinePushBackReader;
 
 import java.io.IOException;
-import java.io.Writer;
 
 /**
  *  Class used to store FH lines.
- *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
  *  @version $Id: FeatureHeader.java,v 1.1 2004-06-09 09:49:24 tjc Exp $
  **/
@@ -52,8 +50,7 @@ public class FeatureHeader extends EmblMisc {
    **/
   private static String getLines (final LinePushBackReader in_stream)
       throws IOException {
-    final StringBuffer buffer = new StringBuffer ();
-
+    final StringBuilder buffer = new StringBuilder ();
     while (true) {
       final String this_line = in_stream.readLine ();
 
@@ -74,9 +71,4 @@ public class FeatureHeader extends EmblMisc {
 
     return buffer.toString ();
   }
-
-  /**
-   *  The line that was read or passed to the constructor.
-   **/
-  private String line;
 }

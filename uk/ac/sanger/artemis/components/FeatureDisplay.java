@@ -150,7 +150,8 @@ public class FeatureDisplay extends EntryGroupPanel
   private boolean update_visible_features = true;
 
   /** Contains those objects listening for adjustment events. */
-  final private Vector adjustment_listener_list = new Vector();
+  final private Vector<DisplayAdjustmentListener> adjustment_listener_list = 
+      new Vector<DisplayAdjustmentListener>();
 
   /**
    *  The index of the first base that we are displaying.  
@@ -4734,27 +4735,24 @@ public class FeatureDisplay extends EntryGroupPanel
 
   /**
    *  Send an event to those object listening for it.
-   *  @param listeners A Vector of the objects that the event should be sent
-   *    to.
+   *  @param listeners A Vector of the objects that the event should be sent to.
    *  @param event The event to send
    **/
-  private void fireAction(Vector listeners, ChangeEvent event) 
+  private void fireAction(final Vector<DisplayAdjustmentListener> listeners, final ChangeEvent event) 
   {
-    final Vector targets;
+    final Vector<DisplayAdjustmentListener> targets;
     // copied from a book - synchronizing the whole method might cause a
     // deadlock
     synchronized(this) 
     {
-      targets = (Vector)listeners.clone();
+      //targets = (Vector)listeners.clone();
+      targets = new Vector<DisplayAdjustmentListener>(listeners);
     }
 
-    final int targets_size = targets.size();
-    for(int i = 0; i < targets_size; ++i) 
+    final int ntargets = targets.size();
+    for(int i = 0; i < ntargets; ++i) 
     {
-      ChangeListener change_listener = (ChangeListener)targets.elementAt(i);
-
-      final DisplayAdjustmentListener target =
-                               (DisplayAdjustmentListener)change_listener;
+      DisplayAdjustmentListener target = targets.elementAt(i);
       target.displayAdjustmentValueChanged((DisplayAdjustmentEvent)event);
     }
   }

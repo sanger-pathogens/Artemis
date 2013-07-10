@@ -699,7 +699,7 @@ public class FeaturePopup extends JPopupMenu
   private JMenuItem[] addFeatureListItems() 
   {
     final JMenuItem feature_list_menus[] = new JMenuItem[7];
-    if(Options.getOptions().readWritePossible()) 
+    if(Options.readWritePossible()) 
     {
       feature_list_menus[0] = new JMenuItem("Save List To File ...");
       feature_list_menus[0].addActionListener(new ActionListener() 

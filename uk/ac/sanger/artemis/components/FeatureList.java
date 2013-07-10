@@ -72,6 +72,7 @@ public class FeatureList extends EntryGroupPanel
              EntryChangeListener, FeatureChangeListener,
              SelectionChangeListener, DisplayComponent
 {
+  private static final long serialVersionUID = 1L;
 
   /** true if correlation scores should be shown */
   private boolean show_correlation_scores = false;
@@ -971,10 +972,9 @@ public class FeatureList extends EntryGroupPanel
   /**
    *  Return a String containing the correlation scores.
    **/
-  protected String getScoresString(final Feature feature)
+  private String getScoresString(final Feature feature)
   {
-    final int base_total = feature.getTranslationBases().length();
-
+    //final int base_total = feature.getTranslationBases().length();
     final int c_total = feature.getBaseCount(Bases.getIndexOfBase('c'));
     final int g_total = feature.getBaseCount(Bases.getIndexOfBase('g'));
 
@@ -1001,7 +1001,6 @@ public class FeatureList extends EntryGroupPanel
     final String c3_score_string;
     final String g1_score_string;
     final String g3_score_string;
-
 
     if(c_total == 0) 
       c3_score_string = "ALL";

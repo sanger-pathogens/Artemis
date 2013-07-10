@@ -53,7 +53,7 @@ import uk.ac.sanger.artemis.util.StringVector;
 
 public class GoBox extends AbstractCvBox
 {
-  protected static String[][] evidenceCodes = 
+  public static String[][] evidenceCodes = 
   { 
      {"EXP", "IC", "IDA", "IEA", "IEP", "IGC", 
        "IBA", "IBD", "IKR", "IRD", "IGI", 
@@ -510,7 +510,7 @@ public class GoBox extends AbstractCvBox
     return newQualifierString;
   }
 
-  public static Dimension getEvidenceListDimension()
+  protected static Dimension getEvidenceListDimension()
   {
     if(evidenceListDimension == null)
     {

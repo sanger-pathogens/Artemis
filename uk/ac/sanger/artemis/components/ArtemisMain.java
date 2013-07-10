@@ -44,6 +44,7 @@ import org.biojava.bio.seq.io.SequenceFormat;
 import java.awt.event.*;
 import java.awt.Toolkit;
 import java.io.*;
+import java.util.Vector;
 import java.awt.datatransfer.*;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -61,11 +62,8 @@ public class ArtemisMain extends Splash
   /** */
   private static final long serialVersionUID = 1L;
 
-  /** Version String use for banner messages and title bars. */
-  public static final String version = "Release 9";
-
   /** A vector containing all EntryEdit object we have created. */
-  private EntryEditVector entry_edit_objects = new EntryEditVector();
+  private Vector<EntryEdit> entry_edit_objects = new Vector<EntryEdit>();
 
   protected static FileManager filemanager = null;
   
@@ -77,7 +75,7 @@ public class ArtemisMain extends Splash
    **/
   public ArtemisMain(final String args[]) 
   {
-    super("Artemis", "Artemis", version);
+    super("Artemis", "Artemis", "15");
 
     makeMenuItem(file_menu, "Open Project Manager ...", new ActionListener(){
       public void actionPerformed(ActionEvent e)
@@ -708,29 +706,10 @@ public class ArtemisMain extends Splash
   }
 
   /**
-   *  This method gets rid of an EntryEdit object and it's frame.  Each object
-   *  removed with this method must have been added previously with
-   *  addEntryEdit().
-   *  @param entry_edit The object to get rid of.
-   **/
-  public void entryEditFinished(EntryEdit entry_edit) 
-  {
-    if(null == entry_edit) 
-      throw new Error("entryEditFinished() was passed a null object");
-
-    if(!entry_edit_objects.removeElement(entry_edit)) 
-      throw new Error("entryEditFinished() - could not remove a " +
-                       "object from an empty vector");
-
-    entry_edit.setVisible(false);
-    entry_edit.dispose();
-  }
-
-  /**
    *  Add an EntryEdit object to our list of objects.
    *  @param entry_edit The object to add.
    **/
-  public synchronized void addEntryEdit(EntryEdit entry_edit) 
+  private synchronized void addEntryEdit(EntryEdit entry_edit) 
   {
     entry_edit_objects.addElement(entry_edit);
   }
@@ -775,13 +754,6 @@ public class ArtemisMain extends Splash
     {
       new MessageDialog(ArtemisMain.this, "read failed due to IO error: " + e);
     }
-  }
-  
-  /**
-   * Retrieve a live vector containing all the EntryEdit object we have created. 
-   */
-  protected EntryEditVector get_entry_edit_objects() {
-	  return entry_edit_objects;
   }
 
   
