@@ -50,6 +50,7 @@ import uk.ac.sanger.artemis.io.EntryInformation;
 import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.StreamQualifier;
 import uk.ac.sanger.artemis.io.QualifierInfo;
+import uk.ac.sanger.artemis.io.ValidateFeature;
 
 import uk.ac.sanger.artemis.components.ProgressThread;
 import uk.ac.sanger.artemis.components.genebuilder.BasicGeneBuilderFrame;
@@ -606,135 +607,6 @@ public class FeatureEdit extends JPanel
       }
     });
 
-    /*if(Options.getOptions().getProperty("external_editor") != null)
-    {
-      final JButton external_fasta_edit_button = new JButton("MESS/FASTA");
-      location_button_panel.add(external_fasta_edit_button);
-      external_fasta_edit_button.addActionListener(new ActionListener()
-      {
-        public void actionPerformed(ActionEvent e) 
-        {
-          try 
-          {
-            if(getFeature().getQualifierByName("fasta_file") != null) 
-            {
-              final String DEFAULT_MAX_EUK_FASTA_HITS = "10";
-              final String max_fasta_hits;
-
-              final String max_fasta_hits_from_options =
-                Options.getOptions().getProperty("mess_fasta_hits");
-
-              if(Options.getOptions().isEukaryoticMode()) 
-              {
-                if (max_fasta_hits_from_options == null) 
-                  max_fasta_hits = DEFAULT_MAX_EUK_FASTA_HITS;
-                else 
-                  max_fasta_hits = max_fasta_hits_from_options;
-
-                externalEdit(new String[] { "-fasta", "-maxhits",
-                                            max_fasta_hits, "-euk" });
-              } 
-              else 
-              {
-                if(max_fasta_hits_from_options == null) 
-                {
-                  externalEdit(new String[] { "-fasta" });
-                } 
-                else 
-                {
-                  externalEdit(new String[] { "-fasta", "-maxhits",
-                                              max_fasta_hits_from_options });
-                }
-              }
-              return;
-            }
-          } catch(InvalidRelationException _) {}
-          
-          new MessageDialog(frame,
-                            "nothing to edit - no /fasta_file qualifier");
-        }
-      });
-
-      final JButton external_blastp_edit_button = new JButton("MESS/BLASTP");
-      location_button_panel.add(external_blastp_edit_button);
-      external_blastp_edit_button.addActionListener(new ActionListener()
-      {
-        public void actionPerformed(ActionEvent e) 
-        {
-          try 
-          {
-            if(getFeature().getQualifierByName("blastp_file") != null)
-            {
-              final String DEFAULT_MAX_BLASTP_HITS = "10";
-              final String max_blastp_hits;
-
-              final String max_blastp_hits_from_options =
-                Options.getOptions().getProperty("mess_blastp_hits");
-
-              if(max_blastp_hits_from_options == null) 
-                max_blastp_hits = DEFAULT_MAX_BLASTP_HITS;
-              else 
-                max_blastp_hits = max_blastp_hits_from_options;
-
-              if(Options.getOptions().isEukaryoticMode()) 
-              {
-                externalEdit(new String[] { "-blastp", "-maxhits",
-                                            max_blastp_hits, "-euk" });
-              } 
-              else
-              {
-                externalEdit(new String[] { "-blastp", "-maxhits",
-                                            max_blastp_hits });
-              }
-              return;
-            }
-          } catch(InvalidRelationException _) {}
-          
-          new MessageDialog(frame,
-                            "nothing to edit - no /blastp_file qualifier");
-        }
-      });
-
-      final JButton external_go_edit_button = new JButton("MESS/GO");
-      location_button_panel.add(external_go_edit_button);
-      external_go_edit_button.addActionListener(new ActionListener () 
-      {
-        public void actionPerformed(ActionEvent e) 
-        {
-          try
-          {
-            if(getFeature().getQualifierByName("blastp+go_file") != null) 
-            {
-              final String DEFAULT_MAX_GO_BLAST_HITS = "10";
-              final String max_go_blast_hits;
-
-              final String max_go_blast_hits_from_options =
-                Options.getOptions ().getProperty ("mess_blast_go_hits");
-
-              if (max_go_blast_hits_from_options == null) 
-                max_go_blast_hits = DEFAULT_MAX_GO_BLAST_HITS;
-              else 
-                max_go_blast_hits = max_go_blast_hits_from_options;
-
-              if(Options.getOptions().isEukaryoticMode()) 
-              {
-                externalEdit(new String[] { "-blastp+go", "-maxhits",
-                                            max_go_blast_hits, "-euk" });
-              } 
-              else
-              {
-                externalEdit(new String[] { "-blastp+go", "-maxhits",
-                                            max_go_blast_hits });
-              }
-              return;
-            }
-          } catch(InvalidRelationException _) {}
-          
-          new MessageDialog(frame,
-                            "nothing to edit - no /blastp+go_file qualifier");
-        }
-      });
-    }*/
 
     if(Options.isUnixHost())
     {
@@ -759,7 +631,7 @@ public class FeatureEdit extends JPanel
           StringReader strRead = new StringReader(qualifier_txt);
           BufferedReader buff = new BufferedReader(strRead);
           String line;
-          final Hashtable dataFile = new Hashtable();
+          final Hashtable<String, Vector<String>> dataFile = new Hashtable<String, Vector<String>>();
           try
           {
             int ind;
@@ -776,11 +648,11 @@ public class FeatureEdit extends JPanel
                 if(ind > -1)
                   line = line.substring(0, ind);
                 
-                Vector v;
+                Vector<String> v;
                 if(dataFile.containsKey("fasta"))
-                  v = (Vector)dataFile.get("fasta");
+                  v = dataFile.get("fasta");
                 else
-                  v = new Vector();
+                  v = new Vector<String>();
                 v.add(line);
                 dataFile.put("fasta",v);
               }
@@ -795,11 +667,11 @@ public class FeatureEdit extends JPanel
                 if(ind > -1)
                   line = line.substring(0, ind);
                 
-                Vector v;
+                Vector<String> v;
                 if(dataFile.containsKey("blastp"))
-                  v = (Vector)dataFile.get("blastp");
+                  v = dataFile.get("blastp");
                 else
-                  v = new Vector();
+                  v = new Vector<String>();
                 v.add(line);
                 dataFile.put("blastp",v);
               }
@@ -813,11 +685,11 @@ public class FeatureEdit extends JPanel
                 if(ind > -1)
                   line = line.substring(0, ind);
                 
-                Vector v;
+                Vector<String> v;
                 if(dataFile.containsKey("blastp+go"))
-                  v = (Vector)dataFile.get("blastp+go");
+                  v = dataFile.get("blastp+go");
                 else
-                  v = new Vector();
+                  v = new Vector<String>();
                 v.add(line);
                 dataFile.put("blastp+go",v);
               }   
@@ -1028,9 +900,9 @@ public class FeatureEdit extends JPanel
     final DatabaseDocument originalDocument =
       (DatabaseDocument)((DocumentEntry)edit_feature.getEmblFeature().getEntry()).getDocument();
 
-    final Set uniquenames = ((GFFStreamFeature)edit_feature.getEmblFeature()).getSegmentRangeStore().keySet();
-    final Iterator it = uniquenames.iterator();
-    final String uniquename = (String)it.next();
+    final Set<String> uniquenames = ((GFFStreamFeature)edit_feature.getEmblFeature()).getSegmentRangeStore().keySet();
+    final Iterator<String> it = uniquenames.iterator();
+    final String uniquename = it.next();
     final DatabaseDocument newDocument = new DatabaseDocument(originalDocument,
         uniquename, null, true, null);
     newDocument.setLazyFeatureLoad(false);
@@ -1287,7 +1159,7 @@ public class FeatureEdit extends JPanel
     StringReader strRead = new StringReader(qualifier_txt);
     BufferedReader buff = new BufferedReader(strRead);
     String line;
-    final Vector qual_str = new Vector();
+    final Vector<String> qual_str = new Vector<String>();
     try
     {
       while((line = buff.readLine()) != null)
@@ -1295,26 +1167,23 @@ public class FeatureEdit extends JPanel
     }
     catch(IOException ioe){}
 
-    Comparator comparator = new Comparator()
+    Comparator<String> comparator = new Comparator<String>()
     {
-      public int compare (Object fst, Object snd)
+      public int compare (String fst, String snd)
       {
-        if( !((String)fst).startsWith("/GO") ||
-            !((String)snd).startsWith("/GO") )
+        if( !fst.startsWith("/GO") ||
+            !snd.startsWith("/GO") )
           return 0;
-
-        return ((String)fst).compareTo((String)snd);
+        return fst.compareTo(snd);
       }
     };
-  
     Collections.sort(qual_str, comparator);
     
     StringBuffer buffer = new StringBuffer();
     for(int i = 0; i < qual_str.size(); i++)
     {
       final String qualifier_string = 
-                           (String)qual_str.elementAt(i);
-
+                           qual_str.elementAt(i);
       buffer.append(tidyHelper(qualifier_string) + "\n");
     }
 
@@ -1845,6 +1714,17 @@ public class FeatureEdit extends JPanel
           qualifiers.addAll(orthologQualifiers);
       }
       
+      final String goErrs = ValidateFeature.validateGO(qualifiers, getEntryInformation());
+      if(goErrs.length()>0)
+      {
+        Object[] options = { "CANCEL", "CONTINUE" };
+        int opt = JOptionPane.showOptionDialog(null, goErrs, "GO errors",
+            JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
+            null, options, options[0]);
+
+        if(opt == 0)
+          return false;
+      }
       //if(similarityTextArea != null)
       //  similarityTextArea.checkForChanges();
     }
