@@ -44,11 +44,13 @@ import uk.ac.sanger.artemis.FilteredEntryGroup;
 import uk.ac.sanger.artemis.GotoEventSource;
 import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.Selection;
+import uk.ac.sanger.artemis.SimpleEntryGroup;
 import uk.ac.sanger.artemis.components.BasePlotGroup;
 import uk.ac.sanger.artemis.components.EntryFileDialog;
 import uk.ac.sanger.artemis.components.FeatureListFrame;
 import uk.ac.sanger.artemis.components.FileViewer;
 import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
+import uk.ac.sanger.artemis.components.genebuilder.cv.GoBox;
 import uk.ac.sanger.artemis.sequence.AminoAcidSequence;
 import uk.ac.sanger.artemis.sequence.Marker;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
@@ -149,7 +151,6 @@ public class ValidateFeature
 
   /**
    * Check a single feature
-   * 
    * GFF - check complete gene model
    *     - check boundaries are valid
    *     - check all features are on the same strand
@@ -161,16 +162,14 @@ public class ValidateFeature
    * - CDS have valid stop codon
    * 
    * @param f
-   * @param fv
    * @param showOnlyFailures
-   * @return true if passed
+   * @return report
    */
-  public boolean featureValidate(final uk.ac.sanger.artemis.io.Feature f, 
-                                 final FileViewer fv, 
-                                 final boolean showOnlyFailures)
+  public LinkedHashMap<String, Level> featureValidate(final uk.ac.sanger.artemis.io.Feature f, 
+                                                      final boolean showOnlyFailures)
   {
     boolean pass = true;
-    
+
     final LinkedHashMap<String, Level> report = new LinkedHashMap<String, Level>();
     final String fTxt = featureTxt(f);
     final boolean isGFF = entryGrp == null || GeneUtils.isGFFEntry( entryGrp );
@@ -232,6 +231,20 @@ public class ValidateFeature
       report.put("Internal stop codon found", Level.FATAL);
     }
     
+    final EntryInformation eInfo;
+    if(f.getEntry() == null)
+      eInfo = ((Feature)f.getUserData()).getEntry().getEntryInformation();
+    else 
+      eInfo = f.getEntry().getEntryInformation();
+    
+    // test GO qualifier
+    final String goErrMsg;
+    if((goErrMsg = validateGO(f.getQualifiers(), eInfo)).length() > 0)
+    {
+      pass = false;
+      report.put(goErrMsg, Level.FATAL);
+    }
+
     if(!hasValidStop(f))
     {
       pass = false;
@@ -239,15 +252,150 @@ public class ValidateFeature
     }
     
     if(pass)
+    {
+      if(showOnlyFailures)
+        return null;
       report.put("PASS", Level.INFO);
-
-    if(!pass || !showOnlyFailures)
+    }   
+    return report;
+  }
+  
+  /**
+   * Check a single feature and append validation report to the
+   * viewer.
+   * @return true if successfully validate
+   */
+  public boolean featureValidate(final uk.ac.sanger.artemis.io.Feature f,
+                                 final FileViewer fv,
+                                 final boolean showFailedFeaturesOnly)
+  {
+    final LinkedHashMap<String, Level> report = featureValidate(f, showFailedFeaturesOnly);
+    boolean pass = false;
+    if (report != null)
     {
       for (Map.Entry<String, Level> entry : report.entrySet())
-        fv.appendString(entry.getKey()+"\n", entry.getValue());
+      {
+        if (!showFailedFeaturesOnly && entry.getKey().equals("PASS"))
+          pass = true;
+        fv.appendString(entry.getKey() + "\n", entry.getValue());
+      }
     }
-    
+    else
+      return true;
     return pass;
+  }
+
+  /**
+   * Check GO annotation for:
+   * 1) unexpected white space in with/from and dbxref columns
+   * 2) with/from must be empty when using IDA, NAS, ND, TAS or EXP evidence code
+   * 3) GO:0005515 can only have IPI evidence code
+   * 4) IEP is not allowed for molecular_function and cellular_component terms
+   * 5) with field must be filled when using ISS, ISA, ISO and ISM codes.
+   * @param qualifiers
+   * @param eInfo
+   * @return errors found in GO annotation
+   */
+  public static String validateGO(QualifierVector qualifiers, EntryInformation eInfo)
+  {
+    final StringBuilder buff = new StringBuilder();
+    final Qualifier q = qualifiers.getQualifierByName("GO");
+    if (q != null)
+    {
+      try
+      {
+        final QualifierInfo qI = eInfo.getQualifierInfo("GO");
+        final StringVector qualifierStrs = StreamQualifier.toStringVector(qI,q);
+        for (int i = 0; i < qualifierStrs.size(); ++i)
+        {
+          final String qualifierStr = qualifierStrs.elementAt(i);
+          final String code = getEvidenceCodeAbbreviation(qualifierStr);
+          final String goid = getField("GOid=", qualifierStr);
+          final String with = getField("with=", qualifierStr);
+          final String dbxref = getField("dbxref=", qualifierStr);
+
+          // System.err.println(GeneUtils.getUniqueName(f)+" "+code+" "+qualifierStr);
+          if (code != null)
+          {
+            if (code.equals("IDA") || code.equals("NAS") || code.equals("ND") || 
+                code.equals("TAS") || code.equals("EXP"))
+            {
+              // with/from must be empty
+              if (with.length() > 0)
+                buff.append("GOid=" + goid
+                  + ", the with/from must be empty when using " + code + "\n");
+            }
+            else if (code.equals("ISS") || code.equals("ISA") || 
+                     code.equals("ISO") || code.equals("ISM"))
+            {
+              // with field must be filled
+              if (with.length() == 0)
+                buff.append("GOid=" + goid +
+                  ", the with/from field must be filled when using " + code + "\n");
+            }
+          }
+
+          // GO:0005515 can only have IPI evidence code
+          if (goid.equals("GO:0005515") && (code == null || !code.equals("IPI")))
+            buff.append("GOid=" + goid + ", can only have IPI evidence code\n");
+
+          // IEP is not allowed for molecular_function and cellular_component terms
+          if (code != null && code.equals("IEP")
+              && !getField("aspect=", qualifierStr).equals("P"))
+            buff.append("GOid=" + goid + ", IEP is restricted to Biological Process terms\n");
+
+          if (with.indexOf(" ") > -1 || dbxref.indexOf(" ") > -1)
+          {
+            buff.append("GOid=" + goid + ", ");
+            if (with.indexOf(" ") > -1)
+              buff.append("with/from field (" + with + ") contains white space ");
+            if (dbxref.indexOf(" ") > -1)
+              buff.append("dbxref field (" + dbxref + ") contains white space");
+            buff.append("\n");
+          }
+        }
+      } catch(Exception e){}
+    }
+
+    return buff.toString();
+  }
+  
+  /**
+   * Extract the value of a field from a qualifier string
+   * @param fieldName
+   * @param qualifierString
+   * @return
+   */
+  private static String getField(final String fieldName, final String qualifierStr)
+  {
+    String field = "";
+    int ind1 = qualifierStr.toLowerCase().indexOf(fieldName.toLowerCase());
+    int ind2 = qualifierStr.indexOf(";", ind1);
+
+    int len = fieldName.length();
+    if(ind2 > ind1 && ind1 > -1)
+      field = qualifierStr.substring(ind1+len,ind2);
+    else if(ind1 > -1)
+      field = qualifierStr.substring(ind1+len);
+    
+    if(field.endsWith("\""))
+      field = field.substring(0, field.length()-1);
+    if(field.startsWith("\""))
+      field = field.substring(1);
+    return field;
+  }
+  
+  private static String getEvidenceCodeAbbreviation(String goText)
+  {
+    final String evidence = getField("evidence=", goText); 
+    for(int i=0; i<GoBox.evidenceCodes[2].length; i++)
+      if(GoBox.evidenceCodes[2][i].equalsIgnoreCase(evidence))
+        return GoBox.evidenceCodes[0][i];
+    
+    for(int i=0; i<GoBox.evidenceCodes[0].length; i++)
+      if(GoBox.evidenceCodes[0][i].equalsIgnoreCase(evidence))
+        return GoBox.evidenceCodes[0][i];
+    return null;
   }
   
   /**
@@ -610,43 +758,68 @@ public class ValidateFeature
     }
   };
   
-  
- 
   public static void main(final String args[])
   {
     System.setProperty("black_belt_mode","true");
     Options.getOptions();
+
+    try
+    {
+      uk.ac.sanger.artemis.Entry entry = ReadAndWriteEntry.readEntryFromDatabase("Pf3D7_01_v3");
+      final EntryGroup egroup = new SimpleEntryGroup();
+      egroup.add(entry);
+      ValidateFeature gffTest = new ValidateFeature(egroup);
+     
+      uk.ac.sanger.artemis.FeatureVector features = entry.getAllFeatures();
+      final FileViewer fv = new FileViewer("Validation Report :: "+features.size()+" feature(s)", 
+          false, false, true); 
+      int nfail = 0;
+      for(int j=0; j<features.size();j++)
+      {
+        if(gffTest.featureValidate(features.elementAt(j).getEmblFeature(), fv, true))
+          nfail++;
+      }
+      fv.setTitle(fv.getTitle()+" Fails:"+nfail);
+      fv.setVisible(true);
+
+      System.out.println("Done");
+    }
+    catch (Exception e)
+    {
+      e.printStackTrace();
+    }
+
     
     if (args.length > 0)
     {
       for(int i=0; i<args.length; i++)
       {
         System.out.println("\nTEST: "+args[i]);
-        final Document entry_document = DocumentFactory.makeDocument(args[i]);
+        final Document doc = DocumentFactory.makeDocument(args[i]);
         final EntryInformation artemis_entry_information = 
             Options.getArtemisEntryInformation();
         final uk.ac.sanger.artemis.io.Entry entry = EntryFileDialog.getEntryFromFile(
-            null, entry_document, artemis_entry_information, false);
+            null, doc, artemis_entry_information, false);
         
         ValidateFeature gffTest = new ValidateFeature(null);
         FeatureVector features = entry.getAllFeatures();
-        final FileViewer fv = new FileViewer("Validation Report :: "+features.size()+" feature(s)");
+        final FileViewer fv = new FileViewer("Validation Report :: "+doc.getName()+
+            " "+features.size()+" feature(s)", 
+            false, false, true); 
+        int nfail = 0;
         for(int j=0; j<features.size();j++)
         {
-          try
-          {
-            gffTest.featureValidate((uk.ac.sanger.artemis.io.Feature)features.elementAt(j), fv, true);
-          }
-          catch(ClassCastException e)
-          {
-            e.printStackTrace();
-          }
+          if(gffTest.featureValidate(features.featureAt(j), fv, true))
+            nfail++;
         }
         
+        fv.setTitle(fv.getTitle()+" Fails:"+nfail);
         fv.setVisible(true);
 
         System.out.println("Done");
       }
+      
+
     }
   }
   
