@@ -272,6 +272,14 @@ public class ReadAndWriteEntry
     return Integer.toString(feature.getFeatureId());
   }
   
+  /**
+   * return the ENTRY_SOURCE
+   */
+  public static DatabaseEntrySource getEntrySource()
+  {
+    return ENTRY_SOURCE;
+  }
+
   public static void main(final String args[])
   {
     try
