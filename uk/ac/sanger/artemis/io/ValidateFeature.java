@@ -24,12 +24,17 @@
 package uk.ac.sanger.artemis.io;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 import java.util.regex.Pattern;
+
+import javax.swing.JOptionPane;
 
 
 import org.apache.log4j.Level;
@@ -49,6 +54,7 @@ import uk.ac.sanger.artemis.components.BasePlotGroup;
 import uk.ac.sanger.artemis.components.EntryFileDialog;
 import uk.ac.sanger.artemis.components.FeatureListFrame;
 import uk.ac.sanger.artemis.components.FileViewer;
+import uk.ac.sanger.artemis.components.database.DatabaseEntrySource;
 import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 import uk.ac.sanger.artemis.components.genebuilder.cv.GoBox;
 import uk.ac.sanger.artemis.sequence.AminoAcidSequence;
@@ -698,7 +704,57 @@ public class ValidateFeature
     return geneModelParts;
   }
   
+  /**
+   * Open a panel with the validation results
+   * @param entry
+   * @param seq
+   */
+  private void showReport(final Entry entry, final String seq)
+  {
+    final FeatureVector features = entry.getAllFeatures();
+    final FileViewer fv = new FileViewer("Validation Report :: "+seq+" "+
+                      features.size()+" feature(s)", false, false, true); 
+    int nfail = 0;
+    for(uk.ac.sanger.artemis.io.Feature f: features)
+    {
+      if(!featureValidate(f, fv, true))
+        nfail++;
+    }
+    fv.setTitle(fv.getTitle()+" Fails:"+nfail);
+    fv.setVisible(true);
+  }
   
+  /**
+   * Write the validation results to a file
+   * @param writer
+   * @param entry
+   * @param seq
+   */
+  private void writeReport(final BufferedWriter writer, final Entry entry, final String seq)
+  {
+    final FeatureVector features = entry.getAllFeatures();
+    try
+    {
+      for(uk.ac.sanger.artemis.io.Feature f: features)
+      {
+        LinkedHashMap<String, Level> report = featureValidate(f, true);
+        if (report != null)
+        {
+          for (Map.Entry<String, Level> ent : report.entrySet())
+          {
+            writer.append(ent.getKey());
+            writer.newLine();
+          }
+        }
+      }
+    }
+    catch(IOException e)
+    {
+      e.printStackTrace();
+    }
+  }
+
+
   private static FeaturePredicate ATTR_PREDICATE = new FeaturePredicate() 
   {
     public boolean testPredicate(uk.ac.sanger.artemis.Feature feature)
@@ -760,67 +816,110 @@ public class ValidateFeature
   
   public static void main(final String args[])
   {
+    if( (args != null && args.length == 1 && args[0].startsWith("-h")) ||
+        (args == null || args.length < 1))
+    {
+      System.out.println("Artemis validation options:");
+      System.out.println("-h\tshow help");
+      System.out.println("-s\tspace separated list of sequences to read and write out");
+      System.out.println("-c\tthe URL for your Chado database e.g. db.genedb.org:5432/snapshot?genedb_ro");
+      System.out.println("-o\twrite report to specified file");
+      System.exit(0);
+    }
+
+    BufferedWriter outfile = null;
+    for(int i = 0; i < args.length; i++)
+    {
+      if (args[i].equalsIgnoreCase("-c"))
+        System.setProperty("chado", args[i + 1]);
+      else if (args[i].equalsIgnoreCase("-o"))
+        try
+        {
+          outfile = new BufferedWriter(new FileWriter(args[i + 1]));
+        }
+        catch (IOException e)
+        {
+          JOptionPane.showMessageDialog(null, e.getMessage());
+          e.printStackTrace();
+          System.exit(1);
+        }
+    }
+
+    final Vector<String> seqs = new Vector<String>();
+    for(int i = 0; i < args.length; i++)
+    {
+      if(args[i].toLowerCase().equals("-s"))
+      {
+        for(int j = i + 1; j < args.length; j++)
+        {
+          if(args[j].startsWith("-"))
+            break;
+          seqs.add(args[j]);
+        }
+      }
+      else if(args[i].startsWith("-"))
+        i++;
+      else
+      {
+        if(!seqs.contains(args[i]))
+          seqs.add(args[i]);
+      }
+    }
+
     System.setProperty("black_belt_mode","true");
     Options.getOptions();
-
-    try
-    {
-      uk.ac.sanger.artemis.Entry entry = ReadAndWriteEntry.readEntryFromDatabase("Pf3D7_01_v3");
-      final EntryGroup egroup = new SimpleEntryGroup();
-      egroup.add(entry);
-      ValidateFeature gffTest = new ValidateFeature(egroup);
-     
-      uk.ac.sanger.artemis.FeatureVector features = entry.getAllFeatures();
-      final FileViewer fv = new FileViewer("Validation Report :: "+features.size()+" feature(s)", 
-          false, false, true); 
-      int nfail = 0;
-      for(int j=0; j<features.size();j++)
-      {
-        if(gffTest.featureValidate(features.elementAt(j).getEmblFeature(), fv, true))
-          nfail++;
-      }
-      fv.setTitle(fv.getTitle()+" Fails:"+nfail);
-      fv.setVisible(true);
-
-      System.out.println("Done");
-    }
-    catch (Exception e)
-    {
-      e.printStackTrace();
-    }
-
     
-    if (args.length > 0)
+    if(System.getProperty("chado") != null)
     {
-      for(int i=0; i<args.length; i++)
+      DatabaseEntrySource entrySrc = null;
+      try
       {
-        System.out.println("\nTEST: "+args[i]);
-        final Document doc = DocumentFactory.makeDocument(args[i]);
+        for(String seq: seqs)
+        {
+          System.out.println("VALIDATING... "+seq);
+          uk.ac.sanger.artemis.Entry entry = ReadAndWriteEntry.readEntryFromDatabase(seq, entrySrc);
+          entrySrc = ReadAndWriteEntry.getEntrySource();
+          final EntryGroup egroup = new SimpleEntryGroup();
+          egroup.add(entry);
+
+          ValidateFeature validate = new ValidateFeature(egroup);
+          if(outfile == null)
+            validate.showReport(entry.getEMBLEntry(), seq);
+          else
+            validate.writeReport(outfile, entry.getEMBLEntry(), seq);
+        }
+      }
+      catch (Exception e)
+      {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(null, e.getMessage());
+      }
+    }  
+    else
+    {
+      for(String seq: seqs)
+      {
+        System.out.println("VALIDATING... "+seq);
+        final Document doc = DocumentFactory.makeDocument(seq);
         final EntryInformation artemis_entry_information = 
             Options.getArtemisEntryInformation();
         final uk.ac.sanger.artemis.io.Entry entry = EntryFileDialog.getEntryFromFile(
             null, doc, artemis_entry_information, false);
         
-        ValidateFeature gffTest = new ValidateFeature(null);
-        FeatureVector features = entry.getAllFeatures();
-        final FileViewer fv = new FileViewer("Validation Report :: "+doc.getName()+
-            " "+features.size()+" feature(s)", 
-            false, false, true); 
-        int nfail = 0;
-        for(int j=0; j<features.size();j++)
-        {
-          if(gffTest.featureValidate(features.featureAt(j), fv, true))
-            nfail++;
-        }
-        
-        fv.setTitle(fv.getTitle()+" Fails:"+nfail);
-        fv.setVisible(true);
-
-        System.out.println("Done");
+        ValidateFeature validate = new ValidateFeature(null);
+        if(outfile == null)
+          validate.showReport(entry, doc.getName());
+        else
+          validate.writeReport(outfile, entry, doc.getName());
       }
-      
-
     }
+    
+    if(outfile != null)
+      try
+      {
+        outfile.close();
+      }
+      catch (IOException e){}
   }
-  
+
 }
