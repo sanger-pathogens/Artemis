@@ -36,33 +36,18 @@ import java.util.Vector;
  **/
 
 public class EntryEditVector {
-  /**
-   *  Create a new, entry EntryEditVector.
-   **/
-  public EntryEditVector () {
-
-  }
 
   /**
    *  Performs the same function as Vector.addElement ()
    */
-  public void addElement (EntryEdit node) {
-    vector.addElement (node);
-  }
+
   
   /**
    *  Performs the same function as Vector.elementAt ()
    */
   public EntryEdit elementAt (int index) {
-    return (EntryEdit) vector.elementAt (index);
+    return vector.elementAt (index);
   }
-
-//    /**
-//     *  Performs the same function as Vector.lastElement ()
-//     **/
-//    public Feature lastElement () {
-//      return (Feature) vector.lastElement ();
-//    }
 
   /**
    *  Performs the same function as Vector.removeElement ()
@@ -88,5 +73,5 @@ public class EntryEditVector {
   /**
    *  Storage for EntryEdit objects.
    */
-  final private Vector vector = new Vector ();
+  final private Vector<EntryEdit> vector = new Vector<EntryEdit> ();
 }

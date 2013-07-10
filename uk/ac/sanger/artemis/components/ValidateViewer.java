@@ -50,7 +50,6 @@ import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.ValidateFeature;
 import uk.ac.sanger.artemis.util.ReadOnlyException;
 
-
 public class ValidateViewer extends FileViewer implements EntryGroupChangeListener
 {
   private static final long serialVersionUID = 1L;
@@ -59,7 +58,7 @@ public class ValidateViewer extends FileViewer implements EntryGroupChangeListen
   private JCheckBox showFailedFeatures = new JCheckBox("Show only failed features", true);
   private boolean inAutoFix = false;
   private String seqName;
-  
+
   public ValidateViewer(final EntryGroup entryGrp,
                         final FeatureVector selectedFeatures)
   {
@@ -215,12 +214,13 @@ public class ValidateViewer extends FileViewer implements EntryGroupChangeListen
     final ValidateFeature gffTest = new ValidateFeature(entryGrp);
     int nfail = 0;
     for(int i=0; i<features.size(); i++)
-    {
       if(!gffTest.featureValidate(features.elementAt(i).getEmblFeature(), 
           this, showFailedFeatures.isSelected()))
         nfail++;
-    }
-    setTitle("Validation Report :: "+ (seqName!=null? seqName:"")+ " :: "+features.size()+
+
+    setTitle("Validation Report :: "+ 
+               (seqName!=null&&!seqName.equals("")? 
+                seqName+" :: " : "")+features.size()+
         " feature(s) Pass: "+(features.size()-nfail)+" Failed: "+nfail);
   }
   

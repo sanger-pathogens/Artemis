@@ -56,6 +56,7 @@ import javax.swing.*;
 public class Selector extends JFrame
     implements EntryGroupChangeListener {
   
+  private static final long serialVersionUID = 1L;
   private JCheckBox by_key_button;
   private JCheckBox by_qualifier_button;
   private JCheckBox by_motif_button;
@@ -81,12 +82,12 @@ public class Selector extends JFrame
    *  If checked the search text is allowed to match a substring of a
    *  qualifier value.
    **/
-  final JCheckBox partial_match_checkbox;
+  final private JCheckBox partial_match_checkbox;
 
   /**
    *  The EntryGroup object that was passed to the constructor.
    **/
-  final EntryGroup entry_group;
+  final private EntryGroup entry_group;
 
   /**
    *  This is the Selection that was passed to the constructor.
@@ -1045,7 +1046,5 @@ public class Selector extends JFrame
   {
     return entry_group;
   }
-  
-
 
 }

@@ -767,6 +767,8 @@ public class BasePlot extends Plot
       if(i < lines.length)
       {
         g.setColor(lines[i].getLineColour());
+        if(lines[i].getStroke() == null)
+          continue;
         ((Graphics2D)g).setStroke(lines[i].getStroke());
       }
       else

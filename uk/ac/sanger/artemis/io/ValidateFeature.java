@@ -24,12 +24,17 @@
 package uk.ac.sanger.artemis.io;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 import java.util.regex.Pattern;
+
+import javax.swing.JOptionPane;
 
 
 import org.apache.log4j.Level;
@@ -44,11 +49,14 @@ import uk.ac.sanger.artemis.FilteredEntryGroup;
 import uk.ac.sanger.artemis.GotoEventSource;
 import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.Selection;
+import uk.ac.sanger.artemis.SimpleEntryGroup;
 import uk.ac.sanger.artemis.components.BasePlotGroup;
 import uk.ac.sanger.artemis.components.EntryFileDialog;
 import uk.ac.sanger.artemis.components.FeatureListFrame;
 import uk.ac.sanger.artemis.components.FileViewer;
+import uk.ac.sanger.artemis.components.database.DatabaseEntrySource;
 import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
+import uk.ac.sanger.artemis.components.genebuilder.cv.GoBox;
 import uk.ac.sanger.artemis.sequence.AminoAcidSequence;
 import uk.ac.sanger.artemis.sequence.Marker;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
@@ -149,7 +157,6 @@ public class ValidateFeature
 
   /**
    * Check a single feature
-   * 
    * GFF - check complete gene model
    *     - check boundaries are valid
    *     - check all features are on the same strand
@@ -161,16 +168,14 @@ public class ValidateFeature
    * - CDS have valid stop codon
    * 
    * @param f
-   * @param fv
    * @param showOnlyFailures
-   * @return true if passed
+   * @return report
    */
-  public boolean featureValidate(final uk.ac.sanger.artemis.io.Feature f, 
-                                 final FileViewer fv, 
-                                 final boolean showOnlyFailures)
+  public LinkedHashMap<String, Level> featureValidate(final uk.ac.sanger.artemis.io.Feature f, 
+                                                      final boolean showOnlyFailures)
   {
     boolean pass = true;
-    
+
     final LinkedHashMap<String, Level> report = new LinkedHashMap<String, Level>();
     final String fTxt = featureTxt(f);
     final boolean isGFF = entryGrp == null || GeneUtils.isGFFEntry( entryGrp );
@@ -232,6 +237,20 @@ public class ValidateFeature
       report.put("Internal stop codon found", Level.FATAL);
     }
     
+    final EntryInformation eInfo;
+    if(f.getEntry() == null)
+      eInfo = ((Feature)f.getUserData()).getEntry().getEntryInformation();
+    else 
+      eInfo = f.getEntry().getEntryInformation();
+    
+    // test GO qualifier
+    final String goErrMsg;
+    if((goErrMsg = validateGO(f.getQualifiers(), eInfo)).length() > 0)
+    {
+      pass = false;
+      report.put(goErrMsg, Level.FATAL);
+    }
+
     if(!hasValidStop(f))
     {
       pass = false;
@@ -239,15 +258,150 @@ public class ValidateFeature
     }
     
     if(pass)
+    {
+      if(showOnlyFailures)
+        return null;
       report.put("PASS", Level.INFO);
-
-    if(!pass || !showOnlyFailures)
+    }   
+    return report;
+  }
+  
+  /**
+   * Check a single feature and append validation report to the
+   * viewer.
+   * @return true if successfully validate
+   */
+  public boolean featureValidate(final uk.ac.sanger.artemis.io.Feature f,
+                                 final FileViewer fv,
+                                 final boolean showFailedFeaturesOnly)
+  {
+    final LinkedHashMap<String, Level> report = featureValidate(f, showFailedFeaturesOnly);
+    boolean pass = false;
+    if (report != null)
     {
       for (Map.Entry<String, Level> entry : report.entrySet())
-        fv.appendString(entry.getKey()+"\n", entry.getValue());
+      {
+        if (!showFailedFeaturesOnly && entry.getKey().equals("PASS"))
+          pass = true;
+        fv.appendString(entry.getKey() + "\n", entry.getValue());
+      }
     }
-    
+    else
+      return true;
     return pass;
+  }
+
+  /**
+   * Check GO annotation for:
+   * 1) unexpected white space in with/from and dbxref columns
+   * 2) with/from must be empty when using IDA, NAS, ND, TAS or EXP evidence code
+   * 3) GO:0005515 can only have IPI evidence code
+   * 4) IEP is not allowed for molecular_function and cellular_component terms
+   * 5) with field must be filled when using ISS, ISA, ISO and ISM codes.
+   * @param qualifiers
+   * @param eInfo
+   * @return errors found in GO annotation
+   */
+  public static String validateGO(QualifierVector qualifiers, EntryInformation eInfo)
+  {
+    final StringBuilder buff = new StringBuilder();
+    final Qualifier q = qualifiers.getQualifierByName("GO");
+    if (q != null)
+    {
+      try
+      {
+        final QualifierInfo qI = eInfo.getQualifierInfo("GO");
+        final StringVector qualifierStrs = StreamQualifier.toStringVector(qI,q);
+        for (int i = 0; i < qualifierStrs.size(); ++i)
+        {
+          final String qualifierStr = qualifierStrs.elementAt(i);
+          final String code = getEvidenceCodeAbbreviation(qualifierStr);
+          final String goid = getField("GOid=", qualifierStr);
+          final String with = getField("with=", qualifierStr);
+          final String dbxref = getField("dbxref=", qualifierStr);
+
+          // System.err.println(GeneUtils.getUniqueName(f)+" "+code+" "+qualifierStr);
+          if (code != null)
+          {
+            if (code.equals("IDA") || code.equals("NAS") || code.equals("ND") || 
+                code.equals("TAS") || code.equals("EXP"))
+            {
+              // with/from must be empty
+              if (with.length() > 0)
+                buff.append("GOid=" + goid
+                  + ", the with/from must be empty when using " + code + "\n");
+            }
+            else if (code.equals("ISS") || code.equals("ISA") || 
+                     code.equals("ISO") || code.equals("ISM"))
+            {
+              // with field must be filled
+              if (with.length() == 0)
+                buff.append("GOid=" + goid +
+                  ", the with/from field must be filled when using " + code + "\n");
+            }
+          }
+
+          // GO:0005515 can only have IPI evidence code
+          if (goid.equals("GO:0005515") && (code == null || !code.equals("IPI")))
+            buff.append("GOid=" + goid + ", can only have IPI evidence code\n");
+
+          // IEP is not allowed for molecular_function and cellular_component terms
+          if (code != null && code.equals("IEP")
+              && !getField("aspect=", qualifierStr).equals("P"))
+            buff.append("GOid=" + goid + ", IEP is restricted to Biological Process terms\n");
+
+          if (with.indexOf(" ") > -1 || dbxref.indexOf(" ") > -1)
+          {
+            buff.append("GOid=" + goid + ", ");
+            if (with.indexOf(" ") > -1)
+              buff.append("with/from field (" + with + ") contains white space ");
+            if (dbxref.indexOf(" ") > -1)
+              buff.append("dbxref field (" + dbxref + ") contains white space");
+            buff.append("\n");
+          }
+        }
+      } catch(Exception e){}
+    }
+
+    return buff.toString();
+  }
+  
+  /**
+   * Extract the value of a field from a qualifier string
+   * @param fieldName
+   * @param qualifierString
+   * @return
+   */
+  private static String getField(final String fieldName, final String qualifierStr)
+  {
+    String field = "";
+    int ind1 = qualifierStr.toLowerCase().indexOf(fieldName.toLowerCase());
+    int ind2 = qualifierStr.indexOf(";", ind1);
+
+    int len = fieldName.length();
+    if(ind2 > ind1 && ind1 > -1)
+      field = qualifierStr.substring(ind1+len,ind2);
+    else if(ind1 > -1)
+      field = qualifierStr.substring(ind1+len);
+    
+    if(field.endsWith("\""))
+      field = field.substring(0, field.length()-1);
+    if(field.startsWith("\""))
+      field = field.substring(1);
+    return field;
+  }
+  
+  private static String getEvidenceCodeAbbreviation(String goText)
+  {
+    final String evidence = getField("evidence=", goText); 
+    for(int i=0; i<GoBox.evidenceCodes[2].length; i++)
+      if(GoBox.evidenceCodes[2][i].equalsIgnoreCase(evidence))
+        return GoBox.evidenceCodes[0][i];
+    
+    for(int i=0; i<GoBox.evidenceCodes[0].length; i++)
+      if(GoBox.evidenceCodes[0][i].equalsIgnoreCase(evidence))
+        return GoBox.evidenceCodes[0][i];
+    return null;
   }
   
   /**
@@ -550,7 +704,57 @@ public class ValidateFeature
     return geneModelParts;
   }
   
+  /**
+   * Open a panel with the validation results
+   * @param entry
+   * @param seq
+   */
+  private void showReport(final Entry entry, final String seq)
+  {
+    final FeatureVector features = entry.getAllFeatures();
+    final FileViewer fv = new FileViewer("Validation Report :: "+seq+" "+
+                      features.size()+" feature(s)", false, false, true); 
+    int nfail = 0;
+    for(uk.ac.sanger.artemis.io.Feature f: features)
+    {
+      if(!featureValidate(f, fv, true))
+        nfail++;
+    }
+    fv.setTitle(fv.getTitle()+" Fails:"+nfail);
+    fv.setVisible(true);
+  }
   
+  /**
+   * Write the validation results to a file
+   * @param writer
+   * @param entry
+   * @param seq
+   */
+  private void writeReport(final BufferedWriter writer, final Entry entry, final String seq)
+  {
+    final FeatureVector features = entry.getAllFeatures();
+    try
+    {
+      for(uk.ac.sanger.artemis.io.Feature f: features)
+      {
+        LinkedHashMap<String, Level> report = featureValidate(f, true);
+        if (report != null)
+        {
+          for (Map.Entry<String, Level> ent : report.entrySet())
+          {
+            writer.append(ent.getKey());
+            writer.newLine();
+          }
+        }
+      }
+    }
+    catch(IOException e)
+    {
+      e.printStackTrace();
+    }
+  }
+
+
   private static FeaturePredicate ATTR_PREDICATE = new FeaturePredicate() 
   {
     public boolean testPredicate(uk.ac.sanger.artemis.Feature feature)
@@ -610,44 +814,112 @@ public class ValidateFeature
     }
   };
   
-  
- 
   public static void main(final String args[])
   {
+    if( (args != null && args.length == 1 && args[0].startsWith("-h")) ||
+        (args == null || args.length < 1))
+    {
+      System.out.println("Artemis validation options:");
+      System.out.println("-h\tshow help");
+      System.out.println("-s\tspace separated list of sequences to read and write out");
+      System.out.println("-c\tthe URL for your Chado database e.g. db.genedb.org:5432/snapshot?genedb_ro");
+      System.out.println("-o\twrite report to specified file");
+      System.exit(0);
+    }
+
+    BufferedWriter outfile = null;
+    for(int i = 0; i < args.length; i++)
+    {
+      if (args[i].equalsIgnoreCase("-c"))
+        System.setProperty("chado", args[i + 1]);
+      else if (args[i].equalsIgnoreCase("-o"))
+        try
+        {
+          outfile = new BufferedWriter(new FileWriter(args[i + 1]));
+        }
+        catch (IOException e)
+        {
+          JOptionPane.showMessageDialog(null, e.getMessage());
+          e.printStackTrace();
+          System.exit(1);
+        }
+    }
+
+    final Vector<String> seqs = new Vector<String>();
+    for(int i = 0; i < args.length; i++)
+    {
+      if(args[i].toLowerCase().equals("-s"))
+      {
+        for(int j = i + 1; j < args.length; j++)
+        {
+          if(args[j].startsWith("-"))
+            break;
+          seqs.add(args[j]);
+        }
+      }
+      else if(args[i].startsWith("-"))
+        i++;
+      else
+      {
+        if(!seqs.contains(args[i]))
+          seqs.add(args[i]);
+      }
+    }
+
     System.setProperty("black_belt_mode","true");
     Options.getOptions();
     
-    if (args.length > 0)
+    if(System.getProperty("chado") != null)
     {
-      for(int i=0; i<args.length; i++)
+      DatabaseEntrySource entrySrc = null;
+      try
       {
-        System.out.println("\nTEST: "+args[i]);
-        final Document entry_document = DocumentFactory.makeDocument(args[i]);
+        for(String seq: seqs)
+        {
+          System.out.println("VALIDATING... "+seq);
+          uk.ac.sanger.artemis.Entry entry = ReadAndWriteEntry.readEntryFromDatabase(seq, entrySrc);
+          entrySrc = ReadAndWriteEntry.getEntrySource();
+          final EntryGroup egroup = new SimpleEntryGroup();
+          egroup.add(entry);
+
+          ValidateFeature validate = new ValidateFeature(egroup);
+          if(outfile == null)
+            validate.showReport(entry.getEMBLEntry(), seq);
+          else
+            validate.writeReport(outfile, entry.getEMBLEntry(), seq);
+        }
+      }
+      catch (Exception e)
+      {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(null, e.getMessage());
+      }
+    }  
+    else
+    {
+      for(String seq: seqs)
+      {
+        System.out.println("VALIDATING... "+seq);
+        final Document doc = DocumentFactory.makeDocument(seq);
         final EntryInformation artemis_entry_information = 
             Options.getArtemisEntryInformation();
         final uk.ac.sanger.artemis.io.Entry entry = EntryFileDialog.getEntryFromFile(
-            null, entry_document, artemis_entry_information, false);
+            null, doc, artemis_entry_information, false);
         
-        ValidateFeature gffTest = new ValidateFeature(null);
-        FeatureVector features = entry.getAllFeatures();
-        final FileViewer fv = new FileViewer("Validation Report :: "+features.size()+" feature(s)");
-        for(int j=0; j<features.size();j++)
-        {
-          try
-          {
-            gffTest.featureValidate((uk.ac.sanger.artemis.io.Feature)features.elementAt(j), fv, true);
-          }
-          catch(ClassCastException e)
-          {
-            e.printStackTrace();
-          }
-        }
-        
-        fv.setVisible(true);
-
-        System.out.println("Done");
+        ValidateFeature validate = new ValidateFeature(null);
+        if(outfile == null)
+          validate.showReport(entry, doc.getName());
+        else
+          validate.writeReport(outfile, entry, doc.getName());
       }
     }
+    
+    if(outfile != null)
+      try
+      {
+        outfile.close();
+      }
+      catch (IOException e){}
   }
-  
+
 }

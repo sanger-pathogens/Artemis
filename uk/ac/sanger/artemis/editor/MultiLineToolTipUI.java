@@ -130,6 +130,8 @@ public class MultiLineToolTipUI extends ToolTipUI
     int fontHeight = fontMetrics.getHeight();
     int fontAscent = fontMetrics.getAscent();
     String tipText = ((JToolTip)c).getTipText();
+    if(tipText == null)
+      return;
     String lines[] = PlafMacros.breakupLines(tipText);
     int num_lines = lines.length;
     int height;
