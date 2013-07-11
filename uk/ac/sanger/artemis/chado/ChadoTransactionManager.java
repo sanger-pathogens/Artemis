@@ -2901,8 +2901,12 @@ public class ChadoTransactionManager
 
       if(ind > -1)
       {
-        sv.remove(ind);
-        sv.add(ind, qual+";qualifier="+qStr);
+        // avoid duplicating a history qualifier
+        if(qStr.indexOf(msg+";") == -1 && !qStr.endsWith(msg))
+        {
+          sv.remove(ind);
+          sv.add(ind, qual+";qualifier="+qStr);
+        }
       }
       else
         sv.add(qual);
