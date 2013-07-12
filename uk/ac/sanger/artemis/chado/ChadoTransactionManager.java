@@ -165,9 +165,9 @@ public class ChadoTransactionManager
     if(Options.getOptions().getPropertyTruthValue("product_cv"))
     { 
       logger4j.debug("PRODUCT STORED AS A CV (product_cv=yes) IN "+PRODUCT_CV);
-      int nsize = 4;
+      /*int nsize = 4;
       if(HISTORY_CV != null)
-        nsize++;
+        nsize++;*/
       
       CV_NAME = new String[]
         { "GO",
@@ -178,9 +178,9 @@ public class ChadoTransactionManager
     else
     {
       logger4j.debug("PRODUCT STORED AS A FEATUREPROP (product_cv=no)");
-      int nsize = 3;
+      /*int nsize = 3;
       if(HISTORY_CV != null)
-        nsize++;
+        nsize++;*/
       
       CV_NAME = new String[]
         { "GO",
@@ -320,9 +320,8 @@ public class ChadoTransactionManager
         {
           // location and segment number change
           final RangeVector rangesToAdd = new RangeVector();
-          for(int i=0;i<rv_new.size();i++)
+          for(Range range: rv_new)
           {  
-            final Range range = (Range) rv_new.get(i);
             if(!rv_old.containsRange(range))
               rangesToAdd.add(range);
           }
@@ -330,7 +329,7 @@ public class ChadoTransactionManager
           try
           {
             final String parent = 
-              (String)feature.getQualifierByName("Parent").getValues().get(0);
+              feature.getQualifierByName("Parent").getValues().get(0);
             GeneUtils.addSegment(feature, rangesToAdd, parent);
           }
           catch(ReadOnlyException e)
@@ -348,11 +347,11 @@ public class ChadoTransactionManager
         
         ChadoTransaction tsn;
         int ichanged;
-        Vector changes = new Vector();
+        Vector<Integer> changes = new Vector<Integer>();
         for(ichanged=0; ichanged<rv_old.size(); ichanged++)
         {
-          Range rnew = (Range)rv_new.elementAt(ichanged);
-          Range rold = (Range)rv_old.elementAt(ichanged);
+          Range rnew = rv_new.elementAt(ichanged);
+          Range rold = rv_old.elementAt(ichanged);
    
           if(rnew.getStart() != rold.getStart() ||
              rnew.getEnd()   != rold.getEnd() ||
@@ -361,12 +360,12 @@ public class ChadoTransactionManager
             changes.add(new Integer(ichanged));
         }
  
-        for(int i=0; i<changes.size();i++)
+        for(Integer c: changes)
         {
-          ichanged = ((Integer)changes.elementAt(i)).intValue();
+          ichanged = c.intValue();
           
-          Range range_new = (Range)rv_new.elementAt(ichanged);
-          Range range_old = (Range)rv_old.elementAt(ichanged);
+          Range range_new = rv_new.elementAt(ichanged);
+          Range range_old = rv_old.elementAt(ichanged);
           String seg_id   = feature.getSegmentID(range_new);
           
           if(seg_id == null)
@@ -462,7 +461,7 @@ public class ChadoTransactionManager
         {
           qualifier_uniquename = feature.getQualifierByName("ID");
           logger4j.debug("FEATURE_ADDED ------> DUPLICATE "+
-              (String)(qualifier_uniquename.getValues()).elementAt(0));
+              qualifier_uniquename.getValues().elementAt(0));
         }
         catch(InvalidRelationException e)
         {
@@ -478,12 +477,10 @@ public class ChadoTransactionManager
         return;
       
       final Feature feature = event.getFeature();
-      
-      if(! (((GFFStreamFeature)feature.getEmblFeature()).getDocumentEntry().getDocument() instanceof DatabaseDocument))
+      if(!GeneUtils.isDatabaseEntry(feature.getEmblFeature()))
         return;
-      
+
       final FeatureSegmentVector segments = feature.getSegments();
-      
       if(segments != null && segments.size() > 1)
       {
         for(int iadd = 0; iadd < segments.size(); iadd++)
@@ -515,8 +512,7 @@ public class ChadoTransactionManager
       try
       {
         Qualifier qualifier_uniquename = event.getFeature().getQualifierByName("ID");
-        String feature_uniquename = 
-                             (String)(qualifier_uniquename.getValues()).elementAt(0);
+        String feature_uniquename = qualifier_uniquename.getValues().elementAt(0);
         
         final GFFStreamFeature gff_feature =
           (GFFStreamFeature)event.getFeature().getEmblFeature();
@@ -527,9 +523,8 @@ public class ChadoTransactionManager
         if(event.getFeature().getSegments().size() > 0)
         {
           RangeVector ranges = gff_feature.getLocation().getRanges();
-          for(int i=0; i<ranges.size(); i++)
+          for(Range range: ranges)
           {
-            Range range = (Range)ranges.get(i);
             feature_uniquename = gff_feature.getSegmentID(range);
             deleteFeature(feature_uniquename, gff_feature.getKey().getKeyString(), gff_feature);
           }    
@@ -543,7 +538,6 @@ public class ChadoTransactionManager
       }
     }
 
-//  System.out.println(event.getEntry().getName());
   }
   
   /**
@@ -581,18 +575,17 @@ public class ChadoTransactionManager
     logger4j.debug("SEGMENT_CHANGED "+rv_new.size()+"  "+rv_old.size());
 
     // check for deleted segments
-    final Vector deleted = new Vector();
+    final Vector<Integer> deleted = new Vector<Integer>();
     for(int ideleted = 0; ideleted < rv_old.size(); ideleted++)
     {
-      final Range range = (Range) rv_old.get(ideleted);
+      final Range range = rv_old.get(ideleted);
       if(!rv_new.containsRange(range))
         deleted.add(new Integer(ideleted));
     }
 
-    for(int i = 0; i < deleted.size(); i++)
+    for(Integer d: deleted)
     {
-      Range range_old = (Range) rv_old.elementAt(((Integer) deleted
-          .elementAt(i)).intValue());
+      Range range_old = rv_old.elementAt(d.intValue());
       String seg_id = feature.getSegmentID(range_old);
       deleteFeature(seg_id, feature.getKey().getKeyString(), feature);
       feature.getSegmentRangeStore().remove(seg_id);
@@ -643,30 +636,30 @@ public class ChadoTransactionManager
   {   
     // update feature_relationship.rank
     ChadoTransaction tsn;
-    Hashtable feature_relationship_rank_store = new Hashtable();
+    Hashtable<String, Integer> feature_relationship_rank_store = new Hashtable<String, Integer>();
     Qualifier qualifier_relation = feature.getQualifierByName("Parent");
 
     for(int rank=0; rank<rv_new.size(); rank++)
     {
-      Range range   = (Range)rv_new.elementAt(rank);
+      Range range   = rv_new.elementAt(rank);
       String seq_id = feature.getSegmentID(range);
       
       org.gmod.schema.sequence.Feature chado_feature = 
                new org.gmod.schema.sequence.Feature();
       chado_feature.setUniqueName(seq_id);
 
-      List featureRelationshipsForSubjectId = null;
+      List<FeatureRelationship> featureRelationshipsForSubjectId = null;
       if(qualifier_relation != null)
       {
         StringVector parents = qualifier_relation.getValues();
         if(parents.size() > 0)
-          featureRelationshipsForSubjectId = new Vector();
+          featureRelationshipsForSubjectId = new Vector<FeatureRelationship>();
         
         for(int i=0; i<parents.size(); i++)
         {
           org.gmod.schema.sequence.Feature parent =
               new org.gmod.schema.sequence.Feature();
-          parent.setUniqueName((String)parents.get(i));
+          parent.setUniqueName(parents.get(i));
           FeatureRelationship feature_relationship =
               new FeatureRelationship();
           
@@ -712,7 +705,7 @@ public class ChadoTransactionManager
       qualifier_name = feature.getQualifierByName("Name");
       if(qualifier_uniquename != null)
       {
-        feature_uniquename = (String)(qualifier_uniquename.getValues()).elementAt(0);
+        feature_uniquename = qualifier_uniquename.getValues().elementAt(0);
         logger4j.debug("FEATURE_ADDED "+feature_uniquename);
       }
       
@@ -758,28 +751,24 @@ public class ChadoTransactionManager
     { 
       // relationship attributes
       Qualifier qualifier_relation = feature.getQualifierByName("Parent");
-      List featureRelationshipsForSubjectId = null;
+      List<FeatureRelationship> featureRelationshipsForSubjectId = null;
       if(qualifier_relation != null)
       {
         StringVector parents = qualifier_relation.getValues();
         if(parents.size() > 0)
-          featureRelationshipsForSubjectId = new Vector();
+          featureRelationshipsForSubjectId = new Vector<FeatureRelationship>();
         
         for(int i=0; i<parents.size(); i++)
         {
           org.gmod.schema.sequence.Feature parent =
               new org.gmod.schema.sequence.Feature();
-          parent.setUniqueName((String)parents.get(i));
+          parent.setUniqueName(parents.get(i));
           FeatureRelationship feature_relationship =
               new FeatureRelationship();
           
           //
           // should be retrieved from relationship ontology !!
-          CvTerm cvterm = DatabaseDocument.getCvTermByCvAndCvTerm("part_of", "relationship");
-          
-          //CvTerm cvterm = new CvTerm();
-          //cvterm.setCvTermId(DatabaseDocument.getCvtermID("part_of").intValue());
-          
+          CvTerm cvterm = DatabaseDocument.getCvTermByCvAndCvTerm("part_of", "relationship");         
           feature_relationship.setFeatureByObjectId(parent);
           feature_relationship.setFeatureBySubjectId(chado_feature);
           feature_relationship.setCvTerm(cvterm);
@@ -794,13 +783,13 @@ public class ChadoTransactionManager
       {
         StringVector derives = qualifier_relation.getValues();
         if(derives.size() > 0 && featureRelationshipsForSubjectId == null)
-          featureRelationshipsForSubjectId = new Vector();
+          featureRelationshipsForSubjectId = new Vector<FeatureRelationship>();
         
         for(int i=0; i<derives.size(); i++)
         {
           org.gmod.schema.sequence.Feature parent =
                                       new org.gmod.schema.sequence.Feature();
-          parent.setUniqueName((String) derives.get(i));
+          parent.setUniqueName(derives.get(i));
           FeatureRelationship feature_relationship = new FeatureRelationship();
           
           //
@@ -823,7 +812,7 @@ public class ChadoTransactionManager
     
     chado_feature.setUniqueName(feature_uniquename);
     if(qualifier_name != null)
-      chado_feature.setName((String)(qualifier_name.getValues()).elementAt(0));
+      chado_feature.setName(qualifier_name.getValues().elementAt(0));
 
     String key = feature.getKey().toString();
     if(key.equals(DatabaseDocument.EXONMODEL))
@@ -880,7 +869,7 @@ public class ChadoTransactionManager
       Qualifier qualifier_phase = feature.getQualifierByName("codon_start");
       if(qualifier_phase != null)
       {
-        String phase = (String)(qualifier_phase.getValues()).elementAt(0);
+        String phase = qualifier_phase.getValues().elementAt(0);
 
         if(phase.equals ("1"))
           featureloc.setPhase(new Integer(0));
@@ -894,18 +883,18 @@ public class ChadoTransactionManager
       
       // relationship attributes
       Qualifier qualifier_relation = feature.getQualifierByName("Parent");
-      List featureRelationshipsForSubjectId = null;
+      List<FeatureRelationship> featureRelationshipsForSubjectId = null;
       if(qualifier_relation != null)
       {
         StringVector parents = qualifier_relation.getValues();
         if(parents.size() > 0)
-          featureRelationshipsForSubjectId = new Vector();
+          featureRelationshipsForSubjectId = new Vector<FeatureRelationship>();
         
         for(int i=0; i<parents.size(); i++)
         {
           org.gmod.schema.sequence.Feature parent =
               new org.gmod.schema.sequence.Feature();
-          parent.setUniqueName((String)parents.get(i));
+          parent.setUniqueName(parents.get(i));
           FeatureRelationship feature_relationship =
               new FeatureRelationship();
           
@@ -928,13 +917,13 @@ public class ChadoTransactionManager
       {
         StringVector derives = qualifier_relation.getValues();
         if(derives.size() > 0 && featureRelationshipsForSubjectId == null)
-          featureRelationshipsForSubjectId = new Vector();
+          featureRelationshipsForSubjectId = new Vector<FeatureRelationship>();
         
         for(int i=0; i<derives.size(); i++)
         {
           org.gmod.schema.sequence.Feature parent =
                                       new org.gmod.schema.sequence.Feature();
-          parent.setUniqueName((String) derives.get(i));
+          parent.setUniqueName(derives.get(i));
           FeatureRelationship feature_relationship = new FeatureRelationship();
           
           //
@@ -975,7 +964,7 @@ public class ChadoTransactionManager
    
     sql.add(tsn);
     
-    List tsns = DatabaseDocument.getUpdateResiduesColumnTransactions(tsn);
+    List<ChadoTransaction> tsns = DatabaseDocument.getUpdateResiduesColumnTransactions(tsn);
     if(tsns != null)
       sql.addAll(tsns);
   }
@@ -1019,7 +1008,6 @@ public class ChadoTransactionManager
                chadoFeature,
                null, null, "polypeptide_domain",
                "FEATURE: ID="+chadoFeature.getUniqueName()+" "+qualifier.getName());
-
           sql.add(tsn);
         }
       }
@@ -1044,7 +1032,7 @@ public class ChadoTransactionManager
         ChadoTransaction tsn = null;
         for(int i = 0; i < old_qualifier_strings.size(); ++i)
         {
-          String qualifierString = (String)old_qualifier_strings.elementAt(i);
+          String qualifierString = old_qualifier_strings.elementAt(i);
           int index = qualifierString.indexOf("=");
           qualifierString = qualifierString.substring(index+1);
           AnalysisFeature analysisFeature =
@@ -1129,7 +1117,7 @@ public class ChadoTransactionManager
         "FEATURE: ID="+uniquename+" "+featureKey);
 
     sql.add(tsn);
-    List tsns = DatabaseDocument.getUpdateResiduesColumnTransactions(tsn);
+    List<ChadoTransaction> tsns = DatabaseDocument.getUpdateResiduesColumnTransactions(tsn);
     if(tsns != null)
       sql.addAll(tsns);
   }
@@ -1149,7 +1137,7 @@ public class ChadoTransactionManager
     for(int qualifier_index = 0; qualifier_index < qualifiers.size();
       ++qualifier_index)
     {
-      final Qualifier this_qualifier = (Qualifier)qualifiers.elementAt(qualifier_index);
+      final Qualifier this_qualifier = qualifiers.elementAt(qualifier_index);
       if(this_qualifier instanceof QualifierLazyLoading)
         ((QualifierLazyLoading)this_qualifier).setForceLoad(true);
       final String name = this_qualifier.getName();
@@ -1163,7 +1151,7 @@ public class ChadoTransactionManager
         for(int value_index = 0; value_index < qualifier_values.size();
           ++value_index)
         {
-          final String qualifierStr = (String)qualifier_values.elementAt(value_index);
+          final String qualifierStr = qualifier_values.elementAt(value_index);
           // ignore reserved tags
           if(isReservedTag(name) || 
              isSynonymTag(name, feature) || 
@@ -1178,12 +1166,12 @@ public class ChadoTransactionManager
           // happens when duplicating features 
           final CvTerm cvTerm = DatabaseDocument.getCvTermByCvTermName(name);
           final FeatureProp featureprop = new FeatureProp();
-          featureprop.setValue((String)qualifier_values.elementAt(value_index));
+          featureprop.setValue(qualifier_values.elementAt(value_index));
           featureprop.setRank(value_index);
           featureprop.setCvTerm(cvTerm);
           chado_feature.addFeatureProp(featureprop);
 
-          logger4j.debug("ADD FEATUREPROP "+name+"="+(String)qualifier_values.elementAt(value_index));
+          logger4j.debug("ADD FEATUREPROP "+name+"="+qualifier_values.elementAt(value_index));
         }
       }
       catch(NullPointerException npe)
@@ -1276,7 +1264,7 @@ public class ChadoTransactionManager
                                     final GFFStreamFeature feature,
                                     final int event_type)
   {
-    String uniquename = (String)(feature.getQualifierByName("ID").getValues()).elementAt(0);
+    String uniquename = feature.getQualifierByName("ID").getValues().elementAt(0);
     ChadoTransaction tsn;
 
     // updating the key unless just a qualifier changed
@@ -1307,7 +1295,7 @@ public class ChadoTransactionManager
               new org.gmod.schema.sequence.Feature();
         
             chado_feature.setCvTerm(cvTerm);
-            chado_feature.setUniqueName( feature.getSegmentID((Range)rv.elementAt(i)) );
+            chado_feature.setUniqueName( feature.getSegmentID(rv.elementAt(i)) );
         
             logger4j.debug("KEY CHANGE "+chado_feature.getUniqueName()+" "+old_key+" -> "+new_key);
             tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
@@ -1341,7 +1329,7 @@ public class ChadoTransactionManager
     for(int qualifier_index = 0; qualifier_index < qualifiers_old.size();
         ++qualifier_index)
     {
-      final Qualifier this_qualifier = (Qualifier)qualifiers_old.elementAt(qualifier_index);
+      final Qualifier this_qualifier = qualifiers_old.elementAt(qualifier_index);
       String name = this_qualifier.getName();
       
       if(!qualifiers_new.contains(name))
@@ -1374,7 +1362,7 @@ public class ChadoTransactionManager
     for(int qualifier_index = 0; qualifier_index < qualifiers_new.size();
         ++qualifier_index)
     {
-      final Qualifier this_qualifier = (Qualifier)qualifiers_new.elementAt(qualifier_index);
+      final Qualifier this_qualifier = qualifiers_new.elementAt(qualifier_index);
       String name = this_qualifier.getName();          
       int old_index = qualifiers_old.indexOfQualifierWithName(name);
 
@@ -1385,7 +1373,7 @@ public class ChadoTransactionManager
 
       if(old_index> -1)  // update qualifier
       {
-        this_old_qualifier = (Qualifier)qualifiers_old.elementAt(old_index);
+        this_old_qualifier = qualifiers_old.elementAt(old_index);
 
         old_qualifier_strings =
                    StreamQualifier.toStringVector(null, this_old_qualifier);
@@ -1395,7 +1383,7 @@ public class ChadoTransactionManager
         for(int value_index = 0; value_index < new_qualifier_strings.size();
             ++value_index)
         {
-          String qualifier_string = (String)new_qualifier_strings.elementAt(value_index);
+          String qualifier_string = new_qualifier_strings.elementAt(value_index);
           if(!old_qualifier_strings.contains(qualifier_string))
             need_to_update = true;
         }
@@ -1440,7 +1428,7 @@ public class ChadoTransactionManager
         for(int rank = 0; rank < new_qualifier_strings.size();
             ++rank)
         {         
-          String qualifier_string = (String)new_qualifier_strings.elementAt(rank);
+          String qualifier_string = new_qualifier_strings.elementAt(rank);
           int index = qualifier_string.indexOf("=");
 
           if(index > -1)
@@ -1468,7 +1456,7 @@ public class ChadoTransactionManager
         for(int rank = 0; rank < new_qualifier_strings.size();
             ++rank)
         {
-          String qualifier_string = (String)new_qualifier_strings.elementAt(rank);
+          String qualifier_string = new_qualifier_strings.elementAt(rank);
           
           int index = qualifier_string.indexOf("=");
           if(index > -1)
@@ -1500,11 +1488,11 @@ public class ChadoTransactionManager
     ChadoTransaction tsn;
     if(feature.getFeature_relationship_rank_store() != null)
     {
-      Hashtable rank_hash = feature.getFeature_relationship_rank_store();
-      Enumeration id_keys= rank_hash.keys();
+      Hashtable<String, Integer> rank_hash = feature.getFeature_relationship_rank_store();
+      Enumeration<String> id_keys= rank_hash.keys();
       while(id_keys.hasMoreElements())
       {
-        uniquename = (String)id_keys.nextElement();
+        uniquename = id_keys.nextElement();
         final FeatureProp featureprop = getFeatureProp(uniquename, qualifier_string,
                                                  lcvterm_id, rank);
         
@@ -1555,10 +1543,9 @@ public class ChadoTransactionManager
       ChadoCanonicalGene gene = feature.getChadoGene();
       uk.ac.sanger.artemis.io.Feature transcript =
         gene.getTranscriptFeatureFromName(uniquename);
-      List exons = gene.getSpliceSitesOfTranscript(
+      List<uk.ac.sanger.artemis.io.Feature> exons = gene.getSpliceSitesOfTranscript(
           GeneUtils.getUniqueName(transcript), DatabaseDocument.EXONMODEL);
-      Feature exon = 
-        ((Feature)((uk.ac.sanger.artemis.io.Feature)exons.get(0)).getUserData());
+      Feature exon = (Feature)exons.get(0).getUserData();
       exon.setQualifier(colourQualifier);
       exon.resetColour();
     }
@@ -1608,7 +1595,7 @@ public class ChadoTransactionManager
     // find tags that have been deleted
     for(int i = 0; i < old_qualifier_strings.size(); ++i)
     {
-      String qualifierString = (String)old_qualifier_strings.elementAt(i);
+      String qualifierString = old_qualifier_strings.elementAt(i);
       
       if( new_qualifier_strings == null ||
          !new_qualifier_strings.contains(qualifierString) ||
@@ -1693,7 +1680,7 @@ public class ChadoTransactionManager
          {
            if(new_qualifier_strings != null &&
                SimilarityTable.containsStringInStringVector(
-                  (String)old_qualifier_strings.elementAt(i), new_qualifier_strings))
+                  old_qualifier_strings.elementAt(i), new_qualifier_strings))
              continue;
            
            logger4j.debug(uniquename+"  in handleReservedTags() DELETE "+qualifierName+" "+
@@ -1750,7 +1737,7 @@ public class ChadoTransactionManager
     // find tags that have been inserted
     for(int i = 0; i < new_qualifier_strings.size(); ++i)
     {
-      String qualifierString = (String)new_qualifier_strings.elementAt(i);
+      String qualifierString = new_qualifier_strings.elementAt(i);
       if(!old_qualifier_strings.contains(qualifierString))
       {
         addReservedTag(qualifierString, qualifierName, uniquename,
@@ -1780,11 +1767,11 @@ public class ChadoTransactionManager
     int n_old = 0;
     
     for(int i=0; i<newValues.size(); i++)
-      if(((String)newValues.get(i)).equals(qualifier_string))
+      if(newValues.get(i).equals(qualifier_string))
          n_new++;
     
     for(int i=0; i<oldValues.size(); i++)
-      if(((String)oldValues.get(i)).equals(qualifier_string))
+      if(oldValues.get(i).equals(qualifier_string))
          n_old++;
     
     if(n_new < n_old)
@@ -1971,12 +1958,12 @@ public class ChadoTransactionManager
     final String log;
     if(qualifierName.equals("ID"))
     {
-      Hashtable segmentRangeStore = feature.getSegmentRangeStore();
+      Hashtable<String, Range> segmentRangeStore = feature.getSegmentRangeStore();
       if(   segmentRangeStore != null && 
           ( segmentRangeStore.size() > 1 || 
           feature.getKey().getKeyString().equals(DatabaseDocument.EXONMODEL)) )
       {
-        Hashtable mappingIds = feature.getNewIdMapToOldId();
+        Hashtable<String, String> mappingIds = feature.getNewIdMapToOldId();
         
         if(mappingIds == null)
         {
@@ -1990,19 +1977,19 @@ public class ChadoTransactionManager
         for(int i=0; i<newKeys.length; i++)
         {
           uniqueName[i]     = (String)newKeys[i];
-          oldUniqueNames[i] = (String)mappingIds.get(uniqueName[i]);
+          oldUniqueNames[i] = mappingIds.get(uniqueName[i]);
         }
       }
       else
       {
         uniqueName = new String[1];
         oldUniqueNames = new String[1];
-        uniqueName[0]  = (String)new_qualifier.getValues().get(0);
-        oldUniqueNames[0] = (String) old_qualifier.getValues().get(0);
+        uniqueName[0]  = new_qualifier.getValues().get(0);
+        oldUniqueNames[0] = old_qualifier.getValues().get(0);
       }
       
       if(feature.getQualifierByName("isObsolete") != null)
-        isObsolete = (String) feature.getQualifierByName("isObsolete").getValues().get(0);
+        isObsolete = feature.getQualifierByName("isObsolete").getValues().get(0);
       else
         isObsolete = "false";
       log = "UNIQUENAME: ID=";
@@ -2011,35 +1998,35 @@ public class ChadoTransactionManager
     {
       if(feature.getFeature_relationship_rank_store() != null)
       {
-        Hashtable rank_hash = feature.getFeature_relationship_rank_store();
-        Enumeration id_keys= rank_hash.keys();
+        Hashtable<String, Integer> rank_hash = feature.getFeature_relationship_rank_store();
+        Enumeration<String> id_keys= rank_hash.keys();
         uniqueName = new String[rank_hash.size()];
         int next = 0;
         while(id_keys.hasMoreElements())
         {
-          uniqueName[next] = (String)id_keys.nextElement();
+          uniqueName[next] = id_keys.nextElement();
           next++;
         }
       }
       else
       {
         uniqueName = new String[1];
-        uniqueName[0] = (String) feature.getQualifierByName("ID").getValues().get(0);
+        uniqueName[0] = feature.getQualifierByName("ID").getValues().get(0);
       }
       
       if(qualifierName.equals("Name"))
       {
         if(feature.getQualifierByName("isObsolete") != null)
-          isObsolete = (String) feature.getQualifierByName("isObsolete").getValues().get(0);
+          isObsolete = feature.getQualifierByName("isObsolete").getValues().get(0);
         else
           isObsolete = "false";
         if(new_qualifier != null)
-          name = (String)new_qualifier.getValues().get(0);
+          name = new_qualifier.getValues().get(0);
         log = "PRIMARY NAME:";
       }
       else
       {  
-        isObsolete = (String)new_qualifier.getValues().get(0);
+        isObsolete = new_qualifier.getValues().get(0);
         log = "IS_OBSOLETE:";
       }
     }
@@ -2058,9 +2045,9 @@ public class ChadoTransactionManager
       chadoFeature.setObsolete(Boolean.parseBoolean(isObsolete));
 
       String logVal = uniqueName[i] + " " + log
-                 + (new_qualifier !=null ? (String) new_qualifier.getValues().get(0) : "NULL")
+                 + (new_qualifier !=null ? new_qualifier.getValues().get(0) : "NULL")
                  + " OLD=" 
-                 + (old_qualifier != null ? (String) old_qualifier.getValues().get(0) : "NULL");
+                 + (old_qualifier != null ? old_qualifier.getValues().get(0) : "NULL");
       logger4j.debug(logVal);
       ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
           chadoFeature, feature.getLastModified(), feature, 
@@ -2078,7 +2065,7 @@ public class ChadoTransactionManager
       GFFStreamFeature gffFeature = ((GFFStreamFeature)feature);
       if(gffFeature.getChadoGene() == null)
         return;
-      Set children = gffFeature.getChadoGene().getChildren(gffFeature);
+      Set<uk.ac.sanger.artemis.io.Feature> children = gffFeature.getChadoGene().getChildren(gffFeature);
       if(children != null && children.size()>0)
       {
         final String prefix;
@@ -2113,15 +2100,15 @@ public class ChadoTransactionManager
   private void updateFeatureLoc(final GFFStreamFeature feature,
                                 final String uniquename)
   {
-    final Hashtable rangeHash = feature.getSegmentRangeStore();
+    final Hashtable<String, Range> rangeHash = feature.getSegmentRangeStore();
     ChadoTransaction tsn;
     if(rangeHash != null)
     {
-      Enumeration id_keys= rangeHash.keys();
+      Enumeration<String> id_keys= rangeHash.keys();
       while(id_keys.hasMoreElements())
       {
-        String seqId = (String)id_keys.nextElement();
-        Range range = (Range)rangeHash.get(seqId);
+        String seqId = id_keys.nextElement();
+        Range range = rangeHash.get(seqId);
         FeatureLoc featureloc = getFeatureLoc(feature, seqId, 
                                               range);
         
@@ -2203,7 +2190,7 @@ public class ChadoTransactionManager
     Qualifier qualifier_phase = gffFeature.getQualifierByName("codon_start");
     if(qualifier_phase != null)
     {
-      String phase = (String)(qualifier_phase.getValues()).elementAt(0);
+      String phase = qualifier_phase.getValues().elementAt(0);
 
       if(phase.equals ("1"))
         featureloc.setPhase(new Integer(0));
@@ -2283,8 +2270,8 @@ public class ChadoTransactionManager
   { 
     boolean isCurrent = true;
     StringVector strings = StringVector.getStrings(qualifier_string, ";");
-    final String synonymValue = ((String)strings.get(0));
-    if(strings.size() > 1 && ((String)strings.get(1)).equals("current=false"))
+    final String synonymValue = strings.get(0);
+    if(strings.size() > 1 && strings.get(1).equals("current=false"))
       isCurrent = false;
     else 
       isCurrent = true;
@@ -2398,7 +2385,7 @@ public class ChadoTransactionManager
       return feature_cvterm;
     }
     
-    List featureCvTermProps = new Vector();
+    List<FeatureCvTermProp> featureCvTermProps = new Vector<FeatureCvTermProp>();
     StringVector strings = StringVector.getStrings(qualifier_string, ";");
     
     String cvName = null; 
@@ -2409,7 +2396,7 @@ public class ChadoTransactionManager
       {
         for(int i=0; i<strings.size(); i++)
         {
-          String qual = ((String)strings.get(i)).trim();
+          String qual = strings.get(i).trim();
           if(qual.startsWith("cv="))
             cvName = qual.substring(3);
         }
@@ -2422,7 +2409,7 @@ public class ChadoTransactionManager
     
     for(int i=0; i<strings.size(); i++)
     {    
-      final String this_qualifier_part = ((String)strings.get(i)).trim();
+      final String this_qualifier_part = strings.get(i).trim();
       final String this_qualifier_part_lowercase = this_qualifier_part.toLowerCase();
 
       if(this_qualifier_part_lowercase.startsWith("term="))
@@ -2606,18 +2593,14 @@ public class ChadoTransactionManager
    * @param cvTermName - new featureprop cvterm.name
    * @return
    */
-  private int getFeatureCvTermPropRank(List featureCvTermProps, final String cvTermName)
+  private int getFeatureCvTermPropRank(List<FeatureCvTermProp> featureCvTermProps, final String cvTermName)
   {
     int rank = 0;
-    
-    for(int i=0; i<featureCvTermProps.size(); i++)
+    for(FeatureCvTermProp prop: featureCvTermProps)
     {
-      CvTerm this_cvterm =
-         ( (FeatureCvTermProp)featureCvTermProps.get(i) ).getCvTerm();
-      if(this_cvterm.getName().equals(cvTermName))
+      if(prop.getCvTerm().getName().equals(cvTermName))
         rank++;
     }
-    
     return rank;
   }
   
@@ -2633,7 +2616,6 @@ public class ChadoTransactionManager
       cvTermName = cvTermName.substring(1, cvTermName.length()-1);
     
     CvTerm cvTerm = null;
-    
     if(cvName != null)
       cvTerm = DatabaseDocument.getCvTermByCvPartAndCvTerm(cvTermName, cvName);
     else
@@ -2668,12 +2650,10 @@ public class ChadoTransactionManager
   private void loadDbXRefsAndPubs(final String searchStr,
                                   final FeatureCvTerm feature_cvterm)
   {
-    List featureCvTermDbXRefs = null;
+    List<FeatureCvTermDbXRef> featureCvTermDbXRefs = null;
     
     //StringVector strings = StringVector.getStrings(searchStr, "|");
     StringTokenizer tok = new StringTokenizer(searchStr, "|,");
-    
-
     while(tok.hasMoreTokens())
     {
       String this_part = tok.nextToken();  //(String)strings.get(i);
@@ -2712,11 +2692,11 @@ public class ChadoTransactionManager
           // secondary pub
           logger4j.debug("Set secondary Pub for " + 
               dbName + ":" + accession);
-          Collection featureCvTermPubs = feature_cvterm.getFeatureCvTermPubs();
+          Collection<FeatureCvTermPub> featureCvTermPubs = feature_cvterm.getFeatureCvTermPubs();
           if(featureCvTermPubs == null ||
              featureCvTermPubs.size() < 1)
           {
-            featureCvTermPubs = new Vector();
+            featureCvTermPubs = new Vector<FeatureCvTermPub>();
             feature_cvterm.setFeatureCvTermPubs(featureCvTermPubs);
           }
           FeatureCvTermPub featureCvTermPub = new FeatureCvTermPub();
@@ -2740,7 +2720,7 @@ public class ChadoTransactionManager
         featureCvTermDbXRef.setDbXRef(dbxref);
         
         if(featureCvTermDbXRefs == null)
-          featureCvTermDbXRefs = new Vector();
+          featureCvTermDbXRefs = new Vector<FeatureCvTermDbXRef>();
         featureCvTermDbXRefs.add(featureCvTermDbXRef);
       }
     }
@@ -2948,19 +2928,15 @@ public class ChadoTransactionManager
   
   public ChadoTransaction getTransactionAt(final int index)
   {
-    return (ChadoTransaction)sql.elementAt(index);
+    return sql.elementAt(index);
   }
 
 
   private Vector<ChadoTransaction> getSql()
   {
     final Vector<ChadoTransaction> tmpSql = new Vector<ChadoTransaction>(sql.size());
-    
-    for(int i=0;i<sql.size();i++)
-    {
-      ChadoTransaction tsn = sql.get(i);
+    for(ChadoTransaction tsn: sql)
       tmpSql.add(tsn.copy());
-    }
     
     return tmpSql;
   }
@@ -2977,4 +2953,3 @@ public class ChadoTransactionManager
     return commitReturnValue;
   }
 }
-
