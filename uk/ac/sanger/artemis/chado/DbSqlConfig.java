@@ -77,7 +77,7 @@ public class DbSqlConfig
 //         index3 = index3+3;
 
 //       properties.put("chado", url.substring(index3,index)); 
-       properties.put("chado",url);
+       properties.put("chado",dlp.getUnprefixedURL());
 
 //       if(index2 < 0)
 //         properties.put("username", url.substring(index+1));
