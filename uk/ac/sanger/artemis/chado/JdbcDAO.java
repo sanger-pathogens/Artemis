@@ -32,6 +32,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Vector;
 
+import uk.ac.sanger.artemis.util.DatabaseLocationParser;
+
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureCvTerm;
 import org.gmod.schema.sequence.FeatureCvTermProp;
@@ -81,9 +83,10 @@ public class JdbcDAO extends GmodDAO
       conn = DriverManager.getConnection(location);
 
     // assume we have a password
-    final int index = location.indexOf("?user=");
-    conn = DriverManager.getConnection(location.substring(0, index),
-                                       location.substring(index + 6),
+    DatabaseLocationParser dlp = new DatabaseLocationParser();
+    dlp.setFromURLString(location);
+    conn = DriverManager.getConnection(dlp.getConnectionString(),
+                                       dlp.getUsername(),
                                        new String(pfield.getPassword()));
   }
 
