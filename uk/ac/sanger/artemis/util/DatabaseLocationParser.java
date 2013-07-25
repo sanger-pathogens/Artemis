@@ -36,7 +36,7 @@ import java.util.regex.Pattern;
  */
 /**
  *
- * @author esr
+ * @author Eric Rasche <rasche.eric@yandex.ru>
  */
 public class DatabaseLocationParser {
 
