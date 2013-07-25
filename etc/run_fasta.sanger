@@ -82,7 +82,7 @@ run_one_prog () {
     echo "$OUTPUT_FILE using database $DATABASE" 1>&2
 
     # add/change the flags to suit your site:
-    COMMAND="$EXEC -B -S -q -b 100 -H $INPUT_FILE $DATABASE ktup 2"
+    COMMAND="$EXEC -S -q -b 100 -H $INPUT_FILE $DATABASE ktup 2"
 
     echo "command line: $COMMAND" 1>&2
 
@@ -129,8 +129,7 @@ $ENV{'FASTLIBS'} = "/software/pathogen/external/etc/pubseqgbs";
 open(BSUB, "| bsub -q normal -o fasta_errors -n 1 -R \"select[blast && mem > 500] rusage[r1m=1:mem=500]\" -K") or die "could not open bsub pipe : $!";
 open(LIST_FILE,$file);
 
-$EXEC="/nfs/disk222/yeastpub/bio-soft/fasta/fasta33_t";
-$EXEC="/software/pathogen/external/applications/fasta/fasta35";
+$EXEC="/software/pathogen/external/apps/usr/bin/fasta36";
 
 while(my $inFile = <LIST_FILE>)
 {
@@ -164,7 +163,7 @@ while(my $inFile = <LIST_FILE>)
     }
   }
 
-  print BSUB "$EXEC -B -S -q -b 100 -H $inFile $database ktup 2 > $inFile\.out\n";
+  print BSUB "$EXEC -S -q -b 100 -H $inFile $database ktup 2 > $inFile\.out\n";
   print BSUB "gzip -9 $inFile\.out\n";
 }
 close BSUB or die "--Could not submit job : $!";
@@ -188,8 +187,8 @@ chomp $database;
 $ENV{'FASTLIBS'} = "/software/pathogen/external/etc/pubseqgbs";
 open(LIST_FILE,$file);
 
-$EXEC="/nfs/disk222/yeastpub/bio-soft/fasta/fasta33";
-$EXEC="/software/pathogen/external/applications/fasta/fasta35";
+$EXEC="/software/pathogen/external/apps/usr/bin/fasta36";
+
 $NEW_WDIR=".";
 $NUM_JOBS=0;
 
@@ -405,6 +404,13 @@ sub bsub
     $name = "$2";
   }
 
+  # substitute characters
+  if($name =~ /(\+|\#)/)
+  {
+    $name =~ s/\\\+/plus/;
+    $name =~ s/\#/\_/;
+  }
+
   my $random = int( rand( 999+1 ) );
   
   push(@bsub_jobs, "$name$random\_fasta");
@@ -415,9 +421,9 @@ sub bsub
     $QUEUE="normal";
   }
 
-  open(BSUB, "| bsub -q $QUEUE -o /dev/null -n 1 -R \"select[mem > 500] rusage[mem=500]\" -J$name$random\_fasta\"[$index]%16\"")  or die "could not open bsub pipe  : $!";
+  open(BSUB, "| bsub -q $QUEUE -o /dev/null -R \"select[mem > 10000] rusage[mem=10000]\" -M10000 -J$name$random\_fasta\"[$index]%16\"")  or die "could not open bsub pipe  : $!";
   print BSUB "cd $NEW_WDIR\n";
-  print BSUB "$EXEC -B -S -q -b 100 -H $prefix$num";
+  print BSUB "$EXEC -S -q -b 100 -H $prefix$num";
   print BSUB "\${LSB_JOBINDEX} $database ktup 2 > $prefix$num";
   print BSUB "\${LSB_JOBINDEX}\.out\n";
 

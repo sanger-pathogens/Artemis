@@ -34,7 +34,7 @@ CLASSPATH="$CLASSPATH:$ARTEMIS_HOME/lib/ibatis/ibatis-2.3.4.726.jar:$ARTEMIS_HOM
 CLASSPATH="$CLASSPATH:$ARTEMIS_HOME/lib/picard/picard.jar"
 export CLASSPATH
 
-FLAGS="-mx1024m -ms20m -Djdbc.drivers=org.postgresql.Driver -Dibatis"
+FLAGS="-mx2048m -ms20m -Djdbc.drivers=org.postgresql.Driver -Dibatis"
 DEFAULT_CONNECTION="-Dchado=db.genedb.org:5432/snapshot?genedb_ro -Dread_only"
 
 while test $# != 0

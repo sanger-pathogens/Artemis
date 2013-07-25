@@ -57,8 +57,8 @@ LINKEND="CONCEPTS-ACTIVEENTRY">.)
   <TITLE>The Select Menu</TITLE>
   <PARA>
 The items in this menu are used to modify the current selection (see <XREF
-LINKEND="CONCEPTS-SELECTION">).  &art;<![ %artemis-only; [ A short summary of
-the current selection is shown at the top of the main window (see <XREF
+LINKEND="CONCEPTS-SELECTION">).  &art;<![ %artemis-only; [ shows a short summary of
+the current selection at the top of the main window (see <XREF
 LINKEND="MAINWINDOW-BREAKDOWN-SELECTIONSTATUS"> for details).]]>.
   </PARA>
 
@@ -1380,8 +1380,9 @@ called "ambiguous bases".
 This menu is primarily used for running external programs on UNIX.
 Additionally there are menu options to send sequences from selected
 features to the <ULINK URL="http://blast.ncbi.nlm.nih.gov/Blast.cgi"
-TYPE="external">NCBI web BLAST</ULINK> and <ULINK URL="http://pfam.sanger.ac.uk/"
-TYPE="external">Pfam</ULINK>.
+TYPE="external">NCBI web BLAST</ULINK>, <ULINK URL="http://pfam.sanger.ac.uk/"
+TYPE="external">Pfam</ULINK> and <ULINK URL="http://rfam.sanger.ac.uk/"
+TYPE="external">Rfam</ULINK>.
   </PARA>
   <PARA>
 Once configured correctly, running an external
@@ -1622,6 +1623,10 @@ foo	5	5	22	121	28      25      419
 foo	6	30	36	124	32      30      412
 ...
 </SYNOPSIS>
+<![ %artemis-only; [
+Indexed user plots can be used with indexed FASTA sequences and indexed GFF files (see
+<XREF LINKEND="FILETYPES">). The sequence can then be changed using the drop down menu in
+the Entry toolbar and this will change the graph data to the selected sequence.]]> 
       </PARA>
       </LISTITEM>
 
