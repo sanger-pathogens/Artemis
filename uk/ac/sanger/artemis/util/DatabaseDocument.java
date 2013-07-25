@@ -174,7 +174,7 @@ public class DatabaseDocument extends Document
    * 
    * @param location
    *          This should be a URL string giving:
-   *          jdbc:postgresql://host:port/datbase_name?user=username
+   *          jdbc:postgresql://host:port/database_name?user=username
    * 
    */
   public DatabaseDocument(String location, JPasswordField pfield)
@@ -230,7 +230,7 @@ public class DatabaseDocument extends Document
    * 
    * @param location
    *          This should be a URL string giving:
-   *          jdbc:postgresql://host:port/datbase_name?user=username
+   *          jdbc:postgresql://host:port/database_name?user=username
    * @param srcFeatureId
    *          ID of a feature to be extracted.
    * @param splitGFFEntry
@@ -2647,8 +2647,7 @@ public class DatabaseDocument extends Document
     // "localhost:10001/backup?chado"
     
     String url = (String)getLocation();
-    DatabaseLocationParser dlp = new DatabaseLocationParser();
-    dlp.setFromURLString(url);
+    DatabaseLocationParser dlp = new DatabaseLocationParser(url);
     
 //    
 //    int index  = url.indexOf("?");

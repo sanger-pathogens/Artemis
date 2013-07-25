@@ -448,13 +448,12 @@ class DatabaseLoginPrompt extends JPanel implements ILoginPrompt
   
   private void setFromURL(String db_url)
   {
-      DatabaseLocationParser dlp = new DatabaseLocationParser();
-      dlp.setFromURLString(db_url);
+      DatabaseLocationParser dlp = new DatabaseLocationParser(db_url);
       server.setText(dlp.getHost());
       port.setText("" + dlp.getPort());
       db.setText(dlp.getDatabase());
       user.setText(dlp.getUsername());
-      ssl.setSelected(dlp.getSSL());
+      ssl.setSelected(dlp.isSSLEnabled());
   }
   
   /**
@@ -570,8 +569,7 @@ class DatabaseLoginPromptConsole implements ILoginPrompt
 	
 	private void setFromURL(String db_url)
 	  {
-              DatabaseLocationParser dlp = new DatabaseLocationParser();
-              dlp.setFromURLString(db_url);
+              DatabaseLocationParser dlp = new DatabaseLocationParser(db_url);
               server = dlp.getHost();
               port = "" + dlp.getPort();
               db = dlp.getDatabase();

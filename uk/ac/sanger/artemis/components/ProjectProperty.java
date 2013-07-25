@@ -727,8 +727,7 @@ public class ProjectProperty extends JFrame
   private void openDatabase(final Splash splash, final String featureName)
   {
     String loc = System.getProperty("chado");
-    DatabaseLocationParser dlp = new DatabaseLocationParser();
-    dlp.setFromURLString(loc);
+    DatabaseLocationParser dlp = new DatabaseLocationParser(loc);
     
     
 //    int idx;

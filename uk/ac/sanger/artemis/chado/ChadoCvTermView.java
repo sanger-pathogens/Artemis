@@ -347,17 +347,22 @@ public class ChadoCvTermView extends JFrame
     bacross.add(pfield);
 
     
-    DatabaseLocationParser dlp = new DatabaseLocationParser();
+    DatabaseLocationParser dlp; 
     // given -Dchado=localhost:port/dbname?username
     if(System.getProperty("chado") != null)
     {
       String db_url = System.getProperty("chado").trim();
-      dlp.setFromURLString(db_url);
+      dlp = new DatabaseLocationParser(db_url);
       inServer.setText(dlp.getHost());
       inPort.setText("" + dlp.getPort());
       inDB.setText(dlp.getDatabase());
       inUser.setText(dlp.getUsername());
    
+    }
+    else
+    {
+        // Still need to initialise the object
+        dlp = new DatabaseLocationParser();
     }
 
     int n = JOptionPane.showConfirmDialog(null, bacross,

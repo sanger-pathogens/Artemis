@@ -83,8 +83,7 @@ public class JdbcDAO extends GmodDAO
       conn = DriverManager.getConnection(location);
 
     // assume we have a password
-    DatabaseLocationParser dlp = new DatabaseLocationParser();
-    dlp.setFromURLString(location);
+    DatabaseLocationParser dlp = new DatabaseLocationParser(location);
     conn = DriverManager.getConnection(dlp.getConnectionString(),
                                        dlp.getUsername(),
                                        new String(pfield.getPassword()));
