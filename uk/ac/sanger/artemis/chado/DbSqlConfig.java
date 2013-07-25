@@ -51,6 +51,9 @@ public class DbSqlConfig
    * artemis_sqlmap/chado_iBatis_config.xml file and the
    * database location properties defined by the system property, 
    * <i>e.g.</i> -Dchado=localhost:2997/chado?tjc
+   * 
+   * It is especially important that the -Dchado argument is not prefixed with
+   * jdbc:postgresql:// as that is handled in iBatis
    *
    */
   public void init(JPasswordField fpasswd)
