@@ -30,10 +30,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 /**
  *
  * @author Eric Rasche <rasche.eric@yandex.ru>
@@ -43,8 +39,6 @@ public class DatabaseLocationParser {
     private String host;
     private String database;
     private int port = 0;
-//    private String username;
-//    private String ssl_param;
     private String db_engine = "postgresql";
     private String protocol = "jdbc";
     private static org.apache.log4j.Logger logger4j =
@@ -235,7 +229,6 @@ public class DatabaseLocationParser {
                 }
             }
             URI uri_result = new URI(scheme, userInfo, host, db_port, db_name, query_params, fragment);
-//            System.out.println(uri_result.toString());
             logger4j.debug("Pre-final URL: " + uri_result.toString());
 
             result = result + uri_result.toString();
