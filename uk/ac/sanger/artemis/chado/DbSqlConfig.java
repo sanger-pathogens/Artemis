@@ -29,6 +29,8 @@ import com.ibatis.sqlmap.client.SqlMapClient;
 import com.ibatis.sqlmap.client.SqlMapClientBuilder;
 import com.ibatis.common.resources.Resources;
 
+import uk.ac.sanger.artemis.util.DatabaseLocationParser;
+
 import javax.swing.JPasswordField;
 import java.util.Properties;
 import java.io.Reader;
@@ -49,6 +51,9 @@ public class DbSqlConfig
    * artemis_sqlmap/chado_iBatis_config.xml file and the
    * database location properties defined by the system property, 
    * <i>e.g.</i> -Dchado=localhost:2997/chado?tjc
+   * 
+   * It is especially important that the -Dchado argument is not prefixed with
+   * jdbc:postgresql:// as that is handled in iBatis
    *
    */
   public void init(JPasswordField fpasswd)
@@ -62,23 +67,13 @@ public class DbSqlConfig
      if(System.getProperty("chado") != null)
      {
        String url = System.getProperty("chado");
-       int index  = url.indexOf("?");
-       int index2 = url.indexOf("user=");
+       DatabaseLocationParser dlp = new DatabaseLocationParser(url);
        properties = new Properties();
 
-       int index3 = url.indexOf("://");
-       if(index3 < 0)
-         index3 = 0;
-       else
-         index3 = index3+3;
+       properties.put("chado",dlp.getUnprefixedURL());
 
-       properties.put("chado", url.substring(index3,index)); 
-
-       if(index2 < 0)
-         properties.put("username", url.substring(index+1));
-       else
-         properties.put("username", url.substring(index2+5));
-
+       properties.put("username",dlp.getUsername());
+       
        if(fpasswd != null && fpasswd.getPassword().length > 0)
          properties.put("password", new String(fpasswd.getPassword()));
      }

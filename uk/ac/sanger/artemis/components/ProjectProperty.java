@@ -76,6 +76,7 @@ import uk.ac.sanger.artemis.components.database.DatabaseEntrySource;
 import uk.ac.sanger.artemis.components.database.DatabaseJPanel;
 import uk.ac.sanger.artemis.util.Document;
 import uk.ac.sanger.artemis.util.FileDocument;
+import uk.ac.sanger.artemis.util.DatabaseLocationParser;
 
 /**
  * Project file management system using a properties file.
@@ -726,9 +727,12 @@ public class ProjectProperty extends JFrame
   private void openDatabase(final Splash splash, final String featureName)
   {
     String loc = System.getProperty("chado");
-    int idx;
-    if((idx = loc.indexOf("?")) > -1 && loc.indexOf("?user=") == -1)
-      loc = loc.substring(0, idx+1) + "user=" + loc.substring(idx+1);
+    DatabaseLocationParser dlp = new DatabaseLocationParser(loc);
+    
+    
+//    int idx;
+//    if((idx = loc.indexOf("?")) > -1 && loc.indexOf("?user=") == -1)
+//      loc = loc.substring(0, idx+1) + "user=" + loc.substring(idx+1);
 
     if( entry_source == null || 
        !entry_source.getLocation().endsWith(loc) )
