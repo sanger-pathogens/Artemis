@@ -99,7 +99,7 @@ public class EditMenu extends SelectionMenu
     org.apache.log4j.Logger.getLogger(EditMenu.class);
   
   /** records the gene builders that are open */
-  private static Hashtable geneBuilderHash;
+  private static Hashtable<String, GeneBuilderFrame> geneBuilderHash;
   
   /**
    *  Create a new EditMenu object.
@@ -1001,7 +1001,7 @@ public class EditMenu extends SelectionMenu
         ((GFFStreamFeature)selection_feature.getEmblFeature()).getChadoGene() != null)
     {
       if(geneBuilderHash == null)
-         geneBuilderHash = new Hashtable();
+         geneBuilderHash = new Hashtable<String, GeneBuilderFrame>();
       
       final String gene = 
         ((GFFStreamFeature)selection_feature.getEmblFeature()).getChadoGene().getGeneUniqueName();
@@ -1012,18 +1012,23 @@ public class EditMenu extends SelectionMenu
          "Show gene builder already open\nfor this gene model?", gene, 
          JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION)
       {
-        ((GeneBuilderFrame)geneBuilderHash.get(gene)).toFront();
+        geneBuilderHash.get(gene).toFront();
       }
       else
       {
         if(System.getProperty("basic") == null ||
            System.getProperty("basic").equals("false"))
         {
-          final GeneBuilderFrame gbFrame = 
-            new GeneBuilderFrame(selection_feature, entry_group,
-                                 selection, goto_event_source);
-          gbFrame.addGeneBuilderHash(geneBuilderHash);
-          geneBuilderHash.put(gene, gbFrame);
+          SwingUtilities.invokeLater(new Runnable() {
+            public void run()
+            {
+              final GeneBuilderFrame gbFrame = 
+                new GeneBuilderFrame(selection_feature, entry_group,
+                                     selection, goto_event_source);
+              gbFrame.addGeneBuilderHash(geneBuilderHash);
+              geneBuilderHash.put(gene, gbFrame);
+            }
+          });
         }
         else
           new BasicGeneBuilderFrame(selection_feature, entry_group,
@@ -1569,10 +1574,10 @@ public class EditMenu extends SelectionMenu
    * @param features
    * @return
    */
-  private static java.util.List getGeneModels(final FeatureVector features)
+  private static java.util.List<ChadoCanonicalGene> getGeneModels(final FeatureVector features)
   {
-    final java.util.List geneModels = new Vector();
-    final java.util.List geneModelNames = new Vector();
+    final java.util.List<ChadoCanonicalGene> geneModels = new Vector<ChadoCanonicalGene>();
+    final java.util.List<String> geneModelNames = new Vector<String>();
     for(int i=0; i< features.size(); i++)
     {
       if(features.elementAt(i).getEmblFeature() instanceof GFFStreamFeature)
