@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.Enumeration;
@@ -327,69 +329,134 @@ public class MappedReads
       else
         df = new DecimalFormat("0");
 
-      StringBuffer buff = new StringBuffer();
+      // use two possible titles used for the truncated names and
+      // the full names of BAM's when saved to file
+      final StringBuilder hdr = new StringBuilder();
+      final StringBuilder title = new StringBuilder();
+      final StringBuilder titleToSave = new StringBuilder();
+      final StringBuilder body = new StringBuilder();
+      
       for (int j = 0; j < bamList.size(); j++)
       {
         String bam = bamList.get(j);
-        buff.append("#BAM: " + bam);
+        hdr.append("#BAM: " + bam);
         if (mappedReads != null)
         {
           final DecimalFormat df2 = new DecimalFormat("0.000000");
-          buff.append(" Mapped Reads/million: "
+          hdr.append(" Mapped Reads/million: "
               + df2.format(((float) mappedReads[j]) / 1000000.f));
         }
-        buff.append("\n");
+        hdr.append("\n");
       }
-      buff.append("\n");
+      hdr.append("\n");
 
-      Enumeration<String> enumFeat = featureReadCount.keys();
+      final Enumeration<String> enumFeat = featureReadCount.keys();
       int n = 0;
       while (enumFeat.hasMoreElements())
       {
-        String fId = enumFeat.nextElement();
+        final String fId = enumFeat.nextElement();
         if(n == 0)
         {
-          for (int i = 0; i < ((String)fId).length(); i++)
-            buff.append(" ");
-          buff.append("\t");
+          for (int i = 0; i < fId.length(); i++)
+          {
+            titleToSave.append(" ");
+            title.append(" ");
+          }
+          titleToSave.append("\t");
+          title.append("\t");
+          for (String bam: bamList)
+          {
+            String name = new File(bam).getName();
+            titleToSave.append(name+"\t");
+            if(mappedReads == null)
+            {
+              if(name.length() > 21)
+                 name = "  "+name.substring(0, 19) + "...";
+              else
+              {
+                int len = 21-name.length();
+                name = "  "+name;
+                for (int i = 0; i < len; i++)
+                  name = name+" ";
+              }
+            }
+            else if(mappedReads != null)
+            {
+              if(name.length() > 28)
+                 name = "      "+name.substring(0, 26) + "...";
+              else
+              {
+                int len = 28-name.length(); 
+                name = "      "+name;
+                for (int i = 0; i < len; i++)
+                  name = name+" ";
+              }
+            }
+            title.append(name+"\t");
+          }
+          
+          title.append("\n");
+          titleToSave.append("\n");
+          for (int i = 0; i < fId.length(); i++)
+          {
+            title.append(" ");
+            titleToSave.append(" ");
+          }
+          title.append("\t");
+          titleToSave.append("\t");
           for (int j = 0; j < bamList.size(); j++)
           {
             if(mappedReads != null)
-              buff.append("      Sense   Antisense       Total\t");
+            {
+              title.append("      Sense   Antisense       Total\t");
+              titleToSave.append("      Sense   Antisense       Total\t");
+            }
             else
-              buff.append("  Sense Antisense  Total\t");
+            {
+              title.append("  Sense Antisense  Total\t");
+              titleToSave.append("  Sense Antisense  Total\t");
+            }
           }
-          buff.append("\n");
+          title.append("\n");
+          titleToSave.append("\n");
         }
         
-        buff.append(fId + "\t");
-        List<ReadCount> cnts = featureReadCount.get(fId);
+        body.append(fId + "\t");
+        final List<ReadCount> cnts = featureReadCount.get(fId);
         
         for (ReadCount c: cnts)
         {
-          pad(buff, c.senseCnt, df);
-          buff.append(" ");
-          pad(buff, c.antiCnt, df);
-          buff.append(" ");
-          pad(buff, c.senseCnt+c.antiCnt, df);
-          buff.append("\t");
+          pad(body, c.senseCnt, df);
+          body.append(" ");
+          pad(body, c.antiCnt, df);
+          body.append(" ");
+          pad(body, c.senseCnt+c.antiCnt, df);
+          body.append("\t");
         }
-        buff.append("\n");
+        body.append("\n");
         n++;
       }
 
-      FileViewer viewer;
+      final FileViewer viewer;
+      final ActionListener saveListener = new ActionListener()
+      {
+        public void actionPerformed(ActionEvent e)
+        {
+          FileViewer.writeToFile(hdr.toString()+
+              titleToSave.toString()+body.toString());
+        }
+      };
       if (mappedReads != null)
-        viewer = new FileViewer("RPKM", true, false, true);
+        viewer = new FileViewer("RPKM", true, false, true, saveListener);
       else
-        viewer = new FileViewer("Read Count", true, false, true);
-      viewer.getTextPane().setText(buff.toString());
+        viewer = new FileViewer("Read Count", true, false, true, saveListener);
+      viewer.getTextPane().setText(hdr.toString()+title.toString()+body.toString());
       
       dialog.dispose();
     }
   }
   
-  private static void pad(StringBuffer buff, float f, final DecimalFormat df)
+  private static void pad(StringBuilder buff, float f, final DecimalFormat df)
   {
     if(f < 10)
       buff.append("      ");

@@ -115,6 +115,13 @@ public class FileViewer extends JFrame
     this(label, visible, true, false);  
   }
   
+  public FileViewer(final String label, final boolean visible, 
+                    final boolean showClearButton,
+                    final boolean showSaveButton) 
+  {
+    this(label, visible, showClearButton, showSaveButton, null); 
+  }
+  
   /**
    *  Create a new FileViewer component.
    *  @param label The name to attach to the new JFrame.
@@ -123,7 +130,8 @@ public class FileViewer extends JFrame
    **/
   public FileViewer(final String label, final boolean visible, 
                     final boolean showClearButton,
-                    final boolean showSaveButton) 
+                    final boolean showSaveButton,
+                    final ActionListener saveListener) 
   {
     super(label);
 
@@ -201,13 +209,16 @@ public class FileViewer extends JFrame
     if(showSaveButton)
     {
       final JButton saveToFile = new JButton("Save");
-      saveToFile.addActionListener(new ActionListener()
-      {
-        public void actionPerformed(ActionEvent e)
+      if(saveListener != null)
+        saveToFile.addActionListener(saveListener);
+      else
+        saveToFile.addActionListener(new ActionListener()
         {
-          writeToFile();
-        }
-      });
+          public void actionPerformed(ActionEvent e)
+          {
+            writeToFile(getText());
+           }
+        });
       button_panel.add(saveToFile);
     }
     
@@ -448,15 +459,15 @@ public class FileViewer extends JFrame
     this.isHideOnClose = isHideOnClose;
   }
   
-  private void writeToFile()
+  public static void writeToFile(final String txt)
   {
     StickyFileChooser fc = new StickyFileChooser();
-    fc.showSaveDialog(FileViewer.this);
+    fc.showSaveDialog(null);
     
     File f = fc.getSelectedFile();
     if(f.exists() && f.canWrite())
     {
-      int status = JOptionPane.showConfirmDialog(FileViewer.this, 
+      int status = JOptionPane.showConfirmDialog(null, 
           f.getName()+" exists overwrite?", 
           "Overwrite", JOptionPane.OK_CANCEL_OPTION);
       if(status == JOptionPane.CANCEL_OPTION)
@@ -465,12 +476,12 @@ public class FileViewer extends JFrame
     try
     {
       FileWriter writer = new FileWriter(f);
-      writer.write(getText());
+      writer.write(txt);
       writer.close();
     }
     catch (IOException e1)
     {
-      JOptionPane.showMessageDialog(FileViewer.this,
+      JOptionPane.showMessageDialog(null,
           e1.getMessage(), "Problem Writing", JOptionPane.WARNING_MESSAGE);
     }
   }
