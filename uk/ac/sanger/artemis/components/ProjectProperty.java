@@ -725,11 +725,7 @@ public class ProjectProperty extends JFrame
    */
   private void openDatabase(final Splash splash, final String featureName)
   {
-    String loc = System.getProperty("chado");
-    int idx;
-    if((idx = loc.indexOf("?")) > -1 && loc.indexOf("?user=") == -1)
-      loc = loc.substring(0, idx+1) + "user=" + loc.substring(idx+1);
-
+    final String loc = System.getProperty("chado");
     if( entry_source == null || 
        !entry_source.getLocation().endsWith(loc) )
     {
