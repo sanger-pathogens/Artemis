@@ -82,7 +82,7 @@ public class DatabaseLocationParser {
      *
      * @param url
      */
-    private void setFromURLString(String url) {
+    public void setFromURLString(String url) {
         logger4j.debug("DLP was called with a URL of [" + url + "]");
         try {
             //"jdbc:postgres://localhost:5432/drupal6?user=drupal6&ssl=true";
