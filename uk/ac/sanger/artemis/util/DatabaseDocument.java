@@ -43,6 +43,7 @@ import uk.ac.sanger.artemis.chado.ChadoTransaction;
 import uk.ac.sanger.artemis.components.database.DatabaseEntrySource;
 import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 import uk.ac.sanger.artemis.components.Splash;
+import uk.ac.sanger.artemis.util.DatabaseLocationParser;
 
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureProp;
@@ -173,7 +174,7 @@ public class DatabaseDocument extends Document
    * 
    * @param location
    *          This should be a URL string giving:
-   *          jdbc:postgresql://host:port/datbase_name?user=username
+   *          jdbc:postgresql://host:port/database_name?user=username
    * 
    */
   public DatabaseDocument(String location, JPasswordField pfield)
@@ -229,7 +230,7 @@ public class DatabaseDocument extends Document
    * 
    * @param location
    *          This should be a URL string giving:
-   *          jdbc:postgresql://host:port/datbase_name?user=username
+   *          jdbc:postgresql://host:port/database_name?user=username
    * @param srcFeatureId
    *          ID of a feature to be extracted.
    * @param splitGFFEntry
@@ -2473,18 +2474,20 @@ public class DatabaseDocument extends Document
         } 
       });  
     }
-    catch(RuntimeException sqlExp)
+    catch(RuntimeException runExp)
     {
-      JOptionPane.showMessageDialog(null, "SQL Problems...\n"+
+        runExp.printStackTrace();
+      JOptionPane.showMessageDialog(null, "Runtime Problems...\n"+
                                     getLocation()+"\n"+
-                                    sqlExp.getMessage(), 
-                                    "SQL Error",
+                                    runExp.getMessage(), 
+                                    "Runtime Error",
                                     JOptionPane.ERROR_MESSAGE);
       
-      logger4j.debug(sqlExp.getMessage());
+      logger4j.debug(runExp.getMessage());
     }
     catch(ConnectException exp)
     {
+        exp.printStackTrace();
       JOptionPane.showMessageDialog(null, "Connection Problems...\n"+
             exp.getMessage(), 
             "Connection Error",
@@ -2494,6 +2497,7 @@ public class DatabaseDocument extends Document
     }
     catch(java.sql.SQLException sqlExp)
     {
+        sqlExp.printStackTrace();
       JOptionPane.showMessageDialog(null, "SQL Problems....\n"+
                                     getLocation()+"\n"+
                                     sqlExp.getMessage(), 
@@ -2643,13 +2647,16 @@ public class DatabaseDocument extends Document
     // "localhost:10001/backup?chado"
     
     String url = (String)getLocation();
-    int index  = url.indexOf("?");
+    DatabaseLocationParser dlp = new DatabaseLocationParser(url);
     
-    String userName = url.substring(index+1).trim();
-    if(userName.startsWith("user="))
-      userName = userName.substring(5);
-    
-    return userName;
+//    
+//    int index  = url.indexOf("?");
+//    
+//    String userName = url.substring(index+1).trim();
+//    if(userName.startsWith("user="))
+//      userName = userName.substring(5);
+//    
+    return dlp.getUsername();
   }
   
   private GmodDAO getDAOOnly()
