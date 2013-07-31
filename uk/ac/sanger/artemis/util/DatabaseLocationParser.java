@@ -28,7 +28,6 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 /**
  *
@@ -188,7 +187,7 @@ public class DatabaseLocationParser {
      * @return String version of a URL, modified according to the rules
      * supplied.
      */
-    public String getURLWithFixes(int modifications) {
+    private String getURLWithFixes(int modifications) {
         try {
             String scheme = new String(db_engine);
             String userInfo = null;
