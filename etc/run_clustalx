@@ -36,6 +36,6 @@ perl -pne 'if (/^>(\S+)/) {
   }
 }' $temp_file_name > $temp_file_name.processed
 
-clustalx $temp_file_name.processed
+clustalx -INFILE=$temp_file_name.processed
 
 exit 0
