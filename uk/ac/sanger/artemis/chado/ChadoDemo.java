@@ -91,7 +91,7 @@ import uk.ac.sanger.artemis.util.DatabaseLocationParser;
 public class ChadoDemo
 {
   /** JDBC DAO */
-  private JdbcDAO jdbcDAO = null;
+  /*private JdbcDAO jdbcDAO = null;*/
 
   /** iBatis DAO */
   private IBatisDAO connIB = null;
@@ -179,12 +179,12 @@ public class ChadoDemo
   {
     int index = location.indexOf('=') + 1;
     String schema = location.substring(index);
-    
+
     final List schemas = dao.getOrganismsContainingSrcFeatures();
 
     Vector v_schemas = new Vector();
     v_schemas.add(0, "All");
-    
+
     for(int i=0; i<schemas.size(); i++)
     {
       Organism o = (Organism)schemas.get(i);
@@ -202,7 +202,7 @@ public class ChadoDemo
     JScrollPane jsp = new JScrollPane(schema_list);
 
     Box xbox = Box.createHorizontalBox();
-    final JTextField gene_text = new JTextField("PFA0005w*",20);
+    final JTextField gene_text = new JTextField("PF3D7_0100100*",20);
     xbox.add(gene_text);
     gene_text.selectAll();
 
@@ -212,7 +212,10 @@ public class ChadoDemo
     scrollpane.setPreferredSize(new Dimension(600, 250));
 
     //panel.add(scrollpane, BorderLayout.CENTER);
+    if(schemas != null)
     pubDbXRefs = new List[schemas.size()];
+    else
+      pubDbXRefs = new List[1];
     
     JButton findButt = new JButton("FIND");
     findButt.addActionListener(new ActionListener()
@@ -408,14 +411,14 @@ public class ChadoDemo
    */
   private GmodDAO getDAO() throws java.net.ConnectException, SQLException
   {
-    if(System.getProperty("ibatis") == null)
+/*    if(System.getProperty("ibatis") == null)
     {
       logger4j.debug("Using JDBC");
       if(jdbcDAO == null)
         jdbcDAO = new JdbcDAO(location, pfield);
       return jdbcDAO;
     }
-    else
+    else*/
     {
       logger4j.debug("Using iBatis");
       if(connIB == null)
@@ -437,7 +440,7 @@ public class ChadoDemo
 
     JLabel lServer = new JLabel("Server : ");
     bacross.add(lServer);
-    JTextField inServer = new JTextField("localhost");
+    JTextField inServer = new JTextField("db.genedb.org");
     bacross.add(inServer);
 
     JLabel lPort = new JLabel("Port : ");
@@ -447,12 +450,12 @@ public class ChadoDemo
 
     JLabel lDB = new JLabel("Database : ");
     bacross.add(lDB);
-    JTextField inDB = new JTextField("chado");
+    JTextField inDB = new JTextField("snapshot");
     bacross.add(inDB);
 
     JLabel lUser = new JLabel("User : ");
     bacross.add(lUser);
-    JTextField inUser = new JTextField("afumigatus");
+    JTextField inUser = new JTextField("genedb_ro");
     bacross.add(inUser);
 
     JLabel lpasswd = new JLabel("Password : ");
