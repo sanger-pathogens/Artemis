@@ -30,6 +30,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.IOException;
 import java.io.Serializable;
+import javax.swing.JCheckBox;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -43,6 +44,7 @@ import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.sequence.Bases;
 import uk.ac.sanger.artemis.sequence.NoSequenceException;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
+import uk.ac.sanger.artemis.util.DatabaseLocationParser;
 import uk.ac.sanger.artemis.util.InputStreamProgressListener;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
 import uk.ac.sanger.artemis.util.StringVector;
@@ -185,13 +187,14 @@ public class DatabaseEntrySource implements EntrySource, Serializable
     }
     
     pfield = promptPanel.getPfield();
+    DatabaseLocationParser dlp = new DatabaseLocationParser();
+    dlp.setHost(promptPanel.getServer());
+    dlp.setPort(promptPanel.getPort());
+    dlp.setDatabase(promptPanel.getDb());
+    dlp.setUsername(promptPanel.getUser());
+    dlp.setSSL(promptPanel.getSSL());
     
-    location = "jdbc:postgresql://" + 
-               promptPanel.getServer() + ":" +
-               promptPanel.getPort() + "/" +
-               promptPanel.getDb() + "?user=" +
-               promptPanel.getUser();
-
+    location = dlp.getCompleteURL();
     return true;
   }
   
@@ -340,6 +343,7 @@ interface ILoginPrompt
     String getPort();
     String getDb();
     String getUser();
+    boolean getSSL();
 }
 
 /**
@@ -353,6 +357,7 @@ class DatabaseLoginPrompt extends JPanel implements ILoginPrompt
   private JTextField port;
   private JTextField db;
   private JTextField user;
+  private JCheckBox ssl;
   public DatabaseLoginPrompt()
   {
     super(new GridBagLayout());
@@ -378,6 +383,9 @@ class DatabaseLoginPrompt extends JPanel implements ILoginPrompt
     c.gridy = ++nrow;
     add(new JLabel("Password : "), c);
 
+    c.gridy = ++nrow;
+    add(new JLabel("SSL : "), c);
+    
     // column 2
     nrow = 1;
     c.anchor = GridBagConstraints.WEST;
@@ -396,12 +404,16 @@ class DatabaseLoginPrompt extends JPanel implements ILoginPrompt
     add(db, c);
 
     c.gridy = ++nrow;
-    user = new JTextField("afumigatus");
+    user = new JTextField("");
     add(user, c);
     
     c.gridy = ++nrow;
     pfield = new JPasswordField(16);
     add(pfield, c);
+    
+    c.gridy = ++nrow;
+    ssl = new JCheckBox();
+    add(ssl, c);
 
     // given -Dchado=localhost:port/dbname?username
     if(System.getProperty("chado") != null)
@@ -436,44 +448,12 @@ class DatabaseLoginPrompt extends JPanel implements ILoginPrompt
   
   private void setFromURL(String db_url)
   {
-    if(db_url.startsWith("jdbc:postgresql://"))
-      db_url = db_url.substring(18);
-    
-    int index;
-    if((index = db_url.indexOf(":")) > -1)
-    {
-      server.setText(db_url.substring(0, index));
-      int index2;
-      if((index2 = db_url.indexOf("/")) > -1)
-      {
-        port.setText(db_url.substring(index + 1, index2));
-        int index3;
-        if((index3 = db_url.indexOf("?")) > -1)
-        {
-          db.setText(db_url.substring(index2 + 1, index3));
-          
-          String userStr = db_url.substring(index3 + 1);
-          if(userStr.startsWith("user="))
-            userStr = userStr.substring(5);
-          user.setText(userStr);
-
-          /*
-           * if(!prompt_user) { location = "jdbc:postgresql://"
-           * +inServer.getText().trim()+ ":" +inPort.getText().trim()+ "/"
-           * +inDB.getText().trim()+ "?user=" +inUser.getText().trim(); return
-           * true; }
-           */
-        }
-        /** 
-            @TODO GSV determine if the case where a user only passes in db name without a user name should be handled like this:
-            } else
-	        {
-	            db = (db_url.substring(index2 + 1));
-	        }
-	    /*/
-        
-      }
-    }  
+      DatabaseLocationParser dlp = new DatabaseLocationParser(db_url);
+      server.setText(dlp.getHost());
+      port.setText("" + dlp.getPort());
+      db.setText(dlp.getDatabase());
+      user.setText(dlp.getUsername());
+      ssl.setSelected(dlp.isSSLEnabled());
   }
   
   /**
@@ -554,6 +534,11 @@ class DatabaseLoginPrompt extends JPanel implements ILoginPrompt
   {
     return user.getText().trim();
   }
+  
+  public boolean getSSL()
+  {
+    return ssl.isSelected();
+  }
 }
 
 class DatabaseLoginPromptConsole implements ILoginPrompt
@@ -563,6 +548,7 @@ class DatabaseLoginPromptConsole implements ILoginPrompt
 	private String port;
 	private String db;
 	private String user;
+        private String ssl;
 
 	public DatabaseLoginPromptConsole()
 	{
@@ -583,33 +569,12 @@ class DatabaseLoginPromptConsole implements ILoginPrompt
 	
 	private void setFromURL(String db_url)
 	  {
-	    if(db_url.startsWith("jdbc:postgresql://"))
-	      db_url = db_url.substring(18);
-	    
-	    int index;
-	    if((index = db_url.indexOf(":")) > -1)
-	    {
-	      server = (db_url.substring(0, index));
-	      int index2;
-	      if((index2 = db_url.indexOf("/")) > -1)
-	      {
-	        port = (db_url.substring(index + 1, index2));
-	        int index3;
-	        if((index3 = db_url.indexOf("?")) > -1)
-	        {
-	          db = (db_url.substring(index2 + 1, index3));
-	          
-	          String userStr = db_url.substring(index3 + 1);
-	          if(userStr.startsWith("user="))
-	            userStr = userStr.substring(5);
-	          user = (userStr);
-
-	        } else
-	        {
-	            db = (db_url.substring(index2 + 1));
-	        }
-	      }
-	    }  
+              DatabaseLocationParser dlp = new DatabaseLocationParser(db_url);
+              server = dlp.getHost();
+              port = "" + dlp.getPort();
+              db = dlp.getDatabase();
+              user = dlp.getUsername();
+              ssl = dlp.isSSLEnabled() ? "y" : "";
 	  }
 	
 	public JPasswordField getPfield()
@@ -638,6 +603,11 @@ class DatabaseLoginPromptConsole implements ILoginPrompt
 	{
 		return user;
 	}
+        
+        public boolean getSSL()
+        {
+                return ssl.toLowerCase().equals("y") || ssl.toLowerCase().equals("yes");
+        }
 
 	public boolean prompt() 
 	{
@@ -670,6 +640,11 @@ class DatabaseLoginPromptConsole implements ILoginPrompt
 		if (password == null)
 		{
 			password = UI.userInput("Enter Password", true);
+			userEntered = true;
+		}
+                if (ssl == null)
+		{
+			ssl = UI.userInput("Use SSL [y/n]", false);
 			userEntered = true;
 		}
 		
