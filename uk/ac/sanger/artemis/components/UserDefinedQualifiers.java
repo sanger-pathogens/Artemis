@@ -29,61 +29,142 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.event.MenuEvent;
+import javax.swing.event.MenuListener;
+import javax.swing.filechooser.FileFilter;
 
 import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.components.genebuilder.JExtendedComboBox;
+import uk.ac.sanger.artemis.components.genebuilder.cv.DatePanel;
 import uk.ac.sanger.artemis.editor.MultiLineToolTipUI;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.util.Document;
 import uk.ac.sanger.artemis.util.FileDocument;
+import uk.ac.sanger.artemis.util.LinePushBackReader;
 import uk.ac.sanger.artemis.util.StringVector;
 import uk.ac.sanger.artemis.util.URLDocument;
 
-class UserDefinedQualifier extends JPanel
+/**
+ * Load and make available qualifiers from a list in a file 
+ * of tag=value pairs and from OBO files.
+ */
+class UserDefinedQualifier extends JFrame
 {
   private static final long serialVersionUID = 1L;
   private static org.apache.log4j.Logger logger4j = 
       org.apache.log4j.Logger.getLogger(UserDefinedQualifier.class);
-  private QualifierVector qualifiers = new QualifierVector();
+  
+  /* collection of loaded files */
+  private Vector<OBO> obos = new Vector<OBO>();
+  
+  /* component containing list of available values */
   private Box qualifierBox = Box.createHorizontalBox();
-  private JButton addButton = new JButton("ADD");
+  
+  /* listener for adding qualifiers **/
   private ActionListener addListener;
+  
+  /* text area in the feature editor to add qualifiers to */
   private QualifierTextArea qualifier_text_area;
+  private JPanel mainPanel;
+  
+  /* line pattern for tag=value */
+  private static Pattern TAG_VALUE_PATTERN = Pattern.compile("^/?(\\w+) ?= ?([^\\n\\r]+)$");
   
   UserDefinedQualifier()
   {
+    mainPanel = (JPanel) getContentPane();
     MultiLineToolTipUI.initialize();
     read();
     createComponentToAddCvTerm();
-  }
-
-  public void setQualifierTextArea(QualifierTextArea qualifier_text_area)
-  {
-    this.qualifier_text_area = qualifier_text_area;
+    createMenus();
   }
   
-  public JFrame getFrame()
+  /**
+   * Menu creation
+   */
+  private void createMenus()
   {
-    return (JFrame) SwingUtilities.getWindowAncestor(this);
+    final JMenuBar menuBar = new JMenuBar();
+    final JMenu fileMenu = new JMenu("File");
+    menuBar.add(fileMenu);
+    final JMenuItem importFile = new JMenuItem("Import qualifiers from file ...");
+    importFile.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent arg0)
+      {
+        importObo();
+      }
+    });
+    fileMenu.add(importFile);
+    
+    final JMenuItem importURL = new JMenuItem("Import qualifiers from URL ...");
+    importURL.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent arg0)
+      {
+        importFromUrl();
+      }
+    });
+    fileMenu.add(importURL);
+    
+
+    fileMenu.addSeparator();
+    
+    final JMenu removeFile = new JMenu("Qualifier source(s)");
+    removeFile.addMenuListener(new MenuListener(){
+      public void menuCanceled(MenuEvent e){}
+      public void menuDeselected(MenuEvent e){}
+
+      public void menuSelected(MenuEvent e)
+      {
+        removeFile.removeAll();
+        for(final OBO obo: obos)
+        {
+          final JCheckBoxMenuItem oboMenu =
+              new JCheckBoxMenuItem(obo.doc.getName(), obo.isAcive);
+          removeFile.add(oboMenu);
+          oboMenu.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e)
+            {
+              obo.isAcive = oboMenu.isSelected();
+              mainPanel.removeAll();
+              createComponentToAddCvTerm();
+              mainPanel.revalidate();
+              mainPanel.repaint();
+            }
+          });
+        }
+      }
+    });
+    fileMenu.add(removeFile);
+    setJMenuBar(menuBar);
   }
 
   /**
@@ -92,30 +173,29 @@ class UserDefinedQualifier extends JPanel
    */
   private void createComponentToAddCvTerm()
   {
-    setLayout(new GridBagLayout());
+    mainPanel.setLayout(new GridBagLayout());
     final GridBagConstraints c = new GridBagConstraints();
 
     final JCheckBox ignoreCase = new JCheckBox("Ignore case",true);
     final JComboBox nameCombo = new JComboBox(getQualiferNames());
-    final Dimension d  = new Dimension(500, nameCombo.getPreferredSize().height);
-    final Dimension d2 = new Dimension(300, nameCombo.getPreferredSize().height);
+    final JButton addButton = new JButton("ADD");
+    //final JScrollPane jspNames = new JScrollPane(nameCombo);
+
+    final Dimension d  = new Dimension(500, ignoreCase.getPreferredSize().height);
+    final Dimension d2 = new Dimension(300, ignoreCase.getPreferredSize().height);
     
     int row = 0;
-    
     c.gridx = 0;
     c.gridy = row;
     c.anchor = GridBagConstraints.EAST;
-    add(new JLabel("Name: "), c);
+    mainPanel.add(new JLabel("Name: "), c);
     
     c.gridx = 1;
-    c.weightx = 0.5d;
     c.anchor = GridBagConstraints.WEST;
-    add(nameCombo, c);
-    c.weightx = 0.d;
-    
+    mainPanel.add(nameCombo, c);
+
     c.gridx = 2;
-    c.weightx = 0.5d;
-    add(Box.createHorizontalStrut(150), c);
+    mainPanel.add(Box.createHorizontalStrut(150), c);
     
     // keyword
     final JTextField keyWord = new JTextField(45);
@@ -127,19 +207,20 @@ class UserDefinedQualifier extends JPanel
       // carry out search when enter key is pressed
       public void actionPerformed(ActionEvent event)
       {
-        searchQualifiers(keyWord.getText(), nameCombo, ignoreCase.isSelected(), d);
+        searchQualifiers(keyWord.getText(), nameCombo, 
+            ignoreCase.isSelected(), addButton, d);
       }
     });
     c.gridy = ++row;
     c.gridx = 0;
     c.anchor = GridBagConstraints.EAST;
-    add(new JLabel("Keywords: "),c);
+    mainPanel.add(new JLabel("Keywords: "),c);
     c.gridx = 1;
     c.anchor = GridBagConstraints.WEST;
-    add(keyWord,c);
+    mainPanel.add(keyWord,c);
 
     c.gridy = ++row;
-    add(ignoreCase,c);
+    mainPanel.add(ignoreCase,c);
      
     // search button
     c.gridx = 0;
@@ -149,49 +230,46 @@ class UserDefinedQualifier extends JPanel
     search.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent arg0)
       {
-        searchQualifiers(keyWord.getText(), nameCombo, ignoreCase.isSelected(), d);
+        searchQualifiers(keyWord.getText(), nameCombo, 
+            ignoreCase.isSelected(), addButton, d);
       }
     });
-    add(search,c);
+    mainPanel.add(search,c);
     
     c.gridx = 0;
     c.gridy = ++row;
     c.gridwidth = 3;
     qualifierBox.add(Box.createVerticalStrut(25));
-    add(qualifierBox, c);
+    mainPanel.add(qualifierBox, c);
 
     c.gridx = 0;
     c.gridy = ++row;
     c.gridwidth = 1;
-    add(addButton, c);
+    mainPanel.add(addButton, c);
     
     c.gridx = 1;
     final JButton closeButton = new JButton("CLOSE");
-    add(closeButton, c);
+    mainPanel.add(closeButton, c);
     closeButton.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent arg0)
       {
-        final JFrame topFrame = 
-            (JFrame) SwingUtilities.getWindowAncestor(UserDefinedQualifier.this);
-        topFrame.dispose();
+        dispose();
       }
     });
     
     c.gridy = ++row;
-    add(Box.createVerticalStrut(15), c);
+    mainPanel.add(Box.createVerticalStrut(15), c);
   }
 
-
-  /**
-   * Search the qualifiers for the selected qualifier name and value.
-   */
-  private void searchQualifiers(final String keyWord, 
-                                final JComboBox nameCombo, 
-                                final boolean ignoreCase,
-                                final Dimension d)
+  private StringVector searchOboQualifiers(final OBO obo, 
+                                           final String qName, 
+                                           final String keyWord,  
+                                           final boolean ignoreCase)
   {
-    final String qName = (String) nameCombo.getSelectedItem();
-    final StringVector values = qualifiers.getQualifierByName(qName).getValues();
+    final Qualifier q = obo.qualifiers.getQualifierByName(qName);
+    if(q == null)
+      return null;
+    final StringVector values = q.getValues();
     
     if(keyWord != null && !keyWord.trim().equals(""))
     {
@@ -208,8 +286,30 @@ class UserDefinedQualifier extends JPanel
           values.remove(val);
       }
     }
+    return values;
+  }
+  
+  /**
+   * Search the qualifiers for the selected qualifier name and value.
+   */
+  private void searchQualifiers(final String keyWord, 
+                                final JComboBox nameCombo, 
+                                final boolean ignoreCase,
+                                final JButton addButton,
+                                final Dimension d)
+  {
+    final String qName = (String) nameCombo.getSelectedItem();
+    final StringVector results = new StringVector();
+    for(OBO obo: obos)
+    {
+      if(!obo.isAcive)
+        continue;
+      StringVector oboResult = searchOboQualifiers(obo, qName, keyWord, ignoreCase);
+      if(oboResult != null)
+        results.add(oboResult);
+    }
     
-    final JExtendedComboBox valuesList = new JExtendedComboBox(values, true);
+    final JExtendedComboBox valuesList = new JExtendedComboBox(results, true);
     valuesList.getEditor().getEditorComponent().addMouseListener(
         new ComboMouseListener(valuesList));
     
@@ -229,12 +329,22 @@ class UserDefinedQualifier extends JPanel
     addListener = new ActionListener(){
       public void actionPerformed(ActionEvent arg0)
       {
-        qualifier_text_area.append("/"+qName+"="+valuesList.getSelectedItem()+"\n");
+        String qval = (String) valuesList.getSelectedItem();
+        if(qName.equals("biological_process"))
+          qval = "/GO=aspect=P;"+qval+";date="+DatePanel.getDate();
+        else if(qName.equals("molecular_function"))
+          qval = "/GO=aspect=F;"+qval+";date="+DatePanel.getDate();
+        else if(qName.equals("cellular_component"))
+          qval = "/GO=aspect=C;"+qval+";date="+DatePanel.getDate();
+        else
+          qval = "/"+qName+"="+qval;
+
+        qualifier_text_area.append(qval+"\n");
       }
     }; 
     addButton.addActionListener(addListener);
 
-    revalidate();
+    mainPanel.revalidate();
   }
   
   /**
@@ -244,28 +354,30 @@ class UserDefinedQualifier extends JPanel
   private Vector<String> getQualiferNames()
   {
     final Vector<String> names = new Vector<String>();
-    for(Qualifier q: qualifiers)
-      names.add(q.getName());
+    for(OBO obo: obos)
+    {
+      if(!obo.isAcive)
+        continue;
+      QualifierVector qualifiers = obo.qualifiers;
+      for(Qualifier q: qualifiers)
+        if(!names.contains(q.getName()))
+           names.add(q.getName());
+    }
     return names;
   }
   
+  /**
+   * Read qualifier lists
+   */
   private void read()
   {
-    InputStream ins = 
-        this.getClass().getClassLoader().getResourceAsStream("etc/artemis.qualifiers");
-    try
+    URL url = ClassLoader.getSystemResource("etc/artemis.qualifiers");
+    if(url != null)
     {
-      if(ins != null)
-      {
-        loadQualifiers(ins);
-        ins.close();
-      }
+      Document doc = new URLDocument(
+        ClassLoader.getSystemResource("etc/artemis.qualifiers"));
+      createObo(doc);
     }
-    catch (IOException e)
-    {
-      e.printStackTrace();
-    }
-    catch (NullPointerException e2) {}
     
     final String [] qualFiles = 
     {
@@ -275,64 +387,311 @@ class UserDefinedQualifier extends JPanel
     
     for(String fileName: qualFiles)
     {
-      final Document doc = new FileDocument(new File(fileName));
+      Document doc = new FileDocument(new File(fileName));
       if(doc.readable()) 
-      {
-        try
-        {
-          ins = doc.getInputStream();
-          loadQualifiers(ins);
-          ins.close();
-        }
-        catch (IOException e)
-        {
-          e.printStackTrace();
-        }
-        logger4j.debug("Reading qualifiers from: "+fileName);
-      }
+        createObo(doc);
     }
   }
   
   /**
    * Load the qualifiers from an input stream.
    * @param ins
+   * @throws IOException 
    */
-  private void loadQualifiers(final InputStream ins)
+  private QualifierVector loadQualifiers(final Document doc) throws IOException
   {
-    final BufferedReader br = new BufferedReader(new InputStreamReader(ins));
+    QualifierVector qualifiers = loadObo(doc.getInputStream());
+    if(qualifiers.size() == 0)
+      qualifiers = loadText(doc.getInputStream());
+    return qualifiers;
+  }
+  
+  /**
+   * Load in qualifiers from an input stream that are in OBO format.
+   * @param ins
+   * @return
+   */
+  private QualifierVector loadObo(final InputStream ins)
+  {
+    final LinePushBackReader reader = new LinePushBackReader(
+        new BufferedReader(new InputStreamReader(ins)));
+    final QualifierVector qualifiers = new QualifierVector();
     try
     {
       String line;
-      while((line = br.readLine()) != null) 
+      while((line = reader.readLine()) != null) 
       {
-        int idx = line.indexOf("name:");
-        if(idx > -1)
+        if(line.startsWith("#"))
+          continue;
+
+        if(startOfStanza(line))
         {
-          String val = line.substring(idx+5).trim();
-          while((line = br.readLine()) != null &&  
-                (idx = line.indexOf("namespace:")) > -1)
+          String val = null;
+          String name = null;
+          String id = null;
+          while((line = reader.readLine()) != null &&
+                !startOfStanza(line) &&
+                 line.indexOf("import:") == -1)
           {
-            String name = line.substring(idx+10).trim();
-            logger4j.debug(name + "=" +val);
-            qualifiers.addQualifierValues(new Qualifier(name, val));
+            if(line.startsWith("namespace:"))
+              name = line.substring(10).trim();
+            else if(line.startsWith("name:"))
+              val = line.substring(5).trim();
+            else if(line.startsWith("id:"))
+              id = line.substring(3).trim();
           }
+          
+          if(line != null)
+            reader.pushBack(line);
+          
+          if(id != null)
+          {
+            if(  name != null && 
+                (name.equals("biological_process") || 
+                 name.equals("molecular_function") || 
+                 name.equals("cellular_component")))
+              val = "term="+val+"; GOid="+id;
+            else
+              val = "term="+val+"; id="+id;
+          }
+          if(name != null)
+            qualifiers.addQualifierValues(new Qualifier(name, val));
         }
-        else if((idx = line.indexOf("import:")) > -1)
+        else if(line.startsWith("import:"))
         {
           // import OBO file from a URL
-          final URL url = new URL(line.substring(idx+7).trim());
-          final Document doc = new URLDocument(url);
-          loadQualifiers(doc.getInputStream());
+          final URL url = new URL(line.substring(7).trim());
+          createObo(new URLDocument(url));
         }
       }
+      reader.close();
     }
     catch (IOException e)
     {
       e.printStackTrace();
     }
+    return qualifiers;
   }
   
-  class ComboMouseListener extends MouseAdapter 
+  /**
+   * Each unit of the OBO file starts with one of the three supported stanza 
+   * types: [Term], [Typedef], and [Instance]. Parsers/serializers will round-trip 
+   * (successfully load and save) unrecognized stanzas. 
+   * @param line
+   * @return
+   */
+  private boolean startOfStanza(final String line)
+  {
+    return line.startsWith("[");
+  }
+  
+  /**
+   * Load in qualifiers from an input stream that are in the format:
+   * name=value
+   * @param ins
+   * @return
+   */
+  private QualifierVector loadText(final InputStream ins)
+  {
+    final BufferedReader reader = new BufferedReader(new InputStreamReader(ins));
+    final QualifierVector qualifiers = new QualifierVector();
+    try
+    {
+      String line;
+      while((line = reader.readLine()) != null) 
+      {
+        Matcher m = TAG_VALUE_PATTERN.matcher(line);
+        if(m.matches())
+          qualifiers.addQualifierValues(new Qualifier(m.group(1), m.group(2)));
+      }
+      reader.close();
+    }
+    catch (IOException e)
+    {
+      e.printStackTrace();
+    }
+    return qualifiers;
+  }
+  
+  /**
+   * Import OBO
+   */
+  private void importObo()
+  {
+    final StickyFileChooser fc = new StickyFileChooser();
+    final JCheckBox autoImport = new JCheckBox("Automatically import", true);
+    fc.setAccessory(autoImport);
+    
+    OboFileFilter oboFilter = new OboFileFilter(new String[]{"obo", "OBO"}, "OBO files");
+    fc.addChoosableFileFilter(oboFilter);
+    fc.setFileFilter(oboFilter);
+    int status = fc.showOpenDialog(UserDefinedQualifier.this);
+    if(status != StickyFileChooser.APPROVE_OPTION)
+      return;
+    
+    final FileDocument doc = new FileDocument(fc.getSelectedFile());
+    if(!doc.readable())
+    {
+      JOptionPane.showMessageDialog(UserDefinedQualifier.this, 
+          "Cannot read file "+doc.getName(), 
+          "Problem reading file", JOptionPane.WARNING_MESSAGE);
+      return;
+    }
+    
+    createObo(doc);
+    
+    mainPanel.removeAll();
+    createComponentToAddCvTerm();
+    mainPanel.revalidate();
+    
+    if(autoImport.isSelected())
+      writeProperties(fc.getSelectedFile().getAbsolutePath());
+  }
+  
+  private void importFromUrl()
+  {
+    String s = (String)JOptionPane.showInputDialog(
+        UserDefinedQualifier.this,
+        "URL:", "Import Qualifiers",
+        JOptionPane.PLAIN_MESSAGE,
+        null, null,
+        "http://www.geneontology.org/GO_slims/goslim_generic.obo");
+    if(s == null || s.trim().equals("") || s.trim().equals("http://"))
+      return;
+
+    try
+    {
+      String urlStr = s.trim();
+      createObo(new URLDocument(new URL(urlStr)));
+      mainPanel.removeAll();
+      createComponentToAddCvTerm();
+      mainPanel.revalidate();
+      
+      int status = JOptionPane.showConfirmDialog(
+          UserDefinedQualifier.this, 
+          "Automatically import:\n"+urlStr+"\nbetween session?", 
+          "Import Option", JOptionPane.YES_NO_OPTION);
+      if(status == JOptionPane.YES_OPTION)
+        writeProperties(urlStr);
+    }
+    catch (MalformedURLException e)
+    {
+      e.printStackTrace();
+    }
+  }
+  
+  private void createObo(Document doc)
+  {
+    try
+    {
+      logger4j.debug("Reading qualifiers from: "+doc.getName());
+      OBO obo = new OBO();
+      obo.doc = doc;
+      obo.qualifiers = loadQualifiers(doc);
+      obos.add(obo);
+    }
+    catch (IOException e)
+    {
+      logger4j.error(e.getMessage());
+      JOptionPane.showMessageDialog(UserDefinedQualifier.this, 
+          "Problem Loading:\n"+doc.getName()+"\n"+
+          e.getMessage(), "Problem Loading", 
+          JOptionPane.ERROR_MESSAGE);
+    }
+  }
+  
+  
+  /**
+  * Write or re-write properties and insert/update the user.dir property
+  * @param jemProp      properties file
+  * @param uHome        user working directory
+  */
+  private static void writeProperties(final String loc)
+  {
+    final String qualPath = System.getProperty("user.home") + File.separator + ".artemis.qualifiers";
+    try
+    {
+      final FileDocument doc = new FileDocument(new File(qualPath));
+      if(doc.readable())
+      {
+        final BufferedReader reader = 
+            new BufferedReader(new InputStreamReader(doc.getInputStream()));
+        try
+        {
+          String line;
+          while((line = reader.readLine()) != null)
+          {
+            if(line.startsWith("import: file://"+loc))
+            {
+              System.out.println("Import line already exists :\n"+line);
+              return;
+            }
+            else if(line.startsWith("import: "+loc))
+            {
+              System.out.println("Import line already exists :\n"+line);
+              return;
+            }
+          }
+        }
+        finally
+        {
+          reader.close();
+        }
+      }
+
+      final BufferedWriter bufferedwriter = new BufferedWriter(
+          new FileWriter(new File(qualPath), true));
+      if(loc.startsWith("http://"))
+        bufferedwriter.append("\nimport: "+loc+"\n");
+      else
+        bufferedwriter.append("\nimport: file://"+loc+"\n");
+      bufferedwriter.close();
+    }
+    catch (FileNotFoundException filenotfoundexception)
+    {
+      System.err.println(qualPath+" read error");
+    }
+    catch (IOException e)
+    {
+      System.err.println(qualPath+" i/o error");
+    }
+  }
+  
+  private class OboFileFilter extends FileFilter
+  {
+    private String[] suffix;
+    private String descr;
+    OboFileFilter(final String[] suffix, final String descr)
+    {
+      this.suffix = suffix;
+      this.descr = descr;
+    }
+    
+    public boolean accept(final File file)
+    {
+      if(file.isDirectory())
+        return true;
+
+      for(String s: suffix)
+      {
+        if(file.getName().endsWith("." + s) )
+          return true;
+      }
+      return false;
+    }
+
+    public String getDescription()
+    {
+      return descr;
+    }
+  }
+  
+  protected void setQualifierTextArea(QualifierTextArea qualifier_text_area)
+  {
+    this.qualifier_text_area = qualifier_text_area;
+  }
+  
+  private class ComboMouseListener extends MouseAdapter 
   {
     private JComboBox cb;
     ComboMouseListener(JComboBox cb)
@@ -342,7 +701,8 @@ class UserDefinedQualifier extends JPanel
     
     public void mouseEntered(MouseEvent me) 
     {
-      cb.setToolTipText(getWrappedStr((String) cb.getSelectedItem()));
+      if(cb.getSelectedItem() != null)
+        cb.setToolTipText(getWrappedStr((String) cb.getSelectedItem()));
     }
     
     private String getWrappedStr(String s)
@@ -360,6 +720,13 @@ class UserDefinedQualifier extends JPanel
     }
   }
   
+  private class OBO
+  {
+    Document doc;
+    QualifierVector qualifiers;
+    boolean isAcive = true;
+  }
+  
   public static void main(String args[])
   {
     final javax.swing.plaf.FontUIResource font_ui_resource =
@@ -374,8 +741,7 @@ class UserDefinedQualifier extends JPanel
         UIManager.put(key, font_ui_resource);
     }
 
-    final JFrame f = new JFrame("User Defined Qualifiers");
-    f.getContentPane().add(new UserDefinedQualifier());
+    final JFrame f = new UserDefinedQualifier();
     f.pack();
     f.setVisible(true);
   }
