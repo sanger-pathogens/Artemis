@@ -166,6 +166,8 @@ public class FeatureEdit extends JPanel
   
   private GeneEditorPanel editorPanel;
   
+  private static UserDefinedQualifier userDefinedQualifierFrame;
+  
   /**
    *  Create a new FeatureEdit object from the given Feature.
    *  @param entry_group The EntryGroup that contains this Feature.
@@ -215,6 +217,8 @@ public class FeatureEdit extends JPanel
         {
           stopListening();
           frame.dispose();
+          if(userDefinedQualifierFrame != null)
+            userDefinedQualifierFrame.setVisible(false);
         }
       });
     }
@@ -510,6 +514,7 @@ public class FeatureEdit extends JPanel
     location_panel.add(location_text, "Center");
 
     final JButton complement_button = new JButton("Complement");
+    complement_button.setToolTipText("Complement position");
     location_button_panel.add(complement_button);
     complement_button.addActionListener(new ActionListener () 
     {
@@ -533,6 +538,7 @@ public class FeatureEdit extends JPanel
     }
 
     final JButton grab_button = new JButton("Grab Range");
+    grab_button.setToolTipText("Add selected base range from feature coordinates");
     location_button_panel.add(grab_button);
     grab_button.addActionListener(new ActionListener()
     {
@@ -543,6 +549,7 @@ public class FeatureEdit extends JPanel
     });
 
     final JButton remove_button = new JButton("Remove Range");
+    remove_button.setToolTipText("Remove selected base range from feature coordinates");
     location_button_panel.add(remove_button);
     remove_button.addActionListener(new ActionListener() 
     {
@@ -553,16 +560,18 @@ public class FeatureEdit extends JPanel
     });
 
     final JButton goto_button = new JButton("Goto Feature");
+    goto_button.setToolTipText("Goto and select this feature");
     location_button_panel.add(goto_button);
     goto_button.addActionListener(new ActionListener() 
     {
       public void actionPerformed(ActionEvent e)
       {
         goto_event_source.gotoBase(getFeature().getFirstBaseMarker());
+        getSelection().set(getFeature());
       }
     });
 
-    final JButton select_button = new JButton("Select Feature");
+/*    final JButton select_button = new JButton("Select Feature");
     location_button_panel.add(select_button);
     select_button.addActionListener(new ActionListener()
     {
@@ -570,7 +579,7 @@ public class FeatureEdit extends JPanel
       {
         getSelection().set(getFeature());
       }
-    });
+    });*/
 
     if(Options.getOptions().getPropertyTruthValue("sanger_options"))
     {
@@ -588,10 +597,9 @@ public class FeatureEdit extends JPanel
           } 
           catch(QualifierParseException exception) 
           {
-            final String error_string = exception.getMessage();
             new MessageDialog(frame,
-                              "Cannot tidy - qualifier error: " +
-                              error_string);
+                 "Cannot tidy - qualifier error: " +
+                  exception.getMessage());
           }
         }
       });
@@ -771,6 +779,33 @@ public class FeatureEdit extends JPanel
       });
     }
 
+    final JButton userQualifiers = new JButton("User Qualifiers");
+    userQualifiers.setToolTipText("User defined qualifier selection");
+    location_button_panel.add(userQualifiers);
+    userQualifiers.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e) 
+      {
+        if(userDefinedQualifierFrame == null) 
+        {
+          userDefinedQualifierFrame = new UserDefinedQualifier();
+          userDefinedQualifierFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        }
+
+        userDefinedQualifierFrame.pack();
+        final JFrame topFrame = 
+              (JFrame) SwingUtilities.getWindowAncestor(FeatureEdit.this);
+        Point p = topFrame.getLocationOnScreen();
+        p.x -= userDefinedQualifierFrame.getWidth();
+        if(p.x < 10)
+          p.x = 10;
+        userDefinedQualifierFrame.setLocation(p);
+
+        userDefinedQualifierFrame.setQualifierTextArea(qualifier_text_area);
+        userDefinedQualifierFrame.setVisible(true);
+      }
+    });
+    
     middle_panel.add(location_panel, "North");
     add(key_and_qualifier_panel, "North");
 
@@ -781,6 +816,8 @@ public class FeatureEdit extends JPanel
         if(edit_feature.getEntry() != null)
           stopListening();
         frame.dispose();
+        if(userDefinedQualifierFrame != null)
+          userDefinedQualifierFrame.setVisible(false);
       }
     });
 
@@ -798,6 +835,8 @@ public class FeatureEdit extends JPanel
               propertiesPanel.updateSettings();
             
             frame.dispose();
+            if(userDefinedQualifierFrame != null)
+              userDefinedQualifierFrame.setVisible(false);
           }
         }
       });
@@ -1125,43 +1164,30 @@ public class FeatureEdit extends JPanel
   private void tidy() throws QualifierParseException
   {
     final StringBuffer buffer = new StringBuffer();
-
     final QualifierVector qualifiers =
       qualifier_text_area.getParsedQualifiers(getEntryInformation());
-    
-    for(int qualifier_index = 0; qualifier_index < qualifiers.size();
-         ++qualifier_index) 
+
+    for(Qualifier this_qualifier: qualifiers) 
     {
-      final Qualifier this_qualifier = (Qualifier)qualifiers.elementAt(qualifier_index);
-      
       final QualifierInfo qualifier_info =
             getEntryInformation().getQualifierInfo(this_qualifier.getName());
-      
       final StringVector qualifier_strings =
           StreamQualifier.toStringVector(qualifier_info, this_qualifier);
       
-      for(int value_index = 0; value_index < qualifier_strings.size();
-          ++value_index)
-      {
-        final String qualifier_string =
-          (String)qualifier_strings.elementAt(value_index);
-
+      for(String qualifier_string: qualifier_strings)
         buffer.append(tidyHelper(qualifier_string) + "\n");
-      }
     }
-
     qualifier_text_area.setText(buffer.toString());
   }
 
   private void tidyGO() throws QualifierParseException
   {
     String qualifier_txt = qualifier_text_area.getText();
-    StringReader strRead = new StringReader(qualifier_txt);
-    BufferedReader buff = new BufferedReader(strRead);
-    String line;
+    BufferedReader buff = new BufferedReader(new StringReader(qualifier_txt));
     final Vector<String> qual_str = new Vector<String>();
     try
     {
+      String line;
       while((line = buff.readLine()) != null)
         qual_str.add(line);
     }
@@ -1180,12 +1206,8 @@ public class FeatureEdit extends JPanel
     Collections.sort(qual_str, comparator);
     
     StringBuffer buffer = new StringBuffer();
-    for(int i = 0; i < qual_str.size(); i++)
-    {
-      final String qualifier_string = 
-                           qual_str.elementAt(i);
+    for(String qualifier_string: qual_str)
       buffer.append(tidyHelper(qualifier_string) + "\n");
-    }
 
     qualifier_text_area.setText(buffer.toString());
   }
@@ -1597,11 +1619,8 @@ public class FeatureEdit extends JPanel
     final StringBuffer buffer = new StringBuffer();
     final QualifierVector qualifiers = getFeature().getQualifiers();       
     
-    for(int qualifier_index = 0; qualifier_index < qualifiers.size();
-        ++qualifier_index) 
+    for(Qualifier this_qualifier: qualifiers) 
     {
-      final Qualifier this_qualifier = (Qualifier)qualifiers.elementAt(qualifier_index);
-
       //
       // strip out CV qualifiers
       //
@@ -1621,12 +1640,8 @@ public class FeatureEdit extends JPanel
       final StringVector qualifier_strings =
                        StreamQualifier.toStringVector(qualifier_info, this_qualifier);
 
-      for(int value_index = 0; value_index < qualifier_strings.size();
-          ++value_index)
-      {
-        final String qualifier_string = (String)qualifier_strings.elementAt(value_index);
-        buffer.append(qualifier_string + "\n");
-      }
+      for(String qualStr: qualifier_strings)
+        buffer.append(qualStr + "\n");
     }
 
     return buffer.toString();
