@@ -30,6 +30,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -84,7 +85,7 @@ class UserDefinedQualifier extends JFrame
       org.apache.log4j.Logger.getLogger(UserDefinedQualifier.class);
   
   /* collection of loaded files */
-  private Vector<OBO> obos = new Vector<OBO>();
+  private Vector<QualifierList> obos = new Vector<QualifierList>();
   
   /* component containing list of available values */
   private Box qualifierBox = Box.createHorizontalBox();
@@ -120,7 +121,7 @@ class UserDefinedQualifier extends JFrame
     importFile.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent arg0)
       {
-        importObo();
+        importFromFile();
       }
     });
     fileMenu.add(importFile);
@@ -134,7 +135,29 @@ class UserDefinedQualifier extends JFrame
     });
     fileMenu.add(importURL);
     
+    final JMenuItem pasteQualifiers = new JMenuItem("Paste qualifiers ...");
+    pasteQualifiers.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent arg0)
+      {
+        final QualifierTextArea qualifierText = new QualifierTextArea();
+        int status = JOptionPane.showConfirmDialog(UserDefinedQualifier.this, 
+            qualifierText, "Paste in qualifier lists in the format: name = value",
+            JOptionPane.OK_CANCEL_OPTION);
+        
+        if(status == JOptionPane.OK_OPTION)
+        {
+          QualifierList obo = new QualifierList();
+          obo.qualifiers = loadText(new ByteArrayInputStream(qualifierText.getText().getBytes()));
+          obos.add(obo);
+          createComponentToAddCvTerm();
+          mainPanel.revalidate();
+          
+          writeQualifierList(qualifierText.getText());
+        }
 
+      }
+    });
+    fileMenu.add(pasteQualifiers);
     fileMenu.addSeparator();
     
     final JMenu removeFile = new JMenu("Qualifier source(s)");
@@ -145,7 +168,7 @@ class UserDefinedQualifier extends JFrame
       public void menuSelected(MenuEvent e)
       {
         removeFile.removeAll();
-        for(final OBO obo: obos)
+        for(final QualifierList obo: obos)
         {
           final JCheckBoxMenuItem oboMenu =
               new JCheckBoxMenuItem(obo.doc.getName(), obo.isAcive);
@@ -154,7 +177,6 @@ class UserDefinedQualifier extends JFrame
             public void actionPerformed(ActionEvent e)
             {
               obo.isAcive = oboMenu.isSelected();
-              mainPanel.removeAll();
               createComponentToAddCvTerm();
               mainPanel.revalidate();
               mainPanel.repaint();
@@ -173,6 +195,7 @@ class UserDefinedQualifier extends JFrame
    */
   private void createComponentToAddCvTerm()
   {
+    mainPanel.removeAll();
     mainPanel.setLayout(new GridBagLayout());
     final GridBagConstraints c = new GridBagConstraints();
 
@@ -261,7 +284,7 @@ class UserDefinedQualifier extends JFrame
     mainPanel.add(Box.createVerticalStrut(15), c);
   }
 
-  private StringVector searchOboQualifiers(final OBO obo, 
+  private StringVector searchOboQualifiers(final QualifierList obo, 
                                            final String qName, 
                                            final String keyWord,  
                                            final boolean ignoreCase)
@@ -300,7 +323,7 @@ class UserDefinedQualifier extends JFrame
   {
     final String qName = (String) nameCombo.getSelectedItem();
     final StringVector results = new StringVector();
-    for(OBO obo: obos)
+    for(QualifierList obo: obos)
     {
       if(!obo.isAcive)
         continue;
@@ -354,7 +377,7 @@ class UserDefinedQualifier extends JFrame
   private Vector<String> getQualiferNames()
   {
     final Vector<String> names = new Vector<String>();
-    for(OBO obo: obos)
+    for(QualifierList obo: obos)
     {
       if(!obo.isAcive)
         continue;
@@ -516,11 +539,11 @@ class UserDefinedQualifier extends JFrame
   /**
    * Import OBO
    */
-  private void importObo()
+  private void importFromFile()
   {
     final StickyFileChooser fc = new StickyFileChooser();
-    final JCheckBox autoImport = new JCheckBox("Automatically import", true);
-    fc.setAccessory(autoImport);
+    //final JCheckBox autoImport = new JCheckBox("Automatically import", true);
+    //fc.setAccessory(autoImport);
     
     OboFileFilter oboFilter = new OboFileFilter(new String[]{"obo", "OBO"}, "OBO files");
     fc.addChoosableFileFilter(oboFilter);
@@ -540,12 +563,11 @@ class UserDefinedQualifier extends JFrame
     
     createObo(doc);
     
-    mainPanel.removeAll();
     createComponentToAddCvTerm();
     mainPanel.revalidate();
     
-    if(autoImport.isSelected())
-      writeProperties(fc.getSelectedFile().getAbsolutePath());
+    //if(autoImport.isSelected())
+    writeQualifierList(fc.getSelectedFile().getAbsolutePath());
   }
   
   private void importFromUrl()
@@ -563,16 +585,10 @@ class UserDefinedQualifier extends JFrame
     {
       String urlStr = s.trim();
       createObo(new URLDocument(new URL(urlStr)));
-      mainPanel.removeAll();
       createComponentToAddCvTerm();
       mainPanel.revalidate();
       
-      int status = JOptionPane.showConfirmDialog(
-          UserDefinedQualifier.this, 
-          "Automatically import:\n"+urlStr+"\nbetween session?", 
-          "Import Option", JOptionPane.YES_NO_OPTION);
-      if(status == JOptionPane.YES_OPTION)
-        writeProperties(urlStr);
+      writeQualifierList(urlStr);
     }
     catch (MalformedURLException e)
     {
@@ -585,7 +601,7 @@ class UserDefinedQualifier extends JFrame
     try
     {
       logger4j.debug("Reading qualifiers from: "+doc.getName());
-      OBO obo = new OBO();
+      final QualifierList obo = new QualifierList();
       obo.doc = doc;
       obo.qualifiers = loadQualifiers(doc);
       obos.add(obo);
@@ -599,15 +615,34 @@ class UserDefinedQualifier extends JFrame
           JOptionPane.ERROR_MESSAGE);
     }
   }
-  
-  
+
+
   /**
-  * Write or re-write properties and insert/update the user.dir property
-  * @param jemProp      properties file
-  * @param uHome        user working directory
-  */
-  private static void writeProperties(final String loc)
+   * Write or append to artemis qualifiers list
+   * @param loc
+   * @param isOBO
+   */
+  private static void writeQualifierList(final String loc)
   {
+    int status = JOptionPane.showConfirmDialog(
+        null, 
+        "Automatically import:\n"+loc+"\nbetween session?", 
+        "Import Option", JOptionPane.YES_NO_OPTION);
+    if(status != JOptionPane.YES_OPTION)
+      return;
+    
+    final boolean isOBO;
+    if(loc.toLowerCase().endsWith(".obo"))
+      isOBO = true;
+    else
+    {
+      File f = new File(loc);
+      if(f.exists())
+        isOBO = true;
+      else
+        isOBO = false;
+    }
+    
     final String qualPath = System.getProperty("user.home") + File.separator + ".artemis.qualifiers";
     try
     {
@@ -639,12 +674,30 @@ class UserDefinedQualifier extends JFrame
         }
       }
 
+      final File qualFile = new File(qualPath);
+      final boolean exists = qualFile.exists();
       final BufferedWriter bufferedwriter = new BufferedWriter(
-          new FileWriter(new File(qualPath), true));
-      if(loc.startsWith("http://"))
-        bufferedwriter.append("\nimport: "+loc+"\n");
+          new FileWriter(qualFile, true));
+      
+      if(!exists)
+      {
+        bufferedwriter.append("# User defined list of qualifiers in the format of:\n");
+        bufferedwriter.append("# name=value\n");
+        bufferedwriter.append("# The qualifiers are separated by lines.\n");
+        bufferedwriter.append("# OBO files can be used by defining import statements:\n");
+        bufferedwriter.append("#import: http://www.geneontology.org/GO_slims/goslim_generic.obo\n\n");
+      }
+      
+      if(isOBO)
+      {
+        if(loc.startsWith("http://"))
+          bufferedwriter.append("\nimport: "+loc+"\n");
+        else
+          bufferedwriter.append("\nimport: file://"+loc+"\n");
+      }
       else
-        bufferedwriter.append("\nimport: file://"+loc+"\n");
+        bufferedwriter.append(loc+"\n");
+
       bufferedwriter.close();
     }
     catch (FileNotFoundException filenotfoundexception)
@@ -719,8 +772,9 @@ class UserDefinedQualifier extends JFrame
       return buff.toString();
     }
   }
-  
-  private class OBO
+
+
+  private class QualifierList
   {
     Document doc;
     QualifierVector qualifiers;
