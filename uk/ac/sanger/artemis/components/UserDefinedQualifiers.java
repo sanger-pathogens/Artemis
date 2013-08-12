@@ -62,15 +62,19 @@ import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import javax.swing.filechooser.FileFilter;
 
+import uk.ac.sanger.artemis.FeatureVector;
 import uk.ac.sanger.artemis.Options;
+import uk.ac.sanger.artemis.Selection;
 import uk.ac.sanger.artemis.components.genebuilder.JExtendedComboBox;
 import uk.ac.sanger.artemis.components.genebuilder.cv.DatePanel;
 import uk.ac.sanger.artemis.editor.MultiLineToolTipUI;
+import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.util.Document;
 import uk.ac.sanger.artemis.util.FileDocument;
 import uk.ac.sanger.artemis.util.LinePushBackReader;
+import uk.ac.sanger.artemis.util.ReadOnlyException;
 import uk.ac.sanger.artemis.util.StringVector;
 import uk.ac.sanger.artemis.util.URLDocument;
 
@@ -95,6 +99,7 @@ class UserDefinedQualifier extends JFrame
   
   /* text area in the feature editor to add qualifiers to */
   private QualifierTextArea qualifier_text_area;
+  private Selection selection;
   private JPanel mainPanel;
   
   /* line pattern for tag=value */
@@ -200,10 +205,11 @@ class UserDefinedQualifier extends JFrame
     final GridBagConstraints c = new GridBagConstraints();
 
     final JCheckBox ignoreCase = new JCheckBox("Ignore case",true);
-    final JComboBox nameCombo = new JComboBox(getQualiferNames());
+    final Vector<String> names = getQualiferNames();
+    final JComboBox nameCombo = new JComboBox(names);   
     final JButton addButton = new JButton("ADD");
-    //final JScrollPane jspNames = new JScrollPane(nameCombo);
-
+    final JCheckBox addToAllSelected = new JCheckBox("add to all selected features", false);
+    final JTextField keyWord = new JTextField(45);
     final Dimension d  = new Dimension(500, ignoreCase.getPreferredSize().height);
     final Dimension d2 = new Dimension(300, ignoreCase.getPreferredSize().height);
     
@@ -211,17 +217,30 @@ class UserDefinedQualifier extends JFrame
     c.gridx = 0;
     c.gridy = row;
     c.anchor = GridBagConstraints.EAST;
-    mainPanel.add(new JLabel("Name: "), c);
     
-    c.gridx = 1;
-    c.anchor = GridBagConstraints.WEST;
-    mainPanel.add(nameCombo, c);
-
+    if(names.size() < 1)
+    {
+      c.gridwidth = 2;
+      mainPanel.add(new JLabel("Import a list of qualifiers from the File menu."), c);
+      c.gridwidth = 1;
+      ignoreCase.setEnabled(false);
+      nameCombo.setEnabled(false);
+      addButton.setEnabled(false);
+      addToAllSelected.setEnabled(false);
+      keyWord.setEnabled(false);
+    }
+    else
+    {
+      mainPanel.add(new JLabel("Name: "), c);
+      c.gridx = 1;
+      c.anchor = GridBagConstraints.WEST;
+      mainPanel.add(nameCombo, c);
+    }
+    
     c.gridx = 2;
     mainPanel.add(Box.createHorizontalStrut(150), c);
     
     // keyword
-    final JTextField keyWord = new JTextField(45);
     keyWord.setSelectionStart(0);
     keyWord.setSelectionEnd(keyWord.getText().length());
     keyWord.setSelectedTextColor(Color.blue);
@@ -231,7 +250,7 @@ class UserDefinedQualifier extends JFrame
       public void actionPerformed(ActionEvent event)
       {
         searchQualifiers(keyWord.getText(), nameCombo, 
-            ignoreCase.isSelected(), addButton, d);
+            ignoreCase.isSelected(), addButton, addToAllSelected, d);
       }
     });
     c.gridy = ++row;
@@ -254,7 +273,7 @@ class UserDefinedQualifier extends JFrame
       public void actionPerformed(ActionEvent arg0)
       {
         searchQualifiers(keyWord.getText(), nameCombo, 
-            ignoreCase.isSelected(), addButton, d);
+            ignoreCase.isSelected(), addButton, addToAllSelected, d);
       }
     });
     mainPanel.add(search,c);
@@ -268,8 +287,8 @@ class UserDefinedQualifier extends JFrame
     c.gridx = 0;
     c.gridy = ++row;
     c.gridwidth = 1;
-    mainPanel.add(addButton, c);
-    
+    mainPanel.add(addButton, c);  
+
     c.gridx = 1;
     final JButton closeButton = new JButton("CLOSE");
     mainPanel.add(closeButton, c);
@@ -279,6 +298,11 @@ class UserDefinedQualifier extends JFrame
         dispose();
       }
     });
+    
+    c.gridx = 0;
+    c.gridy = ++row;
+    c.gridwidth = 2;
+    mainPanel.add(addToAllSelected,c);
     
     c.gridy = ++row;
     mainPanel.add(Box.createVerticalStrut(15), c);
@@ -319,6 +343,7 @@ class UserDefinedQualifier extends JFrame
                                 final JComboBox nameCombo, 
                                 final boolean ignoreCase,
                                 final JButton addButton,
+                                final JCheckBox addToAllSelected,
                                 final Dimension d)
   {
     final String qName = (String) nameCombo.getSelectedItem();
@@ -361,8 +386,38 @@ class UserDefinedQualifier extends JFrame
           qval = "/GO=aspect=C;"+qval+";date="+DatePanel.getDate();
         else
           qval = "/"+qName+"="+qval;
-
-        qualifier_text_area.append(qval+"\n");
+        
+        if(addToAllSelected.isSelected())
+        {
+          final FeatureVector features = selection.getAllFeatures();
+          if(!Options.isBlackBeltMode() && features.size() > 1)
+          {
+            int status = JOptionPane.showConfirmDialog(UserDefinedQualifier.this, 
+              "Add "+qName+" to "+features.size()+" selected features?",
+              "Add Qualifier To Selected Features", 
+              JOptionPane.OK_CANCEL_OPTION);
+            if(status == JOptionPane.CANCEL_OPTION)
+              return;
+          }
+          final int idx = qval.indexOf("=");
+          final Qualifier q = new Qualifier(qval.substring(1, idx), qval.substring( idx+1 ));
+          
+          try
+          {
+            for(int i=0; i<features.size(); i++)
+              features.elementAt(i).addQualifierValues(q);
+          }
+          catch (ReadOnlyException e)
+          {
+            e.printStackTrace();
+          }
+          catch (EntryInformationException e)
+          {
+            e.printStackTrace();
+          }
+        }
+        else
+          qualifier_text_area.append(qval+"\n");
       }
     }; 
     addButton.addActionListener(addListener);
@@ -565,7 +620,7 @@ class UserDefinedQualifier extends JFrame
     
     createComponentToAddCvTerm();
     mainPanel.revalidate();
-    
+    mainPanel.repaint();
     //if(autoImport.isSelected())
     writeQualifierList(fc.getSelectedFile().getAbsolutePath());
   }
@@ -587,6 +642,7 @@ class UserDefinedQualifier extends JFrame
       createObo(new URLDocument(new URL(urlStr)));
       createComponentToAddCvTerm();
       mainPanel.revalidate();
+      mainPanel.repaint();
       
       writeQualifierList(urlStr);
     }
@@ -739,9 +795,14 @@ class UserDefinedQualifier extends JFrame
     }
   }
   
-  protected void setQualifierTextArea(QualifierTextArea qualifier_text_area)
+  protected void setQualifierTextArea(final QualifierTextArea qualifier_text_area)
   {
     this.qualifier_text_area = qualifier_text_area;
+  }
+  
+  protected void setSelection(final Selection selection)
+  {
+    this.selection = selection;
   }
   
   private class ComboMouseListener extends MouseAdapter 

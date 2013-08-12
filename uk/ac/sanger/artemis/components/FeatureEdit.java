@@ -802,6 +802,7 @@ public class FeatureEdit extends JPanel
         userDefinedQualifierFrame.setLocation(p);
 
         userDefinedQualifierFrame.setQualifierTextArea(qualifier_text_area);
+        userDefinedQualifierFrame.setSelection(selection);
         userDefinedQualifierFrame.setVisible(true);
       }
     });
