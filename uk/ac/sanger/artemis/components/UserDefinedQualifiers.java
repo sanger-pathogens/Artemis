@@ -82,11 +82,11 @@ import uk.ac.sanger.artemis.util.URLDocument;
  * Load and make available qualifiers from a list in a file 
  * of tag=value pairs and from OBO files.
  */
-class UserDefinedQualifier extends JFrame
+class UserDefinedQualifiers extends JFrame
 {
   private static final long serialVersionUID = 1L;
   private static org.apache.log4j.Logger logger4j = 
-      org.apache.log4j.Logger.getLogger(UserDefinedQualifier.class);
+      org.apache.log4j.Logger.getLogger(UserDefinedQualifiers.class);
   
   /* collection of loaded files */
   private Vector<QualifierList> obos = new Vector<QualifierList>();
@@ -105,7 +105,7 @@ class UserDefinedQualifier extends JFrame
   /* line pattern for tag=value */
   private static Pattern TAG_VALUE_PATTERN = Pattern.compile("^/?(\\w+) ?= ?([^\\n\\r]+)$");
   
-  UserDefinedQualifier()
+  UserDefinedQualifiers()
   {
     mainPanel = (JPanel) getContentPane();
     MultiLineToolTipUI.initialize();
@@ -145,7 +145,7 @@ class UserDefinedQualifier extends JFrame
       public void actionPerformed(ActionEvent arg0)
       {
         final QualifierTextArea qualifierText = new QualifierTextArea();
-        int status = JOptionPane.showConfirmDialog(UserDefinedQualifier.this, 
+        int status = JOptionPane.showConfirmDialog(UserDefinedQualifiers.this, 
             qualifierText, "Paste in qualifier lists in the format: name = value",
             JOptionPane.OK_CANCEL_OPTION);
         
@@ -392,7 +392,7 @@ class UserDefinedQualifier extends JFrame
           final FeatureVector features = selection.getAllFeatures();
           if(!Options.isBlackBeltMode() && features.size() > 1)
           {
-            int status = JOptionPane.showConfirmDialog(UserDefinedQualifier.this, 
+            int status = JOptionPane.showConfirmDialog(UserDefinedQualifiers.this, 
               "Add "+qName+" to "+features.size()+" selected features?",
               "Add Qualifier To Selected Features", 
               JOptionPane.OK_CANCEL_OPTION);
@@ -603,14 +603,14 @@ class UserDefinedQualifier extends JFrame
     OboFileFilter oboFilter = new OboFileFilter(new String[]{"obo", "OBO"}, "OBO files");
     fc.addChoosableFileFilter(oboFilter);
     fc.setFileFilter(oboFilter);
-    int status = fc.showOpenDialog(UserDefinedQualifier.this);
+    int status = fc.showOpenDialog(UserDefinedQualifiers.this);
     if(status != StickyFileChooser.APPROVE_OPTION)
       return;
     
     final FileDocument doc = new FileDocument(fc.getSelectedFile());
     if(!doc.readable())
     {
-      JOptionPane.showMessageDialog(UserDefinedQualifier.this, 
+      JOptionPane.showMessageDialog(UserDefinedQualifiers.this, 
           "Cannot read file "+doc.getName(), 
           "Problem reading file", JOptionPane.WARNING_MESSAGE);
       return;
@@ -628,7 +628,7 @@ class UserDefinedQualifier extends JFrame
   private void importFromUrl()
   {
     String s = (String)JOptionPane.showInputDialog(
-        UserDefinedQualifier.this,
+        UserDefinedQualifiers.this,
         "URL:", "Import Qualifiers",
         JOptionPane.PLAIN_MESSAGE,
         null, null,
@@ -665,7 +665,7 @@ class UserDefinedQualifier extends JFrame
     catch (IOException e)
     {
       logger4j.error(e.getMessage());
-      JOptionPane.showMessageDialog(UserDefinedQualifier.this, 
+      JOptionPane.showMessageDialog(UserDefinedQualifiers.this, 
           "Problem Loading:\n"+doc.getName()+"\n"+
           e.getMessage(), "Problem Loading", 
           JOptionPane.ERROR_MESSAGE);
@@ -856,7 +856,7 @@ class UserDefinedQualifier extends JFrame
         UIManager.put(key, font_ui_resource);
     }
 
-    final JFrame f = new UserDefinedQualifier();
+    final JFrame f = new UserDefinedQualifiers();
     f.pack();
     f.setVisible(true);
   }

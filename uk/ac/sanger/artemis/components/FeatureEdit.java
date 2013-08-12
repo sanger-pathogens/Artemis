@@ -166,7 +166,7 @@ public class FeatureEdit extends JPanel
   
   private GeneEditorPanel editorPanel;
   
-  private static UserDefinedQualifier userDefinedQualifierFrame;
+  private static UserDefinedQualifiers userDefinedQualifierFrame;
   
   /**
    *  Create a new FeatureEdit object from the given Feature.
@@ -788,7 +788,7 @@ public class FeatureEdit extends JPanel
       {
         if(userDefinedQualifierFrame == null) 
         {
-          userDefinedQualifierFrame = new UserDefinedQualifier();
+          userDefinedQualifierFrame = new UserDefinedQualifiers();
           userDefinedQualifierFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         }
 
