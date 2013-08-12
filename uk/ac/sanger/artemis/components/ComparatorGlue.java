@@ -28,11 +28,7 @@ package uk.ac.sanger.artemis.components;
 import uk.ac.sanger.artemis.*;
 import uk.ac.sanger.artemis.sequence.*;
 
-import uk.ac.sanger.artemis.util.ReadOnlyException;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
-
-import java.util.*;
-import java.awt.*;
 
 import javax.swing.*;
 
@@ -353,12 +349,12 @@ public class ComparatorGlue {
     }
   }
 
-  /**
+/*  *//**
    *  Send an event to those object listening for it.
    *  @param listeners A Vector of the objects that the event should be sent
    *    to.
    *  @param event The event to send
-   **/
+   **//*
   private void fireAction (final Vector listeners, final EventObject event) {
     final Vector targets;
     // copied from a book - synchronising the whole method might cause a
@@ -377,7 +373,7 @@ public class ComparatorGlue {
         throw new Error ("EntryEdit.fireAction () - unknown event");
       }
     }
-  }
+  }*/
 
   /**
    *  Return the forward Strand of the subject EntryGroup from when the

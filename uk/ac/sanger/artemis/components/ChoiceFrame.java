@@ -27,19 +27,28 @@ package uk.ac.sanger.artemis.components;
 
 import uk.ac.sanger.artemis.util.StringVector;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
 
 /**
  *  A Choice in a JFrame.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: ChoiceFrame.java,v 1.1 2004-06-09 09:46:08 tjc Exp $
  **/
 
 public class ChoiceFrame extends JFrame {
+
+  private static final long serialVersionUID = 1L;
+
   /**
    *  Create a new ChoiceFrame component with the given list of Strings.
    **/
@@ -48,9 +57,8 @@ public class ChoiceFrame extends JFrame {
 
     choice = new JComboBox ();
 
-    for (int i = 0 ; i < strings.size () ; ++i) {
-      choice.addItem (strings.elementAt (i));
-    }
+    for (String s: strings)
+      choice.addItem (s);
 
     final JPanel choice_panel = new JPanel ();
     choice_panel.add (choice);
@@ -58,7 +66,6 @@ public class ChoiceFrame extends JFrame {
     getContentPane ().add (choice_panel, "Center");
 
     final JPanel panel = new JPanel ();
-
     panel.add (ok_button);
     ok_button.addActionListener (new ActionListener () {
       public void actionPerformed (ActionEvent e) {
@@ -66,6 +73,7 @@ public class ChoiceFrame extends JFrame {
       }
     });
 
+    final JButton close_button = new JButton ("Cancel");
     panel.add (close_button);
     close_button.addActionListener (new ActionListener () {
       public void actionPerformed (ActionEvent e) {
@@ -74,38 +82,28 @@ public class ChoiceFrame extends JFrame {
     });
 
     getContentPane ().add (panel, "South");
-    pack ();
-
-    addWindowListener (new WindowAdapter () {
-      public void windowClosing (WindowEvent event) {
-        ChoiceFrame.this.dispose ();
-      }
-    });
-
-    pack ();
+    setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
     final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
     setLocation (new Point ((screen.width - getSize ().width) / 2,
                             (screen.height - getSize ().height) / 2));
+    pack ();
   }
 
   /**
    *  Return the Choice component that is displayed in this JFrame.
    **/
-  public JComboBox getChoice () {
+  protected JComboBox getChoice () {
     return choice;
   }
 
   /**
    *  Return the reference of the OK button of this Chooser.
    **/
-  public JButton getOKButton () {
+  protected JButton getOKButton () {
     return ok_button;
   }
 
   private JComboBox choice;
-
   final private JButton ok_button = new JButton ("OK");
-
-  final private JButton close_button = new JButton ("Cancel");
 }
