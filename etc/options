@@ -582,8 +582,6 @@ extra_qualifiers_gff = \
     fasta_file "text" \
     GO "text" \
     history "text" \
-    isFminPartial none \
-    isFmaxPartial none \
     literature "text" \
     note "text" \
     orthologous_to "text" \
@@ -704,8 +702,6 @@ invisible_qualifiers_gff= \
     history \
     ID             \
     insertion_seq  \
-    isFminPartial \
-    isFmaxPartial \
     isObsolete \
     isoelectric    \
     isolation_source \
