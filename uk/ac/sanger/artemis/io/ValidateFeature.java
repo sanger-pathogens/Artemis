@@ -76,14 +76,15 @@ public class ValidateFeature
   private static String[] RESERVED_TAGS =
     { "ID", "Name", "Alias", "Parent", 
       "Target", "Gap", "Derives_from", "Note", 
-      "Dbxref", "Ontology_term", "Is_circular"};
+      "Dbxref", "Ontology_term", "Is_circular",
+      "Start_range", "End_range"};
 
   private static String[] OTHER_RESERVED_TAGS =
     { "GO", "EC_number", "EMBL_qualifier", "SignalP_prediction", 
       "GPI_anchor_cleavage_site", "GPI_anchored", "PlasmoAP_score" };
   
   private static String[] ALLOWED_TAGS_WITH_NO_VALUE =
-    { "isFminPartial", "isFmaxPartial", "stop_codon_redefined_as_selenocysteine", "Name" };
+    { "stop_codon_redefined_as_selenocysteine", "Name" };
   
   private EntryGroup entryGrp;
   private FeaturePredicate cds_predicate;
@@ -648,9 +649,9 @@ public class ValidateFeature
     {
       try
       {
-        if(feature.getQualifierByName("isFminPartial") != null)
+        if(feature.getQualifierByName("Start_range") != null)
           low_pos = "<"+low_pos;
-        if(feature.getQualifierByName("isFmaxPartial") != null)
+        if(feature.getQualifierByName("End_range") != null)
           high_pos = ">"+high_pos;
       }
       catch (InvalidRelationException e){}
