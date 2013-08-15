@@ -852,7 +852,9 @@ public class GFFStreamFeature extends SimpleDocumentFeature
     final String names[] = { "ID", "Name", "Alias", "Parent",
                              "Derives_from",
                              "Target", "Gap", "Note", 
-                             "Dbxref", "Ontology_term" };
+                             "Dbxref", "Ontology_term", 
+                             "Start_range", "End_range",
+                             "Is_circular"};
     int count = 0;
     final int names_length = names.length;
 
