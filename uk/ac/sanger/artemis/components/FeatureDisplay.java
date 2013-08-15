@@ -2645,7 +2645,7 @@ public class FeatureDisplay extends EntryGroupPanel
   
   /**
    * Check if this feature is an exon and is a child of a non-coding transcript
-   * and is part of a database entry.
+   * and is part of a GFF or database entry.
    * @param feature
    * @param key
    * @return
@@ -2653,7 +2653,7 @@ public class FeatureDisplay extends EntryGroupPanel
   private boolean isExonOfNonCodingTranscript(final Feature feature, final String key)
   {
     if(key.equals(DatabaseDocument.EXONMODEL) && 
-       GeneUtils.isDatabaseEntry(getEntryGroup()))
+       GeneUtils.isGFFEntry(getEntryGroup()))
     {
       final String nonCodingTranscripts[] = GeneUtils.getNonCodingTranscripts();
       try
