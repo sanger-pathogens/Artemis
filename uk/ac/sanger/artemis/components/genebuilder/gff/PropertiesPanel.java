@@ -710,7 +710,7 @@ public class PropertiesPanel extends JPanel
    * Change partial settings of child featuers.
    * @param gffFeature
    */
-  public void updatePartialSettings(GFFStreamFeature gffFeature)
+  private void updatePartialSettings(GFFStreamFeature gffFeature)
   {
     if(!partialChanged)
       return;
