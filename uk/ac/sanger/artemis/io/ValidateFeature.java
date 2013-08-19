@@ -133,6 +133,7 @@ public class ValidateFeature
       showFeatureList(STRAND_PREDICATE, "Gene Strand Errors", grp, sel, gotoSrc, plotGrp);
       showFeatureList(BOUNDARY_PREDICATE, "Gene Boundary Errors", grp, sel, gotoSrc, plotGrp);
       showFeatureList(COMPLETE_GENE_MODEL_PREDICATE, "Incomplete Gene Model", grp, sel, gotoSrc, plotGrp);
+      showFeatureList(PARTIAL_PREDICATE, "Partial Settings", grp, sel, gotoSrc, plotGrp);
     }
     
     showFeatureList(INTERNAL_STOP, "Internal Stop Codons", grp, sel, gotoSrc, plotGrp);
@@ -212,15 +213,11 @@ public class ValidateFeature
           report.put("Gene features found on different strand", Level.FATAL);
         }
 
-        if(!isPartialConsistent(gffFeature, "Start_range"))
+        if(!isPartialConsistent(gffFeature, "Start_range") || 
+           !isPartialConsistent(gffFeature, "End_range"))
         {
           pass = false;
-          report.put("Partial attribute 'Start_range' not consistent", Level.FATAL);
-        }
-        if(!isPartialConsistent(gffFeature, "End_range"))
-        {
-          pass = false;
-          report.put("Partial attribute 'End_range' not consistent", Level.FATAL);
+          report.put("Partial settings not consistent", Level.FATAL);
         }
       }
     
@@ -546,6 +543,7 @@ public class ValidateFeature
     }
     return true;
   }
+  
   
   /**
    * The phase is REQUIRED for all CDS features.
@@ -900,6 +898,17 @@ public class ValidateFeature
       if(!isPartOfGene((GFFStreamFeature) feature.getEmblFeature()))
         return false;
       return isCompleteGeneModelOK((GFFStreamFeature) feature.getEmblFeature()) > 0;
+    }
+  };
+  
+  private static FeaturePredicate PARTIAL_PREDICATE = new FeaturePredicate() 
+  {
+    public boolean testPredicate(uk.ac.sanger.artemis.Feature feature)
+    {
+      if( isPartialConsistent((GFFStreamFeature) feature.getEmblFeature(), "Start_range") &&
+          isPartialConsistent((GFFStreamFeature) feature.getEmblFeature(), "End_range") )
+        return false;
+      return true;
     }
   };
   
