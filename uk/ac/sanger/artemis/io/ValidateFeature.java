@@ -31,11 +31,11 @@ import java.io.StringReader;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 import java.util.regex.Pattern;
 
 import javax.swing.JOptionPane;
-
 
 import org.apache.log4j.Level;
 
@@ -66,7 +66,6 @@ import uk.ac.sanger.artemis.util.StringVector;
 
 public class ValidateFeature
 {
-
   private static String[] geneModelParts;
   
   //##sequence-region seqid start end
@@ -162,6 +161,7 @@ public class ValidateFeature
    *     - check boundaries are valid
    *     - check all features are on the same strand
    *     - check CDS features have a phase
+   *     - check partial attributes consistent
    *     - check attribute column 
    *          - qualifiers have a value (not empty)
    *          - only reserved tags start with uppercase
@@ -172,7 +172,7 @@ public class ValidateFeature
    * @param showOnlyFailures
    * @return report
    */
-  public LinkedHashMap<String, Level> featureValidate(final uk.ac.sanger.artemis.io.Feature f, 
+  private LinkedHashMap<String, Level> featureValidate(final uk.ac.sanger.artemis.io.Feature f, 
                                                       final boolean showOnlyFailures)
   {
     boolean pass = true;
@@ -210,6 +210,17 @@ public class ValidateFeature
         {
           pass = false;
           report.put("Gene features found on different strand", Level.FATAL);
+        }
+
+        if(!isPartialConsistent(gffFeature, "Start_range"))
+        {
+          pass = false;
+          report.put("Partial attribute 'Start_range' not consistent", Level.FATAL);
+        }
+        if(!isPartialConsistent(gffFeature, "End_range"))
+        {
+          pass = false;
+          report.put("Partial attribute 'End_range' not consistent", Level.FATAL);
         }
       }
     
@@ -313,9 +324,8 @@ public class ValidateFeature
       {
         final QualifierInfo qI = eInfo.getQualifierInfo("GO");
         final StringVector qualifierStrs = StreamQualifier.toStringVector(qI,q);
-        for (int i = 0; i < qualifierStrs.size(); ++i)
+        for (String qualifierStr: qualifierStrs)
         {
-          final String qualifierStr = qualifierStrs.elementAt(i);
           final String code = getEvidenceCodeAbbreviation(qualifierStr);
           final String goid = getField("GOid=", qualifierStr);
           final String with = getField("with=", qualifierStr);
@@ -412,7 +422,7 @@ public class ValidateFeature
    *         1 - no gene found
    *         2 - missing transcript
    */
-  public static int isCompleteGeneModelOK(final GFFStreamFeature gffFeature)
+  private static int isCompleteGeneModelOK(final GFFStreamFeature gffFeature)
   {
     final ChadoCanonicalGene gene = gffFeature.getChadoGene();
     if(gene == null)
@@ -425,7 +435,7 @@ public class ValidateFeature
     return 0;
   }
   
-  public static int isBoundaryOK(final GFFStreamFeature gffFeature)
+  private static int isBoundaryOK(final GFFStreamFeature gffFeature)
   {
     final ChadoCanonicalGene gene = gffFeature.getChadoGene();
     int gb = 0;
@@ -434,11 +444,106 @@ public class ValidateFeature
     return gb;
   }
   
-  public static boolean isStrandOK(final GFFStreamFeature gffFeature)
+  private static boolean isStrandOK(final GFFStreamFeature gffFeature)
   {
     final ChadoCanonicalGene gene = gffFeature.getChadoGene();
     if(gene != null && isGene(gffFeature) && !GeneUtils.isStrandOK(gene))
       return false;
+    return true;
+  }
+  
+  /**
+   * Test if the partial qualifiers are consistent within a gene model
+   * @param gffFeature
+   * @param partialKeyStr - either Start_range or End_range qualifier keys
+   * @return
+   */
+  private static boolean isPartialConsistent(final GFFStreamFeature gffFeature,
+                                             final String partialKeyStr)
+  {
+    final ChadoCanonicalGene gene = gffFeature.getChadoGene();
+    if(gene == null)
+      return true;
+    try
+    {
+      // is the gene marked as partial
+      boolean partial = 
+          (gene.getGene().getQualifierByName(partialKeyStr) == null ? false : true);
+      
+      if(partial)
+      {
+        if(!isPartialChildren(partial, gene, gene.getGene(), partialKeyStr))
+          return false;
+      }
+      else
+      {
+        final List<uk.ac.sanger.artemis.io.Feature> transcripts = gene.getTranscripts();
+        for(uk.ac.sanger.artemis.io.Feature f: transcripts)
+        {
+          // is the transcript marked as partial
+          partial = (f.getQualifierByName(partialKeyStr) == null ? false : true);
+          if(!isPartialChildren(partial, gene, f, partialKeyStr))
+            return false;
+        }
+      }
+    }
+    catch (Exception e){ e.printStackTrace(); }
+    return true;
+  }
+  
+  /**
+   * Return true if the child features agree with the parent 
+   * feature for a given key
+   * @param parentIsPartial
+   * @param gene
+   * @param f
+   * @param partialKeyStr
+   * @return
+   * @throws InvalidRelationException
+   */
+  private static boolean isPartialChildren(
+      final boolean parentIsPartial,
+      final ChadoCanonicalGene gene,
+      final uk.ac.sanger.artemis.io.Feature f,
+      final String partialKeyStr) throws InvalidRelationException
+  {
+    final Set<uk.ac.sanger.artemis.io.Feature> children = gene.getChildren(f);
+    for(uk.ac.sanger.artemis.io.Feature child: children)
+    {
+      String keyStr = child.getKey().getKeyString();
+      boolean isComplement = f.getLocation().isComplement();
+      if(keyStr.equals("three_prime_UTR"))
+      {
+        if(isComplement)
+        {
+          if(partialKeyStr.equals("End_range"))
+            continue;
+        }
+        else
+        {
+          if(partialKeyStr.equals("Start_range"))
+             continue;
+        }
+      }
+      else if(keyStr.equals("five_prime_UTR"))
+      {
+        if(isComplement)
+        {
+          if(partialKeyStr.equals("Start_range"))
+            continue;
+        }
+        else
+        {
+          if(partialKeyStr.equals("End_range"))
+             continue;
+        }
+      }
+
+      boolean partial = (child.getQualifierByName(partialKeyStr) == null ? false : true);
+      if( (  partial && !parentIsPartial ) ||
+          ( !partial &&  parentIsPartial ) )
+        return false;
+    }
     return true;
   }
   
