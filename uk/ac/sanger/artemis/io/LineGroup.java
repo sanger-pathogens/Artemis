@@ -19,8 +19,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/LineGroup.java,v 1.13 2009-04-20 14:39:10 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -37,8 +35,6 @@ import uk.ac.sanger.artemis.util.LinePushBackReader;
  *  that start with FT.
  *
  *  @author Kim Rutherford
- *  @version $Id: LineGroup.java,v 1.13 2009-04-20 14:39:10 tjc Exp $
- *
  */
 
 abstract class LineGroup
@@ -137,11 +133,11 @@ abstract class LineGroup
    *  This hash table contains the GENBANK start of line keywords (LOCUS,
    *  DEFINITION, FEATURES etc.)
    **/
-  private static Hashtable genbank_hash = null;
+  private static Hashtable<String, String> genbank_hash = null;
                                                                                                 
   static 
   {
-    genbank_hash = new Hashtable ();
+    genbank_hash = new Hashtable<String, String> ();
     genbank_hash.put ("LOCUS","LOCUS");
     genbank_hash.put ("DEFINITION","DEFINITION");
     genbank_hash.put ("ACCESSION","ACCESSION");
