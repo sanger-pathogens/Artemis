@@ -388,13 +388,13 @@ public class ReadAndWriteEntry
       // run this after all the system properties have been set
       UI.initalise();
       
-      java.util.Vector files = null;
+      java.util.Vector<String> files = null;
       for(int i = 0; i < args.length; i++)
       {
         if(args[i].toLowerCase().equals("-s"))
         {
           if(files == null)
-            files = new java.util.Vector();
+            files = new java.util.Vector<String>();
           for(int j = i + 1; j < args.length; j++)
           {
             if(args[j].startsWith("-"))
@@ -409,7 +409,7 @@ public class ReadAndWriteEntry
         else
         {
           if(files == null)
-            files = new java.util.Vector();
+            files = new java.util.Vector<String>();
           if(!files.contains(args[i]))
             files.add(args[i]);
         }
