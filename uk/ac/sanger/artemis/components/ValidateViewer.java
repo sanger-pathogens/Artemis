@@ -160,7 +160,8 @@ public class ValidateViewer extends FileViewer implements EntryGroupChangeListen
       }
     });
     
-    if(entryGrp.getDefaultEntry().isReadOnly())
+    if(entryGrp.getDefaultEntry() != null &&
+       entryGrp.getDefaultEntry().isReadOnly())
       fixButton.setEnabled(false);
     button_panel.add(fixButton);
 
