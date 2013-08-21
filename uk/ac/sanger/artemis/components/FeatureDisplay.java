@@ -2645,7 +2645,7 @@ public class FeatureDisplay extends EntryGroupPanel
   
   /**
    * Check if this feature is an exon and is a child of a non-coding transcript
-   * and is part of a database entry.
+   * and is a GFF3 feature.
    * @param feature
    * @param key
    * @return
@@ -2653,7 +2653,7 @@ public class FeatureDisplay extends EntryGroupPanel
   private boolean isExonOfNonCodingTranscript(final Feature feature, final String key)
   {
     if(key.equals(DatabaseDocument.EXONMODEL) && 
-       GeneUtils.isDatabaseEntry(getEntryGroup()))
+       feature.getEmblFeature() instanceof GFFStreamFeature)
     {
       final String nonCodingTranscripts[] = GeneUtils.getNonCodingTranscripts();
       try
@@ -2663,7 +2663,7 @@ public class FeatureDisplay extends EntryGroupPanel
         {
           final ChadoCanonicalGene chadoGene = 
             ((GFFStreamFeature)feature.getEmblFeature()).getChadoGene();
-          final String transcriptName = (String)qualifier.getValues().get(0);
+          final String transcriptName = qualifier.getValues().get(0);
           final GFFStreamFeature transcript = 
             (GFFStreamFeature)chadoGene.getFeatureFromId(transcriptName);
           final String transcriptKey = transcript.getKey().getKeyString();

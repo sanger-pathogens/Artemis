@@ -121,8 +121,8 @@ public class ChadoTransactionManager
               "Ontology_term",
               "score",
               "codon_start",
-              "isFminPartial",
-              "isFmaxPartial",
+              "Start_range",
+              "End_range",
               "isObsolete",
               MatchPanel.SIMILARITY,
               MatchPanel.ORTHOLOG,
@@ -1626,8 +1626,8 @@ public class ChadoTransactionManager
            sql.add(tsn);
          }
          else if(qualifierName.equals("codon_start") ||
-                 qualifierName.equals("isFminPartial") ||
-                 qualifierName.equals("isFmaxPartial"))
+                 qualifierName.equals("Start_range") ||
+                 qualifierName.equals("End_range"))
          {
            updateFeatureLoc(feature, uniquename);
          }
@@ -1821,8 +1821,8 @@ public class ChadoTransactionManager
       sql.add(tsn);
     }
     else if(qualifierName.equals("codon_start") ||
-            qualifierName.equals("isFminPartial") ||
-            qualifierName.equals("isFmaxPartial"))
+            qualifierName.equals("Start_range") ||
+            qualifierName.equals("End_range"))
     {
       updateFeatureLoc(feature, uniquename);
     }
@@ -2215,12 +2215,12 @@ public class ChadoTransactionManager
         lastSeg = true;
     }
 
-    if(firstSeg && gffFeature.getQualifierByName("isFminPartial") != null)
+    if(firstSeg && gffFeature.getQualifierByName("Start_range") != null)
       featureloc.setFminPartial(true);
     else
       featureloc.setFminPartial(false);
     
-    if(lastSeg && gffFeature.getQualifierByName("isFmaxPartial") != null)
+    if(lastSeg && gffFeature.getQualifierByName("End_range") != null)
       featureloc.setFmaxPartial(true);
     else
       featureloc.setFmaxPartial(false);

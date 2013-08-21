@@ -29,7 +29,6 @@ import uk.ac.sanger.artemis.*;
 import uk.ac.sanger.artemis.sequence.*;
 import uk.ac.sanger.artemis.plot.CodonUsageAlgorithm;
 
-import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.InvalidRelationException;
@@ -110,8 +109,6 @@ public class FeatureList extends EntryGroupPanel
 
   /** JScrollPane viewport that this panel is the view of */
   private JViewport viewport = null;
-
-  private boolean isDatabaseGroup = false;
   
   /**
    *  Create a new FeatureList with the default number of rows.
@@ -127,8 +124,6 @@ public class FeatureList extends EntryGroupPanel
                      final BasePlotGroup base_plot_group)
   {
     super(entry_group, selection, goto_event_source, base_plot_group);
-
-    isDatabaseGroup = GeneUtils.isDatabaseEntry(getEntryGroup());
 
     addMouseListener(new MouseAdapter() 
     {
@@ -760,7 +755,7 @@ public class FeatureList extends EntryGroupPanel
     else 
     {
       String note = null;
-      if(isDatabaseGroup)
+      if(feature.getEmblFeature() instanceof GFFStreamFeature)
       {
         try
         {
@@ -812,15 +807,14 @@ public class FeatureList extends EntryGroupPanel
         high_pos = String.valueOf(low_marker.getRawPosition());
       }
     }
-    
 
-    if(isDatabaseGroup)
+    if(feature.getEmblFeature() instanceof GFFStreamFeature)
     {
       try
       {
-        if(feature.getQualifierByName("isFminPartial") != null)
+        if(feature.getQualifierByName("Start_range") != null)
           low_pos = "<"+low_pos;
-        if(feature.getQualifierByName("isFmaxPartial") != null)
+        if(feature.getQualifierByName("End_range") != null)
           high_pos = ">"+high_pos;
       }
       catch (InvalidRelationException e){}

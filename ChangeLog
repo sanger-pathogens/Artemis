@@ -1,4 +1,11 @@
 Version XX
+	In the Feature Editor there is now a button ('User Qualifiers') which
+	opens a tool for maintaining user defined lists of qualifiers (i.e. 
+	qualifiers in the form tag = value pairs on separate lines) and the 
+	option to read qualifiers from OBO formatted files or URLs. These can
+	be saved between sessions in the file '.artemis.qualifiers' in the
+	home directory.
+	
 	Automatic addition of history qualifier in chado database mode.
 
 	Added RNASeq strand specific option to the BAM popup menu ('Colour By' -> 

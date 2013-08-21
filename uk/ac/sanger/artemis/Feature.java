@@ -587,20 +587,20 @@ public class Feature
         {
           if(isForwardFeature())
           {
-            if(getQualifierByName("isFminPartial") != null)
+            if(getQualifierByName("Start_range") != null)
               return true;
           }
-          else if(getQualifierByName("isFmaxPartial") != null)
+          else if(getQualifierByName("End_range") != null)
               return true;
         }
         else
         {
           if(isForwardFeature())
           {
-            if(getQualifierByName("isFmaxPartial") != null)
+            if(getQualifierByName("End_range") != null)
               return true;
           }
-          else if(getQualifierByName("isFminPartial") != null)
+          else if(getQualifierByName("Start_range") != null)
               return true;
         }
       }

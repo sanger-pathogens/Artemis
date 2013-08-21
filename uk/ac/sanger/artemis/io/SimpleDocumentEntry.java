@@ -56,7 +56,7 @@ abstract public class SimpleDocumentEntry
   final private EntryInformation entry_information;
                                                                                                      
   /** collection to send ReadEvents to */
-  private Vector listeners = new Vector();
+  private Vector<ReadListener> listeners = new Vector<ReadListener>();
 
   /** 
    *  The Document object that was passed to the constructor.  This should be
@@ -68,7 +68,7 @@ abstract public class SimpleDocumentEntry
    *  This contains all the lines(stored as LineGroup objects) from the entry
    *  stream that was passed to the constructor.
    **/
-  protected LineGroupVector line_groups = new LineGroupVector();
+  protected Vector<LineGroup> line_groups = new Vector<LineGroup>();
                                                                                                                
   /**
    *  The DocumentEntryAutosaveThread that is started when the first call is
@@ -381,7 +381,7 @@ abstract public class SimpleDocumentEntry
       throws IOException 
   {
 
-    final LineGroupVector new_line_groups = new LineGroupVector();
+    final Vector<LineGroup> new_line_groups = new Vector<LineGroup>();
 
     if(new_header != null) 
     {
