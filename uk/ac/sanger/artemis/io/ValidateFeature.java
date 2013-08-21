@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.JOptionPane;
@@ -71,6 +72,7 @@ public class ValidateFeature
   //##sequence-region seqid start end
   private static Pattern HEADER_SEQ_REGION = Pattern.compile("##sequence-region \\S+ \\d+ \\d+");
   private static Pattern CAPITAL_START = Pattern.compile("^[A-Z]+\\S*");
+  private static Pattern ID_PREFIX = Pattern.compile("^[^.:]+");
   
   private static String[] RESERVED_TAGS =
     { "ID", "Name", "Alias", "Parent", 
@@ -133,7 +135,8 @@ public class ValidateFeature
       showFeatureList(STRAND_PREDICATE, "Gene Strand Errors", grp, sel, gotoSrc, plotGrp);
       showFeatureList(BOUNDARY_PREDICATE, "Gene Boundary Errors", grp, sel, gotoSrc, plotGrp);
       showFeatureList(COMPLETE_GENE_MODEL_PREDICATE, "Incomplete Gene Model", grp, sel, gotoSrc, plotGrp);
-      showFeatureList(PARTIAL_PREDICATE, "Partial Settings", grp, sel, gotoSrc, plotGrp);
+      showFeatureList(PARTIAL_PREDICATE, "Check Partial Settings", grp, sel, gotoSrc, plotGrp);
+      showFeatureList(ID_PREDICATE, "Check ID Settings", grp, sel, gotoSrc, plotGrp);
     }
     
     showFeatureList(INTERNAL_STOP, "Internal Stop Codons", grp, sel, gotoSrc, plotGrp);
@@ -218,6 +221,12 @@ public class ValidateFeature
         {
           pass = false;
           report.put("Partial settings not consistent", Level.FATAL);
+        }
+        
+        if(!isIdPrefixConsistent(gffFeature))
+        {
+          pass = false;
+          report.put("Prefix of ID attribute not consistent within gene model", Level.FATAL);
         }
       }
     
@@ -544,6 +553,41 @@ public class ValidateFeature
     return true;
   }
   
+  /**
+   * Test if the ID GFF3 attribute prefix is consistent within a gene model
+   * @param gffFeature
+   * @return true if the prefix is the same within the gene model features
+   */
+  private static boolean isIdPrefixConsistent(final GFFStreamFeature gffFeature)
+  {
+    final ChadoCanonicalGene gene = gffFeature.getChadoGene();
+    if(gene == null)
+      return true;
+
+    try
+    {
+      if(gffFeature.getKey().getKeyString().endsWith("gene"))
+        return (gene.getGene().getQualifierByName("ID") != null);
+
+      if(gene.getGene().getQualifierByName("ID") == null)
+        return true;
+      if(gffFeature.getQualifierByName("ID") == null)
+        return false;
+      
+      String id = gene.getGene().getQualifierByName("ID").getValues().elementAt(0);
+      final Matcher m = ID_PREFIX.matcher(id);
+      if(m.matches())
+      {
+        id = gffFeature.getQualifierByName("ID").getValues().elementAt(0);
+        return id.startsWith( m.group() );
+      }
+    }
+    catch (Exception e)
+    {
+      e.printStackTrace();
+    }
+    return true;
+  }
   
   /**
    * The phase is REQUIRED for all CDS features.
@@ -907,6 +951,16 @@ public class ValidateFeature
     {
       if( isPartialConsistent((GFFStreamFeature) feature.getEmblFeature(), "Start_range") &&
           isPartialConsistent((GFFStreamFeature) feature.getEmblFeature(), "End_range") )
+        return false;
+      return true;
+    }
+  };
+  
+  private static FeaturePredicate ID_PREDICATE = new FeaturePredicate() 
+  {
+    public boolean testPredicate(uk.ac.sanger.artemis.Feature feature)
+    {
+      if( isIdPrefixConsistent((GFFStreamFeature) feature.getEmblFeature() ))
         return false;
       return true;
     }
