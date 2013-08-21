@@ -127,8 +127,8 @@ public class QualifierTextArea extends JTextPane
     {
       doc.insertString(doc.getLength(), s, getLogicalStyle());
       
-      for(int i=0; i<DATABASES.size(); i++)
-        setStyleForHyperLinks(s, (String)DATABASES.get(i));
+      for(String db: DATABASES)
+        setStyleForHyperLinks(s, db);
     }
     catch(BadLocationException e)
     {
@@ -159,8 +159,8 @@ public class QualifierTextArea extends JTextPane
     // ensure we have the default style set
     getStyledDocument().setCharacterAttributes(0, text.length(), 
                  DEFAULT_STYLE, true);
-    for(int i=0; i<DATABASES.size(); i++)
-      setStyleForHyperLinks(text, (String)DATABASES.get(i));
+    for(String db: DATABASES)
+      setStyleForHyperLinks(text, db);
   }
 
   /**
@@ -279,9 +279,9 @@ public class QualifierTextArea extends JTextPane
   private int getStartOfLink(final String s)
   {
     int lastIndexLink = -1;
-    for(int i=0; i<DATABASES.size(); i++)
+    for(String db: DATABASES)
     {
-      int index = lastIndexOfIgnoreCase(s, (String)DATABASES.get(i)+":");
+      int index = lastIndexOfIgnoreCase(s, db+":");
       if(index > lastIndexLink)
         lastIndexLink = index;
     }
