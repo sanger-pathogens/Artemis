@@ -69,7 +69,7 @@ public class QualifierTextArea extends JTextPane
   private static Style DEFAULT_STYLE = 
     StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE);
   private static StringVector dbsLinks;
-  public static Vector DATABASES = new Vector();
+  public static Vector<String> DATABASES = new Vector<String>();
   
   private boolean useHyperlinks = true;
   
