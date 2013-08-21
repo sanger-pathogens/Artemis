@@ -252,10 +252,10 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
       }
       else if(ntranscripts == 1)
       {
-        if(qualifiers.getQualifierByName("isFminPartial") != null)
-          addNewQualifier(qualifiers, qualifiers.getQualifierByName("isFminPartial"));
-        if(qualifiers.getQualifierByName("isFmaxPartial") != null)
-          addNewQualifier(qualifiers, qualifiers.getQualifierByName("isFmaxPartial"));
+        if(qualifiers.getQualifierByName("Start_range") != null)
+          addNewQualifier(qualifiers, qualifiers.getQualifierByName("Start_range"));
+        if(qualifiers.getQualifierByName("End_range") != null)
+          addNewQualifier(qualifiers, qualifiers.getQualifierByName("End_range"));
       }
       combineQualifiers(qualifiers, geneQualifiers, true);
     }
@@ -781,7 +781,7 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
    */
   private Location handlePartials(QualifierVector qualifiers, Location location)
   {
-    if(qualifiers.getQualifierByName("isFminPartial") != null)
+    if(qualifiers.getQualifierByName("Start_range") != null)
     {
       try
       {
@@ -792,7 +792,7 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
         e.printStackTrace();
       }
     }
-    if(qualifiers.getQualifierByName("isFmaxPartial") != null)
+    if(qualifiers.getQualifierByName("End_range") != null)
     {
       try
       {

@@ -31,11 +31,12 @@ import java.io.StringReader;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.JOptionPane;
-
 
 import org.apache.log4j.Level;
 
@@ -66,24 +67,25 @@ import uk.ac.sanger.artemis.util.StringVector;
 
 public class ValidateFeature
 {
-
   private static String[] geneModelParts;
   
   //##sequence-region seqid start end
   private static Pattern HEADER_SEQ_REGION = Pattern.compile("##sequence-region \\S+ \\d+ \\d+");
   private static Pattern CAPITAL_START = Pattern.compile("^[A-Z]+\\S*");
+  private static Pattern ID_PREFIX = Pattern.compile("^[^.:]+");
   
   private static String[] RESERVED_TAGS =
     { "ID", "Name", "Alias", "Parent", 
       "Target", "Gap", "Derives_from", "Note", 
-      "Dbxref", "Ontology_term", "Is_circular"};
+      "Dbxref", "Ontology_term", "Is_circular",
+      "Start_range", "End_range"};
 
   private static String[] OTHER_RESERVED_TAGS =
     { "GO", "EC_number", "EMBL_qualifier", "SignalP_prediction", 
       "GPI_anchor_cleavage_site", "GPI_anchored", "PlasmoAP_score" };
   
   private static String[] ALLOWED_TAGS_WITH_NO_VALUE =
-    { "isFminPartial", "isFmaxPartial", "stop_codon_redefined_as_selenocysteine", "Name" };
+    { "stop_codon_redefined_as_selenocysteine", "Name" };
   
   private EntryGroup entryGrp;
   private FeaturePredicate cds_predicate;
@@ -133,6 +135,8 @@ public class ValidateFeature
       showFeatureList(STRAND_PREDICATE, "Gene Strand Errors", grp, sel, gotoSrc, plotGrp);
       showFeatureList(BOUNDARY_PREDICATE, "Gene Boundary Errors", grp, sel, gotoSrc, plotGrp);
       showFeatureList(COMPLETE_GENE_MODEL_PREDICATE, "Incomplete Gene Model", grp, sel, gotoSrc, plotGrp);
+      showFeatureList(PARTIAL_PREDICATE, "Check Partial Settings", grp, sel, gotoSrc, plotGrp);
+      showFeatureList(ID_PREDICATE, "Check ID Settings", grp, sel, gotoSrc, plotGrp);
     }
     
     showFeatureList(INTERNAL_STOP, "Internal Stop Codons", grp, sel, gotoSrc, plotGrp);
@@ -161,6 +165,7 @@ public class ValidateFeature
    *     - check boundaries are valid
    *     - check all features are on the same strand
    *     - check CDS features have a phase
+   *     - check partial attributes consistent
    *     - check attribute column 
    *          - qualifiers have a value (not empty)
    *          - only reserved tags start with uppercase
@@ -171,7 +176,7 @@ public class ValidateFeature
    * @param showOnlyFailures
    * @return report
    */
-  public LinkedHashMap<String, Level> featureValidate(final uk.ac.sanger.artemis.io.Feature f, 
+  private LinkedHashMap<String, Level> featureValidate(final uk.ac.sanger.artemis.io.Feature f, 
                                                       final boolean showOnlyFailures)
   {
     boolean pass = true;
@@ -209,6 +214,19 @@ public class ValidateFeature
         {
           pass = false;
           report.put("Gene features found on different strand", Level.FATAL);
+        }
+
+        if(!isPartialConsistent(gffFeature, "Start_range") || 
+           !isPartialConsistent(gffFeature, "End_range"))
+        {
+          pass = false;
+          report.put("Partial settings not consistent", Level.FATAL);
+        }
+        
+        if(!isIdPrefixConsistent(gffFeature))
+        {
+          pass = false;
+          report.put("Prefix of ID attribute not consistent within gene model", Level.FATAL);
         }
       }
     
@@ -312,9 +330,8 @@ public class ValidateFeature
       {
         final QualifierInfo qI = eInfo.getQualifierInfo("GO");
         final StringVector qualifierStrs = StreamQualifier.toStringVector(qI,q);
-        for (int i = 0; i < qualifierStrs.size(); ++i)
+        for (String qualifierStr: qualifierStrs)
         {
-          final String qualifierStr = qualifierStrs.elementAt(i);
           final String code = getEvidenceCodeAbbreviation(qualifierStr);
           final String goid = getField("GOid=", qualifierStr);
           final String with = getField("with=", qualifierStr);
@@ -411,7 +428,7 @@ public class ValidateFeature
    *         1 - no gene found
    *         2 - missing transcript
    */
-  public static int isCompleteGeneModelOK(final GFFStreamFeature gffFeature)
+  private static int isCompleteGeneModelOK(final GFFStreamFeature gffFeature)
   {
     final ChadoCanonicalGene gene = gffFeature.getChadoGene();
     if(gene == null)
@@ -424,7 +441,7 @@ public class ValidateFeature
     return 0;
   }
   
-  public static int isBoundaryOK(final GFFStreamFeature gffFeature)
+  private static int isBoundaryOK(final GFFStreamFeature gffFeature)
   {
     final ChadoCanonicalGene gene = gffFeature.getChadoGene();
     int gb = 0;
@@ -433,11 +450,142 @@ public class ValidateFeature
     return gb;
   }
   
-  public static boolean isStrandOK(final GFFStreamFeature gffFeature)
+  private static boolean isStrandOK(final GFFStreamFeature gffFeature)
   {
     final ChadoCanonicalGene gene = gffFeature.getChadoGene();
     if(gene != null && isGene(gffFeature) && !GeneUtils.isStrandOK(gene))
       return false;
+    return true;
+  }
+  
+  /**
+   * Test if the partial qualifiers are consistent within a gene model
+   * @param gffFeature
+   * @param partialKeyStr - either Start_range or End_range qualifier keys
+   * @return
+   */
+  private static boolean isPartialConsistent(final GFFStreamFeature gffFeature,
+                                             final String partialKeyStr)
+  {
+    final ChadoCanonicalGene gene = gffFeature.getChadoGene();
+    if(gene == null)
+      return true;
+    try
+    {
+      // is the gene marked as partial
+      boolean partial = 
+          (gene.getGene().getQualifierByName(partialKeyStr) == null ? false : true);
+      
+      if(partial)
+      {
+        if(!isPartialChildren(partial, gene, gene.getGene(), partialKeyStr))
+          return false;
+      }
+      else
+      {
+        final List<uk.ac.sanger.artemis.io.Feature> transcripts = gene.getTranscripts();
+        for(uk.ac.sanger.artemis.io.Feature f: transcripts)
+        {
+          // is the transcript marked as partial
+          partial = (f.getQualifierByName(partialKeyStr) == null ? false : true);
+          if(!isPartialChildren(partial, gene, f, partialKeyStr))
+            return false;
+        }
+      }
+    }
+    catch (Exception e){ e.printStackTrace(); }
+    return true;
+  }
+  
+  /**
+   * Return true if the child features agree with the parent 
+   * feature for a given key
+   * @param parentIsPartial
+   * @param gene
+   * @param f
+   * @param partialKeyStr
+   * @return
+   * @throws InvalidRelationException
+   */
+  private static boolean isPartialChildren(
+      final boolean parentIsPartial,
+      final ChadoCanonicalGene gene,
+      final uk.ac.sanger.artemis.io.Feature f,
+      final String partialKeyStr) throws InvalidRelationException
+  {
+    final Set<uk.ac.sanger.artemis.io.Feature> children = gene.getChildren(f);
+    for(uk.ac.sanger.artemis.io.Feature child: children)
+    {
+      String keyStr = child.getKey().getKeyString();
+      boolean isComplement = f.getLocation().isComplement();
+      if(keyStr.equals("three_prime_UTR"))
+      {
+        if(isComplement)
+        {
+          if(partialKeyStr.equals("End_range"))
+            continue;
+        }
+        else
+        {
+          if(partialKeyStr.equals("Start_range"))
+             continue;
+        }
+      }
+      else if(keyStr.equals("five_prime_UTR"))
+      {
+        if(isComplement)
+        {
+          if(partialKeyStr.equals("Start_range"))
+            continue;
+        }
+        else
+        {
+          if(partialKeyStr.equals("End_range"))
+             continue;
+        }
+      }
+
+      boolean partial = (child.getQualifierByName(partialKeyStr) == null ? false : true);
+      if( (  partial && !parentIsPartial ) ||
+          ( !partial &&  parentIsPartial ) )
+        return false;
+    }
+    return true;
+  }
+  
+  /**
+   * Test if the ID GFF3 attribute prefix is consistent within a gene model
+   * @param gffFeature
+   * @return true if the prefix is the same within the gene model features
+   */
+  private static boolean isIdPrefixConsistent(final GFFStreamFeature gffFeature)
+  {
+    final ChadoCanonicalGene gene = gffFeature.getChadoGene();
+    if(gene == null)
+      return true;
+
+    try
+    {
+      if(gffFeature.getKey().getKeyString().endsWith("gene"))
+        return (gene.getGene().getQualifierByName("ID") != null);
+
+      if(gene.getGene().getQualifierByName("ID") == null)
+        return true;
+      if(gffFeature.getQualifierByName("ID") == null)
+        return false;
+      
+      String id = gene.getGene().getQualifierByName("ID").getValues().elementAt(0);
+      final Matcher m = ID_PREFIX.matcher(id);
+      if(m.matches())
+      {
+        id = gffFeature.getQualifierByName("ID").getValues().elementAt(0);
+        return id.startsWith( m.group() );
+      }
+    }
+    catch (Exception e)
+    {
+      e.printStackTrace();
+    }
     return true;
   }
   
@@ -648,9 +796,9 @@ public class ValidateFeature
     {
       try
       {
-        if(feature.getQualifierByName("isFminPartial") != null)
+        if(feature.getQualifierByName("Start_range") != null)
           low_pos = "<"+low_pos;
-        if(feature.getQualifierByName("isFmaxPartial") != null)
+        if(feature.getQualifierByName("End_range") != null)
           high_pos = ">"+high_pos;
       }
       catch (InvalidRelationException e){}
@@ -794,6 +942,27 @@ public class ValidateFeature
       if(!isPartOfGene((GFFStreamFeature) feature.getEmblFeature()))
         return false;
       return isCompleteGeneModelOK((GFFStreamFeature) feature.getEmblFeature()) > 0;
+    }
+  };
+  
+  private static FeaturePredicate PARTIAL_PREDICATE = new FeaturePredicate() 
+  {
+    public boolean testPredicate(uk.ac.sanger.artemis.Feature feature)
+    {
+      if( isPartialConsistent((GFFStreamFeature) feature.getEmblFeature(), "Start_range") &&
+          isPartialConsistent((GFFStreamFeature) feature.getEmblFeature(), "End_range") )
+        return false;
+      return true;
+    }
+  };
+  
+  private static FeaturePredicate ID_PREDICATE = new FeaturePredicate() 
+  {
+    public boolean testPredicate(uk.ac.sanger.artemis.Feature feature)
+    {
+      if( isIdPrefixConsistent((GFFStreamFeature) feature.getEmblFeature() ))
+        return false;
+      return true;
     }
   };
   

@@ -76,12 +76,12 @@ public class Entry implements FeatureChangeListener, Selectable
   /**
    *  A vector of those objects listening for entry change events.
    **/
-  final private Vector entry_listener_list = new Vector();
+  final private Vector<ChangeListener> entry_listener_list = new Vector<ChangeListener>();
 
   /**
    *  A vector of those objects listening for feature change events.
    **/
-  final private Vector feature_listener_list = new Vector();
+  final private Vector<ChangeListener> feature_listener_list = new Vector<ChangeListener>();
 
   /**
    *  This is the Bases reference that was passed to the constructor.
@@ -807,32 +807,6 @@ public class Entry implements FeatureChangeListener, Selectable
   }
 
   /**
-   *  Return the base length of the sequence of this entry.
-   **/
-  private int getSequenceLength() 
-  {
-    return getBases().getLength();
-  }
-
-  /**
-   *  Return the object representing the forward sequence of bases for this
-   *  Entry.
-   **/
-  private Strand getForwardStrand() 
-  {
-    return getBases().getForwardStrand();
-  }
-
-  /**
-   *  Return the object representing the backward(reverse complemented)
-   *  sequence of bases for this Entry.
-   **/
-  private Strand getReverseStrand() 
-  {
-    return getBases().getReverseStrand();
-  }
-
-  /**
    *  Return the Bases object that was passed to the constructor.
    **/
   public Bases getBases() 
@@ -1156,30 +1130,28 @@ public class Entry implements FeatureChangeListener, Selectable
    *    to.
    *  @param event The event to send
    **/
-  private void fireAction(Vector listeners, ChangeEvent event) 
+  private void fireAction(Vector<ChangeListener> listeners, ChangeEvent event) 
   {
-    final Vector targets;
+    final Vector<ChangeListener> targets;
     // copied from a book - synchronising the whole method might cause a
     // deadlock
     synchronized(this) 
     {
-      targets = (Vector)listeners.clone();
+      targets = (Vector) listeners.clone();
     }
 
-    for(int i = 0 ; i < targets.size() ; ++i) 
+    for(ChangeListener target: targets) 
     {
-      ChangeListener target = (ChangeListener)targets.elementAt(i);
-
       if(event instanceof EntryChangeEvent) 
       {
         final EntryChangeListener entry_change_listener =
-         (EntryChangeListener) target;
+          (EntryChangeListener) target;
         entry_change_listener.entryChanged((EntryChangeEvent) event);
       } 
       else
       {
         final FeatureChangeListener feature_change_listener =
-         (FeatureChangeListener) target;
+          (FeatureChangeListener) target;
         feature_change_listener.featureChanged((FeatureChangeEvent) event);
       }
     }
@@ -1244,11 +1216,8 @@ public class Entry implements FeatureChangeListener, Selectable
     // embl.Feature, which will in turn create a uk.ac.sanger.artemis.Feature
 
     final FeatureEnumeration feature_enumerator = features();
-
     while(feature_enumerator.hasMoreFeatures())  
-    {
-      final Feature this_feature = feature_enumerator.nextFeature();
-    }
+      feature_enumerator.nextFeature();
   }
 
   /**

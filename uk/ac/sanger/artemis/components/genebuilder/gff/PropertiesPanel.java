@@ -132,8 +132,8 @@ public class PropertiesPanel extends JPanel
        qualifier.getName().equals("feature_relationship_rank") ||
        qualifier.getName().equals("timelastmodified") ||
        qualifier.getName().equals("isObsolete") ||
-       qualifier.getName().equals("isFminPartial") ||
-       qualifier.getName().equals("isFmaxPartial") ||
+       qualifier.getName().equals("Start_range") ||
+       qualifier.getName().equals("End_range") ||
        qualifier.getName().equals("codon_start") ||
        ChadoTransactionManager.isSynonymTag(qualifier.getName(), 
            (GFFStreamFeature)feature.getEmblFeature()))
@@ -396,13 +396,13 @@ public class PropertiesPanel extends JPanel
     Qualifier isPartialQualfier3;
     if(feature.isForwardFeature())
     {
-      isPartialQualfier5   = gffQualifiers.getQualifierByName("isFminPartial");
-      isPartialQualfier3   = gffQualifiers.getQualifierByName("isFmaxPartial");
+      isPartialQualfier5   = gffQualifiers.getQualifierByName("Start_range");
+      isPartialQualfier3   = gffQualifiers.getQualifierByName("End_range");
     }
     else
     {
-      isPartialQualfier3   = gffQualifiers.getQualifierByName("isFminPartial");
-      isPartialQualfier5   = gffQualifiers.getQualifierByName("isFmaxPartial");
+      isPartialQualfier3   = gffQualifiers.getQualifierByName("Start_range");
+      isPartialQualfier5   = gffQualifiers.getQualifierByName("End_range");
     }
 
     Box optionsBox = Box.createHorizontalBox();
@@ -597,9 +597,9 @@ public class PropertiesPanel extends JPanel
     
     Qualifier isPartial5primeQualifier; 
     if(feature.isForwardFeature())
-      isPartial5primeQualifier = gffQualifiers.getQualifierByName("isFminPartial");
+      isPartial5primeQualifier = gffQualifiers.getQualifierByName("Start_range");
     else
-      isPartial5primeQualifier = gffQualifiers.getQualifierByName("isFmaxPartial");
+      isPartial5primeQualifier = gffQualifiers.getQualifierByName("End_range");
     if(isPartial5primeQualifier != null)
     {
       if(showOptions && !partialField5prime.isSelected())
@@ -611,17 +611,17 @@ public class PropertiesPanel extends JPanel
     else if(showOptions && partialField5prime.isSelected())
     {
       if(feature.isForwardFeature())
-        gffQualifiers.addElement(new Qualifier("isFminPartial"));
+        gffQualifiers.addElement(new Qualifier("Start_range",".,."));
       else
-        gffQualifiers.addElement(new Qualifier("isFmaxPartial"));
+        gffQualifiers.addElement(new Qualifier("End_range",".,."));
       partialChanged = true;
     }
     
     Qualifier isPartial3primeQualifier;
     if(feature.isForwardFeature())
-      isPartial3primeQualifier = gffQualifiers.getQualifierByName("isFmaxPartial");
+      isPartial3primeQualifier = gffQualifiers.getQualifierByName("End_range");
     else
-      isPartial3primeQualifier = gffQualifiers.getQualifierByName("isFminPartial");
+      isPartial3primeQualifier = gffQualifiers.getQualifierByName("Start_range");
     if(isPartial3primeQualifier != null)
     {
       if(showOptions && !partialField3prime.isSelected())
@@ -633,9 +633,9 @@ public class PropertiesPanel extends JPanel
     else if(showOptions && partialField3prime.isSelected())
     {
       if(feature.isForwardFeature())
-        gffQualifiers.addElement(new Qualifier("isFmaxPartial"));
+        gffQualifiers.addElement(new Qualifier("End_range",".,."));
       else
-        gffQualifiers.addElement(new Qualifier("isFminPartial"));
+        gffQualifiers.addElement(new Qualifier("Start_range",".,."));
       partialChanged = true;
     }
 
@@ -710,7 +710,7 @@ public class PropertiesPanel extends JPanel
    * Change partial settings of child featuers.
    * @param gffFeature
    */
-  public void updatePartialSettings(GFFStreamFeature gffFeature)
+  private void updatePartialSettings(GFFStreamFeature gffFeature)
   {
     if(!partialChanged)
       return;
@@ -718,8 +718,8 @@ public class PropertiesPanel extends JPanel
     
     if(gffFeature.getChadoGene() == null)
       return;
-    Qualifier fminQualifier = gffFeature.getQualifierByName("isFminPartial");
-    Qualifier fmaxQualifier = gffFeature.getQualifierByName("isFmaxPartial");
+    Qualifier fminQualifier = gffFeature.getQualifierByName("Start_range");
+    Qualifier fmaxQualifier = gffFeature.getQualifierByName("End_range");
     ChadoCanonicalGene chadoGene = gffFeature.getChadoGene();
     Set<uk.ac.sanger.artemis.io.Feature> children = chadoGene.getChildren(gffFeature);
 
@@ -750,28 +750,28 @@ public class PropertiesPanel extends JPanel
                 (keyStr.equals("three_prime_UTR") && !isFwd) )
             {
               if(fminQualifier != null)
-                f.setQualifier(new Qualifier("isFminPartial"));
+                f.setQualifier(new Qualifier("Start_range",".,."));
               else
-                f.removeQualifierByName("isFminPartial");
+                f.removeQualifierByName("Start_range");
             }
             else
             {
               if(fmaxQualifier != null)
-                f.setQualifier(new Qualifier("isFmaxPartial"));
+                f.setQualifier(new Qualifier("End_range",".,."));
               else
-                f.removeQualifierByName("isFmaxPartial");
+                f.removeQualifierByName("End_range");
             }
           }
           else
           {
             if(fminQualifier != null)
-              f.setQualifier(new Qualifier("isFminPartial"));
+              f.setQualifier(new Qualifier("Start_range",".,."));
             else
-              f.removeQualifierByName("isFminPartial");
+              f.removeQualifierByName("Start_range");
             if(fmaxQualifier != null)
-              f.setQualifier(new Qualifier("isFmaxPartial"));
+              f.setQualifier(new Qualifier("End_range",".,."));
             else
-              f.removeQualifierByName("isFmaxPartial");
+              f.removeQualifierByName("End_range");
           }
         }
       }

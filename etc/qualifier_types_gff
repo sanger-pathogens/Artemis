@@ -36,6 +36,8 @@ Target           no         text
 Gap              no         text     
 Derives_from     no         text     
 Dbxref           no         feature
+Start_range      no         text
+End_range        no         text
 feature_id       no         number  1 99999999
 colour           no         text
 color            no         text

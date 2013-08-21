@@ -1372,9 +1372,9 @@ public class DatabaseDocument extends Document
     this_buff.append("isObsolete=" + Boolean.toString(feat.isObsolete()) + ";");
     
     if(featureloc.isFminPartial())
-      this_buff.append("isFminPartial;");
+      this_buff.append("Start_range=.,.;");
     if(featureloc.isFmaxPartial())
-      this_buff.append("isFmaxPartial;");
+      this_buff.append("End_range=.,.;");
     // this is the chado feature_relationship.rank used
     // to order joined features e.g. exons
     if(rank > -1)

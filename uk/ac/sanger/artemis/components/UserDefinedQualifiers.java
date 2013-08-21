@@ -107,6 +107,7 @@ class UserDefinedQualifiers extends JFrame
   
   UserDefinedQualifiers()
   {
+    super("Qualifier List");
     mainPanel = (JPanel) getContentPane();
     MultiLineToolTipUI.initialize();
     read();
