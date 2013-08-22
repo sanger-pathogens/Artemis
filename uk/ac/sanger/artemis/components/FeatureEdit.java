@@ -86,10 +86,6 @@ import javax.swing.*;
 public class FeatureEdit extends JPanel
                          implements EntryChangeListener, FeatureChangeListener 
 {
-
-  /**
-   * 
-   */
   private static final long serialVersionUID = 1L;
 
 
@@ -103,9 +99,6 @@ public class FeatureEdit extends JPanel
 
   /** The location text - set by updateLocation(). */
   private JTextField location_text = new JTextField(LOCATION_TEXT_WIDTH);
-
-  /** When pressed - apply changes and dispose of the component. */
-  private JButton ok_button = new JButton("OK");
 
   /** When pressed - discard changes and dispose of the component. */
   private JButton cancel_button = new JButton("Cancel");
@@ -292,7 +285,7 @@ public class FeatureEdit extends JPanel
   /**
    *  Add an ActionListener to the Cancel JButton of this FeatureEdit.
    **/
-  public void addCancelActionListener(final ActionListener l) 
+  protected void addCancelActionListener(final ActionListener l) 
   {
     cancel_button.addActionListener(l);
   }
@@ -300,7 +293,7 @@ public class FeatureEdit extends JPanel
   /**
    *  Remove an ActionListener from the Cancel JButton of this FeatureEdit.
    **/
-  public void removeCancelActionListener(final ActionListener l) 
+  protected void removeCancelActionListener(final ActionListener l) 
   {
     cancel_button.removeActionListener(l);
   }
@@ -308,17 +301,9 @@ public class FeatureEdit extends JPanel
   /**
    *  Add an ActionListener to the Apply JButton of this FeatureEdit.
    **/
-  public void addApplyActionListener(final ActionListener l) 
+  protected void addApplyActionListener(final ActionListener l) 
   {
     apply_button.addActionListener(l);
-  }
-
-  /**
-   *  Remove an ActionListener from the Apply JButton of this FeatureEdit.
-   **/
-  public void removeApplyActionListener(final ActionListener l) 
-  {
-    apply_button.removeActionListener(l);
   }
 
   /**
@@ -822,6 +807,7 @@ public class FeatureEdit extends JPanel
       }
     });
 
+    final JButton ok_button = new JButton("OK");
     if(!getFeature().isReadOnly())
     {
       ok_button.addActionListener(new ActionListener()
