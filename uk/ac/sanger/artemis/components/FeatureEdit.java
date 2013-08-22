@@ -174,24 +174,13 @@ public class FeatureEdit extends JPanel
                      final GotoEventSource goto_event_source,
                      final JFrame frame) 
   {
-    this(edit_feature, entry_group, selection, 
-         goto_event_source, frame, 
-         edit_feature.getEntry().getEntryInformation());
-  }
-  
-  public FeatureEdit(final Feature edit_feature,
-      final EntryGroup entry_group,
-      final Selection selection,
-      final GotoEventSource goto_event_source,
-      final JFrame frame, final EntryInformation entry_information) 
-  {
-    this.entry_information = entry_information;
     this.frame = frame;
     this.edit_feature = edit_feature;
     this.edit_entry   = edit_feature.getEntry();
     this.entry_group  = entry_group;
     this.selection    = selection;
     this.goto_event_source = goto_event_source;
+    this.entry_information = edit_feature.getEntry().getEntryInformation();
 
     setLayout(new BorderLayout());
     createComponents();
