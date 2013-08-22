@@ -138,7 +138,7 @@ public class FeatureEdit extends JPanel
    *  This is used to work out if anything has changed since the creation of
    *  the FeatureEdit.
    **/
-  final String orig_qualifier_text;
+  private final String orig_qualifier_text;
 
   private JFrame frame;
   
