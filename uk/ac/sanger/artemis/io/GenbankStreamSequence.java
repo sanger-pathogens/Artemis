@@ -203,7 +203,9 @@ public class GenbankStreamSequence extends StreamSequence
                                            in_stream.getLineNumber());
         }
       }
-      appendChar(this_line_sequence_buffer.toString().toLowerCase().toCharArray());
+      
+      if(this_line_sequence_buffer.length() > 0)
+        appendChar(this_line_sequence_buffer.toString().toLowerCase().toCharArray());
     }
     setCounts();
   }
