@@ -86,10 +86,6 @@ import javax.swing.*;
 public class FeatureEdit extends JPanel
                          implements EntryChangeListener, FeatureChangeListener 
 {
-
-  /**
-   * 
-   */
   private static final long serialVersionUID = 1L;
 
 
@@ -103,9 +99,6 @@ public class FeatureEdit extends JPanel
 
   /** The location text - set by updateLocation(). */
   private JTextField location_text = new JTextField(LOCATION_TEXT_WIDTH);
-
-  /** When pressed - apply changes and dispose of the component. */
-  private JButton ok_button = new JButton("OK");
 
   /** When pressed - discard changes and dispose of the component. */
   private JButton cancel_button = new JButton("Cancel");
@@ -145,7 +138,7 @@ public class FeatureEdit extends JPanel
    *  This is used to work out if anything has changed since the creation of
    *  the FeatureEdit.
    **/
-  final String orig_qualifier_text;
+  private final String orig_qualifier_text;
 
   private JFrame frame;
   
@@ -181,24 +174,13 @@ public class FeatureEdit extends JPanel
                      final GotoEventSource goto_event_source,
                      final JFrame frame) 
   {
-    this(edit_feature, entry_group, selection, 
-         goto_event_source, frame, 
-         edit_feature.getEntry().getEntryInformation());
-  }
-  
-  public FeatureEdit(final Feature edit_feature,
-      final EntryGroup entry_group,
-      final Selection selection,
-      final GotoEventSource goto_event_source,
-      final JFrame frame, final EntryInformation entry_information) 
-  {
-    this.entry_information = entry_information;
     this.frame = frame;
     this.edit_feature = edit_feature;
     this.edit_entry   = edit_feature.getEntry();
     this.entry_group  = entry_group;
     this.selection    = selection;
     this.goto_event_source = goto_event_source;
+    this.entry_information = edit_feature.getEntry().getEntryInformation();
 
     setLayout(new BorderLayout());
     createComponents();
@@ -292,7 +274,7 @@ public class FeatureEdit extends JPanel
   /**
    *  Add an ActionListener to the Cancel JButton of this FeatureEdit.
    **/
-  public void addCancelActionListener(final ActionListener l) 
+  protected void addCancelActionListener(final ActionListener l) 
   {
     cancel_button.addActionListener(l);
   }
@@ -300,7 +282,7 @@ public class FeatureEdit extends JPanel
   /**
    *  Remove an ActionListener from the Cancel JButton of this FeatureEdit.
    **/
-  public void removeCancelActionListener(final ActionListener l) 
+  protected void removeCancelActionListener(final ActionListener l) 
   {
     cancel_button.removeActionListener(l);
   }
@@ -308,17 +290,9 @@ public class FeatureEdit extends JPanel
   /**
    *  Add an ActionListener to the Apply JButton of this FeatureEdit.
    **/
-  public void addApplyActionListener(final ActionListener l) 
+  protected void addApplyActionListener(final ActionListener l) 
   {
     apply_button.addActionListener(l);
-  }
-
-  /**
-   *  Remove an ActionListener from the Apply JButton of this FeatureEdit.
-   **/
-  public void removeApplyActionListener(final ActionListener l) 
-  {
-    apply_button.removeActionListener(l);
   }
 
   /**
@@ -822,6 +796,7 @@ public class FeatureEdit extends JPanel
       }
     });
 
+    final JButton ok_button = new JButton("OK");
     if(!getFeature().isReadOnly())
     {
       ok_button.addActionListener(new ActionListener()
@@ -1452,134 +1427,6 @@ public class FeatureEdit extends JPanel
       return false;
     }
   }
-
-
-  /**
-   *  Edit the qualifiers of this Feature in an external editor.  The
-   *  qualifiers will be set when the editor finishes.  This method works by
-   *  writing the qualifiers to a temporary file and the sequence of the
-   *  feature to a different file.
-   *  @param editor_extra_args Extra arguments to pass to the editor.  null
-   *    means there are no extra args.
-   **/
-  /*private void externalEdit(final String[] editor_extra_args) 
-  {
-    try 
-    {
-      final String pre_edit_text = qualifier_text_area.getText();
-
-      // write to a temporary file
-      final Date current_time = calendar.getTime();
-
-      final String temp_file_name =
-               "/tmp/artemis_temp." + current_time.getTime();
-
-      final File temp_file = new File(temp_file_name);
-
-      final FileWriter out_writer    = new FileWriter(temp_file);
-      final PrintWriter print_writer = new PrintWriter(out_writer);
-
-      print_writer.write(qualifier_text_area.getText());
-      print_writer.close();
-      out_writer.close();
-
-      final File sequence_temp_file = new File(temp_file_name + ".seq");
-      final FileWriter sequence_out_writer =
-                                     new FileWriter(sequence_temp_file);
-      final PrintWriter sequence_print_writer =
-                                   new PrintWriter(sequence_out_writer);
-
-      getFeature().writeBasesOfFeature(sequence_print_writer);
-      sequence_print_writer.close();
-      sequence_out_writer.close();
-
-      final String editor_path =
-        Options.getOptions().getProperty("external_editor");
-
-      final String[] process_args;
-
-      if(editor_extra_args == null) 
-      {
-        process_args = new String[1];
-        process_args[0] = temp_file.getCanonicalPath();
-      } 
-      else
-      {
-        process_args = new String[editor_extra_args.length + 1];
-        System.arraycopy(editor_extra_args, 0, process_args, 0,
-                         editor_extra_args.length);
-        process_args[process_args.length - 1] = temp_file.getCanonicalPath();
-      }
-
-
-      System.out.println(editor_path);
-      for(int i=0;i<process_args.length;i++)
-        System.out.println(process_args[i]);
-
-      final Process process =
-        ExternalProgram.startProgram(editor_path, process_args);
-
-      final ProcessWatcher process_watcher =
-                                new ProcessWatcher(process, "editor", false);
-
-      final Thread watcher_thread = new Thread(process_watcher);
-      watcher_thread.start();
-
-      final ProcessWatcherListener listener = new ProcessWatcherListener()
-      {
-        public void processFinished(final ProcessWatcherEvent event)
-        {
-          try 
-          {
-            final FileReader file_reader = new FileReader(temp_file);
-            final BufferedReader buffered_reader = 
-                                     new BufferedReader(file_reader);
-
-            final StringBuffer buffer = new StringBuffer();
-            String line;
-
-            while((line = buffered_reader.readLine()) != null) 
-              buffer.append(line + "\n");
-
-            //ensure current qualifier text has not changed
-            if(!qualifier_text_area.getText().equals(pre_edit_text))
-            {
-              final String message =
-                  "the qualifiers have changed - apply changes from the " +
-                  "external editor?";
-
-              final YesNoDialog yes_no_dialog =
-                  new YesNoDialog(frame, message);
-
-              if(!yes_no_dialog.getResult())
-                return;
-            }
-
-            qualifier_text_area.setText(buffer.toString());
-            temp_file.delete();
-            sequence_temp_file.delete();
-
-            return;
-          }
-          catch(IOException e) 
-          {
-            new MessageDialog(frame, "an error occured while " +
-                              "reading from the editor: " + e);
-          }
-        }
-      };
-
-      process_watcher.addProcessWatcherListener(listener);
-    }
-    catch(IOException e) 
-    {
-      new MessageDialog(frame, "error while starting editor: " + e);
-    } 
-    catch(ExternalProgramException e) 
-    {
-      new MessageDialog(frame, "error while starting editor: " + e);
-    }
-  }*/
 
   /**
    *  Read the qualifiers from the feature and update the qualifier JTextArea.
