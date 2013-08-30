@@ -479,7 +479,7 @@ class UserDefinedQualifiers extends JFrame
    */
   private QualifierVector loadQualifiers(final Document doc) throws IOException
   {
-    QualifierVector qualifiers = loadObo(doc.getInputStream());
+    QualifierVector qualifiers = loadObo(doc);
     if(qualifiers.size() == 0)
       qualifiers = loadText(doc.getInputStream());
     return qualifiers;
@@ -489,11 +489,12 @@ class UserDefinedQualifiers extends JFrame
    * Load in qualifiers from an input stream that are in OBO format.
    * @param ins
    * @return
+   * @throws IOException 
    */
-  private QualifierVector loadObo(final InputStream ins)
+  private QualifierVector loadObo(final Document doc) throws IOException
   {
     final LinePushBackReader reader = new LinePushBackReader(
-        new BufferedReader(new InputStreamReader(ins)));
+        new BufferedReader(new InputStreamReader(doc.getInputStream())));
     final QualifierVector qualifiers = new QualifierVector();
     try
     {
@@ -539,8 +540,11 @@ class UserDefinedQualifiers extends JFrame
         else if(line.startsWith("import:"))
         {
           // import OBO file from a URL
-          final URL url = new URL(line.substring(7).trim());
-          createObo(new URLDocument(url));
+          final URLDocument urlDoc = new URLDocument(
+              new URL(line.substring(7).trim()) );
+          // check to ensure not recursively reading from same file
+          if(!doc.getLocation().equals(urlDoc.getLocation()))
+            createObo(urlDoc);
         }
       }
       reader.close();
