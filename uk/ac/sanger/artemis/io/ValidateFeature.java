@@ -246,8 +246,12 @@ public class ValidateFeature
       }
     }
     else
+    {
+      if(f.getUserData() == null)
+        return report;
       report.put("\n"+((uk.ac.sanger.artemis.Feature)f.getUserData()).getIDString()+
           " ("+fTxt+"):", Level.INFO);
+    }
 
     if(isInternalStops(f))
     {
