@@ -2460,6 +2460,17 @@ public class ChadoTransactionManager
         continue;
       }
       
+      // for product use the rank=1 to specify an alternative product 
+      // where there are multiple products for a feature
+      if(cvName != null && cvName.equals(PRODUCT_CV) && 
+         this_qualifier_part_lowercase.startsWith("rank="))
+      {
+        if(this_qualifier_part_lowercase.equals("rank=1"))
+          feature_cvterm.setRank(1);
+        else
+          feature_cvterm.setRank(0);
+        continue;
+      }
       // feature_cvterm_prop's  
       
       if(!this_qualifier_part_lowercase.startsWith("goid=") &&
