@@ -831,15 +831,19 @@ public class BamView extends JPanel
       return 0;
     
     if(offsetLengths == null)
-    {   
-/*    offsetLengths = new Hashtable<String, Integer>(combo.getItemCount());
-      int offset = 0;
-      for(int i=0; i<combo.getItemCount(); i++)
+    {
+      if(feature_display == null)
       {
-        String thisSeqName = (String) combo.getItemAt(i);
-        offsetLengths.put(thisSeqName, offset);
-        offset += seqLengths.get(combo.getItemAt(i));
-      }*/
+        offsetLengths = new HashMap<String, Integer>(combo.getItemCount());
+        int offset = 0;
+        for(int i=0; i<combo.getItemCount(); i++)
+        {
+          String thisSeqName = (String) combo.getItemAt(i);
+          offsetLengths.put(thisSeqName, offset);
+          offset += seqLengths.get(combo.getItemAt(i));
+        }
+        return offsetLengths.get(refName);
+      }
 
       final FeatureVector features = feature_display.getEntryGroup().getAllFeatures();
       final HashMap<String, Integer> lookup = new HashMap<String, Integer>();
