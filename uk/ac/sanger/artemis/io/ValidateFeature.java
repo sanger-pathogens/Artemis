@@ -158,6 +158,14 @@ public class ValidateFeature
         new FeatureListFrame (title, sel, gotoSrc, fltrGrp, plotGrp);
     featureList.setVisible(true);
   }
+  
+  protected static boolean isGFF(final uk.ac.sanger.artemis.io.Feature f, final EntryGroup entryGrp)
+  {
+    final boolean isGFF = entryGrp == null || GeneUtils.isGFFEntry( entryGrp );
+    if(isGFF && f instanceof GFFStreamFeature)
+      return true;
+    return false;
+  }
 
   /**
    * Check a single feature
@@ -183,8 +191,7 @@ public class ValidateFeature
 
     final LinkedHashMap<String, Level> report = new LinkedHashMap<String, Level>();
     final String fTxt = featureTxt(f);
-    final boolean isGFF = entryGrp == null || GeneUtils.isGFFEntry( entryGrp );
-    if(isGFF && f instanceof GFFStreamFeature)
+    if(isGFF(f, entryGrp))
     {
       final GFFStreamFeature gffFeature = (GFFStreamFeature)f;
       report.put("\n"+GeneUtils.getUniqueName(gffFeature)+" ("+fTxt+"):", Level.INFO);
@@ -229,7 +236,7 @@ public class ValidateFeature
           report.put("Prefix of ID attribute not consistent within gene model", Level.FATAL);
         }
       }
-    
+
       if( (entryGrp == null || !GeneUtils.isDatabaseEntry(entryGrp)) && !isCDSPhaseOK(gffFeature))
       {
         pass = false;
@@ -246,8 +253,12 @@ public class ValidateFeature
       }
     }
     else
+    {
+      if(f.getUserData() == null)
+        return report;
       report.put("\n"+((uk.ac.sanger.artemis.Feature)f.getUserData()).getIDString()+
           " ("+fTxt+"):", Level.INFO);
+    }
 
     if(isInternalStops(f))
     {
@@ -428,7 +439,7 @@ public class ValidateFeature
    *         1 - no gene found
    *         2 - missing transcript
    */
-  private static int isCompleteGeneModelOK(final GFFStreamFeature gffFeature)
+  protected static int isCompleteGeneModelOK(final GFFStreamFeature gffFeature)
   {
     final ChadoCanonicalGene gene = gffFeature.getChadoGene();
     if(gene == null)
@@ -441,7 +452,7 @@ public class ValidateFeature
     return 0;
   }
   
-  private static int isBoundaryOK(final GFFStreamFeature gffFeature)
+  protected static int isBoundaryOK(final GFFStreamFeature gffFeature)
   {
     final ChadoCanonicalGene gene = gffFeature.getChadoGene();
     int gb = 0;
@@ -450,7 +461,7 @@ public class ValidateFeature
     return gb;
   }
   
-  private static boolean isStrandOK(final GFFStreamFeature gffFeature)
+  protected static boolean isStrandOK(final GFFStreamFeature gffFeature)
   {
     final ChadoCanonicalGene gene = gffFeature.getChadoGene();
     if(gene != null && isGene(gffFeature) && !GeneUtils.isStrandOK(gene))
@@ -464,7 +475,7 @@ public class ValidateFeature
    * @param partialKeyStr - either Start_range or End_range qualifier keys
    * @return
    */
-  private static boolean isPartialConsistent(final GFFStreamFeature gffFeature,
+  protected static boolean isPartialConsistent(final GFFStreamFeature gffFeature,
                                              final String partialKeyStr)
   {
     final ChadoCanonicalGene gene = gffFeature.getChadoGene();
@@ -558,7 +569,7 @@ public class ValidateFeature
    * @param gffFeature
    * @return true if the prefix is the same within the gene model features
    */
-  private static boolean isIdPrefixConsistent(final GFFStreamFeature gffFeature)
+  protected static boolean isIdPrefixConsistent(final GFFStreamFeature gffFeature)
   {
     final ChadoCanonicalGene gene = gffFeature.getChadoGene();
     if(gene == null)
@@ -609,7 +620,7 @@ public class ValidateFeature
    * Check attribute column
    * @param gffFeature
    */
-  public static String isAttributesOK(final GFFStreamFeature gffFeature)
+  protected static String isAttributesOK(final GFFStreamFeature gffFeature)
   {
     final StringBuilder str = new StringBuilder();
     final QualifierVector qualifiers = gffFeature.getQualifiers();
@@ -657,7 +668,7 @@ public class ValidateFeature
     return str.toString();
   }
   
-  public boolean isInternalStops(final uk.ac.sanger.artemis.io.Feature feature)
+  protected boolean isInternalStops(final uk.ac.sanger.artemis.io.Feature feature)
   { 
     if(feature.getUserData() == null)
       return false;
@@ -687,7 +698,7 @@ public class ValidateFeature
     if(cds_predicate != null)
       return cds_predicate;
 
-    if(entryGrp != null && GeneUtils.isDatabaseEntry( entryGrp ))
+    if(entryGrp != null && GeneUtils.isGFFEntry( entryGrp ))
     {
       
       final FeaturePredicate codingPredicate = new FeaturePredicate(){
@@ -748,7 +759,7 @@ public class ValidateFeature
     return msg;
   }
   
-  private static boolean isPartOfGene(final GFFStreamFeature gffFeature)
+  protected static boolean isPartOfGene(final GFFStreamFeature gffFeature)
   {
     final String keyStr = gffFeature.getKey().getKeyString();
     for(String part: getGeneModelParts())
@@ -1048,10 +1059,10 @@ public class ValidateFeature
           System.out.println("VALIDATING... "+seq);
           uk.ac.sanger.artemis.Entry entry = ReadAndWriteEntry.readEntryFromDatabase(seq, entrySrc);
           entrySrc = ReadAndWriteEntry.getEntrySource();
-          final EntryGroup egroup = new SimpleEntryGroup();
-          egroup.add(entry);
+          final EntryGroup egrp = new SimpleEntryGroup();
+          egrp.add(entry);
 
-          ValidateFeature validate = new ValidateFeature(egroup);
+          ValidateFeature validate = new ValidateFeature(egrp);
           if(outfile == null)
             validate.showReport(entry.getEMBLEntry(), seq);
           else
@@ -1070,10 +1081,8 @@ public class ValidateFeature
       {
         System.out.println("VALIDATING... "+seq);
         final Document doc = DocumentFactory.makeDocument(seq);
-        final EntryInformation artemis_entry_information = 
-            Options.getArtemisEntryInformation();
         final uk.ac.sanger.artemis.io.Entry entry = EntryFileDialog.getEntryFromFile(
-            null, doc, artemis_entry_information, false);
+            null, doc, Options.getArtemisEntryInformation(), false);
         
         ValidateFeature validate = new ValidateFeature(null);
         if(outfile == null)

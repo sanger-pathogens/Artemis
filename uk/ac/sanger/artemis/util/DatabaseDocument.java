@@ -1595,6 +1595,9 @@ public class DatabaseDocument extends Document
     {
       attr_buff.append("product=");
       
+      // use the rank=1 to specify an alternative product where there is more than one
+      if(feature_cvterm.getRank() > 0)
+        attr_buff.append("rank="+feature_cvterm.getRank()+"%3B");
       constructCvTermString(attr_buff, dao, feature_cvterm, featureCvTermDbXRefs, 
           featureCvTermPubs, dbXRef, false, gene_builder);
     }

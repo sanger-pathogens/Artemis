@@ -28,6 +28,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 
 import javax.swing.Box;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
@@ -38,7 +39,11 @@ import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.util.StringVector;
 
 /**
- * Product display box
+ * Product display box. 
+ * 
+ * Where there are multiple products associated with a feature assume 
+ * the product is the recommended product unless rank=1 which means it 
+ * is an alternative product.
  */
 class ProductBox extends AbstractCvBox
 {
@@ -48,33 +53,34 @@ class ProductBox extends AbstractCvBox
   private JTextField withTextField;
   private JTextField dbxrefTextField;
   private JExtendedComboBox evidenceList;
-  private String origQualifierString;
+  private JCheckBox recommended = new JCheckBox();
+  private String origQualifierStr;
   private Qualifier origQualifier;
   private Box xHeadings = Box.createHorizontalBox();
   
   public ProductBox(final Qualifier qualifier,
-                    final String qualifierString,
+                    final String qualifierStr,
                     final int value_index,
                     final Dimension dimension,
                     final Dimension go_dimension)
   {
     this.origQualifier = qualifier;
-    this.origQualifierString = qualifierString;
+    this.origQualifierStr = qualifierStr;
     this.value_index  = value_index;
     this.xBox = Box.createHorizontalBox();
     
-    String term = getField("term=", qualifierString);
+    String term = getField("term=", qualifierStr);
 
     // this may not be stored as a CV (product_cv=no?)
     if(term.equals(""))
-      term = qualifierString;
+      term = qualifierStr;
    
     termTextField = new WrapTextArea(term, go_dimension, dimension.width*2);
     
     xBox.add(termTextField);
     
     // the WITH column is associated with one or more FeatureCvTermDbXRef
-    String with = getField("with=", qualifierString);
+    String with = getField("with=", qualifierStr);
     withTextField = new JTextField(with);
     withTextField.setToolTipText("with/from column");
     withTextField.setPreferredSize(dimension);
@@ -85,7 +91,7 @@ class ProductBox extends AbstractCvBox
 
     // N.B. for /GO the db_xref is a Pub (for primary pubs) 
     //      or FeatureCvTermPub (for others) in /GO
-    String dbxref = getField("db_xref=", qualifierString);
+    String dbxref = getField("db_xref=", qualifierStr);
     dbxrefTextField = new JTextField(dbxref);
     dbxrefTextField.setToolTipText("dbxref column");
     dbxrefTextField.setPreferredSize(dimension);
@@ -95,7 +101,7 @@ class ProductBox extends AbstractCvBox
     xBox.add(dbxrefTextField); 
     
     // feature_cvterm_prop's
-    String evidence = getField("evidence=", qualifierString);
+    String evidence = getField("evidence=", qualifierStr);
     
     evidenceList = new JExtendedComboBox(GoBox.evidenceCodes[1]);
     evidenceList.setOpaque(false);
@@ -109,23 +115,38 @@ class ProductBox extends AbstractCvBox
     evidenceList.setActionCommand("evidence=");
     xBox.add(evidenceList);
     
-   
-    JLabel lab = new JLabel("Product");
-    lab.setFont(lab.getFont().deriveFont(Font.BOLD));
-    xHeadings.add(lab);
+    // check box for recommended product
+    final String rank = getField("rank=", qualifierStr);
+    recommended.setSelected( (rank.length() == 0 || rank.equals("0")) ? true : false );
+    evidenceList.setActionCommand("rank=");
+    xBox.add(recommended);
     
-    xHeadings.add(Box.createRigidArea(new Dimension(
-         termTextField.getPreferredSize().width-lab.getPreferredSize().width,0)));
-    JLabel withLabel = new JLabel("WITH/FROM");
-    withLabel.setPreferredSize(dimension);
-    withLabel.setMaximumSize(dimension);
-    xHeadings.add(withLabel);
-    
-    JLabel dbxrefLabel = new JLabel("Dbxref");
-    dbxrefLabel.setPreferredSize(dimension);
-    dbxrefLabel.setMaximumSize(dimension);
-    xHeadings.add(dbxrefLabel);
-    xHeadings.add(Box.createHorizontalGlue());
+    if (value_index == 0)
+    {
+      JLabel lab = new JLabel("Product");
+      lab.setFont(lab.getFont().deriveFont(Font.BOLD));
+      xHeadings.add(lab);
+
+      xHeadings.add(Box.createRigidArea(new Dimension(termTextField
+          .getPreferredSize().width - lab.getPreferredSize().width, 0)));
+      JLabel withLabel = new JLabel("WITH/FROM");
+      withLabel.setPreferredSize(dimension);
+      withLabel.setMaximumSize(dimension);
+      xHeadings.add(withLabel);
+
+      JLabel dbxrefLabel = new JLabel("Dbxref");
+      dbxrefLabel.setPreferredSize(dimension);
+      dbxrefLabel.setMaximumSize(dimension);
+      xHeadings.add(dbxrefLabel);
+
+      xHeadings.add(Box.createHorizontalStrut(de.width));
+      JLabel recommendedLabel = new JLabel("Recommended");
+      recommendedLabel.setPreferredSize(dimension);
+      recommendedLabel.setMaximumSize(dimension);
+      xHeadings.add(recommendedLabel);
+
+      xHeadings.add(Box.createHorizontalGlue());
+    }
   }
 
   /**
@@ -133,29 +154,40 @@ class ProductBox extends AbstractCvBox
    */
   protected boolean isQualifierChanged()
   {
-    String old = getField("with=", origQualifierString);
+    String old = getField("with=", origQualifierStr);
     if(!old.equals(withTextField.getText().trim()))
       return true;
     
-    old = getField("db_xref=", origQualifierString);
+    old = getField("db_xref=", origQualifierStr);
     if(!old.equals(dbxrefTextField.getText().trim()))
       return true;
     
-    old = getField("evidence=", origQualifierString);
+    old = getField("evidence=", origQualifierStr);
     if(evidenceList.getSelectedIndex() > -1 &&
        !old.equalsIgnoreCase(GoBox.evidenceCodes[2][ evidenceList.getSelectedIndex() ]))
       return true;
     
+    // test rank change for recommended/alternative product
+    if(recommended.isEnabled())
+    {
+      old = getField("rank=", origQualifierStr);
+      if( !recommended.isSelected() && (old.equals("0") || old.equals("")) )
+        return true;
+      else if(recommended.isSelected() && !old.equals("0"))
+        return true;
+    }
     return false;
   }
 
   protected void updateQualifier(QualifierVector qv)
   {
-    StringVector values = origQualifier.getValues();
+    Qualifier oldQualifier = qv.getQualifierByName(origQualifier.getName());
+    StringVector values = oldQualifier.getValues();
+
     values.remove(value_index);
     String updatedQualifierString = updateQualifierString();
     
-    Splash.logger4j.debug(origQualifierString);
+    Splash.logger4j.debug(origQualifierStr);
     Splash.logger4j.debug(updatedQualifierString);
     values.add(value_index, updatedQualifierString);
     
@@ -168,29 +200,42 @@ class ProductBox extends AbstractCvBox
   
   private String updateQualifierString()
   {
-    String newQualifierString = origQualifierString;
+    String newQualifierString = origQualifierStr;
     
-    String old = getField("with=", origQualifierString);
+    String old = getField("with=", origQualifierStr);
     if(!old.equals(withTextField.getText().trim()))
     {
       newQualifierString = changeField("with=", withTextField.getText().trim(), 
                                        newQualifierString);
     }
     
-    old = getField("db_xref=", origQualifierString);
+    old = getField("db_xref=", origQualifierStr);
     if(!old.equals(dbxrefTextField.getText().trim()))
     {    
       newQualifierString = changeField("db_xref=", dbxrefTextField.getText().trim(), 
                                        newQualifierString);
     }
     
-    old = getField("evidence=", origQualifierString);
+    old = getField("evidence=", origQualifierStr);
     if(evidenceList.getSelectedIndex() > -1 &&
        !old.equals(GoBox.evidenceCodes[2][ evidenceList.getSelectedIndex() ]))
     {
       newQualifierString = changeField("evidence=", 
                    GoBox.evidenceCodes[2][ evidenceList.getSelectedIndex() ], 
                                        newQualifierString);
+    }
+    
+    // test rank change
+    old = getField("rank=", origQualifierStr);
+    if( !recommended.isSelected() )
+    {
+      if(old.equals("0") || old.equals(""))
+        newQualifierString = changeField("rank=", "1", newQualifierString);
+    }
+    else
+    {
+      if(recommended.isEnabled() && !old.equals("0") && !old.equals(""))
+        newQualifierString = changeField("rank=", "0", newQualifierString);
     }
 
     return newQualifierString;
@@ -205,6 +250,12 @@ class ProductBox extends AbstractCvBox
   {
     return xHeadings;
   }
-  
 
+  /**
+   * @return the recommended
+   */
+  protected JCheckBox getRecommended()
+  {
+    return recommended;
+  }
 }
