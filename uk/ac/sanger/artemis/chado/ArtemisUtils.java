@@ -76,23 +76,34 @@ public class ArtemisUtils
    */
   public static void inserFeatureCvTerm(GmodDAO dao, FeatureCvTerm featureCvTerm)
   {
-    List featureCvTerms = dao.getFeatureCvTermsByFeature(featureCvTerm.getFeature());
+    List<FeatureCvTerm> featureCvTerms = dao.getFeatureCvTermsByFeature(featureCvTerm.getFeature());
     logger4j.debug("In inserFeatureCvTerm() inserting");
-    int rank = 0;
-    for(int i=0; i<featureCvTerms.size(); i++)
+   
+    boolean isNotProduct = true;
+    try
     {
-      FeatureCvTerm this_feature_cvterm = (FeatureCvTerm)featureCvTerms.get(i);
-      
-      if(this_feature_cvterm.getCvTerm().getName().equals( 
-         featureCvTerm.getCvTerm().getName() )  &&
-         this_feature_cvterm.getCvTerm().getCv().getName().equals( 
-             featureCvTerm.getCvTerm().getCv().getName() ))
-      {
-        rank++;
-      }
-    }
+      // product feature_cvterm.rank is used to define alternative products
+      // where there are multiple products, so the rank may already be set
+      if(featureCvTerm.getCvTerm().getCv().getName().equals(
+          DatabaseDocument.PRODUCTS_TAG_CVNAME))
+        isNotProduct = false;
+    } catch(Exception e){}
     
-    featureCvTerm.setRank(rank);
+    if(isNotProduct || featureCvTerm.getRank() == 0)
+    {
+      int rank = 0;
+      for(FeatureCvTerm this_feature_cvterm: featureCvTerms)
+      {
+        if(this_feature_cvterm.getCvTerm().getName().equals( 
+           featureCvTerm.getCvTerm().getName() )  &&
+           this_feature_cvterm.getCvTerm().getCv().getName().equals( 
+               featureCvTerm.getCvTerm().getCv().getName() ))
+        {
+          rank++;
+        }
+      }
+      featureCvTerm.setRank(rank);
+    }
     dao.persist(featureCvTerm);
   }
   
