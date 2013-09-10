@@ -959,11 +959,11 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
       if(contig_ranges != null)
       {
         final FeatureVector gff_regions = getAllFeatures();
-        final Enumeration gff_features  = gff_regions.elements();
-        
+        final Enumeration<Feature> gff_features  = gff_regions.elements();
+
         while(gff_features.hasMoreElements())
         {
-          final Feature f = (Feature) gff_features.nextElement();
+          final Feature f = gff_features.nextElement();
           if( !(f instanceof GFFStreamFeature) )
             continue;
           
@@ -986,7 +986,9 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
                                          r.getEnd()+new_range.getStart()-1));
               }
 
-              f.setLocation(new Location(new_ranges, f.getLocation().isComplement()));
+              Location l = new Location(new_ranges, f.getLocation().isComplement());
+              f.setLocation(l);
+              ((uk.ac.sanger.artemis.Feature)f.getUserData()).setLocation(l);
             }
             catch(OutOfRangeException e)
             {
