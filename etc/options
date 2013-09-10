@@ -423,7 +423,7 @@ extra_keys = \
     TMM signalP
 
 # this list is added to the keys from the feature_keys_gff file
-extra_keys_gff = CDS spliced_leader_RNA sequence_variant
+extra_keys_gff = CDS spliced_leader_RNA sequence_variant fasta_record
 
 # Names of qualifiers to search when attempting to find the primary or display
 # name of a gene.  These qualifiers names are searched in order when looking
