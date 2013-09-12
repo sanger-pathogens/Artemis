@@ -24,23 +24,31 @@ import java.io.IOException;
 import java.net.URL;
 
 import junit.framework.Assert;
+import uk.ac.sanger.artemis.EntryGroup;
+import uk.ac.sanger.artemis.Feature;
+import uk.ac.sanger.artemis.FeatureSegmentVector;
+import uk.ac.sanger.artemis.FeatureVector;
 import uk.ac.sanger.artemis.Options;
+import uk.ac.sanger.artemis.Selection;
+import uk.ac.sanger.artemis.SimpleEntryGroup;
 import uk.ac.sanger.artemis.io.DocumentEntryFactory;
 import uk.ac.sanger.artemis.io.Entry;
 import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.sequence.AminoAcidSequence;
 import uk.ac.sanger.artemis.sequence.Bases;
+import uk.ac.sanger.artemis.sequence.NoSequenceException;
 import uk.ac.sanger.artemis.util.Document;
 import uk.ac.sanger.artemis.util.DocumentFactory;
+import uk.ac.sanger.artemis.util.OutOfRangeException;
 import uk.ac.sanger.artemis.util.StringVector;
 
 public class Utils
 {
-  protected static Entry getEntry(final String fileName)
+  public static Entry getEntry(final String fileName)
   {
     try
     {
-      URL entryFile = ValidateFeatureTest.class.getResource(fileName);
+      URL entryFile = Utils.class.getResource(fileName);
       final Document doc = DocumentFactory.makeDocument(entryFile.getFile());
       return DocumentEntryFactory.makeDocumentEntry(
           Options.getArtemisEntryInformation(),doc,null);
@@ -50,6 +58,27 @@ public class Utils
       Assert.fail(e.getMessage());
     }
     catch(IOException e) 
+    {
+      Assert.fail(e.getMessage());
+    }
+    return null;
+  }
+  
+  public static EntryGroup getEntryGroup(final String fileName)
+  {
+    try
+    {
+      final Entry new_embl_entry = getEntry(fileName);
+      final uk.ac.sanger.artemis.Entry entry = new  uk.ac.sanger.artemis.Entry(new_embl_entry);
+      final EntryGroup egrp = new SimpleEntryGroup(entry.getBases());
+      egrp.add(entry);
+      return egrp;
+    }
+    catch(OutOfRangeException e)
+    {
+      Assert.fail(e.getMessage());
+    }
+    catch(NoSequenceException e)
     {
       Assert.fail(e.getMessage());
     }
