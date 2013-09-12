@@ -21,6 +21,7 @@
 package uk.ac.sanger.artemis.io;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 import junit.framework.Assert;
 
 import org.junit.Test;
@@ -68,13 +69,13 @@ public class GFFTest
             final String id = q.getValues().get(0);
             if (id.equals("PF3D7_0200100"))
             {
-              assertTrue("Offset check first base: " + id + 
+              assertEquals("Offset check first base: " + id + 
                   " " +f.getFirstBase() + " != 666083",
-                  f.getFirstBase() == 666083);
+                  f.getFirstBase(), 666083);
 
-              assertTrue("Offset check location: " + id+ 
+              assertEquals("Offset check location: " + id+ 
                   " " +f.getEmblFeature().getLocation().getFirstBase() + " != 666083", 
-                  f.getEmblFeature().getLocation().getFirstBase() == 666083);
+                  f.getEmblFeature().getLocation().getFirstBase(), 666083);
             }
           }
         }
