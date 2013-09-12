@@ -34,6 +34,7 @@ import org.junit.Test;
 import junit.framework.Assert;
 
 import uk.ac.sanger.artemis.EntryGroup;
+import uk.ac.sanger.artemis.Feature;
 import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.SimpleEntryGroup;
 import uk.ac.sanger.artemis.components.EntryFileDialog;
@@ -54,45 +55,37 @@ public class ValidateFeatureTest
   @Test
   public void testGFF()
   {
-    try 
-    {
-      final Entry entry = Utils.getEntry("/data/test.gff.gz");
-      final EntryGroup egrp = new SimpleEntryGroup();
-      egrp.add(new uk.ac.sanger.artemis.Entry(entry));
-      ValidateFeature validate = new ValidateFeature(egrp);
-      
-      final FeatureVector features = entry.getAllFeatures();
+    testAll(Utils.getEntryGroup("/data/test.gff.gz"));
+  }
+  
+  public static void testAll(final EntryGroup egrp)
+  {
+    ValidateFeature validate = new ValidateFeature(egrp);
+    final uk.ac.sanger.artemis.FeatureVector features = egrp.getAllFeatures();
 
-      for(uk.ac.sanger.artemis.io.Feature f: features)
+    for(int i=0; i<features.size(); i++)
+    {
+      Feature artFeature = features.elementAt(i);
+      uk.ac.sanger.artemis.io.Feature f = artFeature.getEmblFeature();
+      if(ValidateFeature.isGFF(f, null))
       {
-        if(ValidateFeature.isGFF(f, null))
-        {
-          GFFStreamFeature gffFeature = (GFFStreamFeature)f;
-          String id = GeneUtils.getUniqueName(gffFeature);
-          
-          assertTrue("Boundary "+id,  ValidateFeature.isBoundaryOK(gffFeature) == 0);
-          assertTrue("Strand "+id,    ValidateFeature.isStrandOK(gffFeature));
-          assertTrue("CDS phase "+id, ValidateFeature.isCDSPhaseOK(gffFeature));
-          assertTrue("Attribute "+id, ValidateFeature.isAttributesOK(gffFeature).length() == 0);
-          assertTrue("ID check "+id, ValidateFeature.isIdPrefixConsistent(gffFeature));
-          assertTrue("Start_range check "+id, ValidateFeature.isPartialConsistent(gffFeature, "Start_range"));
-          assertTrue("End_range check "+id, ValidateFeature.isPartialConsistent(gffFeature, "End_range"));
+        GFFStreamFeature gffFeature = (GFFStreamFeature)f;
+        String id = GeneUtils.getUniqueName(gffFeature);
+        
+        assertTrue("Boundary "+id,  ValidateFeature.isBoundaryOK(gffFeature) == 0);
+        assertTrue("Strand "+id,    ValidateFeature.isStrandOK(gffFeature));
+        assertTrue("CDS phase "+id, ValidateFeature.isCDSPhaseOK(gffFeature));
+        assertTrue("Attribute "+id, ValidateFeature.isAttributesOK(gffFeature).length() == 0);
+        assertTrue("ID check "+id, ValidateFeature.isIdPrefixConsistent(gffFeature));
+        assertTrue("Start_range check "+id, ValidateFeature.isPartialConsistent(gffFeature, "Start_range"));
+        assertTrue("End_range check "+id, ValidateFeature.isPartialConsistent(gffFeature, "End_range"));
 
-          if(ValidateFeature.isPartOfGene(gffFeature))
-            assertTrue("Gene model "+id, ValidateFeature.isCompleteGeneModelOK(gffFeature) == 0);
-        }
-
-        assertTrue("Stop codon", validate.hasValidStop(f));
-        assertTrue("Internal stop codon", !validate.isInternalStops(f));
+        if(ValidateFeature.isPartOfGene(gffFeature))
+          assertTrue("Gene model not complete "+id, ValidateFeature.isCompleteGeneModelOK(gffFeature) == 0);
       }
-    }
-    catch(OutOfRangeException e)
-    {
-      Assert.fail(e.getMessage());
-    }
-    catch(NoSequenceException e)
-    {
-      Assert.fail(e.getMessage());
+
+      assertTrue("Stop codon "+artFeature.getIDString(), validate.hasValidStop(f));
+      assertTrue("Internal stop codon "+artFeature.getIDString(), !validate.isInternalStops(f));
     }
   }
   
