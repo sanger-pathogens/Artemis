@@ -34,6 +34,8 @@ import uk.ac.sanger.artemis.SimpleEntryGroup;
 import uk.ac.sanger.artemis.io.DocumentEntryFactory;
 import uk.ac.sanger.artemis.io.Entry;
 import uk.ac.sanger.artemis.io.EntryInformationException;
+import uk.ac.sanger.artemis.io.InvalidRelationException;
+import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.sequence.AminoAcidSequence;
 import uk.ac.sanger.artemis.sequence.Bases;
 import uk.ac.sanger.artemis.sequence.NoSequenceException;
@@ -79,6 +81,37 @@ public class Utils
       Assert.fail(e.getMessage());
     }
     catch(NoSequenceException e)
+    {
+      Assert.fail(e.getMessage());
+    }
+    return null;
+  }
+  
+  /**
+   * Get a CDS feature with the feature ID prefix
+   * @param featureName
+   * @param features
+   * @return
+   */
+  public static Feature getCDSFeatureByIdPrefix(
+                 final String id,
+                 final FeatureVector features)
+  {
+    try
+    {
+      for (int i=0; i<features.size(); i++)
+      {
+        Feature f = features.elementAt(i);
+        final Qualifier q = f.getQualifierByName("ID");
+        if (q != null)
+        {
+          final String thisId = q.getValues().get(0);
+          if (thisId.startsWith(id) && f.isCDS())
+            return f;
+        }
+      }
+    }
+    catch(InvalidRelationException e) 
     {
       Assert.fail(e.getMessage());
     }
