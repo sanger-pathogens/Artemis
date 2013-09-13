@@ -1641,7 +1641,7 @@ public class EditMenu extends SelectionMenu
    *  @param entry_group Used to get the ActionController for calling
    *    startAction() and endAction().
    **/
-  private static void unmergeFeature(final JFrame frame,
+  protected static void unmergeFeature(final JFrame frame,
                               final Selection selection,
                               final EntryGroup entry_group) 
   {
@@ -1710,16 +1710,15 @@ public class EditMenu extends SelectionMenu
         {
           final FeatureVector chadoGenes = new FeatureVector();
           chadoGenes.add(segment_feature);
-          final Vector duplicateGenes = duplicateGeneFeatures(frame, chadoGenes, entry_group);
+          final Vector<ChadoCanonicalGene> duplicateGenes = duplicateGeneFeatures(frame, chadoGenes, entry_group);
           
           // get the new duplicate spliced feature
-          ChadoCanonicalGene chado_gene = (ChadoCanonicalGene)duplicateGenes.get(0);
+          ChadoCanonicalGene chado_gene = duplicateGenes.get(0);
           // assumes single transcript
-          uk.ac.sanger.artemis.io.Feature transcript = 
-            (uk.ac.sanger.artemis.io.Feature)chado_gene.getTranscripts().get(0);
+          uk.ac.sanger.artemis.io.Feature transcript = chado_gene.getTranscripts().get(0);
           // get the spliced feature with the same key as the segment
           // selected to unmerge
-          uk.ac.sanger.artemis.io.Feature spliced = (uk.ac.sanger.artemis.io.Feature)
+          uk.ac.sanger.artemis.io.Feature spliced =
             chado_gene.getSpliceSitesOfTranscript(GeneUtils.getUniqueName(transcript), 
               first_segment.getFeature().getKey().getKeyString()).get(0);
           new_feature = (Feature)spliced.getUserData();
@@ -1733,11 +1732,8 @@ public class EditMenu extends SelectionMenu
         // segment_feature and delete the segments up to (and including)
         // index_of_first_segment from new_feature
 
-        for(int i = all_feature_segments.size() - 1;
-            i >= index_of_second_segment; --i)
-        {
+        for(int i = all_feature_segments.size() - 1; i >= index_of_second_segment; --i)
           segment_feature.getSegments ().elementAt (i).removeFromFeature ();
-        }
 
         // remove the first segment of new_feature index_of_first_segment times
         for (int i = 0; i <= index_of_first_segment; ++i) 
@@ -1747,15 +1743,15 @@ public class EditMenu extends SelectionMenu
         {
           final FeatureVector chadoGenes = new FeatureVector();
           chadoGenes.add(segment_feature);
-          final Vector duplicateGenes = duplicateGeneFeatures(frame, chadoGenes, entry_group);
+          final Vector<ChadoCanonicalGene> duplicateGenes = duplicateGeneFeatures(frame, chadoGenes, entry_group);
           
           final GFFStreamFeature orig_feature = (GFFStreamFeature)segment_feature.getEmblFeature();
           final ChadoCanonicalGene orig_chado_gene = orig_feature.getChadoGene();
           final String prevId = GeneUtils.getUniqueName(orig_chado_gene.getGene());
           GeneUtils.deleteAllFeature(
-              ((uk.ac.sanger.artemis.Feature)orig_chado_gene.getGene().getUserData()), orig_chado_gene);
+              ((uk.ac.sanger.artemis.Feature)orig_chado_gene.getGene().getUserData()), orig_chado_gene, false);
 
-          final ChadoCanonicalGene gene1 = (ChadoCanonicalGene)duplicateGenes.get(0);
+          final ChadoCanonicalGene gene1 = duplicateGenes.get(0);
           final ChadoCanonicalGene gene2 = ((GFFStreamFeature)new_feature.getEmblFeature()).getChadoGene();
           if(!prevId.startsWith("DUP"))
           {
@@ -2176,7 +2172,7 @@ public class EditMenu extends SelectionMenu
   }
 
   
-  protected static Vector duplicateGeneFeatures(final JFrame frame,
+  private static Vector<ChadoCanonicalGene> duplicateGeneFeatures(final JFrame frame,
       final FeatureVector features,
       final EntryGroup entry_group) 
   {
