@@ -167,6 +167,7 @@ public class IndexFastaStream extends StreamSequence
     
     len = getLengthByIndex(seqIndex);
     contig = getContigByIndex(seqIndex);
+    basesCache = null;
   }
 
   /**
@@ -204,6 +205,7 @@ public class IndexFastaStream extends StreamSequence
       for(int idx=0; idx<seq.length(); idx++)
         basesCache.put(i+idx, seq.charAt(idx));
     }
+
     return (Character)basesCache.get(i);
   }
   
