@@ -1,3 +1,23 @@
+/* 
+ * This file is part of Artemis
+ *
+ * Copyright (C) 2013  Genome Research Limited
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ */
 package uk.ac.sanger.artemis.io;
 
 import static org.junit.Assert.assertEquals;
@@ -14,6 +34,7 @@ import org.junit.Test;
 import junit.framework.Assert;
 
 import uk.ac.sanger.artemis.EntryGroup;
+import uk.ac.sanger.artemis.Feature;
 import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.SimpleEntryGroup;
 import uk.ac.sanger.artemis.components.EntryFileDialog;
@@ -34,45 +55,37 @@ public class ValidateFeatureTest
   @Test
   public void testGFF()
   {
-    try 
-    {
-      final Entry entry = getEntry("/data/test.gff.gz");
-      final EntryGroup egrp = new SimpleEntryGroup();
-      egrp.add(new uk.ac.sanger.artemis.Entry(entry));
-      ValidateFeature validate = new ValidateFeature(egrp);
-      
-      final FeatureVector features = entry.getAllFeatures();
+    testAll(Utils.getEntryGroup("/data/test.gff.gz"));
+  }
+  
+  public static void testAll(final EntryGroup egrp)
+  {
+    ValidateFeature validate = new ValidateFeature(egrp);
+    final uk.ac.sanger.artemis.FeatureVector features = egrp.getAllFeatures();
 
-      for(uk.ac.sanger.artemis.io.Feature f: features)
+    for(int i=0; i<features.size(); i++)
+    {
+      Feature artFeature = features.elementAt(i);
+      uk.ac.sanger.artemis.io.Feature f = artFeature.getEmblFeature();
+      if(ValidateFeature.isGFF(f, null))
       {
-        if(ValidateFeature.isGFF(f, null))
-        {
-          GFFStreamFeature gffFeature = (GFFStreamFeature)f;
-          String id = GeneUtils.getUniqueName(gffFeature);
-          
-          assertTrue("Boundary "+id,  ValidateFeature.isBoundaryOK(gffFeature) == 0);
-          assertTrue("Strand "+id,    ValidateFeature.isStrandOK(gffFeature));
-          assertTrue("CDS phase "+id, ValidateFeature.isCDSPhaseOK(gffFeature));
-          assertTrue("Attribute "+id, ValidateFeature.isAttributesOK(gffFeature).length() == 0);
-          assertTrue("ID check "+id, ValidateFeature.isIdPrefixConsistent(gffFeature));
-          assertTrue("Start_range check "+id, ValidateFeature.isPartialConsistent(gffFeature, "Start_range"));
-          assertTrue("End_range check "+id, ValidateFeature.isPartialConsistent(gffFeature, "End_range"));
+        GFFStreamFeature gffFeature = (GFFStreamFeature)f;
+        String id = GeneUtils.getUniqueName(gffFeature);
+        
+        assertTrue("Boundary "+id,  ValidateFeature.isBoundaryOK(gffFeature) == 0);
+        assertTrue("Strand "+id,    ValidateFeature.isStrandOK(gffFeature));
+        assertTrue("CDS phase "+id, ValidateFeature.isCDSPhaseOK(gffFeature));
+        assertTrue("Attribute "+id, ValidateFeature.isAttributesOK(gffFeature).length() == 0);
+        assertTrue("ID check "+id, ValidateFeature.isIdPrefixConsistent(gffFeature));
+        assertTrue("Start_range check "+id, ValidateFeature.isPartialConsistent(gffFeature, "Start_range"));
+        assertTrue("End_range check "+id, ValidateFeature.isPartialConsistent(gffFeature, "End_range"));
 
-          if(ValidateFeature.isPartOfGene(gffFeature))
-            assertTrue("Gene model "+id, ValidateFeature.isCompleteGeneModelOK(gffFeature) == 0);
-        }
-
-        assertTrue("Stop codon", validate.hasValidStop(f));
-        assertTrue("Internal stop codon", !validate.isInternalStops(f));
+        if(ValidateFeature.isPartOfGene(gffFeature))
+          assertTrue("Gene model not complete "+id, ValidateFeature.isCompleteGeneModelOK(gffFeature) == 0);
       }
-    }
-    catch(OutOfRangeException e)
-    {
-      Assert.fail(e.getMessage());
-    }
-    catch(NoSequenceException e)
-    {
-      Assert.fail(e.getMessage());
+
+      assertTrue("Stop codon "+artFeature.getIDString(), validate.hasValidStop(f));
+      assertTrue("Internal stop codon "+artFeature.getIDString(), !validate.isInternalStops(f));
     }
   }
   
@@ -82,7 +95,7 @@ public class ValidateFeatureTest
   @Test
   public void testGFFBoundary()
   {
-    final Entry entry = getEntry("/data/test_boundary.gff.gz");
+    final Entry entry = Utils.getEntry("/data/test_boundary.gff.gz");
     final FeatureVector features = entry.getAllFeatures();
 
     for(uk.ac.sanger.artemis.io.Feature f: features)
@@ -105,7 +118,7 @@ public class ValidateFeatureTest
   @Test
   public void testGFFStrand()
   {
-    final Entry entry = getEntry("/data/test_boundary.gff.gz");
+    final Entry entry = Utils.getEntry("/data/test_boundary.gff.gz");
     final FeatureVector features = entry.getAllFeatures();
 
     for(uk.ac.sanger.artemis.io.Feature f: features)
@@ -128,7 +141,7 @@ public class ValidateFeatureTest
   @Test
   public void testGFFPhase()
   {
-    final Entry entry = getEntry("/data/test_boundary.gff.gz");
+    final Entry entry = Utils.getEntry("/data/test_boundary.gff.gz");
     final FeatureVector features = entry.getAllFeatures();
 
     for(uk.ac.sanger.artemis.io.Feature f: features)
@@ -151,7 +164,7 @@ public class ValidateFeatureTest
   @Test
   public void testGFFCompleteGeneModel()
   {
-    final Entry entry = getEntry("/data/test_boundary.gff.gz");
+    final Entry entry = Utils.getEntry("/data/test_boundary.gff.gz");
     final FeatureVector features = entry.getAllFeatures();
 
     for(uk.ac.sanger.artemis.io.Feature f: features)
@@ -180,7 +193,7 @@ public class ValidateFeatureTest
   @Test
   public void testGFFId()
   {
-    final Entry entry = getEntry("/data/test_boundary.gff.gz");
+    final Entry entry = Utils.getEntry("/data/test_boundary.gff.gz");
     final FeatureVector features = entry.getAllFeatures();
 
     for(uk.ac.sanger.artemis.io.Feature f: features)
@@ -205,7 +218,7 @@ public class ValidateFeatureTest
   @Test
   public void testGFFPartials()
   {
-    final Entry entry = getEntry("/data/test_boundary.gff.gz");
+    final Entry entry = Utils.getEntry("/data/test_boundary.gff.gz");
     final FeatureVector features = entry.getAllFeatures();
 
     for(uk.ac.sanger.artemis.io.Feature f: features)
@@ -232,7 +245,7 @@ public class ValidateFeatureTest
   @Test
   public void testGFFAttributes()
   {
-    final Entry entry = getEntry("/data/test_boundary.gff.gz");
+    final Entry entry = Utils.getEntry("/data/test_boundary.gff.gz");
     final FeatureVector features = entry.getAllFeatures();
 
     for(uk.ac.sanger.artemis.io.Feature f: features)
@@ -259,7 +272,7 @@ public class ValidateFeatureTest
   {
     try
     {
-      final Entry entry = getEntry("/data/test_boundary.gff.gz");
+      final Entry entry = Utils.getEntry("/data/test_boundary.gff.gz");
       final FeatureVector features = entry.getAllFeatures();
       final EntryGroup egrp = new SimpleEntryGroup();
       egrp.add(new uk.ac.sanger.artemis.Entry(entry));
@@ -294,7 +307,7 @@ public class ValidateFeatureTest
   {
     try
     {
-      final Entry entry = getEntry("/data/test_boundary.gff.gz");
+      final Entry entry = Utils.getEntry("/data/test_boundary.gff.gz");
       final FeatureVector features = entry.getAllFeatures();
       final EntryGroup egrp = new SimpleEntryGroup();
       egrp.add(new uk.ac.sanger.artemis.Entry(entry));
@@ -317,24 +330,4 @@ public class ValidateFeatureTest
     }
   }
   
-  
-  private Entry getEntry(final String gff)
-  {
-    try
-    {
-      URL gffFile = ValidateFeatureTest.class.getResource(gff);
-      final Document doc = DocumentFactory.makeDocument(gffFile.getFile());
-      return DocumentEntryFactory.makeDocumentEntry(
-          Options.getArtemisEntryInformation(),doc,null);
-    }
-    catch(EntryInformationException e) 
-    {
-      Assert.fail(e.getMessage());
-    }
-    catch(IOException e) 
-    {
-      Assert.fail(e.getMessage());
-    }
-    return null;
-  }
 }

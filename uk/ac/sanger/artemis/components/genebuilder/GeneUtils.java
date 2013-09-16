@@ -593,9 +593,8 @@ public class GeneUtils
     final Vector<ChadoCanonicalGene> newGenes = new Vector<ChadoCanonicalGene>();
     for (int i = 0 ; i < features_to_duplicate.size () ; ++i) 
     {
-      final uk.ac.sanger.artemis.Feature this_feature = 
-                           features_to_duplicate.elementAt(i);
-      final GFFStreamFeature gffFeature = (GFFStreamFeature)this_feature.getEmblFeature();
+      final GFFStreamFeature gffFeature = 
+           (GFFStreamFeature)features_to_duplicate.elementAt(i).getEmblFeature();
       if(duplicatedGenes.contains(gffFeature.getChadoGene()))
         continue;
       
@@ -614,61 +613,39 @@ public class GeneUtils
         newchadoGene.setGene(newGeneFeature.getEmblFeature());
         
         final List<Feature> transcripts = chadoGene.getTranscripts();
-        for(int j=0; j<transcripts.size(); j++)
+        for(int j=0; j<transcripts.size(); j++) // duplicate transcripts and children
         {
           final GFFStreamFeature transcript = (GFFStreamFeature)transcripts.get(j);
-          final String transcriptName =
-            (String)transcript.getQualifierByName("ID").getValues().get(0);
+          final String transcriptName = getUniqueName(transcript);
           
-          uk.ac.sanger.artemis.Feature newTranscriptFeature = 
-            duplicateFeature(transcript, newchadoGene);
+          uk.ac.sanger.artemis.Feature newTranscriptFeature = duplicateFeature(transcript, newchadoGene);
           newchadoGene.addTranscript(newTranscriptFeature.getEmblFeature());
-          final String newTranscriptName =
-            (String)newTranscriptFeature.getQualifierByName("ID").getValues().get(0);
-          
-          List newFeatures;
-          
-          newFeatures= duplicateFeatures(chadoGene.get3UtrOfTranscript(transcriptName), newchadoGene);
-          for(int k=0; k<newFeatures.size(); k++)
-          {
-            uk.ac.sanger.artemis.Feature utrFeature = 
-              (uk.ac.sanger.artemis.Feature)newFeatures.get(k);
+          final String newTranscriptName = getUniqueName(newTranscriptFeature.getEmblFeature());
+
+          List<uk.ac.sanger.artemis.Feature> newFeatures= 
+              duplicateFeatures(chadoGene.get3UtrOfTranscript(transcriptName), newchadoGene);
+          for(uk.ac.sanger.artemis.Feature utrFeature: newFeatures)
             newchadoGene.add3PrimeUtr(newTranscriptName, utrFeature.getEmblFeature());
-          }
           
           newFeatures = duplicateFeatures(chadoGene.get5UtrOfTranscript(transcriptName), newchadoGene);
-          for(int k=0; k<newFeatures.size(); k++)
-          {
-            uk.ac.sanger.artemis.Feature utrFeature = 
-              (uk.ac.sanger.artemis.Feature)newFeatures.get(k);
+          for(uk.ac.sanger.artemis.Feature utrFeature: newFeatures)
             newchadoGene.add5PrimeUtr(newTranscriptName, utrFeature.getEmblFeature());
-          }
           
           newFeatures = duplicateFeatures(chadoGene.getOtherFeaturesOfTranscript(transcriptName), newchadoGene);
-          for(int k=0; k<newFeatures.size(); k++)
-          {
-            uk.ac.sanger.artemis.Feature otherFeature = 
-              (uk.ac.sanger.artemis.Feature)newFeatures.get(k);
+          for(uk.ac.sanger.artemis.Feature otherFeature: newFeatures)
             newchadoGene.addOtherFeatures(newTranscriptName, otherFeature.getEmblFeature());
-          }
 
           newFeatures = duplicateFeatures(chadoGene.getSplicedFeaturesOfTranscript(transcriptName), newchadoGene);
-          for(int k=0; k<newFeatures.size(); k++)
-          {
-            uk.ac.sanger.artemis.Feature splicedFeature = 
-              (uk.ac.sanger.artemis.Feature)newFeatures.get(k);
+          for(uk.ac.sanger.artemis.Feature splicedFeature: newFeatures)
             newchadoGene.addSplicedFeatures(newTranscriptName, splicedFeature.getEmblFeature());
-          }
           
           uk.ac.sanger.artemis.Feature newProtein = 
             duplicateFeature(chadoGene.getProteinOfTranscript(transcriptName), newchadoGene);
           if(newProtein != null)
             newchadoGene.addProtein(newTranscriptName, newProtein.getEmblFeature());
-          
         }
       } 
       catch (ReadOnlyException e) {}
-      catch(InvalidRelationException e) {}
     }
     
     duplicatedGenes.clear();
@@ -704,34 +681,6 @@ public class GeneUtils
     ((GFFStreamFeature)newFeature.getEmblFeature()).setChadoGene(chadoGene);
     if(isHiddenFeature(newFeature.getKey().getKeyString()))
       ((GFFStreamFeature)newFeature.getEmblFeature()).setVisible(false);
-    /*
-    try
-    {
-      final QualifierVector qv = newFeature.getQualifiers().copy();
-      
-      for(int i=0; i<qv.size(); i++)
-      {
-        final Qualifier qualifier = (Qualifier)qv.elementAt(i);
-        if(!qualifier.getName().equals("ID") &&
-           !qualifier.getName().equals("Parent") &&
-           !qualifier.getName().equals("Derives_from") &&
-           ChadoTransactionManager.isSpecialTag(qualifier.getName()))
-          newFeature.getQualifiers().removeQualifierByName(qualifier.getName());
-      }
-
-      newFeature.set(newFeature.getKey(), newFeature.getLocation(), qv);
-    }
-    catch(EntryInformationException e)
-    {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-    catch(OutOfRangeException e)
-    {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-    */
     return newFeature;
   }
   
@@ -1001,6 +950,12 @@ public class GeneUtils
       feature.removeFromEntry();
   }
 
+  public static void deleteAllFeature(uk.ac.sanger.artemis.Feature feature,
+      final ChadoCanonicalGene chado_gene) throws ReadOnlyException
+  {
+    deleteAllFeature(feature, chado_gene, true); 
+  }
+  
   /**
    * Delete feature and children in a chado gene model
    * @param feature
@@ -1008,20 +963,22 @@ public class GeneUtils
    * @throws ReadOnlyException
    */
   public static void deleteAllFeature(uk.ac.sanger.artemis.Feature feature,
-      final ChadoCanonicalGene chado_gene) throws ReadOnlyException
+      final ChadoCanonicalGene chado_gene, final boolean updateChadoCanonicalGene) throws ReadOnlyException
   {
-    Set children = chado_gene.getChildren(feature.getEmblFeature());
+    Set<Feature> children = chado_gene.getChildren(feature.getEmblFeature());
     deleteFeature(feature);
-    chado_gene.deleteFeature(feature.getEmblFeature());
+    if(updateChadoCanonicalGene)
+      chado_gene.deleteFeature(feature.getEmblFeature());
 
     Feature embl_feature;
-    Iterator it = children.iterator();
+    Iterator<Feature> it = children.iterator();
 
     while(it.hasNext())
     {
-      embl_feature = (Feature) it.next();
+      embl_feature = it.next();
       deleteFeature((uk.ac.sanger.artemis.Feature) embl_feature.getUserData());
-      chado_gene.deleteFeature(embl_feature);
+      if(updateChadoCanonicalGene)
+        chado_gene.deleteFeature(embl_feature);
     }
   }
   

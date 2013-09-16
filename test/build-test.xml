@@ -83,6 +83,21 @@
   	<echo>Running test with EMBOSS_ROOT=${EMBOSS_ROOT}</echo>
   	<junit description="alltests" fork="yes">
   	 <jvmarg value="-DEMBOSS_ROOT=${EMBOSS_ROOT}"/>
+  	 <batchtest todir="${build.dest.tests}">
+  	 	<fileset dir="${build.src.tests}">
+  	 		<include name="uk/ac/sanger/artemis/**/**Test.java"/>
+  	 		<include name="uk/ac/sanger/artemis/**/**/**Test.java"/>
+  	 	</fileset>
+  	 </batchtest>
+  	 <formatter type="plain" usefile="false"/>
+  	 <classpath refid="compile.classpath"/> 
+  	</junit>
+  </target>
+	
+  <target name="test-headless" depends="compile">
+  	<echo>Running test with EMBOSS_ROOT=${EMBOSS_ROOT}</echo>
+  	<junit description="alltests" fork="yes">
+  	 <jvmarg value="-DEMBOSS_ROOT=${EMBOSS_ROOT}"/>
      <jvmarg value="-Djava.awt.headless=true"/>
   	 <batchtest todir="${build.dest.tests}">
   	 	<fileset dir="${build.src.tests}">
