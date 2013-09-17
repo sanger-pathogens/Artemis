@@ -57,29 +57,18 @@ public class ValidateViewer extends FileViewer implements EntryGroupChangeListen
   private FeatureVector selectedFeatures;
   private JCheckBox showFailedFeatures = new JCheckBox("Show only failed features", true);
   private boolean inAutoFix = false;
-  private String seqName;
 
-  public ValidateViewer(final EntryGroup entryGrp,
-                        final FeatureVector selectedFeatures)
-  {
-    this(entryGrp, selectedFeatures, null);
-  }
-  
   /**
    * Viewer to display validation results
    * @param entryGrp
    * @param features
    */
   public ValidateViewer(final EntryGroup entryGrp,
-                        final FeatureVector selectedFeatures,
-                        final String seqName)
+                        final FeatureVector selectedFeatures)
   {
-    super("Validation Report :: "+ (seqName!=null? seqName:""), false, false, true);
+    super("Validation Report :: ", false, false, true);
     this.entryGrp = entryGrp;
     this.selectedFeatures = selectedFeatures;
-    this.seqName = seqName;
-    
-    //final boolean allFeatures = (selectedFeatures == null);
 
     update();
     setVisible(true);
@@ -219,9 +208,7 @@ public class ValidateViewer extends FileViewer implements EntryGroupChangeListen
           this, showFailedFeatures.isSelected()))
         nfail++;
 
-    setTitle("Validation Report :: "+ 
-               (seqName!=null&&!seqName.equals("")? 
-                seqName+" :: " : "")+features.size()+
+    setTitle("Validation Report :: "+ features.size()+
         " feature(s) Pass: "+(features.size()-nfail)+" Failed: "+nfail);
   }
   
@@ -264,7 +251,6 @@ public class ValidateViewer extends FileViewer implements EntryGroupChangeListen
     if(gene != null && !gene.getGene().isReadOnly() && GeneUtils.isBoundaryOK(gene) > 0)
     {
       //updatedFeatures.add(feature);
-      
       GeneUtils.checkGeneBoundary(gene, false);
     }
   }
