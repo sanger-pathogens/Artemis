@@ -55,31 +55,21 @@ public class ValidateViewer extends FileViewer implements EntryGroupChangeListen
   private static final long serialVersionUID = 1L;
   private EntryGroup entryGrp;
   private FeatureVector selectedFeatures;
-  private JCheckBox showFailedFeatures = new JCheckBox("Show only failed features", true);
+  private JCheckBox showFailedFeatures = new JCheckBox("failed features only", true);
+  private JCheckBox showObsoleteFeatures = new JCheckBox("obsolete features", false);
   private boolean inAutoFix = false;
-  private String seqName;
 
-  public ValidateViewer(final EntryGroup entryGrp,
-                        final FeatureVector selectedFeatures)
-  {
-    this(entryGrp, selectedFeatures, null);
-  }
-  
   /**
    * Viewer to display validation results
    * @param entryGrp
    * @param features
    */
   public ValidateViewer(final EntryGroup entryGrp,
-                        final FeatureVector selectedFeatures,
-                        final String seqName)
+                        final FeatureVector selectedFeatures)
   {
-    super("Validation Report :: "+ (seqName!=null? seqName:""), false, false, true);
+    super("Validation Report :: ", false, false, true);
     this.entryGrp = entryGrp;
     this.selectedFeatures = selectedFeatures;
-    this.seqName = seqName;
-    
-    //final boolean allFeatures = (selectedFeatures == null);
 
     update();
     setVisible(true);
@@ -165,9 +155,17 @@ public class ValidateViewer extends FileViewer implements EntryGroupChangeListen
       fixButton.setEnabled(false);
     button_panel.add(fixButton);
 
-    
     button_panel.add(showFailedFeatures);
     showFailedFeatures.addItemListener(new ItemListener(){
+      public void itemStateChanged(ItemEvent arg0)
+      {
+        update();
+      }
+    });
+    
+    if(GeneUtils.isGFFEntry(entryGrp))
+      button_panel.add(showObsoleteFeatures);
+    showObsoleteFeatures.addItemListener(new ItemListener(){
       public void itemStateChanged(ItemEvent arg0)
       {
         update();
@@ -214,15 +212,22 @@ public class ValidateViewer extends FileViewer implements EntryGroupChangeListen
     super.setText("");
     final ValidateFeature gffTest = new ValidateFeature(entryGrp);
     int nfail = 0;
+    int total = 0;
     for(int i=0; i<features.size(); i++)
-      if(!gffTest.featureValidate(features.elementAt(i).getEmblFeature(), 
+    {
+      uk.ac.sanger.artemis.io.Feature f = features.elementAt(i).getEmblFeature();
+      if(!showObsoleteFeatures.isSelected() &&
+         f instanceof GFFStreamFeature && GeneUtils.isObsolete((GFFStreamFeature)f))
+        continue;
+      
+      if(!gffTest.featureValidate(f, 
           this, showFailedFeatures.isSelected()))
         nfail++;
-
-    setTitle("Validation Report :: "+ 
-               (seqName!=null&&!seqName.equals("")? 
-                seqName+" :: " : "")+features.size()+
-        " feature(s) Pass: "+(features.size()-nfail)+" Failed: "+nfail);
+      total++;
+    }
+    
+    setTitle("Validation Report :: "+ total+
+        " feature(s) Pass: "+(total-nfail)+" Failed: "+nfail);
   }
   
   private FeatureVector getFeatures()
@@ -264,7 +269,6 @@ public class ValidateViewer extends FileViewer implements EntryGroupChangeListen
     if(gene != null && !gene.getGene().isReadOnly() && GeneUtils.isBoundaryOK(gene) > 0)
     {
       //updatedFeatures.add(feature);
-      
       GeneUtils.checkGeneBoundary(gene, false);
     }
   }

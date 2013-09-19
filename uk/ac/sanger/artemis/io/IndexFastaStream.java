@@ -38,6 +38,7 @@ import net.sf.picard.reference.ReferenceSequenceFileFactory;
 import uk.ac.sanger.artemis.io.Entry;
 import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.components.EntryFileDialog;
+import uk.ac.sanger.artemis.util.CacheHashMap;
 import uk.ac.sanger.artemis.util.FileDocument;
 import uk.ac.sanger.artemis.util.ReadOnlyException;
 import uk.ac.sanger.artemis.util.URLDocument;
@@ -48,6 +49,7 @@ public class IndexFastaStream extends StreamSequence
   private FastaSequenceIndex fastaIndex;
   private int len;
   private String contig;
+  private CacheHashMap basesCache;  // used by charAt()
   
   public IndexFastaStream(Entry entry)
   {
@@ -165,6 +167,7 @@ public class IndexFastaStream extends StreamSequence
     
     len = getLengthByIndex(seqIndex);
     contig = getContigByIndex(seqIndex);
+    basesCache = null;
   }
 
   /**
@@ -182,6 +185,28 @@ public class IndexFastaStream extends StreamSequence
   public char[] getCharSubSequence(int start, int end) 
   {
     return getSubSequence(start, end).toCharArray();
+  }
+  
+  /**
+   * Used by AddMenu.markAmbiguities() to retrieve the sequence character
+   * at a specified position
+   */
+  public char charAt(final int i)
+  {
+    if(basesCache == null)
+      basesCache = new CacheHashMap(250,50);
+      
+    if(!basesCache.containsKey(i))
+    {
+      int end = i+249;
+      if(end > length())
+        end = length();
+      String seq = getSubSequence(i, end);
+      for(int idx=0; idx<seq.length(); idx++)
+        basesCache.put(i+idx, seq.charAt(idx));
+    }
+
+    return (Character)basesCache.get(i);
   }
   
   private int getLengthByIndex(int seqIndex)

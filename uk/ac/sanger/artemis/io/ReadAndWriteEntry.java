@@ -192,7 +192,7 @@ public class ReadAndWriteEntry
    * @param entry_information
    * @param feature
    */
-  private static void addAllKeysQualifiers(final EntryInformation entry_information,
+  protected static void addAllKeysQualifiers(final EntryInformation entry_information,
                                            final Feature feature)
   {
     Key new_key = feature.getKey();
@@ -242,7 +242,7 @@ public class ReadAndWriteEntry
 
   }
   
-  private static void addQualifierToEntryInfo(final EntryInformation entry_information,
+  protected static void addQualifierToEntryInfo(final EntryInformation entry_information,
                                              final String qualifier_name)
   {
     KeyVector keys = new KeyVector();
