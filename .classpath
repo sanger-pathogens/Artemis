@@ -12,7 +12,6 @@
 	<classpathentry kind="lib" path="lib/j2ssh/commons-logging.jar"/>
 	<classpathentry kind="lib" path="lib/ibatis/ibatis-2.3.4.726.jar"/>
 	<classpathentry kind="lib" path="lib/ibatis/log4j-1.2.14.jar"/>
-	<classpathentry kind="lib" path="test/lib/junit-4.5.jar"/>
 	<classpathentry kind="lib" path="lib/postgresql-8.4-701.jdbc3.jar"/>
 	<classpathentry kind="lib" path="lib/picard/picard.jar"/>
 	<classpathentry kind="lib" path="lib/picard/sam.jar"/>

@@ -211,7 +211,8 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
     if(location == null)
       return null;
     // flatten gene model - combining qualifiers
-    if(key.getKeyString().equals(DatabaseDocument.EXONMODEL))
+    if(key.getKeyString().equals(DatabaseDocument.EXONMODEL) &&
+        ((GFFStreamFeature)feature).getChadoGene() != null)
     {
       ChadoCanonicalGene chadoGene = ((GFFStreamFeature)feature).getChadoGene();
 
