@@ -57,7 +57,7 @@ public class UserPlotTest
       int start = 278;
       alg.getValues(start, start+10, values);
       assertEquals("Number of plots",values.length,6);
-      assertTrue("Value of plot 1 at base position 278",values[0]==804.99f);
+      assertTrue("Value of plot 1 at base position "+start,values[0]==804.99f);
     }
     catch(IOException e)
     {
@@ -87,7 +87,38 @@ public class UserPlotTest
       int start = 278;
       alg.getValues(start, start+10, values);
       assertEquals("Number of plots",values.length,6);
-      assertTrue("Value of plot 1 at base position 278",values[0]==804.99f);
+      assertTrue("Value of plot 1 at base position "+start,values[0]==804.99f);
+    }
+    catch(IOException e)
+    {
+      Assert.fail(e.getMessage());
+    }
+  }
+  
+  @Test
+  /**
+   * Indexed (tabix) user plot.
+   */
+  public void indexed()
+  {
+    URL gffURL = UserPlotTest.class.getResource("/data/plot/index_tab_sorted.plot.gz");
+    EntryGroup entryGrp = Utils.getEntryGroup("/data/MAL1.embl.gz");
+    final Strand fwdStrand = entryGrp.getBases ().getForwardStrand ();
+    final FileDocument doc = new FileDocument (new File(gffURL.getFile()));
+    try
+    {
+      final UserDataAlgorithm alg = new UserDataAlgorithm (fwdStrand, doc, false);
+
+      alg.readIndexValues(true, entryGrp.getSequenceEntry(), 1, 120);
+      float [] values = new float [alg.getValueCount()];
+
+      int start = 20;
+      alg.getValues(start, start+1, values);
+      assertEquals("Number of plots",values.length,6);
+      assertTrue("Value of plot 5 at base position "+start+"="+values[5],values[5]==(234.f/2.f));
+      
+      alg.getValues(start, start+4, values);
+      assertTrue("Value of plot 5 at base position "+start+"="+values[5],values[5]==(234.f/5.f));
     }
     catch(IOException e)
     {
