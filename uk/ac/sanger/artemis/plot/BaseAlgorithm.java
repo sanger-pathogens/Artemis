@@ -118,45 +118,32 @@ public abstract class BaseAlgorithm extends Algorithm
 
     if( (strand.isForwardStrand() && !isRevCompDisplay()) ||
         (!strand.isForwardStrand() && isRevCompDisplay()))
-    {     
+    {
+      int width = 0;
       for(int i=0; i<numPlots; i++)
       {
         g2d.setColor(Color.black);
-        g2d.drawString(Integer.toString(i+1),i*5*font_width,font_height);
+        
+        if(lines[i].getLabel() != null) // user defined label
+        {
+          g2d.drawString(lines[i].getLabel(),width,font_height);
+          width += lines[i].getLabelWidth(fm);
+        }
+        else
+        {
+          g2d.drawString(Integer.toString(i+1),width,font_height);
+          width += 5*font_width;
+        }
         
         BasicStroke stroke = (BasicStroke)g2d.getStroke();
         g2d.setStroke(new BasicStroke(3.f));
         g2d.setColor(lines[i].getLineColour());
-        g2d.drawLine(font_width*(2 + (i*5)), lineHgt, font_width*(4 + (i*5)), lineHgt);
+        g2d.drawLine(width - (font_width*1), lineHgt, width - (font_width*3), lineHgt);
         g2d.setStroke(stroke);
       }
     }
     else
     {
-      
-      /*
-      int frame = strand.getSequenceLength() % 3;
-      g2d.setColor(Color.black);
-      
-      g2d.drawString("4",0,font_height);
-      g2d.drawString("5",font_width*5,font_height);
-      g2d.drawString("6",font_width*10,font_height);
-
-      BasicStroke stroke = (BasicStroke)g2d.getStroke();
-      g2d.setStroke(new BasicStroke(3.f));
-      
-      
-      g2d.setColor(frameColour[0]);
-      g2d.drawLine(font_width*2, lineHgt, font_width*4, lineHgt);
-
-      g2d.setColor(frameColour[2]);
-      g2d.drawLine(font_width*7, lineHgt, font_width*9, lineHgt);
-
-      g2d.setColor(frameColour[1]);
-      g2d.drawLine(font_width*12, lineHgt, font_width*14, lineHgt);
-      g2d.setStroke(stroke);
-      */
-      
       g2d.setColor(Color.black);
       g2d.drawString("4",0,font_height);
       g2d.drawString("5",font_width*5,font_height);
