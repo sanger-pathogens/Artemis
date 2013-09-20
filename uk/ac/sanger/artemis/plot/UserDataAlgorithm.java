@@ -579,7 +579,8 @@ public class UserDataAlgorithm extends BaseAlgorithm
       while ((line = reader.readLine()) != null) 
       {
         if((line.indexOf("colour") == -1 && 
-            line.indexOf("color")  == -1 ) ||
+            line.indexOf("color")  == -1 &&
+            line.indexOf("label ") == -1) ||
             line.startsWith("track"))
         {
           if(line.startsWith("track "))
@@ -591,17 +592,31 @@ public class UserDataAlgorithm extends BaseAlgorithm
           continue;
         }
 
-        int index = line.indexOf("colour");
-        if (index == -1)
-          index = line.indexOf("color");
+        int idx = line.indexOf("colour");
+        if (idx == -1)
+          idx = line.indexOf("color");
 
-        index = line.indexOf(" ", index + 1);
-        line = line.substring(index).trim();
-        String rgbValues[] = line.split(" ");
+        if (idx != -1)
+        {
+          idx = line.indexOf(" ", idx + 1);
+          line = line.substring(idx).trim();
+          String rgbValues[] = line.split(" ");
 
-        lines = new LineAttributes[rgbValues.length];
-        for (int j = 0; j < rgbValues.length; j++)
-          lines[j] = new LineAttributes(LineAttributes.parse(rgbValues[j]));
+          lines = new LineAttributes[rgbValues.length];
+          for (int j = 0; j < rgbValues.length; j++)
+            lines[j] = new LineAttributes(LineAttributes.parse(rgbValues[j]));
+        }
+        else if(lines != null)
+        {
+          idx = line.indexOf("label ");
+          if (idx != -1)
+          {
+            line = line.substring(idx+6).trim();
+            String labels[] = line.split(" ");
+            for (int j = 0; j < labels.length; j++)
+              lines[j].setLabel(labels[j]);
+          }
+        }
       }
     }
     catch (NumberFormatException e) 
