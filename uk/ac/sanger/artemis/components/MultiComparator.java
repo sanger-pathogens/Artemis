@@ -350,8 +350,7 @@ public class MultiComparator extends JFrame
       }
     });
 
-    final URL icon_url = Splash.class.getResource("/icon.gif");
-
+    final URL icon_url = Splash.class.getResource("/images/act.gif");
     if(icon_url != null) 
     {
       Toolkit toolkit = Toolkit.getDefaultToolkit();
