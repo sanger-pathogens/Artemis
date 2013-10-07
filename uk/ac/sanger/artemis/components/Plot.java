@@ -1031,11 +1031,12 @@ public abstract class Plot extends JPanel
     final FontMetrics fm = g.getFontMetrics();
     int font_width = fm.stringWidth("2");
 
-    int width = getWidth() - window_changer.getWidth() -
-               ((5*numPlots)*font_width);
+    int width = 0;
+    for(LineAttributes ln : lines)
+      width += ln.getLabelWidth(fm);
+    width = getWidth() - window_changer.getWidth() - width;
 
     g.translate(width,0);
-    // note GCFrameAlgorithm overrides this
     ((BaseAlgorithm)getAlgorithm()).drawLegend(g,font_height,
                                                font_width,lines, numPlots);
     g.translate(-width,0);

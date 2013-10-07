@@ -29,6 +29,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
@@ -63,6 +64,10 @@ public class LineAttributes
 {
   /** defines the colour */
   private Color lineColour = Color.black;
+  
+  /** line label */
+  private String label;
+  
   /** defines the line Stroke - size and style */
   private BasicStroke stroke;
   
@@ -389,6 +394,23 @@ public class LineAttributes
       thislines[number].setStroke(newStroke);
     }
     plot.repaint();
+  }
+
+  protected void setLabel(String label)
+  {
+    this.label = label;
+  }
+  
+  public String getLabel()
+  {
+    return label;
+  }
+  
+  public int getLabelWidth(final FontMetrics fm)
+  {
+    if(label != null)
+      return fm.stringWidth(label) + fm.stringWidth("2")*4;
+    return fm.stringWidth("2")*5;
   }
 }
 
