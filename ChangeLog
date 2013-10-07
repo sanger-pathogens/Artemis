@@ -1,4 +1,11 @@
 Version XX
+	Labels can optionally be added to the header of base position plots
+	and these are used in the legend, e.g.
+	# colour 5:150:55 255:0:0 0:255:0 0:0:255 100:100:100 50:150:50
+	# label lab1 lab2 lab3 lab4 lab5 lab6
+	176 2204.8 848.23 0 0 0 536.04
+	...
+	
 	In the Feature Editor there is now a button ('User Qualifiers') which
 	opens a tool for maintaining user defined lists of qualifiers (i.e. 
 	qualifiers in the form tag = value pairs on separate lines) and the 
