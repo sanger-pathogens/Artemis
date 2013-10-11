@@ -244,7 +244,7 @@ public class GoBox extends AbstractCvBox
                                         dimension.height); 
     
     editable.add(dateField);
-    xBox.add(dateField.getDateSpinner());
+    xBox.add(dateField);
   }
   
   public static CvTerm getGOCvTerm(String term)

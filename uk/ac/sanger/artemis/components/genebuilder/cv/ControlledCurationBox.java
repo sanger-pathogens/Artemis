@@ -143,7 +143,7 @@ class ControlledCurationBox extends AbstractCvBox
     dateField = new DatePanel(getField("date=", qualifierString),
                               dimension.height);
 
-    xBox.add(dateField.getDateSpinner());
+    xBox.add(dateField);
   }
 
 

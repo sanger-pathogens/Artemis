@@ -115,7 +115,7 @@ public class HistoryBox extends AbstractCvBox
     dateField = new DatePanel(getField("date=", qualifierString),
                               dimension.height);
 
-    lineBox.add(dateField.getDateSpinner());
+    lineBox.add(dateField);
     lineBox.add(Box.createHorizontalGlue());
     yBox.add(lineBox);
     
@@ -124,7 +124,7 @@ public class HistoryBox extends AbstractCvBox
     Dimension dimension4 = new Dimension(
         termCombo.getPreferredSize().width+
         curatorNameField.getPreferredSize().width+
-        dateField.getDateSpinner().getPreferredSize().width-5, dimension.height*20);
+        dateField.getPreferredSize().width-5, dimension.height*20);
     qual = getFieldIgnoreSeparator("qualifier", qualifierString);
     qualfTextField = new QualifierTextArea();
     qualfTextField.setUseHyperlinks(false);
