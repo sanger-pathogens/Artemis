@@ -115,30 +115,11 @@ public class GeneEditorPanel extends JPanel
    */
   public void updatePanelState()
   {
-    if(qualifier_text_area.getText().equals(""))
-      coreButton.setOpen(false);
-    else
-      coreButton.setOpen(true);
-    
-    if(cvForm.isEmpty())
-      cvButton.setOpen(false);
-    else
-      cvButton.setOpen(true);
-    
-    if(refPanel.isEmpty())
-      refButton.setOpen(false);
-    else
-      refButton.setOpen(true);
-    
-    if(matchForm.isEmpty())
-      matchButton.setOpen(false);
-    else
-      matchButton.setOpen(true);
-    
-    if(propertiesPanel.isEmpty())
-      propertiesButton.setOpen(false);
-    else
-      propertiesButton.setOpen(true);
+    coreButton.setOpen(!qualifier_text_area.getText().equals(""));
+    cvButton.setOpen(!cvForm.isEmpty());
+    refButton.setOpen(!refPanel.isEmpty());
+    matchButton.setOpen(!matchForm.isEmpty());
+    propertiesButton.setOpen(!propertiesPanel.isEmpty());
   }
   
   /**
