@@ -137,8 +137,6 @@ public class GoBox extends AbstractCvBox
     this.value_index  = value_index;
     this.xBox = Box.createHorizontalBox();
     
-    Vector editable = new Vector(5);
-    
     String goId = getField("GOid=", qualifierString);
     final String term = getField("term=", qualifierString);
     CvTerm cvTerm = getGOCvTerm(term);
@@ -147,7 +145,6 @@ public class GoBox extends AbstractCvBox
     addGoLabelLiteners(goTermField);
     
     JLabel goAspect = null;
-    
     Font font = goTermField.getFont().deriveFont(Font.BOLD);
     
     if(cvTerm.getCv().getName().indexOf("molecular_function")>-1)
@@ -190,7 +187,6 @@ public class GoBox extends AbstractCvBox
     withTextField.setPreferredSize(dimension);
     withTextField.setMaximumSize(dimension);
     withTextField.setActionCommand("with=");
-    editable.add(withTextField);
     xBox.add(withTextField);
  
 
@@ -202,7 +198,6 @@ public class GoBox extends AbstractCvBox
     dbxrefTextField.setPreferredSize(dimension);
     dbxrefTextField.setMaximumSize(dimension);
     dbxrefTextField.setActionCommand("db_xref=");
-    editable.add(dbxrefTextField);
     xBox.add(dbxrefTextField);
  
     // feature_cvterm_prop's
@@ -228,7 +223,6 @@ public class GoBox extends AbstractCvBox
     evidenceList.setPreferredSize(evidenceListDimension);
     evidenceList.setMaximumSize(evidenceListDimension);
     evidenceList.setActionCommand("evidence=");
-    editable.add(evidenceList);
     xBox.add(evidenceList);
     
     String qual = getField("qualifier=", qualifierString);
@@ -237,13 +231,10 @@ public class GoBox extends AbstractCvBox
     qualfTextField.setPreferredSize(dimension);
     qualfTextField.setMaximumSize(dimension);
     qualfTextField.setActionCommand("qualifier=");
-    editable.add(qualfTextField);
     xBox.add(qualfTextField);
     
     dateField = new DatePanel( getField("date=", qualifierString), 
                                         dimension.height); 
-    
-    editable.add(dateField);
     xBox.add(dateField);
   }
   
@@ -320,7 +311,7 @@ public class GoBox extends AbstractCvBox
       {
         if(dbsLinks.get(i).equals("GO"))
         {
-          AMIGOURL = (String) dbsLinks.get(i+1);
+          AMIGOURL = dbsLinks.get(i+1);
           return;
         }
       }
@@ -337,14 +328,6 @@ public class GoBox extends AbstractCvBox
          evidenceCodes[0][i].equalsIgnoreCase(evidence))
         return i;
     }
-    
-    // this is mainly to catch RCA
-    // - reviewed computational analysis (inferred from missing)
-    /*for(int i=0; i<evidenceCodes[2].length; i++)
-    {
-      if(evidenceCodes[2][i].indexOf(evidence) > -1)
-        return i;
-    }*/
     return -1;
   }
   
@@ -401,10 +384,10 @@ public class GoBox extends AbstractCvBox
     final String goId = getField("GOid=", origQualifierString);
     
     StringVector oldValues = oldQualifier.getValues();
-    Vector values_index = new Vector();
+    Vector<Integer> values_index = new Vector<Integer>();
     for(int i=0; i<oldValues.size(); i++)
     {
-      String oldValue = (String)oldValues.get(i);
+      String oldValue = oldValues.get(i);
       String newGoId = getField("GOid=", oldValue);
       if(newGoId.equals(goId))
         values_index.add(new Integer(i));
@@ -412,13 +395,13 @@ public class GoBox extends AbstractCvBox
   
     if(values_index.size() > 0)
     { 
-      String oldValue = (String) oldValues.get(value_index);
+      String oldValue = oldValues.get(value_index);
       String oldGoId  = getField("GOid=", oldValue);
       
       if(!goId.equals(oldGoId))
       {
         if(values_index.size() == 1)
-        value_index = ((Integer)values_index.get(0)).intValue();
+          value_index = values_index.get(0).intValue();
         else
         {
           final String with = getField("with=", origQualifierString);
@@ -426,9 +409,9 @@ public class GoBox extends AbstractCvBox
           final String dbxref = getField("dbxref=", origQualifierString);
           for(int i=0; i<values_index.size(); i++)
           {
-            int ind = ((Integer)values_index.get(i)).intValue();
+            int ind = values_index.get(i).intValue();
             value_index = ind;
-            String value = (String) oldValues.get(ind);
+            String value = oldValues.get(ind);
 
             if(!with.equals(""))
             {
@@ -458,7 +441,6 @@ public class GoBox extends AbstractCvBox
       oldValues.remove(value_index);
     
     String updatedQualifierString = updateQualifierString();
-    
     logger4j.debug(origQualifierString);
     logger4j.debug(updatedQualifierString);
     oldValues.add(value_index, updatedQualifierString);
@@ -474,39 +456,28 @@ public class GoBox extends AbstractCvBox
     
     String old = getField("with=", origQualifierString);
     if(!old.equals(withTextField.getText().trim()))
-    {
       newQualifierString = changeField("with=", withTextField.getText().trim(), 
                                        newQualifierString);
-    }
     
     old = getField("db_xref=", origQualifierString);
     if(!old.equals(dbxrefTextField.getText().trim()))
-    {    
       newQualifierString = changeField("db_xref=", dbxrefTextField.getText().trim(), 
                                        newQualifierString);
-    }
     
     old = getField("evidence=", origQualifierString);
     if(!old.equals(evidenceCodes[2][ evidenceList.getSelectedIndex() ]))
-    {
       newQualifierString = changeField("evidence=", evidenceCodes[2][ evidenceList.getSelectedIndex() ], 
                                        newQualifierString);
-    }
     
     old = getField("qualifier=", origQualifierString);
     if(!old.equals(qualfTextField.getText()))
-    {
       newQualifierString = changeField("qualifier=", qualfTextField.getText().trim(), 
                                        newQualifierString);
-    }
     
     old = getField("date=", origQualifierString);
     if(!old.equals(dateField.getText()))
-    {
       newQualifierString = changeField("date=", dateField.getText().trim(), 
                                        newQualifierString);
-    }
-
     return newQualifierString;
   }
 
@@ -518,7 +489,6 @@ public class GoBox extends AbstractCvBox
       evidenceListDimension = evidenceList.getPreferredSize();
       evidenceListDimension = new Dimension(80,(int)evidenceListDimension.getHeight());
     }
-    
     return evidenceListDimension;
   }
   
@@ -548,5 +518,4 @@ public class GoBox extends AbstractCvBox
       goText = goText.replaceAll(oldEvidence, newEvidence);
     return goText;
   }
-  
 }
