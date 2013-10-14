@@ -203,7 +203,8 @@ NAMES:= \
 	uk/ac/sanger/artemis/chado/DbSqlConfig \
         uk/ac/sanger/artemis/circular/DNADraw \
 	 uk/ac/sanger/artemis/circular/digest/Utils \
-	uk/ac/sanger/artemis/circular/digest/CircularGenomeController
+	uk/ac/sanger/artemis/circular/digest/CircularGenomeController \
+	uk/ac/sanger/artemis/io/GffToEMBL.java
 
 CLASSES := $(NAMES:%=%.class)
 SOURCES := $(NAMES:%=%.java)
