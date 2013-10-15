@@ -162,6 +162,8 @@ public class PropertiesPanel extends JPanel
     if(feature.getEntry().getEntryInformation().isValidQualifier(
        feature.getKey(), "codon_start"))
       addPhaseComponent(c, gridPanel);
+    else
+      phaseButtonGroup = null;
 
     // partial/obsolete options
     if(showOptions)
