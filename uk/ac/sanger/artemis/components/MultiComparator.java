@@ -141,6 +141,8 @@ public class MultiComparator extends JFrame
 
   /** Used to show the progress of loading file. */
   private InputStreamProgressListener progress_listener;
+  
+  private GridBagLayout layout = new GridBagLayout();
 
   /**
    *  Initialise entry_group_array and comparison_data_array and create all
@@ -257,7 +259,7 @@ public class MultiComparator extends JFrame
 
     setFont(getDefaultFont());
     makeMenus();
-    getContentPane().setLayout(new GridBagLayout());
+    getContentPane().setLayout(layout);
 
     GridBagConstraints c = new GridBagConstraints();
     c.gridwidth  = GridBagConstraints.REMAINDER;
@@ -715,6 +717,15 @@ public class MultiComparator extends JFrame
                        sub_menu_name, null, i+1);
       graph_menu.add(this_graph_menu);
     }
+
+    final JMenuItem resize = new JMenuItem("Adjust panel heights ...");
+    resize.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent arg0)
+      {
+        new ActPanelResizer(MultiComparator.this, layout);
+      }
+    });
+    view_menu.add(resize);
 
     final JMenu display_menu = new JMenu("Display");
     display_menu.setMnemonic(KeyEvent.VK_D);
