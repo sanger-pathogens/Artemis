@@ -106,7 +106,6 @@ public class PropertiesPanel extends JPanel
                          boolean showTimeLastModified)
   {
     super(new FlowLayout(FlowLayout.LEFT));
-    
     this.showNames   = showNames;
     this.showOptions = showOptions;
     this.showParent  = showParent;
@@ -114,7 +113,6 @@ public class PropertiesPanel extends JPanel
     
     setBackground(Color.WHITE);
     updateFromFeature(feature);
-    //makeBorder();
   }
   
   /**
@@ -148,47 +146,44 @@ public class PropertiesPanel extends JPanel
     JPanel gridPanel = new JPanel(new GridBagLayout());
     gridPanel.setBackground(Color.white);
 
-    int nrow = 0;
-    
     if(showNames)
     {
-      addNames(c, gridPanel, nrow++);
-      nrow = addSynonyms(c, gridPanel, nrow);
+      addNames(c, gridPanel);
+      addSynonyms(c, gridPanel);
     }
     
     if(showParent)
-      addParent(c, gridPanel, nrow++);
+    {
+      addParent(c, gridPanel, "Parent");
+      addParent(c, gridPanel, "Derives_from");
+    }
     
     // phase of translation wrt / codon_start
     if(feature.getEntry().getEntryInformation().isValidQualifier(
        feature.getKey(), "codon_start"))
-      addPhaseComponent(c, gridPanel, nrow++);
+      addPhaseComponent(c, gridPanel);
 
     // partial/obsolete options
     if(showOptions)
-      addOptions(c, gridPanel, nrow);
+      addOptions(c, gridPanel);
 
     // add buttons and timelastmodified
     if(showTimeLastModified)
-      addTimeLastModified(c, gridPanel, nrow);
+      addTimeLastModified(c, gridPanel);
     return gridPanel;
   }
   
   /**
    * Add uniquename and name to the panel.
-   * @param cellDimension
    * @param c
    * @param gridPanel
-   * @param nrows
    */
-  private void addNames(GridBagConstraints c, 
-                        JPanel gridPanel, 
-                        int nrows)
+  private void addNames(GridBagConstraints c, JPanel gridPanel)
   {
     Qualifier idQualifier   = gffQualifiers.getQualifierByName("ID");
     Qualifier nameQualifier = gffQualifiers.getQualifierByName("Name");
    
-    final String uniquename = (String)idQualifier.getValues().get(0);
+    final String uniquename = idQualifier.getValues().get(0);
     uniquenameTextField = new JTextField(uniquename);
     uniquenameTextField.setPreferredSize(calcPreferredMaxTextFieldWidth());
     uniquenameTextField.setCaretPosition(0);
@@ -199,7 +194,7 @@ public class PropertiesPanel extends JPanel
     idField.setPreferredSize(calcPreferredLabelWidth());
 
     c.gridx = 0;
-    c.gridy = nrows;
+    c.gridy++;
     c.ipadx = 5;
     c.anchor = GridBagConstraints.EAST;
     gridPanel.add(idField, c);
@@ -214,11 +209,11 @@ public class PropertiesPanel extends JPanel
       Qualifier timeQualifier = gffQualifiers.getQualifierByName("timelastmodified");
       String time = null;
       if (timeQualifier != null)
-        time = (String) timeQualifier.getValues().get(0);
+        time = timeQualifier.getValues().get(0);
       
       String parent = getParentString();
       String tt = "feature_id=" +
-        (String) featIdQualifier.getValues().get(0) +
+        featIdQualifier.getValues().get(0) +
         (parent == null ? "" : "\n"+parent)+
         (time == null ? "" : "\n"+time);
 
@@ -271,21 +266,16 @@ public class PropertiesPanel extends JPanel
    */
   private String getParentString()
   {
-    Qualifier parentQualifier      = gffQualifiers.getQualifierByName("Parent");
-    if(parentQualifier != null && 
-       parentQualifier.getValues().size() == 1)
-    {
-      StringVector parents = parentQualifier.getValues();
-      return "Parent: "+parents.get(0);
-    }
+    Qualifier parentQual = gffQualifiers.getQualifierByName("Parent");
+    if(parentQual != null && 
+       parentQual.getValues().size() == 1)
+      return "Parent: "+parentQual.getValues().get(0);
 
-    Qualifier derivesFromQualifier = gffQualifiers.getQualifierByName("Derives_from");
-    if(derivesFromQualifier != null && 
-       derivesFromQualifier.getValues().size() == 1)
-    {
-      StringVector derivesFroms = derivesFromQualifier.getValues();
-      return "Derives from: "+derivesFroms.get(0);
-    }
+    Qualifier derivesFromQual = gffQualifiers.getQualifierByName("Derives_from");
+    if(derivesFromQual != null && 
+       derivesFromQual.getValues().size() == 1)
+      return "Derives from: "+derivesFromQual.getValues().get(0);
+
     return null;
   }
   
@@ -293,55 +283,31 @@ public class PropertiesPanel extends JPanel
    * Add Parent or Derives_from.
    * @param c
    * @param gridPanel
-   * @param nrows
    */
   private void addParent(GridBagConstraints c,
                          JPanel gridPanel,
-                         int nrows)
+                         String parentName)
   {
-    Qualifier parentQualifier = gffQualifiers.getQualifierByName("Parent");
+    Qualifier parentQualifier = gffQualifiers.getQualifierByName(parentName);
     if(parentQualifier != null && 
        parentQualifier.getValues().size() == 1)
     {
-      StringVector parents = parentQualifier.getValues();
-      JLabel parentField = new JLabel("Parent");
+      JLabel parentField = new JLabel(parentName);
       parentField.setFont(getFont().deriveFont(Font.BOLD));
       c.gridx = 0;
-      c.gridy = nrows;
+      c.gridy++;
       c.ipadx = 5;
       c.fill = GridBagConstraints.NONE;
       c.anchor = GridBagConstraints.EAST;
       gridPanel.add(parentField, c);
       
-      JTextField parent = new JTextField(" "+(String) parents.get(0));
+      JTextField parent = new JTextField(" "+ parentQualifier.getValues().get(0));
       parent.setPreferredSize(calcPreferredMaxTextFieldWidth());
       parent.setBorder(BorderFactory.createEmptyBorder());
       c.gridx = 1;
       c.anchor = GridBagConstraints.WEST;
       gridPanel.add(parent, c);
       return;
-    }
-
-    Qualifier derivesFromQualifier = gffQualifiers.getQualifierByName("Derives_from");
-    if(derivesFromQualifier != null && 
-       derivesFromQualifier.getValues().size() == 1)
-    {
-      StringVector derivesFroms = derivesFromQualifier.getValues();
-      JLabel derivesFromsField = new JLabel("Derives from");
-      derivesFromsField.setFont(getFont().deriveFont(Font.BOLD));
-      c.gridx = 0;
-      c.gridy = nrows;
-      c.ipadx = 5;
-      c.fill = GridBagConstraints.NONE;
-      c.anchor = GridBagConstraints.EAST;
-      gridPanel.add(derivesFromsField, c);
-      
-      JTextField parent = new JTextField(" "+(String) derivesFroms.get(0));
-      parent.setPreferredSize(calcPreferredMaxTextFieldWidth());
-      parent.setBorder(BorderFactory.createEmptyBorder());
-      c.gridx = 1;
-      c.anchor = GridBagConstraints.WEST;
-      gridPanel.add(parent, c);
     }
   }
   
@@ -350,37 +316,28 @@ public class PropertiesPanel extends JPanel
    * @param c
    * @param gridPanel
    * @param nrows
-   * @return
    */
-  private int addSynonyms(GridBagConstraints c, JPanel gridPanel, int nrows)
+  private void addSynonyms(GridBagConstraints c, JPanel gridPanel)
   {
-    int maxSynonymWidth = 0;
-    int maxLabelWidth = new JLabel("previous_systematic_id ").getPreferredSize().width;
-    
-    for(int i=0; i<gffQualifiers.size(); i++)
+    for(Qualifier qualifier: gffQualifiers)
     {
-      final Qualifier qualifier = (Qualifier)gffQualifiers.get(i);
       if( ChadoTransactionManager.isSynonymTag(qualifier.getName(), 
           (GFFStreamFeature)feature.getEmblFeature()) &&
           isSystematicId(qualifier.getName()))
       {
-        addSynonymComponent(qualifier, c, gridPanel, nrows++,
-            maxLabelWidth, maxSynonymWidth);  
+        addSynonymComponent(qualifier, c, gridPanel);  
       }
     }
     
-    for(int i=0; i<gffQualifiers.size(); i++)
+    for(Qualifier qualifier: gffQualifiers)
     {
-      final Qualifier qualifier = (Qualifier)gffQualifiers.get(i);
       if( ChadoTransactionManager.isSynonymTag(qualifier.getName(), 
           (GFFStreamFeature)feature.getEmblFeature()) &&
           !isSystematicId(qualifier.getName()))
       {
-        addSynonymComponent(qualifier, c, gridPanel, nrows++, 
-            maxLabelWidth, maxSynonymWidth);  
+        addSynonymComponent(qualifier, c, gridPanel);  
       }
     }
-    return nrows;
   }
   
   
@@ -388,21 +345,20 @@ public class PropertiesPanel extends JPanel
    * Add partial and obsolete options to the panel.
    * @param c
    * @param gridPanel
-   * @param nrows
    */
-  private void addOptions(GridBagConstraints c, JPanel gridPanel, int nrows)
+  private void addOptions(GridBagConstraints c, JPanel gridPanel)
   {
-    Qualifier isPartialQualfier5;
-    Qualifier isPartialQualfier3;
+    final Qualifier isPartialQualfier5;
+    final Qualifier isPartialQualfier3;
     if(feature.isForwardFeature())
     {
-      isPartialQualfier5   = gffQualifiers.getQualifierByName("Start_range");
-      isPartialQualfier3   = gffQualifiers.getQualifierByName("End_range");
+      isPartialQualfier5 = gffQualifiers.getQualifierByName("Start_range");
+      isPartialQualfier3 = gffQualifiers.getQualifierByName("End_range");
     }
     else
     {
-      isPartialQualfier3   = gffQualifiers.getQualifierByName("Start_range");
-      isPartialQualfier5   = gffQualifiers.getQualifierByName("End_range");
+      isPartialQualfier3 = gffQualifiers.getQualifierByName("Start_range");
+      isPartialQualfier5 = gffQualifiers.getQualifierByName("End_range");
     }
 
     Box optionsBox = Box.createHorizontalBox();
@@ -417,7 +373,6 @@ public class PropertiesPanel extends JPanel
         checkPartial();
       }
     });
-    
     optionsBox.add(partialField5prime);
 
     partialField3prime = new JCheckBox("partial 3'", 
@@ -432,15 +387,10 @@ public class PropertiesPanel extends JPanel
     });
     optionsBox.add(partialField3prime);
 
-    Qualifier obsoleteQualifier = gffQualifiers.getQualifierByName("isObsolete");
-    boolean isObsolete;
-    if(obsoleteQualifier == null)
-      isObsolete = false;
-    else
-      isObsolete = Boolean.parseBoolean((String) obsoleteQualifier.getValues().get(0));
-    obsoleteField = new JCheckBox("obsolete", isObsolete);
+    Qualifier obsoleteQual = gffQualifiers.getQualifierByName("isObsolete");
+    obsoleteField = new JCheckBox("obsolete", (obsoleteQual == null ? false : 
+      Boolean.parseBoolean(obsoleteQual.getValues().get(0))));
     obsoleteField.setPreferredSize(calcPreferred(obsoleteField.getPreferredSize().width));
-    
     obsoleteField.setOpaque(false);
     obsoleteField.addActionListener(new ActionListener()
     {
@@ -459,22 +409,21 @@ public class PropertiesPanel extends JPanel
     c.gridx = 0;
     c.anchor = GridBagConstraints.WEST;
     c.gridwidth = GridBagConstraints.REMAINDER;
-    c.gridy = nrows;
+    c.gridy++;
     gridPanel.add(optionsBox, c);
     c.gridwidth = 1;
   }
   
-  private void addTimeLastModified(GridBagConstraints c, JPanel gridPanel, int nrows)
+  private void addTimeLastModified(GridBagConstraints c, JPanel gridPanel)
   {
     Qualifier timeQualifier = gffQualifiers.getQualifierByName("timelastmodified");
     if (timeQualifier != null)
     {
-      String time = (String) timeQualifier.getValues().get(0);
-      JLabel timeLabel = new JLabel(time);
+      JLabel timeLabel = new JLabel(timeQualifier.getValues().get(0));
       timeLabel.setEnabled(false);
       timeLabel.setToolTipText("time last modified");
       
-      c.gridy = ++nrows;
+      c.gridy++;
       c.gridx = 4;
       c.gridwidth = GridBagConstraints.REMAINDER;
       c.anchor = GridBagConstraints.EAST;
@@ -492,9 +441,8 @@ public class PropertiesPanel extends JPanel
     
     gffQualifiers = new QualifierVector();
     final QualifierVector qualifiers = feature.getQualifiers();  
-    for(int i = 0 ; i < qualifiers.size(); ++i) 
+    for(Qualifier qualifier: qualifiers) 
     {
-      Qualifier qualifier = (Qualifier)qualifiers.elementAt(i);
       if(isPropertiesTag(qualifier, feature))
         gffQualifiers.addElement(qualifier.copy());
     }
@@ -506,16 +454,15 @@ public class PropertiesPanel extends JPanel
   }
 
   /**
-   * Get the latest (edited) controlled vocab qualifiers
+   * Get the latest (edited) property qualifiers
    * @return
    */
   public QualifierVector getGffQualifiers(final Feature feature)
   {
     // check editable components for changes
-    
     Qualifier idQualifier = gffQualifiers.getQualifierByName("ID");
     if(showNames &&
-        !((String)(idQualifier.getValues().get(0))).equals(uniquenameTextField.getText()))
+        !idQualifier.getValues().get(0).equals(uniquenameTextField.getText()))
     {
       if(!uniquenameTextField.getText().equals(""))
       {
@@ -539,7 +486,7 @@ public class PropertiesPanel extends JPanel
     {
       Qualifier nameQualifier = gffQualifiers.getQualifierByName("Name");
       if( (nameQualifier != null &&
-       !((String)(nameQualifier.getValues().get(0))).equals(primaryNameTextField.getText())) ||
+       !nameQualifier.getValues().get(0).equals(primaryNameTextField.getText())) ||
        (primaryNameTextField != null && !primaryNameTextField.getText().equals("")))
       {
         gffQualifiers.remove(nameQualifier);   
@@ -552,7 +499,6 @@ public class PropertiesPanel extends JPanel
     if(phaseButtonGroup != null)
     {
       String selectionCmd = phaseButtonGroup.getSelection().getActionCommand();
-      
       Qualifier phaseQualifier = gffQualifiers.getQualifierByName("codon_start");
       if(phaseQualifier == null)
       {
@@ -564,7 +510,7 @@ public class PropertiesPanel extends JPanel
       }
       else
       {
-        String oldPhase = (String)phaseQualifier.getValues().get(0);
+        String oldPhase = phaseQualifier.getValues().get(0);
         if(!oldPhase.equals(phaseButtonGroup))
         {
           gffQualifiers.remove(phaseQualifier);
@@ -582,7 +528,7 @@ public class PropertiesPanel extends JPanel
     {
       if(showOptions)
       {
-        String isObsoleteOld = (String) isObsoleteQualifier.getValues().get(0);
+        String isObsoleteOld = isObsoleteQualifier.getValues().get(0);
         String isObsoleteNew = Boolean.toString(obsoleteField.isSelected());
 
         if (!isObsoleteNew.equals(isObsoleteOld))
@@ -660,11 +606,8 @@ public class PropertiesPanel extends JPanel
   public static void updateObsoleteSettings(GFFStreamFeature gffFeature)
   {
     Qualifier isObsoleteQualifier = gffFeature.getQualifierByName("isObsolete");
-    String isObsoleteNew = (String) isObsoleteQualifier.getValues().get(0);
-    if(isObsoleteNew.equals("true"))
-      gffFeature.setVisible(false);
-    else
-      gffFeature.setVisible(true); 
+    String isObsoleteNew = isObsoleteQualifier.getValues().get(0);
+    gffFeature.setVisible(!isObsoleteNew.equals("true"));
     
     if(gffFeature.getChadoGene() == null)
       return;
@@ -674,7 +617,6 @@ public class PropertiesPanel extends JPanel
     if(children.size() > 0)
     {
       Qualifier idQualifier = gffFeature.getQualifierByName("ID");
-      
       int select = JOptionPane.showConfirmDialog(null, 
           "Make children of "+idQualifier.getValues().get(0)+"\n"+
           (isObsoleteNew.equals("true") ? "obsolete?" : "not obsolete?"), 
@@ -803,9 +745,7 @@ public class PropertiesPanel extends JPanel
   
   private boolean isSystematicId(final String synonymType)
   {
-    if(synonymType.indexOf("systematic_id") > -1)
-      return true;
-    return false;
+    return (synonymType.indexOf("systematic_id") > -1);
   }
   
   private void removeSynonym(String synonymName, String qualifierValue)
@@ -819,7 +759,7 @@ public class PropertiesPanel extends JPanel
     
     StringVector values =
       gffQualifiers.getQualifierByName(synonymName).getValues();
-    
+
     if(values.size()==1)
       gffQualifiers.removeQualifierByName(synonymName);
     else
@@ -836,7 +776,6 @@ public class PropertiesPanel extends JPanel
     repaint();
   }
   
-  
   private void addSynonym()
   {
     final Vector<CvTerm> synonyms = DatabaseDocument.getCvterms("", 
@@ -848,9 +787,7 @@ public class PropertiesPanel extends JPanel
         "Select synonym type",
          JOptionPane.YES_NO_CANCEL_OPTION,
          JOptionPane.QUESTION_MESSAGE,
-         null,
-         options,
-         options[1]);
+         null, options, options[1]);
     
     if(select == 0)
       return;
@@ -887,23 +824,6 @@ public class PropertiesPanel extends JPanel
       synonymQualifier.addValue(newSynonymValue);
     
     final StringVector newValues = synonymQualifier.getValues();
-    
-    /*
-    final StringVector newValues = new StringVector();
-    for(int i=0; i<values.size(); i++)
-    {
-      String thisValue = (String) values.get(i);
-      StringVector str = StringVector.getStrings(thisValue, ";");
-      String synonymValue = (String) str.get(0);
-      
-      if(isSystematicId(synonymName) && !synonymValue.equals(newSynonymValue))
-        if(current.isSelected() && !thisValue.endsWith(";current=false"))
-          thisValue = thisValue + ";current=false";
-      
-      newValues.add(thisValue);
-    }
-    */
-
     int index = gffQualifiers.indexOfQualifierWithName(synonymName);
     if(index == -1)
       gffQualifiers.setQualifier(new Qualifier(synonymName,newValues));
@@ -922,46 +842,19 @@ public class PropertiesPanel extends JPanel
    * @param c
    * @param gridPanel
    */
-  private void addPhaseComponent(final GridBagConstraints c, final JPanel gridPanel, int nrows)
+  private void addPhaseComponent(final GridBagConstraints c, final JPanel gridPanel)
   {
-    Qualifier qualifierCodonStart = gffQualifiers.getQualifierByName("codon_start");
     phaseButtonGroup = new ButtonGroup();
- 
-    JRadioButton phase1 = new JRadioButton("1");
-    phase1.setOpaque(false);
-    phase1.setActionCommand("1");
-    phaseButtonGroup.add(phase1);
-    JRadioButton phase2 = new JRadioButton("2");
-    phase2.setOpaque(false);
-    phase2.setActionCommand("2");
-    phaseButtonGroup.add(phase2);
-    JRadioButton phase3 = new JRadioButton("3");
-    phase3.setOpaque(false);
-    phase3.setActionCommand("3");
-    phaseButtonGroup.add(phase3);
-    JRadioButton phaseNone = new JRadioButton("Default");
+
+    JRadioButton phaseNone = new JRadioButton("Default", true);
     phaseNone.setOpaque(false);
     phaseNone.setActionCommand("");
     phaseButtonGroup.add(phaseNone);
-    
-    if(qualifierCodonStart == null)
-      phaseNone.setSelected(true);
-    else
-    {
-      int codon_start = feature.getCodonStart();
-      empty = false;
-      switch (codon_start)
-      {
-        case 1:  phase1.setSelected(true); break;
-        case 2:  phase2.setSelected(true); break;
-        case 3:  phase3.setSelected(true); break;
-        default: phaseNone.setSelected(true);break;
-      }
-    }
-    
+    int codon_start = feature.getCodonStart();
+       
     Box xBox = Box.createHorizontalBox();
     c.gridx = 0;
-    c.gridy = nrows;
+    c.gridy++;
     c.anchor = GridBagConstraints.EAST;
     c.fill = GridBagConstraints.NONE;
     c.ipadx = 5;
@@ -969,9 +862,22 @@ public class PropertiesPanel extends JPanel
     JLabel lab = new JLabel("Codon Start");
     lab.setFont(getFont().deriveFont(Font.BOLD));
     gridPanel.add(lab, c);
-    xBox.add(phase1);
-    xBox.add(phase2);
-    xBox.add(phase3);
+
+    Qualifier qualifierCodonStart = gffQualifiers.getQualifierByName("codon_start");
+    for(int i=1; i<4; i++)
+    {
+      String s = Integer.toString(i);
+      JRadioButton phase = new JRadioButton(s);
+      phase.setOpaque(false);
+      phase.setActionCommand(s);
+      phaseButtonGroup.add(phase);
+      if(qualifierCodonStart != null && i == codon_start)
+      {
+        empty = false;
+        phase.setSelected(true);
+      }
+      xBox.add(phase);
+    }
     xBox.add(phaseNone);
     xBox.add(Box.createHorizontalGlue());
     c.gridx = 1;
@@ -987,17 +893,10 @@ public class PropertiesPanel extends JPanel
    * @param qualifier
    * @param c
    * @param gridPanel
-   * @param nrows
-   * @param maxLabelWidth
-   * @param maxSynonymWidth
-   * @return
    */
   private void addSynonymComponent(final Qualifier qualifier, 
                                    final GridBagConstraints c, 
-                                   final JPanel gridPanel, 
-                                   final int nrows, 
-                                   final int maxLabelWidth,
-                                   int maxSynonymWidth)
+                                   final JPanel gridPanel)
   {
     empty = false;
     final StringVector values = qualifier.getValues();
@@ -1011,29 +910,25 @@ public class PropertiesPanel extends JPanel
     sysidField.setPreferredSize(calcPreferredLabelWidth());
 
     c.gridx = 0;
-    c.gridy = nrows;
+    c.gridy++;
     c.ipadx = 5;
     c.anchor = GridBagConstraints.EAST;
     gridPanel.add(sysidField, c);
 
     c.gridx = 1;
-    c.ipadx = 5;
     c.anchor = GridBagConstraints.WEST;
 
     Box synBox = Box.createHorizontalBox();
-    for (int i = 0; i < values.size(); i++)
+    for (final String val: values)
     {
-      final String val = (String) values.get(i);
-      String strings[] = val.split(";");
-
-      JLabel syn = new JLabel(" "+(String) strings[0] + ";");
+      String strs[] = val.split(";");
+      JLabel syn = new JLabel(" "+ strs[0] + ";");
       syn.setPreferredSize(calcPreferred(syn.getPreferredSize().width));
       
-      if (strings.length > 1
-          && ((String) strings[1]).indexOf("current=false") > -1)
+      if (strs.length > 1 && strs[1].indexOf("current=false") > -1)
         syn.setEnabled(false);
       synBox.add(syn);
-      
+
       ActionListener removeAction = new ActionListener()
       {
         public void actionPerformed(ActionEvent e)
@@ -1041,8 +936,7 @@ public class PropertiesPanel extends JPanel
           removeSynonym(qualifier.getName(), val);
         }  
       };
-      RemoveButton remove = new RemoveButton(removeAction);
-      synBox.add(remove);
+      synBox.add(new RemoveButton(removeAction));
     }
     c.gridwidth = GridBagConstraints.REMAINDER;
 
@@ -1058,11 +952,6 @@ public class PropertiesPanel extends JPanel
   public boolean isEmpty()
   {
     return empty;
-  }
-
-  public void setEmpty(boolean empty)
-  {
-    this.empty = empty;
   }
   
   public void setObsoleteChanged(boolean obsoleteChanged)
@@ -1092,7 +981,7 @@ public class PropertiesPanel extends JPanel
     return d;
   }
   
-  public void makeBorder()
+  protected void makeBorder()
   {
     Border grayline = BorderFactory.createLineBorder(Color.gray);
     setBorder(BorderFactory.createTitledBorder(grayline, 

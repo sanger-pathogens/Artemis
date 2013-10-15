@@ -33,7 +33,6 @@ import javax.swing.BoxLayout;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 
 import uk.ac.sanger.artemis.components.QualifierTextArea;
@@ -47,8 +46,6 @@ import uk.ac.sanger.artemis.components.genebuilder.ortholog.MatchPanel;
  */
 public class GeneEditorPanel extends JPanel
 {
-
-  /** */
   private static final long serialVersionUID = 1L;
   protected static Color STEEL_BLUE = new Color(25, 25, 112);
   private static Color LIGHT_STEEL_BLUE = new Color(176, 196, 222);
@@ -86,9 +83,7 @@ public class GeneEditorPanel extends JPanel
     
     setLayout( new BoxLayout(this, BoxLayout.PAGE_AXIS) );
     setBackground(Color.WHITE);
-    //JScrollPane jspCore = new JScrollPane(qualifier_text_area);
-    //jspCore.setPreferredSize(new Dimension(jspCore.getPreferredSize().width, 100));
-    
+
     addDarkSeparator(this);
     propertiesButton = addOpenClosePanel("Properties", propertiesPanel, this, null);
     add(propertiesPanel);
@@ -120,30 +115,11 @@ public class GeneEditorPanel extends JPanel
    */
   public void updatePanelState()
   {
-    if(qualifier_text_area.getText().equals(""))
-      coreButton.setOpen(false);
-    else
-      coreButton.setOpen(true);
-    
-    if(cvForm.isEmpty())
-      cvButton.setOpen(false);
-    else
-      cvButton.setOpen(true);
-    
-    if(refPanel.isEmpty())
-      refButton.setOpen(false);
-    else
-      refButton.setOpen(true);
-    
-    if(matchForm.isEmpty())
-      matchButton.setOpen(false);
-    else
-      matchButton.setOpen(true);
-    
-    if(propertiesPanel.isEmpty())
-      propertiesButton.setOpen(false);
-    else
-      propertiesButton.setOpen(true);
+    coreButton.setOpen(!qualifier_text_area.getText().equals(""));
+    cvButton.setOpen(!cvForm.isEmpty());
+    refButton.setOpen(!refPanel.isEmpty());
+    matchButton.setOpen(!matchForm.isEmpty());
+    propertiesButton.setOpen(!propertiesPanel.isEmpty());
   }
   
   /**
@@ -169,7 +145,7 @@ public class GeneEditorPanel extends JPanel
     separator.setPreferredSize(
         new Dimension(comp.getPreferredSize().width,
                       6));
-    separator.setMaximumSize(new Dimension(1500,8));
+    separator.setMaximumSize(new Dimension(2500,8));
 
     return separator;
   }
@@ -181,8 +157,7 @@ public class GeneEditorPanel extends JPanel
    */
   public static void addLightSeparator(final JComponent comp)
   {
-    JSeparator separator = getSeparator(comp, true);
-    comp.add(separator);
+    comp.add(getSeparator(comp, true));
   }
   
   /**
@@ -191,8 +166,7 @@ public class GeneEditorPanel extends JPanel
    */
   public static void addDarkSeparator(final JComponent comp)
   {
-    JSeparator separator = getSeparator(comp, false);
-    comp.add(separator);
+    comp.add(getSeparator(comp, false));
   }
   
   /**
@@ -215,9 +189,7 @@ public class GeneEditorPanel extends JPanel
     
     final JLabel nameLabel = new JLabel(name);
     nameLabel.setForeground(STEEL_BLUE);
-    Font font = nameLabel.getFont();
-    font = font.deriveFont(Font.BOLD);
-    nameLabel.setFont(font);
+    nameLabel.setFont(nameLabel.getFont().deriveFont(Font.BOLD));
     
     final OpenSectionButton openButton = new OpenSectionButton("-", panel);
 
@@ -230,6 +202,4 @@ public class GeneEditorPanel extends JPanel
     container.add(bannerPanel);
     return openButton;
   }
-  
-
 }
