@@ -1025,7 +1025,7 @@ public abstract class Plot extends JPanel
 
     g.drawString(desc, 2, font_height);
 
-    if(numPlots < 3 || numPlots > 10)
+    if(numPlots < 2 || numPlots > 10)
       return;
 
     final FontMetrics fm = g.getFontMetrics();

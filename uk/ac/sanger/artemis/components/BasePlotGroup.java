@@ -308,6 +308,24 @@ public class BasePlotGroup extends JPanel
     final Component base_plot = findPlotByAlgorithm(algorithm);
     return base_plot.isVisible ();
   }
+  
+  
+  /**
+   * Return the number of visible plots
+   * @return
+   */
+  public int getVisibleCount()
+  {
+    int cnt = 0;
+    Component comp[] = getComponents();
+    for(int i = 0 ; i<comp.length ; ++i)
+      if(comp[i] instanceof BasePlot)
+      {
+        if(comp[i].isVisible())
+          cnt++;
+      }
+    return cnt;
+  }
 
   /**
    *  Given an Algorithm, find and set the visibility of the corresponding
