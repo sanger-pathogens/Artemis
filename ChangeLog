@@ -1,4 +1,9 @@
 Version XX
+	From the 'View' menu added 'Adjust panel heights...' option in ACT 
+	for adjusting their heights (BAM, VCF, plots, comparisons) by giving 
+	them different weights in order to distribute the space between each 
+	component.
+
 	Labels can optionally be added to the header of base position plots
 	and these are used in the legend, e.g.
 	# colour 5:150:55 255:0:0 0:255:0 0:0:255 100:100:100 50:150:50
