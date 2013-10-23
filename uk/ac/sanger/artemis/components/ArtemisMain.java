@@ -285,6 +285,16 @@ public class ArtemisMain extends Splash
    **/
   protected void readArgsAndOptions(final String [] args, final JFrame f)
   {
+    // JNLP properties
+    if(System.getProperty("jnlp.chado") != null)
+      System.setProperty("chado", System.getProperty("jnlp.chado"));
+    if(System.getProperty("jnlp.offset") != null)
+      System.setProperty("offset", System.getProperty("jnlp.offset"));
+    if(System.getProperty("jnlp.artemis.environment") != null)
+      System.setProperty("artemis.environment", System.getProperty("jnlp.artemis.environment"));
+    if(System.getProperty("jnlp.sanger_options") != null)
+      System.setProperty("sanger_options", System.getProperty("jnlp.sanger_options"));
+    
     if(args.length == 0) 
     {
       if(System.getProperty("chado") != null && 
