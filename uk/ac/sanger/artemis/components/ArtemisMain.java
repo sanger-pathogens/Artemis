@@ -294,6 +294,8 @@ public class ArtemisMain extends Splash
       System.setProperty("artemis.environment", System.getProperty("jnlp.artemis.environment"));
     if(System.getProperty("jnlp.sanger_options") != null)
       System.setProperty("sanger_options", System.getProperty("jnlp.sanger_options"));
+    if(System.getProperty("jnlp.read_only") != null)
+      System.setProperty("read_only", System.getProperty("jnlp.read_only"));
     
     if(args.length == 0) 
     {

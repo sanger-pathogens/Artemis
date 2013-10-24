@@ -834,7 +834,8 @@ srs_url = http://srs.ebi.ac.uk/srsbin/cgi-bin/
 
 # hyperlinked databases in feature editor
 hyperlinks = \
-  EMBL+SWALL+UniProt+UniProtKB srs_url \
+  SWALL+UniProt+UniProtKB srs_url \
+  EMBL http://www.ebi.ac.uk/Tools/dbfetch/expasyfetch? \
   PubMed+PMID http://www.ncbi.nlm.nih.gov/sites/entrez?Db=pubmed&Cmd=ShowDetailView&TermToSearch= \
   InterPro http://www.ebi.ac.uk/interpro/entry/ \
   OrthoMCLDB http://www.orthomcl.org/cgi-bin/OrthoMclWeb.cgi?rm=groupList&type=ackeyword&in=Accession&q= \
