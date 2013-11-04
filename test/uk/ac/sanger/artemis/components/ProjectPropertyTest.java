@@ -33,7 +33,10 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Properties;
 
-
+/**
+ * Tests for loading and writing project properties for
+ * Artemis.
+ */
 public class ProjectPropertyTest
 {
   private HashMap<String, HashMap<String, String>> projects;
