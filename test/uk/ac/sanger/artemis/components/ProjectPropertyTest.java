@@ -40,6 +40,10 @@ import java.util.Properties;
 public class ProjectPropertyTest
 {
   private HashMap<String, HashMap<String, String>> projects;
+  
+  /**
+   * Load the test properties
+   */
   @Before
   public void loadProperties()
   {
@@ -59,6 +63,9 @@ public class ProjectPropertyTest
     }
   }
   
+  /**
+   * Test contents of hash for Styphi
+   */
   @Test
   public void projectContent1()
   {
@@ -75,6 +82,9 @@ public class ProjectPropertyTest
     }
   }
   
+  /**
+   * Test contents of hash for PF3D7
+   */
   @Test
   public void projectContent2()
   {
@@ -90,7 +100,7 @@ public class ProjectPropertyTest
       assertTrue("Styphi project bam",  thisProject.containsKey("bam"));
     }
   }
-  
+
   @Test
   public void launch()
   {
@@ -108,6 +118,10 @@ public class ProjectPropertyTest
     }
   }
   
+  /**
+   * Test writing and reading of the fields in the
+   * properties file
+   */
   @Test
   public void writeAndReadProperties()
   {
