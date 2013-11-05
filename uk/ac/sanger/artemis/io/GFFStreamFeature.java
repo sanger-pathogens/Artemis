@@ -1320,6 +1320,36 @@ public class GFFStreamFeature extends SimpleDocumentFeature
     return false;
   }
   
+  /**
+   * Test if this is feature is marked as having a stop codon
+   * redefined as selenocysteine
+   * @param f
+   * @return
+   */
+  public static boolean isSelenocysteine(Feature f)
+  {
+    if(!(f instanceof GFFStreamFeature))
+      return false;
+    try
+    {
+      ChadoCanonicalGene gffGene = ((GFFStreamFeature)f).getChadoGene();
+      if(gffGene == null)
+        return false;
+      String transcript = gffGene.getTranscriptFromName(
+          GeneUtils.getUniqueName(f));
+      if(transcript == null)
+        return false;
+      Feature pep = gffGene.getProteinOfTranscript(transcript);
+      if(pep == null)
+        return false;
+      if(pep.getQualifierByName("stop_codon_redefined_as_selenocysteine") != null)
+        return true;
+    }
+    catch (Exception e){}
+
+    return false;
+  }
+  
   public static void main(String args[])
   {
     Key key = new Key("region");
