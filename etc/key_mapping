@@ -1,9 +1,9 @@
 # CHADO (SO) database key mappings (used for writing out to file)
 #
 # CHADO                                    map to 	    qualifier (optional)
-pseudogenic_transcript                     mRNA            pseudo
-pseudogenic_exon                           CDS             pseudo
-pseudogene                                 gene            pseudo
+pseudogenic_transcript                     mRNA            pseudogene=unknown
+pseudogenic_exon                           CDS             pseudogene=unknown
+pseudogene                                 gene            pseudogene=unknown
 polypeptide_motif                          CDS_motif
 five_prime_UTR                             5'UTR
 three_prime_UTR                            3'UTR

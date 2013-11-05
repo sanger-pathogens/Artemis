@@ -304,6 +304,7 @@ public class ReadAndWriteEntry
         System.out.println("-z\t[y|n] gzip output, default is y");
         System.out.println("-a\t[y|n] for EMBL submission format change to n, default is y");
         System.out.println("-pp\t[y|n] read polypeptide domain features, default is n");
+        System.out.println("-r\t[y|n] remove product qualifiers from pseudogene (only for EMBL submission format), default is n");
         System.out.println("-c\tthe URL for your Chado database e.g. db.genedb.org:5432/snapshot?genedb_ro (if not using default)");
         System.out.println("-u\t[swing|console|script] the UI mode : run in swing (with popup dialog boxes) mode, run in console mode (choices entered in the console window), or in script mode (all choices default to continue, all parameters passed on command line) ");
         System.out.println("-p\tthe password for connecting to the Chado database");
@@ -320,6 +321,7 @@ public class ReadAndWriteEntry
       String suffix = ".embl";
       boolean gzip = true;
       boolean noprivates = true;
+      boolean removeProductForPseudo = false;
       
       String filePath = "";
       
@@ -374,6 +376,11 @@ public class ReadAndWriteEntry
         else if (key.equals("-c"))
         {
         	System.setProperty("chado", args[i + 1]);
+        }
+        else if (key.equals("-r"))
+        {
+          if(i + 1 < args.length && args[i + 1].toLowerCase().equals("y"))
+            removeProductForPseudo = true;
         }
         else if (key.equals("-p"))
         {
@@ -438,13 +445,12 @@ public class ReadAndWriteEntry
         logger4j.info("read :: "+names[i]+" write :: "+names[i]+suffix);
         
         Entry entry = ReadAndWriteEntry.readEntryFromDatabase(names[i], ENTRY_SOURCE);
-        
+        DocumentEntryFactory.REMOVE_PRODUCT_FROM_PSEUDOGENE = removeProductForPseudo;
         try
         {
           ReadAndWriteEntry.writeDatabaseEntryToFile(
             entry, new File(filePath + names[i]+suffix), flatten, ignoreObsolete, 
-            false, include_diana_extensions,
-            format, null);
+            false, include_diana_extensions, format, null);
           System.out.println("done");
           logger4j.info("done");
         }

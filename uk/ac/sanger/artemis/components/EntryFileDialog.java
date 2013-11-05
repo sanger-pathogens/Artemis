@@ -366,17 +366,21 @@ public class EntryFileDialog extends StickyFileChooser
         Box yBox = Box.createVerticalBox();
         boolean useAccessory = false;
 
-        JCheckBox emblHeader = new JCheckBox("Add EMBL Header",
-                                             false);
+        JCheckBox emblHeader = new JCheckBox("Add EMBL Header", false);
+        
+        JCheckBox removeProductForPseudo = new JCheckBox(
+            "Remove products from pseudogenes", false);
 
         setDialogTitle("Save to ...");
         setDialogType(JFileChooser.SAVE_DIALOG);
 
-        if( destination_type == DocumentEntryFactory.EMBL_FORMAT &&
-           (entry.getHeaderText() == null ||
-           !isHeaderEMBL(entry.getHeaderText())) )
+        if( destination_type == DocumentEntryFactory.EMBL_FORMAT )
         {
-          yBox.add(emblHeader);
+          if((entry.getHeaderText() == null || !isHeaderEMBL(entry.getHeaderText())))
+            yBox.add(emblHeader);
+          
+          if(!include_diana_extensions)
+            yBox.add(removeProductForPseudo);
           useAccessory = true;
         }
 
@@ -466,6 +470,7 @@ public class EntryFileDialog extends StickyFileChooser
                              false);
         try 
         {
+          DocumentEntryFactory.REMOVE_PRODUCT_FROM_PSEUDOGENE = removeProductForPseudo.isSelected();
           if(entry.getEMBLEntry() instanceof DatabaseDocumentEntry ||
              entry.getEMBLEntry() instanceof GFFDocumentEntry)
             ReadAndWriteEntry.writeDatabaseEntryToFile(entry, file, 
@@ -507,6 +512,7 @@ public class EntryFileDialog extends StickyFileChooser
         }
         finally 
         {
+          DocumentEntryFactory.REMOVE_PRODUCT_FROM_PSEUDOGENE = false;
           if(message != null) 
             message.dispose();
         }
