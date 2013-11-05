@@ -627,7 +627,7 @@ public class ProjectProperty extends JFrame
    * @param projectProps
    * @return
    */
-  private HashMap<String, HashMap<String, String>> getProjectMap(final Properties projectProps)
+  protected static HashMap<String, HashMap<String, String>> getProjectMap(final Properties projectProps)
   {
     final HashMap<String, HashMap<String, String>> projects =
         new HashMap<String, HashMap<String, String>>();
@@ -661,15 +661,23 @@ public class ProjectProperty extends JFrame
   
   /**
   * Write or re-write properties and insert/update the user.dir property
-  * @param jemProp      properties file
-  * @param uHome        user working directory
   */
   protected static void writeProperties()
   {
+    writeProperties(new File( System.getProperty("user.home") + 
+        File.separator + ".artemis.project.properties"), userProjects);
+  }
+  
+  /**
+  * Write or re-write properties file
+  * @param propFile      properties file
+  */
+  protected static void writeProperties(final File propFile, 
+      HashMap<String, HashMap<String, String>> userProjects)
+  {
     if(userProjects == null)
       return;
-    final String prop = System.getProperty("user.home") + File.separator + ".artemis.project.properties";
-    File propFile = new File(prop);
+
     try
     {
       if(userProjects.size() > 0)
@@ -710,11 +718,11 @@ public class ProjectProperty extends JFrame
     }
     catch (FileNotFoundException filenotfoundexception)
     {
-      System.err.println(prop+" read error");
+      System.err.println(propFile.getAbsolutePath()+" read error");
     }
     catch (IOException e)
     {
-      System.err.println(prop+" i/o error");
+      System.err.println(propFile.getAbsolutePath()+" i/o error");
     }
   }
   
