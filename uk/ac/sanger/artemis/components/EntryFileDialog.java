@@ -471,7 +471,7 @@ public class EntryFileDialog extends StickyFileChooser
             ReadAndWriteEntry.writeDatabaseEntryToFile(entry, file, 
                 flattenGeneModel.isSelected(), 
                 ignoreObsoleteFeatures.isSelected(), false, 
-                include_diana_extensions, destination_type, owner);
+                include_diana_extensions, false, destination_type, owner);
           else if(include_diana_extensions) 
             entry.save(file, destination_type, false);
           else 
@@ -491,7 +491,7 @@ public class EntryFileDialog extends StickyFileChooser
                 ReadAndWriteEntry.writeDatabaseEntryToFile(entry, file, 
                     flattenGeneModel.isSelected(), 
                     ignoreObsoleteFeatures.isSelected(), true, 
-                    include_diana_extensions, destination_type, null);
+                    include_diana_extensions, false, destination_type, null);
               else if(include_diana_extensions) 
                 entry.save(file, destination_type, true);
               else 
