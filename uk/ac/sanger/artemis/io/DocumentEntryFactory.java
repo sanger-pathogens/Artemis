@@ -48,47 +48,18 @@ abstract public class DocumentEntryFactory
 
   /** use if format of the entry is not important */
   final public static int ANY_FORMAT = UNKNOWN_FORMAT;
-                                                                                                               
+
   /** use for an entry that is in EMBL format */
   final public static int EMBL_FORMAT = 1;
-                                                                                                               
+
   /** use for an entry that is in GENBANK format */
   final public static int GENBANK_FORMAT = 2;
-                                                                                                               
+
   /** use for an entry that is in GFF format  */
   final public static int GFF_FORMAT = 3;
-                                                                                                               
-  /** use for an entry that is in BSML format */
-  final public static int BSML_FORMAT = 4;
-                                                                                                               
-  /** use for an entry that is in GAME format */
-  final public static int GAME_FORMAT = 5;
-                                                                                                               
-  /** use for an entry that is in AVAGE format */
-  final public static int AVAGE_FORMAT = 5;
 
+  public static boolean REMOVE_PRODUCT_FROM_PSEUDOGENE = false;
 
-  /**
-   *  Read a DocumentEntry object from the given Document with no restrictions
-   *  on the possible keys and qualifiers.
-   *  @param listener The object that will listen for ReadEvents.
-   **/
-/*  private static DocumentEntry makeDocumentEntry (final Document document,
-                                                 final ReadListener listener)
-      throws IOException 
-  {
-    try
-    {
-      final EntryInformation entry_information =
-        SimpleEntryInformation.getDefaultEntryInformation ();
-
-      return makeDocumentEntry (entry_information, document, listener);
-    } 
-    catch (EntryInformationException e)
-    {
-      throw new Error ("internal error - unexpected exception: " + e);
-    }
-  }*/
 
   /**
    *  Read a DocumentEntry object from the given Document.
@@ -162,27 +133,6 @@ abstract public class DocumentEntryFactory
   }
 
   /**
-   *  Make a new (nameless) DocumentEntry from the given Entry.  The new Entry
-   *  will have a copy of the EntryInformation object of the argument Entry.
-   *  @param destination_type This parameter control the type of DocumentEntry
-   *    that is created.  It should be a DocumentEntry type that can be
-   *    constructed from any Entry eg. one of EMBL_FORMAT, GENBANK_FORMAT.
-   *  @exception EntryInformationException Thrown if the destination Entry
-   *    cannot contain the Key, Qualifier or Key/Qualifier combination of one
-   *    of the features in the source Entry.
-   **/
-/*  public static DocumentEntry makeDocumentEntry (final Entry entry,
-                                                 final int destination_type)
-      throws EntryInformationException
-  {
-    final EntryInformation entry_information =
-      new SimpleEntryInformation (entry.getEntryInformation ());
-
-    return makeDocumentEntry (entry_information, entry, destination_type,
-                              false);
-  }*/
-
-  /**
    *  Make a new (nameless) DocumentEntry from the given Entry.
    *  @param entry_information The EntryInformation to use for the new object.
    *    This supplies the list of valid keys and qualifiers.  Note that this
@@ -229,7 +179,12 @@ abstract public class DocumentEntryFactory
 
     switch (destination_type) {
     case EMBL_FORMAT:
-      return new EmblDocumentEntry (entry_information, entry, force);
+    {
+      EmblDocumentEntry ee = new EmblDocumentEntry (entry_information, entry, force);
+      if(force)
+        removeProductFromPseudogene(ee, destination_type);
+      return ee;
+    }
     case GENBANK_FORMAT:
       return new GenbankDocumentEntry (entry_information, entry, force);
     case GFF_FORMAT:
@@ -240,6 +195,33 @@ abstract public class DocumentEntryFactory
 //     ...
     default:
       throw new Error ("internal error - unknown DocumentEntry type");
+    }
+  }
+  
+  /**
+   * Remove product qualifier from CDS features with pseudogene qualifier
+   * @param document_entry
+   * @param destination_type
+   * @throws EntryInformationException
+   */
+  private static void removeProductFromPseudogene(final DocumentEntry entry,
+                                                  final int destination_type) 
+      throws EntryInformationException
+  {
+    if( !REMOVE_PRODUCT_FROM_PSEUDOGENE )
+      return;
+
+    final FeatureVector features = entry.getAllFeatures();
+    for(Feature f: features)
+    {
+      if(f.getKey().equals("CDS"))
+      {
+        Qualifier q = f.getQualifierByName("product");
+        if(  q != null && 
+            (f.getQualifierByName("pseudogene") != null || 
+             f.getQualifierByName("pseudo") != null))
+          f.getQualifiers().remove(q);
+      }
     }
   }
 }

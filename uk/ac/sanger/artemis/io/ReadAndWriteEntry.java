@@ -136,7 +136,6 @@ public class ReadAndWriteEntry
                                               final boolean ignoreObsolete,
                                               final boolean force,
                                               final boolean include_diana_extensions,
-                                              final boolean removeProductForPseudo,
                                               final int destination_type,
                                               final JFrame parent) 
          throws IOException, EntryInformationException
@@ -184,27 +183,7 @@ public class ReadAndWriteEntry
     if(include_diana_extensions)
       entry.save(file, destination_type, force, artemis_entry_information);
     else
-    {
-      if(removeProductForPseudo)
-      {
-        uk.ac.sanger.artemis.io.FeatureVector features = entry.getEMBLEntry().getAllFeatures();
-        for(Feature f: features)
-        {
-          if(f.getKey().equals("polypeptide"))
-          {
-            Qualifier q = f.getQualifierByName("product");
-            if(q != null)
-            {
-              Feature gene = ((GFFStreamFeature) f).getChadoGene().getGene();
-              if(gene.getKey().equals("pseudogene"))
-                f.getQualifiers().remove(q);
-            }
-          }
-        }
-      }
-      
       entry.saveStandardOnly(file, destination_type, force);
-    }
   }
   
   
@@ -325,7 +304,7 @@ public class ReadAndWriteEntry
         System.out.println("-z\t[y|n] gzip output, default is y");
         System.out.println("-a\t[y|n] for EMBL submission format change to n, default is y");
         System.out.println("-pp\t[y|n] read polypeptide domain features, default is n");
-        System.out.println("-r\t[y|n] remove product qualifiers from pseudogene, default is n");
+        System.out.println("-r\t[y|n] remove product qualifiers from pseudogene (only for EMBL submission format), default is n");
         System.out.println("-c\tthe URL for your Chado database e.g. db.genedb.org:5432/snapshot?genedb_ro (if not using default)");
         System.out.println("-u\t[swing|console|script] the UI mode : run in swing (with popup dialog boxes) mode, run in console mode (choices entered in the console window), or in script mode (all choices default to continue, all parameters passed on command line) ");
         System.out.println("-p\tthe password for connecting to the Chado database");
@@ -466,13 +445,12 @@ public class ReadAndWriteEntry
         logger4j.info("read :: "+names[i]+" write :: "+names[i]+suffix);
         
         Entry entry = ReadAndWriteEntry.readEntryFromDatabase(names[i], ENTRY_SOURCE);
-        
+        DocumentEntryFactory.REMOVE_PRODUCT_FROM_PSEUDOGENE = removeProductForPseudo;
         try
         {
           ReadAndWriteEntry.writeDatabaseEntryToFile(
             entry, new File(filePath + names[i]+suffix), flatten, ignoreObsolete, 
-            false, include_diana_extensions, removeProductForPseudo,
-            format, null);
+            false, include_diana_extensions, format, null);
           System.out.println("done");
           logger4j.info("done");
         }
@@ -485,7 +463,7 @@ public class ReadAndWriteEntry
         	{
         		ReadAndWriteEntry.writeDatabaseEntryToFile(entry, new File(filePath + names[i] + suffix), 
         				flatten, ignoreObsolete, true,
-        			include_diana_extensions, removeProductForPseudo, format, null);
+        			include_diana_extensions, format, null);
         		System.out.println("done");
         		logger4j.info("done");
         	}
