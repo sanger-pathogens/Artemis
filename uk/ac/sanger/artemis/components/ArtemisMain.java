@@ -44,6 +44,7 @@ import org.biojava.bio.seq.io.SequenceFormat;
 import java.awt.event.*;
 import java.awt.Toolkit;
 import java.io.*;
+import java.util.Properties;
 import java.util.Vector;
 import java.awt.datatransfer.*;
 import javax.swing.JFrame;
@@ -281,22 +282,33 @@ public class ArtemisMain extends Splash
   }
 
   /**
+   * Web start properties need to begin with "javaws." or "jnlp.
+   */
+  private void processJnlpAttributes()
+  {
+    // JNLP properties
+    final Properties properties = System.getProperties();
+    for(String key : properties.stringPropertyNames())
+    {
+      if( key.equals("jnlp.chado") ||
+          key.equals("jnlp.offset") ||
+          key.equals("jnlp.artemis.environment") ||
+          key.equals("jnlp.sanger_options") ||
+          key.equals("jnlp.read_only") || 
+          key.startsWith("jnlp.bam") ||
+          key.startsWith("jnlp.userplot") ||
+          key.startsWith("jnlp.loguserplot") ||
+          key.startsWith("jnlp.show_") )
+        System.setProperty(key.substring(5), System.getProperty(key));
+    }
+  }
+  
+  /**
    *  Read the entries named in args and in the diana.ini file.
    **/
   protected void readArgsAndOptions(final String [] args, final JFrame f)
   {
-    // JNLP properties
-    if(System.getProperty("jnlp.chado") != null)
-      System.setProperty("chado", System.getProperty("jnlp.chado"));
-    if(System.getProperty("jnlp.offset") != null)
-      System.setProperty("offset", System.getProperty("jnlp.offset"));
-    if(System.getProperty("jnlp.artemis.environment") != null)
-      System.setProperty("artemis.environment", System.getProperty("jnlp.artemis.environment"));
-    if(System.getProperty("jnlp.sanger_options") != null)
-      System.setProperty("sanger_options", System.getProperty("jnlp.sanger_options"));
-    if(System.getProperty("jnlp.read_only") != null)
-      System.setProperty("read_only", System.getProperty("jnlp.read_only"));
-    
+    processJnlpAttributes();
     if(args.length == 0) 
     {
       if(System.getProperty("chado") != null && 
