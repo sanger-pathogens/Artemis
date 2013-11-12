@@ -187,6 +187,7 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
     
     final FeatureVector featuresInRange = new FeatureVector();
     final List<IndexContig> contigs = getContigsInRange(range);
+
     for(IndexContig c: contigs)
     {
       try
@@ -198,8 +199,7 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
         ioe.printStackTrace();
       }
     }
-    
-    
+
     if(featuresInRange.size() > 0 && GFFStreamFeature.isGTF((Feature)featuresInRange.get(0)))
     {
       // GTF
@@ -239,7 +239,9 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
      
     if(tabixIterator == null)
       return;
-    int pos[] = iterate(c, range.getStart(), range.getEnd(), tabixIterator, features);
+    
+    FeatureVector featuresInRange = new FeatureVector();
+    int pos[] = iterate(c, range.getStart(), range.getEnd(), tabixIterator, featuresInRange);
 
     if(pos[0] < range.getStart() || pos[1] > range.getEnd())
     {
@@ -250,15 +252,15 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
       tabixIterator = reader.query(r);
       if(tabixIterator == null)
         return;
-      features.clear();
+      featuresInRange.clear();
 
-      iterate(c, pos[0], pos[1], tabixIterator, features);
+      iterate(c, pos[0], pos[1], tabixIterator, featuresInRange);
     }
+    features.addAll(featuresInRange);
   }
   
   private int[] iterate(final IndexContig c, 
-                        int min,
-                        int max,
+                        int min, int max,
                         final TabixReader.Iterator tabixIterator, 
                         final FeatureVector features) throws NumberFormatException, ReadFormatException, IOException
   {
@@ -291,7 +293,11 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
     return new int[]{min, max};
   }
   
-  
+  /**
+   * Return the sequences that lie within a given range
+   * @param range
+   * @return
+   */
   private List<IndexContig> getContigsInRange(Range range)
   {
     final List<IndexContig> list = new Vector<IndexContig>();
@@ -312,10 +318,12 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
     for (String key : contigHash.keySet())
     {
       IndexContig contig = contigHash.get(key);
+      
       if( (range.getStart() >= contig.getOffsetStart() && range.getStart() <= contig.getOffsetEnd()) ||
-          (range.getEnd()   >= contig.getOffsetStart() && range.getEnd()   <= contig.getOffsetEnd()))
+          (range.getEnd()   >= contig.getOffsetStart() && range.getEnd()   <= contig.getOffsetEnd()) ||
+          (contig.getOffsetStart() >= range.getStart() && contig.getOffsetStart() <= range.getEnd()) ||
+          (contig.getOffsetEnd() >= range.getStart()   && contig.getOffsetEnd() <= range.getEnd()) )
       {
-        //System.out.println(contig.chr+" getChr() RANGE "+range.toString());
         list.add(contig);
       }
     }
@@ -1302,68 +1310,62 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
   }
   
   class IndexGFFFeatureEnumeration implements FeatureEnumeration
-  {
-    private Iterator<IndexContig> contigIterator = getListOfContigs().iterator();
-    private TabixReader.Iterator tabixIterator;
-    private IndexContig c;
-    private String gffLine;
+  { 
+    private FeatureVector features;
+    private int idx = 0;
+    private int contigIdx = 0;
+    private List<IndexContig> contigs;
     
     public boolean hasMoreFeatures()
     {
-      try
+      if(features == null)
       {
-        if(tabixIterator == null && !hasNextTabixIterator())
+        if(entryGroup == null)
           return false;
-        
-        gffLine = tabixIterator.next();
-        if(gffLine != null)
-          return true;
-        
-        if(!hasNextTabixIterator())
-          return false;
-        gffLine = tabixIterator.next();
-        if(gffLine != null)
-          return true;
-      }
-      catch (IOException e){}
 
+        if(contigs == null)
+        {
+          try
+          {
+            contigs =  getContigsInRange(
+                new Range(1, entryGroup.getSequenceLength()));
+          }
+          catch (OutOfRangeException e){}
+        }
+        getFeaturesInContig();
+      }
+
+      if(idx < features.size())
+        return true;
+      else
+      {
+        idx = 0;
+        contigIdx++;
+        if(contigIdx < contigs.size())
+        {
+          getFeaturesInContig();
+          if(idx < features.size())
+            return true;
+        }
+      }
       return false;
     }
-
+    
     public Feature nextFeature() throws NoSuchElementException
     {
-      try
-      {
-        final StringVector parts = StringVector.getStrings(gffLine, "\t", true);
-        gffLine = getGffInArtemisCoordinates(gffLine, parts, c);
-        return new GFFStreamFeature(gffLine);
-      }
-      catch (IOException e)
-      {
-        e.printStackTrace();
-      }
-      return null;
+      idx++;
+      return features.elementAt(idx-1);
     }
     
-    private boolean hasNextTabixIterator()
+    private void getFeaturesInContig()
     {
-      if(!contigIterator.hasNext())
-      {
-        tabixIterator = null;
-        return false;
-      }
-      c = contigIterator.next();
-      
-      Range range = null;
       try
       {
-        range = new Range(1, Integer.MAX_VALUE);
-      } catch (OutOfRangeException e){}
-      int start = getCoordInContigCoords(range.getStart(), c);
-      int end = getCoordInContigCoords(range.getEnd(), c);
-
-      tabixIterator = reader.query( c.chr+":"+start+"-"+end );
-      return true;
+        features = getFeaturesInRange(
+            new Range(contigs.get(contigIdx).getOffsetStart(), 
+                      contigs.get(contigIdx).getOffsetEnd()));
+      }
+      catch (OutOfRangeException e){}
     }
   }
 }
