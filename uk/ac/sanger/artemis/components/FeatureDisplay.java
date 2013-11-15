@@ -980,8 +980,11 @@ public class FeatureDisplay extends EntryGroupPanel
         event_feature.getEmblFeature() instanceof GFFStreamFeature &&
         !GeneUtils.isDatabaseEntry(event_feature.getEmblFeature()))
     {
-      GFFUtils.updateSegmentRangeStore((GFFStreamFeature)event_feature.getEmblFeature(),
+      try
+      {
+        GFFUtils.updateSegmentRangeStore((GFFStreamFeature)event_feature.getEmblFeature(),
           event.getOldLocation(), event.getNewLocation());
+      } catch(Exception e) {}
     }
     
     // if the feature is visible now or is in the list of visible features
