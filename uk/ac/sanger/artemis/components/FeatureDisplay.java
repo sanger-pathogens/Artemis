@@ -33,6 +33,7 @@ import uk.ac.sanger.artemis.util.FileDocument;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
 import uk.ac.sanger.artemis.util.StringVector;
 import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
+import uk.ac.sanger.artemis.io.GFFUtils;
 import uk.ac.sanger.artemis.io.InvalidRelationException;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.Range;
@@ -975,6 +976,14 @@ public class FeatureDisplay extends EntryGroupPanel
     if(!getEntryGroup().contains(event_feature)) 
       return;
 
+    if( event.getType() ==  FeatureChangeEvent.LOCATION_CHANGED &&
+        event_feature.getEmblFeature() instanceof GFFStreamFeature &&
+        !GeneUtils.isDatabaseEntry(event_feature.getEmblFeature()))
+    {
+      GFFUtils.updateSegmentRangeStore((GFFStreamFeature)event_feature.getEmblFeature(),
+          event.getOldLocation(), event.getNewLocation());
+    }
+    
     // if the feature is visible now or is in the list of visible features
     //(ie. it was visible previously) then redisplay.
     if(featureVisible(event_feature) ||
