@@ -972,10 +972,6 @@ public class FeatureDisplay extends EntryGroupPanel
   {
     final Feature event_feature = event.getFeature();
 
-    // the feature isn't in an active entry
-    if(!getEntryGroup().contains(event_feature)) 
-      return;
-
     if( event.getType() ==  FeatureChangeEvent.LOCATION_CHANGED &&
         event_feature.getEmblFeature() instanceof GFFStreamFeature &&
         !GeneUtils.isDatabaseEntry(event_feature.getEmblFeature()))
@@ -986,6 +982,10 @@ public class FeatureDisplay extends EntryGroupPanel
           event.getOldLocation(), event.getNewLocation());
       } catch(Exception e) {}
     }
+
+    // the feature isn't in an active entry
+    if(!getEntryGroup().contains(event_feature)) 
+      return;
     
     // if the feature is visible now or is in the list of visible features
     //(ie. it was visible previously) then redisplay.
