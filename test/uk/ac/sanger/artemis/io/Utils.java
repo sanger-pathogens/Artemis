@@ -25,17 +25,11 @@ import java.net.URL;
 
 import junit.framework.Assert;
 import uk.ac.sanger.artemis.EntryGroup;
-import uk.ac.sanger.artemis.Feature;
 import uk.ac.sanger.artemis.FeatureSegmentVector;
-import uk.ac.sanger.artemis.FeatureVector;
+
 import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.Selection;
 import uk.ac.sanger.artemis.SimpleEntryGroup;
-import uk.ac.sanger.artemis.io.DocumentEntryFactory;
-import uk.ac.sanger.artemis.io.Entry;
-import uk.ac.sanger.artemis.io.EntryInformationException;
-import uk.ac.sanger.artemis.io.InvalidRelationException;
-import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.sequence.AminoAcidSequence;
 import uk.ac.sanger.artemis.sequence.Bases;
 import uk.ac.sanger.artemis.sequence.NoSequenceException;
@@ -93,15 +87,15 @@ public class Utils
    * @param features
    * @return
    */
-  public static Feature getCDSFeatureByIdPrefix(
+  public static uk.ac.sanger.artemis.Feature getCDSFeatureByIdPrefix(
                  final String id,
-                 final FeatureVector features)
+                 final uk.ac.sanger.artemis.FeatureVector features)
   {
     try
     {
       for (int i=0; i<features.size(); i++)
       {
-        Feature f = features.elementAt(i);
+        uk.ac.sanger.artemis.Feature f = features.elementAt(i);
         final Qualifier q = f.getQualifierByName("ID");
         if (q != null)
         {
@@ -112,6 +106,30 @@ public class Utils
       }
     }
     catch(InvalidRelationException e) 
+    {
+      Assert.fail(e.getMessage());
+    }
+    return null;
+  }
+  
+  public static Feature getCDSFeatureByIdPrefix(
+      final String id,
+      final FeatureVector features)
+  {
+    try
+    {
+      for (Feature f: features)
+      {
+        final Qualifier q = f.getQualifierByName("ID");
+        if (q != null)
+        {
+          final String thisId = q.getValues().get(0);
+          if (thisId.startsWith(id) && f.getKey().getKeyString().equals("CDS"))
+            return f;
+        }
+      }
+    }
+    catch (InvalidRelationException e)
     {
       Assert.fail(e.getMessage());
     }
