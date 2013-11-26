@@ -227,7 +227,6 @@ class GffToEMBL
       System.out.println("-s\tspace separated list of sequences to read and write out");
       System.out.println("-o\toutput directory");
       System.out.println("-f\t[y|n] flatten the gene model, default is y");
-      System.out.println("-l\tlocation of EMBL mapping files (qualifier_mapping and key_mapping)");
       System.out.println("-z\t[y|n] gzip output, default is y");
       System.out.println("-a\t[y|n] for EMBL submission format change to n, default is y");
       System.exit(0);
@@ -236,8 +235,8 @@ class GffToEMBL
     boolean gzip = true;
     boolean emblSubmission = true;
     boolean flatten = true;
-    Vector<String> files = null;
-    String outDir = null;
+    Vector<String> files = new java.util.Vector<String>();;
+    String outDir = System.getProperty("user.dir"); // working directory
     for(int i=0; i<args.length; i++)
     {
       String s = args[i];
@@ -248,7 +247,7 @@ class GffToEMBL
       }
       else if(s.equals("-a"))
       {
-        if(i + 1 < args.length && args[i + 1].toLowerCase().equals("n"))
+        if(i + 1 < args.length && args[i + 1].toLowerCase().equals("y"))
           emblSubmission = false;
       }
       else if(s.equals("-f"))
@@ -263,8 +262,6 @@ class GffToEMBL
       }
       else if(args[i].toLowerCase().equals("-s"))
       {
-        if(files == null)
-          files = new java.util.Vector<String>();
         for(int j = i + 1; j < args.length; j++)
         {
           if(args[j].startsWith("-"))
@@ -274,10 +271,12 @@ class GffToEMBL
       }
     }
     
-    if(outDir == null)
+    final File outDirFile = new File(outDir);
+    if(!outDirFile.exists() && !outDirFile.mkdir())
     {
-      File f = new File(files.get(0));
-      outDir = f.getParentFile().getAbsolutePath();
+      JOptionPane.showMessageDialog(null, "Problems writing to "+
+               outDirFile.getAbsolutePath(), "Error", JOptionPane.ERROR_MESSAGE);
+      System.exit(0);
     }
 
     for(String fn: files)

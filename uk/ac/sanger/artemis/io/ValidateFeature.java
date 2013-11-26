@@ -677,7 +677,7 @@ public class ValidateFeature
     if(!cds_predicate.testPredicate (f)) 
       return false;
 
-    if(feature instanceof GFFStreamFeature && GFFStreamFeature.isSelenocysteine(feature))
+    if(feature instanceof GFFStreamFeature && GFFUtils.isSelenocysteine(feature))
       return false;
 
     final AminoAcidSequence aa = f.getTranslation ();

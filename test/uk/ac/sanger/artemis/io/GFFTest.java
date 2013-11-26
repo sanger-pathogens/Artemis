@@ -27,19 +27,42 @@ import junit.framework.Assert;
 import org.junit.Test;
 
 import uk.ac.sanger.artemis.EntryGroup;
-import uk.ac.sanger.artemis.Feature;
-import uk.ac.sanger.artemis.FeatureVector;
 import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.SimpleEntryGroup;
-import uk.ac.sanger.artemis.io.Entry;
-import uk.ac.sanger.artemis.io.Qualifier;
-import uk.ac.sanger.artemis.io.InvalidRelationException;
+import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
+
 import uk.ac.sanger.artemis.sequence.NoSequenceException;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
 import uk.ac.sanger.artemis.util.StringVector;
 
 public class GFFTest
 {
+  @Test
+  /**
+   * Test the segment ID is not null after changing the location of
+   * a CDS with a join.
+   */
+  public void testIdAfterLocationChange()
+  {
+    try
+    {
+      final Entry entry = Utils.getEntry("/data/test_boundary.gff.gz");
+      Feature f = Utils.getCDSFeatureByIdPrefix("PF3D7_0200200.1", entry.getAllFeatures());
+      Location oldLocation = f.getLocation();
+      Location newLocation = new Location("join(25234..29035,29837..31168)");
+      f.setLocation(newLocation);
+      GFFUtils.updateSegmentRangeStore((GFFStreamFeature)f, oldLocation, newLocation);
+
+      for(Range r: f.getLocation().getRanges()) 
+        assertTrue("CDS for PF3D7_0200100.1 not found ", 
+            ((GFFStreamFeature)f).getSegmentID(r) != null);
+    }
+    catch (Exception e)
+    {
+      Assert.fail(e.getMessage());
+    }
+  }
+  
   @Test
   /**
    * For a GFF with multiple sequences check the offset position 
@@ -52,7 +75,7 @@ public class GFFTest
       final Entry entry = Utils.getEntry("/data/Pf3D7_01_02_v3.gff.gz");
       final EntryGroup egrp = new SimpleEntryGroup();
       egrp.add(new uk.ac.sanger.artemis.Entry(entry));
-      final FeatureVector features = egrp.getAllFeatures();
+      final uk.ac.sanger.artemis.FeatureVector features = egrp.getAllFeatures();
 
       // change the translation table did cause a problem
       // with the offset that has now been fixed in GFFDocumentEntry
@@ -60,7 +83,7 @@ public class GFFTest
 
       for (int i=0; i<features.size(); i++)
       {
-        Feature f = features.elementAt(i);
+        uk.ac.sanger.artemis.Feature f = features.elementAt(i);
         try
         {
           final Qualifier q = f.getQualifierByName("ID");
@@ -84,6 +107,8 @@ public class GFFTest
           Assert.fail(e.getMessage());
         }
       }
+      
+      GFFStreamFeature.contig_ranges = null;
     }
     catch (OutOfRangeException e)
     {
@@ -94,5 +119,4 @@ public class GFFTest
       Assert.fail(e.getMessage());
     }
   }
-
 }
