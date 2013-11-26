@@ -1,4 +1,7 @@
 Version XX
+	Add 'Features Within Selection' option to the 'Select' menu to select
+	features that are contained by a selected base range.
+
 	Saving an entry as EMBL submission has an option now to remove products
 	from CDS features with a pseudogene qualifier.
 	
