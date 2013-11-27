@@ -140,7 +140,7 @@ public class ActMain extends Splash
                           final InputStreamProgressListener progress_listener,
                           final Object[] file_names) 
   {
-
+    processJnlpAttributes();
     final ProgressThread progress_thread = new ProgressThread(null,
                                                 "Loading Entry...");
 
