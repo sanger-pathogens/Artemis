@@ -44,7 +44,6 @@ import org.biojava.bio.seq.io.SequenceFormat;
 import java.awt.event.*;
 import java.awt.Toolkit;
 import java.io.*;
-import java.util.Properties;
 import java.util.Vector;
 import java.awt.datatransfer.*;
 import javax.swing.JFrame;
@@ -279,28 +278,6 @@ public class ArtemisMain extends Splash
       }
     };
     entryWorker.start();
-  }
-
-  /**
-   * Web start properties need to begin with "javaws." or "jnlp.
-   */
-  private void processJnlpAttributes()
-  {
-    // JNLP properties
-    final Properties properties = System.getProperties();
-    for(String key : properties.stringPropertyNames())
-    {
-      if( key.equals("jnlp.chado") ||
-          key.equals("jnlp.offset") ||
-          key.equals("jnlp.artemis.environment") ||
-          key.equals("jnlp.sanger_options") ||
-          key.equals("jnlp.read_only") || 
-          key.startsWith("jnlp.bam") ||
-          key.startsWith("jnlp.userplot") ||
-          key.startsWith("jnlp.loguserplot") ||
-          key.startsWith("jnlp.show_") )
-        System.setProperty(key.substring(5), System.getProperty(key));
-    }
   }
   
   /**
