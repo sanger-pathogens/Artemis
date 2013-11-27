@@ -349,6 +349,29 @@ abstract public class Splash extends JFrame
             icon);
   }
   
+  /**
+   * Web start properties need to begin with "javaws." or "jnlp.
+   */
+  protected static void processJnlpAttributes()
+  {
+    // JNLP properties
+    final Properties properties = System.getProperties();
+    for(String key : properties.stringPropertyNames())
+    {
+      if( key.equals("jnlp.black_belt_mode") ||
+          key.equals("jnlp.chado") ||
+          key.equals("jnlp.offset") ||
+          key.equals("jnlp.artemis.environment") ||
+          key.equals("jnlp.sanger_options") ||
+          key.equals("jnlp.read_only") || 
+          key.startsWith("jnlp.bam") ||
+          key.startsWith("jnlp.userplot") ||
+          key.startsWith("jnlp.loguserplot") ||
+          key.startsWith("jnlp.show_") )
+        System.setProperty(key.substring(5), System.getProperty(key));
+    }
+  }
+  
   protected void loadFile(final String fileName)
   {
     if(this instanceof ArtemisMain)
