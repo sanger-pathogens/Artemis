@@ -26,6 +26,7 @@
 package uk.ac.sanger.artemis;
 
 import uk.ac.sanger.artemis.sequence.*;
+import uk.ac.sanger.artemis.components.MessageDialog;
 import uk.ac.sanger.artemis.io.GFFDocumentEntry;
 import uk.ac.sanger.artemis.io.IndexedGFFDocumentEntry;
 import uk.ac.sanger.artemis.io.Range;
@@ -646,7 +647,16 @@ public class SimpleEntryGroup extends EntryVector
     if(entry.getEMBLEntry() instanceof IndexedGFFDocumentEntry)
       ((IndexedGFFDocumentEntry)entry.getEMBLEntry()).setEntryGroup(this);
     else if(entry.getEMBLEntry() instanceof GFFDocumentEntry)
+    {
       ((GFFDocumentEntry)entry.getEMBLEntry()).adjustCoordinates( getSequenceEntry() );
+      if(!Options.isBlackBeltMode() && size() > 1 && 
+          entry.getEMBLEntry().getSequence() != null )
+      {
+        new MessageDialog (null, "Warning", 
+            "Overlaying a GFF with a sequence onto an entry with a sequence.",
+            false);
+      }
+    }
 
     addElement(entry);
   }
