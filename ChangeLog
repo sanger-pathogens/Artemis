@@ -9,6 +9,10 @@ Version XX
 	for adjusting their heights (BAM, VCF, plots, comparisons) by giving 
 	them different weights in order to distribute the space between each 
 	component.
+	
+	Added ability to hide graph lines. Right click on the graph to get the 
+	popup menu and select 'Configure...'. Then use the 'Line size' slider 
+	to reduce the size of the line(s) that you want to hide to zero.
 
 	Labels can optionally be added to the header of base position plots
 	and these are used in the legend, e.g.
