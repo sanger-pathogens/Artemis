@@ -58,6 +58,7 @@ public class MappedReads
   private SAMRecordMapQPredicate samRecordMapQPredicate;
   private boolean contained;
   private boolean useIntrons;
+  private boolean useStrandTag = false;
   private JDialog dialog = new JDialog((JFrame)null, "Calculating", true);;
     
   private int mappedReads[];
@@ -87,7 +88,8 @@ public class MappedReads
       SAMRecordMapQPredicate samRecordMapQPredicate,
       final boolean contained, 
       final boolean useIntrons,
-      final boolean allRefSeqs)
+      final boolean allRefSeqs,
+      final boolean useStrandTag)
   {
     this.features = features;
     this.refName = refName;
@@ -102,6 +104,7 @@ public class MappedReads
     this.samRecordMapQPredicate = samRecordMapQPredicate;
     this.contained = contained;
     this.useIntrons = useIntrons;
+    this.useStrandTag = useStrandTag;
     
     progressBar = new JProgressBar(0, sequenceLength);
     progressBar.setValue(0);
@@ -150,7 +153,8 @@ public class MappedReads
       final SAMRecordPredicate samRecordFlagPredicate,
       final SAMRecordMapQPredicate samRecordMapQPredicate,
       final boolean contained, 
-      final boolean useIntrons)
+      final boolean useIntrons,
+      final boolean useStrandTag)
   {
     this.features = features;
     this.refName = refName;
@@ -164,6 +168,7 @@ public class MappedReads
     this.samRecordMapQPredicate = samRecordMapQPredicate;
     this.contained = contained;
     this.useIntrons = useIntrons;
+    this.useStrandTag = useStrandTag;
     
     progressBar = new JProgressBar(0, features.size());
     progressBar.setValue(0);
@@ -297,7 +302,7 @@ public class MappedReads
               float tmpcnt[] = new float[2];
               tmpcnt = BamUtils.getCount(start, end, bam, refName, samFileReaderHash,
                   seqNames, offsetLengths, concatSequences, seqLengths,
-                  samRecordFlagPredicate, samRecordMapQPredicate, contained);
+                  samRecordFlagPredicate, samRecordMapQPredicate, contained, useStrandTag);
               cnt[0] += tmpcnt[0];
               cnt[1] += tmpcnt[1];
             }
@@ -305,7 +310,7 @@ public class MappedReads
           else
             cnt = BamUtils.getCount(start, end, bam, refName, samFileReaderHash, seqNames,
                 offsetLengths, concatSequences, seqLengths,
-                samRecordFlagPredicate, samRecordMapQPredicate, contained);
+                samRecordFlagPredicate, samRecordMapQPredicate, contained, useStrandTag);
 
           if (mappedReads != null)
           {
@@ -543,7 +548,7 @@ public class MappedReads
 
                 mappedReads[j] += BamUtils.count(bam, samFileReaderHash, name,
                     thisStart, thisEnd, samRecordFlagPredicate,
-                    samRecordMapQPredicate, contained, false)[0];
+                    samRecordMapQPredicate, contained, false, useStrandTag)[0];
 
               }
               lastLen = len;
@@ -553,7 +558,7 @@ public class MappedReads
           {
             mappedReads[j] += BamUtils.count(bam, samFileReaderHash, refName, sbegc,
                 sendc, samRecordFlagPredicate, samRecordMapQPredicate,
-                contained, false)[0];
+                contained, false, useStrandTag)[0];
           }
         }
       }
