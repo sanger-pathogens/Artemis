@@ -65,6 +65,7 @@ class BamUtils
    * @param samRecordFlagPredicate
    * @param samRecordMapQPredicate
    * @param contained
+   * @param useStrandTag - strand specific tag
    * @return
    */
   protected static float[] getCount(
@@ -79,7 +80,8 @@ class BamUtils
       final HashMap<String, Integer> seqLengths,
       final SAMRecordPredicate samRecordFlagPredicate,
       final SAMRecordMapQPredicate samRecordMapQPredicate,
-      final boolean contained)
+      final boolean contained,
+      final boolean useStrandTag)
   {
     int cnt[] = new int[2];
     cnt[0] = 0;
@@ -107,7 +109,7 @@ class BamUtils
             thisEnd = thisLength;
 
           cnt = count(bam, samFileReaderHash, name, thisStart, thisEnd, 
-              samRecordFlagPredicate, samRecordMapQPredicate, contained, true);
+              samRecordFlagPredicate, samRecordMapQPredicate, contained, true, useStrandTag);
 
         }
         lastLen = len;
@@ -116,7 +118,7 @@ class BamUtils
     else
     {
       cnt = count(bam, samFileReaderHash, refName, start, end, 
-          samRecordFlagPredicate, samRecordMapQPredicate, contained, true);
+          samRecordFlagPredicate, samRecordMapQPredicate, contained, true, useStrandTag);
     }
     
     float cntf[] = new float[2];
@@ -133,7 +135,8 @@ class BamUtils
                     final SAMRecordPredicate samRecordFlagPredicate,
                     final SAMRecordPredicate samRecordMapQPredicate,
                     final boolean contained,
-                    final boolean byStrand)
+                    final boolean byStrand,
+                    final boolean useStrandTag)
   {
     int cnt[] = new int[2];
     cnt[0] = 0;
@@ -151,7 +154,7 @@ class BamUtils
          if(samRecordMapQPredicate == null ||
             samRecordMapQPredicate.testPredicate(samRecord))
          {
-           if(byStrand && samRecord.getReadNegativeStrandFlag())
+           if(byStrand && BamView.isNegativeStrand(samRecord, useStrandTag))
              cnt[1]++;
            else
              cnt[0]++;

@@ -1623,7 +1623,7 @@ public class BamView extends JPanel
     for(BamViewRecord bamViewRecord: readsInView)
     {
       SAMRecord samRecord = bamViewRecord.sam;
-      if( isNegativeStrand(samRecord) == isStrandNegative )
+      if( isNegativeStrand(samRecord, colourByStrandTag.isSelected()) == isStrandNegative )
       {
         final int offset = getSequenceOffset(samRecord.getReferenceName());
         final int recordStart = samRecord.getAlignmentStart()+offset;
@@ -1847,11 +1847,13 @@ public class BamView extends JPanel
    * Check if a record is on the negative strand. If the RNA strand specific
    * checkbox is set then use the RNA strand.
    * @param samRecord
+   * @param useStrandTag - strand specific tag
    * @return
    */
-  private boolean isNegativeStrand(final SAMRecord samRecord) 
+  protected static boolean isNegativeStrand(final SAMRecord samRecord, 
+                                            final boolean useStrandTag) 
   {
-    if(colourByStrandTag.isSelected())
+    if(useStrandTag)
     {
       if(samRecord.getAttribute("XS") == null)
         return samRecord.getReadNegativeStrandFlag();
@@ -2583,7 +2585,7 @@ public class BamView extends JPanel
         new MappedReads(features, (String)combo.getSelectedItem(), samFileReaderHash, bamList,
             seqNames, offsetLengths, concatSequences, seqLengths, 
             samRecordFlagPredicate, samRecordMapQPredicate,
-            !overlap.isSelected(), spliced.isSelected());
+            !overlap.isSelected(), spliced.isSelected(), colourByStrandTag.isSelected());
       } 
     });
     
@@ -2623,7 +2625,8 @@ public class BamView extends JPanel
         new MappedReads(features, (String)combo.getSelectedItem(),
             samFileReaderHash, bamList, seqNames, offsetLengths, concatSequences, 
             seqLengths, seqlen, samRecordFlagPredicate, samRecordMapQPredicate,
-            !overlap.isSelected(), spliced.isSelected(), allRefSeqs.isSelected());
+            !overlap.isSelected(), spliced.isSelected(), allRefSeqs.isSelected(),
+            colourByStrandTag.isSelected());
       } 
     });
     

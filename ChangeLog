@@ -32,7 +32,8 @@ Version XX
 
 	Added RNASeq strand specific option to the BAM popup menu ('Colour By' -> 
 	'RNASeq Strand Specific Tag (XS)'). Reads colours are based on the XS 
-	tag (used by TopHat). The RNA strand is then used in the coverage plots.
+	tag (used by TopHat). The RNA strand is then used in the coverage plots
+	and in calculation of read counts and RPKM values.
 	
 	Added the following flags:
   		-Dshow_snps			Show SNP marks in BamView
