@@ -1343,7 +1343,16 @@ public class ChadoTransactionManager
         }
         
         // get the cvterm_id for this featureprop/qualifier
-        Integer lcvterm_id = DatabaseDocument.getCvtermID(name);
+        CvTerm cvterm = DatabaseDocument.getCvTermByCvAndCvTerm(name, "feature_property");
+        Integer lcvterm_id;
+        if(cvterm != null)
+          lcvterm_id = cvterm.getCvTermId();
+        else
+          lcvterm_id = DatabaseDocument.getCvtermID(name);
+
+        if(lcvterm_id == null)
+          lcvterm_id = DatabaseDocument.getCvtermID(name);
+
         if(lcvterm_id == null)   // chado doesn't recognise this
         {
           JOptionPane.showMessageDialog(null,
@@ -1406,7 +1415,11 @@ public class ChadoTransactionManager
       Integer lcvterm_id = null;
       if(!name.equals("timelastmodified"))
       {
-        lcvterm_id = DatabaseDocument.getCvtermID(name);
+        CvTerm cvterm = DatabaseDocument.getCvTermByCvAndCvTerm(name, "feature_property");
+        if(cvterm != null)
+          lcvterm_id = cvterm.getCvTermId();
+        else
+          lcvterm_id = DatabaseDocument.getCvtermID(name);
 
         if(lcvterm_id == null)   // chado doesn't recognise this
         {
