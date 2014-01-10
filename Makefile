@@ -229,6 +229,7 @@ uk/ac/sanger/artemis/util
 #CLASSES := $(NAMES:%=%.class)
 SOURCES := $(foreach DIR,$(ARTEMIS_DIRS),$(wildcard $(DIR)/*.java))
 CLASSES := $(SOURCES:%.java=%.class)
+
 all: idl code
 
 code: $(CLASSES)
