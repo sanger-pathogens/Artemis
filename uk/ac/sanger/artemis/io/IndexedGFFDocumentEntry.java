@@ -69,6 +69,7 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
    private EntryGroup entryGroup;
    private int featureCount = -1;
    
+   private boolean isGTF = false;
    // cache used by getFeatureAtIndex() and indexOf()
    private CacheHashMap gffCache = new CacheHashMap(150,5);
    
@@ -202,6 +203,7 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
 
     if(featuresInRange.size() > 0 && GFFStreamFeature.isGTF((Feature)featuresInRange.get(0)))
     {
+      isGTF = true;
       // GTF
       try
       {
@@ -228,8 +230,25 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
   {
     int start = getCoordInContigCoords(range.getStart(), c);
     int end = getCoordInContigCoords(range.getEnd(), c);
+    
+    if(isGTF)
+    {
+      // for GTF grab a larger range so Artemis knows about any
+      // connecting exons outside the view
+      start -= 500000;
+      if(start < 1)
+        start = 1;
+      end += 500000;
+      try
+      {
+        range = new Range(start, end);
+      }
+      catch (OutOfRangeException e){}
+      if(end < start)
+        return;
+    }
+    
     String r = c.chr+":"+start+"-"+end;
-
     TabixReader.Iterator tabixIterator = null;
     try
     {
@@ -265,15 +284,14 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
                         final FeatureVector features) throws NumberFormatException, ReadFormatException, IOException
   {
     String ln;
-
     while( (ln = tabixIterator.next()) != null )
     {
       StringVector parts = StringVector.getStrings(ln, "\t", true);
       ln = getGffInArtemisCoordinates(ln, parts, c);
       parts = StringVector.getStrings(ln, "\t", true);
       
-      int sbeg = Integer.parseInt(((String)parts.elementAt(3)).trim());
-      int send = Integer.parseInt(((String)parts.elementAt(4)).trim());
+      int sbeg = Integer.parseInt(parts.elementAt(3).trim());
+      int send = Integer.parseInt(parts.elementAt(4).trim());
 
       if( (sbeg < min && send < min) || (sbeg > max && send > max) )
         continue;
@@ -282,7 +300,7 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
       gff.setReadOnlyFeature(true);
       features.add(gff);
 
-      if( ((String)parts.elementAt(2)).equals("gene") )
+      if( parts.elementAt(2).equals("gene") )
       {
         if(sbeg < min)
           min = sbeg;
@@ -1050,6 +1068,8 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
   public FeatureVector getAllFeatures()
   {
     return new FeatureVector(){
+      private static final long serialVersionUID = 1L;
+
       public int size() 
       {
         return getFeatureCount();
