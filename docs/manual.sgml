@@ -49,7 +49,7 @@
     </PRODUCTNAME>
     <PUBDATE>22 February 1999</PUBDATE>
     <COPYRIGHT>
-      <YEAR>1999-2013</YEAR>
+      <YEAR>1999-2014</YEAR>
       <HOLDER>Genome Research Limited</HOLDER>
     </COPYRIGHT>
     <LEGALNOTICE>
@@ -76,7 +76,7 @@
     </LEGALNOTICE>
     <ABSTRACT>
       <PARA>
-This document describes release 15 of &art; a DNA sequence viewer and
+This document describes release 16 of &art; a DNA sequence viewer and
 sequence annotation tool.
       </PARA>
     </ABSTRACT>
