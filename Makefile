@@ -232,6 +232,10 @@ CLASSES := $(SOURCES:%.java=%.class)
 
 all: idl code
 
+# Utils needs to be built before controller
+uk/ac/sanger/artemis/circular/digest/CircularGenomeController.class:uk/ac/sanger/artemis/circular/digest/Utils.class
+	$(REAL_CLASSPATH) $(JAVAC) $(@:%.class=%.java)
+
 code: $(CLASSES)
 
 topdown: idl
