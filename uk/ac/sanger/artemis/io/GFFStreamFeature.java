@@ -27,8 +27,10 @@ package uk.ac.sanger.artemis.io;
 
 
 import java.util.Hashtable;
+import java.util.HashSet;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Vector;
 import java.io.IOException;
@@ -112,6 +114,28 @@ public class GFFStreamFeature extends SimpleDocumentFeature
     { ")",  "%29" },  // right bracket
     { "\n", "%5C" }   // new-line
   };
+
+  private static Set<String> attrs_to_filter = new HashSet<String>();
+
+  /**
+   *  Registers an attribute not to be included in the GFF3 output for
+   *  GFFStreamFeatures
+   *  @param attr The GFF3 attribute to remove
+   **/
+  public static void removeAttribute(String attr)
+  {
+    attrs_to_filter.add(attr);
+  }
+
+  /**
+   *  Registers an attribute to be included in the GFF3 output for
+   *  GFFStreamFeatures
+   *  @param attr The GFF3 attribute to include
+   **/
+  public static void includeAttribute(String attr)
+  {
+    attrs_to_filter.remove(attr);
+  }
 
   /**
    *  Create a new GFFStreamFeature object.  The feature should be added
@@ -891,6 +915,9 @@ public class GFFStreamFeature extends SimpleDocumentFeature
           lname = true;
 
       if(lname)
+        continue;
+
+      if(attrs_to_filter.contains(this_qualifier.getName()))
         continue;
 
       if( (this_qualifier.getName().equals("private") && System.getProperty("noprivate") != null) ||
