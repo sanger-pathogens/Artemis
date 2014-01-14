@@ -166,11 +166,11 @@ public class AbstractGraphPanel extends JPanel
    * @param val
    * @return
    */
-  protected float getValue(int val)
+  protected float getValue(int val, boolean logScale)
   {
     if(val == 0)
       return 0.f;
-    return (float) (bamView.logScale ? Math.log(val) : val);
+    return (float) (logScale ? Math.log(val) : val);
   }
   
   protected void drawSelectionRange(final Graphics2D g2,

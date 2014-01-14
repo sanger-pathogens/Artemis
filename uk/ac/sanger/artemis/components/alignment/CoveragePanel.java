@@ -70,6 +70,7 @@ import net.sf.samtools.SAMRecord;
     private List<HeatMapLn> heatPlots;
     private List<String> selected = new Vector<String>();
     private boolean showGrid = false;
+    private boolean logScale = false;
 
     protected CoveragePanel(final BamView bamView)
     {
@@ -309,7 +310,7 @@ import net.sf.samtools.SAMRecord;
     {
       g2.setColor(line.getLineColour());
       int hgt2 = hgt/2;
-      float maxVal = getValue(max);
+      float maxVal = getValue(max, logScale);
       
       if(line.getPlotType() == LineAttributes.PLOT_TYPES[0])
       {
@@ -329,16 +330,16 @@ import net.sf.samtools.SAMRecord;
               else
                 factor = -1;  // reverse strand
               
-              y0 = (int) (hgt2 - (factor)*((getValue(thisPlot[i-1][col])/maxVal)*hgt2));
-              y1 = (int) (hgt2 - (factor)*((getValue(thisPlot[i][col])/maxVal)*hgt2));
+              y0 = (int) (hgt2 - (factor)*((getValue(thisPlot[i-1][col], logScale)/maxVal)*hgt2));
+              y1 = (int) (hgt2 - (factor)*((getValue(thisPlot[i][col], logScale)/maxVal)*hgt2));
               
               g2.drawLine(x0, y0, x1, y1);
             }
           }
           else
           {
-            y0 = (int) (hgt - ((getValue(thisPlot[i-1][0])/maxVal)*hgt));
-            y1 = (int) (hgt - ((getValue(thisPlot[i][0])/maxVal)*hgt));
+            y0 = (int) (hgt - ((getValue(thisPlot[i-1][0], logScale)/maxVal)*hgt));
+            y1 = (int) (hgt - ((getValue(thisPlot[i][0], logScale)/maxVal)*hgt));
             g2.drawLine(x0, y0, x1, y1);
           }
         }
@@ -361,10 +362,10 @@ import net.sf.samtools.SAMRecord;
             {
               if(col == 0)
                 shapeFwd.lineTo(xpos,
-                  hgt2 - ((getValue(thisPlot[i][col])/maxVal)*hgt2));
+                  hgt2 - ((getValue(thisPlot[i][col], logScale)/maxVal)*hgt2));
               else
                 shapeBwd.lineTo(xpos,
-                  hgt2 + ((getValue(thisPlot[i][col])/maxVal)*hgt2));
+                  hgt2 + ((getValue(thisPlot[i][col], logScale)/maxVal)*hgt2));
             }
           }
 
@@ -381,7 +382,7 @@ import net.sf.samtools.SAMRecord;
           {
             float xpos = i*windowSize*pixPerBase;
             shape.lineTo(xpos,
-                hgt - ((getValue(thisPlot[i][0])/maxVal)*hgt));
+                hgt - ((getValue(thisPlot[i][0], logScale)/maxVal)*hgt));
           }
           shape.lineTo(wid,hgt);
           g2.fill(shape);
@@ -412,12 +413,12 @@ import net.sf.samtools.SAMRecord;
 
       heatPlots.add(new HeatMapLn(plotPos, plotPos+plotHgt, fName));
       
-      float maxVal = getValue(max);
+      float maxVal = getValue(max, logScale);
       for(int i=0; i<thisPlot.length; i++)
       {
         int xpos = (int) (i*windowSize*pixPerBase);
         // this is a number between 0.0 and 1.0
-        final float scaledValue = getValue(thisPlot[i][0]) / maxVal;
+        final float scaledValue = getValue(thisPlot[i][0], logScale) / maxVal;
         // set color based on value
         int colourIdx = 
           (int)(definedColours.length * 0.999 * scaledValue);
@@ -583,6 +584,10 @@ import net.sf.samtools.SAMRecord;
       c.gridy = c.gridy+1;
       opts.add(byStrand, c);
 
+      final JCheckBox logMenu = new JCheckBox("Log scale", logScale);
+      c.gridy = c.gridy+1;
+      opts.add(logMenu, c);
+
       String window_options[] = { "OK", "Cancel" };
       int select = JOptionPane.showOptionDialog(null, opts, "Coverage Options",
           JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null,
@@ -595,6 +600,7 @@ import net.sf.samtools.SAMRecord;
       autoWinSize = autoSet.isSelected();
       includeCombined = showCombined.isSelected();
       plotByStrand = byStrand.isSelected();
+      logScale = logMenu.isSelected();
       
       try
       {

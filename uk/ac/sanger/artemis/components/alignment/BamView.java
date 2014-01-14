@@ -189,7 +189,7 @@ public class BamView extends JPanel
   private CoveragePanel coveragePanel;
   private SnpPanel snpPanel;
 
-  protected boolean logScale = false;
+  private boolean logScale = false;
   private Ruler ruler;
   private int nbasesInView;
   
@@ -2729,7 +2729,7 @@ public class BamView extends JPanel
         laststart = -1;
         if(cbCoverageView.isSelected())
         {
-          logMenuItem.setEnabled(true);
+          logMenuItem.setEnabled(false);
           coverageView.setPlotHeatMap(false);
           coverageView.setPlotByStrand(false);
           setViewportBtm();
