@@ -1768,6 +1768,12 @@ public class EditMenu extends SelectionMenu
               {
                 ((Feature)gene1.getGene().getUserData()).addQualifierValues(synQualifier);
                 ((Feature)gene2.getGene().getUserData()).addQualifierValues(synQualifier);
+
+                final Qualifier comment =
+                    new Qualifier("comment", "this gene model has previous ID "+prevId+
+                        " and was reassigned a new ID as changes in the gene model occurred");
+                ((Feature)gene1.getGene().getUserData()).addQualifierValues(comment);
+                ((Feature)gene2.getGene().getUserData()).addQualifierValues(comment);
               }
 
             }
