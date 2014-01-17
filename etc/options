@@ -148,7 +148,7 @@ start_codons_4 = atg
 translation_table_5 = \
       agas aggs atam tgaw
 
-start_codons_5 = atg ata att
+start_codons_5 = ttg att atc ata atg gtg
 #start_codons_5_apis = atg ata atc att
 #start_codons_5_polyplacophora = atg ata gtg
 
