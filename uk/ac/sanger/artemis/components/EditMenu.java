@@ -1772,8 +1772,19 @@ public class EditMenu extends SelectionMenu
                 final Qualifier comment =
                     new Qualifier("comment", "this gene model has previous ID "+prevId+
                         " and was reassigned a new ID as changes in the gene model occurred");
-                ((Feature)gene1.getGene().getUserData()).addQualifierValues(comment);
-                ((Feature)gene2.getGene().getUserData()).addQualifierValues(comment);
+
+                try
+                {
+                  ((Feature)gene1.getProteinOfTranscript( GeneUtils.getUniqueName(
+                            gene1.getTranscripts().get(0)) ).getUserData()).addQualifierValues(comment);
+                  ((Feature)gene2.getProteinOfTranscript( GeneUtils.getUniqueName(
+                            gene2.getTranscripts().get(0)) ).getUserData()).addQualifierValues(comment);
+                }
+                catch (Exception e)
+                {
+                  ((Feature)gene1.getGene().getUserData()).addQualifierValues(comment);
+                  ((Feature)gene2.getGene().getUserData()).addQualifierValues(comment);
+                }
               }
 
             }
