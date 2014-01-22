@@ -26,6 +26,9 @@ else
   done
 fi
 
+if [ ! -f "$NETSCAPE" ]; then
+    NETSCAPE=`which firefox`
+fi
 
 if [ -f "$DIANA_ENVIRONMENT_FILE" ]
 then

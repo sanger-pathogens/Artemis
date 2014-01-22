@@ -830,7 +830,8 @@ common_keys = \
     BLASTN_HIT BLASTCDS 3'UTR 5'UTR
 
 # SRS
-srs_url = http://srs.ebi.ac.uk/srsbin/cgi-bin/
+#srs_url = http://srs.ebi.ac.uk/srsbin/cgi-bin/
+srs_url = http://www.bioinformatics.nl/srsbin/cgi-bin/
 
 # hyperlinked databases in feature editor
 hyperlinks = \
