@@ -150,8 +150,17 @@ public class AbstractGraphPanel extends JPanel
    */
   protected void drawMax(Graphics2D g2)
   {
+    drawMax(g2, (float)max/(float)windowSize);
+  }
+  
+  /**
+   * Draw maximum average value.
+   * @param g2
+   */
+  protected void drawMax(Graphics2D g2, float max)
+  {
     DecimalFormat df = new DecimalFormat("0.#");
-    String maxStr = df.format((float)max/(float)windowSize);
+    String maxStr = df.format(max);
 
     FontMetrics fm = getFontMetrics(getFont());
     g2.setColor(Color.black);
