@@ -1946,7 +1946,7 @@ public class BamView extends JPanel
     coverageView.drawSelectionRange(g2, pixPerBase, start, end, getHeight(), Color.PINK);
     coverageView.draw(g2, getWidth(), hgt, hideBamList);
     if(!coverageView.isPlotHeatMap())
-      coverageView.drawMax(g2);  
+      coverageView.drawMax(g2, coverageView.getMaxCoverage());  
   }
   
   /**
