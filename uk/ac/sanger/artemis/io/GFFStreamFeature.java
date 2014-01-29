@@ -886,7 +886,6 @@ public class GFFStreamFeature extends SimpleDocumentFeature implements
           for (int value_index = 0; value_index < values.size(); ++value_index) {
             int goindex = values.elementAt(value_index).indexOf("GOid=");
             int termindex = values.elementAt(value_index).indexOf(";term=");
-            /* collect GO IDs for later output in Ontology_term attribute */
             if (goindex > -1 && termindex > -1) {
               buffer.append(GFF3Encoder.encode(values.elementAt(value_index)
                   .substring(goindex + 5, termindex)));
