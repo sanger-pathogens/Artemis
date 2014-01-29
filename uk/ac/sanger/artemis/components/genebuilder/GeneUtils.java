@@ -61,6 +61,7 @@ import uk.ac.sanger.artemis.io.DatabaseInferredFeature;
 import uk.ac.sanger.artemis.io.DocumentEntry;
 import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.Feature;
+import uk.ac.sanger.artemis.io.GFF3Encoder;
 import uk.ac.sanger.artemis.io.GFFDocumentEntry;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.io.InvalidRelationException;
@@ -126,7 +127,7 @@ public class GeneUtils
       String value = featureSynonym.getSynonym().getName();
       
       if(!featureSynonym.isCurrent())
-        value.concat(GFFStreamFeature.encode(";current=false"));      
+        value.concat(GFF3Encoder.encode(";current=false"));      
       
       Qualifier qualifier = feature.getQualifiers().getQualifierByName(name);
       if(qualifier == null)
@@ -198,7 +199,7 @@ public class GeneUtils
         final String qualifierString = new String(this_buff.getBytes());
         int ind = qualifierString.indexOf('=');
         final String name  = qualifierString.substring(0, ind);
-        final String value = GFFStreamFeature.decode(
+        final String value = GFF3Encoder.decode(
           qualifierString.substring(ind+1, qualifierString.length()-1));
       
         Qualifier qualifier = feature.getQualifiers().getQualifierByName(name);
