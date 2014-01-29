@@ -116,6 +116,7 @@ public class GFF3AttributeBuilder {
   }
 
   public void add(String attr, StringVector val) {
+    String origAttr = attr;
     ArrayList<String> targetAttrs = new ArrayList<String>();
     // expand attributes
     if (clones.containsKey(attr))
@@ -136,7 +137,10 @@ public class GFF3AttributeBuilder {
     for (String this_attr : targetAttrs) {
       String aggregatedVal;
       // do we have an aggregator for this type?
-      if (aggs.containsKey(this_attr)) {
+      if (aggs.containsKey(origAttr)) {
+        GFF3AttributeAggregator agg = aggs.get(origAttr);
+        aggregatedVal = agg.process(val);
+      } else if (aggs.containsKey(this_attr)) {
         GFF3AttributeAggregator agg = aggs.get(this_attr);
         aggregatedVal = agg.process(val);
       } else {

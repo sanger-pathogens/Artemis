@@ -915,7 +915,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature implements
 
     // EC numbers go into Dbxref
     abuf.setMapping("EC_number", "Dbxref");
-    abuf.setAggregator("Dbxref", ecProc);
+    abuf.setAggregator("EC_number", ecProc);
     abuf.setGlue("Dbxref", ",");
 
     // start/end ranges

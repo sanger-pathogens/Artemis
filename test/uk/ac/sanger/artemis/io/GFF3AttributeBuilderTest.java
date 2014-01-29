@@ -290,6 +290,6 @@ public class GFF3AttributeBuilderTest {
     ab.setAggregator("attr1", testProc);
     ab.add("attr1", in);
     ab.add("attr2", in);
-    assertEquals(ab.toString(), "attr2=foo,bar foo,bar");
+    assertEquals(ab.toString(), "attr2=>>foo<<|>>bar<< foo,bar");
   }
 }
