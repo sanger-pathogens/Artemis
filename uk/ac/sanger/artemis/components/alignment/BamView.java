@@ -189,7 +189,7 @@ public class BamView extends JPanel
   private CoveragePanel coveragePanel;
   private SnpPanel snpPanel;
 
-  protected boolean logScale = false;
+  private boolean logScale = false;
   private Ruler ruler;
   private int nbasesInView;
   
@@ -1946,7 +1946,7 @@ public class BamView extends JPanel
     coverageView.drawSelectionRange(g2, pixPerBase, start, end, getHeight(), Color.PINK);
     coverageView.draw(g2, getWidth(), hgt, hideBamList);
     if(!coverageView.isPlotHeatMap())
-      coverageView.drawMax(g2);  
+      coverageView.drawMax(g2, coverageView.getMaxCoverage());  
   }
   
   /**
@@ -2729,7 +2729,7 @@ public class BamView extends JPanel
         laststart = -1;
         if(cbCoverageView.isSelected())
         {
-          logMenuItem.setEnabled(true);
+          logMenuItem.setEnabled(false);
           coverageView.setPlotHeatMap(false);
           coverageView.setPlotByStrand(false);
           setViewportBtm();

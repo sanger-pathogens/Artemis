@@ -27,8 +27,10 @@ package uk.ac.sanger.artemis.io;
 
 
 import java.util.Hashtable;
+import java.util.HashSet;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Vector;
 import java.io.IOException;
@@ -52,40 +54,40 @@ import uk.ac.sanger.artemis.util.StringVector;
  *  @author Kim Rutherford
  **/
 public class GFFStreamFeature extends SimpleDocumentFeature
-                       implements DocumentFeature, StreamFeature, ComparableFeature 
+                       implements DocumentFeature, StreamFeature, ComparableFeature
 {
 
-  private static org.apache.log4j.Logger logger4j = 
+  private static org.apache.log4j.Logger logger4j =
     org.apache.log4j.Logger.getLogger(GFFStreamFeature.class);
 
   /** store for spliced features containing id and range of each segment */
   private Hashtable<String, Range> id_range_store;
-  
+
   /** store a record of the new and old uniquenames that have been changed */
   private Hashtable<String, String> newIdMapToOldId;
 
   /** store the Timestamp for the feature */
   private Timestamp timelastmodified;
-  
+
   private ChadoCanonicalGene chadoGene;
-  
+
   private boolean visible = true;
-  
+
   /** combined feature_relationship.rank store for exons */
   private Hashtable<String, Integer> feature_relationship_rank_store;
-  
+
   /** first tabbed parameter  */
   private String gffSeqName;
   /** second tabbed parameter */
   private String gffSource;
   /** duplication count */
   private short duplicate = 0;
-  
+
   protected static Hashtable<String, Range> contig_ranges;
   private boolean lazyLoaded = false;
   private org.gmod.schema.sequence.Feature chadoLazyFeature;
   private boolean readOnlyFeature = false;
-  
+
 
   private static String MAP_DECODE[][] = {
     { " ",  "%20" },  // white space
@@ -99,10 +101,10 @@ public class GFFStreamFeature extends SimpleDocumentFeature
     { ")",  "%29" },  // right bracket
     { "'", "\"" }
   };
-  
+
   private static String MAP_ENCODE[][] = {
 //  { " ",  "%20" },  // white space
-    { ",",  "%2C" },  // comma 
+    { ",",  "%2C" },  // comma
     { ";",  "%3B" },  // semi-colon
     { "=",  "%3D" },  // equals
     { "\t", "%09" },  // tab
@@ -110,9 +112,31 @@ public class GFFStreamFeature extends SimpleDocumentFeature
     { " ",  "+"   },  // white space
     { "(",  "%28" },  // left bracket
     { ")",  "%29" },  // right bracket
-    { "\n", "%5C" }   // new-line 
+    { "\n", "%5C" }   // new-line
   };
-  
+
+  private static Set<String> attrs_to_filter = new HashSet<String>();
+
+  /**
+   *  Registers an attribute not to be included in the GFF3 output for
+   *  GFFStreamFeatures
+   *  @param attr The GFF3 attribute to remove
+   **/
+  public static void removeAttribute(String attr)
+  {
+    attrs_to_filter.add(attr);
+  }
+
+  /**
+   *  Registers an attribute to be included in the GFF3 output for
+   *  GFFStreamFeatures
+   *  @param attr The GFF3 attribute to include
+   **/
+  public static void includeAttribute(String attr)
+  {
+    attrs_to_filter.remove(attr);
+  }
+
   /**
    *  Create a new GFFStreamFeature object.  The feature should be added
    *  to an Entry (with Entry.add()).
@@ -121,11 +145,11 @@ public class GFFStreamFeature extends SimpleDocumentFeature
    *  @param qualifiers The qualifiers for the new feature
    **/
   public GFFStreamFeature(final Key key, final Location location,
-                          final QualifierVector qualifiers) 
+                          final QualifierVector qualifiers)
   {
     super(null);
-    
-    try 
+
+    try
     {
       setKey(key);
       setLocation(location);
@@ -149,19 +173,19 @@ public class GFFStreamFeature extends SimpleDocumentFeature
           idStr = key.getKeyString()+":"+location.toString();
         setQualifier(new Qualifier("ID", idStr));
       }
-      
-    } 
-    catch(EntryInformationException e) 
+
+    }
+    catch(EntryInformationException e)
     {
       // this should never happen because the feature will not be in an Entry
       throw new Error("internal error - unexpected exception: " + e);
     }
-    catch(ReadOnlyException e) 
+    catch(ReadOnlyException e)
     {
       // this should never happen because the feature will not be in an Entry
       throw new Error("internal error - unexpected exception: " + e);
-    } 
-    catch(OutOfRangeException e) 
+    }
+    catch(OutOfRangeException e)
     {
       // this should never happen because the feature will not be in an Entry
       throw new Error("internal error - unexpected exception: " + e);
@@ -172,37 +196,37 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   {
     this(feature, false);
   }
-  
+
   /**
    *  Create a new GFFStreamFeature with the same key, location and
    *  qualifiers as the given feature.  The feature should be added to an
    *  Entry (with Entry.add()).
    *  @param feature The feature to copy.
    **/
-  public GFFStreamFeature(final Feature feature, final boolean isDuplicatedInChado) 
+  public GFFStreamFeature(final Feature feature, final boolean isDuplicatedInChado)
   {
     this(feature.getKey(), feature.getLocation(), feature.getQualifiers());
-    
+
     if(feature instanceof GFFStreamFeature)
     {
       if(((GFFStreamFeature)feature).id_range_store != null)
-        this.id_range_store = 
+        this.id_range_store =
           (Hashtable)(((GFFStreamFeature)feature).id_range_store).clone();
-      
+
       if(((GFFStreamFeature)feature).feature_relationship_rank_store != null)
-        this.feature_relationship_rank_store = 
+        this.feature_relationship_rank_store =
           (Hashtable)(((GFFStreamFeature)feature).feature_relationship_rank_store).clone();
-      
+
       this.setGffSeqName(((GFFStreamFeature)feature).getGffSeqName());
       this.setGffSource(((GFFStreamFeature)feature).getGffSource());
-      
+
       if(isDuplicatedInChado)
       {
         try
         {
           final String uniquename;
           final String duplicatePrefix;
-          
+
           if(feature instanceof GFFStreamFeature)
           {
             ((GFFStreamFeature)feature).duplicate++;
@@ -222,7 +246,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
             }
             id_range_store.clear();
             this.id_range_store = (Hashtable) new_id_range_store.clone();
-         
+
 
             if(getLocation().getRanges().size() > 1)
               uniquename = getSegmentID(getLocation().getRanges());
@@ -237,26 +261,26 @@ public class GFFStreamFeature extends SimpleDocumentFeature
           else
             uniquename = duplicatePrefix+ (String)getQualifierByName("ID").getValues().get(0);
           setQualifier(new Qualifier("ID", uniquename));
-          
+
           if(getQualifierByName("Parent") != null)
           {
             final String parent =
               (String) getQualifierByName("Parent").getValues().get(0);
             setQualifier(new Qualifier("Parent", duplicatePrefix+parent));
           }
-          
+
           if(getQualifierByName("Derives_from") != null)
           {
             final String derives_from =
               (String) getQualifierByName("Derives_from").getValues().get(0);
             setQualifier(new Qualifier("Derives_from", duplicatePrefix+derives_from));
           }
-          
+
           // remove qualifiers that don't get transferred to duplicate
-          final String removeQualifierNames[] = 
-            {  "feature_id", 
-          		 "timelastmodified", 
-          		 "feature_relationship_rank", 
+          final String removeQualifierNames[] =
+            {  "feature_id",
+          		 "timelastmodified",
+          		 "feature_relationship_rank",
           		 ProteinMapPanel.POLYPEPTIDE_DOMAIN,
           		 ProteinMapPanel.TMHMM[0],
           		 ProteinMapPanel.TMHMM[1],
@@ -265,7 +289,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
           		 MatchPanel.ORTHOLOG,
           		 MatchPanel.ORTHOLOG
           	};
-          
+
           for(int i=0;i<removeQualifierNames.length; i++)
             removeQualifierByName(removeQualifierNames[i]);
         }
@@ -284,12 +308,12 @@ public class GFFStreamFeature extends SimpleDocumentFeature
    *  in gene finder format.
    **/
   public GFFStreamFeature(final String line)
-      throws ReadFormatException 
+      throws ReadFormatException
   {
     super(null);
 
     final StringVector line_bits = StringVector.getStrings(line, "\t", true);
-    if(line_bits.size() < 8) 
+    if(line_bits.size() < 8)
       throw new ReadFormatException("invalid GFF line: 8 fields needed " +
                                     "(got " + line_bits.size () +
                                     " fields) from: " + line);
@@ -299,33 +323,33 @@ public class GFFStreamFeature extends SimpleDocumentFeature
 
     final int start_base;
     final int end_base;
-    try 
+    try
     {
       start_base = Integer.parseInt(start_base_str);
       end_base   = Integer.parseInt(end_base_str);
-    } 
+    }
     catch(NumberFormatException e)
     {
       throw new ReadFormatException("Could not understand the start or end base " +
-                                    "of a GFF feature: " + start_base_str + 
+                                    "of a GFF feature: " + start_base_str +
                                     " " + end_base_str);
     }
 
     // start of qualifier parsing and setting
-    try 
+    try
     {
       final boolean complement_flag;
-      if(line_bits.elementAt(6).equals("+")) 
+      if(line_bits.elementAt(6).equals("+"))
         complement_flag = false;
       else if(line_bits.elementAt(6).equals("-"))
         complement_flag = true;
-      else 
+      else
       {
         // must be unstranded
         complement_flag = false;
       }
 
-      if(line_bits.size() == 9) 
+      if(line_bits.size() == 9)
       {
         final String rest_of_line = line_bits.elementAt(8);
         final Hashtable<String, StringVector> attributes = parseAttributes(rest_of_line);
@@ -356,29 +380,29 @@ public class GFFStreamFeature extends SimpleDocumentFeature
 
       if( !line_bits.elementAt(0).equals("null") )
         setGffSeqName( decode(line_bits.elementAt(0)) );
-      
+
       setKey(new Key(line_bits.elementAt(2)));
       setGffSource(line_bits.elementAt(1));
-      
+
       if( !line_bits.elementAt(5).equals(".") )
       {
         final Qualifier score_qualifier =
           new Qualifier("score", line_bits.elementAt(5));
         setQualifier(score_qualifier);
       }
-      
+
       String frame = line_bits.elementAt(7);
 
       if(frame.equals ("0"))
         frame = "1";
       else if(frame.equals("1"))
         frame = "2";
-      else if(frame.equals("2")) 
+      else if(frame.equals("2"))
         frame = "3";
       else
         frame = ".";
 
-      if(!frame.equals(".")) 
+      if(!frame.equals("."))
       {
         final Qualifier codon_start_qualifier =
           new Qualifier("codon_start", frame);
@@ -386,28 +410,28 @@ public class GFFStreamFeature extends SimpleDocumentFeature
         setQualifier(codon_start_qualifier);
       }
 
-      if(start_base > end_base) 
+      if(start_base > end_base)
         throw new ReadFormatException("start position is greater than end " +
                                       "position: " + start_base + " > " +
                                       end_base+"\n"+line);
 
       if(start_base < 0)
         throw new ReadFormatException("start position must be positive: " +
-                                      start_base); 
-      
+                                      start_base);
+
       final Range location_range = new Range(start_base, end_base);
       final RangeVector location_ranges = new RangeVector(location_range);
       setLocation(new Location(location_ranges, complement_flag));
     }
-    catch(ReadOnlyException e) 
+    catch(ReadOnlyException e)
     {
       throw new Error("internal error - unexpected exception: " + e);
-    } 
-    catch(EntryInformationException e) 
+    }
+    catch(EntryInformationException e)
     {
       throw new Error("internal error - unexpected exception: " + e);
-    } 
-    catch(OutOfRangeException e) 
+    }
+    catch(OutOfRangeException e)
     {
       throw new Error("internal error - unexpected exception: " + e);
     }
@@ -430,17 +454,17 @@ public class GFFStreamFeature extends SimpleDocumentFeature
     if(id_range_store == null)
     {
       id_range_store = new Hashtable<String, Range>();
-      id_range_store.put((String)this.getQualifierByName("ID").getValues().get(0), 
+      id_range_store.put((String)this.getQualifierByName("ID").getValues().get(0),
                          this.getLocation().getTotalRange());
     }
     return id_range_store;
   }
-  
+
   public Hashtable<String, String> getNewIdMapToOldId()
   {
     return newIdMapToOldId;
   }
-  
+
   /**
    * Used when changing spliced feature uniquenames
    * @param newIdMapToOldId
@@ -449,7 +473,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   {
     this.newIdMapToOldId = newIdMapToOldId;
   }
-  
+
   /**
    * Store for ID's and CHADO feature_relationship.rank
    * @param feature_relationship_rank_store
@@ -459,7 +483,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   {
     this.feature_relationship_rank_store = feature_relationship_rank_store;
   }
-  
+
   /**
    * Store for ID's and CHADO feature_relationship.rank
    * @return
@@ -468,10 +492,10 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   {
     return feature_relationship_rank_store;
   }
-  
- 
+
+
   /**
-   * Get the chado uniquename 
+   * Get the chado uniquename
    * @param r
    * @return
    */
@@ -487,7 +511,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
         Range offset_range = contig_ranges.get(getGffSeqName());
         offset = offset_range.getStart()-1;
       }
-      
+
       Enumeration<String> enum_ranges = id_range_store.keys();
       while(enum_ranges.hasMoreElements())
       {
@@ -509,7 +533,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   }
 
   /**
-   * Get the feature ID based on the segments chado 
+   * Get the feature ID based on the segments chado
    * uniquename's.
    * @param rv
    * @return
@@ -526,7 +550,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       {
         range  = (Range)rv.get(i);
         id_new = getSegmentID(range);
-        
+
         String prefix[] = getPrefix(id_new, ':');
         if(prefix[0] != null)
         {
@@ -538,9 +562,9 @@ public class GFFStreamFeature extends SimpleDocumentFeature
             id = id+prefix[0] + "{" + prefix[1] + "}";
             continue;
           }
-          
+
           index = id.indexOf('}', index);
-          id = id.substring(0,index) + "," + 
+          id = id.substring(0,index) + "," +
                prefix[1] + id.substring(index);
         }
         else if(id_new != null)
@@ -551,10 +575,10 @@ public class GFFStreamFeature extends SimpleDocumentFeature
         }
       }
     }
-    
+
     return id;
   }
-  
+
   /**
    * Get the ID prefix, e.g. for SPAC1556.06.1:exon:2
    * returns SPAC1556.06.1:exon as the prefix and 2 as the
@@ -575,7 +599,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
     }
     return prefix;
   }
- 
+
   /**
    * Used to automatically generate
    * @param prefix
@@ -593,7 +617,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
     }
     return auto;
   }
-  
+
 
   /**
   * For gff-version 3:
@@ -616,7 +640,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
     return s;
   }
 
-  
+
   /**
   * For gff-version 3:
   * http://www.sequenceontology.org/gff3.shtml
@@ -642,7 +666,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   /**
    *  Return the reference of a new copy of this Feature.
    **/
-  public Feature copy() 
+  public Feature copy()
   {
     final Feature return_value = new GFFStreamFeature(this);
     return return_value;
@@ -660,17 +684,17 @@ public class GFFStreamFeature extends SimpleDocumentFeature
    *    called
    */
   protected static GFFStreamFeature readFromStream(LinePushBackReader stream)
-      throws IOException, InvalidRelationException 
+      throws IOException, InvalidRelationException
   {
     final String line = stream.readLine();
-    if(line == null) 
+    if(line == null)
       return null;
 
     try
     {
       return new GFFStreamFeature(line);
-    } 
-    catch(ReadFormatException exception) 
+    }
+    catch(ReadFormatException exception)
     {
       // re-throw the exception with the line number added
       final String new_error_string = exception.getMessage();
@@ -692,7 +716,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
    **/
   public void setFromStream(final EntryInformation entry_information,
                             final LinePushBackReader in_stream)
-      throws IOException, InvalidRelationException, ReadOnlyException 
+      throws IOException, InvalidRelationException, ReadOnlyException
   {
     throw new ReadOnlyException();
   }
@@ -704,13 +728,13 @@ public class GFFStreamFeature extends SimpleDocumentFeature
    *    the Feature.
    **/
   public void writeToStream(final Writer writer)
-      throws IOException 
+      throws IOException
   {
     final RangeVector ranges = getLocation().getRanges();
     final int ranges_size = ranges.size();
 
 //  final Hashtable contig_ranges = SimpleDocumentEntry.getContigRanges();
-    for(int i = 0; i < ranges_size; ++i) 
+    for(int i = 0; i < ranges_size; ++i)
     {
       Range this_range = (Range)ranges.elementAt(i);
 
@@ -725,19 +749,19 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       {
         source_str = getDbxrefGFFSource(getQualifierByName("Dbxref"));
       }
-      
+
       int start = this_range.getStart();
       int end   = this_range.getEnd();
-      
-      if(seqname == null && ((GFFDocumentEntry)getEntry()).getDocument() != null) 
+
+      if(seqname == null && ((GFFDocumentEntry)getEntry()).getDocument() != null)
         seqname = ((GFFDocumentEntry)getEntry()).getDocument().getName();
       if(seqname == null)
         seqname = deriveSeqName(start);
-      
-      if(source == null) 
+
+      if(source == null)
         source = "artemis";
 
-      if(score == null) 
+      if(score == null)
         score = new Qualifier("score", ".");
 
       if(seqname != null && contig_ranges != null &&
@@ -753,20 +777,20 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       {
         final Qualifier gene = getQualifierByName("gene");
 
-        if(gene == null) 
+        if(gene == null)
           group = new Qualifier("group", "");
-        else 
+        else
           group = gene;
       }
 
       String frame = ".";
       final Qualifier codon_start = getQualifierByName("codon_start");
 
-      if(codon_start != null) 
+      if(codon_start != null)
       {
         frame = (String)(codon_start.getValues()).elementAt(0);
 
-        if(frame.equals ("1")) 
+        if(frame.equals ("1"))
           frame = "0";
         else if(frame.equals("2"))
           frame = "1";
@@ -775,7 +799,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
         else
           frame = ".";
       }
-      
+
       // phase is REQUIRED for all CDS features
       if(getKey().equals("CDS") && frame.equals("."))
         frame = "0";
@@ -831,12 +855,12 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       }
       catch(Exception e) {}
     }
-    
+
     if(seqname == null)
       seqname = "gff_seqname";
     return seqname;
   }
-  
+
   /**
    *  Return a String containing the qualifiers of this feature in a form
    *  suitable for using as the last field of a GFF line.  The codon_start
@@ -844,15 +868,15 @@ public class GFFStreamFeature extends SimpleDocumentFeature
    *  gff_source and score aren't included since they have corresponding
    *  fields.
    **/
-  private String unParseAttributes(final String myId) 
+  private String unParseAttributes(final String myId)
   {
     final StringBuffer buffer = new StringBuffer();
     final QualifierVector qualifiers = getQualifiers();
 
     final String names[] = { "ID", "Name", "Alias", "Parent",
                              "Derives_from",
-                             "Target", "Gap", "Note", 
-                             "Dbxref", "Ontology_term", 
+                             "Target", "Gap", "Note",
+                             "Dbxref", "Ontology_term",
                              "Start_range", "End_range",
                              "Is_circular"};
     int count = 0;
@@ -864,12 +888,12 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       buffer.append(encode(myId));
       count++;
     }
-    
+
     for(int i=1; i<names_length; i++)
     {
       Qualifier this_qualifier = qualifiers.getQualifierByName(names[i]);
-      
-      if(this_qualifier == null) 
+
+      if(this_qualifier == null)
         continue;
 
       final String this_qualifier_str = getQualifierString(this_qualifier, true);
@@ -881,9 +905,9 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       buffer.append(this_qualifier_str);
       count++;
     }
-    
+
     boolean lname;
-    for(Qualifier this_qualifier: qualifiers) 
+    for(Qualifier this_qualifier: qualifiers)
     {
       lname = false;
       for(int j=0; j<names_length; j++)
@@ -892,16 +916,19 @@ public class GFFStreamFeature extends SimpleDocumentFeature
 
       if(lname)
         continue;
-      
+
+      if(attrs_to_filter.contains(this_qualifier.getName()))
+        continue;
+
       if( (this_qualifier.getName().equals("private") && System.getProperty("noprivate") != null) ||
           (this_qualifier.getName().equals("history") && System.getProperty("nohistory") != null) )
         continue;
 
       final String this_qualifier_str = getQualifierString(this_qualifier, false);
-      
+
       if(this_qualifier_str == null)
         continue;
-      
+
       if(count != 0)
         buffer.append(";");
       buffer.append(this_qualifier_str);
@@ -910,11 +937,11 @@ public class GFFStreamFeature extends SimpleDocumentFeature
     return buffer.toString();
   }
 
-  
+
   /**
    * Get the translation qualifier string for polypeptide features.
    */
-  private String getTranslation() 
+  private String getTranslation()
   {
     if (! getKey().getKeyString().equals("polypeptide"))
         return null;
@@ -922,15 +949,15 @@ public class GFFStreamFeature extends SimpleDocumentFeature
     {
       if(getUserData() == null)
         new uk.ac.sanger.artemis.Feature(this);
-      // the above line constructs the appropriate userData within this current GFFStreamFeature object, 
-      // which is required by the following GeneUtils.deriveResidues()     
+      // the above line constructs the appropriate userData within this current GFFStreamFeature object,
+      // which is required by the following GeneUtils.deriveResidues()
       String residues = GeneUtils.deriveResidues(this);
       if (residues != null)
         return "translation="+residues;
-    } 
+    }
     return null;
   }
-  
+
   /**
    * Used to write out the GFF attributes.
    * @param q the qualifier to represent as a <code>String</code>
@@ -947,24 +974,32 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       return null;
 
     final StringVector values = q.getValues();
-    
-    /* 
+
+    /* ignore qualifiers with just one empty value, will mess up GFF3 output */
+    if(values != null && values.size() == 1)
+    {
+      if (values.elementAt(0).replaceAll("\\s+","").equals(""))
+        return null;
+    }
+
+    /*
      * GSV :
-     * The Bio::FeatureIO perl module falls over if there are Uppercased 
-     * attribute names for tags which aren't part of the standard reserved 
+     * The Bio::FeatureIO perl module falls over if there are Uppercased
+     * attribute names for tags which aren't part of the standard reserved
      * set. So we lowercase these, since in the specification it says :
-     * 
+     *
      * "All attributes that begin with an uppercase letter are reserved for
      * later use.  Attributes that begin with a lowercase letter can be used
      * freely by applications."
      * see http://www.sequenceontology.org/gff3.shtml
      */
     String nameToBuffer = encode(name);
+
     if (! reserved)
     	nameToBuffer = Character.toLowerCase(nameToBuffer.charAt(0)) + nameToBuffer.substring(1);
     buffer.append(nameToBuffer);
-    
-    if(values != null)
+
+    if(values != null && values.size() > 0)
     {
       buffer.append('=');
       for(int value_index = 0; value_index < values.size();
@@ -981,10 +1016,10 @@ public class GFFStreamFeature extends SimpleDocumentFeature
         }
         else
           this_value = encode(values.elementAt(value_index));
-        
+
         if(value_index>0)
           buffer.append("%2C");
-        
+
         if(name.equals("Parent"))
           buffer.append(this_value);
         else
@@ -1009,6 +1044,8 @@ public class GFFStreamFeature extends SimpleDocumentFeature
         }
       }
     }
+    if (buffer.toString().charAt(buffer.toString().length()-1) == '=')
+      System.out.println(buffer.toString() + " ----- values length was " + values.size() + ": '" + values.elementAt(0) + "'");
     return buffer.toString();
   }
 
@@ -1022,13 +1059,13 @@ public class GFFStreamFeature extends SimpleDocumentFeature
    *    If the attribute has no value then the Hashtable value will be a zero
    *    length vector.
    **/
-  private Hashtable<String, StringVector> parseAttributes(final String att_val_list) 
+  private Hashtable<String, StringVector> parseAttributes(final String att_val_list)
   {
     final Hashtable<String, StringVector> attr = new Hashtable<String, StringVector>();
 
     int ind_start = 0;
     int ind_end;
-    while( (ind_end = att_val_list.indexOf(";",ind_start)) > -1 || 
+    while( (ind_end = att_val_list.indexOf(";",ind_start)) > -1 ||
            ind_start < att_val_list.length() )
     {
       if(ind_end < 0)
@@ -1038,7 +1075,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       ind_start = ind_end+1;
 
       int index_of_first_space = this_token.indexOf(" ");
-       
+
       final String att_name;
       StringVector att_values = new StringVector();
 
@@ -1050,28 +1087,28 @@ public class GFFStreamFeature extends SimpleDocumentFeature
         att_name = this_token.substring(0, index_of_first_space);
         att_values.add(this_token.substring(index_of_first_space+1).trim());
       }
-      else if(index_of_first_space == -1) 
+      else if(index_of_first_space == -1)
         att_name = this_token;
-      else 
+      else
       {
         att_name = this_token.substring(0, index_of_first_space);
 
         String rest_of_token =
           this_token.substring(index_of_first_space+1).trim();
 
-        while(rest_of_token.length() > 0) 
+        while(rest_of_token.length() > 0)
         {
           if(rest_of_token.startsWith("\""))
           {
             int quote_index = 0;
-            do 
+            do
             {
               quote_index++;
               quote_index = rest_of_token.indexOf("\"", quote_index);
             } while(quote_index > -1 &&
                     rest_of_token.charAt(quote_index - 1) == '\\');
 
-            if(quote_index < 0) 
+            if(quote_index < 0)
             {
               // no closing quote - panic
               final Hashtable<String, StringVector> panic_attributes =
@@ -1086,17 +1123,17 @@ public class GFFStreamFeature extends SimpleDocumentFeature
             final String next_bit = rest_of_token.substring(1, quote_index);
             att_values.add(next_bit);
             rest_of_token = rest_of_token.substring(quote_index + 1).trim();
-          } 
+          }
           else
           {
             final int index_of_next_space = rest_of_token.indexOf(" ");
 
-            if(index_of_next_space == -1) 
+            if(index_of_next_space == -1)
             {
               att_values.add(rest_of_token);
               rest_of_token = "";
-            } 
-            else 
+            }
+            else
             {
               final String next_bit =
                 rest_of_token.substring(0, index_of_next_space);
@@ -1114,7 +1151,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
 
       if(att_name.equals("Dbxref") || att_name.equals("Alias")) // convert to multi-line
       {
-        StringTokenizer stok = 
+        StringTokenizer stok =
             new StringTokenizer((String)att_values.get(0), ",");
         StringVector str_values = new StringVector();
         while(stok.hasMoreTokens())
@@ -1122,14 +1159,14 @@ public class GFFStreamFeature extends SimpleDocumentFeature
 
         att_values = str_values;
       }
-      
+
       if(att_name.equals("timelastmodified"))
       {
         try
         {
-          this.timelastmodified = 
+          this.timelastmodified =
                   new Timestamp( Long.parseLong((String)att_values.get(0)) );
-          SimpleDateFormat date_format = 
+          SimpleDateFormat date_format =
                   new SimpleDateFormat("dd.MM.yyyy hh:mm:ss z");
           att_values.set(0,date_format.format(timelastmodified));
         }
@@ -1139,9 +1176,9 @@ public class GFFStreamFeature extends SimpleDocumentFeature
         }
       }
 
-      if(attr.get(att_name) != null) 
+      if(attr.get(att_name) != null)
         attr.get(att_name).add(att_values);
-      else 
+      else
         attr.put(att_name, att_values);
     }
 
@@ -1156,7 +1193,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   {
     return timelastmodified;
   }
-  
+
   /**
    * Get the GFF_source value of a Dbxref qualifier.
    * @param qualifier
@@ -1166,11 +1203,11 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   {
     StringVector qualifier_strings =
       StreamQualifier.toStringVector(null, qualifier);
-    
+
     for(int i=0; i<qualifier_strings.size(); i++)
     {
       String qualifier_string = (String)qualifier_strings.elementAt(i);
-      
+
       if(qualifier_string.indexOf("GFF_source:") >-1)
       {
         int index = qualifier_string.indexOf(":")+1;
@@ -1182,7 +1219,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
     }
     return null;
   }
-  
+
   /**
    * Set the feature time last modified timestamp.
    * @param timelastmodified
@@ -1190,20 +1227,20 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   public void setLastModified(final Timestamp timelastmodified)
   {
     this.timelastmodified = timelastmodified;
-    
+
     // now update the qualifier value itself
     QualifierVector qualifiers = getQualifiers();
     Qualifier qualifier = qualifiers.getQualifierByName("timelastmodified");
-    SimpleDateFormat date_format = 
+    SimpleDateFormat date_format =
       new SimpleDateFormat("dd.MM.yyyy hh:mm:ss z");
-    
+
     if(qualifier != null)
       qualifier.removeValue((String)qualifier.getValues().get(0));
     else
     {
       try
       {
-        qualifier = new Qualifier("timelastmodified", 
+        qualifier = new Qualifier("timelastmodified",
                date_format.format(timelastmodified));
         setQualifier(qualifier);
         return;
@@ -1213,15 +1250,15 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       catch(ReadOnlyException roe)
       {}
     }
-    
+
     qualifier.addValue(date_format.format(timelastmodified));
   }
-  
+
   /**
    *  Returns true if and only if this Feature can't be changed or can't be
    *  removed from it's entry.
    **/
-  public boolean isReadOnly () 
+  public boolean isReadOnly ()
   {
     if(readOnlyFeature)
       return true;
@@ -1232,7 +1269,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   {
     this.readOnlyFeature = readOnlyFeature;
   }
-  
+
   public ChadoCanonicalGene getChadoGene()
   {
     return chadoGene;
@@ -1242,7 +1279,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   {
     this.chadoGene = chadoGene;
   }
-  
+
   public boolean isVisible()
   {
     return visible;
@@ -1293,24 +1330,24 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   {
     this.chadoLazyFeature = chadoLazyFeature;
   }
-  
+
   protected static boolean isGTF(Feature feature)
   {
     if(!(feature instanceof GFFStreamFeature))
       return false;
-    
+
     final String names[] = { "ID", "Name", "Alias", "Parent",
         "Derives_from",
-        "Target", "Gap", "Note", 
+        "Target", "Gap", "Note",
         "Dbxref", "Ontology_term" };
-    
+
     for(String name: names)
     {
       if(feature.getQualifiers().getQualifierByName(name) != null)
         return false;
     }
-    
-    if(feature.getQualifiers().getQualifierByName("gene_id") != null && 
+
+    if(feature.getQualifiers().getQualifierByName("gene_id") != null &&
        feature.getQualifiers().getQualifierByName("transcript_id") != null)
     {
       if(feature.getEntry() != null)

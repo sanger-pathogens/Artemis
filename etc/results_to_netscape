@@ -26,6 +26,9 @@ else
   done
 fi
 
+if [ ! -f "$NETSCAPE" ]; then
+    NETSCAPE=`which firefox`
+fi
 
 if [ -f "$DIANA_ENVIRONMENT_FILE" ]
 then
@@ -93,9 +96,10 @@ BEGIN {
   $DNA_DATABASES = "embl";
 
   # change this to point to the wgetz script of your SRS server
-  $SRS_SERVER = "www.sanger.ac.uk/srs6bin/cgi-bin/wgetz?-e+";
-  $SRS_SERVER = "srs.ebi.ac.uk/srsbin/cgi-bin/wgetz?-e+";
-
+  #$SRS_SERVER = "www.sanger.ac.uk/srs6bin/cgi-bin/wgetz?-e+";
+  #$SRS_SERVER = "srs.ebi.ac.uk/srsbin/cgi-bin/wgetz?-e+";
+  $SRS_SERVER = "www.bioinformatics.nl/srsbin/cgi-bin/wgetz?-e+";
+  
   $PROTEIN_DATABASES =~ s/ /%20/g;
   $DNA_DATABASES =~ s/ /%20/g;
 
@@ -140,8 +144,9 @@ sub hyperlink_id
     }
 
     # Text Entry
-    $r = qq#<a href="http://$SRS_SERVER-id+1+\[\{$PROTEIN_DATABASES\}-ID:$id*]|[\{$PROTEIN_DATABASES\}-AccNumber:$id*]+-vn+2">$id</a>#;
-
+    $r = qq#<a href="http://www.uniprot.org/uniprot/$id">$id</a>#;
+    
+    #$r = qq#<a href="http://$SRS_SERVER-id+1+\[\{$PROTEIN_DATABASES\}-ID:$id*]|[\{$PROTEIN_DATABASES\}-AccNumber:$id*]+-vn+2">$id</a>#;
     #$r = qq#<a href="http://$SRS_SERVER-id+1+\[\{$PROTEIN_DATABASES\}-ID:$id*]|[\{$PROTEIN_DATABASES\}-AccNumber:$id*]">$id</a>#;
   }
   return $r
