@@ -99,6 +99,29 @@ first (top) sequence in ACT:
     </SECT2>
 ]]>
 
+    <SECT2 ID="JVM-SHOW-SNPS">
+       <TITLE><LITERAL>-Dshow_snps</LITERAL></TITLE>
+      <PARA>
+Show SNP marks in BAM panels.
+</PARA>
+    </SECT2>
+
+    <SECT2 ID="JVM-SHOW-SNPS-PLOT">
+       <TITLE><LITERAL>-Dshow_snp_plot</LITERAL></TITLE>
+      <PARA>
+Automatically open SNP plots for BAM files that are opened.
+</PARA>
+    </SECT2>
+
+
+    <SECT2 ID="JVM-SHOW-COV-PLOT">
+       <TITLE><LITERAL>-Dshow_cov_plot</LITERAL></TITLE>
+      <PARA>
+Automatically open coverage plots for BAM files that are opened.
+</PARA>
+    </SECT2>
+
+
     <SECT2 ID="JVM-CHADO">
        <TITLE><LITERAL>-Dchado="hostname:port/database?username"</LITERAL></TITLE>
       <PARA>
