@@ -25,14 +25,14 @@ package uk.ac.sanger.artemis.io;
 import org.apache.commons.lang.StringUtils;
 
 public class GFF3Encoder {
-  private static String MAP_DEC[] = { "%", "&", ",", ";", "=", "\t", "\n", "\r" };
-  private static String MAP_ENC[] = { "%25", "%26", "%2C", "%3B", "%3D", "%09", "%0A", "%0D" };
+  public static final String mapChars[] = { "%", "&", ",", ";", "=", "\t", "\n", "\r" };
+  public static final String mappedEscapes[] = { "%25", "%26", "%2C", "%3B", "%3D", "%09", "%0A", "%0D" };
 
   public static String decode(String s) {
-    return StringUtils.replaceEach(s, MAP_ENC, MAP_DEC);
+    return StringUtils.replaceEach(s, mappedEscapes, mapChars);
   }
 
   public static String encode(String s) {
-    return StringUtils.replaceEach(s, MAP_DEC, MAP_ENC);
+    return StringUtils.replaceEach(s, mapChars, mappedEscapes);
   }
 }
