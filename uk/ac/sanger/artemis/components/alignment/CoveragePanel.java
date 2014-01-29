@@ -47,6 +47,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 
 import uk.ac.sanger.artemis.components.Plot;
@@ -71,11 +72,14 @@ import net.sf.samtools.SAMRecord;
     private List<String> selected = new Vector<String>();
     private boolean showGrid = false;
     private boolean logScale = false;
+    private int maxCoverage = Integer.MAX_VALUE;
+    private JCheckBox fixHgt = new JCheckBox("Fix the graph height to cut-off", false);
 
     protected CoveragePanel(final BamView bamView)
     {
       this();
       this.bamView = bamView;
+      setMaxBases = false;
       createMenus(popup);
       addMouseListener(new PopupListener());
     }
@@ -129,7 +133,18 @@ import net.sf.samtools.SAMRecord;
       if(!plotHeatMap)
         drawSelectionRange(g2, pixPerBase, start, end, getHeight(), Color.PINK);
       drawPlot(g2);
-      drawMax(g2);
+      drawMax(g2, getMaxCoverage());
+    }
+    
+    protected float getMaxCoverage()
+    {
+      return (useMaxCutOff() ? maxCoverage: (float)max/(float)windowSize);
+    }
+    
+    private boolean useMaxCutOff()
+    {
+      return (maxCoverage < Integer.MAX_VALUE && maxCoverage < (float)max/(float)windowSize) ||
+             (maxCoverage < Integer.MAX_VALUE && fixHgt.isSelected());
     }
     
     protected void init(BamView bamView, float pixPerBase, int start, int end)
@@ -187,7 +202,7 @@ import net.sf.samtools.SAMRecord;
             max = thisPlot[i][0];
         }
       }
-      
+
       draw(g2, getWidth(), getHeight(), null);
     }
     
@@ -310,7 +325,12 @@ import net.sf.samtools.SAMRecord;
     {
       g2.setColor(line.getLineColour());
       int hgt2 = hgt/2;
-      float maxVal = getValue(max, logScale);
+      float maxVal;
+
+      if(useMaxCutOff())
+        maxVal = getValue((maxCoverage*windowSize), logScale);
+      else
+        maxVal = getValue(max, logScale);
       
       if(line.getPlotType() == LineAttributes.PLOT_TYPES[0])
       {
@@ -538,25 +558,45 @@ import net.sf.samtools.SAMRecord;
       final GridBagConstraints c = new GridBagConstraints();
 
       final JTextField newBaseMax = new JTextField(Integer.toString(bamView.getMaxBases()), 10);
-      c.gridy = 0;
+      c.gridy+=1;
+      c.gridwidth = 1;
       if(setMaxBases)
       {
         final JLabel labMax1 = new JLabel("Zoom level before switching");
         final JLabel labMax2 = new JLabel("to coverage view (in bases):");
         c.anchor = GridBagConstraints.WEST;
+        c.gridy+=1;
         opts.add(labMax1, c);
-        c.gridy = c.gridy+1;
+        c.gridy+=1;
         opts.add(labMax2, c);
         opts.add(newBaseMax, c);
+        addSeparator(c, opts);
       }
       
+      // cut-off
+      final JTextField maxCutoff = new JTextField(
+          (maxCoverage < Integer.MAX_VALUE ? Integer.toString(maxCoverage) : ""), 10);
+      c.gridy+=1;
+      c.anchor = GridBagConstraints.WEST;
+      opts.add(new JLabel("Coverage cut-off:"), c);
+      c.anchor = GridBagConstraints.EAST;
+      opts.add(maxCutoff, c);
+      
+      c.gridy+=1;
+      c.gridwidth = GridBagConstraints.REMAINDER;
+      c.anchor = GridBagConstraints.WEST;
+      opts.add(fixHgt, c);
+      
+      addSeparator(c, opts);
+      
+      // window size
       final JTextField newWinSize = new JTextField(Integer.toString(userWinSize), 10);
       final JLabel lab = new JLabel("Window size:");
       lab.setEnabled(!autoWinSize);
       newWinSize.setEnabled(!autoWinSize);
       
-      c.gridy = c.gridy+1;
-      c.anchor = GridBagConstraints.EAST;
+      c.gridy+=1;
+      c.anchor = GridBagConstraints.WEST;
       opts.add(lab, c);
       opts.add(newWinSize, c);
 
@@ -570,22 +610,24 @@ import net.sf.samtools.SAMRecord;
         }
       });
       c.anchor = GridBagConstraints.WEST;
-      c.gridy = c.gridy+1;
+      c.gridy+=1;
       c.gridwidth = GridBagConstraints.REMAINDER;
       opts.add(autoSet, c);
 
+      addSeparator(c, opts);
+      
       final JCheckBox showCombined = new JCheckBox("Show combined plot", includeCombined);
       if(bamView.bamList.size() == 1)
         showCombined.setEnabled(false);
-      c.gridy = c.gridy+1;
+      c.gridy+=1;
       opts.add(showCombined, c);
       
       final JCheckBox byStrand = new JCheckBox("Plot by strand", plotByStrand);
-      c.gridy = c.gridy+1;
+      c.gridy+=1;
       opts.add(byStrand, c);
 
       final JCheckBox logMenu = new JCheckBox("Log scale", logScale);
-      c.gridy = c.gridy+1;
+      c.gridy+=1;
       opts.add(logMenu, c);
 
       String window_options[] = { "OK", "Cancel" };
@@ -601,10 +643,14 @@ import net.sf.samtools.SAMRecord;
       includeCombined = showCombined.isSelected();
       plotByStrand = byStrand.isSelected();
       logScale = logMenu.isSelected();
-      
+
       try
       {
         userWinSize = Integer.parseInt(newWinSize.getText().trim());
+        if(maxCutoff.getText().length() > 0)
+          maxCoverage = Integer.parseInt(maxCutoff.getText().trim());
+        else
+          maxCoverage = Integer.MAX_VALUE;
         if(setMaxBases)
           bamView.setMaxBases(Integer.parseInt(newBaseMax.getText().trim()));
       }
@@ -612,6 +658,22 @@ import net.sf.samtools.SAMRecord;
       {
         return;
       }
+    }
+    
+    /**
+     * Add a separator 
+     * @param c
+     * @param opts
+     */
+    private void addSeparator(GridBagConstraints c, final JPanel opts)
+    {
+      c.gridy+=1;
+      c.gridwidth = GridBagConstraints.REMAINDER;
+      final JSeparator sep = new JSeparator();
+      c.fill = GridBagConstraints.HORIZONTAL;
+      opts.add(sep, c);
+      c.gridwidth = 1;
+      c.fill = GridBagConstraints.NONE;
     }
     
     /**
