@@ -21,6 +21,7 @@
 <!ENTITY views-directedit SYSTEM "views_directedit.sgml">
 <!ENTITY featurelist SYSTEM "feature_list.sgml">
 <!ENTITY mousebuttons SYSTEM "mousebuttons.sgml">
+<!ENTITY validator SYSTEM "validator.sgml">
 <!ENTITY gettingjava SYSTEM "getting_java.sgml">
 <!ENTITY unixargs SYSTEM "unix_args.sgml">
 <!ENTITY jvmopts SYSTEM "jvm_options.sgml">
