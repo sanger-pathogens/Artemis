@@ -1,0 +1,181 @@
+  <SECT1 ID="VALIDATOR">
+    <TITLE>Annotation Validation</TITLE>
+
+<SECT2 ID="VALIDATOR-RUN">
+    <TITLE>How to Run Validation Checks</TITLE>
+    <PARA>
+&prog; can carry out validations checks to try and minimise annotation errors. 
+These checks can be carried out in the following ways:
+    </PARA>
+<ORDEREDLIST ID="VALID-CHECK">
+    <LISTITEM ID="VALID-CHECK-1">
+      <PARA>
+Click on the tick button
+
+<inlinemediaobject>
+	<imageobject>
+		<imagedata fileref="tick.png">
+	</imageobject>
+</inlinemediaobject>
+
+found in the top right hand side of Artemis to validate all features. When complete it will
+open a report window highlighting any features which have failed the checks.
+
+      </PARA>
+    </LISTITEM>
+    <LISTITEM ID="VALID-CHECK-2">
+      <PARA>
+Select the features to be checked in &prog; and open the popup menu by right clicking on the feature display 
+and selecting the 'Validation report ...' option. 
+      </PARA>
+    </LISTITEM>
+
+    <LISTITEM ID="VALID-CHECK-3">
+      <PARA>
+From the View menu, select the 'Feature Filters' menu item and the 'Validation checks...' option. This opens
+a feature list window for each of the type of check it carries out and these contain the features that have
+failed the check.
+      </PARA>
+    </LISTITEM>
+    <LISTITEM ID="VALID-CHECK-4">
+      <PARA>
+For organisms in a chado database the vaidator can be run from the 'Database and File Manager' window from the 
+'File' menu by selecting the 'Validate Selected Sequence / Organism' option.
+      </PARA>
+    </LISTITEM>
+</ORDEREDLIST>
+</SECT2>
+
+<SECT2 ID="VALIDATOR-CHECKS-ALL">
+    <TITLE>Validation Checks For All File Types</TITLE>
+    <PARA>
+The following checks are made on all file types (e.g. EMBL, GFF3):
+    </PARA>
+
+<ITEMIZEDLIST SPACING="compact">
+   <LISTITEM>
+   <PARA>
+CDS have no internal stop codon 
+   </PARA>
+   </LISTITEM>
+   <LISTITEM>
+   <PARA>
+CDS have a valid stop codon 
+   </PARA>
+   </LISTITEM>
+</ITEMIZEDLIST>
+
+    <PARA>
+Additionally &prog; checks GO annotation for: 
+    </PARA>
+
+<ITEMIZEDLIST SPACING="compact">
+   <LISTITEM>
+   <PARA>
+unexpected white space in with/from and dbxref columns 
+   </PARA>
+   </LISTITEM>
+   <LISTITEM>
+   <PARA>
+the WITH/FROM field must be empty when using IDA, NAS, ND, TAS or EXP evidence code 
+   </PARA>
+   </LISTITEM>
+   <LISTITEM>
+   <PARA>
+GO:0005515 can only have IPI evidence code 
+   </PARA>
+   </LISTITEM>
+   <LISTITEM>
+   <PARA>
+IEP is not allowed for molecular_function and cellular_component terms 
+   </PARA>
+   </LISTITEM>
+   <LISTITEM>
+   <PARA>
+the WITH/FROM field must be filled when using ISS, ISA, ISO and ISM codes
+   </PARA>
+   </LISTITEM>
+</ITEMIZEDLIST>
+</SECT2>
+
+<SECT2 ID="VALIDATOR-CHECKS-GFF">
+    <TITLE>Validation Checks For GFF3</TITLE>
+
+    <PARA>
+The following are checks for GFF3 and Chado entries only: 
+    </PARA>
+
+<ITEMIZEDLIST SPACING="compact">
+   <LISTITEM>
+   <PARA>
+check that the gene model comprises of at least a gene and a transcript feature
+   </PARA>
+   </LISTITEM>
+   <LISTITEM>
+   <PARA>
+check that the boundaries of the features making up a gene model are consistent
+   </PARA>
+   </LISTITEM>
+   <LISTITEM>
+   <PARA>
+check that all the features in a gene model are on the same strand 
+   </PARA>
+   </LISTITEM>
+   <LISTITEM>
+   <PARA>
+check that CDS features have a phase 
+   </PARA>
+   </LISTITEM>
+   <LISTITEM>
+   <PARA>
+check the attribute column to ensure that qualifiers have a value (not empty) and
+that only reserved tags start with an uppercase character
+   </PARA>
+   </LISTITEM>
+   <LISTITEM>
+   <PARA>
+check that partial qualifiers are consistent within a gene model 
+   </PARA>
+   </LISTITEM>
+   <LISTITEM>
+   <PARA>
+check that the gene name prefix is consistent within a gene model 
+   </PARA>
+   </LISTITEM>
+</ITEMIZEDLIST>
+
+</SECT2>
+
+<SECT2 ID="VALIDATOR-REPORT">
+    <TITLE>Validation Report</TITLE>
+
+   <PARA>
+The validation report window displays a summary for the failed features. The
+title bar of the window displays the number of features that have passed and
+the number that have failed the validation checks. The problems identified 
+are highlighted in red.
+   </PARA>
+
+   <PARA>
+<MEDIAOBJECT>
+        <IMAGEOBJECT>
+           <IMAGEDATA FORMAT="png" FILEREF="validation_report.png"></IMAGEOBJECT>
+        </MEDIAOBJECT>
+   </PARA>
+
+   <PARA>
+Some of the errors can be fixed automatically. The 'Auto-Fix' button opens a window
+with the fixes enabled that are available for the entry type that is loaded in &prog;. It will
+attempt to fix CDS features that have been found not to end in stop codons. If the last codon is not a 
+stop codon, but the very next codon is a stop codon, then the end of the feature is 
+extended by three bases.
+   </PARA>
+   <PARA>
+For GFF3 and chado entries &prog; will also attempt to fix problems it finds with gene
+boundaries and if a phase is absent then a default phase of 0 is given. Once these are
+fixed the results window will automatically update and remove problems it has
+managed to resolved.
+   </PARA>
+</SECT2>
+
+  </SECT1>
