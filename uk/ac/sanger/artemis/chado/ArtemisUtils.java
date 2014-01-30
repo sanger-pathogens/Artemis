@@ -47,6 +47,7 @@ import org.gmod.schema.sequence.FeatureProp;
 import org.gmod.schema.sequence.FeatureRelationship;
 
 import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
+import uk.ac.sanger.artemis.io.GFF3Encoder;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.util.StringVector;
@@ -262,7 +263,7 @@ public class ArtemisUtils
       if(this_fcp.getValue().equals(fcp.getValue()))
         return true;
 
-      if(this_fcp.getValue().equals(GFFStreamFeature.decode(fcp.getValue())))
+      if(this_fcp.getValue().equals(GFF3Encoder.decode(fcp.getValue())))
         return true;
     }
     return false;

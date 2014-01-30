@@ -27,11 +27,11 @@ package uk.ac.sanger.artemis.util;
 import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
 import uk.ac.sanger.artemis.io.DocumentEntry;
+import uk.ac.sanger.artemis.io.GFF3Encoder;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.io.PartialSequence;
 import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.io.ReadFormatException;
-
 import uk.ac.sanger.artemis.chado.ArtemisUtils;
 import uk.ac.sanger.artemis.chado.ChadoCvTermView;
 import uk.ac.sanger.artemis.chado.ChadoTransactionManager;
@@ -1301,7 +1301,7 @@ public class DatabaseDocument extends Document
           // ortholog/paralog/cluster data
           int orthologueFeature = fr.getFeatureByObjectId().getFeatureId();
           clusterOrthoParalog.append(cvTermName+"="+
-              GFFStreamFeature.encode("object_id="+orthologueFeature+"; rank="+fr.getRank())+";");
+              GFF3Encoder.encode("object_id="+orthologueFeature+"; rank="+fr.getRank())+";");
         }
       }
     }
@@ -1393,10 +1393,10 @@ public class DatabaseDocument extends Document
         if(qualifier_name == null)
           continue;
         if(featprop.getValue() != null)
-          this_buff.append(GFFStreamFeature.encode(qualifier_name)+ "=" +
-                           GFFStreamFeature.encode(featprop.getValue())+";");
+          this_buff.append(GFF3Encoder.encode(qualifier_name)+ "=" +
+                           GFF3Encoder.encode(featprop.getValue())+";");
         else
-          this_buff.append(GFFStreamFeature.encode(qualifier_name)+";");
+          this_buff.append(GFF3Encoder.encode(qualifier_name)+";");
       }
     }
 
@@ -1408,7 +1408,7 @@ public class DatabaseDocument extends Document
     if(feat.getDbXRef() != null)
     {
       this_buff.append("Dbxref=");
-      this_buff.append(GFFStreamFeature.encode(
+      this_buff.append(GFF3Encoder.encode(
           feat.getDbXRef().getDb().getName()+":"+feat.getDbXRef().getAccession()));
       foundPrimaryDbXRef = true;
       if(dbxref == null || dbxref.size() == 0)
@@ -1423,7 +1423,7 @@ public class DatabaseDocument extends Document
         this_buff.append("Dbxref=");
       for(int j=0; j<dbxref.size(); j++)
       {
-        this_buff.append(GFFStreamFeature.encode(dbxref.get(j)));
+        this_buff.append(GFF3Encoder.encode(dbxref.get(j)));
         if(j<dbxref.size()-1)
           this_buff.append(",");
       }
@@ -1442,7 +1442,7 @@ public class DatabaseDocument extends Document
         this_buff.append(alias.getSynonym().getName());
         
         if(!alias.isCurrent())
-          this_buff.append(GFFStreamFeature.encode(";current=false"));
+          this_buff.append(GFF3Encoder.encode(";current=false"));
         
         //if(j<v_synonyms.size()-1)
         this_buff.append(";");
@@ -1511,9 +1511,9 @@ public class DatabaseDocument extends Document
       attr_buff.append("controlled_curation=");
       
       attr_buff.append("term="+
-          GFFStreamFeature.encode(feature_cvterm.getCvTerm().getName())+"%3B");
+          GFF3Encoder.encode(feature_cvterm.getCvTerm().getName())+"%3B");
       attr_buff.append("cv="+
-          GFFStreamFeature.encode(feature_cvterm.getCvTerm().getCv().getName())+"%3B");   
+          GFF3Encoder.encode(feature_cvterm.getCvTerm().getCv().getName())+"%3B");   
       
       // N.B. the db_xref may be a FeatureCvTermDbXRef or a Pub for /controlled_curation
       int nfound_dbxref = 0;
@@ -1584,7 +1584,7 @@ public class DatabaseDocument extends Document
         attr_buff.append(getCvtermName(feature_cvtermprop.getCvTerm()
             .getCvTermId(), dao, gene_builder));
         attr_buff.append("=");
-        attr_buff.append(GFFStreamFeature.encode(feature_cvtermprop.getValue()));
+        attr_buff.append(GFF3Encoder.encode(feature_cvtermprop.getValue()));
         if(i < feature_cvtermprops.size()-1)
           attr_buff.append("%3B");
       }
@@ -1657,7 +1657,7 @@ public class DatabaseDocument extends Document
                        + dbXRef.getAccession() + "%3B");
     
     attr_buff.append("term="+
-        GFFStreamFeature.encode(feature_cvterm.getCvTerm().getName())+"%3B");
+        GFF3Encoder.encode(feature_cvterm.getCvTerm().getName())+"%3B");
     
     // PMID
     int nfound_pub = 0;
@@ -1731,7 +1731,7 @@ public class DatabaseDocument extends Document
       attr_buff.append(getCvtermName(feature_cvtermprop.getCvTerm()
           .getCvTermId(), dao, gene_builder));
       attr_buff.append("=");
-      attr_buff.append(GFFStreamFeature.encode(feature_cvtermprop.getValue()));
+      attr_buff.append(GFF3Encoder.encode(feature_cvtermprop.getValue()));
       if(i < feature_cvtermprops.size()-1)
         attr_buff.append("%3B");
     }

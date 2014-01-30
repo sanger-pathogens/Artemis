@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="corba"/>
+	<classpathentry kind="src" path="lib"/>
 	<classpathentry including="nsdb/|seqdb/|type/" kind="src" path="ant-build/src/main"/>
 	<classpathentry excluding="ant-build/src/main/|uk/ac/sanger/artemis/ExternalProgramUtils.java" including="nsdb/|org/|seqdb/|type/|uk/" kind="src" path=""/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
@@ -23,5 +24,6 @@
 	<classpathentry kind="lib" path="lib/batik/batik-svggen.jar"/>
 	<classpathentry kind="lib" path="lib/batik/batik-util.jar"/>
 	<classpathentry kind="lib" path="lib/batik/batik-xml.jar"/>
+	<classpathentry kind="lib" path="lib/commons-lang-2.6.jar"/>
 	<classpathentry kind="output" path="ant-build/classes/main"/>
 </classpath>
