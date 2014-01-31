@@ -129,9 +129,9 @@ public class GFF3AttributeBuilder {
     } else {
       targetAttrs.add(attr);
     }
-    // drop attributes with empty values
-    if (val.size() == 1
-        && val.elementAt(0).replaceAll("\\s+", "").equals(""))
+    // drop attributes with null or empty values
+    if (val == null || (val.size() == 1
+        && val.elementAt(0).replaceAll("\\s+", "").equals("")) )
       return;
     // process expanded list of attributes
     for (String this_attr : targetAttrs) {
