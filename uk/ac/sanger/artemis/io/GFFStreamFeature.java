@@ -713,12 +713,9 @@ public class GFFStreamFeature extends SimpleDocumentFeature implements
 
   /**
    * Return a String containing the qualifiers of this feature in a form
-   * suitable for using as the last field of a GFF line. The codon_start
-   * attribute is not included since GFF has a frame field. gff_seqname,
-   * gff_source and score aren't included since they have corresponding fields.
+   * suitable for using as the last field of a GFF line.
    **/
   private String unParseAttributes(final String myId) {
-    //final StringBuffer buffer = new StringBuffer();
     final QualifierVector qualifiers = getQualifiers();
     GFF3AttributeBuilder abuf = new GFF3AttributeBuilder();
     prepareProcessors(abuf);
@@ -727,10 +724,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature implements
       abuf.ignore(attr);
     }
 
-    final String names[] = { "ID", "Name", "Alias", "Parent", "Derives_from",
-        "Target", "Gap", "Note", "Dbxref", "Ontology_term", "Start_range",
-        "End_range", "Is_circular" };
-    final int names_length = names.length;
+    final int names_length = abuf.reserved_a.length;
 
     // add ID attribute
     if (myId != null) {
@@ -739,7 +733,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature implements
     
     // build reserved attributes
     for (int i = 1; i < names_length; i++) {
-      Qualifier this_qualifier = qualifiers.getQualifierByName(names[i]);
+      Qualifier this_qualifier = qualifiers.getQualifierByName(abuf.reserved_a[i]);
       
       if (this_qualifier == null)
         continue;
@@ -754,7 +748,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature implements
 
       // skip reserved names
       for (int j = 0; j < names_length; j++)
-        if (this_qualifier.getName().equals(names[j]))
+        if (this_qualifier.getName().equals(abuf.reserved_a[j]))
           lname = true;
       if (lname)
         continue;
