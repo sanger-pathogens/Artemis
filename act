@@ -43,6 +43,8 @@ CLASSPATH=$CLASSPATH:$ACT_HOME/lib/ibatis/ibatis-2.3.4.726.jar:$ACT_HOME/lib/iba
 # picard jars
 CLASSPATH=$ACT_HOME/lib/picard/sam.jar:$ACT_HOME/lib/picard/picard.jar:$CLASSPATH
 
+CLASSPATH="$ACT_HOME/lib/commons-lang-2.6.jar:$CLASSPATH"
+
 export CLASSPATH
 
 ACT_PROPERTIES="-Dartemis.environment=UNIX"
