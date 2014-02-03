@@ -775,9 +775,6 @@ The feature edit window
         <IMAGEOBJECT>
           <IMAGEDATA FORMAT="gif" FILEREF="feature_edit.gif">
         </IMAGEOBJECT>
-        <IMAGEOBJECT>
-          <IMAGEDATA FORMAT="eps" FILEREF="feature_edit.eps">
-        </IMAGEOBJECT>
       </MEDIAOBJECT>
     </SCREENSHOT>
     <PARA>
@@ -835,12 +832,6 @@ the location string.  This is normally used to create an intron in a feature.
 Pressing the <LITERAL>Goto Feature</LITERAL> button has the same effect as the
 "Start of Selection" item in the "Goto" menu.  (See <XREF
 LINKEND="GOTOMENU-GOTO-SELECTION-START"> for more).
-              </PARA>
-            </LISTITEM>
-            <LISTITEM>
-              <PARA>
-The <LITERAL>Select Feature</LITERAL> button selects this feature (in the same
-way as clicking on the feature in one of the views).
               </PARA>
             </LISTITEM>
           </ITEMIZEDLIST>
