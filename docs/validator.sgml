@@ -150,10 +150,10 @@ check that the gene name prefix is consistent within a gene model
     <TITLE>Validation Report</TITLE>
 
    <PARA>
-The validation report window displays a summary for the failed features. The
-title bar of the window displays the number of features that have passed and
-the number that have failed the validation checks. The problems identified 
-are highlighted in red.
+The validation report window displays a summary for the features that have failed one or
+more of the annotation checks above. The title bar of the window displays the number of 
+features that have passed and the number that have failed the validation checks. The 
+problems identified are highlighted in red.
    </PARA>
 
    <PARA>
@@ -165,7 +165,7 @@ are highlighted in red.
 
    <PARA>
 Some of the errors can be fixed automatically. The 'Auto-Fix' button opens a window
-with the fixes enabled that are available for the entry type that is loaded in &prog;. It will
+with the fixes enabled that are available for the entry type that is loaded in &prog;. For example, it will
 attempt to fix CDS features that have been found not to end in stop codons. If the last codon is not a 
 stop codon, but the very next codon is a stop codon, then the end of the feature is 
 extended by three bases.
@@ -173,7 +173,7 @@ extended by three bases.
    <PARA>
 For GFF3 and chado entries &prog; will also attempt to fix problems it finds with gene
 boundaries and if a phase is absent then a default phase of 0 is given. Once these are
-fixed the results window will automatically update and remove problems it has
+fixed the results window will automatically update and remove the problems it has
 managed to resolved.
    </PARA>
 </SECT2>
