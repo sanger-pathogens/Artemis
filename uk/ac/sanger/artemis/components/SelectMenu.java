@@ -1000,37 +1000,65 @@ public class SelectMenu extends SelectionMenu
       }
     }
   }
-  
 
   /**
-   *  If there are some selected bases select the features that are
+   *  If there are some selected bases or features select the features that are
    *  fully contained within that selection.
    **/
   private void selectContainedFeatures () {
     final MarkerRange selected_marker_range =
       getSelection ().getMarkerRange ();
 
-    if (selected_marker_range == null) {
-      new MessageDialog (getParentFrame (), "sequence range is not selected");
-      return;
-    } else {
-      try {
-        final FeatureVector featuresInRange =
-            getEntryGroup ().getFeaturesInRange (selected_marker_range.getRawRange ());
-        final FeatureVector featuresContainedByRange = new FeatureVector();
-        for(int i=0; i<featuresInRange.size(); i++)
-        {
-          Feature f = featuresInRange.elementAt(i);
-          Range maxR =  f.getMaxRawRange(); 
-          if(selected_marker_range.getRawStart().getRawPosition() <= maxR.getStart() &&
-             selected_marker_range.getRawEnd().getRawPosition()   >= maxR.getEnd())
-            featuresContainedByRange.add(f);
+    final FeatureVector featuresContainedByRange;
+    try
+    {
+      if (selected_marker_range == null) {
+        final FeatureVector selected_features = getSelection ().getAllFeatures ();
+        if (selected_features.size () == 0) {
+          new MessageDialog (getParentFrame (), "nothing selected");
+          return;
         }
-        getSelection ().set (featuresContainedByRange);
-      } catch (OutOfRangeException e) {
-        throw new Error ("internal error - unexpected exception: " + e);
+
+        featuresContainedByRange = new FeatureVector();
+        for(int i=0; i<selected_features.size(); i++) {
+          Range r = selected_features.elementAt(i).getMaxRawRange();
+          final FeatureVector featuresContained = getFeaturesContainedByRange(r);
+          for(int j=0; j<featuresContained.size(); j++) {
+            final Feature f = featuresContained.elementAt(j);
+            if(!featuresContainedByRange.contains(f) && !selected_features.contains(f))
+              featuresContainedByRange.add(f);
+          }
+        }
+      } else {
+        featuresContainedByRange = getFeaturesContainedByRange(
+            selected_marker_range.getRawRange());
       }
+    } catch (OutOfRangeException e) {
+      throw new Error ("internal error - unexpected exception: " + e);
     }
+    getSelection ().set (featuresContainedByRange);
+  }
+
+  /**
+   * Return the features that are contained by a given range
+   * @param r
+   * @return
+   * @throws OutOfRangeException
+   */
+  private FeatureVector getFeaturesContainedByRange(Range r) throws OutOfRangeException
+  {
+    final FeatureVector featuresInRange =
+        getEntryGroup ().getFeaturesInRange (r);
+    final FeatureVector featuresContainedByRange = new FeatureVector();
+    for(int i=0; i<featuresInRange.size(); i++)
+    {
+      Feature f = featuresInRange.elementAt(i);
+      Range maxR =  f.getMaxRawRange(); 
+      if(r.getStart() <= maxR.getStart() &&
+         r.getEnd()   >= maxR.getEnd())
+        featuresContainedByRange.add(f);
+    }
+    return featuresContainedByRange;
   }
 
   /**
