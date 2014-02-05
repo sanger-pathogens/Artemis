@@ -165,10 +165,21 @@ similar effect to double clicking the middle button on a base or residue (see
     <TITLE>Features Overlapping Selection</TITLE>
     <PARA>
 Select those (and only those) features that overlap the currently selected
-range of bases or any of the currently selected features.  The current
+range of bases or any of the currently selected features. The current
 selection will be discarded.
     </PARA>
   </SECT2>
+
+
+  <SECT2 ID="SELECTMENU-WITHIN-SELECTION">
+    <TITLE>Features Within Selection</TITLE>
+    <PARA>
+Select those (and only those) features that are fully contained by the currently 
+selected range of bases or any of the currently selected features. The current
+selection will be discarded.
+    </PARA>
+  </SECT2>
+
 
   <SECT2 ID="SELECTMENU-BASE-RANGE">
     <TITLE>Base Range ...</TITLE>
