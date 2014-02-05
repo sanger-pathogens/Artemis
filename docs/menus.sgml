@@ -546,6 +546,16 @@ LINKEND="GRAPHS">.  Configuration options for graphs are described in <XREF
 LINKEND="OPTIONS-PLOTS">.
     </PARA>
   </SECT2>
+
+<![ %act-only; [
+  <SECT2 ID="VIEWMENU-ADJUST-HEIGHTS">
+    <TITLE>Adjust panel heights ...</TITLE>
+    <PARA>
+Option in ACT for adjusting the panel heights (BAM, VCF, plots, comparisons) by giving
+them different weights in order to distribute the space between each component.
+    </PARA>
+  </SECT2>
+]]>
 </SECT1>
 
 <SECT1 ID="GOTOMENU">
