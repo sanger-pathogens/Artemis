@@ -840,9 +840,9 @@ The <LITERAL>User Qualifiers</LITERAL> button opens a tool for maintaining
 user defined lists of qualifiers (i.e. qualifiers in the form tag = value pairs 
 on separate lines) and the option to read qualifiers from <ULINK 
 URL="http://www.geneontology.org/GO.format.shtml" TYPE="external">OBO</ULINK> formatted files or 
-URLs. These can be optionally saved between sessions in the file '.artemis.qualifiers' in the
-home directory. In the intial screen (below) you are invited to import your 
-qualifier list from the File menu.
+URLs. In the intial screen (see below) you are invited to import your qualifier list from the import 
+options in the "File" menu. These lists can be optionally saved between sessions in the file 
+'.artemis.qualifiers' in the home directory. 
               </PARA>
       <MEDIAOBJECT>
         <IMAGEOBJECT>
@@ -852,8 +852,10 @@ qualifier list from the File menu.
 
               <PARA>
 When a qualifier list or OBO file has been added then it is possible to search for
-keywords and the qualifer added to the current feature or added to selected features
-in &prog;.
+keywords within a list. The qualifer selected in the drop down list (under the SEARCH button) 
+can then be added to the current feature annotation or added to selected features in &prog;.
+If the keywords text field is left blank then all qualifiers are available from the drop
+down list of qualifier values.
               </PARA>
 
       <MEDIAOBJECT>
