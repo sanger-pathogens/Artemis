@@ -165,10 +165,21 @@ similar effect to double clicking the middle button on a base or residue (see
     <TITLE>Features Overlapping Selection</TITLE>
     <PARA>
 Select those (and only those) features that overlap the currently selected
-range of bases or any of the currently selected features.  The current
+range of bases or any of the currently selected features. The current
 selection will be discarded.
     </PARA>
   </SECT2>
+
+
+  <SECT2 ID="SELECTMENU-WITHIN-SELECTION">
+    <TITLE>Features Within Selection</TITLE>
+    <PARA>
+Select those (and only those) features that are fully contained by the currently 
+selected range of bases or any of the currently selected features. The current
+selection will be discarded.
+    </PARA>
+  </SECT2>
+
 
   <SECT2 ID="SELECTMENU-BASE-RANGE">
     <TITLE>Base Range ...</TITLE>
@@ -535,6 +546,16 @@ LINKEND="GRAPHS">.  Configuration options for graphs are described in <XREF
 LINKEND="OPTIONS-PLOTS">.
     </PARA>
   </SECT2>
+
+<![ %act-only; [
+  <SECT2 ID="VIEWMENU-ADJUST-HEIGHTS">
+    <TITLE>Adjust panel heights ...</TITLE>
+    <PARA>
+Option in ACT for adjusting the panel heights (BAM, VCF, plots, comparisons) by giving
+them different weights in order to distribute the space between each component.
+    </PARA>
+  </SECT2>
+]]>
 </SECT1>
 
 <SECT1 ID="GOTOMENU">
@@ -775,9 +796,6 @@ The feature edit window
         <IMAGEOBJECT>
           <IMAGEDATA FORMAT="gif" FILEREF="feature_edit.gif">
         </IMAGEOBJECT>
-        <IMAGEOBJECT>
-          <IMAGEDATA FORMAT="eps" FILEREF="feature_edit.eps">
-        </IMAGEOBJECT>
       </MEDIAOBJECT>
     </SCREENSHOT>
     <PARA>
@@ -839,9 +857,35 @@ LINKEND="GOTOMENU-GOTO-SELECTION-START"> for more).
             </LISTITEM>
             <LISTITEM>
               <PARA>
-The <LITERAL>Select Feature</LITERAL> button selects this feature (in the same
-way as clicking on the feature in one of the views).
+The <LITERAL>User Qualifiers</LITERAL> button opens a tool for maintaining 
+user defined lists of qualifiers (i.e. qualifiers in the form tag = value pairs 
+on separate lines) and the option to read qualifiers from <ULINK 
+URL="http://www.geneontology.org/GO.format.shtml" TYPE="external">OBO</ULINK> formatted files or 
+URLs. In the intial screen (see below) you are invited to import your qualifier list from the import 
+options in the "File" menu. These lists can be optionally saved between sessions in the file 
+'.artemis.qualifiers' in the home directory. 
               </PARA>
+      <MEDIAOBJECT>
+        <IMAGEOBJECT>
+          <IMAGEDATA FORMAT="gif" FILEREF="qualifier_list.gif">
+        </IMAGEOBJECT>
+      </MEDIAOBJECT>
+
+              <PARA>
+When a qualifier list or OBO file has been added then it is possible to search for
+keywords within a list. The qualifer selected in the drop down list (under the SEARCH button) 
+can then be added to the current feature annotation or added to selected features in &prog;.
+If the keywords text field is left blank then all qualifiers are available from the drop
+down list of qualifier values.
+              </PARA>
+
+      <MEDIAOBJECT>
+        <IMAGEOBJECT>
+          <IMAGEDATA FORMAT="gif" FILEREF="qualifier_list2.gif">
+        </IMAGEOBJECT>
+      </MEDIAOBJECT>
+
+
             </LISTITEM>
           </ITEMIZEDLIST>
         </LISTITEM>
