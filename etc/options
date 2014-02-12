@@ -861,7 +861,7 @@ hyperlinks = \
 # No. threads used to read from multiple BAM files
 bam_read_thread = 2
 # Max read coverage to display
-bam_max_coverage = 10000
+bam_max_coverage = 1000000
 
 #
 # CHADO DATABASE OPTIONS 
