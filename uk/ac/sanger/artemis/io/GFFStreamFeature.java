@@ -820,7 +820,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature implements
             int index = values.elementAt(value_index).indexOf(";current=");
             if (index > -1)
               this_value = GFF3Encoder.encode(values.elementAt(value_index)
-                  .substring(0, index - 1));
+                  .substring(0, index));
             else
               this_value = GFF3Encoder.encode(values.elementAt(value_index));
             if (value_index > 0 && value_index < (values.size())) {
