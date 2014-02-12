@@ -892,12 +892,29 @@ public class GFFStreamFeature extends SimpleDocumentFeature implements
       }
     };
 
+    GFF3AttributeAggregator curcomProc = new GFF3AttributeAggregator() {
+      @Override
+      public String process(StringVector values) {
+        StringBuilder buffer = new StringBuilder();
+        if (values != null && values.size() > 0) {
+          for (int value_index = 0; value_index < values.size(); ++value_index) {
+            buffer.append(GFF3Encoder.encode(values.elementAt(value_index)));
+            if (value_index < (values.size()) - 1)
+              buffer.append(" ");
+          }
+        }
+        return buffer.toString();
+      }
+    };
+
     // map GO -> full_GO
     abuf.setMapping("GO", "full_GO");
     abuf.setGlue("full_GO", ",");
 
     // merge curation and comment
     abuf.setMapping("curation", "comment");
+    abuf.setGlue("comment", " ");
+    abuf.setAggregator("comment", curcomProc);
     
     // also put GOs in Ontology_term
     abuf.setClone("full_GO", "Ontology_term");

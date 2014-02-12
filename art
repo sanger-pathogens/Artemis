@@ -40,6 +40,9 @@ export CLASSPATH
 
 # picard jars
 CLASSPATH=$ARTEMIS_HOME/lib/picard/sam.jar:$ARTEMIS_HOME/lib/picard/picard.jar:$ARTEMIS_HOME/lib/commons-net-2.2.jar:$CLASSPATH
+
+CLASSPATH="$ARTEMIS_HOME/lib/commons-lang-2.6.jar:$CLASSPATH"
+
 export CLASSPATH
 
 

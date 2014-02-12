@@ -5,14 +5,6 @@ As well as the listing file names on the command line, the following switches
 are available to UNIX users:
     </PARA>
 
-    <SECT2 ID="UNIXARGS-QUIET">
-      <TITLE><LITERAL>-quiet</LITERAL></TITLE>
-      <PARA>
-This option tells &prog; to suppress normal informational messages while
-running.
-      </PARA>
-    </SECT2>
-
     <SECT2 ID="UNIXARGS-OPTIONS">
       <TITLE><LITERAL>-options</LITERAL></TITLE>
       <PARA>

@@ -67,10 +67,12 @@ import org.postgresql.largeobject.LargeObjectManager;
 import com.ibatis.common.jdbc.SimpleDataSource;
 
 import java.sql.*;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.io.*;
 import java.net.ConnectException;
 import java.net.InetAddress;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -551,7 +553,11 @@ public class DatabaseDocument extends Document
       ByteBuffer entryBuffer = new ByteBuffer();
       try
       {
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        Calendar cal = Calendar.getInstance();
+
         entryBuffer.append("##gff-version 3\n");
+        entryBuffer.append("#created " + dateFormat.format(cal.getTime()) + "\n");
         
         ByteBuffer sequenceBuffer = new ByteBuffer();
         if(dao instanceof IBatisDAO)
