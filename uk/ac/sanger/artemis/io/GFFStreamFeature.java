@@ -754,10 +754,11 @@ public class GFFStreamFeature extends SimpleDocumentFeature implements
         continue;
 
       // skip internal qualifiers
-      if ((this_qualifier.getName().equals("private") && System
-          .getProperty("noprivate") != null)
-          || (this_qualifier.getName().equals("history") && System
-              .getProperty("nohistory") != null))
+      if ( (this_qualifier.getName().equals("private") && 
+            System.getProperty("noprivate") != null) || 
+           (this_qualifier.getName().equals("history") && 
+            System.getProperty("nohistory") != null) ||
+            this_qualifier.getName().equals("codon_start"))
         continue;
 
       abuf.add(this_qualifier.getName(), this_qualifier.getValues());
