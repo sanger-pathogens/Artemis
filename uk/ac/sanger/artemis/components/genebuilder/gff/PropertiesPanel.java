@@ -34,7 +34,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -184,7 +183,9 @@ public class PropertiesPanel extends JPanel
   {
     Qualifier idQualifier   = gffQualifiers.getQualifierByName("ID");
     Qualifier nameQualifier = gffQualifiers.getQualifierByName("Name");
-   
+
+    if(idQualifier == null)
+      return;
     final String uniquename = idQualifier.getValues().get(0);
     uniquenameTextField = new JTextField(uniquename);
     uniquenameTextField.setPreferredSize(calcPreferredMaxTextFieldWidth());
@@ -780,9 +781,13 @@ public class PropertiesPanel extends JPanel
   
   private void addSynonym()
   {
-    final Vector<CvTerm> synonyms = DatabaseDocument.getCvterms("", 
-        ChadoTransactionManager.SYNONYM_TAG_CVNAME, false);
-    final JExtendedComboBox list = new JExtendedComboBox(synonyms);
+    final JExtendedComboBox list;
+    if(GeneUtils.isDatabaseEntry(feature.getEmblFeature()))
+      list = new JExtendedComboBox(DatabaseDocument.getCvterms("", 
+          ChadoTransactionManager.SYNONYM_TAG_CVNAME, false));
+    else
+      list = new JExtendedComboBox(ChadoTransactionManager.getSynonymTags());
+
     final String options[] = { "CANCEL", "NEXT>"};   
     
     int select = JOptionPane.showOptionDialog(null, list,
@@ -790,12 +795,15 @@ public class PropertiesPanel extends JPanel
          JOptionPane.YES_NO_CANCEL_OPTION,
          JOptionPane.QUESTION_MESSAGE,
          null, options, options[1]);
-    
     if(select == 0)
       return;
-    
+
     Box xBox = Box.createHorizontalBox();
-    final String synonymName = ((CvTerm)list.getSelectedItem()).getName();
+    final String synonymName;
+    if(list.getSelectedItem() instanceof CvTerm)
+      synonymName = ((CvTerm)list.getSelectedItem()).getName();
+    else
+      synonymName = (String) list.getSelectedItem();
     final JLabel name = new JLabel( synonymName );
     xBox.add(name);
     

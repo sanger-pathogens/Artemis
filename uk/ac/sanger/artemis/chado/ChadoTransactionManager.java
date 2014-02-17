@@ -1228,8 +1228,10 @@ public class ChadoTransactionManager
   {
     if(synonym_tags == null)
     {
-      synonym_tags = DatabaseDocument.getSynonymTypeNames(
+      if(GeneUtils.isDatabaseEntry(feature))
+        synonym_tags = DatabaseDocument.getSynonymTypeNames(
                               SYNONYM_TAG_CVNAME, feature);
+
       if(synonym_tags == null || synonym_tags.length < 1)
       {
         logger4j.debug("Using default synonym names");
@@ -1249,6 +1251,12 @@ public class ChadoTransactionManager
     
     return false;
   }
+  
+  public static String[] getSynonymTags()
+  {
+    return synonym_tags;
+  }
+
   
   /**
    * Compare the old and new keys and qualifiers and find the qualifiers 

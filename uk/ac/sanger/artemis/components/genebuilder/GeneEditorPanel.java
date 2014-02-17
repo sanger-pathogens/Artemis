@@ -40,7 +40,6 @@ import uk.ac.sanger.artemis.components.genebuilder.cv.CVPanel;
 import uk.ac.sanger.artemis.components.genebuilder.gff.PropertiesPanel;
 import uk.ac.sanger.artemis.components.genebuilder.ortholog.MatchPanel;
 
-
 /**
  * Panel for display controlled vocabulary terms for Chado
  */
@@ -92,22 +91,32 @@ public class GeneEditorPanel extends JPanel
     coreButton = addOpenClosePanel("Core",qualifier_text_area, this, null);
     add(qualifier_text_area);
     
-    addDarkSeparator(this);
-    refButton = addOpenClosePanel("References",refPanel, this, null);
-    add(refPanel);
-    
-    addDarkSeparator(this);
-    cvButton = addOpenClosePanel("Controlled Vocabulary", cvForm, this,
+    if(refPanel != null)
+    {
+      addDarkSeparator(this);
+      refButton = addOpenClosePanel("References",refPanel, this, null);
+      add(refPanel);
+    }
+
+    if(cvForm != null)
+    {
+      addDarkSeparator(this);
+      cvButton = addOpenClosePanel("Controlled Vocabulary", cvForm, this,
         CVPanel.getDescription());
-    add(cvForm);
-    
-    addDarkSeparator(this);
-    matchButton = addOpenClosePanel("Match", matchForm, this,
+      add(cvForm);
+    }
+
+    if(matchForm != null)
+    {
+      addDarkSeparator(this);
+      matchButton = addOpenClosePanel("Match", matchForm, this,
         MatchPanel.getDescription());
-    add(matchForm);
-    
+      add(matchForm);
+    }
+
     add(Box.createVerticalGlue());
   }
+  
 
   /**
    * Open/close the sections if they contain elements or
@@ -116,9 +125,12 @@ public class GeneEditorPanel extends JPanel
   public void updatePanelState()
   {
     coreButton.setOpen(!qualifier_text_area.getText().equals(""));
-    cvButton.setOpen(!cvForm.isEmpty());
-    refButton.setOpen(!refPanel.isEmpty());
-    matchButton.setOpen(!matchForm.isEmpty());
+    if(cvForm != null)
+      cvButton.setOpen(!cvForm.isEmpty());
+    if(refPanel != null)
+      refButton.setOpen(!refPanel.isEmpty());
+    if(matchForm != null)
+      matchButton.setOpen(!matchForm.isEmpty());
     propertiesButton.setOpen(!propertiesPanel.isEmpty());
   }
   
