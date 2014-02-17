@@ -592,6 +592,28 @@ abstract public class Splash extends JFrame
     options_menu.add(autohide_option);
     options_menu.addSeparator();
 
+    //Set view Custom Annotation checkbox
+    //@Author Luj 19/08/2013 (start)
+    final JCheckBoxMenuItem viewCustomAnnotation_option = new JCheckBoxMenuItem(
+                                         "View Custom Annotation");
+    viewCustomAnnotation_option.setState((System.getProperty("viewCustomAnnotation") != null));
+
+    viewCustomAnnotation_option.addItemListener(new ItemListener()
+    {
+      public void itemStateChanged(ItemEvent event)
+      {
+        final boolean item_state = viewCustomAnnotation_option.getState();
+        if(item_state)
+          System.setProperty("viewCustomAnnotation", "true");
+        else
+          System.setProperty("viewCustomAnnotation", "false");
+      }
+    });
+    options_menu.add(viewCustomAnnotation_option);
+    options_menu.addSeparator();
+
+    //@Author Luj 19/08/2013 (end)
+    
     
     final JCheckBoxMenuItem highlight_active_entry_item =
       new JCheckBoxMenuItem("Highlight Active Entry");
