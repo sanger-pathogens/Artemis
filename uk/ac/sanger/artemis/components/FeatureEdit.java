@@ -76,7 +76,6 @@ import java.util.Comparator;
 
 import javax.swing.*;
 
-
 /**
  *  FeatureEdit class
  *
@@ -860,7 +859,6 @@ public class FeatureEdit extends JPanel
         }
       });
 
-
       final JCheckBox oneView = new JCheckBox("Overview", false);
       oneView.addItemListener(new ItemListener()
       {
@@ -886,6 +884,12 @@ public class FeatureEdit extends JPanel
       ok_cancel_update_panel.add(tabbedView);
       fillerBox.add(Box.createHorizontalStrut( 
           tabbedView.getPreferredSize().width ));
+    }
+    else if(getFeature().getEmblFeature() instanceof GFFStreamFeature)
+    {
+      propertiesPanel = new PropertiesPanel(getFeature());
+      addGffAnnotationView(lower_panel);
+
     }
     else
       lower_panel.add(new JScrollPane(qualifier_text_area), "Center");
@@ -1438,8 +1442,8 @@ public class FeatureEdit extends JPanel
     
     qualifier_text_area.setText(getQualifierString());
     
-    if(GeneUtils.isDatabaseEntry(getFeature().getEmblFeature()))
-    {  
+    if(getFeature().getEmblFeature() instanceof GFFStreamFeature)
+    {
       // load synonym
       if(cvForm != null)
         cvForm.updateFromFeature(getFeature());
@@ -1541,9 +1545,7 @@ public class FeatureEdit extends JPanel
     {
       qualifiers =
         qualifier_text_area.getParsedQualifiers(getEntryInformation ());
-      
-      updateGffIds(qualifiers);
-      
+           
       // if using controlled vocab form
       if(cvForm != null)
       {
@@ -1569,6 +1571,7 @@ public class FeatureEdit extends JPanel
         if(mapQualifiers != null && mapQualifiers.size() > 0)
           qualifiers.addAll(mapQualifiers);
       }
+      updateGffIds(qualifiers);
       
       if(matchForm != null)
       {
@@ -1679,7 +1682,7 @@ public class FeatureEdit extends JPanel
         {
           final String newName = ((String) (qualifiers.getQualifierByName("ID").getValues().get(0))).trim();
           final String oldName = ((String) (gffFeature.getQualifierByName("ID").getValues().get(0))).trim();
-         
+ 
           if(!newName.equals(oldName))
           {
             int val = JOptionPane.showConfirmDialog(null, 
@@ -1704,7 +1707,7 @@ public class FeatureEdit extends JPanel
             }
           }
         }
-        catch(Exception e){ }
+        catch(Exception e){ e.printStackTrace(); }
       }
     }
   }

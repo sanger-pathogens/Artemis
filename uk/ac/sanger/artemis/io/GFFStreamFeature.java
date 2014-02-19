@@ -429,7 +429,9 @@ public class GFFStreamFeature extends SimpleDocumentFeature implements
    * @return
    */
   public String getSegmentID(final Range r) {
-    if (id_range_store != null && !getKey().getKeyString().equals("gene")) {
+    if ( id_range_store != null && 
+         getKey().getKeyString().indexOf("gene") == -1 &&
+         getKey().getKeyString().indexOf("RNA")  == -1 ) {
       int offset = 0;
       if (getGffSeqName() != null && contig_ranges != null
           && contig_ranges.containsKey(getGffSeqName())) {

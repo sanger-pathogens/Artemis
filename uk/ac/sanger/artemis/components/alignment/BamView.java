@@ -2687,6 +2687,7 @@ public class BamView extends JPanel
         if(cbStackView.isSelected())
           logMenuItem.setEnabled(false);
         getJspView().setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        setViewportBtm();
         repaint();
       }
     });
@@ -3188,31 +3189,18 @@ public class BamView extends JPanel
       public void mouseMoved(MouseEvent e)
       {
         lastMousePoint = e.getPoint();
-        
         int thisHgt = HEIGHT-2;
         if (thisHgt < 5)
           thisHgt = 15;
 
         int y = (int) (e.getY() - jspView.getViewport().getViewRect().getY());
-        Point p = jspView.getViewport().getViewPosition();
-        boolean isVis = topPanel.isVisible();
-        
         if (y < thisHgt)
-        {
           topPanel.setVisible(true);
-          if(!isVis)
-            p.y += topPanel.getHeight();
-        }
         else
         {
-          if (buttonAutoHide.isSelected())
+          if (buttonAutoHide.isSelected() && topPanel.isVisible())
             topPanel.setVisible(false); 
         }
-        
-        if(!showBaseAlignment && topPanel.isVisible())
-          jspView.getViewport().setViewPosition(p);
-        mainPanel.repaint();
-        //mainPanel.revalidate();
       }
     };
     addMouseMotionListener(mouseMotionListener);
@@ -3396,18 +3384,17 @@ public class BamView extends JPanel
         cbLastSelected.setSelected(true);
         cbLastSelected = null;
       }
-      
+
       jspView.setColumnHeaderView(null);
-      
-      if(!isStrandStackView())
+      if(isCoverageView(pixPerBase))
         setViewportBtm();
-      else
+      else if (isStrandStackView())
         setViewportMidPoint();
       showBaseAlignment = false;
       baseQualityColour.setEnabled(false);
       markInsertions.setEnabled(false);
     }
-    
+
     if(scrollBar != null)
     {
       scrollBar.setValues(startValue, nbasesInView, 1, 
