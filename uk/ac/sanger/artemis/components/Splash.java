@@ -596,7 +596,8 @@ abstract public class Splash extends JFrame
     //@Author Luj 19/08/2013 (start)
     final JCheckBoxMenuItem viewCustomAnnotation_option = new JCheckBoxMenuItem(
                                          "View Custom Annotation");
-    viewCustomAnnotation_option.setState((System.getProperty("viewCustomAnnotation") != null));
+    viewCustomAnnotation_option.setState(Options.getOptions().canViewCustomAnnotation());
+    //viewCustomAnnotation_option.setState((System.getProperty("viewCustomAnnotation") != null));
 
     viewCustomAnnotation_option.addItemListener(new ItemListener()
     {

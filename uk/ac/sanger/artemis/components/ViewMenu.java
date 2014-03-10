@@ -599,7 +599,8 @@ public class ViewMenu extends SelectionMenu
     //If "view Custom Annotation" is selected in menu or
     //view_Custom_Annotation is set up in option file,add submenus to the View menu. 
     //@Author Luj 19/08/2013 (start)
-        if (Options.getOptions().getPropertyTruthValue("view_Custom_Annotation") ||
+        if (
+                //Options.getOptions().getPropertyTruthValue("view_Custom_Annotation") ||
                (System.getProperty("viewCustomAnnotation")!=null &&
                 System.getProperty("viewCustomAnnotation").equals("true"))) {
             JMenu view_Customized_Annotation_menu = null;
