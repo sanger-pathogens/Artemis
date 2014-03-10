@@ -594,25 +594,27 @@ abstract public class Splash extends JFrame
 
     //Set view Custom Annotation checkbox
     //@Author Luj 19/08/2013 (start)
-    final JCheckBoxMenuItem viewCustomAnnotation_option = new JCheckBoxMenuItem(
-                                         "View Custom Annotation");
-    viewCustomAnnotation_option.setState(Options.getOptions().canViewCustomAnnotation());
-    //viewCustomAnnotation_option.setState((System.getProperty("viewCustomAnnotation") != null));
-
-    viewCustomAnnotation_option.addItemListener(new ItemListener()
+    if( Options.getOptions().getPropertyTruthValue("enable_Custom_Annotation"))
     {
-      public void itemStateChanged(ItemEvent event)
-      {
-        final boolean item_state = viewCustomAnnotation_option.getState();
-        if(item_state)
-          System.setProperty("viewCustomAnnotation", "true");
-        else
-          System.setProperty("viewCustomAnnotation", "false");
-      }
-    });
-    options_menu.add(viewCustomAnnotation_option);
-    options_menu.addSeparator();
+        final JCheckBoxMenuItem viewCustomAnnotation_option = new JCheckBoxMenuItem(
+                                         "View Custom Annotation");
+        viewCustomAnnotation_option.setState(Options.getOptions().canViewCustomAnnotation());
+        //viewCustomAnnotation_option.setState((System.getProperty("viewCustomAnnotation") != null));
 
+        viewCustomAnnotation_option.addItemListener(new ItemListener()
+        {
+          public void itemStateChanged(ItemEvent event)
+          {
+            final boolean item_state = viewCustomAnnotation_option.getState();
+            if(item_state)
+              System.setProperty("viewCustomAnnotation", "true");
+            else
+              System.setProperty("viewCustomAnnotation", "false");
+          }
+        });
+        options_menu.add(viewCustomAnnotation_option);
+        options_menu.addSeparator();
+    }
     //@Author Luj 19/08/2013 (end)
     
     

@@ -18,6 +18,7 @@
 # This option will set the font size for all the Artemis windows.
 
 font_size = 12
+enable_Custom_Annotation = false
 view_Custom_Annotation = false
 
 
