@@ -2582,9 +2582,7 @@ public class BamView extends JPanel
           return;
         //JOptionPane.showMessageDialog(null, yBox, "Read Count Option", JOptionPane.INFORMATION_MESSAGE);
         
-        new MappedReads(features, (String)combo.getSelectedItem(), samFileReaderHash, bamList,
-            seqNames, offsetLengths, concatSequences, seqLengths, 
-            samRecordFlagPredicate, samRecordMapQPredicate,
+        new MappedReads(BamView.this, features,
             !overlap.isSelected(), spliced.isSelected(), colourByStrandTag.isSelected());
       } 
     });
@@ -2622,16 +2620,12 @@ public class BamView extends JPanel
         else if(bases != null)
           seqlen = bases.getLength();
         
-        new MappedReads(features, (String)combo.getSelectedItem(),
-            samFileReaderHash, bamList, seqNames, offsetLengths, concatSequences, 
-            seqLengths, seqlen, samRecordFlagPredicate, samRecordMapQPredicate,
+        new MappedReads(BamView.this, features, seqlen,
             !overlap.isSelected(), spliced.isSelected(), allRefSeqs.isSelected(),
             colourByStrandTag.isSelected());
-      } 
+      }
     });
-    
-    
-    
+
     final JMenuItem createFeatures = new JMenuItem("Create features from coverage peaks ...");
     analyse.add(createFeatures);
     if(feature_display == null)
@@ -3676,6 +3670,26 @@ public class BamView extends JPanel
     return combo;
   }
   
+  protected Hashtable<String, SAMFileReader>  getSamFileReaderHash()
+  {
+    return samFileReaderHash;
+  }
+  
+  protected Vector<String> getSeqNames()
+  {
+    return seqNames;
+  }
+  
+  protected HashMap<String, Integer> getSeqLengths()
+  {
+    return seqLengths;
+  }
+  
+  protected HashMap<String, Integer> getOffsetLengths()
+  {
+    return offsetLengths;
+  }
+  
   private String getVersion()
   {
     final ClassLoader cl = this.getClass().getClassLoader();
@@ -4275,8 +4289,7 @@ public class BamView extends JPanel
         minBams.setValue(groupsFrame.getMaximumBamsInGroup());
       }
 
-      new MappedReads((String)combo.getSelectedItem(),BamView.this, samFileReaderHash,
-          seqNames, offsetLengths, concatSequences, seqLengths, 
+      new MappedReads(BamView.this,
           (useGroup.isSelected() ? groupsFrame : null), threshold.getValue(), 
           minSize.getValue(), minBams.getValue(), cbOpposite.isSelected(), true);
     }

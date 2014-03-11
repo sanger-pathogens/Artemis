@@ -28,12 +28,15 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
+import javax.swing.JProgressBar;
+
 import net.sf.samtools.AlignmentBlock;
 import net.sf.samtools.SAMFileReader;
 import net.sf.samtools.SAMRecord;
 import net.sf.samtools.util.CloseableIterator;
 import uk.ac.sanger.artemis.Feature;
 import uk.ac.sanger.artemis.FeatureSegmentVector;
+import uk.ac.sanger.artemis.FeatureVector;
 import uk.ac.sanger.artemis.io.Range;
 
 class BamUtils
@@ -69,24 +72,21 @@ class BamUtils
    * @return
    */
   protected static float[] getCount(
+      final BamView bamView,
       final int start,
       final int end,
       final String bam,
-      final String refName,
-      final Hashtable<String, SAMFileReader> samFileReaderHash,
-      final Vector<String> seqNames,
-      final HashMap<String, Integer> offsetLengths,
-      final boolean concatSequences, 
-      final HashMap<String, Integer> seqLengths,
-      final SAMRecordPredicate samRecordFlagPredicate,
-      final SAMRecordMapQPredicate samRecordMapQPredicate,
       final boolean contained,
       final boolean useStrandTag)
   {
+    final Vector<String> seqNames = bamView.getSeqNames();
+    final HashMap<String, Integer> offsetLengths = bamView.getOffsetLengths();
+    final HashMap<String, Integer> seqLengths = bamView.getSeqLengths();
+
     int cnt[] = new int[2];
     cnt[0] = 0;
     cnt[1] = 0;
-    if(concatSequences)
+    if(bamView.isConcatSequences())
     {
       int len = 0;
       int lastLen = 1;
@@ -108,8 +108,7 @@ class BamUtils
           if(thisEnd > thisLength)
             thisEnd = thisLength;
 
-          cnt = count(bam, samFileReaderHash, name, thisStart, thisEnd, 
-              samRecordFlagPredicate, samRecordMapQPredicate, contained, true, useStrandTag);
+          cnt = count(bamView, bam, thisStart, thisEnd, contained, true, useStrandTag);
 
         }
         lastLen = len;
@@ -117,8 +116,7 @@ class BamUtils
     }
     else
     {
-      cnt = count(bam, samFileReaderHash, refName, start, end, 
-          samRecordFlagPredicate, samRecordMapQPredicate, contained, true, useStrandTag);
+      cnt = count(bamView, bam, start, end, contained, true, useStrandTag);
     }
     
     float cntf[] = new float[2];
@@ -127,17 +125,20 @@ class BamUtils
     return cntf;
   }
 
-  protected static int[] count(final String bam, 
-                    final Hashtable<String, SAMFileReader> samFileReaderHash, 
-                    final String refName, 
-                    final int start, 
-                    final int end,
-                    final SAMRecordPredicate samRecordFlagPredicate,
-                    final SAMRecordPredicate samRecordMapQPredicate,
-                    final boolean contained,
-                    final boolean byStrand,
-                    final boolean useStrandTag)
+  protected static int[] count(
+          final BamView bamView,
+          final String bam, 
+          final int start,
+          final int end,
+          final boolean contained,
+          final boolean byStrand,
+          final boolean useStrandTag)
   {
+    final String refName = (String) bamView.getCombo().getSelectedItem();
+    final Hashtable<String, SAMFileReader> samFileReaderHash = bamView.getSamFileReaderHash();
+    final SAMRecordPredicate samRecordFlagPredicate = bamView.getSamRecordFlagPredicate();
+    final SAMRecordPredicate samRecordMapQPredicate = bamView.getSamRecordMapQPredicate();
+
     int cnt[] = new int[2];
     cnt[0] = 0;
     cnt[1] = 0;
@@ -164,29 +165,89 @@ class BamUtils
     it.close();
     return cnt;
   }
+  
+  protected static int[] calc(
+      final BamView bamView, 
+      final String refName, 
+      final int sequenceLength,
+      final boolean useStrandTag,
+      final JProgressBar progressBar)
+  {
+    int mappedReads[] = new int[bamView.bamList.size()];
+    int MAX_BASE_CHUNK = 2000 * 60;
+    boolean contained = false;
+    for (int i = 0; i < sequenceLength; i += MAX_BASE_CHUNK)
+    {
+      if(progressBar != null)
+        progressBar.setValue(i);
+      int sbegc = i;
+      int sendc = i + MAX_BASE_CHUNK - 1;
+
+      for (int j = 0; j < bamView.bamList.size(); j++)
+      {
+        String bam = bamView.bamList.get(j);
+        if (bamView.isConcatSequences())
+        {
+          int len = 0;
+          int lastLen = 1;
+          for (String name : bamView.getSeqNames())
+          {
+            int thisLength = bamView.getSeqLengths().get(name);
+            len += thisLength;
+
+            if ((lastLen >= sbegc && lastLen < sendc)
+                || (len >= sbegc && len < sendc)
+                || (sbegc >= lastLen && sbegc < len)
+                || (sendc >= lastLen && sendc < len))
+            {
+              int offset = bamView.getOffsetLengths().get(name);
+              int thisStart = sbegc - offset;
+              if (thisStart < 1)
+                thisStart = 1;
+              int thisEnd = sendc - offset;
+              if (thisEnd > thisLength)
+                thisEnd = thisLength;
+
+              mappedReads[j] += BamUtils.count(bamView, bam, thisStart, thisEnd, 
+                  contained, false, useStrandTag)[0];
+            }
+            lastLen = len;
+          }
+        }
+        else
+        {
+          mappedReads[j] += BamUtils.count(bamView, bam, sbegc, sendc,
+              contained, false, useStrandTag)[0];
+        }
+      }
+    }
+    return mappedReads;
+  }
 
   /**
    * Return the coverage for each base in a range for the forward and
    * reverse strand.
+   * @param bamView
    * @param bamFile
-   * @param samFileReaderHash
-   * @param refName
    * @param start
    * @param end
-   * @param samRecordFlagPredicate
-   * @param samRecordMapQPredicate
+   * @param concatShift
+   * @param cnt
    * @return
    */
-  protected static int[][] countOverRange(final String bamFile,
-                                          final Hashtable<String, SAMFileReader> samFileReaderHash, 
-                                          final String refName,
-                                          final int start, 
-                                          final int end,
-                                          final int concatShift,
-                                          final int cnt[][],
-                                          final SAMRecordPredicate samRecordFlagPredicate,
-                                          final SAMRecordPredicate samRecordMapQPredicate)
+  protected static int[][] countOverRange(
+      final BamView bamView,
+      final String bamFile, 
+      final int start, 
+      final int end, 
+      final int concatShift, 
+      final int cnt[][])
   {
+    final String refName = (String) bamView.getCombo().getSelectedItem();
+    final Hashtable<String, SAMFileReader> samFileReaderHash = bamView.getSamFileReaderHash();
+    final SAMRecordPredicate samRecordFlagPredicate = bamView.getSamRecordFlagPredicate();
+    final SAMRecordPredicate samRecordMapQPredicate = bamView.getSamRecordMapQPredicate();
+
     SAMFileReader inputSam = samFileReaderHash.get(bamFile);
     final CloseableIterator<SAMRecord> it = 
         inputSam.query(refName, start, end, false);
@@ -225,6 +286,81 @@ class BamUtils
     }
     it.close();
     return cnt;
+  }
+
+  /**
+   * For a list of features calculate the read count for each
+   * @param bamView
+   * @param features
+   * @param contained
+   * @param useIntrons
+   * @param useStrandTag
+   * @param mappedReads
+   * @param progressBar
+   * @return
+   */
+  protected static Hashtable<String, List<ReadCount>> calculateMappedReads(
+      final BamView bamView,
+      final FeatureVector features,
+      final boolean contained, 
+      final boolean useIntrons,
+      final boolean useStrandTag,
+      final int mappedReads[],
+      final JProgressBar progressBar)
+  {
+    final Hashtable<String, List<ReadCount>> featureReadCount = 
+        new Hashtable<String, List<ReadCount>>();
+    for (int i = 0; i < features.size(); i++)
+    {
+      final Feature f = features.elementAt(i);
+      if(progressBar != null)
+        progressBar.setValue(i);
+
+      int start = f.getRawFirstBase();
+      int end = f.getRawLastBase();
+      final float fLen = BamUtils.getFeatureLength(f);
+      List<ReadCount> sampleCounts = new Vector<ReadCount>();
+
+      for (int j = 0; j < bamView.bamList.size(); j++)
+      {
+        final String bam = bamView.bamList.get(j);
+        float cnt[] = new float[2];
+
+        cnt = BamUtils.getCount(bamView, start, end, bam, contained, useStrandTag);
+        if (!useIntrons && f.getSegments().size() > 1)
+        {
+          // remove reads contained by intron
+          for (int k = 0; k < f.getSegments().size()-1; k++)
+          {
+            int seg = k;
+            int nextSeg = k+1;
+            if(!f.isForwardFeature())
+            {
+              seg = f.getSegments().size()-k-1;
+              nextSeg = seg-1;
+            }
+
+            start = f.getSegments().elementAt(seg).getRawRange().getEnd();
+            end = f.getSegments().elementAt(nextSeg).getRawRange().getStart();
+
+            float tmpcnt[] = new float[2];
+            tmpcnt = BamUtils.getCount(bamView, start, end, bam, true, useStrandTag);
+            cnt[0] -= tmpcnt[0];
+            cnt[1] -= tmpcnt[1];
+          }
+        }
+        
+        if (mappedReads != null)
+        {
+          cnt[0] = (cnt[0] / (((float) mappedReads[j] / 1000000.f) * (fLen / 1000.f)));
+          cnt[1] = (cnt[1] / (((float) mappedReads[j] / 1000000.f) * (fLen / 1000.f)));
+        }
+
+        sampleCounts.add( new ReadCount(cnt, f.isForwardFeature()) );
+      }
+      featureReadCount.put(ReadCountDialog.getFeatureName(f), sampleCounts);
+    }
+    return featureReadCount;
   }
 }
 

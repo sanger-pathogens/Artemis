@@ -9,7 +9,6 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
@@ -37,188 +36,93 @@ import uk.ac.sanger.artemis.sequence.MarkerRange;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
 import uk.ac.sanger.artemis.util.ReadOnlyException;
 
-import net.sf.samtools.SAMFileReader;
-
 public class MappedReads
 {
   private JProgressBar progressBar;
   private JLabel progressTxt = new JLabel();
 
   private FeatureVector features;
-  private String refName;
-  private Hashtable<String, SAMFileReader> samFileReaderHash;
-  private List<String> bamList;
-  private List<Short> hideBamList;
-  private Vector<String> seqNames;
-  private HashMap<String, Integer> offsetLengths;
-  private boolean concatSequences;
-  private HashMap<String, Integer> seqLengths;
-  private int sequenceLength;
-  private SAMRecordPredicate samRecordFlagPredicate;
-  private SAMRecordMapQPredicate samRecordMapQPredicate;
+  private BamView bamView;
+
   private boolean contained;
   private boolean useIntrons;
   private boolean useStrandTag = false;
-  private JDialog dialog = new JDialog((JFrame)null, "Calculating", true);;
-    
-  private int mappedReads[];
+  private JDialog dialog = new JDialog((JFrame)null, "Calculating", true);
     
   /**
    * Calculate the total number of mapped reads.
-   * @param refName
-   * @param samFileReaderHash
-   * @param bamList
-   * @param seqNames
-   * @param offsetLengths
-   * @param concatSequences
-   * @param seqLengths
+   * @param bamView
+   * @param features
    * @param sequenceLength
+   * @param contained
+   * @param useIntrons
+   * @param allRefSeqs
+   * @param useStrandTag
    */
   public MappedReads(
+      final BamView bamView,
       final FeatureVector features,
-      final String refName,
-      final Hashtable<String, SAMFileReader> samFileReaderHash,
-      final List<String> bamList, 
-      final Vector<String> seqNames,
-      final HashMap<String, Integer> offsetLengths,
-      final boolean concatSequences,
-      final HashMap<String, Integer> seqLengths, 
       final int sequenceLength,
-      final SAMRecordPredicate samRecordFlagPredicate,
-      SAMRecordMapQPredicate samRecordMapQPredicate,
       final boolean contained, 
       final boolean useIntrons,
       final boolean allRefSeqs,
       final boolean useStrandTag)
   {
     this.features = features;
-    this.refName = refName;
-    this.samFileReaderHash = samFileReaderHash;
-    this.bamList = bamList;
-    this.seqNames = seqNames;
-    this.offsetLengths = offsetLengths;
-    this.concatSequences = concatSequences;
-    this.seqLengths = seqLengths;
-    this.sequenceLength = sequenceLength;
-    this.samRecordFlagPredicate = samRecordFlagPredicate;
-    this.samRecordMapQPredicate = samRecordMapQPredicate;
+    this.bamView = bamView;
     this.contained = contained;
     this.useIntrons = useIntrons;
     this.useStrandTag = useStrandTag;
-    
-    progressBar = new JProgressBar(0, sequenceLength);
-    progressBar.setValue(0);
-    progressBar.setStringPainted(true);
 
-    JPanel panel = new JPanel(new BorderLayout());
-    progressTxt.setText("Total number of mapped reads");
-    panel.add(progressTxt, BorderLayout.NORTH);
-    panel.add(progressBar, BorderLayout.CENTER);
-
-    dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-    panel.setOpaque(true);
-    dialog.setContentPane(panel);
-    dialog.pack();
-    centerDialog();
-
-    CalculateTotalMappedReads cmr = new CalculateTotalMappedReads(allRefSeqs);
+    showProgress(sequenceLength, "Total number of mapped reads");
+    CalculateTotalMappedReads cmr = new CalculateTotalMappedReads(allRefSeqs, sequenceLength);
     cmr.start();
     dialog.setVisible(true);
   }
 
   /**
    * Read count for selected features.
+   * @param bamView
    * @param features
-   * @param refName
-   * @param samFileReaderHash
-   * @param bamList
-   * @param seqNames
-   * @param offsetLengths
-   * @param concatSequences
-   * @param seqLengths
-   * @param samRecordFlagPredicate
-   * @param samRecordMapQPredicate
    * @param contained
    * @param useIntrons
+   * @param useStrandTag
    */
   public MappedReads(
+      final BamView bamView,
       final FeatureVector features, 
-      final String refName,
-      final Hashtable<String, SAMFileReader> samFileReaderHash,
-      final List<String> bamList, 
-      final Vector<String> seqNames,
-      final HashMap<String, Integer> offsetLengths,
-      final boolean concatSequences,
-      final HashMap<String, Integer> seqLengths,
-      final SAMRecordPredicate samRecordFlagPredicate,
-      final SAMRecordMapQPredicate samRecordMapQPredicate,
       final boolean contained, 
       final boolean useIntrons,
       final boolean useStrandTag)
   {
+    this.bamView = bamView;
     this.features = features;
-    this.refName = refName;
-    this.samFileReaderHash = samFileReaderHash;
-    this.bamList = bamList;
-    this.seqNames = seqNames;
-    this.offsetLengths = offsetLengths;
-    this.concatSequences = concatSequences;
-    this.seqLengths = seqLengths;
-    this.samRecordFlagPredicate = samRecordFlagPredicate;
-    this.samRecordMapQPredicate = samRecordMapQPredicate;
+    this.bamView = bamView;
     this.contained = contained;
     this.useIntrons = useIntrons;
     this.useStrandTag = useStrandTag;
-    
-    progressBar = new JProgressBar(0, features.size());
-    progressBar.setValue(0);
-    progressBar.setStringPainted(true);
 
-    JPanel panel = new JPanel(new BorderLayout());
-    progressTxt.setText("Number of mapped reads for "+features.size()+" features");
-    panel.add(progressTxt, BorderLayout.NORTH);
-    panel.add(progressBar, BorderLayout.CENTER);
-
-    panel.setOpaque(true);
-    dialog.setContentPane(panel);
-    dialog.pack();
-    centerDialog();
-    
-    CalculateMappedReads cmr = new CalculateMappedReads();
+    showProgress(features.size(), "Number of mapped reads for "+features.size()+" features");
+    CalculateMappedReads cmr = new CalculateMappedReads(null);
     cmr.start();
     dialog.setVisible(true);
   }
-  
-  
 
   /**
    * Search for new features based on a threshold of read counts in the intergenic 
    * and anti-sense regions of existing annotations. This should exclude rRNA and 
    * tRNA regions. If two or more BAM files are loaded it should create features 
    * based on the combined read peak span.
-   * @param refName
    * @param bamView
-   * @param samFileReaderHash
-   * @param bamList
-   * @param seqNames
-   * @param offsetLengths
-   * @param concatSequences
-   * @param seqLengths
    * @param groupsFrame
    * @param threshold
    * @param minSize
    * @param minBams
-   * @param readsOnOppositeStrand assume reads are on the opposite strand if true.
+   * @param readsOnOppositeStrand
    * @param contained
    */
   public MappedReads(  
-      final String refName,
       final BamView bamView,
-      final Hashtable<String, SAMFileReader> samFileReaderHash,
-      final Vector<String> seqNames,
-      final HashMap<String, Integer> offsetLengths,
-      final boolean concatSequences,
-      final HashMap<String, Integer> seqLengths,
       final GroupBamFrame groupsFrame,
       final int threshold,
       final int minSize,
@@ -226,26 +130,26 @@ public class MappedReads
       final boolean readsOnOppositeStrand,
       final boolean contained)
   {
-    this.refName = refName;
-    this.samFileReaderHash = samFileReaderHash;
-    this.bamList = bamView.bamList;
-    this.hideBamList = bamView.hideBamList;
-    this.seqNames = seqNames;
-    this.offsetLengths = offsetLengths;
-    this.concatSequences = concatSequences;
-    this.seqLengths = seqLengths;
-    this.samRecordFlagPredicate = bamView.getSamRecordFlagPredicate();
-    this.samRecordMapQPredicate = bamView.getSamRecordMapQPredicate();
-    
+    this.bamView = bamView;
     this.contained = contained;
     
     final FeatureDisplay feature_display = bamView.getFeatureDisplay();
-    progressBar = new JProgressBar(0, feature_display.getSequenceLength());
+    showProgress(feature_display.getSequenceLength(), "");
+    final CalculateNewFeatures cmr = new CalculateNewFeatures(
+        feature_display, (String) bamView.getCombo().getSelectedItem(), groupsFrame, 
+        threshold, minSize, minBams, readsOnOppositeStrand);
+    cmr.start();
+    dialog.setVisible(true);
+  }
+  
+  private void showProgress(int progressBarMax, String txt)
+  {
+    progressBar = new JProgressBar(0, progressBarMax);
     progressBar.setValue(0);
     progressBar.setStringPainted(true);
 
     JPanel panel = new JPanel(new BorderLayout());
-    progressTxt.setText("");
+    progressTxt.setText(txt);
     panel.add(progressTxt, BorderLayout.NORTH);
     panel.add(progressBar, BorderLayout.CENTER);
 
@@ -254,11 +158,6 @@ public class MappedReads
     dialog.setContentPane(panel);
     dialog.pack();
     centerDialog();
-    
-    final CalculateNewFeatures cmr = new CalculateNewFeatures(
-        feature_display, refName, groupsFrame, threshold, minSize, minBams, readsOnOppositeStrand);
-    cmr.start();
-    dialog.setVisible(true);
   }
 
   private void centerDialog()
@@ -274,55 +173,18 @@ public class MappedReads
   
   class CalculateMappedReads extends SwingWorker
   {
-    Hashtable<String, List<ReadCount>> featureReadCount;
+    private Hashtable<String, List<ReadCount>> featureReadCount;
+    private int mappedReads[];
+    
+    public CalculateMappedReads(final int mappedReads[])
+    {
+      this.mappedReads = mappedReads;
+    }
+    
     public Object construct()
     {
-      featureReadCount = new Hashtable<String, List<ReadCount>>();
-      for (int i = 0; i < features.size(); i++)
-      {
-        Feature f = features.elementAt(i);
-        progressBar.setValue(i);
-
-        int start = f.getRawFirstBase();
-        int end = f.getRawLastBase();
-        float fLen = BamUtils.getFeatureLength(f);
-        List<ReadCount> sampleCounts = new Vector<ReadCount>();
-
-        for (int j = 0; j < bamList.size(); j++)
-        {
-          String bam = bamList.get(j);
-          float cnt[] = new float[2];
-
-          if (!useIntrons && f.getSegments().size() > 1)
-          {
-            for (int k = 0; k < f.getSegments().size(); k++)
-            {
-              start = f.getSegments().elementAt(k).getRawRange().getStart();
-              end = f.getSegments().elementAt(k).getRawRange().getEnd();
-              float tmpcnt[] = new float[2];
-              tmpcnt = BamUtils.getCount(start, end, bam, refName, samFileReaderHash,
-                  seqNames, offsetLengths, concatSequences, seqLengths,
-                  samRecordFlagPredicate, samRecordMapQPredicate, contained, useStrandTag);
-              cnt[0] += tmpcnt[0];
-              cnt[1] += tmpcnt[1];
-            }
-          }
-          else
-            cnt = BamUtils.getCount(start, end, bam, refName, samFileReaderHash, seqNames,
-                offsetLengths, concatSequences, seqLengths,
-                samRecordFlagPredicate, samRecordMapQPredicate, contained, useStrandTag);
-
-          if (mappedReads != null)
-          {
-            cnt[0] = (cnt[0] / (((float) mappedReads[j] / 1000000.f) * (fLen / 1000.f)));
-            cnt[1] = (cnt[1] / (((float) mappedReads[j] / 1000000.f) * (fLen / 1000.f)));
-          }
-
-          sampleCounts.add( new ReadCount(cnt, f.isForwardFeature()) );
-        }
-        
-        featureReadCount.put(ReadCountDialog.getFeatureName(f), sampleCounts);
-      }
+      featureReadCount = BamUtils.calculateMappedReads(bamView, features, 
+          contained, useIntrons, useStrandTag, mappedReads, progressBar);
       return null;
     }
        
@@ -341,9 +203,9 @@ public class MappedReads
       final StringBuilder titleToSave = new StringBuilder();
       final StringBuilder body = new StringBuilder();
       
-      for (int j = 0; j < bamList.size(); j++)
+      for (int j = 0; j < bamView.bamList.size(); j++)
       {
-        String bam = bamList.get(j);
+        String bam = bamView.bamList.get(j);
         hdr.append("#BAM: " + bam);
         if (mappedReads != null)
         {
@@ -369,7 +231,7 @@ public class MappedReads
           }
           titleToSave.append("\t");
           title.append("\t");
-          for (String bam: bamList)
+          for (String bam: bamView.bamList)
           {
             String name = new File(bam).getName();
             titleToSave.append(name+"\t");
@@ -409,7 +271,7 @@ public class MappedReads
           }
           title.append("\t");
           titleToSave.append("\t");
-          for (int j = 0; j < bamList.size(); j++)
+          for (int j = 0; j < bamView.bamList.size(); j++)
           {
             if(mappedReads != null)
             {
@@ -481,87 +343,42 @@ public class MappedReads
   class CalculateTotalMappedReads extends SwingWorker
   {
     private boolean useAllRefSeqs;
-    CalculateTotalMappedReads(boolean useAllRefSeqs)
+    private int sequenceLength;
+    
+    CalculateTotalMappedReads(boolean useAllRefSeqs, final int sequenceLength)
     {
       this.useAllRefSeqs = useAllRefSeqs;
+      this.sequenceLength = sequenceLength;
     }
     
     public Object construct()
     {
-      mappedReads = new int[bamList.size()];
-      if(concatSequences || !useAllRefSeqs)
-        calc(refName, sequenceLength);
+      int mappedReads[] = null;
+      if(bamView.isConcatSequences() || !useAllRefSeqs)
+      {
+        String refName = (String) bamView.getCombo().getSelectedItem();
+        mappedReads = BamUtils.calc(bamView, refName, sequenceLength, 
+            useStrandTag, progressBar);
+      }
       else
       {
-        for (String name : seqNames)
+        for (String name : bamView.getSeqNames())
         {
           progressTxt.setText(name);
-          int thisLength = seqLengths.get(name);
+          int thisLength = bamView.getSeqLengths().get(name);
           progressBar.setValue(0);
           progressBar.setMaximum(thisLength);
-          calc(name, thisLength);
+          mappedReads = BamUtils.calc(bamView, name, thisLength, 
+              useStrandTag, progressBar);
         }
       }
       
       progressBar.setValue(0);
       progressBar.setMaximum(features.size());
       progressTxt.setText("RPKM values for "+features.size()+" features");
-      CalculateMappedReads cmr = new CalculateMappedReads();
+      CalculateMappedReads cmr = new CalculateMappedReads(mappedReads);
       cmr.start();
       return null;
-    }
-    
-    private void calc(final String refName, final int sequenceLength)
-    {
-      int MAX_BASE_CHUNK = 2000 * 60;
-      boolean contained = false;
-      for (int i = 0; i < sequenceLength; i += MAX_BASE_CHUNK)
-      {
-        progressBar.setValue(i);
-        int sbegc = i;
-        int sendc = i + MAX_BASE_CHUNK - 1;
-
-        for (int j = 0; j < bamList.size(); j++)
-        {
-          String bam = bamList.get(j);
-          if (concatSequences)
-          {
-            int len = 0;
-            int lastLen = 1;
-            for (String name : seqNames)
-            {
-              int thisLength = seqLengths.get(name);
-              len += thisLength;
-
-              if ((lastLen >= sbegc && lastLen < sendc)
-                  || (len >= sbegc && len < sendc)
-                  || (sbegc >= lastLen && sbegc < len)
-                  || (sendc >= lastLen && sendc < len))
-              {
-                int offset = offsetLengths.get(name);
-                int thisStart = sbegc - offset;
-                if (thisStart < 1)
-                  thisStart = 1;
-                int thisEnd = sendc - offset;
-                if (thisEnd > thisLength)
-                  thisEnd = thisLength;
-
-                mappedReads[j] += BamUtils.count(bam, samFileReaderHash, name,
-                    thisStart, thisEnd, samRecordFlagPredicate,
-                    samRecordMapQPredicate, contained, false, useStrandTag)[0];
-
-              }
-              lastLen = len;
-            }
-          }
-          else
-          {
-            mappedReads[j] += BamUtils.count(bam, samFileReaderHash, refName, sbegc,
-                sendc, samRecordFlagPredicate, samRecordMapQPredicate,
-                contained, false, useStrandTag)[0];
-          }
-        }
-      }
     }
   }
   
@@ -572,7 +389,6 @@ public class MappedReads
   {
     private EntryGroup entryGroup;
     private Bases bases;
-    private String refSeq;
     private int threshold;
     private int minSize;
     private int minBams;
@@ -589,7 +405,7 @@ public class MappedReads
     {
       entryGroup = feature_display.getEntryGroup();
       bases = feature_display.getBases();
-      this.refSeq = refSeq;
+
       this.groupsFrame = groupsFrame;
       this.threshold = threshold;
       this.minSize = minSize;
@@ -620,14 +436,14 @@ public class MappedReads
       int revStart = -1;
       final List<MarkerObj> fwdMarkers = new Vector<MarkerObj>();
       final List<MarkerObj> revMarkers = new Vector<MarkerObj>();
-      for (short i = 0; i < bamList.size(); i++)
+      for (short i = 0; i < bamView.bamList.size(); i++)
       {
-        if(hideBamList.contains(i))
+        if(bamView.hideBamList.contains(i))
           continue;
         
         for(int j=beg; j<end; j+=MAX_BASE_CHUNK)
         {
-          progressBar.setValue((j + (i*end)) / bamList.size());
+          progressBar.setValue((j + (i*end)) / bamView.bamList.size());
           if(j > end)
             continue;
           int start = j;
@@ -640,12 +456,12 @@ public class MappedReads
               for (int col = 0; col < 2; col++)
                 cnt[row][col] = 0;
             
-            if (concatSequences)
+            if (bamView.isConcatSequences())
             {
-              for (String name : seqNames)
+              for (String name : bamView.getSeqNames())
               {
-                int len = seqLengths.get(name);
-                int offset = offsetLengths.get(name);
+                int len = bamView.getSeqLengths().get(name);
+                int offset = bamView.getOffsetLengths().get(name);
                 
                 if( (start >= offset && start <= offset+len) ||
                     (stop >= offset  && start <= offset+len) )
@@ -662,17 +478,15 @@ public class MappedReads
                     concatShift = offset-start;
 
                   cnt =
-                    BamUtils.countOverRange(bamList.get(i), samFileReaderHash, 
-                        name, thisStart, thisEnd, concatShift, cnt,
-                        samRecordFlagPredicate, samRecordMapQPredicate);
+                    BamUtils.countOverRange(bamView, bamView.bamList.get(i), 
+                        thisStart, thisEnd, concatShift, cnt);
                 }
               }
             }
             else
               cnt =
-                BamUtils.countOverRange(bamList.get(i), samFileReaderHash, 
-                    refSeq, start, stop, 0, cnt,
-                    samRecordFlagPredicate, samRecordMapQPredicate);
+                BamUtils.countOverRange(bamView, bamView.bamList.get(i),  
+                    start, stop, 0, cnt);
 
             for(int k=0; k<cnt.length; k++)
             {
@@ -741,7 +555,7 @@ public class MappedReads
             Hashtable<String, Integer> groupCluster = new Hashtable<String, Integer>();
             for(int j=0; j<bamIdxList.size(); j++)
             {
-              File f = new File(bamList.get(j));
+              File f = new File(bamView.bamList.get(j));
               String grp = groupsFrame.getGroupName( f.getName() );
               if(groupCluster.containsKey(grp))
               {
@@ -892,25 +706,6 @@ public class MappedReads
     public void finished() 
     {
       dialog.dispose();
-    }
-  }
-  
-  class ReadCount
-  {
-    private float senseCnt = 0;
-    private float antiCnt  = 0;
-    ReadCount(float[] cnt, boolean isFwd)
-    {
-      if(isFwd)
-      {
-        senseCnt = cnt[0];
-        antiCnt  = cnt[1];
-      }
-      else
-      {
-        senseCnt = cnt[1];
-        antiCnt  = cnt[0];
-      }
     }
   }
 }
