@@ -94,8 +94,8 @@ public class MappedReadsTest
     final List<ReadCount> cnts = featureReadCount.get("PFA0110w");
     
     ReadCount c = cnts.get(0);
-    assertTrue(2153.f == c.senseCnt);
-    assertTrue(1443.f == c.antiCnt);
+    assertTrue(1495.f == c.senseCnt);
+    assertTrue(998.f == c.antiCnt);
   }
   
   @Test
@@ -113,8 +113,8 @@ public class MappedReadsTest
     final List<ReadCount> cnts = featureReadCount.get("PFA0110w");
     
     ReadCount c = cnts.get(0);
-    assertTrue(2152.f == c.senseCnt);
-    assertTrue(1442.f == c.antiCnt);
+    assertTrue(1494.f == c.senseCnt);
+    assertTrue(997.f == c.antiCnt);
   }
   
   @Test
@@ -137,7 +137,7 @@ public class MappedReadsTest
     final List<ReadCount> cnts = featureReadCount.get("PFA0110w");
     
     ReadCount c = cnts.get(0);
-    assertTrue(183514.266f == c.senseCnt);
-    assertTrue(122996.328f == c.antiCnt);
+    assertTrue(183768.719f == c.senseCnt);
+    assertTrue(122676.375f == c.antiCnt);
   }
 }
