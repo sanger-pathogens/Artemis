@@ -138,11 +138,14 @@ import uk.ac.sanger.artemis.util.StringVector;
       if(qNames == null)
       {
         qNames = new StringVector();
-        Object objs[] = systematicListSelectionPanel.getResultArray();
+        Object objs[];
+        if(systematicListSelectionPanel != null)
+          objs = systematicListSelectionPanel.getResultArray();
+        else
+          objs = Options.getOptions().getSystematicQualifierNames().toArray();
         for(Object o: objs)
           qNames.add((String)o);
       }
-      
       return pickName(f, qNames);
     }
     

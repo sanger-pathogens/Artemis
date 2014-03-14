@@ -642,7 +642,7 @@ public class EntryEdit extends JFrame
     return bamPanel;
   }
   
-  protected BamView getJamView()
+  public BamView getJamView()
   {
     return bamView;
   }
