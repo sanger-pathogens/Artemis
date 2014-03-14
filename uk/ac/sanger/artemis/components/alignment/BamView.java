@@ -1837,9 +1837,13 @@ public class BamView extends JPanel
       else
         g2.setColor(Color.blue);
 
+      Color c = g2.getColor();
       drawRead(g2, pr.sam1, pixPerBase, ypos, baseAtStartOfView, getSNPs(pr.sam1.sam), ydiff);
       if(pr.sam2 != null)
+      {
+        g2.setColor(c);
         drawRead(g2, pr.sam2, pixPerBase, ypos, baseAtStartOfView, getSNPs(pr.sam2.sam), ydiff);
+      }
     }
   }
   
