@@ -473,27 +473,31 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
   {
     final StringVector values = productQualifier.getValues();
     final StringVector tmpNewValues = new StringVector();
-    for(int j=0; j<values.size(); j++)
+    for(String val: values)
     {
-      String val = (String)values.get(j);
-      
       int ind = 0;
-      
       if((ind=val.indexOf(";db_xref="))>-1 && this instanceof EmblDocumentEntry)
         val = val.substring(0,ind);
-      
+
       if((ind=val.indexOf(";evidence="))>-1 && this instanceof EmblDocumentEntry)
         val = val.substring(0,ind);
-      
+
       if((ind=val.indexOf(";with="))>-1 && this instanceof EmblDocumentEntry)
         val = val.substring(0,ind);
-      
+
+      if((ind=val.indexOf("rank="))>-1 && this instanceof EmblDocumentEntry)
+      {
+        int ind2 = val.indexOf(";", ind);
+        if(ind == 0 && ind2 > -1)
+          val = val.substring(ind2+1);
+      }
+
       if(val.startsWith("term="))
         val = val.substring(5,  val.length());
-      
+
       if(val.endsWith(";"))
         val = val.substring(0,  val.length()-1);
-      
+
       tmpNewValues.add(val);
     }
     return tmpNewValues;
@@ -741,7 +745,7 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
     Enumeration qualifiersenum = qualifierMapProperties.propertyNames();
     n = 0;
 
-    Vector qualifiersToRemove = new Vector();
+    Vector<String> qualifiersToRemove = new Vector<String>();
     while(qualifiersenum.hasMoreElements()) 
     {
       String current_map_name = (String) qualifiersenum.nextElement();
