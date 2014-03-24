@@ -1,7 +1,5 @@
 # This is a GNU Makefile for Artemis
 
-# $Header: //tmp/pathsoft/artemis/Makefile,v 1.47 2009-09-21 15:32:03 tjc Exp $
-
 SHELL=/bin/sh
 
 #OPT_FLAGS = -g -deprecation
