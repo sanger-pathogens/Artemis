@@ -73,8 +73,8 @@ map                      no        "text"
 mating_type              yes       "text"
 mobile_element_type      no        "text"
 mod_base                 yes        list    OTHER ac4c chm5u cm cmnm5s2u cmnm5u d fm gal q gm i i6a m1a m1f m1g m1i m22g m2a m2g m3c m5c m6a m7g mam5s2u mam5u man q mcm5s2u mcm5u mo5u ms2i6a ms2t6a mt6a mv o5u osyw p q s2c s2t s2u s4u t t6a tm um x yw
-mol_type                 yes       "list"    "unassigned DNA" "unassigned RNA" "genomic DNA" "genomic RNA" "mRNA" "tRNA" "rRNA" "transcribed RNA" "other RNA" "other DNA" "protein" "viral cRNA"
-ncRNA_class              yes        list    "antisense_RNA" "autocatalytically_spliced_intron" "hammerhead_ribozyme" "RNase_P_RNA" "RNase_MRP_RNA" "telomerase_RNA" "guide_RNA" "rasiRNA" "scRNA" "siRNA" "miRNA" "piRNA" "snoRNA" "snRNA" "SRP_RNA" "vault_RNA" "Y_RNA" "other" "ribozyme"
+mol_type                 yes       "list"   "unassigned DNA" "unassigned RNA" "genomic DNA" "genomic RNA" "mRNA" "tRNA" "rRNA" "transcribed RNA" "other RNA" "other DNA" "protein" "viral cRNA"
+ncRNA_class              yes       "list"   "antisense_RNA" "autocatalytically_spliced_intron" "hammerhead_ribozyme" "RNase_P_RNA" "RNase_MRP_RNA" "telomerase_RNA" "guide_RNA" "rasiRNA" "scRNA" "siRNA" "miRNA" "piRNA" "snoRNA" "snRNA" "SRP_RNA" "vault_RNA" "Y_RNA" "other" "ribozyme"
 note                     no        "text"
 number                   yes        number  1 99999999
 old_locus_tag            no        "text"
