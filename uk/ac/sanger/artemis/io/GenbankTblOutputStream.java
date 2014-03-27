@@ -38,14 +38,12 @@ import uk.ac.sanger.artemis.FeatureVector;
 import uk.ac.sanger.artemis.util.FileDocument;
 import uk.ac.sanger.artemis.util.StringVector;
 
-
 /**
  *  Handle writing tbl format:
  *  http://www.ncbi.nlm.nih.gov/Sequin/table.html
  */
 public class GenbankTblOutputStream
 {
-  
   /**
    * Write out an entry as tbl format.
    * @param entry
@@ -76,10 +74,9 @@ public class GenbankTblOutputStream
     {
       final Writer writer = fileDocument.getWriter();
       writer.write(">Feature "+entry.getName()+"\n");
-      
+
       final FeatureVector features = entry.getAllFeatures();
       final EntryInformation entry_information = entry.getEntryInformation ();
-      
       int count = 0;
       for(int i=0; i<features.size(); i++)
       {
@@ -88,7 +85,7 @@ public class GenbankTblOutputStream
           continue;
         if(count > 0)
           writer.write("\n");
-        
+
         count++;
         writeRanges(feature, writer);
         writeQualifiers(feature, entry_information, writer);
@@ -113,24 +110,91 @@ public class GenbankTblOutputStream
     final RangeVector ranges = feature.getLocation().getRanges();
     if(!feature.isForwardFeature() && ranges.size() > 1)
       ranges.reverse();
-    
-    Range r = (Range)ranges.elementAt(0);
-    if(feature.isForwardFeature())
-      writer.write(r.getStart()+"\t"+r.getEnd());
+
+    boolean isStartPartial = false;
+    boolean isEndPartial   = false;
+    if(feature.getEmblFeature() instanceof GFFStreamFeature)
+    {
+      try
+      {
+        if(feature.getQualifierByName("Start_range") != null)
+          isStartPartial = true;
+        if(feature.getQualifierByName("End_range") != null)
+          isEndPartial = true;
+      }
+      catch (InvalidRelationException e){}
+    }
     else
-      writer.write(r.getEnd()+"\t"+r.getStart());
-    
+    {
+      if(feature.getLocation().isPartial(true)) // 5prime
+      {
+        if(feature.isForwardFeature()) 
+          isStartPartial = true;
+        else
+          isEndPartial = true;
+      }
+      if(feature.getLocation().isPartial(false)) // 3prime
+      {
+        if(feature.isForwardFeature())
+          isEndPartial = true;
+        else
+          isStartPartial = true;
+      }
+    }
+
+    writer.write( getPositionsStr(feature, ranges.elementAt(0), 
+        isStartPartial, isEndPartial) );
     writer.write("\t"+feature.getKey().getKeyString());
     
     for(int j=1; j<ranges.size(); j++)
     {
       writer.write("\n");
-      r = (Range)ranges.elementAt(j);
-      if(feature.isForwardFeature())
-        writer.write(r.getStart()+"\t"+r.getEnd());
-      else
-        writer.write(r.getEnd()+"\t"+r.getStart());
+      writer.write( getPositionsStr(feature, ranges.elementAt(j), 
+          isStartPartial, isEndPartial) );
     }
+  }
+  
+  /**
+   * Get the start and end positions as a tab delimited string
+   * @param feature
+   * @param r
+   * @param isStartRangePartial
+   * @param isEndRangePartial
+   * @return
+   */
+  private static String getPositionsStr(
+      final Feature feature, 
+      final Range r,
+      final boolean isStartPartial,
+      final boolean isEndPartial)
+  {
+    boolean firstBase;
+    boolean lastBase;
+    final int low_marker  = feature.getFirstBaseMarker().getPosition();
+    final int high_marker = feature.getLastBaseMarker().getPosition();
+    String low_pos;
+    String high_pos;
+    if(feature.isForwardFeature())
+    {
+      firstBase = (r.getStart() == low_marker);
+      lastBase  = (r.getEnd()   == high_marker);
+      low_pos   = Integer.toString(r.getStart());
+      high_pos  = Integer.toString(r.getEnd());
+    }
+    else
+    {
+      firstBase = (r.getEnd()   == high_marker);
+      lastBase  = (r.getStart() == low_marker);
+      low_pos   = Integer.toString(r.getEnd());
+      high_pos  = Integer.toString(r.getStart());
+    }
+
+    // set partials
+    if(firstBase && isStartPartial)
+      low_pos  = (feature.isForwardFeature() ? "<" : ">")+low_pos;
+    if(lastBase && isEndPartial)
+      high_pos = (feature.isForwardFeature() ? ">" : "<")+high_pos;
+    return low_pos+"\t"+high_pos;
   }
   
   /**
