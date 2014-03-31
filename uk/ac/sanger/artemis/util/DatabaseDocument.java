@@ -1661,10 +1661,10 @@ public class DatabaseDocument extends Document
     if(showDbId)
       attr_buff.append("GOid="+dbXRef.getDb().getName() + ":"
                        + dbXRef.getAccession() + "%3B");
-    
+
     attr_buff.append("term="+
         GFF3Encoder.encode(feature_cvterm.getCvTerm().getName())+"%3B");
-    
+
     // PMID
     int nfound_pub = 0;
     if(feature_cvterm.getPub() != null &&
@@ -1672,62 +1672,68 @@ public class DatabaseDocument extends Document
        !feature_cvterm.getPub().getUniqueName().equalsIgnoreCase("NULL"))
     {
       Pub pub = feature_cvterm.getPub();
-      attr_buff.append("db_xref="+
-          pub.getUniqueName());
+      attr_buff.append("db_xref="+pub.getUniqueName());
       nfound_pub++;
     }
-    
-    if(featureCvTermPubs != null &&
-       featureCvTermPubs.size() > 0)
+
+    if(featureCvTermPubs != null && featureCvTermPubs.size() > 0)
     {
       for(FeatureCvTermPub featureCvTermPub: featureCvTermPubs)
       {
         if(feature_cvterm.getFeatureCvTermId() != 
           featureCvTermPub.getFeatureCvTerm().getFeatureCvTermId())
           continue;
-        
-        if(nfound_pub == 0)
-          attr_buff.append("db_xref=");
-        else if(nfound_pub > 0)
-          attr_buff.append("|");
 
+        attr_buff.append((nfound_pub == 0 ? "db_xref=" : "|"));
         attr_buff.append(featureCvTermPub.getPub().getUniqueName());
         nfound_pub++;
       }
     }
-    
+
+    // GO_REF is stored as a dbxref and displayed in the dbxref column
+    if(featureCvTermDbXRefs != null && featureCvTermDbXRefs.size() > 0 )
+    {
+      for(FeatureCvTermDbXRef featureCvTermDbXRef: featureCvTermDbXRefs)
+      {
+        if(feature_cvterm.getFeatureCvTermId() != 
+          featureCvTermDbXRef.getFeatureCvTerm().getFeatureCvTermId())
+          continue;
+
+        DbXRef fc_dbXRef = featureCvTermDbXRef.getDbXRef();
+        if(!fc_dbXRef.getDb().getName().equals("GO_REF"))
+          continue;
+        attr_buff.append((nfound_pub == 0 ? "db_xref=" : "|"));
+        attr_buff.append(fc_dbXRef.getDb().getName()+":");
+        attr_buff.append(fc_dbXRef.getAccession());
+        nfound_pub++;
+      }
+    }
     if(nfound_pub > 0)
       attr_buff.append("%3B");
-    
-    if(featureCvTermDbXRefs != null &&
-       featureCvTermDbXRefs.size() > 0 )
+
+    if(featureCvTermDbXRefs != null && featureCvTermDbXRefs.size() > 0 )
     {  
       int nfound = 0;
       for(FeatureCvTermDbXRef featureCvTermDbXRef : featureCvTermDbXRefs)
       {
         if(feature_cvterm.getFeatureCvTermId() != 
           featureCvTermDbXRef.getFeatureCvTerm().getFeatureCvTermId())
-        {
           continue;
-        }
 
-        if(nfound == 0)
-          attr_buff.append("with=");
-        else if(nfound > 0)
-          attr_buff.append("|");
-        
         DbXRef fc_dbXRef = featureCvTermDbXRef.getDbXRef();
+        if(fc_dbXRef.getDb().getName().equals("GO_REF"))
+          continue;
+        attr_buff.append((nfound == 0 ? "with=" : "|"));
         attr_buff.append(fc_dbXRef.getDb().getName()+":");
         attr_buff.append(fc_dbXRef.getAccession());
         nfound++;
       }
-      
       if(nfound > 0)
         attr_buff.append("%3B");
-
     }
 
-    List<FeatureCvTermProp> feature_cvtermprops = (List<FeatureCvTermProp>)feature_cvterm.getFeatureCvTermProps();
+    List<FeatureCvTermProp> feature_cvtermprops = 
+        (List<FeatureCvTermProp>)feature_cvterm.getFeatureCvTermProps();
     for(int i = 0; i < feature_cvtermprops.size(); i++)
     {
       FeatureCvTermProp feature_cvtermprop = feature_cvtermprops.get(i);
@@ -1741,7 +1747,6 @@ public class DatabaseDocument extends Document
       if(i < feature_cvtermprops.size()-1)
         attr_buff.append("%3B");
     }
-    
     attr_buff.append(";");
   }
   
