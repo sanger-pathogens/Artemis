@@ -224,7 +224,7 @@ class GffToEMBL
         (args == null || args.length < 1))
     {
       System.out.println("-h\tshow help");
-      System.out.println("-s\tspace separated list of sequences to read and write out");
+      System.out.println("-s\tspace separated list of GFF files to read and write out");
       System.out.println("-o\toutput directory");
       System.out.println("-f\t[y|n] flatten the gene model, default is y");
       System.out.println("-z\t[y|n] gzip output, default is y");
