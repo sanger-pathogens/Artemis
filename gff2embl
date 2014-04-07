@@ -23,6 +23,34 @@ CLASSPATH=$ARTEMIS_HOME/lib/picard/sam.jar:$ARTEMIS_HOME/lib/picard/picard.jar:$
 CLASSPATH="$ARTEMIS_HOME/lib/commons-lang-2.6.jar:$CLASSPATH"
 export CLASSPATH
 
+if [ $# = 0 ]
+then
+    :
+else
+    if [ "$1" = "-h" -o "$1" = "--help" -o "$1" = "-help" ]
+    then
+        cat <<EOF
+
+SYNOPSIS
+        gff2embl
+USAGE
+        $0 [options] <SEQUENCE_FILE>
+OPTIONS
+        SEQUENCE_FILE                  A GFF3 file
+
+        -s FILE                  space separated list of GFF files to read and write out
+        -o OUTPUT_DIR            output directory
+        -f [y/n]                 flatten the gene model, default is y
+        -z                       gzip output, default is y
+        -a [y|n]                 for EMBL submission format change to n, default is y
+EXAMPLES
+        % -s /Users/tjc/test.gff -o /Users/tjc
+HOMEPAGE
+        http://www.sanger.ac.uk/resources/software/artemis/
+EOF
+        exit 0
+    fi
+fi
 
 ARTEMIS_PROPERTIES="-Dartemis.environment=UNIX"
 
