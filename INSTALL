@@ -36,7 +36,8 @@ Makefile targets
 ================
 
 make		- compile code  
-make jar	- create an Artemis and ACT jar file in jar_build directory
+make jar	- create Artemis (jar_build/artemis.jar) and ACT 
+			  (jar_build/act.jar) jar files.
 make dist	- create a tar ball of the Artemis/ACT distribution
 
 Creating signed jar files for Artemis/ACT Java Web Start launch
@@ -48,17 +49,17 @@ for a description of deploying and signing jar files:
 http://java.sun.com/docs/books/tutorial/deployment/webstart/deploying.html
 http://java.sun.com/docs/books/tutorial/deployment/jar/signing.html
 
-Use the Java keytool to generate a keystore (artemisstore) file:
+Use the Java keytool to generate a keystore (e.g. artemisstore below) file:
 
 keytool -genkey -alias signFiles -dname "CN=$NAME, \
         OU=$ORGU, O=$ORG, L=$LOC, S=$STATE, C=$CODE" \
         -keypass $KEYPASS -storepass $STOREPASS -keystore artemisstore  -validity $VALID
 
-The following cab be used view the key store and list the details:
+The following can be used to view the key store and list entry details:
 
 keytool -list -v -keystore artemisstore
 
-Then use that to create the signed jar that you point your JNLP to :
+Then use the following to create a signed jar to use in the JNLP file:
 
 jarsigner -keystore artemisstore -storepass $STOREPASS -keypass $KEYPASS \
            -signedjar sartemis.jar artemis.jar signFiles
