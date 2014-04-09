@@ -31,6 +31,8 @@ import uk.ac.sanger.artemis.util.LinePushBackReader;
 import java.io.File;
 import java.io.IOException;
 
+import javax.swing.JOptionPane;
+
 
 /**
  *  This class contains the method makeDocumentEntry (), which creates a
@@ -79,7 +81,18 @@ abstract public class DocumentEntryFactory
         document.getInputStream() instanceof net.sf.samtools.util.BlockCompressedInputStream)
     {
       if(IndexedGFFDocumentEntry.isIndexed( ((File)document.getLocation()) ))
-        return new IndexedGFFDocumentEntry(document);
+      {
+        Object[] possibleValues = { "Use index", "Ignore index" };
+        int sel = JOptionPane.showOptionDialog(null, 
+            "Use the GFF index file (to increase the performance)\n"+ 
+            "or concatenate the sequences together?",
+            "Indexed GFF", 
+            JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
+            null, possibleValues, possibleValues[0]);
+
+        if(sel == 0)
+          return new IndexedGFFDocumentEntry(document);
+      }
     }
     
     final LinePushBackReader document_reader =
