@@ -1,11 +1,10 @@
 
 Installation instructions for UNIX
+==================================
 
    1. change to /some/directory
-
    2. uncompress and untar the artemis_compiled.tar.gz file
-      On UNIX the command is:   gzip -d < artemis_compiled.tar.gz | tar xf -
-
+      On UNIX the command is:   tar xzvf artemis_compiled.tar.gz 
 
 This will create a "artemis" directory containing all the java classes.  On
 Unix the easiest way to run the program is to run the script called art in the
@@ -18,7 +17,8 @@ menus.  From the File menu you can open a flat file containing an
 entry.  If it reads the entry successfully a new window will open,
 which shows the sequence and features for the entry.
 
-====================================================================
+Download and Install from GitHub
+================================
 
 Installation instructions for GitHub download
 
@@ -31,3 +31,41 @@ Installation instructions for GitHub download
       ./art
       or ACT:
       ./act
+      
+Makefile targets
+================
+
+make		- compile code  
+make jar	- create Artemis (jar_build/artemis.jar) and ACT 
+			  (jar_build/act.jar) jar files.
+make dist	- create a tar ball of the Artemis/ACT distribution
+
+Creating signed jar files for Artemis/ACT Java Web Start launch
+===============================================================
+
+Use 'make jar' to create jar_build/artemis.jar. See the following pages 
+for a description of deploying and signing jar files:
+
+http://java.sun.com/docs/books/tutorial/deployment/webstart/deploying.html
+http://java.sun.com/docs/books/tutorial/deployment/jar/signing.html
+
+Use the Java keytool to generate a keystore (e.g. artemisstore below) file:
+
+keytool -genkey -alias signFiles -dname "CN=$NAME, \
+        OU=$ORGU, O=$ORG, L=$LOC, S=$STATE, C=$CODE" \
+        -keypass $KEYPASS -storepass $STOREPASS -keystore artemisstore  -validity $VALID
+
+The following can be used to view the key store and list entry details:
+
+keytool -list -v -keystore artemisstore
+
+Then use the following to create a signed jar to use in the JNLP file:
+
+jarsigner -keystore artemisstore -storepass $STOREPASS -keypass $KEYPASS \
+           -signedjar sartemis.jar artemis.jar signFiles
+
+Running the test suite
+======================
+
+cd test
+ant -f build-test.xml
