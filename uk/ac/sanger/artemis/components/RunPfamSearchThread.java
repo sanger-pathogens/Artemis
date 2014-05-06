@@ -41,8 +41,8 @@ import uk.ac.sanger.artemis.editor.BrowserControl;
  */
 public class RunPfamSearchThread extends Thread
 {
-  protected static String pfamUrl = "http://pfam.sanger.ac.uk/search/sequence";
-  protected static String rfamUrl = "http://rfam.sanger.ac.uk/search/sequence";
+  protected static String pfamUrl = "http://pfam.xfam.org/search/sequence";
+  protected static String rfamUrl = "http://rfam.xfam.org/search/sequence";
   private String searchURL = pfamUrl;
   
   private String residues;
