@@ -2682,7 +2682,9 @@ public class ChadoTransactionManager
   private void loadDbXRefsAndPubs(final String searchStr,
                                   final FeatureCvTerm feature_cvterm)
   {
-    List<FeatureCvTermDbXRef> featureCvTermDbXRefs = null;
+    Collection<FeatureCvTermDbXRef> featureCvTermDbXRefs = feature_cvterm.getFeatureCvTermDbXRefs();
+    if(featureCvTermDbXRefs.size() == 0)
+      featureCvTermDbXRefs = null;
     
     //StringVector strings = StringVector.getStrings(searchStr, "|");
     StringTokenizer tok = new StringTokenizer(searchStr, "|,");
