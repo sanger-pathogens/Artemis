@@ -21,6 +21,7 @@
 package uk.ac.sanger.artemis.plot;
 
 import uk.ac.sanger.artemis.Entry;
+import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.sequence.Bases;
 import uk.ac.sanger.artemis.sequence.Strand;
 import uk.ac.sanger.artemis.util.Document;
@@ -211,6 +212,13 @@ public class UserDataAlgorithm extends BaseAlgorithm
     final int seqLength = getStrand ().getSequenceLength ();
     final Pattern patt = Pattern.compile("\\s+");
     
+    final boolean useEstimate = 
+        Options.getOptions ().getIntegerProperty (getAlgorithmShortName () +
+        "_default_window_size") == null;
+    if(!useEstimate)
+      default_window_size = Options.getOptions ().getIntegerProperty (getAlgorithmShortName () +
+          "_default_window_size");
+    
     while ((line = pushback_reader.readLine ()) != null)
     {
       if (count >= seqLength) 
@@ -278,7 +286,7 @@ public class UserDataAlgorithm extends BaseAlgorithm
     else
     {
       average_value = average_value/countAll;
-      if(estimate_window_size != Integer.MAX_VALUE)
+      if(estimate_window_size != Integer.MAX_VALUE && useEstimate)
         default_window_size = estimate_window_size;
     }
   }
@@ -782,7 +790,11 @@ public class UserDataAlgorithm extends BaseAlgorithm
    **/
   public Integer getDefaultMaxWindowSize ()
   {
-    return new Integer (100);
+    if(Options.getOptions ().getIntegerProperty (getAlgorithmShortName () +
+       "_default_max_window") == null)
+      return new Integer (100);
+    else
+      return super.getDefaultMaxWindowSize ();
   }
 
   /**
@@ -792,7 +804,11 @@ public class UserDataAlgorithm extends BaseAlgorithm
    **/
   public Integer getDefaultMinWindowSize () 
   {
-    return new Integer (1);
+    if(Options.getOptions ().getIntegerProperty (getAlgorithmShortName () +
+       "_default_min_window") == null)
+      return new Integer (1);
+    else
+      return super.getDefaultMinWindowSize();
   }
 
   /**
