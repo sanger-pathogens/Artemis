@@ -184,9 +184,18 @@ public class UserDataAlgorithm extends BaseAlgorithm
       readWiggle(pushback_reader);
     pushback_reader.close();
     doc_reader.close();
-    
+
     max_min_disabled = Options.getOptions ().getPropertyTruthValue(
         getAlgorithmShortName () +  "_scaling_on");
+
+    String propStr = getAlgorithmShortName () +  "_data_max";
+    if(Options.getOptions ().getProperty(propStr) != null)
+      data_max = Float.valueOf(
+          Options.getOptions ().getProperty(propStr));
+    propStr = getAlgorithmShortName () +  "_data_min";
+    if(Options.getOptions ().getProperty(propStr) != null)
+      data_min = Float.valueOf(
+          Options.getOptions ().getProperty(propStr));
   }
   
   /**
