@@ -51,7 +51,7 @@ public abstract class Algorithm {
   /**
    *  Set by disableMaxAndMin () and enableMaxAndMin ().
    **/
-  private boolean max_min_disabled = false;
+  protected boolean max_min_disabled = false;
 
   /**
    *  Set by the constructor by looking at the options with this name:
