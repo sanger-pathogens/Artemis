@@ -776,15 +776,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature implements
         StringBuilder buffer = new StringBuilder();
         if (values != null && values.size() > 0) {
           for (int value_index = 0; value_index < values.size(); ++value_index) {
-            final String this_value;
-            int index = values.elementAt(value_index).indexOf("term=");
-            // strip off the 'term=' etc
-            if (index > -1)
-              this_value = GFF3Encoder.encode(values.elementAt(value_index)
-                  .substring(index + 5,
-                      values.elementAt(value_index).length() - 1));
-            else
-              this_value = GFF3Encoder.encode(values.elementAt(value_index));
+            String this_value = GFF3Encoder.encode(values.elementAt(value_index));
             if (value_index > 0 && value_index < (values.size())) {
               buffer.append(",");
             }
