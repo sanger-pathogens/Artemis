@@ -201,10 +201,12 @@ public class GFF3AttributeBuilder {
     Collections.sort(sortedAttrs, comparator);
     for (String key : sortedAttrs) {
       if (!ignores.contains(key)) {
-        String value = attrs.get(key); 
-        if (i++ != 0)
-          b.append(";");
-        b.append(decapitalize(key) + "=" + value);
+        String value = attrs.get(key);
+        if (value.length() > 0) {
+          if (i++ != 0)
+            b.append(";");
+          b.append(decapitalize(key) + "=" + value);
+        }
       }
     }
     return b.toString();
