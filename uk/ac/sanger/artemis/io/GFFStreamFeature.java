@@ -29,6 +29,8 @@ import java.util.Hashtable;
 import java.util.HashSet;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -50,7 +52,7 @@ import uk.ac.sanger.artemis.io.GFF3Encoder;
 
 /**
  * A StreamFeature that thinks it is a GFF feature.
- * 
+ *
  * @author Kim Rutherford
  **/
 public class GFFStreamFeature extends SimpleDocumentFeature implements
@@ -92,7 +94,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature implements
   /**
    * Registers an attribute not to be included in the GFF3 output for
    * GFFStreamFeatures
-   * 
+   *
    * @param attr
    *          The GFF3 attribute to remove
    **/
@@ -103,7 +105,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature implements
   /**
    * Registers an attribute to be included in the GFF3 output for
    * GFFStreamFeatures
-   * 
+   *
    * @param attr
    *          The GFF3 attribute to include
    **/
@@ -114,7 +116,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature implements
   /**
    * Create a new GFFStreamFeature object. The feature should be added to an
    * Entry (with Entry.add()).
-   * 
+   *
    * @param key
    *          The new feature key
    * @param location
@@ -167,7 +169,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature implements
    * Create a new GFFStreamFeature with the same key, location and qualifiers as
    * the given feature. The feature should be added to an Entry (with
    * Entry.add()).
-   * 
+   *
    * @param feature
    *          The feature to copy.
    **/
@@ -373,9 +375,9 @@ public class GFFStreamFeature extends SimpleDocumentFeature implements
   }
 
   /**
-   * 
+   *
    * Store for spliced regions of segments ID's and ranges.
-   * 
+   *
    */
   public void setSegmentRangeStore(Hashtable<String, Range> id_range_store) {
     this.id_range_store = id_range_store;
@@ -396,7 +398,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature implements
 
   /**
    * Used when changing spliced feature uniquenames
-   * 
+   *
    * @param newIdMapToOldId
    */
   public void setNewIdMapToOldId(Hashtable<String, String> newIdMapToOldId) {
@@ -405,7 +407,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature implements
 
   /**
    * Store for ID's and CHADO feature_relationship.rank
-   * 
+   *
    * @param feature_relationship_rank_store
    */
   public void setFeature_relationship_rank_store(
@@ -415,7 +417,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature implements
 
   /**
    * Store for ID's and CHADO feature_relationship.rank
-   * 
+   *
    * @return
    */
   public Hashtable<String, Integer> getFeature_relationship_rank_store() {
@@ -424,12 +426,12 @@ public class GFFStreamFeature extends SimpleDocumentFeature implements
 
   /**
    * Get the chado uniquename
-   * 
+   *
    * @param r
    * @return
    */
   public String getSegmentID(final Range r) {
-    if ( id_range_store != null && 
+    if ( id_range_store != null &&
          getKey().getKeyString().indexOf("gene") == -1 &&
          getKey().getKeyString().indexOf("RNA")  == -1 ) {
       int offset = 0;
@@ -459,7 +461,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature implements
 
   /**
    * Get the feature ID based on the segments chado uniquename's.
-   * 
+   *
    * @param rv
    * @return
    */
@@ -499,7 +501,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature implements
   /**
    * Get the ID prefix, e.g. for SPAC1556.06.1:exon:2 returns SPAC1556.06.1:exon
    * as the prefix and 2 as the index.
-   * 
+   *
    * @param id
    * @return
    */
@@ -516,7 +518,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature implements
 
   /**
    * Used to automatically generate
-   * 
+   *
    * @param prefix
    * @return
    */
@@ -541,7 +543,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature implements
   /**
    * Read and return a GFFStreamFeature from a stream. A feature must be the
    * next thing in the stream.
-   * 
+   *
    * @param stream
    *          the Feature is read from this stream
    * @exception IOException
@@ -569,7 +571,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature implements
 
   /**
    * Read the details of a feature from an EMBL stream into the current object.
-   * 
+   *
    * @param entry_information
    *          The EntryInformation object of the Entry that will contain the
    *          Feature.
@@ -588,7 +590,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature implements
 
   /**
    * Write this Feature to the given stream.
-   * 
+   *
    * @param writer
    *          The stream to write to.
    * @exception IOException
@@ -684,7 +686,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature implements
   /**
    * If the seqname is not set for this feature try to derive the
    * contig/chromosome it is located on
-   * 
+   *
    * @param start
    * @return
    */
@@ -721,7 +723,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature implements
     final QualifierVector qualifiers = getQualifiers();
     GFF3AttributeBuilder abuf = new GFF3AttributeBuilder();
     prepareProcessors(abuf);
-    
+
     for (String attr : attrs_to_filter) {
       abuf.ignore(attr);
     }
@@ -732,11 +734,11 @@ public class GFFStreamFeature extends SimpleDocumentFeature implements
     if (myId != null) {
      abuf.add("ID", myId);
     }
-    
+
     // build reserved attributes
     for (int i = 1; i < names_length; i++) {
       Qualifier this_qualifier = qualifiers.getQualifierByName(abuf.reserved_a[i]);
-      
+
       if (this_qualifier == null)
         continue;
 
@@ -756,9 +758,9 @@ public class GFFStreamFeature extends SimpleDocumentFeature implements
         continue;
 
       // skip internal qualifiers
-      if ( (this_qualifier.getName().equals("private") && 
-            System.getProperty("noprivate") != null) || 
-           (this_qualifier.getName().equals("history") && 
+      if ( (this_qualifier.getName().equals("private") &&
+            System.getProperty("noprivate") != null) ||
+           (this_qualifier.getName().equals("history") &&
             System.getProperty("nohistory") != null) ||
             this_qualifier.getName().equals("codon_start"))
         continue;
@@ -767,6 +769,16 @@ public class GFFStreamFeature extends SimpleDocumentFeature implements
     }
 
     return abuf.toString();
+  }
+
+  private static String strJoin(String[] aArr, String sSep) {
+    StringBuilder sbStr = new StringBuilder();
+    for (int i = 0, il = aArr.length; i < il; i++) {
+        if (i > 0)
+            sbStr.append(sSep);
+        sbStr.append(aArr[i]);
+    }
+    return sbStr.toString();
   }
 
   void prepareProcessors(GFF3AttributeBuilder abuf) {
@@ -887,6 +899,25 @@ public class GFFStreamFeature extends SimpleDocumentFeature implements
       }
     };
 
+    GFF3AttributeAggregator ucProc = new GFF3AttributeAggregator() {
+      @Override
+      public String process(StringVector values) {
+        StringBuilder buffer = new StringBuilder();
+        Set<String> set = new HashSet<String>();
+        if (values != null && values.size() > 0) {
+          for (int value_index = 0; value_index < values.size(); ++value_index) {
+            String regex = "tritryp_uc[:=]\"?([^\";]+)";
+            Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+            Matcher matcher = pattern.matcher(values.elementAt(value_index));
+            while (matcher.find()) {
+              set.add(GFF3Encoder.encode(matcher.group(1)));
+            }
+          }
+        }
+        return strJoin(set.toArray(new String[set.size()]), ",");
+      }
+    };
+
     GFF3AttributeAggregator curcomProc = new GFF3AttributeAggregator() {
       @Override
       public String process(StringVector values) {
@@ -910,11 +941,16 @@ public class GFFStreamFeature extends SimpleDocumentFeature implements
     abuf.setMapping("curation", "comment");
     abuf.setGlue("comment", " ");
     abuf.setAggregator("comment", curcomProc);
-    
+
     // also put GOs in Ontology_term
     abuf.setClone("full_GO", "Ontology_term");
     abuf.setAggregator("Ontology_term", goProc);
     abuf.setGlue("Ontology_term", ",");
+
+    // also put TriTryp UC numbers into separate attribute
+    abuf.setClone("history", "tritryp_uc");
+    abuf.setAggregator("tritryp_uc", ucProc);
+    abuf.setGlue("tritryp_uc", ",");
 
     // class
     abuf.setAggregator("class", classProc);
@@ -930,7 +966,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature implements
 
     // previous_systematic_id
     abuf.setAggregator("previous_systematic_id", psysIDProc);
-    
+
     // product
     abuf.setAggregator("product", productProc);
   }
@@ -957,9 +993,9 @@ public class GFFStreamFeature extends SimpleDocumentFeature implements
   /**
    * Parse the given String as ACeDB format attributes. Adapted from code by
    * Matthew Pocock for the BioJava project.
-   * 
+   *
    * Modified for gff-version 3.
-   * 
+   *
    * @return Return a Hashtable. Each key is an attribute name and each value of
    *         the Hashtable is a StringVector containing the attribute values. If
    *         the attribute has no value then the Hashtable value will be a zero
@@ -1076,7 +1112,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature implements
 
   /**
    * Get the feature time last modified timestamp.
-   * 
+   *
    * @return
    */
   public Timestamp getLastModified() {
@@ -1085,7 +1121,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature implements
 
   /**
    * Get the GFF_source value of a Dbxref qualifier.
-   * 
+   *
    * @param qualifier
    * @return the gff_source value or NULL
    */
@@ -1109,7 +1145,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature implements
 
   /**
    * Set the feature time last modified timestamp.
-   * 
+   *
    * @param timelastmodified
    */
   public void setLastModified(final Timestamp timelastmodified) {
