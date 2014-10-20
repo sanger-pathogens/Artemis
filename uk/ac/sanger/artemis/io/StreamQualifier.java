@@ -109,7 +109,7 @@ class StreamQualifier {
           buffer.append ('=');
           buffer.append (quotedValue (qualifier_info,
                                       qualifier.getName (),
-                                      (String)values.elementAt (i)));
+                                      (String)values.elementAt (i).replaceAll("(^|[^\"])\"([^\"]|$)","$1\"\"$2")));
         }
       }
 
@@ -143,7 +143,7 @@ class StreamQualifier {
           buffer.append ('=');
           buffer.append (quotedValue (qualifier_info,
                                       qualifier.getName (),
-                                      (String)values.elementAt (i)));
+                                      (String)values.elementAt (i).replaceAll("(^|[^\"])\"([^\"]|$)","$1\"\"$2")));
         }
         return_vector.add (buffer.toString ());
       }
