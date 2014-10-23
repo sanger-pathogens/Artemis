@@ -106,10 +106,14 @@ class StreamQualifier {
         buffer.append ('/');
         buffer.append (qualifier.getName ());
         if (values.elementAt (i) != null) {
+          /* Escape double quotes */
+          String processedValue = (String)values.elementAt (i).replaceAll("(^|[^\"])\"([^\"]|$)","$1\"\"$2");
+          /* Mask line breaks in entries (e.g. notes/history) */
+          processedValue = processedValue.replaceAll("\n", " ");
           buffer.append ('=');
-          buffer.append (quotedValue (qualifier_info,
-                                      qualifier.getName (),
-                                      (String)values.elementAt (i).replaceAll("(^|[^\"])\"([^\"]|$)","$1\"\"$2")));
+          buffer.append (quotedValue(qualifier_info,
+                                      qualifier.getName(),
+                                      processedValue));
         }
       }
 
@@ -140,10 +144,14 @@ class StreamQualifier {
         buffer.append ('/');
         buffer.append (qualifier.getName ());
         if (values.elementAt (i) != null) {
+          /* Escape double quotes */
+          String processedValue = (String)values.elementAt (i).replaceAll("(^|[^\"])\"([^\"]|$)","$1\"\"$2");
+          /* Mask line breaks in entries (e.g. notes/history) */
+          processedValue = processedValue.replaceAll("\n", " ");
           buffer.append ('=');
           buffer.append (quotedValue (qualifier_info,
                                       qualifier.getName (),
-                                      (String)values.elementAt (i).replaceAll("(^|[^\"])\"([^\"]|$)","$1\"\"$2")));
+                                      processedValue));
         }
         return_vector.add (buffer.toString ());
       }
