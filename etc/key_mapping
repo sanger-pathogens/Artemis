@@ -24,3 +24,6 @@ modified_amino_acid_feature                misc_feature    note=modified_amino_a
 snRNA                                      ncRNA           ncRNA_class=snRNA
 snoRNA                                     ncRNA           ncRNA_class=snoRNA
 nucleotide_match                           misc_feature    note=nucleotide_match
+uORF                                       misc_feature    note=uORF
+sORF                                       misc_feature    note=sORF
+tnaORF                                     misc_feature    note=tnaORF
