@@ -906,7 +906,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature implements
         Set<String> set = new HashSet<String>();
         if (values != null && values.size() > 0) {
           for (int value_index = 0; value_index < values.size(); ++value_index) {
-            String regex = "tritryp_uc[:=]\"?([a-zA-Z0-9]+)";
+            String regex = "eupathdb_uc[:=]\"?([a-zA-Z0-9]+)";
             Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
             Matcher matcher = pattern.matcher(values.elementAt(value_index));
             while (matcher.find()) {
@@ -949,8 +949,8 @@ public class GFFStreamFeature extends SimpleDocumentFeature implements
 
     // also put TriTryp UC numbers into separate attribute
     abuf.setClone("history", "tritryp_uc");
-    abuf.setAggregator("tritryp_uc", ucProc);
-    abuf.setGlue("tritryp_uc", ",");
+    abuf.setAggregator("eupathdb_uc", ucProc);
+    abuf.setGlue("eupathdb_uc", ",");
 
     // class
     abuf.setAggregator("class", classProc);
