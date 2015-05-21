@@ -947,8 +947,8 @@ public class GFFStreamFeature extends SimpleDocumentFeature implements
     abuf.setAggregator("Ontology_term", goProc);
     abuf.setGlue("Ontology_term", ",");
 
-    // also put TriTryp UC numbers into separate attribute
-    abuf.setClone("history", "tritryp_uc");
+    // also put EuPathDB UC numbers into separate attribute
+    abuf.setClone("history", "eupathdb_uc");
     abuf.setAggregator("eupathdb_uc", ucProc);
     abuf.setGlue("eupathdb_uc", ",");
 
