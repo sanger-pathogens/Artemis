@@ -5,4 +5,4 @@ sudo: false
 install:
   - "make"
   - "cd test"
-script: ant -f build-test.xml test | tee test.log && [ -z "$(grep 'Failures:\s[^0]' test.log)" ]
+script: ant -f build-test.xml test | tee test.log && [ -z "$(grep 'Failures:\s[^0]\|Errors:\s[^0]' test.log)" ]
