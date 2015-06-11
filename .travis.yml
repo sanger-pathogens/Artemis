@@ -2,15 +2,13 @@ language: java
 jdk:
   - openjdk7
 sudo: false
+cache:
+  directories:
+  - "build"
 before_install:
   - "export DISPLAY=:99.0"
   - "sh -e /etc/init.d/xvfb start"
-  - "mkdir dependencies && cd dependencies"
-  - "wget ftp://emboss.open-bio.org/pub/EMBOSS/EMBOSS-6.6.0.tar.gz && tar xzfv EMBOSS-6.6.0.tar.gz"
-  - "cd EMBOSS-6.6.0 && mkdir build && ./configure --prefix $(pwd)/build"
-  - "make"
-  - "make install"
-  - "export EMBOSS_ROOT=$(pwd)/build && cd ../.."
+  - "source install_dependencies.sh"
 install:
   - "make"
   - "cd test"
