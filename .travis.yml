@@ -6,6 +6,10 @@ before_install:
   - "export DISPLAY=:99.0"
   - "sh -e /etc/init.d/xvfb start"
 install:
+  - "wget ftp://emboss.open-bio.org/pub/EMBOSS/EMBOSS-6.6.0.tar.gz && tar xzfv EMBOSS-6.6.0.tar.gz"
+  - "cd EMBOSS-6.6.0 && mkdir build && ./configure --prefix $(pwd)/build && make && make install"
+  - "export EMBOSS_ROOT=$(pwd)/build && cd .."
+  - "ls -l ${EMBOSS_ROOT}/bin"
   - "make"
   - "cd test"
-script: ant -f build-test.xml test | tee test.log && [ -z "$(grep 'Failures:\s[^0]\|Errors:\s[^0]' test.log)" ]
+script: ant -f build-test.xml test -DEMBOSS_ROOT=$EMBOSS_ROOT | tee test.log && [ -z "$(grep 'Failures:\s[^0]\|Errors:\s[^0]' test.log)" ]
