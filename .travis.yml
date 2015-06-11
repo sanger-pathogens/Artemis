@@ -6,6 +6,7 @@ cache:
   directories:
   - "build"
 before_install:
+  - "export CASHER_TIME_OUT=300"
   - "export DISPLAY=:99.0"
   - "sh -e /etc/init.d/xvfb start"
   - "source install_dependencies.sh"
