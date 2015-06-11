@@ -1,5 +1,7 @@
 INTRODUCTION
 
+[![Build Status](https://travis-ci.org/sanger-pathogens/Artemis.svg?branch=master)](https://travis-ci.org/sanger-pathogens/Artemis)
+
 Artemis is a free genome browser and annotation tool that allows visualisation 
 of sequence features, next generation data and the results of analyses within 
 the context of the sequence, and also its six-frame translation.  Artemis is written 
