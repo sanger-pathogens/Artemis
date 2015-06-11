@@ -10,10 +10,10 @@ EMBOSS_VERSION="6.6.0"
 EMBOSS_DOWNLOAD_URL="ftp://emboss.open-bio.org/pub/EMBOSS/EMBOSS-${EMBOSS_VERSION}.tar.gz"
 
 # Make an install location
-if [ ! -d 'build' ]; then
-  mkdir build
+if [ ! -d "${HOME}/dependencies" ]; then
+  mkdir ${HOME}/dependencies
 fi
-cd build
+cd ${HOME}/dependencies
 build_dir=$(pwd)
 
 # DOWNLOAD ALL THE THINGS

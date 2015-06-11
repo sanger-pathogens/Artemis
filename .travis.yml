@@ -6,7 +6,7 @@ jdk:
 sudo: false
 cache:
   directories:
-  - "build"
+  - "${HOME}/dependencies"
 before_install:
   - "export CASHER_TIME_OUT=300"
   - "export DISPLAY=:99.0"
