@@ -29,7 +29,7 @@ download () {
   fi
 }
 
-download $EMBOSS_DOWNLOAD_URL "emboss-${EMBOSS_VERSION}.tgz"
+download $EMBOSS_DOWNLOAD_URL "${build_dir}/emboss-${EMBOSS_VERSION}.tgz"
 
 # Build all the things
 cd $build_dir
