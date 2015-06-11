@@ -1,4 +1,6 @@
-INTRODUCTION
+# INTRODUCTION
+
+[![Build Status](https://travis-ci.org/sanger-pathogens/Artemis.svg?branch=master)](https://travis-ci.org/sanger-pathogens/Artemis)
 
 Artemis is a free genome browser and annotation tool that allows visualisation 
 of sequence features, next generation data and the results of analyses within 
@@ -13,7 +15,7 @@ difference between genomes and to explore conservation of synteny, in the contex
 of the entire sequences and their annotation.
 
 
-DOCUMENTATION
+# DOCUMENTATION
 
 The Artemis user manual is at:
   http://www.sanger.ac.uk/resources/software/artemis/
@@ -21,12 +23,12 @@ The Artemis user manual is at:
 The ACT user manual is at:
   http://www.sanger.ac.uk/resources/software/act/
 
-INSTALLATION
+# INSTALLATION
 
 The installation instructions are included in the user manual.
 
 
-DISTRIBUTION
+# DISTRIBUTION
 
 Artemis may be freely distributed under the terms of the GNU Public License,
 and should run on any system with a recent version of Java.  
@@ -35,7 +37,7 @@ For information on how to get Artemis see this web page:
   http://www.sanger.ac.uk/resources/software/artemis/
 
 
-COPYRIGHT
+# COPYRIGHT
 
 Copyright (C) 1998-2013  Genome Research Limited
 
