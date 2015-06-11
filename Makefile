@@ -72,7 +72,7 @@ manual :
 
 CLASS_FILES := `find org uk nsdb type seqdb -name '*.class' -print`
 
-OTHER_FILES := `find images/PSUlogo.gif images/icon.gif COPYING README`
+OTHER_FILES := `find images/PSUlogo.gif images/icon.gif COPYING README.md`
 
 dist :
 	rm -rf artemis_compiled.tar.gz tar_build
@@ -112,24 +112,24 @@ artemis.jar : $(CLASSES)
           done; \
         fi; \
 	cp -R ../lib/LICENSE.Apache ../uk ../org ../nsdb ../type ../seqdb ../etc ../images ../lib/j2ssh/j2ssh.properties \
-	      ../images/PSUlogo.gif ../images/icon.gif ../README ../artemis_sqlmap .
+	      ../images/PSUlogo.gif ../images/icon.gif ../README.md ../artemis_sqlmap .
 	find jar_build -name '*.java' -print | xargs rm -f
 	find jar_build -name '.svn' -print | xargs rm -rf
 	cd jar_build; \
 	rm -rf META-INF/MANIFEST.MF; \
 	echo "Main-Class: uk.ac.sanger.artemis.components.ArtemisMain\nPermissions: all-permissions" > manifest-art; \
-	jar cmf manifest-art artemis.jar META-INF/services images/PSUlogo.gif images/icon.gif README etc \
+	jar cmf manifest-art artemis.jar META-INF/services images/PSUlogo.gif images/icon.gif README.md etc \
 	                     artemis_sqlmap org uk com net nsdb type seqdb LICENSE.Apache j2ssh.properties; \
         echo "Main-Class: uk.ac.sanger.artemis.circular.DNADraw\nPermissions: all-permissions" > manifest-circular; \
-        jar cmf manifest-circular DNAPlotter.jar images/PSUlogo.gif README etc \
+        jar cmf manifest-circular DNAPlotter.jar images/PSUlogo.gif README.md etc \
                              uk org/gmod org/w3c org/apache org/biojava/bio/ com/ibatis/common/jdbc/ net/sf/samtools/ LICENSE.Apache j2ssh.properties; \
 	echo "Main-Class: uk.ac.sanger.artemis.components.alignment.BamView\nPermissions: all-permissions" > manifest-bamview; \
 	jar cmf manifest-bamview BamView.jar META-INF/services etc uk org/apache org/biojava org/biojavax org/gmod org/w3c net/sf com/ibatis; \
 	echo "Main-Class: uk.ac.sanger.artemis.components.ActMain\nPermissions: all-permissions" > manifest-act; \
-	jar cmf manifest-act act.jar META-INF/services images/PSUlogo.gif images/icon.gif README etc \
+	jar cmf manifest-act act.jar META-INF/services images/PSUlogo.gif images/icon.gif README.md etc \
 	                     artemis_sqlmap org uk com net nsdb type seqdb LICENSE.Apache j2ssh.properties; \
 	rm -f etc/log4j.properties; \
-	jar cmf manifest-art artemis_mac.jar images/PSUlogo.gif images/icon.gif README \
+	jar cmf manifest-art artemis_mac.jar images/PSUlogo.gif images/icon.gif README.md \
 	        uk org/gmod nsdb type seqdb LICENSE.Apache artemis_sqlmap
 
 clean :
