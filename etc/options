@@ -439,6 +439,7 @@ systematic_name_qualifiers = systematic_id temporary_systematic_id \
 
 # this list is added to the qualifiers from the qualifier_types file
 extra_qualifiers = \
+    alias "text" \
     CHROMO_LINK text \
     C_processing "text" \
     C_processing_BigPi "text" \
@@ -569,6 +570,7 @@ extra_qualifiers = \
 
 # this list is added to the qualifiers from the qualifier_types_gff file
 extra_qualifiers_gff = \
+    alias "text" \
     blast_score text \
     blast_file "text" \
     blastn_file "text" \
