@@ -5,9 +5,9 @@ set -e
 
 start_dir=$(pwd)
 
-EMBOSS_VERSION="6.6.0"
+EMBOSS_VERSION="6.5.7"
 
-EMBOSS_DOWNLOAD_URL="ftp://emboss.open-bio.org/pub/EMBOSS/EMBOSS-${EMBOSS_VERSION}.tar.gz"
+EMBOSS_DOWNLOAD_URL="ftp://emboss.open-bio.org/pub/EMBOSS/old/6.5.0/EMBOSS-${EMBOSS_VERSION}.tar.gz"
 
 # Make an install location
 if [ ! -d "${HOME}/dependencies" ]; then
