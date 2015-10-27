@@ -107,5 +107,8 @@ import uk.ac.sanger.artemis.util.OutOfRangeException;
     public void reset()
     {
     }
-    
+
+    public void close()
+    {
+    }
   }
