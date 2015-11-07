@@ -51,11 +51,11 @@ public class StringVector extends Vector<String>
   /**
    *  Create a new vector which contains the given Strings.
    **/
-  public StringVector(final String[] new_strings) 
+  public StringVector(final String[] new_strings)
   {
     super(new_strings.length);
     int len = new_strings.length;
-    for(int i = 0; i < len; ++i) 
+    for(int i = 0; i < len; ++i)
       add(new_strings[i]);
   }
 
@@ -68,7 +68,7 @@ public class StringVector extends Vector<String>
   /**
    *  Create a new vector which contains the given Strings.
    **/
-  public StringVector(final StringVector new_strings) 
+  public StringVector(final StringVector new_strings)
   {
     super(new_strings);
   }
@@ -76,7 +76,7 @@ public class StringVector extends Vector<String>
   /**
    *  Call add() on each of the String objects in the given StringVector.
    **/
-  public void add(final StringVector new_strings) 
+  public void add(final StringVector new_strings)
   {
     for (int i = 0; i < new_strings.size(); ++i)
       add (new_strings.elementAt(i));
@@ -87,19 +87,19 @@ public class StringVector extends Vector<String>
    *  package.
    */
   public void sort()
-  { 
+  {
     final Comparator<String> comparator = new Comparator<String>()
     {
-      public int compare(String fst, String snd) 
+      public int compare(String fst, String snd)
       {
-        if(fst == null) 
+        if(fst == null)
         {
           if(snd == null)
             return 0;
           else
             return -1;
-        } 
-        else 
+        }
+        else
         {
           if(snd == null)
             return 1;
@@ -114,7 +114,7 @@ public class StringVector extends Vector<String>
   /**
    *  Return a new copy of this object.
    **/
-  public StringVector copy() 
+  public StringVector copy()
   {
     return new StringVector(this);
   }
@@ -132,7 +132,7 @@ public class StringVector extends Vector<String>
    **/
   public static StringVector getStrings(final String argument,
                                         final String delim,
-                                        final boolean keep_zero_char_toks) 
+                                        final boolean keep_zero_char_toks)
   {
     final StringVector strVector = new StringVector();
 
@@ -153,23 +153,23 @@ public class StringVector extends Vector<String>
 
       if(idx2 < 0)
         idx2 = argLen;
- 
+
       tok = argument.substring(idx1,idx2);
       idx1 = idx2+1;
 
       if(tok.length() == 1 &&
-          delim.indexOf(tok.charAt(0)) != -1) 
+          delim.indexOf(tok.charAt(0)) != -1)
       {
         // ignore the split characters
         if(keep_zero_char_toks &&
            (lastTok == null ||
             lastTok != null && lastTok.length () == 1 &&
-            delim.indexOf (lastTok) != -1)) 
+            delim.indexOf (lastTok) != -1))
         {
           // add a space because of two split_characters in a row
           strVector.add("");
         }
-      } 
+      }
       else
         strVector.add(tok);
 
@@ -186,7 +186,7 @@ public class StringVector extends Vector<String>
    *  vector will be zero length.
    **/
   public static StringVector getStrings(final String argument,
-                                        final String split_characters) 
+                                        final String split_characters)
   {
     return getStrings(argument, split_characters, false);
   }
@@ -198,7 +198,7 @@ public class StringVector extends Vector<String>
    *  String is zero length or it consists only of whitespace, the return
    *  vector will be zero length.
    **/
-  public static StringVector getStrings(final String argument) 
+  public static StringVector getStrings(final String argument)
   {
     return getStrings(argument, " ", false);
   }
