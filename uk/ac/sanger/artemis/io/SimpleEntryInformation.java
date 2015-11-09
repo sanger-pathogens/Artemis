@@ -175,7 +175,7 @@ public class SimpleEntryInformation
       return null;
     }
 
-    return_vector.sort ();
+    return_vector.mysort ();
     return return_vector;
   }
 
@@ -187,11 +187,11 @@ public class SimpleEntryInformation
 
     if (isValidKey (misc_feature_key))
       return misc_feature_key;
-    
+
     misc_feature_key = new Key ("region");
     if (isValidKey (misc_feature_key))
       return misc_feature_key;
-   
+
     return (Key)getValidKeys ().get (0);
   }
 
@@ -397,7 +397,7 @@ public class SimpleEntryInformation
       return getQualifierInfoHash ().copy ();
     }
   }
-    
+
   /**
    *  Fix this EntryInformation so that the given exception won't happen
    *  again.

@@ -154,7 +154,7 @@ public class FeatureVector {
   public FeatureVector sort (final Comparator cmp) {
     final FeatureVector return_vector = (FeatureVector) clone ();
 
-    return_vector.vector = return_vector.vector.sort (cmp);
+    return_vector.vector = return_vector.vector.mysort (cmp);
 
     return return_vector;
   }
