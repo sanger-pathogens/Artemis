@@ -857,7 +857,8 @@ hyperlinks = \
   AID http://pubchem.ncbi.nlm.nih.gov/assay/assay.cgi?aid= \
   GeneID http://www.ncbi.nlm.nih.gov/sites/entrez?db=gene&cmd=Retrieve&dopt=full_report&list_uids= \
   Rfam http://rfam.sanger.ac.uk/family/ \
-  GI http://www.ncbi.nlm.nih.gov/entrez/sutils/girevhist.cgi?val=
+  GI http://www.ncbi.nlm.nih.gov/entrez/sutils/girevhist.cgi?val= \
+  TCDB http://www.tcdb.org/search/result.php?tc=
 
 # BamView
 # No. threads used to read from multiple BAM files
