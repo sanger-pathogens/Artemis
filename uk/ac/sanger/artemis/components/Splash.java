@@ -418,7 +418,7 @@ abstract public class Splash extends JFrame
         g.drawString(geneticCode,
                      left_margin, yPos+(font_height * 3));
 
-        g.drawString("Copyright 1998 - 2014",
+        g.drawString("Copyright 1998 - 2016",
                      left_margin, yPos+(font_height * 9 / 2));
         g.drawString("Genome Research Limited",
                      left_margin, yPos+(font_height * 11 / 2));
