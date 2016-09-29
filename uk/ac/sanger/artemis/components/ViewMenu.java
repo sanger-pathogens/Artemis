@@ -595,8 +595,60 @@ public class ViewMenu extends SelectionMenu
     addSeparator();
     add(feature_info_item);
     add(plot_features_item);
-  }
+    
+    //If "view Custom Annotation" is selected in menu or
+    //view_Custom_Annotation is set up in option file,add submenus to the View menu. 
+    //@Author Luj 19/08/2013 (start)
+        if (
+                //Options.getOptions().getPropertyTruthValue("view_Custom_Annotation") ||
+               (System.getProperty("viewCustomAnnotation")!=null &&
+                System.getProperty("viewCustomAnnotation").equals("true"))) {
+            JMenu view_Customized_Annotation_menu = null;
+            view_Customized_Annotation_menu = new JMenu("View Customized Annotation Results");
+            final JMenuItem view_GAMOLA_BLAST = new JMenuItem("View GAMOLA BLAST Annotation for Selection");
+            view_GAMOLA_BLAST.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent event) {
+                    new SelectionCustomViewer(getSelection(), entry_group, "Blast_database");
+                }
+            });
+            view_Customized_Annotation_menu.add(view_GAMOLA_BLAST);
 
+            final JMenuItem view_GAMOLA_COG = new JMenuItem("View GAMOLA COG Annotation for Selection");
+            view_GAMOLA_COG.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent event) {
+                    new SelectionCustomViewer(getSelection(), entry_group, "COG_database");
+                }
+            });
+            view_Customized_Annotation_menu.add(view_GAMOLA_COG);
+
+            final JMenuItem view_GAMOLA_PFAM = new JMenuItem("View GAMOLA PFAM Annotation for Selection");
+            view_GAMOLA_PFAM.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent event) {
+                    new SelectionCustomViewer(getSelection(), entry_group, "PFam_database");
+                }
+            });
+            view_Customized_Annotation_menu.add(view_GAMOLA_PFAM);
+
+            final JMenuItem view_GAMOLA_TIGR = new JMenuItem("View GAMOLA TIGR Annotation for Selection");
+            view_GAMOLA_TIGR.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent event) {
+                    new SelectionCustomViewer(getSelection(), entry_group, "TIGRfam_database");
+                }
+            });
+            view_Customized_Annotation_menu.add(view_GAMOLA_TIGR);
+            addSeparator();
+            add(view_Customized_Annotation_menu);
+            view_Customized_Annotation_menu.add(view_GAMOLA_BLAST);
+            view_Customized_Annotation_menu.add(view_GAMOLA_COG);
+            view_Customized_Annotation_menu.add(view_GAMOLA_PFAM);
+            view_Customized_Annotation_menu.add(view_GAMOLA_TIGR);
+
+        }
+  }
+  //@Author Luj 19/08/2013 (end)
+  
+
+  
   /**
    *  Create a new ViewMenu object.
    *  @param entry_edit The EntryEdit that owns this JMenu.

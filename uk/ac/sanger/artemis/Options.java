@@ -67,7 +67,8 @@ public class Options extends Properties
 
   /** The name of the "direct edit" option. */
   static private final String direct_edit_string = "direct_edit";
-
+  static private final String view_Custom_Annotation_string = "view_Custom_Annotation";
+  
   /** The name of the "eukaryotic mode" option. */
   static private final String eukaryotic_mode_string = "organism_type";
 
@@ -1120,6 +1121,14 @@ public class Options extends Properties
   public boolean canDirectEdit() 
   {
     if(getPropertyTruthValue(direct_edit_string)) 
+      return true;
+    else 
+      return false;
+  }
+  
+  public boolean canViewCustomAnnotation() 
+  {
+    if(getPropertyTruthValue(view_Custom_Annotation_string)) 
       return true;
     else 
       return false;
