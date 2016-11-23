@@ -58,7 +58,7 @@ class RunBlastAtNCBI extends Thread
     try
     {
       // Send data
-      URL url = new URL("http://blast.ncbi.nlm.nih.gov/Blast.cgi");
+      URL url = new URL("https://blast.ncbi.nlm.nih.gov/Blast.cgi");
       URLConnection conn = url.openConnection();
       conn.setDoOutput(true);
       OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
