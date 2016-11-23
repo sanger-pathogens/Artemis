@@ -18,10 +18,10 @@ of the entire sequences and their annotation.
 # DOCUMENTATION
 
 The Artemis user manual is at:
-  http://www.sanger.ac.uk/resources/software/artemis/
+  http://www.sanger.ac.uk/science/tools/artemis
 
 The ACT user manual is at:
-  http://www.sanger.ac.uk/resources/software/act/
+  http://www.sanger.ac.uk/science/tools/act
 
 # INSTALLATION
 
@@ -34,12 +34,12 @@ Artemis may be freely distributed under the terms of the GNU Public License,
 and should run on any system with a recent version of Java.  
 
 For information on how to get Artemis see this web page:
-  http://www.sanger.ac.uk/resources/software/artemis/
+  http://www.sanger.ac.uk/science/tools/artemis
 
 
 # COPYRIGHT
 
-Copyright (C) 1998-2013  Genome Research Limited
+Copyright (C) 1998-2016  Genome Research Limited
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
