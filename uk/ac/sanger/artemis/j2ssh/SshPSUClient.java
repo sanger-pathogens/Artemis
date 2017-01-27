@@ -342,7 +342,7 @@ public class SshPSUClient extends Thread
       {
         try
         {
-          if(wdir.endsWith("scratch108") || wdir.endsWith("scratch108/"))
+          if(wdir.endsWith("scratch118") || wdir.endsWith("scratch118/"))
           {
             if(fileExists(sftp , wdir+"/bacteria/", user))
               wdir = wdir+"/bacteria/";
