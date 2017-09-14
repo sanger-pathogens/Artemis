@@ -29,9 +29,26 @@ import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.awt.event.*;
-import javax.swing.*;
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
+import java.util.Arrays;
+import java.util.HashSet;
 
+import javax.swing.*;
+
+import org.apache.batik.dom.GenericDOMImplementation;
+import org.apache.batik.svggen.SVGGeneratorContext;
+import org.apache.batik.svggen.SVGGraphics2D;
+import org.apache.batik.svggen.SVGGraphics2DIOException;
+import org.w3c.dom.DOMImplementation;
+import org.w3c.dom.Document;
+
+import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.editor.ScrollPanel;
 
 /**
@@ -66,15 +83,45 @@ public class PrintArtemis extends ScrollPanel implements Printable
   }
 
   /**
-  *
   * Override paintComponent to draw entry
-  *
   */
-  public void paintComponent(Graphics g)
+  public void paintComponent(Graphics g2d)
   {
 // let UI delegate paint first (incl. background filling)
-    super.paintComponent(g);
-    Graphics2D g2d = (Graphics2D)g.create();
+    super.paintComponent(g2d);
+
+    // feature list
+    if(featListDisplay.isSelected())
+    {
+      FeatureList flist = entry.getFeatureList();
+      Point ploc = flist.getViewport().getViewPosition(); 
+      try
+      {
+        int translateX = 0;
+        if(selectDisplay.isSelected())
+          translateX += entry.getSelectionInfoDisplay().getHeight();
+        if(groupsDisplay.isSelected())
+          translateX += entry.getEntryGroupDisplay().getHeight();
+        if(plotsDisplay.isSelected())
+          translateX += entry.getBasePlotGroup().getHeight();
+        if(jamDisplay.isSelected() && entry.getBamPanel() != null && entry.getBamPanel().isVisible())
+          translateX += entry.getBamPanel().getHeight()-1;
+        if(vcfDisplay.isSelected() && entry.getVcfView() != null && entry.getVcfView().isVisible())
+          translateX += entry.getVcfPanel().getHeight();
+        if(onelineDisplay.isSelected())
+          translateX += entry.getOneLinePerEntryDisplay().getHeight();
+        if(featDisplay.isSelected())
+          translateX += entry.getFeatureDisplay().getHeight();
+        if(baseDisplay.isSelected())
+          translateX += entry.getBaseDisplay().getHeight();
+
+        translateX-=2+ploc.y;
+        g2d.translate(0,translateX);
+        flist.paintComponent(g2d);
+        g2d.translate(0,-translateX);
+      }
+      catch(IllegalArgumentException e){} // thrown if the list is not visible
+    }
 
     // selection info
     if(selectDisplay.isSelected())
@@ -95,13 +142,13 @@ public class PrintArtemis extends ScrollPanel implements Printable
       entry.getBasePlotGroup().printComponent(g2d);
 //  g2d.translate(0,entry.getBasePlotGroup().getHeight());
 
-    if(jamDisplay.isSelected() && entry.getJamView() != null && entry.getJamView().isVisible())
+    if(jamDisplay.isSelected() && entry.getBamPanel() != null && entry.getBamPanel().isVisible())
     {
       entry.getBamPanel().paintComponents(g2d);
-      g2d.translate(0,entry.getBamPanel().getHeight());
+      g2d.translate(0,entry.getBamPanel().getHeight()-1);
     }
     
-    if(vcfDisplay.isSelected() && entry.getVcfPanel() != null && entry.getVcfPanel().isVisible())
+    if(vcfDisplay.isSelected() && entry.getVcfView() != null && entry.getVcfView().isVisible())
     {
       entry.getVcfPanel().paintComponents(g2d);
       g2d.translate(0,entry.getVcfPanel().getHeight());
@@ -128,18 +175,9 @@ public class PrintArtemis extends ScrollPanel implements Printable
       entry.getBaseDisplay().paintComponent(g2d);
       g2d.translate(0,entry.getBaseDisplay().getHeight());
     }
-
-    // feature list
-    if(featListDisplay.isSelected())
-    {
-      FeatureList flist = entry.getFeatureList();
-      Point ploc = flist.getViewport().getViewPosition();
-      flist.setOpaque(false);
-      g2d.translate(0,-ploc.y);
-      flist.paintComponent(g2d);
-      flist.setOpaque(true);
-    }
   }
+  
+  
 
 
   /**
@@ -147,7 +185,7 @@ public class PrintArtemis extends ScrollPanel implements Printable
   * Set the size of the image
   *
   */
-  private void setImageSize()
+  private Dimension getImageSize()
   {
     height = 0;
     width  = entry.getFeatureDisplay().getDisplayWidth();
@@ -160,9 +198,9 @@ public class PrintArtemis extends ScrollPanel implements Printable
     if(jamDisplay.isSelected() && 
        entry.getJamView() != null && entry.getJamView().isVisible())
       height += entry.getBamPanel().getHeight();
-    
+
     if(vcfDisplay.isSelected() && 
-        entry.getVcfPanel() != null && entry.getVcfPanel().isVisible())
+        entry.getVcfView() != null && entry.getVcfView().isVisible())
        height += entry.getVcfPanel().getHeight();
     
     if(plotsDisplay.isSelected())
@@ -179,9 +217,14 @@ public class PrintArtemis extends ScrollPanel implements Printable
 
     if(featListDisplay.isSelected())
       height += entry.getFeatureList().getViewport().getExtentSize().height;
-    setPreferredSize(new Dimension(width,height));
+    return new Dimension(width,height);
   }
 
+  private void setImageSize()
+  {
+    setPreferredSize(getImageSize());
+  }
+  
   /**
   *
   * Display a print preview page
@@ -385,6 +428,21 @@ public class PrintArtemis extends ScrollPanel implements Printable
     f.setVisible(true);
   }
 
+  public static String[] getImageFormats()
+  {
+    final String fmts[] = javax.imageio.ImageIO.getWriterFormatNames();
+    final HashSet<String> list = new HashSet<String>();
+    for(int i=0; i<fmts.length; i++)
+      list.add(fmts[i].toLowerCase());
+
+    final String tmpFmts[] = new String[list.size()+1];
+    System.arraycopy(list.toArray(), 0, tmpFmts, 0, list.size());
+    tmpFmts[tmpFmts.length-1] = "svg";
+    Arrays.sort(tmpFmts);
+
+    return tmpFmts;
+  }
+  
   /**
   *
   * Print to a jpeg or png file
@@ -393,9 +451,8 @@ public class PrintArtemis extends ScrollPanel implements Printable
   public void print()
   {
     // file chooser
-    String cwd = System.getProperty("user.dir");
-    JFileChooser fc = new JFileChooser(cwd);
-    File fselect = new File(cwd+
+    final StickyFileChooser fc = new StickyFileChooser();
+    File fselect = new File(fc.getCurrentDirectory()+
                             System.getProperty("file.separator")+
                             "artemis.png");
     fc.setSelectedFile(fselect);
@@ -408,9 +465,27 @@ public class PrintArtemis extends ScrollPanel implements Printable
     YBox.add(labFormat);
 
     Box bacross = Box.createHorizontalBox();
-    JComboBox formatSelect =
-       new JComboBox(javax.imageio.ImageIO.getWriterFormatNames());
+    final JComboBox formatSelect = new JComboBox(getImageFormats());
     formatSelect.setSelectedItem("png");
+    formatSelect.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent arg0)
+      {
+        String selected;
+        if(fc.getSelectedFile() != null)
+        {
+          selected = fc.getSelectedFile().getAbsolutePath();
+          String fmts[] = getImageFormats();
+          for(int i=0; i<fmts.length; i++)
+            selected = selected.replaceAll("."+fmts[i]+"$", "");
+        }
+        else
+          selected = "artemis";
+        
+        fc.setSelectedFile(new File(selected+"."+
+               formatSelect.getSelectedItem()));
+      }
+    });
 
     Dimension d = formatSelect.getPreferredSize();
     formatSelect.setMaximumSize(d);
@@ -432,6 +507,22 @@ public class PrintArtemis extends ScrollPanel implements Printable
     {
       bacross = Box.createHorizontalBox();
       bacross.add(plotsDisplay);
+      bacross.add(Box.createHorizontalGlue());
+      YBox.add(bacross);
+    }
+
+    if(entry.getBamPanel() != null && entry.getBamPanel().isVisible())
+    {
+      bacross = Box.createHorizontalBox();
+      bacross.add(jamDisplay);
+      bacross.add(Box.createHorizontalGlue());
+      YBox.add(bacross);
+    }
+    
+    if(entry.getVcfView() != null && entry.getVcfView().isVisible())
+    {
+      bacross = Box.createHorizontalBox();
+      bacross.add(vcfDisplay);
       bacross.add(Box.createHorizontalGlue());
       YBox.add(bacross);
     }
@@ -467,6 +558,13 @@ public class PrintArtemis extends ScrollPanel implements Printable
 
     // remove file extension
     String fsave = fc.getSelectedFile().getAbsolutePath().toLowerCase();
+    
+    if(fsave.endsWith(".svg"))
+    {
+      createSVG(fc.getSelectedFile());
+      return;
+    }
+
     if(fsave.endsWith(".png") ||
        fsave.endsWith(".jpg") ||
        fsave.endsWith(".jpeg") )
@@ -491,6 +589,45 @@ public class PrintArtemis extends ScrollPanel implements Printable
       JOptionPane.showMessageDialog(this,
             "This option requires Java 1.4 or higher.");
     }
+  }
+  
+  private void createSVG(final File fout)
+  {
+    final DOMImplementation domImpl =
+        GenericDOMImplementation.getDOMImplementation();
+    final Document doc = domImpl.createDocument(
+        "http://www.w3.org/2000/svg", "svg", null);
+
+    SVGGeneratorContext ctx = SVGGeneratorContext.createDefault(doc);
+    ctx.setComment("Generated by Artemis with Batik SVG Generator");
+    final SVGGraphics2D svgG = new SVGGraphics2D(ctx, true);
+    svgG.setFont(Options.getOptions().getFont());
+    final FontMetrics fm = svgG.getFontMetrics();
+    final Dimension d = getImageSize();
+    svgG.setSVGCanvasSize( new Dimension(
+        d.width+fm.stringWidth(" "), d.height+fm.getHeight()) );
+    paintComponent(svgG);
+
+    try
+    {
+      final Writer out = new OutputStreamWriter(
+          new FileOutputStream(fout), "UTF-8");
+      svgG.stream(out, true);
+    }
+    catch (UnsupportedEncodingException e)
+    {
+      e.printStackTrace();
+    }
+    catch (SVGGraphics2DIOException e)
+    {
+      e.printStackTrace();
+    }
+    catch (FileNotFoundException e)
+    {
+      e.printStackTrace();
+    }
+
+    return;
   }
   
   protected void doPrintActions()
@@ -554,7 +691,7 @@ public class PrintArtemis extends ScrollPanel implements Printable
   public int print(Graphics g, PageFormat pf, int pageIndex) throws PrinterException
   {
     setImageSize();
-    Graphics2D g2 = (Graphics2D) g;
+    Graphics2D g2 = (Graphics2D)g.create();
 
 //  RepaintManager.currentManager(this).setDoubleBufferingEnabled(false);
     Dimension d = this.getSize();    //get size of document

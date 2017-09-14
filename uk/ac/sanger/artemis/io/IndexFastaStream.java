@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Iterator;
+import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
@@ -37,6 +38,7 @@ import net.sf.picard.reference.ReferenceSequenceFileFactory;
 import uk.ac.sanger.artemis.io.Entry;
 import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.components.EntryFileDialog;
+import uk.ac.sanger.artemis.util.CacheHashMap;
 import uk.ac.sanger.artemis.util.FileDocument;
 import uk.ac.sanger.artemis.util.ReadOnlyException;
 import uk.ac.sanger.artemis.util.URLDocument;
@@ -47,6 +49,7 @@ public class IndexFastaStream extends StreamSequence
   private FastaSequenceIndex fastaIndex;
   private int len;
   private String contig;
+  private CacheHashMap basesCache;  // used by charAt()
   
   public IndexFastaStream(Entry entry)
   {
@@ -90,7 +93,7 @@ public class IndexFastaStream extends StreamSequence
    * @param entry
    * @return
    */
-  public static boolean isIndexed(Entry entry)
+  protected static boolean isIndexed(Entry entry)
   {
     try
     {
@@ -105,7 +108,19 @@ public class IndexFastaStream extends StreamSequence
         else
           fastaIndexFile = new File(fasta.getName() + ".fai");
         if (fastaIndexFile.exists())
+        {
+          try
+          {
+            setExtensions();
+          }
+          catch(UnsupportedClassVersionError e)
+          {
+            System.err.println("Java version "+System.getProperty("java.version")+
+                " does not support indexed fasta - use Java 1.6 or higher.");
+            return false;
+          }
           return true;
+        }
       }
     }
     catch(Exception e)
@@ -113,6 +128,35 @@ public class IndexFastaStream extends StreamSequence
       e.printStackTrace();
     }
     return false;
+  }
+  
+  protected boolean useIndex()
+  {
+    if(fastaIndex.size() == 1)
+      return true;
+
+    Object[] possibleValues = { "Use index", "Concatenate Sequences" };
+    int sel = JOptionPane.showOptionDialog(null, 
+        "Use the FASTA index file (to increase the performance)\n"+ 
+        "or concatenate the sequences together?",
+        "Indexed FASTA Found", 
+        JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
+        null, possibleValues, possibleValues[0]);
+   
+    return sel == 0;
+  }
+  
+  /**
+   * Add to supported FASTA allowed suffixes.
+   */
+  private static void setExtensions()
+  {
+    if(ReferenceSequenceFileFactory.FASTA_EXTENSIONS.contains(".dna"))
+      return;
+    ReferenceSequenceFileFactory.FASTA_EXTENSIONS.add(".dna");
+    ReferenceSequenceFileFactory.FASTA_EXTENSIONS.add(".seq");
+    ReferenceSequenceFileFactory.FASTA_EXTENSIONS.add(".fas");
+    ReferenceSequenceFileFactory.FASTA_EXTENSIONS.add(".ffn");
   }
   
   public void setContigByIndex(int seqIndex) 
@@ -123,6 +167,7 @@ public class IndexFastaStream extends StreamSequence
     
     len = getLengthByIndex(seqIndex);
     contig = getContigByIndex(seqIndex);
+    basesCache = null;
   }
 
   /**
@@ -142,6 +187,28 @@ public class IndexFastaStream extends StreamSequence
     return getSubSequence(start, end).toCharArray();
   }
   
+  /**
+   * Used by AddMenu.markAmbiguities() to retrieve the sequence character
+   * at a specified position
+   */
+  public char charAt(final int i)
+  {
+    if(basesCache == null)
+      basesCache = new CacheHashMap(250,50);
+      
+    if(!basesCache.containsKey(i))
+    {
+      int end = i+249;
+      if(end > length())
+        end = length();
+      String seq = getSubSequence(i, end);
+      for(int idx=0; idx<seq.length(); idx++)
+        basesCache.put(i+idx, seq.charAt(idx));
+    }
+
+    return (Character)basesCache.get(i);
+  }
+  
   private int getLengthByIndex(int seqIndex)
   {
     Iterator it = fastaIndex.iterator();
@@ -151,8 +218,12 @@ public class IndexFastaStream extends StreamSequence
       Object obj = it.next();
       if(i == seqIndex)
       {
-        String size = obj.toString().split(";")[2].substring(5).trim();
-        return Integer.parseInt(size);
+        String parts[] = obj.toString().split(";");
+        for(String part: parts)
+        {
+          if(part.trim().startsWith("size"))
+            return Integer.parseInt(part.substring(5).trim());
+        }
       }
       i++;
     }
@@ -167,10 +238,29 @@ public class IndexFastaStream extends StreamSequence
     {
       Object obj = it.next();
       if(i == seqIndex)
-        return obj.toString().split(";")[0].substring(6).trim();
+      {
+        String c = obj.toString().split(" ")[1];
+        if(c.endsWith(";"))
+          c = c.substring(0, c.length()-1);
+        return c;
+      }
       i++;
     }
     return null;
+  }
+  
+  public Vector<String> getContigs()
+  {
+    Iterator it = fastaIndex.iterator();
+    Vector<String> contigs = new Vector<String>();
+    while(it.hasNext())
+    {
+      String contig = it.next().toString().split(";")[0];
+      if(contig.startsWith("contig "))
+        contig = contig.substring(6).trim();
+      contigs.add(  contig );
+    }
+    return contigs;
   }
   
   public ReferenceSequence getReferenceSequence(int seqIndex)
@@ -230,6 +320,11 @@ public class IndexFastaStream extends StreamSequence
   public FastaSequenceIndex getFastaIndex()
   {
     return fastaIndex;
+  }
+  
+  public String getContig()
+  {
+    return contig;
   }
   
   public static void main(String args[])

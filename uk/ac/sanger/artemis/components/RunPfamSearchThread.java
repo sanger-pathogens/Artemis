@@ -36,10 +36,15 @@ import javax.swing.JOptionPane;
 
 import uk.ac.sanger.artemis.editor.BrowserControl;
 
+/**
+ * Pfam and Rfam sequence search
+ */
 public class RunPfamSearchThread extends Thread
 {
-  private static String pfamUrl = "http://pfam.sanger.ac.uk/search/sequence";
-
+  protected static String pfamUrl = "http://pfam.xfam.org/search/sequence";
+  protected static String rfamUrl = "http://rfam.xfam.org/search/sequence";
+  private String searchURL = pfamUrl;
+  
   private String residues;
   
   public RunPfamSearchThread(final String residues)
@@ -47,8 +52,16 @@ public class RunPfamSearchThread extends Thread
     this.residues = residues;
   }
   
+  public RunPfamSearchThread(final String residues, final String searchURL)
+  {
+    this.residues = residues;
+    this.searchURL = searchURL;
+  }
+  
   public void run()
   {
+    boolean isPfam = searchURL.equals(pfamUrl);
+
     try
     {
       // Construct data
@@ -58,10 +71,14 @@ public class RunPfamSearchThread extends Thread
           + URLEncoder.encode("xml", "UTF-8");
 
       // Send data
-      URL url = new URL(pfamUrl);
+      URL url = new URL(searchURL);
 
       URLConnection conn = url.openConnection();
       conn.setDoOutput(true);
+      
+      if(!isPfam)
+        conn.addRequestProperty("Accept", "text/xml");
+      
       OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
       wr.write(data);
       wr.flush();
@@ -69,7 +86,8 @@ public class RunPfamSearchThread extends Thread
       // Get the response
       BufferedReader rd = new BufferedReader(
           new InputStreamReader(conn.getInputStream()));
-      String urlResults = pfamUrl+"/results?";
+      String urlResults = searchURL + (isPfam ? "/results?" : "/");
+
       String line;
       String eta = "5";
       while ((line = rd.readLine()) != null)
@@ -78,7 +96,10 @@ public class RunPfamSearchThread extends Thread
         if((index = line.indexOf("job_id=")) > -1)
         {
           line = line.substring(index+8, line.length()-2);
-          urlResults = urlResults.concat("jobId="+line);
+          if(isPfam)
+            urlResults = urlResults.concat("jobId="+line);
+          else
+            urlResults = urlResults.concat(line);
         }
         else if((index = line.indexOf("<estimated_time>")) > -1)
         {
@@ -102,7 +123,7 @@ public class RunPfamSearchThread extends Thread
       rd.close();
       
       int waitTime = Integer.parseInt(eta);
-      ProgressBarFrame progress = new ProgressBarFrame(waitTime, "Pfam");
+      ProgressBarFrame progress = new ProgressBarFrame(waitTime, (isPfam ? "Pfam" : "Rfam"));
       URL result = new URL(urlResults);
       Thread.sleep(waitTime*1000);
       
@@ -117,6 +138,6 @@ public class RunPfamSearchThread extends Thread
       BrowserControl.displayURL(urlResults);
       progress.dispose();
     }
-    catch (Exception e){}
+    catch (Exception e){ e.printStackTrace(); }
   }
 }

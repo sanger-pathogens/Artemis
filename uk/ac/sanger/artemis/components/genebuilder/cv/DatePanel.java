@@ -39,25 +39,22 @@ import javax.swing.event.ChangeListener;
 /**
  * Date input panel
  */
-public class DatePanel
+public class DatePanel extends JSpinner
 {
-  private JSpinner spinner;
-  
+  private static final long serialVersionUID = 1L;
+
   public DatePanel(final String date, 
                    final int height)
   {
     this(date);
-    spinner.setMaximumSize(
-        new Dimension(spinner.getPreferredSize().width, height));
+    setMaximumSize(
+        new Dimension(getPreferredSize().width, height));
   }
   
   public DatePanel(final String date)
   {
     Date initDate = getDate(date);
     Calendar calendar = Calendar.getInstance();
-    
-    //if(initDate == null)
-    //  initDate = calendar.getTime();
     calendar.add(Calendar.YEAR, -100);
     Date earliestDate = calendar.getTime();
     calendar.add(Calendar.YEAR, 200);
@@ -69,29 +66,28 @@ public class DatePanel
                                  earliestDate,
                                  latestDate,
                                  Calendar.YEAR);
-      spinner = new JSpinner(model);
-      spinner.setBackground(Color.white);
-      spinner.setEditor(new JSpinner.DateEditor(spinner, "yyyy/MM/dd"));
+      setModel(model);
+      setBackground(Color.white);
+      setEditor(new JSpinner.DateEditor(this, "yyyy/MM/dd"));
     }
     else
     {
       SpinnerListModel model = new SpinnerListModel( new String[] { "", "----/--/--", "" } );
-      spinner = new JSpinner(model);
-      spinner.setBackground(Color.white);
-      spinner.setValue("----/--/--");
+      setModel(model);
+      setBackground(Color.white);
+      setValue("----/--/--");
       model.addChangeListener(new ChangeListener()
       {
         public void stateChanged(ChangeEvent e)
         {
-          if(spinner.getModel() instanceof SpinnerListModel)
+          if(getModel() instanceof SpinnerListModel)
           {
-            spinner.setModel(new SpinnerDateModel());
-            spinner.setEditor(new JSpinner.DateEditor(spinner, "yyyy/MM/dd"));
+            setModel(new SpinnerDateModel());
+            setEditor(new JSpinner.DateEditor(DatePanel.this, "yyyy/MM/dd"));
           }
         }  
       });
-    } 
-
+    }
   }
   
   /**
@@ -116,62 +112,23 @@ public class DatePanel
     return cal.getTime();
   }
   
-  /*class DateVerifier extends InputVerifier 
-  {
-    java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat(
-            "yyyyMMdd");
-    java.util.Calendar cal = java.util.Calendar.getInstance();
-    public DateVerifier() 
-    {
-      sdf.setLenient(false);
-    }
-
-    public boolean verify(JComponent input) 
-    {
-      JFormattedTextField ftf = (JFormattedTextField) input;
-      // allow null entry which will include slashes because of the
-      // mask
-      if(ftf.getText().trim().equals(""))
-      {
-        ftf.setValue( null );
-        return true;
-      }
-        
-      try 
-      {
-        cal.setTime(sdf.parse(ftf.getText()));
-      }
-      catch (Exception pe) 
-      {
-        return false;
-      }
-      return true;
-    }
-  }*/
-
-  public JSpinner getDateSpinner()
-  {
-    return spinner;
-  }
-  
-  public String getText()
+  protected String getText()
   { 
-    if(spinner.getModel() instanceof SpinnerDateModel)
+    if(getModel() instanceof SpinnerDateModel)
     {
       java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat(
       "yyyyMMdd");
-      Date date = ((SpinnerDateModel)spinner.getModel()).getDate();
+      Date date = ((SpinnerDateModel)getModel()).getDate();
       return sdf.format(date);
     }
     return "";
   }
   
-  protected static String getDate()
+  public static String getDate()
   {
     java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat(
         "yyyyMMdd");
     Date date = new Date();
     return sdf.format(date);
   }
-  
 }

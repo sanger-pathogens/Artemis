@@ -26,14 +26,17 @@
 package uk.ac.sanger.artemis.components;
 
 import uk.ac.sanger.artemis.*;
-import uk.ac.sanger.artemis.sequence.*;
+import uk.ac.sanger.artemis.sequence.Marker;
+import uk.ac.sanger.artemis.sequence.MarkerRange;
+import uk.ac.sanger.artemis.util.OutOfRangeException;
 
-import uk.ac.sanger.artemis.util.*;
-
-import java.awt.*;
-import java.awt.event.*;
-
-import javax.swing.*;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import javax.swing.JFrame;
+import javax.swing.JMenuItem;
+import javax.swing.KeyStroke;
 
 /**
  *  A JMenu with commands for moving around the entries.
@@ -43,6 +46,57 @@ import javax.swing.*;
  **/
 
 public class GotoMenu extends SelectionMenu {
+  
+  private static final long serialVersionUID = 1L;
+
+  /** GotoEventSource object that was passed to the constructor */
+  private GotoEventSource goto_event_source;
+
+  /**
+   *  Set by the constructor to the reference of the first feature in
+   *  selection_features or null if selection_features is empty.
+   **/
+  private Feature selection_feature;
+
+  /**
+   *  Set by the constructor to the reference of the first segment in
+   *  selection_segments or null if selection_segments is empty.
+   **/
+  private FeatureSegment selection_segment;
+  
+  /** shortcut for the Navigator */
+  private final static KeyStroke NAVIGATOR_KEY =
+    KeyStroke.getKeyStroke (KeyEvent.VK_G, 
+                            Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()); 
+
+  /** shortcut to go to the start of the selection */
+  private final static KeyStroke START_OF_SELECTION_KEY =
+    KeyStroke.getKeyStroke (KeyEvent.VK_LEFT, 
+                            Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
+
+  /** shortcut to go to the end of the selection */
+  private final static KeyStroke END_OF_SELECTION_KEY =
+    KeyStroke.getKeyStroke (KeyEvent.VK_RIGHT, 
+                            Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()); 
+
+  /** shortcut to go to the start of the sequence */
+  private final static KeyStroke START_OF_SEQUENCE_KEY =
+    KeyStroke.getKeyStroke (KeyEvent.VK_UP, 
+                            Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()); 
+
+  /** shortcut to go to the end of the sequence */
+  private final static KeyStroke END_OF_SEQUENCE_KEY =
+    KeyStroke.getKeyStroke (KeyEvent.VK_DOWN, 
+                            Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()); 
+
+  /** shortcut to go to the start of the feature */
+  private final static KeyStroke START_OF_FEATURE_KEY =
+    KeyStroke.getKeyStroke (KeyEvent.VK_COMMA, KeyEvent.SHIFT_MASK); 
+  
+  /** shortcut to go to the start of the feature */
+  private final static KeyStroke END_OF_FEATURE_KEY =
+    KeyStroke.getKeyStroke (KeyEvent.VK_PERIOD, KeyEvent.SHIFT_MASK); 
+  
   /**
    *  Create a new GotoMenu object.
    *  @param frame The JFrame that owns this JMenu.
@@ -60,20 +114,27 @@ public class GotoMenu extends SelectionMenu {
                    final EntryGroup entry_group,
                    final String menu_name) {
     super (frame, menu_name, selection);
-
     this.goto_event_source = goto_event_source;
 
-    navigator_item = new JMenuItem ("Navigator ...");
+    final JMenuItem navigator_item = new JMenuItem ("Navigator ...");
     navigator_item.setAccelerator (NAVIGATOR_KEY);
     navigator_item.addActionListener(new ActionListener () {
+      private Navigator navigator = null;
       public void actionPerformed (ActionEvent event) {
-        new Navigator (getSelection (),
+        if(navigator == null || navigator.isVisible())
+        {
+          if(navigator != null)
+            navigator.setDisposeOnClose(true);
+          navigator = new Navigator (getSelection (),
                        GotoMenu.this.goto_event_source,
                        entry_group);
+        }
+        else
+          navigator.setVisible(true);
       }
     });
 
-    goto_selection_start_item = new JMenuItem ("Start of Selection");
+    final JMenuItem goto_selection_start_item = new JMenuItem ("Start of Selection");
     goto_selection_start_item.setAccelerator (START_OF_SELECTION_KEY);
     goto_selection_start_item.addActionListener(new ActionListener () {
       public void actionPerformed (ActionEvent event) {
@@ -81,7 +142,7 @@ public class GotoMenu extends SelectionMenu {
       }
     });
 
-    goto_selection_end_item = new JMenuItem ("End of Selection");
+    final JMenuItem goto_selection_end_item = new JMenuItem ("End of Selection");
     goto_selection_end_item.setAccelerator (END_OF_SELECTION_KEY);
     goto_selection_end_item.addActionListener(new ActionListener () {
       public void actionPerformed (ActionEvent event) {
@@ -89,28 +150,30 @@ public class GotoMenu extends SelectionMenu {
       }
     });
 
-    goto_feature_start_item = new JMenuItem ("Feature Start");
+    final JMenuItem goto_feature_start_item = new JMenuItem ("Feature Start");
+    goto_feature_start_item.setAccelerator(START_OF_FEATURE_KEY);
     goto_feature_start_item.addActionListener(new ActionListener () {
       public void actionPerformed (ActionEvent event) {
         gotoFeatureStart ();
       }
     });
 
-    goto_feature_end_item = new JMenuItem ("Feature End");
+    final JMenuItem goto_feature_end_item = new JMenuItem ("Feature End");
+    goto_feature_end_item.setAccelerator(END_OF_FEATURE_KEY);
     goto_feature_end_item.addActionListener(new ActionListener () {
       public void actionPerformed (ActionEvent event) {
         gotoFeatureEnd ();
       }
     });
 
-    goto_feature_base = new JMenuItem ("Feature Base Position ...");
+    final JMenuItem goto_feature_base = new JMenuItem ("Feature Base Position ...");
     goto_feature_base.addActionListener(new ActionListener () {
       public void actionPerformed (ActionEvent event) {
         gotoFeaturePosition (false);
       }
     });
 
-    goto_feature_aa_position = new JMenuItem ("Feature Amino Acid ...");
+    final JMenuItem goto_feature_aa_position = new JMenuItem ("Feature Amino Acid ...");
     goto_feature_aa_position.addActionListener(new ActionListener () {
       public void actionPerformed (ActionEvent event) {
         gotoFeaturePosition (true);
@@ -118,7 +181,7 @@ public class GotoMenu extends SelectionMenu {
     });
 
 
-    goto_first_item = new JMenuItem ("Start of Sequence");
+    final JMenuItem goto_first_item = new JMenuItem ("Start of Sequence");
     goto_first_item.setAccelerator (START_OF_SEQUENCE_KEY);
     goto_first_item.addActionListener(new ActionListener () {
       public void actionPerformed (ActionEvent event) {
@@ -126,7 +189,7 @@ public class GotoMenu extends SelectionMenu {
       }
     });
 
-    goto_last_item = new JMenuItem ("End of Sequence");
+    final JMenuItem goto_last_item = new JMenuItem ("End of Sequence");
     goto_last_item.setAccelerator (END_OF_SEQUENCE_KEY);
     goto_last_item.addActionListener(new ActionListener () {
       public void actionPerformed (ActionEvent event) {
@@ -145,42 +208,7 @@ public class GotoMenu extends SelectionMenu {
     add (goto_feature_base);
     add (goto_feature_aa_position);
   }
-
-  /**
-   *  The shortcut for the Navigator.
-   **/
-  final static KeyStroke NAVIGATOR_KEY =
-    KeyStroke.getKeyStroke (KeyEvent.VK_G, 
-                            Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()); //InputEvent.CTRL_MASK);
-
-  /**
-   *  The shortcut to go to the start of the selection.
-   **/
-  final static KeyStroke START_OF_SELECTION_KEY =
-    KeyStroke.getKeyStroke (KeyEvent.VK_LEFT, 
-                            Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()); //InputEvent.CTRL_MASK);
-
-  /**
-   *  The shortcut to go to the end of the selection.
-   **/
-  final static KeyStroke END_OF_SELECTION_KEY =
-    KeyStroke.getKeyStroke (KeyEvent.VK_RIGHT, 
-                            Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()); //InputEvent.CTRL_MASK);
-
-  /**
-   *  The shortcut to go to the start of the sequence.
-   **/
-  final static KeyStroke START_OF_SEQUENCE_KEY =
-    KeyStroke.getKeyStroke (KeyEvent.VK_UP, 
-                            Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()); //InputEvent.CTRL_MASK);
-
-  /**
-   *  The shortcut to go to the end of the sequence.
-   **/
-  final static KeyStroke END_OF_SEQUENCE_KEY =
-    KeyStroke.getKeyStroke (KeyEvent.VK_DOWN, 
-                            Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()); //InputEvent.CTRL_MASK);
-
+  
   /**
    *  Create a new GotoMenu object.
    *  @param frame The JFrame that owns this JMenu.
@@ -253,38 +281,6 @@ public class GotoMenu extends SelectionMenu {
       }
     } else {
       makeFeatureEndVisible (selection_feature);
-    }
-  }
-
-  /**
-   *  Goto the start of the (first) selected segment.  (FeatureDisplay only.)
-   **/
-  private void gotoSegmentStart () {
-    setInternalVariables ();
-    if (selection_segment == null) {
-      if (selection_feature == null) {
-        // do nothing
-      } else {
-        makeFeatureStartVisible (selection_feature);
-      }
-    } else {
-      makeSegmentStartVisible (selection_segment);
-    }
-  }
-
-  /**
-   *  Goto the end of the (first) selected segment.  (FeatureDisplay only.)
-   **/
-  private void gotoSegmentEnd () {
-    setInternalVariables ();
-    if (selection_segment == null) {
-      if (selection_feature == null) {
-        // do nothing
-      } else {
-        makeFeatureEndVisible (selection_feature);
-      }
-    } else {
-      makeSegmentEndVisible (selection_segment);
     }
   }
 
@@ -394,10 +390,8 @@ public class GotoMenu extends SelectionMenu {
    *  @param feature The feature to make visible.
    **/
   private void makeFeatureStartVisible (Feature feature) {
-    if (feature == null) {
+    if (feature == null)
       return;
-    }
-
     makeBaseVisible (feature.getFirstBaseMarker ());
   }
 
@@ -407,44 +401,9 @@ public class GotoMenu extends SelectionMenu {
    *  @param feature The feature to make visible.
    **/
   private void makeFeatureEndVisible (Feature feature) {
-    if (feature == null) {
+    if (feature == null)
       return;
-    }
-
     makeBaseVisible (feature.getLastBaseMarker ());
-
-//    System.out.println (feature.getLastBaseMarker ().getPosition ());
-//    System.out.println (feature.getLastBaseMarker ().getStrand ());
-  }
-
-  /**
-   *  Scroll the display so that the given segment is visible (the first base
-   *  in the segment will be the middle of the screen after the call).
-   *  @param segment The segment to make visible.
-   **/
-  private void makeSegmentStartVisible (FeatureSegment segment) {
-    if (segment == null) {
-      return;
-    }
-
-    final Marker first_base = segment.getStart ();
-
-    makeBaseVisible (first_base);
-  }
-
-  /**
-   *  Scroll the display so that the given segment is visible (the last base
-   *  in the segment will be the middle of the screen after the call).
-   *  @param segment The segment to make visible.
-   **/
-  private void makeSegmentEndVisible (FeatureSegment segment) {
-    if (segment == null) {
-      return;
-    }
-
-    final Marker last_base = segment.getEnd ();
-
-    makeBaseVisible (last_base);
   }
 
   /**
@@ -468,48 +427,4 @@ public class GotoMenu extends SelectionMenu {
       selection_segment = null;
     }
   }
-
-  /**
-   *  Check that the are some Features in the current selection.  If there
-   *  there are some features then return true.  If there are no features
-   *  selected then popup a message saying so and return false.
-   **/
-  protected boolean checkForSelection () {
-    final FeatureVector features_to_check =
-      getSelection ().getAllFeatures ();
-
-    if (features_to_check.size () == 0) {
-      new MessageDialog (getParentFrame (), "No features selected");
-      return false;
-    } else {
-      return true;
-    }
-  }
-
-  /**
-   *  The GotoEventSource object that was passed to the constructor.
-   **/
-  private GotoEventSource goto_event_source;
-
-  /**
-   *  Set by the constructor to the reference of the first feature in
-   *  selection_features or null if selection_features is empty.
-   **/
-  private Feature selection_feature;
-
-  /**
-   *  Set by the constructor to the reference of the first segment in
-   *  selection_segments or null if selection_segments is empty.
-   **/
-  private FeatureSegment selection_segment;
-
-  private JMenuItem navigator_item = null;
-  private JMenuItem goto_feature_start_item = null;
-  private JMenuItem goto_feature_end_item = null;
-  private JMenuItem goto_selection_end_item = null;
-  private JMenuItem goto_selection_start_item = null;
-  private JMenuItem goto_first_item = null;
-  private JMenuItem goto_last_item = null;
-  private JMenuItem goto_feature_base = null;
-  private JMenuItem goto_feature_aa_position = null;
 }

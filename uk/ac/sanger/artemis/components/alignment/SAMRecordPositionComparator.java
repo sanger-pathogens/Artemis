@@ -27,6 +27,7 @@ package uk.ac.sanger.artemis.components.alignment;
 import java.util.Comparator;
 
 import net.sf.samtools.SAMRecord;
+import uk.ac.sanger.artemis.components.alignment.BamViewRecord;
 
  class SAMRecordPositionComparator implements Comparator<Object>
   {
@@ -38,8 +39,8 @@ import net.sf.samtools.SAMRecord;
     
     public int compare(Object o1, Object o2) 
     {
-      SAMRecord pr1 = (SAMRecord) o1;
-      SAMRecord pr2 = (SAMRecord) o2;
+      SAMRecord pr1 = ((BamViewRecord) o1).sam;
+      SAMRecord pr2 = ((BamViewRecord) o2).sam;
       
       int offset1 = bamView.getSequenceOffset(pr1.getReferenceName());
       int offset2 = bamView.getSequenceOffset(pr2.getReferenceName());

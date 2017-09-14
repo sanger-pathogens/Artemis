@@ -44,6 +44,7 @@ import org.biojava.bio.seq.io.SequenceFormat;
 import java.awt.event.*;
 import java.awt.Toolkit;
 import java.io.*;
+import java.util.Vector;
 import java.awt.datatransfer.*;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -61,11 +62,8 @@ public class ArtemisMain extends Splash
   /** */
   private static final long serialVersionUID = 1L;
 
-  /** Version String use for banner messages and title bars. */
-  public static final String version = "Release 9";
-
   /** A vector containing all EntryEdit object we have created. */
-  private EntryEditVector entry_edit_objects = new EntryEditVector();
+  private Vector<EntryEdit> entry_edit_objects = new Vector<EntryEdit>();
 
   protected static FileManager filemanager = null;
   
@@ -77,8 +75,15 @@ public class ArtemisMain extends Splash
    **/
   public ArtemisMain(final String args[]) 
   {
-    super("Artemis", "Artemis", version);
+    super("Artemis", "Artemis", "15");
 
+    makeMenuItem(file_menu, "Open Project Manager ...", new ActionListener(){
+      public void actionPerformed(ActionEvent e)
+      {
+        new ProjectProperty(ArtemisMain.this);
+      }
+    });
+    
     ActionListener menu_listener = new ActionListener()
     {
       public void actionPerformed(ActionEvent event)
@@ -274,12 +279,13 @@ public class ArtemisMain extends Splash
     };
     entryWorker.start();
   }
-
+  
   /**
    *  Read the entries named in args and in the diana.ini file.
    **/
-  protected void readArgsAndOptions(final String [] args)
+  protected void readArgsAndOptions(final String [] args, final JFrame f)
   {
+    processJnlpAttributes();
     if(args.length == 0) 
     {
       if(System.getProperty("chado") != null && 
@@ -335,7 +341,7 @@ public class ArtemisMain extends Splash
         entry_document.addInputStreamProgressListener(progress_listener);
 
         final uk.ac.sanger.artemis.io.Entry new_embl_entry =
-          EntryFileDialog.getEntryFromFile(this, entry_document,
+          EntryFileDialog.getEntryFromFile(f, entry_document,
                                            artemis_entry_information,
                                            false);
 
@@ -356,6 +362,7 @@ public class ArtemisMain extends Splash
                              new_entry_name + " has an out of range " +
                              "location: " + e.getMessage());
         }
+        seen_plus = false; // reset
       }
       else if(System.getProperty("chado") != null && new_entry_name.indexOf(':')>-1)
       {
@@ -371,12 +378,9 @@ public class ArtemisMain extends Splash
           entry_source.setReadOnly(true);
         }
         
-        if(!entry_source.setLocation(promptUser))
+        last_entry_edit = dbLogin(entry_source, promptUser, new_entry_name);
+        if(last_entry_edit == null)
           return;
-        
-        last_entry_edit =
-          DatabaseJPanel.show(entry_source, this,
-              getInputStreamProgressListener(), new_entry_name);
       }
       else
       {
@@ -407,7 +411,7 @@ public class ArtemisMain extends Splash
         entry_document.addInputStreamProgressListener(getInputStreamProgressListener());
  
         final uk.ac.sanger.artemis.io.Entry new_embl_entry =
-          EntryFileDialog.getEntryFromFile(this, entry_document,
+          EntryFileDialog.getEntryFromFile(f, entry_document,
                                            artemis_entry_information,
                                            false);
 
@@ -451,7 +455,41 @@ public class ArtemisMain extends Splash
     }
   }
   
+  /**
+   * Handle database connection and construction of EntryEdit
+   * @param entry_source
+   * @param promptUser
+   * @param new_entry_name
+   * @return
+   */
+  private EntryEdit dbLogin(final DatabaseEntrySource entry_source, 
+                            final boolean promptUser, 
+                            final String new_entry_name)
+  {
+    EntryEdit last_entry_edit = null;
+    
+    // allow 3 attempts to login
+    for(int i = 0; i < 3; i++)
+    {
+      if (!entry_source.setLocation(promptUser))
+        return null;
 
+      try
+      {
+        last_entry_edit = DatabaseJPanel.show(entry_source, this,
+            getInputStreamProgressListener(), new_entry_name);
+        break;
+      }
+      catch (Exception e)
+      {
+        new MessageDialog(this, e.getMessage());
+        entry_source.getDatabaseDocument().reset();
+      }
+    }
+    
+    return last_entry_edit;
+  }
+  
   /**
    *
    *  Handle the -biojava option
@@ -669,29 +707,10 @@ public class ArtemisMain extends Splash
   }
 
   /**
-   *  This method gets rid of an EntryEdit object and it's frame.  Each object
-   *  removed with this method must have been added previously with
-   *  addEntryEdit().
-   *  @param entry_edit The object to get rid of.
-   **/
-  public void entryEditFinished(EntryEdit entry_edit) 
-  {
-    if(null == entry_edit) 
-      throw new Error("entryEditFinished() was passed a null object");
-
-    if(!entry_edit_objects.removeElement(entry_edit)) 
-      throw new Error("entryEditFinished() - could not remove a " +
-                       "object from an empty vector");
-
-    entry_edit.setVisible(false);
-    entry_edit.dispose();
-  }
-
-  /**
    *  Add an EntryEdit object to our list of objects.
    *  @param entry_edit The object to add.
    **/
-  public synchronized void addEntryEdit(EntryEdit entry_edit) 
+  private synchronized void addEntryEdit(EntryEdit entry_edit) 
   {
     entry_edit_objects.addElement(entry_edit);
   }
@@ -703,54 +722,39 @@ public class ArtemisMain extends Splash
    **/
   private void getEntryEditFromEntrySource(final EntrySource entry_source) 
   {
-    SwingWorker entryWorker = new SwingWorker()
-    { 
-      EntryEdit entry_edit;
-      public Object construct()
+    try
+    {
+      final Entry entry = entry_source.getEntry(true);
+      if(entry == null)
+        return ;
+
+      final EntryGroup entry_group =
+           new SimpleEntryGroup(entry.getBases());
+      entry_group.add(entry);
+
+      SwingUtilities.invokeLater(new Runnable() 
       {
-        try
+        public void run() 
         {
-          final Entry entry = entry_source.getEntry(true);
-          if(entry == null)
-            return null;
-
-          final EntryGroup entry_group =
-              new SimpleEntryGroup(entry.getBases());
-
-          entry_group.add(entry);
-          entry_edit = new EntryEdit(entry_group);
-        }
-        catch(OutOfRangeException e)
-        {
-          new MessageDialog(ArtemisMain.this, "read failed: one of the features in " +
-                     " the entry has an out of range " +
-                     "location: " + e.getMessage());
-        }
-        catch(NoSequenceException e)
-        {
-          new MessageDialog(ArtemisMain.this, "read failed: entry contains no sequence");
-        }
-        catch(IOException e)
-        {
-          new MessageDialog(ArtemisMain.this, "read failed due to IO error: " + e);
-        }
-        return null;
-      }
-
-      public void finished()
-      {
-        if(entry_edit != null)
+          EntryEdit entry_edit = new EntryEdit(entry_group);
           entry_edit.setVisible(true);
-      }
-    };
-    entryWorker.start();
-  }
-  
-  /**
-   * Retrieve a live vector containing all the EntryEdit object we have created. 
-   */
-  protected EntryEditVector get_entry_edit_objects() {
-	  return entry_edit_objects;
+        }
+      });
+    }
+    catch(OutOfRangeException e)
+    {
+      new MessageDialog(ArtemisMain.this, "read failed: one of the features in " +
+               " the entry has an out of range " +
+               "location: " + e.getMessage());
+    }
+    catch(NoSequenceException e)
+    {
+      new MessageDialog(ArtemisMain.this, "read failed: entry contains no sequence");
+    }
+    catch(IOException e)
+    {
+      new MessageDialog(ArtemisMain.this, "read failed due to IO error: " + e);
+    }
   }
 
   
@@ -783,7 +787,7 @@ public class ArtemisMain extends Splash
       {
         final ArtemisMain main_window = new ArtemisMain(args);
         main_window.setVisible(true);
-        main_window.readArgsAndOptions(args);
+        main_window.readArgsAndOptions(args, main_window);
       }
     });
   }

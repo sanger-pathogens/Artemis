@@ -25,6 +25,7 @@
 
 package uk.ac.sanger.artemis.io;
 
+import uk.ac.sanger.artemis.sequence.BasePattern;
 import uk.ac.sanger.artemis.util.LinePushBackReader;
 
 import java.io.IOException;
@@ -45,14 +46,14 @@ public class RawStreamSequence extends StreamSequence
    *  The _character_ positions of the header lines relative to the sequence.
    *  This is in the same order as fasta_header_strings.
    **/
-  private Vector fasta_header_positions = null;
+  private Vector<Integer> fasta_header_positions = null;
 
   /**
    *  This Vector holds the fasta headers (if any) that where seen while
    *  reading the sequence.  This is in the same order as
    *  fasta_header_positions.
    **/
-  private Vector fasta_header_strings = null;
+  private Vector<String> fasta_header_strings = null;
 
   /**
    *  Create a new RawStreamSequence object from a stream containing raw
@@ -124,14 +125,14 @@ public class RawStreamSequence extends StreamSequence
    *  as it goes.  No checks are made on the format of the sequence, apart
    *  from checking that the stream contains only letters.
    **/
-  protected void readSequence(final LinePushBackReader in_stream)
+  private void readSequence(final LinePushBackReader in_stream)
       throws IOException 
   {
 
     // initialise these here because this method is called before class
     // variables are initialised
-    fasta_header_positions = new Vector();
-    fasta_header_strings   = new Vector();
+    fasta_header_positions = new Vector<Integer>();
+    fasta_header_strings   = new Vector<String>();
 
     final int buffer_capacity = 5000;
 
@@ -141,29 +142,60 @@ public class RawStreamSequence extends StreamSequence
 
     String line;
     int nbase = 0;
+    boolean validSequenceCheck = true;
+    String hdrLine = null;
     while((line = in_stream.readLine()) !=null) 
     {
       if(line.startsWith(">")) 
       {
-        final String header_string = line.substring(1);
-        final Integer header_position = new Integer(nbase);
-
-        fasta_header_strings.addElement(header_string);
-        fasta_header_positions.addElement(header_position);
-
-        // ignore header lines
+        storeHeader(line, nbase);
+        validSequenceCheck = true;
+        hdrLine = line;
         continue;
       }
 
       line = line.trim().toLowerCase();
+      
+      if(validSequenceCheck)
+      {
+        if(BasePattern.patternType(line) == BasePattern.ILLEGAL_PATTERN)
+        {
+          // ignore non-nucleotide sequence
+          if(hdrLine != null)
+          {
+            System.err.println(
+                "Warning:: ignore non-nucleotide sequence found in "+hdrLine.substring(1));
+            fasta_header_strings.remove(hdrLine.substring(1));
+            fasta_header_positions.remove(new Integer(nbase));
+          }
+
+          while((line = in_stream.readLine()) !=null) 
+          {
+            if(line.startsWith(">")) 
+            {
+              storeHeader(line, nbase);
+              hdrLine = line;
+              break;
+            }
+          }
+          continue;
+        }
+        validSequenceCheck = false;
+      }
 
       if(line.length() > 0)
         appendChar(line.toCharArray());
       nbase += line.length();
+      hdrLine = null;
     }
 
     setCounts();
-
+  }
+  
+  private void storeHeader(String line, int nbase)
+  {
+    fasta_header_strings.addElement(line.substring(1));
+    fasta_header_positions.addElement(new Integer(nbase));
   }
 
   /**
@@ -265,7 +297,7 @@ public class RawStreamSequence extends StreamSequence
 
     if(fasta_header_positions != null && fasta_header_positions.size() > 0)
     {
-      Vector seen = new Vector(fasta_header_positions.size());
+      Vector<Integer> seen = new Vector<Integer>(fasta_header_positions.size());
       for(int i = 0 ; i < fasta_header_positions.size(); ++i)
       {
         int current_position = ((Integer)fasta_header_positions.elementAt(i)).intValue();

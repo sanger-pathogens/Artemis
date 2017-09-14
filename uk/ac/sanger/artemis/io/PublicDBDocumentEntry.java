@@ -211,7 +211,8 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
     if(location == null)
       return null;
     // flatten gene model - combining qualifiers
-    if(key.getKeyString().equals(DatabaseDocument.EXONMODEL))
+    if(key.getKeyString().equals(DatabaseDocument.EXONMODEL) &&
+        ((GFFStreamFeature)feature).getChadoGene() != null)
     {
       ChadoCanonicalGene chadoGene = ((GFFStreamFeature)feature).getChadoGene();
 
@@ -250,6 +251,13 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
     	addNewQualifier(qualifiers, newIDQualifier);
     	geneQualifiers.removeQualifierByName("ID");
       }
+      else if(ntranscripts == 1)
+      {
+        if(qualifiers.getQualifierByName("Start_range") != null)
+          addNewQualifier(qualifiers, qualifiers.getQualifierByName("Start_range"));
+        if(qualifiers.getQualifierByName("End_range") != null)
+          addNewQualifier(qualifiers, qualifiers.getQualifierByName("End_range"));
+      }
       combineQualifiers(qualifiers, geneQualifiers, true);
     }
     else if(GeneUtils.isNonCodingTranscripts(key))
@@ -261,11 +269,18 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
         qualifiers.removeQualifierByName("ID");
         QualifierVector geneQualifiers = chadoGene.getGene().getQualifiers().copy();
         combineQualifiers(qualifiers, geneQualifiers, true);
+        
+        if(qualifiers.getQualifierByName("product") != null)
+        {
+          Qualifier newQualifier = new Qualifier("product", processProductValues(qualifiers.getQualifierByName("product")));
+          qualifiers.setQualifier(newQualifier);
+        }
       }
     }
     
     try
     {
+      location = handlePartials(qualifiers, location);
       for(int i=0; i<DATABASE_QUALIFIERS_TO_MAP.length; i++)
       {
         if(!getEntryInformation().isValidQualifier(DATABASE_QUALIFIERS_TO_MAP[i][0]))
@@ -355,9 +370,15 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
         if(start != feature.getLocation().getTotalRange().getStart())
           return null;
         
+        if(feature.getLocation().isComplement())
+          ranges.reverse();
         location =
           new Location(ranges, feature.getLocation().isComplement());
       }
+
+      int ntranscripts = gene.getTranscripts().size();
+      if(ntranscripts == 1)
+    	  transcriptName = gene.getGeneUniqueName();
       qualifiers.setQualifier(new Qualifier("locus_tag", transcriptName));
       qualifiers.removeQualifierByName("ID");
     }
@@ -398,29 +419,7 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
       
       if(newQualifier.getName().equals("product"))
       {
-        final StringVector newValues = newQualifier.getValues();
-        final StringVector tmpNewValues = new StringVector();
-        for(int j=0; j<newValues.size(); j++)
-        {
-          String val = (String)newValues.get(j);
-          
-          int ind = 0;
-          if((ind=val.indexOf(";db_xref="))>-1)
-            val = val.substring(0,ind);
-          
-          if((ind=val.indexOf(";evidence="))>-1)
-            val = val.substring(0,ind);
-          
-          if(val.startsWith("term="))
-            val = val.substring(5,  val.length());
-          
-          if(val.endsWith(";"))
-            val = val.substring(0,  val.length()-1);
-          
-          tmpNewValues.add(val);
-        }
- 
-        newQualifier = new Qualifier("product", tmpNewValues);
+        newQualifier = new Qualifier("product", processProductValues(newQualifier));
       }
       
       if(newQualifier.getName().equals("orthologous_to") ||
@@ -436,7 +435,7 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
         if(tmpNewValues.size() == 0)
           continue;
         
-        Pattern p = Pattern.compile("\\w+:link=\\w+");
+        Pattern p = Pattern.compile("\\w+[ :]link=\\w+");
         for(int j=0; j<tmpNewValues.size(); j++)
         {
           String valueStr = (String)tmpNewValues.get(j);
@@ -463,6 +462,45 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
       
       addNewQualifier(qualifiers, newQualifier);
     }
+  }
+  
+  /**
+   * Process product qualifier
+   * @param productQualifier
+   * @return
+   */
+  private StringVector processProductValues(Qualifier productQualifier)
+  {
+    final StringVector values = productQualifier.getValues();
+    final StringVector tmpNewValues = new StringVector();
+    for(String val: values)
+    {
+      int ind = 0;
+      if((ind=val.indexOf(";db_xref="))>-1 && this instanceof EmblDocumentEntry)
+        val = val.substring(0,ind);
+
+      if((ind=val.indexOf(";evidence="))>-1 && this instanceof EmblDocumentEntry)
+        val = val.substring(0,ind);
+
+      if((ind=val.indexOf(";with="))>-1 && this instanceof EmblDocumentEntry)
+        val = val.substring(0,ind);
+
+      if((ind=val.indexOf("rank="))>-1 && this instanceof EmblDocumentEntry)
+      {
+        int ind2 = val.indexOf(";", ind);
+        if(ind == 0 && ind2 > -1)
+          val = val.substring(ind2+1);
+      }
+
+      if(val.startsWith("term="))
+        val = val.substring(5,  val.length());
+
+      if(val.endsWith(";"))
+        val = val.substring(0,  val.length()-1);
+
+      tmpNewValues.add(val);
+    }
+    return tmpNewValues;
   }
   
   /**
@@ -707,7 +745,7 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
     Enumeration qualifiersenum = qualifierMapProperties.propertyNames();
     n = 0;
 
-    Vector qualifiersToRemove = new Vector();
+    Vector<String> qualifiersToRemove = new Vector<String>();
     while(qualifiersenum.hasMoreElements()) 
     {
       String current_map_name = (String) qualifiersenum.nextElement();
@@ -737,6 +775,40 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
         n++;
       }
     }
+  }
+  
+  /**
+   * Use '<' and '>' signs in the location descriptors to
+   * indicate that the sequence is partial.
+   * @param qualifiers
+   * @param location
+   * @return
+   */
+  private Location handlePartials(QualifierVector qualifiers, Location location)
+  {
+    if(qualifiers.getQualifierByName("Start_range") != null)
+    {
+      try
+      {
+        location = new Location(location.toStringShort().replaceFirst("(\\d)", "<$1"));
+      }
+      catch (LocationParseException e)
+      {
+        e.printStackTrace();
+      }
+    }
+    if(qualifiers.getQualifierByName("End_range") != null)
+    {
+      try
+      {
+        location = new Location(location.toStringShort().replaceAll("^(.*)(\\.)(.*)$","$1$2>$3"));
+      }
+      catch (LocationParseException e)
+      {
+        e.printStackTrace();
+      }
+    }
+    return location;
   }
   
   /**
@@ -770,7 +842,7 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
     for(int i=0; i<segments.size(); i++)
     {
       int seglen = segments.elementAt(i).getBases().length();
-      if(nbases+seglen > translatedBasePosion)
+      if(nbases+seglen > translatedBasePosion && sequenceloc == 0)
       {
         Bases bases = f.getStrand().getBases();
         sequenceloc = segments.elementAt(i).getStart().getPosition() +
@@ -782,11 +854,11 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
       nbases += seglen;
     }
     
-    String pos = "";
+    String pos;
     if(f.isForwardFeature())
       pos = sequenceloc+".."+(sequenceloc+2);
     else
-      pos = "complement("+(sequenceloc-2)+".."+sequenceloc+")";
+      pos = sequenceloc+".."+(sequenceloc-2);
     
     qualifiers.add(new Qualifier("transl_except","(pos:"+pos+",aa:Sec)"));
   }

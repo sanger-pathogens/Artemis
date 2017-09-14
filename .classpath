@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="corba"/>
+	<classpathentry kind="src" path="lib"/>
 	<classpathentry including="nsdb/|seqdb/|type/" kind="src" path="ant-build/src/main"/>
-	<classpathentry excluding="uk/ac/sanger/artemis/ExternalProgramUtils.java|ant-build/src/main/" including="nsdb/|seqdb/|type/|uk/" kind="src" path=""/>
+	<classpathentry excluding="ant-build/src/main/|uk/ac/sanger/artemis/ExternalProgramUtils.java" including="nsdb/|org/|seqdb/|type/|uk/" kind="src" path=""/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/jemAlign.jar"/>
 	<classpathentry kind="lib" path="lib/jakarta-regexp-1.2.jar"/>
@@ -11,11 +12,18 @@
 	<classpathentry kind="lib" path="lib/j2ssh/j2ssh-artemis-plugin.jar"/>
 	<classpathentry kind="lib" path="lib/j2ssh/commons-logging.jar"/>
 	<classpathentry kind="lib" path="lib/ibatis/ibatis-2.3.4.726.jar"/>
-	<classpathentry kind="lib" path="lib/chado-14-interface.jar"/>
 	<classpathentry kind="lib" path="lib/ibatis/log4j-1.2.14.jar"/>
-	<classpathentry kind="lib" path="test/lib/junit-4.5.jar"/>
 	<classpathentry kind="lib" path="lib/postgresql-8.4-701.jdbc3.jar"/>
 	<classpathentry kind="lib" path="lib/picard/picard.jar"/>
 	<classpathentry kind="lib" path="lib/picard/sam.jar"/>
+	<classpathentry kind="lib" path="lib/commons-net-2.2.jar"/>
+	<classpathentry kind="lib" path="lib/batik/batik-awt-util.jar"/>
+	<classpathentry kind="lib" path="lib/batik/batik-codec.jar"/>
+	<classpathentry kind="lib" path="lib/batik/batik-dom.jar"/>
+	<classpathentry kind="lib" path="lib/batik/batik-ext.jar"/>
+	<classpathentry kind="lib" path="lib/batik/batik-svggen.jar"/>
+	<classpathentry kind="lib" path="lib/batik/batik-util.jar"/>
+	<classpathentry kind="lib" path="lib/batik/batik-xml.jar"/>
+	<classpathentry kind="lib" path="lib/commons-lang-2.6.jar"/>
 	<classpathentry kind="output" path="ant-build/classes/main"/>
 </classpath>

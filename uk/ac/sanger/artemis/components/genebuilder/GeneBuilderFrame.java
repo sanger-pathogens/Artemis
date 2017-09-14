@@ -343,13 +343,25 @@ public class GeneBuilderFrame extends JFrame
         geneBuilderHash.put(chado_gene.getGeneUniqueName(), gbFrame);
       }
     }
-    else if(!GeneUtils.isBoundaryOK(chado_gene))
+    else 
     {
-      int result = JOptionPane.showConfirmDialog(this, 
+      if(!chado_gene.getGene().isReadOnly() && GeneUtils.isBoundaryOK(chado_gene) > 0)
+      {
+        int result = JOptionPane.showConfirmDialog(this, 
           "Gene model boundary needs fixing.\nFix this now?", 
           "Gene Boundary", JOptionPane.YES_NO_OPTION);
-      if(result == JOptionPane.YES_OPTION)
-        GeneUtils.checkGeneBoundary(chado_gene);
+        if(result == JOptionPane.YES_OPTION)
+          GeneUtils.checkGeneBoundary(chado_gene);
+      }
+      
+      if(!GeneUtils.isStrandOK(chado_gene))
+      {
+        JOptionPane.showMessageDialog(this, 
+          "All gene features should be on the same strand.\n"+
+          "Check the strand of each of the features (gene,\n"+
+          "transcript, CDS, polypeptide).", 
+          "Check Strand", JOptionPane.WARNING_MESSAGE);
+      }
     }
     
     super.dispose();

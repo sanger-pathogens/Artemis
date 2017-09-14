@@ -108,14 +108,26 @@ public class FileDocument extends Document {
 
     final InputStream file_input_stream =
       new ProgressInputStream (new FileInputStream (read_file),
-                               getProgressListeners ());;
+                               getProgressListeners ());
     
     if (read_file.getName ().endsWith (".gz")) {
-      // assume this file is gzipped
-      return new WorkingGZIPInputStream (file_input_stream);
-    } else {
+      final BufferedInputStream ins = new BufferedInputStream(file_input_stream);
+      
+      if (! System.getProperty("java.version").startsWith("1.5.")) 
+      {
+        if(DocumentBlockCompressed.isValidFile(ins)) // BGZIP
+          return DocumentBlockCompressed.getBlockCompressedInputStream(ins);
+      }
+      
+      ins.close();
+      file_input_stream.close();
+
+      // assume GZIP
+      return new WorkingGZIPInputStream (
+          new ProgressInputStream (new FileInputStream (read_file),
+          getProgressListeners ()));
+    } else
       return file_input_stream;      
-    }
   }
 
   /**
@@ -143,5 +155,22 @@ public class FileDocument extends Document {
    **/
   public File getFile () {
     return (File) getLocation ();
+  }
+  
+}
+
+/**
+ * Requires Java 1.6
+ */
+class DocumentBlockCompressed
+{
+  protected static boolean isValidFile(BufferedInputStream ins) throws IOException
+  {
+    return net.sf.samtools.util.BlockCompressedInputStream.isValidFile(ins);
+  }
+  
+  protected static InputStream getBlockCompressedInputStream(BufferedInputStream ins) throws IOException
+  {
+    return new net.sf.samtools.util.BlockCompressedInputStream(ins);
   }
 }

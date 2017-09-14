@@ -19,20 +19,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/DocumentFeature.java,v 1.1 2004-06-09 09:49:07 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
 
-import uk.ac.sanger.artemis.util.*;
-import java.io.*;
-
 /**
  *  This is a Faeture that is owned by a DocumentEntry.
- *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: DocumentFeature.java,v 1.1 2004-06-09 09:49:07 tjc Exp $
  **/
 
 public interface DocumentFeature extends Feature {

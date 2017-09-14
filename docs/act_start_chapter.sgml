@@ -15,7 +15,12 @@ Before running &prog; you will need to obtain a comparison file.
             </ULINK> version 2.2.2 or better</TITLE>
           <PARA>
 The <COMMAND>blastall</COMMAND> command must be run with the <COMMAND>-m
-8</COMMAND> flag which generates one line of information per HSP.
+8</COMMAND> flag which generates one line of information per HSP. If 
+<ULINK URL="http://blast.ncbi.nlm.nih.gov/">BLAST+</ULINK>
+is used then the legacy_blast.pl PERL script (bundled along with the BLAST+ applications)
+can be used to generate the tabular format or run it with the <COMMAND>-outfmt 6</COMMAND> flag.
+For more details see the <ULINK URL=
+"ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/user_manual.pdf">BLAST+ manual</ULINK>.
           </PARA>
         </FORMALPARA>
       </LISTITEM>
@@ -33,7 +38,7 @@ which is part of the blast distribution.
         <FORMALPARA>
           <TITLE>MSPcrunch output</TITLE>
           <PARA>
-<ULINK URL="http://www.cgr.ki.se/cgr/groups/sonnhammer/MSPcrunch.html"
+<ULINK URL="http://sonnhammer.sbc.su.se/download/software/MSPcrunch+Blixem/"
 TYPE="external">MSPcrunch</ULINK> is program for UNIX and GNU/Linux systems
 which can post-process <ULINK
 URL="http://www.ncbi.nlm.nih.gov/BLAST/">BLAST</ULINK> version 1 output into
@@ -165,7 +170,7 @@ cd ~/act
 
     <PARA>
       <COMMAND>
-java -Dartemis.environment=UNIX -classpath .:./lib/biojava.jar:./lib/jakarta-regexp-1.2.jar:./lib/jemAlign.jar -Dartemis.environment=UNIX uk.ac.sanger.artemis.components.ActMain
+java -mx500m -ms100m -classpath lib/biojava.jar:lib/jemAlign.jar:lib/j2ssh/j2ssh-core.jar:lib/ibatis/ibatis-2.3.4.726.jar:lib/ibatis/log4j-1.2.14.jar:lib/ibatis/cglib-nodep-2.2.jar:lib/postgresql-8.4-701.jdbc3.jar:lib/picard.jar:lib/picard/sam.jar:lib/batik/batik-awt-util.jar:lib/batik/batik-codec.jar:lib/batik/batik-dom.jar:lib/batik/batik-ext.jar:lib/batik/batik-svggen.jar:lib/batik/batik-util.jar:lib/batik/batik-xml.jar:lib/commons-lang-2.6.jar:lib/commons-net-2.2.jar:. uk.ac.sanger.artemis.components.ActMain 
       </COMMAND>
     </PARA>
   </SECT1>
@@ -183,7 +188,7 @@ icon.
   <SECT1 ID="RUNNINGPC">
     <TITLE>Running &prog; on Windows Systems</TITLE>
     <PARA>
-On systems with Java 1.5 (or higher) installed &prog; can be
+On systems with Java 1.6 (or higher) installed &prog; can be
 started by double clicking on the act.jar icon.
     </PARA>
   </SECT1>

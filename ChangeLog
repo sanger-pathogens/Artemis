@@ -1,8 +1,183 @@
-Version 12.+
-	It is now possible to add BAM / VCF files from the command line using the 
+Version 16
+	Add 'Features Within Selection' option to the 'Select' menu to select
+	features that are contained by a selected base range.
+
+	Saving an entry as EMBL submission has an option now to remove products
+	from CDS features with a pseudogene qualifier.
+	
+	From the 'View' menu added 'Adjust panel heights...' option in ACT 
+	for adjusting their heights (BAM, VCF, plots, comparisons) by giving 
+	them different weights in order to distribute the space between each 
+	component.
+	
+	Added ability to hide graph lines. Right click on the graph to get the 
+	popup menu and select 'Configure...'. Then use the 'Line size' slider 
+	to reduce the size of the line(s) that you want to hide to zero.
+
+	Labels can optionally be added to the header of base position plots
+	and these are used in the legend, e.g.
+	# colour 5:150:55 255:0:0 0:255:0 0:0:255 100:100:100 50:150:50
+	# label lab1 lab2 lab3 lab4 lab5 lab6
+	176 2204.8 848.23 0 0 0 536.04
+	...
+	
+	In the Feature Editor there is now a button ('User Qualifiers') which
+	opens a tool for maintaining user defined lists of qualifiers (i.e. 
+	qualifiers in the form tag = value pairs on separate lines) and the 
+	option to read qualifiers from OBO formatted files or URLs. These can
+	be saved between sessions in the file '.artemis.qualifiers' in the
+	home directory.
+	
+	Automatic addition of history qualifier in chado database mode.
+
+	Added RNASeq strand specific option to the BAM popup menu ('Colour By' -> 
+	'RNASeq Strand Specific Tag (XS)'). Reads colours are based on the XS 
+	tag (used by TopHat). The RNA strand is then used in the coverage plots
+	and in calculation of read counts and RPKM values.
+	
+	Added the following flags:
+  		-Dshow_snps			Show SNP marks in BamView
+  		-Dshow_snp_plot		Open SNP plot in BamView
+  		-Dshow_cov_plot		Open coverage plot in BamView
+  
+	Add validation checks. This will check the following:
+		All file types:
+	    	- CDS have no internal stop codon
+      		- CDS have valid stop codon
+		GFF / Chado:
+	    	- check complete gene model
+        	- check boundaries are valid
+        	- check all features are on the same strand
+        	- check CDS features have a phase
+        	- check attribute column 
+            - qualifiers have a value (not empty)
+            - only reserved tags start with uppercase
+	
+		Validation can be run in two ways: 
+			1. using the option in View->Feature Filters->Validation checks... which shows 
+			'failed' features in feature list windows
+			2. selecting 'Validation report ...' option in the popup menu when right clicking 
+			on the feature display. This produces a report with an option to auto-fix gene 
+			boundaries and stop codons. 
+
+Version 15
+
+	Multiple BAM panels can be opened using the bamClone flag this is used with 
+	the -Dbam flag:
+	art -Dbam='/pathToFile/file1.bam,/pathToFile/file2.bam' -DbamClone=n  
+	(where n is an integer greater than 1). All BAM files are then shown in	each 
+	panel. Alternatively the following will open BAM files in separate panels
+	(using -Dbam[1,2,3...]):
+	art -Dbam1=fileA.bam -Dbam2=fileB.bam
+	
+	Add SVG (scalable vector graphics) support for Artemis, ACT and DNAPlotter.
+
+	Option added to adjust VCF row height.
+		
+	Add support for indexed user graphs using tabix. For example file.plot is a tab
+	delimited file with column 1 containing the sequence name and column 2 the
+	positions:
+	(grep ^"#" file.plot; grep -v ^"#" file.plot | sort -k1,1 -k2,2n) | bgzip > sorted.plot.gz ;
+	tabix -s 1 -b 2 -e 2 sorted.plot.gz
+	
+	Option added to show or hide the average line in the graphs.
+	
+	BAM coverage heatmap view added.
+
+	Add Rfam sequence search from the RUN menu.
+	
+	Base similarity graph for each VCF added to the VCF view.
+	
+	Sense and anti-sense read counts and RPKM values are now reported.
+	
+	Option added to create features from BAM peaks, i.e. above a threshold of the 
+	number aligned reads.
+
+	Option included for defining groups of BAM files so that they can be
+	switched on and off by their group.
+	
+	Coverage plots from read alignments (BAM) can be plotted by their strand.
+
+	Addition of a Project File Manager used to group files together for
+	launching in Artemis. When a project has been added or updated the details 
+	are saved at the end of each session in '.artemis.project.properties' 
+	in the user's home directory. 
+
+	Fix for saving user defined shortcuts between sessions on windows.
+	
+	Add preliminary support for the CRAM format:
+	http://www.ebi.ac.uk/ena/about/cram_toolkit
+	This requires the cramtools.jar to be added to the start of the CLASSPATH.
+
+	Improved support for matching GFF feature coordinates to the correct
+	contig in a multiple FASTA sequences. This works now whether
+	the sequence is part of the GFF file or a separate multiple-FASTA file.
+
+	Add 'Feature Stack View' to visualise overlapping gene features.
+
+	Add support for read-only indexed GFF. Features in GFF format are
+	sorted and indexed with tabix:
+	http://samtools.sourceforge.net/tabix.shtml
+
+Version 14
+	Add options in the navigator for searching the forward and 
+	reverse strands individually for base / amino acid patterns.
+	
+	Add an option to the navigator for searching for matches that
+	overlap a selected region or feature.
+	
+	New translation table 24 (Pterobranchia mitochondrial) added.
+	
+	If the BAM index file is missing then Artemis uses the picard library to
+	attempt to create the index.
+
+	Variant (VCF / BCF) filtering now uses the meta-data in the header to
+	enable filtering based on INFO, FILTER and FORMAT columns.
+	
+	Shortcut changes made in the 'Preferences' menu are saved between sessions (the 
+	shortcut_cache flag in the options file can be used to turn this on/off).
+	
+	More support for GTF format to show CDS and exons as joined features. 
+
+	BAM record list option added to display as a list the reads and their
+	properties.
+	
+	Add options for loading graph, BAM and VCF files into ACT from the 
+	command line. Numbers are used to associate the file with a particular
+	sequence. e.g. add a BAM to the first (top) sequence in ACT:
+	act -Dbam1=/pathToFile/file.bam 
+	or, to add a userplot to the second sequence:
+	act -Duserplot2=/pathToFile/userPlot
+
+Version 13.2.0
+	Added option to provide overview of the variation sites.
+
+	Change BamView filter to enable filtering in and out based on
+	reads flag.
+	
+	Add read count and RPKM calculations to BamView.
+
+	Add option in BamView to clone the alignment panel.
+	
+	Create features option for VCF records.
+	
+	Unit tests added for writing VCF/BCF sequences.
+
+	Add new Coverage view to BamView. It automatically switches to this view
+	on zooming out.
+
+	Add options to write out or view FASTA sequences from VCF/BVF variation
+	data.
+
+Version 13
+	Add support for reading in indexed BCF (Binary VCF) files.
+	
+	Memory optimisation of codon caching, reducing the memory footprint.
+	
+	It is now possible to add BAM, VCF and BCF files from the command line using the 
 	JVM bam option, e.g. art -Dbam=/pathToFile/file.bam 
 	and for multiple BAM's/VCF's this is comma separated
-	art -Duserplot='/pathToFile/file1.bam,/pathToFile/file2.bam', it
+	art -Dbam='/pathToFile/file1.bam,/pathToFile/file2.bam', it
 	can also read the BAM's from URL's.
 	
 	Added option to display orientation of reads in BamView.

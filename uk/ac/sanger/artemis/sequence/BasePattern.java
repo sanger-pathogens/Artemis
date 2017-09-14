@@ -56,7 +56,7 @@ public class BasePattern {
   /**
    *  A return value of patternType () - illegal characters in the pattern.
    **/
-  private static int ILLEGAL_PATTERN = -1;
+  public static int ILLEGAL_PATTERN = -1;
 
   /**
    *  A return value of patternType () - the pattern contains only the
@@ -112,7 +112,9 @@ public class BasePattern {
   public MarkerRange findMatch (final Bases bases,
                                 final Marker search_start_marker,
                                 final int search_end_position,
-                                final boolean search_backwards) {
+                                final boolean search_backwards,
+                                final boolean search_fwd_strand,
+                                final boolean search_bwd_strand) {
     final String bases_string = bases.toString ();
 
     // search the bases_string forward for the pattern_string and its
@@ -157,17 +159,19 @@ public class BasePattern {
       }
     }
     
-    final int forward_search_result =
-      searchFor (bases_string,
-                 pattern_string,
-                 forward_search_start_index,
-                 search_backwards);
+    final int forward_search_result;
+    if(search_fwd_strand)
+      forward_search_result = searchFor (bases_string, pattern_string,
+                                         forward_search_start_index, search_backwards);
+    else
+      forward_search_result = -1;
 
-    final int complement_search_result =
-      searchFor (bases_string,
-                 Bases.reverseComplement (pattern_string),
-                 complement_search_start_index,
-                 search_backwards);
+    final int complement_search_result;
+    if(search_bwd_strand)
+      complement_search_result = searchFor (bases_string, Bases.reverseComplement (pattern_string),
+                                            complement_search_start_index, search_backwards);
+    else
+      complement_search_result = -1;
 
     final int match_first_base;
     final int match_last_base;
@@ -251,7 +255,7 @@ public class BasePattern {
 
     while (true) {
       final MarkerRange new_match_position =
-        findMatch (bases, current_position_marker, search_end_position, false);
+        findMatch (bases, current_position_marker, search_end_position, false, true, true);
 
       if (new_match_position == null) {
         break;
@@ -271,7 +275,7 @@ public class BasePattern {
    *    should start.
    *  @return The index of the match or -1 if there is no match.
    **/
-  public int searchFor (final String bases_string,
+  private int searchFor (final String bases_string,
                         final int start_index) {
     return searchFor (bases_string, pattern_string, start_index, false);
   }
@@ -336,6 +340,7 @@ public class BasePattern {
         for (int pattern_index = 0 ;
              pattern_index < pattern_string.length () ;
              ++pattern_index) {
+          
           if (charMatch (bases_string.charAt (i + pattern_index),
                          pattern_string.charAt (pattern_index))) {
             // OK, so continue with the inner loop
@@ -410,7 +415,7 @@ public class BasePattern {
    *  if the pattern contains only the characters a,t,g,c,r,y,k,m,s,w,n,b,d,h
    *  and v, ie IUC base codes.
    **/
-  private static int patternType (String pattern_string) {
+  public static int patternType (String pattern_string) {
     boolean seen_iuc = false;
 
     for (int i = 0 ; i < pattern_string.length () ; ++i) {

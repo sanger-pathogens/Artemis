@@ -6,7 +6,7 @@
     <PARA>
 On Unix and GNU/Linux the easiest way to run the program is to run the script
 called <COMMAND>art</COMMAND> in the &prog; installation directory (see <XREF
-LINKEND="INSTALLATION">) like this:
+LINKEND="INSTALLATION">), like this:
     </PARA>
 
     <PARA>
@@ -14,7 +14,7 @@ LINKEND="INSTALLATION">) like this:
     </PARA>
 
     <PARA>
-If all goes well you will be presented with a small window with two
+If all goes well you will be presented with a small window with three
 menus.  See <XREF LINKEND="LAUNCH-WINDOW"> to find out what to do next.
     </PARA>
 
@@ -45,8 +45,13 @@ plus sign.  The "+" must be surrounded by spaces.
     </PARA>
 
     <PARA>
-See <XREF LINKEND="UNIXARGS"> for a list of the other possible arguments.
+See <XREF LINKEND="UNIXARGS"> for a list of the other possible arguments. Also
+to see a summary of the options type:
     </PARA>
+
+   <PARA>
+      <COMMAND>artemis/art -help</COMMAND>
+   </PARA>
 
     <PARA>
 Here is an alternative way to run &prog; if the <COMMAND>art</COMMAND> script
@@ -61,7 +66,7 @@ cd ~/artemis
 
     <PARA>
       <COMMAND>
-java -classpath lib/biojava.jar:lib/jemAlign.jar:lib/j2ssh/j2ssh-core.jar:lib/ibatis/ibatis-2.3.4.726.jar:lib/ibatis/log4j-1.2.14.jar:lib/chado-14-interface.jar:lib/postgresql-8.4-701.jdbc3.jar:lib/picard.jar:lib/picard/sam.jar:. -Dartemis.environment=UNIX uk.ac.sanger.artemis.components.ArtemisMain
+java  -mx500m -ms100m -classpath lib/biojava.jar:lib/jemAlign.jar:lib/j2ssh/j2ssh-core.jar:lib/ibatis/ibatis-2.3.4.726.jar:lib/ibatis/log4j-1.2.14.jar:lib/ibatis/cglib-nodep-2.2.jar:lib/postgresql-8.4-701.jdbc3.jar:lib/picard.jar:lib/picard/sam.jar:lib/batik/batik-awt-util.jar:lib/batik/batik-codec.jar:lib/batik/batik-dom.jar:lib/batik/batik-ext.jar:lib/batik/batik-svggen.jar:lib/batik/batik-util.jar:lib/batik/batik-xml.jar:lib/commons-lang-2.6.jar:lib/commons-net-2.2.jar:. -Dartemis.environment=UNIX uk.ac.sanger.artemis.components.ArtemisMain
       </COMMAND>
     </PARA>
   </SECT1>
@@ -93,7 +98,7 @@ lines that look like this:
   <SECT1 ID="RUNNINGPC">
     <TITLE>Running &prog; on Windows Systems</TITLE>
     <PARA>
-On systems with Java 1.5 (or above) installed &prog; can be
+On systems with Java 1.6 (or above) installed &prog; can be
 started by double clicking on the artemis.jar icon.
     </PARA>
   </SECT1>
@@ -106,6 +111,15 @@ top of this window allow you to read a new sequence or embl entry.
     </PARA>
     <SECT2 ID="LAUNCH-WINDOW-FILE-MENU">
       <TITLE>The File Menu</TITLE>
+
+      <SECT3 ID="LAUNCH-WINDOW-PROJMANAGER">
+        <TITLE>Open Project Manager ...</TITLE>
+        <PARA>
+This opens up the Project File Manager which can be used to facilitate launching
+of groups of files (annotation, userplot, BAM, VCF) with a particular sequence.
+See <XREF LINKEND="PROJ-MANAGER-CHAPTER">.
+        </PARA>
+      </SECT3>
 
       <SECT3 ID="LAUNCH-WINDOW-FILEMANAGER">
         <TITLE>Open File Manager ...</TITLE>

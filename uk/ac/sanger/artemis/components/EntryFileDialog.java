@@ -366,22 +366,26 @@ public class EntryFileDialog extends StickyFileChooser
         Box yBox = Box.createVerticalBox();
         boolean useAccessory = false;
 
-        JCheckBox emblHeader = new JCheckBox("Add EMBL Header",
-                                             false);
+        JCheckBox emblHeader = new JCheckBox("Add EMBL Header", false);
+        
+        JCheckBox removeProductForPseudo = new JCheckBox(
+            "Remove products from pseudogenes", false);
 
         setDialogTitle("Save to ...");
         setDialogType(JFileChooser.SAVE_DIALOG);
 
-        if( destination_type == DocumentEntryFactory.EMBL_FORMAT &&
-           (entry.getHeaderText() == null ||
-           !isHeaderEMBL(entry.getHeaderText())) )
+        if( destination_type == DocumentEntryFactory.EMBL_FORMAT )
         {
-          yBox.add(emblHeader);
+          if((entry.getHeaderText() == null || !isHeaderEMBL(entry.getHeaderText())))
+            yBox.add(emblHeader);
+          
+          if(!include_diana_extensions)
+            yBox.add(removeProductForPseudo);
           useAccessory = true;
         }
 
         final JCheckBox flattenGeneModel = new JCheckBox("Flatten Gene Model",
-                                                          true);
+                                                          false);
         final JCheckBox ignoreObsoleteFeatures = new JCheckBox(
                               "Ignore obsolete features", true);
         if(((DocumentEntry)entry.getEMBLEntry()).getDocument() 
@@ -402,6 +406,22 @@ public class EntryFileDialog extends StickyFileChooser
         if(useAccessory)
           setAccessory(yBox);
 
+        switch(destination_type) // provide a suffix
+        {
+          case DocumentEntryFactory.EMBL_FORMAT:
+            super.setSelectedFile(new File(".embl"));
+            flattenGeneModel.setSelected(true);
+            break;
+          case DocumentEntryFactory.GENBANK_FORMAT:
+            super.setSelectedFile(new File(".gbk"));
+            flattenGeneModel.setSelected(true);
+            break;
+          case DocumentEntryFactory.GFF_FORMAT:
+            super.setSelectedFile(new File(".gff"));
+            break;
+          default:
+            break;
+        }
         int status = showSaveDialog(owner);
 
         if(status != JFileChooser.APPROVE_OPTION ||
@@ -450,6 +470,7 @@ public class EntryFileDialog extends StickyFileChooser
                              false);
         try 
         {
+          DocumentEntryFactory.REMOVE_PRODUCT_FROM_PSEUDOGENE = removeProductForPseudo.isSelected();
           if(entry.getEMBLEntry() instanceof DatabaseDocumentEntry ||
              entry.getEMBLEntry() instanceof GFFDocumentEntry)
             ReadAndWriteEntry.writeDatabaseEntryToFile(entry, file, 
@@ -491,6 +512,7 @@ public class EntryFileDialog extends StickyFileChooser
         }
         finally 
         {
+          DocumentEntryFactory.REMOVE_PRODUCT_FROM_PSEUDOGENE = false;
           if(message != null) 
             message.dispose();
         }

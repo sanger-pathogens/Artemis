@@ -77,28 +77,18 @@ public class Bases
   static public final int MAX_PRIORITY = 5;
 
   /**
-   *  A cache of the forward stop codon positions.
-   *  0 means not set/not cached yet, 1 not a stop codon, 2 is a stop codon.
+   *  A cache of the forward & reverse stop codon positions.
+   *  0 means not set/cached yet, 1 not a stop codon, 2 and 3 are a 
+   *  stop codon on fwd or reverse strand respectively.
    **/
-  private byte [] forward_stop_codon_cache = null;
+  private byte [] stop_codon_cache = null;
 
   /**
-   *  A cache of the reverse stop codon positions.
-   *  0 means not set/not cached yet, 1 not a stop codon, 2 is a stop codon.
+   *  A cache of the forward & reverse start codon positions.
+   *  0 means not set/cached yet, 1 not a start codon, 2 and 3 are a 
+   *  start codon on fwd or reverse strand repectively.
    **/
-  private byte [] reverse_stop_codon_cache = null;
-
-  /**
-   *  A cache of the forward start codon positions.
-   *  0 means not set/not cached yet, 1 not a start codon, 2 is a start codon.
-   **/
-  private byte [] forward_start_codon_cache = null;
-
-  /**
-   *  A cache of the reverse start codon positions.
-   *  0 means not set/not cached yet, 1 not a start codon, 2 is a start codon.
-   **/
-  private byte [] reverse_start_codon_cache = null;
+  private byte [] start_codon_cache = null;
   
   /**
    *  Create a new Bases object.
@@ -108,8 +98,7 @@ public class Bases
   {
     this.embl_sequence = sequence;
 
-    forward_stop_codon_cache = null;
-    reverse_stop_codon_cache = null;
+    stop_codon_cache = null;
 
     forward_strand = new Strand(this, FORWARD);
     reverse_strand = new Strand(this, REVERSE);
@@ -160,8 +149,7 @@ public class Bases
   public void reverseComplement()
       throws ReadOnlyException 
   {
-    forward_stop_codon_cache = null;
-    reverse_stop_codon_cache = null;
+    stop_codon_cache = null;
 
     final Strand temp = forward_strand;
     forward_strand = reverse_strand;
@@ -468,73 +456,41 @@ public class Bases
   }
 
   /**
-   *  Returns forward_stop_codon_cache after allocating it (if it is null).
+   *  Returns stop_codon_cache after allocating it (if it is null).
    **/
-  private byte[] getForwardStopCodonCache() 
+  private byte[] getStopCodonCache() 
   {
-    if (forward_stop_codon_cache == null) 
+    if (stop_codon_cache == null) 
     { 
       final int nbytes = getLength() >> 1 >> 1;
-      forward_stop_codon_cache = new byte[nbytes];
+      stop_codon_cache = new byte[nbytes+1];
     }
 
-    return forward_stop_codon_cache;
-  }
-
-  /**
-   *  Returns reverse_stop_codon_cache after allocating it (if it is null).
-   **/
-  private byte[] getReverseStopCodonCache() 
-  {
-    if (reverse_stop_codon_cache == null) 
-    {
-      final int nbytes = (getLength() >> 1 >> 1) + 1;
-      reverse_stop_codon_cache = new byte[nbytes];
-    }
-
-    return reverse_stop_codon_cache;
+    return stop_codon_cache;
   }
 
   
   /**
-   *  Returns forward_stop_codon_cache after allocating it (if it is null).
+   *  Returns start_codon_cache after allocating it (if it is null).
    **/
-  private byte[] getForwardStartCodonCache() 
+  private byte[] getStartCodonCache() 
   {
-    if (forward_start_codon_cache == null) 
+    if (start_codon_cache == null) 
     { 
       final int nbytes = getLength() >> 1 >> 1;
-      forward_start_codon_cache = new byte[nbytes];
+      start_codon_cache = new byte[nbytes+1];
     }
 
-    return forward_start_codon_cache;
+    return start_codon_cache;
   }
-
-  /**
-   *  Returns reverse_stop_codon_cache after allocating it (if it is null).
-   **/
-  private byte[] getReverseStartCodonCache() 
-  {
-    if (reverse_start_codon_cache == null) 
-    {
-      final int nbytes = (getLength() >> 1 >> 1) + 1;
-      reverse_start_codon_cache = new byte[nbytes];
-    }
-
-    return reverse_start_codon_cache;
-  }
-  
 
   /**
    *  Clear stop codon cache (forward and reverse).
    **/
   public void clearCodonCache()
   {
-    forward_stop_codon_cache = null;
-    reverse_stop_codon_cache = null;
-    
-    forward_start_codon_cache = null;
-    reverse_start_codon_cache = null;
+    stop_codon_cache = null;
+    start_codon_cache = null;
   }
  
 
@@ -549,7 +505,7 @@ public class Bases
    *  @return An array containing the positions of the first base of the stop
    *    codons.  This array is padded with zeros at the end.
    **/
-  public int[] getStopCodons(final Range range, final int direction)
+  protected int[] getStopCodons(final Range range, final int direction)
   {
     final Range real_range;
 
@@ -596,55 +552,43 @@ public class Bases
     range_start_index--;
     range_end_index--;
 
-    // whether a codon is a stp codon or not is cached in
-    // 2 bit chuncks (i.e. 4 per byte)
+    // whether a codon is a stop codon or not is cached in
+    // 2 bit chunks (i.e. 4 per byte)
     int ncurrent_byte;
     int bit_position;
-    //int nframe;
     byte bitty;
 
+    final byte[] this_stop_codon_flags = getStopCodonCache();
     if(direction == FORWARD)
     {
-      final byte[] forward_stop_codon_flags = getForwardStopCodonCache();
-      for(int i = range_start_index; i < range_end_index - 2; i += 3)
+    
+      for(int i = range_start_index; i < range_end_index + 1; i += 3)
       {
-        if(i < 0 || i >= sequence_length - 2)
+        if(i < 0 || i >= sequence_length-1)
           continue;
 
-        //nframe = (i-range_start_index) % 3;
         ncurrent_byte = i >> 1 >> 1;
         bit_position  = i % 4;
 
         // determine if codon type is cached or not
-        bitty = (byte) ((forward_stop_codon_flags[ncurrent_byte]
-                                >> (2*bit_position) ) & 0x0003);
-
+        bitty = (byte) ((this_stop_codon_flags[ncurrent_byte]
+                              >> (2*bit_position) ) & 0x0003);
         if(bitty == 0)
         {
           // not cached yet
-          if(isStopCodon(sequence_string[i-range_start_index],
-                         sequence_string[i-range_start_index+1],
-                         sequence_string[i-range_start_index+2]))
-          {
-            forward_stop_codon_flags[ncurrent_byte] =
-                    (byte)(forward_stop_codon_flags[ncurrent_byte] 
-                           | (0x0002 << 2*bit_position));
-          }
-          else
-          {
-            forward_stop_codon_flags[ncurrent_byte] =
-                    (byte)(forward_stop_codon_flags[ncurrent_byte] 
-                           | (0x0001 << 2*bit_position));
-            continue;
-          }
+          setCache(range_start_index, range_end_index, sequence_string, i,
+              null, this_stop_codon_flags, ncurrent_byte, bit_position);
         }
-        else if(bitty == 1)
+
+        bitty = (byte) ((this_stop_codon_flags[ncurrent_byte]
+                           >> (2*bit_position) ) & 0x0003);
+        if( bitty == 1 || bitty == 3 ) 
           continue;
 
         // if we reach here this is a stop codon
         if(current_return_array_index == return_positions.length)
         {
-          // first reallocate the array
+            // first reallocate the array
           final int[] new_array =
             new int[return_positions.length * 3 / 2 + 1];
 
@@ -660,37 +604,27 @@ public class Bases
     }
     else
     {
-      final byte[] reverse_stop_codon_flags = getReverseStopCodonCache();
       for (int i = range_end_index ; i > range_start_index + 2 ; i -= 3)
       {
         if(i < 2 || i >= sequence_length)
           continue;
 
-        //nframe = (range_end_index-i) % 3;
         ncurrent_byte = i >> 1 >> 1;
-        bit_position  = i % 4;
-        bitty = (byte) ((reverse_stop_codon_flags[ncurrent_byte]
-                                >> (2*bit_position) ) & 0x0003);
+        bit_position = i % 4;
+        bitty = (byte) ((this_stop_codon_flags[ncurrent_byte]
+                              >> (2*bit_position) ) & 0x0003);
 
         if(bitty == 0)
         {
-          if(isStopCodon(complement(sequence_string[i-range_start_index]),
-                         complement(sequence_string[i-range_start_index-1]),
-                         complement(sequence_string[i-range_start_index-2])))
-          {
-            reverse_stop_codon_flags[ncurrent_byte] =
-                    (byte)(reverse_stop_codon_flags[ncurrent_byte] 
-                           | (0x0002 << 2*bit_position));
-          }
-          else
-          {
-            reverse_stop_codon_flags[ncurrent_byte] =
-                    (byte)(reverse_stop_codon_flags[ncurrent_byte]
-                           | (0x0001 << 2*bit_position));
-            continue;
-          }
+          // not cached yet
+          setCache(range_start_index, range_end_index, sequence_string, i,
+              null, this_stop_codon_flags, ncurrent_byte, bit_position);
         }
-        else if(bitty == 1)
+
+        bitty = (byte) ((this_stop_codon_flags[ncurrent_byte]
+                           >> (2*bit_position) ) & 0x0003);
+
+        if( bitty == 1 || bitty != 3 )  
           continue;
 
         // if we reach here this is a stop codon
@@ -707,8 +641,7 @@ public class Bases
         }
 
         return_positions[current_return_array_index] =
-              sequence_length - i;
-
+            sequence_length - i;
         ++current_return_array_index;
       }
     }
@@ -780,171 +713,149 @@ public class Bases
     char[] sequence_string = null;
 
     // whether a codon is a stp codon or not is cached in
-    // 2 bit chuncks (i.e. 4 per byte)
+    // 2 bit chunks (i.e. 4 per byte)
     int ncurrent_byte;
     int bit_position;
-    int nframe;
+    int nframe = 0;
     byte bitty;
 
-    if(direction == FORWARD) 
+    final byte[] this_forward_codon_flags;
+    // if this is null then searching for stop codons
+    if(query_codons == null)
+      this_forward_codon_flags = getStopCodonCache();
+    else
+      this_forward_codon_flags = getStartCodonCache();
+      
+    for(int i = range_start_index; i < range_end_index+1; i += 1)
     {
-      final byte[] this_forward_codon_flags; 
-      
-      // if this is null then searching for stop codons
-      if(query_codons == null)
-        this_forward_codon_flags = getForwardStopCodonCache();
-      else
-        this_forward_codon_flags = getForwardStartCodonCache();
-      
-      for(int i = range_start_index; i < range_end_index - 2; i += 1)
-      {
-        if(i < 0 || i >= sequence_length - 2) 
-          continue;
+      if(i < 0 || i >= sequence_length)
+        continue;
 
-        nframe = (i-range_start_index) % 3;
-        ncurrent_byte = i >> 1 >> 1;
-        bit_position  = i % 4;
+      ncurrent_byte = i >> 1 >> 1;
+      bit_position  = i % 4;
 
-        // determine if codon type is cached or not
-        bitty = (byte) ((this_forward_codon_flags[ncurrent_byte]
+      // determine if codon type is cached or not
+      bitty = (byte) ((this_forward_codon_flags[ncurrent_byte]
                                 >> (2*bit_position) ) & 0x0003);
         
-        if(bitty == 0)  // not cached yet
-        {
-          if(sequence_string == null)
-            sequence_string = getSequence().getCharSubSequence(range_start_index+1,
+      if(bitty == 0)  // not cached yet
+      {
+        if(sequence_string == null)
+          sequence_string = getSequence().getCharSubSequence(range_start_index+1,
                                                                range_end_index+1);
 
-          // is this a match to either a stop (or start) codon
-          boolean ismatch;
-          if(query_codons == null)
-            ismatch = isStopCodon(sequence_string[i-range_start_index],
-                                  sequence_string[i-range_start_index+1],
-                                  sequence_string[i-range_start_index+2]);
-          else
-            ismatch = isCodon(sequence_string[i-range_start_index],
-                              sequence_string[i-range_start_index+1],
-                              sequence_string[i-range_start_index+2],
-                              query_codons);
-          
-          if(ismatch)
-          {
-            this_forward_codon_flags[ncurrent_byte] =
-                    (byte)(this_forward_codon_flags[ncurrent_byte] 
-                           | (0x0002 << 2*bit_position));
-          } 
-          else 
-          {
-            this_forward_codon_flags[ncurrent_byte] =
-                    (byte)(this_forward_codon_flags[ncurrent_byte] 
-                           | (0x0001 << 2*bit_position));
-            continue;
-          }
-        } 
-        else if(bitty == 1)  // not a stop/start codon
-          continue;
+        setCache(range_start_index, range_end_index, sequence_string, i,
+                 query_codons, this_forward_codon_flags, ncurrent_byte, 
+                 bit_position);
+        bitty = (byte) ((this_forward_codon_flags[ncurrent_byte]
+                                 >> (2*bit_position) ) & 0x0003);
+      }
 
-        // if we reach here this is a stop/start codon
+      if(  bitty == 1 ||                         // not a stop/start codon
+          (direction == FORWARD && bitty == 3) ||
+          (direction != FORWARD && bitty != 3 ))  
+        continue;
 
-        if(current_return_array_index[nframe] == return_positions[nframe].length) 
-        {
-          // first reallocate the array
-          final int[][] new_array =
+      if(direction == FORWARD) 
+        nframe = (i-range_start_index) % 3;
+      else
+        nframe = (range_end_index-i) % 3;
+      
+      // if we reach here this is a stop/start codon
+      if(current_return_array_index[nframe] == return_positions[nframe].length) 
+      {
+        // first reallocate the array
+        final int[][] new_array =
             new int[3][return_positions[nframe].length * 3 / 2 + 1];
 
-          for(int j=0; j<3; j++)
-            System.arraycopy(return_positions[j], 0,
-                             new_array[j], 0,
-                             return_positions[j].length);
-          return_positions = new_array;
-        }
+        for(int j=0; j<3; j++)
+          System.arraycopy(return_positions[j], 0,
+                           new_array[j], 0,
+                           return_positions[j].length);
+        return_positions = new_array;
+      }
 
+      if(direction == FORWARD)
+      {
         if(i==0)
           return_positions[nframe][current_return_array_index[nframe]] = i + 1;
         else
           return_positions[nframe][current_return_array_index[nframe]] = i;
-        ++current_return_array_index[nframe];
       }
-    } 
-    else
-    {
-      final byte[] this_reverse_codon_flags;
-      
-      if(query_codons == null)
-        this_reverse_codon_flags = getReverseStopCodonCache();
       else
-        this_reverse_codon_flags = getReverseStartCodonCache();
-      
-      for (int i = range_end_index ; i > range_start_index + 2 ; i -= 1) 
-      {
-        if(i < 2 || i >= sequence_length)
-          continue;
-
-        nframe = (range_end_index-i) % 3;
-        ncurrent_byte = i >> 1 >> 1;
-        bit_position  = i % 4;
-        bitty = (byte) ((this_reverse_codon_flags[ncurrent_byte]
-                                >> (2*bit_position) ) & 0x0003);
-
-        if(bitty == 0)    //reverse_stop_codon_flags[i] == 0) 
-        {
-          if(sequence_string == null)
-            sequence_string = getSequence().getCharSubSequence(range_start_index+1,
-                                                               range_end_index+1);
-          // is this a match to either a stop (or start) codon
-          boolean ismatch;
-          if(query_codons == null)
-            ismatch = isStopCodon(complement(sequence_string[i-range_start_index]),
-                                  complement(sequence_string[i-range_start_index-1]),
-                                  complement(sequence_string[i-range_start_index-2]));
-          else
-            ismatch = isCodon(complement(sequence_string[i-range_start_index]),
-                              complement(sequence_string[i-range_start_index-1]),
-                              complement(sequence_string[i-range_start_index-2]),
-                              query_codons);
-          
-          if(ismatch) 
-          {
-            this_reverse_codon_flags[ncurrent_byte] =
-                    (byte)(this_reverse_codon_flags[ncurrent_byte] 
-                           | (0x0002 << 2*bit_position));
-          } 
-          else 
-          {
-            this_reverse_codon_flags[ncurrent_byte] =
-                    (byte)(this_reverse_codon_flags[ncurrent_byte]
-                           | (0x0001 << 2*bit_position));
-            continue;
-          }
-        } 
-        else if(bitty == 1)  // not a stop/start codon
-          continue;
-
-        // if we reach here then this is a stop/start codon
-        if(current_return_array_index[nframe] == return_positions[nframe].length) 
-        {
-          // first reallocate the array
-          final int[][] new_array =
-            new int[3][return_positions[nframe].length * 3 / 2 + 1];
-
-          for(int j=0; j<3; j++)
-            System.arraycopy(return_positions[j], 0,
-                             new_array[j], 0,
-                             return_positions[j].length);
-
-          return_positions = new_array;
-        }
-
-        // return the complemented base position
         return_positions[nframe][current_return_array_index[nframe]] =
-            sequence_length - i;
-        ++current_return_array_index[nframe];
-      }
+              sequence_length - i;
+      ++current_return_array_index[nframe];
     }
-
+    
     return return_positions;
   }
 
+  /**
+   * Set the codon cache for forward and reverse strand.
+   * @param range_start_index
+   * @param range_end_index
+   * @param sequence_string
+   * @param i
+   * @param query_codons
+   * @param this_codon_flags
+   * @param ncurrent_byte
+   * @param bit_position
+   */
+  private void setCache(int range_start_index, 
+                        int range_end_index, 
+                        char[] sequence_string, 
+                        int i,
+                        final StringVector query_codons,
+                        final byte[] this_codon_flags,
+                        int ncurrent_byte,
+                        int bit_position)
+  {
+    // test if stop (or start) codon
+    boolean ismatch = false;
+    
+    // forward codon
+    if(i < range_end_index-1)
+      if(query_codons == null)
+        ismatch = isStopCodon(sequence_string[i-range_start_index],
+                              sequence_string[i-range_start_index+1],
+                              sequence_string[i-range_start_index+2]);
+      else
+        ismatch = isCodon(sequence_string[i-range_start_index],
+                          sequence_string[i-range_start_index+1],
+                          sequence_string[i-range_start_index+2],
+                          query_codons);
+
+    if(ismatch)
+    {
+      this_codon_flags[ncurrent_byte] =                // forward strand stop/start = 2
+             (byte)(this_codon_flags[ncurrent_byte] 
+                     | (0x0002 << 2*bit_position));
+    }
+    else
+    {
+      this_codon_flags[ncurrent_byte] =                // cached no stop/start = 1
+        (byte)(this_codon_flags[ncurrent_byte] 
+               | (0x0001 << 2*bit_position));
+    }
+
+    // reverse codon
+    ismatch = false;
+    if(i-range_start_index > 1 && i-range_start_index < sequence_string.length)
+      if(query_codons == null)
+        ismatch = isStopCodon(complement(sequence_string[i-range_start_index]),
+                              complement(sequence_string[i-range_start_index-1]),
+                              complement(sequence_string[i-range_start_index-2]));
+      else
+        ismatch = isCodon(complement(sequence_string[i-range_start_index]),
+                          complement(sequence_string[i-range_start_index-1]),
+                          complement(sequence_string[i-range_start_index-2]),
+                          query_codons);
+    if(ismatch)
+      this_codon_flags[ncurrent_byte] =                // reverse strand stop/start = 3
+             (byte)(this_codon_flags[ncurrent_byte] 
+                     | (0x0003 << 2*bit_position));
+  }
 
   /**
    *  Return the base at the given position.
@@ -1108,8 +1019,7 @@ public class Bases
   public void reverseComplement(final Feature feature)
               throws ReadOnlyException 
   {
-    forward_stop_codon_cache = null;
-    reverse_stop_codon_cache = null;
+    stop_codon_cache = null;
    
     final Range range = feature.getMaxRawRange();
     final int range_start_index = range.getStart();
@@ -1163,8 +1073,7 @@ public class Bases
   public void contigRearrange(final Feature feature, final int new_base_pos)
               throws ReadOnlyException
   {
-    forward_stop_codon_cache = null;
-    reverse_stop_codon_cache = null;
+    stop_codon_cache = null;
   
     final Range range = feature.getMaxRawRange();
     final int range_start_index = range.getStart();
@@ -1244,8 +1153,7 @@ public class Bases
    **/
   public String deleteRange (final Range range)
       throws ReadOnlyException {
-    forward_stop_codon_cache = null;
-    reverse_stop_codon_cache = null;
+    stop_codon_cache = null;
 
     final String removed_bases =
       getSequence ().getSubSequence (range.getStart (), range.getEnd ());
@@ -1288,13 +1196,10 @@ public class Bases
   public void addBases (final int position, final int direction,
                         final String bases)
       throws ReadOnlyException, IllegalSymbolException {
-    forward_stop_codon_cache = null;
-    reverse_stop_codon_cache = null;
+    stop_codon_cache = null;
 
     final String new_sequence;
-
     final int real_position;
-
     final String real_bases;
 
     if (direction == FORWARD) {

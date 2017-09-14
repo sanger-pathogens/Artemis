@@ -22,7 +22,7 @@ feature is still experimental, but copes well with straightforward entries
 
     <PARA>
 For more information on &prog; go to 
-<ULINK URL="http://www.sanger.ac.uk/Software/Artemis/" TYPE="external">the &prog;
+<ULINK URL="http://www.sanger.ac.uk/resources/software/artemis/" TYPE="external">the &prog;
 web pages</ULINK>.
     </PARA>
   </SECT1>
@@ -33,7 +33,7 @@ web pages</ULINK>.
     <TITLE>Getting and Installing &prog;</TITLE>
     <PARA>
 The most up to date version of &prog; is always available from the <ULINK
-URL="http://www.sanger.ac.uk/Software/Artemis/">&art; web pages</ULINK>.
+URL="http://www.sanger.ac.uk/resources/software/artemis/">&art; web pages</ULINK>.
     </PARA>
 
 &gettingjava;
@@ -55,7 +55,7 @@ UNIX the command is:
             </PARA>
             <PARA>
               <COMMAND>
-gzip -d &lt; artemis_compiled.tar.gz | tar xf -
+tar zxf artemis_compiled.tar.gz
               </COMMAND>
             </PARA>
           </LISTITEM>
@@ -101,7 +101,7 @@ and the software contents displayed by double clicking on it. Open an read the
     <SECT2 ID="DOSINSTALLATION">
       <TITLE>Installation Instructions for Windows</TITLE>
       <PARA>
-On Windows systems with Java (version 1.5 or higher), installing &prog; 
+On Windows systems with Java (version 1.6 or higher), installing &prog; 
 is as simple as downloading the the artemis.jar file to an appropriate 
 place (such as the desktop or the Programs folder). When downloading
 some versions of windows mistake this file for a zip file ensure it
@@ -116,6 +116,7 @@ LINKEND="RUNNINGPC"> .
     </SECT2>
   </SECT1>
 
+&filetypes;
 &concepts;
 
   <SECT1 ID="CONTRIBUTIONS">

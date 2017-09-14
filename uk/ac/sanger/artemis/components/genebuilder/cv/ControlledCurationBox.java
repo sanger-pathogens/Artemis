@@ -44,6 +44,7 @@ class ControlledCurationBox extends AbstractCvBox
   private Box xBox;
   private int value_index;
   private WrapTextArea termTextField;
+  private JTextField withTextField;
   private JTextField dbxrefTextField;
   private JExtendedComboBox evidenceList;
   private JTextField qualfTextField;
@@ -69,8 +70,11 @@ class ControlledCurationBox extends AbstractCvBox
     //xBox.add(cclabel);
     
     final String term = getField("term=", qualifierString);
-    final CvTerm cvTerm = DatabaseDocument.getCvTermByCvPartAndCvTerm(term,"CC");
+    final String cvName = getField("cv=", qualifierString);
 
+    CvTerm cvTerm = DatabaseDocument.getCvTermByCvPartAndCvTerm(term,cvName);
+    if(cvTerm == null)
+      cvTerm = DatabaseDocument.getCvTermByCvPartAndCvTerm(term,"CC");
     termTextField = new WrapTextArea(term, go_dimension, dimension.width);
     termTextField.setOpaque(false);
     termTextField.setEditable(false);
@@ -95,7 +99,15 @@ class ControlledCurationBox extends AbstractCvBox
     termTextField.setCaretPosition(0);
     xBox.add(termTextField);
     
-
+    //
+    String with = getField("with=", qualifierString);
+    withTextField = new JTextField(with);
+    withTextField.setToolTipText("with/from column");
+    withTextField.setPreferredSize(dimension);
+    withTextField.setMaximumSize(dimension);
+    withTextField.setActionCommand("with=");
+    xBox.add(withTextField);
+    
     String dbxref = getField("db_xref=", qualifierString);
     dbxrefTextField = new JTextField(dbxref);
     dbxrefTextField.setToolTipText("dbxref column");
@@ -131,14 +143,18 @@ class ControlledCurationBox extends AbstractCvBox
     dateField = new DatePanel(getField("date=", qualifierString),
                               dimension.height);
 
-    xBox.add(dateField.getDateSpinner());
+    xBox.add(dateField);
   }
 
 
   
   protected boolean isQualifierChanged()
   {
-    String old = getField("db_xref=", origQualifierString);
+    String old = getField("with=", origQualifierString);
+    if(!old.equals(withTextField.getText().trim()))
+      return true;
+    
+    old = getField("db_xref=", origQualifierString);
     if(!old.equals(dbxrefTextField.getText().trim()))
       return true;
     
@@ -236,7 +252,14 @@ class ControlledCurationBox extends AbstractCvBox
   {
     String newQualifierString = origQualifierString;
     
-    String old = getField("date=", origQualifierString);
+    String old = getField("with=", origQualifierString);
+    if(!old.equals(withTextField.getText().trim()))
+    {
+      newQualifierString = changeField("with=", withTextField.getText().trim(), 
+                                       newQualifierString);
+    }
+    
+    old = getField("date=", origQualifierString);
     if(!old.equals(dateField.getText()))
     {
       newQualifierString = changeField("date=", dateField.getText().trim(), 

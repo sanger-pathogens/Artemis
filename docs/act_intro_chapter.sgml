@@ -5,7 +5,7 @@
     <TITLE>What is &prog;?</TITLE>
     <PARA>
 &prog; is a DNA sequence comparison viewer based on <ULINK
-URL="http://www.sanger.ac.uk/Software/Artemis/"
+URL="http://www.sanger.ac.uk/resources/software/artemis/"
 type="external">Artemis</ULINK>.  The name &prog; stands for Artemis
 Comparison Tool.  &prog; is written in Java, reads EMBL or GENBANK format
 sequences and feature tables, and can work on sequences of any size.
@@ -20,10 +20,9 @@ See <XREF LINKEND="COMPARISON-RUN"> for more details.
 
     <PARA>
 For other information see the <ULINK
-URL="http://www.sanger.ac.uk/Software/ACT/" TYPE="external">the &prog; web
-pages</ULINK>, <ULINK URL="http://www.sanger.ac.uk/Software/ACT/Examples/"
-TYPE="external">the &prog; example pages</ULINK> or the <ULINK
-URL="http://www.sanger.ac.uk/Software/Artemis/" TYPE="external">the &art; web
+URL="http://www.sanger.ac.uk/resources/software/act/" TYPE="external">the &prog; web
+pages</ULINK> or the <ULINK
+URL="http://www.sanger.ac.uk/resources/software/artemis/" TYPE="external">the &art; web
 pages</ULINK>.
     </PARA>
   </SECT1>
@@ -34,7 +33,7 @@ pages</ULINK>.
     <TITLE>Getting and Installing &prog;</TITLE>
     <PARA>
 The most up to date version of &prog; is always available from the <ULINK
-URL="http://www.sanger.ac.uk/Software/ACT/">&prog; web pages</ULINK>.
+URL="http://www.sanger.ac.uk/resources/software/act/">&prog; web pages</ULINK>.
     </PARA>
 
 &gettingjava;
@@ -49,7 +48,7 @@ is:
       </PARA>
       <PARA>
          <COMMAND>
-gzip -d &lt; act_compiled.tar.gz | tar xf -
+tar zxf act_compiled.tar.gz
          </COMMAND>
       </PARA>
       <PARA>
@@ -94,7 +93,7 @@ and the software contents displayed by double clicking on it. Open an read the
     <SECT2 ID="DOSINSTALLATION">
       <TITLE>Installation Instructions for Windows</TITLE>
       <PARA>
-On Windows systems with Java (version 1.5 or higher), installing &prog;
+On Windows systems with Java (version 1.6 or higher), installing &prog;
 is as simple as downloading the the act.jar file to an appropriate 
 place (such as the desktop or the Programs folder). When downloading
 some versions of windows mistake this file for a zip file ensure it

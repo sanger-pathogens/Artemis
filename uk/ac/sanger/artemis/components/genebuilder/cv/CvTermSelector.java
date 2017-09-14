@@ -91,7 +91,13 @@ class CvTermSelector extends JPanel
     keyWord.setSelectedTextColor(Color.blue);
     keyWord.setMinimumSize(d);
     keyWord.setPreferredSize(d);
-    
+    keyWord.addActionListener(new ActionListener(){
+      // carry out search when enter key is pressed
+      public void actionPerformed(ActionEvent arg0)
+      {
+        searchCvTerms();
+      }
+    });
     c.gridy = ++row;
     c.gridx = 0;
     c.anchor = GridBagConstraints.EAST;

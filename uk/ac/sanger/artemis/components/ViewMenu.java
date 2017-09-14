@@ -33,7 +33,10 @@ import uk.ac.sanger.artemis.components.filetree.FileList;
 import uk.ac.sanger.artemis.components.filetree.RemoteFileNode;
 import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 
+import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
 import uk.ac.sanger.artemis.io.DocumentEntry;
+import uk.ac.sanger.artemis.io.GFFStreamFeature;
+import uk.ac.sanger.artemis.io.ValidateFeature;
 import uk.ac.sanger.artemis.io.InvalidRelationException;
 import uk.ac.sanger.artemis.io.Key;
 import uk.ac.sanger.artemis.io.Qualifier;
@@ -141,14 +144,16 @@ public class ViewMenu extends SelectionMenu
       }
     });
 
+    final SelectionSubMenu view_bases = new SelectionSubMenu(this, "Bases");
     final JMenuItem view_bases_item = new JMenuItem("Bases Of Selection");
     view_bases_item.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent event) 
       {
-        viewSelectedBases(true);
+        viewSelectedBases(true, false);
       }
     });
+    view_bases.add(view_bases_item);
 
     final JMenuItem view_bases_as_fasta_item =
       new JMenuItem("Bases Of Selection As FASTA");
@@ -156,10 +161,24 @@ public class ViewMenu extends SelectionMenu
     {
       public void actionPerformed(ActionEvent event) 
       {
-        viewSelectedBases(false);
+        viewSelectedBases(false, false);
       }
     });
+    view_bases.add(view_bases_as_fasta_item);
+    view_bases.addSeparator();
 
+    final JMenuItem view_exon_bases =
+        new JMenuItem("Bases Of Selected Exons As FASTA");
+    view_exon_bases.addActionListener(new ActionListener() 
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        viewSelectedBases(false, true);
+      }
+    });
+    view_bases.add(view_exon_bases);
+
+    final SelectionSubMenu view_aa = new SelectionSubMenu(this, "Amino Acids");
     final JMenuItem view_aa_item = new JMenuItem("Amino Acids Of Selection");
     view_aa_item.addActionListener(new ActionListener() 
     {
@@ -168,6 +187,7 @@ public class ViewMenu extends SelectionMenu
         viewSelectedAminoAcids(true);
       }
     });
+    view_aa.add(view_aa_item);
 
     final JMenuItem view_aa_as_fasta_item =
       new JMenuItem("Amino Acids Of Selection As FASTA");
@@ -178,6 +198,7 @@ public class ViewMenu extends SelectionMenu
         viewSelectedAminoAcids(false);
       }
     });
+    view_aa.add(view_aa_as_fasta_item);
 
     final JMenuItem overview_item = new JMenuItem("Overview");
     overview_item.setAccelerator(OVERVIEW_KEY);
@@ -241,7 +262,7 @@ public class ViewMenu extends SelectionMenu
 
     JMenu search_results_menu = null;
 
-    search_results_menu = new JMenu("Search Results");
+    search_results_menu = new SelectionSubMenu(this, "Search Results");
 
     final boolean sanger_options =
       Options.getOptions().getPropertyTruthValue("sanger_options");
@@ -289,7 +310,7 @@ public class ViewMenu extends SelectionMenu
 
     final int MAX_FILTER_FEATURE_COUNT = 10000;
 
-    final JMenu feature_filters_menu = new JMenu("Feature Filters");
+    final JMenu feature_filters_menu = new SelectionSubMenu(this, "Feature Filters");
 
     final JMenuItem bad_start_codons_item =
       new JMenuItem("Suspicious Start Codons ...");
@@ -329,6 +350,48 @@ public class ViewMenu extends SelectionMenu
                                  base_plot_group);
       }
     });
+    
+    
+    final JMenuItem intronsSpliceSite =
+        new JMenuItem("Introns without GT/GC start and AG end ...");
+    intronsSpliceSite.addActionListener(new ActionListener() 
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        if(checkEntryGroupSize(MAX_FILTER_FEATURE_COUNT)) 
+          showIntrons(selection, entry_group, goto_event_source,
+              base_plot_group);
+      }
+    });
+    
+    
+    final JMenuItem geneModelCheck =
+        new JMenuItem("Gene model boundary check ...");
+    geneModelCheck.addActionListener(new ActionListener() 
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        if(checkEntryGroupSize(MAX_FILTER_FEATURE_COUNT)) 
+          geneBoundaryCheck(selection, entry_group, goto_event_source,
+              base_plot_group);
+      }
+    });
+    
+    
+    final JMenuItem validate =
+        new JMenuItem("Validation checks ...");
+    validate.addActionListener(new ActionListener() 
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        if(checkEntryGroupSize(MAX_FILTER_FEATURE_COUNT))
+        {
+          ValidateFeature gffTest = new ValidateFeature(getEntryGroup());
+          gffTest.featureListErrors(entry_group, selection, goto_event_source, base_plot_group);
+        }
+      }
+    });
+    
 
     final JMenuItem bad_feature_keys_item =
       new JMenuItem("Non EMBL Keys ...");
@@ -405,6 +468,54 @@ public class ViewMenu extends SelectionMenu
                                        base_plot_group);
       }
     });
+    
+    final JMenuItem all_filters_item =
+        new JMenuItem("Apply All Filters Above ...");
+    all_filters_item.addActionListener(new ActionListener()
+      {
+        public void actionPerformed(ActionEvent event) 
+        {
+          if(!checkEntryGroupSize(MAX_FILTER_FEATURE_COUNT))
+            return;
+          
+          showBadStartCodons(getParentFrame(), selection, 
+              entry_group, goto_event_source,
+              base_plot_group);
+          
+          showBadStopCodons(getParentFrame(), selection,
+              entry_group, goto_event_source,
+              base_plot_group);
+          
+          showStopsInTranslation(getParentFrame(), selection,
+              entry_group, goto_event_source,
+              base_plot_group);
+          
+          showNonEMBLKeys(getParentFrame(), selection,
+              entry_group, goto_event_source,
+              base_plot_group);
+          
+          showDuplicatedFeatures(getParentFrame(), selection,
+              entry_group, goto_event_source,
+              base_plot_group);
+          
+          showOverlappingCDSs(getParentFrame(), selection,
+              entry_group, goto_event_source,
+              base_plot_group);
+          
+          showFeaturesWithSameStopCodons(getParentFrame(), 
+              selection, entry_group,
+              goto_event_source,
+              base_plot_group);
+          
+          showMissingQualifierFeatures(getParentFrame(), selection,
+              entry_group, goto_event_source,
+              base_plot_group);
+          
+          showFilterByMultipleID(getParentFrame(), selection,
+              entry_group, goto_event_source,
+              base_plot_group);
+        }
+      });
 
     final JMenuItem filter_by_key_item =
       new JMenuItem("Filter By Key ...");
@@ -448,12 +559,20 @@ public class ViewMenu extends SelectionMenu
     feature_filters_menu.add(bad_start_codons_item);
     feature_filters_menu.add(bad_stop_codons_item);
     feature_filters_menu.add(stop_codons_in_translation);
+    feature_filters_menu.add(intronsSpliceSite);
+    if(GeneUtils.isGFFEntry( getEntryGroup() ))
+      feature_filters_menu.add(geneModelCheck);
+
     feature_filters_menu.add(bad_feature_keys_item);
     feature_filters_menu.add(duplicated_keys_item);
     feature_filters_menu.add(overlapping_cds_features_item);
     feature_filters_menu.add(same_stop_cds_features_item);
     feature_filters_menu.add(missing_qualifier_features_item);
     feature_filters_menu.add(filter_by_multiple_sys_id);
+    feature_filters_menu.add(validate);
+    
+    feature_filters_menu.addSeparator();
+    feature_filters_menu.add(all_filters_item);
     feature_filters_menu.addSeparator();
     feature_filters_menu.add(filter_by_key_item);
     feature_filters_menu.add(filter_by_selection_item);
@@ -471,10 +590,8 @@ public class ViewMenu extends SelectionMenu
     add(forward_overview_item);
     add(reverse_overview_item);
     addSeparator();
-    add(view_bases_item);
-    add(view_bases_as_fasta_item);
-    add(view_aa_item);
-    add(view_aa_as_fasta_item);
+    add(view_bases);
+    add(view_aa);
     addSeparator();
     add(feature_info_item);
     add(plot_features_item);
@@ -646,7 +763,10 @@ public class ViewMenu extends SelectionMenu
       cds_predicate = new FeatureKeyPredicate(new Key(DatabaseDocument.EXONMODEL));
     else
       cds_predicate =
-        new FeatureKeyQualifierPredicate (Key.CDS, "pseudo", false);
+          new FeaturePredicateConjunction(
+              new FeatureKeyQualifierPredicate(Key.CDS, "pseudo", false),
+              new FeatureKeyQualifierPredicate(Key.CDS, "pseudogene", false),
+              FeaturePredicateConjunction.AND);
 
     final FeaturePredicate feature_predicate = new FeaturePredicate ()
     {
@@ -707,7 +827,10 @@ public class ViewMenu extends SelectionMenu
       cds_predicate = new FeatureKeyPredicate(new Key(DatabaseDocument.EXONMODEL));
     else
       cds_predicate =
-        new FeatureKeyQualifierPredicate (Key.CDS, "pseudo", false);
+          new FeaturePredicateConjunction(
+              new FeatureKeyQualifierPredicate(Key.CDS, "pseudo", false),
+              new FeatureKeyQualifierPredicate(Key.CDS, "pseudogene", false),
+              FeaturePredicateConjunction.AND);
 
     final FeaturePredicate feature_predicate =  new FeaturePredicate () 
     {
@@ -768,7 +891,10 @@ public class ViewMenu extends SelectionMenu
       cds_predicate = new FeatureKeyPredicate(new Key(DatabaseDocument.EXONMODEL));
     else
       cds_predicate =
-        new FeatureKeyQualifierPredicate(Key.CDS, "pseudo", false);
+          new FeaturePredicateConjunction(
+              new FeatureKeyQualifierPredicate(Key.CDS, "pseudo", false),
+              new FeatureKeyQualifierPredicate(Key.CDS, "pseudogene", false),
+              FeaturePredicateConjunction.AND);
 
     final FeaturePredicate feature_predicate = new FeaturePredicate () 
     {
@@ -806,6 +932,80 @@ public class ViewMenu extends SelectionMenu
     feature_list_frame.setVisible (true);
   }
 
+  /**
+   *  Popup a FeatureListFrame containing the features that contains 
+   *  introns without GT/GC start and AG end.
+   *  @param selection The Selection to pass to the FeatureList.
+   *  @param entry_group The EntryGroup to pass to the FilteredEntryGroup.
+   *  @param goto_source The GotoEventSource to pass to the FeatureList.
+   *  @param base_plot_group The BasePlotGroup associated with this JMenu -
+   *    needed to call getCodonUsageAlgorithm()
+   **/
+  protected static void showIntrons(final Selection selection,
+                                    final EntryGroup entry_group,
+                                    final GotoEventSource goto_source,
+                                    final BasePlotGroup base_plot_group)
+  {
+    final FeaturePredicate feature_predicate = Selector.getIntronPredicate();
+    final String filter_name = "Contains introns without GT/GC start and AG end";
+    final FilteredEntryGroup filtered_entry_group =
+        new FilteredEntryGroup (entry_group, feature_predicate, filter_name);
+
+      final FeatureListFrame feature_list_frame =
+        new FeatureListFrame (filter_name,
+                              selection, goto_source, filtered_entry_group,
+                              base_plot_group);
+
+    feature_list_frame.setVisible (true);
+  }
+  
+
+  /**
+   *  Popup a FeatureListFrame containing the gene models with boundaries that
+   *  need fixing.
+   *  @param selection The Selection to pass to the FeatureList.
+   *  @param entry_group The EntryGroup to pass to the FilteredEntryGroup.
+   *  @param goto_source The GotoEventSource to pass to the FeatureList.
+   *  @param base_plot_group The BasePlotGroup associated with this JMenu -
+   *    needed to call getCodonUsageAlgorithm()
+   **/
+  protected static void geneBoundaryCheck(
+                                    final Selection selection,
+                                    final EntryGroup entry_group,
+                                    final GotoEventSource goto_source,
+                                    final BasePlotGroup base_plot_group)
+  {
+    final FeaturePredicate feature_predicate = new FeaturePredicate() {
+      // return true if boundary need fixing
+      public boolean testPredicate(Feature feature)
+      {
+        if(!GeneUtils.isGFFEntry(entry_group) ||
+           !feature.getKey().equals("gene"))
+          return false;
+        ChadoCanonicalGene chadoGene =
+            ((GFFStreamFeature)feature.getEmblFeature()).getChadoGene();
+        
+        if(chadoGene == null)
+          return false;
+        if(GeneUtils.isBoundaryOK(chadoGene) > 0)
+          return true;
+        
+        return !GeneUtils.isStrandOK(chadoGene);
+      }
+    };
+    
+    final String filter_name = "Gene Model Boundary";
+    final FilteredEntryGroup filtered_entry_group =
+        new FilteredEntryGroup (entry_group, feature_predicate, filter_name);
+
+    final FeatureListFrame feature_list_frame =
+        new FeatureListFrame (filter_name,
+                              selection, goto_source, filtered_entry_group,
+                              base_plot_group);
+
+    feature_list_frame.setVisible (true);
+  }
+  
   /**
    *  Popup a FeatureListFrame containing the features that have non-EMBL keys.
    *  @param parent_frame The parent JFrame.
@@ -1546,32 +1746,36 @@ public class ViewMenu extends SelectionMenu
    *    (every second line of the display will be numbers rather than
    *    sequence).
    **/
-  private void viewSelectedBases (final boolean include_numbers) {
+  private void viewSelectedBases (final boolean include_numbers, final boolean selectedExonsOnly) {
     if (getSelection ().isEmpty ()) {
       new MessageDialog (getParentFrame (), "Nothing selected");
       return;
     }
 
-    final MarkerRange range = selection.getMarkerRange ();
+    if (selection.getMarkerRange () == null) {
+      final FeatureVector fs = getSelection ().getAllFeatures ();
 
-    if (range == null) {
-      final FeatureVector features_to_view = getSelection ().getAllFeatures ();
-
-      if (features_to_view.size () > MAXIMUM_SELECTED_FEATURES) {
-        new MessageDialog (getParentFrame (),
-                           "warning: only viewing bases for " +
-                           "the first " + MAXIMUM_SELECTED_FEATURES +
-                           " selected features");
+      if(selectedExonsOnly)
+      {
+        if (fs.size () > 1) 
+          new MessageDialog (getParentFrame (),
+               "warning: only viewing bases for the selected exons of one feature");
+        new FeatureBaseViewer (fs.elementAt(0), include_numbers, 
+            getSelection ().getSelectedSegments());
       }
-
-      for (int i = 0 ;
-           i < features_to_view.size () && i < MAXIMUM_SELECTED_FEATURES ;
-           ++i) {
-        final Feature this_feature = features_to_view.elementAt (i);
-
-        new FeatureBaseViewer (this_feature, include_numbers);
+      else
+      {
+        if (fs.size () > MAXIMUM_SELECTED_FEATURES) 
+          new MessageDialog (getParentFrame (),
+               "warning: only viewing bases for " +
+               "the first " + MAXIMUM_SELECTED_FEATURES +
+               " selected features");
+        for (int i = 0; i < fs.size () && i < MAXIMUM_SELECTED_FEATURES; ++i)
+          new FeatureBaseViewer (fs.elementAt (i), include_numbers, null);
       }
-    } else {
+    } 
+    else 
+    {
       final SequenceViewer sequence_viewer =
         new SequenceViewer ("Selected bases", include_numbers);
 

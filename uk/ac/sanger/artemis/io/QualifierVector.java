@@ -36,8 +36,10 @@ import java.util.Vector;
  *
  */
 
-public class QualifierVector extends Vector
+public class QualifierVector extends Vector<Qualifier>
 {
+  private static final long serialVersionUID = 1L;
+
   /**
    *  Create a new (empty) vector of Qualifier objects.
    */
@@ -54,7 +56,7 @@ public class QualifierVector extends Vector
    *  @param qualifier This object contians name and values to add.
    *  @return The Qualifier that was changed or created.
    **/
-  public Qualifier addQualifierValues(Qualifier qualifier) 
+  public Qualifier addQualifierValues(final Qualifier qualifier) 
   {
     if(qualifier.getName() == null) 
       throw new Error("");
@@ -69,7 +71,7 @@ public class QualifierVector extends Vector
     } 
     else
     {
-      final Qualifier current_qualifier = (Qualifier)elementAt(index_of_qualifier);
+      final Qualifier current_qualifier = elementAt(index_of_qualifier);
       current_qualifier.addValues(qualifier.getValues());
       return current_qualifier;
     }
@@ -85,10 +87,7 @@ public class QualifierVector extends Vector
     final int index = indexOfQualifierWithName(qualifier.getName());
 
     if(index == -1) 
-    {
-      // just add it
       addElement(qualifier);
-    } 
     else 
     {
       removeQualifierByName(qualifier.getName());
@@ -129,11 +128,10 @@ public class QualifierVector extends Vector
    **/
   public int indexOfQualifierWithName(String name) 
   {
-//  return vector.indexOf(name);
     final int vsize = size();
     for(int i = 0; i < vsize; ++i) 
     {
-      if(((Qualifier)elementAt(i)).getName().equals(name)) 
+      if(elementAt(i).getName().equals(name)) 
         return i;
     }
     return -1;
@@ -150,7 +148,7 @@ public class QualifierVector extends Vector
     if(index_of_named_qualifier == -1)
       return null; 
     else
-      return (Qualifier)elementAt(index_of_named_qualifier);
+      return elementAt(index_of_named_qualifier);
   }
   
   /**
@@ -169,4 +167,3 @@ public class QualifierVector extends Vector
   }
 
 }
-

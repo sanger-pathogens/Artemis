@@ -33,8 +33,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
 import java.util.Hashtable;
-import java.util.Enumeration;
-import javax.swing.JOptionPane;
 
 /**
  *  This class contains the methods common to all DocumentEntry objects.
@@ -58,7 +56,7 @@ abstract public class SimpleDocumentEntry
   final private EntryInformation entry_information;
                                                                                                      
   /** collection to send ReadEvents to */
-  private Vector listeners = new Vector();
+  private Vector<ReadListener> listeners = new Vector<ReadListener>();
 
   /** 
    *  The Document object that was passed to the constructor.  This should be
@@ -70,7 +68,7 @@ abstract public class SimpleDocumentEntry
    *  This contains all the lines(stored as LineGroup objects) from the entry
    *  stream that was passed to the constructor.
    **/
-  protected LineGroupVector line_groups = new LineGroupVector();
+  protected Vector<LineGroup> line_groups = new Vector<LineGroup>();
                                                                                                                
   /**
    *  The DocumentEntryAutosaveThread that is started when the first call is
@@ -89,6 +87,8 @@ abstract public class SimpleDocumentEntry
    *  will do nothing while this is true.
    **/
   protected boolean in_constructor = false;
+  
+  protected Hashtable<String, Range> contig_ranges;
 
   /**
    *  Create a new SimpleDocumentEntry from the given Document.
@@ -119,7 +119,6 @@ abstract public class SimpleDocumentEntry
 
     LineGroup new_line_group;
 
-    boolean isGFF = false;
     final int MAX_LOOP = 9999;
     
     while((new_line_group =
@@ -129,9 +128,6 @@ abstract public class SimpleDocumentEntry
       {
         final SimpleDocumentFeature new_feature =
                    (SimpleDocumentFeature)new_line_group;
-
-        if(new_line_group instanceof GFFStreamFeature)
-          isGFF = true;
         
         // try several times because adding the Feature may cause more than
         // one exception
@@ -169,7 +165,6 @@ abstract public class SimpleDocumentEntry
     last_change_time = null;
 
     final Sequence sequence = getSequence();
-    Hashtable contig_ranges = null;
 
     if(sequence != null && sequence instanceof FastaStreamSequence) 
     {
@@ -185,7 +180,8 @@ abstract public class SimpleDocumentEntry
         final int[] header_positions =
                       fasta_sequence.getFastaHeaderPositions();
 
-        final FeatureTable feature_table = getFeatureTable();
+        //final FeatureTable feature_table = 
+        getFeatureTable();
 
         for(int i = 0 ; i < header_strings.length ; ++i) 
         {
@@ -212,12 +208,12 @@ abstract public class SimpleDocumentEntry
                                     header_positions[i+1]);
             }
 
+            String thisHeader[] = header_strings[i].split("\\s");
             final QualifierVector qualifiers = new QualifierVector();
 
             qualifiers.setQualifier(new Qualifier("note",
                                                     header_strings[i]));
-            qualifiers.setQualifier(new Qualifier("label",
-                                                    header_strings[i]));
+            qualifiers.setQualifier(new Qualifier("label", thisHeader[0]));
             if(i % 2 == 0) 
               qualifiers.setQualifier(new Qualifier("colour", "10"));
             else 
@@ -232,15 +228,11 @@ abstract public class SimpleDocumentEntry
             fake_fasta_features.add(new_feature);
 
             // record coordinates to adjust feature coordinates
-            if(isGFF)
-            {
-              if(contig_ranges == null)
-                contig_ranges = new Hashtable();           
+            if(contig_ranges == null)
+              contig_ranges = new Hashtable<String, Range>();           
 
-              // find the sequence id from the header
-              String thisHeader[] = header_strings[i].split("\\s");
-              contig_ranges.put(thisHeader[0], new_range);
-            }
+            // find the sequence id from the header
+            contig_ranges.put(thisHeader[0], new_range);
           }
           catch(InvalidRelationException e) 
           {
@@ -251,42 +243,6 @@ abstract public class SimpleDocumentEntry
             throw new Error("internal error - unexpected exception: " + e);
           }
         }
-
-        // adjust feature coordinates
-        if(isGFF && contig_ranges != null)
-        {
-          final FeatureVector gff_regions = getAllFeatures();
-          Enumeration gff_features  = gff_regions.elements();
-          while(gff_features.hasMoreElements())
-          {
-            final GFFStreamFeature feature = (GFFStreamFeature)gff_features.nextElement();
-            //Qualifier seqname = feature.getQualifierByName("gff_seqname");
-            //String name = (String)(seqname.getValues()).elementAt(0);
-            final String name = feature.getGffSeqName();
-            if(name == null)
-              continue;
-            if(contig_ranges.containsKey(name))
-            {
-              try
-              {
-                Range new_range = (Range)contig_ranges.get(name);
-                final Location loc = feature.getLocation();
-                int start = feature.getFirstBase()+new_range.getStart()-1;
-                int end   = feature.getLastBase()+new_range.getStart()-1;
-                final Range feat_range = new Range(start, end);
-                final RangeVector location_ranges = new RangeVector(feat_range);
-                feature.setLocation(new Location(location_ranges, loc.isComplement()));
-              }
-              catch(OutOfRangeException e)
-              {
-                throw new Error("internal error - unexpected exception: " + e);
-              }
-            }
-          }
-          // store so these can be used when writing out
-          GFFStreamFeature.contig_ranges = contig_ranges;
-        }
-
         addFakeFeatures();
       }
     }
@@ -340,7 +296,7 @@ abstract public class SimpleDocumentEntry
 
     final FeatureEnumeration feature_enum = new_entry.features();
 
-    Set failed = null;
+    Set<String> failed = null;
     while(feature_enum.hasMoreFeatures()) 
     {
       final Feature new_feature = feature_enum.nextFeature();
@@ -356,7 +312,7 @@ abstract public class SimpleDocumentEntry
             if(forcedAdd(f) == null)
             {
               if(failed == null)
-                failed = new HashSet();
+                failed = new HashSet<String>();
               failed.add(new_feature.getKey().getKeyString());
             }
           }
@@ -381,14 +337,7 @@ abstract public class SimpleDocumentEntry
     }
 
     if(failed != null)
-    {
-//      JOptionPane.showMessageDialog(null, 
-//          "Failed to use the following keys\n"+
-//          failed.toString(),
-//          "Warning - unknown keys",
-//          JOptionPane.WARNING_MESSAGE);
       UI.warn("Failed to use the following keys\n"+failed.toString(), "Warning - unknown keys");
-    }
     
     final Sequence new_sequence = new_entry.getSequence();
 
@@ -432,7 +381,7 @@ abstract public class SimpleDocumentEntry
       throws IOException 
   {
 
-    final LineGroupVector new_line_groups = new LineGroupVector();
+    final Vector<LineGroup> new_line_groups = new Vector<LineGroup>();
 
     if(new_header != null) 
     {
@@ -851,6 +800,8 @@ abstract public class SimpleDocumentEntry
       new_feature = new EmblStreamFeature(key, location, qualifiers);
     else if(this instanceof DatabaseDocumentEntry)
       new_feature = new DatabaseStreamFeature(key, location, qualifiers);
+    else if(this instanceof GFFDocumentEntry)
+      new_feature = new GFFStreamFeature(key, location, qualifiers);
     else
       new_feature = new GenbankStreamFeature(key, location, qualifiers);
 
@@ -1093,7 +1044,7 @@ abstract public class SimpleDocumentEntry
    *  @return a FeatureTable object for this Entry.  the returned object is
    *    not a copy - changes to it will change the Entry object itself
    **/
-  FeatureTable getFeatureTable() 
+  private FeatureTable getFeatureTable() 
   {
     final FeatureTable found_feature_table = findFeatureTable();
 

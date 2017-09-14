@@ -29,6 +29,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
@@ -63,11 +64,15 @@ public class LineAttributes
 {
   /** defines the colour */
   private Color lineColour = Color.black;
+  
+  /** line label */
+  private String label;
+  
   /** defines the line Stroke - size and style */
   private BasicStroke stroke;
   
   private static float dotDash[] = {10.f, 5.f, 3.f, 5.f};
-  private static float dash[] = {10.f};
+  private static float dash[] = {5.f};
   
   private static BasicStroke style1 = 
       new BasicStroke(1.f);
@@ -131,6 +136,8 @@ public class LineAttributes
    */
   private static int getStyleIndex(BasicStroke stroke)
   {
+    if(stroke == null)
+      stroke = style1;
     float myDash[] = stroke.getDashArray();
     if(myDash != null && 
        myDash.length == dotDash.length)
@@ -151,13 +158,13 @@ public class LineAttributes
   public static LineAttributes[]  init(int numPlots)
   {
     final Color frameColour[] = { 
-        Color.red, 
-        new Color(0,200,0), 
+        Color.red,
         Color.blue,
+        Color.black,
+        new Color(0,200,0),
         Color.magenta,
         new Color(50, 255, 255),
-        Color.yellow,
-        Color.black };
+        Color.yellow };
     LineAttributes lines[] = new LineAttributes[numPlots];
     
     if(numPlots == 1)
@@ -304,8 +311,13 @@ public class LineAttributes
       panel.add(butt, c);
       
       // line style
-      final JSlider slider = new JSlider(1, 10, 
-          (int)lines[colourNumber].getStroke().getLineWidth());
+      final int lineWidth;
+      if(lines[colourNumber].getStroke() == null)
+        lineWidth = 0;
+      else
+        lineWidth = (int)lines[colourNumber].getStroke().getLineWidth();
+      
+      final JSlider slider = new JSlider(0, 10, lineWidth);
       Integer index[] = new Integer[STROKES.length];
       for(int j=0; j<index.length; j++)
         index[j] = j;
@@ -331,6 +343,8 @@ public class LineAttributes
       {
         public void stateChanged(ChangeEvent e)
         {
+          thislines[colourNumber].setStroke(
+              STROKES[lineStyle.getSelectedIndex()]);
           setLineSize(plot, slider, thislines, colourNumber);
         }
       });
@@ -369,12 +383,34 @@ public class LineAttributes
   private static void setLineSize(Plot plot, JSlider slider,
                            LineAttributes[] thislines, int number)
   {
-    BasicStroke oldStroke = thislines[number].getStroke();
-    BasicStroke newStroke = new BasicStroke(slider.getValue(),
+    if(slider.getValue() == 0.f)
+      thislines[number].setStroke(null);
+    else
+    {
+      BasicStroke oldStroke = thislines[number].getStroke();
+      BasicStroke newStroke = new BasicStroke(slider.getValue(),
         BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 
         1.f, oldStroke.getDashArray(), 0.f);
-    thislines[number].setStroke(newStroke);
+      thislines[number].setStroke(newStroke);
+    }
     plot.repaint();
+  }
+
+  protected void setLabel(String label)
+  {
+    this.label = label;
+  }
+  
+  public String getLabel()
+  {
+    return label;
+  }
+  
+  public int getLabelWidth(final FontMetrics fm)
+  {
+    if(label != null)
+      return fm.stringWidth(label) + fm.stringWidth("2")*4;
+    return fm.stringWidth("2")*5;
   }
 }
 

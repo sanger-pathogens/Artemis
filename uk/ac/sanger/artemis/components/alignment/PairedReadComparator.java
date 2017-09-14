@@ -26,6 +26,8 @@ package uk.ac.sanger.artemis.components.alignment;
 
 import java.util.Comparator;
 
+import net.sf.samtools.SAMRecord;
+
 import uk.ac.sanger.artemis.components.alignment.BamView.PairedRead;
 
 
@@ -33,16 +35,16 @@ import uk.ac.sanger.artemis.components.alignment.BamView.PairedRead;
   {
     public int compare(Object o1, Object o2) 
     {
-      PairedRead pr1 = (PairedRead) o1;
-      PairedRead pr2 = (PairedRead) o2;
+      SAMRecord sam1 = ((PairedRead) o1).sam1.sam;
+      SAMRecord sam2 = ((PairedRead) o2).sam1.sam;
       
-      int start1 = pr1.sam1.getAlignmentStart();
-      if(pr1.sam1.getAlignmentEnd() < start1)
-        start1 = pr1.sam1.getAlignmentEnd();
+      int start1 = sam1.getAlignmentStart();
+      if(sam1.getAlignmentEnd() < start1)
+        start1 = sam1.getAlignmentEnd();
       
-      int start2 = pr2.sam1.getAlignmentStart();
-      if(pr2.sam1.getAlignmentEnd() < start2)
-        start2 = pr1.sam1.getAlignmentEnd();
+      int start2 = sam2.getAlignmentStart();
+      if(sam2.getAlignmentEnd() < start2)
+        start2 = sam1.getAlignmentEnd();
         
       return start1-start2;
     }

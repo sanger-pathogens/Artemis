@@ -31,6 +31,9 @@ ACT_HOME=`dirname "$PRG"`/.
 
 CLASSPATH=$ACT_HOME:$ACT_HOME/lib/JacORB.jar:$ACT_HOME/lib/jemAlign.jar:$ACT_HOME/lib/jakarta-regexp-1.2.jar:$ACT_HOME/lib/macos.jar:$ACT_HOME/lib/chado-14-interface.jar:$ACT_HOME/lib/postgresql-8.4-701.jdbc3.jar:$CLASSPATH
 
+# batik jars
+CLASSPATH=$CLASSPATH:$ACT_HOME/lib/batik/batik-awt-util.jar:$ACT_HOME/lib/batik/batik-dom.jar:$ACT_HOME/lib/batik/batik-ext.jar:$ACT_HOME/lib/batik/batik-svggen.jar:$ACT_HOME/lib/batik/batik-util.jar:$ACT_HOME/lib/batik/batik-xml.jar
+
 # j2ssh jars
 CLASSPATH=$CLASSPATH:$ACT_HOME/lib/j2ssh/commons-logging.jar:$ACT_HOME/lib/j2ssh/j2ssh-core.jar:$ACT_HOME/lib/j2ssh/
 
@@ -38,7 +41,9 @@ CLASSPATH=$CLASSPATH:$ACT_HOME/lib/j2ssh/commons-logging.jar:$ACT_HOME/lib/j2ssh
 CLASSPATH=$CLASSPATH:$ACT_HOME/lib/ibatis/ibatis-2.3.4.726.jar:$ACT_HOME/lib/ibatis/:$ACT_HOME/lib/ibatis/log4j-1.2.14.jar:$ACT_HOME/lib/ibatis/cglib-nodep-2.2.jar:$ACT_HOME/lib/retrotranslator-runtime-1.1.0.jar
 
 # picard jars
-CLASSPATH=$CLASSPATH:$ACT_HOME/lib/picard/sam.jar:$ACT_HOME/lib/picard/picard.jar
+CLASSPATH=$ACT_HOME/lib/picard/sam.jar:$ACT_HOME/lib/picard/picard.jar:$CLASSPATH
+
+CLASSPATH="$ACT_HOME/lib/commons-lang-2.6.jar:$CLASSPATH"
 
 export CLASSPATH
 
@@ -67,10 +72,37 @@ if [ $# = 0 ]
 then
     :
 else
-    if [ x$1 = x-h -o x$1 = x--help ]
+    if [ "$1" = "-h" -o "$1" = "--help" -o "$1" = "-help" ]
     then
         cat <<EOF
-usage: $0 [EMBL/GENBANK/SEQUENCE file] [crunch file] [EMBL/GENBANK/SEQUENCE file]
+
+SYNOPSIS
+        Artemis Comparison Tool (ACT): Genome Comparison Tool
+USAGE
+        $0 [options] <SEQUENCE_1> <COMPARISON_1_2> <SEQUENCE_2> ...
+OPTIONS
+        SEQUENCE                   An EMBL, GenBank, FASTA, or GFF3 file
+        FEATURE                    An Artemis TAB file, or GFF file
+        COMPARISON                 A BLAST comparison file in tabular format
+
+        -options FILE              Read a text file of options from FILE
+        -debug                     Run using the debugging JVM instead
+
+        -Dblack_belt_mode=?         Keep warning messages to a minimum [true,false]
+        -DuserplotX=FILE[,FILE2]    For sequence 'X" open one or more userplots
+        -DloguserplotX=FILE[,FILE2] For sequence 'X" open one or more userplots, take log(data)
+        -DbamX=FILE[,FILE2,...]     For sequence 'X" open one or more BAM, VCF, or BCF files
+        -Dchado="h:p/d?u"           Get ACT to open this CHADO database
+        -Dread_only                 Open CHADO database read-only
+EXAMPLES
+        % act
+        % act af063097.embl af063097_v_b132222.crunch b132222.embl
+        % act -Dblack_belt_mode=true -Dbam1=MAL_0h.bam -Dbam2=MAL_7h.bam,var.raw.new.bcf 
+        % act -Duserplot2=/pathToFile/userPlot
+
+HOMEPAGE
+        http://www.sanger.ac.uk/resources/software/act/
+
 EOF
         exit 0
     fi

@@ -19,22 +19,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/StreamFeatureTable.java,v 1.1 2004-06-09 09:50:34 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
 
-import java.util.Vector;
-import java.io.*;
-import java.util.NoSuchElementException;
+import java.io.IOException;
+import java.io.Writer;
+
 
 /**
  *  This object contains all the features in an entry.  This object can write
  *  itself to a stream.
  *
  *  @author Kim Rutherford
- *  @version $Id: StreamFeatureTable.java,v 1.1 2004-06-09 09:50:34 tjc Exp $
  */
 
 class StreamFeatureTable extends FeatureTable {

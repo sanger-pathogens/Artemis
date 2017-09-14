@@ -21,9 +21,9 @@
 
 package uk.ac.sanger.artemis.components.filetree;
 
+import uk.ac.sanger.artemis.components.SwingWorker;
 import uk.ac.sanger.artemis.components.database.DatabaseEntrySource;
 import uk.ac.sanger.artemis.components.database.DatabaseJPanel;
-import uk.ac.sanger.artemis.components.database.DatabaseTreeNode;
 import uk.ac.sanger.artemis.j2ssh.SshLogin;
 import uk.ac.sanger.artemis.j2ssh.SshFileManager;
 import uk.ac.sanger.artemis.util.StringVector;
@@ -52,6 +52,8 @@ public class LocalAndRemoteFileManager extends JFrame
   private DatabaseEntrySource entry_source;
   public static JCheckBoxMenuItem lazyLoad = 
     new JCheckBoxMenuItem("Lazy load feature data", false);
+  private static JCheckBoxMenuItem automaticHistory =
+    new JCheckBoxMenuItem("Automatic History Annotation", false);
   
   public static JCheckBoxMenuItem domainLoad = 
     new JCheckBoxMenuItem("Display protein domains", false);
@@ -492,6 +494,19 @@ public class LocalAndRemoteFileManager extends JFrame
   }
 
   /**
+   * @return the automatic history
+   */
+  public static boolean isAutomaticHistory()
+  {
+    return automaticHistory.isSelected();
+  }
+  
+  public static void setAutomaticHistory(boolean flag)
+  {
+    automaticHistory.setSelected(flag);
+  }
+
+  /**
   *
   * Set up a menu and tool bar
   * @param pane   panel to add toolbar to
@@ -555,7 +570,7 @@ public class LocalAndRemoteFileManager extends JFrame
     if(System.getProperty("chado") != null)
     {
       fileMenu.add(new JSeparator());
-      JMenuItem fileShow = new JMenuItem("Open Selected Database Sequence ...");
+      final JMenuItem fileShow = new JMenuItem("Open Selected Database Sequence ...");
       fileShow.addActionListener(new ActionListener()
       {
         public void actionPerformed(ActionEvent e)
@@ -565,7 +580,7 @@ public class LocalAndRemoteFileManager extends JFrame
         }
       });
       fileMenu.add(fileShow);
-      
+
       final JCheckBoxMenuItem splitGFF = new JCheckBoxMenuItem(
           "Split into entries ...", false);
       splitGFF.addActionListener(new ActionListener()
@@ -595,13 +610,17 @@ public class LocalAndRemoteFileManager extends JFrame
       fileMenu.add(domainLoad);
       fileMenu.add(lazyLoad);
       
+      if(Options.getOptions().getPropertyTruthValue("automatic_history_annotation"))
+        automaticHistory.setSelected(true);
+      fileMenu.add(automaticHistory);
+      
       JMenuItem clearCache = new JMenuItem("Clear database manager cache");
       clearCache.addActionListener(new ActionListener()
       {
 
         public void actionPerformed(ActionEvent e)
         {
-          File cacheDir = new File(DatabaseTreeNode.CACHE_PATH);
+          File cacheDir = new File(Options.CACHE_PATH);
           
           if(cacheDir.exists())
           {
@@ -616,6 +635,37 @@ public class LocalAndRemoteFileManager extends JFrame
       });
       fileMenu.add(clearCache);
     }
+    
+    
+    final JMenuItem validate = new JMenuItem("Validate Selected Sequence / Organism ...");
+    validate.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        SwingWorker entryWorker = new SwingWorker()
+        {
+          public Object construct()
+          {
+            if(dbthread.getDatabaseJPanel() != null)
+            {
+              dbthread.getDatabaseJPanel().setCursor(new Cursor(Cursor.WAIT_CURSOR));
+              try
+              {
+                dbthread.getDatabaseJPanel().validate(entry_source);
+              }
+              finally
+              {
+                dbthread.getDatabaseJPanel().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+              }
+            }
+            return null;
+          }
+        };
+        entryWorker.start();
+      }
+    });
+    fileMenu.add(new JSeparator());
+    fileMenu.add(validate);
     
     JMenuItem fileMenuClose = new JMenuItem("Close");
     fileMenuClose.addActionListener(new ActionListener()

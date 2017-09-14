@@ -76,7 +76,8 @@ genetic_codes = \
      - \
      Trematode_Mitochondrial \
      Scenedesmus_Obliquus_Mitochondrial \
-     Thraustochytrium_Mitochondrial
+     Thraustochytrium_Mitochondrial \
+     Pterobranchia_mitochondrial
 
 # The translation_table option is used to lookup codon translations.  The
 # table must have exactly 64 entries, and there is one entry for each codon.
@@ -147,7 +148,7 @@ start_codons_4 = atg
 translation_table_5 = \
       agas aggs atam tgaw
 
-start_codons_5 = atg ata att
+start_codons_5 = ttg att atc ata atg gtg
 #start_codons_5_apis = atg ata atc att
 #start_codons_5_polyplacophora = atg ata gtg
 
@@ -221,6 +222,12 @@ translation_table_23 = \
       tta*
 
 start_codons_23 = att atg gtg
+
+# 24. Pterobranchia mitochondrial
+translation_table_24 = \
+      agas aggk tgaw
+
+start_codons_24 = ttg ctg atg gtg
 
 # the sequence of colour numbers must not have any gaps - if for example
 # colour_5 is missing then all colours with higher numbers will be ignored
@@ -332,6 +339,11 @@ feature_plot_height = 160
 # overview_one_line_per_entry = yes
 
 
+# if this option is yes then the overview will start showing the feature
+# stack view (the default is no)
+# overview_feature_stack_view = yes
+
+
 # if this option is "yes" then the feature list will be displayed on startup
 # (this is the default)
 show_list = yes
@@ -394,6 +406,8 @@ draw_feature_borders = yes
 # feature.  if set to no, no arrows will be drawn.
 draw_feature_arrows = yes
 
+# if yes then shortcut changed in Preferences are saved between sessions
+shortcut_cache = yes
 
 # the number of levels of undo to save or 0 if undo is disabled.  more undo
 # levels will require more memory.
@@ -409,7 +423,7 @@ extra_keys = \
     TMM signalP
 
 # this list is added to the keys from the feature_keys_gff file
-extra_keys_gff = CDS
+extra_keys_gff = CDS uORF sORF tnaORF spliced_leader_RNA sequence_variant fasta_record
 
 # Names of qualifiers to search when attempting to find the primary or display
 # name of a gene.  These qualifiers names are searched in order when looking
@@ -425,6 +439,7 @@ systematic_name_qualifiers = systematic_id temporary_systematic_id \
 
 # this list is added to the qualifiers from the qualifier_types file
 extra_qualifiers = \
+    alias "text" \
     CHROMO_LINK text \
     C_processing "text" \
     C_processing_BigPi "text" \
@@ -517,6 +532,7 @@ extra_qualifiers = \
     previous_systematic_id "text" \
     primary_name "text" \
     prosite_match "text" \
+    pseudo none \
     psu_db_xref "text" \
     psu_domain "text" \
     reserved_name "text" \
@@ -554,6 +570,7 @@ extra_qualifiers = \
 
 # this list is added to the qualifiers from the qualifier_types_gff file
 extra_qualifiers_gff = \
+    alias "text" \
     blast_score text \
     blast_file "text" \
     blastn_file "text" \
@@ -567,8 +584,6 @@ extra_qualifiers_gff = \
     fasta_file "text" \
     GO "text" \
     history "text" \
-    isFminPartial none \
-    isFmaxPartial none \
     literature "text" \
     note "text" \
     orthologous_to "text" \
@@ -634,6 +649,7 @@ invisible_qualifiers = \
     percent_id     \
     pfam_match     \
     prosite_match  \
+    pseudo         \
     psu_domain     \
     reserved_gene_name \
     query_id       \
@@ -688,8 +704,6 @@ invisible_qualifiers_gff= \
     history \
     ID             \
     insertion_seq  \
-    isFminPartial \
-    isFmaxPartial \
     isObsolete \
     isoelectric    \
     isolation_source \
@@ -774,16 +788,14 @@ feature_protein_programs = \
     fasta %kineto_aa \
     sigcleave 0 \
     pepstats - \
-    blastp %uniprot \
-    blastp %uniprot_archaea \
-    blastp %uniprot_bacteria \
-    blastp %uniprot_eukaryota \
-    blastp %uniprot_viruses \
-    blastp %uniprot_rest \
-    blastp psu/Kineto_aa \
+    blastp uniprot \
+    blastp uniprot_archaea \
+    blastp uniprot_bacteria \
+    blastp uniprot_eukaryota \
+    blastp uniprot_viruses \
+    blastp uniprot_rest \
+    blastp /lustre/scratch101/blastdb/Pathogen/Kineto_aa \
     tblastn %embl_other \
-    blastp+go psu/go_all \
-    blastp+go /nfs/pathsoft/databases/GO/new/go_all \
     hth - \
     smart - \
     clustalx PROTEIN \
@@ -820,13 +832,15 @@ common_keys = \
     BLASTN_HIT BLASTCDS 3'UTR 5'UTR
 
 # SRS
-srs_url = http://srs.ebi.ac.uk/srsbin/cgi-bin/
+#srs_url = http://srs.ebi.ac.uk/srsbin/cgi-bin/
+srs_url = http://www.bioinformatics.nl/srsbin/cgi-bin/
 
 # hyperlinked databases in feature editor
 hyperlinks = \
-  EMBL+SWALL+UniProt+UniProtKB srs_url \
+  SWALL+UniProt+UniProtKB srs_url \
+  EMBL http://www.ebi.ac.uk/Tools/dbfetch/expasyfetch? \
   PubMed+PMID http://www.ncbi.nlm.nih.gov/sites/entrez?Db=pubmed&Cmd=ShowDetailView&TermToSearch= \
-  InterPro http://www.ebi.ac.uk/interpro/ISearch?query= \
+  InterPro http://www.ebi.ac.uk/interpro/entry/ \
   OrthoMCLDB http://www.orthomcl.org/cgi-bin/OrthoMclWeb.cgi?rm=groupList&type=ackeyword&in=Accession&q= \
   PlasmoDB http://plasmodb.org/plasmodb/servlet/sv?page=gene&source_id= \
   Pfam http://pfam.sanger.ac.uk/family?acc= \
@@ -836,18 +850,21 @@ hyperlinks = \
   PIRSF http://pir.georgetown.edu/cgi-bin/ipcSF?id= \
   TIGR_TIGRFAMS http://cmr.tigr.org/tigr-scripts/CMR/HmmReport.cgi?hmm_acc= \
   OPI http://chemlims.com/OPI/MServlet.ChemInfo?module=GeneGo&act=findGenes&Gene_Name_= \
-  GO http://amigo.geneontology.org/cgi-bin/amigo/term-details.cgi?term= \
+  GO http://amigo.geneontology.org/cgi-bin/amigo/term_details?term=GO: \
   PANTHER http://www.pantherdb.org/panther/family.do?clsAccession= \
   Superfamily http://supfam.org/SUPERFAMILY/cgi-bin/scop.cgi?ipid= \
   PDB http://www.rcsb.org/pdb/explore.do?structureId= \
   AID http://pubchem.ncbi.nlm.nih.gov/assay/assay.cgi?aid= \
   GeneID http://www.ncbi.nlm.nih.gov/sites/entrez?db=gene&cmd=Retrieve&dopt=full_report&list_uids= \
-  Rfam http://rfam.sanger.ac.uk/family/
+  Rfam http://rfam.sanger.ac.uk/family/ \
+  GI http://www.ncbi.nlm.nih.gov/entrez/sutils/girevhist.cgi?val= \
+  TCDB http://www.tcdb.org/search/result.php?tc=
 
-# Lookseq url
-#lookseq = http://www.sanger.ac.uk/cgi-bin/teams/team112/lookseq/get_data.pl?
-#lookseq_chr  = MAL1
-#lookseq_lane = sample_7a
+# BamView
+# No. threads used to read from multiple BAM files
+bam_read_thread = 2
+# Max read coverage to display
+bam_max_coverage = 1000000
 
 #
 # CHADO DATABASE OPTIONS 
@@ -871,6 +888,10 @@ product_cvname = genedb_products
 synonym_cvname = genedb_synonym_type
 # cv containing annotation types for history qualifier
 history_cvname = annotation_change
+
+# automatically add a history qualifier when a new CV term (product, 
+# GO, controlled curation) term is added to the annotation
+automatic_history_annotation=yes
 
 # set default delete behaviour to make things obsolete, if
 # this is not provided the default is to permanently delete

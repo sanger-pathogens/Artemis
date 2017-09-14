@@ -28,9 +28,11 @@ package uk.ac.sanger.artemis.components.database;
 import uk.ac.sanger.artemis.components.*;
 
 import uk.ac.sanger.artemis.Entry;
+import uk.ac.sanger.artemis.EntryGroup;
 import uk.ac.sanger.artemis.FeatureVector;
 import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.Selection;
+import uk.ac.sanger.artemis.SimpleEntryGroup;
 import uk.ac.sanger.artemis.sequence.*;
 import uk.ac.sanger.artemis.util.InputStreamProgressEvent;
 import uk.ac.sanger.artemis.util.InputStreamProgressListener;
@@ -39,11 +41,12 @@ import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.util.StringVector;
 import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
 import uk.ac.sanger.artemis.io.Range;
+import uk.ac.sanger.artemis.io.ValidateFeature;
 
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JTree;
@@ -51,11 +54,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.BorderFactory;
+import javax.swing.ListSelectionModel;
 import javax.swing.border.Border;
 import javax.swing.tree.TreePath;
 
 import org.gmod.schema.organism.Organism;
-import org.gmod.schema.organism.OrganismProp;
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureLoc;
 
@@ -67,12 +70,13 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Frame;
 import java.awt.Toolkit;
 import java.awt.Cursor;
 import java.awt.FontMetrics;
 import java.io.*;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -82,8 +86,8 @@ public class DatabaseJPanel extends JPanel
 {
   /** */
   private static final long serialVersionUID = 1L;
-  private JLabel status_line = new JLabel("");
-  private boolean splitGFFEntry = false;
+  private static JLabel status_line = new JLabel("");
+  private static boolean splitGFFEntry = false;
   private JTree tree;
   private DatabaseDocument doc;
   private static Vector<String> opening = new Vector<String>();
@@ -143,7 +147,7 @@ public class DatabaseJPanel extends JPanel
       public void keyPressed(KeyEvent e) 
       {
         if (e.getKeyCode() == KeyEvent.VK_ENTER)
-          getEntryEditFromDatabase(entry_source, splash_main,
+          getEntryEditFromDatabase(entry_source, splash_main, DatabaseJPanel.this,
               openGeneText.getText().trim());
       } 
     });
@@ -153,7 +157,7 @@ public class DatabaseJPanel extends JPanel
     {
       public void actionPerformed(ActionEvent e)
       {
-        getEntryEditFromDatabase(entry_source, splash_main,
+        getEntryEditFromDatabase(entry_source, splash_main, DatabaseJPanel.this,
             openGeneText.getText().trim());
       }
     });
@@ -182,42 +186,138 @@ public class DatabaseJPanel extends JPanel
         (DatabaseTreeNode)path.getLastPathComponent();
       String node_name = (String)seq_node.getUserObject();
       String userName = doc.getUserName();
-
+      
       final String id = seq_node.getFeatureId();
       if(id != null)
       {
-    	getEntryEditFromDatabase(id, entry_source, tree, 
+        boolean isMitochondrial = false;
+        if(seq_node.getFeatureType() != null &&
+           seq_node.getFeatureType().startsWith("mitochondrial_"))
+          isMitochondrial = true;
+    	boolean readOnly = DatabaseTreeNode.setOrganismProps(
+    	    seq_node.getOrganism().getOrganismProps(), isMitochondrial);
+        getEntryEditFromDatabase(id, entry_source, tree, 
             status_line, stream_progress_listener, 
             splitGFFEntry, splash_main, 
-            node_name, userName);
-    	
-    	Frame[] frames = JFrame.getFrames();
-    	Splash splash = null;
-        for(int i=0;i<frames.length;i++)
-        {
-          if(frames[i] instanceof Splash)
-          {
-        	splash = (Splash)frames[i];
-        	break;
-          }
-        }
-        
-        if(splash != null)
-        {
-          final Iterator it = seq_node.getOrganism().getOrganismProps().iterator();
-          while (it.hasNext()) 
-          {
-	        OrganismProp organismProp = (OrganismProp) it.next();
-     	    if (organismProp.getCvTerm().getName().equals("translationTable"))
-		   	  splash.setTranslationTable(organismProp.getValue());
-		  }
-        }
+            node_name, userName, readOnly);
       }
     }
     catch(NullPointerException npe)
     {
       npe.printStackTrace();
     }
+  }
+  
+  
+  /**
+   * Validate the selected chromosome/genome
+   * @param entrySrc
+   */
+  public void validate(final DatabaseEntrySource entrySrc)
+  {
+    try
+    {
+      final TreePath path = tree.getLeadSelectionPath();
+      if(path == null)
+        return;
+      DatabaseTreeNode node = 
+        (DatabaseTreeNode)path.getLastPathComponent();
+      final String userName = doc.getUserName();
+      String id = node.getFeatureId();
+      final FileViewer fv = new FileViewer(
+          (String) node.getUserObject(), false, false, true);
+      int nfail = 0;
+      
+      if(id != null)
+        nfail = openValidatePanel(fv, entrySrc, id, userName, node, nfail);
+      else
+      {
+        if(!node.isExplored())
+          node.explore();
+        for(int i=0; i<node.getChildCount(); i++)
+        {
+          DatabaseTreeNode child = (DatabaseTreeNode)node.getChildAt(i);
+          id = child.getFeatureId();
+
+          if(id == null)
+          {
+            for(int j=0; j<child.getChildCount(); j++)
+            {
+              DatabaseTreeNode child2 = 
+                  (DatabaseTreeNode)child.getChildAt(j);
+              id = child2.getFeatureId();
+              nfail = openValidatePanel(fv, entrySrc, id, userName, child2, nfail);
+            }
+          }
+          else
+            nfail = openValidatePanel(fv, entrySrc, id, userName, child, nfail);
+        }
+      }
+      
+      fv.setTitle(fv.getTitle()+" ::: Failed: "+nfail);
+      fv.setVisible(true);
+    }
+    catch(NullPointerException npe)
+    {
+      npe.printStackTrace();
+    }
+  }
+  
+  /**
+   * Create entry and validate
+   * @param fv
+   * @param entrySrc
+   * @param srcFeatureId
+   * @param userName
+   * @param node
+   * @param nfail
+   * @return
+   */
+  private int openValidatePanel(final FileViewer fv,
+                                 final DatabaseEntrySource entrySrc, 
+                                 final String srcFeatureId,
+                                 final String userName,
+                                 final DatabaseTreeNode node,
+                                 int nfail)       
+  {
+    try
+    {
+      stream_progress_listener.progressMade("Validating... "+(String)node.getUserObject());
+      boolean isMitochondrial = false;
+      if(((String)node.getPreviousNode().getUserObject()).startsWith("mitochondrial_"))
+        isMitochondrial = true;
+      DatabaseTreeNode.setOrganismProps(
+          node.getOrganism().getOrganismProps(), isMitochondrial);
+      
+      final Entry entry = entrySrc.getEntry(srcFeatureId, userName,
+          stream_progress_listener, null);
+      ((DatabaseDocumentEntry)entry.getEMBLEntry()).setReadOnly(true);
+      final EntryGroup entryGrp = new SimpleEntryGroup(entry.getBases());
+      entryGrp.add(entry);
+
+      final ValidateFeature validate = new ValidateFeature(entryGrp);
+      uk.ac.sanger.artemis.io.FeatureVector features = entry.getEMBLEntry().getAllFeatures();
+
+      for(uk.ac.sanger.artemis.io.Feature f: features)
+        if(!validate.featureValidate(f, fv, true))
+          nfail++;
+
+      entry.dispose();
+      stream_progress_listener.progressMade("Validated: "+(String)node.getUserObject());
+    }
+    catch (OutOfRangeException e)
+    {
+      e.printStackTrace();
+    }
+    catch (NoSequenceException e)
+    {
+      e.printStackTrace();
+    }
+    catch (IOException e)
+    {
+      e.printStackTrace();
+    }
+    return nfail;
   }
   
   /**
@@ -228,11 +328,12 @@ public class DatabaseJPanel extends JPanel
    * @param entryName                 e.g. Pfalciparum:Pf3D7_09 or 
    *                                  Pfalciparum:Pf3D7_09:20050..40000
    * @return
+   * @throws Exception 
    */
   public static EntryEdit show(final DatabaseEntrySource entry_source,
                           final Splash splash_main,
                           final InputStreamProgressListener stream_progress_listener,
-                          final String entryName)
+                          final String entryName) throws Exception
   {
     return show(entry_source,
         (splash_main == null ? null : splash_main.getCanvas()), 
@@ -253,15 +354,16 @@ public class DatabaseJPanel extends JPanel
    *                          Pfalciparum:Pf3D7_09:20050..40000
    * @param isNotSrcFeature true is the entry name may not be a source feature
    * @return
+   * @throws Exception 
    */
   private static EntryEdit show(final DatabaseEntrySource entry_source,
-                          final JComponent srcComponent,
+                          final Component srcComponent,
                           final JLabel status_line,
                           final Splash splash_main,
                           final InputStreamProgressListener stream_progress_listener,
                           final String entryName,
                           final boolean isNotSrcFeature,
-                          final boolean splitGFFEntry)
+                          final boolean splitGFFEntry) throws Exception
   {
     final String entry[] = entryName.split(":");
     String url = (String)entry_source.getLocation();
@@ -292,14 +394,45 @@ public class DatabaseJPanel extends JPanel
     }
     
     Feature f = doc.getFeatureByUniquename(entry[1]);
-    
+
     if(isNotSrcFeature && f.getFeatureLocsForFeatureId() != null
                        && f.getFeatureLocsForFeatureId().size() > 0)
     {
-      Iterator it = f.getFeatureLocsForFeatureId().iterator();
-      f = ((FeatureLoc) it.next()).getFeatureBySrcFeatureId();
+      final Collection<FeatureLoc> flocs = f.getFeatureLocsForFeatureId();
+      if(flocs.size() > 1)
+      {
+        final Object flocsArr[] = flocs.toArray();
+        final String uniqueNames[] = new String[flocsArr.length];
+        for(int i=0; i<flocsArr.length; i++)
+        {
+          Feature thisF = ((FeatureLoc) flocsArr[i]).getFeatureBySrcFeatureId();
+          uniqueNames[i] = thisF.getUniqueName() + " (" + thisF.getCvTerm().getName() + ")";
+        }
+        final JList list = new JList(uniqueNames);
+        list.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+        list.setSelectedIndex(0);
+        int status = JOptionPane.showConfirmDialog(null,
+            new JScrollPane(list), "Choose", JOptionPane.OK_CANCEL_OPTION);
+        if(status == JOptionPane.CANCEL_OPTION)
+          return null;
+        f = ((FeatureLoc)flocsArr[list.getSelectedIndex()]).getFeatureBySrcFeatureId();
+        logger4j.debug("Opening... "+f.getUniqueName());
+      }
+      else
+      {
+        final Iterator<FeatureLoc> it = flocs.iterator();
+        f = it.next().getFeatureBySrcFeatureId();
+      }
     }
     
+    if(f == null)
+      throw new Exception(entryName+" not found!");
+    
+    boolean isMitochondrial = false;
+    if(f.getCvTerm().getName().startsWith("mitochondrial_"))
+      isMitochondrial = true;
+    boolean readOnly = DatabaseTreeNode.setOrganismProps(
+        f.getOrganism().getOrganismProps(), isMitochondrial);
     // warn when opening duplicate entries at the same time
     if(opening.contains(f.getUniqueName()))
     {
@@ -312,12 +445,12 @@ public class DatabaseJPanel extends JPanel
       if(status != JOptionPane.YES_OPTION)
         return null;
     }
-    
+
     opening.add(f.getUniqueName());
     EntryEdit ee = openEntry(Integer.toString(f.getFeatureId()), entry_source, 
         srcComponent, status_line, 
         stream_progress_listener,
-        splitGFFEntry, splash_main,  f.getUniqueName(), userName, range);
+        splitGFFEntry, splash_main,  f.getUniqueName(), userName, range, readOnly);
     opening.remove(f.getUniqueName());
     
     return ee;
@@ -344,7 +477,8 @@ public class DatabaseJPanel extends JPanel
       final boolean splitGFFEntry,
       final Splash splash_main, 
       final String dbDocumentName,
-      final String userName)
+      final String userName,
+      final boolean readOnly)
   {
     SwingWorker entryWorker = new SwingWorker()
     {
@@ -360,7 +494,7 @@ public class DatabaseJPanel extends JPanel
           while(DatabaseDocument.isCvThreadAlive())
             Thread.sleep(5);
           openEntry(srcfeatureId, entry_source, srcComponent, status_line, stream_progress_listener,
-              splitGFFEntry, splash_main, dbDocumentName, userName, null);
+              splitGFFEntry, splash_main, dbDocumentName, userName, null, readOnly);
         }
         catch(RuntimeException re)
         {
@@ -378,7 +512,7 @@ public class DatabaseJPanel extends JPanel
             userName = userName.substring(5);
             
           openEntry(srcfeatureId, entry_source, srcComponent, status_line, stream_progress_listener,
-              splitGFFEntry, splash_main, dbDocumentName, userName, null);
+              splitGFFEntry, splash_main, dbDocumentName, userName, null, readOnly);
         }
         catch(InterruptedException e)
         {
@@ -401,8 +535,9 @@ public class DatabaseJPanel extends JPanel
    * @param splash_main
    * @param featureName
    */
-  private void getEntryEditFromDatabase(final DatabaseEntrySource entry_source,
+  public static void getEntryEditFromDatabase(final DatabaseEntrySource entry_source,
                          final Splash splash_main,
+                         final Component comp,
                          final String featureName)
   {
     SwingWorker entryWorker = new SwingWorker()
@@ -413,24 +548,25 @@ public class DatabaseJPanel extends JPanel
         Cursor cdone = new Cursor(Cursor.DEFAULT_CURSOR);
         try
         {
-          DatabaseJPanel.this.setCursor(cbusy);
+          comp.setCursor(cbusy);
+          
           EntryEdit ee = show(entry_source, 
-             DatabaseJPanel.this, status_line, splash_main,
+             comp, status_line, splash_main,
              stream_progress_listener, ":" + featureName,
              true, splitGFFEntry);
           goTo(ee, featureName);
         }
-        catch (NullPointerException npe)
+        catch (Exception npe)
         {
           //npe.printStackTrace();
-          JOptionPane.showMessageDialog(DatabaseJPanel.this, 
+          JOptionPane.showMessageDialog(comp, 
               featureName + " not opened/found!", 
               "Failed to Open", JOptionPane.WARNING_MESSAGE);
           logger4j.debug(featureName + " not found!");
         }
         finally
         {
-          DatabaseJPanel.this.setCursor(cdone);
+          comp.setCursor(cdone);
         }
         return null;
       }
@@ -455,14 +591,15 @@ public class DatabaseJPanel extends JPanel
   private static EntryEdit openEntry(
       final String srcfeatureId,
       final DatabaseEntrySource entry_source, 
-      final JComponent srcComponent,
+      final Component srcComponent,
       final JLabel status_line,
       final InputStreamProgressListener stream_progress_listener,
       final boolean splitGFFEntry,
       final Splash splash_main, 
       final String dbDocumentName,
       final String userName,
-      final Range range) 
+      final Range range, 
+      final boolean readOnly) 
   {
     Cursor cdone = new Cursor(Cursor.DEFAULT_CURSOR);
     try
@@ -473,9 +610,10 @@ public class DatabaseJPanel extends JPanel
 
       final Entry entry = entry_source.getEntry(srcfeatureId, userName,
           stream_progress_listener, range);
-
+      
       DatabaseDocumentEntry db_entry = (DatabaseDocumentEntry) entry
           .getEMBLEntry();
+      db_entry.setReadOnly(readOnly);
       DatabaseDocument doc = (DatabaseDocument) db_entry.getDocument();
       doc.setName(dbDocumentName);
 
@@ -540,7 +678,7 @@ public class DatabaseJPanel extends JPanel
         doc = entry_source.getDatabaseDocument();
         final DatabaseTreeNode top = new DatabaseTreeNode("");
 
-        File cacheFile = new File(DatabaseTreeNode.CACHE_PATH+
+        File cacheFile = new File(Options.CACHE_PATH+
             ((String)doc.getLocation()).replaceAll("[/:=\\?]", "_"));
         
         if(System.getProperty("database_manager_cache_off") == null &&
@@ -572,10 +710,10 @@ public class DatabaseJPanel extends JPanel
         else if(System.getProperty("database_manager_cache_off") != null)
           logger4j.debug("Database manager cache off");
         
-        final List organisms = doc.getOrganismsContainingSrcFeatures();
+        final List<Organism> organisms = doc.getOrganismsContainingSrcFeatures();
         for(int i=0; i<organisms.size(); i++)
         {
-          Organism org = (Organism)organisms.get(i);
+          Organism org = organisms.get(i);
           
           String name = org.getCommonName();
           if(name == null || name.equals(""))
@@ -601,7 +739,7 @@ public class DatabaseJPanel extends JPanel
    * An InputStreamProgressListener used to update the error label with the
    * current number of chars read.
    */
-  private final InputStreamProgressListener stream_progress_listener =
+  private static final InputStreamProgressListener stream_progress_listener =
     new InputStreamProgressListener() 
   {
     public void progressMade(final InputStreamProgressEvent event) 

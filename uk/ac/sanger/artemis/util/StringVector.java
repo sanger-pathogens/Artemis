@@ -36,8 +36,10 @@ import java.util.Comparator;
  *  @version $Id: StringVector.java,v 1.5 2005-10-13 12:06:12 tjc Exp $
  **/
 
-public class StringVector extends Vector
+public class StringVector extends Vector<String>
 {
+  private static final long serialVersionUID = 1L;
+
   /**
    *  Create a new vector of String objects.
    **/
@@ -49,11 +51,11 @@ public class StringVector extends Vector
   /**
    *  Create a new vector which contains the given Strings.
    **/
-  public StringVector(final String[] new_strings) 
+  public StringVector(final String[] new_strings)
   {
     super(new_strings.length);
     int len = new_strings.length;
-    for(int i = 0; i < len; ++i) 
+    for(int i = 0; i < len; ++i)
       add(new_strings[i]);
   }
 
@@ -66,7 +68,7 @@ public class StringVector extends Vector
   /**
    *  Create a new vector which contains the given Strings.
    **/
-  public StringVector(final StringVector new_strings) 
+  public StringVector(final StringVector new_strings)
   {
     super(new_strings);
   }
@@ -74,7 +76,7 @@ public class StringVector extends Vector
   /**
    *  Call add() on each of the String objects in the given StringVector.
    **/
-  public void add(final StringVector new_strings) 
+  public void add(final StringVector new_strings)
   {
     for (int i = 0; i < new_strings.size(); ++i)
       add (new_strings.elementAt(i));
@@ -86,23 +88,23 @@ public class StringVector extends Vector
    */
   public void sort()
   {
-    final Comparator comparator = new Comparator()
+    final Comparator<String> comparator = new Comparator<String>()
     {
-      public int compare(Object fst, Object snd) 
+      public int compare(String fst, String snd)
       {
-        if(fst == null) 
+        if(fst == null)
         {
           if(snd == null)
             return 0;
           else
             return -1;
-        } 
-        else 
+        }
+        else
         {
           if(snd == null)
             return 1;
         }
-        return ((String)fst).compareTo((String) snd);
+        return fst.compareTo(snd);
       }
     };
 
@@ -112,7 +114,7 @@ public class StringVector extends Vector
   /**
    *  Return a new copy of this object.
    **/
-  public StringVector copy() 
+  public StringVector copy()
   {
     return new StringVector(this);
   }
@@ -122,61 +124,59 @@ public class StringVector extends Vector
    *  splitting using the given characters.  If the argument String is zero
    *  length or it consists only of the characters used to split, the return
    *  vector will be zero length.
-   *  @param keep_zero_char_tokens If true then zero width tokens will be
-   *    returned.  eg. when spliting on tabs if this parameter is true then
+   *  @param keep_zero_char_toks If true then zero width tokens will be
+   *    returned.  eg. when splitting on tabs if this parameter is true then
    *    splitting this "\t\tfoo" will return "" and "foo".  If this flag is
    *    false then the split_characters will be treated as a block (and "foo"
    *    would be returned in the example.
    **/
   public static StringVector getStrings(final String argument,
-                                        String split_characters,
-                                        final boolean keep_zero_char_tokens) 
+                                        final String delim,
+                                        final boolean keep_zero_char_toks)
   {
-    final StringVector return_vector = new StringVector();
+    final StringVector strVector = new StringVector();
 
-    String value;
-    String last_value = null;
+    String tok;
+    String lastTok = null;
+    int idx1 = 0;
+    int idx2;
+    final int argLen = argument.length();
 
-    int ind1 = 0;
-    int ind2;
-    int argLen  = argument.length();
-
-    while(ind1 < argLen)
+    while(idx1 < argLen)
     {
-      ind2 = argument.indexOf(split_characters,ind1);
-      if(ind2 == ind1)
+      idx2 = argument.indexOf(delim,idx1);
+      if(idx2 == idx1)
       {
-        ind1++;
+        idx1++;
         continue;
       }
 
-      if(ind2 < 0)
-        ind2 = argLen;
- 
-      value = argument.substring(ind1,ind2);
-      ind1 = ind2+1;
+      if(idx2 < 0)
+        idx2 = argLen;
 
-      if(value.length() == 1 &&
-         split_characters.indexOf(value.charAt(0)) != -1) 
+      tok = argument.substring(idx1,idx2);
+      idx1 = idx2+1;
+
+      if(tok.length() == 1 &&
+          delim.indexOf(tok.charAt(0)) != -1)
       {
         // ignore the split characters
-
-        if(keep_zero_char_tokens &&
-           (last_value == null ||
-            last_value != null && last_value.length () == 1 &&
-            split_characters.indexOf (last_value) != -1)) 
+        if(keep_zero_char_toks &&
+           (lastTok == null ||
+            lastTok != null && lastTok.length () == 1 &&
+            delim.indexOf (lastTok) != -1))
         {
-          // we need to add a space because of two split_characters in a row
-          return_vector.add("");
+          // add a space because of two split_characters in a row
+          strVector.add("");
         }
-      } 
+      }
       else
-        return_vector.add(value);
+        strVector.add(tok);
 
-      last_value = value;
+      lastTok = tok;
     }
 
-    return return_vector;
+    return strVector;
   }
 
   /**
@@ -186,7 +186,7 @@ public class StringVector extends Vector
    *  vector will be zero length.
    **/
   public static StringVector getStrings(final String argument,
-                                        final String split_characters) 
+                                        final String split_characters)
   {
     return getStrings(argument, split_characters, false);
   }
@@ -198,7 +198,7 @@ public class StringVector extends Vector
    *  String is zero length or it consists only of whitespace, the return
    *  vector will be zero length.
    **/
-  public static StringVector getStrings(final String argument) 
+  public static StringVector getStrings(final String argument)
   {
     return getStrings(argument, " ", false);
   }
@@ -207,13 +207,19 @@ public class StringVector extends Vector
   {
     String argument = "a a g g g c a c g t c g c a t c g a c t c";
     long startTime = System.currentTimeMillis();
-
     for(int i=0; i<10000000; i++)
       getStrings(argument, " ", true);
 
-    long endTime = System.currentTimeMillis();
+    System.out.println("TIME TAKEN "+  Long.toString(System.currentTimeMillis()-startTime));
 
-    System.out.println("TIME TAKEN "+  Long.toString(endTime-startTime));
+    startTime = System.currentTimeMillis();
+    for(int i=0; i<10000000; i++)
+    {
+      java.util.StringTokenizer st = new java.util.StringTokenizer(argument, " ", true);
+      while(st.hasMoreTokens())
+        st.nextToken();
+    }
+    System.out.println("TIME TAKEN "+  Long.toString(System.currentTimeMillis()-startTime));
   }
 
 }

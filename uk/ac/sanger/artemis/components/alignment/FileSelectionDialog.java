@@ -29,6 +29,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import uk.ac.sanger.artemis.components.StickyFileChooser;
+import uk.ac.sanger.artemis.components.variant.VCFview;
 
 /**
  * File selection panel to allow input of DNA sequences
@@ -42,6 +43,7 @@ public class FileSelectionDialog extends JDialog
   private int row = 0;
   private List<JTextField> bamFields = new Vector<JTextField>(30);
   private JTextField referenceField = new JTextField(30);
+  private boolean statusOK = false;
   
   public FileSelectionDialog(String fileNames[])
   {
@@ -50,6 +52,7 @@ public class FileSelectionDialog extends JDialog
       JTextField bamField = new JTextField(fileNames[i]);
       bamFields.add(bamField);
     }
+    statusOK = true;
   }
   
   /**
@@ -64,14 +67,14 @@ public class FileSelectionDialog extends JDialog
   {
     super(f, program+" :: Select Files", true);
 
-    addBamField(fileType);
+    addBamField(fileType, null);
     
     JButton addMoreFiles = new JButton("Add More");
     addMoreFiles.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
       {
-        addBamField(fileType);
+        addBamField(fileType, null);
       }
     });
     
@@ -88,7 +91,7 @@ public class FileSelectionDialog extends JDialog
       c.gridy = ++row;
       dialog.add(referenceField, c);
       JButton selectReference = new JButton("Select...");
-      addActionListener(selectReference, referenceField);
+      addActionListener(selectReference, referenceField, fileType);
       c.gridx = 1;
       dialog.add(selectReference, c);
     }
@@ -97,6 +100,7 @@ public class FileSelectionDialog extends JDialog
     okButton.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e)
       {
+        statusOK = true;
         FileSelectionDialog.this.dispose();
       }
     });
@@ -117,11 +121,13 @@ public class FileSelectionDialog extends JDialog
    * Add a text field to the dialog for adding in a path
    * to a BAM file.
    */
-  private void addBamField(String fileType)
+  private void addBamField(String fileType, String fileName)
   {
     JTextField bamField = new JTextField(30);
     bamFields.add(bamField);
     
+    if(fileName != null)
+      bamField.setText(fileName);
     bamField.setPreferredSize(
         new Dimension(200,bamField.getPreferredSize().height));
     c.gridy = row;
@@ -132,7 +138,7 @@ public class FileSelectionDialog extends JDialog
     dialog.add(bamField, c);
     c.gridx = 1;
     JButton selectBam = new JButton("Select...");
-    addActionListener(selectBam, bamField);
+    addActionListener(selectBam, bamField, fileType);
     dialog.add(selectBam, c);
     
     pack();
@@ -142,19 +148,51 @@ public class FileSelectionDialog extends JDialog
    * Add action listener to a button.
    * @param fileSelectionButton
    * @param tfield
+   * @param fileType
    */
   private void addActionListener(final JButton fileSelectionButton, 
-                                 final JTextField tfield)
+                                 final JTextField tfield,
+                                 final String fileType)
   {
+    final javax.swing.filechooser.FileFilter filter =
+        new javax.swing.filechooser.FileFilter()
+    {
+      public boolean accept(final File file) 
+      {
+        if(file.isDirectory() ||
+           file.getName().matches(VCFview.VCFFILE_SUFFIX) ||
+           file.getName().matches(BamView.BAM_SUFFIX))
+          return true;
+        return false;
+      }
+
+      public String getDescription() 
+      {
+        return "BAM / VCF files";
+      }
+    };
+    
     fileSelectionButton.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
       {
         StickyFileChooser fileChooser = new StickyFileChooser();
+        fileChooser.setMultiSelectionEnabled(true);
+        fileChooser.setFileFilter(filter);
+        
         int status = fileChooser.showOpenDialog(null);
         if(status == StickyFileChooser.CANCEL_OPTION)
           return;
-        tfield.setText(fileChooser.getSelectedFile().getAbsolutePath());
+        
+        
+        File[] files = fileChooser.getSelectedFiles();
+        tfield.setText(files[0].getAbsolutePath());
+        
+        if(files.length > 1)
+        {
+          for(int i=1; i<files.length; i++)
+            addBamField(fileType, files[i].getAbsolutePath());
+        }
       }
     });
   }
@@ -166,7 +204,7 @@ public class FileSelectionDialog extends JDialog
    */
   public static boolean isListOfFiles(String filename) 
   {
-    if(filename.startsWith("http"))
+    if(filename.startsWith("http") || filename.startsWith("ftp"))
     {
       try
       {
@@ -178,7 +216,7 @@ public class FileSelectionDialog extends JDialog
         is.close();
         reader.close();
         
-        if(s != null && s.trim().startsWith("http"))
+        if(s != null && (s.trim().startsWith("http") || s.trim().startsWith("ftp")))
           return true;
       }
       catch (IOException e){}
@@ -195,7 +233,13 @@ public class FileSelectionDialog extends JDialog
         DataInputStream in = new DataInputStream(fstream);
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
 
-        f = new File(br.readLine().trim());
+        String line = br.readLine().trim();
+        br.close();
+        fstream.close();
+        
+        if(line.startsWith("http") || line.startsWith("ftp"))
+          return true;
+        f = new File(line);
         if (f.exists())
           return true;
       }
@@ -204,6 +248,7 @@ public class FileSelectionDialog extends JDialog
     {
       return false;
     }
+    
     return false;
   }
   
@@ -270,6 +315,8 @@ public class FileSelectionDialog extends JDialog
    */
   public List<String> getFiles(String patternStr)
   {
+    if(!statusOK)
+      return new Vector<String>();
     Pattern p = Pattern.compile(patternStr);
     
     List<String> files = new Vector<String>();
@@ -307,4 +354,5 @@ public class FileSelectionDialog extends JDialog
   {
     return referenceField.getText();
   }
+      
 }

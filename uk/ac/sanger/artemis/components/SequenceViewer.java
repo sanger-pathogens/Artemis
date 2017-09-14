@@ -25,8 +25,23 @@
 
 package uk.ac.sanger.artemis.components;
 
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.StringWriter;
 import java.io.PrintWriter;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.swing.ButtonGroup;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JRadioButtonMenuItem;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 
 /**
  *  This component provides a viewer for dna or amino acid sequences.  The
@@ -49,9 +64,80 @@ public class SequenceViewer extends FileViewer {
    **/
   public SequenceViewer (final String title,
                          final boolean include_numbers) {
-    super (title);
-
+    super (title, true, false, true);
     this.include_numbers = include_numbers;
+    initMenu();
+  }
+  
+  private void initMenu()
+  {
+    final JMenuBar mBar = getJMenuBar();
+    final JMenu viewMenu = new JMenu("View");
+    mBar.add(viewMenu);
+    
+    final ButtonGroup group = new ButtonGroup();
+    final JRadioButtonMenuItem none = new JRadioButtonMenuItem("No Colour");
+    none.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent arg0)
+      {
+        if(none.isSelected())
+          clearColour();
+      }
+    });
+    viewMenu.add(none);
+    group.add(none);
+    
+    final JRadioButtonMenuItem taylor = new JRadioButtonMenuItem("Taylor Colour");
+    taylor.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent arg0)
+      {
+        if(taylor.isSelected())
+          colourTaylor();
+      }
+    });
+    viewMenu.add(taylor);
+    group.add(taylor);
+    
+    final JRadioButtonMenuItem rasmol = new JRadioButtonMenuItem("Rasmol Colour");
+    rasmol.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        colourRasmol();
+      }  
+    });
+    viewMenu.add(rasmol);
+    group.add(rasmol);
+    
+    final JRadioButtonMenuItem stops = new JRadioButtonMenuItem("Stop Codon Colour");
+    stops.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        colourStops();
+      }  
+    });
+    viewMenu.add(stops);
+    group.add(stops);
+
+    final JRadioButtonMenuItem nuc = new JRadioButtonMenuItem("Nucleotide Colour");
+    nuc.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        colourNuc();
+      }  
+    });
+    viewMenu.add(nuc);
+    group.add(nuc);
+    
+    
+    stops.setSelected(true);
+    // add clear style
+    final Style style = getTextPane().addStyle("clear", null);
+    StyleConstants.setBackground(style, Color.white);
   }
 
   /**
@@ -143,22 +229,104 @@ public class SequenceViewer extends FileViewer {
     writer.flush ();
 
     setText (string_writer.toString ());
+    
+    colourStops();
   }
-
+  
+  private void colourStops()
+  {
+    clearColour();
+    final StyledDocument doc = getTextPane().getStyledDocument();
+    final Style style = getTextPane().addStyle("Red", null);
+    StyleConstants.setBackground(style, Color.red);
+    
+    final Matcher matcher = STOP_CODON_PATTERN.matcher(getText());
+    while( matcher.find() )
+    {
+      doc.setCharacterAttributes(matcher.start(), matcher.end()-matcher.start(), 
+          getTextPane().getStyle("Red"), true);
+    } 
+  }
+  
   /**
-   *  The sequence to display.
-   **/
+   * Use Taylor colour scheme
+   * W.R.Taylor Protein Eng. vol.10 no. 7 pp743-746, 1997
+   */
+  private void colourTaylor()
+  {
+    clearColour();
+    applyColourScheme(org.emboss.jemboss.editor.SequenceProperties.taylorColor);
+  }
+  
+  /**
+   * Use Rasmol colour scheme
+   */
+  private void colourRasmol()
+  {
+    clearColour();
+    applyColourScheme(org.emboss.jemboss.editor.SequenceProperties.rasmolColor);
+  }
+  
+  /**
+   * Use Rasmol colour scheme
+   */
+  private void colourNuc()
+  {
+    clearColour();
+    applyColourScheme(org.emboss.jemboss.editor.SequenceProperties.baseColor);
+  }
+  
+  
+  private void applyColourScheme(final Hashtable<String, Color> colourHash)
+  {
+    final Enumeration<String> keys = colourHash.keys();
+    final StyledDocument doc = getTextPane().getStyledDocument();
+    
+    while(keys.hasMoreElements())
+    {
+      final String aa = keys.nextElement();
+      Style style = getTextPane().addStyle(aa, null);
+      StyleConstants.setBackground(style, colourHash.get(aa));
+    }
+    
+    final String seq = getText().toUpperCase();
+    int seqStart = 0;
+    if(seq.startsWith(">"))
+    {
+      final Matcher matcher = EOL_PATTERN.matcher(getText());
+      if(matcher.find())
+        seqStart = matcher.start();
+      if(seqStart < 0)
+        seqStart = 0;
+    }
+
+    for(int i=seqStart; i<seq.length(); i++)
+    {
+      String c = Character.toString( seq.charAt(i) );
+      if(getTextPane().getStyle(c) != null)
+        doc.setCharacterAttributes(i, 1, getTextPane().getStyle(c), true);
+    }
+  }
+  
+  private void clearColour()
+  {
+    final StyledDocument doc = getTextPane().getStyledDocument();
+    doc.setCharacterAttributes(0, getText().length(), getTextPane().getStyle("clear"), true);
+  }
+  
+
+  /** Pattern for locating stop codons */
+  private static Pattern STOP_CODON_PATTERN = Pattern.compile("[\\*#+]");
+  private static Pattern EOL_PATTERN = Pattern.compile("[\r\n]");
+  
+  /** The sequence to display. */
   private String sequence = "";
 
-  /**
-   *  A comment to put on the first line.  If null don't display any comment.
-   **/
+  /** A comment to put on the first line.  If null don't display any comment. */
   private String comment_line = null;
 
-  /**
-   *  If true then the amino acids will be numbered (every second line of the
-   *  display will be numbers rather than sequence).
-   **/
+  /** If true then the amino acids will be numbered (every second line of the
+      display will be numbers rather than sequence). */
   private final boolean include_numbers;
 }
 

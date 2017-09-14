@@ -25,6 +25,7 @@
 
 package uk.ac.sanger.artemis;
 
+import uk.ac.sanger.artemis.io.IndexedGFFDocumentEntry;
 import uk.ac.sanger.artemis.util.FastVector;
 
 import java.util.*;
@@ -84,6 +85,9 @@ public class FeatureVector {
    *  Return true if this object contains the given Feature.
    **/
   public boolean contains (Feature feature) {
+    if(feature.getEntry().getEMBLEntry() instanceof IndexedGFFDocumentEntry)
+      return IndexedGFFDocumentEntry.contains(feature, this);
+
     return vector.contains (feature);
   }
 
@@ -150,7 +154,7 @@ public class FeatureVector {
   public FeatureVector sort (final Comparator cmp) {
     final FeatureVector return_vector = (FeatureVector) clone ();
 
-    return_vector.vector = return_vector.vector.sort (cmp);
+    return_vector.vector = return_vector.vector.mysort (cmp);
 
     return return_vector;
   }

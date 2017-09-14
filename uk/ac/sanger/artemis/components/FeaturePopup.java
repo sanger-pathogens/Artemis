@@ -34,6 +34,7 @@ import java.io.*;
 import java.awt.Component;
 import java.awt.BorderLayout;
 import java.awt.event.*;
+
 import javax.swing.*;
 
 /**
@@ -143,6 +144,29 @@ public class FeaturePopup extends JPopupMenu
           maybeAdd(feature_list_menus[i]);
     }
     addSeparator();
+    
+
+    final JMenuItem miValidate = new JMenuItem("Validation report...");
+    miValidate.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent arg0)
+      {
+        FeatureVector features = null;
+        if(selection.getAllFeatures().size() < 1)
+        {
+          int status = JOptionPane.showConfirmDialog(owner.getParentFrame(), 
+              "No features selected. Validate all features.", "Select Features", 
+              JOptionPane.OK_CANCEL_OPTION);
+          if(status == JOptionPane.CANCEL_OPTION)
+            return;
+        }
+        else
+          features = selection.getAllFeatures();
+        new ValidateViewer(getEntryGroup(), features);
+      }     
+    });
+    maybeAdd(miValidate);
+    addSeparator();
+    
 
     for(int i = 0; i<action_menus.length; i++)
       maybeAdd(action_menus[i]);
@@ -281,10 +305,12 @@ public class FeaturePopup extends JPopupMenu
     final JMenuItem[] feature_display_menus;
     
     final boolean isDatabaseGroup = GeneUtils.isDatabaseEntry( getEntryGroup() );
-    if(isDatabaseGroup)
-      feature_display_menus = new JMenuItem[21];
+    final boolean isGFFGroup      = GeneUtils.isGFFEntry( getEntryGroup() );
+    
+    if(isDatabaseGroup || isGFFGroup)
+      feature_display_menus = new JMenuItem[22];
     else
-      feature_display_menus = new JMenuItem[20];
+      feature_display_menus = new JMenuItem[21];
     
     feature_display_menus[0] = new JCheckBoxMenuItem("Start Codons");
     ((JCheckBoxMenuItem)feature_display_menus[0]).setState(
@@ -352,88 +378,107 @@ public class FeaturePopup extends JPopupMenu
     {
       public void itemStateChanged(ItemEvent e) 
       {
-        final boolean new_state = 
+        final boolean new_state =
                   ((JCheckBoxMenuItem)feature_display_menus[5]).getState();
         if(new_state && getEntryGroup().size() > 8) 
           feature_display.setShowLabels(false);
         feature_display.setOneLinePerEntry(new_state);
+        if(new_state)
+          ((JCheckBoxMenuItem)feature_display_menus[6]).setState(false);
       }
     });
-
-    feature_display_menus[6] = new JCheckBoxMenuItem("Forward Frame Lines");
+    
+    feature_display_menus[6] = new JCheckBoxMenuItem("Feature Stack View");
     ((JCheckBoxMenuItem)feature_display_menus[6]).setState(
-                                feature_display.getShowForwardFrameLines());
+                                 feature_display.getFeatureStackViewFlag());
     feature_display_menus[6].addItemListener(new ItemListener() 
     {
       public void itemStateChanged(ItemEvent e) 
       {
-        feature_display.setShowForwardFrameLines(
-                  ((JCheckBoxMenuItem)feature_display_menus[6]).getState());
+        final boolean new_state = 
+                  ((JCheckBoxMenuItem)feature_display_menus[6]).getState();
+        if(new_state && getEntryGroup().size() > 8) 
+          feature_display.setShowLabels(false);
+        feature_display.setFeatureStackViewFlag(new_state);
+        if(new_state)
+          ((JCheckBoxMenuItem)feature_display_menus[5]).setState(false);
       }
     });
 
-    feature_display_menus[7] = new JCheckBoxMenuItem("Reverse Frame Lines");
+    feature_display_menus[7] = new JCheckBoxMenuItem("Forward Frame Lines");
     ((JCheckBoxMenuItem)feature_display_menus[7]).setState(
-                               feature_display.getShowReverseFrameLines());
+                                feature_display.getShowForwardFrameLines());
     feature_display_menus[7].addItemListener(new ItemListener() 
     {
       public void itemStateChanged(ItemEvent e) 
       {
-        feature_display.setShowReverseFrameLines(
+        feature_display.setShowForwardFrameLines(
                   ((JCheckBoxMenuItem)feature_display_menus[7]).getState());
       }
     });
 
-    feature_display_menus[8] = new JCheckBoxMenuItem("All Features On Frame Lines");
+    feature_display_menus[8] = new JCheckBoxMenuItem("Reverse Frame Lines");
     ((JCheckBoxMenuItem)feature_display_menus[8]).setState(
-                                            feature_display.getFrameFeaturesFlag());
+                               feature_display.getShowReverseFrameLines());
     feature_display_menus[8].addItemListener(new ItemListener() 
     {
       public void itemStateChanged(ItemEvent e) 
       {
-        feature_display.setFrameFeaturesFlag(
+        feature_display.setShowReverseFrameLines(
                   ((JCheckBoxMenuItem)feature_display_menus[8]).getState());
       }
     });
 
-    feature_display_menus[9] = new JCheckBoxMenuItem("Show Source Features");
+    feature_display_menus[9] = new JCheckBoxMenuItem("All Features On Frame Lines");
     ((JCheckBoxMenuItem)feature_display_menus[9]).setState(
-                                    feature_display.getShowSourceFeatures());
+                                            feature_display.getFrameFeaturesFlag());
     feature_display_menus[9].addItemListener(new ItemListener() 
     {
       public void itemStateChanged(ItemEvent e) 
       {
-        feature_display.setShowSourceFeatures(
+        feature_display.setFrameFeaturesFlag(
                   ((JCheckBoxMenuItem)feature_display_menus[9]).getState());
       }
     });
 
-    feature_display_menus[10] = new JCheckBoxMenuItem("Flip Display");
+    feature_display_menus[10] = new JCheckBoxMenuItem("Show Source Features");
     ((JCheckBoxMenuItem)feature_display_menus[10]).setState(
-                                  feature_display.isRevCompDisplay());
-    feature_display_menus[10].addItemListener(new ItemListener()
+                                    feature_display.getShowSourceFeatures());
+    feature_display_menus[10].addItemListener(new ItemListener() 
     {
       public void itemStateChanged(ItemEvent e) 
       {
-        feature_display.setRevCompDisplay(
+        feature_display.setShowSourceFeatures(
                   ((JCheckBoxMenuItem)feature_display_menus[10]).getState());
       }
     });
 
-    feature_display_menus[11] = new JCheckBoxMenuItem("Colourise Bases");
+    feature_display_menus[11] = new JCheckBoxMenuItem("Flip Display");
     ((JCheckBoxMenuItem)feature_display_menus[11]).setState(
-                                   feature_display.getShowBaseColours());
-    feature_display_menus[11].addItemListener(new ItemListener() 
+                                  feature_display.isRevCompDisplay());
+    feature_display_menus[11].addItemListener(new ItemListener()
     {
       public void itemStateChanged(ItemEvent e) 
       {
-        feature_display.setShowBaseColours(
+        feature_display.setRevCompDisplay(
                   ((JCheckBoxMenuItem)feature_display_menus[11]).getState());
       }
     });
 
-    feature_display_menus[12] = new JMenuItem("Smallest Features In Front");
-    feature_display_menus[12].addActionListener(new ActionListener() 
+    feature_display_menus[12] = new JCheckBoxMenuItem("Colourise Bases");
+    ((JCheckBoxMenuItem)feature_display_menus[12]).setState(
+                                   feature_display.getShowBaseColours());
+    feature_display_menus[12].addItemListener(new ItemListener() 
+    {
+      public void itemStateChanged(ItemEvent e) 
+      {
+        feature_display.setShowBaseColours(
+                  ((JCheckBoxMenuItem)feature_display_menus[12]).getState());
+      }
+    });
+
+    feature_display_menus[13] = new JMenuItem("Smallest Features In Front");
+    feature_display_menus[13].addActionListener(new ActionListener() 
     {
       public void actionPerformed(ActionEvent e) 
       {
@@ -444,8 +489,8 @@ public class FeaturePopup extends JPopupMenu
       }
     });
 
-    feature_display_menus[13] = new JMenuItem("Set Score Cutoffs ...");
-    feature_display_menus[13].addActionListener(new ActionListener() 
+    feature_display_menus[14] = new JMenuItem("Set Score Cutoffs ...");
+    feature_display_menus[14].addActionListener(new ActionListener() 
     {
       public void actionPerformed(ActionEvent e) 
       {
@@ -495,8 +540,8 @@ public class FeaturePopup extends JPopupMenu
       }
     });
 
-    feature_display_menus[14] = new JMenuItem("Raise Selected Features");
-    feature_display_menus[14].addActionListener(new ActionListener() 
+    feature_display_menus[15] = new JMenuItem("Raise Selected Features");
+    feature_display_menus[15].addActionListener(new ActionListener() 
     {
       public void actionPerformed(ActionEvent event) 
       {
@@ -504,8 +549,8 @@ public class FeaturePopup extends JPopupMenu
       }
     });
 
-    feature_display_menus[15] = new JMenuItem("Lower Selected Features");
-    feature_display_menus[15].addActionListener(new ActionListener() 
+    feature_display_menus[16] = new JMenuItem("Lower Selected Features");
+    feature_display_menus[16].addActionListener(new ActionListener() 
     {
       public void actionPerformed(ActionEvent event) 
       {
@@ -513,8 +558,8 @@ public class FeaturePopup extends JPopupMenu
       }
     });
 
-    feature_display_menus[16] = new JMenuItem("Zoom to Selection");
-    feature_display_menus[16].addActionListener(new ActionListener() 
+    feature_display_menus[17] = new JMenuItem("Zoom to Selection");
+    feature_display_menus[17].addActionListener(new ActionListener() 
     {
       public void actionPerformed(ActionEvent event) 
       {
@@ -522,8 +567,8 @@ public class FeaturePopup extends JPopupMenu
       }
     });
 
-    feature_display_menus[17] = new JMenuItem("Select Visible Range");
-    feature_display_menus[17].addActionListener(new ActionListener() 
+    feature_display_menus[18] = new JMenuItem("Select Visible Range");
+    feature_display_menus[18].addActionListener(new ActionListener() 
     {
       public void actionPerformed(ActionEvent e) 
       {
@@ -531,8 +576,8 @@ public class FeaturePopup extends JPopupMenu
       }
     });
 
-    feature_display_menus[18] = new JMenuItem("Select Visible Features");
-    feature_display_menus[18].addActionListener(new ActionListener() 
+    feature_display_menus[19] = new JMenuItem("Select Visible Features");
+    feature_display_menus[19].addActionListener(new ActionListener() 
     {
       public void actionPerformed(ActionEvent e) 
       {
@@ -540,8 +585,8 @@ public class FeaturePopup extends JPopupMenu
       }
     });
 
-    feature_display_menus[19] = new JMenuItem("Frame Line Features ...");
-    feature_display_menus[19].addActionListener(new ActionListener()
+    feature_display_menus[20] = new JMenuItem("Frame Line Features ...");
+    feature_display_menus[20].addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
       {
@@ -604,12 +649,11 @@ public class FeaturePopup extends JPopupMenu
         ((FeatureDisplay)owner).setProteinKeys(listModel.toArray());
       }
     });
-
     
-    if(isDatabaseGroup)
+    if(isDatabaseGroup || isGFFGroup)
     {
-      feature_display_menus[20] = new JMenuItem("Show/Hide Features ...");
-      feature_display_menus[20].addActionListener(new ActionListener()
+      feature_display_menus[21] = new JMenuItem("Show/Hide Features ...");
+      feature_display_menus[21].addActionListener(new ActionListener()
       {
         public void actionPerformed(ActionEvent e)
         {
@@ -655,7 +699,7 @@ public class FeaturePopup extends JPopupMenu
   private JMenuItem[] addFeatureListItems() 
   {
     final JMenuItem feature_list_menus[] = new JMenuItem[7];
-    if(Options.getOptions().readWritePossible()) 
+    if(Options.readWritePossible()) 
     {
       feature_list_menus[0] = new JMenuItem("Save List To File ...");
       feature_list_menus[0].addActionListener(new ActionListener() 

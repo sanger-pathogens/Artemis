@@ -148,7 +148,7 @@ public abstract class StreamSequence
       count++;
     }
 
-    for(int i=packStart; i <= packEnd && count < dst_length; i++) 
+    for(int i=packStart; i <= packEnd && count < dst_length && i < sequencePacked.length; i++) 
     {
       currStorageUnit = sequencePacked[i];
       index1 = (int)(currStorageUnit & 0x000F);
@@ -237,7 +237,7 @@ public abstract class StreamSequence
    *  Set this sequence to hold the bases in the given byte array.
    *
    **/
-  public void setFromChar(final char dna[], int offset, 
+  private void setFromChar(final char dna[], int offset, 
                           final int bit_shift,
                           final int new_sequence_length)
   {
@@ -296,7 +296,7 @@ public abstract class StreamSequence
   protected void appendChar(final char dna[])
   {
     int newlength = sequence_length + dna.length;
-    int numBytes  = Math.round( newlength/2.f );
+    int numBytes  = (int)Math.round( (double)newlength/2.d );
     if(numBytes > capacity())
       expandCapacity(numBytes);
 

@@ -31,6 +31,7 @@ import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.InvalidKeyException;
 
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.Hashtable;
 import java.awt.event.*;
 
@@ -54,8 +55,8 @@ public class RunMenu extends SelectionMenu
   private static final long serialVersionUID = 1L;
   private JMenu fastaMenu = null;
   private JMenu fastaMenuOptions = null;
-  private Hashtable blastMenu = null;
-  private Hashtable blastMenuOptions = null;
+  private Hashtable<String, JMenu> blastMenu = null;
+  private Hashtable<String, JMenu> blastMenuOptions = null;
 
   /**
    *  Create a new RunMenu object.
@@ -73,6 +74,7 @@ public class RunMenu extends SelectionMenu
     addPfamSearches(selection);
     if(Options.isUnixHost())
     {
+      addSeparator();
       final ExternalProgramVector external_programs = Options.getOptions()
           .getExternalPrograms();
 
@@ -115,13 +117,37 @@ public class RunMenu extends SelectionMenu
         if(features.size() != 1)
         {
           JOptionPane.showMessageDialog(RunMenu.this,
-              "Selected a single feature to send to NCBI for searching.", 
-              "NCBI Search", JOptionPane.INFORMATION_MESSAGE);
+              "Selected a single feature to send to Pfam for searching.", 
+              "Pfam Search", JOptionPane.INFORMATION_MESSAGE);
           return; 
         }
         final String residues = features.elementAt(0).getTranslation().toString().toUpperCase();
 
         RunPfamSearchThread pfamSearch = new RunPfamSearchThread(residues);
+        pfamSearch.start();
+      }
+    });
+    
+    
+    final JMenuItem rfam = new JMenuItem("Rfam Search");
+    add(rfam);
+    rfam.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent arg0)
+      {
+        final FeatureVector features = selection.getAllFeatures();
+        
+        if(features.size() != 1)
+        {
+          JOptionPane.showMessageDialog(RunMenu.this,
+              "Selected a single feature to send to Rfam for searching.", 
+              "Rfam Search", JOptionPane.INFORMATION_MESSAGE);
+          return; 
+        }
+        final String residues = features.elementAt(0).getTranslationBases();
+
+        RunPfamSearchThread pfamSearch = new RunPfamSearchThread(
+            residues, RunPfamSearchThread.rfamUrl);
         pfamSearch.start();
       }
     });
@@ -159,19 +185,24 @@ public class RunMenu extends SelectionMenu
                 "NCBI Search", JOptionPane.INFORMATION_MESSAGE);
             return; 
           }
-          final String residues;
           
-          if(program.getType() == ExternalProgram.AA_PROGRAM)
-            residues = features.elementAt(0).getTranslation().toString().toUpperCase();
-          else
-            residues = features.elementAt(0).getBases();
-          
-          String data = RunBlastAtNCBI.setData(programName, residues);
-          if(data != null)
+          final StringWriter writer = new StringWriter();
+          try
           {
-            RunBlastAtNCBI blastSearch = new RunBlastAtNCBI(data);
-            blastSearch.start();
+            if(program.getType() == ExternalProgram.AA_PROGRAM)
+              features.elementAt(0).writeAminoAcidsOfFeature(writer);
+            else
+              features.elementAt(0).writeBasesOfFeature(writer);
+            
+            writer.close();
+            final String data = RunBlastAtNCBI.setData(programName, writer.toString());
+            if(data != null)
+            {
+              RunBlastAtNCBI blastSearch = new RunBlastAtNCBI(data);
+              blastSearch.start();
+            }
           }
+          catch(IOException ioe){}
           //BrowserControl.displayURL(program.getProgramOptions()+residues);
         }
       });
@@ -285,7 +316,7 @@ public class RunMenu extends SelectionMenu
     else if(program.getName().indexOf("blast")>-1)
     {
       if(blastMenu == null)
-        blastMenu = new Hashtable();
+        blastMenu = new Hashtable<String, JMenu>();
 
       if(!blastMenu.containsKey(program.getName()))
       {
@@ -295,7 +326,7 @@ public class RunMenu extends SelectionMenu
         add(topMenu);
       }
       
-      JMenu topMenu = (JMenu) blastMenu.get(program.getName());
+      JMenu topMenu = blastMenu.get(program.getName());
       topMenu.add(new_menu);
     }
     else
@@ -328,7 +359,7 @@ public class RunMenu extends SelectionMenu
     else if(program_name.indexOf("blast")>-1)
     {
       if(blastMenuOptions == null)
-        blastMenuOptions = new Hashtable();
+        blastMenuOptions = new Hashtable<String, JMenu>();
       
       String menuStr = "Set " + program_name + " options";
       if(!blastMenuOptions.containsKey(menuStr))
@@ -338,7 +369,7 @@ public class RunMenu extends SelectionMenu
         add(topMenu);
       }
       
-      JMenu topMenu = (JMenu) blastMenuOptions.get(menuStr);
+      JMenu topMenu = blastMenuOptions.get(menuStr);
       new_options_menu = new JMenuItem(program.getProgramOptions());
       topMenu.add(new_options_menu);
     }

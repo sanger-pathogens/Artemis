@@ -24,7 +24,6 @@
 
 package uk.ac.sanger.artemis.j2ssh;
 
-import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.components.MessageDialog;
 
 import javax.swing.JFileChooser;
@@ -204,7 +203,7 @@ public class SshPSUClient extends Thread
       Thread.sleep(1000);
       try
       {
-        if(fileExists(getSftpClient() , file))
+        if(fileExists(getSftpClient() , wdir, file))
           return true;
       }
       catch(SshException sshe)
@@ -225,7 +224,7 @@ public class SshPSUClient extends Thread
     return false;
   }
 
-  private boolean fileExists(SftpClient sftp, String file)
+  private boolean fileExists(SftpClient sftp, String wdir, String file)
              throws SshException, IOException
   {
     Object list[] = null;
@@ -343,6 +342,18 @@ public class SshPSUClient extends Thread
       {
         try
         {
+          if(wdir.endsWith("scratch118") || wdir.endsWith("scratch118/"))
+          {
+            if(fileExists(sftp , wdir+"/bacteria/", user))
+              wdir = wdir+"/bacteria/";
+            else if(fileExists(sftp , wdir+"/parasites/", user))
+              wdir = wdir+"/parasites/";
+            else if(fileExists(sftp , wdir+"/pathogen/", user))
+              wdir = wdir+"/pathogen/";
+            else if(fileExists(sftp , wdir+"/viruses/", user))
+              wdir = wdir+"/viruses/";
+          }
+          
           if(!keep)
             wdir = wdir + "/" + user;
           sftp.mkdir(wdir);

@@ -33,6 +33,8 @@ import uk.ac.sanger.artemis.util.FileDocument;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
 import uk.ac.sanger.artemis.util.StringVector;
 import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
+import uk.ac.sanger.artemis.io.GFFUtils;
+import uk.ac.sanger.artemis.io.InvalidRelationException;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.io.EntryInformation;
@@ -54,7 +56,6 @@ import java.awt.*;
 import java.lang.Math;
 import java.util.Vector;
 import java.util.Comparator;
-import java.util.Enumeration;
 import javax.swing.border.Border;
 import javax.swing.border.BevelBorder;
 
@@ -67,6 +68,8 @@ import javax.swing.JComponent;
 import javax.swing.UIManager;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+
+import org.apache.batik.svggen.SVGGraphics2D;
 
 /**
  *  This component is used for displaying an Entry.
@@ -90,10 +93,12 @@ public class FeatureDisplay extends EntryGroupPanel
   private int highlight_drop_base = -1;
 
   /** Key code for calling zoomToSelection(). */
-  final static public int ZOOM_TO_SELECTION_KEY = KeyEvent.VK_Z;
+  private final static int ZOOM_TO_SELECTION_KEY = KeyEvent.VK_Z;
+  private final static int ARROW_LEFT = KeyEvent.VK_LEFT;
+  private final static int ARROW_RIGHT = KeyEvent.VK_RIGHT;
 
-  final static public int SCROLLBAR_AT_TOP = 1;
-  final static public int SCROLLBAR_AT_BOTTOM = 2;
+  protected final static int SCROLLBAR_AT_TOP = 1;
+  protected final static int SCROLLBAR_AT_BOTTOM = 2;
 
   private final static int FORWARD = Bases.FORWARD;
   private final static int REVERSE = Bases.REVERSE;
@@ -146,7 +151,8 @@ public class FeatureDisplay extends EntryGroupPanel
   private boolean update_visible_features = true;
 
   /** Contains those objects listening for adjustment events. */
-  final private Vector adjustment_listener_list = new Vector();
+  final private Vector<DisplayAdjustmentListener> adjustment_listener_list = 
+      new Vector<DisplayAdjustmentListener>();
 
   /**
    *  The index of the first base that we are displaying.  
@@ -185,6 +191,18 @@ public class FeatureDisplay extends EntryGroupPanel
    *  separate line.
    **/
   private boolean one_line_per_entry = false;
+  
+  private boolean feature_stack_view = false;
+  
+  private short MAX_LINES_FEATURE_STACK = 10;
+  
+  /** expand / collapse stack view, 2 or 1 respectively */
+  private int STACK_EXPAND_FACTOR = 1;
+  
+  /** visible features sorted by size */
+  private FeatureVector visibleFeaturesSortBySize;
+  /** visible features sorted by position */
+  private FeatureVector visibleFeaturesSortByPosition;
 
   /**
    *  If true the there will never be a gap between the left edge of the
@@ -283,7 +301,8 @@ public class FeatureDisplay extends EntryGroupPanel
 
   private final int scrollbar_style;
   
-  private static Vector contigKeys;
+  private static Vector<String> contigKeys;
+  private static Vector<String> allPossibleContigKeys;
 
   private Object[] protein_keys = { "CDS", 
                                     "BLASTCDS",
@@ -343,6 +362,9 @@ public class FeatureDisplay extends EntryGroupPanel
 
     one_line_per_entry =
       Options.getOptions().getPropertyTruthValue("one_line_per_entry");
+    
+    feature_stack_view =
+      Options.getOptions().getPropertyTruthValue("feature_stack_view");
 
     show_labels =
       Options.getOptions().getPropertyTruthValue("feature_labels");
@@ -553,6 +575,29 @@ public class FeatureDisplay extends EntryGroupPanel
   protected boolean getOneLinePerEntryFlag() 
   {
     return one_line_per_entry;
+  }
+  
+  
+  /**
+   *  Set value of the feature stack view flag.
+   *  @param feature_stack_view If true then each CDS will be shown on a
+   *    different line, instead of showing frame lines.
+   **/
+  protected void setFeatureStackViewFlag(final boolean feature_stack_view)
+  {
+    if(this.feature_stack_view != feature_stack_view) 
+    {
+      this.feature_stack_view = feature_stack_view;
+      fixCanvasSize();
+    }
+  }
+
+  /**
+   *  Get the value of the "one line per entry" flag.
+   **/
+  protected boolean getFeatureStackViewFlag() 
+  {
+    return feature_stack_view;
   }
 
   /**
@@ -772,7 +817,7 @@ public class FeatureDisplay extends EntryGroupPanel
    *  change events from this object.
    *  @param l the event change listener.
    **/
-  protected void addDisplayAdjustmentListener(DisplayAdjustmentListener l) 
+  public void addDisplayAdjustmentListener(DisplayAdjustmentListener l) 
   {
     adjustment_listener_list.addElement(l);
   }
@@ -782,7 +827,7 @@ public class FeatureDisplay extends EntryGroupPanel
    *  adjustment change events from this object.
    *  @param l the event change listener.
    **/
-  protected void removeDisplayAdjustmentListener(DisplayAdjustmentListener l) 
+  public void removeDisplayAdjustmentListener(DisplayAdjustmentListener l) 
   {
     adjustment_listener_list.removeElement(l);
   }
@@ -803,6 +848,16 @@ public class FeatureDisplay extends EntryGroupPanel
     {
       case ZOOM_TO_SELECTION_KEY:
         FeaturePopup.zoomToSelection(feature_display);
+        break;
+      case ARROW_LEFT:
+        feature_display.setFirstBase(
+            feature_display.getFirstVisibleForwardBase()-
+            feature_display.scrollbar.getUnitIncrement());
+        break;
+      case ARROW_RIGHT:
+        feature_display.setFirstBase(
+            feature_display.getFirstVisibleForwardBase()+
+            feature_display.scrollbar.getUnitIncrement());
         break;
       default:
         break;
@@ -917,10 +972,21 @@ public class FeatureDisplay extends EntryGroupPanel
   {
     final Feature event_feature = event.getFeature();
 
+    if( event.getType() ==  FeatureChangeEvent.LOCATION_CHANGED &&
+        event_feature.getEmblFeature() instanceof GFFStreamFeature &&
+        !GeneUtils.isDatabaseEntry(event_feature.getEmblFeature()))
+    {
+      try
+      {
+        GFFUtils.updateSegmentRangeStore((GFFStreamFeature)event_feature.getEmblFeature(),
+          event.getOldLocation(), event.getNewLocation());
+      } catch(Exception e) {}
+    }
+
     // the feature isn't in an active entry
     if(!getEntryGroup().contains(event_feature)) 
       return;
-
+    
     // if the feature is visible now or is in the list of visible features
     //(ie. it was visible previously) then redisplay.
     if(featureVisible(event_feature) ||
@@ -1366,8 +1432,13 @@ public class FeatureDisplay extends EntryGroupPanel
     {
       final Feature new_feature = real_visible_features.elementAt(i);
       if(!visible_features.contains(new_feature) &&
-         selection_features.contains(new_feature)) 
-        new_visible_features.addElementAtEnd(new_feature);
+         selection_features.contains(new_feature))
+      {
+        try
+        {
+          new_visible_features.addElementAtEnd(new_feature);
+        }catch(Error e){}
+      }
     }
 
     visible_features = new_visible_features;
@@ -1377,7 +1448,7 @@ public class FeatureDisplay extends EntryGroupPanel
   /**
    *  This is used by getSortedFeaturesInRange().
    **/
-  final private static Comparator feature_comparator = new Comparator() 
+  final private static Comparator<Feature> feature_comparator = new Comparator<Feature>() 
   {
     /**
      *  Compare two Objects with respect to ordering.
@@ -1385,12 +1456,9 @@ public class FeatureDisplay extends EntryGroupPanel
      *    feature2_object ; a positive number if feature1_object is greater
      *    than feature2_object; else 0
      **/
-    public int compare(final Object feature1_object,
-                       final Object feature2_object) 
+    public int compare(final Feature feature1,
+                       final Feature feature2) 
     {
-      final Feature feature1 =(Feature) feature1_object;
-      final Feature feature2 =(Feature) feature2_object;
-
       final int feature1_size = feature1.getBaseCount();
       final int feature2_size = feature2.getBaseCount();
 
@@ -1401,6 +1469,33 @@ public class FeatureDisplay extends EntryGroupPanel
       else if(feature1.hashCode() < feature2.hashCode())  // use hash value as a last resort
         return -1;
       else if(feature1.hashCode() == feature2.hashCode())
+        return 0;
+      else
+        return 1;
+    }
+  };
+  
+  final private static Comparator<Feature> feature_position_comparator = new Comparator<Feature>() 
+  {
+    /**
+     *  Compare two Objects with respect to ordering.
+     *  @return a negative number if feature1_object is less than
+     *    feature2_object ; a positive number if feature1_object is greater
+     *    than feature2_object; else 0
+     **/
+    public int compare(final Feature f1,
+                       final Feature f2) 
+    {
+      final int pos1 = f1.getFirstBase();
+      final int pos2 = f2.getFirstBase();
+
+      if(pos1 > pos2) 
+        return -1;
+      else if(pos1 < pos2)
+        return 1;
+      else if(f1.hashCode() < f2.hashCode())  // use hash value as a last resort
+        return -1;
+      else if(f1.hashCode() == f2.hashCode())
         return 0;
       else
         return 1;
@@ -1499,7 +1594,11 @@ public class FeatureDisplay extends EntryGroupPanel
     }
 
     if(update_visible_features) 
+    {
       updateVisibleFeatureVector();
+      visibleFeaturesSortBySize = null;
+      visibleFeaturesSortByPosition = null;
+    }
 
     fillBackground(g);
 
@@ -1520,13 +1619,13 @@ public class FeatureDisplay extends EntryGroupPanel
 
     // we draw the feature backgrounds first then the visible indication
     // that there is a MarkerRange selected, then the feature outlines.
-    Vector segment_borders = new Vector(num_visible_features);
+    final Vector<SegmentBorder> segment_borders = 
+        new Vector<SegmentBorder>(num_visible_features);
 
     for(int i = 0; i < num_visible_features; ++i)
       drawFeature(g, segment_borders, getVisibleFeatures().elementAt(i),
                   true, selected_features, selected_segments,
                   segment_height, seq_length, fm);
-
 
 //  System.out.println("4 "+ System.currentTimeMillis());
     drawBaseSelection(g);
@@ -1538,14 +1637,9 @@ public class FeatureDisplay extends EntryGroupPanel
 
     // draw the segment borders
     g.setColor(Color.black);
-
     final int arrowWidth = getFontWidth() * 8 / 10;
-    Enumeration enumSegmentBorder = segment_borders.elements();
-    while(enumSegmentBorder.hasMoreElements())
-    {
-      SegmentBorder fb = (SegmentBorder)enumSegmentBorder.nextElement();
-      fb.drawSegmentBorder(g, segment_height, arrowWidth);
-    } 
+    for(SegmentBorder sb: segment_borders)
+      sb.drawSegmentBorder(g, segment_height, arrowWidth);
 
 //  System.out.println("6 "+ System.currentTimeMillis());
 
@@ -1554,7 +1648,7 @@ public class FeatureDisplay extends EntryGroupPanel
  
 // draw drag and drop line
     if(highlight_drop_base > 0)
-    {   
+    { 
       g.setColor(Color.red);
       final int draw_x_position = getLowXPositionOfBase(highlight_drop_base);
       int nlines = 16;
@@ -1568,6 +1662,16 @@ public class FeatureDisplay extends EntryGroupPanel
                  draw_x_position, (nlines*getFontHeight()));
     }
 //  Thread.yield();
+
+    if(getFeatureStackViewFlag())
+    {
+      int w = fm.charWidth('+');
+      g.setColor(Color.RED);
+      if(STACK_EXPAND_FACTOR == 1)
+        g.drawString("+", getDisplayWidth()-w-2, 10);
+      else
+        g.drawString("-", getDisplayWidth()-w-2, 10);
+    }
   }
 
   /**
@@ -1581,7 +1685,11 @@ public class FeatureDisplay extends EntryGroupPanel
     final int last_visible_base_coord =
       getHighXPositionOfBase(getLastVisibleForwardBase());
 
-    if(getOneLinePerEntryFlag()) 
+    if(getFeatureStackViewFlag())
+    {
+      
+    }
+    else if(getOneLinePerEntryFlag()) 
     {
       final int group_size = getEntryGroup().size();
       for(int i = 0 ; i < group_size; ++i) 
@@ -1758,6 +1866,9 @@ public class FeatureDisplay extends EntryGroupPanel
     if(getScaleFactor() > 1 ||
        getScaleFactor() == 1 && !show_base_colours) 
       return;
+    
+    if(getFeatureStackViewFlag())
+      return;
 
     final Strand forward_strand;
     final Strand reverse_strand;
@@ -1794,8 +1905,19 @@ public class FeatureDisplay extends EntryGroupPanel
 
     // draw fwd bases
     if(getScaleFactor() == 0)
-      g.drawString(forward_visible_bases, offset * getFontWidth(),
-                   yposition + getFontAscent() + 1);
+    {
+      if(!(g instanceof SVGGraphics2D))
+        g.drawString(forward_visible_bases, offset * getFontWidth(),
+            yposition + getFontAscent() + 1);
+      else
+      {
+        // for svg graphics
+        for(int i=0;i<forward_visible_bases.length();i++)
+          g.drawString(String.valueOf(forward_visible_bases.charAt(i)), 
+              (offset+i)*getFontWidth(), 
+              yposition + getFontAscent() + 1);
+      }
+    }
     else
     {
       for(int base_index = 0; base_index < forward_sequence_length;
@@ -1818,8 +1940,19 @@ public class FeatureDisplay extends EntryGroupPanel
 
     // draw bwd bases
     if(getScaleFactor() == 0)
-      g.drawString(reverse_visible_bases, offset * getFontWidth(),
-                   yposition + getFontAscent() + 1);
+    {  
+      if(!(g instanceof SVGGraphics2D))
+        g.drawString(reverse_visible_bases, offset * getFontWidth(),
+            yposition + getFontAscent() + 1);
+      else
+      {
+        // for svg graphics
+        for(int i=0;i<reverse_visible_bases.length();i++)
+          g.drawString(String.valueOf(reverse_visible_bases.charAt(i)), 
+              (offset+i)*getFontWidth(), 
+              yposition + getFontAscent() + 1);
+      }
+    }
     else
     {
       for(int base_index = 0; base_index < reverse_sequence_length;
@@ -1850,18 +1983,18 @@ public class FeatureDisplay extends EntryGroupPanel
    **/
   private void drawCodons(Graphics g) 
   {
+    if(getOneLinePerEntryFlag() || getFeatureStackViewFlag()) 
+      return;
+    
     g.setColor(Color.black);
 
     if(getScaleFactor() == 0)  
     {
-      if(!getOneLinePerEntryFlag()) 
-      {
-        if(show_forward_lines) 
-          drawForwardCodonLetters(g);
+      if(show_forward_lines) 
+        drawForwardCodonLetters(g);
         
-        if(show_reverse_lines) 
-          drawReverseCodonLetters(g);
-      }
+      if(show_reverse_lines) 
+        drawReverseCodonLetters(g);
     }
     else 
     {
@@ -1869,14 +2002,11 @@ public class FeatureDisplay extends EntryGroupPanel
       if((show_stop_codons || show_start_codons) &&
           getScaleFactor() <= MAX_STOP_CODON_SCALE_FACTOR) 
       {
-        if(!getOneLinePerEntryFlag()) 
-        {
-          if(show_forward_lines) 
-            drawCodons(g,true);
+        if(show_forward_lines) 
+          drawCodons(g,true);
 
-          if(show_reverse_lines) 
-            drawCodons(g,false);
-        }
+        if(show_reverse_lines) 
+          drawCodons(g,false);
       }
     }
   }
@@ -2107,8 +2237,15 @@ public class FeatureDisplay extends EntryGroupPanel
     else
        draw_x_position = (int)((offset + frame_start + 1) * getScaleValue());
 
-    g.drawString(codons, draw_x_position,
+    if(!(g instanceof SVGGraphics2D))
+      g.drawString(codons, draw_x_position,
                  draw_y_position + getFontAscent() + 1);
+    else
+    {
+      for(int i=0;i<codons.length();i++)
+        g.drawString(String.valueOf(codons.charAt(i)), draw_x_position+(i*getFontWidth() ), 
+          draw_y_position + getFontAscent() + 1);
+    }
   }
 
   /**
@@ -2278,7 +2415,106 @@ public class FeatureDisplay extends EntryGroupPanel
     g.setColor(getColourOfBase(base_char));
     g.drawLine(x_pos, y_pos, x_pos, y_pos + getFontHeight() - 1);
   }
+  
+  /**
+   * Get the 'feature stack view' line number for a feature.
+   * @param thisCDSFeature
+   * @param parentId
+   * @param predicate
+   * @param sortByPosition
+   * @return
+   */
+  private int getFeatureStackLineNumber(final Feature thisCDSFeature, 
+                                        final String parentId, 
+                                        final FeaturePredicate predicate, 
+                                        final boolean sortByPosition)
+  {
+    final String sysName = thisCDSFeature.getSystematicName();
+    final Location loc = thisCDSFeature.getLocation();
+    final Range range = loc.getTotalRange();
+    final FeatureVector features;
+    
+    if(sortByPosition)
+    {
+      if(visibleFeaturesSortByPosition == null)
+        visibleFeaturesSortByPosition = getVisibleFeatures().sort(feature_position_comparator);
+      features = visibleFeaturesSortByPosition;
+    }
+    else
+    {
+      if(visibleFeaturesSortBySize == null)
+        visibleFeaturesSortBySize = getVisibleFeatures().sort(feature_comparator);
+      features = visibleFeaturesSortBySize;
+    }
+    
+    int cnt = 0;
+    for(int i=0; i<features.size(); i++)
+    {
+      final Feature f = features.elementAt(i);
 
+      if( range.getStart() == f.getLocation().getTotalRange().getStart() )
+      {
+        if(f.getSystematicName().equals(sysName))
+        {
+          if(f.getKey().equals(thisCDSFeature.getKey()))
+          {
+            if(parentId != null && parentId.equals(getParentQualifier(f)))
+              break;
+            else if(thisCDSFeature == f)
+              break; 
+          }
+        }
+      }
+
+      if(predicate.testPredicate(f) && 
+         range.fuzzyOverlaps(f.getLocation().getTotalRange(), 10))
+        cnt++;
+
+      if(cnt > MAX_LINES_FEATURE_STACK)
+        break;
+    }
+
+    if(((cnt*STACK_EXPAND_FACTOR)+8)  > MAX_LINES_FEATURE_STACK)
+      cnt = (MAX_LINES_FEATURE_STACK-8)/STACK_EXPAND_FACTOR;
+    return cnt;
+  }
+  
+  /**
+   * Return locus_tag, Parent (GFF) or transcript_id (GTF) qualifier or
+   * null.
+   * @param f
+   * @return
+   */
+  public static String getParentQualifier(final Feature f)
+  {
+    try
+    {
+      if(f.getQualifierByName("locus_tag") != null)
+        return (String) f.getQualifierByName("locus_tag").getValues().get(0);
+      else if(f.getQualifierByName("Parent") != null)
+        return (String) f.getQualifierByName("Parent").getValues().get(0);
+      else if(f.getQualifierByName("transcript_id") != null)
+        return (String) f.getQualifierByName("transcript_id").getValues().get(0);
+    }
+    catch (InvalidRelationException e){}
+    return null;
+  }
+  
+  /**
+   * Return true if the feature is a CDS, pseudogenic_exon or an exon
+   * that has been added as a frame line feature. This defines what
+   * feature types get stacked in the feature stack view.
+   * @param f       feature
+   * @param keyStr  feature key
+   * @return
+   */
+  private boolean isStackingFeature(final Feature f)
+  {
+    if( isProteinFeature(f) )
+      return true;
+    return false;
+  }
+  
   /**
    *  Return the line on the canvas where this feature segment should be drawn.
    *  @param segment The segment in question.
@@ -2286,7 +2522,83 @@ public class FeatureDisplay extends EntryGroupPanel
    **/
   private int getSegmentDisplayLine(FeatureSegment segment)
   {
-    if(getOneLinePerEntryFlag()) 
+    if(getFeatureStackViewFlag())
+    {
+      final FeaturePredicate predicate = new FeaturePredicate(){
+        public boolean testPredicate(Feature f)
+        {
+          if(isStackingFeature(f))
+            return true;
+          return false;
+        }
+      };
+      
+      String keyStr = segment.getFeature().getKey().toString();
+      if(keyStr.equals("gene") || keyStr.equals("pseudogene"))
+        return getLineCount()-2;
+      else if( isStackingFeature(segment.getFeature()) )
+      {
+        final String parentId = getParentQualifier(segment.getFeature());
+        return getLineCount()-4-( getFeatureStackLineNumber(
+            segment.getFeature(), parentId, predicate, false) * STACK_EXPAND_FACTOR);
+      }
+      else if(keyStr.indexOf("utr") > -1 || keyStr.indexOf("UTR") > -1 )
+      {
+        try
+        {
+          // try to identify with associated CDS and return same line
+          final String parentId = getParentQualifier(segment.getFeature());
+          final FeatureVector visibleFeatures = getVisibleFeatures().sort(feature_comparator);
+          for(int i=0; i<visibleFeatures.size(); i++)
+          {
+            final Feature f = visibleFeatures.elementAt(i);
+            if(isStackingFeature(f))
+            {
+              if(parentId.equals( getParentQualifier(f) ))
+              {
+                int ln = getLineCount()-4-( getFeatureStackLineNumber(
+                    f, parentId, predicate, false) * STACK_EXPAND_FACTOR );
+
+                if(ln < 1)
+                  ln = STACK_EXPAND_FACTOR;
+                if(STACK_EXPAND_FACTOR == 2)
+                  ln--;
+                return ln;
+              }
+            }
+          }
+        }
+        catch (Exception e){}
+        return MAX_LINES_FEATURE_STACK-5;
+      }
+      else if(getAllPossibleContigKeys().contains(keyStr))
+      {
+        if(keyStr.equals("gap"))
+          return 1;
+        return 2;
+      }
+ 
+      ///
+      ///
+      final FeaturePredicate predicate2 = new FeaturePredicate(){
+        public boolean testPredicate(Feature f)
+        {
+          final String thisKeyStr = f.getKey().getKeyString();
+          if( !thisKeyStr.equals("gene") && !thisKeyStr.equals("pseudogene") &&
+              !isStackingFeature(f) &&
+              (thisKeyStr.indexOf("utr") == -1 || thisKeyStr.indexOf("UTR") == -1 ) &&
+              !getAllPossibleContigKeys().contains(thisKeyStr) )
+            return true;
+          return false;
+        }
+      };
+      int ln = getFeatureStackLineNumber(segment.getFeature(), null, predicate2, true);
+      if(ln % 2 == 0)
+        return 3;
+
+      return 4;
+    }
+    else if(getOneLinePerEntryFlag()) 
     {
       final Feature feature = segment.getFeature();
       if((isProteinFeature(feature) || frame_features_flag) &&
@@ -2345,7 +2657,7 @@ public class FeatureDisplay extends EntryGroupPanel
   
   /**
    * Check if this feature is an exon and is a child of a non-coding transcript
-   * and is part of a database entry.
+   * and is a GFF3 feature.
    * @param feature
    * @param key
    * @return
@@ -2353,7 +2665,7 @@ public class FeatureDisplay extends EntryGroupPanel
   private boolean isExonOfNonCodingTranscript(final Feature feature, final String key)
   {
     if(key.equals(DatabaseDocument.EXONMODEL) && 
-       GeneUtils.isDatabaseEntry(getEntryGroup()))
+       feature.getEmblFeature() instanceof GFFStreamFeature)
     {
       final String nonCodingTranscripts[] = GeneUtils.getNonCodingTranscripts();
       try
@@ -2363,7 +2675,7 @@ public class FeatureDisplay extends EntryGroupPanel
         {
           final ChadoCanonicalGene chadoGene = 
             ((GFFStreamFeature)feature.getEmblFeature()).getChadoGene();
-          final String transcriptName = (String)qualifier.getValues().get(0);
+          final String transcriptName = qualifier.getValues().get(0);
           final GFFStreamFeature transcript = 
             (GFFStreamFeature)chadoGene.getFeatureFromId(transcriptName);
           final String transcriptKey = transcript.getKey().getKeyString();
@@ -2522,6 +2834,10 @@ public class FeatureDisplay extends EntryGroupPanel
    **/
   private int getFrameDisplayLine(int frame_id) 
   {
+    if(getFeatureStackViewFlag()) 
+    {
+      return 0;
+    }
     if(getOneLinePerEntryFlag()) 
     {
       int return_value;
@@ -2687,7 +3003,9 @@ public class FeatureDisplay extends EntryGroupPanel
 
     int extra_line_count;
 
-    if(getOneLinePerEntryFlag())  // some number of entry lines
+    if(getFeatureStackViewFlag())
+      return MAX_LINES_FEATURE_STACK;
+    else if(getOneLinePerEntryFlag())  // some number of entry lines
       extra_line_count = getEntryGroup().size();
     else    // three frame line
       extra_line_count = 3;
@@ -2709,7 +3027,7 @@ public class FeatureDisplay extends EntryGroupPanel
    *  The returned value will be the y-coordinate of the top of the lane that
    *  this feature should be draw into.
    **/
-  public int getSegmentVerticalOffset(FeatureSegment segment) 
+  private int getSegmentVerticalOffset(FeatureSegment segment) 
   {
     // one "line" is font_height pixels high,(the number of lines times the
     // font_height is the height of the height of canvas)
@@ -3015,7 +3333,7 @@ public class FeatureDisplay extends EntryGroupPanel
    *  @param feature The feature to draw.
    **/
   private void drawFeature(final Graphics g,
-                           final Vector segment_borders,
+                           final Vector<SegmentBorder> segment_borders,
                            final Feature feature,
                            final boolean draw_feature_fill,
                            final FeatureVector selected_features,
@@ -3435,9 +3753,9 @@ public class FeatureDisplay extends EntryGroupPanel
    *    segment.
    **/
   private SegmentBorder drawSegment(Graphics g, FeatureSegment segment,
-                                    boolean highlight_feature,
-                                    boolean highlight_segment,
-                                    boolean draw_arrow,
+                                    final boolean highlight_feature,
+                                    final boolean highlight_segment,
+                                    final boolean draw_arrow,
                                     final int segment_height) 
   {
     // not on screen
@@ -3445,7 +3763,6 @@ public class FeatureDisplay extends EntryGroupPanel
       return null;
 
     final Feature segment_feature = segment.getFeature();
-
     final int vertical_offset = getSegmentVerticalOffset(segment) + 1;
 
     int segment_start_coord = getSegmentStartCoord(segment);
@@ -3675,13 +3992,13 @@ public class FeatureDisplay extends EntryGroupPanel
     int count = 0;
     if((event.getModifiers() & InputEvent.BUTTON1_MASK) > 0) 
       ++count;
-    
-    if((event.getModifiers() & InputEvent.BUTTON2_MASK) > 0) 
+
+    if((event.getModifiers() & InputEvent.BUTTON2_DOWN_MASK) > 0) 
       ++count;
-    
+
     if((event.getModifiers() & InputEvent.BUTTON3_MASK) > 0) 
       ++count;
-    
+
     return count;
   }
 
@@ -3694,6 +4011,12 @@ public class FeatureDisplay extends EntryGroupPanel
     {
       private FeaturePopup popup = null;
 
+      public void mouseEntered(MouseEvent event)
+      {
+        // grab focus to enable scrolling with ARROW_LEFT/RIGHT
+        requestFocusInWindow(); 
+      }
+      
       /**
        *  Listen for mouse press events so that we can do popup menus and
        *  selection.
@@ -3881,15 +4204,30 @@ public class FeatureDisplay extends EntryGroupPanel
    **/
   private void handleCanvasSingleClick(MouseEvent event) 
   {
+    if(getFeatureStackViewFlag())
+    {
+      if(event.getPoint().y < 10 &&
+         event.getPoint().x > getDisplayWidth()-10)
+      {
+        if(STACK_EXPAND_FACTOR == 1) // expand/collapse
+          STACK_EXPAND_FACTOR = 2;
+        else
+          STACK_EXPAND_FACTOR = 1;
+        
+        updateOneLinePerFeatureFlag();
+        return;
+      }
+    }
+    
     click_segment_marker = null;
 
     final Selectable clicked_thing = getThingAtPoint(event.getPoint());
 
-    // treate alt modifier like pressing button 2
-    if(clicked_thing == null ||
-       (event.getModifiers() & InputEvent.BUTTON2_MASK) != 0) 
+    // note: ALT_MASK and BUTTON2_MASK are the same value
+    // so check this is not BUTTON1 to allow BUTTON1+ALT to drag
+    if( clicked_thing == null ||
+       (event.getModifiers() & InputEvent.BUTTON2_MASK) != 0)
     {
-
       // if the user presses the mouse button 2 on feature or segment we treat
       // it like the feature/segment isn't there
 
@@ -4017,6 +4355,9 @@ public class FeatureDisplay extends EntryGroupPanel
       if(Options.getOptions().canDirectEdit() &&
          !clicked_feature.isReadOnly()) 
       {
+        if(getFeatureStackViewFlag())
+          return;
+        
         // check to see if the click was on a marker, the second argument is
         // false because we want the range to cover just one base
 
@@ -4033,24 +4374,60 @@ public class FeatureDisplay extends EntryGroupPanel
         {
           final FeatureSegment this_segment = segments.elementAt(i);
 
-          if(new_click_range.getStart().equals(this_segment.getStart()) &&
-              this_segment.canDirectEdit()) 
+          if(this_segment.getStart().getStrand() ==  new_click_range.getStrand() &&
+             this_segment.canDirectEdit())
           {
-            click_segment_marker = this_segment.getStart();
-            click_segment_marker_is_start_marker = true;
-            other_end_of_segment_marker = this_segment.getEnd();
-            getEntryGroup().getActionController().startAction();
-            break;
-          }
+            if(event.isShiftDown() && getSelection().getSelectedSegments().size() == 0)
+            {
+              int baseGrab = 15;
+              if(getScaleFactor() > 2)
+                baseGrab = 30;
 
-          if(new_click_range.getEnd().equals(this_segment.getEnd()) &&
-              this_segment.canDirectEdit()) 
-          {
-            click_segment_marker = this_segment.getEnd();
-            click_segment_marker_is_start_marker = false;
-            other_end_of_segment_marker = this_segment.getStart();
-            getEntryGroup().getActionController().startAction();
-            break;
+              if( (new_click_range.getStart().getPosition() >= this_segment.getStart().getPosition() &&
+                   new_click_range.getStart().getPosition() <= this_segment.getStart().getPosition()+baseGrab) ||
+                  (new_click_range.getEnd().getPosition() <= this_segment.getEnd().getPosition() &&
+                   new_click_range.getEnd().getPosition() >= this_segment.getEnd().getPosition()-baseGrab) )
+              {
+                int distFromBeg = new_click_range.getStart().getPosition()-this_segment.getStart().getPosition();
+                int distFromEnd = this_segment.getEnd().getPosition()-new_click_range.getEnd().getPosition();
+                if(distFromBeg < distFromEnd)
+                {
+                  click_segment_marker = this_segment.getStart();
+                  click_segment_marker_is_start_marker = true;
+                  other_end_of_segment_marker = this_segment.getEnd();
+                }
+                else
+                {
+                  click_segment_marker = this_segment.getEnd();
+                  click_segment_marker_is_start_marker = false;
+                  other_end_of_segment_marker = this_segment.getStart();
+                }
+
+                getSelection().add(this_segment);
+                getEntryGroup().getActionController().startAction();
+                break;
+              }
+            }
+            else
+            {
+              if (new_click_range.getStart().equals(this_segment.getStart()))
+              {
+                click_segment_marker = this_segment.getStart();
+                click_segment_marker_is_start_marker = true;
+                other_end_of_segment_marker = this_segment.getEnd();
+                getEntryGroup().getActionController().startAction();
+                break;
+              }
+
+              if (new_click_range.getEnd().equals(this_segment.getEnd()))
+              {
+                click_segment_marker = this_segment.getEnd();
+                click_segment_marker_is_start_marker = false;
+                other_end_of_segment_marker = this_segment.getStart();
+                getEntryGroup().getActionController().startAction();
+                break;
+              }
+            }
           }
         }
       }
@@ -4122,8 +4499,9 @@ public class FeatureDisplay extends EntryGroupPanel
    **/
   private void handleCanvasMouseDrag(final MouseEvent event)
   {
-    if(event.isShiftDown() &&
-       getSelection().getAllFeatures().size() > 0) 
+    if( event.isShiftDown() &&
+       (getSelection().getAllFeatures().size() > 1 ||
+        getSelection().getSelectedSegments().size() > 1)) 
       return;
 
     if(click_segment_marker != null) 
@@ -4272,6 +4650,8 @@ public class FeatureDisplay extends EntryGroupPanel
           }
 
           needVisibleFeatureVectorUpdate();
+          updateOneLinePerFeatureFlag();
+          
           fireAdjustmentEvent(DisplayAdjustmentEvent.SCROLL_ADJUST_EVENT);
           repaint();
         }
@@ -4288,6 +4668,54 @@ public class FeatureDisplay extends EntryGroupPanel
       add(box, "North");
     else 
       add(box, "South");
+  }
+  
+
+  protected void updateOneLinePerFeatureFlag()
+  {
+    if(getFeatureStackViewFlag())
+    {
+      final Range visRange;
+      if(isRevCompDisplay())
+      {
+        final int first_visible_base = getFirstVisibleReverseBase();
+        final int last_visible_base  = getLastVisibleReverseBase();
+        visRange = newRange(first_visible_base, last_visible_base);
+      } 
+      else 
+        visRange = getVisibleRange();
+      final FeatureVector visFeatures = getSortedFeaturesInRange(visRange);
+      
+      short maxOverlaps = 2;
+      for(int i=0; i<visFeatures.size(); i++)
+      {
+        final Feature f1 = visFeatures.elementAt(i);
+        if(!isProteinFeature(f1))
+          continue;
+        
+        final Range r = f1.getMaxRawRange();
+        short cnt = 0;
+        for(int j=0; j<visFeatures.size(); j++)
+        {
+          final Feature f2 = visFeatures.elementAt(j);
+          if( f1 == f2 )
+            break;
+
+          if(isProteinFeature(f2) && r.overlaps(f2.getMaxRawRange()))
+            cnt++;
+        }
+        if(cnt > maxOverlaps)
+          maxOverlaps = cnt;
+      }
+
+      if(((maxOverlaps*STACK_EXPAND_FACTOR)+10) != MAX_LINES_FEATURE_STACK)
+      {
+        MAX_LINES_FEATURE_STACK = (short) ((maxOverlaps*STACK_EXPAND_FACTOR)+10);
+        if(MAX_LINES_FEATURE_STACK > 42)
+          MAX_LINES_FEATURE_STACK = 42;
+        fixCanvasSize();
+      }
+    }
   }
 
   /**
@@ -4319,27 +4747,24 @@ public class FeatureDisplay extends EntryGroupPanel
 
   /**
    *  Send an event to those object listening for it.
-   *  @param listeners A Vector of the objects that the event should be sent
-   *    to.
+   *  @param listeners A Vector of the objects that the event should be sent to.
    *  @param event The event to send
    **/
-  private void fireAction(Vector listeners, ChangeEvent event) 
+  private void fireAction(final Vector<DisplayAdjustmentListener> listeners, final ChangeEvent event) 
   {
-    final Vector targets;
+    final Vector<DisplayAdjustmentListener> targets;
     // copied from a book - synchronizing the whole method might cause a
     // deadlock
     synchronized(this) 
     {
-      targets = (Vector)listeners.clone();
+      //targets = (Vector)listeners.clone();
+      targets = new Vector<DisplayAdjustmentListener>(listeners);
     }
 
-    final int targets_size = targets.size();
-    for(int i = 0; i < targets_size; ++i) 
+    final int ntargets = targets.size();
+    for(int i = 0; i < ntargets; ++i) 
     {
-      ChangeListener change_listener = (ChangeListener)targets.elementAt(i);
-
-      final DisplayAdjustmentListener target =
-                               (DisplayAdjustmentListener)change_listener;
+      DisplayAdjustmentListener target = targets.elementAt(i);
       target.displayAdjustmentValueChanged((DisplayAdjustmentEvent)event);
     }
   }
@@ -4445,6 +4870,7 @@ public class FeatureDisplay extends EntryGroupPanel
         scrollbar.setValue(new_position);
       
       needVisibleFeatureVectorUpdate();
+      updateOneLinePerFeatureFlag();
       repaint();
     }
   }
@@ -4789,7 +5215,7 @@ public class FeatureDisplay extends EntryGroupPanel
    *  Arrange for updateVisibleFeatureVector() to be called in the next call
    *  to paint()
    **/
-  private void needVisibleFeatureVectorUpdate() 
+  protected void needVisibleFeatureVectorUpdate() 
   {
     update_visible_features = true;
   }
@@ -4874,11 +5300,11 @@ public class FeatureDisplay extends EntryGroupPanel
     entryWorker.start();
   }
 
-  protected static Vector getContigKeys()
+  protected static Vector<String> getContigKeys()
   {
     if(contigKeys == null)
     {
-      contigKeys = new Vector(3);
+      contigKeys = new Vector<String>(3);
       contigKeys.add("fasta_record");
       contigKeys.add("contig");
       contigKeys.add("insertion_gap");
@@ -4887,15 +5313,18 @@ public class FeatureDisplay extends EntryGroupPanel
     return contigKeys;
   }
   
-  protected static Vector getAllPossibleContigKeys()
+  protected static Vector<String> getAllPossibleContigKeys()
   {
-    Vector allPossibleContigKeys = new Vector();
-    allPossibleContigKeys.add("fasta_record");
-    allPossibleContigKeys.add("contig");
-    allPossibleContigKeys.add("insertion_gap");
-    allPossibleContigKeys.add("gap");
-    allPossibleContigKeys.add("scaffold");
-    allPossibleContigKeys.add("source");
+    if(allPossibleContigKeys == null)
+    {
+      allPossibleContigKeys = new Vector<String>();
+      allPossibleContigKeys.add("fasta_record");
+      allPossibleContigKeys.add("contig");
+      allPossibleContigKeys.add("insertion_gap");
+      allPossibleContigKeys.add("gap");
+      allPossibleContigKeys.add("scaffold");
+      allPossibleContigKeys.add("source");
+    }
     return allPossibleContigKeys;
   }
 
@@ -4906,13 +5335,13 @@ public class FeatureDisplay extends EntryGroupPanel
   {
     final FeatureVector tmpContigFeatures = new FeatureVector();
     // find all fasta_record features
-    Vector contigKeys = getContigKeys();
+    final Vector<String> contigKeys = getContigKeys();
     final FeaturePredicate key_predicate_contig[]
            =  new FeatureKeyQualifierPredicate[contigKeys.size()];
 
     for(int i=0; i<contigKeys.size(); i++)
       key_predicate_contig[i] = new FeatureKeyQualifierPredicate(
-                                             new Key((String)contigKeys.get(i)),
+                                             new Key(contigKeys.get(i)),
                                              null, // match any qialifier
                                              false);
 
@@ -5081,7 +5510,7 @@ public class FeatureDisplay extends EntryGroupPanel
     FeatureVector features_from_entry = getVisibleFeatures();   
     int first;
     int last;
-    Vector contig_keys = getContigKeys();
+    Vector<String> contig_keys = getContigKeys();
 
     for(int i = 0; i < features_from_entry.size(); i++)
     {
@@ -5185,7 +5614,10 @@ public class FeatureDisplay extends EntryGroupPanel
       if(((MouseEvent)ie).isPopupTrigger())
         return;
 
-    final Vector contig_keys = getContigKeys();
+    if(getFeatureStackViewFlag() || getEntryGroup().isReadOnly())
+      return;
+    
+    final Vector<String> contig_keys = getContigKeys();
     final FeatureVector selected_features = getSelection().getAllFeatures();
     if(selected_features.size() == 1 &&
        contig_keys.contains(selected_features.elementAt(0).getKey()))

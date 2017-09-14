@@ -61,7 +61,7 @@ public class SearchResultViewer extends FileViewer
                             final Document document)
       throws IOException 
   {
-    super (label, false, false);
+    super (label, false, false, false);
 
     try 
     {

@@ -1,0 +1,26 @@
+language: java
+jdk:
+  - openjdk7
+  - openjdk6
+  - oraclejdk7
+sudo: false
+env:
+  global:
+    - BUILD_CMD='make'
+matrix:
+  include:
+    - jdk: openjdk7
+      env: BUILD_CMD='ant -f build.xml'
+cache:
+  directories:
+  - "${HOME}/dependencies"
+before_install:
+  - "export CASHER_TIME_OUT=300"
+  - "export DISPLAY=:99.0"
+  - "sh -e /etc/init.d/xvfb start"
+  - "source install_dependencies.sh"
+install:
+  - "$BUILD_CMD"
+  - "cd test"
+  - "ln -s $(pwd)/../etc/log4j.properties ."
+script: ant -f build-test.xml test -DEMBOSS_ROOT=$EMBOSS_ROOT | tee test.log && [ -z "$(grep 'Failures:\s[^0]\|Errors:\s[^0]' test.log)" ]

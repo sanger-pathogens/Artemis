@@ -26,6 +26,9 @@
 package uk.ac.sanger.artemis;
 
 import uk.ac.sanger.artemis.sequence.*;
+import uk.ac.sanger.artemis.components.MessageDialog;
+import uk.ac.sanger.artemis.io.GFFDocumentEntry;
+import uk.ac.sanger.artemis.io.IndexedGFFDocumentEntry;
 import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.io.StreamSequence;
 import uk.ac.sanger.artemis.io.SimpleDocumentEntry;
@@ -460,7 +463,6 @@ public class SimpleEntryGroup extends EntryVector
     if(index < 0) 
       throw new Error("internal error - index out of range: " + index);
 
-    int feature_count_of_previous_entries = 0;
     final int active_entries_size = active_entries.size();
 
     for(int entry_index = 0; entry_index < active_entries_size; 
@@ -642,6 +644,20 @@ public class SimpleEntryGroup extends EntryVector
    **/
   public void add(final Entry entry) 
   {
+    if(entry.getEMBLEntry() instanceof IndexedGFFDocumentEntry)
+      ((IndexedGFFDocumentEntry)entry.getEMBLEntry()).setEntryGroup(this);
+    else if(entry.getEMBLEntry() instanceof GFFDocumentEntry)
+    {
+      ((GFFDocumentEntry)entry.getEMBLEntry()).adjustCoordinates( getSequenceEntry() );
+      if(!Options.isBlackBeltMode() && size() > 1 && 
+          entry.getEMBLEntry().getSequence() != null )
+      {
+        new MessageDialog (null, "Warning", 
+            "Overlaying a GFF with a sequence onto an entry with a sequence.",
+            false);
+      }
+    }
+
     addElement(entry);
   }
 
@@ -705,13 +721,13 @@ public class SimpleEntryGroup extends EntryVector
   public Entry createEntry() 
   {
     Entry new_entry = null;
-    uk.ac.sanger.artemis.io.Entry default_entry = 
-      getDefaultEntry().getEMBLEntry();
+    Entry default_entry = getDefaultEntry();
     if(default_entry != null &&
-       default_entry instanceof DatabaseDocumentEntry)
+       default_entry.getEMBLEntry() != null &&
+       default_entry.getEMBLEntry() instanceof DatabaseDocumentEntry)
     {
       DatabaseDocument doc =
-        (DatabaseDocument)((DocumentEntry)getDefaultEntry().getEMBLEntry()).getDocument();
+        (DatabaseDocument)((DocumentEntry)default_entry.getEMBLEntry()).getDocument();
       DatabaseDocument new_doc = doc.createDatabaseDocument();
       
       try
@@ -871,7 +887,7 @@ public class SimpleEntryGroup extends EntryVector
       targets = (Vector)listeners.clone();
     }
 
-    boolean seen_chado_manager = false;
+    //boolean seen_chado_manager = false;
     final int targets_size = targets.size();
     for(int i = 0; i < targets_size; ++i) 
     {

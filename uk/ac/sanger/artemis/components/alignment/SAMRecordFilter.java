@@ -7,13 +7,12 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.Vector;
 
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -24,13 +23,17 @@ import javax.swing.JTextField;
  * Filter reads bases on their mapping quality (mapq) or the
  * flags that are set in the BAM file.
  */
-class SAMRecordFilter extends JPanel
+class SAMRecordFilter extends JFrame
 {
   private static final long serialVersionUID = 1L;
 
   public SAMRecordFilter(final BamView bamView)
   {
-    super(new GridBagLayout());
+    super("Filter Reads");
+    
+    JPanel pane = (JPanel) getContentPane();
+    pane.setLayout(new GridBagLayout());
+    
     int nflags = SAMRecordFlagPredicate.FLAGS.length;
     GridBagConstraints c = new GridBagConstraints();
     
@@ -43,7 +46,7 @@ class SAMRecordFilter extends JPanel
     c.gridy = nrows++;
     
     // MAPQ
-    add(new JLabel("Mappying quality (mapq) cut-off:"),c);
+    pane.add(new JLabel(" By Mappying Quality (mapq) cut-off:"),c);
     
     c.gridy = nrows++;
     c.gridwidth = 1;
@@ -59,7 +62,7 @@ class SAMRecordFilter extends JPanel
           setQualityCutOff(cutOff, bamView);
       }
     });
-    add(cutOff,c);
+    pane.add(cutOff,c);
     
     c.gridx = 1;
     final JButton setCutOff = new JButton("SET");
@@ -70,64 +73,63 @@ class SAMRecordFilter extends JPanel
         setQualityCutOff(cutOff, bamView);
       }
     });
-    add(setCutOff,c);
+    pane.add(setCutOff,c);
     
     // FLAGS
     c.gridwidth = 2;
     c.gridx = 0;
     c.gridy = nrows++;
-    add(new JSeparator(),c);
+    pane.add(new JSeparator(),c);
     
     c.gridy = nrows++;
-    add(new JLabel("To filter reads using the FLAG column in the BAM file"),c);
+    pane.add(new JLabel(" By SAM FLAG column:"),c);
     c.gridy = nrows++;
-    add(new JLabel("select any of the options below to hide the reads with"),c);
+    pane.add(new JLabel(" Select below to show or hide only the reads with "),c);
     c.gridy = nrows++;
-    add(new JLabel("that flag set."),c);
-    final JCheckBox flagCheck[] = new JCheckBox[nflags];
-    final SAMRecordFlagPredicate predicate = bamView.getSamRecordFlagPredicate();
+    pane.add(new JLabel(" the flag set."),c);
     
+    final JComboBox flagCombo[] = new JComboBox[nflags];
+    
+    final String[] items = {"", "SHOW", "HIDE"};
+    c.gridwidth = 1;
     for(int j=0; j<nflags; j++)
     {
-      flagCheck[j] = new JCheckBox(
-          SAMRecordFlagPredicate.FLAGS_DESCRUIPTION[j], false);
+      flagCombo[j] = new JComboBox(items);
+      if(SAMRecordFlagPredicate.FLAGS_DESCRIPTION[j].equalsIgnoreCase("Read Unmapped"))
+        flagCombo[j].setSelectedItem("HIDE");
       
-      if(predicate != null &&
-         predicate.isFlagSet(SAMRecordFlagPredicate.FLAGS[j]))
-        flagCheck[j].setSelected(true);
-      
-      flagCheck[j].addItemListener(new ItemListener()
+      flagCombo[j].addActionListener(new ActionListener() 
       {
-        public void itemStateChanged(ItemEvent e)
+        public void actionPerformed(ActionEvent e)
         {
-          filterChange(bamView, flagCheck);
-        }            
+          filterChange(bamView, flagCombo);
+        } 
       });
       
       c.gridy = nrows++;
-      add(flagCheck[j], c);
+      c.gridx = 0;
+      pane.add(flagCombo[j], c);
+      c.gridx = 1;
+      pane.add(new JLabel(SAMRecordFlagPredicate.FLAGS_DESCRIPTION[j]), c);
     }
 
-    
-    final JFrame f = new JFrame("Filter Settings");
     JButton closeFrame = new JButton("Close");
     closeFrame.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
       {
-        f.dispose();
+        setVisible(false);
       }
     });
     c.gridx = 1;
     c.gridy = nrows++;
     c.fill = GridBagConstraints.NONE;
-    add(closeFrame, c);
+    pane.add(closeFrame, c);
 
-    f.getContentPane().add(this);
-    f.pack();
+    pack();
     
-    rightJustifyFrame(f);
-    f.setVisible(true);
+    rightJustifyFrame(this);
+    setVisible(true);
   } 
   
   private void rightJustifyFrame(JFrame frame)
@@ -162,23 +164,45 @@ class SAMRecordFilter extends JPanel
     }
     bamView.repaint();
   }
-  
-  private void filterChange(final BamView bamView,
-                            final JCheckBox flagCheck[])
+
+  private void filterChange(final BamView bamView, final JComboBox flagCheck[])
   {
     int nflags = SAMRecordFlagPredicate.FLAGS.length;
     int flagCombined = 0;
-    for(int j=0; j<nflags; j++)
+    Vector <SAMRecordPredicate> predicates = new Vector<SAMRecordPredicate>();
+    
+    for (int j = 0; j < nflags; j++)
     {
-      if(flagCheck[j].isSelected())
+      String opt = (String) flagCheck[j].getSelectedItem();
+      if (opt.equals("HIDE"))
         flagCombined = flagCombined | SAMRecordFlagPredicate.FLAGS[j];
+      else if(opt.equals("SHOW"))
+        predicates.add(new SAMRecordFlagPredicate( SAMRecordFlagPredicate.FLAGS[j], false ));
     }
 
-    if(flagCombined == 0)
+    if (flagCombined == 0 && predicates.size() == 0)
       bamView.setSamRecordFlagPredicate(null);
     else
-      bamView.setSamRecordFlagPredicate(new SAMRecordFlagPredicate(flagCombined));
+    {
+      final SAMRecordPredicate predicate;
+      if(predicates.size()  == 0)
+        predicate = new SAMRecordFlagPredicate(flagCombined);
+      else if(flagCombined == 0)
+      {
+        predicate = 
+          new SAMRecordFlagConjunctionPredicate(predicates, SAMRecordFlagConjunctionPredicate.OR);
+      }
+      else
+      {
+        SAMRecordFlagPredicate p1 = new SAMRecordFlagPredicate(flagCombined);
+        SAMRecordFlagConjunctionPredicate p2 = 
+          new SAMRecordFlagConjunctionPredicate(predicates, SAMRecordFlagConjunctionPredicate.OR);
+        
+        predicate = new SAMRecordFlagConjunctionPredicate(p1, p2, 
+            SAMRecordFlagConjunctionPredicate.OR);
+      }
+      bamView.setSamRecordFlagPredicate(predicate);
+    }
     bamView.repaint();
   }
-  
 }

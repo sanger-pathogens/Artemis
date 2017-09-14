@@ -38,12 +38,11 @@ public class SegmentBorder
   private int y;
   private int width;
   private int feature_direction;
+  public static Color HIGHLIGHT_BORDER_COLOUR = new Color(140,25,25);
  
   /**
-  *
   * Information stored in this object is used to draw the feature
   * segment borders.
-  *
   * @param highlight_feature  true if the feature is highlighted
   * @param highlight_segment  true if the segment is highlighted
   * @param draw_arrow         true if an arrow is to be drawn on this segment
@@ -53,8 +52,9 @@ public class SegmentBorder
   * @param feature_direction  feature direction 
   *
   */
-  public SegmentBorder(boolean highlight_feature, boolean highlight_segment, 
-                       boolean draw_arrow, int x, int y, int width,
+  public SegmentBorder(final boolean highlight_feature, 
+                       final boolean highlight_segment, 
+                       final boolean draw_arrow, int x, int y, int width,
                        int feature_direction)
   {
     this.highlight_feature = highlight_feature;
@@ -71,18 +71,22 @@ public class SegmentBorder
 
   protected void drawSegmentBorder(Graphics g, int height, int arrowWidth)
   {
-    Graphics2D g2d = (Graphics2D)g;
+    final Graphics2D g2d = (Graphics2D)g;
     if(highlight_feature)  // highlight selected features
     {
       // selected - highlight by drawing a thicker line
-      BasicStroke stroke = (BasicStroke)g2d.getStroke();
+      final BasicStroke stroke = (BasicStroke)g2d.getStroke();
 
       if(highlight_segment)
+      {
+        g2d.setColor(HIGHLIGHT_BORDER_COLOUR);
         g2d.setStroke(new BasicStroke(4.f));
+      }
       else
         g2d.setStroke(new BasicStroke(3.f));
 
       g2d.drawRect(x, y, width, height);
+      g2d.setColor(Color.black);
       g2d.setStroke(stroke);
     }
     else

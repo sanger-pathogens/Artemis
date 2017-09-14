@@ -1,16 +1,4 @@
 
 biojava.jar - http://biojava.org  (1.6)
-postgresql-8.0-310.jdbc2ee.jar - http://jdbc.postgresql.org/license.html
+postgresql-8.4-701.jdbc3.jar - http://jdbc.postgresql.org/license.html
                                  BSD License
-macos.jar - compiled version of the Mac handler class
-            uk/ac/sanger/artemis/components/MacHandler.java
-            
-retrotranslator -
-    http://retrotranslator.sourceforge.net/
-    Retrotranslator: a Java bytecode transformer that translates Java classes
-    compiled with JDK 5.0 into classes that can be run on JVM 1.4.
-
-    Copyright (c) 2005, 2006 Taras Puchko
-    All rights reserved.
-           
-

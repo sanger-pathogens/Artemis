@@ -315,6 +315,16 @@ public class FuzzyRange extends Range {
       throw new Error ("internal error - unexpected exception");
     }
   }
+  
+  public Object getStartObject()
+  {
+    return start_object;
+  }
+  
+  public Object getEndObject()
+  {
+    return end_object;
+  }
 
   /**
    *  The start Object of this FuzzyRange.

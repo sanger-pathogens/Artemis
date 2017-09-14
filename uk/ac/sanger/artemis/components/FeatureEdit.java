@@ -50,6 +50,7 @@ import uk.ac.sanger.artemis.io.EntryInformation;
 import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.StreamQualifier;
 import uk.ac.sanger.artemis.io.QualifierInfo;
+import uk.ac.sanger.artemis.io.ValidateFeature;
 
 import uk.ac.sanger.artemis.components.ProgressThread;
 import uk.ac.sanger.artemis.components.genebuilder.BasicGeneBuilderFrame;
@@ -72,8 +73,8 @@ import java.util.Set;
 import java.util.Vector;
 import java.util.Collections;
 import java.util.Comparator;
-import javax.swing.*;
 
+import javax.swing.*;
 
 /**
  *  FeatureEdit class
@@ -84,10 +85,6 @@ import javax.swing.*;
 public class FeatureEdit extends JPanel
                          implements EntryChangeListener, FeatureChangeListener 
 {
-
-  /**
-   * 
-   */
   private static final long serialVersionUID = 1L;
 
 
@@ -101,9 +98,6 @@ public class FeatureEdit extends JPanel
 
   /** The location text - set by updateLocation(). */
   private JTextField location_text = new JTextField(LOCATION_TEXT_WIDTH);
-
-  /** When pressed - apply changes and dispose of the component. */
-  private JButton ok_button = new JButton("OK");
 
   /** When pressed - discard changes and dispose of the component. */
   private JButton cancel_button = new JButton("Cancel");
@@ -143,7 +137,7 @@ public class FeatureEdit extends JPanel
    *  This is used to work out if anything has changed since the creation of
    *  the FeatureEdit.
    **/
-  final String orig_qualifier_text;
+  private final String orig_qualifier_text;
 
   private JFrame frame;
   
@@ -164,6 +158,8 @@ public class FeatureEdit extends JPanel
   
   private GeneEditorPanel editorPanel;
   
+  private static UserDefinedQualifiers userDefinedQualifierFrame;
+  
   /**
    *  Create a new FeatureEdit object from the given Feature.
    *  @param entry_group The EntryGroup that contains this Feature.
@@ -177,24 +173,13 @@ public class FeatureEdit extends JPanel
                      final GotoEventSource goto_event_source,
                      final JFrame frame) 
   {
-    this(edit_feature, entry_group, selection, 
-         goto_event_source, frame, 
-         edit_feature.getEntry().getEntryInformation());
-  }
-  
-  public FeatureEdit(final Feature edit_feature,
-      final EntryGroup entry_group,
-      final Selection selection,
-      final GotoEventSource goto_event_source,
-      final JFrame frame, final EntryInformation entry_information) 
-  {
-    this.entry_information = entry_information;
     this.frame = frame;
     this.edit_feature = edit_feature;
     this.edit_entry   = edit_feature.getEntry();
     this.entry_group  = entry_group;
     this.selection    = selection;
     this.goto_event_source = goto_event_source;
+    this.entry_information = edit_feature.getEntry().getEntryInformation();
 
     setLayout(new BorderLayout());
     createComponents();
@@ -213,6 +198,8 @@ public class FeatureEdit extends JPanel
         {
           stopListening();
           frame.dispose();
+          if(userDefinedQualifierFrame != null)
+            userDefinedQualifierFrame.setVisible(false);
         }
       });
     }
@@ -222,7 +209,7 @@ public class FeatureEdit extends JPanel
   
   private boolean isPartialSequence()
   {
-    return edit_feature.getEmblFeature().getEntry().getSequence() instanceof PartialSequence;
+    return entry_group.getSequenceEntry().getBases().getSequence() instanceof PartialSequence;
   }
   
   /**
@@ -286,7 +273,7 @@ public class FeatureEdit extends JPanel
   /**
    *  Add an ActionListener to the Cancel JButton of this FeatureEdit.
    **/
-  public void addCancelActionListener(final ActionListener l) 
+  protected void addCancelActionListener(final ActionListener l) 
   {
     cancel_button.addActionListener(l);
   }
@@ -294,7 +281,7 @@ public class FeatureEdit extends JPanel
   /**
    *  Remove an ActionListener from the Cancel JButton of this FeatureEdit.
    **/
-  public void removeCancelActionListener(final ActionListener l) 
+  protected void removeCancelActionListener(final ActionListener l) 
   {
     cancel_button.removeActionListener(l);
   }
@@ -302,17 +289,9 @@ public class FeatureEdit extends JPanel
   /**
    *  Add an ActionListener to the Apply JButton of this FeatureEdit.
    **/
-  public void addApplyActionListener(final ActionListener l) 
+  protected void addApplyActionListener(final ActionListener l) 
   {
     apply_button.addActionListener(l);
-  }
-
-  /**
-   *  Remove an ActionListener from the Apply JButton of this FeatureEdit.
-   **/
-  public void removeApplyActionListener(final ActionListener l) 
-  {
-    apply_button.removeActionListener(l);
   }
 
   /**
@@ -451,7 +430,7 @@ public class FeatureEdit extends JPanel
                                  new java.text.FieldPosition(java.text.DateFormat.DATE_FIELD));
             
               final String go_string = "aspect=; term=; GOid=GO:; "+
-                                       "evidence=ISS; db_xref=GOC:unpublished; " +
+                                       "evidence=ISS; db_xref=GO_REF:0000001; " +
                                        "with=UniProtKB:; date=" + result_buffer;
               qualifier_text_area.append("=\"" + go_string + "\"");
             } 
@@ -508,6 +487,7 @@ public class FeatureEdit extends JPanel
     location_panel.add(location_text, "Center");
 
     final JButton complement_button = new JButton("Complement");
+    complement_button.setToolTipText("Complement position");
     location_button_panel.add(complement_button);
     complement_button.addActionListener(new ActionListener () 
     {
@@ -531,6 +511,7 @@ public class FeatureEdit extends JPanel
     }
 
     final JButton grab_button = new JButton("Grab Range");
+    grab_button.setToolTipText("Add selected base range from feature coordinates");
     location_button_panel.add(grab_button);
     grab_button.addActionListener(new ActionListener()
     {
@@ -541,6 +522,7 @@ public class FeatureEdit extends JPanel
     });
 
     final JButton remove_button = new JButton("Remove Range");
+    remove_button.setToolTipText("Remove selected base range from feature coordinates");
     location_button_panel.add(remove_button);
     remove_button.addActionListener(new ActionListener() 
     {
@@ -551,16 +533,18 @@ public class FeatureEdit extends JPanel
     });
 
     final JButton goto_button = new JButton("Goto Feature");
+    goto_button.setToolTipText("Goto and select this feature");
     location_button_panel.add(goto_button);
     goto_button.addActionListener(new ActionListener() 
     {
       public void actionPerformed(ActionEvent e)
       {
         goto_event_source.gotoBase(getFeature().getFirstBaseMarker());
+        getSelection().set(getFeature());
       }
     });
 
-    final JButton select_button = new JButton("Select Feature");
+/*    final JButton select_button = new JButton("Select Feature");
     location_button_panel.add(select_button);
     select_button.addActionListener(new ActionListener()
     {
@@ -568,7 +552,7 @@ public class FeatureEdit extends JPanel
       {
         getSelection().set(getFeature());
       }
-    });
+    });*/
 
     if(Options.getOptions().getPropertyTruthValue("sanger_options"))
     {
@@ -586,10 +570,9 @@ public class FeatureEdit extends JPanel
           } 
           catch(QualifierParseException exception) 
           {
-            final String error_string = exception.getMessage();
             new MessageDialog(frame,
-                              "Cannot tidy - qualifier error: " +
-                              error_string);
+                 "Cannot tidy - qualifier error: " +
+                  exception.getMessage());
           }
         }
       });
@@ -601,143 +584,10 @@ public class FeatureEdit extends JPanel
     {
       public void actionPerformed(ActionEvent e) 
       {
-      	java.util.List geneNames = null;
-      	if(matchForm != null)
-      		geneNames = matchForm.getGeneNameList();
-      	
-        new TransferAnnotationTool(getFeature(), entry_group, geneNames);
+      	new TransferAnnotationTool(getFeature(), entry_group, matchForm);
       }
     });
 
-    /*if(Options.getOptions().getProperty("external_editor") != null)
-    {
-      final JButton external_fasta_edit_button = new JButton("MESS/FASTA");
-      location_button_panel.add(external_fasta_edit_button);
-      external_fasta_edit_button.addActionListener(new ActionListener()
-      {
-        public void actionPerformed(ActionEvent e) 
-        {
-          try 
-          {
-            if(getFeature().getQualifierByName("fasta_file") != null) 
-            {
-              final String DEFAULT_MAX_EUK_FASTA_HITS = "10";
-              final String max_fasta_hits;
-
-              final String max_fasta_hits_from_options =
-                Options.getOptions().getProperty("mess_fasta_hits");
-
-              if(Options.getOptions().isEukaryoticMode()) 
-              {
-                if (max_fasta_hits_from_options == null) 
-                  max_fasta_hits = DEFAULT_MAX_EUK_FASTA_HITS;
-                else 
-                  max_fasta_hits = max_fasta_hits_from_options;
-
-                externalEdit(new String[] { "-fasta", "-maxhits",
-                                            max_fasta_hits, "-euk" });
-              } 
-              else 
-              {
-                if(max_fasta_hits_from_options == null) 
-                {
-                  externalEdit(new String[] { "-fasta" });
-                } 
-                else 
-                {
-                  externalEdit(new String[] { "-fasta", "-maxhits",
-                                              max_fasta_hits_from_options });
-                }
-              }
-              return;
-            }
-          } catch(InvalidRelationException _) {}
-          
-          new MessageDialog(frame,
-                            "nothing to edit - no /fasta_file qualifier");
-        }
-      });
-
-      final JButton external_blastp_edit_button = new JButton("MESS/BLASTP");
-      location_button_panel.add(external_blastp_edit_button);
-      external_blastp_edit_button.addActionListener(new ActionListener()
-      {
-        public void actionPerformed(ActionEvent e) 
-        {
-          try 
-          {
-            if(getFeature().getQualifierByName("blastp_file") != null)
-            {
-              final String DEFAULT_MAX_BLASTP_HITS = "10";
-              final String max_blastp_hits;
-
-              final String max_blastp_hits_from_options =
-                Options.getOptions().getProperty("mess_blastp_hits");
-
-              if(max_blastp_hits_from_options == null) 
-                max_blastp_hits = DEFAULT_MAX_BLASTP_HITS;
-              else 
-                max_blastp_hits = max_blastp_hits_from_options;
-
-              if(Options.getOptions().isEukaryoticMode()) 
-              {
-                externalEdit(new String[] { "-blastp", "-maxhits",
-                                            max_blastp_hits, "-euk" });
-              } 
-              else
-              {
-                externalEdit(new String[] { "-blastp", "-maxhits",
-                                            max_blastp_hits });
-              }
-              return;
-            }
-          } catch(InvalidRelationException _) {}
-          
-          new MessageDialog(frame,
-                            "nothing to edit - no /blastp_file qualifier");
-        }
-      });
-
-      final JButton external_go_edit_button = new JButton("MESS/GO");
-      location_button_panel.add(external_go_edit_button);
-      external_go_edit_button.addActionListener(new ActionListener () 
-      {
-        public void actionPerformed(ActionEvent e) 
-        {
-          try
-          {
-            if(getFeature().getQualifierByName("blastp+go_file") != null) 
-            {
-              final String DEFAULT_MAX_GO_BLAST_HITS = "10";
-              final String max_go_blast_hits;
-
-              final String max_go_blast_hits_from_options =
-                Options.getOptions ().getProperty ("mess_blast_go_hits");
-
-              if (max_go_blast_hits_from_options == null) 
-                max_go_blast_hits = DEFAULT_MAX_GO_BLAST_HITS;
-              else 
-                max_go_blast_hits = max_go_blast_hits_from_options;
-
-              if(Options.getOptions().isEukaryoticMode()) 
-              {
-                externalEdit(new String[] { "-blastp+go", "-maxhits",
-                                            max_go_blast_hits, "-euk" });
-              } 
-              else
-              {
-                externalEdit(new String[] { "-blastp+go", "-maxhits",
-                                            max_go_blast_hits });
-              }
-              return;
-            }
-          } catch(InvalidRelationException _) {}
-          
-          new MessageDialog(frame,
-                            "nothing to edit - no /blastp+go_file qualifier");
-        }
-      });
-    }*/
 
     if(Options.isUnixHost())
     {
@@ -762,7 +612,7 @@ public class FeatureEdit extends JPanel
           StringReader strRead = new StringReader(qualifier_txt);
           BufferedReader buff = new BufferedReader(strRead);
           String line;
-          final Hashtable dataFile = new Hashtable();
+          final Hashtable<String, Vector<String>> dataFile = new Hashtable<String, Vector<String>>();
           try
           {
             int ind;
@@ -779,11 +629,11 @@ public class FeatureEdit extends JPanel
                 if(ind > -1)
                   line = line.substring(0, ind);
                 
-                Vector v;
+                Vector<String> v;
                 if(dataFile.containsKey("fasta"))
-                  v = (Vector)dataFile.get("fasta");
+                  v = dataFile.get("fasta");
                 else
-                  v = new Vector();
+                  v = new Vector<String>();
                 v.add(line);
                 dataFile.put("fasta",v);
               }
@@ -798,11 +648,11 @@ public class FeatureEdit extends JPanel
                 if(ind > -1)
                   line = line.substring(0, ind);
                 
-                Vector v;
+                Vector<String> v;
                 if(dataFile.containsKey("blastp"))
-                  v = (Vector)dataFile.get("blastp");
+                  v = dataFile.get("blastp");
                 else
-                  v = new Vector();
+                  v = new Vector<String>();
                 v.add(line);
                 dataFile.put("blastp",v);
               }
@@ -816,11 +666,11 @@ public class FeatureEdit extends JPanel
                 if(ind > -1)
                   line = line.substring(0, ind);
                 
-                Vector v;
+                Vector<String> v;
                 if(dataFile.containsKey("blastp+go"))
-                  v = (Vector)dataFile.get("blastp+go");
+                  v = dataFile.get("blastp+go");
                 else
-                  v = new Vector();
+                  v = new Vector<String>();
                 v.add(line);
                 dataFile.put("blastp+go",v);
               }   
@@ -902,6 +752,34 @@ public class FeatureEdit extends JPanel
       });
     }
 
+    final JButton userQualifiers = new JButton("User Qualifiers");
+    userQualifiers.setToolTipText("User defined qualifier selection");
+    location_button_panel.add(userQualifiers);
+    userQualifiers.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e) 
+      {
+        if(userDefinedQualifierFrame == null) 
+        {
+          userDefinedQualifierFrame = new UserDefinedQualifiers();
+          userDefinedQualifierFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        }
+
+        userDefinedQualifierFrame.pack();
+        final JFrame topFrame = 
+              (JFrame) SwingUtilities.getWindowAncestor(FeatureEdit.this);
+        Point p = topFrame.getLocationOnScreen();
+        p.x -= userDefinedQualifierFrame.getWidth();
+        if(p.x < 10)
+          p.x = 10;
+        userDefinedQualifierFrame.setLocation(p);
+
+        userDefinedQualifierFrame.setQualifierTextArea(qualifier_text_area);
+        userDefinedQualifierFrame.setSelection(selection);
+        userDefinedQualifierFrame.setVisible(true);
+      }
+    });
+    
     middle_panel.add(location_panel, "North");
     add(key_and_qualifier_panel, "North");
 
@@ -912,9 +790,12 @@ public class FeatureEdit extends JPanel
         if(edit_feature.getEntry() != null)
           stopListening();
         frame.dispose();
+        if(userDefinedQualifierFrame != null)
+          userDefinedQualifierFrame.setVisible(false);
       }
     });
 
+    final JButton ok_button = new JButton("OK");
     if(!getFeature().isReadOnly())
     {
       ok_button.addActionListener(new ActionListener()
@@ -926,9 +807,11 @@ public class FeatureEdit extends JPanel
             stopListening();
             
             if(propertiesPanel != null)
-              propertiesPanel.updateObsoleteSettings();
+              propertiesPanel.updateSettings();
             
             frame.dispose();
+            if(userDefinedQualifierFrame != null)
+              userDefinedQualifierFrame.setVisible(false);
           }
         }
       });
@@ -976,7 +859,6 @@ public class FeatureEdit extends JPanel
         }
       });
 
-
       final JCheckBox oneView = new JCheckBox("Overview", false);
       oneView.addItemListener(new ItemListener()
       {
@@ -987,7 +869,7 @@ public class FeatureEdit extends JPanel
             stopListening();
             
             if(propertiesPanel != null)
-              propertiesPanel.updateObsoleteSettings();
+              propertiesPanel.updateSettings();
             
             frame.dispose();
             System.setProperty("basic", "true");
@@ -1002,6 +884,12 @@ public class FeatureEdit extends JPanel
       ok_cancel_update_panel.add(tabbedView);
       fillerBox.add(Box.createHorizontalStrut( 
           tabbedView.getPreferredSize().width ));
+    }
+    else if(getFeature().getEmblFeature() instanceof GFFStreamFeature)
+    {
+      propertiesPanel = new PropertiesPanel(getFeature());
+      addGffAnnotationView(lower_panel);
+
     }
     else
       lower_panel.add(new JScrollPane(qualifier_text_area), "Center");
@@ -1031,9 +919,9 @@ public class FeatureEdit extends JPanel
     final DatabaseDocument originalDocument =
       (DatabaseDocument)((DocumentEntry)edit_feature.getEmblFeature().getEntry()).getDocument();
 
-    final Set uniquenames = ((GFFStreamFeature)edit_feature.getEmblFeature()).getSegmentRangeStore().keySet();
-    final Iterator it = uniquenames.iterator();
-    final String uniquename = (String)it.next();
+    final Set<String> uniquenames = ((GFFStreamFeature)edit_feature.getEmblFeature()).getSegmentRangeStore().keySet();
+    final Iterator<String> it = uniquenames.iterator();
+    final String uniquename = it.next();
     final DatabaseDocument newDocument = new DatabaseDocument(originalDocument,
         uniquename, null, true, null);
     newDocument.setLazyFeatureLoad(false);
@@ -1256,70 +1144,50 @@ public class FeatureEdit extends JPanel
   private void tidy() throws QualifierParseException
   {
     final StringBuffer buffer = new StringBuffer();
-
     final QualifierVector qualifiers =
       qualifier_text_area.getParsedQualifiers(getEntryInformation());
-    
-    for(int qualifier_index = 0; qualifier_index < qualifiers.size();
-         ++qualifier_index) 
+
+    for(Qualifier this_qualifier: qualifiers) 
     {
-      final Qualifier this_qualifier = (Qualifier)qualifiers.elementAt(qualifier_index);
-      
       final QualifierInfo qualifier_info =
             getEntryInformation().getQualifierInfo(this_qualifier.getName());
-      
       final StringVector qualifier_strings =
           StreamQualifier.toStringVector(qualifier_info, this_qualifier);
       
-      for(int value_index = 0; value_index < qualifier_strings.size();
-          ++value_index)
-      {
-        final String qualifier_string =
-          (String)qualifier_strings.elementAt(value_index);
-
+      for(String qualifier_string: qualifier_strings)
         buffer.append(tidyHelper(qualifier_string) + "\n");
-      }
     }
-
     qualifier_text_area.setText(buffer.toString());
   }
 
   private void tidyGO() throws QualifierParseException
   {
     String qualifier_txt = qualifier_text_area.getText();
-    StringReader strRead = new StringReader(qualifier_txt);
-    BufferedReader buff = new BufferedReader(strRead);
-    String line;
-    final Vector qual_str = new Vector();
+    BufferedReader buff = new BufferedReader(new StringReader(qualifier_txt));
+    final Vector<String> qual_str = new Vector<String>();
     try
     {
+      String line;
       while((line = buff.readLine()) != null)
         qual_str.add(line);
     }
     catch(IOException ioe){}
 
-    Comparator comparator = new Comparator()
+    Comparator<String> comparator = new Comparator<String>()
     {
-      public int compare (Object fst, Object snd)
+      public int compare (String fst, String snd)
       {
-        if( !((String)fst).startsWith("/GO") ||
-            !((String)snd).startsWith("/GO") )
+        if( !fst.startsWith("/GO") ||
+            !snd.startsWith("/GO") )
           return 0;
-
-        return ((String)fst).compareTo((String)snd);
+        return fst.compareTo(snd);
       }
     };
-  
     Collections.sort(qual_str, comparator);
     
     StringBuffer buffer = new StringBuffer();
-    for(int i = 0; i < qual_str.size(); i++)
-    {
-      final String qualifier_string = 
-                           (String)qual_str.elementAt(i);
-
+    for(String qualifier_string: qual_str)
       buffer.append(tidyHelper(qualifier_string) + "\n");
-    }
 
     qualifier_text_area.setText(buffer.toString());
   }
@@ -1564,134 +1432,6 @@ public class FeatureEdit extends JPanel
     }
   }
 
-
-  /**
-   *  Edit the qualifiers of this Feature in an external editor.  The
-   *  qualifiers will be set when the editor finishes.  This method works by
-   *  writing the qualifiers to a temporary file and the sequence of the
-   *  feature to a different file.
-   *  @param editor_extra_args Extra arguments to pass to the editor.  null
-   *    means there are no extra args.
-   **/
-  /*private void externalEdit(final String[] editor_extra_args) 
-  {
-    try 
-    {
-      final String pre_edit_text = qualifier_text_area.getText();
-
-      // write to a temporary file
-      final Date current_time = calendar.getTime();
-
-      final String temp_file_name =
-               "/tmp/artemis_temp." + current_time.getTime();
-
-      final File temp_file = new File(temp_file_name);
-
-      final FileWriter out_writer    = new FileWriter(temp_file);
-      final PrintWriter print_writer = new PrintWriter(out_writer);
-
-      print_writer.write(qualifier_text_area.getText());
-      print_writer.close();
-      out_writer.close();
-
-      final File sequence_temp_file = new File(temp_file_name + ".seq");
-      final FileWriter sequence_out_writer =
-                                     new FileWriter(sequence_temp_file);
-      final PrintWriter sequence_print_writer =
-                                   new PrintWriter(sequence_out_writer);
-
-      getFeature().writeBasesOfFeature(sequence_print_writer);
-      sequence_print_writer.close();
-      sequence_out_writer.close();
-
-      final String editor_path =
-        Options.getOptions().getProperty("external_editor");
-
-      final String[] process_args;
-
-      if(editor_extra_args == null) 
-      {
-        process_args = new String[1];
-        process_args[0] = temp_file.getCanonicalPath();
-      } 
-      else
-      {
-        process_args = new String[editor_extra_args.length + 1];
-        System.arraycopy(editor_extra_args, 0, process_args, 0,
-                         editor_extra_args.length);
-        process_args[process_args.length - 1] = temp_file.getCanonicalPath();
-      }
-
-
-      System.out.println(editor_path);
-      for(int i=0;i<process_args.length;i++)
-        System.out.println(process_args[i]);
-
-      final Process process =
-        ExternalProgram.startProgram(editor_path, process_args);
-
-      final ProcessWatcher process_watcher =
-                                new ProcessWatcher(process, "editor", false);
-
-      final Thread watcher_thread = new Thread(process_watcher);
-      watcher_thread.start();
-
-      final ProcessWatcherListener listener = new ProcessWatcherListener()
-      {
-        public void processFinished(final ProcessWatcherEvent event)
-        {
-          try 
-          {
-            final FileReader file_reader = new FileReader(temp_file);
-            final BufferedReader buffered_reader = 
-                                     new BufferedReader(file_reader);
-
-            final StringBuffer buffer = new StringBuffer();
-            String line;
-
-            while((line = buffered_reader.readLine()) != null) 
-              buffer.append(line + "\n");
-
-            //ensure current qualifier text has not changed
-            if(!qualifier_text_area.getText().equals(pre_edit_text))
-            {
-              final String message =
-                  "the qualifiers have changed - apply changes from the " +
-                  "external editor?";
-
-              final YesNoDialog yes_no_dialog =
-                  new YesNoDialog(frame, message);
-
-              if(!yes_no_dialog.getResult())
-                return;
-            }
-
-            qualifier_text_area.setText(buffer.toString());
-            temp_file.delete();
-            sequence_temp_file.delete();
-
-            return;
-          }
-          catch(IOException e) 
-          {
-            new MessageDialog(frame, "an error occured while " +
-                              "reading from the editor: " + e);
-          }
-        }
-      };
-
-      process_watcher.addProcessWatcherListener(listener);
-    }
-    catch(IOException e) 
-    {
-      new MessageDialog(frame, "error while starting editor: " + e);
-    } 
-    catch(ExternalProgramException e) 
-    {
-      new MessageDialog(frame, "error while starting editor: " + e);
-    }
-  }*/
-
   /**
    *  Read the qualifiers from the feature and update the qualifier JTextArea.
    **/
@@ -1702,8 +1442,8 @@ public class FeatureEdit extends JPanel
     
     qualifier_text_area.setText(getQualifierString());
     
-    if(GeneUtils.isDatabaseEntry(getFeature().getEmblFeature()))
-    {  
+    if(getFeature().getEmblFeature() instanceof GFFStreamFeature)
+    {
       // load synonym
       if(cvForm != null)
         cvForm.updateFromFeature(getFeature());
@@ -1731,11 +1471,8 @@ public class FeatureEdit extends JPanel
     final StringBuffer buffer = new StringBuffer();
     final QualifierVector qualifiers = getFeature().getQualifiers();       
     
-    for(int qualifier_index = 0; qualifier_index < qualifiers.size();
-        ++qualifier_index) 
+    for(Qualifier this_qualifier: qualifiers) 
     {
-      final Qualifier this_qualifier = (Qualifier)qualifiers.elementAt(qualifier_index);
-
       //
       // strip out CV qualifiers
       //
@@ -1755,12 +1492,8 @@ public class FeatureEdit extends JPanel
       final StringVector qualifier_strings =
                        StreamQualifier.toStringVector(qualifier_info, this_qualifier);
 
-      for(int value_index = 0; value_index < qualifier_strings.size();
-          ++value_index)
-      {
-        final String qualifier_string = (String)qualifier_strings.elementAt(value_index);
-        buffer.append(qualifier_string + "\n");
-      }
+      for(String qualStr: qualifier_strings)
+        buffer.append(qualStr + "\n");
     }
 
     return buffer.toString();
@@ -1812,7 +1545,7 @@ public class FeatureEdit extends JPanel
     {
       qualifiers =
         qualifier_text_area.getParsedQualifiers(getEntryInformation ());
-      
+           
       // if using controlled vocab form
       if(cvForm != null)
       {
@@ -1838,6 +1571,7 @@ public class FeatureEdit extends JPanel
         if(mapQualifiers != null && mapQualifiers.size() > 0)
           qualifiers.addAll(mapQualifiers);
       }
+      updateGffIds(qualifiers);
       
       if(matchForm != null)
       {
@@ -1846,6 +1580,17 @@ public class FeatureEdit extends JPanel
           qualifiers.addAll(orthologQualifiers);
       }
       
+      final String goErrs = ValidateFeature.validateGO(qualifiers, getEntryInformation());
+      if(goErrs.length()>0)
+      {
+        Object[] options = { "CANCEL", "CONTINUE" };
+        int opt = JOptionPane.showOptionDialog(null, goErrs, "GO errors",
+            JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
+            null, options, options[0]);
+
+        if(opt == 0)
+          return false;
+      }
       //if(similarityTextArea != null)
       //  similarityTextArea.checkForChanges();
     }
@@ -1920,6 +1665,53 @@ public class FeatureEdit extends JPanel
     return true;
   }
 
+  /**
+   * Propagate any changes to GFF ID qualifiers through the 
+   * gene model
+   * @param qualifiers
+   */
+  private void updateGffIds(QualifierVector qualifiers)
+  {
+    if( !GeneUtils.isDatabaseEntry(getFeature().getEmblFeature()) &&
+        getFeature().getEmblFeature() instanceof GFFStreamFeature )
+    {
+      final GFFStreamFeature gffFeature = (GFFStreamFeature)getFeature().getEmblFeature();
+      if(gffFeature.getChadoGene() != null)
+      {
+        try
+        {
+          final String newName = ((String) (qualifiers.getQualifierByName("ID").getValues().get(0))).trim();
+          final String oldName = ((String) (gffFeature.getQualifierByName("ID").getValues().get(0))).trim();
+ 
+          if(!newName.equals(oldName))
+          {
+            int val = JOptionPane.showConfirmDialog(null, 
+                "Change name of children based on this ["+newName+"]?", 
+                "Name Change", JOptionPane.OK_CANCEL_OPTION);
+            if(val == JOptionPane.CANCEL_OPTION)
+              return;
+
+            final Set<uk.ac.sanger.artemis.io.Feature> children = 
+              gffFeature.getChadoGene().getChildren(gffFeature);
+            GeneUtils.propagateId(gffFeature, newName, children);
+            GeneUtils.fixParentQualifier(oldName, newName, children);
+            
+            final Iterator<uk.ac.sanger.artemis.io.Feature> it = children.iterator();
+            while(it.hasNext())
+            {
+              final GFFStreamFeature child = (GFFStreamFeature)it.next();
+              if( child.getSegmentRangeStore().size() == 1 && 
+                 !child.getKey().getKeyString().equals("CDS") &&
+                  child.getKey().getKeyString().indexOf("exon") == -1)
+                child.setSegmentRangeStore(null);
+            }
+          }
+        }
+        catch(Exception e){ e.printStackTrace(); }
+      }
+    }
+  }
+  
   /**
    *  Return the Feature we are editing as passed to the constructor.
    **/

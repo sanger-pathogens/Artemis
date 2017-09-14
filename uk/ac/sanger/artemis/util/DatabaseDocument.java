@@ -27,11 +27,11 @@ package uk.ac.sanger.artemis.util;
 import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
 import uk.ac.sanger.artemis.io.DocumentEntry;
+import uk.ac.sanger.artemis.io.GFF3Encoder;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.io.PartialSequence;
 import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.io.ReadFormatException;
-
 import uk.ac.sanger.artemis.chado.ArtemisUtils;
 import uk.ac.sanger.artemis.chado.ChadoCvTermView;
 import uk.ac.sanger.artemis.chado.ChadoTransactionManager;
@@ -43,6 +43,7 @@ import uk.ac.sanger.artemis.chado.ChadoTransaction;
 import uk.ac.sanger.artemis.components.database.DatabaseEntrySource;
 import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 import uk.ac.sanger.artemis.components.Splash;
+import uk.ac.sanger.artemis.util.DatabaseLocationParser;
 
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureProp;
@@ -66,10 +67,12 @@ import org.postgresql.largeobject.LargeObjectManager;
 import com.ibatis.common.jdbc.SimpleDataSource;
 
 import java.sql.*;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.io.*;
 import java.net.ConnectException;
 import java.net.InetAddress;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -97,7 +100,7 @@ public class DatabaseDocument extends Document
   /** database schema */
   private String schema = "public";
 
-  private static Hashtable cvterms;
+  private static Hashtable<Integer, CvTerm> cvterms;
   
   private InputStreamProgressListener progress_listener;
 
@@ -128,9 +131,9 @@ public class DatabaseDocument extends Document
   
   private boolean singleSchema = true;
 
-  private List schema_list;
+  //private List schema_list;
   
-  private static List organismNames;
+  private static List<String> organismNames;
   
   private boolean gene_builder;
   
@@ -142,7 +145,7 @@ public class DatabaseDocument extends Document
   
   private Feature geneFeature;
   
-  private Hashtable idFeatureStore;
+  private Hashtable<String, Feature> idFeatureStore;
   
   private boolean lazyFeatureLoad = true;
   
@@ -151,7 +154,7 @@ public class DatabaseDocument extends Document
   public static boolean CHADO_INFER_CDS = false;
   
   /** list of controlled_curation CV names */
-  private static Vector cvControledCuratioNames;
+  private static Vector<String> cvControledCuratioNames;
   
   private static CvTermThread cvThread;
   
@@ -173,7 +176,7 @@ public class DatabaseDocument extends Document
    * 
    * @param location
    *          This should be a URL string giving:
-   *          jdbc:postgresql://host:port/datbase_name?user=username
+   *          jdbc:postgresql://host:port/database_name?user=username
    * 
    */
   public DatabaseDocument(String location, JPasswordField pfield)
@@ -229,7 +232,7 @@ public class DatabaseDocument extends Document
    * 
    * @param location
    *          This should be a URL string giving:
-   *          jdbc:postgresql://host:port/datbase_name?user=username
+   *          jdbc:postgresql://host:port/database_name?user=username
    * @param srcFeatureId
    *          ID of a feature to be extracted.
    * @param splitGFFEntry
@@ -511,7 +514,7 @@ public class DatabaseDocument extends Document
       if(gene_builder)
       {
         // creating a gene builder
-        List schemaList = new Vector();
+        List<String> schemaList = new Vector<String>();
         schemaList.add(schema);
           
         ByteBuffer bb = getGeneFeature(srcFeatureId,
@@ -527,9 +530,9 @@ public class DatabaseDocument extends Document
         final Feature srcFeature;
         if(geneFeature != null)
         {
-          Collection featureLocs = geneFeature.getFeatureLocsForFeatureId();
-          Iterator it = featureLocs.iterator();
-          final FeatureLoc featureLoc = (FeatureLoc)it.next();
+          Collection<FeatureLoc> featureLocs = geneFeature.getFeatureLocsForFeatureId();
+          Iterator<FeatureLoc> it = featureLocs.iterator();
+          final FeatureLoc featureLoc = it.next();
 
           int srcfeatureid = featureLoc.getFeatureBySrcFeatureId().getFeatureId();
           srcFeature = dao.getFeatureById(srcfeatureid);
@@ -550,7 +553,11 @@ public class DatabaseDocument extends Document
       ByteBuffer entryBuffer = new ByteBuffer();
       try
       {
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        Calendar cal = Calendar.getInstance();
+
         entryBuffer.append("##gff-version 3\n");
+        entryBuffer.append("#created " + dateFormat.format(cal.getTime()) + "\n");
         
         ByteBuffer sequenceBuffer = new ByteBuffer();
         if(dao instanceof IBatisDAO)
@@ -679,34 +686,33 @@ public class DatabaseDocument extends Document
     child.setAnalysis(false);
     child.setCvTerm(cvTerm);
     
-    final List featList = dao.getFeaturesByLocatedOnFeature(child);
+    final List<Feature> featList = dao.getFeaturesByLocatedOnFeature(child);
     final ByteBuffer[] buffers = new ByteBuffer[TYPES.length + 1];
     for(int i = 0; i < buffers.length; i++)
       buffers[i] = new ByteBuffer();
     
     ByteBuffer this_buff;
-
     int feature_size = featList.size();
-    final Hashtable id_store = new Hashtable(feature_size);
+    final Hashtable<String, Feature> id_store = new Hashtable<String, Feature>(feature_size);
 
     // build feature store
     for(int i = 0; i < feature_size; i++)
     {
-      Feature feat = (Feature)featList.get(i);
+      Feature feat = featList.get(i);
       id_store.put(Integer.toString(feat.getFeatureId()), feat);
     }
-    
+
     if(lazyFeatureLoad)
       idFeatureStore = id_store;
-    
+
     // get all dbrefs & synonyms etc
-    final Hashtable dbxrefs;
-    final Hashtable synonym;
-    final Hashtable featureCvTerms;
-    final Hashtable featureCvTermDbXRefs;
-    Hashtable featureCvTermPubs = null;
-    final Hashtable featurePubs;
-    final List pubDbXRefs;
+    final Hashtable<Integer, List<String>> dbxrefs;
+    final Hashtable<Integer, List<FeatureSynonym>> synonym;
+    final Hashtable<Integer, List<FeatureCvTerm>> featureCvTerms;
+    final Hashtable<Integer, List<FeatureCvTermDbXRef>> featureCvTermDbXRefs;
+    Hashtable<Integer, List<FeatureCvTermPub>> featureCvTermPubs = null;
+    final Hashtable<Integer, List<FeaturePub>> featurePubs;
+    final List<PubDbXRef> pubDbXRefs;
     
     if(lazyFeatureLoad)
     {
@@ -756,7 +762,7 @@ public class DatabaseDocument extends Document
     for(int i = 0; i < feature_size; i++)
     { 
       // select buffer based on feature type
-      Feature feat = (Feature)featList.get(i);
+      Feature feat = featList.get(i);
       int type_id = feat.getCvTerm().getCvTermId();
       String typeName = getCvtermName(type_id, dao, gene_builder);
       this_buff = buffers[0];
@@ -788,21 +794,21 @@ public class DatabaseDocument extends Document
    * feature_synonym
    * 
    */
-  private Hashtable getAllFeatureSynonyms(final List list) 
+  private Hashtable<Integer, List<FeatureSynonym>> getAllFeatureSynonyms(final List<FeatureSynonym> list) 
   {   
-    Hashtable synonym = new Hashtable();
+    Hashtable<Integer, List<FeatureSynonym>> synonym = new Hashtable<Integer, List<FeatureSynonym>>();
     Integer featureId;
-    List value;
+    List<FeatureSynonym> value;
     FeatureSynonym alias;
     
     for(int i=0; i<list.size(); i++)
     {
-      alias = (FeatureSynonym)list.get(i);
+      alias = list.get(i);
       featureId = new Integer(alias.getFeature().getFeatureId());
       if(synonym.containsKey(featureId))
-        value = (Vector)synonym.get(featureId);
+        value = synonym.get(featureId);
       else
-        value = new Vector();
+        value = new Vector<FeatureSynonym>();
       
       value.add(alias);
       synonym.put(featureId, value);
@@ -817,22 +823,22 @@ public class DatabaseDocument extends Document
    * @param list
    * @return
    */
-  private Hashtable getFeaturePubs(final GmodDAO dao,
-                                   final List list)
+  private Hashtable<Integer, List<FeaturePub>> getFeaturePubs(final GmodDAO dao,
+                                                              final List<FeaturePub> list)
   {
-    final Hashtable featurePubs = new Hashtable();
+    final Hashtable<Integer, List<FeaturePub>> featurePubs = new Hashtable<Integer, List<FeaturePub>>();
     Integer featureId;
-    List value;
+    List<FeaturePub> value;
     FeaturePub featurePub;
     
     for(int i=0; i<list.size(); i++)
     {
-      featurePub = (FeaturePub)list.get(i);
+      featurePub = list.get(i);
       featureId = new Integer(featurePub.getFeature().getFeatureId());
       if(featurePubs.containsKey(featureId))
-        value = (Vector)featurePubs.get(featureId);
+        value = featurePubs.get(featureId);
       else
-        value = new Vector();
+        value = new Vector<FeaturePub>();
       
       value.add(featurePub);
       featurePubs.put(featureId, value);
@@ -842,32 +848,31 @@ public class DatabaseDocument extends Document
   }
   
   /**
-   * 
    * @param dao
    * @param chadoFeature null if we want them all
    * @return
    */
-  private Hashtable getFeatureCvTermsByFeature(final GmodDAO dao, 
-                                               final List list)
+  private Hashtable<Integer, List<FeatureCvTerm>> getFeatureCvTermsByFeature(
+                                final GmodDAO dao, 
+                                final List<FeatureCvTerm> list)
   {
-    Hashtable featureCvTerms = new Hashtable();
+    Hashtable<Integer, List<FeatureCvTerm>> featureCvTerms = new Hashtable<Integer, List<FeatureCvTerm>>();
     Integer featureId;
-    List value;
+    List<FeatureCvTerm> value;
     FeatureCvTerm feature_cvterm;
     
     for(int i=0; i<list.size(); i++)
     {
-      feature_cvterm = (FeatureCvTerm)list.get(i);
+      feature_cvterm = list.get(i);
       featureId = new Integer(feature_cvterm.getFeature().getFeatureId());
       if(featureCvTerms.containsKey(featureId))
-        value = (Vector)featureCvTerms.get(featureId);
+        value = featureCvTerms.get(featureId);
       else
-        value = new Vector();
+        value = new Vector<FeatureCvTerm>();
       
       value.add(feature_cvterm);
       featureCvTerms.put(featureId, value);
     }
-    
     return featureCvTerms;
   }
   
@@ -877,27 +882,29 @@ public class DatabaseDocument extends Document
    * @param chadoFeature null if we want all
    * @return
    */
-  private Hashtable getFeatureCvTermDbXRef(final GmodDAO dao, final List list)
+  private Hashtable<Integer, List<FeatureCvTermDbXRef>> getFeatureCvTermDbXRef(
+      final GmodDAO dao, final List<FeatureCvTermDbXRef> list)
   {
     if(list == null || list.size() == 0)
       return null;
     
     Integer featureCvTermDbXRefId;
-    List value;
+    List<FeatureCvTermDbXRef> value;
     
-    Hashtable featureCvTermDbXRefs = new Hashtable(list.size());
+    Hashtable<Integer, List<FeatureCvTermDbXRef>> featureCvTermDbXRefs = 
+      new Hashtable<Integer, List<FeatureCvTermDbXRef>>(list.size());
     for(int i=0; i<list.size(); i++)
     {
       FeatureCvTermDbXRef featureCvTermDbXRef =
-        (FeatureCvTermDbXRef)list.get(i);
+        list.get(i);
       
       featureCvTermDbXRefId = new Integer(
           featureCvTermDbXRef.getFeatureCvTerm().getFeatureCvTermId());
       
       if(featureCvTermDbXRefs.containsKey(featureCvTermDbXRefId))
-        value = (Vector)featureCvTermDbXRefs.get(featureCvTermDbXRefId);
+        value = featureCvTermDbXRefs.get(featureCvTermDbXRefId);
       else
-        value = new Vector();
+        value = new Vector<FeatureCvTermDbXRef>();
       
       value.add(featureCvTermDbXRef);
       featureCvTermDbXRefs.put(featureCvTermDbXRefId, value);
@@ -906,33 +913,34 @@ public class DatabaseDocument extends Document
     return featureCvTermDbXRefs;
   }
   
-  private Hashtable getFeatureCvTermPub(final GmodDAO dao,
-                                        final List list)
+  private Hashtable<Integer, List<FeatureCvTermPub>> getFeatureCvTermPub(
+                                        final GmodDAO dao,
+                                        final List<FeatureCvTermPub> list)
   {
     if(list == null || list.size() == 0)
       return null;
-    
+
     Integer featureCvTermId;
-    List value;
-    
-    Hashtable featureCvTermPubs = new Hashtable(list.size());
+    List<FeatureCvTermPub> value;
+
+    Hashtable<Integer, List<FeatureCvTermPub>> featureCvTermPubs = 
+      new Hashtable<Integer, List<FeatureCvTermPub>>(list.size());
     for(int i=0; i<list.size(); i++)
     {
       FeatureCvTermPub featureCvTermPub =
-        (FeatureCvTermPub)list.get(i);
+        list.get(i);
       
       featureCvTermId = new Integer(
           featureCvTermPub.getFeatureCvTerm().getFeatureCvTermId());
       
       if(featureCvTermPubs.containsKey(featureCvTermId))
-        value = (Vector)featureCvTermPubs.get(featureCvTermId);
+        value = featureCvTermPubs.get(featureCvTermId);
       else
-        value = new Vector();
+        value = new Vector<FeatureCvTermPub>();
       
       value.add(featureCvTermPub);
       featureCvTermPubs.put(featureCvTermId, value);
     }
-     
     return featureCvTermPubs;
   }
   
@@ -953,7 +961,7 @@ public class DatabaseDocument extends Document
     List featuresInRange = dao.getFeaturesByRange(range.getStart()-1, 
                                 range.getEnd(), 0, srcFeature, null);
     
-    List featureIds = new Vector(featuresInRange.size());
+    List<Integer> featureIds = new Vector<Integer>(featuresInRange.size());
     for(int i=0; i<featuresInRange.size(); i++)
     {
       Feature thisFeature = (Feature)featuresInRange.get(i);
@@ -965,22 +973,22 @@ public class DatabaseDocument extends Document
     featureLoc.setFmax(new Integer(range.getEnd()));
     srcFeature.setFeatureLoc(featureLoc);
     
-    Hashtable dbxrefs = IBatisDAO.mergeDbXRef(
+    Hashtable<Integer, List<String>> dbxrefs = IBatisDAO.mergeDbXRef(
         dao.getFeatureDbXRefsBySrcFeature(srcFeature));
-    Hashtable synonym = getAllFeatureSynonyms(
+    Hashtable<Integer, List<FeatureSynonym>> synonym = getAllFeatureSynonyms(
         dao.getFeatureSynonymsBySrcFeature(srcFeature));
-    Hashtable featureCvTerms = getFeatureCvTermsByFeature(dao, 
+    Hashtable<Integer, List<FeatureCvTerm>> featureCvTerms = getFeatureCvTermsByFeature(dao, 
         dao.getFeatureCvTermsBySrcFeature(srcFeature));
-    Hashtable featureCvTermDbXRefs = getFeatureCvTermDbXRef(dao, 
+    Hashtable<Integer, List<FeatureCvTermDbXRef>> featureCvTermDbXRefs = getFeatureCvTermDbXRef(dao, 
         dao.getFeatureCvTermDbXRefBySrcFeature(srcFeature));
-    Hashtable featureCvTermPubs = getFeatureCvTermPub(dao, 
+    Hashtable<Integer, List<FeatureCvTermPub>> featureCvTermPubs = getFeatureCvTermPub(dao, 
         dao.getFeatureCvTermPubBySrcFeature(srcFeature));
-    Hashtable featurePubs = getFeaturePubs(dao,
+    Hashtable<Integer, List<FeaturePub>> featurePubs = getFeaturePubs(dao,
         dao.getFeaturePubsBySrcFeature(srcFeature));
 
-    List pubDbXRefs = dao.getPubDbXRef();
+    List<PubDbXRef> pubDbXRefs = dao.getPubDbXRef();
     
-    Hashtable id_store = new Hashtable(featuresInRange.size());
+    Hashtable<String, Feature> id_store = new Hashtable<String, Feature>(featuresInRange.size());
 
     // build feature name store
     for(int i = 0; i < featuresInRange.size(); i++)
@@ -1017,7 +1025,7 @@ public class DatabaseDocument extends Document
    * @throws ConnectException 
    */
   private ByteBuffer getGeneFeature(final String search_gene, 
-                                    final List schema_search,
+                                    final List<String> schema_search,
                                     GmodDAO dao, 
                                     final boolean readChildren) 
           throws SQLException, ReadFormatException, ConnectException, IOException
@@ -1029,15 +1037,14 @@ public class DatabaseDocument extends Document
       cvThread.start();
     }
     
-    final Hashtable id_store = new Hashtable();
+    final Hashtable<String, Feature> id_store = new Hashtable<String, Feature>();
 
     boolean singleSchema = true;
-    final List pg_schemas = dao.getSchema(); 
-    Iterator schemasIt = pg_schemas.iterator();
+    final List<String> pg_schemas = dao.getSchema(); 
+    Iterator<String> schemasIt = pg_schemas.iterator();
     while(schemasIt.hasNext())
     {
-      String thisSchema = (String)schemasIt.next();
-      
+      String thisSchema = schemasIt.next();
       if( thisSchema.equalsIgnoreCase(schema) )
       {
         singleSchema = false;
@@ -1047,20 +1054,20 @@ public class DatabaseDocument extends Document
     if(singleSchema)
       logger4j.debug("SINGLE SCHEMA");
     else
-      reset((String)getLocation(), (String)schema_search.get(0));
+      reset((String)getLocation(), schema_search.get(0));
     dao = getDAO();
     
-    List features = dao.getFeaturesByUniqueName(search_gene);
+    List<Feature> features = dao.getFeaturesByUniqueName(search_gene);
     if(features == null || features.size() == 0)
       throw new IOException();
-    Feature chadoFeature = (Feature)(features.get(0));
+    Feature chadoFeature = features.get(0);
     
     ChadoCanonicalGene chado_gene = new ChadoCanonicalGene();
     id_store.put(Integer.toString(chadoFeature.getFeatureId()), 
                  chadoFeature);
 
-    List featurelocs = new Vector(chadoFeature.getFeatureLocsForFeatureId());
-    FeatureLoc featureloc = (FeatureLoc) featurelocs.get(0);
+    List<FeatureLoc> featurelocs = new Vector<FeatureLoc>(chadoFeature.getFeatureLocsForFeatureId());
+    FeatureLoc featureloc = featurelocs.get(0);
     int src_id = featureloc.getSrcFeatureId();
     srcFeatureId = Integer.toString(src_id);
 
@@ -1087,12 +1094,12 @@ public class DatabaseDocument extends Document
     }
     
     // get children of gene
-    List relations = new Vector(chadoFeature.getFeatureRelationshipsForObjectId());
-    Set idsSeen = new HashSet();
+    List<FeatureRelationship> relations = new Vector<FeatureRelationship>(chadoFeature.getFeatureRelationshipsForObjectId());
+    Set<Integer> idsSeen = new HashSet<Integer>();
     for(int i = 0; i < relations.size(); i++)
     {
       //Feature transcript = new Feature();
-      int id = ((FeatureRelationship) relations.get(i)).getFeatureBySubjectId().getFeatureId();
+      int id = relations.get(i).getFeatureBySubjectId().getFeatureId();
       Integer idInt = new Integer(id);
       if(idsSeen.contains(idInt))
         continue;
@@ -1107,12 +1114,12 @@ public class DatabaseDocument extends Document
         continue;
       // get children of transcript - exons and pp
       logger4j.debug("GET CHILDREN OF "+transcript.getName());
-      List transcipt_relations = new Vector(
+      List<FeatureRelationship> transcipt_relations = new Vector<FeatureRelationship>(
           transcript.getFeatureRelationshipsForObjectId());
 
       for(int j = 0; j < transcipt_relations.size(); j++)
       {
-        id = ((FeatureRelationship) transcipt_relations.get(j)).getFeatureBySubjectId().getFeatureId();
+        id = transcipt_relations.get(j).getFeatureBySubjectId().getFeatureId();
 
         buildGffLineFromId(dao, id, id_store, parent.getUniqueName(), 
                            src_id, buff, null);
@@ -1135,13 +1142,10 @@ public class DatabaseDocument extends Document
           e.printStackTrace();
         }
     }
-    
     return buff;
   }
-  
-  
+
   /**
-   * 
    * @param dao
    * @param featureId
    * @param id_store
@@ -1153,7 +1157,7 @@ public class DatabaseDocument extends Document
    */
   private Feature buildGffLineFromId(final GmodDAO dao, 
                                   final int featureId, 
-                                  final Hashtable id_store,
+                                  final Hashtable<String, Feature> id_store,
                                   final String parentName,
                                   final int srcFeatureId,
                                   final ByteBuffer this_buff,
@@ -1173,19 +1177,19 @@ public class DatabaseDocument extends Document
       logger4j.debug("FEATURELOC NOT FOUND :: "+chadoFeature.getUniqueName());
       return null;
     }
-    final Hashtable dbxrefs = IBatisDAO.mergeDbXRef(
+    final Hashtable<Integer, List<String>> dbxrefs = IBatisDAO.mergeDbXRef(
         dao.getFeatureDbXRefsByFeatureUniquename(chadoFeature.getUniqueName()));
     
-    final Hashtable synonym = getAllFeatureSynonyms( 
+    final Hashtable<Integer, List<FeatureSynonym>> synonym = getAllFeatureSynonyms( 
         dao.getFeatureSynonymsByFeatureUniquename(chadoFeature.getUniqueName()));
     
-    final Hashtable featureCvTerms = getFeatureCvTermsByFeature(dao, 
+    final Hashtable<Integer, List<FeatureCvTerm>> featureCvTerms = getFeatureCvTermsByFeature(dao, 
                                   dao.getFeatureCvTermsByFeature(chadoFeature));
     
-    final Hashtable featureCvTermDbXRefs = getFeatureCvTermDbXRef(dao, 
+    final Hashtable<Integer, List<FeatureCvTermDbXRef>> featureCvTermDbXRefs = getFeatureCvTermDbXRef(dao, 
                              dao.getFeatureCvTermDbXRefByFeature(chadoFeature));
     
-    Hashtable featureCvTermPubs = null;
+    Hashtable<Integer, List<FeatureCvTermPub>> featureCvTermPubs = null;
     
     try
     {
@@ -1194,9 +1198,9 @@ public class DatabaseDocument extends Document
     }
     catch(RuntimeException re){re.printStackTrace();}
 
-    final Hashtable featurePubs = getFeaturePubs(dao,
+    final Hashtable<Integer, List<FeaturePub>> featurePubs = getFeaturePubs(dao,
         dao.getFeaturePubsByFeature(chadoFeature));
-    List pubDbXRefs= new Vector(); //dao.getPubDbXRef();
+    List<PubDbXRef> pubDbXRefs= new Vector<PubDbXRef>(); //dao.getPubDbXRef();
     chadoToGFF(chadoFeature, parentName, dbxrefs, synonym, featureCvTerms,
         pubDbXRefs, featureCvTermDbXRefs, featureCvTermPubs, featurePubs, 
         id_store, dao, loc, this_buff, gene_builder);  
@@ -1217,20 +1221,21 @@ public class DatabaseDocument extends Document
    * @param featureloc     feature location for this chado feature
    * @param this_buff      byte buffer of GFF line 
    */
-  private static void chadoToGFF(final Feature feat,
-                                 final String parentFeature,
-                                 final Hashtable dbxrefs,
-                                 final Hashtable synonym,
-                                 final Hashtable featureCvTerms,
-                                 final List pubDbXRefs,
-                                 final Hashtable featureCvTermDbXRefs,
-                                 final Hashtable featureCvTermPubs,
-                                 final Hashtable featurePubs,
-                                 final Hashtable id_store,
-                                 final GmodDAO dao,
-                                 final FeatureLoc featureloc,
-                                 final ByteBuffer this_buff,
-                                 final boolean gene_builder)
+  private static void chadoToGFF(
+      final Feature feat,
+      final String parentFeature,
+      final Hashtable<Integer, List<String>> dbxrefs,
+      final Hashtable<Integer, List<FeatureSynonym>> synonym,
+      final Hashtable<Integer, List<FeatureCvTerm>> featureCvTerms,
+      final List<PubDbXRef>  pubDbXRefs,
+      final Hashtable<Integer, List<FeatureCvTermDbXRef>> featureCvTermDbXRefs,
+      final Hashtable<Integer, List<FeatureCvTermPub>> featureCvTermPubs,
+      final Hashtable<Integer, List<FeaturePub>> featurePubs,
+      final Hashtable<String, Feature> id_store,
+      final GmodDAO dao,
+      final FeatureLoc featureloc,
+      final ByteBuffer this_buff,
+      final boolean gene_builder)
   {
     String gff_source = null;
     
@@ -1264,15 +1269,14 @@ public class DatabaseDocument extends Document
     ByteBuffer clusterOrthoParalog = null;
     if(feat.getFeatureRelationshipsForSubjectId() != null)
     {
-      Collection relations = feat.getFeatureRelationshipsForSubjectId();
-      Iterator it = relations.iterator();
-      Set featureRelationshipIds = new HashSet();
+      Collection<FeatureRelationship> relations = feat.getFeatureRelationshipsForSubjectId();
+      Iterator<FeatureRelationship> it = relations.iterator();
+      Set<Integer> featureRelationshipIds = new HashSet<Integer>();
       //Set duplicates = new HashSet();
       
       while(it.hasNext())
       {
-        final FeatureRelationship fr = 
-                            (FeatureRelationship)it.next();
+        final FeatureRelationship fr = it.next();
         final Integer featureRelationShipId = new Integer( fr.getFeatureRelationshipId() );
 
         if(featureRelationshipIds.contains( featureRelationShipId ))
@@ -1303,28 +1307,28 @@ public class DatabaseDocument extends Document
           // ortholog/paralog/cluster data
           int orthologueFeature = fr.getFeatureByObjectId().getFeatureId();
           clusterOrthoParalog.append(cvTermName+"="+
-              GFFStreamFeature.encode("object_id="+orthologueFeature+"; rank="+fr.getRank())+";");
+              GFF3Encoder.encode("object_id="+orthologueFeature+"; rank="+fr.getRank())+";");
         }
       }
     }
 
     // look up parent name
     if(parent_id != null && id_store != null &&  id_store.containsKey(parent_id))
-      parent_id = ((Feature)id_store.get(parent_id)).getUniqueName();
+      parent_id = id_store.get(parent_id).getUniqueName();
  
     // make gff format
     
-    Vector dbxref = null;
+    Vector<String> dbxref = null;
     // append dbxrefs
     if(dbxrefs != null &&
        dbxrefs.containsKey(featureId))
     {
-      dbxref = (Vector)dbxrefs.get(featureId);
+      dbxref = (Vector<String>)dbxrefs.get(featureId);
       for(int j=0; j<dbxref.size(); j++)
       {
-        if(((String)dbxref.get(j)).startsWith("GFF_source:"))
+        if(dbxref.get(j).startsWith("GFF_source:"))
         {
-          gff_source = ((String)dbxref.get(j)).substring(11);
+          gff_source = dbxref.get(j).substring(11);
           dbxref.removeElementAt(j);
         }
       }
@@ -1374,9 +1378,9 @@ public class DatabaseDocument extends Document
     this_buff.append("isObsolete=" + Boolean.toString(feat.isObsolete()) + ";");
     
     if(featureloc.isFminPartial())
-      this_buff.append("isFminPartial;");
+      this_buff.append("Start_range=.,.;");
     if(featureloc.isFmaxPartial())
-      this_buff.append("isFmaxPartial;");
+      this_buff.append("End_range=.,.;");
     // this is the chado feature_relationship.rank used
     // to order joined features e.g. exons
     if(rank > -1)
@@ -1388,20 +1392,17 @@ public class DatabaseDocument extends Document
     if(feat.getFeatureProps() != null &&
        feat.getFeatureProps().size() > 0)
     {
-      Collection featureprops = feat.getFeatureProps();
-      Iterator it = featureprops.iterator();
-      
-      while(it.hasNext())
+      Collection<FeatureProp> featureprops = feat.getFeatureProps();
+      for(FeatureProp featprop : featureprops)
       {
-        FeatureProp featprop = (FeatureProp)it.next();
         String qualifier_name = getCvtermName(featprop.getCvTerm().getCvTermId(), dao, gene_builder);
         if(qualifier_name == null)
           continue;
         if(featprop.getValue() != null)
-          this_buff.append(GFFStreamFeature.encode(qualifier_name)+ "=" +
-                           GFFStreamFeature.encode(featprop.getValue())+";");
+          this_buff.append(GFF3Encoder.encode(qualifier_name)+ "=" +
+                           GFF3Encoder.encode(featprop.getValue())+";");
         else
-          this_buff.append(GFFStreamFeature.encode(qualifier_name)+";");
+          this_buff.append(GFF3Encoder.encode(qualifier_name)+";");
       }
     }
 
@@ -1413,7 +1414,7 @@ public class DatabaseDocument extends Document
     if(feat.getDbXRef() != null)
     {
       this_buff.append("Dbxref=");
-      this_buff.append(GFFStreamFeature.encode(
+      this_buff.append(GFF3Encoder.encode(
           feat.getDbXRef().getDb().getName()+":"+feat.getDbXRef().getAccession()));
       foundPrimaryDbXRef = true;
       if(dbxref == null || dbxref.size() == 0)
@@ -1428,7 +1429,7 @@ public class DatabaseDocument extends Document
         this_buff.append("Dbxref=");
       for(int j=0; j<dbxref.size(); j++)
       {
-        this_buff.append(GFFStreamFeature.encode((String)dbxref.get(j)));
+        this_buff.append(GFF3Encoder.encode(dbxref.get(j)));
         if(j<dbxref.size()-1)
           this_buff.append(",");
       }
@@ -1439,18 +1440,15 @@ public class DatabaseDocument extends Document
     if(synonym != null &&
        synonym.containsKey(featureId))
     {   
-      FeatureSynonym alias;
-      Vector v_synonyms = (Vector)synonym.get(featureId);
-      for(int j=0; j<v_synonyms.size(); j++)
+      List<FeatureSynonym> v_synonyms = synonym.get(featureId);
+      for(FeatureSynonym alias: v_synonyms)
       {
-        alias = (FeatureSynonym)v_synonyms.get(j);
-        
         this_buff.append( getCvtermName(alias.getSynonym().getCvTerm().getCvTermId(), dao, gene_builder) + "=" );
         //this_buff.append(alias.getSynonym().getCvterm().getName()+"=");
         this_buff.append(alias.getSynonym().getName());
         
         if(!alias.isCurrent())
-          this_buff.append(GFFStreamFeature.encode(";current=false"));
+          this_buff.append(GFF3Encoder.encode(";current=false"));
         
         //if(j<v_synonyms.size()-1)
         this_buff.append(";");
@@ -1461,11 +1459,9 @@ public class DatabaseDocument extends Document
     if(featurePubs != null &&
        featurePubs.containsKey(featureId))
     {
-      FeaturePub featurePub;
-      Vector v_featurePubs = (Vector)featurePubs.get(featureId);
-      for(int j=0; j<v_featurePubs.size(); j++)
+      List<FeaturePub> v_featurePubs = featurePubs.get(featureId);
+      for(FeaturePub featurePub: v_featurePubs)
       {
-        featurePub = (FeaturePub)v_featurePubs.get(j);
         this_buff.append( "literature=" );
         this_buff.append(featurePub.getPub().getUniqueName());
         this_buff.append(";");
@@ -1476,30 +1472,24 @@ public class DatabaseDocument extends Document
     if(featureCvTerms != null && 
        featureCvTerms.containsKey(featureId))
     {
-      FeatureCvTerm feature_cvterm;
-      Vector v_feature_cvterms = (Vector)featureCvTerms.get(featureId);
-      for(int j=0; j<v_feature_cvterms.size(); j++)
+      List<FeatureCvTerm> v_feature_cvterms = featureCvTerms.get(featureId);
+      for(FeatureCvTerm feature_cvterm: v_feature_cvterms)
       {
-        feature_cvterm = (FeatureCvTerm)v_feature_cvterms.get(j);
-        
         Integer featureCvTermId = new Integer( feature_cvterm.getFeatureCvTermId() );
         
-        List featureCvTermDbXRefList = null;
-        
+        List<FeatureCvTermDbXRef> featureCvTermDbXRefList = null;
         if(featureCvTermDbXRefs != null)
-          featureCvTermDbXRefList = (List)featureCvTermDbXRefs.get(featureCvTermId);
+          featureCvTermDbXRefList = featureCvTermDbXRefs.get(featureCvTermId);
         
-        List featureCvTermPubList = null;
-        
+        List<FeatureCvTermPub> featureCvTermPubList = null;
         if(featureCvTermPubs != null)
-          featureCvTermPubList = (List)featureCvTermPubs.get(featureCvTermId);
+          featureCvTermPubList = featureCvTermPubs.get(featureCvTermId);
           
         appendControlledVocabulary(this_buff, dao, feature_cvterm,
                                    featureCvTermDbXRefList,featureCvTermPubList, pubDbXRefs, gene_builder);
       }
       //System.out.println(new String(this_buff.getBytes()));
     }
-      
     this_buff.append("\n");
   }
   
@@ -1510,25 +1500,26 @@ public class DatabaseDocument extends Document
    * @param feature_cvterm
    * @param featureCvTermDbXRef
    */
-  public static void appendControlledVocabulary(final ByteBuffer attr_buff,
-                                          final GmodDAO dao,
-                                          final FeatureCvTerm feature_cvterm,
-                                          final List featureCvTermDbXRefs,
-                                          final List featureCvTermPubs,
-                                          final List pubDbXRefs,
-                                          final boolean gene_builder)
+  public static void appendControlledVocabulary(
+      final ByteBuffer attr_buff,
+      final GmodDAO dao,
+      final FeatureCvTerm feature_cvterm,
+      final List<FeatureCvTermDbXRef> featureCvTermDbXRefs,
+      final List<FeatureCvTermPub> featureCvTermPubs,
+      final List<PubDbXRef> pubDbXRefs,
+      final boolean gene_builder)
   {
     CvTerm cvterm =  getCvTerm( feature_cvterm.getCvTerm().getCvTermId(), dao, gene_builder);
     DbXRef dbXRef = feature_cvterm.getCvTerm().getDbXRef();
-    
+
     if(cvterm.getCv().getName().startsWith(DatabaseDocument.CONTROLLED_CURATION_TAG_CVNAME))
     {
       attr_buff.append("controlled_curation=");
       
       attr_buff.append("term="+
-          GFFStreamFeature.encode(feature_cvterm.getCvTerm().getName())+"%3B");
+          GFF3Encoder.encode(feature_cvterm.getCvTerm().getName())+"%3B");
       attr_buff.append("cv="+
-          GFFStreamFeature.encode(feature_cvterm.getCvTerm().getCv().getName())+"%3B");   
+          GFF3Encoder.encode(feature_cvterm.getCvTerm().getCv().getName())+"%3B");   
       
       // N.B. the db_xref may be a FeatureCvTermDbXRef or a Pub for /controlled_curation
       int nfound_dbxref = 0;
@@ -1537,50 +1528,69 @@ public class DatabaseDocument extends Document
       {
         // PMID
         Pub pub = feature_cvterm.getPub();
-        
         // internal check
         checkPubDbXRef(pubDbXRefs, pub.getPubId(), pub, feature_cvterm);
         
         attr_buff.append("db_xref="+ pub.getUniqueName());
         nfound_dbxref++;
       }
-      
-      if(featureCvTermDbXRefs != null &&
-              featureCvTermDbXRefs.size() > 0)
+
+      if(featureCvTermPubs != null &&
+          featureCvTermPubs.size() > 0)
       {
-        for(int i=0; i<featureCvTermDbXRefs.size(); i++)
+        for(FeatureCvTermPub featureCvTermPub: featureCvTermPubs)
         {
-          FeatureCvTermDbXRef featureCvTermDbXRef =
-            (FeatureCvTermDbXRef)featureCvTermDbXRefs.get(i);
-    
           if(feature_cvterm.getFeatureCvTermId() != 
-            featureCvTermDbXRef.getFeatureCvTerm().getFeatureCvTermId())
+            featureCvTermPub.getFeatureCvTerm().getFeatureCvTermId())
             continue;
-      
+
           if(nfound_dbxref == 0)
             attr_buff.append("db_xref=");
           else if(nfound_dbxref > 0)
+            attr_buff.append("|");
+
+          attr_buff.append(featureCvTermPub.getPub().getUniqueName());
+          nfound_dbxref++;
+        }
+      }
+      if(nfound_dbxref > 0)
+        attr_buff.append("%3B");
+
+      if(featureCvTermDbXRefs != null &&
+          featureCvTermDbXRefs.size() > 0 )
+      {  
+        int nfound = 0;
+        for(FeatureCvTermDbXRef featureCvTermDbXRef: featureCvTermDbXRefs)
+        {
+          if(feature_cvterm.getFeatureCvTermId() != 
+            featureCvTermDbXRef.getFeatureCvTerm().getFeatureCvTermId())
+          {
+            continue;
+          }
+          
+          if(nfound == 0)
+            attr_buff.append("with=");
+          else if(nfound > 0)
             attr_buff.append("|");
           
           DbXRef fc_dbXRef = featureCvTermDbXRef.getDbXRef();
           attr_buff.append(fc_dbXRef.getDb().getName()+":");
           attr_buff.append(fc_dbXRef.getAccession());
-          nfound_dbxref++;
+          nfound++;
         }
+        
+        if(nfound > 0)
+          attr_buff.append("%3B");
       }
-      
-      if(nfound_dbxref > 0)
-        attr_buff.append("%3B");
-      
-      List feature_cvtermprops = (List) feature_cvterm.getFeatureCvTermProps();
+
+      List<FeatureCvTermProp> feature_cvtermprops = (List<FeatureCvTermProp>) feature_cvterm.getFeatureCvTermProps();
       for(int i = 0; i < feature_cvtermprops.size(); i++)
       {
-        FeatureCvTermProp feature_cvtermprop = 
-          (FeatureCvTermProp)feature_cvtermprops.get(i);
+        FeatureCvTermProp feature_cvtermprop = feature_cvtermprops.get(i);
         attr_buff.append(getCvtermName(feature_cvtermprop.getCvTerm()
             .getCvTermId(), dao, gene_builder));
         attr_buff.append("=");
-        attr_buff.append(GFFStreamFeature.encode(feature_cvtermprop.getValue()));
+        attr_buff.append(GFF3Encoder.encode(feature_cvtermprop.getValue()));
         if(i < feature_cvtermprops.size()-1)
           attr_buff.append("%3B");
       }
@@ -1591,6 +1601,9 @@ public class DatabaseDocument extends Document
     {
       attr_buff.append("product=");
       
+      // use the rank=1 to specify an alternative product where there is more than one
+      if(feature_cvterm.getRank() > 0)
+        attr_buff.append("rank="+feature_cvterm.getRank()+"%3B");
       constructCvTermString(attr_buff, dao, feature_cvterm, featureCvTermDbXRefs, 
           featureCvTermPubs, dbXRef, false, gene_builder);
     }
@@ -1619,9 +1632,7 @@ public class DatabaseDocument extends Document
         attr_buff.append("aspect=P%3B");
       constructCvTermString(attr_buff, dao, feature_cvterm, featureCvTermDbXRefs, 
           featureCvTermPubs, dbXRef, true, gene_builder);
-
     }
-    
   }
   
   /**
@@ -1634,14 +1645,15 @@ public class DatabaseDocument extends Document
    * @param dbXRef
    * @param showDbId
    */
-  private static void constructCvTermString(final ByteBuffer attr_buff,
-                                            final GmodDAO dao,
-                                            final FeatureCvTerm feature_cvterm,
-                                            final List featureCvTermDbXRefs,
-                                            final List featureCvTermPubs,
-                                            final DbXRef dbXRef,
-                                            final boolean showDbId,
-                                            final boolean gene_builder)
+  private static void constructCvTermString(
+      final ByteBuffer attr_buff,
+      final GmodDAO dao,
+      final FeatureCvTerm feature_cvterm,
+      final List<FeatureCvTermDbXRef> featureCvTermDbXRefs,
+      final List<FeatureCvTermPub> featureCvTermPubs,
+      final DbXRef dbXRef,
+      final boolean showDbId,
+      final boolean gene_builder)
   {
     if(feature_cvterm.isNot())
       attr_buff.append("qualifier=NOT%3B");
@@ -1649,10 +1661,10 @@ public class DatabaseDocument extends Document
     if(showDbId)
       attr_buff.append("GOid="+dbXRef.getDb().getName() + ":"
                        + dbXRef.getAccession() + "%3B");
-    
+
     attr_buff.append("term="+
-        GFFStreamFeature.encode(feature_cvterm.getCvTerm().getName())+"%3B");
-    
+        GFF3Encoder.encode(feature_cvterm.getCvTerm().getName())+"%3B");
+
     // PMID
     int nfound_pub = 0;
     if(feature_cvterm.getPub() != null &&
@@ -1660,85 +1672,81 @@ public class DatabaseDocument extends Document
        !feature_cvterm.getPub().getUniqueName().equalsIgnoreCase("NULL"))
     {
       Pub pub = feature_cvterm.getPub();
-      attr_buff.append("db_xref="+
-          pub.getUniqueName());
+      attr_buff.append("db_xref="+pub.getUniqueName());
       nfound_pub++;
     }
-    
-    if(featureCvTermPubs != null &&
-        featureCvTermPubs.size() > 0)
+
+    if(featureCvTermPubs != null && featureCvTermPubs.size() > 0)
     {
-      for(int i=0; i<featureCvTermPubs.size(); i++)
+      for(FeatureCvTermPub featureCvTermPub: featureCvTermPubs)
       {
-        FeatureCvTermPub featureCvTermPub =
-          (FeatureCvTermPub)featureCvTermPubs.get(i);
-        
         if(feature_cvterm.getFeatureCvTermId() != 
           featureCvTermPub.getFeatureCvTerm().getFeatureCvTermId())
           continue;
-        
-        if(nfound_pub == 0)
-          attr_buff.append("db_xref=");
-        else if(nfound_pub > 0)
-          attr_buff.append("|");
 
+        attr_buff.append((nfound_pub == 0 ? "db_xref=" : "|"));
         attr_buff.append(featureCvTermPub.getPub().getUniqueName());
         nfound_pub++;
       }
     }
-    
-    if(nfound_pub > 0)
-      attr_buff.append("%3B");
-    
-    if(featureCvTermDbXRefs != null &&
-        featureCvTermDbXRefs.size() > 0 )
-    {  
-      int nfound = 0;
-      for(int i=0; i<featureCvTermDbXRefs.size(); i++)
+
+    // GO_REF is stored as a dbxref and displayed in the dbxref column
+    if(featureCvTermDbXRefs != null && featureCvTermDbXRefs.size() > 0 )
+    {
+      for(FeatureCvTermDbXRef featureCvTermDbXRef: featureCvTermDbXRefs)
       {
-        FeatureCvTermDbXRef featureCvTermDbXRef =
-          (FeatureCvTermDbXRef)featureCvTermDbXRefs.get(i);
-          
         if(feature_cvterm.getFeatureCvTermId() != 
           featureCvTermDbXRef.getFeatureCvTerm().getFeatureCvTermId())
-        {
           continue;
-        }
-        
-        if(nfound == 0)
-          attr_buff.append("with=");
-        else if(nfound > 0)
-          attr_buff.append("|");
-        
+
         DbXRef fc_dbXRef = featureCvTermDbXRef.getDbXRef();
+        if(!fc_dbXRef.getDb().getName().equals("GO_REF"))
+          continue;
+        attr_buff.append((nfound_pub == 0 ? "db_xref=" : "|"));
+        attr_buff.append(fc_dbXRef.getDb().getName()+":");
+        attr_buff.append(fc_dbXRef.getAccession());
+        nfound_pub++;
+      }
+    }
+    if(nfound_pub > 0)
+      attr_buff.append("%3B");
+
+    if(featureCvTermDbXRefs != null && featureCvTermDbXRefs.size() > 0 )
+    {  
+      int nfound = 0;
+      for(FeatureCvTermDbXRef featureCvTermDbXRef : featureCvTermDbXRefs)
+      {
+        if(feature_cvterm.getFeatureCvTermId() != 
+          featureCvTermDbXRef.getFeatureCvTerm().getFeatureCvTermId())
+          continue;
+
+        DbXRef fc_dbXRef = featureCvTermDbXRef.getDbXRef();
+        if(fc_dbXRef.getDb().getName().equals("GO_REF"))
+          continue;
+        attr_buff.append((nfound == 0 ? "with=" : "|"));
         attr_buff.append(fc_dbXRef.getDb().getName()+":");
         attr_buff.append(fc_dbXRef.getAccession());
         nfound++;
       }
-      
       if(nfound > 0)
         attr_buff.append("%3B");
-
     }
-    
-    List feature_cvtermprops = (List)feature_cvterm
-        .getFeatureCvTermProps();
+
+    List<FeatureCvTermProp> feature_cvtermprops = 
+        (List<FeatureCvTermProp>)feature_cvterm.getFeatureCvTermProps();
     for(int i = 0; i < feature_cvtermprops.size(); i++)
     {
-      FeatureCvTermProp feature_cvtermprop = 
-        (FeatureCvTermProp)feature_cvtermprops.get(i);
-      
+      FeatureCvTermProp feature_cvtermprop = feature_cvtermprops.get(i);
       if(feature_cvtermprop.getValue() == null)
         continue;
       
       attr_buff.append(getCvtermName(feature_cvtermprop.getCvTerm()
           .getCvTermId(), dao, gene_builder));
       attr_buff.append("=");
-      attr_buff.append(GFFStreamFeature.encode(feature_cvtermprop.getValue()));
+      attr_buff.append(GFF3Encoder.encode(feature_cvtermprop.getValue()));
       if(i < feature_cvtermprops.size()-1)
         attr_buff.append("%3B");
     }
-    
     attr_buff.append(";");
   }
   
@@ -1749,13 +1757,13 @@ public class DatabaseDocument extends Document
    * @param pub
    * @param feature_cvterm
    */
-  private static void checkPubDbXRef(final List pubDbXRefs, final int pubId,
+  private static void checkPubDbXRef(final List<PubDbXRef> pubDbXRefs, final int pubId,
                                      final Pub pub, final FeatureCvTerm feature_cvterm)
   {
     PubDbXRef pubDbXRef = null;
     for(int i = 0; i < pubDbXRefs.size(); i++)
     {
-      pubDbXRef = (PubDbXRef) pubDbXRefs.get(i);
+      pubDbXRef = pubDbXRefs.get(i);
       if(pubDbXRef.getPub().getPubId() == pubId)
       {
         DbXRef dbxref = pubDbXRef.getDbXRef();
@@ -1770,11 +1778,6 @@ public class DatabaseDocument extends Document
      {
        Splash.logger4j.debug("Checking PubDbXRef and not found Pub "+
                            feature_cvterm.getPub().getUniqueName());
-      
-       /*JOptionPane.showMessageDialog(null, "Cannot find pub_dbxref for:\n"+
-           feature_cvterm.getPub().getUniqueName(), 
-           "Database Error",
-           JOptionPane.ERROR_MESSAGE);*/
      }
   }
   
@@ -1785,11 +1788,11 @@ public class DatabaseDocument extends Document
    */
   public static Integer getCvtermID(final String name)
   {
-    Enumeration enum_cvterm = cvterms.keys();
+    Enumeration<Integer> enum_cvterm = cvterms.keys();
     while(enum_cvterm.hasMoreElements())
     {
-      Integer key = (Integer)enum_cvterm.nextElement();
-      if(name.equalsIgnoreCase( ((CvTerm)cvterms.get(key)).getName() ))
+      Integer key = enum_cvterm.nextElement();
+      if(name.equalsIgnoreCase( cvterms.get(key).getName() ))
         return key;
     }
     return null;
@@ -1819,7 +1822,7 @@ public class DatabaseDocument extends Document
     if(cvterms == null)
       getCvterms(dao);
 
-    return (CvTerm)cvterms.get(new Integer(id));
+    return cvterms.get(new Integer(id));
   }
   
   /**
@@ -1829,10 +1832,10 @@ public class DatabaseDocument extends Document
    */
   public static CvTerm getCvTermByCvTermName(final String cvterm_name)
   {
-    Enumeration enum_cvterm = cvterms.elements();
+    Enumeration<CvTerm> enum_cvterm = cvterms.elements();
     while(enum_cvterm.hasMoreElements())
     {
-      CvTerm cvterm = (CvTerm)enum_cvterm.nextElement();
+      CvTerm cvterm = enum_cvterm.nextElement();
       if(cvterm_name.equalsIgnoreCase( cvterm.getName() ))
         return cvterm;
     }
@@ -1866,10 +1869,10 @@ public class DatabaseDocument extends Document
       }
     }
     
-    Enumeration enum_cvterm = cvterms.elements();
+    Enumeration<CvTerm> enum_cvterm = cvterms.elements();
     while(enum_cvterm.hasMoreElements())
     {
-      CvTerm cvterm = (CvTerm)enum_cvterm.nextElement();
+      CvTerm cvterm = enum_cvterm.nextElement();
       if(cvterm.getCvTermId() == cvTermId)
         return cvterm;
     }
@@ -1886,10 +1889,10 @@ public class DatabaseDocument extends Document
   public static CvTerm getCvTermByCvAndCvTerm(final String cvterm_name,
                                               final String cvName)
   {
-    final Enumeration enum_cvterm = cvterms.elements();
+    final Enumeration<CvTerm> enum_cvterm = cvterms.elements();
     while(enum_cvterm.hasMoreElements())
     {
-      final CvTerm cvterm = (CvTerm)enum_cvterm.nextElement();
+      final CvTerm cvterm = enum_cvterm.nextElement();
       if(cvName.equals( cvterm.getCv().getName() ) &&
          cvterm_name.equals( cvterm.getName() ))
         return cvterm;
@@ -1908,10 +1911,10 @@ public class DatabaseDocument extends Document
   public static CvTerm getCvTermByCvPartAndCvTerm(final String cvterm_name,
                                               final String cvName)
   {
-    Enumeration enum_cvterm = cvterms.elements();
+    Enumeration<CvTerm> enum_cvterm = cvterms.elements();
     while(enum_cvterm.hasMoreElements())
     {
-      CvTerm cvterm = (CvTerm)enum_cvterm.nextElement();
+      CvTerm cvterm = enum_cvterm.nextElement();
       if(cvterm.getCv().getName().startsWith( cvName ) &&
          cvterm_name.equals( cvterm.getName() ))
         return cvterm;
@@ -1923,17 +1926,17 @@ public class DatabaseDocument extends Document
    * @param dao the data access object
    * @return    the cvterm <code>Hashtable</code>
    */
-  private static Hashtable getCvterms(final GmodDAO dao)
+  private static Hashtable<Integer, CvTerm> getCvterms(final GmodDAO dao)
   {
     try
     {
-      final List cvterm_list = dao.getCvTerms();
-      final Iterator it = cvterm_list.iterator();
-      cvterms = new Hashtable(cvterm_list.size());
+      final List<CvTerm> cvterm_list = dao.getCvTerms();
+      final Iterator<CvTerm> it = cvterm_list.iterator();
+      cvterms = new Hashtable<Integer, CvTerm>(cvterm_list.size());
 
       while(it.hasNext())
       {
-        final CvTerm cvterm = (CvTerm)it.next();
+        final CvTerm cvterm = it.next();
         cvterms.put(new Integer(cvterm.getCvTermId()), cvterm);
       }
     }
@@ -1963,11 +1966,11 @@ public class DatabaseDocument extends Document
     return getCvterms("", cvName, false);
   }
   
-  public List getDatabaseNames()
+  public List<String> getDatabaseNames()
   {
     GmodDAO dao = getDAOOnly();
     List dbs = dao.getDbs();
-    List names = new Vector();
+    List<String> names = new Vector<String>();
     Iterator it = dbs.iterator();
     while(it.hasNext())
     {
@@ -1983,14 +1986,14 @@ public class DatabaseDocument extends Document
     return dao.getOrganismByCommonName(commonName);
   }
   
-  public List getOrganismNames()
+  public List<String> getOrganismNames()
   {
     if(organismNames != null && organismNames.size() > 0)
       return organismNames;
     
     GmodDAO dao = getDAOOnly();
     List organisms = dao.getOrganisms();
-    organismNames = new Vector();
+    organismNames = new Vector<String>();
     Iterator it = organisms.iterator();
     while(it.hasNext())
     {
@@ -2000,17 +2003,16 @@ public class DatabaseDocument extends Document
     return organismNames;
   }
   
-  public static Vector getCvterms(final String search_str, 
+  public static Vector<CvTerm> getCvterms(final String search_str, 
                                   final String cv_name,
                                   final boolean ignoreCase)
   {
-    final Vector cvterm_match = new Vector();
-    
-    Enumeration enum_cvterm = cvterms.keys();
+    final Vector<CvTerm> cvterm_match = new Vector<CvTerm>();
+    Enumeration<Integer> enum_cvterm = cvterms.keys();
     while(enum_cvterm.hasMoreElements())
     {
-      Integer key = (Integer)enum_cvterm.nextElement();
-      CvTerm cvterm = (CvTerm)cvterms.get(key);
+      Integer key = enum_cvterm.nextElement();
+      CvTerm cvterm = cvterms.get(key);
       
       if(cvterm.getCv().getName().startsWith(cv_name))
       {
@@ -2032,11 +2034,11 @@ public class DatabaseDocument extends Document
   
   public static CvTerm getCvtermFromGoId(final String goId)
   {
-    Enumeration enum_cvterm = cvterms.keys();
+    Enumeration<Integer> enum_cvterm = cvterms.keys();
     while (enum_cvterm.hasMoreElements())
     {
-      Integer key = (Integer) enum_cvterm.nextElement();
-      CvTerm cvTerm = (CvTerm) cvterms.get(key);
+      Integer key = enum_cvterm.nextElement();
+      CvTerm cvTerm = cvterms.get(key);
 
       if(cvTerm.getCv().getName().equals("molecular_function") ||
          cvTerm.getCv().getName().equals("biological_process") ||
@@ -2073,15 +2075,15 @@ public class DatabaseDocument extends Document
    * 
    * @return
    */
-  public static List getCvControledCurationNames()
+  public static List<String> getCvControledCurationNames()
   {
     if(cvControledCuratioNames != null)
       return cvControledCuratioNames;
-    cvControledCuratioNames = new Vector();
-    final Enumeration enum_cvterm = cvterms.elements();
+    cvControledCuratioNames = new Vector<String>();
+    final Enumeration<CvTerm> enum_cvterm = cvterms.elements();
     while(enum_cvterm.hasMoreElements())
     {
-      final CvTerm cvTerm = (CvTerm)enum_cvterm.nextElement();
+      final CvTerm cvTerm = enum_cvterm.nextElement();
       final String cvNameStr = cvTerm.getCv().getName();
       
       if(cvNameStr.startsWith(DatabaseDocument.CONTROLLED_CURATION_TAG_CVNAME) && 
@@ -2106,27 +2108,27 @@ public class DatabaseDocument extends Document
       {
         Cv cv = new Cv();
         cv.setName(cv_name);
-        List synonymCvTerms = doc.getDAO().getCvTermByNameInCv(null, cv);
+        List<CvTerm> synonymCvTerms = doc.getDAO().getCvTermByNameInCv(null, cv);
         String synonymNames[] = new String[synonymCvTerms.size()];
         for(int i=0; i<synonymCvTerms.size(); i++)
-          synonymNames[i] = ((CvTerm) synonymCvTerms.get(i)).getName();
+          synonymNames[i] = synonymCvTerms.get(i).getName();
 
         return synonymNames;
       }
       catch(ConnectException e){}
       catch(SQLException e){}   
     }
-    
-    Vector synonym_names = new Vector();
-    Enumeration cvterm_enum = cvterms.elements();
+
+    Vector<String> synonym_names = new Vector<String>();
+    Enumeration<CvTerm> cvterm_enum = cvterms.elements();
     while(cvterm_enum.hasMoreElements())
     {
-      CvTerm cvterm = (CvTerm)cvterm_enum.nextElement();
+      CvTerm cvterm = cvterm_enum.nextElement();
       if(cvterm.getCv().getName().equals(cv_name))
         synonym_names.add(cvterm.getName());
     }
-    
-    return (String[])synonym_names.toArray(
+
+    return synonym_names.toArray(
                        new String[synonym_names.size()]);
   }
   
@@ -2198,15 +2200,15 @@ public class DatabaseDocument extends Document
    * @param peptideName
    * @return
    */
-  public List getCdsFeatureLocsByPeptideName(final String peptideName)
+  public List<FeatureLoc> getCdsFeatureLocsByPeptideName(final String peptideName)
   {
     Feature peptideFeature = getFeatureByUniquename(peptideName);
-    Collection frs = peptideFeature.getFeatureRelationshipsForSubjectId();
-    Iterator it = frs.iterator();
+    Collection<FeatureRelationship> frs = peptideFeature.getFeatureRelationshipsForSubjectId();
+    Iterator<FeatureRelationship> it = frs.iterator();
     Feature transcriptFeature = null;
     while(it.hasNext())
     {
-      FeatureRelationship fr = (FeatureRelationship)it.next();
+      FeatureRelationship fr = it.next();
       if(fr.getCvTerm().getName().equalsIgnoreCase("derives_from"))
       {
         transcriptFeature = fr.getFeatureByObjectId();
@@ -2225,33 +2227,28 @@ public class DatabaseDocument extends Document
    * @param transcriptName
    * @return
    */
-  public List getCdsFeatureLocsByTranscriptName(final String transcriptName)
+  public List<FeatureLoc> getCdsFeatureLocsByTranscriptName(final String transcriptName)
   {
     Feature transcriptFeature = getFeatureByUniquename(transcriptName);
     if(transcriptFeature == null)
       return null;
     
-    Collection frs = transcriptFeature.getFeatureRelationshipsForObjectId();
-    Iterator it = frs.iterator();
-    List cdsFeatureLocs = new Vector();
+    Collection<FeatureRelationship> frs = transcriptFeature.getFeatureRelationshipsForObjectId();
+    Iterator<FeatureRelationship> it = frs.iterator();
+    List<FeatureLoc> cdsFeatureLocs = new Vector<FeatureLoc>();
     while(it.hasNext())
     {
-      FeatureRelationship fr = (FeatureRelationship)it.next();
+      FeatureRelationship fr = it.next();
       org.gmod.schema.sequence.Feature child = fr.getFeatureBySubjectId();
       if(child.getCvTerm().getName().equals("exon") || 
          child.getCvTerm().getName().equals("pseudogenic_exon"))
       {
-        Collection featureLocs = child.getFeatureLocsForFeatureId();
-
-        Iterator it2 = featureLocs.iterator();
+        Collection<FeatureLoc> featureLocs = child.getFeatureLocsForFeatureId();
+        Iterator<FeatureLoc> it2 = featureLocs.iterator();
         while(it2.hasNext())
-        {
-          FeatureLoc featureLoc = (FeatureLoc) it2.next();
-          cdsFeatureLocs.add(featureLoc);
-        }
+          cdsFeatureLocs.add(it2.next());
       }
     }
-
     Collections.sort(cdsFeatureLocs, new LocationComarator());
     return cdsFeatureLocs;
   }
@@ -2291,10 +2288,10 @@ public class DatabaseDocument extends Document
    * Get the <code>List</code> of available schemas.
    * @return  the <code>List</code> of available schemas
    */
-  public List getSchema()
+/*  public List getSchema()
   {
     return schema_list;
-  }
+  }*/
   
   public Feature getFeatureByUniquename(final String uniqueName) 
   {
@@ -2308,7 +2305,7 @@ public class DatabaseDocument extends Document
    * @param geneName
    * @return
    */
-  public Vector getPartOfFeatures(final String uniqueName)
+  public Vector<Feature> getPartOfFeatures(final String uniqueName)
   {
     Feature feature = getFeatureByUniquename(uniqueName);
     if(feature == null)
@@ -2316,7 +2313,7 @@ public class DatabaseDocument extends Document
     
     Collection frs = feature.getFeatureRelationshipsForObjectId();
     Iterator it = frs.iterator();
-    Vector partOfFeatures = new Vector(frs.size());
+    Vector<Feature> partOfFeatures = new Vector<Feature>(frs.size());
     while(it.hasNext())
     {
       FeatureRelationship fr = (FeatureRelationship)it.next();
@@ -2333,31 +2330,31 @@ public class DatabaseDocument extends Document
    * @param geneName
    * @return
    */
-  public Vector getPolypeptideFeatures(final String geneName)
+  public Vector<Feature> getPolypeptideFeatures(final String geneName)
   {
     Feature geneFeature =  getFeatureByUniquename(geneName);
     if(geneFeature == null)
       return null;
     
-    Collection frs = geneFeature.getFeatureRelationshipsForObjectId();
-    Iterator it = frs.iterator();
-    List transcripts = new Vector(frs.size());
+    Collection<FeatureRelationship> frs = geneFeature.getFeatureRelationshipsForObjectId();
+    Iterator<FeatureRelationship> it = frs.iterator();
+    List<Feature> transcripts = new Vector<Feature>(frs.size());
     while(it.hasNext())
     {
-      FeatureRelationship fr = (FeatureRelationship)it.next();
+      FeatureRelationship fr = it.next();
       transcripts.add(fr.getFeatureBySubjectId());
     }
     
-    Vector polypep = new Vector();
+    Vector<Feature> polypep = new Vector<Feature>();
     for(int i=0; i<transcripts.size(); i++)
     {
       org.gmod.schema.sequence.Feature transcript = 
-        (org.gmod.schema.sequence.Feature) transcripts.get(i);
+        transcripts.get(i);
       frs = transcript.getFeatureRelationshipsForObjectId();
       it = frs.iterator();
       while(it.hasNext())
       {
-        FeatureRelationship fr = (FeatureRelationship)it.next();
+        FeatureRelationship fr = it.next();
         if(fr.getCvTerm().getName().equalsIgnoreCase("derives_from"))
           if(fr.getFeatureBySubjectId().getCvTerm().getName().equalsIgnoreCase("polypeptide"))
             polypep.add(fr.getFeatureBySubjectId());
@@ -2463,10 +2460,10 @@ public class DatabaseDocument extends Document
    * @throws ConnectException
    * @throws java.sql.SQLException
    */
-  public List getOrganismsContainingSrcFeatures()
+  public List<Organism> getOrganismsContainingSrcFeatures()
          throws ConnectException, java.sql.SQLException
   {
-    List list = null;
+    List<Organism> list = null;
     try
     { 
       GmodDAO dao = getDAO();
@@ -2474,38 +2471,37 @@ public class DatabaseDocument extends Document
       cvThread.start();
       
       list = dao.getOrganismsContainingSrcFeatures();
-      
-      Collections.sort(list, new Comparator()
+  
+      Collections.sort(list, new Comparator<Organism>()
       {
-        public int compare(Object o1, Object o2)
-        {
-          Organism org1 = (Organism)o1;
-          Organism org2 = (Organism)o2;
-          
-          String name1 = org1.getCommonName();
-          String name2 = org2.getCommonName();
+        public int compare(final Organism o1, final Organism o2)
+        {         
+          String name1 = o1.getCommonName();
+          String name2 = o2.getCommonName();
           
           if(name1 == null)
-            name1 = org1.getGenus() + "." + org1.getSpecies();
+            name1 = o1.getGenus() + "." + o1.getSpecies();
           
           if(name2 == null)
-            name2 = org2.getGenus() + "." + org2.getSpecies();
+            name2 = o2.getGenus() + "." + o2.getSpecies();
           return name1.compareToIgnoreCase( name2 );
         } 
       });  
     }
-    catch(RuntimeException sqlExp)
+    catch(RuntimeException runExp)
     {
-      JOptionPane.showMessageDialog(null, "SQL Problems...\n"+
+        runExp.printStackTrace();
+      JOptionPane.showMessageDialog(null, "Runtime Problems...\n"+
                                     getLocation()+"\n"+
-                                    sqlExp.getMessage(), 
-                                    "SQL Error",
+                                    runExp.getMessage(), 
+                                    "Runtime Error",
                                     JOptionPane.ERROR_MESSAGE);
       
-      logger4j.debug(sqlExp.getMessage());
+      logger4j.debug(runExp.getMessage());
     }
     catch(ConnectException exp)
     {
+        exp.printStackTrace();
       JOptionPane.showMessageDialog(null, "Connection Problems...\n"+
             exp.getMessage(), 
             "Connection Error",
@@ -2515,6 +2511,7 @@ public class DatabaseDocument extends Document
     }
     catch(java.sql.SQLException sqlExp)
     {
+        sqlExp.printStackTrace();
       JOptionPane.showMessageDialog(null, "SQL Problems....\n"+
                                     getLocation()+"\n"+
                                     sqlExp.getMessage(), 
@@ -2664,13 +2661,16 @@ public class DatabaseDocument extends Document
     // "localhost:10001/backup?chado"
     
     String url = (String)getLocation();
-    int index  = url.indexOf("?");
+    DatabaseLocationParser dlp = new DatabaseLocationParser(url);
     
-    String userName = url.substring(index+1).trim();
-    if(userName.startsWith("user="))
-      userName = userName.substring(5);
-    
-    return userName;
+//    
+//    int index  = url.indexOf("?");
+//    
+//    String userName = url.substring(index+1).trim();
+//    if(userName.startsWith("user="))
+//      userName = userName.substring(5);
+//    
+    return dlp.getUsername();
   }
   
   private GmodDAO getDAOOnly()
@@ -2736,12 +2736,12 @@ public class DatabaseDocument extends Document
    * @param sql the collection of <code>ChadoTransaction</code> objects
    * @return
    */
-  public int commit(final Vector sql,
+  public int commit(final Vector<ChadoTransaction> sql,
                     final boolean force)
   {
     GmodDAO dao = null;
     int ncommit = -1;
-    final Hashtable featureIdStore = new Hashtable();
+    final Hashtable<String, Feature> featureIdStore = new Hashtable<String, Feature>();
     boolean useTransactions = false;
 
     try
@@ -2760,10 +2760,10 @@ public class DatabaseDocument extends Document
       
       //
       // check feature timestamps have not changed
-      Vector names_checked = new Vector();
+      Vector<String> names_checked = new Vector<String>();
       for(int i = 0; i < sql.size(); i++)
       {
-        final ChadoTransaction tsn = (ChadoTransaction)sql.get(i);
+        final ChadoTransaction tsn = sql.get(i);
         final Object uniquenames[] = getUniqueNames(tsn);
         
         if(uniquenames == null)
@@ -2811,7 +2811,7 @@ public class DatabaseDocument extends Document
 
       //
       // update timelastmodified timestamp
-      names_checked = new Vector();
+      names_checked = new Vector<String>();
       
       
       //
@@ -2819,7 +2819,7 @@ public class DatabaseDocument extends Document
       // these time stamps should already have been updated
       for(int i = 0; i < sql.size(); i++)
       {
-        final ChadoTransaction tsn = (ChadoTransaction) sql.get(i);
+        final ChadoTransaction tsn = sql.get(i);
         if(tsn.getType() == ChadoTransaction.UPDATE &&
            tsn.getFeatureObject() instanceof Feature)
         {
@@ -2835,7 +2835,7 @@ public class DatabaseDocument extends Document
       
       for(int i = 0; i < sql.size(); i++)
       {
-        final ChadoTransaction tsn = (ChadoTransaction) sql.get(i);
+        final ChadoTransaction tsn = sql.get(i);
         final Object uniquenames[] = getUniqueNames(tsn);
              
         if(uniquenames == null)
@@ -2854,7 +2854,7 @@ public class DatabaseDocument extends Document
           // retrieve from featureId store
           if(featureIdStore != null && featureIdStore.containsKey(uniquename))
           {
-            Feature f = (Feature) featureIdStore.get(uniquename);
+            Feature f = featureIdStore.get(uniquename);
 
             feature = new Feature();
             feature.setFeatureId(f.getFeatureId());
@@ -2954,14 +2954,13 @@ public class DatabaseDocument extends Document
    * @return
    */
   private String constructExceptionMessage(final RuntimeException re,
-                                           final Vector sql,
+                                           final Vector<ChadoTransaction> sql,
                                            final int ncommit)
   {
     String msg = "";
     if(ncommit > -1 && ncommit < sql.size())
     {
-      final ChadoTransaction t_failed = (ChadoTransaction)sql.get(ncommit);
-      
+      final ChadoTransaction t_failed = sql.get(ncommit);
       if(t_failed.getType() == ChadoTransaction.DELETE)
         msg = "DELETE failed ";
       else if(t_failed.getType() == ChadoTransaction.INSERT)
@@ -2978,10 +2977,9 @@ public class DatabaseDocument extends Document
         if(chadoFeature.getUniqueName() != null)
           msg = msg + "for " + chadoFeature.getUniqueName() +":";
       }
-        
+
       msg = msg+"\n";
     }
-    
     return msg + re.getMessage();  
   }
   
@@ -3033,11 +3031,11 @@ public class DatabaseDocument extends Document
       {
         // if CDS featureloc is changed update residues on
         // associated features
-        List tsns = getUpdateResiduesColumnTransactions(tsn);
+        List<ChadoTransaction> tsns = getUpdateResiduesColumnTransactions(tsn);
         if(tsns != null)
         {
           for(int i=0; i<tsns.size(); i++)
-            dao.merge( ((ChadoTransaction)tsns.get(i)).getFeatureObject() );
+            dao.merge( tsns.get(i).getFeatureObject() );
         }
       }
     }
@@ -3091,7 +3089,7 @@ public class DatabaseDocument extends Document
                                        final String uniquename,
                                        final GmodDAO dao,
                                        final String keyName,
-                                       final Hashtable featureIdStore,
+                                       final Hashtable<String, Feature> featureIdStore,
                                        final ChadoTransaction tsn)
   {
     final Timestamp timestamp  = tsn.getLastModified();
@@ -3153,12 +3151,12 @@ public class DatabaseDocument extends Document
   {
     int featureId = newFeatureLoc.getFeatureByFeatureId().getFeatureId();
     int srcFeatureId = newFeatureLoc.getFeatureBySrcFeatureId().getFeatureId();
-    List oldFeatureLocs = dao.getFeatureLocsByFeatureId(featureId);
+    List<FeatureLoc> oldFeatureLocs = dao.getFeatureLocsByFeatureId(featureId);
     FeatureLoc oldFeatureLoc = null;
     
     for(int i=0; i<oldFeatureLocs.size(); i++)
     {
-      FeatureLoc fl = (FeatureLoc) oldFeatureLocs.get(i);
+      FeatureLoc fl = oldFeatureLocs.get(i);
       if(srcFeatureId == fl.getFeatureBySrcFeatureId().getFeatureId())
       {
         oldFeatureLoc = fl;
@@ -3171,11 +3169,11 @@ public class DatabaseDocument extends Document
     
     if(oldFeatureLoc.getFmin() != newFeatureLoc.getFmin())
     {
-      List featureLocsBySrcFeatureId =
+      List<FeatureLoc> featureLocsBySrcFeatureId =
         dao.getFeatureLocsBySrcFeatureId(featureId);
       for(int i=0; i<featureLocsBySrcFeatureId.size(); i++)
       {  
-        FeatureLoc onPolyPepLoc = (FeatureLoc)featureLocsBySrcFeatureId.get(i);
+        FeatureLoc onPolyPepLoc = featureLocsBySrcFeatureId.get(i);
         onPolyPepLoc.setFmin(onPolyPepLoc.getFmin() -
             (newFeatureLoc.getFmin() - oldFeatureLoc.getFmin()));
         
@@ -3190,11 +3188,11 @@ public class DatabaseDocument extends Document
    * Update residues column when the CDS featureloc is updated
    * @param tsn
    */
-  public static List getUpdateResiduesColumnTransactions(
+  public static List<ChadoTransaction> getUpdateResiduesColumnTransactions(
                                         final ChadoTransaction tsn)
   {
     String keyStr = tsn.getGff_feature().getKey().getKeyString();
-    List transactions = null;
+    List<ChadoTransaction> transactions = null;
     if(DatabaseDocument.EXONMODEL.equals(keyStr) &&
        Options.getOptions().getOptionValues("sequence_update_features") != null)
     {
@@ -3218,7 +3216,7 @@ public class DatabaseDocument extends Document
               null, null, null, "RESIDUE SEQUENCE UPDATE "+
               GeneUtils.getUniqueName(transcript));
           if(transactions == null)
-            transactions = new Vector();
+            transactions = new Vector<ChadoTransaction>();
           transactions.add(tsnResidue);
           logger4j.debug(tsnResidue.getLogComment());
         }
@@ -3237,7 +3235,7 @@ public class DatabaseDocument extends Document
                 null, null, null, "RESIDUE SEQUENCE UPDATE "+
                 GeneUtils.getUniqueName(pp));
             if(transactions == null)
-              transactions = new Vector();
+              transactions = new Vector<ChadoTransaction>();
             transactions.add(tsnResidue);
             logger4j.debug(tsnResidue.getLogComment());
           }
@@ -3263,21 +3261,21 @@ public class DatabaseDocument extends Document
       
       Feature feature = new Feature();
       feature.setUniqueName(args[0]);
-      List schemas = new Vector();
+      List<String> schemas = new Vector<String>();
       schemas.add(args[1]);
-      List featureList = new Vector();
+      List<Feature> featureList = new Vector<Feature>();
       featureList.add(dao.getFeatureByUniqueName(args[0], "polypeptide")); 
       System.out.println("FINISHED getFeature()");
       for(int i = 0; i < featureList.size(); i++)
       {
-        feature = (Feature)featureList.get(i);
+        feature = featureList.get(i);
         
         String abb  = feature.getOrganism().getAbbreviation();
         String type = feature.getCvTerm().getName();
         int fmin    = feature.getFeatureLoc().getFmin().intValue() + 1;
         int fmax    = feature.getFeatureLoc().getFmax().intValue();
         String featprop = 
-          ((FeatureProp)(new Vector(feature.getFeatureProps()).get(0))).getCvTerm().getName();
+          ((new Vector<FeatureProp>(feature.getFeatureProps()).get(0))).getCvTerm().getName();
         
         System.out.print(fmin+".."+fmax);
         System.out.print(" "+type);
@@ -3324,11 +3322,11 @@ public class DatabaseDocument extends Document
    * @param srcfeature_id
    * @return
    */
-  public static FeatureLoc getFeatureLoc(List locs, int srcfeature_id)
+  public static FeatureLoc getFeatureLoc(List<FeatureLoc> locs, int srcfeature_id)
   {
     for(int i=0; i<locs.size(); i++)
     {
-      FeatureLoc loc = (FeatureLoc)locs.get(i);
+      FeatureLoc loc = locs.get(i);
       if(loc.getFeatureBySrcFeatureId().getFeatureId() == srcfeature_id)
         return loc;
     }
@@ -3361,17 +3359,16 @@ public class DatabaseDocument extends Document
   /**
    * Ensure exon featurelocs are in the correct order
    */
-  class LocationComarator implements Comparator
+  class LocationComarator implements Comparator<FeatureLoc>
   {
-
-    public int compare(Object o1, Object o2)
+    public int compare(FeatureLoc o1, FeatureLoc o2)
     {
-      int loc1 = ((FeatureLoc)o1).getFmin().intValue();
-      int loc2 = ((FeatureLoc)o2).getFmin().intValue();
+      int loc1 = o1.getFmin().intValue();
+      int loc2 = o2.getFmin().intValue();
       
       if(loc2 == loc1)
         return 0;
-      int strand = ((FeatureLoc)o1).getStrand().intValue();
+      int strand = o1.getStrand().intValue();
       
       if(strand < 0)
       {
@@ -3410,7 +3407,7 @@ public class DatabaseDocument extends Document
   }
 
 
-  public Hashtable getIdFeatureStore()
+  public Hashtable<String, Feature> getIdFeatureStore()
   {
     return idFeatureStore;
   }

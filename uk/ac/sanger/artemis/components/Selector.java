@@ -56,6 +56,7 @@ import javax.swing.*;
 public class Selector extends JFrame
     implements EntryGroupChangeListener {
   
+  private static final long serialVersionUID = 1L;
   private JCheckBox by_key_button;
   private JCheckBox by_qualifier_button;
   private JCheckBox by_motif_button;
@@ -81,12 +82,12 @@ public class Selector extends JFrame
    *  If checked the search text is allowed to match a substring of a
    *  qualifier value.
    **/
-  final JCheckBox partial_match_checkbox;
+  final private JCheckBox partial_match_checkbox;
 
   /**
    *  The EntryGroup object that was passed to the constructor.
    **/
-  final EntryGroup entry_group;
+  final private EntryGroup entry_group;
 
   /**
    *  This is the Selection that was passed to the constructor.
@@ -850,74 +851,8 @@ public class Selector extends JFrame
     
     FeaturePredicate intron_pattern_predicate = null;
     if(intron_pattern_button.isSelected())
-    {
-      intron_pattern_predicate = new FeaturePredicate()
-      {
-        public boolean testPredicate(final Feature feature)
-        { 
-          if(feature.getSegments().size() < 2)
-            return false;
-          
-          final Location location = feature.getLocation().copy();
-          final RangeVector ranges = location.getRanges();
-          Collections.sort(ranges, new RangeComparator());
-          
-          final Strand strand = feature.getStrand();
-          for(int i = 0; i < ranges.size () -1; ++i) 
-          {
-            final int end_of_range_1 =
-              ((Range)ranges.elementAt(i)).getEnd ();
-            final int start_of_range_2 =
-              ((Range)ranges.elementAt(i+1)).getStart ();
-            
-            // ignore - the exons overlap so there is no room for an intron
-            if(end_of_range_1 > start_of_range_2) 
-              continue;
-
-            try
-            {
-              Range feature_range = new Range(end_of_range_1 + 1,
-                                              start_of_range_2 - 1);
-
-              final char bases[];
-              if(location.isComplement())
-              {
-                final char tmp_bases[] = strand.getRawSubSequenceC(feature_range);
-                final char tmp2_bases[] = new char[feature_range.getCount()];
-                
-                for(int j=0; j<tmp2_bases.length; j++)
-                  tmp2_bases[j] = tmp_bases[j];
-                bases = Bases.reverseComplement(  tmp2_bases );
-              }
-              else
-                bases = strand.getRawSubSequenceC(feature_range);
-                           
-              if(bases.length < 3)
-                return true;
-
-              
-              int length = feature_range.getCount();
-              if( bases[0] != 'g' ||
-                 (bases[1] != 't' && bases[1] != 'c') ||
-                  bases[length-1] != 'g' ||
-                  bases[length-2] != 'a' )
-              {
-                logger4j.info("INTRON SPLICE SITE: "+end_of_range_1+".."+start_of_range_2);
-                return true;
-              }
-              
-            }
-            catch(uk.ac.sanger.artemis.util.OutOfRangeException oore)
-            {           
-            }
-          }
-
-          return false;
-        }
-      };
-    }
+      intron_pattern_predicate = getIntronPredicate();
     
-
     FeaturePredicate predicate = null;
     if(!by_key_button.isSelected() && !by_motif_button.isSelected())
     {
@@ -1012,6 +947,89 @@ public class Selector extends JFrame
 
     return return_features;
   }
+  
+  protected static FeaturePredicate getIntronPredicate()
+  {
+    return new FeaturePredicate()
+    {
+      public boolean testPredicate(final Feature feature)
+      { 
+        if(feature.getSegments().size() < 2)
+          return false;
+        
+        final Location location = feature.getLocation().copy();
+        final RangeVector ranges = location.getRanges();
+        Collections.sort(ranges, new Comparator<Range>(){
+          public int compare(final Range r1, final Range r2)
+          {
+            return r1.getStart()-r2.getStart();
+          }
+        });
+        
+        final Strand strand = feature.getStrand();
+        for(int i = 0; i < ranges.size () -1; ++i) 
+        {
+          final int end_of_range_1 =
+            ((Range)ranges.elementAt(i)).getEnd ();
+          final int start_of_range_2 =
+            ((Range)ranges.elementAt(i+1)).getStart ();
+          
+          // ignore - the exons overlap so there is no room for an intron
+          if(end_of_range_1 > start_of_range_2) 
+            continue;
+
+          try
+          {
+            Range feature_range = new Range(end_of_range_1 + 1,
+                                            start_of_range_2 - 1);
+
+            final char bases[];
+            if(location.isComplement())
+            {
+              final char tmp_bases[] = strand.getRawSubSequenceC(feature_range);
+              final char tmp2_bases[] = new char[feature_range.getCount()];
+              
+              for(int j=0; j<tmp2_bases.length; j++)
+                tmp2_bases[j] = tmp_bases[j];
+              bases = Bases.reverseComplement(  tmp2_bases );
+            }
+            else
+              bases = strand.getRawSubSequenceC(feature_range);
+                         
+            if(bases.length < 3)
+              return true;
+
+            
+            int length = feature_range.getCount();
+            if( bases[0] != 'g' ||
+               (bases[1] != 't' && bases[1] != 'c') ||
+                bases[length-1] != 'g' ||
+                bases[length-2] != 'a' )
+            {
+              if(bases[length-1] != 'g' || bases[length-2] != 'a')
+                if(location.isComplement())
+                  logger4j.info("INTRON SPLICE SITE MISSING AG: "+end_of_range_1);
+                else
+                  logger4j.info("INTRON SPLICE SITE MISSING AG: "+start_of_range_2);
+              
+              else
+                if(location.isComplement())
+                  logger4j.info("INTRON SPLICE SITE MISSING GT/GC: "+start_of_range_2);
+                else
+                  logger4j.info("INTRON SPLICE SITE MISSING GT/GC: "+end_of_range_1);
+              return true;
+            }
+            
+          }
+          catch(uk.ac.sanger.artemis.util.OutOfRangeException oore)
+          {           
+          }
+        }
+
+        return false;
+      }
+    };
+  }
 
   /**
    *  Return the Selection object that was passed to the constructor.
@@ -1027,16 +1045,6 @@ public class Selector extends JFrame
   private EntryGroup getEntryGroup() 
   {
     return entry_group;
-  }
-  
-  class RangeComparator implements Comparator
-  {
-    public int compare(Object o1, Object o2)
-    {
-      int start1 = ((Range)o1).getStart();
-      int start2 = ((Range)o2).getStart();
-      return start1-start2;
-    }
   }
 
 }

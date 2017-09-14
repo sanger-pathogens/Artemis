@@ -26,6 +26,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -56,6 +57,10 @@ import uk.ac.sanger.artemis.components.MessageDialog;
 import uk.ac.sanger.artemis.components.StickyFileChooser;
 import uk.ac.sanger.artemis.components.SwingWorker;
 import uk.ac.sanger.artemis.io.EntryInformation;
+import uk.ac.sanger.artemis.io.EntryInformationException;
+import uk.ac.sanger.artemis.io.Key;
+import uk.ac.sanger.artemis.io.Location;
+import uk.ac.sanger.artemis.io.MSPcrunchDocumentEntry;
 import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.io.RangeVector;
 import uk.ac.sanger.artemis.sequence.Bases;
@@ -63,6 +68,8 @@ import uk.ac.sanger.artemis.sequence.NoSequenceException;
 import uk.ac.sanger.artemis.util.Document;
 import uk.ac.sanger.artemis.util.DocumentFactory;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
+import uk.ac.sanger.artemis.util.ReadOnlyException;
+import uk.ac.sanger.artemis.util.WorkingGZIPInputStream;
 
 
 /**
@@ -268,6 +275,7 @@ public class Wizard
       String gcGraphStart     = "# GC Graph:";
       String gcSkewGraphStart = "# GC Skew Graph:";
       String userGraphStart   = "# User Graph:";
+      String mergeBlastFeatures = "# merge.blast";
       
       while((inLine = inputStream.readLine()) != null)
       {
@@ -283,6 +291,8 @@ public class Wizard
             gcSkewGraphStr = inLine.substring(gcSkewGraphStart.length()).trim().split("[=\\s]");
           else if(inLine.startsWith(userGraphStart))
             userGraphStr = inLine.substring(userGraphStart.length()).trim().split("[=\\s]");
+          else if(inLine.startsWith(mergeBlastFeatures))
+            System.setProperty("merge.blast", "true");
           continue;
         }
 
@@ -503,7 +513,7 @@ public class Wizard
     final EntryInformation artemis_entry_information =
       Options.getArtemisEntryInformation();
     
-    final uk.ac.sanger.artemis.io.Entry new_embl_entry =
+    uk.ac.sanger.artemis.io.Entry new_embl_entry =
       EntryFileDialog.getEntryFromFile(null, entry_document,
                                        artemis_entry_information,
                                        false);
@@ -511,6 +521,8 @@ public class Wizard
     if(new_embl_entry == null)  // the read failed
       return null;
 
+    new_embl_entry = mergeOption(new_embl_entry);
+    
     Entry entry = null;
     try
     {
@@ -531,6 +543,112 @@ public class Wizard
                         "location: " + e.getMessage());
     }
     return entry;
+  }
+  
+  
+  private static uk.ac.sanger.artemis.io.Entry mergeOption(uk.ac.sanger.artemis.io.Entry embl_entry)
+  {
+    if(embl_entry instanceof uk.ac.sanger.artemis.io.MSPcrunchDocumentEntry &&
+        System.getProperty("merge.blast") == null)
+    {
+      int status = JOptionPane.showConfirmDialog(null, 
+          "This looks like a BLAST file. Do you want to merge\n"+ 
+          "overlapping BLAST hits to improve performance?", "Read BLAST", 
+          JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+      if(status == JOptionPane.OK_OPTION)
+        System.setProperty("merge.blast", "");
+      else
+        System.setProperty("merge.blast", "false");
+    }
+    
+    if( embl_entry instanceof uk.ac.sanger.artemis.io.MSPcrunchDocumentEntry &&
+        System.getProperty("merge.blast") != null &&
+       !System.getProperty("merge.blast").equals("false") )
+      embl_entry = mergeOverlappingFeatures(embl_entry);
+    return embl_entry;
+  }
+  
+  /**
+   * Merge overlapping BLAST hit features to improve the performance of
+   * DNAPlotter.
+   * @param embl_entry
+   * @return
+   */
+  private static uk.ac.sanger.artemis.io.Entry mergeOverlappingFeatures(uk.ac.sanger.artemis.io.Entry embl_entry)
+  {
+    final String name = embl_entry.getName();
+    final RangeVector ranges = new RangeVector();
+    uk.ac.sanger.artemis.io.FeatureVector features = embl_entry.getAllFeatures();
+    System.out.print("Number of features: before merge = "+features.size());
+    
+    for(int i=0; i<features.size(); i++)
+    {
+      Range ri = ((uk.ac.sanger.artemis.io.Feature) features.elementAt(i)).
+          getLocation().getTotalRange();
+      boolean overlaps = false;
+      Range rjOld = null;
+      Range rj = null;
+      int j;
+      for(j=0; j<ranges.size(); j++)
+      {
+        rjOld = (Range) ranges.get(j);
+        if(ri.overlaps(rjOld))
+        {
+          int start = rjOld.getStart();
+          int end = rjOld.getEnd();
+          if(start > ri.getStart())
+            start = ri.getStart();
+          if(end < ri.getEnd())
+            end = ri.getEnd();
+          
+          try
+          {
+            rj = new Range(start, end);
+            overlaps = true;
+            break;
+          }
+          catch (OutOfRangeException e){}
+        }
+      }
+      if(!overlaps)
+        ranges.add(ri);
+      else
+      {
+        ranges.remove(rjOld);
+        ranges.add(rj);
+      }
+    }
+    
+    embl_entry.dispose();
+    embl_entry = new MSPcrunchDocumentEntry(
+        Options.getOptions().getArtemisEntryInformation())
+    {
+      public boolean isReadOnly () {
+        return false;
+      }
+    };
+    embl_entry.setName(name);
+  
+    final Key key = new Key("CRUNCH_D");
+    for(int i=0; i<ranges.size(); i++)
+    {
+      Range r = (Range)ranges.get(i);
+      try
+      {
+        Feature f = new uk.ac.sanger.artemis.Feature(
+            new uk.ac.sanger.artemis.io.EmblStreamFeature(key, new Location(r), null));
+        embl_entry.add(f.getEmblFeature());
+      }
+      catch (ReadOnlyException e){}
+      catch (EntryInformationException e){}
+      catch (OutOfRangeException e)
+      {
+        e.printStackTrace();
+      }
+    }
+    
+    System.out.println(" after merge = "+ranges.size());
+    return embl_entry;
   }
 
   /**
@@ -673,7 +791,15 @@ public class Wizard
 
     try
     {
-      final Entry entry = entrySource.getEntry(bases,true);
+      Entry entry = entrySource.getEntry(bases,true);
+      
+      if(entry.getEMBLEntry() instanceof uk.ac.sanger.artemis.io.MSPcrunchDocumentEntry)
+      {
+        uk.ac.sanger.artemis.io.Entry new_embl_entry = 
+          mergeOption(entry.getEMBLEntry());
+        entry = new Entry(bases, new_embl_entry);
+      }
+      
       dna_current.getArtemisEntryGroup().add(entry);
 
       addFeaturesFromEntry(entry, dna_current);
@@ -856,10 +982,18 @@ public class Wizard
     {
       try
       {
-        FileReader reader = new FileReader(fileTemplate);
-        inputStream = new BufferedReader(reader);
+        if(templateName.endsWith(".gz"))
+          inputStream = new BufferedReader(
+              new InputStreamReader(new WorkingGZIPInputStream( 
+                  new FileInputStream(fileTemplate) )));
+        else
+          inputStream = new BufferedReader(new FileReader(fileTemplate));
       }
       catch(FileNotFoundException e)
+      {
+        e.printStackTrace();
+      }
+      catch (IOException e)
       {
         e.printStackTrace();
       }

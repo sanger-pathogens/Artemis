@@ -29,8 +29,15 @@ import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.circular.TextFieldFloat;
 import uk.ac.sanger.artemis.plot.*;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.Scrollbar;
 import java.awt.event.*;
+import java.util.Vector;
 
 import javax.swing.JMenu;
 import javax.swing.JPanel;
@@ -44,15 +51,16 @@ import javax.swing.JMenuItem;
 import javax.swing.JScrollBar;
 import javax.swing.JPopupMenu;
 
+import org.apache.batik.svggen.SVGGraphics2D;
+
 /**
  *  This class implements a simple plot component.
- *
  *  @author Kim Rutherford
- *  @version $Id: Plot.java,v 1.26 2009-08-18 09:01:44 tjc Exp $
  **/
 
 public abstract class Plot extends JPanel 
 {
+  private static final long serialVersionUID = 1L;
 
   /** scroll bar for changing the window size. */
   private JScrollBar window_changer = null;
@@ -73,12 +81,16 @@ public abstract class Plot extends JPanel
    *  drawScaleLine() is called.
    **/
   private boolean draw_scale;
+  
+  private final int SCROLL_NOB_SIZE = 10;
 
   /**
    *  Set to true if drawMultiValueGraph() should call recalculateValues().
    *  It is reset to false by recalculateValues().
    **/
   protected boolean recalculate_flag = true;
+  
+  private boolean showAverage = true;
 
   /**
    *  The x position of the last click or -1 if the user hasn't clicked
@@ -95,7 +107,7 @@ public abstract class Plot extends JPanel
   /**
    *  A vector of those objects listening for PlotMouse events.
    **/
-  final private java.util.Vector listener_list = new java.util.Vector();
+  final private Vector<PlotMouseListener> listener_list = new Vector<PlotMouseListener>();
 
   /**
    *  Recalculate the values all the state that is used for drawing the plot
@@ -116,10 +128,12 @@ public abstract class Plot extends JPanel
   /** number of graph lines to be drawn */
   private int numPlots;
 
-  /** colour array for graph drawing */
   protected LineAttributes lines[];
   
   private int lastPaintHeight = getHeight();
+  
+  /** the minimum distance in pixels between the labels */
+  private final static int MINIMUM_LABEL_SPACING = 50;
  
   /**
    *  Create a new plot component.
@@ -130,34 +144,27 @@ public abstract class Plot extends JPanel
    **/
   public Plot(Algorithm algorithm, boolean draw_scale) 
   {
-    super();
+    super(new BorderLayout());
     this.algorithm = algorithm;
     this.draw_scale = draw_scale;
 
-    final Font font = Options.getOptions().getFont();
-
-    setFont(font);
-    FontMetrics fm = getFontMetrics(font);
+    setFont(Options.getOptions().getFont());
+    FontMetrics fm = getFontMetrics(getFont());
     font_height = fm.getHeight();
 
-    setLayout(new BorderLayout());
-
     final int MAX_WINDOW;
-
     if(getAlgorithm().getDefaultMaxWindowSize() != null) 
       MAX_WINDOW = getAlgorithm().getDefaultMaxWindowSize().intValue();
     else 
       MAX_WINDOW = 500;
 
     final int MIN_WINDOW;
-
     if(getAlgorithm().getDefaultMinWindowSize() != null) 
       MIN_WINDOW = getAlgorithm().getDefaultMinWindowSize().intValue();
     else 
       MIN_WINDOW = 5;
 
     final int START_WINDOW;
-
     if(getAlgorithm().getDefaultWindowSize() == null) 
       START_WINDOW = 10;
     else 
@@ -189,16 +196,10 @@ public abstract class Plot extends JPanel
       }
     });
 
-
-//  setBackground(Color.white);
     add(window_changer, "East");
-
     addMouseListener(mouse_listener);
     addMouseMotionListener(mouse_motion_listener);
-
   }
-
-  final int SCROLL_NOB_SIZE = 10;
 
   /**
    *  Return the algorithm that was passed to the constructor.
@@ -220,8 +221,7 @@ public abstract class Plot extends JPanel
   final MouseListener mouse_listener = new MouseAdapter()
   {
     /**
-     *  Listen for mouse press events so that we can do a popup menu and a
-     *  crosshair.
+     *  Listen for mouse press popup menu and crosshair events.
      **/
     public void mousePressed(MouseEvent event) 
     {
@@ -296,10 +296,9 @@ public abstract class Plot extends JPanel
         });
         popup.add(setScale);
 
-        final JCheckBoxMenuItem scaling_toggle =
-          new JCheckBoxMenuItem("Scaling");
 
-        scaling_toggle.setState(getAlgorithm().scalingFlag());
+        final JCheckBoxMenuItem scaling_toggle =
+          new JCheckBoxMenuItem("Scaling",getAlgorithm().scalingFlag());
         scaling_toggle.addItemListener(new ItemListener() 
         {
           public void itemStateChanged(ItemEvent _) 
@@ -309,10 +308,19 @@ public abstract class Plot extends JPanel
             repaint();
           }
         });
-
         popup.add(scaling_toggle);
-        
-        
+
+        final JCheckBoxMenuItem showAverageLn = new JCheckBoxMenuItem("Show average", showAverage);
+        showAverageLn.addItemListener(new ItemListener() 
+        {
+          public void itemStateChanged(ItemEvent _) 
+          {
+            showAverage = showAverageLn.isSelected();
+            repaint();
+          }
+        });
+        popup.add(showAverageLn);
+
         if(Plot.this instanceof BasePlot)
         {
           final JMenuItem showMinMaxValues =
@@ -351,13 +359,11 @@ public abstract class Plot extends JPanel
             }
           });
         }
-        
-        
+
         popup.addSeparator();
 
         final JMenu max_window_size =
               new JMenu("Maximum Window Size");
-
         popup.add(max_window_size);
 
         final int[] window_sizes = 
@@ -366,9 +372,7 @@ public abstract class Plot extends JPanel
           200000, 500000, 1000000
         };
 
-
         JMenuItem window_size_item;
-
         for(int i = 0 ; i < window_sizes.length ; ++i) 
         {
           final int size = i;
@@ -440,7 +444,6 @@ public abstract class Plot extends JPanel
         }
 
         final JSplitPane splitPane = getJSplitPane();
-
         if(splitPane == null)
         {
           popup.addSeparator();
@@ -458,8 +461,7 @@ public abstract class Plot extends JPanel
           {
             public void actionPerformed(ActionEvent e)
             {
-              Dimension d = getSize();
-              rescale((int) (d.height * 0.9f));
+              rescale((int) (getSize().height * 0.9f));
             }
           });
 
@@ -467,8 +469,7 @@ public abstract class Plot extends JPanel
           {
             public void actionPerformed(ActionEvent e)
             {
-              Dimension d = getSize();
-              rescale((int) (d.height * 1.1f));
+              rescale((int) (getSize().height * 1.1f));
             }
           });
 
@@ -486,12 +487,10 @@ public abstract class Plot extends JPanel
 
               if(select == 1)
                 return;
-
               try
               {
-                final int value = Integer
-                    .parseInt(newGraphHgt.getText().trim());
-                rescale(value);
+                rescale(Integer.parseInt(
+                    newGraphHgt.getText().trim()));
               }
               catch(NumberFormatException nfe)
               {
@@ -611,7 +610,7 @@ public abstract class Plot extends JPanel
     PlotMouseListener listener;
     for(int i = 0; i < listener_list.size(); ++i)
     {
-      listener = (PlotMouseListener)listener_list.elementAt(i);
+      listener = listener_list.elementAt(i);
       listener.mouseClick(getPointPosition(cross_hair_position));
     }
   }
@@ -625,7 +624,7 @@ public abstract class Plot extends JPanel
     PlotMouseListener listener;
     for(int i = 0; i < listener_list.size(); ++i) 
     {
-      listener = (PlotMouseListener)listener_list.elementAt(i);
+      listener = listener_list.elementAt(i);
       listener.mouseDrag(getPointPosition(drag_start_position),
                          getPointPosition(cross_hair_position));
     }
@@ -640,7 +639,7 @@ public abstract class Plot extends JPanel
     PlotMouseListener listener;
     for(int i = 0; i < listener_list.size(); ++i) 
     {
-      listener = (PlotMouseListener)listener_list.elementAt(i);
+      listener = listener_list.elementAt(i);
       listener.mouseDoubleClick(getPointPosition(cross_hair_position));
     }
   }
@@ -685,11 +684,17 @@ public abstract class Plot extends JPanel
     if(offscreen == null || lastPaintHeight != height)
       offscreen = createImage(width, height);
 
-    Graphics og = offscreen.getGraphics();
-    og.setClip(0, 0, width, height);
-    og.setColor(Color.WHITE);
-    og.fillRect(0, 0, width, height);
-
+    final Graphics og;
+    if(g instanceof SVGGraphics2D)
+      og = g;
+    else
+    {
+      og = offscreen.getGraphics();
+      og.setClip(0, 0, width, height);
+      og.setColor(Color.WHITE);
+      og.fillRect(0, 0, width, height);
+    }
+    
     // Redraw the graph on the canvas using the algorithm from the
     // constructor.
 
@@ -706,8 +711,12 @@ public abstract class Plot extends JPanel
     
     numPlots = drawMultiValueGraph(og,lines);
     drawLabels(og,numPlots);
-    g.drawImage(offscreen, 0, 0, null);
-    og.dispose();
+    
+    if( !(g instanceof SVGGraphics2D) )
+    {
+      g.drawImage(offscreen, 0, 0, null);
+      og.dispose();
+    }
     lastPaintHeight = height;
   }
 
@@ -737,31 +746,19 @@ public abstract class Plot extends JPanel
     drag_start_position = -1;
   }
 
-  // the minimum distance in pixels between the labels
-  private final static int MINIMUM_LABEL_SPACING = 50;
-
   /**
-   *  Draw the scale line at the bottom of the graph.
+   *  Draw the scale line at the bottom of the graph (used by FeaturePlot).
    *  @param start The base on the left
    *  @param end The base on the right
    **/
   protected void drawScaleLine(final Graphics g,
                                final int start, final int end) 
   {
-    final int width  = getWidth() - window_changer.getWidth();
-    final int height = getHeight();
-
-    final int scale_number_y_pos =  height - 1;
-
+    final int hgt = getHeight();
+    final int scale_number_y_pos =  hgt - 1;
     final float bases_per_pixel = 1.0F;
 
-    // set the spacing so that the labels are at multiples of 10
-    final int base_label_spacing = MINIMUM_LABEL_SPACING;
-
-    final int label_spacing = (int)(base_label_spacing / bases_per_pixel);
-
-    final int possible_index_of_first_label = start / base_label_spacing;
-
+    final int possible_index_of_first_label = start / MINIMUM_LABEL_SPACING;
     final int index_of_first_label;
 
     if(possible_index_of_first_label == 0) 
@@ -769,22 +766,18 @@ public abstract class Plot extends JPanel
     else 
       index_of_first_label = possible_index_of_first_label;
 
-    final int index_of_last_label = end / base_label_spacing;
-
-    String label_string;
+    final int index_of_last_label = end / MINIMUM_LABEL_SPACING;
     for(int i = index_of_first_label; i <= index_of_last_label; i++)
     {
-      label_string = String.valueOf((int)(i * base_label_spacing));
-
       final int scale_number_x_pos =
-        (int)((i * base_label_spacing - start) / bases_per_pixel);
+        (int)((i * MINIMUM_LABEL_SPACING - start) / bases_per_pixel);
 
-      g.drawString(label_string,
+      g.drawString(String.valueOf((int)(i * MINIMUM_LABEL_SPACING)),
                    scale_number_x_pos + 2,
                    scale_number_y_pos);
 
-      g.drawLine(scale_number_x_pos, height - getScaleHeight() / 2,
-                 scale_number_x_pos, height - getScaleHeight());
+      g.drawLine(scale_number_x_pos, hgt - getScaleHeight() / 2,
+                 scale_number_x_pos, hgt - getScaleHeight());
     }
   }
 
@@ -930,7 +923,7 @@ public abstract class Plot extends JPanel
    * @param NUMBER_OF_SHADES
    * @return
    */
-  protected Color[] makeColours(Color col, int NUMBER_OF_SHADES)
+  public static Color[] makeColours(Color col, int NUMBER_OF_SHADES)
   {
     Color definedColour[] = new Color[NUMBER_OF_SHADES];
     for(int i = 0; i < NUMBER_OF_SHADES; ++i)
@@ -938,8 +931,7 @@ public abstract class Plot extends JPanel
       int R = col.getRed();
       int G = col.getGreen();
       int B = col.getBlue();
-
-      float scale = ((float)(NUMBER_OF_SHADES-i) * (float)(255 / NUMBER_OF_SHADES )) ;
+      int scale = NUMBER_OF_SHADES-i;
       
       if((R+scale) <= 255)
         R += scale;
@@ -977,6 +969,11 @@ public abstract class Plot extends JPanel
                                     final float min_value,
                                     final float max_value) 
   {
+    // if a heatmap do not show the average
+    if(!showAverage || (
+        lines != null && lines[0].getPlotType().equals(LineAttributes.PLOT_TYPES[2])))
+        return;
+    
     final Float average = getAlgorithm().getAverage();
 
     if(average != null) 
@@ -1028,17 +1025,18 @@ public abstract class Plot extends JPanel
 
     g.drawString(desc, 2, font_height);
 
-    if(numPlots < 3 || numPlots > 10)
+    if(numPlots < 2 || numPlots > 10)
       return;
 
     final FontMetrics fm = g.getFontMetrics();
     int font_width = fm.stringWidth("2");
 
-    int width = getWidth() - window_changer.getWidth() -
-               ((5*numPlots)*font_width);
+    int width = 0;
+    for(LineAttributes ln : lines)
+      width += ln.getLabelWidth(fm);
+    width = getWidth() - window_changer.getWidth() - width;
 
     g.translate(width,0);
-    // note GCFrameAlgorithm overrides this
     ((BaseAlgorithm)getAlgorithm()).drawLegend(g,font_height,
                                                font_width,lines, numPlots);
     g.translate(-width,0);
@@ -1126,22 +1124,6 @@ public abstract class Plot extends JPanel
   {
     return font_height;
   }
-
-  /**
-   *  Used to get the X coordinate for the tooltip text.
-   *  @param total_unit_count The maximum number of residues/bases we can
-   *    show.  This is used to draw the scale line and to calculate the
-   *    distance (in pixels) between plot points.
-   *  @param start_position The distance from the edge of the canvas (measured
-   *    in residues/bases) to start drawing the plot.
-   *  @param xpos The mouse position on the canvas.
-   **/
-  protected int getXCoordinate(final int total_unit_count,
-                               final int start_position,
-                               final int xpos) 
-  {
-    return (xpos * total_unit_count)/getSize().width + start_position;
-  }
   
   /**
    *  Used to get the Y coordinate for the tooltip text.
@@ -1159,7 +1141,6 @@ public abstract class Plot extends JPanel
       final float plot_values[], int base_pos)
   {
     int ypos = (int)((base_pos - start_position - (window_size/2))/step_size);
-    
     if(ypos < 0)
       ypos = 0;
     else if(ypos > plot_values.length-1)
@@ -1167,5 +1148,4 @@ public abstract class Plot extends JPanel
     
     return plot_values[ypos];
   }
-  
 }

@@ -28,15 +28,17 @@ package uk.ac.sanger.artemis.components.variant;
 /* Contact: Heng Li <hengli@broadinstitute.org> */
 
 import net.sf.samtools.util.BlockCompressedInputStream;
+import net.sf.samtools.seekablestream.SeekableStream;
 
 import java.io.*;
+import java.net.URL;
 import java.nio.*;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.lang.StringBuffer;
 
-public class TabixReader
+public class TabixReader extends AbstractVCFReader
 {
 	private String mFn;
 	private BlockCompressedInputStream mFp;
@@ -91,6 +93,18 @@ public class TabixReader
 		mFn = fn;
 		mFp = new BlockCompressedInputStream(new File(fn));
 		readIndex();
+	}
+	
+	public TabixReader(final String fn, final SeekableStream ins) throws IOException {
+	    mFn = fn;
+	    mFp = new BlockCompressedInputStream(ins);
+	    readIndex();
+    }
+	
+	public TabixReader(final String fn, final URL url) throws IOException {
+	    mFn = fn;
+	    mFp = new BlockCompressedInputStream(url);
+	    readIndex();
 	}
 
 	private static int reg2bins(final int beg, final int _end, final int[] list) {
@@ -217,7 +231,7 @@ public class TabixReader
 		String chr;
 		int colon, hyphen;
 		int[] ret = new int[3];
-		colon = reg.indexOf(':'); hyphen = reg.indexOf('-');
+		colon = reg.indexOf(':'); hyphen = reg.lastIndexOf('-');
 		chr = colon >= 0? reg.substring(0, colon) : reg;
 		ret[1] = colon >= 0? Integer.parseInt(reg.substring(colon+1, hyphen)) - 1 : 0;
 		ret[2] = hyphen >= 0? Integer.parseInt(reg.substring(hyphen+1)) : 0x7fffffff;
@@ -394,8 +408,33 @@ public class TabixReader
 		}
 	}
 	
-	  protected String[] getmSeq()
+	  public String[] getSeqNames()
 	  {
 	    return mSeq;
 	  }
+	  
+	  public int getStartColumn()
+	  {
+	    return mBc;
+	  }
+	  
+	  public int getEndColumn()
+	  {
+	    return mEc;
+	  }
+	  
+	  public int getSeqColumn()
+	  {
+	    return mSc;
+	  }
+	  
+	  public String getFileName()
+	  {
+	    return mFn;
+	  }
+	  
+      public char getCommentChar() 
+      {
+        return (char)mMeta;
+    }
 }

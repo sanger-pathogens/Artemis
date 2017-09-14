@@ -60,8 +60,8 @@ public class ActionController
   private ActionVector undo_action_vector = new ActionVector ();
   private ActionVector redo_action_vector = new ActionVector ();
 
-  private List undo;
-  private List redo;
+  private List<JMenuItem> undo;
+  private List<JMenuItem> redo;
   
   /**
    *  Note the start of an action.  Create a new Action and add all
@@ -203,7 +203,7 @@ public class ActionController
    
     final Action temp_current_action = current_action;
 
-    // discard the in-progress Action (if any) and throw an eception below
+    // discard the in-progress Action (if any) and throw an exception below
     current_action = null;
 
     try 
@@ -357,7 +357,7 @@ public class ActionController
   public void addUndoMenu(final JMenuItem undo_item)
   {
     if(undo == null)
-      undo = new Vector();
+      undo = new Vector<JMenuItem>();
     undo.add(undo_item);
     setEnabledMenuItems();
   }
@@ -365,7 +365,7 @@ public class ActionController
   public void addRedoMenu(final JMenuItem redo_item)
   {
     if(redo == null)
-      redo = new Vector();
+      redo = new Vector<JMenuItem>();
     redo.add(redo_item);
     setEnabledMenuItems();
   }  

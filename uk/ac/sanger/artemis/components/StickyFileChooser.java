@@ -26,22 +26,18 @@
 package uk.ac.sanger.artemis.components;
 
 import uk.ac.sanger.artemis.Options;
-
 import java.io.File;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.filechooser.FileSystemView;
 
 /**
  *  A JFileChooser that remembers which directory it is in for next time.
- *
- *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: StickyFileChooser.java,v 1.1 2004-06-09 09:47:49 tjc Exp $
+ *  @author Kim Rutherford
  **/
 
 public class StickyFileChooser extends JFileChooser 
 {
-
+  private static final long serialVersionUID = 1L;
   /**
    *  Used to remember the directory the JFileChooser was in when the user
    *  pressed OK.  This is used as the starting directory next time.

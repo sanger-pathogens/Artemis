@@ -27,9 +27,9 @@ package uk.ac.sanger.artemis;
 
 import uk.ac.sanger.artemis.util.LinePushBackReader;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.Writer;
 import java.util.StringTokenizer;
-import java.util.Vector;
 
 /**
  *  This class implements the ComparisonData interface for MSPcrunch -d
@@ -54,7 +54,6 @@ public class MSPcrunchComparisonData extends SimpleComparisonData
    *  Create a new, empty instance of MSPcrunchComparisonData.
    **/
   protected MSPcrunchComparisonData () {
-    
   }
 
   /**
@@ -88,7 +87,12 @@ public class MSPcrunchComparisonData extends SimpleComparisonData
     final String s_end_token = tokenizer.nextToken ();
 
     try {
-      final int score   = Integer.valueOf (score_token).intValue ();
+      int score;
+      try {
+        score = Integer.valueOf (score_token).intValue ();
+      } catch (NumberFormatException e) {
+        score = Float.valueOf (score_token).intValue (); // blast+
+      }
       final int percent_ident =
         (int)(Float.valueOf (percent_ident_token).floatValue ());
       final int q_start = Integer.valueOf (q_start_token).intValue ();
@@ -141,7 +145,6 @@ public class MSPcrunchComparisonData extends SimpleComparisonData
     } catch (IOException e) {
       return false;
     }
-
     return true;
   }
 }

@@ -3,6 +3,7 @@
 <!ENTITY start SYSTEM "start_chapter.sgml">
 <!ENTITY mainwindow SYSTEM "main_window_chapter.sgml">
 <!ENTITY ssh SYSTEM "ssh_chapter.sgml">
+<!ENTITY proj SYSTEM "project_manager.sgml">
 <!ENTITY options SYSTEM "options.sgml">
 <!ENTITY filemenu SYSTEM "file_menu.sgml">
 <!ENTITY menus SYSTEM "menus.sgml">
@@ -12,6 +13,7 @@
 <!ENTITY acknowledgments SYSTEM "acknowledgments.sgml">
 <!ENTITY copyright SYSTEM "copyright.sgml">
 <!ENTITY concepts SYSTEM "concepts.sgml">
+<!ENTITY filetypes SYSTEM "filetypes.sgml">
 <!ENTITY views-popup SYSTEM "views_popup.sgml">
 <!ENTITY views-scrolling SYSTEM "views_scrolling.sgml">
 <!ENTITY views-scale SYSTEM "views_scale.sgml">
@@ -19,11 +21,15 @@
 <!ENTITY views-directedit SYSTEM "views_directedit.sgml">
 <!ENTITY featurelist SYSTEM "feature_list.sgml">
 <!ENTITY mousebuttons SYSTEM "mousebuttons.sgml">
+<!ENTITY validator SYSTEM "validator.sgml">
 <!ENTITY gettingjava SYSTEM "getting_java.sgml">
 <!ENTITY unixargs SYSTEM "unix_args.sgml">
+<!ENTITY jvmopts SYSTEM "jvm_options.sgml">
 <!ENTITY options-menu SYSTEM "options_menu.sgml">
+<!ENTITY nextgen SYSTEM "next_gen.sgml">
 
 <!ENTITY % artemis-only "INCLUDE">
+<!ENTITY % act-only "IGNORE">
 
 <!ENTITY prog "Artemis">
 <!ENTITY art "Artemis">
@@ -44,7 +50,7 @@
     </PRODUCTNAME>
     <PUBDATE>22 February 1999</PUBDATE>
     <COPYRIGHT>
-      <YEAR>1999-2010</YEAR>
+      <YEAR>1999-2016</YEAR>
       <HOLDER>Genome Research Limited</HOLDER>
     </COPYRIGHT>
     <LEGALNOTICE>
@@ -71,7 +77,7 @@
     </LEGALNOTICE>
     <ABSTRACT>
       <PARA>
-This document describes release 12 of &art; a DNA sequence viewer and
+This document describes release 16 of &art; a DNA sequence viewer and
 sequence annotation tool.
       </PARA>
     </ABSTRACT>
@@ -80,6 +86,7 @@ sequence annotation tool.
   &intro;
   &start;
   &mainwindow;
+  &proj;
   &ssh;
   &options;
 </BOOK>

@@ -1,0 +1,97 @@
+  <SECT2 ID="FILEMENU-READ-BAM">
+    <TITLE>Read BAM / VCF ...</TITLE>
+     <PARA>
+&prog; can read in and visualise BAM, VCF and BCF files. These files need
+to be indexed as described below. They require &prog; to be run with at least
+Java 1.6. Some examples can be found on the 
+<ULINK URL="http://www.sanger.ac.uk/resources/software/artemis/ngs/">Artemis homepage</ULINK>.
+     </PARA>
+     <PARA>
+<ULINK URL="http://samtools.sourceforge.net/">BAM</ULINK> files need to be sorted and indexed using <ULINK
+URL="http://samtools.sourceforge.net/">SAMtools</ULINK>. The index file should be in
+the same directory as the BAM file. This provides an integrated
+<ULINK URL="http://bamview.sourceforge.net/">BamView</ULINK> panel in &prog;, displaying
+sequence alignment mappings to a reference sequence. Multiple BAM files can be loaded
+in from here either by selecting each file individually or by selecting a file of
+path names to the BAM files. The BAM files can be read from a local file system or remotely
+from an HTTP server.
+      </PARA>
+      <PARA>
+BamView will look to match the length of the sequence in &prog; with the reference sequence lengths
+in the BAM file header. It will display a warning when it opens if it finds a matching reference sequence
+(from these lengths) and changes to displaying the reads for that. The reference sequence for the mapped
+reads can be changed manually in the drop down list in the toolbar at the top of the BamView. 
+      </PARA>
+      <PARA>
+In the case when the reference sequences are concatenated together into one (e.g. in a multiple
+FASTA sequence) and the sequence length matches the sum of sequence lengths given in the
+header of the BAM, &prog; will try to match the names (e.g. locus_tag or label) of the
+features (e.g. contig or chromosome) against the reference sequence names in the BAM. It will
+then adjust the read positions accordingly using the start position of the feature.
+      </PARA>
+      <PARA>
+When open the BamView can be configured via the popup menu which is activated by clicking on the 
+BamView panel. The 'View' menu allows the reads to be displayed in a number of views: stack,
+strand-stack, paired-stack, inferred size and coverage.
+      </PARA>
+      <PARA>
+In &prog; the BamView display can be used to calculate the number of reads mapped to the
+regions covered by selected features. In addition the reads per kilobase per million mapped reads (RPKM) 
+values for selected features can be calculated on the fly. Note this calculation can take
+a while to complete.
+      </PARA>
+      <PARA>
+Variant Call Format (<ULINK
+URL="http://1000genomes.org/wiki/doku.php?id=1000_genomes:analysis:vcf4.0">VCF</ULINK>)
+files can also be read. The VCF files need to be compressed and indexed using bgzip and
+tabix respectively (see the <ULINK URL="http://samtools.sourceforge.net/tabix.shtml">tabix manual</ULINK> and
+<ULINK URL="http://sourceforge.net/projects/samtools/files/">download page</ULINK>).
+The compressed file gets read in (e.g. file.vcf.gz) and below are the commands for
+generating this from a VCF file:
+        </PARA>
+        <SYNOPSIS>
+        bgzip file.vcf
+        tabix -p vcf file.vcf.gz
+        </SYNOPSIS>
+      <PARA>
+Alternatively a Binary VCF (<ULINK URL="http://samtools.sourceforge.net/mpileup.shtml">BCF</ULINK>) can
+be indexed with BCFtools and read into Artemis or ACT.
+      </PARA>
+        <PARA>
+As with reading in multiple BAM files, it is possible to read a number of (compressed and indexed)
+VCF files by listing their full paths in a single file. They then get displayed in separate rows
+in the VCF panel.
+        </PARA>
+        <MEDIAOBJECT>
+        <IMAGEOBJECT>
+           <IMAGEDATA FORMAT="png" FILEREF="vcf.png"></IMAGEOBJECT>
+        </MEDIAOBJECT>
+        <PARA>
+For single base changes the colour represents the base it is being changed to, i.e. T black,
+G blue, A green, C red. There are options available to filter the display by the different
+types of variants. Right clicking on the VCF panel will display a pop-up menu in which
+there is a 'Filter...' menu. This opens a window with check boxes for a number of varaint types and properties that can
+be used to filter on. This can be used to show and hide synonymous, non-synonymous, deletion (grey),
+insertion (magenta), and multiple allele (orange line with a circle at the top)
+variants.  In this window there is a check box to hide the variants that do not overlap CDS features.
+There is an option to mark variants that introduce stop codons (into the CDS
+features) with a circle in the middle of the line that represents the variant. There are also options
+to filter the variants by various properties such as their quality score (QUAL) or their depth across the
+samples (DP).
+        </PARA>
+        <PARA>
+Placing the mouse over a vertical line shows an overview  of the variation as a
+tooltip. Also right clicking over a line then gives an extra option in the pop-up
+menu to show the details for that variation in a separate window. There are also
+alternative colouring schemes. It is possible to colour the variants by whether they are
+synonymous or non-synonymous or by their quality score (the lower the quality the
+more faded the variant appears).
+        </PARA>
+        <PARA>
+There is an option to provide an overview of the variant types (e.g. synonymous, non-synonymous,
+insertion, deletion) for selected features. Also, filtered data can be exported in VCF format, or
+the reconstructed DNA sequences of variants can be exported in FASTA format for selected features or
+regions for further analyses. These sequences can be used as input for multiple sequence alignment tools.
+        </PARA>
+  </SECT2>
+

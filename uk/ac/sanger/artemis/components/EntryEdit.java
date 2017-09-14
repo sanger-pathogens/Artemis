@@ -38,7 +38,6 @@ import uk.ac.sanger.artemis.components.variant.VCFview;
 import uk.ac.sanger.artemis.editor.BigPane;
 import uk.ac.sanger.artemis.editor.FastaTextPane;
 import uk.ac.sanger.artemis.editor.HitInfo;
-import uk.ac.sanger.artemis.sequence.Marker;
 import uk.ac.sanger.artemis.sequence.SequenceChangeEvent;
 import uk.ac.sanger.artemis.sequence.SequenceChangeListener;
 
@@ -52,11 +51,31 @@ import uk.ac.sanger.artemis.io.DocumentEntryFactory;
 import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
 import uk.ac.sanger.artemis.io.GenbankTblOutputStream;
+import uk.ac.sanger.artemis.io.IndexFastaStream;
 import uk.ac.sanger.artemis.io.InvalidRelationException;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Image;
+import java.awt.Insets;
+import java.awt.MediaTracker;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
+import java.io.IOException;
 
 import javax.swing.*;
 
@@ -69,10 +88,8 @@ import java.util.Vector;
 
 /**
  *  Each object of this class is used to edit an EntryGroup object.
- *
  *  @author Kim Rutherford
  *  @version $Id: EntryEdit.java,v 1.82 2009-09-24 12:42:16 tjc Exp $
- *
  */
 public class EntryEdit extends JFrame
     implements EntryGroupChangeListener, EntryChangeListener
@@ -112,7 +129,7 @@ public class EntryEdit extends JFrame
   private Selection selection = null;
 
   /** Alignment panel */
-  private BamView jamView;
+  private BamView bamView;
   private JPanel bamPanel;
   private VCFview vcfView;
   private JPanel vcfPanel;
@@ -126,7 +143,6 @@ public class EntryEdit extends JFrame
 
   private SelectionInfoDisplay selection_info;
  
-  private ChadoTransactionManager ctm = new ChadoTransactionManager();
   private CommitButton commitButton;
   private static org.apache.log4j.Logger logger4j = 
     org.apache.log4j.Logger.getLogger(EntryEdit.class);
@@ -165,9 +181,33 @@ public class EntryEdit extends JFrame
       final String name = getEntryGroup().getDefaultEntry().getName();
       if(name != null) 
         setTitle("Artemis Entry Edit: " + name);
-
+      
+      final JButton validate = new JButton("\u2713");
+      validate.setToolTipText("Validate selected entries");
+      validate.setFont(validate.getFont().deriveFont(18f));
+      validate.setPreferredSize(new Dimension(25,25));
+      validate.setMargin(new Insets(0, 0, 0, 0));
+      validate.addActionListener(new ActionListener(){
+        public void actionPerformed(ActionEvent arg0)
+        {
+          SwingUtilities.invokeLater(new Runnable() 
+          {
+            public void run() 
+            {
+              setCursor(new Cursor(Cursor.WAIT_CURSOR));
+              new ValidateViewer(getEntryGroup(), 
+                    getEntryGroup().getAllFeatures());
+              setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+            }
+          });
+        }
+      });
+      xBox.add(validate);
+      
       if(getEntryGroup().getDefaultEntry().getEMBLEntry() instanceof DatabaseDocumentEntry)
-      {       
+      {
+        ChadoTransactionManager ctm = getDatabaseDocumentEntry().getChadoTransactionManager();
+        
         getEntryGroup().addFeatureChangeListener(ctm);
         getEntryGroup().addEntryChangeListener(ctm);
         getEntryGroup().getBases().addSequenceChangeListener(ctm, 0);
@@ -181,27 +221,13 @@ public class EntryEdit extends JFrame
           getEntryGroup().getBases().addSequenceChangeListener(commitButton, 0);
           xBox.add(commitButton);
         }
-        
+
         if(DatabaseDocument.CHADO_INFER_CDS)
           DatabaseInferredFeature.addListenersToEntryGroup(getEntryGroup());
       }
     }
 
-    //final int font_height;
-    //final int font_base_line;
     final Font default_font = getDefaultFont();
-
-    /*if(default_font != null) 
-    {
-      FontMetrics fm = getFontMetrics(default_font);
-      font_height    = fm.getHeight();
-      font_base_line = fm.getMaxAscent();
-    }
-    else 
-    {
-      font_height = -1;
-      font_base_line = -1;
-    }*/
 
     addWindowListener(new WindowAdapter() 
     {
@@ -275,9 +301,8 @@ public class EntryEdit extends JFrame
       jspLookSeq.setVisible(false);
       main_box_panel.add(jspLookSeq);
     }
-    
 
-    
+
     // one line per entry display
     one_line_per_entry_display =
       new FeatureDisplay(getEntryGroup(), getSelection(),
@@ -327,6 +352,13 @@ public class EntryEdit extends JFrame
       final boolean option_value =
         options.getPropertyTruthValue("overview_one_line_per_entry");
       feature_display.setOneLinePerEntry(option_value);
+    }
+    
+    if(options.getProperty("overview_feature_stack_view") != null) 
+    {
+      final boolean option_value =
+        options.getPropertyTruthValue("overview_feature_stack_view");
+      feature_display.setFeatureStackViewFlag(option_value);
     }
 
     feature_display.addDisplayAdjustmentListener(base_plot_group);
@@ -450,7 +482,6 @@ public class EntryEdit extends JFrame
 
     if(icon != null) 
     {
-      //oolkit toolkit = Toolkit.getDefaultToolkit();
       final Image icon_image = icon.getImage();
       MediaTracker tracker = new MediaTracker(this);
       tracker.addImage(icon_image, 0);
@@ -470,10 +501,10 @@ public class EntryEdit extends JFrame
     int screen_height = screen.height;
     int screen_width  = screen.width;
 
-    if(screen_width <= 900 || screen_height <= 700)
+    if(screen_width <= 900 || screen_height <= 800)
       setSize(screen_width * 9 / 10, screen_height * 9 / 10);
     else
-      setSize(900, 700);
+      setSize(900, 800);
 
     final int hgt = getEntryGroup().getAllFeaturesCount() * 
                     feature_list.getLineHeight();
@@ -482,13 +513,69 @@ public class EntryEdit extends JFrame
 
     Utilities.centreFrame(this);
     
-    if(System.getProperty("bam") != null)
+    if(System.getProperty("bam") != null || System.getProperty("bam1") != null)
     {
-      String ngs[] = System.getProperty("bam").split("[\\s,]");
-      FileSelectionDialog fileChooser = new FileSelectionDialog(ngs);
-      List<String> listBams = fileChooser.getFiles(".*\\.bam$");
-      List<String> vcfFiles = fileChooser.getFiles(".*\\.vcf(\\.gz)*$");
-      loadBamAndVcf(listBams, vcfFiles);
+      SwingWorker worker = new SwingWorker()
+      {
+        public Object construct()
+        {
+          EntryEdit.this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
+          final String ngs[];
+          final int idx;
+          
+          if(System.getProperty("bam") != null)
+          {
+            idx = 1;
+            ngs = System.getProperty("bam").split("[\\s,]");
+          }
+          else
+          {
+            idx = 2;
+            ngs = System.getProperty("bam1").split("[\\s,]");
+            System.setProperty("bam1", "");
+          }
+          FileSelectionDialog fileChooser = new FileSelectionDialog(ngs);
+          List<String> listBams = fileChooser.getFiles(".*\\.(bam|cram)$");
+          final List<String> vcfFiles = fileChooser.getFiles(VCFview.VCFFILE_SUFFIX);
+          loadBamAndVcf(listBams, vcfFiles);
+          
+          for(int i=idx; i<20; i++)
+          {
+            if(System.getProperty("bam"+i) != null)
+            {
+              fileChooser = new FileSelectionDialog(
+                  System.getProperty("bam"+i).split("[\\s,]"));
+              
+              List<String> lBams = fileChooser.getFiles(".*\\.(bam|cram)$");
+              if(lBams.size() > 0)
+                bamView.openBamView(fileChooser.getFiles(".*\\.(bam|cram)$"));
+              System.setProperty("bam"+i, "");
+            }
+          }
+
+          if(System.getProperty("bamClone") != null)
+          {
+            int nclone = 2;
+            try
+            {
+              nclone = Integer.parseInt(System.getProperty("bamClone"));
+            }
+            catch(NumberFormatException ne){}
+            if(nclone > 10)
+              nclone = 10;
+            logger4j.debug("No. BamView clones = "+nclone+" bamClone = "+
+                           System.getProperty("bamClone"));
+            
+            for(int i=1;i<nclone;i++)
+              bamView.openBamView(listBams);
+          }
+          System.setProperty("bam", "");
+          
+          EntryEdit.this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+          return null;
+        }
+      };
+      worker.start();
     }
   }
 
@@ -503,11 +590,10 @@ public class EntryEdit extends JFrame
     final Box box_across = Box.createHorizontalBox();
     box_across.add(butt);
     box_across.add(Box.createHorizontalGlue());
-
     return box_across;
   }
   
-  public void resetScrolls()
+  protected void resetScrolls()
   {
     base_display.setFirstBase(1);
     base_display.fixScrollbar();
@@ -518,9 +604,7 @@ public class EntryEdit extends JFrame
   }
 
   /**
-  *
   * Retrieve the feature list object.
-  *
   */
   protected FeatureList getFeatureList()
   {
@@ -529,9 +613,7 @@ public class EntryEdit extends JFrame
 
 
   /**
-  *
   * Retrieve the base display object.
-  *
   */
   protected FeatureDisplay getBaseDisplay()
   {
@@ -539,20 +621,16 @@ public class EntryEdit extends JFrame
   }
 
   /**
-  *
   * Retrieve the one line per entry object.
-  *
   */
-  protected FeatureDisplay getOneLinePerEntryDisplay()
+  public FeatureDisplay getOneLinePerEntryDisplay()
   {
     return one_line_per_entry_display;
   }
 
 
   /**
-  *
   * Retrieve the base plot display object.
-  *
   */
   protected BasePlotGroup getBasePlotGroup()
   {
@@ -564,32 +642,33 @@ public class EntryEdit extends JFrame
     return bamPanel;
   }
   
-  protected JPanel getJamView()
+  public BamView getJamView()
   {
-    return jamView;
+    return bamView;
   }
   
   protected JPanel getVcfPanel()
   {
     return vcfPanel;
   }
+  
+  protected JPanel getVcfView()
+  {
+    return vcfView;
+  }
 
 
   /**
-  *
   * Retrieve the entry group display object.
-  *
   */
-  protected EntryGroupDisplay getEntryGroupDisplay()
+  public EntryGroupDisplay getEntryGroupDisplay()
   {
     return group_display;
   }
 
 
   /**
-  *
   * Retrieve the selection info display object.
-  *
   */
   protected SelectionInfoDisplay getSelectionInfoDisplay()
   {
@@ -598,9 +677,7 @@ public class EntryEdit extends JFrame
 
 
   /**
-  *
   * Retrieve the feature display object.
-  *
   */
   protected FeatureDisplay getFeatureDisplay()
   {
@@ -628,17 +705,6 @@ public class EntryEdit extends JFrame
   }
 
   /**
-   *  This method sends an GotoEvent to all the GotoEvent listeners that will
-   *  make the start of the first selected Feature or FeatureSegment visible.
-   **/
-  public void makeSelectionVisible() 
-  {
-    final Marker first_base = getSelection().getStartBaseOfSelection();
-    final GotoEvent new_event = new GotoEvent(this, first_base);
-    getGotoEventSource().sendGotoEvent(new_event);
-  }
-
-  /**
    *  Return an object that implements the GotoEventSource interface, and is
    *  the controlling object for Goto events associated with this object.
    **/
@@ -653,6 +719,18 @@ public class EntryEdit extends JFrame
   public EntryGroup getEntryGroup() 
   {
     return entry_group;
+  }
+  
+  /**
+   * Return the database document entry if present or null.
+   * @return
+   */
+  private DatabaseDocumentEntry getDatabaseDocumentEntry() 
+  {
+    for(int i=0; i<entry_group.size(); i++)
+      if(entry_group.elementAt(i).getEMBLEntry() instanceof DatabaseDocumentEntry)
+        return (DatabaseDocumentEntry) entry_group.elementAt(i).getEMBLEntry();
+    return null;
   }
 
   /**
@@ -702,8 +780,12 @@ public class EntryEdit extends JFrame
     setVisible(false);
    
     // chado transaction manager
-    getEntryGroup().removeFeatureChangeListener(ctm);
-    getEntryGroup().removeEntryChangeListener(ctm);
+    if(getDatabaseDocumentEntry() != null)
+    {
+      ChadoTransactionManager ctm = getDatabaseDocumentEntry().getChadoTransactionManager();
+      getEntryGroup().removeFeatureChangeListener(ctm);
+      getEntryGroup().removeEntryChangeListener(ctm);
+    }
     
     if(commitButton != null)
     {
@@ -765,7 +847,7 @@ public class EntryEdit extends JFrame
          destination_type, true); 
   }
   
-  void saveEntry(final Entry entry,
+  private void saveEntry(final Entry entry,
       final boolean include_diana_extensions,
       final boolean ask_for_name, final boolean keep_new_name,
       final int destination_type, final boolean useSwingWorker) 
@@ -788,8 +870,17 @@ public class EntryEdit extends JFrame
 
 //  if(!System.getProperty("os.arch").equals("alpha"))
 //  {
+    if(entry.getEMBLEntry().getSequence() instanceof IndexFastaStream)
+    {
+      JOptionPane.showMessageDialog(null, 
+          entry.getName()+" is an indexed sequence.\n"+
+          "This cannot be written out.",
+          "Write Option Not Available", 
+          JOptionPane.WARNING_MESSAGE);
+      return;
+    }
     
-    if(useSwingWorker)
+/*    if(useSwingWorker)
     {
       SwingWorker worker = new SwingWorker()
       {
@@ -805,7 +896,7 @@ public class EntryEdit extends JFrame
       };
       worker.start();
     }
-    else
+    else*/
     {
       final EntryFileDialog file_dialog = new EntryFileDialog(this,
                                                               false);
@@ -813,32 +904,14 @@ public class EntryEdit extends JFrame
       file_dialog.saveEntry(entry, include_diana_extensions, ask_for_name,
                           keep_new_name, destination_type);
     }
-//  }
-//  else
-//    alphaBug(entry, include_diana_extensions, ask_for_name,
-//             keep_new_name, destination_type);
   }
 
-
-/*  private boolean isHeaderEMBL(String header)
-  {
-    StringReader reader = new StringReader(header);
-    BufferedReader buff_reader = new BufferedReader(reader);
- 
-    try
-    {   
-      if(!buff_reader.readLine().startsWith("ID"))
-        return false;
-    }
-    catch(IOException ioe){}
-    return true;
-  }*/
 
   /**
    *  Save the changes to all the Entry objects in the entry_group back to
    *  where the they came from.
    **/
-  public void saveAllEntries() 
+  private void saveAllEntries() 
   {
     SwingWorker worker = new SwingWorker()
     {
@@ -969,11 +1042,9 @@ public class EntryEdit extends JFrame
                                                 getGotoEventSource(),
                                                 base_plot_group);
         }
-
         return true;
       }
     }
-
     return false;
   }
 
@@ -985,8 +1056,6 @@ public class EntryEdit extends JFrame
                          final JScrollPane jspLookSeq, 
                          final LookSeqPanel lookseqPanel) 
   {
-    //final Font default_font = getDefaultFont();
-
     setJMenuBar(menu_bar);
     makeFileMenu();
     menu_bar.add(file_menu);
@@ -1062,16 +1131,37 @@ public class EntryEdit extends JFrame
 
     final JCheckBoxMenuItem show_one_line =
       new JCheckBoxMenuItem("Show One Line Per Entry View", false);
+    final JCheckBoxMenuItem show_feature_stack =
+        new JCheckBoxMenuItem("Show Feature Stack View", false);
+    
     show_one_line.setState(one_line_per_entry_display.isVisible());
     show_one_line.addItemListener(new ItemListener() 
     {
       public void itemStateChanged(ItemEvent event) 
       {
+        if(show_one_line.getState())
+          show_feature_stack.setState(false);
+        one_line_per_entry_display.setFeatureStackViewFlag(false);
         one_line_per_entry_display.setVisible(show_one_line.getState());
         validate();
       }
     });
     display_menu.add(show_one_line);
+    
+    show_feature_stack.setState(one_line_per_entry_display.isVisible());
+    show_feature_stack.addItemListener(new ItemListener() 
+    {
+      public void itemStateChanged(ItemEvent event) 
+      {
+        if(show_feature_stack.getState())
+          show_one_line.setState(false);
+        one_line_per_entry_display.setFeatureStackViewFlag(true);
+        one_line_per_entry_display.setVisible(show_feature_stack.getState());
+        validate();
+        one_line_per_entry_display.updateOneLinePerFeatureFlag();
+      }
+    });
+    display_menu.add(show_feature_stack);
 
     final JCheckBoxMenuItem show_base_display_item =
                                 new JCheckBoxMenuItem("Show Base View");
@@ -1159,23 +1249,25 @@ public class EntryEdit extends JFrame
     {
       public void actionPerformed(ActionEvent event)
       {
-        if(jamView == null)
+        if(bamView == null)
           return;
         
-        if (!jamView.isVisible())
+        if (!bamPanel.isVisible())
         {
-          jamView.setVisible(true);
-          jamView.setDisplay(feature_display.getFirstVisibleForwardBase(),
+          bamPanel.setVisible(true);
+          bamView.setDisplay(feature_display.getFirstVisibleForwardBase(),
                              feature_display.getLastVisibleForwardBase(), null);
-          jamView.revalidate();
-          feature_display.addDisplayAdjustmentListener(jamView);
-          feature_display.getSelection().addSelectionChangeListener(jamView);
+          bamView.revalidate();
+          one_line_per_entry_display.addDisplayAdjustmentListener(bamView);
+          feature_display.addDisplayAdjustmentListener(bamView);
+          feature_display.getSelection().addSelectionChangeListener(bamView);
         }
         else
         {
-          feature_display.removeDisplayAdjustmentListener(jamView);
-          feature_display.getSelection().removeSelectionChangeListener(jamView);
-          jamView.setVisible(false);
+          one_line_per_entry_display.removeDisplayAdjustmentListener(bamView);
+          feature_display.removeDisplayAdjustmentListener(bamView);
+          feature_display.getSelection().removeSelectionChangeListener(bamView);
+          bamPanel.setVisible(false);
         }
         setNGDivider();
       }
@@ -1239,7 +1331,8 @@ public class EntryEdit extends JFrame
         {
           public void actionPerformed(ActionEvent event)
           {
-            commitToDatabase(entry_group, ctm, EntryEdit.this, 
+            commitToDatabase(entry_group,
+                getDatabaseDocumentEntry().getChadoTransactionManager(), EntryEdit.this, 
                 selection, goto_event_source, base_plot_group);
           }
         });
@@ -1315,8 +1408,8 @@ public class EntryEdit extends JFrame
         {
           FileSelectionDialog fileChooser = new FileSelectionDialog(
               null, false, "BAM / VCF View", "BAM / VCF");
-          List<String> listBams = fileChooser.getFiles(".*\\.bam$");
-          List<String> vcfFiles = fileChooser.getFiles(".*\\.vcf(\\.gz)*$");
+          List<String> listBams = fileChooser.getFiles(".*\\.(bam|cram)$");
+          List<String> vcfFiles = fileChooser.getFiles(VCFview.VCFFILE_SUFFIX);
           loadBamAndVcf(listBams, vcfFiles);
         }
       });
@@ -1518,14 +1611,21 @@ public class EntryEdit extends JFrame
         int nmenus = EntryEdit.super.getJMenuBar().getMenuCount();
         final JTabbedPane shortcut_pane = new JTabbedPane();
         
+        Vector<String> sc = new Vector<String>();
         for(int i=0; i<nmenus; i++)
         {
           JMenu menu = EntryEdit.super.getJMenuBar().getMenu(i);
           if(menu instanceof SelectionMenu &&
-             ( menu instanceof SelectMenu ||
-               menu instanceof EditMenu ||
-               menu instanceof ViewMenu ))
-            shortcut_pane.add(menu.getText()+" Menu", ((SelectionMenu)menu).getShortCuts());
+            ((SelectionMenu)menu).isEditableShortCutMenu() )
+            sc.addAll( ((SelectionMenu)menu).getUsedShortCutKeys() );
+        }
+        
+        for(int i=0; i<nmenus; i++)
+        {
+          JMenu menu = EntryEdit.super.getJMenuBar().getMenu(i);
+          if(menu instanceof SelectionMenu &&
+            ((SelectionMenu)menu).isEditableShortCutMenu() )
+            shortcut_pane.add(menu.getText()+" Menu", ((SelectionMenu)menu).getShortCuts(sc));
         }
         
         shortcut_pane.setPreferredSize(new Dimension(
@@ -1650,18 +1750,17 @@ public class EntryEdit extends JFrame
         //
         // Contig ordering options
         //
-        final Vector contigKeys = FeatureDisplay.getContigKeys();
-        final Vector allPossibleContigKeys = FeatureDisplay.getAllPossibleContigKeys();
-        final Vector nonContigKeys = new Vector();
+        final Vector<String> contigKeys = FeatureDisplay.getContigKeys();
+        final Vector<String> allPossibleContigKeys = FeatureDisplay.getAllPossibleContigKeys();
+        final Vector<String> nonContigKeys = new Vector<String>();
         
         for(int i=0; i<allPossibleContigKeys.size(); i++)
         {
-          String keyStr = ((String)allPossibleContigKeys.get(i));
+          String keyStr = allPossibleContigKeys.get(i);
           if( !contigKeys.contains(keyStr) )
             nonContigKeys.add(keyStr);
         }
-        
-        
+
         final DefaultListModel showListModel = new DefaultListModel();
         for(int i=0; i<contigKeys.size(); i++)
           showListModel.addElement(contigKeys.get(i));
@@ -1825,28 +1924,38 @@ public class EntryEdit extends JFrame
       bamPanel.removeAll();
       try
       {
-        jamView = new BamView(listBams, null, 2000);
+        bamView = new BamView(listBams, null, feature_display.getMaxVisibleBases(), this,
+            feature_display, getEntryGroup().getBases(), bamPanel, null);
+        
+        
+        if(entry_group.getSequenceEntry().getEMBLEntry().getSequence() instanceof IndexFastaStream)
+        {
+          // add reference sequence selection listeners
+          getEntryGroupDisplay().getIndexFastaCombo().addIndexReferenceListener(bamView.getCombo());
+          bamView.getCombo().addIndexReferenceListener(getEntryGroupDisplay().getIndexFastaCombo());
+        }
+        
       }
       catch (Exception ex)
       {
-        JOptionPane.showMessageDialog(null, ex.getMessage(), "Error",
+        logger4j.warn("EntryEdit.loadBamAndVcf() "+ex.getMessage());
+        
+        if(ex.getMessage() != null)
+          JOptionPane.showMessageDialog(null, ex.getMessage(), "Error",
             JOptionPane.ERROR_MESSAGE);
+        else
+          ex.printStackTrace();
         return;
       }
 
-      jamView.setShowScale(false);
-      jamView.setBases(getEntryGroup().getBases());
-      jamView.addJamToPanel(bamPanel, null, true, feature_display);
-      jamView.getJspView().setHorizontalScrollBarPolicy(
-          JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-      jamView.removeBorder();
-      jamView.setDisplay(feature_display.getFirstVisibleForwardBase(),
+      bamView.getJspView().getVerticalScrollBar().setValue(
+          bamView.getJspView().getVerticalScrollBar().getMaximum());
+      bamView.setDisplay(feature_display.getFirstVisibleForwardBase(),
           feature_display.getLastVisibleForwardBase(), null);
-      bamPanel.revalidate();
-      jamView.getJspView().getVerticalScrollBar().setValue(
-          jamView.getJspView().getVerticalScrollBar().getMaximum());
-      feature_display.addDisplayAdjustmentListener(jamView);
-      feature_display.getSelection().addSelectionChangeListener(jamView);
+      
+      one_line_per_entry_display.addDisplayAdjustmentListener(bamView);
+      feature_display.addDisplayAdjustmentListener(bamView);
+      feature_display.getSelection().addSelectionChangeListener(bamView);
 
       setNGDivider();
     }
@@ -1857,10 +1966,18 @@ public class EntryEdit extends JFrame
       vcfPanel.removeAll();
       vcfView = new VCFview(null, vcfPanel, vcfFiles,
           feature_display.getMaxVisibleBases(), 1, null, null,
-          feature_display);
+          this, feature_display);
 
       feature_display.addDisplayAdjustmentListener(vcfView);
       feature_display.getSelection().addSelectionChangeListener(vcfView);
+
+      if(entry_group.getSequenceEntry().getEMBLEntry().getSequence() instanceof IndexFastaStream)
+      {
+        // add reference sequence selection listeners
+        getEntryGroupDisplay().getIndexFastaCombo().addIndexReferenceListener(vcfView.getCombo());
+        vcfView.getCombo().addIndexReferenceListener(getEntryGroupDisplay().getIndexFastaCombo());
+      }
+  
       setNGDivider();
     }
   }
@@ -1868,14 +1985,14 @@ public class EntryEdit extends JFrame
   /**
    * Handle the split panes divider positions for BamView and VcfView.
    */
-  private void setNGDivider() 
+  public void setNGDivider() 
   {
     if( (bamPanel.getComponents().length > 0 && bamPanel.isVisible()) &&
         (vcfPanel.getComponents().length > 0 && vcfView.isVisible()))
     {
       ngSplitPane.setVisible(true);
       lowerSplitPane.setDividerSize(3);
-      lowerSplitPane.setDividerLocation(0.35d);
+      lowerSplitPane.setDividerLocation(0.4d);
       
       ngSplitPane.setResizeWeight(0.5);
       ngSplitPane.setDividerSize(3);
@@ -1887,7 +2004,7 @@ public class EntryEdit extends JFrame
     {
       ngSplitPane.setVisible(true);
       lowerSplitPane.setDividerSize(3);
-      lowerSplitPane.setDividerLocation(0.35d);
+      lowerSplitPane.setDividerLocation(0.25d);
       
       ngSplitPane.setResizeWeight(0);
       ngSplitPane.setDividerSize(0);
@@ -1898,7 +2015,7 @@ public class EntryEdit extends JFrame
     {
       ngSplitPane.setVisible(true);
       lowerSplitPane.setDividerSize(3);
-      lowerSplitPane.setDividerLocation(0.35d);
+      lowerSplitPane.setDividerLocation(0.3d);
       
       ngSplitPane.setResizeWeight(1);
       ngSplitPane.setDividerSize(1);
@@ -1916,7 +2033,7 @@ public class EntryEdit extends JFrame
   
   private void printMenu()
   {
-    JMenuItem printImage = new JMenuItem("Save As Image Files (png/jpeg)...");
+    JMenuItem printImage = new JMenuItem("Save As Image Files (png/svg)...");
     printImage.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
@@ -2010,7 +2127,7 @@ public class EntryEdit extends JFrame
    * @param getGotoEventSource
    * @param base_plot_group
    * @param force force the commit - i.e. commit everything that doesn't
-   * trow an exception
+   * throw an exception
    * @return
    */
   private static boolean commitToDatabase(final EntryGroup entry_group,
@@ -2080,7 +2197,7 @@ public class EntryEdit extends JFrame
                                     final BasePlotGroup  base_plot_group)
   {
     // only need to check if the Feature table has been changed
-    List changed_features = ctm.getFeatureInsertUpdate();
+    List<String> changed_features = ctm.getFeatureInsertUpdate();
     if(changed_features == null)
       return true;
     
@@ -2151,73 +2268,28 @@ public class EntryEdit extends JFrame
    **/
   private void readAnEntry(final EntrySource this_source)
   {
-    SwingWorker entryWorker = new SwingWorker()
+    try
     {
-      public Object construct()
-      {
-        try
-        {
-          final Entry new_entry = this_source.getEntry(entry_group.getBases(),
-                                                       true);
-          if(new_entry != null)
-            getEntryGroup().add(new_entry);
-        }
-        catch(final OutOfRangeException e)
-        {
-          new MessageDialog(EntryEdit.this,
-                         "read failed: one of the features " +
-                         "in the entry has an out of " +
-                         "range location: " +
-                         e.getMessage());
-        }
-        catch(final IOException e)
-        {
-          new MessageDialog(EntryEdit.this,
-                         "read failed due to an IO error: " +
-                         e.getMessage());
-        }
-        return null;
-      }
-    };
-    entryWorker.start();
+      final Entry new_entry = this_source.getEntry(entry_group.getBases(),
+                                                   true);
+      if(new_entry != null)
+        getEntryGroup().add(new_entry);
+    }
+    catch(final OutOfRangeException e)
+    {
+      new MessageDialog(EntryEdit.this,
+                     "read failed: one of the features " +
+                     "in the entry has an out of " +
+                     "range location: " +
+                     e.getMessage());
+    }
+    catch(final IOException e)
+    {
+      new MessageDialog(EntryEdit.this,
+                     "read failed due to an IO error: " +
+                     e.getMessage());
+    }
   }
-
-  /**
-  *
-  *  Read an entry from a remote file node (ssh)
-  *
-  **/ 
-/*  private void readAnEntryFromRemoteFileNode(final RemoteFileNode node)
-  {
-    SwingWorker entryWorker = new SwingWorker()
-    {
-      public Object construct()
-      {
-        try
-        {
-          EntryInformation new_entry_information =
-             new SimpleEntryInformation(Options.getArtemisEntryInformation());
-
-          final Entry entry =  new Entry(entry_group.getBases(),
-                           EntryFileDialog.getEntryFromFile(null,
-                           new RemoteFileDocument(node),
-                           new_entry_information, true));
-          if(entry != null)
-            getEntryGroup().add(entry);
-        }
-        catch(final OutOfRangeException e)
-        {
-          new MessageDialog(EntryEdit.this,
-                         "read failed: one of the features " +
-                         "in the entry has an out of " +
-                         "range location: " +
-                         e.getMessage());
-        }
-        return null;
-      }
-    };
-    entryWorker.start();
-  }*/
 
 
   /**
@@ -2234,11 +2306,13 @@ public class EntryEdit extends JFrame
     private static final long serialVersionUID = 1L;
     private Color DEFAULT_FOREGROUND;
     private CommitFrame commitFrame;
+    private final ChadoTransactionManager ctm;
     
     public CommitButton()
     {
       super("Commit");
       
+      ctm = getDatabaseDocumentEntry().getChadoTransactionManager();
       setBackground(EntryGroupDisplay.background_colour);
       addActionListener(new ActionListener()
       {

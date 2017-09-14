@@ -29,7 +29,6 @@ import uk.ac.sanger.artemis.*;
 import uk.ac.sanger.artemis.sequence.*;
 import uk.ac.sanger.artemis.plot.CodonUsageAlgorithm;
 
-import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.InvalidRelationException;
@@ -72,6 +71,7 @@ public class FeatureList extends EntryGroupPanel
              EntryChangeListener, FeatureChangeListener,
              SelectionChangeListener, DisplayComponent
 {
+  private static final long serialVersionUID = 1L;
 
   /** true if correlation scores should be shown */
   private boolean show_correlation_scores = false;
@@ -109,8 +109,6 @@ public class FeatureList extends EntryGroupPanel
 
   /** JScrollPane viewport that this panel is the view of */
   private JViewport viewport = null;
-
-  private boolean isDatabaseGroup = false;
   
   /**
    *  Create a new FeatureList with the default number of rows.
@@ -126,8 +124,6 @@ public class FeatureList extends EntryGroupPanel
                      final BasePlotGroup base_plot_group)
   {
     super(entry_group, selection, goto_event_source, base_plot_group);
-
-    isDatabaseGroup = GeneUtils.isDatabaseEntry(getEntryGroup());
 
     addMouseListener(new MouseAdapter() 
     {
@@ -645,7 +641,9 @@ public class FeatureList extends EntryGroupPanel
                BOX_WIDTH, BOX_WIDTH - 1);
 
     g.setColor(Color.black);
-    if(getSelection().contains(feature)) 
+    
+    final FeatureVector selected_features = getSelection().getAllFeatures();
+    if(selected_features.contains(feature)) 
     {
       // draw in reverse
       g.fillRect(BOX_WIDTH + 4, y_pos,
@@ -653,7 +651,7 @@ public class FeatureList extends EntryGroupPanel
                  getLineHeight());
       g.setColor(background_colour);
     } 
-    
+
     if( feature.getEmblFeature() instanceof GFFStreamFeature &&
         !getSelection().contains(feature) &&
         !((GFFStreamFeature)feature.getEmblFeature()).isVisible() )
@@ -718,13 +716,25 @@ public class FeatureList extends EntryGroupPanel
     {
       try
       { 
-        StringVector sv = StringVector.getStrings(user_defined_qualifier);
+        final StringVector sv = StringVector.getStrings(user_defined_qualifier);
         for(int i=0; i<sv.size(); i++)
         {
-          final String user_defined_qualifier_string = 
-            feature.getValueOfQualifier((String)sv.get(i));
-          if(user_defined_qualifier_string != null)
-            description_string_buffer.append("/"+sv.get(i)+"="+user_defined_qualifier_string+" ");
+          final Qualifier q = feature.getQualifierByName((String)sv.get(i));
+          if(q != null)
+          {
+            final StringVector values = q.getValues();
+            if(values != null)
+            {
+              if(values.size() == 0)
+                description_string_buffer.append("/"+sv.get(i)+" ");
+              else
+                for(int j=0; j<values.size(); j++)  // show multiple values
+                  description_string_buffer.append("/"+sv.get(i)+
+                    (values.get(j) == null ? "" : "="+values.get(j))+" ");
+            }
+            else
+              description_string_buffer.append("/"+sv.get(i)+" ");
+          }
         }
       }
       catch(InvalidRelationException ire){}
@@ -745,11 +755,15 @@ public class FeatureList extends EntryGroupPanel
     else 
     {
       String note = null;
-      if(isDatabaseGroup)
+      if(feature.getEmblFeature() instanceof GFFStreamFeature)
       {
         try
         {
-          note = feature.getValueOfQualifier("comment");
+          if(feature.getValueOfQualifier("isObsolete") != null &&
+             feature.getValueOfQualifier("isObsolete").equals("true"))
+            note = "obsolete";
+          else
+            note = feature.getValueOfQualifier("comment");
         }
         catch(InvalidRelationException e){}
       }
@@ -772,9 +786,9 @@ public class FeatureList extends EntryGroupPanel
         description_string_buffer.append(getQualifierString(feature));
     }
 
-    final String low_pos;
-    final String high_pos;
 
+    String low_pos;
+    String high_pos;
     if(low_marker == null || high_marker == null) 
     {
       low_pos  = "unknown";
@@ -791,6 +805,35 @@ public class FeatureList extends EntryGroupPanel
       {
         low_pos = String.valueOf(high_marker.getRawPosition());
         high_pos = String.valueOf(low_marker.getRawPosition());
+      }
+    }
+
+    if(feature.getEmblFeature() instanceof GFFStreamFeature)
+    {
+      try
+      {
+        if(feature.getQualifierByName("Start_range") != null)
+          low_pos = "<"+low_pos;
+        if(feature.getQualifierByName("End_range") != null)
+          high_pos = ">"+high_pos;
+      }
+      catch (InvalidRelationException e){}
+    }
+    else
+    {
+      if(feature.getLocation().isPartial(true)) // 5prime
+      {
+        if(feature.isForwardFeature()) 
+          low_pos = "<"+low_pos;
+        else
+          high_pos = ">"+high_pos;
+      }
+      if(feature.getLocation().isPartial(false)) // 3prime
+      {
+        if(feature.isForwardFeature())
+          high_pos = ">"+high_pos;
+        else
+          low_pos = "<"+low_pos;
       }
     }
 
@@ -923,10 +966,9 @@ public class FeatureList extends EntryGroupPanel
   /**
    *  Return a String containing the correlation scores.
    **/
-  protected String getScoresString(final Feature feature)
+  private String getScoresString(final Feature feature)
   {
-    final int base_total = feature.getTranslationBases().length();
-
+    //final int base_total = feature.getTranslationBases().length();
     final int c_total = feature.getBaseCount(Bases.getIndexOfBase('c'));
     final int g_total = feature.getBaseCount(Bases.getIndexOfBase('g'));
 
@@ -953,7 +995,6 @@ public class FeatureList extends EntryGroupPanel
     final String c3_score_string;
     final String g1_score_string;
     final String g3_score_string;
-
 
     if(c_total == 0) 
       c3_score_string = "ALL";

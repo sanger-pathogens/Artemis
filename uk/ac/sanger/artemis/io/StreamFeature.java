@@ -25,13 +25,12 @@
 
 package uk.ac.sanger.artemis.io;
 
-import uk.ac.sanger.artemis.util.*;
-import java.io.*;
+import java.io.IOException;
+import java.io.Writer;
 
 /**
  *  This is an implementation of Feature that can read and write itself to a
  *  stream.
- *
  *  @author Kim Rutherford
  *  @version $Id: StreamFeature.java,v 1.1 2004-06-09 09:50:33 tjc Exp $
  **/

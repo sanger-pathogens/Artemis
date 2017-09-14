@@ -722,6 +722,13 @@ public class BasePlot extends Plot
    **/
   public int drawMultiValueGraph(Graphics g, LineAttributes[] lines) 
   {
+    if( getAlgorithm() instanceof UserDataAlgorithm && 
+        ((UserDataAlgorithm)getAlgorithm()).FORMAT ==  UserDataAlgorithm.TABIX_INDEXED_FORMAT)
+    {
+      ((UserDataAlgorithm) getAlgorithm()).readIndexValues(recalculate_flag,
+          entryGroup.getSequenceEntry(), getStart(), getEnd());
+    }
+
     if(recalculate_flag)
       recalculateValues();
     
@@ -735,10 +742,8 @@ public class BasePlot extends Plot
     final int window_size = getWindowSize();
 
     // the number of values to plot at each x position
-    final int get_values_return_count =
+    final int nvalues =
       getBaseAlgorithm().getValueCount();
-
-    final int number_of_values = value_array_array[0].length;
 
     boolean isWiggle = false;
     boolean isBlast  = false;
@@ -753,17 +758,18 @@ public class BasePlot extends Plot
         isBlast = true;
     }
     
-    if(number_of_values > 1 && !isWiggle) 
+    if(value_array_array[0].length > 1 && !isWiggle) 
       drawGlobalAverage(g, min_value, max_value);
 
     Stroke stroke = ((Graphics2D)g).getStroke();
-    for(int value_index = 0; value_index < get_values_return_count;
-        ++value_index)
+    for(int i = 0; i < nvalues; ++i)
     {
-      if(value_index < lines.length)
+      if(i < lines.length)
       {
-        g.setColor(lines[value_index].getLineColour());
-        ((Graphics2D)g).setStroke(lines[value_index].getStroke());
+        g.setColor(lines[i].getLineColour());
+        if(lines[i].getStroke() == null)
+          continue;
+        ((Graphics2D)g).setStroke(lines[i].getStroke());
       }
       else
         g.setColor(Color.black);
@@ -778,8 +784,8 @@ public class BasePlot extends Plot
       drawPoints(g, min_value, max_value, step_size, window_size,
                    getWidthInBases(),
                    offset,
-                   value_array_array[value_index], value_index, 
-                   get_values_return_count, isWiggle, isBlast);
+                   value_array_array[i], i, 
+                   nvalues, isWiggle, isBlast);
     }
     ((Graphics2D)g).setStroke(stroke);
     
@@ -870,7 +876,7 @@ public class BasePlot extends Plot
       }
     }
 
-    return get_values_return_count;
+    return nvalues;
   }
 
 
@@ -985,45 +991,43 @@ public class BasePlot extends Plot
     if(offset < 1) 
       offset = 0;
 
-    final int get_values_return_count =
+    final int nvalues =
       getBaseAlgorithm().getValueCount();
     
     int xpos = getPointPosition(event.getPoint().x);
-    
-    //getXCoordinate(getWidthInBases(),
-    //                          offset, event.getPoint().x);
-    
     String tt = Integer.toString(xpos);
     
-    NumberFormat df= NumberFormat.getNumberInstance();
+    NumberFormat df = NumberFormat.getNumberInstance();
     df.setMaximumFractionDigits(2);
     
-    float ypos;
-    for(int value_index = 0; value_index < get_values_return_count;
-        ++value_index)
-    {
-       ypos = getYCoordinate(step_size, getWindowSize(),
-                             offset, value_array_array[value_index], 
-                             xpos);
-       tt = tt + ", " + df.format(ypos);
-    }
- 
+    for(int i = 0; i < nvalues; ++i)
+      tt += ", " + df.format(
+           getYCoordinate(step_size, getWindowSize(),
+               offset, value_array_array[i], xpos));
+
     if(lines != null)
     {
       // if heat map display column number
       String plotType = lines[0].getPlotType();
       if(plotType.equals(LineAttributes.PLOT_TYPES[2]))
       {
-        final int graph_height = super.getSize().height -
+        final int graph_height = getSize().height -
                   getLabelHeight() - getScaleHeight() - 2;
-        
-        float hgt = ((float)graph_height/(float)lines.length);
+
+        int hgt = graph_height/value_array_array.length;
         float mousePos = (float) (event.getPoint().getY()- 
                   getLabelHeight() - getScaleHeight() - 2.f );
 
         int plotNumber = Math.round(( mousePos / hgt )+.5f);
         if(plotNumber < 1)
           plotNumber = 1;
+        else if(plotNumber > value_array_array.length)
+          plotNumber = value_array_array.length;
+        
+        if(nvalues > 5)
+          tt = Integer.toString(xpos)+", "+df.format(
+              getYCoordinate(step_size, getWindowSize(),
+              offset, value_array_array[plotNumber-1], xpos));
         
         tt = "Plot number : "+plotNumber+"\n"+tt;
       }

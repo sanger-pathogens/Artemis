@@ -134,7 +134,8 @@ public abstract class Graph extends JPanel
       g2.setTransform(newOrig);
       
       float xA = value_array[i];
-       
+      if(xA == 0.f)
+        continue;
       if(value_array[i] >= gcAverage)
         g2.setColor(getPlusColour());
       else
@@ -552,6 +553,7 @@ public abstract class Graph extends JPanel
                               final ActionListener okListener,
                               final JColorChooser colorChooser)
   { 
+    button.setOpaque(true);
     button.setBackground(col);
     button.setBorderPainted(false);
     button.setMargin(new Insets(0,0,0,0));

@@ -26,7 +26,6 @@ package uk.ac.sanger.artemis.components.alignment;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 
@@ -49,18 +48,16 @@ import net.sf.samtools.SAMRecord;
   public class SnpPanel extends AbstractGraphPanel
   {
     private static final long serialVersionUID = 1L;
-    private BamView bamView;
-
     private Bases bases;
     private float minBaseQualityFilter = 0;
+    private int snpCount[];
        
     public SnpPanel(final BamView bamView, Bases bases)
     {
       super();
-      setBackground(Color.white);
       this.bamView = bamView;
       this.bases = bases;
-      initPopupMenu(this);
+      initPopupMenu(popup);
       
       JMenuItem configure = new JMenuItem("Filter by Base Quality...");
       configure.addActionListener(new ActionListener()
@@ -96,16 +93,20 @@ import net.sf.samtools.SAMRecord;
     {
       super.paintComponent(g);
       Graphics2D g2 = (Graphics2D)g;
-      
-      if(bases == null)
+
+      if(bases == null || nBins == 0 || snpCount == null)
         return;
-      
-      List<SAMRecord> readsInView = bamView.getReadsInView();
-      if(readsInView == null)
-        return;
-      
-      int windowSize;
-      
+
+      drawSelectionRange(g2, pixPerBase, start, end, getHeight(), Color.PINK);
+      draw(g2);
+      drawMax(g2);
+    }
+    
+    protected void init(BamView bamView, float pixPerBase, int start, int end)
+    {
+      this.bamView = bamView;
+      setPixPerBase(pixPerBase);
+      setStartAndEnd(start, end);
       if(autoWinSize)
       {
         windowSize = (bamView.getBasesInView()/300);
@@ -116,36 +117,13 @@ import net.sf.samtools.SAMRecord;
       
       if(windowSize < 1)
         windowSize = 1;
-
-      int nBins = Math.round((end-start+1.f)/windowSize);
-      int max = drawPlot(g2, nBins, windowSize);
-      
-      String maxStr = Float.toString(max/windowSize);
-      FontMetrics fm = getFontMetrics(getFont());
-      g2.setColor(Color.black);
-      
-      int xpos = getWidth() - fm.stringWidth(maxStr) - 
-      bamView.getJspView().getVerticalScrollBar().getWidth();
-      g2.drawString(maxStr, xpos, fm.getHeight());
+      nBins = Math.round((end-start+1.f)/windowSize);
+      max = 0;
+      snpCount = null;
     }
-    
-    
-    private int drawPlot(Graphics2D g2, int nBins, int windowSize)
-    {
-      //lines = CoveragePanel.getLineAttributes(bamView.bamList.size());
-      List<SAMRecord> readsInView = bamView.getReadsInView();
-      
-      int snpCount[] = new int[nBins];
-      for(int i=0; i<snpCount.length; i++)
-        snpCount[i] = 0;
-      
-      int max = 0;
-      for(int i=0; i<readsInView.size(); i++)
-      {
-        SAMRecord thisRead = readsInView.get(i);
-        max = calculateSNPs(thisRead, windowSize, nBins, snpCount, max);
-      }
 
+    protected void draw(Graphics2D g2)
+    {
       g2.setColor(Color.red);
       g2.setStroke(new BasicStroke(1.f));
       
@@ -182,8 +160,6 @@ import net.sf.samtools.SAMRecord;
           g2.drawLine(x0, y0, x1, y1);
         }
       }
-
-      return max;
     }
     
     /**
@@ -193,19 +169,22 @@ import net.sf.samtools.SAMRecord;
      * @param pixPerBase
      * @param ypos
      */
-    private int calculateSNPs(SAMRecord thisRead,
-                               int windowSize, 
-                               int nBins,
-                               int[] snpCount,
-                               int max)
+    protected void addRecord(final SAMRecord thisRead, int offset)
     {
-      int thisStart = thisRead.getAlignmentStart();
-      int thisEnd   = thisRead.getAlignmentEnd();
-      int offset    = bamView.getSequenceOffset(thisRead.getReferenceName());
+      if(snpCount == null)
+      {
+        snpCount = new int[nBins];
+        for(int i=0; i<snpCount.length; i++)
+          snpCount[i] = 0;
+      }
+
+      final int thisStart = thisRead.getAlignmentStart();
+      final int thisEnd   = thisRead.getAlignmentEnd();
+
       // use alignment blocks of the contiguous alignment of
       // subsets of read bases to a reference sequence
-      List<AlignmentBlock> blocks = thisRead.getAlignmentBlocks();
-      byte[] phredQuality = thisRead.getBaseQualities();
+      final List<AlignmentBlock> blocks = thisRead.getAlignmentBlocks();
+      final byte[] phredQuality = thisRead.getBaseQualities();
       try
       {
         char[] refSeq = bases.getSubSequenceC(
@@ -221,7 +200,7 @@ import net.sf.samtools.SAMRecord;
             int readPos = block.getReadStart()-1+j;
             int refPos  = block.getReferenceStart()+j;
 
-            if (Character.toUpperCase(refSeq[refPos-thisStart]) != readSeq[readPos])
+            if (Character.toUpperCase(refSeq[refPos-thisStart]) != Character.toUpperCase( (char)readSeq[readPos] ))
             {
               if(phredQuality[readPos] < minBaseQualityFilter)
                 continue;
@@ -241,7 +220,5 @@ import net.sf.samtools.SAMRecord;
       {
         e.printStackTrace();
       }
-      return max;
     }
-   
   }

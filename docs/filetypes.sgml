@@ -1,0 +1,100 @@
+  <SECT1 ID="FILETYPES">
+    <TITLE>Sequence and Annotation File Formats</TITLE>
+    <PARA>
+&prog; reads in the common sequence and annotation file formats. As larger data sets become more common it is now
+possible to index some of these formats (FASTA and GFF3) to speed up and improve the performance of &prog;.
+&prog; can read the following sequence and annotation file formats. As discussed in the next
+section these can be read individually or as a combination of different annotation files
+being read in and overlaid on the same sequence.
+    </PARA>
+    <ITEMIZEDLIST>
+      <LISTITEM>
+        <PARA>
+          <ULINK URL="http://www.ebi.ac.uk/embl/Documentation/">EMBL</ULINK> format.
+        </PARA>
+      </LISTITEM>
+      <LISTITEM>
+        <PARA>
+          <ULINK URL="http://www.ncbi.nlm.nih.gov/genbank/">GenBank</ULINK> format.
+        </PARA>
+      </LISTITEM>
+      <LISTITEM>
+        <PARA>
+          <ULINK URL="http://www.sequenceontology.org/gff3.shtml">GFF3</ULINK> format. The
+          file can contain both the sequence and annotation or the
+          GFF can just be the feature annotation and be read in as a seperate entry and overlaid
+          onto another entry containing the sequence.
+        </PARA>
+      </LISTITEM>
+
+      <LISTITEM>
+        <PARA>
+          FASTA nucleotide sequence files can be one of the following:
+        </PARA>
+        <ITEMIZEDLIST>
+          <LISTITEM>
+            <PARA>
+               Single FASTA sequence.
+            </PARA>
+          </LISTITEM>
+          <LISTITEM>
+            <PARA>
+               Multiple FASTA sequence. The sequences are concatenated together when opened in &prog;.
+            </PARA>
+          </LISTITEM>
+          <LISTITEM>
+            <PARA>
+          Indexed FASTA files can be read in. The files are indexed
+using <ULINK URL="http://samtools.sourceforge.net/">SAMtools</ULINK>:
+        </PARA>
+       <SYNOPSIS>
+samtools faidx ref.fasta
+        </SYNOPSIS>
+        <PARA>
+A drop down menu of the sequences in the Entry toolbar (see <XREF
+LINKEND="MAINWINDOW-BREAKDOWN">) at the top can then used to select the sequence to view.
+        </PARA>
+          </LISTITEM>
+        </ITEMIZEDLIST>
+      </LISTITEM>
+
+      <LISTITEM>
+        <PARA>
+Indexed GFF3 format. This can be read in and overlaid onto an indexed FASTA file. The indexed GFF3 file contains
+the feature annotations. To index the GFF first sort and bgzip the file and then use tabix with 
+"-p gff" option (see the <ULINK URL="http://samtools.sourceforge.net/tabix.shtml">tabix manual</ULINK>):
+        </PARA>
+       <SYNOPSIS>
+(grep ^"#" in.gff; grep -v ^"#" in.gff | sort -k1,1 -k4,4n) | bgzip > sorted.gff.gz;
+tabix -p gff sorted.gff.gz
+        </SYNOPSIS>
+        <PARA>
+A drop down menu of the sequences in the Entry toolbar (see <XREF
+LINKEND="MAINWINDOW-BREAKDOWN">) at the top can then used to select the sequence to view.
+Using indexed FASTA and indexed GFF files improves the memory management
+and enables large genomes to be viewed. Note that as it is indexed the sequence and annotation are
+read-only and cannot be edited. When there are many contigs to select from it can be easier
+to display the one of interest by typing the name into the drop down list.
+        </PARA>
+      </LISTITEM>
+
+      <LISTITEM>
+        <PARA>
+The output of <ULINK
+URL="http://sonnhammer.sbc.su.se/download/software/MSPcrunch+Blixem/"><COMMAND>MSPcrunch</COMMAND></ULINK>.
+<COMMAND>MSPcrunch</COMMAND> must be run with the <COMMAND>-x</COMMAND> or
+<COMMAND>-d</COMMAND> flags.
+        </PARA>
+      </LISTITEM>
+      <LISTITEM>
+        <PARA>
+The output of <ULINK URL="http://www.ncbi.nlm.nih.gov/blast/">blastall version
+2.2.2</ULINK> or better.  <COMMAND>blastall</COMMAND> must be run with the
+<COMMAND>-m 8</COMMAND> flag which generates one line of information per HSP.
+Note that currently &prog; displays each Blast HSP as a separate feature
+rather than displaying each BLAST hit as a feature.
+        </PARA>
+      </LISTITEM>
+    </ITEMIZEDLIST>
+
+  </SECT1>

@@ -39,6 +39,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.List;
+import java.util.Random;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -150,14 +151,22 @@ public class LineAttributes
   public static LineAttributes[]  init(int numPlots)
   {
     final Color frameColour[] = { 
-        Color.red, 
-        new Color(0,200,0), 
+        Color.red,
         Color.blue,
+        Color.black,
+        new Color(0,200,0), 
         Color.magenta,
-        new Color(50, 255, 255),
-        Color.yellow,
-        Color.black };
-    LineAttributes lines[] = new LineAttributes[numPlots];
+        new Color(100, 100, 0),
+        new Color(0, 100, 100),
+        new Color(100, 0, 100),
+        new Color(255, 100, 0),
+        new Color(0, 255, 255),
+        new Color(100, 0, 255),
+        new Color(150, 0, 75),
+        new Color(255, 200, 0),
+        new Color(255, 0, 150)};
+
+    final LineAttributes lines[] = new LineAttributes[numPlots];
     
     if(numPlots == 1)
     {
@@ -165,12 +174,14 @@ public class LineAttributes
       return lines;
     }
     
+    final Random rand = new Random();
     for(int i=0; i<numPlots; i++)
     {
       if(i < frameColour.length)
         lines[i] = new LineAttributes(frameColour[i]);
       else
-        lines[i] = new LineAttributes(Color.black);
+        lines[i] = new LineAttributes(
+            new Color(rand.nextFloat(), rand.nextFloat(), rand.nextFloat()));
     }
     return lines;
   }

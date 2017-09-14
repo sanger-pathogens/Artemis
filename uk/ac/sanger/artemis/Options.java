@@ -113,6 +113,10 @@ public class Options extends Properties
 
   /** Set by getInvisibleQualifiers() and reset by resetCachedValues() */
   private StringVector invisible_qualifiers = null;
+  
+  public static String CACHE_PATH = 
+      System.getProperty("user.home") + File.separatorChar +
+      ".artemis" + File.separatorChar + "cache" + File.separatorChar;
 
   /** 
    *  Create a new Options object with default settings for the options.

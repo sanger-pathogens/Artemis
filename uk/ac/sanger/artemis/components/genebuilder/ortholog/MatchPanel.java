@@ -786,10 +786,20 @@ public class MatchPanel extends JPanel
     return matchQualifiers;
   }
   
-  public List getGeneNameList()
+  public List<String> getGeneNameList()
+  {
+	return getGeneNameList(false);
+  }
+  
+  /**
+   * Get a list of the gene names from the ortholog table or cluster table.
+   * @param cluster if true then retrieve names from the cluster table
+   * @return
+   */
+  public List<String> getGeneNameList(boolean cluster)
   {
     final OrthoParalogTable table;
-  	if(orthoparaLogTable == null || orthoparaLogTable.getTable().getRowCount()<1)
+  	if(orthoparaLogTable == null || orthoparaLogTable.getTable().getRowCount()<1 || cluster)
   	{
   	   if(clusterTable == null || clusterTable.getTable().getRowCount()<1)
   	      return null;
@@ -799,7 +809,7 @@ public class MatchPanel extends JPanel
   	  table = orthoparaLogTable;
 
   	int columnIndex = table.getColumnIndex(OrthoParalogTable.GENE_COL);
-  	List geneNames = new Vector(table.getTable().getRowCount());
+  	List<String> geneNames = new Vector<String>(table.getTable().getRowCount());
   	for(int row=0; row<table.getTable().getRowCount(); row++)
   	{
   		String name[] = 

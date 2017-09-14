@@ -24,16 +24,21 @@
 
 package uk.ac.sanger.artemis.components.database;
 
+import java.awt.Frame;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
 
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.gmod.schema.organism.Organism;
+import org.gmod.schema.organism.OrganismProp;
 import org.gmod.schema.sequence.Feature;
 
+import uk.ac.sanger.artemis.Options;
+import uk.ac.sanger.artemis.components.Splash;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
 
 import java.io.File;
@@ -42,19 +47,16 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.io.IOException;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 /**
-*
 * File node for local file tree manager
-*
 */
 public class DatabaseTreeNode extends DefaultMutableTreeNode 
                  implements Transferable, Serializable
 {
-  public static String CACHE_PATH = 
-    System.getProperty("user.home") + File.separatorChar +
-    ".artemis" + File.separatorChar + "cache" + File.separatorChar;
   private static final long serialVersionUID = 1L;
   public static final DataFlavor DATABASETREENODE = 
           new DataFlavor(DatabaseTreeNode.class, "Work Package");
@@ -64,6 +66,7 @@ public class DatabaseTreeNode extends DefaultMutableTreeNode
          { DATABASETREENODE, DataFlavor.stringFlavor };
   
   private String featureId;
+  private String featureType;  // e.g. chromosome, mitochondrial_chromosome
   private transient Organism organism;
   private String organismCommonName;
   private boolean isLeaf = false;
@@ -71,12 +74,12 @@ public class DatabaseTreeNode extends DefaultMutableTreeNode
   private static transient DatabaseDocument dbDoc;
   private boolean explored = false;
    
-  public DatabaseTreeNode(final String name)
+  protected DatabaseTreeNode(final String name)
   { 
     super(name);
   }
   
-  public DatabaseTreeNode(final String name, 
+  private DatabaseTreeNode(final String name, 
                           final boolean isLeaf)
   {
     super(name);
@@ -91,7 +94,7 @@ public class DatabaseTreeNode extends DefaultMutableTreeNode
    * @param userName
    * @param dbDoc
    */
-  public DatabaseTreeNode(final String name, 
+  protected DatabaseTreeNode(final String name, 
                           final boolean isLeaf,
                           final Organism organism,
                           final String userName,
@@ -112,14 +115,16 @@ public class DatabaseTreeNode extends DefaultMutableTreeNode
    * @param featureId
    * @param userName
    */
-  public DatabaseTreeNode(final String name,
+  private DatabaseTreeNode(final String name,
                           final Organism organism,
                           final String featureId,
+                          final String featureType,
                           final String userName)
   { 
     super(name);
     this.organism  = organism;
     this.featureId = featureId;
+    this.featureType = featureType;
     this.userName  = userName;
     if(getOrganism() != null)
       setOrganismCommonName();
@@ -135,6 +140,47 @@ public class DatabaseTreeNode extends DefaultMutableTreeNode
 	this.organismCommonName = getOrganism().getCommonName();
 	if(organismCommonName == null || organismCommonName.equals(""))
 	  organismCommonName = getOrganism().getGenus() + "." + getOrganism().getSpecies();
+  }
+  
+  /**
+   * Use the OrganismProps to set the translation table and
+   * determine in this is a read only entry.
+   * @param op
+   * @return
+   */
+  public static boolean setOrganismProps(Set<OrganismProp> op, final boolean isMitochondrial)
+  {
+    Splash splash = getSplash();
+    boolean readOnly = false;
+    final Iterator<OrganismProp> it = op.iterator();
+    while (it.hasNext()) 
+    {
+      OrganismProp organismProp = it.next();
+      if(splash != null)
+      {
+        if( (isMitochondrial && 
+             organismProp.getCvTerm().getName().equals("mitochondrialTranslationTable")) ||
+            (!isMitochondrial && 
+             organismProp.getCvTerm().getName().equals("translationTable")))
+          splash.setTranslationTable(organismProp.getValue());
+      }
+      
+     if(organismProp.getCvTerm().getName().equals("frozen") &&
+        organismProp.getValue().equals("yes"))
+       readOnly = true;
+    } 
+    return readOnly;
+  }
+  
+  private static Splash getSplash()
+  {
+    Frame[] frames = JFrame.getFrames();
+    for(int i=0;i<frames.length;i++)
+    {
+      if(frames[i] instanceof Splash)
+        return (Splash)frames[i];
+    }
+    return null;
   }
   
   /** @return   true if node is a directory */
@@ -154,12 +200,12 @@ public class DatabaseTreeNode extends DefaultMutableTreeNode
     if(isLeaf)
       return;
     
-    List sequenceList = dbDoc.getResidueFeatures(new Integer(getOrganism().getOrganismId()));
-    Hashtable sequenceNode = new Hashtable();
+    List<Feature> sequenceList = dbDoc.getResidueFeatures(new Integer(getOrganism().getOrganismId()));
+    Hashtable<String, DatabaseTreeNode> sequenceNode = new Hashtable<String, DatabaseTreeNode>();
     
     for(int i=0;i<sequenceList.size(); i++)
     {
-      Feature f = (Feature)sequenceList.get(i);
+      Feature f = sequenceList.get(i);
       DatabaseTreeNode typeNode;
       if(!sequenceNode.containsKey(f.getCvTerm().getName()))
       {
@@ -171,7 +217,9 @@ public class DatabaseTreeNode extends DefaultMutableTreeNode
         typeNode = (DatabaseTreeNode) sequenceNode.get(f.getCvTerm().getName());
       
       DatabaseTreeNode seqNode = new DatabaseTreeNode(
-          f.getUniqueName(), getOrganism(), Integer.toString(f.getFeatureId()), getUserName());
+          f.getUniqueName(), getOrganism(), 
+          Integer.toString(f.getFeatureId()),
+          f.getCvTerm().getName(), getUserName());
 
       seqNode.isLeaf = true;
       typeNode.add(seqNode);
@@ -190,10 +238,10 @@ public class DatabaseTreeNode extends DefaultMutableTreeNode
   {
     try
     {
-      File dir = new File(CACHE_PATH);
+      File dir = new File(Options.CACHE_PATH);
       if(!dir.exists())
         dir.mkdirs();
-      FileOutputStream fos = new FileOutputStream(CACHE_PATH +
+      FileOutputStream fos = new FileOutputStream(Options.CACHE_PATH +
           ((String)dbDoc.getLocation()).replaceAll("[/:=\\?]", "_"));
       
       ObjectOutputStream out = new ObjectOutputStream(fos);
@@ -226,7 +274,7 @@ public class DatabaseTreeNode extends DefaultMutableTreeNode
     if(d.equals(DATABASETREENODE))
       return new DatabaseTreeNode((String)getUserObject(), 
                                   organism,
-                                  getFeatureId(), getUserName());
+                                  getFeatureId(), getFeatureType(), getUserName());
     else if(d.equals(DataFlavor.stringFlavor))
     {
       String name = getOrganism().getCommonName();
@@ -237,10 +285,14 @@ public class DatabaseTreeNode extends DefaultMutableTreeNode
     else throw new UnsupportedFlavorException(d);
   }
 
-
   public String getFeatureId()
   {
     return featureId;
+  }
+  
+  public String getFeatureType()
+  {
+    return featureType;
   }
 
   protected void setDbDoc(DatabaseDocument dbDoc)
@@ -248,7 +300,7 @@ public class DatabaseTreeNode extends DefaultMutableTreeNode
     DatabaseTreeNode.dbDoc = dbDoc;
   }
   
-  protected Organism getOrganism()
+  public Organism getOrganism()
   {
     if(organism == null && organismCommonName != null)
       organism = dbDoc.getOrganismByCommonName(organismCommonName);

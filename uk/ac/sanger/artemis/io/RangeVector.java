@@ -35,8 +35,9 @@ import java.util.Vector;
  *
  **/
 
-public class RangeVector extends Vector
+public class RangeVector extends Vector<Range>
 {
+  private static final long serialVersionUID = 1L;
 
   /**
    *  Create a new vector of Range objects.
@@ -62,7 +63,7 @@ public class RangeVector extends Vector
     for(int i = 0 ; i < size () / 2 ; ++i) 
     {
       final int swap_position = size () - i - 1;
-      final Object tmp = elementAt(i);
+      final Range tmp = elementAt(i);
       setElementAt(elementAt(swap_position), i);
       setElementAt(tmp, swap_position);
     }
@@ -72,13 +73,11 @@ public class RangeVector extends Vector
   {
     for(int i=0; i<size(); i++)
     {
-      Range thisRange = (Range)elementAt(i);
+      Range thisRange = elementAt(i);
       if(r.equals(thisRange))
         return true;
     }
     return false;
-  }
-  
+  }  
 }
-
 

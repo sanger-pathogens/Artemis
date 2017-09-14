@@ -1375,24 +1375,23 @@ public class IBatisDAO extends GmodDAO
    * @param list  a <code>List</code> of <code>DbXRef</code> objects.
    * @return a <code>Hashtable</code> of dbxrefs.
    */
-  public static Hashtable mergeDbXRef(final List list)
+  public static Hashtable<Integer, List<String>> mergeDbXRef(final List<FeatureDbXRef> list)
   {
-    Hashtable dbxrefHash = new Hashtable();
-    for(int i = 0; i < list.size(); i++)
+    Hashtable<Integer, List<String>> dbxrefHash = new Hashtable<Integer, List<String>>();
+    for(FeatureDbXRef dbxref : list)
     {
-      FeatureDbXRef dbxref = (FeatureDbXRef)list.get(i);
       Integer feature_id = new Integer(dbxref.getFeature().getFeatureId());
       String value = dbxref.getDbXRef().getDb().getName() + ":" + 
                      dbxref.getDbXRef().getAccession();
       if(dbxrefHash.containsKey(feature_id))
       {
-        Vector v = (Vector)dbxrefHash.get(feature_id);
+        List<String> v = dbxrefHash.get(feature_id);
         v.add(value);
         dbxrefHash.put(feature_id, v);
       }  
       else
       {
-        Vector v = new Vector();
+        List<String> v = new Vector<String>();
         v.add(value);
         dbxrefHash.put(feature_id, v);
       }

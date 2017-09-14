@@ -44,7 +44,7 @@ import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.util.StringVector;
 
-class HistoryBox extends AbstractCvBox
+public class HistoryBox extends AbstractCvBox
 {
   private Box xBox;
   private int value_index;
@@ -115,7 +115,7 @@ class HistoryBox extends AbstractCvBox
     dateField = new DatePanel(getField("date=", qualifierString),
                               dimension.height);
 
-    lineBox.add(dateField.getDateSpinner());
+    lineBox.add(dateField);
     lineBox.add(Box.createHorizontalGlue());
     yBox.add(lineBox);
     
@@ -124,7 +124,7 @@ class HistoryBox extends AbstractCvBox
     Dimension dimension4 = new Dimension(
         termCombo.getPreferredSize().width+
         curatorNameField.getPreferredSize().width+
-        dateField.getDateSpinner().getPreferredSize().width-5, dimension.height*20);
+        dateField.getPreferredSize().width-5, dimension.height*20);
     qual = getFieldIgnoreSeparator("qualifier", qualifierString);
     qualfTextField = new QualifierTextArea();
     qualfTextField.setUseHyperlinks(false);
@@ -162,6 +162,35 @@ class HistoryBox extends AbstractCvBox
     if(!old.equals(curatorNameField.getText()))
       return true;
     
+    return false;
+  }
+  
+  public static boolean contains(StringVector oldQualValues, String newQualString)
+  {
+	for(int i=0; i<oldQualValues.size(); i++)
+	{
+	  String oldQualString = (String) oldQualValues.get(i);
+      String oldStr = getField("term=", oldQualString);
+      String newStr = getField("term=", newQualString);
+      if(!oldStr.equals(newStr))
+        continue;
+    
+      oldStr = getFieldIgnoreSeparator("qualifier", oldQualString);
+      newStr = getFieldIgnoreSeparator("qualifier", newQualString);
+      if(!oldStr.equals(newStr))
+        continue;
+    
+      oldStr = getField("date=", oldQualString);
+      newStr = getField("date=", newQualString);
+      if(!oldStr.equals(newStr))
+        continue;
+    
+      oldStr = getField("curatorName=", oldQualString);
+      newStr = getField("curatorName=", newQualString);
+      if(oldStr.equals(newStr))
+        return true;
+	}
+	
     return false;
   }
 
@@ -284,7 +313,7 @@ class HistoryBox extends AbstractCvBox
     return DatabaseDocument.getCvterms("", ChadoTransactionManager.HISTORY_CV, false);
   }
   
-  private static Vector<String> getCvTermStrings()
+  public static Vector<String> getCvTermStrings()
   {
     Vector<CvTerm> cvTerms = getCvTerms();
     Vector<String> cvTermStr = new Vector<String>();
@@ -296,7 +325,7 @@ class HistoryBox extends AbstractCvBox
     return cvTermStr;
   }
   
-  protected static CvTerm getDefaultTerm()
+  public static CvTerm getDefaultTerm()
   {
     CvTerm cvterm =
       (CvTerm) DatabaseDocument.getCvterms("", ChadoTransactionManager.HISTORY_CV, false).get(0);

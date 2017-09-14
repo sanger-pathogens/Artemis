@@ -20,8 +20,11 @@
 <!ENTITY mousebuttons SYSTEM "mousebuttons.sgml">
 <!ENTITY gettingjava SYSTEM "getting_java.sgml">
 <!ENTITY unixargs SYSTEM "unix_args.sgml">
+<!ENTITY jvmopts SYSTEM "jvm_options.sgml">
 <!ENTITY options-menu SYSTEM "options_menu.sgml">
+<!ENTITY nextgen SYSTEM "next_gen.sgml">
 
+<!ENTITY % act-only "INCLUDE">
 <!ENTITY % artemis-only "IGNORE">
 
 <!ENTITY prog "ACT">
@@ -41,7 +44,7 @@
     </PRODUCTNAME>
     <PUBDATE>16 May 2000</PUBDATE>
     <COPYRIGHT>
-      <YEAR>2000-2010</YEAR>
+      <YEAR>2000-2016</YEAR>
       <HOLDER>Genome Research Limited</HOLDER>
     </COPYRIGHT>
     <LEGALNOTICE>
@@ -68,7 +71,7 @@
     </LEGALNOTICE>
     <ABSTRACT>
       <PARA>
-This document describes release 9 of &prog; - a DNA sequence comparison
+This document describes release 13 of &prog; - a DNA sequence comparison
 viewer.
       </PARA>
     </ABSTRACT>

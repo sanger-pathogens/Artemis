@@ -27,7 +27,6 @@ package uk.ac.sanger.artemis.io;
 
 /**
  *  This class is used to represent a upper end of a range like this 100..>200
- *
  *  @author Kim Rutherford
  *  @version $Id: UpperInteger.java,v 1.1 2004-06-09 09:50:39 tjc Exp $
  **/
@@ -36,34 +35,32 @@ public class UpperInteger {
   /**
    *  Create a new UpperInteger from the given int.
    **/
-  public UpperInteger (final Integer position) {
+  protected UpperInteger (final Integer position) {
     this.position = position.intValue ();
   }
 
   /**
    *  Create a new UpperInteger from the given Integer.
    **/
-  public UpperInteger (final int position) {
+  protected UpperInteger (final int position) {
     this.position = position;
   }
 
   /**
    *  Return the position that was passed to the constructor.
    **/
-  public int getPosition () {
+  protected int getPosition () {
     return position;
   }
 
   /**
-   *  Return a String representing this object.  It will look something like
+   *  Return a String representing this.  It will look something like
    *  this: ">100"
    **/
   public String toString () {
     return ">" + getPosition ();
   }
 
-  /**
-   *  The position that was passed to the constructor
-   **/
+  /** position that was passed to the constructor */
   private int position;
 }

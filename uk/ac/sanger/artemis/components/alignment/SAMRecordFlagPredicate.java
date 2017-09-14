@@ -29,20 +29,21 @@ import net.sf.samtools.SAMRecord;
 public class SAMRecordFlagPredicate implements SAMRecordPredicate
 {
   private int flag;
+  private boolean isSet;
   
-  private static final int READ_PAIRED_FLAG = 0x1;
-  private static final int PROPER_PAIR_FLAG = 0x2;
+  protected static final int READ_PAIRED_FLAG = 0x1;
+  protected static final int PROPER_PAIR_FLAG = 0x2;
   protected static final int READ_UNMAPPED_FLAG = 0x4;
-  private static final int MATE_UNMAPPED_FLAG = 0x8;
-  private static final int READ_STRAND_FLAG = 0x10;
-  private static final int MATE_STRAND_FLAG = 0x20;
-  private static final int FIRST_OF_PAIR_FLAG = 0x40;
-  private static final int SECOND_OF_PAIR_FLAG = 0x80;
-  private static final int NOT_PRIMARY_ALIGNMENT_FLAG = 0x100;
-  private static final int READ_FAILS_VENDOR_QUALITY_CHECK_FLAG = 0x200;
-  private static final int DUPLICATE_READ_FLAG = 0x400;
+  protected static final int MATE_UNMAPPED_FLAG = 0x8;
+  protected static final int READ_STRAND_FLAG = 0x10;
+  protected static final int MATE_STRAND_FLAG = 0x20;
+  protected static final int FIRST_OF_PAIR_FLAG = 0x40;
+  protected static final int SECOND_OF_PAIR_FLAG = 0x80;
+  protected static final int NOT_PRIMARY_ALIGNMENT_FLAG = 0x100;
+  protected static final int READ_FAILS_VENDOR_QUALITY_CHECK_FLAG = 0x200;
+  protected static final int DUPLICATE_READ_FLAG = 0x400;
   
-  protected static final String[] FLAGS_DESCRUIPTION =
+  protected static final String[] FLAGS_DESCRIPTION =
   {
     "Read Paired",
     "Proper Pair",
@@ -75,7 +76,13 @@ public class SAMRecordFlagPredicate implements SAMRecordPredicate
   
   public SAMRecordFlagPredicate(int flag)
   {
+    this(flag, true);
+  }
+  
+  public SAMRecordFlagPredicate(int flag, boolean isSet)
+  {
     this.flag = flag;
+    this.isSet = isSet;
   }
   
   /**
@@ -86,10 +93,12 @@ public class SAMRecordFlagPredicate implements SAMRecordPredicate
    **/
   public boolean testPredicate (final SAMRecord samRecord)
   {
+    if(!isSet)
+      return !isFlagSet(samRecord.getFlags());
     return isFlagSet(samRecord.getFlags());
   }
   
-  protected boolean isFlagSet(int thisFlag)
+  private boolean isFlagSet(int thisFlag)
   {
     for(int i=0; i<FLAGS.length; i++)
     {
@@ -99,7 +108,6 @@ public class SAMRecordFlagPredicate implements SAMRecordPredicate
           return true;
       }
     }
-
     return false;
   }
 }

@@ -40,6 +40,9 @@ import java.util.Vector;
 import java.util.Comparator;
 import java.util.Arrays;
 import javax.swing.*;
+
+import org.apache.batik.svggen.SVGGraphics2D;
+
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -99,18 +102,6 @@ public class AlignmentViewer extends CanvasPanel
    **/
   private Strand orig_query_forward_strand;
 
-  /**
-   *  Set by the constructor to be the original reverse strand for the subject
-   *  sequence.
-   **/
-  private Strand orig_subject_reverse_strand;
-
-  /**
-   *  Set by the constructor to be the original reverse strand for the query
-   *  sequence.
-   **/
-  private Strand orig_query_reverse_strand;
-
   /** One of the two Entry objects that we are comparing. */
   final private EntryGroup subject_entry_group;
 
@@ -123,7 +114,8 @@ public class AlignmentViewer extends CanvasPanel
   /**
    *  The objects that are listening for AlignmentSelectionChangeEvents.
    **/
-  private Vector selection_change_listeners = new Vector();
+  private Vector<AlignmentSelectionChangeListener> selection_change_listeners = 
+      new Vector<AlignmentSelectionChangeListener>();
 
   /**
    *  The number of shades of red and blue to use for percentage ID colouring.
@@ -168,8 +160,7 @@ public class AlignmentViewer extends CanvasPanel
   private boolean ignore_self_match_flag = false;
 
   /** Vector of those objects that are listening for AlignmentEvents */
-  private java.util.Vector alignment_event_listeners =
-    new java.util.Vector ();
+  private Vector<AlignmentListener> alignment_event_listeners =  new Vector<AlignmentListener> ();
 
   /**
    *  If true then the FeatureDisplays above and below this AlignmentViewer
@@ -863,19 +854,17 @@ public class AlignmentViewer extends CanvasPanel
    **/
   public void alignAt(final AlignMatch align_match) 
   {
-    final java.util.Vector targets;
+    final Vector<AlignmentListener> targets;
     // copied from a book - synchronizing the whole method might cause a
     // deadlock
     synchronized(this) 
     {
-      targets = (java.util.Vector)alignment_event_listeners.clone();
+      targets = new Vector<AlignmentListener>(alignment_event_listeners);
     }
 
     for(int i = 0; i < targets.size(); ++i) 
     {
-      final AlignmentListener listener =
-        (AlignmentListener)targets.elementAt(i);
-
+      final AlignmentListener listener = targets.elementAt(i);
       listener.alignMatchChosen(new AlignmentEvent(align_match));
     }
   }
@@ -1016,9 +1005,7 @@ public class AlignmentViewer extends CanvasPanel
       final AlignmentSelectionChangeEvent ev =
         new AlignmentSelectionChangeEvent(this, matches);
 
-      final AlignmentSelectionChangeListener listener =
-        (AlignmentSelectionChangeListener)selection_change_listeners.elementAt(i);
-
+      final AlignmentSelectionChangeListener listener = selection_change_listeners.elementAt(i);
       listener.alignmentSelectionChanged(ev);
     }
 
@@ -1172,14 +1159,25 @@ public class AlignmentViewer extends CanvasPanel
       if(offscreen == null)
         offscreen = createImage(canvas_width, canvas_height);
 
-      Graphics og = offscreen.getGraphics();
-      og.setClip(0,0,canvas_width,canvas_height);
+      final Graphics og;
+      if(!(g instanceof SVGGraphics2D))
+      {
+        og = offscreen.getGraphics();
+        og.setClip(0,0,canvas_width,canvas_height);
+      }
+      else
+        og = g;
+      
       og.setColor(Color.white);
       og.fillRect(0, 0, canvas_width, canvas_height);
       drawAlignments(og);
       drawLabels(og);
-      g.drawImage(offscreen, 0, 0, null);
-      og.dispose();
+       
+      if(!(g instanceof SVGGraphics2D))
+      {
+        g.drawImage(offscreen, 0, 0, null);
+        og.dispose();
+      }
     }
   }
 
@@ -1525,7 +1523,7 @@ public class AlignmentViewer extends CanvasPanel
    *  sequences. If the reverse_position argument is true reverse the
    *  complemented match coordinates will be returned.
    **/
-  static int getRealSubjectSequenceStart(final AlignMatch match,
+  protected static int getRealSubjectSequenceStart(final AlignMatch match,
                                          final int sequence_length,
                                          final boolean reverse_position) 
   {
@@ -1541,7 +1539,7 @@ public class AlignmentViewer extends CanvasPanel
    *  reverse_position argument is true reverse the complemented match
    *  coordinates will be returned.
    **/
-  static int getRealSubjectSequenceEnd(final AlignMatch match,
+  protected static int getRealSubjectSequenceEnd(final AlignMatch match,
                                        final int sequence_length,
                                        final boolean reverse_position) 
   {
@@ -1557,7 +1555,7 @@ public class AlignmentViewer extends CanvasPanel
    *  reverse_position argument is true reverse the complemented match
    *  coordinates will be returned.
    **/
-  static int getRealQuerySequenceStart(final AlignMatch match,
+  protected static int getRealQuerySequenceStart(final AlignMatch match,
                                        final int sequence_length,
                                        final boolean reverse_position) 
   {
@@ -1573,7 +1571,7 @@ public class AlignmentViewer extends CanvasPanel
    *  reverse_position argument is true reverse the complemented match
    *  coordinates will be returned.
    **/
-  static int getRealQuerySequenceEnd(final AlignMatch match,
+  protected static int getRealQuerySequenceEnd(final AlignMatch match,
                                      final int sequence_length,
                                      final boolean reverse_position) 
   {
@@ -1587,7 +1585,7 @@ public class AlignmentViewer extends CanvasPanel
    * Remove AlignMatch from the all_matches array
    * @param collection of indexes to be removed from the array
    */
-  private void removeMatches(Vector index)
+  private void removeMatches(Vector<Integer> index)
   {
     AlignMatch tmp_matches[] = new AlignMatch[all_matches.length - index.size()];
     int start_old  = 0;
@@ -1595,7 +1593,7 @@ public class AlignmentViewer extends CanvasPanel
 
     for(int i=0; i<index.size(); i++)
     {
-      curr_index = ( (Integer)index.get(i) ).intValue();
+      curr_index = ( index.get(i) ).intValue();
 
       if(curr_index !=0)
         System.arraycopy(all_matches, start_old, tmp_matches,
@@ -1634,8 +1632,8 @@ public class AlignmentViewer extends CanvasPanel
     int split_at;
     int delete_overlaps = -1;
 
-    Vector matches_to_split = new Vector();
-    Vector removals = new Vector();
+    Vector<Integer> matches_to_split = new Vector<Integer>();
+    Vector<Integer> removals = new Vector<Integer>();
 
     for(int i=0; i<all_matches.length; i++)
     {
@@ -1696,7 +1694,7 @@ public class AlignmentViewer extends CanvasPanel
 
     for(int i=0; i<matches_to_split.size(); i++)
     {
-      curr_index = ((Integer)matches_to_split.get(i)).intValue();
+      curr_index = matches_to_split.get(i).intValue();
 
       //
       if(subject)
@@ -1837,7 +1835,7 @@ public class AlignmentViewer extends CanvasPanel
     int match_start;
     int match_end;
     int delete_overlaps = -1;
-    Vector removals = new Vector();
+    Vector<Integer> removals = new Vector<Integer>();
 
     for(int i = 0; i < all_matches.length; ++i)
     {
@@ -1912,7 +1910,7 @@ public class AlignmentViewer extends CanvasPanel
   *         no matches.
   *
   */
-  protected Vector getDifferenceCoords(boolean subject)
+  protected Vector<Integer[]> getDifferenceCoords(boolean subject)
   {
     final int length;
     final boolean flipped;
@@ -1930,7 +1928,6 @@ public class AlignmentViewer extends CanvasPanel
 
     AlignMatchComparator comparator = new AlignMatchComparator(subject, length,
                                                                flipped);
-
     int imatch = 0;
     final AlignMatch[] sorted_all_matches = new AlignMatch[all_matches.length];   
     for(int i = 0; i < sorted_all_matches.length; ++i)
@@ -1943,7 +1940,7 @@ public class AlignmentViewer extends CanvasPanel
     Arrays.sort(sorted_all_matches, 0, imatch, comparator);
 
     int start = 1;
-    Vector differences = new Vector();
+    Vector<Integer[]> differences = new Vector<Integer[]>();
 
     // find & record regions of no match
     for(int i = 0; i < imatch; ++i)
@@ -2165,7 +2162,7 @@ public class AlignmentViewer extends CanvasPanel
   /**
    *  Return the reference of the subject FeatureDisplay.
    **/
-  public FeatureDisplay getSubjectDisplay() 
+  private FeatureDisplay getSubjectDisplay() 
   {
     return subject_feature_display;
   }
@@ -2173,7 +2170,7 @@ public class AlignmentViewer extends CanvasPanel
   /**
    *  Return the reference of the query FeatureDisplay.
    **/
-  public FeatureDisplay getQueryDisplay() 
+  private FeatureDisplay getQueryDisplay() 
   {
     return query_feature_display;
   }
@@ -2212,7 +2209,7 @@ public class AlignmentViewer extends CanvasPanel
    *  Return the forward Strand of the subject EntryGroup from when the
    *  Comparator was created.
    **/
-  public Strand getOrigSubjectForwardStrand() 
+  private Strand getOrigSubjectForwardStrand() 
   {
     return orig_subject_forward_strand;
   }
@@ -2221,27 +2218,9 @@ public class AlignmentViewer extends CanvasPanel
    *  Return the forward Strand of the query EntryGroup from when the
    *  Comparator was created.
    **/
-  public Strand getOrigQueryForwardStrand() 
+  private Strand getOrigQueryForwardStrand() 
   {
     return orig_query_forward_strand;
-  }
-
-  /**
-   *  Return the reverse Strand of the subject EntryGroup from when the
-   *  Comparator was created.
-   **/
-  public Strand getOrigSubjectReverseStrand() 
-  {
-    return orig_subject_reverse_strand;
-  }
-
-  /**
-   *  Return the reverse Strand of the query EntryGroup from when the
-   *  Comparator was created.
-   **/
-  public Strand getOrigQueryReverseStrand() 
-  {
-    return orig_query_reverse_strand;
   }
 
   /**
@@ -2340,7 +2319,7 @@ public class AlignmentViewer extends CanvasPanel
     return comparison_data;
   }
 
-  public class AlignMatchComparator implements Comparator
+  public class AlignMatchComparator implements Comparator<AlignMatch>
   {
     final private boolean subject;
     final private int length;
@@ -2354,24 +2333,8 @@ public class AlignmentViewer extends CanvasPanel
       this.flipped = flipped;
     }
 
-    public int compare(Object o1,Object o2) throws ClassCastException
-    {
-//    if(o1 == null && o2 == null)
-//      return 0;
-//    else if (o1 == null)
-//      return 1;
-//    else if (o2 == null)
-//      return -1;
-
-      if(!(o1 instanceof AlignMatch))
-        throw new ClassCastException();
-       
-      if(!(o2 instanceof AlignMatch))
-        throw new ClassCastException();
-        
-      AlignMatch c1 = (AlignMatch)o1;
-      AlignMatch c2 = (AlignMatch)o2;
-        
+    public int compare(AlignMatch c1,AlignMatch c2) throws ClassCastException
+    {        
       int start1;
       int start2;
     
@@ -2468,14 +2431,12 @@ public class AlignmentViewer extends CanvasPanel
 
     private void colourBox()
     {
-      //Dimension d = new Dimension(20, 35);
       for(int i = 0; i < NUMBER_OF_SHADES; ++i)
       {
         banner[i].setBackground(definedColour[i]);
         banner[i].repaint();
       }
     }
-    
 
     /**
      *  Return an array of colours that will be used for colouring the matches
@@ -2508,5 +2469,4 @@ public class AlignmentViewer extends CanvasPanel
       return definedColour;
     }
   }
-
 }

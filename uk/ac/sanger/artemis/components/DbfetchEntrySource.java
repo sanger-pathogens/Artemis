@@ -37,6 +37,8 @@ import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.SimpleEntryInformation;
 
 import java.io.*;
+import java.util.regex.Pattern;
+
 import javax.swing.*;
 
 /**
@@ -50,7 +52,7 @@ import javax.swing.*;
 public class DbfetchEntrySource
     implements EntrySource 
 {
-
+  private static Pattern REFSEQ_PATTERN = Pattern.compile("[a-zA-Z]{2}?_\\w*");
   /**
    *  Create a new DbfetchEntrySource.
    *  @param frame The component that created this EntrySource.  (Used for
@@ -96,8 +98,12 @@ public class DbfetchEntrySource
 //      new MessageDialog (getFrame (),
 //                         "reading entry - please wait", false);
 
+      String db = "EMBL";
+      if(REFSEQ_PATTERN.matcher(embl_id).matches())
+        db = "refseq";
+      
       final String url_string =
-        "http://www.ebi.ac.uk/cgi-bin/dbfetch?db=EMBL&id=" + embl_id +"&style=raw";
+        "http://www.ebi.ac.uk/cgi-bin/dbfetch?db="+db+"&id=" + embl_id +"&style=raw";
 
       final Document url_document =
         DocumentFactory.makeDocument(url_string);

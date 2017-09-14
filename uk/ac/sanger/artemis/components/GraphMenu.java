@@ -46,6 +46,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.IOException;
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.Vector;
@@ -89,7 +90,7 @@ public class GraphMenu extends JMenu
    *  This list of the CheckboxMenuItems for the graphs is stored so that we
    *  can turn them all off with "Hide All Graphs".
    **/
-  private Vector algorithm_menu_items = new Vector ();
+  private Vector<JCheckBoxMenuItem> algorithm_menu_items = new Vector <JCheckBoxMenuItem>();
 
   private JSplitPane splitPane;
   
@@ -107,7 +108,8 @@ public class GraphMenu extends JMenu
                     final BasePlotGroup base_plot_group,
                     final FeatureDisplay feature_display,
                     final String menu_name, 
-                    final JSplitPane splitPane) 
+                    final JSplitPane splitPane,
+                    final int index) 
   {
     super (menu_name);
     this.frame = frame;
@@ -134,7 +136,7 @@ public class GraphMenu extends JMenu
           base_plot_group.setVisibleByAlgorithm (this_algorithm, false);
 
           final JCheckBoxMenuItem this_menu_item =
-            (JCheckBoxMenuItem) algorithm_menu_items.elementAt (i);
+             algorithm_menu_items.elementAt (i);
 
           this_menu_item.setState (false);
         }
@@ -169,7 +171,7 @@ public class GraphMenu extends JMenu
         {
           try
           {
-            addUserPlot (null);
+            addUserPlot ((uk.ac.sanger.artemis.util.Document)null, false);
             adjustSplitPane(true);
           }
           catch(java.lang.OutOfMemoryError emem)
@@ -244,34 +246,24 @@ public class GraphMenu extends JMenu
     }
     
     // add user plots from the command line JVM option
-    if(System.getProperty("userplot") != null)
+    if(System.getProperty("userplot"+ (index > 0 ? index : "")) != null ||
+       System.getProperty("loguserplot"+ (index > 0 ? index : "")) != null)
     {
-      String plots[] = System.getProperty("userplot").split("[\\s,]");
+      String plots[] = new String[]{};
+      if(System.getProperty("userplot"+ (index > 0 ? index : "")) != null)
+        plots = System.getProperty("userplot"+ (index > 0 ? index : "")).split("[\\s,]");
+      
+      String logplots[] = new String[]{};
+      if(System.getProperty("loguserplot"+ (index > 0 ? index : "")) != null)
+        logplots = System.getProperty("loguserplot"+ (index > 0 ? index : "")).split("[\\s,]");
       try
       {
         for(int i=0;i<plots.length; i++)
-        {
-          if(plots[i].startsWith("http:") ||
-             plots[i].startsWith("file:") ||
-             plots[i].startsWith("ftp:"))
-          {
-            uk.ac.sanger.artemis.util.Document document =
-              new uk.ac.sanger.artemis.util.URLDocument (new URL(plots[i]));
-            addUserPlot (document);
-          }
-          else
-          {
-            File f = new File(plots[i]);
-            if(f.exists())
-            {
-              uk.ac.sanger.artemis.util.Document document =
-                new uk.ac.sanger.artemis.util.FileDocument (f);
-              addUserPlot (document);
-            }
-            else
-              System.err.println(plots[i]+" not found.");
-          }
-        }
+          addUserPlot (plots[i], false);
+        
+        for(int i=0;i<logplots.length; i++)
+          addUserPlot (logplots[i], true);
+
         splitPane.setDividerSize(3);
         splitPane.setDividerLocation(150);
       }
@@ -294,7 +286,7 @@ public class GraphMenu extends JMenu
                     final FeatureDisplay feature_display,
                     final JSplitPane splitPane) 
   {
-    this (frame, entry_group, base_plot_group, feature_display, "Graph",splitPane);
+    this (frame, entry_group, base_plot_group, feature_display, "Graph",splitPane, -1);
   }
 
   /**
@@ -348,7 +340,7 @@ public class GraphMenu extends JMenu
     for (int i = 0 ; i < current_algorithms.length ; ++i)
     {
       final JCheckBoxMenuItem this_menu_item =
-        (JCheckBoxMenuItem) algorithm_menu_items.elementAt (i);
+         algorithm_menu_items.elementAt (i);
 
        if(this_menu_item.isSelected())
        {
@@ -366,7 +358,8 @@ public class GraphMenu extends JMenu
       splitPane.setDividerLocation(0);
     }
     else if( ( thisGraphOn && nvisible == 1 ) ||
-             (usageDisplayed && nvisible == 2) )
+             (usageDisplayed && nvisible == 2)  ||
+             (splitPane.getDividerLocation() == 0))
     {
       splitPane.setDividerSize(3);
       splitPane.setDividerLocation(0.2d);
@@ -558,12 +551,27 @@ public class GraphMenu extends JMenu
     return true;
   }
   
+  private void addUserPlot (final String plot, final boolean isLog) throws MalformedURLException
+  {
+    if (plot.startsWith("http:") || plot.startsWith("file:") || plot.startsWith("ftp:"))
+      addUserPlot(new uk.ac.sanger.artemis.util.URLDocument(new URL(plot)), isLog);
+    else
+    {
+      File f = new File(plot);
+      if (f.exists())
+        addUserPlot(new uk.ac.sanger.artemis.util.FileDocument(f), isLog);
+      else
+        System.err.println(plot + " not found.");
+    }
+  }
+  
   /**
    *  Add a UserDataAlgorithm to the display.
    **/
-  private void addUserPlot (uk.ac.sanger.artemis.util.Document document) 
+  private void addUserPlot (uk.ac.sanger.artemis.util.Document document,
+                            boolean isLog) 
   {
-    final JCheckBox logTransform = new JCheckBox("Use log(data+1)", false);
+    final JCheckBox logTransform = new JCheckBox("Use log(data+1)", isLog);
     if (document == null)
     {
       final JFrame frame = Utilities.getComponentFrame(base_plot_group);
@@ -631,14 +639,6 @@ public class GraphMenu extends JMenu
       }
     
     frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-  }
-
-  /**
-   *  Return the JFrame that was passed to the constructor.
-   **/
-  private JFrame getParentFrame () 
-  {
-    return frame;
   }
 
   /**

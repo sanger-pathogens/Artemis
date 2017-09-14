@@ -48,6 +48,7 @@ import uk.ac.sanger.artemis.FeatureVector;
 import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.SimpleEntryGroup;
 
+import uk.ac.sanger.artemis.io.DocumentEntryFactory;
 import uk.ac.sanger.artemis.io.EntryInformation;
 import uk.ac.sanger.artemis.io.Key;
 import uk.ac.sanger.artemis.sequence.Bases;
@@ -112,7 +113,7 @@ public class TransferAnnotationToolTest
   { 
     // append product
     TransferAnnotationTool.transferAnnotation(qPanel.getQualifierCheckBoxes(),
-        genesToTransferTo, originatingFeature, entryGroup, true, false,
+        genesToTransferTo, originatingFeature, entryGroup, true, false, false,
         new StringBuffer(), new StringBuffer());
 
     testTransferResult(entryGroup, 2, productStr);
@@ -136,7 +137,7 @@ public class TransferAnnotationToolTest
   { 
     // check it overwrites product
     TransferAnnotationTool.transferAnnotation(qPanel.getQualifierCheckBoxes(),
-        genesToTransferTo, originatingFeature, entryGroup, true, true,
+        genesToTransferTo, originatingFeature, entryGroup, true, true, false,
         new StringBuffer(), new StringBuffer());
 
     testTransferResult(entryGroup, 1, productStr);
@@ -187,11 +188,11 @@ public class TransferAnnotationToolTest
     final Document entryDocument =
         DocumentFactory.makeDocument(url.getFile());
 
-    final uk.ac.sanger.artemis.io.Entry emblEntry =
-      EntryFileDialog.getEntryFromFile(null, entryDocument,
-          artemisEntryInformation, false);
     try
     {
+      final uk.ac.sanger.artemis.io.Entry emblEntry =
+                DocumentEntryFactory.makeDocumentEntry(artemisEntryInformation,
+                		entryDocument, null);
       final Entry entry = new Entry(emblEntry);
       final EntryGroup entryGroup = new SimpleEntryGroup(entry.getBases());
       entryGroup.add(entry);
@@ -204,6 +205,10 @@ public class TransferAnnotationToolTest
     catch(uk.ac.sanger.artemis.sequence.NoSequenceException nse)
     {
       Assert.fail(nse.getMessage());
+    }
+    catch(Exception e)
+    {
+      Assert.fail(e.getMessage());
     }
     return null;
   }

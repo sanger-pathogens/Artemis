@@ -42,7 +42,7 @@ import javax.swing.JTextField;
 import uk.ac.sanger.artemis.editor.BrowserControl;
 
 /**
- * Used to POST data to the NCBI qBLAST web services.
+ * Used to POST data to the NCBI URLAPI (qBLAST) web services.
  */
 class RunBlastAtNCBI extends Thread
 {
@@ -58,7 +58,7 @@ class RunBlastAtNCBI extends Thread
     try
     {
       // Send data
-      URL url = new URL("http://www.ncbi.nlm.nih.gov/blast/Blast.cgi");
+      URL url = new URL("https://blast.ncbi.nlm.nih.gov/Blast.cgi");
       URLConnection conn = url.openConnection();
       conn.setDoOutput(true);
       OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
@@ -94,7 +94,8 @@ class RunBlastAtNCBI extends Thread
       int waitTime = Integer.parseInt(eta);
       ProgressBarFrame progress = new ProgressBarFrame(waitTime, "BLAST");
       Thread.sleep(waitTime * 1000);
-      BrowserControl.displayURL(urlResults + "&CMD=Get");
+      BrowserControl.displayURL(urlResults + "&CMD=Get&OLD_BLAST=false");
+
       progress.dispose();
     }
     catch (Exception e)

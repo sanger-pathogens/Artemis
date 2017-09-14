@@ -29,6 +29,7 @@ import org.gmod.schema.cv.CvTerm;
 
 import uk.ac.sanger.artemis.components.genebuilder.JExtendedComboBox;
 import uk.ac.sanger.artemis.components.genebuilder.cv.CvTermsComparator;
+import uk.ac.sanger.artemis.util.DatabaseLocationParser;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -345,33 +346,23 @@ public class ChadoCvTermView extends JFrame
     pfield = new JPasswordField(16);
     bacross.add(pfield);
 
+    
+    DatabaseLocationParser dlp; 
     // given -Dchado=localhost:port/dbname?username
     if(System.getProperty("chado") != null)
     {
       String db_url = System.getProperty("chado").trim();
-      int index;
-      if((index = db_url.indexOf(":")) > -1)
-      {
-        inServer.setText(db_url.substring(0, index));
-        int index2;
-        if((index2 = db_url.indexOf("/")) > -1)
-        {
-          inPort.setText(db_url.substring(index + 1, index2));
-          int index3;
-          if((index3 = db_url.indexOf("?")) > -1)
-          {
-            inDB.setText(db_url.substring(index2 + 1, index3));
-            inUser.setText(db_url.substring(index3 + 1));
-
-            /*
-             * if(!prompt_user) { location = "jdbc:postgresql://"
-             * +inServer.getText().trim()+ ":" +inPort.getText().trim()+ "/"
-             * +inDB.getText().trim()+ "?user=" +inUser.getText().trim(); return
-             * true; }
-             */
-          }
-        }
-      }
+      dlp = new DatabaseLocationParser(db_url);
+      inServer.setText(dlp.getHost());
+      inPort.setText("" + dlp.getPort());
+      inDB.setText(dlp.getDatabase());
+      inUser.setText(dlp.getUsername());
+   
+    }
+    else
+    {
+        // Still need to initialise the object
+        dlp = new DatabaseLocationParser();
     }
 
     int n = JOptionPane.showConfirmDialog(null, bacross,
@@ -379,10 +370,14 @@ public class ChadoCvTermView extends JFrame
         JOptionPane.QUESTION_MESSAGE);
     if(n == JOptionPane.CANCEL_OPTION)
       return false;
-
-    location = "jdbc:postgresql://" + inServer.getText().trim() + ":"
-        + inPort.getText().trim() + "/" + inDB.getText().trim() + "?user="
-        + inUser.getText().trim();
+    
+    
+    dlp.setHost(inServer.getText());
+    dlp.setPort(inPort.getText());
+    dlp.setDatabase(inDB.getText());
+    dlp.setUsername(inUser.getText());
+  
+    location = dlp.getCompleteURL();
 
     System.setProperty("chado", location);
     return true;

@@ -56,6 +56,8 @@ import javax.swing.*;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Set;
 import java.util.Vector;
 
 /**
@@ -97,7 +99,7 @@ public class EditMenu extends SelectionMenu
     org.apache.log4j.Logger.getLogger(EditMenu.class);
   
   /** records the gene builders that are open */
-  private static Hashtable geneBuilderHash;
+  private static Hashtable<String, GeneBuilderFrame> geneBuilderHash;
   
   /**
    *  Create a new EditMenu object.
@@ -290,10 +292,10 @@ public class EditMenu extends SelectionMenu
         
         if(contig_features == null || contig_features.size() < 1)
         {
-          final Vector contigKeys = FeatureDisplay.getContigKeys();
+          final Vector<String> contigKeys = FeatureDisplay.getContigKeys();
           String msg = "No contig feature keys found:\n";
           for(int i=0; i<contigKeys.size(); i++)
-            msg = msg+(String)contigKeys.get(i)+"\n";
+            msg = msg+contigKeys.get(i)+"\n";
           JOptionPane.showMessageDialog(display, 
               msg, "No Contigs Found", JOptionPane.ERROR_MESSAGE);
           return;
@@ -350,7 +352,8 @@ public class EditMenu extends SelectionMenu
       }
     });
 
-    final JMenu qualifier_menu = new JMenu("Qualifier of Selected Feature(s)");
+    final SelectionSubMenu qualifier_menu = 
+        new SelectionSubMenu(this,"Qualifier of Selected Feature(s)");
     final JMenuItem add_qualifiers_item = new JMenuItem("Change ...");
     add_qualifiers_item.addActionListener(new ActionListener() 
     {
@@ -390,7 +393,8 @@ public class EditMenu extends SelectionMenu
     });
     
 
-    final JMenu feature_menu = new JMenu("Selected Feature(s)");
+    final SelectionSubMenu feature_menu = new SelectionSubMenu(
+        this, "Selected Feature(s)");
     final JMenuItem merge_features_item = new JMenuItem("Merge");
     merge_features_item.setAccelerator(MERGE_FEATURES_KEY);
     merge_features_item.addActionListener(new ActionListener() 
@@ -506,6 +510,7 @@ public class EditMenu extends SelectionMenu
         {
           public void actionPerformed(ActionEvent event) 
           {
+            addGeneModelFeaturesToSelection();
             // unselect, move, then reselect (for speed)
             final FeatureVector selected_features =
               getSelection().getAllFeatures();
@@ -522,6 +527,7 @@ public class EditMenu extends SelectionMenu
         {
           public void actionPerformed(ActionEvent event) 
           {
+            addGeneModelFeaturesToSelection();
             copyFeatures(getSelection().getAllFeatures(), this_entry);
           }
         });
@@ -529,7 +535,8 @@ public class EditMenu extends SelectionMenu
       }
     }
 
-    final JMenu trim_menu = new JMenu("Trim Selected Features");
+    final SelectionSubMenu trim_menu = 
+        new SelectionSubMenu(this, "Trim Selected Features");
     final JMenuItem trim_to_any_item = new JMenuItem("To Any");
     trim_to_any_item.addActionListener(new ActionListener() 
     {
@@ -572,7 +579,8 @@ public class EditMenu extends SelectionMenu
       }
     });
 
-    final JMenu extend_menu = new JMenu("Extend Selected Features");
+    final SelectionSubMenu extend_menu = 
+        new SelectionSubMenu(this, "Extend Selected Features");
     final JMenuItem extend_to_prev_stop_item =
       new JMenuItem("To Previous Stop Codon");
     extend_to_prev_stop_item.setAccelerator(EXTEND_TO_PREVIOUS_STOP_CODON_KEY);
@@ -694,7 +702,8 @@ public class EditMenu extends SelectionMenu
       }
     });
 
-    final JMenu bases_item = new JMenu("Bases");
+    final SelectionSubMenu bases_item = 
+        new SelectionSubMenu(this, "Bases");
     
     final JMenuItem delete_bases_item = new JMenuItem("Delete Selected Bases");
     delete_bases_item.addActionListener(new ActionListener() 
@@ -836,6 +845,37 @@ public class EditMenu extends SelectionMenu
     add(edit_header_item);
 
   }
+  
+  /**
+   * Add all GFF gene model features to the selection
+   * @param f
+   */
+  private void addGeneModelFeaturesToSelection()
+  {
+    if(!GeneUtils.isGFFEntry(getEntryGroup()))
+      return;
+    final FeatureVector selected_features =  getSelection().getAllFeatures();
+    for(int i=0; i<selected_features.size(); i++)
+    {
+      if(selected_features.elementAt(i).getEmblFeature() instanceof GFFStreamFeature)
+      {
+        GFFStreamFeature f = (GFFStreamFeature) selected_features.elementAt(i).getEmblFeature();
+        if(f.getChadoGene() != null)
+        {
+          try
+          {
+            final ChadoCanonicalGene g = f.getChadoGene();
+            Set<uk.ac.sanger.artemis.io.Feature> children = g.getChildren(g.getGene());
+            getSelection().add( (Feature) g.getGene().getUserData() );
+            Iterator<uk.ac.sanger.artemis.io.Feature>  it = children.iterator();
+            while(it.hasNext())
+              getSelection().add( (Feature) it.next().getUserData() );
+          }
+          catch(Exception e){}
+        }
+      }
+    }
+  }
 
   /**
    *  Undo the last change by calling ActionController.undo().
@@ -961,7 +1001,7 @@ public class EditMenu extends SelectionMenu
         ((GFFStreamFeature)selection_feature.getEmblFeature()).getChadoGene() != null)
     {
       if(geneBuilderHash == null)
-         geneBuilderHash = new Hashtable();
+         geneBuilderHash = new Hashtable<String, GeneBuilderFrame>();
       
       final String gene = 
         ((GFFStreamFeature)selection_feature.getEmblFeature()).getChadoGene().getGeneUniqueName();
@@ -972,18 +1012,23 @@ public class EditMenu extends SelectionMenu
          "Show gene builder already open\nfor this gene model?", gene, 
          JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION)
       {
-        ((GeneBuilderFrame)geneBuilderHash.get(gene)).toFront();
+        geneBuilderHash.get(gene).toFront();
       }
       else
       {
         if(System.getProperty("basic") == null ||
            System.getProperty("basic").equals("false"))
         {
-          final GeneBuilderFrame gbFrame = 
-            new GeneBuilderFrame(selection_feature, entry_group,
-                                 selection, goto_event_source);
-          gbFrame.addGeneBuilderHash(geneBuilderHash);
-          geneBuilderHash.put(gene, gbFrame);
+          SwingUtilities.invokeLater(new Runnable() {
+            public void run()
+            {
+              final GeneBuilderFrame gbFrame = 
+                new GeneBuilderFrame(selection_feature, entry_group,
+                                     selection, goto_event_source);
+              gbFrame.addGeneBuilderHash(geneBuilderHash);
+              geneBuilderHash.put(gene, gbFrame);
+            }
+          });
         }
         else
           new BasicGeneBuilderFrame(selection_feature, entry_group,
@@ -1410,6 +1455,22 @@ public class EditMenu extends SelectionMenu
             if(!thisChadoGene.equals(chadoGeneName))
               chadoGene2 = thisChadoGene;
           }
+          
+          //
+          // merge qualifiers
+          try
+          {
+            final uk.ac.sanger.artemis.io.Feature transcript1 = chadoGene.getTranscripts().get(0);
+            final uk.ac.sanger.artemis.io.Feature transcript2 = chadoGene2.getTranscripts().get(0);
+            mergeQualifiers(transcript1, transcript2);
+            
+            final uk.ac.sanger.artemis.io.Feature protein1 = 
+              chadoGene.getProteinOfTranscript(GeneUtils.getUniqueName(transcript1));
+            final uk.ac.sanger.artemis.io.Feature protein2 = 
+              chadoGene2.getProteinOfTranscript(GeneUtils.getUniqueName(transcript2));
+            mergeQualifiers(protein1, protein2);
+          }
+          catch(Exception e){ logger4j.warn(e.getMessage()); }
         }
         else
         {
@@ -1474,6 +1535,11 @@ public class EditMenu extends SelectionMenu
       
       if(chadoGene2 != null)
       {
+        // add prev_sys_id
+        Qualifier q = new Qualifier("previous_systematic_id", 
+            chadoGene2.getGeneUniqueName()+";current=false");
+        ((Feature)chadoGene.getGene().getUserData()).addQualifierValues(q);
+        
         logger4j.debug("Now DELETE "+chadoGene2.getGeneUniqueName());
         GeneUtils.deleteAllFeature((Feature)chadoGene2.getGene().getUserData(), chadoGene2);
       }
@@ -1508,10 +1574,10 @@ public class EditMenu extends SelectionMenu
    * @param features
    * @return
    */
-  private static java.util.List getGeneModels(final FeatureVector features)
+  private static java.util.List<ChadoCanonicalGene> getGeneModels(final FeatureVector features)
   {
-    final java.util.List geneModels = new Vector();
-    final java.util.List geneModelNames = new Vector();
+    final java.util.List<ChadoCanonicalGene> geneModels = new Vector<ChadoCanonicalGene>();
+    final java.util.List<String> geneModelNames = new Vector<String>();
     for(int i=0; i< features.size(); i++)
     {
       if(features.elementAt(i).getEmblFeature() instanceof GFFStreamFeature)
@@ -1535,6 +1601,37 @@ public class EditMenu extends SelectionMenu
   }
   
   /**
+   * Merge qualifiers from two features avoiding duplication of their values.
+   * @param f1  first feature that results in having the merged qualifiers
+   * @param f2  second feature
+   * @throws ReadOnlyException
+   * @throws EntryInformationException
+   */
+  private static void mergeQualifiers(final uk.ac.sanger.artemis.io.Feature f1, 
+                                      final uk.ac.sanger.artemis.io.Feature f2) throws ReadOnlyException, EntryInformationException
+  {
+    if(f1 != null && f2 != null)
+    {
+      final QualifierVector qualifiers = f2.getQualifiers();
+      for(int i=0;i<qualifiers.size(); i++)
+      {
+        Qualifier qualifier = (Qualifier) qualifiers.get(i);
+        if(!TransferAnnotationTool.isNonTransferable(qualifier.getName()))
+        {
+          final Qualifier oldQualifier = f1.getQualifiers().getQualifierByName(qualifier.getName());
+          StringVector oldValues = null;
+          if(oldQualifier != null)
+            oldValues = oldQualifier.getValues();
+          
+          final Qualifier newQualifier =
+              TransferAnnotationTool.getQualifierWithoutDuplicateValues(qualifier, oldValues);
+          ((Feature)f1.getUserData()).addQualifierValues(newQualifier);
+        }
+      }
+    }
+  }
+  
+  /**
    *  If the selection contains exactly two segments and those segments are
    *  adjacent in the same feature, split the feature into two pieces.  The
    *  orignal feature is truncated and a new feature is created.  The
@@ -1544,7 +1641,7 @@ public class EditMenu extends SelectionMenu
    *  @param entry_group Used to get the ActionController for calling
    *    startAction() and endAction().
    **/
-  private static void unmergeFeature(final JFrame frame,
+  protected static void unmergeFeature(final JFrame frame,
                               final Selection selection,
                               final EntryGroup entry_group) 
   {
@@ -1613,16 +1710,15 @@ public class EditMenu extends SelectionMenu
         {
           final FeatureVector chadoGenes = new FeatureVector();
           chadoGenes.add(segment_feature);
-          final Vector duplicateGenes = duplicateGeneFeatures(frame, chadoGenes, entry_group);
+          final Vector<ChadoCanonicalGene> duplicateGenes = duplicateGeneFeatures(frame, chadoGenes, entry_group);
           
           // get the new duplicate spliced feature
-          ChadoCanonicalGene chado_gene = (ChadoCanonicalGene)duplicateGenes.get(0);
+          ChadoCanonicalGene chado_gene = duplicateGenes.get(0);
           // assumes single transcript
-          uk.ac.sanger.artemis.io.Feature transcript = 
-            (uk.ac.sanger.artemis.io.Feature)chado_gene.getTranscripts().get(0);
+          uk.ac.sanger.artemis.io.Feature transcript = chado_gene.getTranscripts().get(0);
           // get the spliced feature with the same key as the segment
           // selected to unmerge
-          uk.ac.sanger.artemis.io.Feature spliced = (uk.ac.sanger.artemis.io.Feature)
+          uk.ac.sanger.artemis.io.Feature spliced =
             chado_gene.getSpliceSitesOfTranscript(GeneUtils.getUniqueName(transcript), 
               first_segment.getFeature().getKey().getKeyString()).get(0);
           new_feature = (Feature)spliced.getUserData();
@@ -1636,11 +1732,8 @@ public class EditMenu extends SelectionMenu
         // segment_feature and delete the segments up to (and including)
         // index_of_first_segment from new_feature
 
-        for(int i = all_feature_segments.size() - 1;
-            i >= index_of_second_segment; --i)
-        {
+        for(int i = all_feature_segments.size() - 1; i >= index_of_second_segment; --i)
           segment_feature.getSegments ().elementAt (i).removeFromFeature ();
-        }
 
         // remove the first segment of new_feature index_of_first_segment times
         for (int i = 0; i <= index_of_first_segment; ++i) 
@@ -1648,12 +1741,61 @@ public class EditMenu extends SelectionMenu
 
         if(segment_feature.getEmblFeature() instanceof GFFStreamFeature)
         {
-          GeneUtils.checkGeneBoundary(
-              ((GFFStreamFeature)segment_feature.getEmblFeature()).getChadoGene());
-          GeneUtils.checkGeneBoundary(
-              ((GFFStreamFeature)new_feature.getEmblFeature()).getChadoGene());
+          final FeatureVector chadoGenes = new FeatureVector();
+          chadoGenes.add(segment_feature);
+          final Vector<ChadoCanonicalGene> duplicateGenes = duplicateGeneFeatures(frame, chadoGenes, entry_group);
+          
+          final GFFStreamFeature orig_feature = (GFFStreamFeature)segment_feature.getEmblFeature();
+          final ChadoCanonicalGene orig_chado_gene = orig_feature.getChadoGene();
+          final String prevId = GeneUtils.getUniqueName(orig_chado_gene.getGene());
+          GeneUtils.deleteAllFeature(
+              ((uk.ac.sanger.artemis.Feature)orig_chado_gene.getGene().getUserData()), orig_chado_gene, false);
+
+          final ChadoCanonicalGene gene1 = duplicateGenes.get(0);
+          final ChadoCanonicalGene gene2 = ((GFFStreamFeature)new_feature.getEmblFeature()).getChadoGene();
+          if(!prevId.startsWith("DUP"))
+          {
+            // add prev_sys_id
+            final Qualifier synQualifier =
+              new Qualifier("previous_systematic_id", prevId+";current=false");
+            
+            try
+            {
+              Qualifier originalQualifier =
+                  ((Feature)gene1.getGene().getUserData()).getQualifierByName("previous_systematic_id");
+              if( originalQualifier == null ||
+                 !originalQualifier.getValues().contains(prevId+";current=false"))
+              {
+                ((Feature)gene1.getGene().getUserData()).addQualifierValues(synQualifier);
+                ((Feature)gene2.getGene().getUserData()).addQualifierValues(synQualifier);
+
+                final Qualifier comment =
+                    new Qualifier("comment", "this gene model has previous ID "+prevId+
+                        " and was reassigned a new ID as changes in the gene model occurred");
+
+                try
+                {
+                  ((Feature)gene1.getProteinOfTranscript( GeneUtils.getUniqueName(
+                            gene1.getTranscripts().get(0)) ).getUserData()).addQualifierValues(comment);
+                  ((Feature)gene2.getProteinOfTranscript( GeneUtils.getUniqueName(
+                            gene2.getTranscripts().get(0)) ).getUserData()).addQualifierValues(comment);
+                }
+                catch (Exception e)
+                {
+                  ((Feature)gene1.getGene().getUserData()).addQualifierValues(comment);
+                  ((Feature)gene2.getGene().getUserData()).addQualifierValues(comment);
+                }
+              }
+
+            }
+            catch (Exception e){}
+          }
+
+          GeneUtils.checkGeneBoundary(gene1);
+          GeneUtils.checkGeneBoundary(gene2);
         }
-        selection.set (segment_feature.getSegments ().lastElement ());
+        else
+          selection.set (segment_feature.getSegments ().lastElement ());
         selection.add (new_feature.getSegments ().elementAt (0));
       } 
       catch (ReadOnlyException e) 
@@ -2047,7 +2189,7 @@ public class EditMenu extends SelectionMenu
   }
 
   
-  protected static Vector duplicateGeneFeatures(final JFrame frame,
+  private static Vector<ChadoCanonicalGene> duplicateGeneFeatures(final JFrame frame,
       final FeatureVector features,
       final EntryGroup entry_group) 
   {
@@ -2163,106 +2305,121 @@ public class EditMenu extends SelectionMenu
       entry_group.getActionController ().startAction ();
 
       final FeatureVector features_to_delete = selection.getAllFeatures ();
-      final String feature_count_string;
-      if (features_to_delete.size () == 1)
-        feature_count_string = "the selected feature";
-      else
-        feature_count_string = features_to_delete.size () + " features";
+      final String feature_count_str = ( (features_to_delete.size () == 1) ?
+          "the selected feature" :  features_to_delete.size () + " features");
+
+      if (!checkForSelectionFeatures (frame, selection, 0,
+          "really delete " + feature_count_str + "?")) 
+        return;
+
+      // clear the selection now so it doesn't need updating as each
+      // feature is deleted
+      selection.clear ();
 
       if (Options.getOptions ().isNoddyMode ()) 
       {
       	if(GeneUtils.isDatabaseEntry(entry_group))
       	{
-      		Box boption = Box.createVerticalBox();
-      		JCheckBox delete = new JCheckBox("permanently delete", 
+      	  Box boption = Box.createVerticalBox();
+      	  final JCheckBox delete = new JCheckBox("permanently delete", 
       		  !Options.getOptions().getPropertyTruthValue("set_obsolete_on_delete"));
-      		boption.add(new JLabel("Make "+feature_count_string+" obsolete?"));
-      		boption.add(delete);
-      		int res = JOptionPane.showConfirmDialog(frame, 
-      				boption, "Make obsolete", JOptionPane.OK_CANCEL_OPTION, 
-      				JOptionPane.QUESTION_MESSAGE);
-      		if(res == JOptionPane.CANCEL_OPTION)
-      			return;
-      		
-      		// make obsolete rather than permanently delete
-      		if(!delete.isSelected())
-      		{
-      			for(int i=0; i<features_to_delete.size(); i++)
-      			{
-      				final Feature currentFeature = features_to_delete.elementAt(i);
-      				try
-							{
-								currentFeature.setQualifier(new Qualifier("isObsolete", "true"));
-	              PropertiesPanel.updateObsoleteSettings(
-	      						(GFFStreamFeature)currentFeature.getEmblFeature());
-							} 
-      				catch (Exception e)
-							{
-								e.printStackTrace();
-							} 	
-      			}
-      			return;
-      		}
-      	}
-      	if (!checkForSelectionFeatures (frame, selection, 0,
-                                        "really delete " +
-                                        feature_count_string + "?")) 
-      	{
+      	  boption.add(new JLabel("Make "+feature_count_str+" obsolete?"));
+      	  boption.add(delete);
+      	  final int res = JOptionPane.showConfirmDialog(frame, 
+      			boption, "Make obsolete", JOptionPane.OK_CANCEL_OPTION, 
+      			JOptionPane.QUESTION_MESSAGE);
+      	  if(res == JOptionPane.CANCEL_OPTION)
       		return;
-      	}
-      }
 
-      // clear the selection now so that it doesn't need to be updated as each
-      // feature is deleted
-      selection.clear ();
+      	  for(int i=0; i<features_to_delete.size(); i++)
+      	  {
+      		try
+      		{
+			  GFFStreamFeature gffFeat = 
+			       (GFFStreamFeature)features_to_delete.elementAt(i).getEmblFeature();
+			  
+			  // if a CDS the delete / obsolete the entire gene model
+			  if(gffFeat.getKey().equals(Key.CDS) && 
+			     gffFeat.getChadoGene() != null && 
+			     gffFeat.getChadoGene().getGene() != null)
+			    gffFeat = (GFFStreamFeature) gffFeat.getChadoGene().getGene();
+			  final Feature f = (Feature) gffFeat.getUserData();
+
+			  if(!delete.isSelected())
+		      {
+			    // make obsolete rather than permanently delete
+				f.setQualifier(new Qualifier("isObsolete", "true"));
+	            PropertiesPanel.updateObsoleteSettings(gffFeat);
+		      }
+			  else if(gffFeat.getChadoGene() != null)
+				GeneUtils.deleteAllFeature(f, gffFeat.getChadoGene());
+			  else
+			  {
+			    if(!deleteFeature(frame, f, selection, features_to_delete))
+			      return;
+			  }
+			} 
+      		catch (Exception e)
+			{
+			  e.printStackTrace();
+			} 	
+      	  }
+      	  return;
+      	}
+      }      
 
       while (features_to_delete.size () > 0) 
       {
         // delete in reverse order for speed
-
         final Feature current_selection_feature =
           features_to_delete.lastElement ();
-
         features_to_delete.removeElementAt (features_to_delete.size () - 1);
 
-        try 
-        {
-          current_selection_feature.removeFromEntry ();
-        } 
-        catch (ReadOnlyException e) 
-        {
-          selection.set (current_selection_feature);
-
-          if (features_to_delete.size () == 1) 
-          {
-            final String message =
-              "the selected feature (" +
-              current_selection_feature.getIDString () +
-              ") is read only - cannot continue";
-            new MessageDialog (frame, message);
-          } 
-          else 
-          {
-            final String message =
-              "one of the selected features (" +
-              current_selection_feature.getIDString () +
-              ") is read only - cannot continue";
-            new MessageDialog (frame, message);
-          }
-
-          features_to_delete.add (current_selection_feature);
-
-          // reset the select so that the user can see what it was
-          selection.set (features_to_delete);
-
+        if(!deleteFeature(frame, current_selection_feature, selection, features_to_delete))
           return;
-        }
       }
     } 
     finally 
     {
       entry_group.getActionController ().endAction ();
     }
+  }
+  
+  private static boolean deleteFeature(final JFrame frame,
+                                    final Feature current_selection_feature, 
+                                    final Selection selection, 
+                                    final FeatureVector features_to_delete)
+  {
+    try 
+    {
+      current_selection_feature.removeFromEntry ();
+    } 
+    catch (ReadOnlyException e) 
+    {
+      selection.set (current_selection_feature);
+      if (features_to_delete.size () == 1) 
+      {
+        final String message =
+          "the selected feature (" +
+          current_selection_feature.getIDString () +
+          ") is read only - cannot continue";
+        new MessageDialog (frame, message);
+      } 
+      else 
+      {
+        final String message =
+          "one of the selected features (" +
+          current_selection_feature.getIDString () +
+          ") is read only - cannot continue";
+        new MessageDialog (frame, message);
+      }
+
+      features_to_delete.add (current_selection_feature);
+      // reset the select so that the user can see what it was
+      selection.set (features_to_delete);
+      return false;
+    }
+    return true;
   }
 
   /**

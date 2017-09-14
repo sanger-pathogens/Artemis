@@ -51,7 +51,7 @@ public abstract class Algorithm {
   /**
    *  Set by disableMaxAndMin () and enableMaxAndMin ().
    **/
-  private boolean max_min_disabled = false;
+  protected boolean max_min_disabled = false;
 
   /**
    *  Set by the constructor by looking at the options with this name:
@@ -142,6 +142,14 @@ public abstract class Algorithm {
   public String getAlgorithmName () 
   {
      return algorithm_name;
+  }
+  
+  /**
+   *  Return the name of this algorithm.
+   **/
+  public void setAlgorithmName (String algorithm_name) 
+  {
+     this.algorithm_name = algorithm_name;
   }
 
   /**

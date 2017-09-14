@@ -2,11 +2,9 @@
   <TITLE>System Requirements</TITLE>
   <PARA>
 &prog; will run on any machine that has a recent version of Java.
-This version of &prog; requires Java 1.5 at least. Most of the
+This version of &prog; requires Java 1.6 at least. Most of the
 development has been done using JDK v1.6 and some of the more 
-advanced features (BamView) now require 1.6. 
-Please note that the version of Java that comes with Netscape and
-Internet Explorer is not sufficient to run &prog;.  See <XREF
-LINKEND="INSTALLATION"> for details on how to get Java.
+advanced features (BamView and VCF/BCF View) require Java 1.6 or higher. 
+See <XREF LINKEND="INSTALLATION"> for details on how to get Java.
   </PARA>
 </SECT1>

@@ -199,13 +199,14 @@ public class Block implements Transferable
 
 //Set up the dialog that the button brings up.
     final JButton colourButton = GeneticMarker.setUpColorButton(colour);
-    final JButton applyButton = new JButton("Apply Colour");
+    final JButton applyButton = new JButton("Apply");
 
     applyButton.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
       {
         setColour(colourButton.getBackground());
+        setLabel(annotation.getText());
         if(draw != null)
           draw.repaint();
       }
@@ -315,6 +316,7 @@ public class Block implements Transferable
       public void itemStateChanged(ItemEvent e)
       {
         drawLabel = label.isSelected();
+        setLabel(annotation.getText());
         draw.repaint();
       }  
     });

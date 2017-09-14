@@ -33,6 +33,8 @@ import java.awt.Font;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.*;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.Reader;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -40,6 +42,10 @@ import java.util.Hashtable;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
@@ -70,14 +76,14 @@ public class FileViewer extends JFrame
   private static final long serialVersionUID = 1L;
 
   /** A JPanel to hold the close button. */
-  private JPanel button_panel;
+  protected JPanel button_panel;
 
   /** The main component we use for displaying the file. */
   private JTextPane textPane = null;
 
-  private Hashtable fontAttributes;
+  private Hashtable<Level, MutableAttributeSet> fontAttributes;
 
-  private static Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+  private final static Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
   
   /**
    *  The size of the last FileViewer JFrame to be resized.  When a new
@@ -101,12 +107,19 @@ public class FileViewer extends JFrame
    **/
   public FileViewer(final String label) 
   {
-    this(label, true, true);
+    this(label, true);
   }
 
   public FileViewer(final String label, final boolean visible)
   {
-    this(label, visible, true);  
+    this(label, visible, true, false);  
+  }
+  
+  public FileViewer(final String label, final boolean visible, 
+                    final boolean showClearButton,
+                    final boolean showSaveButton) 
+  {
+    this(label, visible, showClearButton, showSaveButton, null); 
   }
   
   /**
@@ -116,10 +129,29 @@ public class FileViewer extends JFrame
    *    this argument is true.
    **/
   public FileViewer(final String label, final boolean visible, 
-                    final boolean showClearButton) 
+                    final boolean showClearButton,
+                    final boolean showSaveButton,
+                    final ActionListener saveListener) 
   {
     super(label);
 
+    final JMenuBar mBar = new JMenuBar();
+    setJMenuBar(mBar);
+    final JMenu fileMenu = new JMenu("File");
+    final JMenuItem close = new JMenuItem("Close");
+    close.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent arg0)
+      {
+        if(isHideOnClose())
+          setVisible(false);
+        else
+          dispose();
+      }
+    });
+    fileMenu.add(close);
+    mBar.add(fileMenu);
+    
     getContentPane().setLayout(new BorderLayout());
     final Font font = Options.getOptions().getFont();
     setFont(font);
@@ -137,16 +169,12 @@ public class FileViewer extends JFrame
     };
     
     final JScrollPane scroller = new JScrollPane(textPane);
-    Dimension d = new Dimension((int)screen.getWidth()/2,
-        (int)screen.getHeight()/2);
-    scroller.setPreferredSize(d);
     scroller.getViewport().setBackground(Color.white);
 
     textPane.setEditable(false);
     textPane.setFont(font);
     textPane.setBackground(Color.white);
-    textPane.setMinimumSize(d);
-    
+
     getContentPane().add(scroller, "Center");
 
     button_panel = new JPanel(new FlowLayout());
@@ -178,6 +206,22 @@ public class FileViewer extends JFrame
       button_panel.add(clearbutton);
     }
     
+    if(showSaveButton)
+    {
+      final JButton saveToFile = new JButton("Save");
+      if(saveListener != null)
+        saveToFile.addActionListener(saveListener);
+      else
+        saveToFile.addActionListener(new ActionListener()
+        {
+          public void actionPerformed(ActionEvent e)
+          {
+            writeToFile(getText());
+           }
+        });
+      button_panel.add(saveToFile);
+    }
+    
     addWindowListener(new WindowAdapter() 
     {
       public void windowClosing(WindowEvent event) 
@@ -189,26 +233,11 @@ public class FileViewer extends JFrame
       }
     });
 
-    addComponentListener(new ComponentAdapter() 
-    {
-      public void componentResized(ComponentEvent e) 
-      {
-        saved_size = FileViewer.this.getSize();
-        saved_position = FileViewer.this.getLocation();
-      }
-      public void componentMoved(ComponentEvent e) 
-      {
-        saved_size = FileViewer.this.getSize();
-        saved_position = FileViewer.this.getLocation();
-      }
-    });
-
-    pack();
-
-
     if(saved_position == null) 
     {
-      Utilities.centreFrame(this);
+      Dimension d = new Dimension((int)screen.getWidth()/2,
+          (int)screen.getHeight()/2);
+      scroller.setPreferredSize(d);
     } 
     else
     {
@@ -225,12 +254,35 @@ public class FileViewer extends JFrame
         saved_size.height = 50;
       
       setLocation(saved_position);
-      setSize(saved_size);
+      
+      if(this instanceof ValidateViewer)
+        scroller.setPreferredSize(new Dimension((int)screen.getWidth()/3,
+            (int)screen.getHeight()/3));
+      else
+        scroller.setPreferredSize(saved_size);
     }
+    
+    pack();
+    if(saved_position == null) 
+      Utilities.centreFrame(this);
     
     if(visible)
       setVisible(true);
     createDefaultFontAttributes();
+    
+    addComponentListener(new ComponentAdapter() 
+    {
+      public void componentResized(ComponentEvent e) 
+      {
+        saved_size = scroller.getSize();
+        saved_position = FileViewer.this.getLocation();
+      }
+      public void componentMoved(ComponentEvent e) 
+      {
+        saved_size = scroller.getSize();
+        saved_position = FileViewer.this.getLocation();
+      }
+    });
   }
 
   
@@ -330,7 +382,7 @@ public class FileViewer extends JFrame
     Level[] prio = { Level.FATAL, Level.ERROR, 
            Level.WARN, Level.INFO, Level.DEBUG };
 
-    fontAttributes = new Hashtable();
+    fontAttributes = new Hashtable<Level, MutableAttributeSet>();
     for (int i=0; i<prio.length;i++) 
     {
       MutableAttributeSet att = new SimpleAttributeSet();
@@ -405,5 +457,32 @@ public class FileViewer extends JFrame
   public void setHideOnClose(boolean isHideOnClose)
   {
     this.isHideOnClose = isHideOnClose;
+  }
+  
+  public static void writeToFile(final String txt)
+  {
+    StickyFileChooser fc = new StickyFileChooser();
+    fc.showSaveDialog(null);
+    
+    File f = fc.getSelectedFile();
+    if(f.exists() && f.canWrite())
+    {
+      int status = JOptionPane.showConfirmDialog(null, 
+          f.getName()+" exists overwrite?", 
+          "Overwrite", JOptionPane.OK_CANCEL_OPTION);
+      if(status == JOptionPane.CANCEL_OPTION)
+        return;
+    }
+    try
+    {
+      FileWriter writer = new FileWriter(f);
+      writer.write(txt);
+      writer.close();
+    }
+    catch (IOException e1)
+    {
+      JOptionPane.showMessageDialog(null,
+          e1.getMessage(), "Problem Writing", JOptionPane.WARNING_MESSAGE);
+    }
   }
 }

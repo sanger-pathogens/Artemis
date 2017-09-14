@@ -545,7 +545,7 @@ public class DataCollectionPane extends JScrollPane
       if(FastaTextPane.isRemoteMfetch())
       {
         String cmd   = 
-          "mfetch -p 22140 -f \"org des gen\" -d uniprot -i \"acc:"+hit.getID()+"\"" ;
+          "mfetch -f \"org des gen\" -d uniprot -i \"acc:"+hit.getID()+"\"" ;
         uk.ac.sanger.artemis.j2ssh.SshPSUClient ssh =
           new uk.ac.sanger.artemis.j2ssh.SshPSUClient(cmd);
         ssh.run();
@@ -582,7 +582,7 @@ public class DataCollectionPane extends JScrollPane
       }
       else
       {
-        String cmd[]   = { "mfetch", "-p", "22140", "-f", "org des gen",
+        String cmd[]   = { "mfetch", "-f", "org des gen",
             "-d", "uniprot", "-i", "acc:"+hit.getID() };
 
         ExternalApplication app = new ExternalApplication(cmd,

@@ -70,7 +70,11 @@ abstract public class StreamSequenceFactory
       case FASTA_FORMAT:
       {
         if(IndexFastaStream.isIndexed(entry))
-          return new IndexFastaStream(entry);
+        {
+          IndexFastaStream ifs = new IndexFastaStream(entry);
+          if(ifs.useIndex())
+            return ifs;
+        }
         return new FastaStreamSequence(in_stream);
       }
       case GENBANK_FORMAT:

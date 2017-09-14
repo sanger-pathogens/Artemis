@@ -65,8 +65,10 @@ import uk.ac.sanger.artemis.FeaturePredicate;
 import uk.ac.sanger.artemis.FeatureVector;
 import uk.ac.sanger.artemis.SimpleEntryGroup;
 import uk.ac.sanger.artemis.chado.ChadoTransactionManager;
+import uk.ac.sanger.artemis.components.filetree.LocalAndRemoteFileManager;
 import uk.ac.sanger.artemis.components.genebuilder.GeneEdit;
 import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
+import uk.ac.sanger.artemis.components.genebuilder.ortholog.MatchPanel;
 import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
 import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
@@ -88,8 +90,8 @@ public class TransferAnnotationTool extends JFrame
     "feature_relationship_rank",
     "Parent",
     "isObsolete",
-    "isFminPartial",
-    "isFmaxPartial",
+    "Start_range",
+    "End_range",
     "timelastmodified",
     "cytoplasm_location",
     "cytoplasmic_polypeptide_region",
@@ -109,6 +111,7 @@ public class TransferAnnotationTool extends JFrame
     "transmembrane_polypeptide_region",
     "previous_systematic_id"
   };
+  private MatchPanel matchPanel;
   
   private static org.apache.log4j.Logger logger4j = 
     org.apache.log4j.Logger.getLogger(TransferAnnotationTool.class);
@@ -123,13 +126,16 @@ public class TransferAnnotationTool extends JFrame
    */
   public TransferAnnotationTool(final Feature feature, 
   		                        final EntryGroup entryGroup,
-  		                        final List geneNames)
+  		                        final MatchPanel matchPanel)
   {
-    super("Transfer Annotation Tool :: "
-        + feature.getIDString());
+    super("Transfer Annotation Tool :: "+ feature.getIDString());
+    this.matchPanel = matchPanel;
+    
+    List<String> geneNames = null;
+    if(matchPanel != null)
+      geneNames = matchPanel.getGeneNameList();
 
-    FlowLayout flow = new FlowLayout(FlowLayout.LEFT);
-    JPanel panel = new JPanel(flow);
+    JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     JPanel pane = new JPanel(new GridBagLayout());
     JScrollPane jsp = new JScrollPane(panel);
     panel.setBackground(Color.white);
@@ -140,14 +146,13 @@ public class TransferAnnotationTool extends JFrame
     framePanel.add(jsp, BorderLayout.CENTER);
     framePanel.setPreferredSize(new Dimension(600,600));
     
-    final Vector geneNameCheckBoxes = new Vector();
-    final Vector qualifierPanels = new Vector();
+    final Vector<JCheckBox> geneNameCheckBoxes = new Vector<JCheckBox>();
+    final Vector<QualifierPanel> qualifierPanels = new Vector<QualifierPanel>();
 
     addMainPanel(feature, pane, qualifierPanels, 
                  geneNameCheckBoxes, geneNames);
     addBottomButtons(qualifierPanels, geneNameCheckBoxes, 
                      framePanel, entryGroup);
-    
     pack();
     setVisible(true);
   }
@@ -163,9 +168,9 @@ public class TransferAnnotationTool extends JFrame
    */
   private void addMainPanel(final Feature feature, 
                             final JPanel pane, 
-                            final Vector qualifierPanels, 
-                            final Vector geneNameCheckBoxes,
-                            final List geneNames)
+                            final Vector<QualifierPanel> qualifierPanels, 
+                            final Vector<JCheckBox> geneNameCheckBoxes,
+                            final List<String> geneNames)
   {
     GridBagConstraints c = new GridBagConstraints();
     int nrows = 0;
@@ -185,9 +190,9 @@ public class TransferAnnotationTool extends JFrame
     label.setFont(label.getFont().deriveFont(Font.BOLD));
     pane.add(label, c);
 
+    nrows+=3;
     c.gridx = 2;
-    c.gridy = ++nrows;
-    c.gridy = ++nrows;
+    c.gridy = nrows;
     c.anchor = GridBagConstraints.WEST;
     
     addQualifierPanel(feature, qualifierPanels, c, nrows, pane);
@@ -219,13 +224,12 @@ public class TransferAnnotationTool extends JFrame
               qualifierPanels, c, nrows, pane);
           nrows+=2;
           
-          Set children = chadoGene.getChildren(transcript);
-          Iterator it = children.iterator();
+          Set<uk.ac.sanger.artemis.io.Feature> children = chadoGene.getChildren(transcript);
+          Iterator<uk.ac.sanger.artemis.io.Feature> it = children.iterator();
           
           while(it.hasNext())
           {
             GFFStreamFeature kid = (GFFStreamFeature)it.next();
-            
             if(id.equals( GeneUtils.getUniqueName(((GFFStreamFeature)kid)) ))
               continue;
             addQualifierPanel((Feature)kid.getUserData(), qualifierPanels,
@@ -237,7 +241,7 @@ public class TransferAnnotationTool extends JFrame
     }
     
     c.gridx = 0;
-    c.gridy = 2;
+    c.gridy = 3;
     c.gridheight = nrows;
     c.fill = GridBagConstraints.BOTH;
 
@@ -265,11 +269,11 @@ public class TransferAnnotationTool extends JFrame
       {
         for(int i=0; i<qualifierPanels.size(); i++)
         {
-          QualifierPanel qP = (QualifierPanel)qualifierPanels.get(i);
-          Enumeration enumQualifiers = qP.getQualifierCheckBoxes().keys();
+          QualifierPanel qP = qualifierPanels.get(i);
+          Enumeration<JCheckBox> enumQualifiers = qP.getQualifierCheckBoxes().keys();
           while(enumQualifiers.hasMoreElements())
           {
-            JCheckBox cb = (JCheckBox) enumQualifiers.nextElement();
+            JCheckBox cb = enumQualifiers.nextElement();
             cb.setSelected(!cb.isSelected());
           }
         }
@@ -285,9 +289,10 @@ public class TransferAnnotationTool extends JFrame
       {
         for(int i = 0; i < geneNameCheckBoxes.size(); i++)
         {
-          JCheckBox cb = (JCheckBox) geneNameCheckBoxes.get(i);
+          JCheckBox cb = geneNameCheckBoxes.get(i);
           cb.setSelected(!cb.isSelected());
         }
+        geneNameBox.repaint();
       }
     });
     xBox.add(toggleGeneList); 
@@ -319,9 +324,33 @@ public class TransferAnnotationTool extends JFrame
         pane.revalidate();
       }
     });
-    xBox.add(addGenes); 
+    xBox.add(addGenes);
     c.gridx = 0;
     pane.add(xBox, c);  
+    
+    final List<String> clusterList = (matchPanel == null ? null : matchPanel.getGeneNameList(true));
+    if(clusterList != null && !geneNames.contains(clusterList.get(0)))
+    {
+      final JButton importCluster = new JButton("Import Cluster Names");
+      importCluster.addActionListener(new ActionListener()
+      {
+          public void actionPerformed(ActionEvent e)
+          {
+            for(String n: clusterList)
+            {
+              if(n == null || n.equals(""))
+                continue;
+               JCheckBox cb = new JCheckBox(n,true);
+               geneNameBox.add(cb);
+               geneNameCheckBoxes.add(cb);
+            }
+            importCluster.setEnabled(false);
+            pane.revalidate();
+          }
+        });
+      c.gridy = 2;
+      pane.add(importCluster, c);  
+    }
   }
   
   /**
@@ -333,7 +362,7 @@ public class TransferAnnotationTool extends JFrame
    * @param pane
    */
   private void addQualifierPanel(Feature f,
-                                 Vector qualifierPanels,
+                                 Vector<QualifierPanel> qualifierPanels,
                                  GridBagConstraints c,
                                  int nrows,
                                  JPanel pane)
@@ -352,7 +381,7 @@ public class TransferAnnotationTool extends JFrame
     l.setFont(l.getFont().deriveFont(Font.BOLD));
     l.setForeground(STEEL_BLUE);
     pane.add(l, c);
-    
+
     c.gridy = ++nrows;
     pane.add(qPanel, c);
     c.weightx = 0.d;
@@ -367,8 +396,8 @@ public class TransferAnnotationTool extends JFrame
    * @param feature
    * @param entryGroup
    */
-  private void addBottomButtons(final Vector qualifierPanels,
-                                final Vector geneNameCheckBoxes,
+  private void addBottomButtons(final Vector<QualifierPanel> qualifierPanels,
+                                final Vector<JCheckBox> geneNameCheckBoxes,
                                 final JPanel framePanel, 
                                 final EntryGroup entryGroup)
   {
@@ -376,7 +405,11 @@ public class TransferAnnotationTool extends JFrame
     
     final JCheckBox overwriteCheckBox = new JCheckBox("Overwrite", false);
     overwriteCheckBox.setToolTipText("overwrite rather than append values");
-    
+
+    final JCheckBox cvCheckBox = new JCheckBox("Set evidence as ISO and link to source in WITH/FROM", false);
+    cvCheckBox.setToolTipText("for GO and Product qualifiers set the evidence as ISO (Inferred from\n"+
+                              "Sequence Orthology) and add a link to the source in the WITH/FROM field");
+
     Box buttonBox = Box.createHorizontalBox();
     final JButton transfer = new JButton(">>TRANSFER");
     transfer.setToolTipText("transfer annotation");
@@ -387,39 +420,50 @@ public class TransferAnnotationTool extends JFrame
         if(overwriteCheckBox.isSelected())
         {
           int res = JOptionPane.showConfirmDialog(TransferAnnotationTool.this, 
-              "Overwrite selected annotation?", 
-              "Overwrite", JOptionPane.OK_CANCEL_OPTION);
+              "Overwrite selected annotation?", "Overwrite", JOptionPane.OK_CANCEL_OPTION);
           if(res == JOptionPane.CANCEL_OPTION)
             return;
         }
         
-        setCursor(new Cursor(Cursor.WAIT_CURSOR));
-        StringBuffer buff = new StringBuffer();
+        final boolean autoHistorySetting = LocalAndRemoteFileManager.isAutomaticHistory();
         StringBuffer summary = new StringBuffer();
-        for(int i = 0; i < qualifierPanels.size(); i++)
+        try
         {
-          QualifierPanel qP = (QualifierPanel) qualifierPanels.get(i);
-          int res = transferAnnotation(qP.getQualifierCheckBoxes(), 
+          LocalAndRemoteFileManager.setAutomaticHistory(false);
+          setCursor(new Cursor(Cursor.WAIT_CURSOR));
+          StringBuffer buff = new StringBuffer();
+        
+          for(int i = 0; i < qualifierPanels.size(); i++)
+          {
+            QualifierPanel qP = qualifierPanels.get(i);
+            int res = transferAnnotation(qP.getQualifierCheckBoxes(), 
               geneNameCheckBoxes, qP.getFeature(), entryGroup, 
               sameKeyCheckBox.isSelected(),
-              overwriteCheckBox.isSelected(), buff, summary);
-          if(res == -1)
-            break;
+              overwriteCheckBox.isSelected(),
+              cvCheckBox.isSelected(),
+              buff, summary);
+            if(res == -1)
+              break;
+          }
+        
+          if(buff.length() > 0)
+            logger4j.debug("TRANSFERRED ANNOTATION SUMMARY:\n"+buff.toString());
+          setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+          
+          if(summary.length()>0)
+          {
+            final JTextArea list = new JTextArea(summary.toString());
+            final JScrollPane jsp = new JScrollPane(list);
+            jsp.setPreferredSize(new Dimension(300,200));
+            JOptionPane.showMessageDialog(
+                TransferAnnotationTool.this, jsp, 
+                "Summary of Genes Changed",
+                JOptionPane.INFORMATION_MESSAGE);
+          }
         }
-        
-        if(buff.length() > 0)
-          logger4j.debug("TRANSFERRED ANNOTATION SUMMARY:\n"+buff.toString());
-        setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-        
-        if(summary.length()>0)
+        finally
         {
-          final JTextArea list = new JTextArea(summary.toString());
-          final JScrollPane jsp = new JScrollPane(list);
-          jsp.setPreferredSize(new Dimension(300,200));
-          JOptionPane.showMessageDialog(
-              TransferAnnotationTool.this, jsp, 
-              "Summary of Genes Changed",
-              JOptionPane.INFORMATION_MESSAGE);
+          LocalAndRemoteFileManager.setAutomaticHistory(autoHistorySetting);
         }
       }
     });
@@ -427,6 +471,7 @@ public class TransferAnnotationTool extends JFrame
     yBox.add(transfer);
     yBox.add(sameKeyCheckBox);
     yBox.add(overwriteCheckBox);
+    yBox.add(cvCheckBox);
     buttonBox.add(yBox);
     
     final JButton close = new JButton("CLOSE");
@@ -472,42 +517,47 @@ public class TransferAnnotationTool extends JFrame
    * @param overwrite
    */
   protected static int transferAnnotation(
-                                 final Hashtable qualifierCheckBoxes, 
-  		                         final Vector geneNameCheckBoxes,
-  		                         final Feature orginatingFeature,
-  		                         final EntryGroup entryGroup,
-  		                         final boolean sameKey,
-  		                         final boolean overwrite,
-  		                         final StringBuffer buff,
-  		                         final StringBuffer genesUpdated)
+             final Hashtable<JCheckBox, Vector<JCheckBox>> qualifierCheckBoxes, 
+  		     final Vector<JCheckBox> geneNameCheckBoxes,
+  		     final Feature orginatingFeature,
+  		     final EntryGroup entryGroup,
+  		     final boolean sameKey,
+  		     final boolean overwrite,
+  		     final boolean setEvidenceAndWithFrom,
+  		     final StringBuffer buff,
+  		     final StringBuffer genesUpdated)
   {
     // transfer selected annotation to genes
     final QualifierVector qualifiers = orginatingFeature.getQualifiers();
     final QualifierVector qualifiersToTransfer = new QualifierVector();
-    
-    Enumeration enumQualifiers = qualifierCheckBoxes.keys();
+
+    Enumeration<JCheckBox> enumQualifiers = qualifierCheckBoxes.keys();
     while(enumQualifiers.hasMoreElements())
     {
-      JCheckBox cb = (JCheckBox) enumQualifiers.nextElement();
+      JCheckBox cb = enumQualifiers.nextElement();
       if (cb.isSelected())
       {
-        Vector qualifierValuesCheckBox = (Vector)qualifierCheckBoxes.get(cb);
-        StringVector values = qualifiers.getQualifierByName(cb.getText()).getValues();
+        Vector<JCheckBox> qualifierValuesCheckBox = qualifierCheckBoxes.get(cb);
+        final StringVector values = qualifiers.getQualifierByName(cb.getText()).getValues();
         StringVector valuesToTransfer = new StringVector(values);
         
         logger4j.debug("TRANSFER "+cb.getText());
         for(int i=0; i<qualifierValuesCheckBox.size(); i++)
         {
-          JCheckBox valuesCb = (JCheckBox) qualifierValuesCheckBox.get(i);
+          JCheckBox valuesCb = qualifierValuesCheckBox.get(i);
           if(!valuesCb.isSelected())
           {
             valuesToTransfer.remove(valuesCb.getText());
             logger4j.debug("NOT TRANSFERING "+valuesCb.getText());
           }
         }
-        
+
         if(valuesToTransfer.size() < 1)
           continue;
+
+        valuesToTransfer = new StringVector( getTransferValues(
+            setEvidenceAndWithFrom, orginatingFeature, cb.getText(), valuesToTransfer) );
+
         qualifiersToTransfer.addElement(new Qualifier(cb.getText(), valuesToTransfer));
       }
     }
@@ -515,14 +565,13 @@ public class TransferAnnotationTool extends JFrame
     int count = 0;
   	for(int i =0; i<geneNameCheckBoxes.size(); i++)
   	{
-  	  if( ((JCheckBox)geneNameCheckBoxes.get(i)).isSelected() )
+  	  if( geneNameCheckBoxes.get(i).isSelected() )
   	    count++;
   	}
   	
   	if(count < 1)
   	{
-  	  JOptionPane.showMessageDialog(null, 
-        "No genes selected.", 
+  	  JOptionPane.showMessageDialog(null, "No genes selected.", 
         "Warning", JOptionPane.WARNING_MESSAGE);
   	  return -1;
   	} 
@@ -531,7 +580,7 @@ public class TransferAnnotationTool extends JFrame
   	count = 0;
   	for(int i =0; i<geneNameCheckBoxes.size(); i++)
     {
-  	  JCheckBox cb = (JCheckBox)geneNameCheckBoxes.get(i);
+  	  JCheckBox cb = geneNameCheckBoxes.get(i);
       if( cb.isSelected() )
       {
         geneNames[count] = cb.getText();
@@ -545,15 +594,16 @@ public class TransferAnnotationTool extends JFrame
 
   	// transfer selected annotation
   	entryGroup.getActionController().startAction();
-  	geneNames = transfer(features, qualifiersToTransfer, key, sameKey, overwrite, 
+  	geneNames = transfer(features, qualifiersToTransfer, key, sameKey, overwrite,
   			             GeneUtils.isDatabaseEntry(entryGroup), geneNames, genesUpdated);
   	entryGroup.getActionController().endAction();
   	
   	//
   	// Commit changes to genes not in Artemis but in the database
   	//
-    Vector genesNotFound = null;
-    if (orginatingFeature.getEntry().getEMBLEntry() instanceof DatabaseDocumentEntry)
+    Vector<String> genesNotFound = null;
+    if (geneNames != null &&
+        orginatingFeature.getEntry().getEMBLEntry() instanceof DatabaseDocumentEntry)
     {
       DatabaseDocumentEntry db_entry =
         (DatabaseDocumentEntry) orginatingFeature.getEntry().getEMBLEntry();
@@ -567,7 +617,7 @@ public class TransferAnnotationTool extends JFrame
         if (newDbEntry == null)
         {
           if (genesNotFound == null)
-            genesNotFound = new Vector();
+            genesNotFound = new Vector<String>();
           genesNotFound.add(geneNames[i]);
           continue;
         }
@@ -607,7 +657,7 @@ public class TransferAnnotationTool extends JFrame
         // GeneEdit.showGeneEditor(null, geneNames[i], newDbEntry);
       }
     }
-  	
+
   	if(genesNotFound != null)
   		JOptionPane.showMessageDialog(null, 
   				"Gene(s) Not Found:\n"+genesNotFound.toString(), 
@@ -645,7 +695,7 @@ public class TransferAnnotationTool extends JFrame
         StringBuffer qualifierBuffer = new StringBuffer();
         for (int j = 0; j < qualifiersToTransfer.size(); j++)
         {
-          Qualifier newQualifier = (Qualifier) qualifiersToTransfer.elementAt(j);
+          Qualifier newQualifier = qualifiersToTransfer.elementAt(j);
           String qualifierName = newQualifier.getName();
           try
           {
@@ -678,6 +728,7 @@ public class TransferAnnotationTool extends JFrame
             e1.printStackTrace();
           }
         }
+
         geneNames = removeArrayElement(geneNames, predicate.getGeneName());
         if(qualifierBuffer.length() > 0)
           genesUpdated.append(thisFeature.getSystematicName()+
@@ -708,7 +759,7 @@ public class TransferAnnotationTool extends JFrame
    * @return
    * @throws InvalidRelationException
    */
-  private static Qualifier getQualifierWithoutDuplicateValues( 
+  protected static Qualifier getQualifierWithoutDuplicateValues( 
       final Qualifier qualifier,
       final StringVector values) throws InvalidRelationException
   {
@@ -719,10 +770,19 @@ public class TransferAnnotationTool extends JFrame
     {
       StringVector newValues =  qualifier.getValues();
       StringVector valuesToAdd = new StringVector();
+
       for (int k = 0; k < newValues.size(); k++)
       {
         if(!values.contains(newValues.get(k)))
-          valuesToAdd.add(newValues.get(k));
+        {
+          if(qualifier.getName().equals("history"))
+          {
+        	if(!uk.ac.sanger.artemis.components.genebuilder.cv.HistoryBox.contains(values, (String)newValues.get(k)))
+        	  valuesToAdd.add(newValues.get(k));
+          }
+          else
+            valuesToAdd.add(newValues.get(k));
+        }
       }
 
       if(valuesToAdd.size() == 0)
@@ -742,7 +802,11 @@ public class TransferAnnotationTool extends JFrame
   private static String[] removeArrayElement(final String strArr[], final String str)
   {
     if(strArr.length == 1)
+    {
+      if(strArr[0].equals(str))
+        return null;
       return strArr;
+    }
     String[] newarray = new String[strArr.length - 1];
     int count = 0;
     for (int i = 0; i < strArr.length; i++)
@@ -763,17 +827,100 @@ public class TransferAnnotationTool extends JFrame
       System.arraycopy(newarray, 0, tmparray, 0, count);
       newarray = tmparray;
     }
-
     return newarray;
   }
-   
+  
+  /**
+   * Optionally transfer GO fields with evidence code ISO and link back to
+   * the original source in the WITH/FROM column.
+   * @param setEvidenceAndWithFrom
+   * @param feature
+   * @param qName
+   * @param values
+   * @return
+   */
+  private static StringVector getTransferValues(final boolean setEvidenceAndWithFrom,
+                                                final Feature feature, 
+                                                final String qName, 
+                                                final StringVector values)
+  {
+    if(!setEvidenceAndWithFrom)
+      return values;
 
- 
+    if(qName.equals("GO") || qName.equals("product"))
+    {
+      final StringVector tvalues = new StringVector();
+      final String gene = getGeneName(feature);
+      for (int i = 0; i < values.size(); i++)
+      {
+        String val =  changeField("evidence=", 
+              "Inferred from Sequence Orthology",
+              null, values.get(i));
+
+        if(gene != null)
+          val =  changeField("with=", 
+              "GeneDB:"+gene, "|", val);
+        tvalues.add(val);
+      }
+      return tvalues;
+    }
+    return values;
+  }
+  
+  private static String getGeneName(Feature feature)
+  {
+    try
+    {
+       return
+        ((GFFStreamFeature)feature.getEmblFeature()).getChadoGene().getGeneUniqueName();
+    }
+    catch(Exception e){}
+    return null;
+  }
+  
+  /**
+   * Replace or add the value of a field in a qualifier string
+   * @param fieldName
+   * @param newFieldStr
+   * @param separator
+   * @param qualStr
+   * @return
+   */
+  private static String changeField(final String fieldName, 
+                             final String newFieldStr,
+                             final String separator,
+                             String qualStr)
+  {
+    int idx1 = qualStr.toLowerCase().indexOf(fieldName.toLowerCase());
+    int idx2 = qualStr.indexOf(";", idx1);
+    int len  = fieldName.length();
+    if(idx2 > idx1 && idx1 > -1)
+    {
+      if(separator != null)
+        qualStr = qualStr.substring(0, idx2) + separator + newFieldStr +
+                  qualStr.substring(idx2);
+      else
+        qualStr = qualStr.substring(0, idx1+len) + newFieldStr +
+                  qualStr.substring(idx2);
+    }
+    else if(idx1 > -1)
+    {
+      if(separator != null)
+        qualStr = qualStr + separator + newFieldStr;
+      else
+        qualStr = qualStr.substring(0, idx1+len) + newFieldStr;
+    }
+    else if(!newFieldStr.equals(""))
+        qualStr = qualStr + ";" + 
+                  fieldName + newFieldStr;
+    return qualStr;
+  }
 }
 
 class QualifierPanel extends JPanel
 {
-  private Hashtable qualifierCheckBoxes = new Hashtable();
+  private static final long serialVersionUID = 1L;
+  private Hashtable<JCheckBox, Vector<JCheckBox>> qualifierCheckBoxes = new Hashtable<JCheckBox, Vector<JCheckBox>>();
   private Feature feature;
   protected int nrows = 0;
   
@@ -797,7 +944,7 @@ class QualifierPanel extends JPanel
     for(int i = 0; i < qualifiers.size(); i++)
     {
       nrows = 
-        addQualifierComponents((Qualifier) qualifiers.get(i), 
+        addQualifierComponents(qualifiers.get(i), 
                               qualifierCheckBoxes, c, nrows);
     }
     
@@ -808,17 +955,17 @@ class QualifierPanel extends JPanel
   
   /**
    * Add a qualifier to the list of transferable annotation
-   * @param pane
    * @param qualifier
    * @param qualifierCheckBoxes
    * @param c
    * @param nrows
    * @return
    */
-  private int addQualifierComponents(final Qualifier qualifier, 
-                                     final Hashtable qualifierCheckBoxes,
-                                     final GridBagConstraints c,
-                                     int nrows)
+  private int addQualifierComponents(
+      final Qualifier qualifier, 
+      final Hashtable<JCheckBox, Vector<JCheckBox>> qualifierCheckBoxes,
+      final GridBagConstraints c,
+      int nrows)
   {
     if(TransferAnnotationTool.isNonTransferable(qualifier.getName()))
       return nrows;
@@ -830,7 +977,7 @@ class QualifierPanel extends JPanel
     Box qualifierValueBox = Box.createVerticalBox();
     
     JButton detailsShowHide = new JButton("+");
-    final Vector qualifierValuesCheckBox = setExpanderButton(detailsShowHide,
+    final Vector<JCheckBox> qualifierValuesCheckBox = setExpanderButton(detailsShowHide,
         qualifier, qualifierValueBox, qualifierNameCheckBox);
     
     qualifierNameCheckBox.addItemListener(new ItemListener()
@@ -841,7 +988,7 @@ class QualifierPanel extends JPanel
         {
           for(int i=0; i<qualifierValuesCheckBox.size(); i++)
           {
-            JCheckBox cb = (JCheckBox) qualifierValuesCheckBox.get(i);
+            JCheckBox cb = qualifierValuesCheckBox.get(i);
             if(cb.isSelected())
               return;
           }
@@ -849,7 +996,7 @@ class QualifierPanel extends JPanel
         
         for(int i=0; i<qualifierValuesCheckBox.size(); i++)
         {
-          JCheckBox cb = (JCheckBox) qualifierValuesCheckBox.get(i);
+          JCheckBox cb = qualifierValuesCheckBox.get(i);
           cb.setSelected(qualifierNameCheckBox.isSelected());
         }
       }        
@@ -877,7 +1024,7 @@ class QualifierPanel extends JPanel
    * @param pane
    * @return
    */
-  private Vector setExpanderButton(final JButton butt,
+  private Vector<JCheckBox> setExpanderButton(final JButton butt,
                                    final Qualifier qualifier, 
                                    final Box qualifierValueBox,
                                    final JCheckBox qualifierNameCheckBox)
@@ -905,20 +1052,23 @@ class QualifierPanel extends JPanel
 
     // set-up qualifier values list
     qualifierValueBox.setVisible(false);
-    Vector qualifierValuesCheckBox = new Vector();
-    StringVector values = qualifier.getValues();
-    for (int i = 0; i < values.size(); i++)
+    final Vector<JCheckBox> qualifierValuesCheckBox = new Vector<JCheckBox>();
+    final StringVector values = qualifier.getValues();
+    if(values != null)
     {
-      JCheckBox cb = new JCheckBox((String) values.get(i),
+      for (int i = 0; i < values.size(); i++)
+      {
+        final JCheckBox cb = new JCheckBox(values.get(i),
           qualifierNameCheckBox.isSelected());
-      cb.setFont(cb.getFont().deriveFont(Font.ITALIC));
-      qualifierValueBox.add(cb);
-      qualifierValuesCheckBox.add(cb);
+        cb.setFont(cb.getFont().deriveFont(Font.ITALIC));
+        qualifierValueBox.add(cb);
+        qualifierValuesCheckBox.add(cb);
+      }
     }
     return qualifierValuesCheckBox;
   }
-  
-  protected Hashtable getQualifierCheckBoxes()
+
+  protected Hashtable<JCheckBox, Vector<JCheckBox>> getQualifierCheckBoxes()
   {
     return qualifierCheckBoxes;
   }
@@ -959,18 +1109,18 @@ class TransferFeaturePredicate implements FeaturePredicate
     if (sameKey && !targetKey.equals(key))
       return false;
 
-    Vector chadoNames = null;
+    Vector<String> chadoNames = null;
     if (isDatabaseEntry)
     {
       GFFStreamFeature gffFeature = 
         ((GFFStreamFeature) targetFeature.getEmblFeature());
       if (gffFeature.getChadoGene() != null)
       {
-        chadoNames = new Vector();
+        chadoNames = new Vector<String>();
         
         ChadoCanonicalGene chadoGene = gffFeature.getChadoGene();
         chadoNames.add(chadoGene.getGeneUniqueName());
-        List transcripts = chadoGene.getTranscripts();
+        List<uk.ac.sanger.artemis.io.Feature> transcripts = chadoGene.getTranscripts();
         for(int i=0;i<transcripts.size();i++)
         {
           GFFStreamFeature feature = (GFFStreamFeature) transcripts.get(i);

@@ -140,7 +140,7 @@ public class ActMain extends Splash
                           final InputStreamProgressListener progress_listener,
                           final Object[] file_names) 
   {
-
+    processJnlpAttributes();
     final ProgressThread progress_thread = new ProgressThread(null,
                                                 "Loading Entry...");
 
@@ -251,13 +251,19 @@ public class ActMain extends Splash
         if(this_file_name instanceof DatabaseTreeNode)
         {
           DatabaseTreeNode dbNode = (DatabaseTreeNode)this_file_name;
-          //DatabaseEntrySource entry_source = dbNode.getEntrySource();
-         
           try
           {
             entry = dbEntrySource.getEntry(dbNode.getFeatureId(), 
                 dbNode.getUserName(), progress_listener);
+            
+            boolean isMitochondrial = false;
+            if(dbNode.getFeatureType() != null &&
+               dbNode.getFeatureType().startsWith("mitochondrial_"))
+              isMitochondrial = true;
+            boolean readOnly = DatabaseTreeNode.setOrganismProps(
+                dbNode.getOrganism().getOrganismProps(), isMitochondrial);
             embl_entry = (DatabaseDocumentEntry)entry.getEMBLEntry();
+            ((DatabaseDocumentEntry)embl_entry).setReadOnly(readOnly);
           }
           catch(NoSequenceException e)
           {
@@ -312,11 +318,8 @@ public class ActMain extends Splash
         entry_group_array[i / 2] = entry_group;
         return true;
       }
-
-
     };
     entryWorker.start();
-
     return true;
   }
 

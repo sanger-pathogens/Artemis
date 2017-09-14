@@ -39,8 +39,20 @@ import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.DocumentEntryFactory;
 import uk.ac.sanger.artemis.io.DocumentEntry;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Image;
+import java.awt.MediaTracker;
+import java.awt.Point;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.io.File;
 import java.net.URL;
@@ -52,16 +64,13 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 
 
 /**
  *  This JFrame component contains an arbitrary number of AlignmentViewer
  *  components and FeatureDisplay components along with ComparatorGlue objects
  *  to keep them synchronized.
- *
- *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: MultiComparator.java,v 1.22 2008-09-03 10:58:33 tjc Exp $
+ *  @author Kim Rutherford
  **/
 
 public class MultiComparator extends JFrame 
@@ -132,9 +141,8 @@ public class MultiComparator extends JFrame
 
   /** Used to show the progress of loading file. */
   private InputStreamProgressListener progress_listener;
-
-  /** current group used for drag and drop */
-  private int current_group = -1;
+  
+  private GridBagLayout layout = new GridBagLayout();
 
   /**
    *  Initialise entry_group_array and comparison_data_array and create all
@@ -163,16 +171,10 @@ public class MultiComparator extends JFrame
     this.progress_listener = progress_listener;
     this.entry_sources = Utilities.getEntrySources(this, null);
 
-    final StringBuffer title_buffer = new StringBuffer();
-
-    title_buffer.append("ACT: ");
-
+    final StringBuffer title_buffer = new StringBuffer("ACT: ");
     for(int i = 0; i < entry_group_array.length - 1; ++i) 
-    {
-      final String sequence_name =
-        entry_group_array[i].getDefaultEntry().getName();
-      title_buffer.append(sequence_name).append(" vs ");
-    }
+      title_buffer.append(
+          entry_group_array[i].getDefaultEntry().getName()).append(" vs ");
 
     final EntryGroup last_entry_group =
       entry_group_array[entry_group_array.length - 1];
@@ -207,7 +209,6 @@ public class MultiComparator extends JFrame
                           getGotoEventSourceArray()[i]);
 
       final int scroll_bar_position;
-
       if(i == getEntryGroupArray().length - 1 &&
           getEntryGroupArray().length == 2) 
       {
@@ -256,17 +257,11 @@ public class MultiComparator extends JFrame
                             getAlignmentViewerArray()[i]);
     }
 
-    final Font default_font = getDefaultFont();
-
-    setFont(default_font);
-
+    setFont(getDefaultFont());
     makeMenus();
-
-    GridBagLayout gridbag = new GridBagLayout();
-    getContentPane().setLayout(gridbag);
+    getContentPane().setLayout(layout);
 
     GridBagConstraints c = new GridBagConstraints();
-
     c.gridwidth  = GridBagConstraints.REMAINDER;
     c.fill       = GridBagConstraints.BOTH;
     c.anchor     = GridBagConstraints.NORTH;
@@ -308,7 +303,7 @@ public class MultiComparator extends JFrame
       if(i < getAlignmentViewerArray().length) 
       {
         c.fill = GridBagConstraints.BOTH;
-        c.weighty = 1;
+        c.weighty = 0.5;
         getContentPane().add(getAlignmentViewerArray()[i], c);
       }
     }
@@ -357,8 +352,7 @@ public class MultiComparator extends JFrame
       }
     });
 
-    final URL icon_url = Splash.class.getResource("/icon.gif");
-
+    final URL icon_url = Splash.class.getResource("/images/act.gif");
     if(icon_url != null) 
     {
       Toolkit toolkit = Toolkit.getDefaultToolkit();
@@ -392,6 +386,38 @@ public class MultiComparator extends JFrame
 
     setLocation(new Point((screen.width - getSize().width) / 2,
                           (screen.height - getSize().height) / 2));
+    
+    
+    for(int i=0; i<getEntryGroupArray().length; i++)
+      loadFromProperty(i);
+  }
+  
+  /**
+   * Load BAM/VCF files using the system properties flag -Dbam1, -Dbam2
+   * for sequences 1, 2...
+   * @param index the feature display to associate the files with
+   */
+  private void loadFromProperty(final int index)
+  {
+    final String bamProperty = "bam"+(index+1);
+    if(System.getProperty(bamProperty) != null)
+    {
+      SwingWorker worker = new SwingWorker()
+      {
+        public Object construct()
+        {
+          MultiComparator.this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
+          String ngs[] = System.getProperty(bamProperty).split("[\\s,]");
+          FileSelectionDialog fileChooser = new FileSelectionDialog(ngs);
+          List<String> listBams = fileChooser.getFiles(".*\\.bam$");
+          List<String> vcfFiles = fileChooser.getFiles(VCFview.VCFFILE_SUFFIX);
+          loadBamAndVcf(listBams, vcfFiles, index);
+          MultiComparator.this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+          return null;
+        }
+      };
+      worker.start();
+    }
   }
 
   /**
@@ -567,7 +593,7 @@ public class MultiComparator extends JFrame
    **/
   private void makeMenus() 
   {
-    final Font default_font = getDefaultFont();
+    //final Font default_font = getDefaultFont();
     final JMenuBar menu_bar = new JMenuBar();
 
     setJMenuBar(menu_bar);
@@ -596,13 +622,10 @@ public class MultiComparator extends JFrame
     /*final JMenu write_menu = new JMenu("Write");
     write_menu.setMnemonic(KeyEvent.VK_W);
     menu_bar.add(write_menu);*/
-    JMenu run_menu = null;
-    if(Options.isUnixHost()) 
-    {
-      run_menu = new JMenu("Run");
-      run_menu.setMnemonic(KeyEvent.VK_R);
-      menu_bar.add(run_menu);
-    }
+    JMenu run_menu = new JMenu("Run");
+    run_menu.setMnemonic(KeyEvent.VK_R);
+    menu_bar.add(run_menu);
+   
     final JMenu graph_menu = new JMenu("Graph");
     graph_menu.setMnemonic(KeyEvent.VK_G);
     menu_bar.add(graph_menu);
@@ -680,21 +703,10 @@ public class MultiComparator extends JFrame
                       sub_menu_name);
         create_menu.add(this_create_menu);
 
-        /*final WriteMenu this_write_menu =
-          new WriteMenu(this,
-                         getSelectionArray()[i],
-                         getEntryGroupArray()[i],
+        final RunMenu this_run_menu =
+            new RunMenu(this, getSelectionArray()[i],
                          sub_menu_name);
-        write_menu.add(this_write_menu);*/
-
-        if(Options.isUnixHost()) 
-        {
-          final RunMenu this_run_menu =
-            new RunMenu(this,
-                         getSelectionArray()[i],
-                         sub_menu_name);
-          run_menu.add(this_run_menu);
-        }
+        run_menu.add(this_run_menu);
       }
 
       final GraphMenu this_graph_menu =
@@ -702,9 +714,18 @@ public class MultiComparator extends JFrame
                        getEntryGroupArray()[i],
                        getBasePlotGroupArray()[i],
                        getFeatureDisplayArray()[i],
-                       sub_menu_name, null);
+                       sub_menu_name, null, i+1);
       graph_menu.add(this_graph_menu);
     }
+
+    final JMenuItem resize = new JMenuItem("Adjust panel heights ...");
+    resize.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent arg0)
+      {
+        new ActPanelResizer(MultiComparator.this, layout);
+      }
+    });
+    view_menu.add(resize);
 
     final JMenu display_menu = new JMenu("Display");
     display_menu.setMnemonic(KeyEvent.VK_D);
@@ -750,7 +771,7 @@ public class MultiComparator extends JFrame
    **/ 
   private void printMenu()
   {
-    JMenuItem printImage = new JMenuItem("Save As Image Files (png/jpeg)...");
+    JMenuItem printImage = new JMenuItem("Save As Image Files (png/svg)...");
     printImage.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
@@ -948,10 +969,7 @@ public class MultiComparator extends JFrame
       }
 
       JMenuItem read_bam_file = new JMenuItem("Read BAM / VCF ...");
-      final JPanel thisBamPanel = bamPanel[i];
-      final JPanel thisVCFPanel = vcfPanel[i];
-      final FeatureDisplay feature_display = feature_display_array[i];
- 
+      final int index = i;
       read_bam_file.addActionListener(new ActionListener()
       {
         public void actionPerformed(ActionEvent e)
@@ -959,61 +977,9 @@ public class MultiComparator extends JFrame
           FileSelectionDialog fileChooser = new FileSelectionDialog(
               null, false, "BAM / VCF View", "BAM / VCF");
           List<String> listBams = fileChooser.getFiles(".*\\.bam$");
-
-          if(listBams.size() > 0)
-          {
-            thisBamPanel.removeAll();
-            thisBamPanel.setVisible(true);
+          List<String> vcfFiles = fileChooser.getFiles(VCFview.VCFFILE_SUFFIX);
           
-            BamView bamView;
-            try
-            {
-              bamView = new BamView(listBams, null, 2000);
-            }
-            catch(Exception ex)
-            {
-              JOptionPane.showMessageDialog(null,
-                ex.getMessage(),
-                "Error",
-                JOptionPane.ERROR_MESSAGE);
-              return;
-            }
-
-            bamView.setShowScale(false);
-            bamView.setBases(entry_group.getBases());
-            bamView.addJamToPanel(thisBamPanel, null, true, feature_display);
-            bamView.getJspView().setHorizontalScrollBarPolicy(
-              JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-            bamView.removeBorder();
-            bamView.setDisplay(feature_display.getFirstVisibleForwardBase(), 
-                             feature_display.getLastVisibleForwardBase(), null);
-         
-            if(dimensionAlignViewer == null)
-              dimensionAlignViewer = alignment_viewer_array[0].getSize();
-            thisBamPanel.setPreferredSize(new Dimension(500, dimensionAlignViewer.height/2));
-            thisBamPanel.revalidate();
-            bamView.getJspView().getVerticalScrollBar().setValue(
-              bamView.getJspView().getVerticalScrollBar().getMaximum());
-          
-            feature_display.addDisplayAdjustmentListener(bamView);
-            feature_display.getSelection().addSelectionChangeListener(bamView);
-            MultiComparator.this.validate();
-          }
-
-          List<String> vcfFiles = fileChooser.getFiles(".*\\.vcf(\\.gz)*$");
-          if (vcfFiles.size() > 0)
-          {
-            thisVCFPanel.removeAll();
-            thisVCFPanel.setVisible(true);
-            
-            VCFview vcfView = new VCFview(null, thisVCFPanel, vcfFiles,
-                feature_display.getMaxVisibleBases(), 1, null, null,
-                feature_display);
-            
-            feature_display.addDisplayAdjustmentListener(vcfView);
-            feature_display.getSelection().addSelectionChangeListener(vcfView);
-            MultiComparator.this.validate();
-          }
+          loadBamAndVcf(listBams, vcfFiles, index);
         }
       });
       entry_group_menu.add(read_bam_file);
@@ -1047,42 +1013,92 @@ public class MultiComparator extends JFrame
     file_menu.add(close_button);
   }
 
+  private void loadBamAndVcf(List<String> listBams, 
+                             List<String> vcfFiles, 
+                             int index)
+  {
+    final JPanel thisBamPanel = bamPanel[index];
+    final JPanel thisVCFPanel = vcfPanel[index];
+    final FeatureDisplay feature_display = feature_display_array[index];
+    final EntryGroup entry_group = getEntryGroupArray()[index];
+    
+    if(listBams.size() > 0)
+    {
+      thisBamPanel.removeAll();
+      thisBamPanel.setVisible(true);
+    
+      BamView bamView;
+      try
+      {
+        bamView = new BamView(listBams, null, 2000, feature_display, 
+            entry_group.getBases(), thisBamPanel, null);
+      }
+      catch(Exception ex)
+      {
+        JOptionPane.showMessageDialog(null,
+          ex.getMessage(),
+          "Error",
+          JOptionPane.ERROR_MESSAGE);
+        return;
+      }
 
+      if(dimensionAlignViewer == null)
+        dimensionAlignViewer = alignment_viewer_array[0].getSize();
+      thisBamPanel.setPreferredSize(new Dimension(500, dimensionAlignViewer.height/2));
+      
+      bamView.setDisplay(feature_display.getFirstVisibleForwardBase(), 
+                       feature_display.getLastVisibleForwardBase(), null);
+   
+      bamView.getJspView().getVerticalScrollBar().setValue(
+        bamView.getJspView().getVerticalScrollBar().getMaximum());
+    
+      feature_display.addDisplayAdjustmentListener(bamView);
+      feature_display.getSelection().addSelectionChangeListener(bamView);
+      MultiComparator.this.validate();
+    }
+
+    if (vcfFiles.size() > 0)
+    {
+      thisVCFPanel.removeAll();
+      thisVCFPanel.setVisible(true);
+      
+      VCFview vcfView = new VCFview(null, thisVCFPanel, vcfFiles,
+          feature_display.getMaxVisibleBases(), 1, null, null,
+          null, feature_display);
+      
+      feature_display.addDisplayAdjustmentListener(vcfView);
+      feature_display.getSelection().addSelectionChangeListener(vcfView);
+      MultiComparator.this.validate();
+    }  
+  }
+  
   /**
    *  Read an entry
    **/
   private void readAnEntry(final EntrySource this_source,
                            final EntryGroup entry_group)
   {
-    SwingWorker entryWorker = new SwingWorker()
+    try
     {
-      public Object construct()
-      {
-        try
-        {
-          final Entry new_entry = this_source.getEntry(entry_group.getBases(),
-                                                       true);
-          if(new_entry != null)
-            entry_group.add(new_entry);
-        }
-        catch(final OutOfRangeException e)
-        {
-          new MessageDialog(MultiComparator.this,
-                         "read failed: one of the features " +
-                         "in the entry has an out of " +
-                         "range location: " +
-                         e.getMessage());
-        }
-        catch(final IOException e)
-        {
-          new MessageDialog(MultiComparator.this,
-                         "read failed due to an IO error: " +
-                         e.getMessage());
-        }
-        return null;
-      }
-    };
-    entryWorker.start();
+      final Entry new_entry = this_source.getEntry(entry_group.getBases(),
+                                                   true);
+      if(new_entry != null)
+        entry_group.add(new_entry);
+    }
+    catch(final OutOfRangeException e)
+    {
+      new MessageDialog(MultiComparator.this,
+             "read failed: one of the features " +
+             "in the entry has an out of " +
+             "range location: " +
+             e.getMessage());
+    }
+    catch(final IOException e)
+    {
+      new MessageDialog(MultiComparator.this,
+             "read failed due to an IO error: " +
+             e.getMessage());
+    }
   }
 
   /**

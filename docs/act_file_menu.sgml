@@ -27,7 +27,7 @@ This function only reads the feature section of the input file - the sequence
       </LISTITEM>
       <LISTITEM>
         <PARA>
-          <ULINK URL="http://www.sanger.ac.uk/Software/formats/GFF/">GFF files</ULINK>
+          <ULINK URL="http://www.sequenceontology.org/resources/gff3.html">GFF files</ULINK>
         </PARA>
       </LISTITEM>
       <LISTITEM>
@@ -43,7 +43,7 @@ URL="http://www.cgr.ki.se/cgr/groups/sonnhammer/MSPcrunch.html"><COMMAND>MSPcrun
 The output of <ULINK URL="http://www.ncbi.nlm.nih.gov/BLAST/">blastall</ULINK>
 version 2.2.2 or better.  <COMMAND>blastall</COMMAND> must be run with the
 <COMMAND>-m 8</COMMAND> flag which generates one line of information per HSP.
-Note that currently &prog; displays each Blast HSP is a separate feature
+Note that currently &prog; displays each Blast HSP as a separate feature
 rather than displaying each BLAST hit as a feature.
         </PARA>
       </LISTITEM>
@@ -142,7 +142,7 @@ LINKEND="GRAPHMENU-USAGE-PLOTS"> to find out how to plot a usage graph).
     </SECT3>
   </SECT2>
 
-
+  &nextgen;
 
   <SECT2 ID="FILEMENU-EDIT-IN-ARTEMIS">
     <TITLE>Edit In Artemis ...</TITLE>
@@ -152,7 +152,7 @@ made in the &art; window will be immediately visible in the &prog; window and
 vice versa.
     </PARA>
     <PARA>
-See <ULINK URL="http://www.sanger.ac.uk/Software/Artemis/stable/manual/">the
+See <ULINK URL="ftp://ftp.sanger.ac.uk/pub4/resources/software/artemis/artemis.pdf">the
 &art; manual</ULINK> for more about &art;.
     </PARA>
   </SECT2>

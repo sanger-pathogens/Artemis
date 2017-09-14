@@ -60,7 +60,6 @@ import javax.swing.KeyStroke;
  *  "Select by key".
  *
  *  @author Kim Rutherford
- *  @version $Id: SelectMenu.java,v 1.13 2008-05-21 14:14:04 tjc Exp $
  **/
 
 public class SelectMenu extends SelectionMenu 
@@ -77,21 +76,6 @@ public class SelectMenu extends SelectionMenu
    *  The GotoEventSource object that was passed to the constructor.
    **/
   private GotoEventSource goto_event_source;
-
-  private JMenuItem selector_item = null;
-  private JMenuItem all_item = null;
-  private JMenuItem all_bases_item = null;
-  private JMenuItem none_item = null;
-  private JMenuItem selection_toggle_item = null;
-  private JMenuItem select_same_type_item = null;
-  private JMenuItem select_matching_qualifiers_item = null;
-  private JMenuItem select_features_in_range_item = null;
-  private JMenuItem select_base_range_item = null;
-  private JMenuItem select_aa_range_in_feature_item = null;
-  private JMenuItem select_orf_item = null;
-  private JMenuItem select_by_key_item = null;
-  private JMenuItem select_non_pseudo_cds_item = null;
-  private JMenuItem select_all_cds_item = null;
 
   /**
    *  The shortcut for Select All
@@ -170,7 +154,7 @@ public class SelectMenu extends SelectionMenu
     this.entry_group = entry_group;
     this.goto_event_source = goto_event_source;
 
-    selector_item = new JMenuItem("Feature Selector ...");
+    JMenuItem selector_item = new JMenuItem("Feature Selector ...");
     selector_item.addActionListener(new ActionListener() 
     {
       public void actionPerformed(ActionEvent event) 
@@ -179,12 +163,11 @@ public class SelectMenu extends SelectionMenu
                      base_plot_group);
       }
     });
-
     add(selector_item);
 
     addSeparator();
 
-    all_item = new JMenuItem("All");
+    JMenuItem all_item = new JMenuItem("All");
     all_item.setAccelerator(SELECT_ALL_KEY);
     all_item.addActionListener(new ActionListener() 
     {
@@ -195,10 +178,9 @@ public class SelectMenu extends SelectionMenu
         frame.setCursor(cdone);
       }
     });
-
     add(all_item);
 
-    all_bases_item = new JMenuItem("All Bases");
+    JMenuItem all_bases_item = new JMenuItem("All Bases");
     all_bases_item.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent event) 
@@ -208,7 +190,6 @@ public class SelectMenu extends SelectionMenu
         frame.setCursor(cdone);
       }
     });
-
     add(all_bases_item);
 
 
@@ -255,7 +236,7 @@ public class SelectMenu extends SelectionMenu
 
     }
 
-    none_item = new JMenuItem("None");
+    JMenuItem none_item = new JMenuItem("None");
     none_item.setAccelerator(SELECT_NONE_KEY);
     none_item.addActionListener(new ActionListener()
     {
@@ -264,10 +245,9 @@ public class SelectMenu extends SelectionMenu
         clearSelection();
       }
     });
-
     add(none_item);
 
-    select_by_key_item = new JMenuItem("By Key");
+    JMenuItem select_by_key_item = new JMenuItem("By Key");
     select_by_key_item.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent event) 
@@ -278,27 +258,28 @@ public class SelectMenu extends SelectionMenu
 
     add(select_by_key_item);
 
-    select_non_pseudo_cds_item =
-      new JMenuItem("CDS Features without /pseudo");
+    JMenuItem select_non_pseudo_cds_item =
+      new JMenuItem("CDS Features without /pseudogene");
     select_non_pseudo_cds_item.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent event)
       {
-        // select all CDS features that do not have the /pseudo qualifier
-        final FeatureKeyQualifierPredicate predicate =
-          new FeatureKeyQualifierPredicate(Key.CDS, "pseudo", false);
+        // select all CDS features that do not have the /pseudo  or /pseudogene qualifier
+        final FeaturePredicateConjunction predicate = new FeaturePredicateConjunction(
+            new FeatureKeyQualifierPredicate(Key.CDS, "pseudo", false),
+            new FeatureKeyQualifierPredicate(Key.CDS, "pseudogene", false),
+            FeaturePredicateConjunction.AND);
 
         clearSelection();
 
         selectFeaturesByPredicate(predicate);
       }
     });
-
     add(select_non_pseudo_cds_item);
 
     
     final boolean isDatabaseGroup = GeneUtils.isDatabaseEntry( getEntryGroup() );
-    
+    final JMenuItem select_all_cds_item;
     if(isDatabaseGroup)
     {
       select_non_pseudo_cds_item.setEnabled(false);
@@ -322,10 +303,9 @@ public class SelectMenu extends SelectionMenu
         selectFeaturesByPredicate(predicate);
       }
     });
-
     add(select_all_cds_item);
 
-    select_same_type_item = new JMenuItem("Same Key");
+    JMenuItem select_same_type_item = new JMenuItem("Same Key");
     select_same_type_item.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent event) 
@@ -333,10 +313,9 @@ public class SelectMenu extends SelectionMenu
         selectSameKey();
       }
     });
-
     add(select_same_type_item);
 
-    select_matching_qualifiers_item =
+    JMenuItem select_matching_qualifiers_item =
       new JMenuItem("Features Matching Qualifier");
     select_matching_qualifiers_item.addActionListener(new ActionListener()
     {
@@ -345,10 +324,9 @@ public class SelectMenu extends SelectionMenu
         selectMatchingQualifiers();
       }
     });
-
     add(select_matching_qualifiers_item);
 
-    select_orf_item = new JMenuItem("Open Reading Frame");
+    JMenuItem select_orf_item = new JMenuItem("Open Reading Frame");
     select_orf_item.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent event) 
@@ -356,10 +334,9 @@ public class SelectMenu extends SelectionMenu
         selectOrf();
       }
     });
-
     add(select_orf_item);
 
-    select_features_in_range_item =
+    final JMenuItem select_features_in_range_item =
       new JMenuItem("Features Overlapping Selection");
     select_features_in_range_item.addActionListener(new ActionListener()
     {
@@ -370,8 +347,21 @@ public class SelectMenu extends SelectionMenu
     });
 
     add(select_features_in_range_item);
+    
+    
+    final JMenuItem select_features_contained_item =
+        new JMenuItem("Features Within Selection");
+    select_features_contained_item.addActionListener(new ActionListener()
+      {
+        public void actionPerformed(ActionEvent event) 
+        {
+          selectContainedFeatures();
+        }
+      });
 
-    select_base_range_item = new JMenuItem("Base Range ...");
+      add(select_features_contained_item);
+
+    JMenuItem select_base_range_item = new JMenuItem("Base Range ...");
     select_base_range_item.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent event) 
@@ -379,10 +369,9 @@ public class SelectMenu extends SelectionMenu
         selectBaseRange();
       }
     });
-
     add(select_base_range_item);
 
-    select_aa_range_in_feature_item = new JMenuItem("Feature AA Range ...");
+    JMenuItem select_aa_range_in_feature_item = new JMenuItem("Feature AA Range ...");
     select_aa_range_in_feature_item.addActionListener(new ActionListener() 
     {
       public void actionPerformed(ActionEvent event) 
@@ -390,12 +379,11 @@ public class SelectMenu extends SelectionMenu
         selectFeatureAARange();
       }
     });
-
     add(select_aa_range_in_feature_item);
 
     addSeparator();
 
-    selection_toggle_item = new JMenuItem("Toggle Selection");
+    JMenuItem selection_toggle_item = new JMenuItem("Toggle Selection");
     selection_toggle_item.addActionListener(new ActionListener() 
     {
       public void actionPerformed(ActionEvent event) 
@@ -403,7 +391,6 @@ public class SelectMenu extends SelectionMenu
         toggleSelection();
       }
     });
-
     add(selection_toggle_item);
   }
 
@@ -821,11 +808,8 @@ public class SelectMenu extends SelectionMenu
     }
 
     final MarkerRange range = getSelection ().getMarkerRange ();
-
-    final Strand strand = getEntryGroup ().getBases ().getForwardStrand ();
-
     final MarkerRange start_orf_range =
-      strand.getORFAroundMarker (range.getStart (), true);
+      Strand.getORFAroundMarker (range.getStart (), true);
 
     /*final*/ Marker end_marker;
 
@@ -842,7 +826,7 @@ public class SelectMenu extends SelectionMenu
     }
 
     final MarkerRange end_orf_range =
-      strand.getORFAroundMarker (end_marker, true);
+      Strand.getORFAroundMarker (end_marker, true);
 
     MarkerRange new_range = range;
 
@@ -1015,6 +999,66 @@ public class SelectMenu extends SelectionMenu
         throw new Error ("internal error - unexpected exception: " + e);
       }
     }
+  }
+
+  /**
+   *  If there are some selected bases or features select the features that are
+   *  fully contained within that selection.
+   **/
+  private void selectContainedFeatures () {
+    final MarkerRange selected_marker_range =
+      getSelection ().getMarkerRange ();
+
+    final FeatureVector featuresContainedByRange;
+    try
+    {
+      if (selected_marker_range == null) {
+        final FeatureVector selected_features = getSelection ().getAllFeatures ();
+        if (selected_features.size () == 0) {
+          new MessageDialog (getParentFrame (), "nothing selected");
+          return;
+        }
+
+        featuresContainedByRange = new FeatureVector();
+        for(int i=0; i<selected_features.size(); i++) {
+          Range r = selected_features.elementAt(i).getMaxRawRange();
+          final FeatureVector featuresContained = getFeaturesContainedByRange(r);
+          for(int j=0; j<featuresContained.size(); j++) {
+            final Feature f = featuresContained.elementAt(j);
+            if(!featuresContainedByRange.contains(f) && !selected_features.contains(f))
+              featuresContainedByRange.add(f);
+          }
+        }
+      } else {
+        featuresContainedByRange = getFeaturesContainedByRange(
+            selected_marker_range.getRawRange());
+      }
+    } catch (OutOfRangeException e) {
+      throw new Error ("internal error - unexpected exception: " + e);
+    }
+    getSelection ().set (featuresContainedByRange);
+  }
+
+  /**
+   * Return the features that are contained by a given range
+   * @param r
+   * @return
+   * @throws OutOfRangeException
+   */
+  private FeatureVector getFeaturesContainedByRange(Range r) throws OutOfRangeException
+  {
+    final FeatureVector featuresInRange =
+        getEntryGroup ().getFeaturesInRange (r);
+    final FeatureVector featuresContainedByRange = new FeatureVector();
+    for(int i=0; i<featuresInRange.size(); i++)
+    {
+      Feature f = featuresInRange.elementAt(i);
+      Range maxR =  f.getMaxRawRange(); 
+      if(r.getStart() <= maxR.getStart() &&
+         r.getEnd()   >= maxR.getEnd())
+        featuresContainedByRange.add(f);
+    }
+    return featuresContainedByRange;
   }
 
   /**

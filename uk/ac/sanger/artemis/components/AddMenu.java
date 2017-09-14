@@ -39,7 +39,9 @@ import uk.ac.sanger.artemis.util.*;
 import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
 import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
+import uk.ac.sanger.artemis.io.GFFDocumentEntry;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
+import uk.ac.sanger.artemis.io.InvalidRelationException;
 import uk.ac.sanger.artemis.io.Key;
 import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.io.RangeVector;
@@ -184,30 +186,37 @@ public class AddMenu extends SelectionMenu
                                     entry_group, getGotoEventSource ());
       }
     });
-
     add (create_feature_from_range_item);
-    
-    
+
+    final JMenuItem create_gene_model_from_range_item = new JMenuItem(
+          "Gene Model From Base Range");  
     if(GeneUtils.isDatabaseEntry(entry_group))
-    {
-      final JMenuItem create_gene_model_from_range_item = new JMenuItem(
-          "Gene Model From Base Range");
       create_gene_model_from_range_item.setAccelerator(CREATE_FROM_BASE_RANGE_KEY);
-      create_gene_model_from_range_item.addActionListener(new ActionListener()
+    create_gene_model_from_range_item.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent event)
       {
-        public void actionPerformed(ActionEvent event)
+        final Entry default_entry = entry_group.getDefaultEntry();
+        if(default_entry == null)
         {
-          entry_group.getActionController ().startAction ();
-          GeneUtils.createGeneModel(getParentFrame(), getSelection(),
-              entry_group, getGotoEventSource());
-          entry_group.getActionController ().endAction ();
+          new MessageDialog(frame, "There is no default entry.");
+          return;
         }
-      });
-      add (create_gene_model_from_range_item);
-    }
-
-    add (create_feature_from_range_item);
-    
+        final uk.ac.sanger.artemis.io.Entry entry = default_entry.getEMBLEntry();
+        if( !(entry instanceof GFFDocumentEntry || entry instanceof DatabaseDocumentEntry) )
+        {
+          new MessageDialog(frame, 
+              "Expecting a GFF entry. The default entry "+
+              default_entry.getName()+" does not support this.");
+          return;
+        }
+        entry_group.getActionController ().startAction ();
+        GeneUtils.createGeneModel(getParentFrame(), getSelection(),
+            entry_group, getGotoEventSource());
+        entry_group.getActionController ().endAction ();
+      }
+    });
+    add (create_gene_model_from_range_item);   
 
     if(alignQueryViewer != null || alignSubjectViewer != null)
     {
@@ -626,7 +635,11 @@ public class AddMenu extends SelectionMenu
       if (default_entry == null) {
         new MessageDialog (frame, "There is no default entry");
         return;
+      } else if(default_entry.isReadOnly()) {
+        new MessageDialog (frame, "The default entry is read only");
+        return;
       }
+        
 
       try {
         final Location new_location = range.createLocation ();
@@ -750,7 +763,9 @@ public class AddMenu extends SelectionMenu
         final Feature selection_feature =
           selected_features.elementAt (feature_index);
 
-        if (!selection_feature.isProteinFeature ()) {
+        if (!(selection_feature.isProteinFeature () ||
+              selection_feature.getKey().equals("5'UTR") ||
+              selection_feature.getKey().equals("3'UTR"))) {
           continue;
         }
 
@@ -814,6 +829,19 @@ public class AddMenu extends SelectionMenu
             new Location (intron_ranges, cds_location.isComplement ());
           final QualifierVector qualifiers = new QualifierVector ();
 
+          try {
+            StringVector sysNames = Options.getOptions().getSystematicQualifierNames();
+            for(int i=0; i<sysNames.size(); i++) {
+              Qualifier qual = selection_feature.getQualifierByName((String) sysNames.get(i));
+              if(qual != null && qual.getValues() != null && qual.getValues().size() > 0) {
+                qualifiers.addQualifierValues(qual);
+                break;
+              }
+            }
+          } catch (InvalidRelationException e) {
+            throw new Error ("internal error - unexpected exception: " + e);
+          }
+          
           try {
             selection_feature.getEntry ().createFeature (intron_key,
                                                          intron_location,
@@ -1693,7 +1721,7 @@ public class AddMenu extends SelectionMenu
     else
       unsure = new Key ("unsure");
     
-    Pattern p = Pattern.compile("^(n|N)+$"); // pattern match for all n's
+    Pattern p = Pattern.compile("^[nN]+$"); // pattern match for all n's
     
     for (int i = 1 ; i <= bases.getLength () ; ++i) {
       try {

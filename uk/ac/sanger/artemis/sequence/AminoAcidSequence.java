@@ -371,7 +371,9 @@ public class AminoAcidSequence
    **/
   public MarkerRange findMatch(final Bases bases,
                                final Marker search_start_marker,
-                               final boolean search_backwards) 
+                               final boolean search_backwards,
+                               final boolean search_fwd_strand,
+                               final boolean search_bwd_strand) 
   {
     final String bases_string = bases.toString();
 
@@ -432,15 +434,21 @@ public class AminoAcidSequence
       }
     }
 
-    final int forward_search_result =
-      searchFor(bases_string,
-                forward_search_start_index,
-                search_backwards);
+    final int forward_search_result;
+    if(search_fwd_strand)
+      forward_search_result = searchFor(bases_string,
+                                        forward_search_start_index,
+                                        search_backwards);
+    else
+      forward_search_result = -1;
 
-    final int complement_search_result =
-       reverseComplementSearchFor(bases_string,
-                                  complement_search_start_index,
-                                  search_backwards);
+    final int complement_search_result;
+    if(search_bwd_strand)
+      complement_search_result = reverseComplementSearchFor(bases_string,
+                                       complement_search_start_index,
+                                       search_backwards);
+    else
+      complement_search_result = -1;
 
     final int match_first_base;
     final int match_last_base;
@@ -518,7 +526,7 @@ public class AminoAcidSequence
    *    first base, otherwise first to last.
    *  @return The index of the match or -1 if there is no match.
    **/
-  public int searchFor(final String bases_string,
+  private int searchFor(final String bases_string,
                        final int start_index,
                        final boolean search_backwards) 
   {
@@ -537,7 +545,7 @@ public class AminoAcidSequence
    *    should start.
    *  @return The index of the match or -1 if there is no match.
    **/
-  public int searchForwardFor(final String bases_string,
+  private int searchForwardFor(final String bases_string,
                               final int start_index) 
   {
     final int pattern_base_length = length() * 3;
@@ -583,7 +591,7 @@ public class AminoAcidSequence
    *    should start.
    *  @return The index of the match or -1 if there is no match.
    **/
-  public int searchBackwardFor(final String bases_string,
+  private int searchBackwardFor(final String bases_string,
                                int start_index) 
   {
     if(bases_string.length() - start_index < length() * 3) 
@@ -631,7 +639,7 @@ public class AminoAcidSequence
    *    first base, otherwise first to last.
    *  @return The index of the match or -1 if there is no match.
    **/
-  public int reverseComplementSearchFor(final String bases_string,
+  private int reverseComplementSearchFor(final String bases_string,
                                         final int start_index,
                                         final boolean search_backwards) 
   {
@@ -651,7 +659,7 @@ public class AminoAcidSequence
    *    should start.
    *  @return The index of the match or -1 if there is no match.
    **/
-  public int reverseComplementSearchForwardFor(final String bases_string,
+  private int reverseComplementSearchForwardFor(final String bases_string,
                                                final int start_index) 
   {
     final int pattern_base_length = length() * 3;
@@ -703,7 +711,7 @@ public class AminoAcidSequence
    *    should start.
    *  @return The index of the match or -1 if there is no match.
    **/
-  public int reverseComplementSearchBackwardFor(final String bases_string,
+  private int reverseComplementSearchBackwardFor(final String bases_string,
                                                 int start_index) 
   {
     if(bases_string.length() - start_index < length() * 3) 
@@ -1048,7 +1056,7 @@ public class AminoAcidSequence
   /**
    *  The number of amino acid symbols, not including stop codons: 20.
    **/
-  public final static int amino_acid_symbol_count = 20;
+  //private final static int amino_acid_symbol_count = 20;
 
 
   public static void setGeneCode()
@@ -1064,8 +1072,8 @@ public class AminoAcidSequence
       {
         for(int i = 0 ; i < 64 ; ++i) 
         {
-          final char new_table_char =
-                      ((String)(options_file_table.elementAt(i))).charAt(0);
+          final char new_table_char = Character.toUpperCase(
+                      ((String)(options_file_table.elementAt(i))).charAt(0));
 
           if(isLegalCodon (new_table_char)) 
             codon_translation_array[i] = new_table_char;

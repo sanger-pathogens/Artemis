@@ -61,6 +61,8 @@ import uk.ac.sanger.artemis.io.DatabaseInferredFeature;
 import uk.ac.sanger.artemis.io.DocumentEntry;
 import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.Feature;
+import uk.ac.sanger.artemis.io.GFF3Encoder;
+import uk.ac.sanger.artemis.io.GFFDocumentEntry;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.io.InvalidRelationException;
 import uk.ac.sanger.artemis.io.Key;
@@ -90,8 +92,7 @@ import uk.ac.sanger.artemis.Selection;
 
 public class GeneUtils
 {
-  private static final long serialVersionUID = 1L;
-  private static Vector hideFeatures = new Vector();
+  private static Vector<String> hideFeatures = new Vector<String>();
   private static JCheckBox showObsolete = new JCheckBox("Show Obsolete Features",false);
   private static String nonCodingTranscripts[] =
                                 { "tRNA", "rRNA", "snRNA", "snoRNA", "ncRNA", "scRNA" };
@@ -126,7 +127,7 @@ public class GeneUtils
       String value = featureSynonym.getSynonym().getName();
       
       if(!featureSynonym.isCurrent())
-        value.concat(GFFStreamFeature.encode(";current=false"));      
+        value.concat(GFF3Encoder.encode(";current=false"));      
       
       Qualifier qualifier = feature.getQualifiers().getQualifierByName(name);
       if(qualifier == null)
@@ -198,7 +199,7 @@ public class GeneUtils
         final String qualifierString = new String(this_buff.getBytes());
         int ind = qualifierString.indexOf('=');
         final String name  = qualifierString.substring(0, ind);
-        final String value = GFFStreamFeature.decode(
+        final String value = GFF3Encoder.decode(
           qualifierString.substring(ind+1, qualifierString.length()-1));
       
         Qualifier qualifier = feature.getQualifiers().getQualifierByName(name);
@@ -585,17 +586,16 @@ public class GeneUtils
   /**
    * 
    */
-  public static Vector duplicateGeneModel(final JFrame frame,
+  public static Vector<ChadoCanonicalGene> duplicateGeneModel(final JFrame frame,
       final FeatureVector features_to_duplicate,
       final EntryGroup entry_group)
   {
-    final Vector duplicatedGenes = new Vector();
-    final Vector newGenes = new Vector();
+    final Vector<ChadoCanonicalGene> duplicatedGenes = new Vector<ChadoCanonicalGene>();
+    final Vector<ChadoCanonicalGene> newGenes = new Vector<ChadoCanonicalGene>();
     for (int i = 0 ; i < features_to_duplicate.size () ; ++i) 
     {
-      final uk.ac.sanger.artemis.Feature this_feature = 
-                           features_to_duplicate.elementAt(i);
-      final GFFStreamFeature gffFeature = (GFFStreamFeature)this_feature.getEmblFeature();
+      final GFFStreamFeature gffFeature = 
+           (GFFStreamFeature)features_to_duplicate.elementAt(i).getEmblFeature();
       if(duplicatedGenes.contains(gffFeature.getChadoGene()))
         continue;
       
@@ -613,62 +613,40 @@ public class GeneUtils
         ((GFFStreamFeature)newGeneFeature.getEmblFeature()).setChadoGene(newchadoGene);
         newchadoGene.setGene(newGeneFeature.getEmblFeature());
         
-        final List transcripts = chadoGene.getTranscripts();
-        for(int j=0; j<transcripts.size(); j++)
+        final List<Feature> transcripts = chadoGene.getTranscripts();
+        for(int j=0; j<transcripts.size(); j++) // duplicate transcripts and children
         {
           final GFFStreamFeature transcript = (GFFStreamFeature)transcripts.get(j);
-          final String transcriptName =
-            (String)transcript.getQualifierByName("ID").getValues().get(0);
+          final String transcriptName = getUniqueName(transcript);
           
-          uk.ac.sanger.artemis.Feature newTranscriptFeature = 
-            duplicateFeature(transcript, newchadoGene);
+          uk.ac.sanger.artemis.Feature newTranscriptFeature = duplicateFeature(transcript, newchadoGene);
           newchadoGene.addTranscript(newTranscriptFeature.getEmblFeature());
-          final String newTranscriptName =
-            (String)newTranscriptFeature.getQualifierByName("ID").getValues().get(0);
-          
-          List newFeatures;
-          
-          newFeatures= duplicateFeatures(chadoGene.get3UtrOfTranscript(transcriptName), newchadoGene);
-          for(int k=0; k<newFeatures.size(); k++)
-          {
-            uk.ac.sanger.artemis.Feature utrFeature = 
-              (uk.ac.sanger.artemis.Feature)newFeatures.get(k);
+          final String newTranscriptName = getUniqueName(newTranscriptFeature.getEmblFeature());
+
+          List<uk.ac.sanger.artemis.Feature> newFeatures= 
+              duplicateFeatures(chadoGene.get3UtrOfTranscript(transcriptName), newchadoGene);
+          for(uk.ac.sanger.artemis.Feature utrFeature: newFeatures)
             newchadoGene.add3PrimeUtr(newTranscriptName, utrFeature.getEmblFeature());
-          }
           
           newFeatures = duplicateFeatures(chadoGene.get5UtrOfTranscript(transcriptName), newchadoGene);
-          for(int k=0; k<newFeatures.size(); k++)
-          {
-            uk.ac.sanger.artemis.Feature utrFeature = 
-              (uk.ac.sanger.artemis.Feature)newFeatures.get(k);
+          for(uk.ac.sanger.artemis.Feature utrFeature: newFeatures)
             newchadoGene.add5PrimeUtr(newTranscriptName, utrFeature.getEmblFeature());
-          }
           
           newFeatures = duplicateFeatures(chadoGene.getOtherFeaturesOfTranscript(transcriptName), newchadoGene);
-          for(int k=0; k<newFeatures.size(); k++)
-          {
-            uk.ac.sanger.artemis.Feature otherFeature = 
-              (uk.ac.sanger.artemis.Feature)newFeatures.get(k);
+          for(uk.ac.sanger.artemis.Feature otherFeature: newFeatures)
             newchadoGene.addOtherFeatures(newTranscriptName, otherFeature.getEmblFeature());
-          }
 
           newFeatures = duplicateFeatures(chadoGene.getSplicedFeaturesOfTranscript(transcriptName), newchadoGene);
-          for(int k=0; k<newFeatures.size(); k++)
-          {
-            uk.ac.sanger.artemis.Feature splicedFeature = 
-              (uk.ac.sanger.artemis.Feature)newFeatures.get(k);
+          for(uk.ac.sanger.artemis.Feature splicedFeature: newFeatures)
             newchadoGene.addSplicedFeatures(newTranscriptName, splicedFeature.getEmblFeature());
-          }
           
           uk.ac.sanger.artemis.Feature newProtein = 
             duplicateFeature(chadoGene.getProteinOfTranscript(transcriptName), newchadoGene);
           if(newProtein != null)
             newchadoGene.addProtein(newTranscriptName, newProtein.getEmblFeature());
-          
         }
       } 
       catch (ReadOnlyException e) {}
-      catch(InvalidRelationException e) {}
     }
     
     duplicatedGenes.clear();
@@ -676,11 +654,13 @@ public class GeneUtils
   }
   
   
-  private static List duplicateFeatures(final List featuresOfTranscript,
+  private static List<uk.ac.sanger.artemis.Feature> duplicateFeatures(
+                                 final List<Feature> featuresOfTranscript,
                                  final ChadoCanonicalGene chadoGene) 
           throws ReadOnlyException
   {
-    final List newFeatures = new Vector();
+    final List<uk.ac.sanger.artemis.Feature> newFeatures = 
+        new Vector<uk.ac.sanger.artemis.Feature>();
     
     if(featuresOfTranscript == null)
       return newFeatures;
@@ -688,7 +668,6 @@ public class GeneUtils
     for(int i=0; i<featuresOfTranscript.size(); i++)
       newFeatures.add(duplicateFeature(
           (GFFStreamFeature)featuresOfTranscript.get(i), chadoGene));
-  
     return newFeatures;
   }
   
@@ -703,34 +682,6 @@ public class GeneUtils
     ((GFFStreamFeature)newFeature.getEmblFeature()).setChadoGene(chadoGene);
     if(isHiddenFeature(newFeature.getKey().getKeyString()))
       ((GFFStreamFeature)newFeature.getEmblFeature()).setVisible(false);
-    /*
-    try
-    {
-      final QualifierVector qv = newFeature.getQualifiers().copy();
-      
-      for(int i=0; i<qv.size(); i++)
-      {
-        final Qualifier qualifier = (Qualifier)qv.elementAt(i);
-        if(!qualifier.getName().equals("ID") &&
-           !qualifier.getName().equals("Parent") &&
-           !qualifier.getName().equals("Derives_from") &&
-           ChadoTransactionManager.isSpecialTag(qualifier.getName()))
-          newFeature.getQualifiers().removeQualifierByName(qualifier.getName());
-      }
-
-      newFeature.set(newFeature.getKey(), newFeature.getLocation(), qv);
-    }
-    catch(EntryInformationException e)
-    {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-    catch(OutOfRangeException e)
-    {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-    */
     return newFeature;
   }
   
@@ -837,7 +788,9 @@ public class GeneUtils
     String id = null;
     
     if(default_entry.getEMBLEntry() instanceof 
-        uk.ac.sanger.artemis.io.DatabaseDocumentEntry)
+        uk.ac.sanger.artemis.io.DatabaseDocumentEntry ||
+       default_entry.getEMBLEntry() instanceof 
+        uk.ac.sanger.artemis.io.GFFDocumentEntry)
     {  
       while(id == null ||
             id.equals("") ||
@@ -958,6 +911,23 @@ public class GeneUtils
     return false;
   }
   
+  /**
+   * Given an group of entries determine if they contain a GFF entry
+   * @param entryGroup
+   * @return
+   */
+  public static boolean isGFFEntry(final EntryGroup entryGroup)
+  {
+    final EntryVector entries = entryGroup.getActiveEntries();
+    
+    for(int i=0; i<entries.size(); i++)
+    {
+      if( entries.elementAt(i).getEMBLEntry() instanceof GFFDocumentEntry )
+        return true;
+    }
+    return false;
+  }
+  
   
   /**
    * Given a feature determine if it belongs to a database entry
@@ -966,7 +936,8 @@ public class GeneUtils
    */
   public static boolean isDatabaseEntry(final Feature feature)
   {
-    if( feature.getEntry() instanceof DatabaseDocumentEntry )
+    if( feature.getEntry() instanceof DatabaseDocumentEntry &&
+        ((GFFStreamFeature)feature).getDocumentEntry().getDocument() instanceof DatabaseDocument)
       return true;
 
     return false;
@@ -980,6 +951,12 @@ public class GeneUtils
       feature.removeFromEntry();
   }
 
+  public static void deleteAllFeature(uk.ac.sanger.artemis.Feature feature,
+      final ChadoCanonicalGene chado_gene) throws ReadOnlyException
+  {
+    deleteAllFeature(feature, chado_gene, true); 
+  }
+  
   /**
    * Delete feature and children in a chado gene model
    * @param feature
@@ -987,38 +964,78 @@ public class GeneUtils
    * @throws ReadOnlyException
    */
   public static void deleteAllFeature(uk.ac.sanger.artemis.Feature feature,
-      final ChadoCanonicalGene chado_gene) throws ReadOnlyException
+      final ChadoCanonicalGene chado_gene, final boolean updateChadoCanonicalGene) throws ReadOnlyException
   {
-    Set children = chado_gene.getChildren(feature.getEmblFeature());
+    Set<Feature> children = chado_gene.getChildren(feature.getEmblFeature());
     deleteFeature(feature);
-    chado_gene.deleteFeature(feature.getEmblFeature());
+    if(updateChadoCanonicalGene)
+      chado_gene.deleteFeature(feature.getEmblFeature());
 
     Feature embl_feature;
-    Iterator it = children.iterator();
+    Iterator<Feature> it = children.iterator();
 
     while(it.hasNext())
     {
-      embl_feature = (Feature) it.next();
+      embl_feature = it.next();
       deleteFeature((uk.ac.sanger.artemis.Feature) embl_feature.getUserData());
-      chado_gene.deleteFeature(embl_feature);
+      if(updateChadoCanonicalGene)
+        chado_gene.deleteFeature(embl_feature);
     }
+  }
+  
+  /**
+   * Check gene model strands for any inconsistencies
+   * @param chado_gene
+   * @return true is gene model ranges are correct
+   */
+  public static boolean isStrandOK(final ChadoCanonicalGene chado_gene)
+  {
+    boolean isRev = chado_gene.getGene().getLocation().isComplement();
+    final List<Feature> transcripts = chado_gene.getTranscripts();
+    
+    for(int i=0; i<transcripts.size(); i++)
+    {
+      final Feature transcript = (Feature)transcripts.get(i);
+      
+      if(isRev ^ transcript.getLocation().isComplement())
+        return false;
+      
+      final Feature protein = 
+        chado_gene.getProteinOfTranscript(GeneUtils.getUniqueName(transcript));
+      if(protein != null && (isRev ^ protein.getLocation().isComplement()))
+        return false;
+      
+      final Set<Feature> children = chado_gene.getChildren(transcript);
+      final Iterator<Feature> it = children.iterator();
+      while(it.hasNext())
+      {
+        final Feature feature = it.next();
+        if(isRev ^ feature.getLocation().isComplement())
+          return false;
+      }
+    }
+    return true;
   }
 
   /**
    * Check gene model boundaries for any inconsistencies
    * @param chado_gene
-   * @return true is gene model ranges are correct
+   * @return 0 - if consisent
+   *         1 - if transcript start or end is outside gene range
+   *         2 - if child feature of a transcript is outside the transcript range
+   *         3 - if the span of the children features does not match start and end of the transcript
+   *         4 - if the protein range does not match CDS
+   *         5 - if the gene range does not match the largest transcript range
    */
-  public static boolean isBoundaryOK(final ChadoCanonicalGene chado_gene)
+  public static int isBoundaryOK(final ChadoCanonicalGene chado_gene)
   {
     final Range geneRange = chado_gene.getGene().getLocation().getTotalRange();
-    final List transcripts = chado_gene.getTranscripts();
+    final List<Feature> transcripts = chado_gene.getTranscripts();
     int geneStart = Integer.MAX_VALUE;
     int geneEnd = -1;
     
-    for(int i=0; i<transcripts.size(); i++)
+    for(Feature transcript: transcripts)
     {
-      final Feature transcript = (Feature)transcripts.get(i);
       final Range transcriptRange = transcript.getLocation().getTotalRange();
       int transcriptStart = Integer.MAX_VALUE;
       int transcriptEnd = -1;
@@ -1027,7 +1044,7 @@ public class GeneUtils
       
       if(transcriptRange.getStart() < geneRange.getStart() ||
          transcriptRange.getEnd()   > geneRange.getEnd())
-        return false;
+        return 1;
       
       if(transcriptRange.getStart() < geneStart)
         geneStart = transcriptRange.getStart();
@@ -1040,15 +1057,15 @@ public class GeneUtils
       if(protein != null)
         proteinName = GeneUtils.getUniqueName(protein);
       
-      final Set children = chado_gene.getChildren(transcript);
-      final Iterator it = children.iterator();
+      final Set<Feature> children = chado_gene.getChildren(transcript);
+      final Iterator<Feature> it = children.iterator();
       while(it.hasNext())
       {
-        final Feature feature = (Feature) it.next();
+        final Feature feature = it.next();
         final Range childRange = feature.getLocation().getTotalRange();
         if(childRange.getStart() < transcriptRange.getStart() ||
            childRange.getEnd()   > transcriptRange.getEnd())
-          return false;
+          return 2;
 
         if(proteinName != null &&
            GeneUtils.getUniqueName(feature).equals(proteinName))
@@ -1073,41 +1090,52 @@ public class GeneUtils
       
       if((transcriptRange.getStart() != transcriptStart && transcriptStart < Integer.MAX_VALUE) ||
          (transcriptRange.getEnd()   != transcriptEnd   && transcriptEnd   > -1))
-        return false;
+        return 3;
 
       if(protein != null)
       {
         final Range proteinRange = protein.getLocation().getTotalRange();
-        if(proteinRange.getStart() != ppStart ||
-           proteinRange.getEnd()   != ppEnd)
-          return false;
+        if((proteinRange.getStart() != ppStart && ppStart < Integer.MAX_VALUE) ||
+           (proteinRange.getEnd()   != ppEnd   && ppEnd   > -1))
+          return 4;
       }
     }
     
     // check gene range
     if((geneRange.getStart() != geneStart && geneStart < Integer.MAX_VALUE) ||
        (geneRange.getEnd()   != geneEnd   && geneEnd   > -1))
-      return false;
+      return 5;
     
-    return true;
+    return 0;
+  }
+  
+  public static void checkGeneBoundary(final ChadoCanonicalGene chado_gene)
+  {
+    checkGeneBoundary(chado_gene, true);
+  }
+  
+  protected static Range checkTranscriptBoundary(
+      final uk.ac.sanger.artemis.Feature transcript,
+      final ChadoCanonicalGene chado_gene)
+  {
+    return checkTranscriptBoundary(transcript, chado_gene, true);
   }
   
   /**
    * Adjust transcript and gene boundaries
    * @param chado_gene
    */
-  public static void checkGeneBoundary(final ChadoCanonicalGene chado_gene)
+  public static void checkGeneBoundary(final ChadoCanonicalGene chado_gene, final boolean changeEmblFeature)
   {
-    final List transcripts = chado_gene.getTranscripts();
+    final List<Feature> transcripts = chado_gene.getTranscripts();
     int gene_start = Integer.MAX_VALUE;
     int gene_end = -1;
     
     Range range;
-    for(int i=0; i<transcripts.size(); i++)
+    for(Feature transcript: transcripts)
     {
-      final Feature transcript = (Feature)transcripts.get(i);
       range = checkTranscriptBoundary(
-          (uk.ac.sanger.artemis.Feature)transcript.getUserData(), chado_gene);
+          (uk.ac.sanger.artemis.Feature)transcript.getUserData(), chado_gene, changeEmblFeature);
       if(range != null && range.getStart() < gene_start)
         gene_start = range.getStart();
       if(range != null && range.getEnd() > gene_end)
@@ -1117,24 +1145,26 @@ public class GeneUtils
     if(gene_end == -1 && gene_start == Integer.MAX_VALUE)
       return;
     
-    setLocation(chado_gene.getGene(), gene_start, gene_end);
+    setLocation(chado_gene.getGene(), gene_start, gene_end, changeEmblFeature);
   }
-  
   
   /**
    * Check and adjust transcript boundary
    * @param transcript
    * @param chado_gene
+   * @param changeEmblFeature
+   * @return
    */
-  public static Range checkTranscriptBoundary(
+  protected static Range checkTranscriptBoundary(
       final uk.ac.sanger.artemis.Feature transcript,
-      final ChadoCanonicalGene chado_gene)
+      final ChadoCanonicalGene chado_gene,
+      final boolean changeEmblFeature)
   {
     final List transcripts = chado_gene.getTranscripts();
 
     if(transcripts.contains(transcript.getEmblFeature()))
     {
-      checkProteinBoundary(transcript.getEmblFeature(), chado_gene);
+      checkProteinBoundary(transcript.getEmblFeature(), chado_gene, changeEmblFeature);
       
       final Set children = chado_gene.getChildren(transcript.getEmblFeature());
       int transcript_start = Integer.MAX_VALUE;
@@ -1156,7 +1186,7 @@ public class GeneUtils
         return null;
       
       return setLocation(transcript.getEmblFeature(), 
-                   transcript_start, transcript_end);
+            transcript_start, transcript_end, changeEmblFeature);
     }
     else
       JOptionPane.showMessageDialog(null,
@@ -1170,8 +1200,9 @@ public class GeneUtils
    * @param transcript
    * @param chado_gene
    */
-  public static void checkProteinBoundary(final Feature transcript,
-                                          final ChadoCanonicalGene chado_gene)
+  private static void checkProteinBoundary(final Feature transcript,
+                                          final ChadoCanonicalGene chado_gene,
+                                          final boolean changeEmblFeature)
   {
     final String transcriptName = getUniqueName(transcript);
     final Feature protein = chado_gene.getProteinOfTranscript(transcriptName);
@@ -1181,14 +1212,13 @@ public class GeneUtils
     int pp_start = Integer.MAX_VALUE;
     int pp_end = -1;
     
-    final List dnaFeatures = new Vector();
+    final List<Feature> dnaFeatures = new Vector<Feature>();
 /*    if(chado_gene.get3UtrOfTranscript(transcriptName) != null)
       dnaFeatures.addAll(chado_gene.get3UtrOfTranscript(transcriptName));
     if(chado_gene.get5UtrOfTranscript(transcriptName) != null)
       dnaFeatures.addAll(chado_gene.get5UtrOfTranscript(transcriptName));*/ 
     
-    List exons;
-    
+    List<Feature> exons;
     if(DatabaseDocument.CHADO_INFER_CDS)
       exons = chado_gene.getSpliceSitesOfTranscript(transcriptName, "CDS");
     else
@@ -1200,9 +1230,8 @@ public class GeneUtils
     if(exons != null)
       dnaFeatures.addAll(exons);
     
-    for(int i=0; i<dnaFeatures.size(); i++)
+    for(Feature dnaFeature: dnaFeatures)
     {
-      Feature dnaFeature = (Feature)dnaFeatures.get(i);
       final Range range = dnaFeature.getLocation().getTotalRange();
       if(range.getStart() < pp_start)
         pp_start = range.getStart();
@@ -1212,7 +1241,8 @@ public class GeneUtils
     
     if(pp_start == Integer.MAX_VALUE || pp_end == -1)
        return;
-    setLocation(protein, pp_start, pp_end);
+    
+    setLocation(protein, pp_start, pp_end, changeEmblFeature);
   }
   
   /**
@@ -1371,6 +1401,7 @@ public class GeneUtils
       for(int j=0; j<exons.size(); j++)
       {
         final uk.ac.sanger.artemis.Feature exon = (uk.ac.sanger.artemis.Feature)((Feature)exons.get(j)).getUserData();
+        exon.resetColour();
         if(convertToPseudogene)
           exon.set(new Key("pseudogenic_exon"), exon.getLocation(), exon.getQualifiers());
         else
@@ -1378,9 +1409,11 @@ public class GeneUtils
       }
     }
   }
-  
+
   private static Range setLocation(final Feature f, 
-                                   final int start, final int end)
+                                   final int start,
+                                   final int end,
+                                   final boolean changeEmblFeature)
   {
     try
     {
@@ -1389,23 +1422,27 @@ public class GeneUtils
       ranges.add(range);
 
       final Location new_location = new Location(ranges, 
-                        f.getLocation().isComplement());
-      f.setLocation(new_location);
+          f.getLocation().isComplement());
+      
+      if(changeEmblFeature)
+        f.setLocation(new_location);
+      else
+        ((uk.ac.sanger.artemis.Feature)f.getUserData()).setLocation(new_location);
       return range;
     }
-    catch(OutOfRangeException e)
+    catch (OutOfRangeException e)
     {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
-    catch(ReadOnlyException e)
+    catch (ReadOnlyException e)
     {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
     return null;
   }
-  
+
   public static String getUniqueName(final Feature feature)
   {
     try
@@ -1453,15 +1490,14 @@ public class GeneUtils
     {
       String transcriptName =
         chadoGene.getTranscriptFromName(GeneUtils.getUniqueName(gffFeature));
-      
-      List splicedFeatures = 
-        chadoGene.getSplicedFeaturesOfTranscript(transcriptName);
 
-      for (int i = 0; i < splicedFeatures.size(); i++)
+      List<Feature> splicedFeatures = 
+        chadoGene.getSplicedFeaturesOfTranscript(transcriptName);
+      for (Feature emblFeature: splicedFeatures)
       {
-        Feature emblFeature = (Feature) splicedFeatures.get(i);
         if (emblFeature.getKey().getKeyString().equals(
-            DatabaseDocument.EXONMODEL))
+            DatabaseDocument.EXONMODEL) ||
+            emblFeature.getKey().getKeyString().equals("pseudogenic_exon"))
         {
           uk.ac.sanger.artemis.Feature f = 
             (uk.ac.sanger.artemis.Feature) emblFeature.getUserData();
