@@ -136,6 +136,37 @@ public class Utils
     return null;
   }
   
+  public static uk.ac.sanger.artemis.Feature getFeatureByIdAndKey(
+	      final String id,
+	      final String key,
+	      final uk.ac.sanger.artemis.FeatureVector features)
+  {
+	  try
+	    {
+	      for (int i=0; i<features.size(); i++)
+	      {
+	        uk.ac.sanger.artemis.Feature f = features.elementAt(i);
+	        final Qualifier q = f.getQualifierByName("ID");
+	        if (q != null)
+	        {
+	        	
+	          final String thisId = q.getValues().get(0);
+	          if (thisId.startsWith(id) && f.getKey().getKeyString().equals(key))
+	          {
+	            return f;
+	          }
+	          
+	        }
+	      }
+	    }
+	    catch(InvalidRelationException e) 
+	    {
+	      Assert.fail(e.getMessage());
+	    }
+	  
+	    return null;
+  }
+  
   /**
    * Method to change the translation table being used
    * @param n - genetic code table number
