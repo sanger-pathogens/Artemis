@@ -1,0 +1,130 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.circular.digest.EmbossTableParser
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.circular.digest.EmbossTableParser: 0.7027434371184371</ul>
+<ul>
+<li>150.6166665862625 fitness evaluations, 0 generations, null statements, 8 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EmbossTableParser embossTableParser0 = new EmbossTableParser();
+<span class="nocode"><a name="2">  2: </a></span>int int0 = embossTableParser0.getLength();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, int0);
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EmbossTableParser embossTableParser0 = new EmbossTableParser();
+<span class="nocode"><a name="2">  2: </a></span>char[] charArray0 = new char[6];
+<span class="nocode"><a name="3">  3: </a></span>CharArrayReader charArrayReader0 = new CharArrayReader(charArray0);
+<span class="nocode"><a name="4">  4: </a></span>BufferedReader bufferedReader0 = new BufferedReader(charArrayReader0);
+<span class="nocode"><a name="5">  5: </a></span>List&lt;CutSite&gt; list0 = embossTableParser0.parse(bufferedReader0);
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(list0.isEmpty());
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EmbossTableParser embossTableParser0 = new EmbossTableParser();
+<span class="nocode"><a name="2">  2: </a></span>char[] charArray0 = new char[6];
+<span class="nocode"><a name="3">  3: </a></span>charArray0[0] = '.';
+<span class="nocode"><a name="4">  4: </a></span>CharArrayReader charArrayReader0 = new CharArrayReader(charArray0);
+<span class="nocode"><a name="5">  5: </a></span>BufferedReader bufferedReader0 = new BufferedReader(charArrayReader0);
+<span class="nocode"><a name="6">  6: </a></span>List&lt;CutSite&gt; list0 = embossTableParser0.parse(bufferedReader0);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, list0.size());
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EmbossTableParser embossTableParser0 = new EmbossTableParser();
+<span class="nocode"><a name="2">  2: </a></span>PipedReader pipedReader0 = new PipedReader();
+<span class="nocode"><a name="3">  3: </a></span>BufferedReader bufferedReader0 = new BufferedReader(pipedReader0, 5);
+<span class="nocode"><a name="4">  4: </a></span>embossTableParser0.parse(bufferedReader0);
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EmbossTableParser embossTableParser0 = new EmbossTableParser();
+<span class="nocode"><a name="2">  2: </a></span>embossTableParser0.parse((BufferedReader) null);
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EmbossTableParser embossTableParser0 = new EmbossTableParser();
+<span class="nocode"><a name="2">  2: </a></span>byte[] byteArray0 = new byte[7];
+<span class="nocode"><a name="3">  3: </a></span>byteArray0[0] = (byte) (-3);
+<span class="nocode"><a name="4">  4: </a></span>ByteArrayInputStream byteArrayInputStream0 = new ByteArrayInputStream(byteArray0);
+<span class="nocode"><a name="5">  5: </a></span>Charset charset0 = Charset.defaultCharset();
+<span class="nocode"><a name="6">  6: </a></span>CharsetDecoder charsetDecoder0 = charset0.newDecoder();
+<span class="nocode"><a name="7">  7: </a></span>InputStreamReader inputStreamReader0 = new InputStreamReader(byteArrayInputStream0, charsetDecoder0);
+<span class="nocode"><a name="8">  8: </a></span>LineNumberReader lineNumberReader0 = new LineNumberReader(inputStreamReader0, 1760);
+<span class="nocode"><a name="9">  9: </a></span>embossTableParser0.parse(lineNumberReader0);
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EmbossTableParser embossTableParser0 = new EmbossTableParser();
+<span class="nocode"><a name="2">  2: </a></span>StringReader stringReader0 = new StringReader(&quot;#+&quot;);
+<span class="nocode"><a name="3">  3: </a></span>PushbackReader pushbackReader0 = new PushbackReader(stringReader0, 1050);
+<span class="nocode"><a name="4">  4: </a></span>BufferedReader bufferedReader0 = new BufferedReader(pushbackReader0, 1050);
+<span class="nocode"><a name="5">  5: </a></span>LinkedList&lt;CutSite&gt; linkedList0 = new LinkedList&lt;CutSite&gt;();
+<span class="nocode"><a name="6">  6: </a></span>embossTableParser0.list = (List&lt;CutSite&gt;) linkedList0;
+<span class="nocode"><a name="7">  7: </a></span>linkedList0.add((CutSite) null);
+<span class="nocode"><a name="8">  8: </a></span>List&lt;CutSite&gt; list0 = embossTableParser0.parse(bufferedReader0);
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(1, list0.size());
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EmbossTableParser embossTableParser0 = new EmbossTableParser();
+<span class="nocode"><a name="2">  2: </a></span>StringReader stringReader0 = new StringReader(&quot;#+&quot;);
+<span class="nocode"><a name="3">  3: </a></span>PushbackReader pushbackReader0 = new PushbackReader(stringReader0, 1050);
+<span class="nocode"><a name="4">  4: </a></span>BufferedReader bufferedReader0 = new BufferedReader(pushbackReader0, 1050);
+<span class="nocode"><a name="5">  5: </a></span>embossTableParser0.list = null;
+<span class="nocode"><a name="6">  6: </a></span>List&lt;CutSite&gt; list0 = embossTableParser0.parse(bufferedReader0);
+<span class="nocode"><a name="7">  7: </a></span>assertNull(list0);
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.circular.digest.EmbossTableParser
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.circular.digest.EmbossTableParser
+<li>Size: 8
+<li>Length: 42
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.7027434371184371
+<li>BranchCoverage: 0.625
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 0.5555555555555556
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

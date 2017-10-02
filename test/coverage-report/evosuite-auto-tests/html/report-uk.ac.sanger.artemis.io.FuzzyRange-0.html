@@ -1,0 +1,246 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.io.FuzzyRange
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.io.FuzzyRange: 0.824109013106709</ul>
+<ul>
+<li>162.66 fitness evaluations, 0 generations, null statements, 27 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LowerInteger lowerInteger0 = new LowerInteger(0);
+<span class="nocode"><a name="2">  2: </a></span>FuzzyRange fuzzyRange0 = (FuzzyRange)FuzzyRange.makeRange((Object) lowerInteger0);
+<span class="nocode"><a name="3">  3: </a></span>FuzzyRange fuzzyRange1 = (FuzzyRange)fuzzyRange0.getEndObject();
+<span class="nocode"><a name="4">  4: </a></span>assertNull(fuzzyRange1);
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Integer integer0 = Integer.valueOf(1563);
+<span class="nocode"><a name="2">  2: </a></span>LowerInteger lowerInteger0 = new LowerInteger(integer0);
+<span class="nocode"><a name="3">  3: </a></span>FuzzyRange fuzzyRange0 = (FuzzyRange)FuzzyRange.makeRange((Object) lowerInteger0, (Object) integer0);
+<span class="nocode"><a name="4">  4: </a></span>Range range0 = fuzzyRange0.copy();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(1, range0.getCount());
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LowerInteger lowerInteger0 = new LowerInteger(0);
+<span class="nocode"><a name="2">  2: </a></span>FuzzyRange fuzzyRange0 = (FuzzyRange)FuzzyRange.makeRange((Object) lowerInteger0);
+<span class="nocode"><a name="3">  3: </a></span>LowerInteger lowerInteger1 = (LowerInteger)fuzzyRange0.getStartObject();
+<span class="nocode"><a name="4">  4: </a></span>assertSame(lowerInteger1, lowerInteger0);
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LowerInteger lowerInteger0 = new LowerInteger(0);
+<span class="nocode"><a name="2">  2: </a></span>FuzzyRange fuzzyRange0 = (FuzzyRange)FuzzyRange.makeRange((Object) lowerInteger0);
+<span class="nocode"><a name="3">  3: </a></span>FuzzyRange fuzzyRange1 = (FuzzyRange)fuzzyRange0.copy();
+<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = fuzzyRange0.equals((Range) fuzzyRange1);
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Integer integer0 = Integer.valueOf(1563);
+<span class="nocode"><a name="2">  2: </a></span>FuzzyRange.makeRange((Object) integer0, (Object) &quot;&lt;1563&quot;);
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Integer integer0 = new Integer(0);
+<span class="nocode"><a name="2">  2: </a></span>Integer integer1 = new Integer((-1));
+<span class="nocode"><a name="3">  3: </a></span>Range range0 = FuzzyRange.makeRange((Object) integer0, (Object) integer1);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(2, range0.getCount());
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Integer integer0 = new Integer(0);
+<span class="nocode"><a name="2">  2: </a></span>Range range0 = FuzzyRange.makeRange((Object) integer0);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, range0.getEnd());
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LowerInteger lowerInteger0 = new LowerInteger(0);
+<span class="nocode"><a name="2">  2: </a></span>FuzzyRange fuzzyRange0 = (FuzzyRange)FuzzyRange.makeRange((Object) lowerInteger0);
+<span class="nocode"><a name="3">  3: </a></span>FuzzyRange fuzzyRange1 = (FuzzyRange)FuzzyRange.makeRange((Object) fuzzyRange0, (Object) fuzzyRange0);
+<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = fuzzyRange1.equals((Range) fuzzyRange0);
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Object object0 = new Object();
+<span class="nocode"><a name="2">  2: </a></span>UpperInteger upperInteger0 = new UpperInteger(24);
+<span class="nocode"><a name="3">  3: </a></span>FuzzyRange.makeRange(object0, (Object) upperInteger0);
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>UpperInteger upperInteger0 = new UpperInteger((-1));
+<span class="nocode"><a name="2">  2: </a></span>FuzzyRange fuzzyRange0 = (FuzzyRange)FuzzyRange.makeRange((Object) upperInteger0);
+<span class="nocode"><a name="3">  3: </a></span>FuzzyRange fuzzyRange1 = (FuzzyRange)FuzzyRange.makeRange((Object) fuzzyRange0, (Object) upperInteger0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-1), fuzzyRange1.getStart());
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FuzzyRange.makeRange((Object) &quot;826&quot;);
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(26);
+<span class="nocode"><a name="2">  2: </a></span>FuzzyRange fuzzyRange0 = (FuzzyRange)FuzzyRange.makeRange((Object) range0, (Object) range0);
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = fuzzyRange0.equals(range0);
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 13</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LowerInteger lowerInteger0 = new LowerInteger(0);
+<span class="nocode"><a name="2">  2: </a></span>FuzzyRange fuzzyRange0 = (FuzzyRange)FuzzyRange.makeRange((Object) lowerInteger0);
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = fuzzyRange0.equals((Range) fuzzyRange0);
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 14</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LowerInteger lowerInteger0 = new LowerInteger(0);
+<span class="nocode"><a name="2">  2: </a></span>FuzzyRange fuzzyRange0 = (FuzzyRange)FuzzyRange.makeRange((Object) lowerInteger0);
+<span class="nocode"><a name="3">  3: </a></span>FuzzyRange fuzzyRange1 = (FuzzyRange)FuzzyRange.makeRange((Object) fuzzyRange0, (Object) fuzzyRange0);
+<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = fuzzyRange0.equals((Range) fuzzyRange1);
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 15</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LowerInteger lowerInteger0 = new LowerInteger(0);
+<span class="nocode"><a name="2">  2: </a></span>FuzzyRange fuzzyRange0 = (FuzzyRange)FuzzyRange.makeRange((Object) lowerInteger0);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = fuzzyRange0.toString();
+<span class="nocode"><a name="4">  4: </a></span>assertNotNull(string0);
+</pre>
+<h3>Test case 16</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Integer integer0 = new Integer(0);
+<span class="nocode"><a name="2">  2: </a></span>Range range0 = FuzzyRange.makeRange((Object) integer0, (Object) integer0);
+<span class="nocode"><a name="3">  3: </a></span>FuzzyRange fuzzyRange0 = (FuzzyRange)FuzzyRange.makeRange((Object) range0);
+<span class="nocode"><a name="4">  4: </a></span>FuzzyRange fuzzyRange1 = (FuzzyRange)FuzzyRange.makeRange((Object) range0, (Object) fuzzyRange0);
+<span class="nocode"><a name="5">  5: </a></span>String string0 = fuzzyRange1.toString();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;(0.0)..(0.0)&quot;, string0);
+</pre>
+<h3>Test case 17</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LowerInteger lowerInteger0 = new LowerInteger(0);
+<span class="nocode"><a name="2">  2: </a></span>FuzzyRange fuzzyRange0 = (FuzzyRange)FuzzyRange.makeRange((Object) lowerInteger0);
+<span class="nocode"><a name="3">  3: </a></span>Range range0 = fuzzyRange0.change(0, 0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1, range0.getCount());
+</pre>
+<h3>Test case 18</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>UpperInteger upperInteger0 = new UpperInteger(269);
+<span class="nocode"><a name="2">  2: </a></span>FuzzyRange fuzzyRange0 = (FuzzyRange)FuzzyRange.makeRange((Object) upperInteger0);
+<span class="nocode"><a name="3">  3: </a></span>Range range0 = fuzzyRange0.change((-1232), 1802);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(3035, range0.getCount());
+</pre>
+<h3>Test case 19</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Integer integer0 = new Integer(1563);
+<span class="nocode"><a name="2">  2: </a></span>LowerInteger lowerInteger0 = new LowerInteger(integer0);
+<span class="nocode"><a name="3">  3: </a></span>FuzzyRange fuzzyRange0 = (FuzzyRange)FuzzyRange.makeRange((Object) lowerInteger0, (Object) integer0);
+<span class="nocode"><a name="4">  4: </a></span>FuzzyRange fuzzyRange1 = (FuzzyRange)fuzzyRange0.change(896, 896);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(1, fuzzyRange1.getCount());
+</pre>
+<h3>Test case 20</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FuzzyRange.makeRange((Object) null, (Object) null);
+</pre>
+<h3>Test case 21</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Integer integer0 = new Integer(1563);
+<span class="nocode"><a name="2">  2: </a></span>LowerInteger lowerInteger0 = new LowerInteger(integer0);
+<span class="nocode"><a name="3">  3: </a></span>FuzzyRange fuzzyRange0 = (FuzzyRange)FuzzyRange.makeRange((Object) lowerInteger0, (Object) integer0);
+<span class="nocode"><a name="4">  4: </a></span>fuzzyRange0.change(1384, (-1));
+</pre>
+<h3>Test case 22</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Integer integer0 = new Integer(0);
+<span class="nocode"><a name="2">  2: </a></span>UpperInteger upperInteger0 = new UpperInteger(1);
+<span class="nocode"><a name="3">  3: </a></span>FuzzyRange fuzzyRange0 = (FuzzyRange)FuzzyRange.makeRange((Object) upperInteger0);
+<span class="nocode"><a name="4">  4: </a></span>FuzzyRange.makeRange((Object) fuzzyRange0, (Object) integer0);
+</pre>
+<h3>Test case 23</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LowerInteger lowerInteger0 = new LowerInteger(0);
+<span class="nocode"><a name="2">  2: </a></span>FuzzyRange fuzzyRange0 = (FuzzyRange)FuzzyRange.makeRange((Object) lowerInteger0);
+<span class="nocode"><a name="3">  3: </a></span>FuzzyRange fuzzyRange1 = (FuzzyRange)fuzzyRange0.change((-1), (-1));
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1, fuzzyRange1.getCount());
+</pre>
+<h3>Test case 24</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>UpperInteger upperInteger0 = new UpperInteger((-2923));
+<span class="nocode"><a name="2">  2: </a></span>FuzzyRange fuzzyRange0 = (FuzzyRange)FuzzyRange.makeRange((Object) upperInteger0);
+<span class="nocode"><a name="3">  3: </a></span>FuzzyRange fuzzyRange1 = (FuzzyRange)fuzzyRange0.copy();
+<span class="nocode"><a name="4">  4: </a></span>assertNotSame(fuzzyRange0, fuzzyRange1);
+</pre>
+<h3>Test case 25</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LowerInteger lowerInteger0 = new LowerInteger(0);
+<span class="nocode"><a name="2">  2: </a></span>FuzzyRange fuzzyRange0 = (FuzzyRange)FuzzyRange.makeRange((Object) lowerInteger0);
+<span class="nocode"><a name="3">  3: </a></span>FuzzyRange fuzzyRange1 = (FuzzyRange)fuzzyRange0.copy();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, fuzzyRange1.getEnd());
+</pre>
+<h3>Test case 26</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LowerInteger lowerInteger0 = new LowerInteger(0);
+<span class="nocode"><a name="2">  2: </a></span>FuzzyRange fuzzyRange0 = (FuzzyRange)FuzzyRange.makeRange((Object) lowerInteger0);
+<span class="nocode"><a name="3">  3: </a></span>FuzzyRange fuzzyRange1 = (FuzzyRange)FuzzyRange.makeRange((Object) fuzzyRange0, (Object) fuzzyRange0);
+<span class="nocode"><a name="4">  4: </a></span>FuzzyRange fuzzyRange2 = (FuzzyRange)fuzzyRange1.getEndObject();
+<span class="nocode"><a name="5">  5: </a></span>assertSame(fuzzyRange2, fuzzyRange0);
+</pre>
+<h3>Test case 27</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Integer integer0 = Integer.getInteger(&quot;eeTfp3'~eb7&quot;, 356);
+<span class="nocode"><a name="2">  2: </a></span>Integer integer1 = new Integer(734);
+<span class="nocode"><a name="3">  3: </a></span>Range range0 = FuzzyRange.makeRange((Object) integer0, (Object) integer1);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(379, range0.getCount());
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.io.FuzzyRange
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.io.FuzzyRange
+<li>Size: 27
+<li>Length: 85
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.824109013106709
+<li>BranchCoverage: 0.6774193548387096
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 0.6938775510204082
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

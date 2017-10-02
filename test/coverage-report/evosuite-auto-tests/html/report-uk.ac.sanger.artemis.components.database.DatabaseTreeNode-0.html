@@ -1,0 +1,214 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.components.database.DatabaseTreeNode
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.components.database.DatabaseTreeNode: 0.4584863985119739</ul>
+<ul>
+<li>299.1477987421384 fitness evaluations, 0 generations, null statements, 20 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseTreeNode databaseTreeNode0 = new DatabaseTreeNode(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>databaseTreeNode0.getTransferDataFlavors();
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(databaseTreeNode0.isExplored());
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(databaseTreeNode0.isLeaf());
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Organism organism0 = new Organism();
+<span class="nocode"><a name="2">  2: </a></span>JPasswordField jPasswordField0 = new JPasswordField(&quot;Alphabet changed underneath me&quot;, 0);
+<span class="nocode"><a name="3">  3: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;Alphabet changed underneath me&quot;, jPasswordField0, &quot;artemis.environment&quot;, &quot;artemis.environment&quot;);
+<span class="nocode"><a name="4">  4: </a></span>DatabaseTreeNode databaseTreeNode0 = new DatabaseTreeNode(&quot;^+D&amp;)'&quot;, false, organism0, &quot;^+D&amp;)'&quot;, databaseDocument0);
+<span class="nocode"><a name="5">  5: </a></span>DatabaseTreeNode databaseTreeNode1 = (DatabaseTreeNode)databaseTreeNode0.getTransferData(databaseTreeNode0.DATABASETREENODE);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;null.null&quot;, databaseTreeNode1.getOrganismCommonName());
+<span class="nocode"><a name="7">  7: </a></span>assertTrue(databaseTreeNode1.isDirectory());
+<span class="nocode"><a name="8">  8: </a></span>assertFalse(databaseTreeNode0.isLeaf());
+<span class="nocode"><a name="9">  9: </a></span>assertFalse(databaseTreeNode1.isExplored());
+<span class="nocode"><a name="10"> 10: </a></span>assertFalse(databaseTreeNode0.isExplored());
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseTreeNode databaseTreeNode0 = new DatabaseTreeNode(&quot;I thought that I had checked that the translation table was compatible with my source, but apparently something has messed up.&quot;);
+<span class="nocode"><a name="2">  2: </a></span>SshLogin sshLogin0 = new SshLogin();
+<span class="nocode"><a name="3">  3: </a></span>JPasswordField jPasswordField0 = sshLogin0.getJPasswordField();
+<span class="nocode"><a name="4">  4: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;&quot;, jPasswordField0, &quot;&quot;, &quot;rkdqnehstpycgamwlvfi&quot;);
+<span class="nocode"><a name="5">  5: </a></span>databaseTreeNode0.setDbDoc(databaseDocument0);
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(databaseTreeNode0.isExplored());
+<span class="nocode"><a name="7">  7: </a></span>assertFalse(databaseTreeNode0.isLeaf());
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseTreeNode databaseTreeNode0 = new DatabaseTreeNode(&quot;_&quot;);
+<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = databaseTreeNode0.isExplored();
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(databaseTreeNode0.isLeaf());
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseTreeNode databaseTreeNode0 = new DatabaseTreeNode(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>databaseTreeNode0.getOrganismCommonName();
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(databaseTreeNode0.isExplored());
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(databaseTreeNode0.isLeaf());
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseTreeNode databaseTreeNode0 = new DatabaseTreeNode(&quot;I thought that I had checked that the translation table was compatible with my source, but apparently something has messed up.&quot;);
+<span class="nocode"><a name="2">  2: </a></span>DatabaseTreeNode databaseTreeNode1 = (DatabaseTreeNode)databaseTreeNode0.getTransferData(databaseTreeNode0.DATABASETREENODE);
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(databaseTreeNode0.isExplored());
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(databaseTreeNode0.isDirectory());
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(databaseTreeNode1.isLeaf());
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(databaseTreeNode1.isExplored());
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LinkedHashSet&lt;OrganismProp&gt; linkedHashSet0 = new LinkedHashSet&lt;OrganismProp&gt;();
+<span class="nocode"><a name="2">  2: </a></span>OrganismProp organismProp0 = new OrganismProp();
+<span class="nocode"><a name="3">  3: </a></span>linkedHashSet0.add(organismProp0);
+<span class="nocode"><a name="4">  4: </a></span>DatabaseTreeNode.setOrganismProps(linkedHashSet0, false);
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseTreeNode databaseTreeNode0 = new DatabaseTreeNode(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = databaseTreeNode0.getAllowsChildren();
+<span class="nocode"><a name="3">  3: </a></span>assertTrue(boolean0);
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(databaseTreeNode0.isExplored());
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseTreeNode databaseTreeNode0 = new DatabaseTreeNode(&quot;_&quot;);
+<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = databaseTreeNode0.isDirectory();
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(databaseTreeNode0.isExplored());
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseTreeNode databaseTreeNode0 = new DatabaseTreeNode(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>databaseTreeNode0.explore();
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Organism organism0 = new Organism();
+<span class="nocode"><a name="2">  2: </a></span>JPasswordField jPasswordField0 = new JPasswordField(&quot;Alphabet changed underneath me&quot;, 0);
+<span class="nocode"><a name="3">  3: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;Alphabet changed underneath me&quot;, jPasswordField0, &quot;artemis.environment&quot;, &quot;artemis.environment&quot;);
+<span class="nocode"><a name="4">  4: </a></span>DatabaseTreeNode databaseTreeNode0 = new DatabaseTreeNode(&quot;^+D&amp;)'&quot;, false, organism0, &quot;^+D&amp;)'&quot;, databaseDocument0);
+<span class="nocode"><a name="5">  5: </a></span>DataFlavor dataFlavor0 = DataFlavor.stringFlavor;
+<span class="nocode"><a name="6">  6: </a></span>String string0 = (String)databaseTreeNode0.getTransferData(dataFlavor0);
+<span class="nocode"><a name="7">  7: </a></span>assertFalse(databaseTreeNode0.isExplored());
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(&quot;null.null&quot;, databaseTreeNode0.getOrganismCommonName());
+<span class="nocode"><a name="9">  9: </a></span>assertFalse(databaseTreeNode0.isLeaf());
+<span class="nocode"><a name="10"> 10: </a></span>assertEquals(&quot;null.null:featureId=null&quot;, string0);
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseTreeNode databaseTreeNode0 = new DatabaseTreeNode(&quot;I thought that I had checked that the translation table was compatible with my source, but apparently something has messed up.&quot;);
+<span class="nocode"><a name="2">  2: </a></span>DataFlavor dataFlavor0 = DataFlavor.getTextPlainUnicodeFlavor();
+<span class="nocode"><a name="3">  3: </a></span>databaseTreeNode0.getTransferData(dataFlavor0);
+</pre>
+<h3>Test case 13</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseTreeNode databaseTreeNode0 = new DatabaseTreeNode(&quot;{4f&quot;);
+<span class="nocode"><a name="2">  2: </a></span>databaseTreeNode0.getUserName();
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(databaseTreeNode0.isExplored());
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(databaseTreeNode0.isLeaf());
+</pre>
+<h3>Test case 14</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseTreeNode databaseTreeNode0 = new DatabaseTreeNode(&quot;L'Th0G-f+--lVB&quot;);
+<span class="nocode"><a name="2">  2: </a></span>databaseTreeNode0.getFeatureId();
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(databaseTreeNode0.isExplored());
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(databaseTreeNode0.isDirectory());
+</pre>
+<h3>Test case 15</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseTreeNode databaseTreeNode0 = new DatabaseTreeNode(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>databaseTreeNode0.getFeatureType();
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(databaseTreeNode0.isExplored());
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(databaseTreeNode0.isLeaf());
+</pre>
+<h3>Test case 16</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseTreeNode databaseTreeNode0 = new DatabaseTreeNode(&quot;{4f&quot;);
+<span class="nocode"><a name="2">  2: </a></span>databaseTreeNode0.getOrganism();
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(databaseTreeNode0.isExplored());
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(databaseTreeNode0.getAllowsChildren());
+</pre>
+<h3>Test case 17</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DefaultStyledDocument defaultStyledDocument0 = new DefaultStyledDocument();
+<span class="nocode"><a name="2">  2: </a></span>JPasswordField jPasswordField0 = new JPasswordField(defaultStyledDocument0, &quot;embossData&quot;, 1306);
+<span class="nocode"><a name="3">  3: </a></span>ByteBuffer byteBuffer0 = new ByteBuffer();
+<span class="nocode"><a name="4">  4: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;8.5v{cj.S&quot;, jPasswordField0, &quot;&quot;, &quot;&quot;, byteBuffer0, &quot;&quot;);
+<span class="nocode"><a name="5">  5: </a></span>DatabaseTreeNode databaseTreeNode0 = new DatabaseTreeNode(&quot;SubIntegerAlphabet is one-dimensional: &quot;, true, (Organism) null, &quot;/m[IE8wdlFSrNgr+&amp;P&quot;, databaseDocument0);
+</pre>
+<h3>Test case 18</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseTreeNode databaseTreeNode0 = new DatabaseTreeNode(&quot;L'Th0G-f+--lVB&quot;);
+<span class="nocode"><a name="2">  2: </a></span>databaseTreeNode0.isDataFlavorSupported((DataFlavor) null);
+</pre>
+<h3>Test case 19</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseTreeNode databaseTreeNode0 = new DatabaseTreeNode(&quot;uk.ac.sanger.artemis.components.database.DatabaseTreeNode&quot;);
+<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = databaseTreeNode0.isLeaf();
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(databaseTreeNode0.isExplored());
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 20</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseTreeNode databaseTreeNode0 = new DatabaseTreeNode(&quot;_&quot;);
+<span class="nocode"><a name="2">  2: </a></span>DataFlavor dataFlavor0 = DataFlavor.stringFlavor;
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = databaseTreeNode0.isDataFlavorSupported(dataFlavor0);
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(boolean0);
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(databaseTreeNode0.isExplored());
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(databaseTreeNode0.isDirectory());
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.components.database.DatabaseTreeNode
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.components.database.DatabaseTreeNode
+<li>Size: 20
+<li>Length: 57
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.4584863985119739
+<li>BranchCoverage: 0.4264705882352941
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 0.36363636363636365
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

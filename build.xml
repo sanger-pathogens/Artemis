@@ -95,32 +95,17 @@
   </target>
 
   <target name="prepare-src" depends="init,prepare-core" />
-
-	<!-- Compile IDL stub classes into the build directory (jar preparation) -->
-  <target name="compile-idl" depends="init,prepare-core">
-  	<exec executable="idlj" dir="${build.src.main}">
-  		   <arg line="-Icorba corba/types.idl" />
-  		 </exec>
-  	<exec executable="idlj" dir="${build.src.main}">
-  		   <arg line="-Icorba corba/nsdb.idl" />
-  		 </exec>
-  	<exec executable="idlj" dir="${build.src.main}">
-  		   <arg line="-Icorba corba/nsdb_write.idl" />
-  		 </exec> 
-  	<exec executable="idlj" dir="${build.src.main}">
-  		   <arg line="-Icorba corba/seqdb.idl" />
-  		 </exec>
-  </target>
 	
   <!-- Compiles the source directory -->
-  <target name="compile" depends="init,compile-idl,prepare-src">
+  <target name="compile" depends="init,print-version,prepare-src">
     <javac
+    	  target="1.8" 
       fork="true"
       memoryinitialsize="256m"
       memorymaximumsize="256m"
       srcdir="${build.src.main}"
       destdir="${build.dest.main}"
-      excludes="nsdb/**,seqdb/**,type/**,lib/**,src/**,uk/ac/sanger/artemis/components/MacHandler.java,uk/ac/sanger/artemis/components/filetree/FileTree.java,uk/ac/sanger/artemis/components/filetree/SshFileTree.java,uk/ac/sanger/artemis/ExternalProgramUtils.java"
+      excludes="lib/**,src/**,uk/ac/sanger/artemis/components/MacHandler.java,uk/ac/sanger/artemis/components/filetree/FileTree.java,uk/ac/sanger/artemis/components/filetree/SshFileTree.java,uk/ac/sanger/artemis/ExternalProgramUtils.java"
       deprecation="false"
       depend="no"
       debug="true">
@@ -162,5 +147,10 @@
     <delete file="${name}-${version}.tar.gz" />
     <delete file="${name}-${version}.tar" />
     <delete file="${name}-${version}.zip" />
+  </target>
+	
+  <target name="print-version"> 
+    <echo>Java/JVM version: ${ant.java.version}</echo> 
+	<echo>Java/JVM detail version: ${java.version}</echo> 
   </target>
 </project>

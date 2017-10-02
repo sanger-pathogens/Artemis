@@ -1,0 +1,133 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.editor.ScrollPanel
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.editor.ScrollPanel: 0.9485294117647058</ul>
+<ul>
+<li>6.993235100876561 fitness evaluations, 0 generations, null statements, 11 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Box box0 = new Box(0);
+<span class="nocode"><a name="2">  2: </a></span>BoxLayout boxLayout0 = (BoxLayout)box0.getLayout();
+<span class="nocode"><a name="3">  3: </a></span>ScrollPanel scrollPanel0 = new ScrollPanel(boxLayout0);
+<span class="nocode"><a name="4">  4: </a></span>int int0 = scrollPanel0.getScrollableUnitIncrement((Rectangle) null, (-345), 1556);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(10, int0);
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ScrollPanel scrollPanel0 = new ScrollPanel();
+<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = scrollPanel0.getScrollableTracksViewportHeight();
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Box box0 = new Box(0);
+<span class="nocode"><a name="2">  2: </a></span>BoxLayout boxLayout0 = (BoxLayout)box0.getLayout();
+<span class="nocode"><a name="3">  3: </a></span>ScrollPanel scrollPanel0 = new ScrollPanel(boxLayout0);
+<span class="nocode"><a name="4">  4: </a></span>scrollPanel0.getPreferredScrollableViewportSize();
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SynthScrollBarUI synthScrollBarUI0 = new SynthScrollBarUI();
+<span class="nocode"><a name="2">  2: </a></span>ScrollPanel scrollPanel0 = new ScrollPanel(synthScrollBarUI0);
+<span class="nocode"><a name="3">  3: </a></span>int int0 = scrollPanel0.getScrollableBlockIncrement((Rectangle) null, 0, 0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(60, int0);
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>CardLayout cardLayout0 = new CardLayout((-2301), (-4714));
+<span class="nocode"><a name="2">  2: </a></span>ScrollPanel scrollPanel0 = new ScrollPanel(cardLayout0);
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = scrollPanel0.getScrollableTracksViewportWidth();
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ScrollPanel scrollPanel0 = new ScrollPanel((LayoutManager) null);
+<span class="nocode"><a name="2">  2: </a></span>MultiPanelUI multiPanelUI0 = new MultiPanelUI();
+<span class="nocode"><a name="3">  3: </a></span>scrollPanel0.setUI(multiPanelUI0);
+<span class="nocode"><a name="4">  4: </a></span>scrollPanel0.getPreferredScrollableViewportSize();
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SynthScrollBarUI synthScrollBarUI0 = new SynthScrollBarUI();
+<span class="nocode"><a name="2">  2: </a></span>ScrollPanel scrollPanel0 = new ScrollPanel(synthScrollBarUI0);
+<span class="nocode"><a name="3">  3: </a></span>scrollPanel0.getPreferredScrollableViewportSize();
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MetalComboBoxUI metalComboBoxUI0 = new MetalComboBoxUI();
+<span class="nocode"><a name="2">  2: </a></span>MetalComboBoxUI.MetalComboBoxLayoutManager metalComboBoxUI_MetalComboBoxLayoutManager0 = metalComboBoxUI0.new MetalComboBoxLayoutManager();
+<span class="nocode"><a name="3">  3: </a></span>ScrollPanel scrollPanel0 = new ScrollPanel(metalComboBoxUI_MetalComboBoxLayoutManager0);
+<span class="nocode"><a name="4">  4: </a></span>scrollPanel0.getPreferredScrollableViewportSize();
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>CardLayout cardLayout0 = new CardLayout((-2301), (-4714));
+<span class="nocode"><a name="2">  2: </a></span>ScrollPanel scrollPanel0 = new ScrollPanel(cardLayout0);
+<span class="nocode"><a name="3">  3: </a></span>Dimension dimension0 = scrollPanel0.getPreferredScrollableViewportSize();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-9428), dimension0.height);
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ScrollPanel scrollPanel0 = new ScrollPanel();
+<span class="nocode"><a name="2">  2: </a></span>Dimension dimension0 = scrollPanel0.getPreferredScrollableViewportSize();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(10, dimension0.width);
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ScrollPanel scrollPanel0 = new ScrollPanel((LayoutManager) null);
+<span class="nocode"><a name="2">  2: </a></span>Dimension dimension0 = scrollPanel0.getPreferredScrollableViewportSize();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, dimension0.width);
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.editor.ScrollPanel
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.editor.ScrollPanel
+<li>Size: 11
+<li>Length: 34
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.9485294117647058
+<li>BranchCoverage: 1.0
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 0.5882352941176471
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

@@ -1,0 +1,399 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.plot.LineAttributes
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.plot.LineAttributes: 0.6000462731712732</ul>
+<ul>
+<li>391.61590903037313 fitness evaluations, 0 generations, null statements, 24 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Color color0 = LineAttributes.parse(&quot;C3&quot;);
+<span class="nocode"><a name="2">  2: </a></span>LineAttributes lineAttributes0 = new LineAttributes(color0);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = lineAttributes0.getPlotType();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;Open&quot;, string0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(195, color0.getBlue());
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Color color0 = LineAttributes.parse(&quot;C3&quot;);
+<span class="nocode"><a name="2">  2: </a></span>LineAttributes lineAttributes0 = new LineAttributes(color0);
+<span class="nocode"><a name="3">  3: </a></span>lineAttributes0.getLabel();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;Open&quot;, lineAttributes0.getPlotType());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals((-16777021), color0.getRGB());
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BasicStroke[] basicStrokeArray0 = LineAttributes.getStrokes();
+<span class="nocode"><a name="2">  2: </a></span>assertNotNull(basicStrokeArray0);
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Color color0 = Color.RED;
+<span class="nocode"><a name="2">  2: </a></span>LineAttributes lineAttributes0 = new LineAttributes(color0);
+<span class="nocode"><a name="3">  3: </a></span>lineAttributes0.getLineColour();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;Open&quot;, lineAttributes0.getPlotType());
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LineAttributes lineAttributes0 = new LineAttributes((Color) null);
+<span class="nocode"><a name="2">  2: </a></span>lineAttributes0.setLabel(&quot;:&quot;);
+<span class="nocode"><a name="3">  3: </a></span>lineAttributes0.getLabel();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;Open&quot;, lineAttributes0.getPlotType());
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Color color0 = Color.RED;
+<span class="nocode"><a name="2">  2: </a></span>LineAttributes lineAttributes0 = new LineAttributes(color0);
+<span class="nocode"><a name="3">  3: </a></span>lineAttributes0.setLineColour(color0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;Open&quot;, lineAttributes0.getPlotType());
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SystemColor systemColor0 = SystemColor.window;
+<span class="nocode"><a name="2">  2: </a></span>LineAttributes lineAttributes0 = new LineAttributes(systemColor0);
+<span class="nocode"><a name="3">  3: </a></span>BasicStroke basicStroke0 = lineAttributes0.getStroke();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;Open&quot;, lineAttributes0.getPlotType());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(1.0F, basicStroke0.getLineWidth(), 0.01F);
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LineAttributes[] lineAttributesArray0 = LineAttributes.init(0);
+<span class="nocode"><a name="2">  2: </a></span>assertNotNull(lineAttributesArray0);
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LineAttributes[] lineAttributesArray0 = LineAttributes.init(3452);
+<span class="nocode"><a name="2">  2: </a></span>assertNotNull(lineAttributesArray0);
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LineAttributes.parse(&quot;:&quot;);
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LineAttributes.parse(&quot;E+A,Vld|MtCi&lt;B?3ai%&quot;);
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LineAttributes.parse(&quot;# is immutable&quot;);
+</pre>
+<h3>Test case 13</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LineAttributes[] lineAttributesArray0 = new LineAttributes[0];
+<span class="nocode"><a name="2">  2: </a></span>LineAttributes.configurePlots(0, lineAttributesArray0, (Plot) null);
+</pre>
+<h3>Test case 14</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LineAttributes[] lineAttributesArray0 = new LineAttributes[0];
+<span class="nocode"><a name="2">  2: </a></span>LineAttributes.configurePlots(107, lineAttributesArray0, (Plot) null);
+</pre>
+<h3>Test case 15</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SystemColor systemColor0 = SystemColor.controlText;
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(0, systemColor0.getBlue());
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, systemColor0.getGreen());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(255, systemColor0.getAlpha());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(1, systemColor0.getTransparency());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals((-16777216), systemColor0.getRGB());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, systemColor0.getRed());
+<span class="nocode"><a name="8">  8: </a></span>assertNotNull(systemColor0);
+<span class="nocode"><a name="9">  9: </a></span>
+<span class="nocode"><a name="10"> 10: </a></span>LineAttributes lineAttributes0 = new LineAttributes(systemColor0);
+<span class="nocode"><a name="11"> 11: </a></span>assertEquals(0, systemColor0.getBlue());
+<span class="nocode"><a name="12"> 12: </a></span>assertEquals(0, systemColor0.getGreen());
+<span class="nocode"><a name="13"> 13: </a></span>assertEquals(255, systemColor0.getAlpha());
+<span class="nocode"><a name="14"> 14: </a></span>assertEquals(1, systemColor0.getTransparency());
+<span class="nocode"><a name="15"> 15: </a></span>assertEquals((-16777216), systemColor0.getRGB());
+<span class="nocode"><a name="16"> 16: </a></span>assertEquals(0, systemColor0.getRed());
+<span class="nocode"><a name="17"> 17: </a></span>assertNull(lineAttributes0.getLabel());
+<span class="nocode"><a name="18"> 18: </a></span>assertEquals(&quot;Open&quot;, lineAttributes0.getPlotType());
+<span class="nocode"><a name="19"> 19: </a></span>assertNotNull(lineAttributes0);
+<span class="nocode"><a name="20"> 20: </a></span>
+<span class="nocode"><a name="21"> 21: </a></span>StyleContext styleContext0 = new StyleContext();
+<span class="nocode"><a name="22"> 22: </a></span>assertNotNull(styleContext0);
+<span class="nocode"><a name="23"> 23: </a></span>
+<span class="nocode"><a name="24"> 24: </a></span>FontUIResource fontUIResource0 = (FontUIResource)styleContext0.getFont(&quot;&quot;, (-871), 2);
+<span class="nocode"><a name="25"> 25: </a></span>assertEquals(2.0F, fontUIResource0.getSize2D(), 0.01F);
+<span class="nocode"><a name="26"> 26: </a></span>assertEquals(&quot;&quot;, fontUIResource0.getName());
+<span class="nocode"><a name="27"> 27: </a></span>assertEquals(0, fontUIResource0.getStyle());
+<span class="nocode"><a name="28"> 28: </a></span>assertTrue(fontUIResource0.isPlain());
+<span class="nocode"><a name="29"> 29: </a></span>assertFalse(fontUIResource0.isItalic());
+<span class="nocode"><a name="30"> 30: </a></span>assertFalse(fontUIResource0.hasLayoutAttributes());
+<span class="nocode"><a name="31"> 31: </a></span>assertEquals(2, fontUIResource0.getSize());
+<span class="nocode"><a name="32"> 32: </a></span>assertFalse(fontUIResource0.isBold());
+<span class="nocode"><a name="33"> 33: </a></span>assertFalse(fontUIResource0.isTransformed());
+<span class="nocode"><a name="34"> 34: </a></span>assertFalse(fontUIResource0.hasUniformLineMetrics());
+<span class="nocode"><a name="35"> 35: </a></span>assertNotNull(fontUIResource0);
+<span class="nocode"><a name="36"> 36: </a></span>
+<span class="nocode"><a name="37"> 37: </a></span>FontDesignMetrics fontDesignMetrics0 = (FontDesignMetrics)styleContext0.getFontMetrics(fontUIResource0);
+<span class="nocode"><a name="38"> 38: </a></span>assertEquals(2.0F, fontUIResource0.getSize2D(), 0.01F);
+<span class="nocode"><a name="39"> 39: </a></span>assertEquals(&quot;&quot;, fontUIResource0.getName());
+<span class="nocode"><a name="40"> 40: </a></span>assertEquals(0, fontUIResource0.getStyle());
+<span class="nocode"><a name="41"> 41: </a></span>assertTrue(fontUIResource0.isPlain());
+<span class="nocode"><a name="42"> 42: </a></span>assertFalse(fontUIResource0.isItalic());
+<span class="nocode"><a name="43"> 43: </a></span>assertFalse(fontUIResource0.hasLayoutAttributes());
+<span class="nocode"><a name="44"> 44: </a></span>assertEquals(2, fontUIResource0.getSize());
+<span class="nocode"><a name="45"> 45: </a></span>assertFalse(fontUIResource0.isBold());
+<span class="nocode"><a name="46"> 46: </a></span>assertFalse(fontUIResource0.isTransformed());
+<span class="nocode"><a name="47"> 47: </a></span>assertFalse(fontUIResource0.hasUniformLineMetrics());
+<span class="nocode"><a name="48"> 48: </a></span>assertFalse(fontDesignMetrics0.hasUniformLineMetrics());
+<span class="nocode"><a name="49"> 49: </a></span>assertEquals(1, fontDesignMetrics0.getMaxDescent());
+<span class="nocode"><a name="50"> 50: </a></span>assertEquals(2, fontDesignMetrics0.getMaxAscent());
+<span class="nocode"><a name="51"> 51: </a></span>assertEquals(1, fontDesignMetrics0.getMaxDecent());
+<span class="nocode"><a name="52"> 52: </a></span>assertNotNull(fontDesignMetrics0);
+<span class="nocode"><a name="53"> 53: </a></span>
+<span class="nocode"><a name="54"> 54: </a></span>int int0 = lineAttributes0.getLabelWidth(fontDesignMetrics0);
+<span class="nocode"><a name="55"> 55: </a></span>assertEquals(0, systemColor0.getBlue());
+<span class="nocode"><a name="56"> 56: </a></span>assertEquals(0, systemColor0.getGreen());
+<span class="nocode"><a name="57"> 57: </a></span>assertEquals(255, systemColor0.getAlpha());
+<span class="nocode"><a name="58"> 58: </a></span>assertEquals(1, systemColor0.getTransparency());
+<span class="nocode"><a name="59"> 59: </a></span>assertEquals((-16777216), systemColor0.getRGB());
+<span class="nocode"><a name="60"> 60: </a></span>assertEquals(0, systemColor0.getRed());
+<span class="nocode"><a name="61"> 61: </a></span>assertNull(lineAttributes0.getLabel());
+<span class="nocode"><a name="62"> 62: </a></span>assertEquals(&quot;Open&quot;, lineAttributes0.getPlotType());
+<span class="nocode"><a name="63"> 63: </a></span>assertEquals(2.0F, fontUIResource0.getSize2D(), 0.01F);
+<span class="nocode"><a name="64"> 64: </a></span>assertEquals(&quot;&quot;, fontUIResource0.getName());
+<span class="nocode"><a name="65"> 65: </a></span>assertEquals(0, fontUIResource0.getStyle());
+<span class="nocode"><a name="66"> 66: </a></span>assertTrue(fontUIResource0.isPlain());
+<span class="nocode"><a name="67"> 67: </a></span>assertFalse(fontUIResource0.isItalic());
+<span class="nocode"><a name="68"> 68: </a></span>assertFalse(fontUIResource0.hasLayoutAttributes());
+<span class="nocode"><a name="69"> 69: </a></span>assertEquals(2, fontUIResource0.getSize());
+<span class="nocode"><a name="70"> 70: </a></span>assertFalse(fontUIResource0.isBold());
+<span class="nocode"><a name="71"> 71: </a></span>assertFalse(fontUIResource0.isTransformed());
+<span class="nocode"><a name="72"> 72: </a></span>assertFalse(fontUIResource0.hasUniformLineMetrics());
+<span class="nocode"><a name="73"> 73: </a></span>assertFalse(fontDesignMetrics0.hasUniformLineMetrics());
+<span class="nocode"><a name="74"> 74: </a></span>assertEquals(1, fontDesignMetrics0.getMaxDescent());
+<span class="nocode"><a name="75"> 75: </a></span>assertEquals(2, fontDesignMetrics0.getMaxAscent());
+<span class="nocode"><a name="76"> 76: </a></span>assertEquals(1, fontDesignMetrics0.getMaxDecent());
+<span class="nocode"><a name="77"> 77: </a></span>assertEquals(5, int0);
+</pre>
+<h3>Test case 16</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Color color0 = Color.gray;
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(128, color0.getRed());
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(128, color0.getGreen());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-8355712), color0.getRGB());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(1, color0.getTransparency());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(255, color0.getAlpha());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(128, color0.getBlue());
+<span class="nocode"><a name="8">  8: </a></span>assertNotNull(color0);
+<span class="nocode"><a name="9">  9: </a></span>
+<span class="nocode"><a name="10"> 10: </a></span>LineAttributes lineAttributes0 = new LineAttributes(color0);
+<span class="nocode"><a name="11"> 11: </a></span>assertEquals(128, color0.getRed());
+<span class="nocode"><a name="12"> 12: </a></span>assertEquals(128, color0.getGreen());
+<span class="nocode"><a name="13"> 13: </a></span>assertEquals((-8355712), color0.getRGB());
+<span class="nocode"><a name="14"> 14: </a></span>assertEquals(1, color0.getTransparency());
+<span class="nocode"><a name="15"> 15: </a></span>assertEquals(255, color0.getAlpha());
+<span class="nocode"><a name="16"> 16: </a></span>assertEquals(128, color0.getBlue());
+<span class="nocode"><a name="17"> 17: </a></span>assertNull(lineAttributes0.getLabel());
+<span class="nocode"><a name="18"> 18: </a></span>assertEquals(&quot;Open&quot;, lineAttributes0.getPlotType());
+<span class="nocode"><a name="19"> 19: </a></span>assertNotNull(lineAttributes0);
+<span class="nocode"><a name="20"> 20: </a></span>
+<span class="nocode"><a name="21"> 21: </a></span>lineAttributes0.getLabelWidth((FontMetrics) null);
+</pre>
+<h3>Test case 17</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LineAttributes.init((-1671));
+</pre>
+<h3>Test case 18</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LineAttributes.parse((String) null);
+</pre>
+<h3>Test case 19</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SystemColor systemColor0 = SystemColor.controlHighlight;
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(255, systemColor0.getAlpha());
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(255, systemColor0.getGreen());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(255, systemColor0.getRed());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(255, systemColor0.getBlue());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(1, systemColor0.getTransparency());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals((-1), systemColor0.getRGB());
+<span class="nocode"><a name="8">  8: </a></span>assertNotNull(systemColor0);
+<span class="nocode"><a name="9">  9: </a></span>
+<span class="nocode"><a name="10"> 10: </a></span>LineAttributes lineAttributes0 = new LineAttributes(systemColor0);
+<span class="nocode"><a name="11"> 11: </a></span>assertEquals(255, systemColor0.getAlpha());
+<span class="nocode"><a name="12"> 12: </a></span>assertEquals(255, systemColor0.getGreen());
+<span class="nocode"><a name="13"> 13: </a></span>assertEquals(255, systemColor0.getRed());
+<span class="nocode"><a name="14"> 14: </a></span>assertEquals(255, systemColor0.getBlue());
+<span class="nocode"><a name="15"> 15: </a></span>assertEquals(1, systemColor0.getTransparency());
+<span class="nocode"><a name="16"> 16: </a></span>assertEquals((-1), systemColor0.getRGB());
+<span class="nocode"><a name="17"> 17: </a></span>assertEquals(&quot;Open&quot;, lineAttributes0.getPlotType());
+<span class="nocode"><a name="18"> 18: </a></span>assertNull(lineAttributes0.getLabel());
+<span class="nocode"><a name="19"> 19: </a></span>assertNotNull(lineAttributes0);
+<span class="nocode"><a name="20"> 20: </a></span>
+<span class="nocode"><a name="21"> 21: </a></span>SystemColor systemColor1 = (SystemColor)lineAttributes0.getLineColour();
+<span class="nocode"><a name="22"> 22: </a></span>assertEquals(255, systemColor0.getAlpha());
+<span class="nocode"><a name="23"> 23: </a></span>assertEquals(255, systemColor0.getGreen());
+<span class="nocode"><a name="24"> 24: </a></span>assertEquals(255, systemColor0.getRed());
+<span class="nocode"><a name="25"> 25: </a></span>assertEquals(255, systemColor0.getBlue());
+<span class="nocode"><a name="26"> 26: </a></span>assertEquals(1, systemColor0.getTransparency());
+<span class="nocode"><a name="27"> 27: </a></span>assertEquals((-1), systemColor0.getRGB());
+<span class="nocode"><a name="28"> 28: </a></span>assertEquals(&quot;Open&quot;, lineAttributes0.getPlotType());
+<span class="nocode"><a name="29"> 29: </a></span>assertNull(lineAttributes0.getLabel());
+<span class="nocode"><a name="30"> 30: </a></span>assertEquals(255, systemColor1.getRed());
+<span class="nocode"><a name="31"> 31: </a></span>assertEquals(1, systemColor1.getTransparency());
+<span class="nocode"><a name="32"> 32: </a></span>assertEquals(255, systemColor1.getGreen());
+<span class="nocode"><a name="33"> 33: </a></span>assertEquals(255, systemColor1.getBlue());
+<span class="nocode"><a name="34"> 34: </a></span>assertEquals((-1), systemColor1.getRGB());
+<span class="nocode"><a name="35"> 35: </a></span>assertEquals(255, systemColor1.getAlpha());
+<span class="nocode"><a name="36"> 36: </a></span>assertNotNull(systemColor1);
+<span class="nocode"><a name="37"> 37: </a></span>assertSame(systemColor0, systemColor1);
+<span class="nocode"><a name="38"> 38: </a></span>assertSame(systemColor1, systemColor0);
+</pre>
+<h3>Test case 20</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Color color0 = Color.green;
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(255, color0.getGreen());
+<span class="nocode"><a name="3">  3: </a></span>assertEquals((-16711936), color0.getRGB());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(255, color0.getAlpha());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(1, color0.getTransparency());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, color0.getRed());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, color0.getBlue());
+<span class="nocode"><a name="8">  8: </a></span>assertNotNull(color0);
+<span class="nocode"><a name="9">  9: </a></span>
+<span class="nocode"><a name="10"> 10: </a></span>LineAttributes lineAttributes0 = new LineAttributes(color0);
+<span class="nocode"><a name="11"> 11: </a></span>assertEquals(255, color0.getGreen());
+<span class="nocode"><a name="12"> 12: </a></span>assertEquals((-16711936), color0.getRGB());
+<span class="nocode"><a name="13"> 13: </a></span>assertEquals(255, color0.getAlpha());
+<span class="nocode"><a name="14"> 14: </a></span>assertEquals(1, color0.getTransparency());
+<span class="nocode"><a name="15"> 15: </a></span>assertEquals(0, color0.getRed());
+<span class="nocode"><a name="16"> 16: </a></span>assertEquals(0, color0.getBlue());
+<span class="nocode"><a name="17"> 17: </a></span>assertNull(lineAttributes0.getLabel());
+<span class="nocode"><a name="18"> 18: </a></span>assertEquals(&quot;Open&quot;, lineAttributes0.getPlotType());
+<span class="nocode"><a name="19"> 19: </a></span>assertNotNull(lineAttributes0);
+<span class="nocode"><a name="20"> 20: </a></span>
+<span class="nocode"><a name="21"> 21: </a></span>Color color1 = lineAttributes0.getLineColour();
+<span class="nocode"><a name="22"> 22: </a></span>assertEquals(255, color0.getGreen());
+<span class="nocode"><a name="23"> 23: </a></span>assertEquals((-16711936), color0.getRGB());
+<span class="nocode"><a name="24"> 24: </a></span>assertEquals(255, color0.getAlpha());
+<span class="nocode"><a name="25"> 25: </a></span>assertEquals(1, color0.getTransparency());
+<span class="nocode"><a name="26"> 26: </a></span>assertEquals(0, color0.getRed());
+<span class="nocode"><a name="27"> 27: </a></span>assertEquals(0, color0.getBlue());
+<span class="nocode"><a name="28"> 28: </a></span>assertNull(lineAttributes0.getLabel());
+<span class="nocode"><a name="29"> 29: </a></span>assertEquals(&quot;Open&quot;, lineAttributes0.getPlotType());
+<span class="nocode"><a name="30"> 30: </a></span>assertEquals(255, color1.getGreen());
+<span class="nocode"><a name="31"> 31: </a></span>assertEquals(0, color1.getBlue());
+<span class="nocode"><a name="32"> 32: </a></span>assertEquals(0, color1.getRed());
+<span class="nocode"><a name="33"> 33: </a></span>assertEquals((-16711936), color1.getRGB());
+<span class="nocode"><a name="34"> 34: </a></span>assertEquals(1, color1.getTransparency());
+<span class="nocode"><a name="35"> 35: </a></span>assertEquals(255, color1.getAlpha());
+<span class="nocode"><a name="36"> 36: </a></span>assertNotNull(color1);
+<span class="nocode"><a name="37"> 37: </a></span>assertSame(color0, color1);
+<span class="nocode"><a name="38"> 38: </a></span>assertSame(color1, color0);
+</pre>
+<h3>Test case 21</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LineAttributes lineAttributes0 = new LineAttributes((Color) null);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;Open&quot;, lineAttributes0.getPlotType());
+<span class="nocode"><a name="3">  3: </a></span>assertNull(lineAttributes0.getLabel());
+<span class="nocode"><a name="4">  4: </a></span>assertNotNull(lineAttributes0);
+<span class="nocode"><a name="5">  5: </a></span>
+<span class="nocode"><a name="6">  6: </a></span>Color color0 = lineAttributes0.getLineColour();
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(&quot;Open&quot;, lineAttributes0.getPlotType());
+<span class="nocode"><a name="8">  8: </a></span>assertNull(lineAttributes0.getLabel());
+<span class="nocode"><a name="9">  9: </a></span>assertNull(color0);
+</pre>
+<h3>Test case 22</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SystemColor systemColor0 = SystemColor.window;
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(1, systemColor0.getTransparency());
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(255, systemColor0.getGreen());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-1), systemColor0.getRGB());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(255, systemColor0.getAlpha());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(255, systemColor0.getRed());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(255, systemColor0.getBlue());
+<span class="nocode"><a name="8">  8: </a></span>assertNotNull(systemColor0);
+<span class="nocode"><a name="9">  9: </a></span>
+<span class="nocode"><a name="10"> 10: </a></span>LineAttributes lineAttributes0 = new LineAttributes(systemColor0);
+<span class="nocode"><a name="11"> 11: </a></span>assertEquals(1, systemColor0.getTransparency());
+<span class="nocode"><a name="12"> 12: </a></span>assertEquals(255, systemColor0.getGreen());
+<span class="nocode"><a name="13"> 13: </a></span>assertEquals((-1), systemColor0.getRGB());
+<span class="nocode"><a name="14"> 14: </a></span>assertEquals(255, systemColor0.getAlpha());
+<span class="nocode"><a name="15"> 15: </a></span>assertEquals(255, systemColor0.getRed());
+<span class="nocode"><a name="16"> 16: </a></span>assertEquals(255, systemColor0.getBlue());
+<span class="nocode"><a name="17"> 17: </a></span>assertNull(lineAttributes0.getLabel());
+<span class="nocode"><a name="18"> 18: </a></span>assertEquals(&quot;Open&quot;, lineAttributes0.getPlotType());
+<span class="nocode"><a name="19"> 19: </a></span>assertNotNull(lineAttributes0);
+<span class="nocode"><a name="20"> 20: </a></span>
+<span class="nocode"><a name="21"> 21: </a></span>lineAttributes0.setStroke((BasicStroke) null);
+<span class="nocode"><a name="22"> 22: </a></span>assertEquals(1, systemColor0.getTransparency());
+<span class="nocode"><a name="23"> 23: </a></span>assertEquals(255, systemColor0.getGreen());
+<span class="nocode"><a name="24"> 24: </a></span>assertEquals((-1), systemColor0.getRGB());
+<span class="nocode"><a name="25"> 25: </a></span>assertEquals(255, systemColor0.getAlpha());
+<span class="nocode"><a name="26"> 26: </a></span>assertEquals(255, systemColor0.getRed());
+<span class="nocode"><a name="27"> 27: </a></span>assertEquals(255, systemColor0.getBlue());
+<span class="nocode"><a name="28"> 28: </a></span>assertNull(lineAttributes0.getLabel());
+<span class="nocode"><a name="29"> 29: </a></span>assertEquals(&quot;Open&quot;, lineAttributes0.getPlotType());
+<span class="nocode"><a name="30"> 30: </a></span>
+<span class="nocode"><a name="31"> 31: </a></span>BasicStroke basicStroke0 = lineAttributes0.getStroke();
+<span class="nocode"><a name="32"> 32: </a></span>assertEquals(1, systemColor0.getTransparency());
+<span class="nocode"><a name="33"> 33: </a></span>assertEquals(255, systemColor0.getGreen());
+<span class="nocode"><a name="34"> 34: </a></span>assertEquals((-1), systemColor0.getRGB());
+<span class="nocode"><a name="35"> 35: </a></span>assertEquals(255, systemColor0.getAlpha());
+<span class="nocode"><a name="36"> 36: </a></span>assertEquals(255, systemColor0.getRed());
+<span class="nocode"><a name="37"> 37: </a></span>assertEquals(255, systemColor0.getBlue());
+<span class="nocode"><a name="38"> 38: </a></span>assertNull(lineAttributes0.getLabel());
+<span class="nocode"><a name="39"> 39: </a></span>assertEquals(&quot;Open&quot;, lineAttributes0.getPlotType());
+<span class="nocode"><a name="40"> 40: </a></span>assertNull(basicStroke0);
+</pre>
+<h3>Test case 23</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LineAttributes.parse(&quot;C{wNK&lt;&quot;);
+</pre>
+<h3>Test case 24</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LineAttributes[] lineAttributesArray0 = new LineAttributes[5];
+<span class="nocode"><a name="2">  2: </a></span>LineAttributes.configurePlots(0, lineAttributesArray0, (Plot) null);
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.plot.LineAttributes
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.plot.LineAttributes
+<li>Size: 24
+<li>Length: 54
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.6000462731712732
+<li>BranchCoverage: 0.38461538461538464
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 0.4027777777777778
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

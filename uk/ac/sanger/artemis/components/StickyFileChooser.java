@@ -52,6 +52,7 @@ public class StickyFileChooser extends JFileChooser
   public StickyFileChooser() 
   {
     super();
+    setName("StickyFileChooser");
 
     if (last_directory == null) 
     {

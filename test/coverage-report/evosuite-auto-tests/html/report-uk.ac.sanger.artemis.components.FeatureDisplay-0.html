@@ -1,0 +1,124 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.components.FeatureDisplay
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.components.FeatureDisplay: 0.1685356622851112</ul>
+<ul>
+<li>18211.64493070837 fitness evaluations, 0 generations, null statements, 7 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>AminoAcidSequence aminoAcidSequence0 = new AminoAcidSequence(&quot;|F&amp;-EgYZ&quot;);
+<span class="nocode"><a name="5">  5: </a></span>FeaturePatternPredicate featurePatternPredicate0 = new FeaturePatternPredicate(aminoAcidSequence0);
+<span class="nocode"><a name="6">  6: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featurePatternPredicate0, &quot;M]`|6$`&lt;CvXRwM&gt;Ct&quot;);
+<span class="nocode"><a name="7">  7: </a></span>Clipboard clipboard0 = new Clipboard(&quot;M]`|6$`&lt;CvXRwM&gt;Ct&quot;);
+<span class="nocode"><a name="8">  8: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="9">  9: </a></span>SimpleGotoEventSource simpleGotoEventSource0 = new SimpleGotoEventSource(simpleEntryGroup0);
+<span class="nocode"><a name="10"> 10: </a></span>FeatureDisplay featureDisplay0 = new FeatureDisplay(filteredEntryGroup0, selection0, simpleGotoEventSource0, (BasePlotGroup) null, 0);
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;A6gIQ&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleGotoEventSource simpleGotoEventSource0 = new SimpleGotoEventSource((EntryGroup) null);
+<span class="nocode"><a name="4">  4: </a></span>FeatureDisplay featureDisplay0 = new FeatureDisplay((EntryGroup) null, selection0, simpleGotoEventSource0, (BasePlotGroup) null);
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;l&quot;, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Range range0 = new Range(0, 5);
+<span class="nocode"><a name="4">  4: </a></span>Bases bases1 = bases0.truncate(range0);
+<span class="nocode"><a name="5">  5: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases1);
+<span class="nocode"><a name="6">  6: </a></span>Clipboard clipboard0 = new Clipboard(&quot;'{6`n$c&quot;);
+<span class="nocode"><a name="7">  7: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="8">  8: </a></span>SimpleGotoEventSource simpleGotoEventSource0 = new SimpleGotoEventSource(simpleEntryGroup0);
+<span class="nocode"><a name="9">  9: </a></span>BasePlotGroup basePlotGroup0 = mock(BasePlotGroup.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="10"> 10: </a></span>FeatureDisplay featureDisplay0 = new FeatureDisplay(simpleEntryGroup0, selection0, simpleGotoEventSource0, basePlotGroup0);
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Vector&lt;String&gt; vector0 = FeatureDisplay.getContigKeys();
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;[fasta_record, contig, insertion_gap]&quot;, vector0.toString());
+<span class="nocode"><a name="3">  3: </a></span>assertNotNull(vector0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(3, vector0.capacity());
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Vector&lt;String&gt; vector0 = FeatureDisplay.getAllPossibleContigKeys();
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;[fasta_record, contig, insertion_gap, gap, scaffold, source]&quot;, vector0.toString());
+<span class="nocode"><a name="3">  3: </a></span>assertNotNull(vector0);
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>Clipboard clipboard0 = new Clipboard(&quot;darkred&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="4">  4: </a></span>SimpleGotoEventSource simpleGotoEventSource0 = new SimpleGotoEventSource(simpleEntryGroup0);
+<span class="nocode"><a name="5">  5: </a></span>FeatureDisplay featureDisplay0 = new FeatureDisplay(simpleEntryGroup0, selection0, simpleGotoEventSource0, (BasePlotGroup) null, 0);
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;l&quot;, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Clipboard clipboard0 = new Clipboard(&quot;l&quot;);
+<span class="nocode"><a name="4">  4: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="5">  5: </a></span>BasePlotGroup basePlotGroup0 = mock(BasePlotGroup.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="6">  6: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="7">  7: </a></span>SimpleGotoEventSource simpleGotoEventSource0 = new SimpleGotoEventSource(simpleEntryGroup0);
+<span class="nocode"><a name="8">  8: </a></span>FeatureDisplay featureDisplay0 = new FeatureDisplay(simpleEntryGroup0, selection0, simpleGotoEventSource0, basePlotGroup0, 5);
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.components.FeatureDisplay
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.components.FeatureDisplay
+<li>Size: 7
+<li>Length: 39
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.1685356622851112
+<li>BranchCoverage: 0.03884892086330935
+<li>MethodCoverage: 0.047619047619047616
+<li>OutputCoverage: 0.06315789473684211
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

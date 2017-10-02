@@ -1,0 +1,129 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.components.genebuilder.MapPanel
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.components.genebuilder.MapPanel: 0.9444444444444444</ul>
+<ul>
+<li>3.556937340153453 fitness evaluations, 0 generations, null statements, 10 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MapPanel mapPanel0 = new MapPanel();
+<span class="nocode"><a name="2">  2: </a></span>int int0 = mapPanel0.getTranscriptSize();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(75, int0);
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenericDocumentType genericDocumentType0 = new GenericDocumentType(&quot;table-row&quot;, &quot;table-row&quot;, &quot;uk.ac.sanger.artemis.components.genebuilder.MapPanel&quot;);
+<span class="nocode"><a name="2">  2: </a></span>GenericDOMImplementation genericDOMImplementation0 = new GenericDOMImplementation();
+<span class="nocode"><a name="3">  3: </a></span>GenericDocument genericDocument0 = new GenericDocument(genericDocumentType0, genericDOMImplementation0);
+<span class="nocode"><a name="4">  4: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(genericDocument0);
+<span class="nocode"><a name="5">  5: </a></span>Color color0 = Color.orange;
+<span class="nocode"><a name="6">  6: </a></span>MapPanel.drawFeature(sVGGraphics2D0, (-1731), (-2832), (short)2, color0, (short)8, true, (-1.0F), 1);
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MapPanel mapPanel0 = new MapPanel();
+<span class="nocode"><a name="2">  2: </a></span>int int0 = mapPanel0.getViewerBorder();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(15, int0);
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenericDOMImplementation genericDOMImplementation0 = new GenericDOMImplementation();
+<span class="nocode"><a name="2">  2: </a></span>GenericDocument genericDocument0 = new GenericDocument((DocumentType) null, genericDOMImplementation0);
+<span class="nocode"><a name="3">  3: </a></span>SVGGeneratorContext sVGGeneratorContext0 = SVGGeneratorContext.createDefault(genericDocument0);
+<span class="nocode"><a name="4">  4: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(sVGGeneratorContext0, true);
+<span class="nocode"><a name="5">  5: </a></span>MapPanel.drawFeature(sVGGraphics2D0, (short)16, (-2935), 15, (Color) null, (Color) null, (-1.0F), true, (-2935), 2);
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenericDOMImplementation genericDOMImplementation0 = new GenericDOMImplementation();
+<span class="nocode"><a name="2">  2: </a></span>GenericDocument genericDocument0 = new GenericDocument((DocumentType) null, genericDOMImplementation0);
+<span class="nocode"><a name="3">  3: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(genericDocument0);
+<span class="nocode"><a name="4">  4: </a></span>SystemColor systemColor0 = SystemColor.inactiveCaption;
+<span class="nocode"><a name="5">  5: </a></span>MapPanel.drawFeature(sVGGraphics2D0, (short)2, (-1618), (short)1, systemColor0, (short)2, false, 75, 0);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(128, systemColor0.getRed());
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SystemColor systemColor0 = SystemColor.activeCaptionBorder;
+<span class="nocode"><a name="2">  2: </a></span>MapPanel.drawFeature((Graphics2D) null, 131072, 131072, 131072, systemColor0, 0.0F, false, 1032.4309F, 131072);
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Color color0 = Color.green;
+<span class="nocode"><a name="2">  2: </a></span>MapPanel.drawFeature((Graphics2D) null, (-2481), 0, 0, color0, color0, 0, false, (-946.607F), 0);
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MapPanel mapPanel0 = new MapPanel();
+<span class="nocode"><a name="2">  2: </a></span>int int0 = mapPanel0.getFontHeight();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(15, int0);
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MapPanel mapPanel0 = new MapPanel();
+<span class="nocode"><a name="2">  2: </a></span>MapPanel.border = (-1688);
+<span class="nocode"><a name="3">  3: </a></span>int int0 = mapPanel0.getTranscriptSize();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-3331), int0);
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenericDOMImplementation genericDOMImplementation0 = new GenericDOMImplementation();
+<span class="nocode"><a name="2">  2: </a></span>GenericDocument genericDocument0 = new GenericDocument((DocumentType) null, genericDOMImplementation0);
+<span class="nocode"><a name="3">  3: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(genericDocument0);
+<span class="nocode"><a name="4">  4: </a></span>SystemColor systemColor0 = SystemColor.inactiveCaption;
+<span class="nocode"><a name="5">  5: </a></span>MapPanel.drawFeature(sVGGraphics2D0, (-1618), 0, 260, systemColor0, systemColor0, (-1686.0F), false, (-730.1542F), (short)32);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(3, SVGGraphics2D.DEFAULT_MAX_GC_OVERRIDES);
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.components.genebuilder.MapPanel
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.components.genebuilder.MapPanel
+<li>Size: 10
+<li>Length: 34
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.9444444444444444
+<li>BranchCoverage: 1.0
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 0.4444444444444444
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

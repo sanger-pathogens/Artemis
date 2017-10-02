@@ -1,0 +1,244 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.FeatureSegmentVector
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.FeatureSegmentVector: 0.8766098484848486</ul>
+<ul>
+<li>17.257575757575758 fitness evaluations, 0 generations, null statements, 26 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FeatureSegmentVector featureSegmentVector0 = new FeatureSegmentVector();
+<span class="nocode"><a name="2">  2: </a></span>featureSegmentVector0.sortByPosition();
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FeatureSegmentVector featureSegmentVector0 = new FeatureSegmentVector();
+<span class="nocode"><a name="2">  2: </a></span>featureSegmentVector0.addElement((FeatureSegment) null);
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FeatureSegmentVector featureSegmentVector0 = new FeatureSegmentVector();
+<span class="nocode"><a name="2">  2: </a></span>featureSegmentVector0.insertElementAt((FeatureSegment) null, 0);
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="3">  3: </a></span>FeatureSegmentVector featureSegmentVector0 = selection0.getSelectedSegments();
+<span class="nocode"><a name="4">  4: </a></span>featureSegmentVector0.add((FeatureSegment) null);
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;q{&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="3">  3: </a></span>FeatureSegmentVector featureSegmentVector0 = selection0.getAllSegments();
+<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = featureSegmentVector0.removeElement((FeatureSegment) null);
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;q{&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="3">  3: </a></span>FeatureSegmentVector featureSegmentVector0 = selection0.getAllSegments();
+<span class="nocode"><a name="4">  4: </a></span>featureSegmentVector0.elementAt(0);
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FeatureSegmentVector featureSegmentVector0 = new FeatureSegmentVector();
+<span class="nocode"><a name="2">  2: </a></span>featureSegmentVector0.lastElement();
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;q{&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="3">  3: </a></span>FeatureSegmentVector featureSegmentVector0 = selection0.getAllSegments();
+<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = featureSegmentVector0.contains((FeatureSegment) null);
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;q{&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="3">  3: </a></span>FeatureSegmentVector featureSegmentVector0 = selection0.getAllSegments();
+<span class="nocode"><a name="4">  4: </a></span>featureSegmentVector0.setElementAt((FeatureSegment) null, 0);
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FeatureSegmentVector featureSegmentVector0 = new FeatureSegmentVector();
+<span class="nocode"><a name="2">  2: </a></span>featureSegmentVector0.removeAllElements();
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FeatureSegmentVector featureSegmentVector0 = new FeatureSegmentVector();
+<span class="nocode"><a name="2">  2: </a></span>featureSegmentVector0.addElementAtEnd((FeatureSegment) null);
+<span class="nocode"><a name="3">  3: </a></span>featureSegmentVector0.removeElementAt(0);
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FeatureSegmentVector featureSegmentVector0 = new FeatureSegmentVector();
+<span class="nocode"><a name="2">  2: </a></span>featureSegmentVector0.removeElementAt(0);
+</pre>
+<h3>Test case 13</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;q{&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="3">  3: </a></span>FeatureSegmentVector featureSegmentVector0 = selection0.getAllSegments();
+<span class="nocode"><a name="4">  4: </a></span>FeatureSegmentVector featureSegmentVector1 = (FeatureSegmentVector)featureSegmentVector0.clone();
+<span class="nocode"><a name="5">  5: </a></span>assertNotSame(featureSegmentVector1, featureSegmentVector0);
+</pre>
+<h3>Test case 14</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;q{&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="3">  3: </a></span>FeatureSegmentVector featureSegmentVector0 = selection0.getAllSegments();
+<span class="nocode"><a name="4">  4: </a></span>featureSegmentVector0.addElementAtEnd((FeatureSegment) null);
+<span class="nocode"><a name="5">  5: </a></span>boolean boolean0 = featureSegmentVector0.contains((FeatureSegment) null);
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 15</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;q{&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="3">  3: </a></span>FeatureSegmentVector featureSegmentVector0 = selection0.getAllSegments();
+<span class="nocode"><a name="4">  4: </a></span>int int0 = featureSegmentVector0.size();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, int0);
+</pre>
+<h3>Test case 16</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;q{&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="3">  3: </a></span>FeatureSegmentVector featureSegmentVector0 = selection0.getAllSegments();
+<span class="nocode"><a name="4">  4: </a></span>int int0 = featureSegmentVector0.indexOf((FeatureSegment) null);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals((-1), int0);
+</pre>
+<h3>Test case 17</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;q{&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="3">  3: </a></span>FeatureSegmentVector featureSegmentVector0 = selection0.getAllSegments();
+<span class="nocode"><a name="4">  4: </a></span>featureSegmentVector0.elementAt((-1));
+</pre>
+<h3>Test case 18</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;q{&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="3">  3: </a></span>FeatureSegmentVector featureSegmentVector0 = selection0.getAllSegments();
+<span class="nocode"><a name="4">  4: </a></span>featureSegmentVector0.insertElementAt((FeatureSegment) null, 75);
+</pre>
+<h3>Test case 19</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="3">  3: </a></span>FeatureSegmentVector featureSegmentVector0 = selection0.getAllSegments();
+<span class="nocode"><a name="4">  4: </a></span>featureSegmentVector0.removeElementAt((-3999));
+</pre>
+<h3>Test case 20</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FeatureSegmentVector featureSegmentVector0 = new FeatureSegmentVector();
+<span class="nocode"><a name="2">  2: </a></span>featureSegmentVector0.setElementAt((FeatureSegment) null, (-1075));
+</pre>
+<h3>Test case 21</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;q{&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="3">  3: </a></span>FeatureSegmentVector featureSegmentVector0 = selection0.getAllSegments();
+<span class="nocode"><a name="4">  4: </a></span>featureSegmentVector0.addElementAtEnd((FeatureSegment) null);
+<span class="nocode"><a name="5">  5: </a></span>FeatureSegment featureSegment0 = featureSegmentVector0.elementAt(0);
+<span class="nocode"><a name="6">  6: </a></span>assertNull(featureSegment0);
+</pre>
+<h3>Test case 22</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;q{&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="3">  3: </a></span>FeatureSegmentVector featureSegmentVector0 = selection0.getAllSegments();
+<span class="nocode"><a name="4">  4: </a></span>featureSegmentVector0.addElementAtEnd((FeatureSegment) null);
+<span class="nocode"><a name="5">  5: </a></span>int int0 = featureSegmentVector0.indexOf((FeatureSegment) null);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, int0);
+</pre>
+<h3>Test case 23</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;q{&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="3">  3: </a></span>FeatureSegmentVector featureSegmentVector0 = selection0.getAllSegments();
+<span class="nocode"><a name="4">  4: </a></span>featureSegmentVector0.addElementAtEnd((FeatureSegment) null);
+<span class="nocode"><a name="5">  5: </a></span>FeatureSegment featureSegment0 = featureSegmentVector0.lastElement();
+<span class="nocode"><a name="6">  6: </a></span>assertNull(featureSegment0);
+</pre>
+<h3>Test case 24</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;q{&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="3">  3: </a></span>FeatureSegmentVector featureSegmentVector0 = selection0.getAllSegments();
+<span class="nocode"><a name="4">  4: </a></span>featureSegmentVector0.addElementAtEnd((FeatureSegment) null);
+<span class="nocode"><a name="5">  5: </a></span>boolean boolean0 = featureSegmentVector0.removeElement((FeatureSegment) null);
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 25</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;q{&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="3">  3: </a></span>FeatureSegmentVector featureSegmentVector0 = selection0.getAllSegments();
+<span class="nocode"><a name="4">  4: </a></span>featureSegmentVector0.addElementAtEnd((FeatureSegment) null);
+<span class="nocode"><a name="5">  5: </a></span>int int0 = featureSegmentVector0.size();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(1, int0);
+</pre>
+<h3>Test case 26</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;q{&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="3">  3: </a></span>FeatureSegmentVector featureSegmentVector0 = selection0.getAllSegments();
+<span class="nocode"><a name="4">  4: </a></span>featureSegmentVector0.addElementAtEnd((FeatureSegment) null);
+<span class="nocode"><a name="5">  5: </a></span>featureSegmentVector0.setElementAt((FeatureSegment) null, 0);
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.FeatureSegmentVector
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.FeatureSegmentVector
+<li>Size: 26
+<li>Length: 96
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.8766098484848486
+<li>BranchCoverage: 1.0
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 0.5
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

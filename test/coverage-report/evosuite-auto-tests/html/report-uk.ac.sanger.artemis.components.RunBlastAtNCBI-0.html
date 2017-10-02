@@ -1,0 +1,101 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.components.RunBlastAtNCBI
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.components.RunBlastAtNCBI: 0.606488841618152</ul>
+<ul>
+<li>159.23305068758063 fitness evaluations, 0 generations, null statements, 9 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String string0 = RunBlastAtNCBI.constructRequest(&quot;&quot;, &quot;I%:C&quot;, &quot;&quot;, &quot;&quot;, &quot;2RC[z)V&quot;, &quot;I%:C&quot;, &quot;I%:C&quot;, &quot;I%:C&quot;, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;CMD=Put&amp;QUERY=I%25%3AC&amp;DATABASE=&amp;HITLIST_SIZE=&amp;FILTER=2RC%5Bz%29V&amp;EXPECT=I%25%3AC&amp;FORMAT_TYPE=HTML&amp;PROGRAM=&amp;CLIENT=web&amp;SERVICE=I%25%3AC&amp;GAPCOSTS=I%25%3AC+&quot;, string0);
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RunBlastAtNCBI.setData(&quot;]8^AA^&quot;, &quot;hp]Y4&quot;);
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RunBlastAtNCBI.setData(&quot;blastn&quot;, &quot;]8^AAg^&quot;);
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RunBlastAtNCBI.constructRequest(&quot;8`?}Bc+fG_DZ&quot;, &quot;8`?}Bc+fG_DZ&quot;, &quot;&quot;, &quot;500&quot;, (String) null, &quot;N{&gt;PT\&quot;qT_+Qorrt&quot;, (String) null, &quot;&quot;, &quot;&quot;);
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String string0 = RunBlastAtNCBI.constructRequest(&quot;megablast&quot;, &quot;megablast&quot;, &quot;megablast&quot;, &quot;megablast&quot;, &quot;megablast&quot;, &quot;megablast&quot;, &quot;megablast&quot;, &quot;megablast&quot;, (String) null);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;CMD=Put&amp;QUERY=megablast&amp;DATABASE=megablast&amp;HITLIST_SIZE=megablast&amp;FILTER=megablast&amp;EXPECT=megablast&amp;FORMAT_TYPE=HTML&amp;PROGRAM=megablast&amp;CLIENT=web&amp;SERVICE=megablast&amp;MEGABLAST=yes&quot;, string0);
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RunBlastAtNCBI.setData((String) null, &quot;e`2qt7:1n&quot;);
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RunBlastAtNCBI runBlastAtNCBI0 = new RunBlastAtNCBI(&quot;1Kf0&quot;);
+<span class="nocode"><a name="2">  2: </a></span>runBlastAtNCBI0.run();
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(runBlastAtNCBI0.isInterrupted());
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String string0 = RunBlastAtNCBI.constructRequest(&quot;]8^AAg^&quot;, &quot;1Kf0&quot;, &quot;1Kf0&quot;, &quot;1Kf0&quot;, &quot;1Kf0&quot;, &quot;&quot;, &quot;]8^AAg^&quot;, &quot;1Kf0&quot;, &quot;1Kf0&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;CMD=Put&amp;QUERY=1Kf0&amp;DATABASE=1Kf0&amp;HITLIST_SIZE=1Kf0&amp;FILTER=1Kf0&amp;EXPECT=&amp;FORMAT_TYPE=HTML&amp;PROGRAM=%5D8%5EAAg%5E&amp;CLIENT=web&amp;SERVICE=%5D8%5EAAg%5E&amp;GAPCOSTS=1Kf0+1Kf0&quot;, string0);
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String string0 = RunBlastAtNCBI.constructRequest(&quot;Human Repeats&quot;, &quot;Human Repeats&quot;, &quot;Human Repeats&quot;, &quot;Human Repeats&quot;, &quot;Human Repeats&quot;, &quot;Human Repeats&quot;, &quot;Human Repeats&quot;, &quot;Tb+S[%;Xle1\&quot;a|vt1U0&quot;, &quot;Tb+S[%;Xle1\&quot;a|vt1U0&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;CMD=Put&amp;QUERY=Human+Repeats&amp;DATABASE=Human+Repeats&amp;HITLIST_SIZE=Human+Repeats&amp;FILTER=Human+Repeats&amp;EXPECT=Human+Repeats&amp;FORMAT_TYPE=HTML&amp;PROGRAM=Human+Repeats&amp;CLIENT=web&amp;SERVICE=Human+Repeats&amp;GAPCOSTS=Tb%2BS%5B%25%3BXle1%22a%7Cvt1U0+Tb%2BS%5B%25%3BXle1%22a%7Cvt1U0&quot;, string0);
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.components.RunBlastAtNCBI
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.components.RunBlastAtNCBI
+<li>Size: 9
+<li>Length: 10
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.606488841618152
+<li>BranchCoverage: 0.375
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 0.16666666666666666
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

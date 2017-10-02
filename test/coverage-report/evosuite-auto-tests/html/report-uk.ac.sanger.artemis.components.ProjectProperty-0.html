@@ -1,0 +1,135 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.components.ProjectProperty
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.components.ProjectProperty: 0.31442768033327434</ul>
+<ul>
+<li>1914.164296993286 fitness evaluations, 0 generations, null statements, 11 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ProjectProperty.writeProperties();
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;T_)&gt;3nZM&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Properties properties0 = new Properties();
+<span class="nocode"><a name="3">  3: </a></span>properties0.put(mockFile0, mockFile0);
+<span class="nocode"><a name="4">  4: </a></span>ProjectProperty.getProjectMap(properties0);
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Properties properties0 = new Properties();
+<span class="nocode"><a name="2">  2: </a></span>BiFunction&lt;Object, Object, Frame&gt; biFunction0 = (BiFunction&lt;Object, Object, Frame&gt;) mock(BiFunction.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="3">  3: </a></span>properties0.merge(&quot;c}&quot;, &quot;ZjDg&quot;, biFunction0);
+<span class="nocode"><a name="4">  4: </a></span>HashMap&lt;String, HashMap&lt;String, String&gt;&gt; hashMap0 = (HashMap&lt;String, HashMap&lt;String, String&gt;&gt;)ProjectProperty.getProjectMap(properties0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, hashMap0.size());
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Properties properties0 = new Properties();
+<span class="nocode"><a name="2">  2: </a></span>BiFunction&lt;Object, Object, Frame&gt; biFunction0 = (BiFunction&lt;Object, Object, Frame&gt;) mock(BiFunction.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="3">  3: </a></span>properties0.merge(&quot;project.}}&quot;, &quot;ZjDg&quot;, biFunction0);
+<span class="nocode"><a name="4">  4: </a></span>HashMap&lt;String, HashMap&lt;String, String&gt;&gt; hashMap0 = (HashMap&lt;String, HashMap&lt;String, String&gt;&gt;)ProjectProperty.getProjectMap(properties0);
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(hashMap0.isEmpty());
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;getFeatureCvTermPubByFeature&quot;);
+<span class="nocode"><a name="2">  2: </a></span>HashMap&lt;String, HashMap&lt;String, String&gt;&gt; hashMap0 = new HashMap&lt;String, HashMap&lt;String, String&gt;&gt;();
+<span class="nocode"><a name="3">  3: </a></span>ProjectProperty.writeProperties(mockFile0, hashMap0);
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(mockFile0.canExecute());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0L, mockFile0.lastModified());
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;getFeatureCvTermPubByFeature&quot;);
+<span class="nocode"><a name="2">  2: </a></span>HashMap&lt;String, HashMap&lt;String, String&gt;&gt; hashMap0 = new HashMap&lt;String, HashMap&lt;String, String&gt;&gt;();
+<span class="nocode"><a name="3">  3: </a></span>HashMap&lt;String, String&gt; hashMap1 = new HashMap&lt;String, String&gt;();
+<span class="nocode"><a name="4">  4: </a></span>hashMap1.put(&quot;&quot;, &quot;sequence&quot;);
+<span class="nocode"><a name="5">  5: </a></span>hashMap0.put(&quot;sequence&quot;, hashMap1);
+<span class="nocode"><a name="6">  6: </a></span>ProjectProperty.writeProperties(mockFile0, hashMap0);
+<span class="nocode"><a name="7">  7: </a></span>assertTrue(mockFile0.canRead());
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(1392409281320L, mockFile0.lastModified());
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ProjectProperty projectProperty0 = new ProjectProperty();
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ProjectProperty projectProperty0 = new ProjectProperty((Splash) null);
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ProjectProperty.getProjectMap((Properties) null);
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;tRNA&quot;, &quot;tRNA&quot;);
+<span class="nocode"><a name="2">  2: </a></span>HashMap&lt;String, HashMap&lt;String, String&gt;&gt; hashMap0 = new HashMap&lt;String, HashMap&lt;String, String&gt;&gt;();
+<span class="nocode"><a name="3">  3: </a></span>hashMap0.put(&quot;tRNA&quot;, (HashMap&lt;String, String&gt;) null);
+<span class="nocode"><a name="4">  4: </a></span>ProjectProperty.writeProperties(mockFile0, hashMap0);
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FileSystemHandling.shouldAllThrowIOExceptions();
+<span class="nocode"><a name="2">  2: </a></span>MockFile mockFile0 = new MockFile(&quot;getFeatureCvTermPubByFeature&quot;);
+<span class="nocode"><a name="3">  3: </a></span>HashMap&lt;String, HashMap&lt;String, String&gt;&gt; hashMap0 = new HashMap&lt;String, HashMap&lt;String, String&gt;&gt;();
+<span class="nocode"><a name="4">  4: </a></span>HashMap&lt;String, String&gt; hashMap1 = new HashMap&lt;String, String&gt;();
+<span class="nocode"><a name="5">  5: </a></span>hashMap0.put(&quot;sequence&quot;, hashMap1);
+<span class="nocode"><a name="6">  6: </a></span>ProjectProperty.writeProperties(mockFile0, hashMap0);
+<span class="nocode"><a name="7">  7: </a></span>assertTrue(mockFile0.canRead());
+<span class="nocode"><a name="8">  8: </a></span>assertTrue(mockFile0.canExecute());
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.components.ProjectProperty
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.components.ProjectProperty
+<li>Size: 11
+<li>Length: 35
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.31442768033327434
+<li>BranchCoverage: 0.07075471698113207
+<li>MethodCoverage: 0.5555555555555556
+<li>OutputCoverage: 0.3333333333333333
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

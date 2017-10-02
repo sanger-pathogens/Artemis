@@ -1,0 +1,262 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.io.QualifierInfo
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.io.QualifierInfo: 0.9640396210163652</ul>
+<ul>
+<li>12.416666518114798 fitness evaluations, 0 generations, null statements, 27 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Key key0 = new Key(&quot;JSnKK@I|=`ex+nb&quot;);
+<span class="nocode"><a name="2">  2: </a></span>KeyVector keyVector0 = new KeyVector(key0);
+<span class="nocode"><a name="3">  3: </a></span>QualifierInfo qualifierInfo0 = new QualifierInfo(&quot;g`ra\&quot;b}&quot;, 2145, keyVector0, keyVector0, true);
+<span class="nocode"><a name="4">  4: </a></span>KeyVector keyVector1 = qualifierInfo0.getValidKeys();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(2145, qualifierInfo0.getType());
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(qualifierInfo0.isOnceOnly());
+<span class="nocode"><a name="7">  7: </a></span>assertNotNull(keyVector1);
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Key key0 = new Key(&quot;m[)j&quot;, false);
+<span class="nocode"><a name="2">  2: </a></span>KeyVector keyVector0 = new KeyVector(key0);
+<span class="nocode"><a name="3">  3: </a></span>QualifierInfo qualifierInfo0 = new QualifierInfo(&quot;m[)j&quot;, 2000, keyVector0, keyVector0, false);
+<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = qualifierInfo0.isOnceOnly();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(2000, qualifierInfo0.getType());
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Key key0 = Key.CDS;
+<span class="nocode"><a name="2">  2: </a></span>KeyVector keyVector0 = new KeyVector(key0);
+<span class="nocode"><a name="3">  3: </a></span>QualifierInfo qualifierInfo0 = new QualifierInfo(&quot;uHs8[&quot;, (-2509), keyVector0, keyVector0, false);
+<span class="nocode"><a name="4">  4: </a></span>int int0 = qualifierInfo0.getType();
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(qualifierInfo0.isOnceOnly());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals((-2509), int0);
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Key key0 = Key.CDS;
+<span class="nocode"><a name="2">  2: </a></span>KeyVector keyVector0 = new KeyVector(key0);
+<span class="nocode"><a name="3">  3: </a></span>QualifierInfo qualifierInfo0 = new QualifierInfo((String) null, 1, keyVector0, keyVector0, true);
+<span class="nocode"><a name="4">  4: </a></span>qualifierInfo0.getName();
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(qualifierInfo0.isOnceOnly());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(1, qualifierInfo0.getType());
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Key key0 = Key.CDS;
+<span class="nocode"><a name="2">  2: </a></span>KeyVector keyVector0 = new KeyVector(key0);
+<span class="nocode"><a name="3">  3: </a></span>QualifierInfo qualifierInfo0 = new QualifierInfo((String) null, 1, keyVector0, keyVector0, true);
+<span class="nocode"><a name="4">  4: </a></span>KeyVector keyVector1 = qualifierInfo0.getRequiredKeys();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(1, qualifierInfo0.getType());
+<span class="nocode"><a name="6">  6: </a></span>assertNotNull(keyVector1);
+<span class="nocode"><a name="7">  7: </a></span>assertTrue(qualifierInfo0.isOnceOnly());
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>QualifierInfo qualifierInfo0 = new QualifierInfo(&quot;3mXjPt&amp;\&quot;&quot;, 3, (KeyVector) null, (KeyVector) null, true);
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = new Key(&quot;3mXjPt&amp;\&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = qualifierInfo0.isValidFor(key0);
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(qualifierInfo0.isOnceOnly());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(3, qualifierInfo0.getType());
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Key key0 = new Key((String) null, true);
+<span class="nocode"><a name="2">  2: </a></span>KeyVector keyVector0 = new KeyVector(key0);
+<span class="nocode"><a name="3">  3: </a></span>QualifierInfo qualifierInfo0 = new QualifierInfo(&quot;LdJW9'I0f*mt&quot;, 10, keyVector0, keyVector0, true);
+<span class="nocode"><a name="4">  4: </a></span>qualifierInfo0.isValidFor(key0);
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Key key0 = Key.CDS;
+<span class="nocode"><a name="2">  2: </a></span>KeyVector keyVector0 = new KeyVector(key0);
+<span class="nocode"><a name="3">  3: </a></span>QualifierInfo qualifierInfo0 = new QualifierInfo(&quot;uHs8[&quot;, (-2509), keyVector0, keyVector0, false);
+<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = qualifierInfo0.isRequiredFor(key0);
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(boolean0);
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(qualifierInfo0.isOnceOnly());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals((-2509), qualifierInfo0.getType());
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>QualifierInfo qualifierInfo0 = new QualifierInfo(&quot;3mXjPt&amp;\&quot;&quot;, 3, (KeyVector) null, (KeyVector) null, true);
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = new Key(&quot;3mXjPt&amp;\&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = qualifierInfo0.isRequiredFor(key0);
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(qualifierInfo0.isOnceOnly());
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(boolean0);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(3, qualifierInfo0.getType());
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>QualifierInfo.getQualifierTypeID(&quot;lis{&quot;);
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>int int0 = QualifierInfo.getQualifierTypeID(&quot;\&quot;text\&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(1, int0);
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>int int0 = QualifierInfo.getQualifierTypeID(&quot;number&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(2, int0);
+</pre>
+<h3>Test case 13</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>int int0 = QualifierInfo.getQualifierTypeID(&quot;\&quot;list\&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(1, int0);
+</pre>
+<h3>Test case 14</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>int int0 = QualifierInfo.getQualifierTypeID(&quot;text&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(2, int0);
+</pre>
+<h3>Test case 15</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>int int0 = QualifierInfo.getQualifierTypeID(&quot;none&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(3, int0);
+</pre>
+<h3>Test case 16</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>int int0 = QualifierInfo.getQualifierTypeID(&quot;\&quot;opt\&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(4, int0);
+</pre>
+<h3>Test case 17</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>KeyVector keyVector0 = new KeyVector();
+<span class="nocode"><a name="2">  2: </a></span>keyVector0.add((Object) &quot;O[AKle6z*12Er]&quot;);
+<span class="nocode"><a name="3">  3: </a></span>QualifierInfo qualifierInfo0 = new QualifierInfo(&quot;O[AKle6z*12Er]&quot;, (-2108), keyVector0, keyVector0, false);
+<span class="nocode"><a name="4">  4: </a></span>Key key0 = new Key((String) null, false);
+<span class="nocode"><a name="5">  5: </a></span>qualifierInfo0.isRequiredFor(key0);
+</pre>
+<h3>Test case 18</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>KeyVector keyVector0 = new KeyVector();
+<span class="nocode"><a name="2">  2: </a></span>QualifierInfo qualifierInfo0 = new QualifierInfo(&quot;&quot;, (-1224), keyVector0, keyVector0, false);
+<span class="nocode"><a name="3">  3: </a></span>qualifierInfo0.getName();
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(qualifierInfo0.isOnceOnly());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals((-1224), qualifierInfo0.getType());
+</pre>
+<h3>Test case 19</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>QualifierInfo qualifierInfo0 = new QualifierInfo(&quot;3mXjPt&amp;\&quot;&quot;, 3, (KeyVector) null, (KeyVector) null, true);
+<span class="nocode"><a name="2">  2: </a></span>qualifierInfo0.getName();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(3, qualifierInfo0.getType());
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(qualifierInfo0.isOnceOnly());
+</pre>
+<h3>Test case 20</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>KeyVector keyVector0 = new KeyVector();
+<span class="nocode"><a name="2">  2: </a></span>QualifierInfo qualifierInfo0 = new QualifierInfo(&quot;&quot;, (-1224), keyVector0, keyVector0, false);
+<span class="nocode"><a name="3">  3: </a></span>qualifierInfo0.getRequiredKeys();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-1224), qualifierInfo0.getType());
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(qualifierInfo0.isOnceOnly());
+</pre>
+<h3>Test case 21</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Key key0 = Key.CDS;
+<span class="nocode"><a name="2">  2: </a></span>KeyVector keyVector0 = new KeyVector(key0);
+<span class="nocode"><a name="3">  3: </a></span>QualifierInfo qualifierInfo0 = new QualifierInfo(&quot;&quot;, 1, keyVector0, (KeyVector) null, true);
+<span class="nocode"><a name="4">  4: </a></span>qualifierInfo0.getRequiredKeys();
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(qualifierInfo0.isOnceOnly());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(1, qualifierInfo0.getType());
+</pre>
+<h3>Test case 22</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>QualifierInfo qualifierInfo0 = new QualifierInfo(&quot;3mXjPt&amp;\&quot;&quot;, 3, (KeyVector) null, (KeyVector) null, true);
+<span class="nocode"><a name="2">  2: </a></span>int int0 = qualifierInfo0.getType();
+<span class="nocode"><a name="3">  3: </a></span>assertTrue(qualifierInfo0.isOnceOnly());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(3, int0);
+</pre>
+<h3>Test case 23</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>KeyVector keyVector0 = new KeyVector();
+<span class="nocode"><a name="2">  2: </a></span>QualifierInfo qualifierInfo0 = new QualifierInfo(&quot;&quot;, 0, keyVector0, keyVector0, false);
+<span class="nocode"><a name="3">  3: </a></span>int int0 = qualifierInfo0.getType();
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(qualifierInfo0.isOnceOnly());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, int0);
+</pre>
+<h3>Test case 24</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>KeyVector keyVector0 = new KeyVector();
+<span class="nocode"><a name="2">  2: </a></span>QualifierInfo qualifierInfo0 = new QualifierInfo(&quot;&quot;, (-1224), keyVector0, keyVector0, false);
+<span class="nocode"><a name="3">  3: </a></span>qualifierInfo0.getValidKeys();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-1224), qualifierInfo0.getType());
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(qualifierInfo0.isOnceOnly());
+</pre>
+<h3>Test case 25</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>QualifierInfo qualifierInfo0 = new QualifierInfo(&quot;3mXjPt&amp;\&quot;&quot;, 3, (KeyVector) null, (KeyVector) null, true);
+<span class="nocode"><a name="2">  2: </a></span>qualifierInfo0.getValidKeys();
+<span class="nocode"><a name="3">  3: </a></span>assertTrue(qualifierInfo0.isOnceOnly());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(3, qualifierInfo0.getType());
+</pre>
+<h3>Test case 26</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>KeyVector keyVector0 = new KeyVector();
+<span class="nocode"><a name="2">  2: </a></span>QualifierInfo qualifierInfo0 = new QualifierInfo((String) null, 0, keyVector0, keyVector0, true);
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = qualifierInfo0.isOnceOnly();
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(boolean0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, qualifierInfo0.getType());
+</pre>
+<h3>Test case 27</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Key key0 = Key.CDS;
+<span class="nocode"><a name="2">  2: </a></span>KeyVector keyVector0 = new KeyVector();
+<span class="nocode"><a name="3">  3: </a></span>QualifierInfo qualifierInfo0 = new QualifierInfo(&quot;&quot;, (-1224), keyVector0, keyVector0, false);
+<span class="nocode"><a name="4">  4: </a></span>qualifierInfo0.isValidFor(key0);
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(qualifierInfo0.isOnceOnly());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals((-1224), qualifierInfo0.getType());
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.io.QualifierInfo
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.io.QualifierInfo
+<li>Size: 27
+<li>Length: 75
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.9640396210163652
+<li>BranchCoverage: 1.0
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 0.8518518518518519
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

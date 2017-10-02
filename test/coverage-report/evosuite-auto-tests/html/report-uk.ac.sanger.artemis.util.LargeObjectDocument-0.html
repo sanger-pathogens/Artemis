@@ -1,0 +1,123 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.util.LargeObjectDocument
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.util.LargeObjectDocument: 0.8112745098039216</ul>
+<ul>
+<li>6.083333333333333 fitness evaluations, 0 generations, null statements, 9 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LargeObject largeObject0 = mock(LargeObject.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="2">  2: </a></span>LargeObjectDocument largeObjectDocument0 = new LargeObjectDocument(&quot;XKXcLloj?\&quot;4V&quot;, &quot;&quot;, largeObject0);
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = largeObjectDocument0.writable();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;&quot;, largeObjectDocument0.getName());
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>InputStream inputStream0 = mock(InputStream.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="2">  2: </a></span>doReturn(0, 0).when(inputStream0).read();
+<span class="nocode"><a name="3">  3: </a></span>LargeObject largeObject0 = mock(LargeObject.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="4">  4: </a></span>doReturn(inputStream0, (InputStream) null).when(largeObject0).getInputStream();
+<span class="nocode"><a name="5">  5: </a></span>LargeObjectDocument largeObjectDocument0 = new LargeObjectDocument(&quot;g:&quot;, &quot;iS]T&amp;vU5PiI7]gKw+z&quot;, largeObject0);
+<span class="nocode"><a name="6">  6: </a></span>largeObjectDocument0.getInputStream();
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(&quot;iS]T&amp;vU5PiI7]gKw+z&quot;, largeObjectDocument0.getName());
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LargeObjectDocument largeObjectDocument0 = new LargeObjectDocument((String) null, &quot;G&amp;_XMr 'fr%vV_R0xV&quot;, (LargeObject) null);
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LargeObject largeObject0 = mock(LargeObject.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="2">  2: </a></span>doReturn((InputStream) null).when(largeObject0).getInputStream();
+<span class="nocode"><a name="3">  3: </a></span>LargeObjectDocument largeObjectDocument0 = new LargeObjectDocument(&quot;*(`XF%&quot;, &quot;*(`XF%&quot;, largeObject0);
+<span class="nocode"><a name="4">  4: </a></span>largeObjectDocument0.getInputStream();
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LargeObject largeObject0 = mock(LargeObject.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="2">  2: </a></span>LargeObjectDocument largeObjectDocument0 = new LargeObjectDocument(&quot;*zJcQ&quot;, (String) null, largeObject0);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = largeObjectDocument0.getName();
+<span class="nocode"><a name="4">  4: </a></span>assertNull(string0);
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LargeObject largeObject0 = mock(LargeObject.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="2">  2: </a></span>LargeObjectDocument largeObjectDocument0 = new LargeObjectDocument(&quot;&quot;, &quot;&quot;, largeObject0);
+<span class="nocode"><a name="3">  3: </a></span>Document document0 = largeObjectDocument0.append(&quot;&quot;);
+<span class="nocode"><a name="4">  4: </a></span>assertNull(document0);
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LargeObject largeObject0 = mock(LargeObject.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="2">  2: </a></span>LargeObjectDocument largeObjectDocument0 = new LargeObjectDocument(&quot;&quot;, &quot;&quot;, largeObject0);
+<span class="nocode"><a name="3">  3: </a></span>OutputStream outputStream0 = largeObjectDocument0.getOutputStream();
+<span class="nocode"><a name="4">  4: </a></span>assertNull(outputStream0);
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LargeObject largeObject0 = mock(LargeObject.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="2">  2: </a></span>LargeObjectDocument largeObjectDocument0 = new LargeObjectDocument(&quot;&quot;, &quot;&quot;, largeObject0);
+<span class="nocode"><a name="3">  3: </a></span>Document document0 = largeObjectDocument0.getParent();
+<span class="nocode"><a name="4">  4: </a></span>assertNull(document0);
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LargeObject largeObject0 = mock(LargeObject.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="2">  2: </a></span>LargeObjectDocument largeObjectDocument0 = new LargeObjectDocument(&quot;&quot;, &quot;&quot;, largeObject0);
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = largeObjectDocument0.readable();
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(boolean0);
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.util.LargeObjectDocument
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.util.LargeObjectDocument
+<li>Size: 9
+<li>Length: 26
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.8112745098039216
+<li>BranchCoverage: 1.0
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 0.4666666666666667
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

@@ -1,0 +1,548 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.circular.Track
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.circular.Track: 0.7154045924415913</ul>
+<ul>
+<li>242.94229892914103 fitness evaluations, 0 generations, null statements, 46 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Track track0 = new Track((-3597.062528468816), &quot;~&quot;, &quot;~&quot;, true, false, false, (Entry) null);
+<span class="nocode"><a name="2">  2: </a></span>track0.setAny(false);
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(track0.isShowReverse());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(10.0F, track0.getSize(), 0.01F);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals((-3597.062528468816), track0.getPosition(), 0.01);
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(track0.isAny());
+<span class="nocode"><a name="7">  7: </a></span>assertTrue(track0.isNotQualifier());
+<span class="nocode"><a name="8">  8: </a></span>assertFalse(track0.isShowForward());
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>Entry entry0 = simpleEntryGroup0.createEntry();
+<span class="nocode"><a name="3">  3: </a></span>Track track0 = new Track(27.7, &quot;v46Mw^cbY3&quot;, (String) null, false, false, false, entry0);
+<span class="nocode"><a name="4">  4: </a></span>track0.isShowForward();
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Track track0 = new Track(1520.80423, &quot;&quot;, &quot;&quot;, true, false, true, (Entry) null);
+<span class="nocode"><a name="2">  2: </a></span>track0.getQualifier();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(10.0F, track0.getSize(), 0.01F);
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(track0.isAny());
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(track0.isNotQualifier());
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(track0.isShowForward());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(1520.80423, track0.getPosition(), 0.01);
+<span class="nocode"><a name="8">  8: </a></span>assertTrue(track0.isShowReverse());
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Track track0 = new Track(2550.8158, &quot;V#{~&quot;, true, true, (Entry) null);
+<span class="nocode"><a name="2">  2: </a></span>track0.getEntry();
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(track0.isAny());
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(track0.isNotQualifier());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(10.0F, track0.getSize(), 0.01F);
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(track0.isShowForward());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(2550.8158, track0.getPosition(), 0.01);
+<span class="nocode"><a name="8">  8: </a></span>assertTrue(track0.isShowReverse());
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Track track0 = new Track(1.0, &quot;s+&quot;, false, false, (Entry) null);
+<span class="nocode"><a name="2">  2: </a></span>assertTrue(track0.isNotQualifier());
+<span class="nocode"><a name="3">  3: </a></span>
+<span class="nocode"><a name="4">  4: </a></span>track0.setNotQualifier(false);
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(track0.isNotQualifier());
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>Entry entry0 = simpleEntryGroup0.createEntry();
+<span class="nocode"><a name="3">  3: </a></span>Track track0 = new Track(27.7, &quot;v46Mw^cbY3&quot;, (String) null, false, false, false, entry0);
+<span class="nocode"><a name="4">  4: </a></span>track0.setEntry(entry0);
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(track0.isShowReverse());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(27.7, track0.getPosition(), 0.01);
+<span class="nocode"><a name="7">  7: </a></span>assertFalse(track0.isAny());
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(10.0F, track0.getSize(), 0.01F);
+<span class="nocode"><a name="9">  9: </a></span>assertFalse(track0.isShowForward());
+<span class="nocode"><a name="10"> 10: </a></span>assertFalse(track0.isNotQualifier());
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Track track0 = new Track(0.9, (String) null, (String) null, true, true, false, (Entry) null);
+<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = track0.isAny();
+<span class="nocode"><a name="3">  3: </a></span>assertTrue(boolean0);
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(track0.isShowForward());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0.9, track0.getPosition(), 0.01);
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(track0.isShowReverse());
+<span class="nocode"><a name="7">  7: </a></span>assertTrue(track0.isNotQualifier());
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(10.0F, track0.getSize(), 0.01F);
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Track track0 = new Track(0.0, (Entry) null);
+<span class="nocode"><a name="2">  2: </a></span>track0.setFeaturePredicate((FeaturePredicate) null);
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(track0.isNotQualifier());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(10.0F, track0.getSize(), 0.01F);
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(track0.isAny());
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(track0.isShowReverse());
+<span class="nocode"><a name="7">  7: </a></span>assertTrue(track0.isShowForward());
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Bases bases0 = new Bases((Sequence) null);
+<span class="nocode"><a name="2">  2: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = simpleEntryGroup0.createEntry();
+<span class="nocode"><a name="4">  4: </a></span>Track track0 = new Track((-3145.891478971908), &quot;~Ak],L(xORTQIL0&quot;, &quot;&quot;, true, true, true, entry0);
+<span class="nocode"><a name="5">  5: </a></span>double double0 = track0.getPosition();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(10.0F, track0.getSize(), 0.01F);
+<span class="nocode"><a name="7">  7: </a></span>assertTrue(track0.isNotQualifier());
+<span class="nocode"><a name="8">  8: </a></span>assertFalse(track0.isAny());
+<span class="nocode"><a name="9">  9: </a></span>assertEquals((-3145.891478971908), double0, 0.01);
+<span class="nocode"><a name="10"> 10: </a></span>assertTrue(track0.isShowReverse());
+<span class="nocode"><a name="11"> 11: </a></span>assertEquals(&quot;&quot;, track0.getQualifier());
+<span class="nocode"><a name="12"> 12: </a></span>assertEquals(&quot;~Ak],L(xORTQIL0&quot;, track0.getKeyStr());
+<span class="nocode"><a name="13"> 13: </a></span>assertTrue(track0.isShowForward());
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Key key0 = Key.CDS;
+<span class="nocode"><a name="5">  5: </a></span>FeatureKeyPredicate featureKeyPredicate0 = new FeatureKeyPredicate(key0);
+<span class="nocode"><a name="6">  6: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureKeyPredicate0, &quot;/`-vXc`a&quot;);
+<span class="nocode"><a name="7">  7: </a></span>Entry entry0 = filteredEntryGroup0.createEntry(&quot;Q!&quot;);
+<span class="nocode"><a name="8">  8: </a></span>Track track0 = new Track((-2127.1834581), &quot;&quot;, &quot;/`-vXc`a&quot;, true, true, true, entry0);
+<span class="nocode"><a name="9">  9: </a></span>track0.setPosition(2333.281552399577);
+<span class="nocode"><a name="10"> 10: </a></span>assertEquals(2333.281552399577, track0.getPosition(), 0.01);
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Key key0 = Key.CDS;
+<span class="nocode"><a name="5">  5: </a></span>FeatureKeyPredicate featureKeyPredicate0 = new FeatureKeyPredicate(key0);
+<span class="nocode"><a name="6">  6: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureKeyPredicate0, &quot;/`-vXc`a&quot;);
+<span class="nocode"><a name="7">  7: </a></span>Entry entry0 = filteredEntryGroup0.createEntry(&quot;Q!&quot;);
+<span class="nocode"><a name="8">  8: </a></span>Track track0 = new Track((-2127.1834581), &quot;&quot;, &quot;/`-vXc`a&quot;, true, true, true, entry0);
+<span class="nocode"><a name="9">  9: </a></span>String string0 = track0.getKeyStr();
+<span class="nocode"><a name="10"> 10: </a></span>assertTrue(track0.isShowReverse());
+<span class="nocode"><a name="11"> 11: </a></span>assertTrue(track0.isShowForward());
+<span class="nocode"><a name="12"> 12: </a></span>assertEquals(&quot;/`-vXc`a&quot;, track0.getQualifier());
+<span class="nocode"><a name="13"> 13: </a></span>assertEquals((-2127.1834581), track0.getPosition(), 0.01);
+<span class="nocode"><a name="14"> 14: </a></span>assertEquals(10.0F, track0.getSize(), 0.01F);
+<span class="nocode"><a name="15"> 15: </a></span>assertTrue(track0.isNotQualifier());
+<span class="nocode"><a name="16"> 16: </a></span>assertFalse(track0.isAny());
+<span class="nocode"><a name="17"> 17: </a></span>assertEquals(&quot;&quot;, string0);
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Track track0 = new Track(0.0, (Entry) null);
+<span class="nocode"><a name="2">  2: </a></span>track0.setSize(1898.47F);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(1898.47F, track0.getSize(), 0.01F);
+</pre>
+<h3>Test case 13</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Entry entry0 = Entry.newEntry((Bases) null);
+<span class="nocode"><a name="2">  2: </a></span>Track track0 = new Track(0.9, entry0);
+<span class="nocode"><a name="3">  3: </a></span>track0.getFeaturePredicate();
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(track0.isNotQualifier());
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(track0.isShowForward());
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(track0.isShowReverse());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(10.0F, track0.getSize(), 0.01F);
+<span class="nocode"><a name="8">  8: </a></span>assertFalse(track0.isAny());
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(0.9, track0.getPosition(), 0.01);
+</pre>
+<h3>Test case 14</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Entry entry0 = Entry.newEntry((Bases) null);
+<span class="nocode"><a name="2">  2: </a></span>Track track0 = new Track(0.9, entry0);
+<span class="nocode"><a name="3">  3: </a></span>track0.setQualifier(&quot;&quot;);
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(track0.isNotQualifier());
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(track0.isShowForward());
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(track0.isShowReverse());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(10.0F, track0.getSize(), 0.01F);
+<span class="nocode"><a name="8">  8: </a></span>assertFalse(track0.isAny());
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(0.9, track0.getPosition(), 0.01);
+</pre>
+<h3>Test case 15</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Track track0 = new Track(1520.80423, &quot;&quot;, &quot;&quot;, true, false, true, (Entry) null);
+<span class="nocode"><a name="2">  2: </a></span>track0.getQualifierValue();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(1520.80423, track0.getPosition(), 0.01);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(10.0F, track0.getSize(), 0.01F);
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(track0.isAny());
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(track0.isNotQualifier());
+<span class="nocode"><a name="7">  7: </a></span>assertFalse(track0.isShowForward());
+<span class="nocode"><a name="8">  8: </a></span>assertTrue(track0.isShowReverse());
+</pre>
+<h3>Test case 16</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Track track0 = new Track(2550.8158, &quot;V#{~&quot;, true, true, (Entry) null);
+<span class="nocode"><a name="2">  2: </a></span>track0.getColour();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(10.0F, track0.getSize(), 0.01F);
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(track0.isShowForward());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(2550.8158, track0.getPosition(), 0.01);
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(track0.isShowReverse());
+<span class="nocode"><a name="7">  7: </a></span>assertFalse(track0.isAny());
+<span class="nocode"><a name="8">  8: </a></span>assertTrue(track0.isNotQualifier());
+</pre>
+<h3>Test case 17</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Track track0 = new Track(0.9, (String) null, (String) null, true, true, false, (Entry) null);
+<span class="nocode"><a name="2">  2: </a></span>assertFalse(track0.isShowReverse());
+<span class="nocode"><a name="3">  3: </a></span>
+<span class="nocode"><a name="4">  4: </a></span>track0.setShowReverse(true);
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(track0.isShowReverse());
+</pre>
+<h3>Test case 18</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Track track0 = new Track(2469.1, &quot;V&gt;ba0`([e_-&gt;oQ&quot;, true, true, (Entry) null);
+<span class="nocode"><a name="2">  2: </a></span>track0.setQualifierValue(&quot;V&gt;ba0`([e_-&gt;oQ&quot;);
+<span class="nocode"><a name="3">  3: </a></span>assertTrue(track0.isShowReverse());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(10.0F, track0.getSize(), 0.01F);
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(track0.isAny());
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(track0.isNotQualifier());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(2469.1, track0.getPosition(), 0.01);
+<span class="nocode"><a name="8">  8: </a></span>assertTrue(track0.isShowForward());
+</pre>
+<h3>Test case 19</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Track track0 = new Track(1520.80423, &quot;&quot;, &quot;&quot;, true, false, true, (Entry) null);
+<span class="nocode"><a name="2">  2: </a></span>track0.setKeyStr(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(track0.isAny());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(10.0F, track0.getSize(), 0.01F);
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(track0.isShowForward());
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(track0.isShowReverse());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(1520.80423, track0.getPosition(), 0.01);
+<span class="nocode"><a name="8">  8: </a></span>assertTrue(track0.isNotQualifier());
+</pre>
+<h3>Test case 20</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Track track0 = new Track((-662.0573889631734), &quot;deleteFeatureById&quot;, false, true, (Entry) null);
+<span class="nocode"><a name="2">  2: </a></span>assertFalse(track0.isShowForward());
+<span class="nocode"><a name="3">  3: </a></span>
+<span class="nocode"><a name="4">  4: </a></span>track0.setShowForward(true);
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(track0.isShowForward());
+</pre>
+<h3>Test case 21</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Track track0 = new Track(0.0, (Entry) null);
+<span class="nocode"><a name="2">  2: </a></span>float float0 = track0.getSize();
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(track0.isNotQualifier());
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(track0.isShowForward());
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(track0.isShowReverse());
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(track0.isAny());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(10.0F, float0, 0.01F);
+</pre>
+<h3>Test case 22</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Track track0 = new Track(2550.8158, &quot;V#{~&quot;, true, true, (Entry) null);
+<span class="nocode"><a name="2">  2: </a></span>StyleContext styleContext0 = StyleContext.getDefaultStyleContext();
+<span class="nocode"><a name="3">  3: </a></span>DefaultStyledDocument defaultStyledDocument0 = new DefaultStyledDocument(styleContext0);
+<span class="nocode"><a name="4">  4: </a></span>StyleContext.NamedStyle styleContext_NamedStyle0 = styleContext0.new NamedStyle();
+<span class="nocode"><a name="5">  5: </a></span>Color color0 = defaultStyledDocument0.getForeground(styleContext_NamedStyle0);
+<span class="nocode"><a name="6">  6: </a></span>track0.setColour(color0);
+<span class="nocode"><a name="7">  7: </a></span>track0.getColour();
+<span class="nocode"><a name="8">  8: </a></span>assertTrue(track0.isShowReverse());
+<span class="nocode"><a name="9">  9: </a></span>assertTrue(track0.isShowForward());
+<span class="nocode"><a name="10"> 10: </a></span>assertEquals(2550.8158, track0.getPosition(), 0.01);
+<span class="nocode"><a name="11"> 11: </a></span>assertFalse(track0.isAny());
+<span class="nocode"><a name="12"> 12: </a></span>assertEquals(10.0F, track0.getSize(), 0.01F);
+<span class="nocode"><a name="13"> 13: </a></span>assertTrue(track0.isNotQualifier());
+</pre>
+<h3>Test case 23</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Track track0 = new Track((-662.0573889631734), &quot;deleteFeatureById&quot;, false, true, (Entry) null);
+<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = track0.isShowReverse();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals((-662.0573889631734), track0.getPosition(), 0.01);
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(boolean0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(10.0F, track0.getSize(), 0.01F);
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(track0.isNotQualifier());
+<span class="nocode"><a name="7">  7: </a></span>assertFalse(track0.isAny());
+<span class="nocode"><a name="8">  8: </a></span>assertFalse(track0.isShowForward());
+</pre>
+<h3>Test case 24</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Track track0 = new Track(0.0, (Entry) null);
+<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = track0.isOnTrack((Feature) null);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(10.0F, track0.getSize(), 0.01F);
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(track0.isShowReverse());
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(boolean0);
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(track0.isNotQualifier());
+<span class="nocode"><a name="7">  7: </a></span>assertTrue(track0.isShowForward());
+</pre>
+<h3>Test case 25</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>Entry entry0 = simpleEntryGroup0.createEntry((String) null);
+<span class="nocode"><a name="3">  3: </a></span>Track track0 = new Track(0L, entry0);
+<span class="nocode"><a name="4">  4: </a></span>track0.isOnTrack((Feature) null);
+</pre>
+<h3>Test case 26</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Track track0 = new Track(1520.8042340812653, &quot;&quot;, &quot;&quot;, true, false, true, (Entry) null);
+<span class="nocode"><a name="2">  2: </a></span>track0.isOnTrack((Feature) null);
+</pre>
+<h3>Test case 27</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Track track0 = new Track(1520.80423, &quot;&quot;, &quot;&quot;, true, false, true, (Entry) null);
+<span class="nocode"><a name="2">  2: </a></span>StringWriter stringWriter0 = new StringWriter();
+<span class="nocode"><a name="3">  3: </a></span>track0.write(stringWriter0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;1520.80423\t10.0\tfalse\ttrue\ttrue\tfalse\t\t\tnull\tnull\tnull\n&quot;, stringWriter0.toString());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(10.0F, track0.getSize(), 0.01F);
+</pre>
+<h3>Test case 28</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>Entry entry0 = simpleEntryGroup0.createEntry(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Track track0 = new Track(0.0, entry0);
+<span class="nocode"><a name="4">  4: </a></span>PipedWriter pipedWriter0 = new PipedWriter();
+<span class="nocode"><a name="5">  5: </a></span>track0.write(pipedWriter0);
+</pre>
+<h3>Test case 29</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>CharArrayWriter charArrayWriter0 = new CharArrayWriter(1);
+<span class="nocode"><a name="2">  2: </a></span>Vector&lt;GCSkewGraph&gt; vector0 = new Vector&lt;GCSkewGraph&gt;();
+<span class="nocode"><a name="3">  3: </a></span>DNADraw dNADraw0 = new DNADraw(vector0, vector0, vector0, vector0);
+<span class="nocode"><a name="4">  4: </a></span>Track.writeHeader(charArrayWriter0, dNADraw0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(652, charArrayWriter0.size());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;## DNA Plot :: track template (created: 14/02/2014 20:21:21)\n# line attributes: start=0 end=4000 line_size=5 circular=true\n# tick marks: major=500 minor=100\n# Columns are:\n# POS  - track position\n# SIZE - track size\n# FWD  - show forward strand features\n# REV  - show reverse strand features\n# NOT  - use NOT\n# ANY  - show any features\n# KEY  - show features of this key\n# QUAL - show features with this qualifier\n# VAL  - show features with this qualifier value(s)\n# COL  - colour for this track e.g. 255:0:0 (R:G:B) or NULL\n# NAME - file entry name or null\n# DIR  - root directory for this file\n#\n#POS\tSIZE\tFWD\tREV\tNOT \tANY\tKEY\tQUAL\tVAL\tCOL\tNAME\tDIR\n&quot;, charArrayWriter0.toString());
+</pre>
+<h3>Test case 30</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>FeatureVector featureVector0 = new FeatureVector();
+<span class="nocode"><a name="3">  3: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, &quot;vhC$q!3(c&quot;);
+<span class="nocode"><a name="4">  4: </a></span>Entry entry0 = filteredEntryGroup0.createEntry(&quot;vhC$q!3(c&quot;);
+<span class="nocode"><a name="5">  5: </a></span>Track track0 = new Track((-1055.875947169423), entry0);
+<span class="nocode"><a name="6">  6: </a></span>boolean boolean0 = track0.isNotQualifier();
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(10.0F, track0.getSize(), 0.01F);
+<span class="nocode"><a name="8">  8: </a></span>assertTrue(track0.isShowForward());
+<span class="nocode"><a name="9">  9: </a></span>assertFalse(track0.isAny());
+<span class="nocode"><a name="10"> 10: </a></span>assertEquals((-1055.875947169423), track0.getPosition(), 0.01);
+<span class="nocode"><a name="11"> 11: </a></span>assertFalse(boolean0);
+<span class="nocode"><a name="12"> 12: </a></span>assertTrue(track0.isShowReverse());
+</pre>
+<h3>Test case 31</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Track track0 = new Track(0.25, (Entry) null);
+<span class="nocode"><a name="2">  2: </a></span>track0.setPropertiesFromTemplate((String) null);
+</pre>
+<h3>Test case 32</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Track track0 = new Track((-662.0573889631734), &quot;deleteFeatureById&quot;, false, true, (Entry) null);
+<span class="nocode"><a name="2">  2: </a></span>track0.setPropertiesFromTemplate(&quot;&quot;);
+</pre>
+<h3>Test case 33</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Track track0 = new Track((-878.610437784), (Entry) null);
+<span class="nocode"><a name="2">  2: </a></span>track0.write((Writer) null);
+</pre>
+<h3>Test case 34</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JembossParams jembossParams0 = new JembossParams();
+<span class="nocode"><a name="2">  2: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.getPublicServers();
+<span class="nocode"><a name="3">  3: </a></span>DNADraw dNADraw0 = new DNADraw(vector0, vector0, vector0, vector0);
+<span class="nocode"><a name="4">  4: </a></span>Track.writeHeader((Writer) null, dNADraw0);
+</pre>
+<h3>Test case 35</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>Entry entry0 = simpleEntryGroup0.createEntry(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Track track0 = new Track(0.0, entry0);
+<span class="nocode"><a name="4">  4: </a></span>track0.getEntry();
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(track0.isAny());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(10.0F, track0.getSize(), 0.01F);
+<span class="nocode"><a name="7">  7: </a></span>assertTrue(track0.isShowReverse());
+<span class="nocode"><a name="8">  8: </a></span>assertFalse(track0.isNotQualifier());
+<span class="nocode"><a name="9">  9: </a></span>assertTrue(track0.isShowForward());
+</pre>
+<h3>Test case 36</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Track track0 = new Track((-3597.062528468816), &quot;~&quot;, &quot;~&quot;, true, false, false, (Entry) null);
+<span class="nocode"><a name="2">  2: </a></span>track0.getFeaturePredicate();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals((-3597.062528468816), track0.getPosition(), 0.01);
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(track0.isShowForward());
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(track0.isAny());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(10.0F, track0.getSize(), 0.01F);
+<span class="nocode"><a name="7">  7: </a></span>assertFalse(track0.isShowReverse());
+<span class="nocode"><a name="8">  8: </a></span>assertTrue(track0.isNotQualifier());
+</pre>
+<h3>Test case 37</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>Entry entry0 = simpleEntryGroup0.createEntry();
+<span class="nocode"><a name="3">  3: </a></span>Track track0 = new Track(27.7, &quot;v46Mw^cbY3&quot;, (String) null, false, false, false, entry0);
+<span class="nocode"><a name="4">  4: </a></span>String string0 = track0.getKeyStr();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(10.0F, track0.getSize(), 0.01F);
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(track0.isAny());
+<span class="nocode"><a name="7">  7: </a></span>assertFalse(track0.isShowReverse());
+<span class="nocode"><a name="8">  8: </a></span>assertNotNull(string0);
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(27.7, track0.getPosition(), 0.01);
+<span class="nocode"><a name="10"> 10: </a></span>assertFalse(track0.isShowForward());
+<span class="nocode"><a name="11"> 11: </a></span>assertFalse(track0.isNotQualifier());
+</pre>
+<h3>Test case 38</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>Entry entry0 = simpleEntryGroup0.createEntry();
+<span class="nocode"><a name="3">  3: </a></span>Track track0 = new Track(165.0, entry0);
+<span class="nocode"><a name="4">  4: </a></span>track0.getKeyStr();
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(track0.isShowReverse());
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(track0.isShowForward());
+<span class="nocode"><a name="7">  7: </a></span>assertFalse(track0.isNotQualifier());
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(10.0F, track0.getSize(), 0.01F);
+<span class="nocode"><a name="9">  9: </a></span>assertFalse(track0.isAny());
+<span class="nocode"><a name="10"> 10: </a></span>assertEquals(165.0, track0.getPosition(), 0.01);
+</pre>
+<h3>Test case 39</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Entry entry0 = Entry.newEntry((Bases) null);
+<span class="nocode"><a name="2">  2: </a></span>Track track0 = new Track(701.543177, entry0);
+<span class="nocode"><a name="3">  3: </a></span>double double0 = track0.getPosition();
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(track0.isShowReverse());
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(track0.isNotQualifier());
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(track0.isShowForward());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(10.0F, track0.getSize(), 0.01F);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(701.543177, double0, 0.01);
+<span class="nocode"><a name="9">  9: </a></span>assertFalse(track0.isAny());
+</pre>
+<h3>Test case 40</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Track track0 = new Track(0.0, (Entry) null);
+<span class="nocode"><a name="2">  2: </a></span>track0.getPosition();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(10.0F, track0.getSize(), 0.01F);
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(track0.isAny());
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(track0.isShowForward());
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(track0.isShowReverse());
+<span class="nocode"><a name="7">  7: </a></span>assertFalse(track0.isNotQualifier());
+</pre>
+<h3>Test case 41</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Key key0 = Key.CDS;
+<span class="nocode"><a name="5">  5: </a></span>FeatureKeyPredicate featureKeyPredicate0 = new FeatureKeyPredicate(key0);
+<span class="nocode"><a name="6">  6: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureKeyPredicate0, &quot;/`-vXc`a&quot;);
+<span class="nocode"><a name="7">  7: </a></span>Entry entry0 = filteredEntryGroup0.createEntry(&quot;Q!&quot;);
+<span class="nocode"><a name="8">  8: </a></span>Track track0 = new Track((-2127.1834581), &quot;&quot;, &quot;/`-vXc`a&quot;, true, true, true, entry0);
+<span class="nocode"><a name="9">  9: </a></span>String string0 = track0.getQualifier();
+<span class="nocode"><a name="10"> 10: </a></span>assertEquals(10.0F, track0.getSize(), 0.01F);
+<span class="nocode"><a name="11"> 11: </a></span>assertTrue(track0.isNotQualifier());
+<span class="nocode"><a name="12"> 12: </a></span>assertEquals((-2127.1834581), track0.getPosition(), 0.01);
+<span class="nocode"><a name="13"> 13: </a></span>assertFalse(track0.isAny());
+<span class="nocode"><a name="14"> 14: </a></span>assertEquals(&quot;/`-vXc`a&quot;, string0);
+<span class="nocode"><a name="15"> 15: </a></span>assertTrue(track0.isShowForward());
+<span class="nocode"><a name="16"> 16: </a></span>assertTrue(track0.isShowReverse());
+<span class="nocode"><a name="17"> 17: </a></span>assertEquals(&quot;&quot;, track0.getKeyStr());
+</pre>
+<h3>Test case 42</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Track track0 = new Track(0.0, (Entry) null);
+<span class="nocode"><a name="2">  2: </a></span>track0.getQualifier();
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(track0.isNotQualifier());
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(track0.isShowForward());
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(track0.isShowReverse());
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(track0.isAny());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(10.0F, track0.getSize(), 0.01F);
+</pre>
+<h3>Test case 43</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>Entry entry0 = simpleEntryGroup0.createEntry(&quot;48R}L&gt;++]$;t&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Track track0 = new Track(0L, entry0);
+<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = track0.isAny();
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(boolean0);
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(track0.isNotQualifier());
+<span class="nocode"><a name="7">  7: </a></span>assertTrue(track0.isShowForward());
+<span class="nocode"><a name="8">  8: </a></span>assertTrue(track0.isShowReverse());
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(10.0F, track0.getSize(), 0.01F);
+</pre>
+<h3>Test case 44</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Track track0 = new Track((-3597.062528468816), &quot;~&quot;, &quot;~&quot;, true, false, false, (Entry) null);
+<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = track0.isNotQualifier();
+<span class="nocode"><a name="3">  3: </a></span>assertTrue(boolean0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-3597.062528468816), track0.getPosition(), 0.01);
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(track0.isShowForward());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(10.0F, track0.getSize(), 0.01F);
+<span class="nocode"><a name="7">  7: </a></span>assertFalse(track0.isAny());
+<span class="nocode"><a name="8">  8: </a></span>assertFalse(track0.isShowReverse());
+</pre>
+<h3>Test case 45</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Track track0 = new Track(2469.1, &quot;V&gt;ba0`([e_-&gt;oQ&quot;, true, true, (Entry) null);
+<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = track0.isShowForward();
+<span class="nocode"><a name="3">  3: </a></span>assertTrue(track0.isShowReverse());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(2469.1, track0.getPosition(), 0.01);
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(boolean0);
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(track0.isAny());
+<span class="nocode"><a name="7">  7: </a></span>assertTrue(track0.isNotQualifier());
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(10.0F, track0.getSize(), 0.01F);
+</pre>
+<h3>Test case 46</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Track track0 = new Track(0.7573894622892867, &quot;&lt;CHIJmLK2bud&quot;, &quot;&lt;CHIJmLK2bud&quot;, true, false, false, (Entry) null);
+<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = track0.isShowReverse();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(10.0F, track0.getSize(), 0.01F);
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(track0.isNotQualifier());
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(track0.isAny());
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(boolean0);
+<span class="nocode"><a name="7">  7: </a></span>assertFalse(track0.isShowForward());
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(0.7573894622892867, track0.getPosition(), 0.01);
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.circular.Track
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.circular.Track
+<li>Size: 46
+<li>Length: 150
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.7154045924415913
+<li>BranchCoverage: 0.5789473684210527
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 0.6326530612244898
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

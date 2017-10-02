@@ -1,0 +1,160 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.components.alignment.LookSeqPanel
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.components.alignment.LookSeqPanel: 0.6290690874022248</ul>
+<ul>
+<li>765.635814889336 fitness evaluations, 0 generations, null statements, 17 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LookSeqPanel lookSeqPanel0 = new LookSeqPanel(&quot;{chr=&quot;, &quot;{chr=&quot;);
+<span class="nocode"><a name="2">  2: </a></span>lookSeqPanel0.showOptions();
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LookSeqPanel lookSeqPanel0 = new LookSeqPanel(&quot;http:&quot;, (String) null);
+<span class="nocode"><a name="2">  2: </a></span>DisplayAdjustmentEvent displayAdjustmentEvent0 = new DisplayAdjustmentEvent(lookSeqPanel0, 1349, 664, 664, 664);
+<span class="nocode"><a name="3">  3: </a></span>lookSeqPanel0.displayAdjustmentValueChanged(displayAdjustmentEvent0);
+<span class="nocode"><a name="4">  4: </a></span>assertNull(lookSeqPanel0.getQueryStr());
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LookSeqPanel lookSeqPanel0 = new LookSeqPanel();
+<span class="nocode"><a name="2">  2: </a></span>lookSeqPanel0.setFeatureDisplay((FeatureDisplay) null);
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(lookSeqPanel0.getIgnoreRepaint());
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LookSeqPanel lookSeqPanel0 = new LookSeqPanel(&quot;&quot;, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>String string0 = lookSeqPanel0.getQueryStr();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;&quot;, string0);
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>URL uRL0 = MockURL.getHttpExample();
+<span class="nocode"><a name="2">  2: </a></span>LookSeqPanel lookSeqPanel0 = new LookSeqPanel(uRL0);
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(lookSeqPanel0.getIgnoreRepaint());
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LookSeqPanel lookSeqPanel0 = new LookSeqPanel(&quot;&quot;, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>lookSeqPanel0.setUrl(&quot;6C6&gt;&gt;;&quot;, &quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;&quot;, lookSeqPanel0.getQueryStr());
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LookSeqPanel lookSeqPanel0 = new LookSeqPanel(&quot;!74Ofv09U*%@Do&gt;e,&amp;&quot;, &quot;!74Ofv09U*%@Do&gt;e,&amp;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>DisplayAdjustmentEvent displayAdjustmentEvent0 = new DisplayAdjustmentEvent(&quot;!74Ofv09U*%@Do&gt;e,&amp;&quot;, (-2012), (-35), (-2012), (-2012), 0, true, 0);
+<span class="nocode"><a name="3">  3: </a></span>lookSeqPanel0.setDisplay(0, (-2012), displayAdjustmentEvent0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;!74Ofv09U*%@Do&gt;e,&amp;&quot;, lookSeqPanel0.getQueryStr());
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LookSeqPanel lookSeqPanel0 = new LookSeqPanel();
+<span class="nocode"><a name="2">  2: </a></span>lookSeqPanel0.setImage(&quot;;F~]Aa}keUwScL.FQUn&quot;, &quot;Only symbols of type IntegerAlphabet.IntegerSymbol are valid for this alphabet.\n(&quot;);
+<span class="nocode"><a name="3">  3: </a></span>lookSeqPanel0.setDisplay((-2529), (-1098), (DisplayAdjustmentEvent) null);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;Only symbols of type IntegerAlphabet.IntegerSymbol are valid for this alphabet.\n(&quot;, lookSeqPanel0.getQueryStr());
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LookSeqPanel lookSeqPanel0 = new LookSeqPanel(&quot;&quot;, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>DisplayAdjustmentEvent displayAdjustmentEvent0 = new DisplayAdjustmentEvent(&quot;&quot;, 1, 1, 1, 1, 1, false, 1);
+<span class="nocode"><a name="3">  3: </a></span>lookSeqPanel0.setDisplay(1, 1, displayAdjustmentEvent0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;&quot;, lookSeqPanel0.getQueryStr());
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LookSeqPanel lookSeqPanel0 = new LookSeqPanel((URL) null);
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;to=&quot;, &quot;to=&quot;);
+<span class="nocode"><a name="2">  2: </a></span>URL uRL0 = mockFile0.toURL();
+<span class="nocode"><a name="3">  3: </a></span>LookSeqPanel lookSeqPanel0 = new LookSeqPanel(uRL0);
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LookSeqPanel lookSeqPanel0 = new LookSeqPanel();
+<span class="nocode"><a name="2">  2: </a></span>DebugGraphics debugGraphics0 = new DebugGraphics((Graphics) null);
+<span class="nocode"><a name="3">  3: </a></span>lookSeqPanel0.paintComponent(debugGraphics0);
+</pre>
+<h3>Test case 13</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LookSeqPanel lookSeqPanel0 = new LookSeqPanel();
+<span class="nocode"><a name="2">  2: </a></span>lookSeqPanel0.setDisplay(1003, 1003, (DisplayAdjustmentEvent) null);
+</pre>
+<h3>Test case 14</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LookSeqPanel lookSeqPanel0 = new LookSeqPanel();
+<span class="nocode"><a name="2">  2: </a></span>lookSeqPanel0.showOptions();
+</pre>
+<h3>Test case 15</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LookSeqPanel lookSeqPanel0 = new LookSeqPanel();
+<span class="nocode"><a name="2">  2: </a></span>lookSeqPanel0.setImage(&quot;Mximum Inel Size...&quot;, &quot;Mximum Inel Size...&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = lookSeqPanel0.getQueryStr();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;Mximum Inel Size...&quot;, string0);
+</pre>
+<h3>Test case 16</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LookSeqPanel lookSeqPanel0 = new LookSeqPanel();
+<span class="nocode"><a name="2">  2: </a></span>String string0 = lookSeqPanel0.getQueryStr();
+<span class="nocode"><a name="3">  3: </a></span>assertNull(string0);
+</pre>
+<h3>Test case 17</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LookSeqPanel lookSeqPanel0 = new LookSeqPanel(&quot;chr=&quot;, &quot;chr=&quot;);
+<span class="nocode"><a name="2">  2: </a></span>lookSeqPanel0.showOptions();
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.components.alignment.LookSeqPanel
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.components.alignment.LookSeqPanel
+<li>Size: 17
+<li>Length: 40
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.6290690874022248
+<li>BranchCoverage: 0.3793103448275862
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 1.0
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

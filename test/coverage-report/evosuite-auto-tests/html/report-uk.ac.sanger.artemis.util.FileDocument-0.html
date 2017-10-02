@@ -1,0 +1,322 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.util.FileDocument
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.util.FileDocument: 0.9187485733507935</ul>
+<ul>
+<li>23.552630444548157 fitness evaluations, 0 generations, null statements, 36 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;java.version&quot;, &quot;java.version&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileDocument fileDocument0 = new FileDocument(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>FileDocument fileDocument1 = (FileDocument)fileDocument0.getParent();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;java.version&quot;, fileDocument1.getName());
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;java.version&quot;, &quot;java.version&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileDocument fileDocument0 = new FileDocument(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>FileDocument fileDocument1 = (FileDocument)fileDocument0.append(&quot;java.version&quot;);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;java.version&quot;, fileDocument1.getName());
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;java.version&quot;, &quot;java.version&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileDocument fileDocument0 = new FileDocument(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = fileDocument0.getName();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;java.version&quot;, string0);
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;1.5.&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileDocument fileDocument0 = new FileDocument(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = fileDocument0.readable();
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;oE&gt;GOm@x|wK+j[?l`&quot;);
+<span class="nocode"><a name="2">  2: </a></span>mockFile0.createNewFile();
+<span class="nocode"><a name="3">  3: </a></span>FileDocument fileDocument0 = new FileDocument(mockFile0);
+<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = fileDocument0.readable();
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;oE&gt;GOm@x|wK+j[?l`&quot;);
+<span class="nocode"><a name="2">  2: </a></span>mockFile0.createNewFile();
+<span class="nocode"><a name="3">  3: </a></span>FileDocument fileDocument0 = new FileDocument(mockFile0);
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(fileDocument0.readable());
+<span class="nocode"><a name="5">  5: </a></span>
+<span class="nocode"><a name="6">  6: </a></span>mockFile0.setReadable(false);
+<span class="nocode"><a name="7">  7: </a></span>boolean boolean0 = fileDocument0.readable();
+<span class="nocode"><a name="8">  8: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;1.5.&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileDocument fileDocument0 = new FileDocument(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = fileDocument0.writable();
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;oE&gt;GOm@x|wK+j[?l`&quot;);
+<span class="nocode"><a name="2">  2: </a></span>mockFile0.createNewFile();
+<span class="nocode"><a name="3">  3: </a></span>FileDocument fileDocument0 = new FileDocument(mockFile0);
+<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = fileDocument0.writable();
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;, &quot;.gz&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileDocument fileDocument0 = new FileDocument(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>fileDocument0.getOutputStream();
+<span class="nocode"><a name="4">  4: </a></span>mockFile0.setReadOnly();
+<span class="nocode"><a name="5">  5: </a></span>boolean boolean0 = fileDocument0.writable();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(10L, mockFile0.length());
+<span class="nocode"><a name="7">  7: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;1.5.&quot;, &quot;1.5.&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileDocument fileDocument0 = new FileDocument(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>fileDocument0.getWriter();
+<span class="nocode"><a name="4">  4: </a></span>fileDocument0.getInputStream();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0L, mockFile0.length());
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;, &quot;.gz&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileDocument fileDocument0 = new FileDocument(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>fileDocument0.getOutputStream();
+<span class="nocode"><a name="4">  4: </a></span>WorkingGZIPInputStream workingGZIPInputStream0 = (WorkingGZIPInputStream)fileDocument0.getInputStream();
+<span class="nocode"><a name="5">  5: </a></span>assertNotNull(workingGZIPInputStream0);
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;1.5.&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileDocument fileDocument0 = new FileDocument(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>fileDocument0.getOutputStream();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0L, mockFile0.length());
+</pre>
+<h3>Test case 13</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FileDocument fileDocument0 = new FileDocument((File) null);
+</pre>
+<h3>Test case 14</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;@v75RMIdhlytpsIeI$&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileDocument fileDocument0 = new FileDocument(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>BufferedWriter bufferedWriter0 = (BufferedWriter)fileDocument0.getWriter();
+<span class="nocode"><a name="4">  4: </a></span>fileDocument0.setLocation(bufferedWriter0);
+<span class="nocode"><a name="5">  5: </a></span>fileDocument0.append(&quot;&quot;);
+</pre>
+<h3>Test case 15</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;=QS&gt;&quot;, &quot;.gz&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileDocument fileDocument0 = new FileDocument(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>fileDocument0.append((String) null);
+</pre>
+<h3>Test case 16</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;K)&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileDocument fileDocument0 = new FileDocument(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>Object object0 = new Object();
+<span class="nocode"><a name="4">  4: </a></span>fileDocument0.setLocation(object0);
+<span class="nocode"><a name="5">  5: </a></span>fileDocument0.getFile();
+</pre>
+<h3>Test case 17</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;oE&gt;GOm@x|wK+j[?l`&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileDocument fileDocument0 = new FileDocument(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>fileDocument0.getInputStream();
+</pre>
+<h3>Test case 18</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;, &quot;.gz&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileDocument fileDocument0 = new FileDocument(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>fileDocument0.getOutputStream();
+<span class="nocode"><a name="4">  4: </a></span>FileSystemHandling.shouldAllThrowIOExceptions();
+<span class="nocode"><a name="5">  5: </a></span>fileDocument0.getInputStream();
+</pre>
+<h3>Test case 19</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;blH3p$/5l~/%-:eES[&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileDocument fileDocument0 = new FileDocument(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>fileDocument0.setLocation(&quot;blH3p$/5l~/%-:eES[&quot;);
+<span class="nocode"><a name="4">  4: </a></span>fileDocument0.getInputStream();
+</pre>
+<h3>Test case 20</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;Cannot test non-buffered stream&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileDocument fileDocument0 = new FileDocument(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>fileDocument0.setLocation((Object) null);
+<span class="nocode"><a name="4">  4: </a></span>fileDocument0.getInputStream();
+</pre>
+<h3>Test case 21</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;1.5.&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileDocument fileDocument0 = new FileDocument(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>fileDocument0.setLocation(&quot;Invalid file pointer: &quot;);
+<span class="nocode"><a name="4">  4: </a></span>fileDocument0.getName();
+</pre>
+<h3>Test case 22</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileDocument fileDocument0 = new FileDocument(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>fileDocument0.getOutputStream();
+</pre>
+<h3>Test case 23</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;fPwi|n~l}nFo,_M5.gz&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileSystemHandling.shouldAllThrowIOExceptions();
+<span class="nocode"><a name="3">  3: </a></span>FileDocument fileDocument0 = new FileDocument(mockFile0);
+<span class="nocode"><a name="4">  4: </a></span>fileDocument0.getOutputStream();
+</pre>
+<h3>Test case 24</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;=Kx.gz&quot;, &quot;9zJs\&quot;6agG1)sK&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileDocument fileDocument0 = new FileDocument(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>fileDocument0.setLocation(fileDocument0);
+<span class="nocode"><a name="4">  4: </a></span>fileDocument0.getOutputStream();
+</pre>
+<h3>Test case 25</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;java.version&quot;, &quot;java.version&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileDocument fileDocument0 = new FileDocument(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>fileDocument0.setLocation((Object) null);
+<span class="nocode"><a name="4">  4: </a></span>fileDocument0.getOutputStream();
+</pre>
+<h3>Test case 26</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;Al1)2&gt;&quot;, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileDocument fileDocument0 = new FileDocument(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>fileDocument0.setLocation(&quot;Al1)2&gt;&quot;);
+<span class="nocode"><a name="4">  4: </a></span>fileDocument0.getParent();
+</pre>
+<h3>Test case 27</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileDocument fileDocument0 = new FileDocument(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>fileDocument0.getParent();
+</pre>
+<h3>Test case 28</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;t+%03&gt;.vLSY7Se&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileDocument fileDocument0 = new FileDocument(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>fileDocument0.setLocation(&quot;t+%03&gt;.vLSY7Se&quot;);
+<span class="nocode"><a name="4">  4: </a></span>fileDocument0.readable();
+</pre>
+<h3>Test case 29</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;Kd#4q@Far[&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileDocument fileDocument0 = new FileDocument(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>fileDocument0.setLocation((Object) null);
+<span class="nocode"><a name="4">  4: </a></span>fileDocument0.readable();
+</pre>
+<h3>Test case 30</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;oE&gt;GOm@x|wK+j[?l`&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileDocument fileDocument0 = new FileDocument(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>Object object0 = new Object();
+<span class="nocode"><a name="4">  4: </a></span>fileDocument0.setLocation(object0);
+<span class="nocode"><a name="5">  5: </a></span>fileDocument0.writable();
+</pre>
+<h3>Test case 31</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileDocument fileDocument0 = new FileDocument(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>MockFile mockFile1 = (MockFile)fileDocument0.getFile();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;&quot;, mockFile1.toString());
+</pre>
+<h3>Test case 32</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;, &quot;.gz&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileDocument fileDocument0 = new FileDocument(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>MockFile mockFile1 = (MockFile)fileDocument0.getFile();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;/.gz&quot;, mockFile1.toString());
+</pre>
+<h3>Test case 33</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;, &quot;.gz&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileDocument fileDocument0 = new FileDocument(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>fileDocument0.getOutputStream();
+<span class="nocode"><a name="4">  4: </a></span>MockFile mockFile1 = (MockFile)fileDocument0.getFile();
+<span class="nocode"><a name="5">  5: </a></span>assertSame(mockFile0, mockFile1);
+</pre>
+<h3>Test case 34</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;, &quot;.gz&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileDocument fileDocument0 = new FileDocument(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>fileDocument0.setLocation((Object) null);
+<span class="nocode"><a name="4">  4: </a></span>MockFile mockFile1 = (MockFile)fileDocument0.getFile();
+<span class="nocode"><a name="5">  5: </a></span>assertNull(mockFile1);
+</pre>
+<h3>Test case 35</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileDocument fileDocument0 = new FileDocument(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = fileDocument0.getName();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;&quot;, string0);
+</pre>
+<h3>Test case 36</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FileSystemHandling.shouldAllThrowIOExceptions();
+<span class="nocode"><a name="2">  2: </a></span>MockFile mockFile0 = new MockFile(&quot;Hc21DSVja9!ppj[ .gz&quot;, &quot;Hc21DSVja9!ppj[ .gz&quot;);
+<span class="nocode"><a name="3">  3: </a></span>FileDocument fileDocument0 = new FileDocument(mockFile0);
+<span class="nocode"><a name="4">  4: </a></span>Document document0 = fileDocument0.getParent();
+<span class="nocode"><a name="5">  5: </a></span>assertNull(document0);
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.util.FileDocument
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.util.FileDocument
+<li>Size: 36
+<li>Length: 134
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.9187485733507935
+<li>BranchCoverage: 0.9047619047619048
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 0.7446808510638298
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

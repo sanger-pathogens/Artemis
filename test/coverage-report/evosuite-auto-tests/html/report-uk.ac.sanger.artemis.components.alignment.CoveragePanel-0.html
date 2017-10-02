@@ -1,0 +1,207 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.components.alignment.CoveragePanel
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.components.alignment.CoveragePanel: 0.4631011495322087</ul>
+<ul>
+<li>3016.5965397923874 fitness evaluations, 0 generations, null statements, 24 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>CoveragePanel coveragePanel0 = new CoveragePanel();
+<span class="nocode"><a name="2">  2: </a></span>CoveragePanel.HeatMapLn coveragePanel_HeatMapLn0 = coveragePanel0.new HeatMapLn(1227, 1227, &quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = coveragePanel_HeatMapLn0.toString();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;&quot;, string0);
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>CoveragePanel coveragePanel0 = new CoveragePanel((BamView) null);
+<span class="nocode"><a name="2">  2: </a></span>coveragePanel0.init((BamView) null, 173.5F, (-2015), 1743);
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>CoveragePanel coveragePanel0 = new CoveragePanel();
+<span class="nocode"><a name="2">  2: </a></span>List&lt;String&gt; list0 = coveragePanel0.getSelected();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, list0.size());
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>CoveragePanel coveragePanel0 = new CoveragePanel();
+<span class="nocode"><a name="2">  2: </a></span>coveragePanel0.setPlotHeatMap(true);
+<span class="nocode"><a name="3">  3: </a></span>coveragePanel0.singleClick(true, 0);
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>CoveragePanel coveragePanel0 = new CoveragePanel();
+<span class="nocode"><a name="2">  2: </a></span>coveragePanel0.showLabels(false);
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>CoveragePanel coveragePanel0 = new CoveragePanel();
+<span class="nocode"><a name="2">  2: </a></span>coveragePanel0.singleClick(true, 0);
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(coveragePanel0.isFocusTraversalPolicyProvider());
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>CoveragePanel coveragePanel0 = new CoveragePanel();
+<span class="nocode"><a name="2">  2: </a></span>coveragePanel0.setPlotByStrand(false);
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = CoveragePanel.isRedraw();
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>CoveragePanel coveragePanel0 = new CoveragePanel();
+<span class="nocode"><a name="2">  2: </a></span>GenericDocumentType genericDocumentType0 = new GenericDocumentType(&quot;DUPLICATE_PROGRAM_GROUP_ID&quot;, (String) null, &quot;DUPLICATE_PROGRAM_GROUP_ID&quot;);
+<span class="nocode"><a name="3">  3: </a></span>GenericDOMImplementation genericDOMImplementation0 = new GenericDOMImplementation();
+<span class="nocode"><a name="4">  4: </a></span>GenericDocument genericDocument0 = new GenericDocument(genericDocumentType0, genericDOMImplementation0);
+<span class="nocode"><a name="5">  5: </a></span>SVGGeneratorContext sVGGeneratorContext0 = SVGGeneratorContext.createDefault(genericDocument0);
+<span class="nocode"><a name="6">  6: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(sVGGeneratorContext0, false);
+<span class="nocode"><a name="7">  7: </a></span>coveragePanel0.paintComponent(sVGGraphics2D0);
+<span class="nocode"><a name="8">  8: </a></span>assertFalse(coveragePanel0.isFocusCycleRoot());
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>CoveragePanel coveragePanel0 = new CoveragePanel();
+<span class="nocode"><a name="2">  2: </a></span>float float0 = coveragePanel0.getMaxCoverage();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(Float.NaN, float0, 0.01F);
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LineAttributes[] lineAttributesArray0 = CoveragePanel.getLineAttributes(2278);
+<span class="nocode"><a name="2">  2: </a></span>LineAttributes[] lineAttributesArray1 = CoveragePanel.getLineAttributes(0);
+<span class="nocode"><a name="3">  3: </a></span>assertSame(lineAttributesArray1, lineAttributesArray0);
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LineAttributes[] lineAttributesArray0 = CoveragePanel.getLineAttributes(1);
+<span class="nocode"><a name="2">  2: </a></span>LineAttributes[] lineAttributesArray1 = CoveragePanel.getLineAttributes(3);
+<span class="nocode"><a name="3">  3: </a></span>assertNotSame(lineAttributesArray1, lineAttributesArray0);
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>boolean boolean0 = CoveragePanel.isRedraw();
+<span class="nocode"><a name="2">  2: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 13</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>CoveragePanel coveragePanel0 = new CoveragePanel();
+<span class="nocode"><a name="2">  2: </a></span>String string0 = coveragePanel0.getToolTipText((-44));
+<span class="nocode"><a name="3">  3: </a></span>assertNull(string0);
+</pre>
+<h3>Test case 14</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>CoveragePanel coveragePanel0 = new CoveragePanel();
+<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = coveragePanel0.hasSelectedBams();
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 15</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>CoveragePanel coveragePanel0 = new CoveragePanel();
+<span class="nocode"><a name="2">  2: </a></span>SAMFileHeader sAMFileHeader0 = new SAMFileHeader();
+<span class="nocode"><a name="3">  3: </a></span>SAMRecord sAMRecord0 = new SAMRecord(sAMFileHeader0);
+<span class="nocode"><a name="4">  4: </a></span>coveragePanel0.addRecord(sAMRecord0, 3, &quot;&quot;, true);
+</pre>
+<h3>Test case 16</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>CoveragePanel coveragePanel0 = new CoveragePanel();
+<span class="nocode"><a name="2">  2: </a></span>coveragePanel0.createMenus((JComponent) null);
+</pre>
+<h3>Test case 17</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>CoveragePanel coveragePanel0 = new CoveragePanel();
+<span class="nocode"><a name="2">  2: </a></span>GenericDocumentType genericDocumentType0 = new GenericDocumentType(&quot;9Ml5vkZjNNING&quot;, &quot;9Ml5vkZjNNING&quot;, &quot;9Ml5vkZjNNING&quot;);
+<span class="nocode"><a name="3">  3: </a></span>GenericDOMImplementation genericDOMImplementation0 = (GenericDOMImplementation)GenericDOMImplementation.getDOMImplementation();
+<span class="nocode"><a name="4">  4: </a></span>GenericDocument genericDocument0 = new GenericDocument(genericDocumentType0, genericDOMImplementation0);
+<span class="nocode"><a name="5">  5: </a></span>SVGGeneratorContext sVGGeneratorContext0 = SVGGeneratorContext.createDefault(genericDocument0);
+<span class="nocode"><a name="6">  6: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(sVGGeneratorContext0, true);
+<span class="nocode"><a name="7">  7: </a></span>coveragePanel0.draw(sVGGraphics2D0, 10, (short)2, (List&lt;Short&gt;) null);
+</pre>
+<h3>Test case 18</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>CoveragePanel.getLineAttributes((-598));
+</pre>
+<h3>Test case 19</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>CoveragePanel.getLineAttributes(Integer.MAX_VALUE);
+</pre>
+<h3>Test case 20</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>CoveragePanel coveragePanel0 = new CoveragePanel();
+<span class="nocode"><a name="2">  2: </a></span>DebugGraphics debugGraphics0 = new DebugGraphics();
+<span class="nocode"><a name="3">  3: </a></span>coveragePanel0.paintComponent(debugGraphics0);
+</pre>
+<h3>Test case 21</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LineAttributes[] lineAttributesArray0 = CoveragePanel.getLineAttributes(0);
+<span class="nocode"><a name="2">  2: </a></span>assertNotNull(lineAttributesArray0);
+</pre>
+<h3>Test case 22</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>CoveragePanel coveragePanel0 = new CoveragePanel();
+<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = coveragePanel0.isPlotHeatMap();
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 23</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>CoveragePanel coveragePanel0 = new CoveragePanel();
+<span class="nocode"><a name="2">  2: </a></span>JInternalFrame jInternalFrame0 = new JInternalFrame(&quot;&quot;, true, true, true);
+<span class="nocode"><a name="3">  3: </a></span>coveragePanel0.createMenus(jInternalFrame0);
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(coveragePanel0.isFocusTraversalPolicySet());
+</pre>
+<h3>Test case 24</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LineAttributes[] lineAttributesArray0 = CoveragePanel.getLineAttributes(698);
+<span class="nocode"><a name="2">  2: </a></span>LineAttributes[] lineAttributesArray1 = CoveragePanel.getLineAttributes(698);
+<span class="nocode"><a name="3">  3: </a></span>assertSame(lineAttributesArray1, lineAttributesArray0);
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.components.alignment.CoveragePanel
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.components.alignment.CoveragePanel
+<li>Size: 24
+<li>Length: 61
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.4631011495322087
+<li>BranchCoverage: 0.1507537688442211
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 0.47619047619047616
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

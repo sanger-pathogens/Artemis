@@ -1,0 +1,667 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.circular.Block
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.circular.Block: 0.5546123961757129</ul>
+<ul>
+<li>839.1221264273609 fitness evaluations, 0 generations, null statements, 45 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JTable jTable0 = new JTable();
+<span class="nocode"><a name="2">  2: </a></span>ColorUIResource colorUIResource0 = (ColorUIResource)jTable0.getSelectionBackground();
+<span class="nocode"><a name="3">  3: </a></span>Track track0 = new Track(1436.835, (Entry) null);
+<span class="nocode"><a name="4">  4: </a></span>JembossParams jembossParams0 = new JembossParams();
+<span class="nocode"><a name="5">  5: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.getPrivateServers();
+<span class="nocode"><a name="6">  6: </a></span>DNADraw dNADraw0 = new DNADraw(vector0, vector0, vector0, vector0);
+<span class="nocode"><a name="7">  7: </a></span>Block block0 = new Block(&quot;/&quot;, 65, 65, colorUIResource0, 65, track0, dNADraw0);
+<span class="nocode"><a name="8">  8: </a></span>block0.getTrack();
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(65, block0.getBend());
+<span class="nocode"><a name="10"> 10: </a></span>assertEquals(65, block0.getBstart());
+<span class="nocode"><a name="11"> 11: </a></span>assertFalse(block0.isDrawLabel());
+<span class="nocode"><a name="12"> 12: </a></span>assertEquals(65.0F, block0.getStrokeSize(), 0.01F);
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SystemColor systemColor0 = SystemColor.inactiveCaptionBorder;
+<span class="nocode"><a name="2">  2: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;wbt`7&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="4">  4: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="5">  5: </a></span>Entry entry0 = simpleEntryGroup0.createEntry();
+<span class="nocode"><a name="6">  6: </a></span>Track track0 = new Track(2581.81646496, &quot;wbt`7&quot;, false, false, entry0);
+<span class="nocode"><a name="7">  7: </a></span>JembossParams jembossParams0 = new JembossParams();
+<span class="nocode"><a name="8">  8: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.getPublicServers();
+<span class="nocode"><a name="9">  9: </a></span>DNADraw dNADraw0 = new DNADraw(vector0, vector0, vector0, vector0);
+<span class="nocode"><a name="10"> 10: </a></span>Block block0 = new Block(&quot;wbt`7&quot;, (-80), 0, systemColor0, 0, track0, dNADraw0);
+<span class="nocode"><a name="11"> 11: </a></span>block0.setBstart(0);
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>Entry entry0 = simpleEntryGroup0.createEntry(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Track track0 = new Track((-983), &quot;&quot;, true, true, entry0);
+<span class="nocode"><a name="4">  4: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="5">  5: </a></span>Block block0 = new Block(&quot;&quot;, (-983), (-983), (Color) null, (-983), track0, dNADraw0);
+<span class="nocode"><a name="6">  6: </a></span>block0.setArrowTail(true);
+<span class="nocode"><a name="7">  7: </a></span>assertTrue(block0.isArrowTail());
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Color color0 = new Color(0);
+<span class="nocode"><a name="2">  2: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="3">  3: </a></span>Key key0 = new Key(&quot;&quot;);
+<span class="nocode"><a name="4">  4: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate(key0, &quot;&quot;);
+<span class="nocode"><a name="5">  5: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureKeyQualifierPredicate0, &quot;600&quot;);
+<span class="nocode"><a name="6">  6: </a></span>Entry entry0 = filteredEntryGroup0.createEntry((String) null);
+<span class="nocode"><a name="7">  7: </a></span>Track track0 = new Track(1246.92118849, &quot;)BmZyP&amp;[a,U&quot;, false, false, entry0);
+<span class="nocode"><a name="8">  8: </a></span>Block block0 = new Block(&quot;)BmZyP&amp;[a,U&quot;, 0, (-2889), color0, 2.28F, track0);
+<span class="nocode"><a name="9">  9: </a></span>double double0 = block0.getMidAngle();
+<span class="nocode"><a name="10"> 10: </a></span>assertEquals(2.28F, block0.getStrokeSize(), 0.01F);
+<span class="nocode"><a name="11"> 11: </a></span>assertEquals(0.0, double0, 0.01);
+<span class="nocode"><a name="12"> 12: </a></span>assertEquals(0, block0.getBstart());
+<span class="nocode"><a name="13"> 13: </a></span>assertEquals((-2889), block0.getBend());
+<span class="nocode"><a name="14"> 14: </a></span>assertFalse(block0.isDrawLabel());
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Color color0 = new Color(0);
+<span class="nocode"><a name="2">  2: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="3">  3: </a></span>Key key0 = new Key(&quot;&quot;);
+<span class="nocode"><a name="4">  4: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate(key0, &quot;&quot;);
+<span class="nocode"><a name="5">  5: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureKeyQualifierPredicate0, &quot;600&quot;);
+<span class="nocode"><a name="6">  6: </a></span>Entry entry0 = filteredEntryGroup0.createEntry((String) null);
+<span class="nocode"><a name="7">  7: </a></span>Track track0 = new Track(1246.92118849, &quot;)BmZyP&amp;[a,U&quot;, false, false, entry0);
+<span class="nocode"><a name="8">  8: </a></span>Block block0 = new Block(&quot;)BmZyP&amp;[a,U&quot;, 0, (-2889), color0, 2.28F, track0);
+<span class="nocode"><a name="9">  9: </a></span>block0.isArrowTail();
+<span class="nocode"><a name="10"> 10: </a></span>assertFalse(block0.isDrawLabel());
+<span class="nocode"><a name="11"> 11: </a></span>assertEquals(2.28F, block0.getStrokeSize(), 0.01F);
+<span class="nocode"><a name="12"> 12: </a></span>assertEquals(0, block0.getBstart());
+<span class="nocode"><a name="13"> 13: </a></span>assertEquals((-2889), block0.getBend());
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Color color0 = Color.getHSBColor(1683.0F, (-2334), (-3741.1968F));
+<span class="nocode"><a name="2">  2: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="3">  3: </a></span>Block block0 = new Block(&quot;&quot;, (-2334), 0, color0, 0, (Track) null, dNADraw0);
+<span class="nocode"><a name="4">  4: </a></span>block0.setAngStart(10.0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(10.0, block0.getAngStart(), 0.01);
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Track track0 = new Track(0.0, (Entry) null);
+<span class="nocode"><a name="2">  2: </a></span>JembossParams jembossParams0 = new JembossParams();
+<span class="nocode"><a name="3">  3: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.getPublicServers();
+<span class="nocode"><a name="4">  4: </a></span>DNADraw dNADraw0 = new DNADraw(vector0, vector0, vector0, vector0);
+<span class="nocode"><a name="5">  5: </a></span>Block block0 = new Block(&quot;&quot;, 0, 0, (Color) null, 2071.3892F, track0, dNADraw0);
+<span class="nocode"><a name="6">  6: </a></span>block0.setAngEnd(0.0);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(2071.3892F, block0.getStrokeSize(), 0.01F);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(0, block0.getBend());
+<span class="nocode"><a name="9">  9: </a></span>assertFalse(block0.isDrawLabel());
+<span class="nocode"><a name="10"> 10: </a></span>assertEquals(0, block0.getBstart());
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenericDocument genericDocument0 = new GenericDocument((DocumentType) null, (DOMImplementation) null);
+<span class="nocode"><a name="2">  2: </a></span>DefaultImageHandler defaultImageHandler0 = new DefaultImageHandler();
+<span class="nocode"><a name="3">  3: </a></span>DefaultExtensionHandler defaultExtensionHandler0 = new DefaultExtensionHandler();
+<span class="nocode"><a name="4">  4: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(genericDocument0, defaultImageHandler0, defaultExtensionHandler0, false);
+<span class="nocode"><a name="5">  5: </a></span>GraphicContext graphicContext0 = sVGGraphics2D0.getGraphicContext();
+<span class="nocode"><a name="6">  6: </a></span>Color color0 = graphicContext0.getColor();
+<span class="nocode"><a name="7">  7: </a></span>Track track0 = new Track((short)32, &quot;&quot;, &quot;ISO-8859-1&quot;, false, true, true, (Entry) null);
+<span class="nocode"><a name="8">  8: </a></span>Block block0 = new Block(&quot;&quot;, 132, 132, color0, 132, track0);
+<span class="nocode"><a name="9">  9: </a></span>block0.setBend((-1076));
+<span class="nocode"><a name="10"> 10: </a></span>assertEquals((-1076), block0.getBend());
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GapContent gapContent0 = new GapContent();
+<span class="nocode"><a name="2">  2: </a></span>StyleContext styleContext0 = StyleContext.getDefaultStyleContext();
+<span class="nocode"><a name="3">  3: </a></span>DefaultStyledDocument defaultStyledDocument0 = new DefaultStyledDocument(gapContent0, styleContext0);
+<span class="nocode"><a name="4">  4: </a></span>JTextPane jTextPane0 = new JTextPane(defaultStyledDocument0);
+<span class="nocode"><a name="5">  5: </a></span>PrintColorUIResource printColorUIResource0 = (PrintColorUIResource)jTextPane0.getCaretColor();
+<span class="nocode"><a name="6">  6: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="7">  7: </a></span>FeatureVector featureVector0 = new FeatureVector();
+<span class="nocode"><a name="8">  8: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, &quot;&quot;);
+<span class="nocode"><a name="9">  9: </a></span>Entry entry0 = filteredEntryGroup0.createEntry();
+<span class="nocode"><a name="10"> 10: </a></span>Track track0 = new Track(0.0, &quot;h@0Px;#lS?|x&quot;, &quot;None&quot;, true, false, false, entry0);
+<span class="nocode"><a name="11"> 11: </a></span>JembossParams jembossParams0 = new JembossParams();
+<span class="nocode"><a name="12"> 12: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.getPublicServers();
+<span class="nocode"><a name="13"> 13: </a></span>DNADraw dNADraw0 = new DNADraw(vector0, vector0, (Vector) null, (Vector) null);
+<span class="nocode"><a name="14"> 14: </a></span>Block block0 = new Block(&quot;None&quot;, (-4526), 252, printColorUIResource0, 0.5F, track0, dNADraw0);
+<span class="nocode"><a name="15"> 15: </a></span>int int0 = block0.getBstart();
+<span class="nocode"><a name="16"> 16: </a></span>assertFalse(block0.isDrawLabel());
+<span class="nocode"><a name="17"> 17: </a></span>assertEquals(252, block0.getBend());
+<span class="nocode"><a name="18"> 18: </a></span>assertEquals((-4526), int0);
+<span class="nocode"><a name="19"> 19: </a></span>assertEquals(0.5F, block0.getStrokeSize(), 0.01F);
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SystemColor systemColor0 = SystemColor.controlLtHighlight;
+<span class="nocode"><a name="2">  2: </a></span>Track track0 = new Track((-1.0), &quot;Show Label&quot;, false, false, (Entry) null);
+<span class="nocode"><a name="3">  3: </a></span>Block block0 = new Block(&quot;Show Label&quot;, 360, 360, systemColor0, 360, track0);
+<span class="nocode"><a name="4">  4: </a></span>float float0 = block0.getStrokeSize();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(360.0F, float0, 0.01F);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(360, block0.getBend());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(360, block0.getBstart());
+<span class="nocode"><a name="8">  8: </a></span>assertFalse(block0.isDrawLabel());
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Color color0 = Color.PINK;
+<span class="nocode"><a name="2">  2: </a></span>Block block0 = new Block(&quot;Tail&quot;, (-1735), 495, color0, (-1735), (Track) null);
+<span class="nocode"><a name="3">  3: </a></span>JSpinner jSpinner0 = new JSpinner();
+<span class="nocode"><a name="4">  4: </a></span>JSpinner.NumberEditor jSpinner_NumberEditor0 = new JSpinner.NumberEditor(jSpinner0);
+<span class="nocode"><a name="5">  5: </a></span>PrintColorUIResource printColorUIResource0 = (PrintColorUIResource)jSpinner_NumberEditor0.getForeground();
+<span class="nocode"><a name="6">  6: </a></span>block0.setColour(printColorUIResource0);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals((-1735), block0.getBstart());
+<span class="nocode"><a name="8">  8: </a></span>assertEquals((-1735.0F), block0.getStrokeSize(), 0.01F);
+<span class="nocode"><a name="9">  9: </a></span>assertFalse(block0.isDrawLabel());
+<span class="nocode"><a name="10"> 10: </a></span>assertEquals(495, block0.getBend());
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GapContent gapContent0 = new GapContent();
+<span class="nocode"><a name="2">  2: </a></span>StyleContext styleContext0 = StyleContext.getDefaultStyleContext();
+<span class="nocode"><a name="3">  3: </a></span>DefaultStyledDocument defaultStyledDocument0 = new DefaultStyledDocument(gapContent0, styleContext0);
+<span class="nocode"><a name="4">  4: </a></span>JTextPane jTextPane0 = new JTextPane(defaultStyledDocument0);
+<span class="nocode"><a name="5">  5: </a></span>PrintColorUIResource printColorUIResource0 = (PrintColorUIResource)jTextPane0.getCaretColor();
+<span class="nocode"><a name="6">  6: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="7">  7: </a></span>FeatureVector featureVector0 = new FeatureVector();
+<span class="nocode"><a name="8">  8: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, &quot;&quot;);
+<span class="nocode"><a name="9">  9: </a></span>Entry entry0 = filteredEntryGroup0.createEntry();
+<span class="nocode"><a name="10"> 10: </a></span>Track track0 = new Track(0.0, &quot;h@0Px;#lS?|x&quot;, &quot;None&quot;, true, false, false, entry0);
+<span class="nocode"><a name="11"> 11: </a></span>JembossParams jembossParams0 = new JembossParams();
+<span class="nocode"><a name="12"> 12: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.getPublicServers();
+<span class="nocode"><a name="13"> 13: </a></span>DNADraw dNADraw0 = new DNADraw(vector0, vector0, (Vector) null, (Vector) null);
+<span class="nocode"><a name="14"> 14: </a></span>Block block0 = new Block(&quot;None&quot;, (-4526), 252, printColorUIResource0, 0.5F, track0, dNADraw0);
+<span class="nocode"><a name="15"> 15: </a></span>block0.getLabel();
+<span class="nocode"><a name="16"> 16: </a></span>assertEquals(0.5F, block0.getStrokeSize(), 0.01F);
+<span class="nocode"><a name="17"> 17: </a></span>assertEquals((-4526), block0.getBstart());
+<span class="nocode"><a name="18"> 18: </a></span>assertEquals(252, block0.getBend());
+<span class="nocode"><a name="19"> 19: </a></span>assertFalse(block0.isDrawLabel());
+</pre>
+<h3>Test case 13</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Color color0 = new Color(30);
+<span class="nocode"><a name="2">  2: </a></span>Track track0 = new Track(820.0, &quot;p@C$ZAMWu:5&quot;, false, false, (Entry) null);
+<span class="nocode"><a name="3">  3: </a></span>Block block0 = new Block(&quot;p@C$ZAMWu:5&quot;, 105, 105, color0, 105, track0);
+<span class="nocode"><a name="4">  4: </a></span>block0.setLabel(&quot;p@C$ZAMWu:5&quot;);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(105, block0.getBend());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(105.0F, block0.getStrokeSize(), 0.01F);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(105, block0.getBstart());
+<span class="nocode"><a name="8">  8: </a></span>assertFalse(block0.isDrawLabel());
+</pre>
+<h3>Test case 14</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Color color0 = Color.LIGHT_GRAY;
+<span class="nocode"><a name="2">  2: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="3">  3: </a></span>Key key0 = Key.CDS;
+<span class="nocode"><a name="4">  4: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate(key0, &quot;&quot;, &quot;&quot;, true, false);
+<span class="nocode"><a name="5">  5: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureKeyQualifierPredicate0, &quot;&quot;);
+<span class="nocode"><a name="6">  6: </a></span>Entry entry0 = filteredEntryGroup0.createEntry();
+<span class="nocode"><a name="7">  7: </a></span>Track track0 = new Track((-4363.803), &quot;&quot;, false, true, entry0);
+<span class="nocode"><a name="8">  8: </a></span>Vector&lt;Container&gt; vector0 = new Vector&lt;Container&gt;();
+<span class="nocode"><a name="9">  9: </a></span>DNADraw dNADraw0 = new DNADraw(vector0, vector0, vector0, vector0);
+<span class="nocode"><a name="10"> 10: </a></span>Block block0 = new Block(&quot;&quot;, 1176, (-712), color0, 1176, track0, dNADraw0);
+<span class="nocode"><a name="11"> 11: </a></span>block0.setFeature((Feature) null);
+<span class="nocode"><a name="12"> 12: </a></span>assertEquals((-712), block0.getBend());
+<span class="nocode"><a name="13"> 13: </a></span>assertFalse(block0.isDrawLabel());
+<span class="nocode"><a name="14"> 14: </a></span>assertEquals(1176.0F, block0.getStrokeSize(), 0.01F);
+<span class="nocode"><a name="15"> 15: </a></span>assertEquals(1176, block0.getBstart());
+</pre>
+<h3>Test case 15</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JTable jTable0 = new JTable();
+<span class="nocode"><a name="2">  2: </a></span>ColorUIResource colorUIResource0 = (ColorUIResource)jTable0.getSelectionBackground();
+<span class="nocode"><a name="3">  3: </a></span>Track track0 = new Track(1436.835, (Entry) null);
+<span class="nocode"><a name="4">  4: </a></span>JembossParams jembossParams0 = new JembossParams();
+<span class="nocode"><a name="5">  5: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.getPrivateServers();
+<span class="nocode"><a name="6">  6: </a></span>DNADraw dNADraw0 = new DNADraw(vector0, vector0, vector0, vector0);
+<span class="nocode"><a name="7">  7: </a></span>Block block0 = new Block(&quot;/&quot;, 65, 65, colorUIResource0, 65, track0, dNADraw0);
+<span class="nocode"><a name="8">  8: </a></span>int int0 = block0.getBend();
+<span class="nocode"><a name="9">  9: </a></span>assertFalse(block0.isDrawLabel());
+<span class="nocode"><a name="10"> 10: </a></span>assertEquals(65, block0.getBstart());
+<span class="nocode"><a name="11"> 11: </a></span>assertEquals(65, int0);
+<span class="nocode"><a name="12"> 12: </a></span>assertEquals(65.0F, block0.getStrokeSize(), 0.01F);
+</pre>
+<h3>Test case 16</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SystemColor systemColor0 = SystemColor.inactiveCaption;
+<span class="nocode"><a name="2">  2: </a></span>Track track0 = new Track((-0.05), &quot;wP*&quot;, true, true, (Entry) null);
+<span class="nocode"><a name="3">  3: </a></span>Block block0 = new Block(&quot; Line width&quot;, 3834, 579, systemColor0, 0.0F, track0);
+<span class="nocode"><a name="4">  4: </a></span>block0.getTransferDataFlavors();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(3834, block0.getBstart());
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(block0.isDrawLabel());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(579, block0.getBend());
+</pre>
+<h3>Test case 17</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JTable jTable0 = new JTable();
+<span class="nocode"><a name="2">  2: </a></span>ColorUIResource colorUIResource0 = (ColorUIResource)jTable0.getSelectionBackground();
+<span class="nocode"><a name="3">  3: </a></span>Track track0 = new Track(1436.835, (Entry) null);
+<span class="nocode"><a name="4">  4: </a></span>JembossParams jembossParams0 = new JembossParams();
+<span class="nocode"><a name="5">  5: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.getPrivateServers();
+<span class="nocode"><a name="6">  6: </a></span>DNADraw dNADraw0 = new DNADraw(vector0, vector0, vector0, vector0);
+<span class="nocode"><a name="7">  7: </a></span>Block block0 = new Block(&quot;/&quot;, 65, 65, colorUIResource0, 65, track0, dNADraw0);
+<span class="nocode"><a name="8">  8: </a></span>block0.setArrowHead(true);
+<span class="nocode"><a name="9">  9: </a></span>assertTrue(block0.isArrowHead());
+</pre>
+<h3>Test case 18</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Color color0 = new Color(0);
+<span class="nocode"><a name="2">  2: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="3">  3: </a></span>Key key0 = new Key(&quot;&quot;);
+<span class="nocode"><a name="4">  4: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate(key0, &quot;&quot;);
+<span class="nocode"><a name="5">  5: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureKeyQualifierPredicate0, &quot;600&quot;);
+<span class="nocode"><a name="6">  6: </a></span>Entry entry0 = filteredEntryGroup0.createEntry((String) null);
+<span class="nocode"><a name="7">  7: </a></span>Track track0 = new Track(1246.92118849, &quot;)BmZyP&amp;[a,U&quot;, false, false, entry0);
+<span class="nocode"><a name="8">  8: </a></span>Block block0 = new Block(&quot;)BmZyP&amp;[a,U&quot;, 0, (-2889), color0, 2.28F, track0);
+<span class="nocode"><a name="9">  9: </a></span>block0.setDrawLabel(false);
+<span class="nocode"><a name="10"> 10: </a></span>assertEquals((-2889), block0.getBend());
+<span class="nocode"><a name="11"> 11: </a></span>assertFalse(block0.isDrawLabel());
+<span class="nocode"><a name="12"> 12: </a></span>assertEquals(0, block0.getBstart());
+<span class="nocode"><a name="13"> 13: </a></span>assertEquals(2.28F, block0.getStrokeSize(), 0.01F);
+</pre>
+<h3>Test case 19</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JTable jTable0 = new JTable();
+<span class="nocode"><a name="2">  2: </a></span>ColorUIResource colorUIResource0 = (ColorUIResource)jTable0.getSelectionBackground();
+<span class="nocode"><a name="3">  3: </a></span>Track track0 = new Track(1436.835, (Entry) null);
+<span class="nocode"><a name="4">  4: </a></span>JembossParams jembossParams0 = new JembossParams();
+<span class="nocode"><a name="5">  5: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.getPrivateServers();
+<span class="nocode"><a name="6">  6: </a></span>DNADraw dNADraw0 = new DNADraw(vector0, vector0, vector0, vector0);
+<span class="nocode"><a name="7">  7: </a></span>Block block0 = new Block(&quot;/&quot;, 65, 65, colorUIResource0, 65, track0, dNADraw0);
+<span class="nocode"><a name="8">  8: </a></span>boolean boolean0 = block0.isDrawLabel();
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(65, block0.getBend());
+<span class="nocode"><a name="10"> 10: </a></span>assertFalse(boolean0);
+<span class="nocode"><a name="11"> 11: </a></span>assertEquals(65.0F, block0.getStrokeSize(), 0.01F);
+<span class="nocode"><a name="12"> 12: </a></span>assertEquals(65, block0.getBstart());
+</pre>
+<h3>Test case 20</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Color color0 = Color.CYAN;
+<span class="nocode"><a name="2">  2: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = simpleEntryGroup0.createEntry(&quot;zs{o`&quot;);
+<span class="nocode"><a name="4">  4: </a></span>Track track0 = new Track(2.0F, &quot;&quot;, &quot;zs{o`&quot;, false, true, false, entry0);
+<span class="nocode"><a name="5">  5: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="6">  6: </a></span>Block block0 = new Block(&quot;zs{o`&quot;, 100, 100, color0, 2.0F, track0, dNADraw0);
+<span class="nocode"><a name="7">  7: </a></span>block0.isArrowHead();
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(100, block0.getBstart());
+<span class="nocode"><a name="9">  9: </a></span>assertFalse(block0.isDrawLabel());
+<span class="nocode"><a name="10"> 10: </a></span>assertEquals(2.0F, block0.getStrokeSize(), 0.01F);
+<span class="nocode"><a name="11"> 11: </a></span>assertEquals(100, block0.getBend());
+</pre>
+<h3>Test case 21</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GapContent gapContent0 = new GapContent();
+<span class="nocode"><a name="2">  2: </a></span>StyleContext styleContext0 = StyleContext.getDefaultStyleContext();
+<span class="nocode"><a name="3">  3: </a></span>DefaultStyledDocument defaultStyledDocument0 = new DefaultStyledDocument(gapContent0, styleContext0);
+<span class="nocode"><a name="4">  4: </a></span>JTextPane jTextPane0 = new JTextPane(defaultStyledDocument0);
+<span class="nocode"><a name="5">  5: </a></span>PrintColorUIResource printColorUIResource0 = (PrintColorUIResource)jTextPane0.getCaretColor();
+<span class="nocode"><a name="6">  6: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="7">  7: </a></span>FeatureVector featureVector0 = new FeatureVector();
+<span class="nocode"><a name="8">  8: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, &quot;&quot;);
+<span class="nocode"><a name="9">  9: </a></span>Entry entry0 = filteredEntryGroup0.createEntry();
+<span class="nocode"><a name="10"> 10: </a></span>Track track0 = new Track(0.0, &quot;h@0Px;#lS?|x&quot;, &quot;None&quot;, true, false, false, entry0);
+<span class="nocode"><a name="11"> 11: </a></span>JembossParams jembossParams0 = new JembossParams();
+<span class="nocode"><a name="12"> 12: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.getPublicServers();
+<span class="nocode"><a name="13"> 13: </a></span>DNADraw dNADraw0 = new DNADraw(vector0, vector0, (Vector) null, (Vector) null);
+<span class="nocode"><a name="14"> 14: </a></span>Block block0 = new Block(&quot;None&quot;, (-4526), 252, printColorUIResource0, 0.5F, track0, dNADraw0);
+<span class="nocode"><a name="15"> 15: </a></span>assertEquals(0.5F, block0.getStrokeSize(), 0.01F);
+<span class="nocode"><a name="16"> 16: </a></span>
+<span class="nocode"><a name="17"> 17: </a></span>block0.setStrokeSize(0.0F);
+<span class="nocode"><a name="18"> 18: </a></span>assertEquals((-4526), block0.getBstart());
+</pre>
+<h3>Test case 22</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JTable jTable0 = new JTable();
+<span class="nocode"><a name="2">  2: </a></span>ColorUIResource colorUIResource0 = (ColorUIResource)jTable0.getSelectionBackground();
+<span class="nocode"><a name="3">  3: </a></span>Track track0 = new Track(1436.835, (Entry) null);
+<span class="nocode"><a name="4">  4: </a></span>JembossParams jembossParams0 = new JembossParams();
+<span class="nocode"><a name="5">  5: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.getPrivateServers();
+<span class="nocode"><a name="6">  6: </a></span>DNADraw dNADraw0 = new DNADraw(vector0, vector0, vector0, vector0);
+<span class="nocode"><a name="7">  7: </a></span>Block block0 = new Block(&quot;/&quot;, 65, 65, colorUIResource0, 65, track0, dNADraw0);
+<span class="nocode"><a name="8">  8: </a></span>block0.getFeature();
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(65, block0.getBend());
+<span class="nocode"><a name="10"> 10: </a></span>assertFalse(block0.isDrawLabel());
+<span class="nocode"><a name="11"> 11: </a></span>assertEquals(65, block0.getBstart());
+<span class="nocode"><a name="12"> 12: </a></span>assertEquals(65.0F, block0.getStrokeSize(), 0.01F);
+</pre>
+<h3>Test case 23</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Color color0 = Color.BLUE;
+<span class="nocode"><a name="2">  2: </a></span>Track track0 = new Track(0, &quot;Mg3&lt;BxBu|6GP&quot;, false, false, (Entry) null);
+<span class="nocode"><a name="3">  3: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="4">  4: </a></span>Block block0 = new Block(&quot;%yw&lt;}$&quot;, 0, 0, color0, 0, track0, dNADraw0);
+<span class="nocode"><a name="5">  5: </a></span>block0.showProperties((JFrame) null, dNADraw0, (JButton) null);
+</pre>
+<h3>Test case 24</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GapContent gapContent0 = new GapContent(1);
+<span class="nocode"><a name="2">  2: </a></span>StyleContext styleContext0 = new StyleContext();
+<span class="nocode"><a name="3">  3: </a></span>DefaultStyledDocument defaultStyledDocument0 = new DefaultStyledDocument(gapContent0, styleContext0);
+<span class="nocode"><a name="4">  4: </a></span>JTextPane jTextPane0 = new JTextPane(defaultStyledDocument0);
+<span class="nocode"><a name="5">  5: </a></span>PrintColorUIResource printColorUIResource0 = (PrintColorUIResource)jTextPane0.getSelectedTextColor();
+<span class="nocode"><a name="6">  6: </a></span>Track track0 = new Track(1, &quot;&quot;, &quot;&quot;, false, false, true, (Entry) null);
+<span class="nocode"><a name="7">  7: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="8">  8: </a></span>Block block0 = new Block(&quot;-fbgL&quot;, 1, 1, printColorUIResource0, 255.16F, track0, dNADraw0);
+<span class="nocode"><a name="9">  9: </a></span>block0.draw((Graphics2D) null);
+</pre>
+<h3>Test case 25</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>Entry entry0 = simpleEntryGroup0.createEntry(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Track track0 = new Track((-983), &quot;&quot;, true, true, entry0);
+<span class="nocode"><a name="4">  4: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="5">  5: </a></span>Block block0 = new Block(&quot;&quot;, (-983), (-983), (Color) null, (-983), track0, dNADraw0);
+<span class="nocode"><a name="6">  6: </a></span>block0.isOverMe(0, 0);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals((-983.0F), block0.getStrokeSize(), 0.01F);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals((-983), block0.getBstart());
+<span class="nocode"><a name="9">  9: </a></span>assertFalse(block0.isDrawLabel());
+<span class="nocode"><a name="10"> 10: </a></span>assertEquals((-983), block0.getBend());
+</pre>
+<h3>Test case 26</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SystemColor systemColor0 = SystemColor.control;
+<span class="nocode"><a name="2">  2: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = simpleEntryGroup0.createEntry();
+<span class="nocode"><a name="4">  4: </a></span>Track track0 = new Track(916.1688F, entry0);
+<span class="nocode"><a name="5">  5: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="6">  6: </a></span>Block block0 = new Block(&quot;(p?1Ho*rz&quot;, 2135622374, 2135622374, systemColor0, 916.1688F, track0, dNADraw0);
+<span class="nocode"><a name="7">  7: </a></span>block0.isOverMe(65, 0);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(2135622374, block0.getBend());
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(2135622374, block0.getBstart());
+<span class="nocode"><a name="10"> 10: </a></span>assertFalse(block0.isDrawLabel());
+<span class="nocode"><a name="11"> 11: </a></span>assertEquals(916.1688F, block0.getStrokeSize(), 0.01F);
+</pre>
+<h3>Test case 27</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Color color0 = Color.orange;
+<span class="nocode"><a name="2">  2: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = simpleEntryGroup0.createEntry(&quot;&quot;);
+<span class="nocode"><a name="4">  4: </a></span>Track track0 = new Track((-1012.237642764), &quot;&quot;, &quot;&quot;, true, false, true, entry0);
+<span class="nocode"><a name="5">  5: </a></span>Block block0 = new Block(&quot;&quot;, (-370), (-370), color0, (-3129.7F), track0, (DNADraw) null);
+<span class="nocode"><a name="6">  6: </a></span>DataFlavor dataFlavor0 = DataFlavor.stringFlavor;
+<span class="nocode"><a name="7">  7: </a></span>boolean boolean0 = block0.isDataFlavorSupported(dataFlavor0);
+<span class="nocode"><a name="8">  8: </a></span>assertFalse(boolean0);
+<span class="nocode"><a name="9">  9: </a></span>assertEquals((-3129.7F), block0.getStrokeSize(), 0.01F);
+<span class="nocode"><a name="10"> 10: </a></span>assertFalse(block0.isDrawLabel());
+<span class="nocode"><a name="11"> 11: </a></span>assertEquals((-370), block0.getBstart());
+<span class="nocode"><a name="12"> 12: </a></span>assertEquals((-370), block0.getBend());
+</pre>
+<h3>Test case 28</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JTable jTable0 = new JTable();
+<span class="nocode"><a name="2">  2: </a></span>ColorUIResource colorUIResource0 = (ColorUIResource)jTable0.getSelectionBackground();
+<span class="nocode"><a name="3">  3: </a></span>Track track0 = new Track(1436.835, (Entry) null);
+<span class="nocode"><a name="4">  4: </a></span>JembossParams jembossParams0 = new JembossParams();
+<span class="nocode"><a name="5">  5: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.getPrivateServers();
+<span class="nocode"><a name="6">  6: </a></span>DNADraw dNADraw0 = new DNADraw(vector0, vector0, vector0, vector0);
+<span class="nocode"><a name="7">  7: </a></span>Block block0 = new Block(&quot;/&quot;, 65, 65, colorUIResource0, 65, track0, dNADraw0);
+<span class="nocode"><a name="8">  8: </a></span>boolean boolean0 = block0.isDataFlavorSupported(block0.BLOCK);
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(65.0F, block0.getStrokeSize(), 0.01F);
+<span class="nocode"><a name="10"> 10: </a></span>assertEquals(65, block0.getBstart());
+<span class="nocode"><a name="11"> 11: </a></span>assertTrue(boolean0);
+<span class="nocode"><a name="12"> 12: </a></span>assertEquals(65, block0.getBend());
+<span class="nocode"><a name="13"> 13: </a></span>assertFalse(block0.isDrawLabel());
+</pre>
+<h3>Test case 29</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Color color0 = Color.CYAN;
+<span class="nocode"><a name="2">  2: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = simpleEntryGroup0.createEntry(&quot;zs{o`&quot;);
+<span class="nocode"><a name="4">  4: </a></span>Track track0 = new Track(2.0F, &quot;&quot;, &quot;zs{o`&quot;, false, true, false, entry0);
+<span class="nocode"><a name="5">  5: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="6">  6: </a></span>Block block0 = new Block(&quot;zs{o`&quot;, 100, 100, color0, 2.0F, track0, dNADraw0);
+<span class="nocode"><a name="7">  7: </a></span>Color color1 = block0.getColour();
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(100, block0.getBstart());
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(100, block0.getBend());
+<span class="nocode"><a name="10"> 10: </a></span>assertEquals(2.0F, block0.getStrokeSize(), 0.01F);
+<span class="nocode"><a name="11"> 11: </a></span>assertFalse(block0.isDrawLabel());
+<span class="nocode"><a name="12"> 12: </a></span>assertNotNull(color1);
+</pre>
+<h3>Test case 30</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Track track0 = new Track(65489, &quot;`ak$-JiZH&quot;, false, false, (Entry) null);
+<span class="nocode"><a name="2">  2: </a></span>Block block0 = new Block(&quot;kYr(uIo64WAr=&quot;, 65489, 65489, (Color) null, (-2200.6052F), track0);
+<span class="nocode"><a name="3">  3: </a></span>block0.getAngStart();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-2200.6052F), block0.getStrokeSize(), 0.01F);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(65489, block0.getBend());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(65489, block0.getBstart());
+<span class="nocode"><a name="7">  7: </a></span>assertFalse(block0.isDrawLabel());
+</pre>
+<h3>Test case 31</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Color color0 = Color.CYAN;
+<span class="nocode"><a name="2">  2: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = simpleEntryGroup0.createEntry(&quot;zs{o`&quot;);
+<span class="nocode"><a name="4">  4: </a></span>Track track0 = new Track(2.0F, &quot;&quot;, &quot;zs{o`&quot;, false, true, false, entry0);
+<span class="nocode"><a name="5">  5: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="6">  6: </a></span>Block block0 = new Block(&quot;zs{o`&quot;, 100, 100, color0, 2.0F, track0, dNADraw0);
+<span class="nocode"><a name="7">  7: </a></span>block0.getAngEnd();
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(100, block0.getBstart());
+<span class="nocode"><a name="9">  9: </a></span>assertFalse(block0.isDrawLabel());
+<span class="nocode"><a name="10"> 10: </a></span>assertEquals(2.0F, block0.getStrokeSize(), 0.01F);
+<span class="nocode"><a name="11"> 11: </a></span>assertEquals(100, block0.getBend());
+</pre>
+<h3>Test case 32</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="2">  2: </a></span>Block block0 = new Block(&quot;y[~P&lt;e{ cRH4&quot;, (-4259), (-4259), (Color) null, (-4259), (Track) null, dNADraw0);
+<span class="nocode"><a name="3">  3: </a></span>GenericDocumentType genericDocumentType0 = new GenericDocumentType(&quot;&quot;, &quot;y[~P&lt;e{ cRH4&quot;, &quot;8+X S`4=y_5 1veUGv&quot;);
+<span class="nocode"><a name="4">  4: </a></span>GenericDOMImplementation genericDOMImplementation0 = new GenericDOMImplementation();
+<span class="nocode"><a name="5">  5: </a></span>GenericDocument genericDocument0 = new GenericDocument(genericDocumentType0, genericDOMImplementation0);
+<span class="nocode"><a name="6">  6: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(genericDocument0);
+<span class="nocode"><a name="7">  7: </a></span>block0.drawCircular(sVGGraphics2D0);
+</pre>
+<h3>Test case 33</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>StyleContext styleContext0 = StyleContext.getDefaultStyleContext();
+<span class="nocode"><a name="2">  2: </a></span>DefaultStyledDocument defaultStyledDocument0 = new DefaultStyledDocument(styleContext0);
+<span class="nocode"><a name="3">  3: </a></span>JTextPane jTextPane0 = new JTextPane(defaultStyledDocument0);
+<span class="nocode"><a name="4">  4: </a></span>PrintColorUIResource printColorUIResource0 = (PrintColorUIResource)jTextPane0.getSelectedTextColor();
+<span class="nocode"><a name="5">  5: </a></span>Block block0 = new Block((String) null, (-1298), (-1298), printColorUIResource0, (-1298), (Track) null);
+<span class="nocode"><a name="6">  6: </a></span>block0.drawLinear((Graphics2D) null);
+</pre>
+<h3>Test case 34</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Color color0 = Color.getHSBColor(1683.0F, (-2348), (-3741.1968F));
+<span class="nocode"><a name="2">  2: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="3">  3: </a></span>Block block0 = new Block(&quot;&quot;, (-2348), 0, color0, 0, (Track) null, dNADraw0);
+<span class="nocode"><a name="4">  4: </a></span>block0.getLinePoints(1691);
+</pre>
+<h3>Test case 35</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Color color0 = Color.getHSBColor(1683.0F, (-2334), (-3741.1968F));
+<span class="nocode"><a name="2">  2: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="3">  3: </a></span>Block block0 = new Block(&quot;&quot;, (-2334), 0, color0, 0, (Track) null, dNADraw0);
+<span class="nocode"><a name="4">  4: </a></span>block0.getTransferData((DataFlavor) null);
+</pre>
+<h3>Test case 36</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SystemColor systemColor0 = SystemColor.inactiveCaption;
+<span class="nocode"><a name="2">  2: </a></span>Track track0 = new Track((-0.05), &quot;wP*&quot;, true, true, (Entry) null);
+<span class="nocode"><a name="3">  3: </a></span>Block block0 = new Block(&quot; Line width&quot;, 3834, 579, systemColor0, 0.0F, track0);
+<span class="nocode"><a name="4">  4: </a></span>block0.isOverMe(579, 579);
+</pre>
+<h3>Test case 37</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Color color0 = Color.getHSBColor(1683.0F, (-2334), (-3741.1968F));
+<span class="nocode"><a name="2">  2: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="3">  3: </a></span>Block block0 = new Block(&quot;&quot;, (-2334), 0, color0, 0, (Track) null, dNADraw0);
+<span class="nocode"><a name="4">  4: </a></span>int int0 = block0.getBend();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals((-2334), block0.getBstart());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, int0);
+<span class="nocode"><a name="7">  7: </a></span>assertFalse(block0.isDrawLabel());
+</pre>
+<h3>Test case 38</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenericDocumentType genericDocumentType0 = new GenericDocumentType(&quot;&quot;, &quot;AW{&quot;, &quot;AW{&quot;);
+<span class="nocode"><a name="2">  2: </a></span>GenericDOMImplementation genericDOMImplementation0 = (GenericDOMImplementation)GenericDOMImplementation.getDOMImplementation();
+<span class="nocode"><a name="3">  3: </a></span>GenericDocument genericDocument0 = new GenericDocument(genericDocumentType0, genericDOMImplementation0);
+<span class="nocode"><a name="4">  4: </a></span>ImageHandlerBase64Encoder imageHandlerBase64Encoder0 = new ImageHandlerBase64Encoder();
+<span class="nocode"><a name="5">  5: </a></span>DefaultExtensionHandler defaultExtensionHandler0 = new DefaultExtensionHandler();
+<span class="nocode"><a name="6">  6: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(genericDocument0, imageHandlerBase64Encoder0, defaultExtensionHandler0, false);
+<span class="nocode"><a name="7">  7: </a></span>Color color0 = sVGGraphics2D0.getColor();
+<span class="nocode"><a name="8">  8: </a></span>Track track0 = new Track(4115.6682936, &quot;&quot;, false, false, (Entry) null);
+<span class="nocode"><a name="9">  9: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="10"> 10: </a></span>Block block0 = new Block(&quot;&quot;, 0, 0, color0, 0, track0, dNADraw0);
+<span class="nocode"><a name="11"> 11: </a></span>int int0 = block0.getBstart();
+<span class="nocode"><a name="12"> 12: </a></span>assertEquals(0, block0.getBend());
+<span class="nocode"><a name="13"> 13: </a></span>assertFalse(block0.isDrawLabel());
+<span class="nocode"><a name="14"> 14: </a></span>assertEquals(0, int0);
+</pre>
+<h3>Test case 39</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Color color0 = Color.black;
+<span class="nocode"><a name="2">  2: </a></span>Track track0 = new Track((-92), (Entry) null);
+<span class="nocode"><a name="3">  3: </a></span>Block block0 = new Block(&quot;9:;ph$&quot;, (-92), (-92), color0, (-92), track0);
+<span class="nocode"><a name="4">  4: </a></span>Color color1 = block0.getColour();
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(block0.isDrawLabel());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals((-92.0F), block0.getStrokeSize(), 0.01F);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals((-92), block0.getBend());
+<span class="nocode"><a name="8">  8: </a></span>assertNotNull(color1);
+<span class="nocode"><a name="9">  9: </a></span>assertEquals((-92), block0.getBstart());
+</pre>
+<h3>Test case 40</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>Entry entry0 = simpleEntryGroup0.createEntry(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Track track0 = new Track((-756), &quot;repeatCount&quot;, &quot;F[KG+?Bk;,k4r&quot;, true, true, false, entry0);
+<span class="nocode"><a name="4">  4: </a></span>Block block0 = new Block(&quot;F[KG+?Bk;,k4r&quot;, (-756), (-756), (Color) null, 773.2036F, track0);
+<span class="nocode"><a name="5">  5: </a></span>block0.getColour();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals((-756), block0.getBstart());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(773.2036F, block0.getStrokeSize(), 0.01F);
+<span class="nocode"><a name="8">  8: </a></span>assertFalse(block0.isDrawLabel());
+<span class="nocode"><a name="9">  9: </a></span>assertEquals((-756), block0.getBend());
+</pre>
+<h3>Test case 41</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Color color0 = Color.PINK;
+<span class="nocode"><a name="2">  2: </a></span>Block block0 = new Block(&quot;Tail&quot;, (-1735), 495, color0, (-1735), (Track) null);
+<span class="nocode"><a name="3">  3: </a></span>float float0 = block0.getStrokeSize();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-1735.0F), float0, 0.01F);
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(block0.isDrawLabel());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(495, block0.getBend());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals((-1735), block0.getBstart());
+</pre>
+<h3>Test case 42</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenericDocumentType genericDocumentType0 = new GenericDocumentType(&quot;&quot;, &quot;AW{&quot;, &quot;AW{&quot;);
+<span class="nocode"><a name="2">  2: </a></span>GenericDOMImplementation genericDOMImplementation0 = (GenericDOMImplementation)GenericDOMImplementation.getDOMImplementation();
+<span class="nocode"><a name="3">  3: </a></span>GenericDocument genericDocument0 = new GenericDocument(genericDocumentType0, genericDOMImplementation0);
+<span class="nocode"><a name="4">  4: </a></span>ImageHandlerBase64Encoder imageHandlerBase64Encoder0 = new ImageHandlerBase64Encoder();
+<span class="nocode"><a name="5">  5: </a></span>DefaultExtensionHandler defaultExtensionHandler0 = new DefaultExtensionHandler();
+<span class="nocode"><a name="6">  6: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(genericDocument0, imageHandlerBase64Encoder0, defaultExtensionHandler0, false);
+<span class="nocode"><a name="7">  7: </a></span>Color color0 = sVGGraphics2D0.getColor();
+<span class="nocode"><a name="8">  8: </a></span>Track track0 = new Track(4115.6682936, &quot;&quot;, false, false, (Entry) null);
+<span class="nocode"><a name="9">  9: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="10"> 10: </a></span>Block block0 = new Block(&quot;&quot;, 0, 0, color0, 0, track0, dNADraw0);
+<span class="nocode"><a name="11"> 11: </a></span>block0.getStrokeSize();
+<span class="nocode"><a name="12"> 12: </a></span>assertFalse(block0.isDrawLabel());
+<span class="nocode"><a name="13"> 13: </a></span>assertEquals(0, block0.getBend());
+<span class="nocode"><a name="14"> 14: </a></span>assertEquals(0, block0.getBstart());
+</pre>
+<h3>Test case 43</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JTable jTable0 = new JTable();
+<span class="nocode"><a name="2">  2: </a></span>ColorUIResource colorUIResource0 = (ColorUIResource)jTable0.getSelectionBackground();
+<span class="nocode"><a name="3">  3: </a></span>Track track0 = new Track(1436.835, (Entry) null);
+<span class="nocode"><a name="4">  4: </a></span>JembossParams jembossParams0 = new JembossParams();
+<span class="nocode"><a name="5">  5: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.getPrivateServers();
+<span class="nocode"><a name="6">  6: </a></span>DNADraw dNADraw0 = new DNADraw(vector0, vector0, vector0, vector0);
+<span class="nocode"><a name="7">  7: </a></span>Block block0 = new Block(&quot;/&quot;, 65, 65, colorUIResource0, 65, track0, dNADraw0);
+<span class="nocode"><a name="8">  8: </a></span>Track track1 = new Track(999.0, &quot;/&quot;, false, true, (Entry) null);
+<span class="nocode"><a name="9">  9: </a></span>block0.setTrack(track1);
+<span class="nocode"><a name="10"> 10: </a></span>block0.getTrack();
+<span class="nocode"><a name="11"> 11: </a></span>assertEquals(65, block0.getBend());
+<span class="nocode"><a name="12"> 12: </a></span>assertEquals(65, block0.getBstart());
+<span class="nocode"><a name="13"> 13: </a></span>assertFalse(block0.isDrawLabel());
+<span class="nocode"><a name="14"> 14: </a></span>assertEquals(65.0F, block0.getStrokeSize(), 0.01F);
+</pre>
+<h3>Test case 44</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JTable jTable0 = new JTable();
+<span class="nocode"><a name="2">  2: </a></span>ColorUIResource colorUIResource0 = (ColorUIResource)jTable0.getSelectionBackground();
+<span class="nocode"><a name="3">  3: </a></span>Track track0 = new Track(1436.835, (Entry) null);
+<span class="nocode"><a name="4">  4: </a></span>JembossParams jembossParams0 = new JembossParams();
+<span class="nocode"><a name="5">  5: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.getPrivateServers();
+<span class="nocode"><a name="6">  6: </a></span>DNADraw dNADraw0 = new DNADraw(vector0, vector0, vector0, vector0);
+<span class="nocode"><a name="7">  7: </a></span>Block block0 = new Block(&quot;7&quot;, 65, 65, colorUIResource0, 65, track0, dNADraw0);
+<span class="nocode"><a name="8">  8: </a></span>Track track1 = new Track(999.0, &quot;7&quot;, false, false, (Entry) null);
+<span class="nocode"><a name="9">  9: </a></span>block0.setTrack(track1);
+<span class="nocode"><a name="10"> 10: </a></span>block0.getTrack();
+<span class="nocode"><a name="11"> 11: </a></span>assertEquals(65.0F, block0.getStrokeSize(), 0.01F);
+<span class="nocode"><a name="12"> 12: </a></span>assertEquals(65, block0.getBstart());
+<span class="nocode"><a name="13"> 13: </a></span>assertFalse(block0.isDrawLabel());
+<span class="nocode"><a name="14"> 14: </a></span>assertEquals(65, block0.getBend());
+</pre>
+<h3>Test case 45</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Color color0 = Color.RED;
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases((Sequence) null);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Entry entry0 = simpleEntryGroup0.createEntry();
+<span class="nocode"><a name="5">  5: </a></span>Track track0 = new Track(2795, entry0);
+<span class="nocode"><a name="6">  6: </a></span>Object[][] objectArray0 = new Object[7][3];
+<span class="nocode"><a name="7">  7: </a></span>Object[] objectArray1 = new Object[4];
+<span class="nocode"><a name="8">  8: </a></span>DefaultTableModel defaultTableModel0 = new DefaultTableModel(objectArray0, objectArray1);
+<span class="nocode"><a name="9">  9: </a></span>Vector&lt;Object&gt; vector0 = defaultTableModel0.getDataVector();
+<span class="nocode"><a name="10"> 10: </a></span>DNADraw dNADraw0 = new DNADraw(vector0, vector0, vector0, vector0);
+<span class="nocode"><a name="11"> 11: </a></span>Block block0 = new Block(&quot; bases of selection:\n&quot;, 2795, 2795, color0, 2795, track0, dNADraw0);
+<span class="nocode"><a name="12"> 12: </a></span>Point[] pointArray0 = block0.getLinePoints((-130));
+<span class="nocode"><a name="13"> 13: </a></span>assertEquals(2795, block0.getBend());
+<span class="nocode"><a name="14"> 14: </a></span>assertNotNull(pointArray0);
+<span class="nocode"><a name="15"> 15: </a></span>assertEquals(2795, block0.getBstart());
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.circular.Block
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.circular.Block
+<li>Size: 45
+<li>Length: 338
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.5546123961757129
+<li>BranchCoverage: 0.31386861313868614
+<li>MethodCoverage: 0.972972972972973
+<li>OutputCoverage: 0.5
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

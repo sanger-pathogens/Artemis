@@ -1,0 +1,137 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.components.genebuilder.AutoCompleteComboDocument
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.components.genebuilder.AutoCompleteComboDocument: 0.8518605990783411</ul>
+<ul>
+<li>289.1111111111111 fitness evaluations, 0 generations, null statements, 10 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = new String[3];
+<span class="nocode"><a name="2">  2: </a></span>stringArray0[0] = &quot;uk.ac.sanger.artemis.components.genebuilder.AutoCompleteComboDocument&quot;;
+<span class="nocode"><a name="3">  3: </a></span>stringArray0[1] = &quot;h`&quot;;
+<span class="nocode"><a name="4">  4: </a></span>stringArray0[2] = &quot;&quot;;
+<span class="nocode"><a name="5">  5: </a></span>JExtendedComboBox jExtendedComboBox0 = new JExtendedComboBox(stringArray0, true);
+<span class="nocode"><a name="6">  6: </a></span>AutoCompleteComboDocument autoCompleteComboDocument0 = new AutoCompleteComboDocument(jExtendedComboBox0);
+<span class="nocode"><a name="7">  7: </a></span>StyleContext styleContext0 = StyleContext.getDefaultStyleContext();
+<span class="nocode"><a name="8">  8: </a></span>StyleContext.NamedStyle styleContext_NamedStyle0 = styleContext0.new NamedStyle();
+<span class="nocode"><a name="9">  9: </a></span>autoCompleteComboDocument0.insertString(8, &quot;C5TR=%@vez1&gt;'V~}Hc&quot;, styleContext_NamedStyle0);
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JExtendedComboBox jExtendedComboBox0 = new JExtendedComboBox(true);
+<span class="nocode"><a name="2">  2: </a></span>AutoCompleteComboDocument autoCompleteComboDocument0 = new AutoCompleteComboDocument(jExtendedComboBox0);
+<span class="nocode"><a name="3">  3: </a></span>autoCompleteComboDocument0.selecting = true;
+<span class="nocode"><a name="4">  4: </a></span>autoCompleteComboDocument0.remove((-1888), 0);
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JExtendedComboBox jExtendedComboBox0 = new JExtendedComboBox(true);
+<span class="nocode"><a name="2">  2: </a></span>AutoCompleteComboDocument autoCompleteComboDocument0 = new AutoCompleteComboDocument(jExtendedComboBox0);
+<span class="nocode"><a name="3">  3: </a></span>autoCompleteComboDocument0.selecting = true;
+<span class="nocode"><a name="4">  4: </a></span>StyleContext styleContext0 = StyleContext.getDefaultStyleContext();
+<span class="nocode"><a name="5">  5: </a></span>AttributeSet attributeSet0 = styleContext0.getEmptySet();
+<span class="nocode"><a name="6">  6: </a></span>StyleContext.SmallAttributeSet styleContext_SmallAttributeSet0 = (StyleContext.SmallAttributeSet)styleContext0.removeAttribute(attributeSet0, autoCompleteComboDocument0);
+<span class="nocode"><a name="7">  7: </a></span>autoCompleteComboDocument0.insertString(0, &quot;SEPARATOR&quot;, styleContext_SmallAttributeSet0);
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = new String[3];
+<span class="nocode"><a name="2">  2: </a></span>JExtendedComboBox jExtendedComboBox0 = new JExtendedComboBox(stringArray0);
+<span class="nocode"><a name="3">  3: </a></span>AutoCompleteComboDocument autoCompleteComboDocument0 = new AutoCompleteComboDocument(jExtendedComboBox0);
+<span class="nocode"><a name="4">  4: </a></span>autoCompleteComboDocument0.insertString((-408), &quot;&quot;, (AttributeSet) null);
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Object[][] objectArray0 = new Object[8][6];
+<span class="nocode"><a name="2">  2: </a></span>DefaultTableModel defaultTableModel0 = new DefaultTableModel(objectArray0, objectArray0[1]);
+<span class="nocode"><a name="3">  3: </a></span>Vector&lt;Object&gt; vector0 = defaultTableModel0.getDataVector();
+<span class="nocode"><a name="4">  4: </a></span>JExtendedComboBox jExtendedComboBox0 = new JExtendedComboBox(vector0);
+<span class="nocode"><a name="5">  5: </a></span>AutoCompleteComboDocument autoCompleteComboDocument0 = new AutoCompleteComboDocument(jExtendedComboBox0);
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>AutoCompleteComboDocument autoCompleteComboDocument0 = new AutoCompleteComboDocument((JComboBox) null);
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = new String[7];
+<span class="nocode"><a name="2">  2: </a></span>stringArray0[0] = &quot;nw ~)Hw(^XD6,_eh&quot;;
+<span class="nocode"><a name="3">  3: </a></span>JExtendedComboBox jExtendedComboBox0 = new JExtendedComboBox(stringArray0);
+<span class="nocode"><a name="4">  4: </a></span>AutoCompleteComboDocument autoCompleteComboDocument0 = new AutoCompleteComboDocument(jExtendedComboBox0);
+<span class="nocode"><a name="5">  5: </a></span>autoCompleteComboDocument0.insertString((-408), &quot;&quot;, (AttributeSet) null);
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = new String[2];
+<span class="nocode"><a name="2">  2: </a></span>JExtendedComboBox jExtendedComboBox0 = new JExtendedComboBox(stringArray0, true);
+<span class="nocode"><a name="3">  3: </a></span>AutoCompleteComboDocument autoCompleteComboDocument0 = new AutoCompleteComboDocument(jExtendedComboBox0);
+<span class="nocode"><a name="4">  4: </a></span>SimpleAttributeSet simpleAttributeSet0 = new SimpleAttributeSet();
+<span class="nocode"><a name="5">  5: </a></span>autoCompleteComboDocument0.insertString((-125), &quot;[N&gt;S{tfRjbo^uEc3=?&quot;, simpleAttributeSet0);
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JComboBox&lt;Canvas&gt; jComboBox0 = new JComboBox&lt;Canvas&gt;();
+<span class="nocode"><a name="2">  2: </a></span>AutoCompleteComboDocument autoCompleteComboDocument0 = new AutoCompleteComboDocument(jComboBox0);
+<span class="nocode"><a name="3">  3: </a></span>autoCompleteComboDocument0.remove(934, 8);
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Vector&lt;Canvas&gt; vector0 = new Vector&lt;Canvas&gt;();
+<span class="nocode"><a name="2">  2: </a></span>JExtendedComboBox jExtendedComboBox0 = new JExtendedComboBox(vector0);
+<span class="nocode"><a name="3">  3: </a></span>AutoCompleteComboDocument autoCompleteComboDocument0 = new AutoCompleteComboDocument(jExtendedComboBox0);
+<span class="nocode"><a name="4">  4: </a></span>autoCompleteComboDocument0.hitBackspaceOnSelection = true;
+<span class="nocode"><a name="5">  5: </a></span>autoCompleteComboDocument0.remove(0, (-4695));
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.components.genebuilder.AutoCompleteComboDocument
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.components.genebuilder.AutoCompleteComboDocument
+<li>Size: 10
+<li>Length: 48
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.8518605990783411
+<li>BranchCoverage: 0.62
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 1.0
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

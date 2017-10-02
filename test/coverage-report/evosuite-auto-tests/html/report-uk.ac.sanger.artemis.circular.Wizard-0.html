@@ -1,0 +1,142 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.circular.Wizard
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.circular.Wizard: 0.39267509819616264</ul>
+<ul>
+<li>1247.7840575985813 fitness evaluations, 0 generations, null statements, 14 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Wizard wizard0 = new Wizard(&quot;&quot;);
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, (FeaturePredicate) null, &quot;uk.ac.sanger.artemis.circular.GCGraph&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = simpleEntryGroup0.createEntry();
+<span class="nocode"><a name="4">  4: </a></span>Wizard.getDNADrawFromArtemisEntry((DNADraw) null, filteredEntryGroup0, entry0);
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="2">  2: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;E^q?.8YCAB7!7)0I&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="4">  4: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="5">  5: </a></span>FeatureVector featureVector0 = new FeatureVector();
+<span class="nocode"><a name="6">  6: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, &quot;E^q?.8YCAB7!7)0I&quot;);
+<span class="nocode"><a name="7">  7: </a></span>Entry entry0 = simpleEntryGroup0.createEntry(&quot;{X(aZ1k`bl&lt;R&quot;);
+<span class="nocode"><a name="8">  8: </a></span>Entry entry1 = entry0.truncate(bases0, (Range) null);
+<span class="nocode"><a name="9">  9: </a></span>filteredEntryGroup0.createFeature();
+<span class="nocode"><a name="10"> 10: </a></span>DNADraw dNADraw1 = Wizard.getDNADrawFromArtemisEntry(dNADraw0, filteredEntryGroup0, entry1);
+<span class="nocode"><a name="11"> 11: </a></span>assertSame(dNADraw1, dNADraw0);
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Wizard wizard0 = new Wizard((DNADraw) null);
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="2">  2: </a></span>Wizard wizard0 = new Wizard(dNADraw0);
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Wizard.deleteTrack(0);
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BufferedReader bufferedReader0 = Wizard.getReader(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertNull(bufferedReader0);
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BufferedReader bufferedReader0 = Wizard.getReader(&quot;.gz&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertNull(bufferedReader0);
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Wizard.deleteTrack(1431);
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>simpleEntryGroup0.createEntry();
+<span class="nocode"><a name="3">  3: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="4">  4: </a></span>Wizard.getDNADrawFromFile(dNADraw0);
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Wizard.getReader((String) null);
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="2">  2: </a></span>Entry.newEntry((Bases) null);
+<span class="nocode"><a name="3">  3: </a></span>Wizard.readEntry(dNADraw0, (Bases) null);
+</pre>
+<h3>Test case 13</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;E^q?.8YCAB7!7)0I&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Entry entry0 = simpleEntryGroup0.createEntry(&quot;{X(aZ1k`bl&lt;R&quot;);
+<span class="nocode"><a name="5">  5: </a></span>Track track0 = Wizard.addTrack(entry0);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0.7, track0.getPosition(), 0.01);
+</pre>
+<h3>Test case 14</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Track[] trackArray0 = Wizard.getTracks();
+<span class="nocode"><a name="2">  2: </a></span>assertNotNull(trackArray0);
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.circular.Wizard
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.circular.Wizard
+<li>Size: 14
+<li>Length: 36
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.39267509819616264
+<li>BranchCoverage: 0.15736040609137056
+<li>MethodCoverage: 0.8181818181818182
+<li>OutputCoverage: 0.13636363636363635
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.components.EntryGroupMenu
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.components.EntryGroupMenu: 0.7117615961749082</ul>
+<ul>
+<li>385.3491228070176 fitness evaluations, 0 generations, null statements, 11 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>EntryGroupMenu entryGroupMenu0 = new EntryGroupMenu((JFrame) null, simpleEntryGroup0, &quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Key key0 = Key.CDS;
+<span class="nocode"><a name="4">  4: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate(key0, &quot;&quot;, &quot;&quot;, true, true, true);
+<span class="nocode"><a name="5">  5: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureKeyQualifierPredicate0, &quot;%]&quot;);
+<span class="nocode"><a name="6">  6: </a></span>Entry entry0 = filteredEntryGroup0.createEntry((String) null);
+<span class="nocode"><a name="7">  7: </a></span>EntryGroupChangeEvent entryGroupChangeEvent0 = new EntryGroupChangeEvent(simpleEntryGroup0, entry0, 1816);
+<span class="nocode"><a name="8">  8: </a></span>entryGroupMenu0.entryGroupChanged(entryGroupChangeEvent0);
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = new Key(&quot;rGOfQ't/]^hJGeZZ&quot;);
+<span class="nocode"><a name="3">  3: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate(key0, &quot;rGOfQ't/]^hJGeZZ&quot;, &quot;&quot;, false, false);
+<span class="nocode"><a name="4">  4: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureKeyQualifierPredicate0, &quot;)Y[QMXX?gSxE&quot;);
+<span class="nocode"><a name="5">  5: </a></span>EntryGroupMenu entryGroupMenu0 = new EntryGroupMenu((JFrame) null, filteredEntryGroup0);
+<span class="nocode"><a name="6">  6: </a></span>Entry entry0 = simpleEntryGroup0.createEntry(&quot;)Y[QMXX?gSxE&quot;);
+<span class="nocode"><a name="7">  7: </a></span>EntryChangeEvent entryChangeEvent0 = new EntryChangeEvent(entry0, (Feature) null, false, 44);
+<span class="nocode"><a name="8">  8: </a></span>entryGroupMenu0.entryChanged(entryChangeEvent0);
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(4, EntryChangeEvent.HEADER_CHANGED);
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>EntryGroupMenu entryGroupMenu0 = new EntryGroupMenu((JFrame) null, simpleEntryGroup0);
+<span class="nocode"><a name="3">  3: </a></span>EntryGroupChangeEvent entryGroupChangeEvent0 = new EntryGroupChangeEvent(simpleEntryGroup0, (Entry) null, 1);
+<span class="nocode"><a name="4">  4: </a></span>entryGroupMenu0.entryGroupChanged(entryGroupChangeEvent0);
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(entryGroupMenu0.getFocusTraversalKeysEnabled());
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>FeatureVector featureVector0 = new FeatureVector();
+<span class="nocode"><a name="3">  3: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, &quot;kE94`T&quot;);
+<span class="nocode"><a name="4">  4: </a></span>EntryGroupMenu entryGroupMenu0 = new EntryGroupMenu((JFrame) null, filteredEntryGroup0);
+<span class="nocode"><a name="5">  5: </a></span>EntryGroupChangeEvent entryGroupChangeEvent0 = new EntryGroupChangeEvent(filteredEntryGroup0, (Entry) null, 3);
+<span class="nocode"><a name="6">  6: </a></span>entryGroupMenu0.entryGroupChanged(entryGroupChangeEvent0);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(2, EntryGroupChangeEvent.ENTRY_ADDED);
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>EntryGroupMenu entryGroupMenu0 = new EntryGroupMenu((JFrame) null, simpleEntryGroup0, &quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Key key0 = Key.CDS;
+<span class="nocode"><a name="4">  4: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate(key0, &quot;&quot;, &quot;&quot;, true, true, true);
+<span class="nocode"><a name="5">  5: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureKeyQualifierPredicate0, &quot;%]&quot;);
+<span class="nocode"><a name="6">  6: </a></span>Entry entry0 = filteredEntryGroup0.createEntry((String) null);
+<span class="nocode"><a name="7">  7: </a></span>EntryChangeEvent entryChangeEvent0 = new EntryChangeEvent(entry0, (Feature) null, true, 3);
+<span class="nocode"><a name="8">  8: </a></span>entryGroupMenu0.entryChanged(entryChangeEvent0);
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(3, entryChangeEvent0.getType());
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>EntryGroupMenu entryGroupMenu0 = new EntryGroupMenu((JFrame) null, simpleEntryGroup0);
+<span class="nocode"><a name="3">  3: </a></span>FeatureVector featureVector0 = new FeatureVector();
+<span class="nocode"><a name="4">  4: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, &quot;&quot;);
+<span class="nocode"><a name="5">  5: </a></span>Entry entry0 = filteredEntryGroup0.createEntry(&quot;e@k2_&quot;);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, entry0.getFeatureCount());
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EntryGroupMenu entryGroupMenu0 = new EntryGroupMenu((JFrame) null, (EntryGroup) null);
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EntryGroupMenu entryGroupMenu0 = new EntryGroupMenu((JFrame) null, (EntryGroup) null, &quot;grab failed - nothing is selected&quot;);
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = new Key(&quot;rGOfQ't/]^hJGeZZ&quot;);
+<span class="nocode"><a name="3">  3: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate(key0, &quot;rGOfQ't/]^hJGeZZ&quot;, &quot;&quot;, false, false);
+<span class="nocode"><a name="4">  4: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureKeyQualifierPredicate0, &quot;)Y[QMXX?gSxE&quot;);
+<span class="nocode"><a name="5">  5: </a></span>EntryGroupMenu entryGroupMenu0 = new EntryGroupMenu((JFrame) null, filteredEntryGroup0);
+<span class="nocode"><a name="6">  6: </a></span>entryGroupMenu0.entryChanged((EntryChangeEvent) null);
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>EntryGroupMenu entryGroupMenu0 = new EntryGroupMenu((JFrame) null, simpleEntryGroup0);
+<span class="nocode"><a name="3">  3: </a></span>entryGroupMenu0.entryGroupChanged((EntryGroupChangeEvent) null);
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = new Key(&quot;rGOfQ't/]^hJGeZZ&quot;);
+<span class="nocode"><a name="3">  3: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate(key0, &quot;rGOfQ't/]^hJGeZZ&quot;, &quot;&quot;, false, false);
+<span class="nocode"><a name="4">  4: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureKeyQualifierPredicate0, &quot;)Y[QMXX?gSxE&quot;);
+<span class="nocode"><a name="5">  5: </a></span>EntryGroupMenu entryGroupMenu0 = new EntryGroupMenu((JFrame) null, filteredEntryGroup0);
+<span class="nocode"><a name="6">  6: </a></span>Entry entry0 = simpleEntryGroup0.createEntry(&quot;)Y[QMXX?gSxE&quot;);
+<span class="nocode"><a name="7">  7: </a></span>EntryChangeEvent entryChangeEvent0 = new EntryChangeEvent(filteredEntryGroup0, entry0, (-407));
+<span class="nocode"><a name="8">  8: </a></span>entryGroupMenu0.entryChanged(entryChangeEvent0);
+<span class="nocode"><a name="9">  9: </a></span>assertFalse(entryGroupMenu0.isFocusCycleRoot());
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.components.EntryGroupMenu
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.components.EntryGroupMenu
+<li>Size: 11
+<li>Length: 58
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.7117615961749082
+<li>BranchCoverage: 0.43478260869565216
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 1.0
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

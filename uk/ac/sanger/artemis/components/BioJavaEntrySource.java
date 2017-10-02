@@ -39,7 +39,6 @@ import uk.ac.sanger.artemis.sequence.*;
  *  object.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: BioJavaEntrySource.java,v 1.1 2004-06-09 09:46:06 tjc Exp $
  **/
 
 public class BioJavaEntrySource implements EntrySource 
@@ -52,8 +51,7 @@ public class BioJavaEntrySource implements EntrySource
   }
 
   /**
-   *  Get an Entry object from this source (by reading from a file, reading
-   *  from a CORBA server, or whatever).
+   *  Get an Entry object from this source (by reading from a file or whatever).
    *  @param bases The Bases object to pass to the Entry constructor.
    *  @param show_progress If true a InputStreamProgressDialog will be shown
    *    while loading.  (Not implemented)
@@ -76,8 +74,7 @@ public class BioJavaEntrySource implements EntrySource
     }
 
   /**
-   *  Get an Entry object from this source (by reading from a file, reading
-   *  from a CORBA server, or whatever).
+   *  Get an Entry object from this source (by reading from a file or whatever).
    *  @param bases The Bases object to pass to the Entry constructor.
    *  @param show_progress If true a InputStreamProgressDialog will be shown
    *    while loading.  (Not implemented)
@@ -93,9 +90,8 @@ public class BioJavaEntrySource implements EntrySource
     }
 
   /**
-   *  Get an Entry object from this source (by reading from a file, reading
-   *  from a CORBA server, or whatever).  A Bases object will be created for
-   *  the sequence of the new Entry.
+   *  Get an Entry object from this source (by reading from a file or whatever).  
+   *  A Bases object will be created for the sequence of the new Entry.
    *  @param show_progress If true a InputStreamProgressDialog will be shown
    *    while loading.  (Not implemented)
    *  @exception OutOfRangeException Thrown if one of the features in
@@ -113,9 +109,8 @@ public class BioJavaEntrySource implements EntrySource
     }
 
   /**
-   *  Get an Entry object from this source (by reading from a file, reading
-   *  from a CORBA server, or whatever).  A Bases object will be created for
-   *  the sequence of the new Entry.
+   *  Get an Entry object from this source (by reading from a file or whatever).  
+   *  A Bases object will be created for the sequence of the new Entry.
    *  @param show_progress If true a InputStreamProgressDialog will be shown
    *    while loading.  (Not implemented)
    *  @exception OutOfRangeException Thrown if one of the features in

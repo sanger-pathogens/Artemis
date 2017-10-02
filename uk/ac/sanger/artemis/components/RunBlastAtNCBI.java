@@ -232,6 +232,41 @@ class RunBlastAtNCBI extends Thread
     return null;
   }
   
+  static String constructRequest(
+		 	String 	programName,
+		  	String 	residues,
+		  	String 	database,
+		  	String 	hitListSize,
+		  	String 	filter,
+		  	String 	expect,
+		  	String	service,
+		  	String	gapOpen,
+		  	String	gapClose) throws UnsupportedEncodingException
+  {
+	  String request = URLEncoder.encode("CMD", "UTF-8") + "=" + 
+	             URLEncoder.encode("Put", "UTF-8");
+	  
+	  request = addData(request, "QUERY", residues);
+	  request = addData(request, "DATABASE", database);
+	  request = addData(request, "HITLIST_SIZE", hitListSize);
+      if(filter != null)
+      {
+    	  	request = addData(request, "FILTER", filter);
+      }
+      request = addData(request, "EXPECT", expect);
+      request = addData(request, "FORMAT_TYPE", "HTML");
+      request = addData(request, "PROGRAM", programName);
+      request = addData(request, "CLIENT", "web");
+      request = addData(request, "SERVICE", service);
+      
+      if("megablast".equals(service))
+    	  	request = addData(request, "MEGABLAST", "yes");
+      else
+    	  	request = addData(request, "GAPCOSTS", gapOpen+" "+gapClose);
+	  
+	  return request;
+  }
+  
   /**
    * Blast filter options.
    * @param filterField

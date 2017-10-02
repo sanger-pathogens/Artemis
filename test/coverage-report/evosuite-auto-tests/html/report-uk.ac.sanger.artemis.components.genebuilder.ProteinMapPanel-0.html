@@ -1,0 +1,168 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.components.genebuilder.ProteinMapPanel
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.components.genebuilder.ProteinMapPanel: 0.26256814966981157</ul>
+<ul>
+<li>1811.6060349689792 fitness evaluations, 0 generations, null statements, 11 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamFeature emblStreamFeature0 = new EmblStreamFeature();
+<span class="nocode"><a name="2">  2: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="3">  3: </a></span>Clipboard clipboard0 = new Clipboard(&quot;m8&quot;);
+<span class="nocode"><a name="4">  4: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="5">  5: </a></span>ProteinMapPanel proteinMapPanel0 = new ProteinMapPanel(emblStreamFeature0, chadoCanonicalGene0, selection0);
+<span class="nocode"><a name="6">  6: </a></span>GenericDOMImplementation genericDOMImplementation0 = new GenericDOMImplementation();
+<span class="nocode"><a name="7">  7: </a></span>GenericDocumentType genericDocumentType0 = new GenericDocumentType(&quot;m8&quot;, (String) null, (String) null);
+<span class="nocode"><a name="8">  8: </a></span>GenericDocument genericDocument0 = (GenericDocument)genericDOMImplementation0.createDocument((String) null, &quot;transmembrane&quot;, genericDocumentType0);
+<span class="nocode"><a name="9">  9: </a></span>ImageHandlerPNGEncoder imageHandlerPNGEncoder0 = new ImageHandlerPNGEncoder(&quot;&quot;, &quot;m8&quot;);
+<span class="nocode"><a name="10"> 10: </a></span>SVGGeneratorContext sVGGeneratorContext0 = SVGGeneratorContext.createDefault(genericDocument0);
+<span class="nocode"><a name="11"> 11: </a></span>DefaultExtensionHandler defaultExtensionHandler0 = (DefaultExtensionHandler)sVGGeneratorContext0.getExtensionHandler();
+<span class="nocode"><a name="12"> 12: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(genericDocument0, imageHandlerPNGEncoder0, defaultExtensionHandler0, true);
+<span class="nocode"><a name="13"> 13: </a></span>Qualifier qualifier0 = new Qualifier(&quot;ISO-8859-1&quot;, (StringVector) null);
+<span class="nocode"><a name="14"> 14: </a></span>proteinMapPanel0.drawGPIArrow(sVGGraphics2D0, qualifier0, (-2536), (short)8, (short)2, (-1100));
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>Clipboard clipboard0 = new Clipboard(&quot;org.biojava.bio.symbol.IntegerAlphabet$SubIntegerAlphabet&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="4">  4: </a></span>ProteinMapPanel proteinMapPanel0 = new ProteinMapPanel((Feature) null, chadoCanonicalGene0, selection0);
+<span class="nocode"><a name="5">  5: </a></span>GenericDocumentType genericDocumentType0 = new GenericDocumentType((String) null, (String) null, &quot;K{&quot;);
+<span class="nocode"><a name="6">  6: </a></span>GenericDOMImplementation genericDOMImplementation0 = (GenericDOMImplementation)GenericDOMImplementation.getDOMImplementation();
+<span class="nocode"><a name="7">  7: </a></span>GenericDocument genericDocument0 = new GenericDocument(genericDocumentType0, genericDOMImplementation0);
+<span class="nocode"><a name="8">  8: </a></span>SVGGeneratorContext sVGGeneratorContext0 = SVGGeneratorContext.createDefault(genericDocument0);
+<span class="nocode"><a name="9">  9: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(sVGGeneratorContext0, true);
+<span class="nocode"><a name="10"> 10: </a></span>proteinMapPanel0.paintComponent(sVGGraphics2D0);
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature();
+<span class="nocode"><a name="2">  2: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="3">  3: </a></span>Clipboard clipboard0 = new Clipboard(&quot;&quot;);
+<span class="nocode"><a name="4">  4: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="5">  5: </a></span>ProteinMapPanel proteinMapPanel0 = new ProteinMapPanel(genbankStreamFeature0, chadoCanonicalGene0, selection0);
+<span class="nocode"><a name="6">  6: </a></span>GenericDocumentType genericDocumentType0 = new GenericDocumentType(&quot;&quot;, &quot;&quot;, &quot;polypeptide_domain&quot;);
+<span class="nocode"><a name="7">  7: </a></span>GenericDOMImplementation genericDOMImplementation0 = (GenericDOMImplementation)GenericDOMImplementation.getDOMImplementation();
+<span class="nocode"><a name="8">  8: </a></span>GenericDocument genericDocument0 = new GenericDocument(genericDocumentType0, genericDOMImplementation0);
+<span class="nocode"><a name="9">  9: </a></span>SVGGeneratorContext sVGGeneratorContext0 = SVGGeneratorContext.createDefault(genericDocument0);
+<span class="nocode"><a name="10"> 10: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(sVGGeneratorContext0, true);
+<span class="nocode"><a name="11"> 11: </a></span>proteinMapPanel0.drawPrediction(genbankStreamFeature0, sVGGraphics2D0, (short)4, (short)8, 0, 0, proteinMapPanel0.TMHMM);
+<span class="nocode"><a name="12"> 12: </a></span>assertEquals(3, SVGGraphics2D.DEFAULT_MAX_GC_OVERRIDES);
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamFeature emblStreamFeature0 = new EmblStreamFeature();
+<span class="nocode"><a name="2">  2: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="3">  3: </a></span>Clipboard clipboard0 = new Clipboard(&quot;6{p=TDFQe&quot;);
+<span class="nocode"><a name="4">  4: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="5">  5: </a></span>ProteinMapPanel proteinMapPanel0 = new ProteinMapPanel(emblStreamFeature0, chadoCanonicalGene0, selection0);
+<span class="nocode"><a name="6">  6: </a></span>MouseEvent mouseEvent0 = new MouseEvent(proteinMapPanel0, 1075, 1539L, 1075, 1075, (-856), (-856), false);
+<span class="nocode"><a name="7">  7: </a></span>String string0 = proteinMapPanel0.getToolTipText(mouseEvent0);
+<span class="nocode"><a name="8">  8: </a></span>assertNull(string0);
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier(&quot;Yph_fJQEjJg$V`s&quot;, (StringVector) null);
+<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = ProteinMapPanel.isProteinMapElement(qualifier0);
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="3">  3: </a></span>ProteinMapPanel proteinMapPanel0 = new ProteinMapPanel((Feature) null, (ChadoCanonicalGene) null, selection0);
+<span class="nocode"><a name="4">  4: </a></span>GenericDocumentType genericDocumentType0 = new GenericDocumentType(&quot;&quot;, &quot;&quot;, &quot;signal_peptide&quot;);
+<span class="nocode"><a name="5">  5: </a></span>GenericDOMImplementation genericDOMImplementation0 = new GenericDOMImplementation();
+<span class="nocode"><a name="6">  6: </a></span>GenericDocument genericDocument0 = new GenericDocument(genericDocumentType0, genericDOMImplementation0);
+<span class="nocode"><a name="7">  7: </a></span>SVGGeneratorContext sVGGeneratorContext0 = SVGGeneratorContext.createDefault(genericDocument0);
+<span class="nocode"><a name="8">  8: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(sVGGeneratorContext0, true);
+<span class="nocode"><a name="9">  9: </a></span>proteinMapPanel0.drawPrediction((Feature) null, sVGGraphics2D0, (short)32, 3289, 660, 3289, proteinMapPanel0.TMHMM);
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ProteinMapPanel.getProteinMapQualifiers((Feature) null);
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature();
+<span class="nocode"><a name="2">  2: </a></span>GFFStreamFeature gFFStreamFeature0 = new GFFStreamFeature(genbankStreamFeature0);
+<span class="nocode"><a name="3">  3: </a></span>ProteinMapPanel.getProteinsWithProteinMapElement(gFFStreamFeature0);
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>Clipboard clipboard0 = new Clipboard(&quot;&lt;%ZJ&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="4">  4: </a></span>ProteinMapPanel proteinMapPanel0 = new ProteinMapPanel((Feature) null, chadoCanonicalGene0, selection0);
+<span class="nocode"><a name="5">  5: </a></span>proteinMapPanel0.getToolTipText((MouseEvent) null);
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ProteinMapPanel.isProteinMapElement((Qualifier) null);
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>Clipboard clipboard0 = new Clipboard(&quot;/=zC]&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="4">  4: </a></span>ProteinMapPanel proteinMapPanel0 = new ProteinMapPanel((Feature) null, chadoCanonicalGene0, selection0);
+<span class="nocode"><a name="5">  5: </a></span>GenericDocumentType genericDocumentType0 = new GenericDocumentType(&quot;polypeptide_domain&quot;, &quot;polypeptide_domain&quot;, &quot;/=zC]&quot;);
+<span class="nocode"><a name="6">  6: </a></span>GenericDOMImplementation genericDOMImplementation0 = (GenericDOMImplementation)GenericDOMImplementation.getDOMImplementation();
+<span class="nocode"><a name="7">  7: </a></span>GenericDocument genericDocument0 = new GenericDocument(genericDocumentType0, genericDOMImplementation0);
+<span class="nocode"><a name="8">  8: </a></span>SVGGeneratorContext sVGGeneratorContext0 = SVGGeneratorContext.createDefault(genericDocument0);
+<span class="nocode"><a name="9">  9: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(sVGGeneratorContext0, false);
+<span class="nocode"><a name="10"> 10: </a></span>proteinMapPanel0.drawDomain((Feature) null, sVGGraphics2D0, (short)2, (short)1, (-2469), (-502));
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.components.genebuilder.ProteinMapPanel
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.components.genebuilder.ProteinMapPanel
+<li>Size: 11
+<li>Length: 73
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.26256814966981157
+<li>BranchCoverage: 0.0546875
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 0.07692307692307693
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

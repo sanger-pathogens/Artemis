@@ -1,0 +1,113 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.circular.PrintDNAImage
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.circular.PrintDNAImage: 0.272700474707774</ul>
+<ul>
+<li>245.2402912621359 fitness evaluations, 0 generations, null statements, 6 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="2">  2: </a></span>PrintDNAImage printDNAImage0 = new PrintDNAImage(dNADraw0);
+<span class="nocode"><a name="3">  3: </a></span>GenericDOMImplementation genericDOMImplementation0 = (GenericDOMImplementation)GenericDOMImplementation.getDOMImplementation();
+<span class="nocode"><a name="4">  4: </a></span>GenericDocument genericDocument0 = new GenericDocument((DocumentType) null, genericDOMImplementation0);
+<span class="nocode"><a name="5">  5: </a></span>SVGGeneratorContext sVGGeneratorContext0 = SVGGeneratorContext.createDefault(genericDocument0);
+<span class="nocode"><a name="6">  6: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(sVGGeneratorContext0, false);
+<span class="nocode"><a name="7">  7: </a></span>DebugGraphics debugGraphics0 = new DebugGraphics(sVGGraphics2D0);
+<span class="nocode"><a name="8">  8: </a></span>printDNAImage0.paintComponent(debugGraphics0);
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="2">  2: </a></span>PrintDNAImage printDNAImage0 = new PrintDNAImage(dNADraw0);
+<span class="nocode"><a name="3">  3: </a></span>printDNAImage0.getFormatDialog();
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Vector&lt;Checkbox&gt; vector0 = new Vector&lt;Checkbox&gt;();
+<span class="nocode"><a name="2">  2: </a></span>DNADraw dNADraw0 = new DNADraw(vector0, vector0, vector0, vector0);
+<span class="nocode"><a name="3">  3: </a></span>PrintDNAImage printDNAImage0 = new PrintDNAImage(dNADraw0);
+<span class="nocode"><a name="4">  4: </a></span>printDNAImage0.printAsSinglePage();
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Stack&lt;Checkbox&gt; stack0 = new Stack&lt;Checkbox&gt;();
+<span class="nocode"><a name="2">  2: </a></span>DNADraw dNADraw0 = new DNADraw(stack0, stack0, stack0, stack0);
+<span class="nocode"><a name="3">  3: </a></span>PrintDNAImage printDNAImage0 = new PrintDNAImage(dNADraw0);
+<span class="nocode"><a name="4">  4: </a></span>printDNAImage0.printPreview();
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="2">  2: </a></span>PrintDNAImage printDNAImage0 = new PrintDNAImage(dNADraw0);
+<span class="nocode"><a name="3">  3: </a></span>GenericDocumentType genericDocumentType0 = new GenericDocumentType(&quot;&quot;, &quot;&quot;, (String) null);
+<span class="nocode"><a name="4">  4: </a></span>GenericDOMImplementation genericDOMImplementation0 = new GenericDOMImplementation();
+<span class="nocode"><a name="5">  5: </a></span>GenericDocument genericDocument0 = new GenericDocument(genericDocumentType0, genericDOMImplementation0);
+<span class="nocode"><a name="6">  6: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(genericDocument0);
+<span class="nocode"><a name="7">  7: </a></span>printDNAImage0.paintComponent(sVGGraphics2D0);
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Vector&lt;Checkbox&gt; vector0 = new Vector&lt;Checkbox&gt;();
+<span class="nocode"><a name="2">  2: </a></span>DNADraw dNADraw0 = new DNADraw(vector0, vector0, vector0, vector0);
+<span class="nocode"><a name="3">  3: </a></span>PrintDNAImage printDNAImage0 = new PrintDNAImage(dNADraw0);
+<span class="nocode"><a name="4">  4: </a></span>GenericDocumentType genericDocumentType0 = new GenericDocumentType(&quot;iyi8rS&quot;, &quot;iyi8rS&quot;, &quot;iyi8rS&quot;);
+<span class="nocode"><a name="5">  5: </a></span>GenericDOMImplementation genericDOMImplementation0 = (GenericDOMImplementation)GenericDOMImplementation.getDOMImplementation();
+<span class="nocode"><a name="6">  6: </a></span>GenericDocument genericDocument0 = new GenericDocument(genericDocumentType0, genericDOMImplementation0);
+<span class="nocode"><a name="7">  7: </a></span>SVGGeneratorContext sVGGeneratorContext0 = SVGGeneratorContext.createDefault(genericDocument0);
+<span class="nocode"><a name="8">  8: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(sVGGeneratorContext0, true);
+<span class="nocode"><a name="9">  9: </a></span>printDNAImage0.paintComponent(sVGGraphics2D0);
+<span class="nocode"><a name="10"> 10: </a></span>assertFalse(printDNAImage0.isFocusTraversalPolicyProvider());
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.circular.PrintDNAImage
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.circular.PrintDNAImage
+<li>Size: 6
+<li>Length: 35
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.272700474707774
+<li>BranchCoverage: 0.2
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 0.0
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

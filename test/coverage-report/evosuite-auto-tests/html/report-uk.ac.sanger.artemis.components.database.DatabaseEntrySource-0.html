@@ -1,0 +1,195 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.components.database.DatabaseEntrySource
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.components.database.DatabaseEntrySource: 0.6970789858807775</ul>
+<ul>
+<li>100.08333333333334 fitness evaluations, 0 generations, null statements, 20 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseEntrySource databaseEntrySource0 = new DatabaseEntrySource();
+<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = databaseEntrySource0.isReadOnly();
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseEntrySource databaseEntrySource0 = new DatabaseEntrySource();
+<span class="nocode"><a name="2">  2: </a></span>databaseEntrySource0.getPfield();
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(databaseEntrySource0.isReadOnly());
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseEntrySource databaseEntrySource0 = new DatabaseEntrySource();
+<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(215);
+<span class="nocode"><a name="3">  3: </a></span>databaseEntrySource0.getEntry(&quot;&quot;, (String) null, (InputStreamProgressListener) null, range0);
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseEntrySource databaseEntrySource0 = new DatabaseEntrySource();
+<span class="nocode"><a name="2">  2: </a></span>databaseEntrySource0.getLocation();
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(databaseEntrySource0.isReadOnly());
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseEntrySource databaseEntrySource0 = new DatabaseEntrySource();
+<span class="nocode"><a name="2">  2: </a></span>databaseEntrySource0.setSplitGFF(true);
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(databaseEntrySource0.isReadOnly());
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseEntrySource databaseEntrySource0 = new DatabaseEntrySource();
+<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = databaseEntrySource0.isFullEntrySource();
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(databaseEntrySource0.isReadOnly());
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseEntrySource databaseEntrySource0 = new DatabaseEntrySource();
+<span class="nocode"><a name="2">  2: </a></span>databaseEntrySource0.getDatabaseDocument();
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseEntrySource databaseEntrySource0 = new DatabaseEntrySource();
+<span class="nocode"><a name="2">  2: </a></span>assertFalse(databaseEntrySource0.isReadOnly());
+<span class="nocode"><a name="3">  3: </a></span>
+<span class="nocode"><a name="4">  4: </a></span>databaseEntrySource0.setReadOnly(true);
+<span class="nocode"><a name="5">  5: </a></span>boolean boolean0 = databaseEntrySource0.isReadOnly();
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseEntrySource databaseEntrySource0 = new DatabaseEntrySource();
+<span class="nocode"><a name="2">  2: </a></span>databaseEntrySource0.getEntry(false);
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(databaseEntrySource0.isReadOnly());
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseEntrySource databaseEntrySource0 = new DatabaseEntrySource();
+<span class="nocode"><a name="2">  2: </a></span>databaseEntrySource0.getEntry(&quot;&quot;, &quot;&quot;, (InputStreamProgressListener) null);
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseEntrySource databaseEntrySource0 = new DatabaseEntrySource();
+<span class="nocode"><a name="2">  2: </a></span>String string0 = databaseEntrySource0.getSourceName();
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(databaseEntrySource0.isReadOnly());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;Database&quot;, string0);
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseEntrySource databaseEntrySource0 = new DatabaseEntrySource();
+<span class="nocode"><a name="2">  2: </a></span>databaseEntrySource0.getEntry((Bases) null, false);
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(databaseEntrySource0.isReadOnly());
+</pre>
+<h3>Test case 13</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseEntrySource databaseEntrySource0 = new DatabaseEntrySource();
+<span class="nocode"><a name="2">  2: </a></span>UI.UIMode uI_UIMode0 = UI.UIMode.CONSOLE;
+<span class="nocode"><a name="3">  3: </a></span>UI.mode = uI_UIMode0;
+<span class="nocode"><a name="4">  4: </a></span>databaseEntrySource0.setLocation(true);
+</pre>
+<h3>Test case 14</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseEntrySource databaseEntrySource0 = new DatabaseEntrySource();
+<span class="nocode"><a name="2">  2: </a></span>databaseEntrySource0.setLocation(false);
+<span class="nocode"><a name="3">  3: </a></span>databaseEntrySource0.getEntry(&quot;c&lt;y2{j&quot;, &quot;&quot;, (InputStreamProgressListener) null);
+</pre>
+<h3>Test case 15</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseEntrySource databaseEntrySource0 = new DatabaseEntrySource();
+<span class="nocode"><a name="2">  2: </a></span>UI.UIMode uI_UIMode0 = UI.UIMode.SCRIPT;
+<span class="nocode"><a name="3">  3: </a></span>UI.mode = uI_UIMode0;
+<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = databaseEntrySource0.setLocation(true);
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(databaseEntrySource0.isReadOnly());
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 16</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseEntrySource databaseEntrySource0 = new DatabaseEntrySource();
+<span class="nocode"><a name="2">  2: </a></span>JPasswordField jPasswordField0 = new JPasswordField();
+<span class="nocode"><a name="3">  3: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;&quot;, jPasswordField0, &quot;&quot;, &quot;&quot;);
+<span class="nocode"><a name="4">  4: </a></span>databaseEntrySource0.makeFromGff(databaseDocument0, &quot;mRNA&quot;, &quot;CC_&quot;);
+</pre>
+<h3>Test case 17</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseEntrySource databaseEntrySource0 = new DatabaseEntrySource();
+<span class="nocode"><a name="2">  2: </a></span>databaseEntrySource0.setLocation(true);
+</pre>
+<h3>Test case 18</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseEntrySource databaseEntrySource0 = new DatabaseEntrySource();
+<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = databaseEntrySource0.setLocation(false);
+<span class="nocode"><a name="3">  3: </a></span>assertTrue(boolean0);
+<span class="nocode"><a name="4">  4: </a></span>
+<span class="nocode"><a name="5">  5: </a></span>databaseEntrySource0.getDatabaseDocument();
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(databaseEntrySource0.isReadOnly());
+</pre>
+<h3>Test case 19</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseEntrySource databaseEntrySource0 = new DatabaseEntrySource();
+<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = databaseEntrySource0.setLocation(false);
+<span class="nocode"><a name="3">  3: </a></span>assertTrue(boolean0);
+<span class="nocode"><a name="4">  4: </a></span>
+<span class="nocode"><a name="5">  5: </a></span>databaseEntrySource0.getLocation();
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(databaseEntrySource0.isReadOnly());
+</pre>
+<h3>Test case 20</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseEntrySource databaseEntrySource0 = new DatabaseEntrySource();
+<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = databaseEntrySource0.setLocation(false);
+<span class="nocode"><a name="3">  3: </a></span>assertTrue(boolean0);
+<span class="nocode"><a name="4">  4: </a></span>
+<span class="nocode"><a name="5">  5: </a></span>databaseEntrySource0.getPfield();
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(databaseEntrySource0.isReadOnly());
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.components.database.DatabaseEntrySource
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.components.database.DatabaseEntrySource
+<li>Size: 20
+<li>Length: 52
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.6970789858807775
+<li>BranchCoverage: 0.7037037037037037
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 0.425531914893617
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

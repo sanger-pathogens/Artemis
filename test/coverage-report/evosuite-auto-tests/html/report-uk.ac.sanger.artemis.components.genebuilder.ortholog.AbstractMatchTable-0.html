@@ -1,0 +1,114 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.components.genebuilder.ortholog.AbstractMatchTable
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.components.genebuilder.ortholog.AbstractMatchTable: 0.285624251738102</ul>
+<ul>
+<li>1544.083333306374 fitness evaluations, 0 generations, null statements, 7 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier(&quot;, '&quot;, &quot;, '&quot;);
+<span class="nocode"><a name="2">  2: </a></span>JPasswordField jPasswordField0 = new JPasswordField(1584);
+<span class="nocode"><a name="3">  3: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;, '&quot;, jPasswordField0, &quot;rR&quot;, &quot;, '&quot;);
+<span class="nocode"><a name="4">  4: </a></span>SimilarityTable similarityTable0 = new SimilarityTable(qualifier0, databaseDocument0);
+<span class="nocode"><a name="5">  5: </a></span>similarityTable0.openArtemis(databaseDocument0, 1584);
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier(&quot;R@8/r&quot;, &quot;R@8/r&quot;);
+<span class="nocode"><a name="2">  2: </a></span>SimilarityTable similarityTable0 = new SimilarityTable(qualifier0, (DatabaseDocument) null);
+<span class="nocode"><a name="3">  3: </a></span>DefaultFormatterFactory defaultFormatterFactory0 = new DefaultFormatterFactory((JFormattedTextField.AbstractFormatter) null);
+<span class="nocode"><a name="4">  4: </a></span>JFormattedTextField jFormattedTextField0 = new JFormattedTextField((JFormattedTextField.AbstractFormatterFactory) defaultFormatterFactory0);
+<span class="nocode"><a name="5">  5: </a></span>AbstractMatchTable.CellEditing abstractMatchTable_CellEditing0 = similarityTable0.new CellEditing(jFormattedTextField0);
+<span class="nocode"><a name="6">  6: </a></span>boolean boolean0 = abstractMatchTable_CellEditing0.stopCellEditing();
+<span class="nocode"><a name="7">  7: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier((String) null, &quot;v#&quot;);
+<span class="nocode"><a name="2">  2: </a></span>JPasswordField jPasswordField0 = new JPasswordField((String) null);
+<span class="nocode"><a name="3">  3: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;&quot;, jPasswordField0, &quot;+5&amp;{VGZXelRq&quot;, (String) null);
+<span class="nocode"><a name="4">  4: </a></span>SimilarityTable similarityTable0 = new SimilarityTable(qualifier0, databaseDocument0);
+<span class="nocode"><a name="5">  5: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
+<span class="nocode"><a name="6">  6: </a></span>similarityTable0.updateQualifier(qualifierVector0);
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String string0 = AbstractMatchTable.getField(&quot;&quot;, &quot;cluster&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;cluster&quot;, string0);
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>AbstractMatchTable.getField(&quot;9*skCzL661b`&quot;, (String) null);
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String string0 = AbstractMatchTable.getField(&quot;getLazyFeatureExactNoFeatureCvTermRank&quot;, &quot;getLazyFeatureExactNoFeatureCvTermRank&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;&quot;, string0);
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = new String[2];
+<span class="nocode"><a name="2">  2: </a></span>stringArray0[0] = &quot;chars read so far: &quot;;
+<span class="nocode"><a name="3">  3: </a></span>stringArray0[1] = &quot;Can't pack with alphabet &quot;;
+<span class="nocode"><a name="4">  4: </a></span>StringVector stringVector0 = new StringVector(stringArray0);
+<span class="nocode"><a name="5">  5: </a></span>Qualifier qualifier0 = new Qualifier(&quot;chars read so far: &quot;, stringVector0);
+<span class="nocode"><a name="6">  6: </a></span>DefaultStyledDocument defaultStyledDocument0 = new DefaultStyledDocument();
+<span class="nocode"><a name="7">  7: </a></span>JPasswordField jPasswordField0 = new JPasswordField(defaultStyledDocument0, &quot;Can't pack with alphabet &quot;, 49);
+<span class="nocode"><a name="8">  8: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;Can't pack with alphabet &quot;, jPasswordField0, &quot;Can't pack with alphabet &quot;, &quot;&quot;);
+<span class="nocode"><a name="9">  9: </a></span>SimilarityTable similarityTable0 = new SimilarityTable(qualifier0, databaseDocument0);
+<span class="nocode"><a name="10"> 10: </a></span>AbstractMatchTable.TableTransferHandler abstractMatchTable_TableTransferHandler0 = similarityTable0.new TableTransferHandler();
+<span class="nocode"><a name="11"> 11: </a></span>abstractMatchTable_TableTransferHandler0.importString(jPasswordField0, (String) null);
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.components.genebuilder.ortholog.AbstractMatchTable
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.components.genebuilder.ortholog.AbstractMatchTable
+<li>Size: 7
+<li>Length: 31
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.285624251738102
+<li>BranchCoverage: 0.21212121212121213
+<li>MethodCoverage: 0.2
+<li>OutputCoverage: 0.06060606060606061
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

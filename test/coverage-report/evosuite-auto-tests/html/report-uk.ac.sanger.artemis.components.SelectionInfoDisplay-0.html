@@ -1,0 +1,115 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.components.SelectionInfoDisplay
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.components.SelectionInfoDisplay: 0.40909973126306365</ul>
+<ul>
+<li>837.7435064935065 fitness evaluations, 0 generations, null statements, 7 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;2/}=43~bbZ1UJ6E&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="4">  4: </a></span>SelectionInfoDisplay selectionInfoDisplay0 = new SelectionInfoDisplay(simpleEntryGroup0, selection0);
+<span class="nocode"><a name="5">  5: </a></span>Dimension dimension0 = selectionInfoDisplay0.getMinimumSize();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(10, dimension0.width);
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;[&gt;pw&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="4">  4: </a></span>SelectionInfoDisplay selectionInfoDisplay0 = new SelectionInfoDisplay(simpleEntryGroup0, selection0);
+<span class="nocode"><a name="5">  5: </a></span>Dimension dimension0 = selectionInfoDisplay0.getPreferredSize();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(10, dimension0.width);
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;[&gt;pw&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="4">  4: </a></span>SelectionInfoDisplay selectionInfoDisplay0 = new SelectionInfoDisplay(simpleEntryGroup0, selection0);
+<span class="nocode"><a name="5">  5: </a></span>SelectionChangeEvent selectionChangeEvent0 = new SelectionChangeEvent(clipboard0, 15);
+<span class="nocode"><a name="6">  6: </a></span>selectionInfoDisplay0.selectionChanged(selectionChangeEvent0);
+<span class="nocode"><a name="7">  7: </a></span>assertFalse(selectionInfoDisplay0.isFocusTraversalPolicySet());
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;2/}=43~bbZ1UJ6E&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="4">  4: </a></span>String string0 = SelectionInfoDisplay.markerRangeText(selection0, simpleEntryGroup0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;&quot;, string0);
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SelectionInfoDisplay selectionInfoDisplay0 = new SelectionInfoDisplay((EntryGroup) null, (Selection) null);
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate((Key) null, &quot;G/Qq_(z|&quot;);
+<span class="nocode"><a name="3">  3: </a></span>FeaturePredicateConjunction featurePredicateConjunction0 = new FeaturePredicateConjunction(featureKeyQualifierPredicate0, featureKeyQualifierPredicate0, 0);
+<span class="nocode"><a name="4">  4: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featurePredicateConjunction0, &quot;zpz,V6z@&quot;);
+<span class="nocode"><a name="5">  5: </a></span>SelectionInfoDisplay.markerRangeText((Selection) null, filteredEntryGroup0);
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;[&gt;pw&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="4">  4: </a></span>SelectionInfoDisplay selectionInfoDisplay0 = new SelectionInfoDisplay(simpleEntryGroup0, selection0);
+<span class="nocode"><a name="5">  5: </a></span>selectionInfoDisplay0.paintComponent((Graphics) null);
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.components.SelectionInfoDisplay
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.components.SelectionInfoDisplay
+<li>Size: 7
+<li>Length: 31
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.40909973126306365
+<li>BranchCoverage: 0.06666666666666667
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 0.29411764705882354
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

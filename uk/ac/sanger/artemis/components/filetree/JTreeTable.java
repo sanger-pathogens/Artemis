@@ -92,6 +92,7 @@ public class JTreeTable extends JTable
   public JTreeTable(TreeModel treeTableModel) 
   {
     super();
+    setName("File Tree");
 
     DragSource dragSource = DragSource.getDefaultDragSource();
 

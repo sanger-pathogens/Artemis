@@ -1,0 +1,602 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.io.SimpleEntryInformation
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.io.SimpleEntryInformation: 0.9236799240545823</ul>
+<ul>
+<li>45.97692307692308 fitness evaluations, 0 generations, null statements, 57 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = (SimpleEntryInformation)SimpleEntryInformation.getDefaultEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>assertFalse(simpleEntryInformation0.useEMBLFormat());
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = blastEntryInformation0.useEMBLFormat();
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>QualifierInfo qualifierInfo0 = new QualifierInfo(&quot;modbase&quot;, 1, (KeyVector) null, (KeyVector) null, true);
+<span class="nocode"><a name="3">  3: </a></span>blastEntryInformation0.addQualifierInfo(qualifierInfo0);
+<span class="nocode"><a name="4">  4: </a></span>SimpleEntryInformation simpleEntryInformation0 = new SimpleEntryInformation(blastEntryInformation0);
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(simpleEntryInformation0.useEMBLFormat());
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MSPcrunchEntryInformation mSPcrunchEntryInformation0 = new MSPcrunchEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = new Key(&quot;\&quot;list\&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>InvalidKeyException invalidKeyException0 = new InvalidKeyException(&quot;+zU4^&quot;, key0);
+<span class="nocode"><a name="4">  4: </a></span>mSPcrunchEntryInformation0.fixException(invalidKeyException0);
+<span class="nocode"><a name="5">  5: </a></span>SimpleEntryInformation simpleEntryInformation0 = new SimpleEntryInformation(mSPcrunchEntryInformation0);
+<span class="nocode"><a name="6">  6: </a></span>Key key1 = Key.CDS;
+<span class="nocode"><a name="7">  7: </a></span>boolean boolean0 = simpleEntryInformation0.isValidKey(key1);
+<span class="nocode"><a name="8">  8: </a></span>assertFalse(boolean0);
+<span class="nocode"><a name="9">  9: </a></span>assertFalse(simpleEntryInformation0.useEMBLFormat());
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = new Key(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>InvalidKeyException invalidKeyException0 = new InvalidKeyException(&quot;&quot;, key0);
+<span class="nocode"><a name="4">  4: </a></span>blastEntryInformation0.fixException(invalidKeyException0);
+<span class="nocode"><a name="5">  5: </a></span>blastEntryInformation0.addKey(key0);
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(blastEntryInformation0.useEMBLFormat());
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = new Key(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>KeyVector keyVector0 = new KeyVector(key0);
+<span class="nocode"><a name="4">  4: </a></span>QualifierInfo qualifierInfo0 = new QualifierInfo(&quot; used with conflicting types&quot;, (-1), keyVector0, keyVector0, true);
+<span class="nocode"><a name="5">  5: </a></span>blastEntryInformation0.addQualifierInfo(qualifierInfo0);
+<span class="nocode"><a name="6">  6: </a></span>blastEntryInformation0.addQualifierInfo(qualifierInfo0);
+<span class="nocode"><a name="7">  7: </a></span>assertFalse(blastEntryInformation0.useEMBLFormat());
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = new SimpleEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>Qualifier qualifier0 = new Qualifier(&quot;iubZ&quot;, &quot;iubZ&quot;);
+<span class="nocode"><a name="3">  3: </a></span>InvalidQualifierException invalidQualifierException0 = new InvalidQualifierException((String) null, qualifier0);
+<span class="nocode"><a name="4">  4: </a></span>simpleEntryInformation0.fixException(invalidQualifierException0);
+<span class="nocode"><a name="5">  5: </a></span>QualifierInfo qualifierInfo0 = simpleEntryInformation0.getQualifierInfo(&quot;iubZ&quot;);
+<span class="nocode"><a name="6">  6: </a></span>assertNotNull(qualifierInfo0);
+<span class="nocode"><a name="7">  7: </a></span>
+<span class="nocode"><a name="8">  8: </a></span>simpleEntryInformation0.addQualifierInfo(qualifierInfo0);
+<span class="nocode"><a name="9">  9: </a></span>assertFalse(simpleEntryInformation0.useEMBLFormat());
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = new SimpleEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>KeyVector keyVector0 = simpleEntryInformation0.getValidKeys();
+<span class="nocode"><a name="3">  3: </a></span>Key key0 = new Key(&quot;/r5*Z{d!pk&quot;);
+<span class="nocode"><a name="4">  4: </a></span>Key key1 = Key.CDS;
+<span class="nocode"><a name="5">  5: </a></span>simpleEntryInformation0.addKey(key1);
+<span class="nocode"><a name="6">  6: </a></span>simpleEntryInformation0.addKey(key0);
+<span class="nocode"><a name="7">  7: </a></span>KeyVector keyVector1 = simpleEntryInformation0.getValidKeys();
+<span class="nocode"><a name="8">  8: </a></span>QualifierInfo qualifierInfo0 = new QualifierInfo(&quot;internal error - unexpected exception: &quot;, 1, keyVector1, keyVector0, false);
+<span class="nocode"><a name="9">  9: </a></span>simpleEntryInformation0.addQualifierInfo(qualifierInfo0);
+<span class="nocode"><a name="10"> 10: </a></span>assertFalse(simpleEntryInformation0.useEMBLFormat());
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = new Key(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Key key1 = blastEntryInformation0.getDefaultKey();
+<span class="nocode"><a name="4">  4: </a></span>InvalidKeyException invalidKeyException0 = new InvalidKeyException(&quot;&quot;, key1);
+<span class="nocode"><a name="5">  5: </a></span>KeyVector keyVector0 = new KeyVector(key0);
+<span class="nocode"><a name="6">  6: </a></span>QualifierInfo qualifierInfo0 = new QualifierInfo(&quot; used with conflicting types&quot;, (-1), keyVector0, keyVector0, true);
+<span class="nocode"><a name="7">  7: </a></span>blastEntryInformation0.addQualifierInfo(qualifierInfo0);
+<span class="nocode"><a name="8">  8: </a></span>blastEntryInformation0.fixException(invalidKeyException0);
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(&quot;misc_feature&quot;, key1.getKeyString());
+<span class="nocode"><a name="10"> 10: </a></span>
+<span class="nocode"><a name="11"> 11: </a></span>KeyVector keyVector1 = blastEntryInformation0.getSortedValidKeys();
+<span class="nocode"><a name="12"> 12: </a></span>assertNotNull(keyVector1);
+<span class="nocode"><a name="13"> 13: </a></span>assertFalse(blastEntryInformation0.useEMBLFormat());
+<span class="nocode"><a name="14"> 14: </a></span>assertEquals(2, keyVector1.size());
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MSPcrunchEntryInformation mSPcrunchEntryInformation0 = new MSPcrunchEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>mSPcrunchEntryInformation0.getSortedValidKeys();
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(mSPcrunchEntryInformation0.useEMBLFormat());
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = new Key(&quot;aZ@&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Qualifier qualifier0 = new Qualifier(&quot;aZ@&quot;, (StringVector) null);
+<span class="nocode"><a name="4">  4: </a></span>InvalidRelationException invalidRelationException0 = new InvalidRelationException(&quot;aZ@&quot;, key0, qualifier0);
+<span class="nocode"><a name="5">  5: </a></span>blastEntryInformation0.fixException(invalidRelationException0);
+<span class="nocode"><a name="6">  6: </a></span>StringVector stringVector0 = blastEntryInformation0.getValidQualifierNames(key0);
+<span class="nocode"><a name="7">  7: </a></span>assertFalse(blastEntryInformation0.useEMBLFormat());
+<span class="nocode"><a name="8">  8: </a></span>assertNotNull(stringVector0);
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = new Key(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>blastEntryInformation0.getValidQualifierNames(key0);
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(blastEntryInformation0.useEMBLFormat());
+</pre>
+<h3>Test case 13</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = new Key(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Key key1 = blastEntryInformation0.getDefaultKey();
+<span class="nocode"><a name="4">  4: </a></span>KeyVector keyVector0 = new KeyVector(key0);
+<span class="nocode"><a name="5">  5: </a></span>QualifierInfo qualifierInfo0 = new QualifierInfo(&quot; used with conflicting types&quot;, (-1), keyVector0, keyVector0, true);
+<span class="nocode"><a name="6">  6: </a></span>blastEntryInformation0.addQualifierInfo(qualifierInfo0);
+<span class="nocode"><a name="7">  7: </a></span>StringVector stringVector0 = blastEntryInformation0.getValidQualifierNames(key1);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(&quot;misc_feature&quot;, key1.getKeyString());
+<span class="nocode"><a name="9">  9: </a></span>assertNull(stringVector0);
+<span class="nocode"><a name="10"> 10: </a></span>assertFalse(blastEntryInformation0.useEMBLFormat());
+</pre>
+<h3>Test case 14</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = new Key(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>KeyVector keyVector0 = new KeyVector(key0);
+<span class="nocode"><a name="4">  4: </a></span>QualifierInfo qualifierInfo0 = new QualifierInfo(&quot; used with conflicting types&quot;, (-1), keyVector0, keyVector0, true);
+<span class="nocode"><a name="5">  5: </a></span>blastEntryInformation0.addQualifierInfo(qualifierInfo0);
+<span class="nocode"><a name="6">  6: </a></span>StringVector stringVector0 = blastEntryInformation0.getRequiredQualifiers(key0);
+<span class="nocode"><a name="7">  7: </a></span>assertFalse(blastEntryInformation0.useEMBLFormat());
+<span class="nocode"><a name="8">  8: </a></span>assertNotNull(stringVector0);
+</pre>
+<h3>Test case 15</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = new Key(&quot;aZ@&quot;);
+<span class="nocode"><a name="3">  3: </a></span>blastEntryInformation0.getRequiredQualifiers(key0);
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(blastEntryInformation0.useEMBLFormat());
+</pre>
+<h3>Test case 16</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = new Key(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Key key1 = blastEntryInformation0.getDefaultKey();
+<span class="nocode"><a name="4">  4: </a></span>KeyVector keyVector0 = new KeyVector(key0);
+<span class="nocode"><a name="5">  5: </a></span>QualifierInfo qualifierInfo0 = new QualifierInfo(&quot; used with conflicting types&quot;, (-1), keyVector0, keyVector0, true);
+<span class="nocode"><a name="6">  6: </a></span>blastEntryInformation0.addQualifierInfo(qualifierInfo0);
+<span class="nocode"><a name="7">  7: </a></span>StringVector stringVector0 = blastEntryInformation0.getRequiredQualifiers(key1);
+<span class="nocode"><a name="8">  8: </a></span>assertFalse(blastEntryInformation0.useEMBLFormat());
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(12, key1.length());
+<span class="nocode"><a name="10"> 10: </a></span>assertNull(stringVector0);
+</pre>
+<h3>Test case 17</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = new Key(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>KeyVector keyVector0 = new KeyVector(key0);
+<span class="nocode"><a name="4">  4: </a></span>QualifierInfo qualifierInfo0 = new QualifierInfo(&quot; used with conflicting types&quot;, (-1), keyVector0, keyVector0, true);
+<span class="nocode"><a name="5">  5: </a></span>blastEntryInformation0.addQualifierInfo(qualifierInfo0);
+<span class="nocode"><a name="6">  6: </a></span>boolean boolean0 = blastEntryInformation0.isValidQualifier(&quot;&quot;);
+<span class="nocode"><a name="7">  7: </a></span>assertFalse(blastEntryInformation0.useEMBLFormat());
+<span class="nocode"><a name="8">  8: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 18</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MSPcrunchEntryInformation mSPcrunchEntryInformation0 = new MSPcrunchEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = mSPcrunchEntryInformation0.isValidQualifier(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>assertTrue(boolean0);
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(mSPcrunchEntryInformation0.useEMBLFormat());
+</pre>
+<h3>Test case 19</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = new Key(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>KeyVector keyVector0 = new KeyVector(key0);
+<span class="nocode"><a name="4">  4: </a></span>QualifierInfo qualifierInfo0 = new QualifierInfo(&quot;&quot;, (-1), keyVector0, keyVector0, true);
+<span class="nocode"><a name="5">  5: </a></span>blastEntryInformation0.addQualifierInfo(qualifierInfo0);
+<span class="nocode"><a name="6">  6: </a></span>boolean boolean0 = blastEntryInformation0.isValidQualifier(&quot;&quot;);
+<span class="nocode"><a name="7">  7: </a></span>assertFalse(blastEntryInformation0.useEMBLFormat());
+<span class="nocode"><a name="8">  8: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 20</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MSPcrunchEntryInformation mSPcrunchEntryInformation0 = new MSPcrunchEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = Key.CDS;
+<span class="nocode"><a name="3">  3: </a></span>mSPcrunchEntryInformation0.addKey(key0);
+<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = mSPcrunchEntryInformation0.isValidQualifier(key0, &quot;&quot;);
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(mSPcrunchEntryInformation0.useEMBLFormat());
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 21</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MSPcrunchEntryInformation mSPcrunchEntryInformation0 = new MSPcrunchEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = Key.CDS;
+<span class="nocode"><a name="3">  3: </a></span>mSPcrunchEntryInformation0.addKey(key0);
+<span class="nocode"><a name="4">  4: </a></span>Key key1 = mSPcrunchEntryInformation0.getDefaultKey();
+<span class="nocode"><a name="5">  5: </a></span>boolean boolean0 = mSPcrunchEntryInformation0.isValidQualifier(key1, &quot;&quot;);
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(boolean0);
+<span class="nocode"><a name="7">  7: </a></span>assertFalse(mSPcrunchEntryInformation0.useEMBLFormat());
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(&quot;misc_feature&quot;, key1.getKeyString());
+</pre>
+<h3>Test case 22</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = new Key(&quot;aZ@&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Qualifier qualifier0 = new Qualifier(&quot;aZ@&quot;, (StringVector) null);
+<span class="nocode"><a name="4">  4: </a></span>InvalidRelationException invalidRelationException0 = new InvalidRelationException(&quot;aZ@&quot;, key0, qualifier0);
+<span class="nocode"><a name="5">  5: </a></span>blastEntryInformation0.fixException(invalidRelationException0);
+<span class="nocode"><a name="6">  6: </a></span>boolean boolean0 = blastEntryInformation0.isValidQualifier(key0, &quot;W3eL&quot;);
+<span class="nocode"><a name="7">  7: </a></span>assertFalse(boolean0);
+<span class="nocode"><a name="8">  8: </a></span>assertFalse(blastEntryInformation0.useEMBLFormat());
+</pre>
+<h3>Test case 23</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = new Key(&quot;aZ@&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Qualifier qualifier0 = new Qualifier(&quot;Iy\&quot;f&quot;, (StringVector) null);
+<span class="nocode"><a name="4">  4: </a></span>InvalidRelationException invalidRelationException0 = new InvalidRelationException(&quot;aZ@&quot;, key0, qualifier0);
+<span class="nocode"><a name="5">  5: </a></span>blastEntryInformation0.fixException(invalidRelationException0);
+<span class="nocode"><a name="6">  6: </a></span>blastEntryInformation0.isValidQualifier(key0, &quot;Iy\&quot;f&quot;);
+<span class="nocode"><a name="7">  7: </a></span>assertFalse(blastEntryInformation0.useEMBLFormat());
+</pre>
+<h3>Test case 24</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = new Key(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>InvalidKeyException invalidKeyException0 = new InvalidKeyException(&quot;&quot;, key0);
+<span class="nocode"><a name="4">  4: </a></span>blastEntryInformation0.fixException(invalidKeyException0);
+<span class="nocode"><a name="5">  5: </a></span>boolean boolean0 = blastEntryInformation0.isRequiredQualifier(key0, &quot; used with conflicting types&quot;);
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(blastEntryInformation0.useEMBLFormat());
+<span class="nocode"><a name="7">  7: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 25</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = new Key(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Key key1 = blastEntryInformation0.getDefaultKey();
+<span class="nocode"><a name="4">  4: </a></span>InvalidKeyException invalidKeyException0 = new InvalidKeyException(&quot;&quot;, key1);
+<span class="nocode"><a name="5">  5: </a></span>blastEntryInformation0.fixException(invalidKeyException0);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;misc_feature&quot;, key1.toString());
+<span class="nocode"><a name="7">  7: </a></span>
+<span class="nocode"><a name="8">  8: </a></span>boolean boolean0 = blastEntryInformation0.isRequiredQualifier(key0, &quot;&quot;);
+<span class="nocode"><a name="9">  9: </a></span>assertFalse(boolean0);
+<span class="nocode"><a name="10"> 10: </a></span>assertFalse(blastEntryInformation0.useEMBLFormat());
+</pre>
+<h3>Test case 26</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = new Key(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>KeyVector keyVector0 = new KeyVector(key0);
+<span class="nocode"><a name="4">  4: </a></span>QualifierInfo qualifierInfo0 = new QualifierInfo(&quot; used with conflicting types&quot;, (-1), keyVector0, keyVector0, true);
+<span class="nocode"><a name="5">  5: </a></span>blastEntryInformation0.addQualifierInfo(qualifierInfo0);
+<span class="nocode"><a name="6">  6: </a></span>boolean boolean0 = blastEntryInformation0.isRequiredQualifier(key0, &quot;&quot;);
+<span class="nocode"><a name="7">  7: </a></span>assertFalse(boolean0);
+<span class="nocode"><a name="8">  8: </a></span>assertFalse(blastEntryInformation0.useEMBLFormat());
+</pre>
+<h3>Test case 27</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = new Key(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>KeyVector keyVector0 = new KeyVector(key0);
+<span class="nocode"><a name="4">  4: </a></span>QualifierInfo qualifierInfo0 = new QualifierInfo(&quot;&quot;, (-1), keyVector0, keyVector0, true);
+<span class="nocode"><a name="5">  5: </a></span>blastEntryInformation0.addQualifierInfo(qualifierInfo0);
+<span class="nocode"><a name="6">  6: </a></span>blastEntryInformation0.isRequiredQualifier(key0, &quot;&quot;);
+<span class="nocode"><a name="7">  7: </a></span>assertFalse(blastEntryInformation0.useEMBLFormat());
+</pre>
+<h3>Test case 28</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = new Key(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>KeyVector keyVector0 = new KeyVector(key0);
+<span class="nocode"><a name="4">  4: </a></span>QualifierInfo qualifierInfo0 = new QualifierInfo(&quot; used with conflicting types&quot;, (-1), keyVector0, keyVector0, true);
+<span class="nocode"><a name="5">  5: </a></span>blastEntryInformation0.addQualifierInfo(qualifierInfo0);
+<span class="nocode"><a name="6">  6: </a></span>boolean boolean0 = blastEntryInformation0.isValidKey(key0);
+<span class="nocode"><a name="7">  7: </a></span>assertTrue(boolean0);
+<span class="nocode"><a name="8">  8: </a></span>assertFalse(blastEntryInformation0.useEMBLFormat());
+</pre>
+<h3>Test case 29</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = new Key(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>InvalidKeyException invalidKeyException0 = new InvalidKeyException(&quot;&quot;, key0);
+<span class="nocode"><a name="4">  4: </a></span>KeyVector keyVector0 = new KeyVector(key0);
+<span class="nocode"><a name="5">  5: </a></span>QualifierInfo qualifierInfo0 = new QualifierInfo(&quot; used with conflicting types&quot;, (-1), keyVector0, keyVector0, true);
+<span class="nocode"><a name="6">  6: </a></span>blastEntryInformation0.addQualifierInfo(qualifierInfo0);
+<span class="nocode"><a name="7">  7: </a></span>blastEntryInformation0.fixException(invalidKeyException0);
+<span class="nocode"><a name="8">  8: </a></span>Key key1 = blastEntryInformation0.getDefaultKey();
+<span class="nocode"><a name="9">  9: </a></span>assertFalse(blastEntryInformation0.useEMBLFormat());
+<span class="nocode"><a name="10"> 10: </a></span>assertSame(key1, key0);
+</pre>
+<h3>Test case 30</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MSPcrunchEntryInformation mSPcrunchEntryInformation0 = new MSPcrunchEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>InvalidRelationException invalidRelationException0 = new InvalidRelationException((String) null, (Key) null);
+<span class="nocode"><a name="3">  3: </a></span>mSPcrunchEntryInformation0.fixException(invalidRelationException0);
+</pre>
+<h3>Test case 31</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = new Key(&quot;aZ@&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Qualifier qualifier0 = new Qualifier(&quot;aZ@&quot;, (StringVector) null);
+<span class="nocode"><a name="4">  4: </a></span>InvalidRelationException invalidRelationException0 = new InvalidRelationException(&quot;aZ@&quot;, key0, qualifier0);
+<span class="nocode"><a name="5">  5: </a></span>blastEntryInformation0.fixException(invalidRelationException0);
+<span class="nocode"><a name="6">  6: </a></span>blastEntryInformation0.fixException(invalidRelationException0);
+<span class="nocode"><a name="7">  7: </a></span>assertFalse(blastEntryInformation0.useEMBLFormat());
+</pre>
+<h3>Test case 32</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>blastEntryInformation0.getUserKeys();
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(blastEntryInformation0.useEMBLFormat());
+</pre>
+<h3>Test case 33</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = new Key(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>KeyVector keyVector0 = new KeyVector(key0);
+<span class="nocode"><a name="4">  4: </a></span>QualifierInfo qualifierInfo0 = new QualifierInfo(&quot; used with conflicting types&quot;, (-1), keyVector0, keyVector0, true);
+<span class="nocode"><a name="5">  5: </a></span>blastEntryInformation0.addQualifierInfo(qualifierInfo0);
+<span class="nocode"><a name="6">  6: </a></span>KeyVector keyVector1 = blastEntryInformation0.getValidKeys();
+<span class="nocode"><a name="7">  7: </a></span>assertFalse(blastEntryInformation0.useEMBLFormat());
+<span class="nocode"><a name="8">  8: </a></span>assertNotNull(keyVector1);
+</pre>
+<h3>Test case 34</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = new Key(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>InvalidKeyException invalidKeyException0 = new InvalidKeyException(&quot;&quot;, key0);
+<span class="nocode"><a name="4">  4: </a></span>KeyVector keyVector0 = new KeyVector(key0);
+<span class="nocode"><a name="5">  5: </a></span>QualifierInfo qualifierInfo0 = new QualifierInfo(&quot; used with conflicting types&quot;, (-1), keyVector0, keyVector0, true);
+<span class="nocode"><a name="6">  6: </a></span>blastEntryInformation0.addQualifierInfo(qualifierInfo0);
+<span class="nocode"><a name="7">  7: </a></span>blastEntryInformation0.fixException(invalidKeyException0);
+<span class="nocode"><a name="8">  8: </a></span>blastEntryInformation0.getValidKeys();
+<span class="nocode"><a name="9">  9: </a></span>assertFalse(blastEntryInformation0.useEMBLFormat());
+</pre>
+<h3>Test case 35</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = new Key(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Key key1 = blastEntryInformation0.getDefaultKey();
+<span class="nocode"><a name="4">  4: </a></span>InvalidKeyException invalidKeyException0 = new InvalidKeyException(&quot;&quot;, key1);
+<span class="nocode"><a name="5">  5: </a></span>KeyVector keyVector0 = new KeyVector(key0);
+<span class="nocode"><a name="6">  6: </a></span>QualifierInfo qualifierInfo0 = new QualifierInfo(&quot; used with conflicting types&quot;, (-1), keyVector0, keyVector0, true);
+<span class="nocode"><a name="7">  7: </a></span>blastEntryInformation0.addQualifierInfo(qualifierInfo0);
+<span class="nocode"><a name="8">  8: </a></span>blastEntryInformation0.fixException(invalidKeyException0);
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(&quot;misc_feature&quot;, key1.getKeyString());
+<span class="nocode"><a name="10"> 10: </a></span>
+<span class="nocode"><a name="11"> 11: </a></span>KeyVector keyVector1 = blastEntryInformation0.getValidKeys();
+<span class="nocode"><a name="12"> 12: </a></span>assertFalse(blastEntryInformation0.useEMBLFormat());
+<span class="nocode"><a name="13"> 13: </a></span>assertEquals(2, keyVector1.size());
+</pre>
+<h3>Test case 36</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = blastEntryInformation0.getDefaultKey();
+<span class="nocode"><a name="3">  3: </a></span>blastEntryInformation0.isValidKey(key0);
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(blastEntryInformation0.useEMBLFormat());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;misc_feature&quot;, key0.toString());
+</pre>
+<h3>Test case 37</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = new Key(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Key key1 = blastEntryInformation0.getDefaultKey();
+<span class="nocode"><a name="4">  4: </a></span>KeyVector keyVector0 = new KeyVector(key0);
+<span class="nocode"><a name="5">  5: </a></span>QualifierInfo qualifierInfo0 = new QualifierInfo(&quot; used with conflicting types&quot;, (-1), keyVector0, keyVector0, true);
+<span class="nocode"><a name="6">  6: </a></span>blastEntryInformation0.addQualifierInfo(qualifierInfo0);
+<span class="nocode"><a name="7">  7: </a></span>boolean boolean0 = blastEntryInformation0.isValidKey(key1);
+<span class="nocode"><a name="8">  8: </a></span>assertFalse(boolean0);
+<span class="nocode"><a name="9">  9: </a></span>assertFalse(blastEntryInformation0.useEMBLFormat());
+<span class="nocode"><a name="10"> 10: </a></span>assertEquals(&quot;misc_feature&quot;, key1.getKeyString());
+</pre>
+<h3>Test case 38</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = new Key(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Key key1 = blastEntryInformation0.getDefaultKey();
+<span class="nocode"><a name="4">  4: </a></span>InvalidKeyException invalidKeyException0 = new InvalidKeyException(&quot;&quot;, key1);
+<span class="nocode"><a name="5">  5: </a></span>KeyVector keyVector0 = new KeyVector(key0);
+<span class="nocode"><a name="6">  6: </a></span>QualifierInfo qualifierInfo0 = new QualifierInfo(&quot; used with conflicting types&quot;, (-1), keyVector0, keyVector0, true);
+<span class="nocode"><a name="7">  7: </a></span>blastEntryInformation0.addQualifierInfo(qualifierInfo0);
+<span class="nocode"><a name="8">  8: </a></span>blastEntryInformation0.fixException(invalidKeyException0);
+<span class="nocode"><a name="9">  9: </a></span>boolean boolean0 = blastEntryInformation0.isValidKey(key1);
+<span class="nocode"><a name="10"> 10: </a></span>assertTrue(boolean0);
+<span class="nocode"><a name="11"> 11: </a></span>assertFalse(blastEntryInformation0.useEMBLFormat());
+<span class="nocode"><a name="12"> 12: </a></span>assertEquals(12, key1.length());
+</pre>
+<h3>Test case 39</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>blastEntryInformation0.getQualifierInfo(&quot;&gt;8P0RB`d&quot;);
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(blastEntryInformation0.useEMBLFormat());
+</pre>
+<h3>Test case 40</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = new Key(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>KeyVector keyVector0 = new KeyVector(key0);
+<span class="nocode"><a name="4">  4: </a></span>QualifierInfo qualifierInfo0 = new QualifierInfo(&quot; used with conflicting types&quot;, (-1), keyVector0, keyVector0, true);
+<span class="nocode"><a name="5">  5: </a></span>blastEntryInformation0.addQualifierInfo(qualifierInfo0);
+<span class="nocode"><a name="6">  6: </a></span>blastEntryInformation0.getAllQualifierInfo();
+<span class="nocode"><a name="7">  7: </a></span>assertFalse(blastEntryInformation0.useEMBLFormat());
+</pre>
+<h3>Test case 41</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>blastEntryInformation0.getAllQualifierInfo();
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(blastEntryInformation0.useEMBLFormat());
+</pre>
+<h3>Test case 42</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = new SimpleEntryInformation((EntryInformation) null);
+</pre>
+<h3>Test case 43</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = new SimpleEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>simpleEntryInformation0.addKey((Key) null);
+</pre>
+<h3>Test case 44</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = new SimpleEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = simpleEntryInformation0.getDefaultKey();
+<span class="nocode"><a name="3">  3: </a></span>simpleEntryInformation0.addKey(key0);
+<span class="nocode"><a name="4">  4: </a></span>Key key1 = new Key((String) null);
+<span class="nocode"><a name="5">  5: </a></span>simpleEntryInformation0.addKey(key1);
+</pre>
+<h3>Test case 45</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = new SimpleEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>KeyVector keyVector0 = new KeyVector();
+<span class="nocode"><a name="3">  3: </a></span>keyVector0.add((Object) &quot;]Q:W&quot;);
+<span class="nocode"><a name="4">  4: </a></span>QualifierInfo qualifierInfo0 = new QualifierInfo(&quot;]Q:W&quot;, (-2199), keyVector0, keyVector0, true);
+<span class="nocode"><a name="5">  5: </a></span>simpleEntryInformation0.addQualifierInfo(qualifierInfo0);
+</pre>
+<h3>Test case 46</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = new SimpleEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>simpleEntryInformation0.addQualifierInfo((QualifierInfo) null);
+</pre>
+<h3>Test case 47</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MSPcrunchEntryInformation mSPcrunchEntryInformation0 = new MSPcrunchEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = mSPcrunchEntryInformation0.getDefaultKey();
+<span class="nocode"><a name="3">  3: </a></span>Qualifier qualifier0 = new Qualifier((String) null, (StringVector) null);
+<span class="nocode"><a name="4">  4: </a></span>InvalidRelationException invalidRelationException0 = new InvalidRelationException(&quot;Sr\&quot;Nze&quot;, key0, qualifier0);
+<span class="nocode"><a name="5">  5: </a></span>mSPcrunchEntryInformation0.fixException(invalidRelationException0);
+</pre>
+<h3>Test case 48</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MSPcrunchEntryInformation mSPcrunchEntryInformation0 = new MSPcrunchEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = mSPcrunchEntryInformation0.getDefaultKey();
+<span class="nocode"><a name="3">  3: </a></span>Qualifier qualifier0 = new Qualifier(&quot;r9{'*j/I4w9zi&quot;, (String) null);
+<span class="nocode"><a name="4">  4: </a></span>InvalidRelationException invalidRelationException0 = new InvalidRelationException(&quot;HWhE{gR&amp;BcaKh|w&quot;, key0, qualifier0);
+<span class="nocode"><a name="5">  5: </a></span>mSPcrunchEntryInformation0.fixException(invalidRelationException0);
+<span class="nocode"><a name="6">  6: </a></span>mSPcrunchEntryInformation0.getQualifierInfo((String) null);
+</pre>
+<h3>Test case 49</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = new Key((String) null);
+<span class="nocode"><a name="3">  3: </a></span>KeyVector keyVector0 = new KeyVector(key0);
+<span class="nocode"><a name="4">  4: </a></span>QualifierInfo qualifierInfo0 = new QualifierInfo(&quot; used with conflicting types&quot;, 4, keyVector0, keyVector0, true);
+<span class="nocode"><a name="5">  5: </a></span>blastEntryInformation0.addQualifierInfo(qualifierInfo0);
+<span class="nocode"><a name="6">  6: </a></span>blastEntryInformation0.getRequiredQualifiers(key0);
+</pre>
+<h3>Test case 50</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = new SimpleEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = simpleEntryInformation0.getDefaultKey();
+<span class="nocode"><a name="3">  3: </a></span>Qualifier qualifier0 = new Qualifier(&quot;/etc/feature_keys_gff&quot;, (String) null);
+<span class="nocode"><a name="4">  4: </a></span>InvalidRelationException invalidRelationException0 = new InvalidRelationException((String) null, key0, qualifier0);
+<span class="nocode"><a name="5">  5: </a></span>simpleEntryInformation0.fixException(invalidRelationException0);
+<span class="nocode"><a name="6">  6: </a></span>simpleEntryInformation0.isRequiredQualifier(key0, (String) null);
+</pre>
+<h3>Test case 51</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>QualifierInfo qualifierInfo0 = new QualifierInfo(&quot;&gt;8P0RB`d&quot;, (-354), (KeyVector) null, (KeyVector) null, false);
+<span class="nocode"><a name="3">  3: </a></span>blastEntryInformation0.addQualifierInfo(qualifierInfo0);
+<span class="nocode"><a name="4">  4: </a></span>blastEntryInformation0.isValidQualifier((String) null);
+</pre>
+<h3>Test case 52</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = blastEntryInformation0.getDefaultKey();
+<span class="nocode"><a name="3">  3: </a></span>Qualifier qualifier0 = new Qualifier(&quot;Tsj\&quot;TC&quot;);
+<span class="nocode"><a name="4">  4: </a></span>InvalidQualifierException invalidQualifierException0 = new InvalidQualifierException((String) null, qualifier0);
+<span class="nocode"><a name="5">  5: </a></span>blastEntryInformation0.fixException(invalidQualifierException0);
+<span class="nocode"><a name="6">  6: </a></span>blastEntryInformation0.isValidQualifier(key0, (String) null);
+</pre>
+<h3>Test case 53</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = new Key(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>KeyVector keyVector0 = new KeyVector(key0);
+<span class="nocode"><a name="4">  4: </a></span>QualifierInfo qualifierInfo0 = new QualifierInfo(&quot; used with conflicting types&quot;, (-1), keyVector0, keyVector0, true);
+<span class="nocode"><a name="5">  5: </a></span>blastEntryInformation0.addQualifierInfo(qualifierInfo0);
+<span class="nocode"><a name="6">  6: </a></span>blastEntryInformation0.getQualifierInfo(&quot; used with conflicting types&quot;);
+<span class="nocode"><a name="7">  7: </a></span>assertFalse(blastEntryInformation0.useEMBLFormat());
+</pre>
+<h3>Test case 54</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MSPcrunchEntryInformation mSPcrunchEntryInformation0 = new MSPcrunchEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>QualifierInfo qualifierInfo0 = new QualifierInfo(&quot;GK&quot;, 4, (KeyVector) null, (KeyVector) null, true);
+<span class="nocode"><a name="3">  3: </a></span>mSPcrunchEntryInformation0.addQualifierInfo(qualifierInfo0);
+<span class="nocode"><a name="4">  4: </a></span>mSPcrunchEntryInformation0.getQualifierInfo(&quot;GK&quot;);
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(mSPcrunchEntryInformation0.useEMBLFormat());
+</pre>
+<h3>Test case 55</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = new Key(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>InvalidKeyException invalidKeyException0 = new InvalidKeyException(&quot;&quot;, key0);
+<span class="nocode"><a name="4">  4: </a></span>blastEntryInformation0.fixException(invalidKeyException0);
+<span class="nocode"><a name="5">  5: </a></span>blastEntryInformation0.getUserKeys();
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(blastEntryInformation0.useEMBLFormat());
+</pre>
+<h3>Test case 56</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MSPcrunchEntryInformation mSPcrunchEntryInformation0 = new MSPcrunchEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>assertFalse(mSPcrunchEntryInformation0.useEMBLFormat());
+<span class="nocode"><a name="3">  3: </a></span>
+<span class="nocode"><a name="4">  4: </a></span>mSPcrunchEntryInformation0.setEMBLFormat(true);
+<span class="nocode"><a name="5">  5: </a></span>boolean boolean0 = mSPcrunchEntryInformation0.useEMBLFormat();
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 57</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MSPcrunchEntryInformation mSPcrunchEntryInformation0 = new MSPcrunchEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = mSPcrunchEntryInformation0.getDefaultKey();
+<span class="nocode"><a name="3">  3: </a></span>InvalidRelationException invalidRelationException0 = new InvalidRelationException(&quot;&quot;, key0);
+<span class="nocode"><a name="4">  4: </a></span>mSPcrunchEntryInformation0.fixException(invalidRelationException0);
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(mSPcrunchEntryInformation0.useEMBLFormat());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;misc_feature&quot;, key0.getKeyString());
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.io.SimpleEntryInformation
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.io.SimpleEntryInformation
+<li>Size: 57
+<li>Length: 288
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.9236799240545823
+<li>BranchCoverage: 0.9652173913043478
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 0.6031746031746031
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

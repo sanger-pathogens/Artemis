@@ -1,0 +1,648 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.circular.DNADraw
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.circular.DNADraw: 0.38312816129091065</ul>
+<ul>
+<li>3465.5786011689015 fitness evaluations, 0 generations, null statements, 46 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="2">  2: </a></span>dNADraw0.getGeneticMarker();
+<span class="nocode"><a name="3">  3: </a></span>Point point0 = dNADraw0.getLocationPoint();
+<span class="nocode"><a name="4">  4: </a></span>Block block0 = dNADraw0.getBlockAtLocation(point0);
+<span class="nocode"><a name="5">  5: </a></span>dNADraw0.addBlock(block0);
+<span class="nocode"><a name="6">  6: </a></span>dNADraw0.getMinorTickInterval();
+<span class="nocode"><a name="7">  7: </a></span>String string0 = &quot;WZ t&quot;;
+<span class="nocode"><a name="8">  8: </a></span>UserGraph userGraph0 = new UserGraph(dNADraw0, string0);
+<span class="nocode"><a name="9">  9: </a></span>dNADraw0.setUserGraph(userGraph0);
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="2">  2: </a></span>dNADraw0.getColorModel();
+<span class="nocode"><a name="3">  3: </a></span>dNADraw0.getStart();
+<span class="nocode"><a name="4">  4: </a></span>GenericDocumentType genericDocumentType0 = new GenericDocumentType(&quot;&quot;, &quot;  percent id: &quot;, &quot;5;O[~&amp;dIUM]e6g4rTD&quot;);
+<span class="nocode"><a name="5">  5: </a></span>GenericDOMImplementation genericDOMImplementation0 = new GenericDOMImplementation();
+<span class="nocode"><a name="6">  6: </a></span>GenericDocument genericDocument0 = new GenericDocument(genericDocumentType0, genericDOMImplementation0);
+<span class="nocode"><a name="7">  7: </a></span>SVGGeneratorContext sVGGeneratorContext0 = SVGGeneratorContext.createDefault(genericDocument0);
+<span class="nocode"><a name="8">  8: </a></span>GenericDocument genericDocument1 = (GenericDocument)sVGGeneratorContext0.getDOMFactory();
+<span class="nocode"><a name="9">  9: </a></span>ImageHandlerBase64Encoder imageHandlerBase64Encoder0 = (ImageHandlerBase64Encoder)sVGGeneratorContext0.getImageHandler();
+<span class="nocode"><a name="10"> 10: </a></span>DefaultExtensionHandler defaultExtensionHandler0 = (DefaultExtensionHandler)sVGGeneratorContext0.getExtensionHandler();
+<span class="nocode"><a name="11"> 11: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(genericDocument1, imageHandlerBase64Encoder0, defaultExtensionHandler0, true);
+<span class="nocode"><a name="12"> 12: </a></span>dNADraw0.drawCircularPanel(sVGGraphics2D0, true);
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="2">  2: </a></span>dNADraw0.setEnd((-4646));
+<span class="nocode"><a name="3">  3: </a></span>Feature feature0 = new Feature(&quot;k@&amp;hhjO=.\f1!1&quot;, (-2278), (-2278), 1254);
+<span class="nocode"><a name="4">  4: </a></span>double double0 = 1903.0;
+<span class="nocode"><a name="5">  5: </a></span>String string0 = &quot;sV1QWDAZ4B+|K&quot;;
+<span class="nocode"><a name="6">  6: </a></span>boolean boolean0 = false;
+<span class="nocode"><a name="7">  7: </a></span>boolean boolean1 = true;
+<span class="nocode"><a name="8">  8: </a></span>Bases bases0 = null;
+<span class="nocode"><a name="9">  9: </a></span>InputStreamProgressListener inputStreamProgressListener0 = mock(InputStreamProgressListener.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="10"> 10: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument((DatabaseDocument) null, &quot;sV1QWDAZ4B+|K&quot;, &quot;&quot;, true, inputStreamProgressListener0);
+<span class="nocode"><a name="11"> 11: </a></span>String string1 = &quot;&quot;;
+<span class="nocode"><a name="12"> 12: </a></span>LogReadListener logReadListener0 = new LogReadListener(string1);
+<span class="nocode"><a name="13"> 13: </a></span>DatabaseDocumentEntry databaseDocumentEntry0 = new DatabaseDocumentEntry(databaseDocument0, logReadListener0);
+<span class="nocode"><a name="14"> 14: </a></span>Entry entry0 = new Entry(bases0, databaseDocumentEntry0);
+<span class="nocode"><a name="15"> 15: </a></span>Track track0 = new Track(double0, string0, boolean0, boolean1, entry0);
+<span class="nocode"><a name="16"> 16: </a></span>dNADraw0.addFeatureToTrack(feature0, track0, boolean0);
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Vector&lt;ScrollPane&gt; vector0 = null;
+<span class="nocode"><a name="2">  2: </a></span>SshLogin sshLogin0 = new SshLogin();
+<span class="nocode"><a name="3">  3: </a></span>SshFileManager sshFileManager0 = new SshFileManager(sshLogin0);
+<span class="nocode"><a name="4">  4: </a></span>Hashtable&lt;Object, Object&gt; hashtable0 = sshFileManager0.getDirList();
+<span class="nocode"><a name="5">  5: </a></span>int int0 = (-1165);
+<span class="nocode"><a name="6">  6: </a></span>int int1 = (-1190);
+<span class="nocode"><a name="7">  7: </a></span>String string0 = &quot;&quot;;
+<span class="nocode"><a name="8">  8: </a></span>boolean boolean0 = sshFileManager0.delete(string0);
+<span class="nocode"><a name="9">  9: </a></span>int int2 = 109;
+<span class="nocode"><a name="10"> 10: </a></span>DNADraw dNADraw0 = new DNADraw(vector0, vector0, hashtable0, int0, int1, int2);
+<span class="nocode"><a name="11"> 11: </a></span>dNADraw0.addNotify();
+<span class="nocode"><a name="12"> 12: </a></span>dNADraw0.getUIClassID();
+<span class="nocode"><a name="13"> 13: </a></span>dNADraw0.getComponents();
+<span class="nocode"><a name="14"> 14: </a></span>dNADraw0.setNumberOfLines(int0);
+<span class="nocode"><a name="15"> 15: </a></span>dNADraw0.setTickInterval(int1);
+<span class="nocode"><a name="16"> 16: </a></span>dNADraw0.zoomIn();
+<span class="nocode"><a name="17"> 17: </a></span>dNADraw0.getGcGraph();
+<span class="nocode"><a name="18"> 18: </a></span>Document document0 = null;
+<span class="nocode"><a name="19"> 19: </a></span>SVGGeneratorContext sVGGeneratorContext0 = SVGGeneratorContext.createDefault(document0);
+<span class="nocode"><a name="20"> 20: </a></span>boolean boolean1 = false;
+<span class="nocode"><a name="21"> 21: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(sVGGeneratorContext0, boolean1);
+<span class="nocode"><a name="22"> 22: </a></span>dNADraw0.drawAll(sVGGraphics2D0, boolean0);
+<span class="nocode"><a name="23"> 23: </a></span>double double0 = (-5084.546);
+<span class="nocode"><a name="24"> 24: </a></span>dNADraw0.getAngleFromPosition(int1, double0);
+<span class="nocode"><a name="25"> 25: </a></span>Bases bases0 = dNADraw0.getBases();
+<span class="nocode"><a name="26"> 26: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="27"> 27: </a></span>Clipboard clipboard0 = new Clipboard(string0);
+<span class="nocode"><a name="28"> 28: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="29"> 29: </a></span>simpleEntryGroup0.addFeatureChangeListener(selection0);
+<span class="nocode"><a name="30"> 30: </a></span>Range range0 = selection0.getSelectionRange();
+<span class="nocode"><a name="31"> 31: </a></span>EntryGroup entryGroup0 = simpleEntryGroup0.truncate(range0);
+<span class="nocode"><a name="32"> 32: </a></span>dNADraw0.setArtemisEntryGroup(entryGroup0);
+<span class="nocode"><a name="33"> 33: </a></span>MouseEvent mouseEvent0 = null;
+<span class="nocode"><a name="34"> 34: </a></span>Point point0 = dNADraw0.getPopupLocation(mouseEvent0);
+<span class="nocode"><a name="35"> 35: </a></span>dNADraw0.getBlockAtLocation(point0);
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="2">  2: </a></span>dNADraw0.getBlock();
+<span class="nocode"><a name="3">  3: </a></span>DNADraw dNADraw1 = new DNADraw((Vector) null, (Vector) null, (Vector) null, (Vector) null);
+<span class="nocode"><a name="4">  4: </a></span>dNADraw0.getLineAttributes();
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="2">  2: </a></span>dNADraw0.getToolTipLocation((MouseEvent) null);
+<span class="nocode"><a name="3">  3: </a></span>dNADraw0.getLocation((Point) null);
+<span class="nocode"><a name="4">  4: </a></span>dNADraw0.getLineAttributes();
+<span class="nocode"><a name="5">  5: </a></span>dNADraw0.getMinorTickInterval();
+<span class="nocode"><a name="6">  6: </a></span>dNADraw0.getDiameter();
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JembossParams jembossParams0 = new JembossParams();
+<span class="nocode"><a name="2">  2: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.getPublicServers();
+<span class="nocode"><a name="3">  3: </a></span>DNADraw dNADraw0 = new DNADraw(vector0, vector0, vector0, vector0);
+<span class="nocode"><a name="4">  4: </a></span>dNADraw0.isPaintingForPrint();
+<span class="nocode"><a name="5">  5: </a></span>jembossParams0.setPublicSoapService(&quot;*di.@J74&amp;|09^&quot;);
+<span class="nocode"><a name="6">  6: </a></span>dNADraw0.getMinorTickInterval();
+<span class="nocode"><a name="7">  7: </a></span>dNADraw0.getBorderHeight2();
+<span class="nocode"><a name="8">  8: </a></span>dNADraw0.getBlockAtLocation((Point) null);
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="2">  2: </a></span>dNADraw0.getUIClassID();
+<span class="nocode"><a name="3">  3: </a></span>dNADraw0.setArtemisEntryGroup((EntryGroup) null);
+<span class="nocode"><a name="4">  4: </a></span>DNADraw.THETA = 1;
+<span class="nocode"><a name="5">  5: </a></span>dNADraw0.setArtemisEntryGroup((EntryGroup) null);
+<span class="nocode"><a name="6">  6: </a></span>dNADraw0.getNumberOfLines();
+<span class="nocode"><a name="7">  7: </a></span>Button button0 = new Button();
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="2">  2: </a></span>dNADraw0.getGcSkewGraph();
+<span class="nocode"><a name="3">  3: </a></span>dNADraw0.containsGraph((Graph) null);
+<span class="nocode"><a name="4">  4: </a></span>dNADraw0.removeNotify();
+<span class="nocode"><a name="5">  5: </a></span>dNADraw0.zoomIn();
+<span class="nocode"><a name="6">  6: </a></span>dNADraw0.getBlockAtBasePosition(0);
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="2">  2: </a></span>Rectangle rectangle0 = dNADraw0.jsp.getViewportBorderBounds();
+<span class="nocode"><a name="3">  3: </a></span>dNADraw0.setBounds(rectangle0);
+<span class="nocode"><a name="4">  4: </a></span>dNADraw0.getGcGraph();
+<span class="nocode"><a name="5">  5: </a></span>dNADraw0.setStart(265);
+<span class="nocode"><a name="6">  6: </a></span>dNADraw0.doPrintActions();
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JembossParams jembossParams0 = new JembossParams();
+<span class="nocode"><a name="2">  2: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.getPrivateServers();
+<span class="nocode"><a name="3">  3: </a></span>jembossParams0.updateJembossProperty(&quot;NkK*s&quot;, &quot;NkK*s&quot;);
+<span class="nocode"><a name="4">  4: </a></span>DNADraw dNADraw0 = new DNADraw(vector0, vector0, vector0, vector0);
+<span class="nocode"><a name="5">  5: </a></span>DNADraw.THETA = 1129;
+<span class="nocode"><a name="6">  6: </a></span>dNADraw0.zoomIn();
+<span class="nocode"><a name="7">  7: </a></span>jembossParams0.updateJembossPropString(&quot;.R@sIsh2~T]&quot;);
+<span class="nocode"><a name="8">  8: </a></span>dNADraw0.getGeneticMarker();
+<span class="nocode"><a name="9">  9: </a></span>dNADraw0.getGcGraph();
+<span class="nocode"><a name="10"> 10: </a></span>dNADraw0.getNumberOfLines();
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="2">  2: </a></span>dNADraw0.getBlock();
+<span class="nocode"><a name="3">  3: </a></span>Hashtable&lt;Object, Object&gt; hashtable0 = dNADraw0.getLineAttributes();
+<span class="nocode"><a name="4">  4: </a></span>DNADraw dNADraw1 = new DNADraw((Vector) null, (Vector) null, hashtable0, 31, 257, 31);
+<span class="nocode"><a name="5">  5: </a></span>DropTarget dropTarget0 = new DropTarget(dNADraw0, 31, dNADraw1);
+</pre>
+<h3>Test case 13</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="2">  2: </a></span>dNADraw0.getRestrictionEnzyme();
+<span class="nocode"><a name="3">  3: </a></span>DNADraw dNADraw1 = new DNADraw((Vector) null, (Vector) null, (Vector) null, (Vector) null);
+<span class="nocode"><a name="4">  4: </a></span>dNADraw1.getGraphics();
+<span class="nocode"><a name="5">  5: </a></span>dNADraw1.paintComponent((Graphics) null);
+</pre>
+<h3>Test case 14</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="2">  2: </a></span>dNADraw0.getRestrictionEnzyme();
+<span class="nocode"><a name="3">  3: </a></span>Vector&lt;Choice&gt; vector0 = new Vector&lt;Choice&gt;();
+<span class="nocode"><a name="4">  4: </a></span>Hashtable&lt;Object, GCGraph&gt; hashtable0 = new Hashtable&lt;Object, GCGraph&gt;();
+<span class="nocode"><a name="5">  5: </a></span>DNADraw dNADraw1 = new DNADraw((Vector) null, vector0, hashtable0, (-389), 500, 0);
+</pre>
+<h3>Test case 15</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw((Vector) null, (Vector) null, (Vector) null, (Vector) null);
+<span class="nocode"><a name="2">  2: </a></span>MouseWheelEvent mouseWheelEvent0 = new MouseWheelEvent(dNADraw0, 100, 0L, 100, 100, (-2896), 100, (-2896), (-2896), true, 0, 0, (-1216));
+<span class="nocode"><a name="3">  3: </a></span>dNADraw0.getToolTipText((MouseEvent) mouseWheelEvent0);
+</pre>
+<h3>Test case 16</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="2">  2: </a></span>dNADraw0.setName(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>dNADraw0.zoomOut();
+<span class="nocode"><a name="4">  4: </a></span>dNADraw0.getStart();
+<span class="nocode"><a name="5">  5: </a></span>dNADraw0.getLineAttributes();
+<span class="nocode"><a name="6">  6: </a></span>dNADraw0.getNumberOfLines();
+<span class="nocode"><a name="7">  7: </a></span>GenericDocumentType genericDocumentType0 = new GenericDocumentType(&quot;&quot;, &quot;&quot;, &quot;6VGUm(bBBcQD&quot;);
+<span class="nocode"><a name="8">  8: </a></span>GenericDOMImplementation genericDOMImplementation0 = new GenericDOMImplementation();
+<span class="nocode"><a name="9">  9: </a></span>GenericDocument genericDocument0 = new GenericDocument(genericDocumentType0, genericDOMImplementation0);
+<span class="nocode"><a name="10"> 10: </a></span>genericDocument0.getOwnerDocument();
+<span class="nocode"><a name="11"> 11: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D((Document) null);
+</pre>
+<h3>Test case 17</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JembossParams jembossParams0 = new JembossParams();
+<span class="nocode"><a name="2">  2: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.modeVector();
+<span class="nocode"><a name="3">  3: </a></span>DNADraw dNADraw0 = new DNADraw(vector0, vector0, vector0, vector0);
+<span class="nocode"><a name="4">  4: </a></span>dNADraw0.getGeneticMarker();
+<span class="nocode"><a name="5">  5: </a></span>SshFileManager sshFileManager0 = new SshFileManager((SshLogin) null);
+</pre>
+<h3>Test case 18</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="2">  2: </a></span>dNADraw0.getGcGraph();
+<span class="nocode"><a name="3">  3: </a></span>dNADraw0.setGcGraph((Graph) null);
+<span class="nocode"><a name="4">  4: </a></span>Clipboard clipboard0 = new Clipboard(&quot;Delete&quot;);
+<span class="nocode"><a name="5">  5: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="6">  6: </a></span>SimpleGotoEventSource simpleGotoEventSource0 = new SimpleGotoEventSource((EntryGroup) null);
+<span class="nocode"><a name="7">  7: </a></span>BasePlotGroup basePlotGroup0 = new BasePlotGroup((EntryGroup) null, dNADraw0, selection0, simpleGotoEventSource0);
+</pre>
+<h3>Test case 19</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Stack&lt;UI.UIMode&gt; stack0 = new Stack&lt;UI.UIMode&gt;();
+<span class="nocode"><a name="2">  2: </a></span>DNADraw dNADraw0 = new DNADraw(stack0, stack0, stack0, stack0);
+<span class="nocode"><a name="3">  3: </a></span>PageFormat pageFormat0 = new PageFormat();
+<span class="nocode"><a name="4">  4: </a></span>dNADraw0.print((Graphics) null, pageFormat0, (-3619));
+</pre>
+<h3>Test case 20</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JembossParams jembossParams0 = new JembossParams();
+<span class="nocode"><a name="2">  2: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.getPublicServers();
+<span class="nocode"><a name="3">  3: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="4">  4: </a></span>JPopupMenu jPopupMenu0 = new JPopupMenu();
+<span class="nocode"><a name="5">  5: </a></span>Insets insets0 = jPopupMenu0.getMargin();
+<span class="nocode"><a name="6">  6: </a></span>dNADraw0.getInsets(insets0);
+<span class="nocode"><a name="7">  7: </a></span>Hashtable&lt;Object, Object&gt; hashtable0 = dNADraw0.getLineAttributes();
+<span class="nocode"><a name="8">  8: </a></span>int int0 = 0;
+<span class="nocode"><a name="9">  9: </a></span>int int1 = 987;
+<span class="nocode"><a name="10"> 10: </a></span>DNADraw dNADraw1 = new DNADraw(vector0, vector0, hashtable0, int0, int1, jembossParams0.SERVER_DOWN);
+<span class="nocode"><a name="11"> 11: </a></span>boolean boolean0 = false;
+<span class="nocode"><a name="12"> 12: </a></span>dNADraw1.setFocusable(boolean0);
+<span class="nocode"><a name="13"> 13: </a></span>dNADraw1.setEnd(jembossParams0.SERVER_OK);
+<span class="nocode"><a name="14"> 14: </a></span>String string0 = &quot;&quot;;
+<span class="nocode"><a name="15"> 15: </a></span>String string1 = &quot;XoKRbiKr&quot;;
+<span class="nocode"><a name="16"> 16: </a></span>GenericDocumentType genericDocumentType0 = new GenericDocumentType(string0, string0, string1);
+<span class="nocode"><a name="17"> 17: </a></span>GenericDOMImplementation genericDOMImplementation0 = (GenericDOMImplementation)GenericDOMImplementation.getDOMImplementation();
+<span class="nocode"><a name="18"> 18: </a></span>GenericDocument genericDocument0 = new GenericDocument(genericDocumentType0, genericDOMImplementation0);
+<span class="nocode"><a name="19"> 19: </a></span>genericDocumentType0.setNextSibling(genericDocument0);
+<span class="nocode"><a name="20"> 20: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(genericDocument0);
+<span class="nocode"><a name="21"> 21: </a></span>SVGGraphics2D sVGGraphics2D1 = new SVGGraphics2D(sVGGraphics2D0);
+<span class="nocode"><a name="22"> 22: </a></span>PageFormat pageFormat0 = new PageFormat();
+<span class="nocode"><a name="23"> 23: </a></span>int int2 = 0;
+<span class="nocode"><a name="24"> 24: </a></span>dNADraw0.print((Graphics) sVGGraphics2D1, pageFormat0, int2);
+<span class="nocode"><a name="25"> 25: </a></span>dNADraw1.getStartTick();
+<span class="nocode"><a name="26"> 26: </a></span>byte[] byteArray0 = new byte[3];
+<span class="nocode"><a name="27"> 27: </a></span>byte byte0 = (byte)121;
+<span class="nocode"><a name="28"> 28: </a></span>byteArray0[0] = byte0;
+<span class="nocode"><a name="29"> 29: </a></span>byte byte1 = (byte)0;
+<span class="nocode"><a name="30"> 30: </a></span>byteArray0[1] = byte1;
+<span class="nocode"><a name="31"> 31: </a></span>byte byte2 = (byte)0;
+<span class="nocode"><a name="32"> 32: </a></span>byteArray0[2] = byte2;
+<span class="nocode"><a name="33"> 33: </a></span>int int3 = 17;
+<span class="nocode"><a name="34"> 34: </a></span>sVGGraphics2D1.drawBytes(byteArray0, genericDocumentType0.DOCUMENT_POSITION_FOLLOWING, int3, genericDocument0.DOCUMENT_POSITION_PRECEDING, genericDocumentType0.DOCUMENT_POSITION_FOLLOWING);
+<span class="nocode"><a name="35"> 35: </a></span>boolean boolean1 = false;
+<span class="nocode"><a name="36"> 36: </a></span>dNADraw1.drawAll(sVGGraphics2D1, boolean1);
+<span class="nocode"><a name="37"> 37: </a></span>dNADraw1.getTrackManager();
+<span class="nocode"><a name="38"> 38: </a></span>dNADraw0.getBorderWidth2();
+</pre>
+<h3>Test case 21</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="2">  2: </a></span>dNADraw0.getVersion();
+<span class="nocode"><a name="3">  3: </a></span>dNADraw0.getBlock();
+<span class="nocode"><a name="4">  4: </a></span>dNADraw0.setGeneticMarker((Vector) null);
+<span class="nocode"><a name="5">  5: </a></span>dNADraw0.getArtemisEntryGroup();
+<span class="nocode"><a name="6">  6: </a></span>Stack&lt;DefaultTableModel&gt; stack0 = new Stack&lt;DefaultTableModel&gt;();
+<span class="nocode"><a name="7">  7: </a></span>dNADraw0.setRestrictionEnzyme(stack0);
+<span class="nocode"><a name="8">  8: </a></span>dNADraw0.setBorderWidth2(0);
+<span class="nocode"><a name="9">  9: </a></span>GCSkewGraph gCSkewGraph0 = new GCSkewGraph(dNADraw0);
+<span class="nocode"><a name="10"> 10: </a></span>dNADraw0.setGcGraph(gCSkewGraph0);
+<span class="nocode"><a name="11"> 11: </a></span>dNADraw0.getFeaturePoints();
+</pre>
+<h3>Test case 22</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="2">  2: </a></span>dNADraw0.setVerifyInputWhenFocusTarget(false);
+<span class="nocode"><a name="3">  3: </a></span>dNADraw0.getUserGraphs();
+</pre>
+<h3>Test case 23</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JembossParams jembossParams0 = new JembossParams();
+<span class="nocode"><a name="2">  2: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.getPrivateServers();
+<span class="nocode"><a name="3">  3: </a></span>DNADraw dNADraw0 = new DNADraw(vector0, vector0, vector0, vector0);
+<span class="nocode"><a name="4">  4: </a></span>dNADraw0.getUserGraphs();
+<span class="nocode"><a name="5">  5: </a></span>dNADraw0.getTrackManager();
+<span class="nocode"><a name="6">  6: </a></span>UserGraph userGraph0 = new UserGraph(dNADraw0, &quot;Line Height&quot;);
+</pre>
+<h3>Test case 24</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="2">  2: </a></span>dNADraw0.getBorderWidth2();
+<span class="nocode"><a name="3">  3: </a></span>dNADraw0.grabFocus();
+<span class="nocode"><a name="4">  4: </a></span>dNADraw0.setNumberOfLines(0);
+<span class="nocode"><a name="5">  5: </a></span>dNADraw0.getVersion();
+</pre>
+<h3>Test case 25</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="2">  2: </a></span>dNADraw0.isPaintingForPrint();
+<span class="nocode"><a name="3">  3: </a></span>dNADraw0.setStartTick(70);
+<span class="nocode"><a name="4">  4: </a></span>dNADraw0.isCircular();
+<span class="nocode"><a name="5">  5: </a></span>TrackManager trackManager0 = new TrackManager(dNADraw0);
+</pre>
+<h3>Test case 26</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="2">  2: </a></span>dNADraw0.setDoubleBuffered(true);
+<span class="nocode"><a name="3">  3: </a></span>dNADraw0.setStartTick(0);
+<span class="nocode"><a name="4">  4: </a></span>dNADraw0.dragExit((DragSourceEvent) null);
+<span class="nocode"><a name="5">  5: </a></span>GCGraph gCGraph0 = new GCGraph(dNADraw0);
+<span class="nocode"><a name="6">  6: </a></span>gCGraph0.createImage(0, 0);
+<span class="nocode"><a name="7">  7: </a></span>gCGraph0.showOptions();
+</pre>
+<h3>Test case 27</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="2">  2: </a></span>dNADraw0.getRestrictionEnzyme();
+<span class="nocode"><a name="3">  3: </a></span>DNADraw dNADraw1 = new DNADraw((Vector) null, (Vector) null, (Vector) null, (Vector) null);
+<span class="nocode"><a name="4">  4: </a></span>Color color0 = DebugGraphics.flashColor();
+<span class="nocode"><a name="5">  5: </a></span>SystemColor systemColor0 = SystemColor.scrollbar;
+<span class="nocode"><a name="6">  6: </a></span>EtchedBorder etchedBorder0 = new EtchedBorder(color0, systemColor0);
+<span class="nocode"><a name="7">  7: </a></span>dNADraw0.setBorder(etchedBorder0);
+<span class="nocode"><a name="8">  8: </a></span>dNADraw1.getGcGraph();
+<span class="nocode"><a name="9">  9: </a></span>AWTEventMulticaster.add((InputMethodListener) null, (InputMethodListener) null);
+<span class="nocode"><a name="10"> 10: </a></span>dNADraw0.addInputMethodListener((InputMethodListener) null);
+<span class="nocode"><a name="11"> 11: </a></span>dNADraw0.getStart();
+<span class="nocode"><a name="12"> 12: </a></span>dNADraw0.getTrackManager();
+<span class="nocode"><a name="13"> 13: </a></span>dNADraw1.setCloseAndDispose(false, (JFrame) null);
+<span class="nocode"><a name="14"> 14: </a></span>dNADraw1.setStart(0);
+<span class="nocode"><a name="15"> 15: </a></span>UserGraph userGraph0 = new UserGraph(dNADraw1, &quot;&quot;);
+</pre>
+<h3>Test case 28</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="2">  2: </a></span>dNADraw0.setMinorTickInterval(2509);
+<span class="nocode"><a name="3">  3: </a></span>dNADraw0.grabFocus();
+<span class="nocode"><a name="4">  4: </a></span>JApplet jApplet0 = new JApplet();
+</pre>
+<h3>Test case 29</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="2">  2: </a></span>dNADraw0.dragGestureRecognized((DragGestureEvent) null);
+</pre>
+<h3>Test case 30</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="2">  2: </a></span>DefaultCaret defaultCaret0 = new DefaultCaret();
+<span class="nocode"><a name="3">  3: </a></span>AWTEventMulticaster aWTEventMulticaster0 = (AWTEventMulticaster)AWTEventMulticaster.add((MouseListener) defaultCaret0, (MouseListener) defaultCaret0);
+<span class="nocode"><a name="4">  4: </a></span>DefaultCaret defaultCaret1 = (DefaultCaret)AWTEventMulticaster.remove((MouseListener) aWTEventMulticaster0, (MouseListener) defaultCaret0);
+<span class="nocode"><a name="5">  5: </a></span>dNADraw0.removeMouseListener(defaultCaret1);
+<span class="nocode"><a name="6">  6: </a></span>dNADraw0.getBlock();
+<span class="nocode"><a name="7">  7: </a></span>Locale locale0 = new Locale(&quot;&quot;, &quot;&quot;);
+<span class="nocode"><a name="8">  8: </a></span>locale0.toLanguageTag();
+<span class="nocode"><a name="9">  9: </a></span>dNADraw0.setLocale(locale0);
+<span class="nocode"><a name="10"> 10: </a></span>dNADraw0.firePropertyChange((String) null, (-3259.9), (-3259.9));
+<span class="nocode"><a name="11"> 11: </a></span>DNADraw dNADraw1 = new DNADraw((Vector) null, (Vector) null, (Vector) null, (Vector) null);
+<span class="nocode"><a name="12"> 12: </a></span>dNADraw1.getEnd();
+<span class="nocode"><a name="13"> 13: </a></span>dNADraw1.getSingleBaseWidth();
+<span class="nocode"><a name="14"> 14: </a></span>dNADraw1.getTrackManager();
+<span class="nocode"><a name="15"> 15: </a></span>dNADraw1.getBorderHeight2();
+<span class="nocode"><a name="16"> 16: </a></span>dNADraw1.getStartTick();
+<span class="nocode"><a name="17"> 17: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="18"> 18: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate((Key) null, &quot;lsize&quot;);
+<span class="nocode"><a name="19"> 19: </a></span>simpleEntryGroup0.featureAt(117);
+</pre>
+<h3>Test case 31</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="2">  2: </a></span>dNADraw0.getBlock();
+<span class="nocode"><a name="3">  3: </a></span>dNADraw0.setEnd(3065);
+<span class="nocode"><a name="4">  4: </a></span>dNADraw0.setToolTipText(&quot;&quot;);
+<span class="nocode"><a name="5">  5: </a></span>DNADraw dNADraw1 = new DNADraw((Vector) null, (Vector) null, (Vector) null, (Vector) null);
+<span class="nocode"><a name="6">  6: </a></span>dNADraw1.setGeneticMarker((Vector) null);
+<span class="nocode"><a name="7">  7: </a></span>dNADraw1.getUserGraphs();
+<span class="nocode"><a name="8">  8: </a></span>dNADraw1.getGeneticMarker();
+<span class="nocode"><a name="9">  9: </a></span>dNADraw1.getMinorTickInterval();
+<span class="nocode"><a name="10"> 10: </a></span>Bases bases0 = new Bases((Sequence) null);
+<span class="nocode"><a name="11"> 11: </a></span>Entry entry0 = Entry.newEntry(bases0);
+<span class="nocode"><a name="12"> 12: </a></span>Track track0 = new Track(100, entry0);
+<span class="nocode"><a name="13"> 13: </a></span>dNADraw1.addFeaturesToTrack((List) null, track0, true);
+</pre>
+<h3>Test case 32</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JembossParams jembossParams0 = new JembossParams();
+<span class="nocode"><a name="2">  2: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.modeVector();
+<span class="nocode"><a name="3">  3: </a></span>DNADraw dNADraw0 = new DNADraw(vector0, vector0, vector0, vector0);
+<span class="nocode"><a name="4">  4: </a></span>dNADraw0.setLineHeight((-2654.891F));
+</pre>
+<h3>Test case 33</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="2">  2: </a></span>dNADraw0.getBlock();
+<span class="nocode"><a name="3">  3: </a></span>DNADraw dNADraw1 = new DNADraw((Vector) null, (Vector) null, (Vector) null, (Vector) null);
+<span class="nocode"><a name="4">  4: </a></span>dNADraw1.setSingleBaseWidth((-1.0F));
+<span class="nocode"><a name="5">  5: </a></span>DropTarget dropTarget0 = new DropTarget(dNADraw0, 0, dNADraw1);
+</pre>
+<h3>Test case 34</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JembossParams jembossParams0 = new JembossParams();
+<span class="nocode"><a name="2">  2: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.modeVector();
+<span class="nocode"><a name="3">  3: </a></span>DNADraw dNADraw0 = new DNADraw(vector0, vector0, vector0, vector0);
+<span class="nocode"><a name="4">  4: </a></span>dNADraw0.getTickInterval();
+</pre>
+<h3>Test case 35</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JembossParams jembossParams0 = new JembossParams();
+<span class="nocode"><a name="2">  2: </a></span>char[] charArray0 = new char[5];
+<span class="nocode"><a name="3">  3: </a></span>charArray0[0] = '+';
+<span class="nocode"><a name="4">  4: </a></span>charArray0[1] = 'X';
+<span class="nocode"><a name="5">  5: </a></span>charArray0[2] = '9';
+<span class="nocode"><a name="6">  6: </a></span>charArray0[3] = 'P';
+<span class="nocode"><a name="7">  7: </a></span>charArray0[4] = 'P';
+<span class="nocode"><a name="8">  8: </a></span>jembossParams0.setServicePasswd(charArray0);
+<span class="nocode"><a name="9">  9: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.getPrivateServers();
+<span class="nocode"><a name="10"> 10: </a></span>DNADraw dNADraw0 = new DNADraw(vector0, vector0, vector0, vector0);
+<span class="nocode"><a name="11"> 11: </a></span>Hashtable&lt;Object, Object&gt; hashtable0 = dNADraw0.getLineAttributes();
+<span class="nocode"><a name="12"> 12: </a></span>DNADraw dNADraw1 = new DNADraw(vector0, vector0, hashtable0, 1, 989, 989);
+<span class="nocode"><a name="13"> 13: </a></span>dNADraw1.firePropertyChange(&quot;$;!$ytrWu.XR&quot;, 0.0, (double) 2);
+<span class="nocode"><a name="14"> 14: </a></span>dNADraw1.zoomIn();
+<span class="nocode"><a name="15"> 15: </a></span>dNADraw1.getLocationPoint();
+<span class="nocode"><a name="16"> 16: </a></span>dNADraw1.setSingleBaseWidth(1435.1554F);
+<span class="nocode"><a name="17"> 17: </a></span>dNADraw1.setPlasmidLocation(160, 160);
+<span class="nocode"><a name="18"> 18: </a></span>dNADraw1.getTickInterval();
+<span class="nocode"><a name="19"> 19: </a></span>dNADraw0.getBlock();
+<span class="nocode"><a name="20"> 20: </a></span>dNADraw0.getSingleBaseWidth();
+<span class="nocode"><a name="21"> 21: </a></span>dNADraw1.setStartTick(989);
+<span class="nocode"><a name="22"> 22: </a></span>DragSourceContextPeer dragSourceContextPeer0 = mock(DragSourceContextPeer.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="23"> 23: </a></span>BufferedImage bufferedImage0 = new BufferedImage((-2986), 150, 160);
+</pre>
+<h3>Test case 36</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JembossParams jembossParams0 = new JembossParams();
+<span class="nocode"><a name="2">  2: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.modeVector();
+<span class="nocode"><a name="3">  3: </a></span>DNADraw dNADraw0 = new DNADraw(vector0, vector0, vector0, vector0);
+<span class="nocode"><a name="4">  4: </a></span>dNADraw0.getStart();
+<span class="nocode"><a name="5">  5: </a></span>dNADraw0.getGcGraph();
+<span class="nocode"><a name="6">  6: </a></span>dNADraw0.setGcSkewGraph((Graph) null);
+<span class="nocode"><a name="7">  7: </a></span>dNADraw0.getGeneticMarker();
+<span class="nocode"><a name="8">  8: </a></span>dNADraw0.getEnd();
+<span class="nocode"><a name="9">  9: </a></span>dNADraw0.getTickInterval();
+<span class="nocode"><a name="10"> 10: </a></span>jembossParams0.modeVector();
+<span class="nocode"><a name="11"> 11: </a></span>dNADraw0.setBorderHeight2(1);
+<span class="nocode"><a name="12"> 12: </a></span>dNADraw0.setSingleBaseWidth(2);
+<span class="nocode"><a name="13"> 13: </a></span>dNADraw0.getGraphicsConfiguration();
+<span class="nocode"><a name="14"> 14: </a></span>JFrame jFrame0 = new JFrame((String) null, (GraphicsConfiguration) null);
+</pre>
+<h3>Test case 37</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DefaultTableModel defaultTableModel0 = new DefaultTableModel(0, 0);
+<span class="nocode"><a name="2">  2: </a></span>Vector&lt;Object&gt; vector0 = defaultTableModel0.getDataVector();
+<span class="nocode"><a name="3">  3: </a></span>DNADraw dNADraw0 = new DNADraw(vector0, vector0, vector0, vector0);
+<span class="nocode"><a name="4">  4: </a></span>Point point0 = dNADraw0.getLocationPoint();
+<span class="nocode"><a name="5">  5: </a></span>dNADraw0.setStartTick(75);
+<span class="nocode"><a name="6">  6: </a></span>dNADraw0.getGcSkewGraph();
+<span class="nocode"><a name="7">  7: </a></span>dNADraw0.firePropertyChange(&quot;&quot;, (long) 0, 1430L);
+<span class="nocode"><a name="8">  8: </a></span>Object[][] objectArray0 = new Object[1][4];
+<span class="nocode"><a name="9">  9: </a></span>Object[] objectArray1 = new Object[6];
+<span class="nocode"><a name="10"> 10: </a></span>objectArray1[0] = (Object) dNADraw0;
+<span class="nocode"><a name="11"> 11: </a></span>objectArray1[1] = (Object) vector0;
+<span class="nocode"><a name="12"> 12: </a></span>objectArray1[2] = (Object) null;
+<span class="nocode"><a name="13"> 13: </a></span>objectArray1[3] = (Object) point0;
+<span class="nocode"><a name="14"> 14: </a></span>objectArray1[4] = (Object) null;
+<span class="nocode"><a name="15"> 15: </a></span>objectArray1[5] = (Object) &quot;&quot;;
+<span class="nocode"><a name="16"> 16: </a></span>objectArray0[0] = objectArray1;
+<span class="nocode"><a name="17"> 17: </a></span>defaultTableModel0.setDataVector(objectArray0, objectArray1);
+<span class="nocode"><a name="18"> 18: </a></span>dNADraw0.setGcSkewGraph((Graph) null);
+<span class="nocode"><a name="19"> 19: </a></span>dNADraw0.getLocationPoint();
+<span class="nocode"><a name="20"> 20: </a></span>dNADraw0.getGeneticMarker();
+<span class="nocode"><a name="21"> 21: </a></span>SVGGeneratorContext.createDefault((Document) null);
+</pre>
+<h3>Test case 38</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Stack&lt;Dialog&gt; stack0 = new Stack&lt;Dialog&gt;();
+<span class="nocode"><a name="2">  2: </a></span>DNADraw dNADraw0 = new DNADraw(stack0, stack0, stack0, stack0);
+<span class="nocode"><a name="3">  3: </a></span>dNADraw0.getBlockAtBasePosition(2);
+<span class="nocode"><a name="4">  4: </a></span>MouseEvent mouseEvent0 = new MouseEvent(dNADraw0, 13, 2, 0, 0, (-288), 1552, 0, 2, false, (-3465));
+</pre>
+<h3>Test case 39</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="2">  2: </a></span>dNADraw0.getGeneticMarker();
+<span class="nocode"><a name="3">  3: </a></span>Stack&lt;Object&gt; stack0 = new Stack&lt;Object&gt;();
+<span class="nocode"><a name="4">  4: </a></span>DNADraw dNADraw1 = new DNADraw((Vector) null, stack0, (Vector) null, (Vector) null);
+<span class="nocode"><a name="5">  5: </a></span>dNADraw0.setOpaque(false);
+<span class="nocode"><a name="6">  6: </a></span>dNADraw1.setAlignmentX(2881);
+<span class="nocode"><a name="7">  7: </a></span>dNADraw1.setNumberOfLines(2881);
+<span class="nocode"><a name="8">  8: </a></span>dNADraw1.getBlock();
+<span class="nocode"><a name="9">  9: </a></span>dNADraw0.getNumberOfLines();
+<span class="nocode"><a name="10"> 10: </a></span>dNADraw0.getLineHeight();
+<span class="nocode"><a name="11"> 11: </a></span>dNADraw0.zoomIn();
+<span class="nocode"><a name="12"> 12: </a></span>dNADraw1.getAngleFromPosition(0, (-1959.11));
+<span class="nocode"><a name="13"> 13: </a></span>dNADraw0.zoomIn();
+<span class="nocode"><a name="14"> 14: </a></span>SynthTabbedPaneUI synthTabbedPaneUI0 = new SynthTabbedPaneUI();
+<span class="nocode"><a name="15"> 15: </a></span>JScrollPane jScrollPane0 = new JScrollPane(dNADraw1, 0, (-803));
+</pre>
+<h3>Test case 40</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DefaultTableModel defaultTableModel0 = new DefaultTableModel();
+<span class="nocode"><a name="2">  2: </a></span>Vector&lt;Object&gt; vector0 = defaultTableModel0.getDataVector();
+<span class="nocode"><a name="3">  3: </a></span>DNADraw dNADraw0 = new DNADraw(vector0, vector0, vector0, vector0);
+<span class="nocode"><a name="4">  4: </a></span>dNADraw0.getRestrictionEnzyme();
+<span class="nocode"><a name="5">  5: </a></span>SshLogin sshLogin0 = new SshLogin();
+<span class="nocode"><a name="6">  6: </a></span>SshFileManager sshFileManager0 = new SshFileManager(sshLogin0);
+</pre>
+<h3>Test case 41</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JembossParams jembossParams0 = new JembossParams();
+<span class="nocode"><a name="2">  2: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.getPrivateServers();
+<span class="nocode"><a name="3">  3: </a></span>DNADraw dNADraw0 = new DNADraw(vector0, vector0, vector0, vector0);
+<span class="nocode"><a name="4">  4: </a></span>dNADraw0.setMinorTickInterval(1);
+<span class="nocode"><a name="5">  5: </a></span>jembossParams0.setPublicSoapURL(&quot;2&amp;[&quot;);
+<span class="nocode"><a name="6">  6: </a></span>dNADraw0.getRestrictionEnzyme();
+<span class="nocode"><a name="7">  7: </a></span>dNADraw0.getMinorTickInterval();
+<span class="nocode"><a name="8">  8: </a></span>dNADraw0.getTickInterval();
+<span class="nocode"><a name="9">  9: </a></span>Point point0 = dNADraw0.getLocationPoint();
+<span class="nocode"><a name="10"> 10: </a></span>dNADraw0.getGcGraph();
+<span class="nocode"><a name="11"> 11: </a></span>point0.clone();
+<span class="nocode"><a name="12"> 12: </a></span>dNADraw0.setTickInterval(2);
+<span class="nocode"><a name="13"> 13: </a></span>SystemFlavorMap systemFlavorMap0 = (SystemFlavorMap)SystemFlavorMap.getDefaultFlavorMap();
+<span class="nocode"><a name="14"> 14: </a></span>DropTarget dropTarget0 = new DropTarget(dNADraw0, 1, dNADraw0, true, systemFlavorMap0);
+</pre>
+<h3>Test case 42</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="2">  2: </a></span>dNADraw0.getDiameter();
+<span class="nocode"><a name="3">  3: </a></span>dNADraw0.paintAll((Graphics) null);
+<span class="nocode"><a name="4">  4: </a></span>dNADraw0.dropActionChanged((DragSourceDragEvent) null);
+</pre>
+<h3>Test case 43</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Vector&lt;TextComponent&gt; vector0 = new Vector&lt;TextComponent&gt;();
+<span class="nocode"><a name="2">  2: </a></span>DNADraw dNADraw0 = new DNADraw(vector0, vector0, vector0, vector0);
+<span class="nocode"><a name="3">  3: </a></span>Hashtable&lt;Object, Object&gt; hashtable0 = dNADraw0.getLineAttributes();
+<span class="nocode"><a name="4">  4: </a></span>BasicComboBoxEditor.UIResource basicComboBoxEditor_UIResource0 = new BasicComboBoxEditor.UIResource();
+<span class="nocode"><a name="5">  5: </a></span>Action action0 = TransferHandler.getCopyAction();
+<span class="nocode"><a name="6">  6: </a></span>basicComboBoxEditor_UIResource0.addActionListener(action0);
+<span class="nocode"><a name="7">  7: </a></span>basicComboBoxEditor_UIResource0.getItem();
+<span class="nocode"><a name="8">  8: </a></span>dNADraw0.addFocusListener(basicComboBoxEditor_UIResource0);
+<span class="nocode"><a name="9">  9: </a></span>DNADraw dNADraw1 = new DNADraw(vector0, vector0, hashtable0, 350, 0, 0);
+<span class="nocode"><a name="10"> 10: </a></span>dNADraw1.doLayout();
+<span class="nocode"><a name="11"> 11: </a></span>dNADraw1.getVersion();
+<span class="nocode"><a name="12"> 12: </a></span>dNADraw1.getGcGraph();
+<span class="nocode"><a name="13"> 13: </a></span>dNADraw0.setStartTick(350);
+<span class="nocode"><a name="14"> 14: </a></span>dNADraw1.getGcSkewGraph();
+<span class="nocode"><a name="15"> 15: </a></span>dNADraw1.getVersion();
+<span class="nocode"><a name="16"> 16: </a></span>dNADraw0.calculateTickPosistions();
+<span class="nocode"><a name="17"> 17: </a></span>DefaultTableModel defaultTableModel0 = new DefaultTableModel(1890, 7);
+<span class="nocode"><a name="18"> 18: </a></span>Vector&lt;Object&gt; vector1 = defaultTableModel0.getDataVector();
+<span class="nocode"><a name="19"> 19: </a></span>dNADraw1.setRestrictionEnzyme(vector1);
+</pre>
+<h3>Test case 44</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JembossParams jembossParams0 = new JembossParams();
+<span class="nocode"><a name="2">  2: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.modeVector();
+<span class="nocode"><a name="3">  3: </a></span>DNADraw dNADraw0 = new DNADraw(vector0, vector0, vector0, vector0);
+<span class="nocode"><a name="4">  4: </a></span>dNADraw0.getBases();
+<span class="nocode"><a name="5">  5: </a></span>String[] stringArray0 = new String[2];
+<span class="nocode"><a name="6">  6: </a></span>stringArray0[0] = &quot;&quot;;
+<span class="nocode"><a name="7">  7: </a></span>stringArray0[1] = &quot;&quot;;
+<span class="nocode"><a name="8">  8: </a></span>jembossParams0.updateJembossPropStrings(stringArray0);
+<span class="nocode"><a name="9">  9: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup((Bases) null);
+</pre>
+<h3>Test case 45</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Stack&lt;UserGraph&gt; stack0 = new Stack&lt;UserGraph&gt;();
+<span class="nocode"><a name="2">  2: </a></span>JembossParams jembossParams0 = new JembossParams();
+<span class="nocode"><a name="3">  3: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.getPublicServers();
+<span class="nocode"><a name="4">  4: </a></span>DNADraw dNADraw0 = new DNADraw(stack0, vector0, vector0, vector0);
+<span class="nocode"><a name="5">  5: </a></span>dNADraw0.setBasesPerLine((-2983));
+<span class="nocode"><a name="6">  6: </a></span>UserGraph userGraph0 = new UserGraph(dNADraw0, &quot; feature(s) overlapping the contig boundaries.\nA list of these features will appear.\nThis needs fixing before contigs can be reordered.&quot;);
+</pre>
+<h3>Test case 46</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JembossParams jembossParams0 = new JembossParams();
+<span class="nocode"><a name="2">  2: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.modeVector();
+<span class="nocode"><a name="3">  3: </a></span>DNADraw dNADraw0 = new DNADraw(vector0, vector0, vector0, vector0);
+<span class="nocode"><a name="4">  4: </a></span>dNADraw0.getLineSize();
+<span class="nocode"><a name="5">  5: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;O*!}&quot;);
+<span class="nocode"><a name="6">  6: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="7">  7: </a></span>Clipboard clipboard0 = new Clipboard(&quot;O*!}&quot;);
+<span class="nocode"><a name="8">  8: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="9">  9: </a></span>dNADraw0.getPreferredSize();
+<span class="nocode"><a name="10"> 10: </a></span>selection0.getSelectionRange();
+<span class="nocode"><a name="11"> 11: </a></span>bases0.truncate((Range) null);
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.circular.DNADraw
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.circular.DNADraw
+<li>Size: 46
+<li>Length: 451
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.38312816129091065
+<li>BranchCoverage: 0.29260450160771706
+<li>MethodCoverage: 0.7710843373493976
+<li>OutputCoverage: 0.15432098765432098
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

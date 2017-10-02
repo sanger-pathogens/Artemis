@@ -1,0 +1,207 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.components.FeaturePlot
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.components.FeaturePlot: 0.5875779303827303</ul>
+<ul>
+<li>404.48754960317456 fitness evaluations, 0 generations, null statements, 15 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;&lt;em,mHwT-WJLAT=&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = Entry.newEntry(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Feature feature0 = entry0.createFeature();
+<span class="nocode"><a name="5">  5: </a></span>HydrophilicityAlgorithm hydrophilicityAlgorithm0 = new HydrophilicityAlgorithm(feature0);
+<span class="nocode"><a name="6">  6: </a></span>FeaturePlot featurePlot0 = new FeaturePlot(hydrophilicityAlgorithm0);
+<span class="nocode"><a name="7">  7: </a></span>Dimension dimension0 = featurePlot0.getPreferredSize();
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(160, dimension0.height);
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(0, dimension0.width);
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;&lt;em,mHwT-WJLAT=&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = Entry.newEntry(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Feature feature0 = entry0.createFeature();
+<span class="nocode"><a name="5">  5: </a></span>HydrophilicityAlgorithm hydrophilicityAlgorithm0 = new HydrophilicityAlgorithm(feature0);
+<span class="nocode"><a name="6">  6: </a></span>FeaturePlot featurePlot0 = new FeaturePlot(hydrophilicityAlgorithm0);
+<span class="nocode"><a name="7">  7: </a></span>Dimension dimension0 = featurePlot0.getMinimumSize();
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(160, dimension0.height);
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(0, dimension0.width);
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;&lt;em,mHwT-WJLAT=&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = Entry.newEntry(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Feature feature0 = entry0.createFeature();
+<span class="nocode"><a name="5">  5: </a></span>HydrophilicityAlgorithm hydrophilicityAlgorithm0 = new HydrophilicityAlgorithm(feature0);
+<span class="nocode"><a name="6">  6: </a></span>FeaturePlot featurePlot0 = new FeaturePlot(hydrophilicityAlgorithm0);
+<span class="nocode"><a name="7">  7: </a></span>featurePlot0.stopListening();
+<span class="nocode"><a name="8">  8: </a></span>assertFalse(featurePlot0.isFocusCycleRoot());
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamFeature emblStreamFeature0 = new EmblStreamFeature();
+<span class="nocode"><a name="2">  2: </a></span>Feature feature0 = new Feature(emblStreamFeature0);
+<span class="nocode"><a name="3">  3: </a></span>HydrophobicityAlgorithm hydrophobicityAlgorithm0 = new HydrophobicityAlgorithm(feature0);
+<span class="nocode"><a name="4">  4: </a></span>FeaturePlot featurePlot0 = new FeaturePlot(hydrophobicityAlgorithm0);
+<span class="nocode"><a name="5">  5: </a></span>featurePlot0.showAveragesForRange();
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(featurePlot0.getFocusTraversalKeysEnabled());
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamFeature emblStreamFeature0 = new EmblStreamFeature();
+<span class="nocode"><a name="2">  2: </a></span>Feature feature0 = new Feature(emblStreamFeature0);
+<span class="nocode"><a name="3">  3: </a></span>CoilFeatureAlgorithm coilFeatureAlgorithm0 = new CoilFeatureAlgorithm(feature0);
+<span class="nocode"><a name="4">  4: </a></span>FeaturePlot featurePlot0 = new FeaturePlot(coilFeatureAlgorithm0);
+<span class="nocode"><a name="5">  5: </a></span>DisplayAdjustmentEvent displayAdjustmentEvent0 = new DisplayAdjustmentEvent(coilFeatureAlgorithm0, 3482, 0, 0, 2949.0F, 300, false, 1);
+<span class="nocode"><a name="6">  6: </a></span>featurePlot0.displayAdjustmentValueChanged(displayAdjustmentEvent0);
+<span class="nocode"><a name="7">  7: </a></span>featurePlot0.recalculateValues();
+<span class="nocode"><a name="8">  8: </a></span>assertFalse(featurePlot0.isFocusTraversalPolicyProvider());
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;&lt;em,mHwT-WJLAT=&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = Entry.newEntry(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Feature feature0 = entry0.createFeature();
+<span class="nocode"><a name="5">  5: </a></span>HydrophilicityAlgorithm hydrophilicityAlgorithm0 = new HydrophilicityAlgorithm(feature0);
+<span class="nocode"><a name="6">  6: </a></span>FeaturePlot featurePlot0 = new FeaturePlot(hydrophilicityAlgorithm0);
+<span class="nocode"><a name="7">  7: </a></span>int int0 = featurePlot0.getPointPosition(5);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(6, int0);
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamFeature emblStreamFeature0 = new EmblStreamFeature();
+<span class="nocode"><a name="2">  2: </a></span>Feature feature0 = new Feature(emblStreamFeature0);
+<span class="nocode"><a name="3">  3: </a></span>HydrophobicityAlgorithm hydrophobicityAlgorithm0 = new HydrophobicityAlgorithm(feature0);
+<span class="nocode"><a name="4">  4: </a></span>FeaturePlot featurePlot0 = new FeaturePlot(hydrophobicityAlgorithm0);
+<span class="nocode"><a name="5">  5: </a></span>featurePlot0.calculateFeatures(false);
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(featurePlot0.getFocusTraversalKeysEnabled());
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamFeature emblStreamFeature0 = new EmblStreamFeature();
+<span class="nocode"><a name="2">  2: </a></span>Feature feature0 = new Feature(emblStreamFeature0);
+<span class="nocode"><a name="3">  3: </a></span>HydrophobicityAlgorithm hydrophobicityAlgorithm0 = new HydrophobicityAlgorithm(feature0);
+<span class="nocode"><a name="4">  4: </a></span>hydrophobicityAlgorithm0.setScalingFlag(true);
+<span class="nocode"><a name="5">  5: </a></span>FeaturePlot featurePlot0 = new FeaturePlot(hydrophobicityAlgorithm0);
+<span class="nocode"><a name="6">  6: </a></span>featurePlot0.recalculateValues();
+<span class="nocode"><a name="7">  7: </a></span>assertFalse(featurePlot0.isFocusCycleRoot());
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature();
+<span class="nocode"><a name="2">  2: </a></span>Feature feature0 = new Feature(genbankStreamFeature0);
+<span class="nocode"><a name="3">  3: </a></span>CoilFeatureAlgorithm coilFeatureAlgorithm0 = new CoilFeatureAlgorithm(feature0);
+<span class="nocode"><a name="4">  4: </a></span>FeaturePlot featurePlot0 = new FeaturePlot(coilFeatureAlgorithm0);
+<span class="nocode"><a name="5">  5: </a></span>LineAttributes[] lineAttributesArray0 = new LineAttributes[8];
+<span class="nocode"><a name="6">  6: </a></span>featurePlot0.drawMultiValueGraph((Graphics) null, lineAttributesArray0);
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FeaturePlot featurePlot0 = new FeaturePlot((FeatureAlgorithm) null);
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamFeature emblStreamFeature0 = new EmblStreamFeature();
+<span class="nocode"><a name="2">  2: </a></span>Feature feature0 = new Feature(emblStreamFeature0);
+<span class="nocode"><a name="3">  3: </a></span>HydrophobicityAlgorithm hydrophobicityAlgorithm0 = new HydrophobicityAlgorithm(feature0);
+<span class="nocode"><a name="4">  4: </a></span>FeaturePlot featurePlot0 = new FeaturePlot(hydrophobicityAlgorithm0);
+<span class="nocode"><a name="5">  5: </a></span>featurePlot0.displayAdjustmentValueChanged((DisplayAdjustmentEvent) null);
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamFeature emblStreamFeature0 = new EmblStreamFeature();
+<span class="nocode"><a name="2">  2: </a></span>Feature feature0 = new Feature(emblStreamFeature0);
+<span class="nocode"><a name="3">  3: </a></span>HydrophobicityAlgorithm hydrophobicityAlgorithm0 = new HydrophobicityAlgorithm(feature0);
+<span class="nocode"><a name="4">  4: </a></span>FeaturePlot featurePlot0 = new FeaturePlot(hydrophobicityAlgorithm0);
+<span class="nocode"><a name="5">  5: </a></span>hydrophobicityAlgorithm0.setUserMin(0.0F);
+<span class="nocode"><a name="6">  6: </a></span>HydrophobicityAlgorithm hydrophobicityAlgorithm1 = (HydrophobicityAlgorithm)featurePlot0.getFeatureAlgorithm();
+<span class="nocode"><a name="7">  7: </a></span>assertSame(hydrophobicityAlgorithm0, hydrophobicityAlgorithm1);
+</pre>
+<h3>Test case 13</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamFeature emblStreamFeature0 = new EmblStreamFeature();
+<span class="nocode"><a name="2">  2: </a></span>Feature feature0 = new Feature(emblStreamFeature0);
+<span class="nocode"><a name="3">  3: </a></span>HydrophobicityAlgorithm hydrophobicityAlgorithm0 = new HydrophobicityAlgorithm(feature0);
+<span class="nocode"><a name="4">  4: </a></span>hydrophobicityAlgorithm0.setScalingFlag(true);
+<span class="nocode"><a name="5">  5: </a></span>FeaturePlot featurePlot0 = new FeaturePlot(hydrophobicityAlgorithm0);
+<span class="nocode"><a name="6">  6: </a></span>HydrophobicityAlgorithm hydrophobicityAlgorithm1 = (HydrophobicityAlgorithm)featurePlot0.getFeatureAlgorithm();
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(3.4028235E38F, hydrophobicityAlgorithm1.getUserMax(), 0.01F);
+</pre>
+<h3>Test case 14</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;&lt;em,mHwT-WJLAT=&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = Entry.newEntry(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Feature feature0 = entry0.createFeature();
+<span class="nocode"><a name="5">  5: </a></span>HydrophilicityAlgorithm hydrophilicityAlgorithm0 = new HydrophilicityAlgorithm(feature0);
+<span class="nocode"><a name="6">  6: </a></span>FeaturePlot featurePlot0 = new FeaturePlot(hydrophilicityAlgorithm0);
+<span class="nocode"><a name="7">  7: </a></span>featurePlot0.setBounds(0, 0, 49152, 522);
+<span class="nocode"><a name="8">  8: </a></span>Dimension dimension0 = featurePlot0.getMinimumSize();
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(49152, dimension0.width);
+<span class="nocode"><a name="10"> 10: </a></span>assertEquals(160, dimension0.height);
+</pre>
+<h3>Test case 15</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature();
+<span class="nocode"><a name="2">  2: </a></span>Feature feature0 = new Feature(genbankStreamFeature0);
+<span class="nocode"><a name="3">  3: </a></span>CoilFeatureAlgorithm coilFeatureAlgorithm0 = new CoilFeatureAlgorithm(feature0);
+<span class="nocode"><a name="4">  4: </a></span>FeaturePlot featurePlot0 = new FeaturePlot(coilFeatureAlgorithm0);
+<span class="nocode"><a name="5">  5: </a></span>int int0 = featurePlot0.getPointPosition((-3509));
+<span class="nocode"><a name="6">  6: </a></span>assertEquals((-3508), int0);
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.components.FeaturePlot
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.components.FeaturePlot
+<li>Size: 15
+<li>Length: 88
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.5875779303827303
+<li>BranchCoverage: 0.3088235294117647
+<li>MethodCoverage: 0.9166666666666666
+<li>OutputCoverage: 0.41935483870967744
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

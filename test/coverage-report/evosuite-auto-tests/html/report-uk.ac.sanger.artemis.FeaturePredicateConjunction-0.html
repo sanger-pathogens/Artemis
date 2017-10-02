@@ -1,0 +1,107 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.FeaturePredicateConjunction
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.FeaturePredicateConjunction: 0.7912179487179488</ul>
+<ul>
+<li>41.49999999999999 fitness evaluations, 0 generations, null statements, 8 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FeaturePredicateConjunction featurePredicateConjunction0 = new FeaturePredicateConjunction((FeaturePredicate) null, (FeaturePredicate) null, 0);
+<span class="nocode"><a name="2">  2: </a></span>featurePredicateConjunction0.testPredicate((Feature) null);
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FeaturePredicateConjunction featurePredicateConjunction0 = new FeaturePredicateConjunction((FeaturePredicate) null, (FeaturePredicate) null, (-3920));
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Key key0 = Key.CDS;
+<span class="nocode"><a name="2">  2: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate(key0, &quot;&amp;G5b&quot;, &quot;&amp;G5b&quot;);
+<span class="nocode"><a name="3">  3: </a></span>FeaturePredicateConjunction featurePredicateConjunction0 = new FeaturePredicateConjunction(featureKeyQualifierPredicate0, featureKeyQualifierPredicate0, 1);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1, FeaturePredicateConjunction.AND);
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FeaturePredicateVector featurePredicateVector0 = new FeaturePredicateVector();
+<span class="nocode"><a name="2">  2: </a></span>FeaturePredicateConjunction featurePredicateConjunction0 = new FeaturePredicateConjunction(featurePredicateVector0, 0);
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FeaturePredicateVector featurePredicateVector0 = new FeaturePredicateVector();
+<span class="nocode"><a name="2">  2: </a></span>FeaturePredicateConjunction featurePredicateConjunction0 = new FeaturePredicateConjunction(featurePredicateVector0, 1);
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FeaturePredicateVector featurePredicateVector0 = new FeaturePredicateVector();
+<span class="nocode"><a name="2">  2: </a></span>FeaturePredicateConjunction featurePredicateConjunction0 = new FeaturePredicateConjunction(featurePredicateVector0, 290);
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FeaturePredicateVector featurePredicateVector0 = new FeaturePredicateVector();
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = new Key(&quot;O76&gt;u&quot;);
+<span class="nocode"><a name="3">  3: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate(key0, &quot;O76&gt;u&quot;, true);
+<span class="nocode"><a name="4">  4: </a></span>featurePredicateVector0.add(featureKeyQualifierPredicate0);
+<span class="nocode"><a name="5">  5: </a></span>FeaturePredicateConjunction featurePredicateConjunction0 = new FeaturePredicateConjunction(featurePredicateVector0, 1);
+<span class="nocode"><a name="6">  6: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;internal error - no predicates given to FeaturePredicateConjunction constructor&quot;);
+<span class="nocode"><a name="7">  7: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
+<span class="nocode"><a name="8">  8: </a></span>Entry entry0 = Entry.newEntry(bases0);
+<span class="nocode"><a name="9">  9: </a></span>Feature feature0 = entry0.createFeature();
+<span class="nocode"><a name="10"> 10: </a></span>featurePredicateConjunction0.testPredicate(feature0);
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FeaturePredicateConjunction featurePredicateConjunction0 = new FeaturePredicateConjunction((FeaturePredicateVector) null, 866);
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.FeaturePredicateConjunction
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.FeaturePredicateConjunction
+<li>Size: 8
+<li>Length: 23
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.7912179487179488
+<li>BranchCoverage: 0.7
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 0.5
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

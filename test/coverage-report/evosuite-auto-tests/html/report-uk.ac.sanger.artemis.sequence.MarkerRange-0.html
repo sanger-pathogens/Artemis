@@ -1,0 +1,473 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.sequence.MarkerRange
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.sequence.MarkerRange: 0.916023836590339</ul>
+<ul>
+<li>31.66596638655462 fitness evaluations, 0 generations, null statements, 48 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MarkerRange markerRange0 = new MarkerRange((Marker) null);
+<span class="nocode"><a name="2">  2: </a></span>markerRange0.getRange();
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MarkerRange markerRange0 = new MarkerRange((Marker) null);
+<span class="nocode"><a name="2">  2: </a></span>markerRange0.getCount();
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;Files already exist: &quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = new Strand(bases0, 0);
+<span class="nocode"><a name="4">  4: </a></span>MarkerRange markerRange0 = new MarkerRange(strand0, 2, 1);
+<span class="nocode"><a name="5">  5: </a></span>boolean boolean0 = markerRange0.isForwardMarker();
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;Files already exist: &quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = new Strand(bases0, 0);
+<span class="nocode"><a name="4">  4: </a></span>MarkerRange markerRange0 = new MarkerRange(strand0, 2, 1);
+<span class="nocode"><a name="5">  5: </a></span>Marker marker0 = markerRange0.getRawStart();
+<span class="nocode"><a name="6">  6: </a></span>MarkerRange markerRange1 = new MarkerRange(marker0);
+<span class="nocode"><a name="7">  7: </a></span>boolean boolean0 = markerRange0.overlaps(markerRange1);
+<span class="nocode"><a name="8">  8: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;Files already exist: &quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="4">  4: </a></span>MarkerRange markerRange0 = new MarkerRange(strand0, 2, 1);
+<span class="nocode"><a name="5">  5: </a></span>Marker marker0 = markerRange0.getRawEnd();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, Marker.LISTENER_PRIORITY);
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;Files already exist: &quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = new Strand(bases0, 0);
+<span class="nocode"><a name="4">  4: </a></span>MarkerRange markerRange0 = new MarkerRange(strand0, 2, 1);
+<span class="nocode"><a name="5">  5: </a></span>Marker marker0 = markerRange0.getRawEnd();
+<span class="nocode"><a name="6">  6: </a></span>MarkerRange markerRange1 = new MarkerRange(marker0);
+<span class="nocode"><a name="7">  7: </a></span>boolean boolean0 = markerRange0.overlaps(markerRange1);
+<span class="nocode"><a name="8">  8: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;Files already exist: &quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = new Strand(bases0, 0);
+<span class="nocode"><a name="4">  4: </a></span>MarkerRange markerRange0 = new MarkerRange(strand0, 2, 1);
+<span class="nocode"><a name="5">  5: </a></span>Range range0 = markerRange0.getRawRange();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(2, range0.getCount());
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;Files already exist: &quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="4">  4: </a></span>MarkerRange markerRange0 = new MarkerRange(strand0, 2, 1);
+<span class="nocode"><a name="5">  5: </a></span>Range range0 = markerRange0.getRawRange();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(2, range0.getCount());
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;Files already exist: &quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = new Strand(bases0, 0);
+<span class="nocode"><a name="4">  4: </a></span>MarkerRange markerRange0 = new MarkerRange(strand0, 2, 1);
+<span class="nocode"><a name="5">  5: </a></span>boolean boolean0 = markerRange0.overlaps(markerRange0);
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;Files already exist: &quot;, &quot;Files already exist: &quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = new Strand(bases0, 0);
+<span class="nocode"><a name="4">  4: </a></span>MarkerRange markerRange0 = strand0.makeMarkerRangeFromRawPositions(2, 1);
+<span class="nocode"><a name="5">  5: </a></span>MarkerRange markerRange1 = new MarkerRange(strand0, 5, 1);
+<span class="nocode"><a name="6">  6: </a></span>boolean boolean0 = markerRange1.overlaps(markerRange0);
+<span class="nocode"><a name="7">  7: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;Files already exist: &quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = new Strand(bases0, 0);
+<span class="nocode"><a name="4">  4: </a></span>MarkerRange markerRange0 = new MarkerRange(strand0, 2, 1);
+<span class="nocode"><a name="5">  5: </a></span>Marker marker0 = markerRange0.getRawStart();
+<span class="nocode"><a name="6">  6: </a></span>Marker marker1 = marker0.moveBy(1);
+<span class="nocode"><a name="7">  7: </a></span>MarkerRange markerRange1 = new MarkerRange(marker1);
+<span class="nocode"><a name="8">  8: </a></span>boolean boolean0 = markerRange1.overlaps(markerRange0);
+<span class="nocode"><a name="9">  9: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;Files already exist: &quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = new Strand(bases0, 0);
+<span class="nocode"><a name="4">  4: </a></span>Strand strand1 = bases0.getForwardStrand();
+<span class="nocode"><a name="5">  5: </a></span>MarkerRange markerRange0 = new MarkerRange(strand1, 2, 1);
+<span class="nocode"><a name="6">  6: </a></span>Marker marker0 = strand0.makeMarkerFromRawPosition(2);
+<span class="nocode"><a name="7">  7: </a></span>Boolean boolean0 = new Boolean(&quot;Files already exist: &quot;);
+<span class="nocode"><a name="8">  8: </a></span>MarkerRange markerRange1 = Strand.getORFAroundMarker(marker0, (boolean) boolean0);
+<span class="nocode"><a name="9">  9: </a></span>markerRange0.extendRange(markerRange1);
+</pre>
+<h3>Test case 13</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;Files already exist: &quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = new Strand(bases0, 0);
+<span class="nocode"><a name="4">  4: </a></span>MarkerRange markerRange0 = new MarkerRange(strand0, 2, 1);
+<span class="nocode"><a name="5">  5: </a></span>MarkerRange markerRange1 = markerRange0.combineRanges(markerRange0, false);
+<span class="nocode"><a name="6">  6: </a></span>assertNotSame(markerRange1, markerRange0);
+</pre>
+<h3>Test case 14</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;internal error - strands do not match&quot;, &quot;~? 0jJh@DU&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="4">  4: </a></span>MarkerRange markerRange0 = strand0.makeMarkerRangeFromRawPositions(1, 2);
+<span class="nocode"><a name="5">  5: </a></span>Location location0 = markerRange0.createLocation();
+<span class="nocode"><a name="6">  6: </a></span>assertNotNull(location0);
+</pre>
+<h3>Test case 15</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;Files already exist: &quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="4">  4: </a></span>MarkerRange markerRange0 = new MarkerRange(strand0, 2, 1);
+<span class="nocode"><a name="5">  5: </a></span>Location location0 = markerRange0.createLocation();
+<span class="nocode"><a name="6">  6: </a></span>assertNotNull(location0);
+</pre>
+<h3>Test case 16</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;Files already exist: &quot;, &quot;Files already exist: &quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = new Strand(bases0, 0);
+<span class="nocode"><a name="4">  4: </a></span>MarkerRange markerRange0 = strand0.makeMarkerRangeFromRawPositions(2, 1);
+<span class="nocode"><a name="5">  5: </a></span>Marker marker0 = markerRange0.getEnd();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, Marker.LISTENER_PRIORITY);
+</pre>
+<h3>Test case 17</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MarkerRange markerRange0 = new MarkerRange((Marker) null);
+<span class="nocode"><a name="2">  2: </a></span>markerRange0.getStrand();
+</pre>
+<h3>Test case 18</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MarkerRange markerRange0 = new MarkerRange((Marker) null);
+<span class="nocode"><a name="2">  2: </a></span>Marker marker0 = markerRange0.getStart();
+<span class="nocode"><a name="3">  3: </a></span>assertNull(marker0);
+</pre>
+<h3>Test case 19</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MarkerRange markerRange0 = new MarkerRange((Strand) null, (-1149), 0);
+</pre>
+<h3>Test case 20</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;Files already exist: &quot;, &quot;Files already exist: &quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = new Strand(bases0, 0);
+<span class="nocode"><a name="4">  4: </a></span>MarkerRange markerRange0 = strand0.makeMarkerRangeFromRawPositions(2, 1);
+<span class="nocode"><a name="5">  5: </a></span>Strand strand1 = new Strand(bases0, (-19));
+<span class="nocode"><a name="6">  6: </a></span>MarkerRange markerRange1 = new MarkerRange(strand1, 5, 1);
+<span class="nocode"><a name="7">  7: </a></span>markerRange1.combineRanges(markerRange0, true);
+</pre>
+<h3>Test case 21</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;Files already exist: &quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = new Strand(bases0, 0);
+<span class="nocode"><a name="4">  4: </a></span>MarkerRange markerRange0 = new MarkerRange(strand0, 2, 1);
+<span class="nocode"><a name="5">  5: </a></span>Marker marker0 = markerRange0.getRawStart();
+<span class="nocode"><a name="6">  6: </a></span>MarkerRange markerRange1 = Strand.getORFAroundMarker(marker0, false);
+<span class="nocode"><a name="7">  7: </a></span>MarkerRange markerRange2 = markerRange1.combineRanges(markerRange0, false);
+<span class="nocode"><a name="8">  8: </a></span>assertNotSame(markerRange1, markerRange2);
+</pre>
+<h3>Test case 22</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;Files already exist: &quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = new Strand(bases0, 0);
+<span class="nocode"><a name="4">  4: </a></span>MarkerRange markerRange0 = new MarkerRange(strand0, 2, 1);
+<span class="nocode"><a name="5">  5: </a></span>MarkerRange markerRange1 = markerRange0.combineRanges(markerRange0, true);
+<span class="nocode"><a name="6">  6: </a></span>assertNotSame(markerRange1, markerRange0);
+</pre>
+<h3>Test case 23</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;Files already exist: &quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = new Strand(bases0, 0);
+<span class="nocode"><a name="4">  4: </a></span>MarkerRange markerRange0 = new MarkerRange(strand0, 2, 1);
+<span class="nocode"><a name="5">  5: </a></span>Marker marker0 = markerRange0.getRawStart();
+<span class="nocode"><a name="6">  6: </a></span>MarkerRange markerRange1 = new MarkerRange(marker0);
+<span class="nocode"><a name="7">  7: </a></span>MarkerRange markerRange2 = markerRange0.combineRanges(markerRange1, true);
+<span class="nocode"><a name="8">  8: </a></span>assertNotSame(markerRange1, markerRange2);
+</pre>
+<h3>Test case 24</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;Files already exist: &quot;, &quot;Files already exist: &quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = new Strand(bases0, 0);
+<span class="nocode"><a name="4">  4: </a></span>MarkerRange markerRange0 = new MarkerRange(strand0, 2, 1);
+<span class="nocode"><a name="5">  5: </a></span>Marker marker0 = markerRange0.getRawStart();
+<span class="nocode"><a name="6">  6: </a></span>MarkerRange markerRange1 = Strand.getORFAroundMarker(marker0, true);
+<span class="nocode"><a name="7">  7: </a></span>MarkerRange markerRange2 = markerRange0.combineRanges(markerRange1, true);
+<span class="nocode"><a name="8">  8: </a></span>assertNotSame(markerRange0, markerRange2);
+</pre>
+<h3>Test case 25</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;Files already exist: &quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = new Strand(bases0, 0);
+<span class="nocode"><a name="4">  4: </a></span>MarkerRange markerRange0 = new MarkerRange(strand0, 2, 1);
+<span class="nocode"><a name="5">  5: </a></span>Marker marker0 = markerRange0.getRawStart();
+<span class="nocode"><a name="6">  6: </a></span>MarkerRange markerRange1 = Strand.getORFAroundMarker(marker0, false);
+<span class="nocode"><a name="7">  7: </a></span>boolean boolean0 = markerRange1.contains(markerRange0);
+<span class="nocode"><a name="8">  8: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 26</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;Files already exist: &quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = new Strand(bases0, 0);
+<span class="nocode"><a name="4">  4: </a></span>MarkerRange markerRange0 = new MarkerRange(strand0, 2, 1);
+<span class="nocode"><a name="5">  5: </a></span>boolean boolean0 = markerRange0.contains(markerRange0);
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 27</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;Files already exist: &quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = new Strand(bases0, 0);
+<span class="nocode"><a name="4">  4: </a></span>MarkerRange markerRange0 = new MarkerRange(strand0, 2, 1);
+<span class="nocode"><a name="5">  5: </a></span>Marker marker0 = markerRange0.getRawStart();
+<span class="nocode"><a name="6">  6: </a></span>MarkerRange markerRange1 = Strand.getORFAroundMarker(marker0, true);
+<span class="nocode"><a name="7">  7: </a></span>boolean boolean0 = markerRange0.contains(markerRange1);
+<span class="nocode"><a name="8">  8: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 28</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = new Strand(bases0, 2);
+<span class="nocode"><a name="4">  4: </a></span>MarkerRange markerRange0 = new MarkerRange(strand0, 1, (-3152));
+</pre>
+<h3>Test case 29</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MarkerRange markerRange0 = new MarkerRange((Marker) null);
+<span class="nocode"><a name="2">  2: </a></span>markerRange0.combineRanges((MarkerRange) null, true);
+</pre>
+<h3>Test case 30</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[4];
+<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short)1);
+<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = JLayeredPane.FRAME_CONTENT_LAYER;
+<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, (-1), (-1), short0, integer0);
+<span class="nocode"><a name="5">  5: </a></span>Bases bases0 = new Bases(partialSequence0);
+<span class="nocode"><a name="6">  6: </a></span>Strand strand0 = new Strand(bases0, (short)1);
+<span class="nocode"><a name="7">  7: </a></span>MarkerRange markerRange0 = new MarkerRange(strand0, 2, 1);
+<span class="nocode"><a name="8">  8: </a></span>markerRange0.createLocation();
+</pre>
+<h3>Test case 31</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MarkerRange markerRange0 = new MarkerRange((Marker) null);
+<span class="nocode"><a name="2">  2: </a></span>markerRange0.createLocation();
+</pre>
+<h3>Test case 32</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;internal error - strands do not match&quot;, &quot;~? 0jJh@DU&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="4">  4: </a></span>MarkerRange markerRange0 = strand0.makeMarkerRangeFromRawPositions(1, 2);
+<span class="nocode"><a name="5">  5: </a></span>markerRange0.extendRange((MarkerRange) null);
+</pre>
+<h3>Test case 33</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MarkerRange markerRange0 = new MarkerRange((Marker) null);
+<span class="nocode"><a name="2">  2: </a></span>markerRange0.getRawEnd();
+</pre>
+<h3>Test case 34</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MarkerRange markerRange0 = new MarkerRange((Marker) null);
+<span class="nocode"><a name="2">  2: </a></span>markerRange0.getRawRange();
+</pre>
+<h3>Test case 35</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MarkerRange markerRange0 = new MarkerRange((Marker) null);
+<span class="nocode"><a name="2">  2: </a></span>markerRange0.getRawStart();
+</pre>
+<h3>Test case 36</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MarkerRange markerRange0 = new MarkerRange((Marker) null);
+<span class="nocode"><a name="2">  2: </a></span>markerRange0.isForwardMarker();
+</pre>
+<h3>Test case 37</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;Files already exist: &quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = new Strand(bases0, 0);
+<span class="nocode"><a name="4">  4: </a></span>MarkerRange markerRange0 = new MarkerRange(strand0, 2, 1);
+<span class="nocode"><a name="5">  5: </a></span>markerRange0.overlaps((MarkerRange) null);
+</pre>
+<h3>Test case 38</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MarkerRange markerRange0 = new MarkerRange((Marker) null);
+<span class="nocode"><a name="2">  2: </a></span>Marker marker0 = markerRange0.getEnd();
+<span class="nocode"><a name="3">  3: </a></span>assertNull(marker0);
+</pre>
+<h3>Test case 39</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;Files already exist: &quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = new Strand(bases0, 0);
+<span class="nocode"><a name="4">  4: </a></span>MarkerRange markerRange0 = new MarkerRange(strand0, 2, 1);
+<span class="nocode"><a name="5">  5: </a></span>Range range0 = markerRange0.getRange();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(2, range0.getCount());
+</pre>
+<h3>Test case 40</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;Files already exist: &quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = new Strand(bases0, 0);
+<span class="nocode"><a name="4">  4: </a></span>MarkerRange markerRange0 = new MarkerRange(strand0, 2, 1);
+<span class="nocode"><a name="5">  5: </a></span>Marker marker0 = markerRange0.getStart();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, Marker.LISTENER_PRIORITY);
+</pre>
+<h3>Test case 41</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;Files already exist: &quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = new Strand(bases0, 0);
+<span class="nocode"><a name="4">  4: </a></span>MarkerRange markerRange0 = new MarkerRange(strand0, 2, 1);
+<span class="nocode"><a name="5">  5: </a></span>Strand strand1 = markerRange0.getStrand();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(1, Strand.FORWARD);
+</pre>
+<h3>Test case 42</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;Files already exist: &quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="4">  4: </a></span>MarkerRange markerRange0 = new MarkerRange(strand0, 2, 1);
+<span class="nocode"><a name="5">  5: </a></span>Strand strand1 = markerRange0.getStrand();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(2, Strand.REVERSE);
+</pre>
+<h3>Test case 43</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;Files already exist: &quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="4">  4: </a></span>MarkerRange markerRange0 = new MarkerRange(strand0, 2, 1);
+<span class="nocode"><a name="5">  5: </a></span>boolean boolean0 = markerRange0.isForwardMarker();
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 44</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;Files already exist: &quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="4">  4: </a></span>MarkerRange markerRange0 = new MarkerRange(strand0, 2, 1);
+<span class="nocode"><a name="5">  5: </a></span>int int0 = markerRange0.getCount();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(2, int0);
+</pre>
+<h3>Test case 45</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;Files already exist: &quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = new Strand(bases0, 0);
+<span class="nocode"><a name="4">  4: </a></span>MarkerRange markerRange0 = new MarkerRange(strand0, 2, 1);
+<span class="nocode"><a name="5">  5: </a></span>Marker marker0 = markerRange0.getRawStart();
+<span class="nocode"><a name="6">  6: </a></span>MarkerRange markerRange1 = new MarkerRange(marker0);
+<span class="nocode"><a name="7">  7: </a></span>Marker marker1 = markerRange1.getRawStart();
+<span class="nocode"><a name="8">  8: </a></span>assertSame(marker0, marker1);
+</pre>
+<h3>Test case 46</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;Files already exist: &quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = new Strand(bases0, 0);
+<span class="nocode"><a name="4">  4: </a></span>MarkerRange markerRange0 = new MarkerRange(strand0, 2, 1);
+<span class="nocode"><a name="5">  5: </a></span>Marker marker0 = markerRange0.getRawStart();
+<span class="nocode"><a name="6">  6: </a></span>MarkerRange markerRange1 = new MarkerRange(marker0);
+<span class="nocode"><a name="7">  7: </a></span>Marker marker1 = markerRange1.getRawEnd();
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(0, Marker.LISTENER_PRIORITY);
+</pre>
+<h3>Test case 47</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;Files already exist: &quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = new Strand(bases0, 0);
+<span class="nocode"><a name="4">  4: </a></span>MarkerRange markerRange0 = new MarkerRange(strand0, 2, 1);
+<span class="nocode"><a name="5">  5: </a></span>Marker marker0 = markerRange0.getRawStart();
+<span class="nocode"><a name="6">  6: </a></span>MarkerRange markerRange1 = Strand.getORFAroundMarker(marker0, false);
+<span class="nocode"><a name="7">  7: </a></span>MarkerRange markerRange2 = markerRange1.extendRange(markerRange0);
+<span class="nocode"><a name="8">  8: </a></span>boolean boolean0 = markerRange2.overlaps(markerRange1);
+<span class="nocode"><a name="9">  9: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 48</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;Files already exist: &quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = new Strand(bases0, 0);
+<span class="nocode"><a name="4">  4: </a></span>MarkerRange markerRange0 = new MarkerRange(strand0, 2, 1);
+<span class="nocode"><a name="5">  5: </a></span>Marker marker0 = markerRange0.getRawEnd();
+<span class="nocode"><a name="6">  6: </a></span>MarkerRange markerRange1 = new MarkerRange(marker0);
+<span class="nocode"><a name="7">  7: </a></span>MarkerRange markerRange2 = markerRange0.extendRange(markerRange1);
+<span class="nocode"><a name="8">  8: </a></span>assertNotSame(markerRange1, markerRange2);
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.sequence.MarkerRange
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.sequence.MarkerRange
+<li>Size: 48
+<li>Length: 238
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.916023836590339
+<li>BranchCoverage: 0.9761904761904762
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 0.5102040816326531
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

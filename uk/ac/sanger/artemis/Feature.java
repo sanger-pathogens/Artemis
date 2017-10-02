@@ -62,7 +62,6 @@ import java.util.regex.Pattern;
  *  embl.Feature and embl.Entry objects.
  *
  *  @author Kim Rutherford
- *  @version $Id: Feature.java,v 1.35 2009-02-03 11:36:39 tjc Exp $
  **/
 
 public class Feature
@@ -149,8 +148,7 @@ public class Feature
   /**
    *  The current Location reference is saved each time setLocation() is
    *  called so that if the reference changes resetCache() can
-   *  be called.  This is needed to handle RWCorbaFeature objects which can
-   *  change their Location at arbitrary times.
+   *  be called.
    **/
   private Location old_location = null;
 

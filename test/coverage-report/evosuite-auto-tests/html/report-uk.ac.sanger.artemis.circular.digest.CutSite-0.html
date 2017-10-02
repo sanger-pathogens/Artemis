@@ -1,0 +1,168 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.circular.digest.CutSite
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.circular.digest.CutSite: 0.9304084073820916</ul>
+<ul>
+<li>12.333332693825396 fitness evaluations, 0 generations, null statements, 14 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>CutSite cutSite0 = new CutSite(&quot;0&quot;, &quot;0&quot;, &quot;0&quot;, &quot;0&quot;, &quot;0&quot;, &quot;0&quot;);
+<span class="nocode"><a name="2">  2: </a></span>int int0 = cutSite0.getFivePrime();
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(cutSite0.isHighlighted());
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(cutSite0.isForward());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, int0);
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>CutSite cutSite0 = new CutSite(&quot;0&quot;, &quot;0&quot;, &quot;0&quot;, &quot;0&quot;, &quot;0&quot;, &quot;0&quot;);
+<span class="nocode"><a name="2">  2: </a></span>cutSite0.getEnzymeName();
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(cutSite0.isHighlighted());
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(cutSite0.isForward());
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>CutSite cutSite0 = new CutSite(&quot;0&quot;, &quot;0&quot;, &quot;0&quot;, &quot;0&quot;, &quot;0&quot;, &quot;0&quot;);
+<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = cutSite0.isHighlighted();
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(cutSite0.isForward());
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>CutSite cutSite0 = new CutSite(&quot;0&quot;, &quot;0&quot;, &quot;0&quot;, &quot;0&quot;, &quot;0&quot;, &quot;0&quot;);
+<span class="nocode"><a name="2">  2: </a></span>int int0 = cutSite0.getFivePrimeRev();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, int0);
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(cutSite0.isForward());
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(cutSite0.isHighlighted());
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>CutSite cutSite0 = new CutSite(&quot;0&quot;, &quot;0&quot;, &quot;0&quot;, &quot;0&quot;, &quot;0&quot;, &quot;0&quot;);
+<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = cutSite0.isForward();
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(boolean0);
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(cutSite0.isHighlighted());
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>CutSite cutSite0 = new CutSite(&quot;.&quot;, &quot;9&quot;, &quot;9&quot;, &quot;.&quot;, &quot;.&quot;, &quot;.&quot;);
+<span class="nocode"><a name="2">  2: </a></span>int int0 = cutSite0.getThreePrimeRev();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, int0);
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(cutSite0.isForward());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;.&quot;, cutSite0.getEnzymeName());
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(cutSite0.isHighlighted());
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>CutSite cutSite0 = new CutSite(&quot;0&quot;, &quot;0&quot;, &quot;0&quot;, &quot;0&quot;, &quot;0&quot;, &quot;0&quot;);
+<span class="nocode"><a name="2">  2: </a></span>int int0 = cutSite0.getThreePrime();
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(cutSite0.isForward());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, int0);
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(cutSite0.isHighlighted());
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>CutSite cutSite0 = new CutSite(&quot;.&quot;, &quot;9&quot;, &quot;9&quot;, &quot;.&quot;, &quot;.&quot;, (String) null);
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>CutSite cutSite0 = new CutSite(&quot;?YR&gt;3&quot;, &quot;?YR&gt;3&quot;, &quot;?YR&gt;3&quot;, &quot;?YR&gt;3&quot;, &quot;?YR&gt;3&quot;, &quot;?YR&gt;3&quot;);
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>CutSite cutSite0 = new CutSite(&quot;1&quot;, &quot;1&quot;, &quot;1&quot;, &quot;1&quot;, &quot;1&quot;, &quot;1&quot;);
+<span class="nocode"><a name="2">  2: </a></span>int int0 = cutSite0.getFivePrime();
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(cutSite0.isHighlighted());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1, int0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(1, cutSite0.getFivePrimeRev());
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(cutSite0.isForward());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(1, cutSite0.getThreePrimeRev());
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>CutSite cutSite0 = new CutSite(&quot;1&quot;, &quot;1&quot;, &quot;1&quot;, &quot;1&quot;, &quot;1&quot;, &quot;1&quot;);
+<span class="nocode"><a name="2">  2: </a></span>int int0 = cutSite0.getFivePrimeRev();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(1, int0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1, cutSite0.getThreePrimeRev());
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(cutSite0.isHighlighted());
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(cutSite0.isForward());
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>CutSite cutSite0 = new CutSite(&quot;.&quot;, &quot;9&quot;, &quot;9&quot;, &quot;.&quot;, &quot;.&quot;, &quot;.&quot;);
+<span class="nocode"><a name="2">  2: </a></span>int int0 = cutSite0.getThreePrime();
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(cutSite0.isHighlighted());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(9, int0);
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(cutSite0.isForward());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;.&quot;, cutSite0.getEnzymeName());
+</pre>
+<h3>Test case 13</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>CutSite cutSite0 = new CutSite(&quot;9&quot;, &quot;9&quot;, &quot;9&quot;, &quot;9&quot;, &quot;9&quot;, &quot;2K(9*wPVO^IG.&quot;);
+<span class="nocode"><a name="2">  2: </a></span>int int0 = cutSite0.getThreePrimeRev();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;9&quot;, cutSite0.getEnzymeName());
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(cutSite0.isForward());
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(cutSite0.isHighlighted());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(9, int0);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(9, cutSite0.getFivePrimeRev());
+</pre>
+<h3>Test case 14</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>CutSite cutSite0 = new CutSite(&quot;.&quot;, &quot;9&quot;, &quot;9&quot;, &quot;.&quot;, &quot;.&quot;, &quot;.&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertFalse(cutSite0.isHighlighted());
+<span class="nocode"><a name="3">  3: </a></span>
+<span class="nocode"><a name="4">  4: </a></span>cutSite0.setHighlighted(true);
+<span class="nocode"><a name="5">  5: </a></span>boolean boolean0 = cutSite0.isHighlighted();
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(boolean0);
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.circular.digest.CutSite
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.circular.digest.CutSite
+<li>Size: 14
+<li>Length: 27
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.9304084073820916
+<li>BranchCoverage: 0.9285714285714286
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 0.631578947368421
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

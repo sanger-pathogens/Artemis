@@ -1,0 +1,195 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.editor.MultiLineToolTipUI
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.editor.MultiLineToolTipUI: 0.6696160431109489</ul>
+<ul>
+<li>280.54999999720604 fitness evaluations, 0 generations, null statements, 22 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MultiLineToolTipUI.initialize();
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MultiLineToolTipUI multiLineToolTipUI0 = MultiLineToolTipUI.SINGLETON;
+<span class="nocode"><a name="2">  2: </a></span>JToolTip jToolTip0 = new JToolTip();
+<span class="nocode"><a name="3">  3: </a></span>multiLineToolTipUI0.uninstallUI(jToolTip0);
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(jToolTip0.isFocusTraversalPolicyProvider());
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MultiLineToolTipUI multiLineToolTipUI0 = MultiLineToolTipUI.SINGLETON;
+<span class="nocode"><a name="2">  2: </a></span>JToolTip jToolTip0 = new JToolTip();
+<span class="nocode"><a name="3">  3: </a></span>multiLineToolTipUI0.getMaximumSize(jToolTip0);
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MultiLineToolTipUI multiLineToolTipUI0 = MultiLineToolTipUI.SINGLETON;
+<span class="nocode"><a name="2">  2: </a></span>JToolTip jToolTip0 = new JToolTip();
+<span class="nocode"><a name="3">  3: </a></span>multiLineToolTipUI0.paint((Graphics) null, jToolTip0);
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MultiLineToolTipUI multiLineToolTipUI0 = MultiLineToolTipUI.SINGLETON;
+<span class="nocode"><a name="2">  2: </a></span>JToolTip jToolTip0 = new JToolTip();
+<span class="nocode"><a name="3">  3: </a></span>JToolTip jToolTip1 = jToolTip0.createToolTip();
+<span class="nocode"><a name="4">  4: </a></span>String string0 = multiLineToolTipUI0.getAcceleratorString(jToolTip1);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;&quot;, string0);
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MultiLineToolTipUI.setDisplayAcceleratorKey(true);
+<span class="nocode"><a name="2">  2: </a></span>MultiLineToolTipUI multiLineToolTipUI0 = MultiLineToolTipUI.SINGLETON;
+<span class="nocode"><a name="3">  3: </a></span>JToolTip jToolTip0 = new JToolTip();
+<span class="nocode"><a name="4">  4: </a></span>multiLineToolTipUI0.getPreferredSize(jToolTip0);
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MultiLineToolTipUI multiLineToolTipUI0 = MultiLineToolTipUI.SINGLETON;
+<span class="nocode"><a name="2">  2: </a></span>JToolTip jToolTip0 = new JToolTip();
+<span class="nocode"><a name="3">  3: </a></span>String string0 = multiLineToolTipUI0.getAcceleratorString(jToolTip0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;&quot;, string0);
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JPasswordField jPasswordField0 = new JPasswordField();
+<span class="nocode"><a name="2">  2: </a></span>MultiLineToolTipUI multiLineToolTipUI0 = (MultiLineToolTipUI)MultiLineToolTipUI.createUI(jPasswordField0);
+<span class="nocode"><a name="3">  3: </a></span>multiLineToolTipUI0.getAcceleratorString((JToolTip) null);
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MultiLineToolTipUI multiLineToolTipUI0 = MultiLineToolTipUI.SINGLETON;
+<span class="nocode"><a name="2">  2: </a></span>JColorChooser jColorChooser0 = new JColorChooser();
+<span class="nocode"><a name="3">  3: </a></span>multiLineToolTipUI0.getMaximumSize(jColorChooser0);
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MultiLineToolTipUI multiLineToolTipUI0 = MultiLineToolTipUI.SINGLETON;
+<span class="nocode"><a name="2">  2: </a></span>multiLineToolTipUI0.getMaximumSize((JComponent) null);
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MultiLineToolTipUI multiLineToolTipUI0 = MultiLineToolTipUI.SINGLETON;
+<span class="nocode"><a name="2">  2: </a></span>BorderLayout borderLayout0 = new BorderLayout();
+<span class="nocode"><a name="3">  3: </a></span>JPanel jPanel0 = new JPanel(borderLayout0);
+<span class="nocode"><a name="4">  4: </a></span>multiLineToolTipUI0.getMinimumSize(jPanel0);
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MultiLineToolTipUI multiLineToolTipUI0 = MultiLineToolTipUI.SINGLETON;
+<span class="nocode"><a name="2">  2: </a></span>multiLineToolTipUI0.getMinimumSize((JComponent) null);
+</pre>
+<h3>Test case 13</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MultiLineToolTipUI multiLineToolTipUI0 = MultiLineToolTipUI.SINGLETON;
+<span class="nocode"><a name="2">  2: </a></span>JCheckBox jCheckBox0 = new JCheckBox(&quot;ToolTip.font&quot;);
+<span class="nocode"><a name="3">  3: </a></span>multiLineToolTipUI0.getPreferredSize(jCheckBox0);
+</pre>
+<h3>Test case 14</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MultiLineToolTipUI multiLineToolTipUI0 = MultiLineToolTipUI.SINGLETON;
+<span class="nocode"><a name="2">  2: </a></span>multiLineToolTipUI0.getPreferredSize((JComponent) null);
+</pre>
+<h3>Test case 15</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MultiLineToolTipUI multiLineToolTipUI0 = MultiLineToolTipUI.SINGLETON;
+<span class="nocode"><a name="2">  2: </a></span>multiLineToolTipUI0.installUI((JComponent) null);
+</pre>
+<h3>Test case 16</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MultiLineToolTipUI multiLineToolTipUI0 = MultiLineToolTipUI.SINGLETON;
+<span class="nocode"><a name="2">  2: </a></span>DebugGraphics debugGraphics0 = new DebugGraphics();
+<span class="nocode"><a name="3">  3: </a></span>FlowLayout flowLayout0 = new FlowLayout();
+<span class="nocode"><a name="4">  4: </a></span>JPanel jPanel0 = new JPanel(flowLayout0);
+<span class="nocode"><a name="5">  5: </a></span>multiLineToolTipUI0.paint(debugGraphics0, jPanel0);
+</pre>
+<h3>Test case 17</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MultiLineToolTipUI multiLineToolTipUI0 = MultiLineToolTipUI.SINGLETON;
+<span class="nocode"><a name="2">  2: </a></span>DebugGraphics debugGraphics0 = new DebugGraphics((Graphics) null);
+<span class="nocode"><a name="3">  3: </a></span>multiLineToolTipUI0.paint(debugGraphics0, (JComponent) null);
+</pre>
+<h3>Test case 18</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MultiLineToolTipUI multiLineToolTipUI0 = MultiLineToolTipUI.SINGLETON;
+<span class="nocode"><a name="2">  2: </a></span>multiLineToolTipUI0.uninstallUI((JComponent) null);
+</pre>
+<h3>Test case 19</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MultiLineToolTipUI multiLineToolTipUI0 = MultiLineToolTipUI.SINGLETON;
+<span class="nocode"><a name="2">  2: </a></span>JToolTip jToolTip0 = new JToolTip();
+<span class="nocode"><a name="3">  3: </a></span>multiLineToolTipUI0.getMinimumSize(jToolTip0);
+</pre>
+<h3>Test case 20</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>StyleContext styleContext0 = StyleContext.getDefaultStyleContext();
+<span class="nocode"><a name="2">  2: </a></span>DefaultStyledDocument defaultStyledDocument0 = new DefaultStyledDocument(styleContext0);
+<span class="nocode"><a name="3">  3: </a></span>JTextPane jTextPane0 = new JTextPane(defaultStyledDocument0);
+<span class="nocode"><a name="4">  4: </a></span>jTextPane0.getDocument();
+<span class="nocode"><a name="5">  5: </a></span>MultiLineToolTipUI multiLineToolTipUI0 = MultiLineToolTipUI.SINGLETON;
+<span class="nocode"><a name="6">  6: </a></span>JToolTip jToolTip0 = new JToolTip();
+<span class="nocode"><a name="7">  7: </a></span>multiLineToolTipUI0.getPreferredSize(jToolTip0);
+</pre>
+<h3>Test case 21</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MultiLineToolTipUI multiLineToolTipUI0 = MultiLineToolTipUI.SINGLETON;
+<span class="nocode"><a name="2">  2: </a></span>JMenu jMenu0 = new JMenu((Action) null);
+<span class="nocode"><a name="3">  3: </a></span>multiLineToolTipUI0.installUI(jMenu0);
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(jMenu0.getFocusTraversalKeysEnabled());
+</pre>
+<h3>Test case 22</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MultiLineToolTipUI.setDisplayAcceleratorKey(false);
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.editor.MultiLineToolTipUI
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.editor.MultiLineToolTipUI
+<li>Size: 22
+<li>Length: 66
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.6696160431109489
+<li>BranchCoverage: 0.5
+<li>MethodCoverage: 0.9090909090909091
+<li>OutputCoverage: 0.38461538461538464
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

@@ -1,1 +1,6 @@
 *.class
+.settings
+ant-build
+test/ant-build
+**/.DS_Store
+**/*.log

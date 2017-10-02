@@ -154,6 +154,7 @@ public class EntryEdit extends JFrame
   public EntryEdit(final EntryGroup entry_group) 
   {
     super("Artemis Entry Edit");
+    setName("EntryEdit");
 
     setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
     entry_group.ref();

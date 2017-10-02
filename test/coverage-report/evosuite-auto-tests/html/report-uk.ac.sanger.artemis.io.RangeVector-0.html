@@ -1,0 +1,141 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.io.RangeVector
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.io.RangeVector: 0.9956896551724138</ul>
+<ul>
+<li>1.25 fitness evaluations, 0 generations, null statements, 6 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(20, 20);
+<span class="nocode"><a name="2">  2: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
+<span class="nocode"><a name="3">  3: </a></span>Range range1 = range0.truncate(range0);
+<span class="nocode"><a name="4">  4: </a></span>rangeVector0.add(range0);
+<span class="nocode"><a name="5">  5: </a></span>boolean boolean0 = rangeVector0.containsRange(range0);
+<span class="nocode"><a name="6">  6: </a></span>rangeVector0.reverse();
+<span class="nocode"><a name="7">  7: </a></span>boolean boolean1 = rangeVector0.containsRange(range1);
+<span class="nocode"><a name="8">  8: </a></span>assertFalse(boolean1 == boolean0);
+<span class="nocode"><a name="9">  9: </a></span>assertFalse(boolean1);
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RangeVector rangeVector0 = new RangeVector();
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(0, rangeVector0.size());
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RangeVector rangeVector0 = new RangeVector((Range) null);
+<span class="nocode"><a name="2">  2: </a></span>rangeVector0.containsRange((Range) null);
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RangeVector rangeVector0 = new RangeVector();
+<span class="nocode"><a name="2">  2: </a></span>rangeVector0.setSize(1955);
+<span class="nocode"><a name="3">  3: </a></span>rangeVector0.reverse();
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(rangeVector0.isEmpty());
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RangeVector rangeVector0 = new RangeVector();
+<span class="nocode"><a name="2">  2: </a></span>rangeVector0.removeAllElements();
+<span class="nocode"><a name="3">  3: </a></span>rangeVector0.setSize(3655);
+<span class="nocode"><a name="4">  4: </a></span>Integer integer0 = new Integer(3655);
+<span class="nocode"><a name="5">  5: </a></span>Range range0 = new Range(932, 1195);
+<span class="nocode"><a name="6">  6: </a></span>range0.copy();
+<span class="nocode"><a name="7">  7: </a></span>rangeVector0.addElement(range0);
+<span class="nocode"><a name="8">  8: </a></span>rangeVector0.removeElement(integer0);
+<span class="nocode"><a name="9">  9: </a></span>rangeVector0.reverse();
+<span class="nocode"><a name="10"> 10: </a></span>rangeVector0.reverse();
+<span class="nocode"><a name="11"> 11: </a></span>rangeVector0.reverse();
+<span class="nocode"><a name="12"> 12: </a></span>rangeVector0.reverse();
+<span class="nocode"><a name="13"> 13: </a></span>rangeVector0.reverse();
+<span class="nocode"><a name="14"> 14: </a></span>Comparator&lt;Object&gt; comparator0 = (Comparator&lt;Object&gt;) mock(Comparator.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="15"> 15: </a></span>doReturn(0, 0, 0, 0, 0).when(comparator0).compare(any() , any());
+<span class="nocode"><a name="16"> 16: </a></span>rangeVector0.sort(comparator0);
+<span class="nocode"><a name="17"> 17: </a></span>rangeVector0.reverse();
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RangeVector rangeVector0 = new RangeVector();
+<span class="nocode"><a name="2">  2: </a></span>rangeVector0.removeAllElements();
+<span class="nocode"><a name="3">  3: </a></span>rangeVector0.reverse();
+<span class="nocode"><a name="4">  4: </a></span>rangeVector0.reverse();
+<span class="nocode"><a name="5">  5: </a></span>LinkedList&lt;Range&gt; linkedList0 = new LinkedList&lt;Range&gt;();
+<span class="nocode"><a name="6">  6: </a></span>Range range0 = new Range(1951, 1951);
+<span class="nocode"><a name="7">  7: </a></span>linkedList0.parallelStream();
+<span class="nocode"><a name="8">  8: </a></span>linkedList0.add(range0);
+<span class="nocode"><a name="9">  9: </a></span>rangeVector0.addAll((Collection&lt;? extends Range&gt;) linkedList0);
+<span class="nocode"><a name="10"> 10: </a></span>rangeVector0.parallelStream();
+<span class="nocode"><a name="11"> 11: </a></span>Range range1 = new Range(1951, 1951);
+<span class="nocode"><a name="12"> 12: </a></span>range0.truncate(range1);
+<span class="nocode"><a name="13"> 13: </a></span>rangeVector0.reverse();
+<span class="nocode"><a name="14"> 14: </a></span>rangeVector0.setSize(1931);
+<span class="nocode"><a name="15"> 15: </a></span>Range range2 = new Range(0);
+<span class="nocode"><a name="16"> 16: </a></span>range2.toString();
+<span class="nocode"><a name="17"> 17: </a></span>rangeVector0.containsRange(range2);
+<span class="nocode"><a name="18"> 18: </a></span>rangeVector0.containsRange(range2);
+<span class="nocode"><a name="19"> 19: </a></span>rangeVector0.ensureCapacity(1940);
+<span class="nocode"><a name="20"> 20: </a></span>rangeVector0.reverse();
+<span class="nocode"><a name="21"> 21: </a></span>rangeVector0.reverse();
+<span class="nocode"><a name="22"> 22: </a></span>range2.truncate(range0);
+<span class="nocode"><a name="23"> 23: </a></span>rangeVector0.containsRange(range2);
+<span class="nocode"><a name="24"> 24: </a></span>range2.copy();
+<span class="nocode"><a name="25"> 25: </a></span>rangeVector0.containsRange(range2);
+<span class="nocode"><a name="26"> 26: </a></span>rangeVector0.containsRange(range2);
+<span class="nocode"><a name="27"> 27: </a></span>rangeVector0.containsRange(range0);
+<span class="nocode"><a name="28"> 28: </a></span>rangeVector0.reverse();
+<span class="nocode"><a name="29"> 29: </a></span>rangeVector0.reverse();
+<span class="nocode"><a name="30"> 30: </a></span>rangeVector0.containsRange(range2);
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.io.RangeVector
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.io.RangeVector
+<li>Size: 6
+<li>Length: 59
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.9956896551724138
+<li>BranchCoverage: 1.0
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 1.0
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

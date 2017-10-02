@@ -1,0 +1,210 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.sequence.BasePattern
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.sequence.BasePattern: 0.5560815484155373</ul>
+<ul>
+<li>1541.8249999999998 fitness evaluations, 0 generations, null statements, 31 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BasePattern basePattern0 = new BasePattern(&quot;NRh&quot;);
+<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = basePattern0.matches(&quot;nrh&quot;);
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BasePattern basePattern0 = new BasePattern(&quot;NRh&quot;);
+<span class="nocode"><a name="2">  2: </a></span>String string0 = basePattern0.toString();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;nrh&quot;, string0);
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BasePattern basePattern0 = new BasePattern(&quot;&quot;);
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BasePattern basePattern0 = new BasePattern(&quot;NRh&quot;);
+<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = basePattern0.matches(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BasePattern basePattern0 = new BasePattern(&quot;N&quot;);
+<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = basePattern0.matches(&quot;u&quot;);
+<span class="nocode"><a name="3">  3: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BasePattern basePattern0 = new BasePattern(&quot;NRh&quot;);
+<span class="nocode"><a name="2">  2: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;nrh&quot;);
+<span class="nocode"><a name="3">  3: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(emblStreamSequence0);
+<span class="nocode"><a name="4">  4: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="5">  5: </a></span>MarkerRangeVector markerRangeVector0 = basePattern0.findMatches(bases0, (Marker) null, 6);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, markerRangeVector0.size());
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BasePattern basePattern0 = new BasePattern(&quot;AnnotationType: &quot;);
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>int int0 = BasePattern.patternType(&quot;cc*/zYV3&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals((-1), int0);
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BasePattern basePattern0 = new BasePattern(&quot;Ew%K8(Y&quot;);
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>int int0 = BasePattern.patternType(&quot;f`R =TN2&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals((-1), int0);
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BasePattern basePattern0 = new BasePattern(&quot;hg&quot;);
+<span class="nocode"><a name="2">  2: </a></span>basePattern0.findMatch((Bases) null, (Marker) null, 0, false, false, true);
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BasePattern basePattern0 = new BasePattern(&quot;rMi&quot;);
+</pre>
+<h3>Test case 13</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BasePattern basePattern0 = new BasePattern(&quot;ktJX9RY-MnwFE-&quot;);
+</pre>
+<h3>Test case 14</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BasePattern basePattern0 = new BasePattern(&quot;L4&quot;);
+</pre>
+<h3>Test case 15</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>int int0 = BasePattern.patternType(&quot;pnVS%a4h&lt;z+:)D&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals((-1), int0);
+</pre>
+<h3>Test case 16</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BasePattern basePattern0 = new BasePattern(&quot;qp_Y~=W-j5|/WNSj(B&quot;);
+</pre>
+<h3>Test case 17</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BasePattern basePattern0 = new BasePattern(&quot;SCoK?Mlm6|hlV}K/]&quot;);
+</pre>
+<h3>Test case 18</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>int int0 = BasePattern.patternType(&quot;uk.ac.sanger.artemis.sequence.BasePattern&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals((-1), int0);
+</pre>
+<h3>Test case 19</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>int int0 = BasePattern.patternType(&quot;vJP&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals((-1), int0);
+</pre>
+<h3>Test case 20</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BasePattern basePattern0 = new BasePattern(&quot;W1^&quot;);
+</pre>
+<h3>Test case 21</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BasePattern basePattern0 = new BasePattern(&quot;tDX7Zy&quot;);
+</pre>
+<h3>Test case 22</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BasePattern basePattern0 = new BasePattern(&quot;y*x6*Y&quot;);
+</pre>
+<h3>Test case 23</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>int int0 = BasePattern.patternType(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(0, int0);
+</pre>
+<h3>Test case 24</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>int int0 = BasePattern.patternType(&quot;nrh&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(1, int0);
+</pre>
+<h3>Test case 25</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>int int0 = BasePattern.patternType(&quot;internal error - unexpected exception: &quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals((-1), int0);
+</pre>
+<h3>Test case 26</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>int int0 = BasePattern.patternType(&quot;b&amp;W|j\&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals((-1), int0);
+</pre>
+<h3>Test case 27</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>int int0 = BasePattern.patternType(&quot;org.postgresql.fastpath.Fastpath&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals((-1), int0);
+</pre>
+<h3>Test case 28</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>int int0 = BasePattern.patternType(&quot;dZ7%yT5+'+gHFA]}&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals((-1), int0);
+</pre>
+<h3>Test case 29</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BasePattern basePattern0 = new BasePattern((String) null);
+</pre>
+<h3>Test case 30</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BasePattern.patternType((String) null);
+</pre>
+<h3>Test case 31</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BasePattern basePattern0 = new BasePattern(&quot;N&quot;);
+<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = basePattern0.matches(&quot;Oz~A{LXqf&quot;);
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(boolean0);
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.sequence.BasePattern
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.sequence.BasePattern
+<li>Size: 31
+<li>Length: 41
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.5560815484155373
+<li>BranchCoverage: 0.2694610778443114
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 0.4666666666666667
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

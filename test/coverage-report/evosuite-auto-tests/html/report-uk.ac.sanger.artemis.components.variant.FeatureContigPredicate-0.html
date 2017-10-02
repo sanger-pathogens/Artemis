@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.components.variant.FeatureContigPredicate
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.components.variant.FeatureContigPredicate: 0.8906565656565656</ul>
+<ul>
+<li>8.999999970096349 fitness evaluations, 0 generations, null statements, 3 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FeatureContigPredicate featureContigPredicate0 = new FeatureContigPredicate((String) null);
+<span class="nocode"><a name="2">  2: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;Created connection  &quot;, &quot;5/2Y6Ux-`z misc_feature&quot;);
+<span class="nocode"><a name="3">  3: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(fastaStreamSequence0);
+<span class="nocode"><a name="4">  4: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
+<span class="nocode"><a name="5">  5: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="6">  6: </a></span>Entry entry0 = simpleEntryGroup0.createEntry(&quot;5/2Y6Ux-`z misc_feature&quot;);
+<span class="nocode"><a name="7">  7: </a></span>Feature feature0 = entry0.createFeature();
+<span class="nocode"><a name="8">  8: </a></span>featureContigPredicate0.testPredicate(feature0);
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FeatureContigPredicate featureContigPredicate0 = new FeatureContigPredicate(&quot;Xk&amp;+Tw&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = new Key(&quot;Xk&amp;+Tw&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Range range0 = new Range(0, 0);
+<span class="nocode"><a name="4">  4: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
+<span class="nocode"><a name="5">  5: </a></span>Location location0 = new Location(rangeVector0, true);
+<span class="nocode"><a name="6">  6: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
+<span class="nocode"><a name="7">  7: </a></span>MSPcrunchStreamFeature mSPcrunchStreamFeature0 = new MSPcrunchStreamFeature(key0, location0, qualifierVector0);
+<span class="nocode"><a name="8">  8: </a></span>Feature feature0 = new Feature(mSPcrunchStreamFeature0);
+<span class="nocode"><a name="9">  9: </a></span>boolean boolean0 = featureContigPredicate0.testPredicate(feature0);
+<span class="nocode"><a name="10"> 10: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FeatureContigPredicate featureContigPredicate0 = new FeatureContigPredicate((String) null);
+<span class="nocode"><a name="2">  2: </a></span>featureContigPredicate0.testPredicate((Feature) null);
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.components.variant.FeatureContigPredicate
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.components.variant.FeatureContigPredicate
+<li>Size: 3
+<li>Length: 19
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.8906565656565656
+<li>BranchCoverage: 0.8
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 1.0
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

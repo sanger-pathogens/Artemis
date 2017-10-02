@@ -1,0 +1,608 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.editor.HitInfo
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.editor.HitInfo: 0.9061805707313519</ul>
+<ul>
+<li>119.0523806290019 fitness evaluations, 0 generations, null statements, 88 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;5&lt;se#\&quot;lU=/t3b7TLo,&quot;, &quot;5&lt;se#\&quot;lU=/t3b7TLo,&quot;);
+<span class="nocode"><a name="2">  2: </a></span>String string0 = hitInfo0.getOverlap();
+<span class="nocode"><a name="3">  3: </a></span>assertNull(string0);
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;H=+i&lt; |'&amp;l7n w~t:&quot;, &quot;H=+i&lt; |'&amp;l7n w~t:&quot;);
+<span class="nocode"><a name="2">  2: </a></span>String string0 = hitInfo0.getHeader();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;H=+i&lt; |'&amp;l7n w~t:&quot;, string0);
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;f:O,.@Id&quot;, &quot;f:O,.@Id&quot;);
+<span class="nocode"><a name="2">  2: </a></span>String string0 = hitInfo0.getUngapped();
+<span class="nocode"><a name="3">  3: </a></span>assertNull(string0);
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;H=+i&lt; |'&amp;l7n w~t:&quot;, &quot;H=+i&lt; |'&amp;l7n w~t:&quot;);
+<span class="nocode"><a name="2">  2: </a></span>String string0 = hitInfo0.getAcc();
+<span class="nocode"><a name="3">  3: </a></span>assertNull(string0);
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;&quot;, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>String string0 = hitInfo0.getEC_number();
+<span class="nocode"><a name="3">  3: </a></span>assertNull(string0);
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot; &quot;, &quot; &quot;);
+<span class="nocode"><a name="2">  2: </a></span>int int0 = hitInfo0.getStartPosition();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, int0);
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;f:O,.@Id&quot;, &quot;f:O,.@Id&quot;);
+<span class="nocode"><a name="2">  2: </a></span>String string0 = hitInfo0.getQueryRange();
+<span class="nocode"><a name="3">  3: </a></span>assertNull(string0);
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;&quot;, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>int int0 = hitInfo0.getEndPosition();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, int0);
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;FxSv:E3&quot;, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>String string0 = hitInfo0.getDescription();
+<span class="nocode"><a name="3">  3: </a></span>assertNull(string0);
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;&quot;, &quot;TsH &quot;);
+<span class="nocode"><a name="2">  2: </a></span>String string0 = hitInfo0.getID();
+<span class="nocode"><a name="3">  3: </a></span>assertNull(string0);
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;&quot;, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Vector&lt;Object&gt; vector0 = hitInfo0.getGO();
+<span class="nocode"><a name="3">  3: </a></span>assertNull(vector0);
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;f:O,.@Id&quot;, &quot;f:O,.@Id&quot;);
+<span class="nocode"><a name="2">  2: </a></span>String string0 = hitInfo0.getGeneName();
+<span class="nocode"><a name="3">  3: </a></span>assertNull(string0);
+</pre>
+<h3>Test case 13</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;FxSv:E3&quot;, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>String string0 = hitInfo0.getIdentity();
+<span class="nocode"><a name="3">  3: </a></span>assertNull(string0);
+</pre>
+<h3>Test case 14</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;f:O,.@Id&quot;, &quot;f:O,.@Id&quot;);
+<span class="nocode"><a name="2">  2: </a></span>String string0 = hitInfo0.getDB();
+<span class="nocode"><a name="3">  3: </a></span>assertNull(string0);
+</pre>
+<h3>Test case 15</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;&quot;, &quot;TsH &quot;);
+<span class="nocode"><a name="2">  2: </a></span>Vector&lt;Object&gt; vector0 = hitInfo0.getQueryPosition();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;[]&quot;, vector0.toString());
+</pre>
+<h3>Test case 16</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;&quot;, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>String string0 = hitInfo0.getEMBL();
+<span class="nocode"><a name="3">  3: </a></span>assertNull(string0);
+</pre>
+<h3>Test case 17</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;&quot;, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>String string0 = hitInfo0.getOrganism();
+<span class="nocode"><a name="3">  3: </a></span>assertNull(string0);
+</pre>
+<h3>Test case 18</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;(&quot;, &quot;(&quot;);
+<span class="nocode"><a name="2">  2: </a></span>String string0 = hitInfo0.getScore();
+<span class="nocode"><a name="3">  3: </a></span>assertNull(string0);
+</pre>
+<h3>Test case 19</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;5&lt;se#\&quot;lU=/t3b7TLo,&quot;, &quot;5&lt;se#\&quot;lU=/t3b7TLo,&quot;);
+<span class="nocode"><a name="2">  2: </a></span>String string0 = hitInfo0.getSubjectRange();
+<span class="nocode"><a name="3">  3: </a></span>assertNull(string0);
+</pre>
+<h3>Test case 20</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;&quot;, &quot; `jXL%&gt;IDIK&quot;);
+<span class="nocode"><a name="2">  2: </a></span>String string0 = hitInfo0.getEValue();
+<span class="nocode"><a name="3">  3: </a></span>assertNull(string0);
+</pre>
+<h3>Test case 21</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;f:O,.@Id&quot;, &quot;f:O,.@Id&quot;);
+<span class="nocode"><a name="2">  2: </a></span>String string0 = hitInfo0.getLength();
+<span class="nocode"><a name="3">  3: </a></span>assertNull(string0);
+</pre>
+<h3>Test case 22</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;'.2,G|s{2a[Ib1,`[&quot;, &quot;fasta&quot;);
+</pre>
+<h3>Test case 23</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;;&quot;, &quot;blastp&quot;);
+</pre>
+<h3>Test case 24</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;f:O,.@Id&quot;, &quot;f:O,.@Id&quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.setBLASTPInfo(&quot;j\&quot;A_I,8[mqau}&lt;Jb:q sv.w; ]=gn7yuT$i0w?:lT &quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = hitInfo0.getDB();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;j\&quot;A_I,8[mqau}&lt;Jb&quot;, string0);
+<span class="nocode"><a name="5">  5: </a></span>assertNotNull(string0);
+</pre>
+<h3>Test case 25</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot; BI&lt;#K^8h4%8I8%6f&gt;;&quot;, &quot; BI&lt;#K^8h4%8I8%6f&gt;;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.setBLASTPInfo(&quot;[RWR{=. ?&amp;?) /3&quot;);
+</pre>
+<h3>Test case 26</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;X-1,WW&amp;:U788w;&quot;, &quot;X-1,WW&amp;:U788w;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.setBLASTPInfo(&quot;ht{=. kxNg!u|1.%&quot;);
+</pre>
+<h3>Test case 27</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;H=+i&lt; |'&amp;l7n w~t:&quot;, &quot;H=+i&lt; |'&amp;l7n w~t:&quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.setBLASTPInfo(&quot;H=+i&lt; |'&amp;l7n w~t:&quot;);
+</pre>
+<h3>Test case 28</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;(&quot;, &quot;(&quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.setFastaHitInfo(&quot;ogTDuq.'@@Gs 3,N&quot;);
+</pre>
+<h3>Test case 29</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;j\&quot;A_I,8[mqau}&lt;Jb:q&quot;, &quot;j\&quot;A_I,8[mqau}&lt;Jb:q&quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.setFastaHitInfo(&quot;sv.w; ]=gn7yuT$i0w?:lT &quot;);
+</pre>
+<h3>Test case 30</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;f:O,.@Id&quot;, &quot;f:O,.@Id&quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.setOrganism(&quot;f:O,.@Id&quot;);
+<span class="nocode"><a name="3">  3: </a></span>hitInfo0.setOrganism(&quot;f:O,.@Id&quot;);
+</pre>
+<h3>Test case 31</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;&quot;, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.setOrganism(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>hitInfo0.setOrganism((String) null);
+</pre>
+<h3>Test case 32</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;H=+i&lt; |'&amp;l7n w~t:&quot;, &quot;H=+i&lt; |'&amp;l7n w~t:&quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.setDescription(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>hitInfo0.appendDescription(&quot;Lj:&gt;quBjvuA}&quot;);
+</pre>
+<h3>Test case 33</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;H=+i&lt; |'&amp;l7n w~t:&quot;, &quot;H=+i&lt; |'&amp;l7n w~t:&quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.appendDescription(&quot;Lj:&gt;quBjvuA}&quot;);
+<span class="nocode"><a name="3">  3: </a></span>hitInfo0.appendDescription(&quot;6NKc'vAA '7zg,,&quot;);
+</pre>
+<h3>Test case 34</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;M;+~U&gt;&lt;e\&quot;te=y&quot;, &quot;RS&quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.appendDescription(&quot;(EC &quot;);
+</pre>
+<h3>Test case 35</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;X-1,WW&amp;:U788w;&quot;, &quot;X-1,WW&amp;:U788w;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.setEMBL(&quot;X-1,WW&amp;:U788w;&quot;);
+</pre>
+<h3>Test case 36</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;M;+~U&gt;&lt;e\&quot;te=y&quot;, &quot;RS&quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.setEValue(&quot;eM'aXH{KbK&quot;);
+</pre>
+<h3>Test case 37</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;5&lt;se#\&quot;lU=/t3b7TLo,&quot;, &quot;5&lt;se#\&quot;lU=/t3b7TLo,&quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.setGO(&quot;blastp ^Ak S&quot;);
+</pre>
+<h3>Test case 38</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot; &quot;, &quot; &quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.setGoAssociation(&quot;&quot;, &quot;KR=eL|' [ioI^)&quot;);
+<span class="nocode"><a name="3">  3: </a></span>hitInfo0.setGoAssociation(&quot;4Q`h&quot;, &quot;nAO';s&quot;);
+</pre>
+<h3>Test case 39</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;H*]rW8,u&lt;6~9 h&quot;, &quot;H*]rW8,u&lt;6~9 h&quot;);
+<span class="nocode"><a name="2">  2: </a></span>String string0 = hitInfo0.getGoAssociation(&quot;H*]rW8,u&lt;6~9 h&quot;);
+<span class="nocode"><a name="3">  3: </a></span>assertNull(string0);
+</pre>
+<h3>Test case 40</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;&quot;, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.setGoAssociation(&quot;&quot;, &quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = hitInfo0.getGoAssociation(&quot;&quot;);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;&quot;, string0);
+</pre>
+<h3>Test case 41</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;|&quot;, &quot;|&quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.setGoAssociation(&quot;&quot;, &quot;eeM'aXH{KbK&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = hitInfo0.getGoAssociation(&quot;q@nw8bC(+&quot;);
+<span class="nocode"><a name="4">  4: </a></span>assertNull(string0);
+</pre>
+<h3>Test case 42</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;;&quot;, (String) null);
+</pre>
+<h3>Test case 43</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;&quot;, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.appendDescription((String) null);
+</pre>
+<h3>Test case 44</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;M;+~U&gt;&lt;e\&quot;te=y&quot;, &quot;RS&quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.setGoAssociation(&quot;RS&quot;, &quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>hitInfo0.getGoAssociation((String) null);
+</pre>
+<h3>Test case 45</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;i@;B;egWjXNFz4v=4bv&quot;, &quot;i@;B;egWjXNFz4v=4bv&quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.setBLASTPInfo((String) null);
+</pre>
+<h3>Test case 46</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;&quot;, &quot;RY#StK;&gt;&amp;bFME&quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.setEMBL((String) null);
+</pre>
+<h3>Test case 47</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;&quot;, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.setEValue((String) null);
+</pre>
+<h3>Test case 48</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;!&quot;, &quot;O]7q)QvdF-Hr@F&quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.setFastaHitInfo((String) null);
+</pre>
+<h3>Test case 49</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;&quot;, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.setGO((String) null);
+</pre>
+<h3>Test case 50</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;&quot;, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.setGoAssociation((String) null, &quot;:&quot;);
+</pre>
+<h3>Test case 51</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;H=+i&lt; 3|'&amp;l7n wt~t:&quot;, &quot;H=+i&lt; 3|'&amp;l7n wt~t:&quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.setBLASTPInfo(&quot;H=+i&lt; 3|'&amp;l7n wt~t:&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = hitInfo0.getAcc();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;3|'&amp;l7n&quot;, string0);
+<span class="nocode"><a name="5">  5: </a></span>assertNotNull(string0);
+</pre>
+<h3>Test case 52</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot; &quot;, &quot; &quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.appendDescription(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = hitInfo0.getDescription();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;&quot;, string0);
+</pre>
+<h3>Test case 53</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot; BI&lt;#K^8h4%8I8%6f&gt;;&quot;, &quot; BI&lt;#K^8h4%8I8%6f&gt;;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.appendDescription(&quot;UniProt&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = hitInfo0.getDescription();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;UniProt&quot;, string0);
+</pre>
+<h3>Test case 54</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;&quot;, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.setEC_number(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = hitInfo0.getEC_number();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;&quot;, string0);
+</pre>
+<h3>Test case 55</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot; &quot;, &quot; &quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.setEC_number(&quot; &quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = hitInfo0.getEC_number();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot; &quot;, string0);
+</pre>
+<h3>Test case 56</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;f{&lt;v84[ef%:&lt;igV))&quot;, &quot;f{&lt;v84[ef%:&lt;igV))&quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.setEMBL(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = hitInfo0.getEMBL();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;&quot;, string0);
+</pre>
+<h3>Test case 57</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;_&quot;, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.setEMBL(&quot;&gt;Khk*QTp4+OWv;;:I&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = hitInfo0.getEMBL();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;&gt;Khk*QTp4+OWv;;:I&quot;, string0);
+</pre>
+<h3>Test case 58</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;&quot;, &quot;RY#StK;&gt;&amp;bFME&quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.setEValue(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = hitInfo0.getEValue();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;&quot;, string0);
+</pre>
+<h3>Test case 59</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;&quot;, &quot; `jXL%&gt;IDIK&quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.setEValue(&quot; `jXL%&gt;IDIK&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = hitInfo0.getEValue();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot; `jXL%&gt;IDIK&quot;, string0);
+</pre>
+<h3>Test case 60</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;.&quot;, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.setEndPosition((-924));
+<span class="nocode"><a name="3">  3: </a></span>int int0 = hitInfo0.getEndPosition();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-924), int0);
+</pre>
+<h3>Test case 61</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;AI)OpFJn?y.&quot;, &quot;AI)OpFJn?y.&quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.setEndPosition(1484);
+<span class="nocode"><a name="3">  3: </a></span>int int0 = hitInfo0.getEndPosition();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1484, int0);
+</pre>
+<h3>Test case 62</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;S#6&amp;Sgi/'a\&quot;C`&quot;, &quot;S#6&amp;Sgi/'a\&quot;C`&quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.setGO(&quot;S#6&amp;Sgi/'a\&quot;C`&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Vector&lt;Object&gt; vector0 = hitInfo0.getGO();
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(vector0.isEmpty());
+</pre>
+<h3>Test case 63</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;&quot;, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.setGeneName(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = hitInfo0.getGeneName();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;&quot;, string0);
+</pre>
+<h3>Test case 64</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;d2r,B*98nO8g&quot;, &quot;;Fs,J&quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.setGeneName(&quot;\&quot;FV7y&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = hitInfo0.getGeneName();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;\&quot;FV7y&quot;, string0);
+</pre>
+<h3>Test case 65</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;$I~2c$FPA&lt;g&quot;, &quot;$I~2c$FPA&lt;g&quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.setGoAssociation(&quot;&quot;, &quot;t2OQ&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = hitInfo0.getGoAssociation(&quot;&quot;);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;t2OQ&quot;, string0);
+<span class="nocode"><a name="5">  5: </a></span>assertNotNull(string0);
+</pre>
+<h3>Test case 66</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;&quot;, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>String string0 = hitInfo0.getHeader();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;&quot;, string0);
+</pre>
+<h3>Test case 67</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot; &quot;, &quot; &quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.setBLASTPInfo(&quot; &quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = hitInfo0.getID();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;&quot;, string0);
+<span class="nocode"><a name="5">  5: </a></span>assertNotNull(string0);
+</pre>
+<h3>Test case 68</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;&quot;, &quot;TsH &quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.setFastaHitInfo(&quot;H*]rW8,u&lt;6~9 h&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = hitInfo0.getID();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;H*]rW8,u&lt;6~9&quot;, string0);
+<span class="nocode"><a name="5">  5: </a></span>assertNotNull(string0);
+</pre>
+<h3>Test case 69</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;&quot;, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.setIdentity(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = hitInfo0.getIdentity();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;&quot;, string0);
+</pre>
+<h3>Test case 70</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;&quot;, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.setIdentity(&quot;'p&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = hitInfo0.getIdentity();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;'p&quot;, string0);
+</pre>
+<h3>Test case 71</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;|&quot;, &quot;|&quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.setLength(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = hitInfo0.getLength();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;&quot;, string0);
+</pre>
+<h3>Test case 72</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;FxSv:E3&quot;, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.setLength(&quot;0n~92/ A:&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = hitInfo0.getLength();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;0n~92/ A:&quot;, string0);
+</pre>
+<h3>Test case 73</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;&quot;, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.setOrganism(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = hitInfo0.getOrganism();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;&quot;, string0);
+</pre>
+<h3>Test case 74</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;&quot;, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.setOrganism(&quot;2ip8*X}(K8o_:=Oq-{&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = hitInfo0.getOrganism();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;2ip8*X}(K8o_:=Oq-{&quot;, string0);
+</pre>
+<h3>Test case 75</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;&quot;, &quot; m&lt;7;U!&lt;nkJ{d&quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.setOverlap(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = hitInfo0.getOverlap();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;&quot;, string0);
+</pre>
+<h3>Test case 76</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;_&quot;, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.setOverlap(&quot;luwW;%TwtX&amp;Z|fO!&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = hitInfo0.getOverlap();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;luwW;%TwtX&amp;Z|fO!&quot;, string0);
+</pre>
+<h3>Test case 77</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;&quot;, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.setQueryPosition(765, 3265);
+<span class="nocode"><a name="3">  3: </a></span>Vector&lt;Object&gt; vector0 = hitInfo0.getQueryPosition();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;[765, 3265]&quot;, vector0.toString());
+</pre>
+<h3>Test case 78</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;,z&quot;, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.setQueryRange(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = hitInfo0.getQueryRange();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;&quot;, string0);
+</pre>
+<h3>Test case 79</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;&quot;, &quot;RY#StK;&gt;&amp;bFME&quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.setQueryRange(&quot;RY#StK;&gt;&amp;bFME&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = hitInfo0.getQueryRange();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;RY#StK;&gt;&amp;bFME&quot;, string0);
+</pre>
+<h3>Test case 80</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;wg]Dq`  /v[G&quot;, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.setScore(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = hitInfo0.getScore();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;&quot;, string0);
+</pre>
+<h3>Test case 81</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;y=!&quot;, &quot;y=!&quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.setScore(&quot;y=!&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = hitInfo0.getScore();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;y=!&quot;, string0);
+</pre>
+<h3>Test case 82</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot; &quot;, &quot; &quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.setStartPosition((-275));
+<span class="nocode"><a name="3">  3: </a></span>int int0 = hitInfo0.getStartPosition();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-275), int0);
+</pre>
+<h3>Test case 83</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;cn !5IJx&quot;, &quot;cn !5IJx&quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.setStartPosition(3242);
+<span class="nocode"><a name="3">  3: </a></span>int int0 = hitInfo0.getStartPosition();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(3242, int0);
+</pre>
+<h3>Test case 84</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;5&lt;se#\&quot;lU=/t3b7TLo,&quot;, &quot;5&lt;se#\&quot;lU=/t3b7TLo,&quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.setSubjectRange(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = hitInfo0.getSubjectRange();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;&quot;, string0);
+</pre>
+<h3>Test case 85</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot; BI&lt;#K^8h4%8I8%6f&gt;;&quot;, &quot; BI&lt;#K^8h4%8I8%6f&gt;;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.setSubjectRange(&quot; BI&lt;#K^8h4%8I8%6f&gt;;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = hitInfo0.getSubjectRange();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot; BI&lt;#K^8h4%8I8%6f&gt;;&quot;, string0);
+</pre>
+<h3>Test case 86</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;&quot;, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.setUngapped(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = hitInfo0.getUngapped();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;&quot;, string0);
+</pre>
+<h3>Test case 87</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;!&quot;, &quot;O]7q)QvdF-Hr@F&quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.setUngapped(&quot;$ZAz&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = hitInfo0.getUngapped();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;$ZAz&quot;, string0);
+</pre>
+<h3>Test case 88</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;X-1,WW&amp;:U788w;&quot;, &quot;X-1,WW&amp;:U788w;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>hitInfo0.setFastaHitInfo(&quot;ht{=. kxNg!u|1.%&quot;);
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.editor.HitInfo
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.editor.HitInfo
+<li>Size: 88
+<li>Length: 218
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.9061805707313519
+<li>BranchCoverage: 0.8854166666666666
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 0.8461538461538461
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

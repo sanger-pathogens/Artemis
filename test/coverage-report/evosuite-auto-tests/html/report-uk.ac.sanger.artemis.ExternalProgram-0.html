@@ -1,0 +1,249 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.ExternalProgram
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.ExternalProgram: 0.5406943928991155</ul>
+<ul>
+<li>732.7533204374955 fitness evaluations, 0 generations, null statements, 28 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ExternalProgram externalProgram0 = new ExternalProgram(&quot;=zucOH[H{z7f*&gt;&quot;, &quot;=zucOH[H{z7f*&gt;&quot;, 0);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;=zucOH[H{z7f*&gt;&quot;, externalProgram0.getProgramOptions());
+<span class="nocode"><a name="3">  3: </a></span>
+<span class="nocode"><a name="4">  4: </a></span>externalProgram0.setProgramOptions(&quot;-&quot;);
+<span class="nocode"><a name="5">  5: </a></span>String string0 = externalProgram0.getProgramOptions();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;&quot;, string0);
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ExternalProgram externalProgram0 = new ExternalProgram(&quot;=zucOH[H{z7f*&gt;&quot;, &quot;=zucOH[H{z7f*&gt;&quot;, 0);
+<span class="nocode"><a name="2">  2: </a></span>Clipboard clipboard0 = new Clipboard(&quot;hydrophilicity&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="4">  4: </a></span>FeatureVector featureVector0 = selection0.getAllFeatures();
+<span class="nocode"><a name="5">  5: </a></span>LogViewer logViewer0 = new LogViewer();
+<span class="nocode"><a name="6">  6: </a></span>externalProgram0.run(featureVector0, logViewer0);
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ExternalProgram externalProgram0 = new ExternalProgram(&quot;&quot;, &quot;&quot;, 43);
+<span class="nocode"><a name="2">  2: </a></span>FeatureVector featureVector0 = new FeatureVector();
+<span class="nocode"><a name="3">  3: </a></span>LogViewer logViewer0 = new LogViewer();
+<span class="nocode"><a name="4">  4: </a></span>externalProgram0.run(featureVector0, logViewer0);
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ExternalProgram externalProgram0 = new ExternalProgram(&quot;PtOz@&amp;8@wz34@^&quot;, &quot;&quot;, 1);
+<span class="nocode"><a name="2">  2: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="3">  3: </a></span>FeatureVector featureVector0 = simpleEntryGroup0.getAllFeatures();
+<span class="nocode"><a name="4">  4: </a></span>LogViewer logViewer0 = new LogViewer();
+<span class="nocode"><a name="5">  5: </a></span>externalProgram0.run(featureVector0, logViewer0);
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ExternalProgram externalProgram0 = new ExternalProgram(&quot;] to be rolled on top of every hour.&quot;, &quot;] to be rolled on top of every hour.&quot;, 2);
+<span class="nocode"><a name="2">  2: </a></span>Clipboard clipboard0 = new Clipboard(&quot;Zbf1T *Uom&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="4">  4: </a></span>FeatureVector featureVector0 = selection0.getSelectedFeatures();
+<span class="nocode"><a name="5">  5: </a></span>externalProgram0.run(featureVector0, (Logger) null);
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ExternalProgram externalProgram0 = new ExternalProgram(&quot;] to be rolled on top of every hour.&quot;, &quot;] to be rolled on top of every hour.&quot;, 2);
+<span class="nocode"><a name="2">  2: </a></span>Clipboard clipboard0 = new Clipboard(&quot;Zbf1T *Uom&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="4">  4: </a></span>FeatureVector featureVector0 = selection0.getSelectedFeatures();
+<span class="nocode"><a name="5">  5: </a></span>featureVector0.insertElementAfter((Feature) null, (Feature) null);
+<span class="nocode"><a name="6">  6: </a></span>externalProgram0.run(featureVector0, (Logger) null);
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ExternalProgram.startProgram(&quot;&quot;, (String[]) null);
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ExternalProgram.startProgram(&quot;IOhb\&quot;&lt;WV&quot;, (String[]) null);
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = new String[2];
+<span class="nocode"><a name="2">  2: </a></span>ExternalProgram.startProgram(&quot;gRH$TVQJS%ZW$]&quot;, stringArray0);
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = new String[4];
+<span class="nocode"><a name="2">  2: </a></span>ExternalProgram.startProgram(&quot;&quot;, stringArray0);
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ExternalProgram externalProgram0 = new ExternalProgram(&quot;&quot;, &quot;&quot;, (-2137));
+<span class="nocode"><a name="2">  2: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;, &quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>externalProgram0.setFileNumber(mockFile0, (-580L), (RemoteFileNode) null);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-2137), externalProgram0.getType());
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ExternalProgram externalProgram0 = new ExternalProgram(&quot;Nvnhom(8_&quot;, &quot;GA&quot;, 46);
+<span class="nocode"><a name="2">  2: </a></span>MockFile mockFile0 = new MockFile(&quot;GA&quot;, &quot;Nvnhom(8_&quot;);
+<span class="nocode"><a name="3">  3: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(false);
+<span class="nocode"><a name="4">  4: </a></span>externalProgram0.setFileNumber(mockFile0, 46, remoteFileNode0);
+</pre>
+<h3>Test case 13</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ExternalProgram externalProgram0 = new ExternalProgram(&quot;=zucOH[H{z7f*&gt;&quot;, &quot;=zucOH[H{z7f*&gt;&quot;, 0);
+<span class="nocode"><a name="2">  2: </a></span>MockFile mockFile0 = new MockFile(&quot;=zucOH[H{z7f*&gt;&quot;, &quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>MockFile mockFile1 = (MockFile)MockFile.createTempFile(&quot; cannot have &quot;, &quot; cannot have &quot;, (File) mockFile0);
+<span class="nocode"><a name="4">  4: </a></span>externalProgram0.makeDirectory(mockFile1);
+</pre>
+<h3>Test case 14</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ExternalProgram externalProgram0 = new ExternalProgram(&quot;&quot;, &quot;&quot;, (-2137));
+<span class="nocode"><a name="2">  2: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;, &quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>mockFile0.setWritable(false, false);
+<span class="nocode"><a name="4">  4: </a></span>externalProgram0.setFileNumber(mockFile0, (-580L), (RemoteFileNode) null);
+</pre>
+<h3>Test case 15</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ExternalProgram externalProgram0 = new ExternalProgram(&quot;=zucOH[H{z7f*&gt;&quot;, &quot;=zucOH[H{z7f*&gt;&quot;, 0);
+<span class="nocode"><a name="2">  2: </a></span>String string0 = externalProgram0.getProgramOptions();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;=zucOH[H{z7f*&gt;&quot;, string0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, externalProgram0.getType());
+</pre>
+<h3>Test case 16</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ExternalProgram externalProgram0 = new ExternalProgram(&quot;&quot;, &quot;\&quot;.&quot;, 5225);
+<span class="nocode"><a name="2">  2: </a></span>int int0 = externalProgram0.getType();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(5225, int0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;&quot;, externalProgram0.getName());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;\&quot;.&quot;, externalProgram0.getProgramOptions());
+</pre>
+<h3>Test case 17</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ExternalProgram externalProgram0 = new ExternalProgram(&quot;&quot;, &quot;&quot;, 0);
+<span class="nocode"><a name="2">  2: </a></span>externalProgram0.getName();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, externalProgram0.getType());
+</pre>
+<h3>Test case 18</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ExternalProgram externalProgram0 = new ExternalProgram(&quot;Rg` KM8r&quot;, (String) null, 547);
+<span class="nocode"><a name="2">  2: </a></span>externalProgram0.getProgramOptions();
+</pre>
+<h3>Test case 19</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ExternalProgram externalProgram0 = new ExternalProgram(&quot;&quot;, &quot;!:&quot;, 0);
+<span class="nocode"><a name="2">  2: </a></span>externalProgram0.makeDirectory((File) null);
+</pre>
+<h3>Test case 20</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ExternalProgram externalProgram0 = new ExternalProgram((String) null, &quot;Jm^fPUCuV&lt;pO4c]&quot;, 65536);
+<span class="nocode"><a name="2">  2: </a></span>MockFile mockFile0 = new MockFile((String) null, &quot;Jm^fPUCuV&lt;pO4c]&quot;);
+<span class="nocode"><a name="3">  3: </a></span>externalProgram0.setFileNumber(mockFile0, 4462L, (RemoteFileNode) null);
+</pre>
+<h3>Test case 21</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = new String[1];
+<span class="nocode"><a name="2">  2: </a></span>ExternalProgram.startProgram((String) null, stringArray0);
+</pre>
+<h3>Test case 22</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ExternalProgram externalProgram0 = new ExternalProgram(&quot;BySource(&quot;, &quot;b|4m-&quot;, 0);
+<span class="nocode"><a name="2">  2: </a></span>String string0 = externalProgram0.getName();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;BySource(&quot;, string0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;b|4m-&quot;, externalProgram0.getProgramOptions());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, externalProgram0.getType());
+</pre>
+<h3>Test case 23</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ExternalProgram externalProgram0 = new ExternalProgram((String) null, &quot;Jm^fPUCuV&lt;pO4c]&quot;, 65536);
+<span class="nocode"><a name="2">  2: </a></span>String string0 = externalProgram0.getName();
+<span class="nocode"><a name="3">  3: </a></span>assertNull(string0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(65536, externalProgram0.getType());
+</pre>
+<h3>Test case 24</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ExternalProgram externalProgram0 = new ExternalProgram(&quot;\&quot;AsLTr&lt; %)+&quot;, &quot;3aTD,MWc&quot;, (-11));
+<span class="nocode"><a name="2">  2: </a></span>int int0 = externalProgram0.getType();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;3aTD,MWc&quot;, externalProgram0.getProgramOptions());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-11), int0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;\&quot;AsLTr&lt; %)+&quot;, externalProgram0.getName());
+</pre>
+<h3>Test case 25</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ExternalProgram externalProgram0 = new ExternalProgram(&quot;BySource(&quot;, &quot;b|4m-&quot;, 0);
+<span class="nocode"><a name="2">  2: </a></span>int int0 = externalProgram0.getType();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, int0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;b|4m-&quot;, externalProgram0.getProgramOptions());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;BySource(&quot;, externalProgram0.getName());
+</pre>
+<h3>Test case 26</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ExternalProgram externalProgram0 = new ExternalProgram(&quot;Bh'|`_IRXTeu=2@9CU&quot;, &quot;Bh'|`_IRXTeu=2@9CU&quot;, 46);
+<span class="nocode"><a name="2">  2: </a></span>MockFile mockFile0 = new MockFile(&quot;gRH$TVQJS%ZW$]&quot;, &quot;Bh'|`_IRXTeu=2@9CU&quot;);
+<span class="nocode"><a name="3">  3: </a></span>externalProgram0.setFileNumber(mockFile0, 46, (RemoteFileNode) null);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(46, externalProgram0.getType());
+</pre>
+<h3>Test case 27</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ExternalProgram externalProgram0 = new ExternalProgram(&quot;&quot;, &quot;&quot;, 0);
+<span class="nocode"><a name="2">  2: </a></span>MockFile mockFile0 = new MockFile(&quot;$nl]F{elFdl&quot;);
+<span class="nocode"><a name="3">  3: </a></span>externalProgram0.setFileNumber(mockFile0, 0, (RemoteFileNode) null);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, externalProgram0.getType());
+</pre>
+<h3>Test case 28</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ExternalProgram externalProgram0 = new ExternalProgram(&quot;&quot;, &quot;&quot;, 0);
+<span class="nocode"><a name="2">  2: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>externalProgram0.makeDirectory(mockFile0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, externalProgram0.getType());
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.ExternalProgram
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.ExternalProgram
+<li>Size: 28
+<li>Length: 82
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.5406943928991155
+<li>BranchCoverage: 0.3014705882352941
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 0.6111111111111112
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

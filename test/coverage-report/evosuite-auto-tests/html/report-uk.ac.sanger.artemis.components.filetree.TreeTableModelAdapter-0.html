@@ -1,0 +1,253 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.components.filetree.TreeTableModelAdapter
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.components.filetree.TreeTableModelAdapter: 0.9047939068100358</ul>
+<ul>
+<li>18.793589743589745 fitness evaluations, 0 generations, null statements, 24 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FileSystemModel fileSystemModel0 = new FileSystemModel((JFrame) null);
+<span class="nocode"><a name="2">  2: </a></span>JTree jTree0 = new JTree(fileSystemModel0);
+<span class="nocode"><a name="3">  3: </a></span>TreeTableModelAdapter treeTableModelAdapter0 = new TreeTableModelAdapter(fileSystemModel0, jTree0);
+<span class="nocode"><a name="4">  4: </a></span>int int0 = treeTableModelAdapter0.getColumnCount();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(3, int0);
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FileSystemModel fileSystemModel0 = new FileSystemModel((JFrame) null);
+<span class="nocode"><a name="2">  2: </a></span>JTree jTree0 = new JTree(fileSystemModel0);
+<span class="nocode"><a name="3">  3: </a></span>TreeTableModelAdapter treeTableModelAdapter0 = new TreeTableModelAdapter(fileSystemModel0, jTree0);
+<span class="nocode"><a name="4">  4: </a></span>String string0 = (String)treeTableModelAdapter0.getValueAt(0, 0);
+<span class="nocode"><a name="5">  5: </a></span>assertNotNull(string0);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;&quot;, string0);
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FileSystemModel fileSystemModel0 = new FileSystemModel((JFrame) null);
+<span class="nocode"><a name="2">  2: </a></span>JTree jTree0 = new JTree(fileSystemModel0);
+<span class="nocode"><a name="3">  3: </a></span>TreeTableModelAdapter treeTableModelAdapter0 = new TreeTableModelAdapter(fileSystemModel0, jTree0);
+<span class="nocode"><a name="4">  4: </a></span>String string0 = treeTableModelAdapter0.getColumnName(0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;Name&quot;, string0);
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Vector&lt;Object&gt; vector0 = new Vector&lt;Object&gt;();
+<span class="nocode"><a name="2">  2: </a></span>DefaultTableModel defaultTableModel0 = new DefaultTableModel(vector0, vector0);
+<span class="nocode"><a name="3">  3: </a></span>DefaultMutableTreeNode defaultMutableTreeNode0 = new DefaultMutableTreeNode(defaultTableModel0, false);
+<span class="nocode"><a name="4">  4: </a></span>DefaultTreeModel defaultTreeModel0 = new DefaultTreeModel(defaultMutableTreeNode0, false);
+<span class="nocode"><a name="5">  5: </a></span>Object[] objectArray0 = new Object[1];
+<span class="nocode"><a name="6">  6: </a></span>JTree jTree0 = new JTree(objectArray0);
+<span class="nocode"><a name="7">  7: </a></span>TreeTableModelAdapter treeTableModelAdapter0 = new TreeTableModelAdapter(defaultTreeModel0, jTree0);
+<span class="nocode"><a name="8">  8: </a></span>treeTableModelAdapter0.setValueAt(vector0, 0, 0);
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(0, vector0.size());
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FileSystemModel fileSystemModel0 = new FileSystemModel((JFrame) null);
+<span class="nocode"><a name="2">  2: </a></span>JTree jTree0 = new JTree(fileSystemModel0);
+<span class="nocode"><a name="3">  3: </a></span>TreeTableModelAdapter treeTableModelAdapter0 = new TreeTableModelAdapter(fileSystemModel0, jTree0);
+<span class="nocode"><a name="4">  4: </a></span>treeTableModelAdapter0.getColumnClass(3);
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FileSystemModel fileSystemModel0 = new FileSystemModel((JFrame) null);
+<span class="nocode"><a name="2">  2: </a></span>JTree jTree0 = new JTree(fileSystemModel0);
+<span class="nocode"><a name="3">  3: </a></span>TreeTableModelAdapter treeTableModelAdapter0 = new TreeTableModelAdapter(fileSystemModel0, jTree0);
+<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = treeTableModelAdapter0.isCellEditable((-1), 0);
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JTree jTree0 = new JTree((TreeModel) null);
+<span class="nocode"><a name="2">  2: </a></span>TreeTableModelAdapter treeTableModelAdapter0 = new TreeTableModelAdapter((TreeModel) null, jTree0);
+<span class="nocode"><a name="3">  3: </a></span>int int0 = treeTableModelAdapter0.getRowCount();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, int0);
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FileSystemModel fileSystemModel0 = new FileSystemModel((JFrame) null);
+<span class="nocode"><a name="2">  2: </a></span>JTree jTree0 = new JTree(fileSystemModel0);
+<span class="nocode"><a name="3">  3: </a></span>TreeTableModelAdapter treeTableModelAdapter0 = new TreeTableModelAdapter(fileSystemModel0, jTree0);
+<span class="nocode"><a name="4">  4: </a></span>TreePath treePath0 = jTree0.getPathForRow(0);
+<span class="nocode"><a name="5">  5: </a></span>jTree0.collapsePath(treePath0);
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(jTree0.getFocusTraversalKeysEnabled());
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>TreeTableModelAdapter treeTableModelAdapter0 = new TreeTableModelAdapter((TreeModel) null, (JTree) null);
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DefaultTreeModel defaultTreeModel0 = new DefaultTreeModel((TreeNode) null);
+<span class="nocode"><a name="2">  2: </a></span>JTree jTree0 = new JTree();
+<span class="nocode"><a name="3">  3: </a></span>TreeTableModelAdapter treeTableModelAdapter0 = new TreeTableModelAdapter(defaultTreeModel0, jTree0);
+<span class="nocode"><a name="4">  4: </a></span>treeTableModelAdapter0.getColumnClass(2010);
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JembossParams jembossParams0 = new JembossParams();
+<span class="nocode"><a name="2">  2: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.modeVector();
+<span class="nocode"><a name="3">  3: </a></span>JTree jTree0 = new JTree(vector0);
+<span class="nocode"><a name="4">  4: </a></span>TreeTableModelAdapter treeTableModelAdapter0 = new TreeTableModelAdapter((TreeModel) null, jTree0);
+<span class="nocode"><a name="5">  5: </a></span>treeTableModelAdapter0.getColumnClass(79);
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DefaultTreeModel defaultTreeModel0 = new DefaultTreeModel((TreeNode) null, true);
+<span class="nocode"><a name="2">  2: </a></span>Vector&lt;FileDialog&gt; vector0 = new Vector&lt;FileDialog&gt;();
+<span class="nocode"><a name="3">  3: </a></span>JTree jTree0 = new JTree(vector0);
+<span class="nocode"><a name="4">  4: </a></span>TreeTableModelAdapter treeTableModelAdapter0 = new TreeTableModelAdapter(defaultTreeModel0, jTree0);
+<span class="nocode"><a name="5">  5: </a></span>treeTableModelAdapter0.getColumnCount();
+</pre>
+<h3>Test case 13</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Stack&lt;Scrollbar&gt; stack0 = new Stack&lt;Scrollbar&gt;();
+<span class="nocode"><a name="2">  2: </a></span>JTree jTree0 = new JTree(stack0);
+<span class="nocode"><a name="3">  3: </a></span>TreeTableModelAdapter treeTableModelAdapter0 = new TreeTableModelAdapter((TreeModel) null, jTree0);
+<span class="nocode"><a name="4">  4: </a></span>treeTableModelAdapter0.getColumnCount();
+</pre>
+<h3>Test case 14</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = new String[1];
+<span class="nocode"><a name="2">  2: </a></span>stringArray0[0] = &quot;LF/:P:_E8zL`hn{A&gt;&quot;;
+<span class="nocode"><a name="3">  3: </a></span>FileSystemModel fileSystemModel0 = new FileSystemModel(stringArray0, (JFrame) null);
+<span class="nocode"><a name="4">  4: </a></span>Stack&lt;Choice&gt; stack0 = new Stack&lt;Choice&gt;();
+<span class="nocode"><a name="5">  5: </a></span>JTree jTree0 = new JTree(stack0);
+<span class="nocode"><a name="6">  6: </a></span>TreeTableModelAdapter treeTableModelAdapter0 = new TreeTableModelAdapter(fileSystemModel0, jTree0);
+<span class="nocode"><a name="7">  7: </a></span>treeTableModelAdapter0.getColumnName((-1084));
+</pre>
+<h3>Test case 15</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Vector&lt;Object&gt; vector0 = new Vector&lt;Object&gt;();
+<span class="nocode"><a name="2">  2: </a></span>DefaultTableModel defaultTableModel0 = new DefaultTableModel(vector0, vector0);
+<span class="nocode"><a name="3">  3: </a></span>DefaultMutableTreeNode defaultMutableTreeNode0 = new DefaultMutableTreeNode(defaultTableModel0, false);
+<span class="nocode"><a name="4">  4: </a></span>DefaultTreeModel defaultTreeModel0 = new DefaultTreeModel(defaultMutableTreeNode0, false);
+<span class="nocode"><a name="5">  5: </a></span>Object[] objectArray0 = new Object[1];
+<span class="nocode"><a name="6">  6: </a></span>JTree jTree0 = new JTree(objectArray0);
+<span class="nocode"><a name="7">  7: </a></span>TreeTableModelAdapter treeTableModelAdapter0 = new TreeTableModelAdapter(defaultTreeModel0, jTree0);
+<span class="nocode"><a name="8">  8: </a></span>treeTableModelAdapter0.getColumnName(2980);
+</pre>
+<h3>Test case 16</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JTree jTree0 = new JTree();
+<span class="nocode"><a name="2">  2: </a></span>TreeTableModelAdapter treeTableModelAdapter0 = new TreeTableModelAdapter((TreeModel) null, jTree0);
+<span class="nocode"><a name="3">  3: </a></span>treeTableModelAdapter0.getColumnName((-2722));
+</pre>
+<h3>Test case 17</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DefaultTreeModel defaultTreeModel0 = new DefaultTreeModel((TreeNode) null, true);
+<span class="nocode"><a name="2">  2: </a></span>JTree jTree0 = new JTree((Hashtable&lt;?, ?&gt;) null);
+<span class="nocode"><a name="3">  3: </a></span>TreeTableModelAdapter treeTableModelAdapter0 = new TreeTableModelAdapter(defaultTreeModel0, jTree0);
+<span class="nocode"><a name="4">  4: </a></span>treeTableModelAdapter0.getValueAt(869, (-1438));
+</pre>
+<h3>Test case 18</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Object[] objectArray0 = new Object[1];
+<span class="nocode"><a name="2">  2: </a></span>JTree jTree0 = new JTree(objectArray0);
+<span class="nocode"><a name="3">  3: </a></span>TreeTableModelAdapter treeTableModelAdapter0 = new TreeTableModelAdapter((TreeModel) null, jTree0);
+<span class="nocode"><a name="4">  4: </a></span>treeTableModelAdapter0.getValueAt(0, 0);
+</pre>
+<h3>Test case 19</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JTree jTree0 = new JTree((TreeModel) null);
+<span class="nocode"><a name="2">  2: </a></span>TreeTableModelAdapter treeTableModelAdapter0 = new TreeTableModelAdapter((TreeModel) null, jTree0);
+<span class="nocode"><a name="3">  3: </a></span>treeTableModelAdapter0.nodeForRow(0);
+</pre>
+<h3>Test case 20</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FileSystemModel fileSystemModel0 = new FileSystemModel((JFrame) null);
+<span class="nocode"><a name="2">  2: </a></span>JTree jTree0 = new JTree(fileSystemModel0);
+<span class="nocode"><a name="3">  3: </a></span>TreeTableModelAdapter treeTableModelAdapter0 = new TreeTableModelAdapter(fileSystemModel0, jTree0);
+<span class="nocode"><a name="4">  4: </a></span>Class&lt;Object&gt; class0 = treeTableModelAdapter0.getColumnClass(1);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;class java.lang.Integer&quot;, class0.toString());
+</pre>
+<h3>Test case 21</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FileSystemModel fileSystemModel0 = new FileSystemModel((JFrame) null);
+<span class="nocode"><a name="2">  2: </a></span>JTree jTree0 = new JTree(fileSystemModel0);
+<span class="nocode"><a name="3">  3: </a></span>TreeTableModelAdapter treeTableModelAdapter0 = new TreeTableModelAdapter(fileSystemModel0, jTree0);
+<span class="nocode"><a name="4">  4: </a></span>Class&lt;Object&gt; class0 = treeTableModelAdapter0.getColumnClass(0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;interface uk.ac.sanger.artemis.components.filetree.TreeTableModel&quot;, class0.toString());
+</pre>
+<h3>Test case 22</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Vector&lt;Object&gt; vector0 = new Vector&lt;Object&gt;();
+<span class="nocode"><a name="2">  2: </a></span>DefaultTableModel defaultTableModel0 = new DefaultTableModel(vector0, vector0);
+<span class="nocode"><a name="3">  3: </a></span>DefaultMutableTreeNode defaultMutableTreeNode0 = new DefaultMutableTreeNode(defaultTableModel0, false);
+<span class="nocode"><a name="4">  4: </a></span>DefaultTreeModel defaultTreeModel0 = new DefaultTreeModel(defaultMutableTreeNode0, false);
+<span class="nocode"><a name="5">  5: </a></span>Object[] objectArray0 = new Object[1];
+<span class="nocode"><a name="6">  6: </a></span>JTree jTree0 = new JTree(objectArray0);
+<span class="nocode"><a name="7">  7: </a></span>TreeTableModelAdapter treeTableModelAdapter0 = new TreeTableModelAdapter(defaultTreeModel0, jTree0);
+<span class="nocode"><a name="8">  8: </a></span>int int0 = treeTableModelAdapter0.getRowCount();
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(1, int0);
+</pre>
+<h3>Test case 23</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FileSystemModel fileSystemModel0 = new FileSystemModel((JFrame) null);
+<span class="nocode"><a name="2">  2: </a></span>JTree jTree0 = new JTree(fileSystemModel0);
+<span class="nocode"><a name="3">  3: </a></span>TreeTableModelAdapter treeTableModelAdapter0 = new TreeTableModelAdapter(fileSystemModel0, jTree0);
+<span class="nocode"><a name="4">  4: </a></span>String string0 = (String)treeTableModelAdapter0.getValueAt(0, (-6044));
+<span class="nocode"><a name="5">  5: </a></span>assertNull(string0);
+</pre>
+<h3>Test case 24</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JembossParams jembossParams0 = new JembossParams();
+<span class="nocode"><a name="2">  2: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.modeVector();
+<span class="nocode"><a name="3">  3: </a></span>JTree jTree0 = new JTree(vector0);
+<span class="nocode"><a name="4">  4: </a></span>TreeTableModelAdapter treeTableModelAdapter0 = new TreeTableModelAdapter((TreeModel) null, jTree0);
+<span class="nocode"><a name="5">  5: </a></span>JTree.DynamicUtilTreeNode jTree_DynamicUtilTreeNode0 = (JTree.DynamicUtilTreeNode)treeTableModelAdapter0.nodeForRow(1);
+<span class="nocode"><a name="6">  6: </a></span>assertNotNull(jTree_DynamicUtilTreeNode0);
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.components.filetree.TreeTableModelAdapter
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.components.filetree.TreeTableModelAdapter
+<li>Size: 24
+<li>Length: 109
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.9047939068100358
+<li>BranchCoverage: 0.9166666666666666
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 0.5161290322580645
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

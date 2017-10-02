@@ -1,0 +1,211 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.util.ZipFileDocument
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.util.ZipFileDocument: 0.6858673849629402</ul>
+<ul>
+<li>136.55476183390553 fitness evaluations, 0 generations, null statements, 21 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>ZipFileDocument zipFileDocument0 = new ZipFileDocument(mockFile0, &quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Object object0 = new Object();
+<span class="nocode"><a name="4">  4: </a></span>zipFileDocument0.setLocation(object0);
+<span class="nocode"><a name="5">  5: </a></span>zipFileDocument0.getInputStream();
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;.gz&quot;, &quot;.gz&quot;);
+<span class="nocode"><a name="2">  2: </a></span>ZipFileDocument zipFileDocument0 = new ZipFileDocument(mockFile0, &quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = zipFileDocument0.getName();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;&quot;, string0);
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>ZipFileDocument zipFileDocument0 = new ZipFileDocument(mockFile0, (String) null);
+<span class="nocode"><a name="3">  3: </a></span>zipFileDocument0.writeTmpFile(&quot;.gz&quot;);
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;s5}_r&quot;, &quot;s5}_r&quot;);
+<span class="nocode"><a name="2">  2: </a></span>ZipFileDocument zipFileDocument0 = new ZipFileDocument(mockFile0, &quot;s5}_r&quot;);
+<span class="nocode"><a name="3">  3: </a></span>zipFileDocument0.getInputStream();
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;.zip&quot;, &quot;.zip&quot;);
+<span class="nocode"><a name="2">  2: </a></span>ZipFileDocument zipFileDocument0 = new ZipFileDocument(mockFile0, &quot;.zip&quot;);
+<span class="nocode"><a name="3">  3: </a></span>zipFileDocument0.getOutputStream();
+<span class="nocode"><a name="4">  4: </a></span>zipFileDocument0.getInputStream();
+<span class="nocode"><a name="5">  5: </a></span>zipFileDocument0.getInputStream();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;.zip.gz&quot;, zipFileDocument0.getName());
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;.zip&quot;, &quot;.zip&quot;);
+<span class="nocode"><a name="2">  2: </a></span>ZipFileDocument zipFileDocument0 = new ZipFileDocument(mockFile0, &quot;.zip&quot;);
+<span class="nocode"><a name="3">  3: </a></span>zipFileDocument0.getOutputStream();
+<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = zipFileDocument0.readable();
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;fv`MtP\&quot;#|f?Wwk&quot;);
+<span class="nocode"><a name="2">  2: </a></span>ZipFileDocument zipFileDocument0 = new ZipFileDocument(mockFile0, &quot;fv`MtP\&quot;#|f?Wwk&quot;);
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = zipFileDocument0.readable();
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;.zip&quot;);
+<span class="nocode"><a name="2">  2: </a></span>ZipFileDocument zipFileDocument0 = new ZipFileDocument(mockFile0, &quot;tEmp&quot;);
+<span class="nocode"><a name="3">  3: </a></span>zipFileDocument0.getWriter();
+<span class="nocode"><a name="4">  4: </a></span>mockFile0.setReadable(false);
+<span class="nocode"><a name="5">  5: </a></span>boolean boolean0 = zipFileDocument0.readable();
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;.zXp&quot;);
+<span class="nocode"><a name="2">  2: </a></span>ZipFileDocument zipFileDocument0 = new ZipFileDocument(mockFile0, &quot;tEmp&quot;);
+<span class="nocode"><a name="3">  3: </a></span>zipFileDocument0.getWriter();
+<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = zipFileDocument0.readable();
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ZipFileDocument zipFileDocument0 = new ZipFileDocument((File) null, &quot;qZH_.sIxJG.@&quot;);
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;.gz&quot;);
+<span class="nocode"><a name="2">  2: </a></span>ZipFileDocument zipFileDocument0 = new ZipFileDocument(mockFile0, &quot;.gz&quot;);
+<span class="nocode"><a name="3">  3: </a></span>mockFile0.createNewFile();
+<span class="nocode"><a name="4">  4: </a></span>zipFileDocument0.getInputStream();
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;.zip&quot;, &quot;.zip&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileSystemHandling.shouldAllThrowIOExceptions();
+<span class="nocode"><a name="3">  3: </a></span>ZipFileDocument zipFileDocument0 = new ZipFileDocument(mockFile0, &quot;.zip&quot;);
+<span class="nocode"><a name="4">  4: </a></span>zipFileDocument0.getOutputStream();
+<span class="nocode"><a name="5">  5: </a></span>zipFileDocument0.getInputStream();
+</pre>
+<h3>Test case 13</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;s5}_r&quot;, &quot;s5}_r&quot;);
+<span class="nocode"><a name="2">  2: </a></span>ZipFileDocument zipFileDocument0 = new ZipFileDocument(mockFile0, &quot;s5}_r&quot;);
+<span class="nocode"><a name="3">  3: </a></span>zipFileDocument0.setLocation((Object) null);
+<span class="nocode"><a name="4">  4: </a></span>zipFileDocument0.getInputStream();
+</pre>
+<h3>Test case 14</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>ZipFileDocument zipFileDocument0 = new ZipFileDocument(mockFile0, &quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Object object0 = new Object();
+<span class="nocode"><a name="4">  4: </a></span>zipFileDocument0.setLocation(object0);
+<span class="nocode"><a name="5">  5: </a></span>zipFileDocument0.readable();
+</pre>
+<h3>Test case 15</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;Q{k8%L,tB;/U&quot;);
+<span class="nocode"><a name="2">  2: </a></span>ZipFileDocument zipFileDocument0 = new ZipFileDocument(mockFile0, (String) null);
+<span class="nocode"><a name="3">  3: </a></span>zipFileDocument0.setLocation((Object) null);
+<span class="nocode"><a name="4">  4: </a></span>zipFileDocument0.readable();
+</pre>
+<h3>Test case 16</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;5&gt;7R^MB}lD!u4Q&quot;, &quot;5&gt;7R^MB}lD!u4Q&quot;);
+<span class="nocode"><a name="2">  2: </a></span>ZipFileDocument zipFileDocument0 = new ZipFileDocument(mockFile0, &quot;5&gt;7R^MB}lD!u4Q&quot;);
+<span class="nocode"><a name="3">  3: </a></span>FileSystemHandling.shouldAllThrowIOExceptions();
+<span class="nocode"><a name="4">  4: </a></span>zipFileDocument0.writeTmpFile(&quot;&quot;);
+</pre>
+<h3>Test case 17</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>ZipFileDocument zipFileDocument0 = new ZipFileDocument(mockFile0, &quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>zipFileDocument0.writeTmpFile(&quot;tmp&quot;);
+</pre>
+<h3>Test case 18</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;.zXp&quot;);
+<span class="nocode"><a name="2">  2: </a></span>ZipFileDocument zipFileDocument0 = new ZipFileDocument(mockFile0, &quot;tEmp&quot;);
+<span class="nocode"><a name="3">  3: </a></span>zipFileDocument0.getWriter();
+<span class="nocode"><a name="4">  4: </a></span>ProgressInputStream progressInputStream0 = (ProgressInputStream)zipFileDocument0.getInputStream();
+<span class="nocode"><a name="5">  5: </a></span>assertNotNull(progressInputStream0);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;tEmp&quot;, zipFileDocument0.getName());
+</pre>
+<h3>Test case 19</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;fv`MtP\&quot;#|f?Wwk&quot;);
+<span class="nocode"><a name="2">  2: </a></span>ZipFileDocument zipFileDocument0 = new ZipFileDocument(mockFile0, &quot;fv`MtP\&quot;#|f?Wwk&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = zipFileDocument0.getName();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;fv`MtP\&quot;#|f?Wwk&quot;, string0);
+</pre>
+<h3>Test case 20</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>ZipFileDocument zipFileDocument0 = new ZipFileDocument(mockFile0, (String) null);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = zipFileDocument0.getName();
+<span class="nocode"><a name="4">  4: </a></span>assertNull(string0);
+</pre>
+<h3>Test case 21</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;.zXp&quot;);
+<span class="nocode"><a name="2">  2: </a></span>ZipFileDocument zipFileDocument0 = new ZipFileDocument(mockFile0, &quot;tEmp&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = zipFileDocument0.writeTmpFile(&quot;tEmp&quot;);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;/var/folders/r3/l648tx8s7hn8ppds6z2bk5cc000h2n/T/tEmp0tmp&quot;, string0);
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.util.ZipFileDocument
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.util.ZipFileDocument
+<li>Size: 21
+<li>Length: 78
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.6858673849629402
+<li>BranchCoverage: 0.4634146341463415
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 0.7
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

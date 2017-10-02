@@ -1,0 +1,430 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.components.variant.VCFRecord
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.components.variant.VCFRecord: 0.7185403876632213</ul>
+<ul>
+<li>618.4585230978673 fitness evaluations, 0 generations, null statements, 60 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
+<span class="nocode"><a name="2">  2: </a></span>String string0 = vCFRecord0.getChrom();
+<span class="nocode"><a name="3">  3: </a></span>assertNull(string0);
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
+<span class="nocode"><a name="2">  2: </a></span>vCFRecord0.toString();
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
+<span class="nocode"><a name="2">  2: </a></span>String[][] stringArray0 = new String[2][6];
+<span class="nocode"><a name="3">  3: </a></span>vCFRecord0.setGenoTypeData(stringArray0);
+<span class="nocode"><a name="4">  4: </a></span>String string0 = vCFRecord0.getSampleDataString();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;null:null:null:null:null:null\tnull:null:null:null:null:null&quot;, string0);
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
+<span class="nocode"><a name="2">  2: </a></span>vCFRecord0.appendFilter(&quot;systematic_id&quot;);
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
+<span class="nocode"><a name="2">  2: </a></span>String string0 = vCFRecord0.getInfo();
+<span class="nocode"><a name="3">  3: </a></span>assertNull(string0);
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
+<span class="nocode"><a name="2">  2: </a></span>String[][] stringArray0 = vCFRecord0.getGenoTypeData();
+<span class="nocode"><a name="3">  3: </a></span>assertNull(stringArray0);
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
+<span class="nocode"><a name="2">  2: </a></span>vCFRecord0.setMarkAsNewStop(true);
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = vCFRecord0.isMarkAsNewStop();
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
+<span class="nocode"><a name="2">  2: </a></span>vCFRecord0.setAlt(&quot;\t&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Clipboard clipboard0 = new Clipboard(&quot;;&quot;);
+<span class="nocode"><a name="4">  4: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="5">  5: </a></span>FeatureVector featureVector0 = selection0.getSelectedFeatures();
+<span class="nocode"><a name="6">  6: </a></span>short short0 = vCFRecord0.getSynFlag(featureVector0, 757);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals((short)3, short0);
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
+<span class="nocode"><a name="2">  2: </a></span>int int0 = vCFRecord0.getPos();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, int0);
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
+<span class="nocode"><a name="2">  2: </a></span>VariantBase variantBase0 = vCFRecord0.getAlt();
+<span class="nocode"><a name="3">  3: </a></span>assertNull(variantBase0);
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
+<span class="nocode"><a name="2">  2: </a></span>float float0 = vCFRecord0.getQuality();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0.0F, float0, 0.01F);
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
+<span class="nocode"><a name="2">  2: </a></span>vCFRecord0.setChrom(&quot;!?@CmRvNRki&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = vCFRecord0.getChrom();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;!?@CmRvNRki&quot;, string0);
+</pre>
+<h3>Test case 13</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
+<span class="nocode"><a name="2">  2: </a></span>String string0 = vCFRecord0.getRef();
+<span class="nocode"><a name="3">  3: </a></span>assertNull(string0);
+</pre>
+<h3>Test case 14</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
+<span class="nocode"><a name="2">  2: </a></span>String string0 = vCFRecord0.getID();
+<span class="nocode"><a name="3">  3: </a></span>assertNull(string0);
+</pre>
+<h3>Test case 15</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
+<span class="nocode"><a name="2">  2: </a></span>vCFRecord0.setFormat(&quot;!?@CmRvNRki&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = vCFRecord0.getFormatValueForSample(&quot;d\&quot;alls%&quot;, 0);
+<span class="nocode"><a name="4">  4: </a></span>assertNull(string0);
+</pre>
+<h3>Test case 16</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
+<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = vCFRecord0.isMarkAsNewStop();
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 17</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>int int0 = VCFRecord.countOccurrences(&quot;SD{h.&amp;HUpqX&quot;, '{');
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(1, int0);
+</pre>
+<h3>Test case 18</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>VCFRecord.parse(&quot;\t&quot;, 630);
+</pre>
+<h3>Test case 19</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>VCFRecord.split(&quot;~&quot;, &quot;`czC&quot;, 0);
+</pre>
+<h3>Test case 20</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = VCFRecord.split(&quot;&quot;, &quot; basePosition=&quot;, 0);
+<span class="nocode"><a name="2">  2: </a></span>assertNotNull(stringArray0);
+</pre>
+<h3>Test case 21</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
+<span class="nocode"><a name="2">  2: </a></span>vCFRecord0.setInfo(&quot;Cannot start SSH session.\n&quot;);
+<span class="nocode"><a name="3">  3: </a></span>vCFRecord0.getInfoValue(&quot;PASS&quot;);
+<span class="nocode"><a name="4">  4: </a></span>String string0 = vCFRecord0.getInfoValue(&quot;PASS&quot;);
+<span class="nocode"><a name="5">  5: </a></span>assertNull(string0);
+</pre>
+<h3>Test case 22</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
+<span class="nocode"><a name="2">  2: </a></span>vCFRecord0.setInfo(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>vCFRecord0.containsInfoFlag(&quot;&quot;);
+<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = vCFRecord0.containsInfoFlag(&quot;&quot;);
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 23</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
+<span class="nocode"><a name="2">  2: </a></span>vCFRecord0.setInfo(&quot;F.ve1J&quot;);
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = vCFRecord0.containsInfoFlag(&quot;Ul|&quot;);
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 24</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
+<span class="nocode"><a name="2">  2: </a></span>vCFRecord0.setFormat(&quot;;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>vCFRecord0.getFormatValueForSample((-2494));
+</pre>
+<h3>Test case 25</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
+<span class="nocode"><a name="2">  2: </a></span>String string0 = vCFRecord0.getFormatValueForSample(30);
+<span class="nocode"><a name="3">  3: </a></span>assertNull(string0);
+</pre>
+<h3>Test case 26</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
+<span class="nocode"><a name="2">  2: </a></span>String string0 = vCFRecord0.getSampleDataString();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;&quot;, string0);
+</pre>
+<h3>Test case 27</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
+<span class="nocode"><a name="2">  2: </a></span>vCFRecord0.setFilter(&quot;systematic_id&quot;);
+<span class="nocode"><a name="3">  3: </a></span>vCFRecord0.appendFilter(&quot;systematic_id&quot;);
+</pre>
+<h3>Test case 28</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
+<span class="nocode"><a name="2">  2: </a></span>vCFRecord0.setFilter(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>vCFRecord0.appendFilter(&quot;synonym_id&quot;);
+</pre>
+<h3>Test case 29</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
+<span class="nocode"><a name="2">  2: </a></span>Clipboard clipboard0 = new Clipboard(&quot;;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="4">  4: </a></span>FeatureVector featureVector0 = selection0.getSelectedFeatures();
+<span class="nocode"><a name="5">  5: </a></span>vCFRecord0.getSynFlag(featureVector0, 757);
+</pre>
+<h3>Test case 30</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>CDSFeature cDSFeature0 = new CDSFeature(false, (RangeVector) null, 0, 110, (String) null);
+<span class="nocode"><a name="2">  2: </a></span>short short0 = VCFRecord.checkSyn(cDSFeature0, 0, 'K');
+<span class="nocode"><a name="3">  3: </a></span>assertEquals((short) (-1), short0);
+</pre>
+<h3>Test case 31</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>CDSFeature cDSFeature0 = new CDSFeature(false, (RangeVector) null, (-44), 110, (String) null);
+<span class="nocode"><a name="2">  2: </a></span>VCFRecord.checkSyn(cDSFeature0, 0, 'K');
+</pre>
+<h3>Test case 32</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="3">  3: </a></span>RangeVector rangeVector0 = selection0.getSelectionRanges();
+<span class="nocode"><a name="4">  4: </a></span>CDSFeature cDSFeature0 = new CDSFeature(false, rangeVector0, 0, 2, &quot;&quot;);
+<span class="nocode"><a name="5">  5: </a></span>short short0 = VCFRecord.checkSyn(cDSFeature0, 2, 'd');
+<span class="nocode"><a name="6">  6: </a></span>assertEquals((short) (-1), short0);
+</pre>
+<h3>Test case 33</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
+<span class="nocode"><a name="2">  2: </a></span>vCFRecord0.containsInfoFlag(&quot;\&quot;sjmvv&amp;A.ju\&quot;&quot;);
+</pre>
+<h3>Test case 34</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>VCFRecord.countOccurrences((String) null, 'p');
+</pre>
+<h3>Test case 35</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
+<span class="nocode"><a name="2">  2: </a></span>vCFRecord0.setFormat(&quot;!|0&lt;zjQx&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String[][] stringArray0 = new String[2][6];
+<span class="nocode"><a name="4">  4: </a></span>vCFRecord0.setGenoTypeData(stringArray0);
+<span class="nocode"><a name="5">  5: </a></span>vCFRecord0.getFormatValueForSample((-3971));
+</pre>
+<h3>Test case 36</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
+<span class="nocode"><a name="2">  2: </a></span>vCFRecord0.getInfoValue(&quot;\&quot; not a decimal integer.&quot;);
+</pre>
+<h3>Test case 37</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>VCFRecord.parse(&quot;urn:sequence/genbank:&quot;, (-167));
+</pre>
+<h3>Test case 38</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>VCFRecord.parse((String) null, 3);
+</pre>
+<h3>Test case 39</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
+<span class="nocode"><a name="2">  2: </a></span>vCFRecord0.setFilter((String) null);
+</pre>
+<h3>Test case 40</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>VCFRecord.split(&quot;L0^^,T*&quot;, &quot;&quot;, (short) (-1));
+</pre>
+<h3>Test case 41</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>VCFRecord.split((String) null, &quot;)l2D[&lt;H&quot;, 0);
+</pre>
+<h3>Test case 42</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
+<span class="nocode"><a name="2">  2: </a></span>vCFRecord0.setAlt(&quot;-VP.BwE69WIGvpS&quot;);
+<span class="nocode"><a name="3">  3: </a></span>VariantBase variantBase0 = vCFRecord0.getAlt();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;-VP.BwE69WIGvpS&quot;, variantBase0.toString());
+</pre>
+<h3>Test case 43</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
+<span class="nocode"><a name="2">  2: </a></span>vCFRecord0.setFilter(&quot;Unknown event&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = vCFRecord0.getFilter();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;Unknown event&quot;, string0);
+</pre>
+<h3>Test case 44</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
+<span class="nocode"><a name="2">  2: </a></span>String string0 = vCFRecord0.getFilter();
+<span class="nocode"><a name="3">  3: </a></span>assertNull(string0);
+</pre>
+<h3>Test case 45</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
+<span class="nocode"><a name="2">  2: </a></span>vCFRecord0.setFormat(&quot;:&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = vCFRecord0.getFormat();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;:&quot;, string0);
+</pre>
+<h3>Test case 46</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
+<span class="nocode"><a name="2">  2: </a></span>String string0 = vCFRecord0.getFormat();
+<span class="nocode"><a name="3">  3: </a></span>assertNull(string0);
+</pre>
+<h3>Test case 47</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
+<span class="nocode"><a name="2">  2: </a></span>String[] stringArray0 = vCFRecord0.getFormatValues(&quot;cUf&quot;);
+<span class="nocode"><a name="3">  3: </a></span>assertNull(stringArray0);
+</pre>
+<h3>Test case 48</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
+<span class="nocode"><a name="2">  2: </a></span>String[][] stringArray0 = new String[2][6];
+<span class="nocode"><a name="3">  3: </a></span>vCFRecord0.setGenoTypeData(stringArray0);
+<span class="nocode"><a name="4">  4: </a></span>String[][] stringArray1 = vCFRecord0.getGenoTypeData();
+<span class="nocode"><a name="5">  5: </a></span>assertSame(stringArray1, stringArray0);
+</pre>
+<h3>Test case 49</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
+<span class="nocode"><a name="2">  2: </a></span>vCFRecord0.setID(&quot;!elB\&quot;/FmSDT]@r;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = vCFRecord0.getID();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;!elB\&quot;/FmSDT]@r;&quot;, string0);
+</pre>
+<h3>Test case 50</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
+<span class="nocode"><a name="2">  2: </a></span>vCFRecord0.setInfo(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = vCFRecord0.getInfo();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;&quot;, string0);
+</pre>
+<h3>Test case 51</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
+<span class="nocode"><a name="2">  2: </a></span>vCFRecord0.setInfo(&quot;A@pe(Y&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = vCFRecord0.getInfo();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;A@pe(Y&quot;, string0);
+</pre>
+<h3>Test case 52</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
+<span class="nocode"><a name="2">  2: </a></span>vCFRecord0.setPos(836);
+<span class="nocode"><a name="3">  3: </a></span>int int0 = vCFRecord0.getPos();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(836, int0);
+</pre>
+<h3>Test case 53</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
+<span class="nocode"><a name="2">  2: </a></span>vCFRecord0.setQuality(0.395F);
+<span class="nocode"><a name="3">  3: </a></span>float float0 = vCFRecord0.getQuality();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0.395F, float0, 0.01F);
+</pre>
+<h3>Test case 54</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
+<span class="nocode"><a name="2">  2: </a></span>vCFRecord0.setRef(&quot;%-7eH6im&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = vCFRecord0.getRef();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;%-7eH6im&quot;, string0);
+</pre>
+<h3>Test case 55</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = VCFRecord.split(&quot;4x)j&quot;, &quot;4x)j&quot;, 1155);
+<span class="nocode"><a name="2">  2: </a></span>assertNotNull(stringArray0);
+</pre>
+<h3>Test case 56</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
+<span class="nocode"><a name="2">  2: </a></span>vCFRecord0.setAlt(&quot;org.biojava.bio.symbol.AlphabetManager$GapSymbol&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = vCFRecord0.toString();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;null\t0\tnull\tnull\torg.biojava.bio.symbol.AlphabetManager$GapSymbol\t0.0\tnull\tnull\tnull\t&quot;, string0);
+</pre>
+<h3>Test case 57</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
+<span class="nocode"><a name="2">  2: </a></span>vCFRecord0.setAlt(&quot;R&gt;rGosnv&quot;);
+<span class="nocode"><a name="3">  3: </a></span>vCFRecord0.getSynFlag((List&lt;CDSFeature&gt;) null, (short) (-1));
+</pre>
+<h3>Test case 58</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>int int0 = VCFRecord.countOccurrences(&quot;5F'Nf^$CnFE5P)&lt;&quot;, 'c');
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(0, int0);
+</pre>
+<h3>Test case 59</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(30);
+<span class="nocode"><a name="2">  2: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
+<span class="nocode"><a name="3">  3: </a></span>CDSFeature cDSFeature0 = new CDSFeature(true, rangeVector0, 30, 30, (String) null);
+<span class="nocode"><a name="4">  4: </a></span>short short0 = VCFRecord.checkSyn(cDSFeature0, 0, '.');
+<span class="nocode"><a name="5">  5: </a></span>assertEquals((short) (-1), short0);
+</pre>
+<h3>Test case 60</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>CDSFeature cDSFeature0 = new CDSFeature(false, (RangeVector) null, 5, (-3971), &quot;Cannot start SSH session.\n&quot;);
+<span class="nocode"><a name="2">  2: </a></span>short short0 = VCFRecord.checkSyn(cDSFeature0, 512, 'q');
+<span class="nocode"><a name="3">  3: </a></span>assertEquals((short) (-1), short0);
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.components.variant.VCFRecord
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.components.variant.VCFRecord
+<li>Size: 60
+<li>Length: 150
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.7185403876632213
+<li>BranchCoverage: 0.5725190839694656
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 0.5588235294117647
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

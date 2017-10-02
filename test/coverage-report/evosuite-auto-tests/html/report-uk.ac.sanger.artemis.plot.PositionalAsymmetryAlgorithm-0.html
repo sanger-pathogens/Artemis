@@ -1,0 +1,183 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.plot.PositionalAsymmetryAlgorithm
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.plot.PositionalAsymmetryAlgorithm: 0.7823298638699084</ul>
+<ul>
+<li>192.35684955367816 fitness evaluations, 0 generations, null statements, 12 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="4">  4: </a></span>PositionalAsymmetryAlgorithm positionalAsymmetryAlgorithm0 = new PositionalAsymmetryAlgorithm(strand0);
+<span class="nocode"><a name="5">  5: </a></span>positionalAsymmetryAlgorithm0.getMaximumInternal();
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="4">  4: </a></span>PositionalAsymmetryAlgorithm positionalAsymmetryAlgorithm0 = new PositionalAsymmetryAlgorithm(strand0);
+<span class="nocode"><a name="5">  5: </a></span>Float float0 = positionalAsymmetryAlgorithm0.getMinimumInternal();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0.0F, (float)float0, 0.01F);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(&quot;Positional Asymmetry&quot;, positionalAsymmetryAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="8">  8: </a></span>assertTrue(positionalAsymmetryAlgorithm0.scalingFlag());
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="4">  4: </a></span>PositionalAsymmetryAlgorithm positionalAsymmetryAlgorithm0 = new PositionalAsymmetryAlgorithm(strand0);
+<span class="nocode"><a name="5">  5: </a></span>int int0 = positionalAsymmetryAlgorithm0.getValueCount();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(1, int0);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(&quot;Positional Asymmetry&quot;, positionalAsymmetryAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="8">  8: </a></span>assertTrue(positionalAsymmetryAlgorithm0.scalingFlag());
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="4">  4: </a></span>PositionalAsymmetryAlgorithm positionalAsymmetryAlgorithm0 = new PositionalAsymmetryAlgorithm(strand0);
+<span class="nocode"><a name="5">  5: </a></span>float[] floatArray0 = new float[8];
+<span class="nocode"><a name="6">  6: </a></span>positionalAsymmetryAlgorithm0.getValues(1, 1, floatArray0);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(&quot;Reverse Positional Asymmetry&quot;, positionalAsymmetryAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="8">  8: </a></span>assertTrue(positionalAsymmetryAlgorithm0.scalingFlag());
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="4">  4: </a></span>PositionalAsymmetryAlgorithm positionalAsymmetryAlgorithm0 = new PositionalAsymmetryAlgorithm(strand0);
+<span class="nocode"><a name="5">  5: </a></span>float[] floatArray0 = new float[1];
+<span class="nocode"><a name="6">  6: </a></span>positionalAsymmetryAlgorithm0.getValues(957, 1041, floatArray0);
+<span class="nocode"><a name="7">  7: </a></span>assertTrue(positionalAsymmetryAlgorithm0.scalingFlag());
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(&quot;Positional Asymmetry&quot;, positionalAsymmetryAlgorithm0.getAlgorithmName());
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="4">  4: </a></span>PositionalAsymmetryAlgorithm positionalAsymmetryAlgorithm0 = new PositionalAsymmetryAlgorithm(strand0);
+<span class="nocode"><a name="5">  5: </a></span>Integer integer0 = positionalAsymmetryAlgorithm0.getDefaultWindowSize();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(500, (int)integer0);
+<span class="nocode"><a name="7">  7: </a></span>assertNotNull(integer0);
+<span class="nocode"><a name="8">  8: </a></span>assertTrue(positionalAsymmetryAlgorithm0.scalingFlag());
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(&quot;Reverse Positional Asymmetry&quot;, positionalAsymmetryAlgorithm0.getAlgorithmName());
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;positional_asymmetry&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="4">  4: </a></span>PositionalAsymmetryAlgorithm positionalAsymmetryAlgorithm0 = new PositionalAsymmetryAlgorithm(strand0);
+<span class="nocode"><a name="5">  5: </a></span>Integer integer0 = positionalAsymmetryAlgorithm0.getDefaultMaxWindowSize();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;Positional Asymmetry&quot;, positionalAsymmetryAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="7">  7: </a></span>assertTrue(positionalAsymmetryAlgorithm0.scalingFlag());
+<span class="nocode"><a name="8">  8: </a></span>assertNotNull(integer0);
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(5000, (int)integer0);
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="4">  4: </a></span>PositionalAsymmetryAlgorithm positionalAsymmetryAlgorithm0 = new PositionalAsymmetryAlgorithm(strand0);
+<span class="nocode"><a name="5">  5: </a></span>Integer integer0 = positionalAsymmetryAlgorithm0.getDefaultMinWindowSize();
+<span class="nocode"><a name="6">  6: </a></span>assertNotNull(integer0);
+<span class="nocode"><a name="7">  7: </a></span>assertTrue(positionalAsymmetryAlgorithm0.scalingFlag());
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(&quot;Reverse Positional Asymmetry&quot;, positionalAsymmetryAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(10, (int)integer0);
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;positional_asymmetry&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="4">  4: </a></span>PositionalAsymmetryAlgorithm positionalAsymmetryAlgorithm0 = new PositionalAsymmetryAlgorithm(strand0);
+<span class="nocode"><a name="5">  5: </a></span>Integer integer0 = positionalAsymmetryAlgorithm0.getDefaultStepSize(0);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;Positional Asymmetry&quot;, positionalAsymmetryAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="7">  7: </a></span>assertTrue(positionalAsymmetryAlgorithm0.scalingFlag());
+<span class="nocode"><a name="8">  8: </a></span>assertNull(integer0);
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;positional_asymmetry&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="4">  4: </a></span>PositionalAsymmetryAlgorithm positionalAsymmetryAlgorithm0 = new PositionalAsymmetryAlgorithm(strand0);
+<span class="nocode"><a name="5">  5: </a></span>Integer integer0 = positionalAsymmetryAlgorithm0.getDefaultStepSize(941);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(94, (int)integer0);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(&quot;Positional Asymmetry&quot;, positionalAsymmetryAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="8">  8: </a></span>assertNotNull(integer0);
+<span class="nocode"><a name="9">  9: </a></span>assertTrue(positionalAsymmetryAlgorithm0.scalingFlag());
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>PositionalAsymmetryAlgorithm positionalAsymmetryAlgorithm0 = new PositionalAsymmetryAlgorithm((Strand) null);
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="4">  4: </a></span>PositionalAsymmetryAlgorithm positionalAsymmetryAlgorithm0 = new PositionalAsymmetryAlgorithm(strand0);
+<span class="nocode"><a name="5">  5: </a></span>float[] floatArray0 = new float[8];
+<span class="nocode"><a name="6">  6: </a></span>positionalAsymmetryAlgorithm0.getValues(1, 0, floatArray0);
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.plot.PositionalAsymmetryAlgorithm
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.plot.PositionalAsymmetryAlgorithm
+<li>Size: 12
+<li>Length: 59
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.7823298638699084
+<li>BranchCoverage: 0.5892857142857143
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 0.336
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

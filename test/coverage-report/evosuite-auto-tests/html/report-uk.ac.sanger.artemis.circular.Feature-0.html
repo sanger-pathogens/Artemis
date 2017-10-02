@@ -1,0 +1,210 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.circular.Feature
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.circular.Feature: 0.9812834224598931</ul>
+<ul>
+<li>1.75 fitness evaluations, 0 generations, null statements, 19 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Feature feature0 = new Feature(&quot;Q^JDQh?'pTD{qY58&quot;, (-1853), (-1726), (-1853));
+<span class="nocode"><a name="2">  2: </a></span>feature0.setStart(3615);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(3615, feature0.getStart());
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Feature feature0 = new Feature(&quot;~t2!k]rW8&quot;, (-112), (-112), (-112));
+<span class="nocode"><a name="2">  2: </a></span>feature0.setEmblKey(&quot;~t2!k]rW8&quot;);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals((-112), feature0.getEnd());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-112), feature0.getColour());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals((-112), feature0.getStart());
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Feature feature0 = new Feature((String) null, 0, 0, 0);
+<span class="nocode"><a name="2">  2: </a></span>feature0.setColour(0);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, feature0.getEnd());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, feature0.getStart());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, feature0.getColour());
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Feature feature0 = new Feature(&quot;exon&quot;, 1, 1, 1);
+<span class="nocode"><a name="2">  2: </a></span>uk.ac.sanger.artemis.Feature feature1 = feature0.getArtemisFeature();
+<span class="nocode"><a name="3">  3: </a></span>assertNotNull(feature1);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1, feature0.getEnd());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(1, feature0.getColour());
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Feature feature0 = new Feature(&quot;fd!islK9%Xap +T&quot;, (-5977), (-5977), (-5977));
+<span class="nocode"><a name="2">  2: </a></span>feature0.setEnd((-5977));
+<span class="nocode"><a name="3">  3: </a></span>assertEquals((-5977), feature0.getColour());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-5977), feature0.getStart());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals((-5977), feature0.getEnd());
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Feature feature0 = new Feature(&quot;&quot;, 62, (-904), 62);
+<span class="nocode"><a name="2">  2: </a></span>feature0.getEmblKey();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals((-904), feature0.getEnd());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(62, feature0.getStart());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(62, feature0.getColour());
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Feature feature0 = new Feature(&quot;fd!islK9%Xap +T&quot;, (-5977), (-5977), (-5977));
+<span class="nocode"><a name="2">  2: </a></span>int int0 = feature0.getColour();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals((-5977), feature0.getEnd());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-5977), int0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals((-5977), feature0.getStart());
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Feature feature0 = new Feature(&quot;(-)CI/wmV]ZP&quot;, (-4974), (-984), (-984));
+<span class="nocode"><a name="2">  2: </a></span>int int0 = feature0.getStart();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals((-984), feature0.getColour());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-4974), int0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals((-984), feature0.getEnd());
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Feature feature0 = new Feature(&quot;&quot;, 1, 1, 1);
+<span class="nocode"><a name="2">  2: </a></span>int int0 = feature0.getEnd();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(1, feature0.getColour());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1, feature0.getStart());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(1, int0);
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Feature feature0 = new Feature(&quot;3&quot;, 1245, 1245, 2747);
+<span class="nocode"><a name="2">  2: </a></span>uk.ac.sanger.artemis.Feature feature1 = feature0.getArtemisFeature();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(1245, feature0.getStart());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(2747, feature0.getColour());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(1245, feature0.getEnd());
+<span class="nocode"><a name="6">  6: </a></span>assertNotNull(feature1);
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Feature feature0 = new Feature(&quot;&quot;, 0, 0, 0);
+<span class="nocode"><a name="2">  2: </a></span>feature0.getArtemisFeature();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, feature0.getColour());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, feature0.getStart());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, feature0.getEnd());
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Feature feature0 = new Feature(&quot;3&quot;, 1245, 1245, 2747);
+<span class="nocode"><a name="2">  2: </a></span>int int0 = feature0.getColour();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(2747, int0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1245, feature0.getStart());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(1245, feature0.getEnd());
+</pre>
+<h3>Test case 13</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Feature feature0 = new Feature(&quot;&quot;, 0, 0, 0);
+<span class="nocode"><a name="2">  2: </a></span>int int0 = feature0.getColour();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, feature0.getEnd());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, int0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, feature0.getStart());
+</pre>
+<h3>Test case 14</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Feature feature0 = new Feature(&quot;~t2!k]rW8&quot;, (-112), (-112), (-112));
+<span class="nocode"><a name="2">  2: </a></span>feature0.getEmblKey();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals((-112), feature0.getEnd());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-112), feature0.getColour());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals((-112), feature0.getStart());
+</pre>
+<h3>Test case 15</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Feature feature0 = new Feature((String) null, 0, 0, 0);
+<span class="nocode"><a name="2">  2: </a></span>feature0.getEmblKey();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, feature0.getEnd());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, feature0.getStart());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, feature0.getColour());
+</pre>
+<h3>Test case 16</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Feature feature0 = new Feature(&quot;Q^JDQh?'pTD{qY58&quot;, (-1853), (-1726), (-1853));
+<span class="nocode"><a name="2">  2: </a></span>int int0 = feature0.getEnd();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals((-1726), int0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-1853), feature0.getStart());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals((-1853), feature0.getColour());
+</pre>
+<h3>Test case 17</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Feature feature0 = new Feature(&quot;colour&quot;, (-1402), 0, 0);
+<span class="nocode"><a name="2">  2: </a></span>int int0 = feature0.getEnd();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, feature0.getColour());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, int0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals((-1402), feature0.getStart());
+</pre>
+<h3>Test case 18</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Feature feature0 = new Feature(&quot;&quot;, 1876, 0, 1168);
+<span class="nocode"><a name="2">  2: </a></span>int int0 = feature0.getStart();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(1876, int0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1168, feature0.getColour());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, feature0.getEnd());
+</pre>
+<h3>Test case 19</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Feature feature0 = new Feature((String) null, 0, 0, 0);
+<span class="nocode"><a name="2">  2: </a></span>int int0 = feature0.getStart();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, int0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, feature0.getColour());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, feature0.getEnd());
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.circular.Feature
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.circular.Feature
+<li>Size: 19
+<li>Length: 38
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.9812834224598931
+<li>BranchCoverage: 1.0
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 0.9411764705882353
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

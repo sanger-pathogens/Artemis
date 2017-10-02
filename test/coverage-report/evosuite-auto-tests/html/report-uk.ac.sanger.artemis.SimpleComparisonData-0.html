@@ -1,0 +1,187 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.SimpleComparisonData
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.SimpleComparisonData: 0.4534171907591342</ul>
+<ul>
+<li>390.1277056277056 fitness evaluations, 0 generations, null statements, 18 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MSPcrunchComparisonData mSPcrunchComparisonData0 = new MSPcrunchComparisonData();
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch[] alignMatchArray0 = mSPcrunchComparisonData0.getMatches();
+<span class="nocode"><a name="3">  3: </a></span>assertNull(alignMatchArray0);
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[3];
+<span class="nocode"><a name="2">  2: </a></span>CharArrayReader charArrayReader0 = new CharArrayReader(charArray0, 0, 327);
+<span class="nocode"><a name="3">  3: </a></span>LinePushBackReader linePushBackReader0 = new LinePushBackReader(charArrayReader0);
+<span class="nocode"><a name="4">  4: </a></span>MSPcrunchComparisonData mSPcrunchComparisonData0 = new MSPcrunchComparisonData(linePushBackReader0);
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[3];
+<span class="nocode"><a name="2">  2: </a></span>charArray0[0] = '3';
+<span class="nocode"><a name="3">  3: </a></span>CharArrayReader charArrayReader0 = new CharArrayReader(charArray0, 0, 327);
+<span class="nocode"><a name="4">  4: </a></span>LinePushBackReader linePushBackReader0 = new LinePushBackReader(charArrayReader0);
+<span class="nocode"><a name="5">  5: </a></span>MSPcrunchComparisonData mSPcrunchComparisonData0 = new MSPcrunchComparisonData(linePushBackReader0);
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>AlignMatch alignMatch0 = SimpleComparisonData.makeAlignMatch(0, (-38), 0, (-38), (-38), (-38));
+<span class="nocode"><a name="2">  2: </a></span>BlastM8ComparisonData blastM8ComparisonData0 = new BlastM8ComparisonData();
+<span class="nocode"><a name="3">  3: </a></span>AlignMatch[] alignMatchArray0 = new AlignMatch[9];
+<span class="nocode"><a name="4">  4: </a></span>alignMatchArray0[0] = alignMatch0;
+<span class="nocode"><a name="5">  5: </a></span>alignMatchArray0[1] = alignMatch0;
+<span class="nocode"><a name="6">  6: </a></span>blastM8ComparisonData0.setMatches(alignMatchArray0);
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>AlignMatch alignMatch0 = SimpleComparisonData.makeAlignMatch((-1452), 1660, (-1452), 1660, 0, (-1452));
+<span class="nocode"><a name="2">  2: </a></span>assertEquals((-1452), alignMatch0.getPercentID());
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(3112, alignMatch0.getLength());
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(alignMatch0.isRevMatch());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, alignMatch0.getScore());
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>AlignMatch alignMatch0 = SimpleComparisonData.makeAlignMatch((-512), (-512), 54, 0, 2219, 3946);
+<span class="nocode"><a name="2">  2: </a></span>assertTrue(alignMatch0.isRevMatch());
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(2219, alignMatch0.getScore());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, alignMatch0.getLength());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(3946, alignMatch0.getPercentID());
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MegaBlastComparisonData megaBlastComparisonData0 = new MegaBlastComparisonData();
+<span class="nocode"><a name="2">  2: </a></span>megaBlastComparisonData0.getMaximumScore();
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SSAHAComparisonData sSAHAComparisonData0 = new SSAHAComparisonData();
+<span class="nocode"><a name="2">  2: </a></span>sSAHAComparisonData0.getMinimumScore();
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BlastM8ComparisonData blastM8ComparisonData0 = new BlastM8ComparisonData();
+<span class="nocode"><a name="2">  2: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;hydrophobicity&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
+<span class="nocode"><a name="4">  4: </a></span>blastM8ComparisonData0.flipMatchesIfNeeded(bases0, bases0);
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MSPcrunchComparisonData mSPcrunchComparisonData0 = new MSPcrunchComparisonData();
+<span class="nocode"><a name="2">  2: </a></span>mSPcrunchComparisonData0.makeMatchFromString((String) null);
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BlastM8ComparisonData blastM8ComparisonData0 = new BlastM8ComparisonData();
+<span class="nocode"><a name="2">  2: </a></span>blastM8ComparisonData0.makeMatchFromString(&quot;l!e6jdt!oL$&quot;);
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MSPcrunchComparisonData mSPcrunchComparisonData0 = new MSPcrunchComparisonData();
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch[] alignMatchArray0 = new AlignMatch[0];
+<span class="nocode"><a name="3">  3: </a></span>mSPcrunchComparisonData0.setMatches(alignMatchArray0);
+<span class="nocode"><a name="4">  4: </a></span>AlignMatch[] alignMatchArray1 = mSPcrunchComparisonData0.getMatches();
+<span class="nocode"><a name="5">  5: </a></span>assertSame(alignMatchArray1, alignMatchArray0);
+</pre>
+<h3>Test case 13</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MSPcrunchComparisonData mSPcrunchComparisonData0 = new MSPcrunchComparisonData();
+<span class="nocode"><a name="2">  2: </a></span>MSPcrunchComparisonData mSPcrunchComparisonData1 = (MSPcrunchComparisonData)mSPcrunchComparisonData0.getNewSimpleComparisonData();
+<span class="nocode"><a name="3">  3: </a></span>assertNotSame(mSPcrunchComparisonData0, mSPcrunchComparisonData1);
+</pre>
+<h3>Test case 14</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>AlignMatch alignMatch0 = SimpleComparisonData.makeAlignMatch((-38), (-38), (-38), 178, 1675, 0);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(0, alignMatch0.getPercentID());
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, alignMatch0.getLength());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1675, alignMatch0.getScore());
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(alignMatch0.isRevMatch());
+</pre>
+<h3>Test case 15</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>AlignMatch alignMatch0 = SimpleComparisonData.makeAlignMatch(3073, 52, (-478), 1896, 126, (-3));
+<span class="nocode"><a name="2">  2: </a></span>assertTrue(alignMatch0.isRevMatch());
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(3021, alignMatch0.getLength());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-3), alignMatch0.getPercentID());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(126, alignMatch0.getScore());
+</pre>
+<h3>Test case 16</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>AlignMatch alignMatch0 = SimpleComparisonData.makeAlignMatch(2360, 0, 2360, (-388), 2360, (-82));
+<span class="nocode"><a name="2">  2: </a></span>assertEquals((-82), alignMatch0.getPercentID());
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(alignMatch0.isRevMatch());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(2360, alignMatch0.getLength());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(2360, alignMatch0.getScore());
+</pre>
+<h3>Test case 17</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MegaBlastComparisonData megaBlastComparisonData0 = new MegaBlastComparisonData();
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch[] alignMatchArray0 = new AlignMatch[1];
+<span class="nocode"><a name="3">  3: </a></span>Range range0 = new Range((-1125));
+<span class="nocode"><a name="4">  4: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, false, 0, (-1125));
+<span class="nocode"><a name="5">  5: </a></span>alignMatchArray0[0] = alignMatch0;
+<span class="nocode"><a name="6">  6: </a></span>megaBlastComparisonData0.setMatches(alignMatchArray0);
+</pre>
+<h3>Test case 18</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>AlignMatch alignMatch0 = SimpleComparisonData.makeAlignMatch((-1325), (-1325), 0, 0, 0, (-1325));
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(0, alignMatch0.getScore());
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(alignMatch0.isRevMatch());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, alignMatch0.getLength());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals((-1325), alignMatch0.getPercentID());
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.SimpleComparisonData
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.SimpleComparisonData
+<li>Size: 18
+<li>Length: 47
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.4534171907591342
+<li>BranchCoverage: 0.36666666666666664
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 0.37209302325581395
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

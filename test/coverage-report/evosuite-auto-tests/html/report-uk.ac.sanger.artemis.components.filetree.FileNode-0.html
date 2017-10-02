@@ -1,0 +1,272 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.components.filetree.FileNode
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.components.filetree.FileNode: 0.9348753555110292</ul>
+<ul>
+<li>23.442857142857143 fitness evaluations, 0 generations, null statements, 29 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileNode fileNode0 = new FileNode(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>FileFilter fileFilter0 = mock(FileFilter.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="4">  4: </a></span>Object[] objectArray0 = fileNode0.getChildren(fileFilter0);
+<span class="nocode"><a name="5">  5: </a></span>FileFilter fileFilter1 = mock(FileFilter.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="6">  6: </a></span>Object[] objectArray1 = fileNode0.getChildren(fileFilter1);
+<span class="nocode"><a name="7">  7: </a></span>assertSame(objectArray1, objectArray0);
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;B&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileNode fileNode0 = new FileNode(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>fileNode0.reset();
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(fileNode0.isLeaf());
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileNode fileNode0 = new FileNode(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = fileNode0.getAllowsChildren();
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileNode fileNode0 = new FileNode(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>DataFlavor[] dataFlavorArray0 = fileNode0.getTransferDataFlavors();
+<span class="nocode"><a name="4">  4: </a></span>assertNotNull(dataFlavorArray0);
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileNode fileNode0 = new FileNode(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = fileNode0.isLeaf();
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileNode fileNode0 = new FileNode(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = fileNode0.toString();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;/&quot;, string0);
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;=Y}$x8'&lt;W\&quot;+kL4B):&quot;);
+<span class="nocode"><a name="2">  2: </a></span>MockFile mockFile1 = new MockFile(mockFile0, &quot;=Y}$x8'&lt;W\&quot;+kL4B):&quot;);
+<span class="nocode"><a name="3">  3: </a></span>FileNode fileNode0 = new FileNode(mockFile1);
+<span class="nocode"><a name="4">  4: </a></span>String string0 = fileNode0.toString();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;=Y}$x8'&lt;W\&quot;+kL4B):&quot;, string0);
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;eMCLW?{f\&quot;@q&quot;, &quot;eMCLW?{f\&quot;@q&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileNode fileNode0 = new FileNode(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>FileFilter fileFilter0 = mock(FileFilter.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="4">  4: </a></span>Object[] objectArray0 = fileNode0.getChildren(fileFilter0);
+<span class="nocode"><a name="5">  5: </a></span>assertNull(objectArray0);
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;B&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileNode fileNode0 = new FileNode(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>fileNode0.setDirectory(true);
+<span class="nocode"><a name="4">  4: </a></span>FileFilter fileFilter0 = mock(FileFilter.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="5">  5: </a></span>fileNode0.getChildren(fileFilter0);
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(fileNode0.getAllowsChildren());
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileNode fileNode0 = new FileNode(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>Object[] objectArray0 = fileNode0.getChildren((FileFilter) null);
+<span class="nocode"><a name="4">  4: </a></span>assertNotNull(objectArray0);
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileNode fileNode0 = new FileNode(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = fileNode0.isDataFlavorSupported(fileNode0.FILENODE);
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;B&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileNode fileNode0 = new FileNode(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>DataFlavor dataFlavor0 = DataFlavor.stringFlavor;
+<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = fileNode0.isDataFlavorSupported(dataFlavor0);
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 13</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;=Y}$x8'&lt;W\&quot;+kL4B):&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileNode fileNode0 = new FileNode(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>DataFlavor dataFlavor0 = new DataFlavor();
+<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = fileNode0.isDataFlavorSupported(dataFlavor0);
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 14</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;B&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileNode fileNode0 = new FileNode(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>DataFlavor dataFlavor0 = DataFlavor.stringFlavor;
+<span class="nocode"><a name="4">  4: </a></span>FileNode fileNode1 = (FileNode)fileNode0.getTransferData(dataFlavor0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;/Users/kp11/workspace/applications/Artemis/test/B&quot;, fileNode1);
+</pre>
+<h3>Test case 15</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileNode fileNode0 = new FileNode(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>FileNode fileNode1 = (FileNode)fileNode0.getTransferData(fileNode0.FILENODE);
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(fileNode1.getAllowsChildren());
+</pre>
+<h3>Test case 16</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileNode fileNode0 = new FileNode(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>fileNode0.getTransferData((DataFlavor) null);
+</pre>
+<h3>Test case 17</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileNode fileNode0 = new FileNode(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = fileNode0.isDirectory();
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 18</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileNode fileNode0 = new FileNode(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>MockFile mockFile1 = (MockFile)fileNode0.getFile();
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(mockFile1.isFile());
+</pre>
+<h3>Test case 19</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FileNode fileNode0 = new FileNode((File) null);
+</pre>
+<h3>Test case 20</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileNode fileNode0 = new FileNode(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>PipedInputStream pipedInputStream0 = new PipedInputStream();
+<span class="nocode"><a name="4">  4: </a></span>fileNode0.setUserObject(pipedInputStream0);
+<span class="nocode"><a name="5">  5: </a></span>fileNode0.getChildren((FileFilter) null);
+</pre>
+<h3>Test case 21</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;RjUDQwT,&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileNode fileNode0 = new FileNode(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>fileNode0.isDataFlavorSupported((DataFlavor) null);
+</pre>
+<h3>Test case 22</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;eMCLW?{f\&quot;@q&quot;, &quot;eMCLW?{f\&quot;@q&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileNode fileNode0 = new FileNode(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>fileNode0.setUserObject(fileNode0);
+<span class="nocode"><a name="4">  4: </a></span>fileNode0.toString();
+</pre>
+<h3>Test case 23</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;B&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileNode fileNode0 = new FileNode(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = fileNode0.getAllowsChildren();
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 24</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;=Y}$x8'&lt;W\&quot;+kL4B):&quot;);
+<span class="nocode"><a name="2">  2: </a></span>MockFile mockFile1 = new MockFile(mockFile0, &quot;=Y}$x8'&lt;W\&quot;+kL4B):&quot;);
+<span class="nocode"><a name="3">  3: </a></span>FileNode fileNode0 = new FileNode(mockFile1);
+<span class="nocode"><a name="4">  4: </a></span>MockFile mockFile2 = (MockFile)fileNode0.getFile();
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(mockFile2.isDirectory());
+</pre>
+<h3>Test case 25</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;B&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileNode fileNode0 = new FileNode(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(&quot;/Users/kp11/workspace/applications/Artemis/test/B&quot;);
+<span class="nocode"><a name="4">  4: </a></span>FileSystemHandling.appendLineToFile(evoSuiteFile0, &quot;B&quot;);
+<span class="nocode"><a name="5">  5: </a></span>MockFile mockFile1 = (MockFile)fileNode0.getFile();
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(mockFile1.isAbsolute());
+</pre>
+<h3>Test case 26</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileNode fileNode0 = new FileNode(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>FileNode.flavors = null;
+<span class="nocode"><a name="4">  4: </a></span>DataFlavor[] dataFlavorArray0 = fileNode0.getTransferDataFlavors();
+<span class="nocode"><a name="5">  5: </a></span>assertNull(dataFlavorArray0);
+</pre>
+<h3>Test case 27</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;, &quot;v_*.u0yIS?fn3&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileNode fileNode0 = new FileNode(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = fileNode0.isDirectory();
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 28</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile((File) null, &quot;&gt;'Z{7qc&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileNode fileNode0 = new FileNode(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = fileNode0.isLeaf();
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 29</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileNode fileNode0 = new FileNode(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = fileNode0.toString();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;&quot;, string0);
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.components.filetree.FileNode
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.components.filetree.FileNode
+<li>Size: 29
+<li>Length: 102
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.9348753555110292
+<li>BranchCoverage: 0.9032258064516129
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 0.7450980392156863
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

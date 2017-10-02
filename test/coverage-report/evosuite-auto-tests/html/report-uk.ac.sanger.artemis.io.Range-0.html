@@ -1,0 +1,422 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.io.Range
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.io.Range: 0.9364694277568476</ul>
+<ul>
+<li>27.276190476190475 fitness evaluations, 0 generations, null statements, 46 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(1556);
+<span class="nocode"><a name="2">  2: </a></span>Range range1 = range0.copy();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(1556, range0.getEnd());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1, range1.getCount());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(1556, range0.getStart());
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range((-680));
+<span class="nocode"><a name="2">  2: </a></span>range0.change((-1), (-1848));
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(1556);
+<span class="nocode"><a name="2">  2: </a></span>String string0 = range0.toString();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;1556&quot;, string0);
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(0);
+<span class="nocode"><a name="2">  2: </a></span>Range range1 = range0.change(0, 1);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = range1.toString();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, range0.getEnd());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;0..1&quot;, string0);
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(0);
+<span class="nocode"><a name="2">  2: </a></span>Range range1 = range0.truncate(range0);
+<span class="nocode"><a name="3">  3: </a></span>assertNotNull(range1);
+<span class="nocode"><a name="4">  4: </a></span>
+<span class="nocode"><a name="5">  5: </a></span>boolean boolean0 = range1.contains(range0);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(1, range1.getCount());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(1, range0.getCount());
+<span class="nocode"><a name="8">  8: </a></span>assertFalse(boolean0);
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(0, range0.getStart());
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(1556);
+<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = range0.contains(range0);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(1556, range0.getStart());
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(boolean0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(1556, range0.getEnd());
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(1556);
+<span class="nocode"><a name="2">  2: </a></span>Range range1 = new Range((-1), 1723);
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = range0.contains(range1);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1556, range0.getStart());
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(boolean0);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(1725, range1.getCount());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(1556, range0.getEnd());
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(1556);
+<span class="nocode"><a name="2">  2: </a></span>Range range1 = new Range(1556, 1723);
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = range0.contains(range1);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1556, range0.getStart());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(168, range1.getCount());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(1556, range0.getEnd());
+<span class="nocode"><a name="7">  7: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(0);
+<span class="nocode"><a name="2">  2: </a></span>FuzzyRange fuzzyRange0 = (FuzzyRange)range0.truncate(range0);
+<span class="nocode"><a name="3">  3: </a></span>assertNotNull(fuzzyRange0);
+<span class="nocode"><a name="4">  4: </a></span>
+<span class="nocode"><a name="5">  5: </a></span>fuzzyRange0.truncate(range0);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, range0.getEnd());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(1, fuzzyRange0.getStart());
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(1, fuzzyRange0.getCount());
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(0, range0.getStart());
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range((-1), 0);
+<span class="nocode"><a name="2">  2: </a></span>Range range1 = new Range(3599);
+<span class="nocode"><a name="3">  3: </a></span>range0.truncate(range1);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(2, range0.getCount());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(3599, range1.getStart());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(1, range1.getCount());
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(1556);
+<span class="nocode"><a name="2">  2: </a></span>Range range1 = new Range((-1), 1723);
+<span class="nocode"><a name="3">  3: </a></span>FuzzyRange fuzzyRange0 = (FuzzyRange)range1.truncate(range0);
+<span class="nocode"><a name="4">  4: </a></span>assertNotNull(fuzzyRange0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(1556, range0.getEnd());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(1, fuzzyRange0.getCount());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(1, range0.getCount());
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(0);
+<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = range0.equals((Range) null);
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(boolean0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, range0.getEnd());
+</pre>
+<h3>Test case 13</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range((-2203), (-1));
+<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = range0.equals(range0);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(2203, range0.getCount());
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 14</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range((-1));
+<span class="nocode"><a name="2">  2: </a></span>Range range1 = new Range(0, 0);
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = range0.equals(range1);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1, range1.getCount());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(1, range0.getCount());
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(boolean0);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals((-1), range0.getStart());
+</pre>
+<h3>Test case 15</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range((-2203), (-1));
+<span class="nocode"><a name="2">  2: </a></span>Range range1 = new Range((-2203), (-2203));
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = range0.equals(range1);
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(boolean0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(2203, range0.getCount());
+</pre>
+<h3>Test case 16</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(1556);
+<span class="nocode"><a name="2">  2: </a></span>Range range1 = new Range((-1), 1723);
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = range1.contains(range0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1556, range0.getEnd());
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(boolean0);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(1725, range1.getCount());
+</pre>
+<h3>Test case 17</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(0, 0);
+<span class="nocode"><a name="2">  2: </a></span>Range range1 = range0.truncate(range0);
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = range0.overlaps(range1);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1, range0.getCount());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(1, range1.getCount());
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 18</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(1556);
+<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = range0.fuzzyOverlaps(range0, 1379);
+<span class="nocode"><a name="3">  3: </a></span>assertTrue(boolean0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1, range0.getCount());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(1556, range0.getStart());
+</pre>
+<h3>Test case 19</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range((-606), 0);
+<span class="nocode"><a name="2">  2: </a></span>Range range1 = new Range(0);
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = range0.fuzzyOverlaps(range1, 0);
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(boolean0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(607, range0.getCount());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, range1.getEnd());
+</pre>
+<h3>Test case 20</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(0, 0);
+<span class="nocode"><a name="2">  2: </a></span>Range range1 = new Range((-645));
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = range1.fuzzyOverlaps(range0, 0);
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(boolean0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(1, range0.getCount());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals((-645), range1.getEnd());
+</pre>
+<h3>Test case 21</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range((-680));
+<span class="nocode"><a name="2">  2: </a></span>Range range1 = range0.change((-680), 785);
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = range1.fuzzyOverlaps(range0, (-680));
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1, range0.getCount());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals((-680), range0.getEnd());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(1466, range1.getCount());
+<span class="nocode"><a name="7">  7: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 22</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(1, 1);
+<span class="nocode"><a name="2">  2: </a></span>int int0 = range0.getCount();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(1, int0);
+</pre>
+<h3>Test case 23</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range((-4199), (-4199));
+<span class="nocode"><a name="2">  2: </a></span>int int0 = range0.getEnd();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(1, range0.getCount());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-4199), int0);
+</pre>
+<h3>Test case 24</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range((-4199), (-4199));
+<span class="nocode"><a name="2">  2: </a></span>int int0 = range0.getStart();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(1, range0.getCount());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-4199), int0);
+</pre>
+<h3>Test case 25</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(0, (-325));
+</pre>
+<h3>Test case 26</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(0);
+<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = range0.overlaps(range0);
+<span class="nocode"><a name="3">  3: </a></span>assertTrue(boolean0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, range0.getEnd());
+</pre>
+<h3>Test case 27</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range((-2642), (-2135));
+<span class="nocode"><a name="2">  2: </a></span>Range range1 = new Range((-2135));
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = range0.overlaps(range1);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-2135), range1.getEnd());
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(boolean0);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(508, range0.getCount());
+</pre>
+<h3>Test case 28</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(0, 0);
+<span class="nocode"><a name="2">  2: </a></span>Range range1 = new Range((-645));
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = range0.overlaps(range1);
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(boolean0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(1, range0.getCount());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals((-645), range1.getStart());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(1, range1.getCount());
+</pre>
+<h3>Test case 29</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(1, 1);
+<span class="nocode"><a name="2">  2: </a></span>range0.contains((Range) null);
+</pre>
+<h3>Test case 30</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range((-1));
+<span class="nocode"><a name="2">  2: </a></span>range0.fuzzyOverlaps((Range) null, (-1));
+</pre>
+<h3>Test case 31</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range((-1), 0);
+<span class="nocode"><a name="2">  2: </a></span>range0.overlaps((Range) null);
+</pre>
+<h3>Test case 32</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range((-4199), (-4199));
+<span class="nocode"><a name="2">  2: </a></span>range0.truncate((Range) null);
+</pre>
+<h3>Test case 33</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range((-680));
+<span class="nocode"><a name="2">  2: </a></span>Range range1 = range0.change((-680), (-680));
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(1, range0.getCount());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-680), range0.getStart());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(1, range1.getCount());
+</pre>
+<h3>Test case 34</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range((-1));
+<span class="nocode"><a name="2">  2: </a></span>Range range1 = range0.change(1215, 1215);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(1, range1.getCount());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-1), range0.getStart());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(1, range0.getCount());
+</pre>
+<h3>Test case 35</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range((-645));
+<span class="nocode"><a name="2">  2: </a></span>Range range1 = range0.copy();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(1, range1.getCount());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-645), range0.getStart());
+</pre>
+<h3>Test case 36</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(0);
+<span class="nocode"><a name="2">  2: </a></span>Range range1 = range0.copy();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, range0.getStart());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1, range1.getCount());
+</pre>
+<h3>Test case 37</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(1369, 1369);
+<span class="nocode"><a name="2">  2: </a></span>int int0 = range0.getEnd();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(1, range0.getCount());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1369, int0);
+</pre>
+<h3>Test case 38</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(0);
+<span class="nocode"><a name="2">  2: </a></span>int int0 = range0.getEnd();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, int0);
+</pre>
+<h3>Test case 39</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(1369, 1369);
+<span class="nocode"><a name="2">  2: </a></span>int int0 = range0.getStart();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(1, range0.getCount());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1369, int0);
+</pre>
+<h3>Test case 40</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(0);
+<span class="nocode"><a name="2">  2: </a></span>int int0 = range0.getStart();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, range0.getEnd());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, int0);
+</pre>
+<h3>Test case 41</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range((-680));
+<span class="nocode"><a name="2">  2: </a></span>Range range1 = range0.change((-680), 785);
+<span class="nocode"><a name="3">  3: </a></span>Range range2 = range1.truncate(range0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1466, range1.getCount());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals((-680), range0.getStart());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(1, range2.getCount());
+<span class="nocode"><a name="7">  7: </a></span>assertNotNull(range2);
+</pre>
+<h3>Test case 42</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range((-680));
+<span class="nocode"><a name="2">  2: </a></span>Range range1 = range0.change((-680), 785);
+<span class="nocode"><a name="3">  3: </a></span>Range range2 = range0.truncate(range1);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1, range2.getCount());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals((-680), range0.getEnd());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(1466, range1.getCount());
+</pre>
+<h3>Test case 43</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(0, 440);
+<span class="nocode"><a name="2">  2: </a></span>Range range1 = range0.truncate(range0);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(441, range1.getCount());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(441, range0.getCount());
+<span class="nocode"><a name="5">  5: </a></span>assertNotNull(range1);
+</pre>
+<h3>Test case 44</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(0);
+<span class="nocode"><a name="2">  2: </a></span>Range range1 = range0.truncate(range0);
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = range1.equals(range0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, range0.getStart());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(1, range1.getCount());
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 45</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(0, 440);
+<span class="nocode"><a name="2">  2: </a></span>Range range1 = range0.change(0, 0);
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = range1.equals(range0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(441, range0.getCount());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(1, range1.getCount());
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 46</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(0);
+<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = range0.fuzzyOverlaps(range0, 0);
+<span class="nocode"><a name="3">  3: </a></span>assertTrue(boolean0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, range0.getEnd());
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.io.Range
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.io.Range
+<li>Size: 46
+<li>Length: 111
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.9364694277568476
+<li>BranchCoverage: 0.9565217391304348
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 0.68
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

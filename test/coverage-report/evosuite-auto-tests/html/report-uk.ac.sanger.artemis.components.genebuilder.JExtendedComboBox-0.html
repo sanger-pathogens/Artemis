@@ -1,0 +1,228 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.components.genebuilder.JExtendedComboBox
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.components.genebuilder.JExtendedComboBox: 0.9502663493827459</ul>
+<ul>
+<li>11.599999997412993 fitness evaluations, 0 generations, null statements, 20 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = new String[0];
+<span class="nocode"><a name="2">  2: </a></span>JExtendedComboBox jExtendedComboBox0 = new JExtendedComboBox(stringArray0);
+<span class="nocode"><a name="3">  3: </a></span>JExtendedComboBox.ComboPopupMenuLister jExtendedComboBox_ComboPopupMenuLister0 = jExtendedComboBox0.new ComboPopupMenuLister();
+<span class="nocode"><a name="4">  4: </a></span>PopupMenuEvent popupMenuEvent0 = new PopupMenuEvent(jExtendedComboBox0);
+<span class="nocode"><a name="5">  5: </a></span>jExtendedComboBox_ComboPopupMenuLister0.popupMenuCanceled(popupMenuEvent0);
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(jExtendedComboBox0.isHighLightCurrent());
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JembossParams jembossParams0 = new JembossParams();
+<span class="nocode"><a name="2">  2: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.getPrivateServers();
+<span class="nocode"><a name="3">  3: </a></span>JExtendedComboBox jExtendedComboBox0 = new JExtendedComboBox(vector0);
+<span class="nocode"><a name="4">  4: </a></span>JExtendedComboBox.ComboPopupMenuLister jExtendedComboBox_ComboPopupMenuLister0 = jExtendedComboBox0.new ComboPopupMenuLister();
+<span class="nocode"><a name="5">  5: </a></span>PopupMenuEvent popupMenuEvent0 = new PopupMenuEvent(jembossParams0);
+<span class="nocode"><a name="6">  6: </a></span>jExtendedComboBox_ComboPopupMenuLister0.popupMenuWillBecomeInvisible(popupMenuEvent0);
+<span class="nocode"><a name="7">  7: </a></span>assertFalse(jExtendedComboBox0.isHighLightCurrent());
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JembossParams jembossParams0 = new JembossParams();
+<span class="nocode"><a name="2">  2: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.getPrivateServers();
+<span class="nocode"><a name="3">  3: </a></span>JExtendedComboBox jExtendedComboBox0 = new JExtendedComboBox(vector0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, jExtendedComboBox0.getCurrent());
+<span class="nocode"><a name="5">  5: </a></span>
+<span class="nocode"><a name="6">  6: </a></span>jExtendedComboBox0.setCurrent(1);
+<span class="nocode"><a name="7">  7: </a></span>int int0 = jExtendedComboBox0.getCurrent();
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(1, int0);
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JExtendedComboBox jExtendedComboBox0 = new JExtendedComboBox(false);
+<span class="nocode"><a name="2">  2: </a></span>JExtendedComboBox.ComboBoxRenderer jExtendedComboBox_ComboBoxRenderer0 = jExtendedComboBox0.new ComboBoxRenderer();
+<span class="nocode"><a name="3">  3: </a></span>JList&lt;KeyStroke&gt; jList0 = new JList&lt;KeyStroke&gt;();
+<span class="nocode"><a name="4">  4: </a></span>jExtendedComboBox_ComboBoxRenderer0.getListCellRendererComponent(jList0, &quot;java.lang.String@0000000004&quot;, 308, false, true);
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(jExtendedComboBox0.isHighLightCurrent());
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = new String[0];
+<span class="nocode"><a name="2">  2: </a></span>JExtendedComboBox jExtendedComboBox0 = new JExtendedComboBox(stringArray0);
+<span class="nocode"><a name="3">  3: </a></span>JExtendedComboBox.ComboBoxRenderer jExtendedComboBox_ComboBoxRenderer0 = jExtendedComboBox0.new ComboBoxRenderer();
+<span class="nocode"><a name="4">  4: </a></span>JList&lt;Panel&gt; jList0 = new JList&lt;Panel&gt;();
+<span class="nocode"><a name="5">  5: </a></span>jExtendedComboBox_ComboBoxRenderer0.getListCellRendererComponent(jList0, (Object) null, (-2202), true, true);
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(jExtendedComboBox0.isHighLightCurrent());
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = new String[0];
+<span class="nocode"><a name="2">  2: </a></span>JExtendedComboBox jExtendedComboBox0 = new JExtendedComboBox(stringArray0);
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(jExtendedComboBox0.isHighLightCurrent());
+<span class="nocode"><a name="4">  4: </a></span>
+<span class="nocode"><a name="5">  5: </a></span>jExtendedComboBox0.setHighLightCurrent(true);
+<span class="nocode"><a name="6">  6: </a></span>JExtendedComboBox.ComboBoxRenderer jExtendedComboBox_ComboBoxRenderer0 = jExtendedComboBox0.new ComboBoxRenderer();
+<span class="nocode"><a name="7">  7: </a></span>JList&lt;Panel&gt; jList0 = new JList&lt;Panel&gt;();
+<span class="nocode"><a name="8">  8: </a></span>jExtendedComboBox_ComboBoxRenderer0.getListCellRendererComponent(jList0, (Object) null, (-2202), true, true);
+<span class="nocode"><a name="9">  9: </a></span>assertTrue(jExtendedComboBox0.isHighLightCurrent());
+<span class="nocode"><a name="10"> 10: </a></span>assertEquals(0, jExtendedComboBox0.getCurrent());
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DefaultTableModel defaultTableModel0 = new DefaultTableModel(2332, 1246);
+<span class="nocode"><a name="2">  2: </a></span>Vector&lt;Object&gt; vector0 = defaultTableModel0.getDataVector();
+<span class="nocode"><a name="3">  3: </a></span>JExtendedComboBox jExtendedComboBox0 = new JExtendedComboBox(vector0, true);
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = new String[0];
+<span class="nocode"><a name="2">  2: </a></span>JExtendedComboBox jExtendedComboBox0 = new JExtendedComboBox(stringArray0);
+<span class="nocode"><a name="3">  3: </a></span>JExtendedComboBox.ComboPopupMenuLister jExtendedComboBox_ComboPopupMenuLister0 = jExtendedComboBox0.new ComboPopupMenuLister();
+<span class="nocode"><a name="4">  4: </a></span>PopupMenuEvent popupMenuEvent0 = new PopupMenuEvent(jExtendedComboBox0);
+<span class="nocode"><a name="5">  5: </a></span>jExtendedComboBox_ComboPopupMenuLister0.popupMenuWillBecomeVisible(popupMenuEvent0);
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(jExtendedComboBox0.isHighLightCurrent());
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = new String[0];
+<span class="nocode"><a name="2">  2: </a></span>JExtendedComboBox jExtendedComboBox0 = new JExtendedComboBox(stringArray0);
+<span class="nocode"><a name="3">  3: </a></span>JExtendedComboBox.ComboPopupMenuLister jExtendedComboBox_ComboPopupMenuLister0 = jExtendedComboBox0.new ComboPopupMenuLister();
+<span class="nocode"><a name="4">  4: </a></span>JExtendedComboBox.ComboBoxRenderer jExtendedComboBox_ComboBoxRenderer0 = jExtendedComboBox0.new ComboBoxRenderer();
+<span class="nocode"><a name="5">  5: </a></span>JList&lt;Panel&gt; jList0 = new JList&lt;Panel&gt;();
+<span class="nocode"><a name="6">  6: </a></span>jExtendedComboBox_ComboBoxRenderer0.getListCellRendererComponent(jList0, jExtendedComboBox_ComboPopupMenuLister0, (-2202), true, true);
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JembossParams jembossParams0 = new JembossParams();
+<span class="nocode"><a name="2">  2: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.getPrivateServers();
+<span class="nocode"><a name="3">  3: </a></span>JExtendedComboBox jExtendedComboBox0 = new JExtendedComboBox(vector0, false);
+<span class="nocode"><a name="4">  4: </a></span>JExtendedComboBox.ComboBoxRenderer jExtendedComboBox_ComboBoxRenderer0 = jExtendedComboBox0.new ComboBoxRenderer();
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(jExtendedComboBox0.isHighLightCurrent());
+<span class="nocode"><a name="6">  6: </a></span>
+<span class="nocode"><a name="7">  7: </a></span>jExtendedComboBox0.setHighLightCurrent(true);
+<span class="nocode"><a name="8">  8: </a></span>JList&lt;ScrollPane&gt; jList0 = new JList&lt;ScrollPane&gt;();
+<span class="nocode"><a name="9">  9: </a></span>jExtendedComboBox_ComboBoxRenderer0.getListCellRendererComponent(jList0, (Object) null, 0, true, true);
+<span class="nocode"><a name="10"> 10: </a></span>assertTrue(jExtendedComboBox0.isHighLightCurrent());
+<span class="nocode"><a name="11"> 11: </a></span>assertEquals(0, jExtendedComboBox0.getCurrent());
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JembossParams jembossParams0 = new JembossParams();
+<span class="nocode"><a name="2">  2: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.getPublicServers();
+<span class="nocode"><a name="3">  3: </a></span>JExtendedComboBox jExtendedComboBox0 = new JExtendedComboBox(vector0, false);
+<span class="nocode"><a name="4">  4: </a></span>int int0 = jExtendedComboBox0.getCurrent();
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(jExtendedComboBox0.isHighLightCurrent());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, int0);
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JembossParams jembossParams0 = new JembossParams();
+<span class="nocode"><a name="2">  2: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.getPublicServers();
+<span class="nocode"><a name="3">  3: </a></span>JExtendedComboBox jExtendedComboBox0 = new JExtendedComboBox(vector0, false);
+<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = jExtendedComboBox0.isHighLightCurrent();
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 13</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = new String[0];
+<span class="nocode"><a name="2">  2: </a></span>JExtendedComboBox jExtendedComboBox0 = new JExtendedComboBox(stringArray0, false);
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(jExtendedComboBox0.isHighLightCurrent());
+</pre>
+<h3>Test case 14</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JExtendedComboBox jExtendedComboBox0 = new JExtendedComboBox((Vector&lt;?&gt;) null);
+</pre>
+<h3>Test case 15</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JExtendedComboBox jExtendedComboBox0 = new JExtendedComboBox((Vector&lt;?&gt;) null, true);
+</pre>
+<h3>Test case 16</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JExtendedComboBox jExtendedComboBox0 = new JExtendedComboBox((String[]) null);
+</pre>
+<h3>Test case 17</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JExtendedComboBox jExtendedComboBox0 = new JExtendedComboBox((String[]) null, false);
+</pre>
+<h3>Test case 18</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JembossParams jembossParams0 = new JembossParams();
+<span class="nocode"><a name="2">  2: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.getPublicServers();
+<span class="nocode"><a name="3">  3: </a></span>JExtendedComboBox jExtendedComboBox0 = new JExtendedComboBox(vector0, false);
+<span class="nocode"><a name="4">  4: </a></span>jExtendedComboBox0.setCurrent((-2211));
+<span class="nocode"><a name="5">  5: </a></span>int int0 = jExtendedComboBox0.getCurrent();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals((-2211), int0);
+</pre>
+<h3>Test case 19</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JExtendedComboBox jExtendedComboBox0 = new JExtendedComboBox(true);
+<span class="nocode"><a name="2">  2: </a></span>assertFalse(jExtendedComboBox0.isHighLightCurrent());
+<span class="nocode"><a name="3">  3: </a></span>
+<span class="nocode"><a name="4">  4: </a></span>jExtendedComboBox0.setHighLightCurrent(true);
+<span class="nocode"><a name="5">  5: </a></span>boolean boolean0 = jExtendedComboBox0.isHighLightCurrent();
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 20</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JembossParams jembossParams0 = new JembossParams();
+<span class="nocode"><a name="2">  2: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.getPrivateServers();
+<span class="nocode"><a name="3">  3: </a></span>JExtendedComboBox jExtendedComboBox0 = new JExtendedComboBox(vector0, false);
+<span class="nocode"><a name="4">  4: </a></span>JExtendedComboBox.ComboBoxRenderer jExtendedComboBox_ComboBoxRenderer0 = jExtendedComboBox0.new ComboBoxRenderer();
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(jExtendedComboBox0.isHighLightCurrent());
+<span class="nocode"><a name="6">  6: </a></span>
+<span class="nocode"><a name="7">  7: </a></span>jExtendedComboBox0.setHighLightCurrent(true);
+<span class="nocode"><a name="8">  8: </a></span>JList&lt;ScrollPane&gt; jList0 = new JList&lt;ScrollPane&gt;();
+<span class="nocode"><a name="9">  9: </a></span>jExtendedComboBox_ComboBoxRenderer0.getListCellRendererComponent(jList0, (Object) null, 5, true, true);
+<span class="nocode"><a name="10"> 10: </a></span>assertTrue(jExtendedComboBox0.isHighLightCurrent());
+<span class="nocode"><a name="11"> 11: </a></span>assertEquals(0, jExtendedComboBox0.getCurrent());
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.components.genebuilder.JExtendedComboBox
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.components.genebuilder.JExtendedComboBox
+<li>Size: 20
+<li>Length: 81
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.9502663493827459
+<li>BranchCoverage: 0.9090909090909091
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 1.0
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

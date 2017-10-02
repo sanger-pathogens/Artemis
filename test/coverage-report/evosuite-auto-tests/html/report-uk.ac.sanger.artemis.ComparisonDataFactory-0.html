@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.ComparisonDataFactory
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.ComparisonDataFactory: 0.2883522727272727</ul>
+<ul>
+<li>67.13333333333333 fitness evaluations, 0 generations, null statements, 5 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ComparisonDataFactory comparisonDataFactory0 = new ComparisonDataFactory();
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>StringContent stringContent0 = new StringContent();
+<span class="nocode"><a name="2">  2: </a></span>StyleContext styleContext0 = StyleContext.getDefaultStyleContext();
+<span class="nocode"><a name="3">  3: </a></span>DefaultStyledDocument defaultStyledDocument0 = new DefaultStyledDocument(stringContent0, styleContext0);
+<span class="nocode"><a name="4">  4: </a></span>JPasswordField jPasswordField0 = new JPasswordField(defaultStyledDocument0, &quot;;2H`Oa7+8W.aF4x+&gt;W&quot;, 0);
+<span class="nocode"><a name="5">  5: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;Agent not found! 'sshtools.agent' system property should identify the agent location&quot;, jPasswordField0, &quot;org.biojava.utils.ChangeVetoException&quot;, &quot;;2H`Oa7+8W.aF4x+&gt;W&quot;);
+<span class="nocode"><a name="6">  6: </a></span>ComparisonDataFactory.readComparisonData(databaseDocument0);
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot; :: &quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileDocument fileDocument0 = new FileDocument(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>ComparisonDataFactory.readComparisonData(fileDocument0);
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>URL uRL0 = MockURL.getHttpExample();
+<span class="nocode"><a name="2">  2: </a></span>URLDocument uRLDocument0 = new URLDocument(uRL0);
+<span class="nocode"><a name="3">  3: </a></span>ComparisonDataFactory.readComparisonData(uRLDocument0);
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ComparisonDataFactory.readComparisonData((Document) null);
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.ComparisonDataFactory
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.ComparisonDataFactory
+<li>Size: 5
+<li>Length: 14
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.2883522727272727
+<li>BranchCoverage: 0.09090909090909091
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 0.0
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

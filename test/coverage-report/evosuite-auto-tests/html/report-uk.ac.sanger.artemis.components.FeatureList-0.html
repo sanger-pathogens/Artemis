@@ -1,0 +1,378 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.components.FeatureList
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.components.FeatureList: 0.5098898816132876</ul>
+<ul>
+<li>2245.903051115551 fitness evaluations, 0 generations, null statements, 26 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;K/0986&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Clipboard clipboard0 = new Clipboard(&quot;K/0986&quot;);
+<span class="nocode"><a name="5">  5: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="6">  6: </a></span>SimpleGotoEventSource simpleGotoEventSource0 = new SimpleGotoEventSource(simpleEntryGroup0);
+<span class="nocode"><a name="7">  7: </a></span>FeatureList featureList0 = new FeatureList(simpleEntryGroup0, selection0, simpleGotoEventSource0, (BasePlotGroup) null);
+<span class="nocode"><a name="8">  8: </a></span>boolean boolean0 = featureList0.getShowGenes();
+<span class="nocode"><a name="9">  9: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;K/0986&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Clipboard clipboard0 = new Clipboard(&quot;K/0986&quot;);
+<span class="nocode"><a name="5">  5: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="6">  6: </a></span>SimpleGotoEventSource simpleGotoEventSource0 = new SimpleGotoEventSource(simpleEntryGroup0);
+<span class="nocode"><a name="7">  7: </a></span>FeatureList featureList0 = new FeatureList(simpleEntryGroup0, selection0, simpleGotoEventSource0, (BasePlotGroup) null);
+<span class="nocode"><a name="8">  8: </a></span>featureList0.setShowUserDefinedQualifier(&quot;DELETE FROM feature_dbxref WHERE dbxref_id=(SELECT dbxref_id FROM dbxref WHERE accession='&quot;);
+<span class="nocode"><a name="9">  9: </a></span>StringVector stringVector0 = featureList0.getShowUserDefinedQualifier();
+<span class="nocode"><a name="10"> 10: </a></span>assertNotNull(stringVector0);
+<span class="nocode"><a name="11"> 11: </a></span>assertEquals(&quot;[DELETE, FROM, feature_dbxref, WHERE, dbxref_id=(SELECT, dbxref_id, FROM, dbxref, WHERE, accession=']&quot;, stringVector0.toString());
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;K/0986&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Clipboard clipboard0 = new Clipboard(&quot;K/0986&quot;);
+<span class="nocode"><a name="5">  5: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="6">  6: </a></span>SimpleGotoEventSource simpleGotoEventSource0 = new SimpleGotoEventSource(simpleEntryGroup0);
+<span class="nocode"><a name="7">  7: </a></span>FeatureList featureList0 = new FeatureList(simpleEntryGroup0, selection0, simpleGotoEventSource0, (BasePlotGroup) null);
+<span class="nocode"><a name="8">  8: </a></span>featureList0.stopListening();
+<span class="nocode"><a name="9">  9: </a></span>assertFalse(featureList0.isFocusTraversalPolicySet());
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;K/0986&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Clipboard clipboard0 = new Clipboard(&quot;K/0986&quot;);
+<span class="nocode"><a name="5">  5: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="6">  6: </a></span>SimpleGotoEventSource simpleGotoEventSource0 = new SimpleGotoEventSource(simpleEntryGroup0);
+<span class="nocode"><a name="7">  7: </a></span>FeatureList featureList0 = new FeatureList(simpleEntryGroup0, selection0, simpleGotoEventSource0, (BasePlotGroup) null);
+<span class="nocode"><a name="8">  8: </a></span>EntryGroupChangeEvent entryGroupChangeEvent0 = new EntryGroupChangeEvent(simpleEntryGroup0, (Entry) null, 2295);
+<span class="nocode"><a name="9">  9: </a></span>featureList0.entryGroupChanged(entryGroupChangeEvent0);
+<span class="nocode"><a name="10"> 10: </a></span>assertEquals(6, EntryGroupChangeEvent.DONE_GONE);
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;K/0986&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Clipboard clipboard0 = new Clipboard(&quot;K/0986&quot;);
+<span class="nocode"><a name="5">  5: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="6">  6: </a></span>SimpleGotoEventSource simpleGotoEventSource0 = new SimpleGotoEventSource(simpleEntryGroup0);
+<span class="nocode"><a name="7">  7: </a></span>FeatureList featureList0 = new FeatureList(simpleEntryGroup0, selection0, simpleGotoEventSource0, (BasePlotGroup) null);
+<span class="nocode"><a name="8">  8: </a></span>boolean boolean0 = featureList0.getCorrelationScores();
+<span class="nocode"><a name="9">  9: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;K/0986&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Clipboard clipboard0 = new Clipboard(&quot;K/0986&quot;);
+<span class="nocode"><a name="5">  5: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="6">  6: </a></span>SimpleGotoEventSource simpleGotoEventSource0 = new SimpleGotoEventSource(simpleEntryGroup0);
+<span class="nocode"><a name="7">  7: </a></span>FeatureList featureList0 = new FeatureList(simpleEntryGroup0, selection0, simpleGotoEventSource0, (BasePlotGroup) null);
+<span class="nocode"><a name="8">  8: </a></span>boolean boolean0 = featureList0.getShowQualifiers();
+<span class="nocode"><a name="9">  9: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;K/0986&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Clipboard clipboard0 = new Clipboard(&quot;K/0986&quot;);
+<span class="nocode"><a name="5">  5: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="6">  6: </a></span>SimpleGotoEventSource simpleGotoEventSource0 = new SimpleGotoEventSource(simpleEntryGroup0);
+<span class="nocode"><a name="7">  7: </a></span>FeatureList featureList0 = new FeatureList(simpleEntryGroup0, selection0, simpleGotoEventSource0, (BasePlotGroup) null);
+<span class="nocode"><a name="8">  8: </a></span>boolean boolean0 = featureList0.getShowSysID();
+<span class="nocode"><a name="9">  9: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;K/0986&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Clipboard clipboard0 = new Clipboard(&quot;K/0986&quot;);
+<span class="nocode"><a name="5">  5: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="6">  6: </a></span>SimpleGotoEventSource simpleGotoEventSource0 = new SimpleGotoEventSource(simpleEntryGroup0);
+<span class="nocode"><a name="7">  7: </a></span>FeatureList featureList0 = new FeatureList(simpleEntryGroup0, selection0, simpleGotoEventSource0, (BasePlotGroup) null);
+<span class="nocode"><a name="8">  8: </a></span>boolean boolean0 = featureList0.getShowProducts();
+<span class="nocode"><a name="9">  9: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;K/0986&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Clipboard clipboard0 = new Clipboard(&quot;K/0986&quot;);
+<span class="nocode"><a name="5">  5: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="6">  6: </a></span>SimpleGotoEventSource simpleGotoEventSource0 = new SimpleGotoEventSource(simpleEntryGroup0);
+<span class="nocode"><a name="7">  7: </a></span>FeatureList featureList0 = new FeatureList(simpleEntryGroup0, selection0, simpleGotoEventSource0, (BasePlotGroup) null);
+<span class="nocode"><a name="8">  8: </a></span>featureList0.setCorrelationScores(false);
+<span class="nocode"><a name="9">  9: </a></span>assertFalse(featureList0.isFocusTraversalPolicySet());
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;K/0986&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Clipboard clipboard0 = new Clipboard(&quot;K/0986&quot;);
+<span class="nocode"><a name="5">  5: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="6">  6: </a></span>SimpleGotoEventSource simpleGotoEventSource0 = new SimpleGotoEventSource(simpleEntryGroup0);
+<span class="nocode"><a name="7">  7: </a></span>FeatureList featureList0 = new FeatureList(simpleEntryGroup0, selection0, simpleGotoEventSource0, (BasePlotGroup) null);
+<span class="nocode"><a name="8">  8: </a></span>featureList0.setCorrelationScores(true);
+<span class="nocode"><a name="9">  9: </a></span>assertFalse(featureList0.isFocusTraversalPolicyProvider());
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;K/0986&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Clipboard clipboard0 = new Clipboard(&quot;K/0986&quot;);
+<span class="nocode"><a name="5">  5: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="6">  6: </a></span>SimpleGotoEventSource simpleGotoEventSource0 = new SimpleGotoEventSource(simpleEntryGroup0);
+<span class="nocode"><a name="7">  7: </a></span>FeatureList featureList0 = new FeatureList(simpleEntryGroup0, selection0, simpleGotoEventSource0, (BasePlotGroup) null);
+<span class="nocode"><a name="8">  8: </a></span>featureList0.setShowGenes(false);
+<span class="nocode"><a name="9">  9: </a></span>assertFalse(featureList0.getIgnoreRepaint());
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;K/0986&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Clipboard clipboard0 = new Clipboard(&quot;K/0986&quot;);
+<span class="nocode"><a name="5">  5: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="6">  6: </a></span>SimpleGotoEventSource simpleGotoEventSource0 = new SimpleGotoEventSource(simpleEntryGroup0);
+<span class="nocode"><a name="7">  7: </a></span>FeatureList featureList0 = new FeatureList(simpleEntryGroup0, selection0, simpleGotoEventSource0, (BasePlotGroup) null);
+<span class="nocode"><a name="8">  8: </a></span>featureList0.setShowGenes(true);
+<span class="nocode"><a name="9">  9: </a></span>assertFalse(featureList0.isFocusTraversalPolicySet());
+</pre>
+<h3>Test case 13</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;K/0986&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Clipboard clipboard0 = new Clipboard(&quot;K/0986&quot;);
+<span class="nocode"><a name="5">  5: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="6">  6: </a></span>SimpleGotoEventSource simpleGotoEventSource0 = new SimpleGotoEventSource(simpleEntryGroup0);
+<span class="nocode"><a name="7">  7: </a></span>FeatureList featureList0 = new FeatureList(simpleEntryGroup0, selection0, simpleGotoEventSource0, (BasePlotGroup) null);
+<span class="nocode"><a name="8">  8: </a></span>featureList0.setShowSystematicID(false);
+<span class="nocode"><a name="9">  9: </a></span>assertFalse(featureList0.isFocusTraversalPolicySet());
+</pre>
+<h3>Test case 14</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;K/0986&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Clipboard clipboard0 = new Clipboard(&quot;K/0986&quot;);
+<span class="nocode"><a name="5">  5: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="6">  6: </a></span>SimpleGotoEventSource simpleGotoEventSource0 = new SimpleGotoEventSource(simpleEntryGroup0);
+<span class="nocode"><a name="7">  7: </a></span>FeatureList featureList0 = new FeatureList(simpleEntryGroup0, selection0, simpleGotoEventSource0, (BasePlotGroup) null);
+<span class="nocode"><a name="8">  8: </a></span>featureList0.setShowSystematicID(true);
+<span class="nocode"><a name="9">  9: </a></span>assertFalse(featureList0.isFocusTraversalPolicyProvider());
+</pre>
+<h3>Test case 15</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;K/0986&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Clipboard clipboard0 = new Clipboard(&quot;K/0986&quot;);
+<span class="nocode"><a name="5">  5: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="6">  6: </a></span>SimpleGotoEventSource simpleGotoEventSource0 = new SimpleGotoEventSource(simpleEntryGroup0);
+<span class="nocode"><a name="7">  7: </a></span>FeatureList featureList0 = new FeatureList(simpleEntryGroup0, selection0, simpleGotoEventSource0, (BasePlotGroup) null);
+<span class="nocode"><a name="8">  8: </a></span>StringVector stringVector0 = featureList0.getShowUserDefinedQualifier();
+<span class="nocode"><a name="9">  9: </a></span>assertNull(stringVector0);
+</pre>
+<h3>Test case 16</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;K/0986&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Clipboard clipboard0 = new Clipboard(&quot;K/0986&quot;);
+<span class="nocode"><a name="5">  5: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="6">  6: </a></span>SimpleGotoEventSource simpleGotoEventSource0 = new SimpleGotoEventSource(simpleEntryGroup0);
+<span class="nocode"><a name="7">  7: </a></span>FeatureList featureList0 = new FeatureList(simpleEntryGroup0, selection0, simpleGotoEventSource0, (BasePlotGroup) null);
+<span class="nocode"><a name="8">  8: </a></span>featureList0.setShowQualifiers(false);
+<span class="nocode"><a name="9">  9: </a></span>assertFalse(featureList0.getIgnoreRepaint());
+</pre>
+<h3>Test case 17</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;eK/098&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Clipboard clipboard0 = new Clipboard(&quot;eK/098&quot;);
+<span class="nocode"><a name="5">  5: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="6">  6: </a></span>SimpleGotoEventSource simpleGotoEventSource0 = new SimpleGotoEventSource(simpleEntryGroup0);
+<span class="nocode"><a name="7">  7: </a></span>FeatureList featureList0 = new FeatureList(simpleEntryGroup0, selection0, simpleGotoEventSource0, (BasePlotGroup) null);
+<span class="nocode"><a name="8">  8: </a></span>featureList0.setShowProducts(false);
+<span class="nocode"><a name="9">  9: </a></span>assertFalse(featureList0.isFocusTraversalPolicyProvider());
+</pre>
+<h3>Test case 18</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;eK/098&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Clipboard clipboard0 = new Clipboard(&quot;eK/098&quot;);
+<span class="nocode"><a name="5">  5: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="6">  6: </a></span>SimpleGotoEventSource simpleGotoEventSource0 = new SimpleGotoEventSource(simpleEntryGroup0);
+<span class="nocode"><a name="7">  7: </a></span>FeatureList featureList0 = new FeatureList(simpleEntryGroup0, selection0, simpleGotoEventSource0, (BasePlotGroup) null);
+<span class="nocode"><a name="8">  8: </a></span>FeatureVector featureVector0 = new FeatureVector();
+<span class="nocode"><a name="9">  9: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, (String) null);
+<span class="nocode"><a name="10"> 10: </a></span>Entry entry0 = filteredEntryGroup0.createEntry();
+<span class="nocode"><a name="11"> 11: </a></span>entry0.createFeature();
+<span class="nocode"><a name="12"> 12: </a></span>featureList0.getListStrings();
+</pre>
+<h3>Test case 19</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;eK/098&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Clipboard clipboard0 = new Clipboard(&quot;eK/098&quot;);
+<span class="nocode"><a name="5">  5: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="6">  6: </a></span>SimpleGotoEventSource simpleGotoEventSource0 = new SimpleGotoEventSource(simpleEntryGroup0);
+<span class="nocode"><a name="7">  7: </a></span>FeatureList featureList0 = new FeatureList(simpleEntryGroup0, selection0, simpleGotoEventSource0, (BasePlotGroup) null);
+<span class="nocode"><a name="8">  8: </a></span>SelectionChangeEvent selectionChangeEvent0 = new SelectionChangeEvent(rawStreamSequence0, 2);
+<span class="nocode"><a name="9">  9: </a></span>featureList0.selectionChanged(selectionChangeEvent0);
+<span class="nocode"><a name="10"> 10: </a></span>assertFalse(featureList0.isFocusTraversalPolicyProvider());
+</pre>
+<h3>Test case 20</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;K/0986&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Clipboard clipboard0 = new Clipboard(&quot;K/0986&quot;);
+<span class="nocode"><a name="5">  5: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="6">  6: </a></span>SimpleGotoEventSource simpleGotoEventSource0 = new SimpleGotoEventSource(simpleEntryGroup0);
+<span class="nocode"><a name="7">  7: </a></span>FeatureList featureList0 = new FeatureList(simpleEntryGroup0, selection0, simpleGotoEventSource0, (BasePlotGroup) null);
+<span class="nocode"><a name="8">  8: </a></span>SelectionChangeEvent selectionChangeEvent0 = new SelectionChangeEvent(featureList0, 219);
+<span class="nocode"><a name="9">  9: </a></span>featureList0.selectionChanged(selectionChangeEvent0);
+<span class="nocode"><a name="10"> 10: </a></span>assertFalse(featureList0.isFocusCycleRoot());
+</pre>
+<h3>Test case 21</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;eK/098&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Clipboard clipboard0 = new Clipboard(&quot;eK/098&quot;);
+<span class="nocode"><a name="5">  5: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="6">  6: </a></span>SimpleGotoEventSource simpleGotoEventSource0 = new SimpleGotoEventSource(simpleEntryGroup0);
+<span class="nocode"><a name="7">  7: </a></span>FeatureList featureList0 = new FeatureList(simpleEntryGroup0, selection0, simpleGotoEventSource0, (BasePlotGroup) null);
+<span class="nocode"><a name="8">  8: </a></span>StringVector stringVector0 = featureList0.getListStrings();
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(10, stringVector0.capacity());
+</pre>
+<h3>Test case 22</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;K/0986&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Clipboard clipboard0 = new Clipboard(&quot;K/0986&quot;);
+<span class="nocode"><a name="5">  5: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="6">  6: </a></span>SimpleGotoEventSource simpleGotoEventSource0 = new SimpleGotoEventSource(simpleEntryGroup0);
+<span class="nocode"><a name="7">  7: </a></span>FeatureList featureList0 = new FeatureList(simpleEntryGroup0, selection0, simpleGotoEventSource0, (BasePlotGroup) null);
+<span class="nocode"><a name="8">  8: </a></span>featureList0.getViewport();
+</pre>
+<h3>Test case 23</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;eK/098&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Clipboard clipboard0 = new Clipboard(&quot;eK/098&quot;);
+<span class="nocode"><a name="5">  5: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="6">  6: </a></span>SimpleGotoEventSource simpleGotoEventSource0 = new SimpleGotoEventSource(simpleEntryGroup0);
+<span class="nocode"><a name="7">  7: </a></span>FeatureList featureList0 = new FeatureList(simpleEntryGroup0, selection0, simpleGotoEventSource0, (BasePlotGroup) null);
+<span class="nocode"><a name="8">  8: </a></span>FeatureVector featureVector0 = new FeatureVector();
+<span class="nocode"><a name="9">  9: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, (String) null);
+<span class="nocode"><a name="10"> 10: </a></span>Entry entry0 = filteredEntryGroup0.createEntry();
+<span class="nocode"><a name="11"> 11: </a></span>Feature feature0 = entry0.createFeature();
+<span class="nocode"><a name="12"> 12: </a></span>EntryChangeEvent entryChangeEvent0 = new EntryChangeEvent(entry0, feature0, false, (-5));
+<span class="nocode"><a name="13"> 13: </a></span>featureList0.entryChanged(entryChangeEvent0);
+<span class="nocode"><a name="14"> 14: </a></span>assertFalse(featureList0.isFocusTraversalPolicyProvider());
+</pre>
+<h3>Test case 24</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>Clipboard clipboard0 = new Clipboard((String) null);
+<span class="nocode"><a name="3">  3: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="4">  4: </a></span>SimpleGotoEventSource simpleGotoEventSource0 = new SimpleGotoEventSource(simpleEntryGroup0);
+<span class="nocode"><a name="5">  5: </a></span>FeatureList featureList0 = new FeatureList(simpleEntryGroup0, selection0, simpleGotoEventSource0, (BasePlotGroup) null);
+</pre>
+<h3>Test case 25</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;eK/098&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Clipboard clipboard0 = new Clipboard(&quot;eK/098&quot;);
+<span class="nocode"><a name="5">  5: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="6">  6: </a></span>SimpleGotoEventSource simpleGotoEventSource0 = new SimpleGotoEventSource(simpleEntryGroup0);
+<span class="nocode"><a name="7">  7: </a></span>FeatureList featureList0 = new FeatureList(simpleEntryGroup0, selection0, simpleGotoEventSource0, (BasePlotGroup) null);
+<span class="nocode"><a name="8">  8: </a></span>featureList0.paintComponent((Graphics) null);
+</pre>
+<h3>Test case 26</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;eK/098&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Clipboard clipboard0 = new Clipboard(&quot;eK/098&quot;);
+<span class="nocode"><a name="5">  5: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="6">  6: </a></span>SimpleGotoEventSource simpleGotoEventSource0 = new SimpleGotoEventSource(simpleEntryGroup0);
+<span class="nocode"><a name="7">  7: </a></span>FeatureList featureList0 = new FeatureList(simpleEntryGroup0, selection0, simpleGotoEventSource0, (BasePlotGroup) null);
+<span class="nocode"><a name="8">  8: </a></span>int int0 = featureList0.getLineHeight();
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(14, int0);
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.components.FeatureList
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.components.FeatureList
+<li>Size: 26
+<li>Length: 218
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.5098898816132876
+<li>BranchCoverage: 0.23893805309734514
+<li>MethodCoverage: 0.9545454545454546
+<li>OutputCoverage: 0.35714285714285715
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

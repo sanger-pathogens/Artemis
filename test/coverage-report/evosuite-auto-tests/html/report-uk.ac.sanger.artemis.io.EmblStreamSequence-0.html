@@ -1,0 +1,228 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.io.EmblStreamSequence
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.io.EmblStreamSequence: 0.771286231884058</ul>
+<ul>
+<li>443.07140846335324 fitness evaluations, 0 generations, null statements, 24 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;Sj1&quot;);
+<span class="nocode"><a name="2">  2: </a></span>int int0 = emblStreamSequence0.getFormatType();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(3, emblStreamSequence0.length());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1, int0);
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[5];
+<span class="nocode"><a name="2">  2: </a></span>CharArrayReader charArrayReader0 = new CharArrayReader(charArray0);
+<span class="nocode"><a name="3">  3: </a></span>LinePushBackReader linePushBackReader0 = new LinePushBackReader(charArrayReader0);
+<span class="nocode"><a name="4">  4: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(linePushBackReader0);
+<span class="nocode"><a name="5">  5: </a></span>EmblStreamSequence emblStreamSequence1 = (EmblStreamSequence)emblStreamSequence0.copy();
+<span class="nocode"><a name="6">  6: </a></span>StringWriter stringWriter0 = new StringWriter(10);
+<span class="nocode"><a name="7">  7: </a></span>emblStreamSequence1.writeToStream(stringWriter0);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(&quot;SQ   Sequence 0 BP; 0 A; 0 C; 0 G; 0 T; 0 other;\n&quot;, stringWriter0.toString());
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[5];
+<span class="nocode"><a name="2">  2: </a></span>CharArrayReader charArrayReader0 = new CharArrayReader(charArray0);
+<span class="nocode"><a name="3">  3: </a></span>LinePushBackReader linePushBackReader0 = new LinePushBackReader(charArrayReader0);
+<span class="nocode"><a name="4">  4: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(linePushBackReader0);
+<span class="nocode"><a name="5">  5: </a></span>charArrayReader0.reset();
+<span class="nocode"><a name="6">  6: </a></span>emblStreamSequence0.readSequence(linePushBackReader0);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(&quot;\u0000\u0000\u0000\u0000\u0000&quot;, emblStreamSequence0.getHeader());
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[5];
+<span class="nocode"><a name="2">  2: </a></span>CharArrayReader charArrayReader0 = new CharArrayReader(charArray0);
+<span class="nocode"><a name="3">  3: </a></span>LinePushBackReader linePushBackReader0 = new LinePushBackReader(charArrayReader0);
+<span class="nocode"><a name="4">  4: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(linePushBackReader0);
+<span class="nocode"><a name="5">  5: </a></span>StringWriter stringWriter0 = new StringWriter(10);
+<span class="nocode"><a name="6">  6: </a></span>emblStreamSequence0.writeToStream(stringWriter0);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(&quot;\u0000\u0000\u0000\u0000\u0000SQ   Sequence 0 BP; 0 A; 0 C; 0 G; 0 T; 0 other;\n&quot;, stringWriter0.toString());
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;%yjHaH}d|5=$^Vv8/&quot;);
+<span class="nocode"><a name="2">  2: </a></span>MockFile mockFile0 = new MockFile(&quot;Ph^3&quot;, &quot;3(qx9^(Q%u}Z&quot;);
+<span class="nocode"><a name="3">  3: </a></span>MockFileOutputStream mockFileOutputStream0 = new MockFileOutputStream(mockFile0, true);
+<span class="nocode"><a name="4">  4: </a></span>BufferedOutputStream bufferedOutputStream0 = new BufferedOutputStream(mockFileOutputStream0);
+<span class="nocode"><a name="5">  5: </a></span>MockPrintWriter mockPrintWriter0 = new MockPrintWriter(bufferedOutputStream0, false);
+<span class="nocode"><a name="6">  6: </a></span>emblStreamSequence0.writeToStream(mockPrintWriter0);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(16, emblStreamSequence0.getOtherCount());
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>StringReader stringReader0 = new StringReader(&quot;SQ   Sequence S{R.ptS&quot;);
+<span class="nocode"><a name="2">  2: </a></span>LinePushBackReader linePushBackReader0 = new LinePushBackReader(stringReader0);
+<span class="nocode"><a name="3">  3: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(linePushBackReader0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;SQ   Sequence S{R.ptS&quot;, emblStreamSequence0.getHeader());
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;%yjHaH}d|5=$^Vv8/&quot;);
+<span class="nocode"><a name="2">  2: </a></span>emblStreamSequence0.setHeader(&quot;3(qx9^(Q%u}Z&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = emblStreamSequence0.getHeader();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;3(qx9^(Q%u}Z&quot;, string0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(1, emblStreamSequence0.getACount());
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;%yjHaH}d|5=$^Vv8/&quot;);
+<span class="nocode"><a name="2">  2: </a></span>String string0 = emblStreamSequence0.getHeader();
+<span class="nocode"><a name="3">  3: </a></span>assertNull(string0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(16, emblStreamSequence0.getOtherCount());
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;Sj1&quot;);
+<span class="nocode"><a name="2">  2: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(rawStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, emblStreamSequence0.getCCount());
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence((String) null);
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SymbolList symbolList0 = SymbolList.EMPTY_LIST;
+<span class="nocode"><a name="2">  2: </a></span>BioJavaSequence bioJavaSequence0 = new BioJavaSequence(symbolList0);
+<span class="nocode"><a name="3">  3: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(bioJavaSequence0);
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence((Sequence) null);
+</pre>
+<h3>Test case 13</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>StringReader stringReader0 = new StringReader(&quot;SQ   Sequence &quot;);
+<span class="nocode"><a name="2">  2: </a></span>LinePushBackReader linePushBackReader0 = new LinePushBackReader(stringReader0);
+<span class="nocode"><a name="3">  3: </a></span>linePushBackReader0.close();
+<span class="nocode"><a name="4">  4: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(linePushBackReader0);
+</pre>
+<h3>Test case 14</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence((LinePushBackReader) null);
+</pre>
+<h3>Test case 15</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;Sj1&quot;);
+<span class="nocode"><a name="2">  2: </a></span>PipedReader pipedReader0 = new PipedReader(55);
+<span class="nocode"><a name="3">  3: </a></span>LineNumberReader lineNumberReader0 = new LineNumberReader(pipedReader0);
+<span class="nocode"><a name="4">  4: </a></span>LinePushBackReader linePushBackReader0 = new LinePushBackReader(lineNumberReader0);
+<span class="nocode"><a name="5">  5: </a></span>emblStreamSequence0.readHeader(linePushBackReader0);
+</pre>
+<h3>Test case 16</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;XX&quot;);
+<span class="nocode"><a name="2">  2: </a></span>emblStreamSequence0.readHeader((LinePushBackReader) null);
+</pre>
+<h3>Test case 17</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[5];
+<span class="nocode"><a name="2">  2: </a></span>CharArrayReader charArrayReader0 = new CharArrayReader(charArray0);
+<span class="nocode"><a name="3">  3: </a></span>LinePushBackReader linePushBackReader0 = new LinePushBackReader(charArrayReader0);
+<span class="nocode"><a name="4">  4: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(linePushBackReader0);
+<span class="nocode"><a name="5">  5: </a></span>charArrayReader0.close();
+<span class="nocode"><a name="6">  6: </a></span>emblStreamSequence0.readSequence(linePushBackReader0);
+</pre>
+<h3>Test case 18</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;;current=false&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileDescriptor fileDescriptor0 = new FileDescriptor();
+<span class="nocode"><a name="3">  3: </a></span>MockFileReader mockFileReader0 = new MockFileReader(fileDescriptor0);
+<span class="nocode"><a name="4">  4: </a></span>LinePushBackReader linePushBackReader0 = new LinePushBackReader(mockFileReader0);
+<span class="nocode"><a name="5">  5: </a></span>emblStreamSequence0.readSequence(linePushBackReader0);
+</pre>
+<h3>Test case 19</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;&lt;br&gt;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>PipedWriter pipedWriter0 = new PipedWriter();
+<span class="nocode"><a name="3">  3: </a></span>emblStreamSequence0.writeToStream(pipedWriter0);
+</pre>
+<h3>Test case 20</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;6_]%,W$&gt;:~;L~e$z&quot;);
+<span class="nocode"><a name="2">  2: </a></span>emblStreamSequence0.writeToStream((Writer) null);
+</pre>
+<h3>Test case 21</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;%yjHaH}d|5=$^Vv8/&quot;);
+<span class="nocode"><a name="2">  2: </a></span>EmblStreamSequence emblStreamSequence1 = (EmblStreamSequence)emblStreamSequence0.copy();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(17, emblStreamSequence1.length());
+</pre>
+<h3>Test case 22</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;*k`VUlEc4ef7&quot;);
+<span class="nocode"><a name="2">  2: </a></span>EmblStreamSequence emblStreamSequence1 = (EmblStreamSequence)emblStreamSequence0.copy();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(11, emblStreamSequence1.getOtherCount());
+</pre>
+<h3>Test case 23</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;/etc/feature_keys_gff&quot;);
+<span class="nocode"><a name="2">  2: </a></span>EmblStreamSequence emblStreamSequence1 = (EmblStreamSequence)emblStreamSequence0.copy();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(1, emblStreamSequence1.getACount());
+</pre>
+<h3>Test case 24</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;%yjHaH}d|5=$^Vv8/&quot;);
+<span class="nocode"><a name="2">  2: </a></span>StringReader stringReader0 = new StringReader(&quot;3(qx9^(Q%u}Z&quot;);
+<span class="nocode"><a name="3">  3: </a></span>LinePushBackReader linePushBackReader0 = new LinePushBackReader(stringReader0);
+<span class="nocode"><a name="4">  4: </a></span>emblStreamSequence0.readHeader(linePushBackReader0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;3(qx9^(Q%u}Z&quot;, emblStreamSequence0.getHeader());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(1, emblStreamSequence0.getACount());
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.io.EmblStreamSequence
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.io.EmblStreamSequence
+<li>Size: 24
+<li>Length: 80
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.771286231884058
+<li>BranchCoverage: 0.625
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 0.6
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

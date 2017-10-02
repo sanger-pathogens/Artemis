@@ -1,0 +1,181 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.util.ProgressInputStream
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.util.ProgressInputStream: 0.8716269841269841</ul>
+<ul>
+<li>152.11109110671015 fitness evaluations, 0 generations, null statements, 13 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FileDescriptor fileDescriptor0 = new FileDescriptor();
+<span class="nocode"><a name="2">  2: </a></span>MockFileInputStream mockFileInputStream0 = new MockFileInputStream(fileDescriptor0);
+<span class="nocode"><a name="3">  3: </a></span>InputStreamProgressListenerVector inputStreamProgressListenerVector0 = new InputStreamProgressListenerVector();
+<span class="nocode"><a name="4">  4: </a></span>ProgressInputStream progressInputStream0 = new ProgressInputStream(mockFileInputStream0, inputStreamProgressListenerVector0);
+<span class="nocode"><a name="5">  5: </a></span>byte[] byteArray0 = new byte[4];
+<span class="nocode"><a name="6">  6: </a></span>int int0 = progressInputStream0.read(byteArray0, (int) (byte)0, 0);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, int0);
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[5];
+<span class="nocode"><a name="2">  2: </a></span>ByteArrayInputStream byteArrayInputStream0 = new ByteArrayInputStream(byteArray0, (-86), 16);
+<span class="nocode"><a name="3">  3: </a></span>DataInputStream dataInputStream0 = new DataInputStream(byteArrayInputStream0);
+<span class="nocode"><a name="4">  4: </a></span>InputStreamProgressListenerVector inputStreamProgressListenerVector0 = new InputStreamProgressListenerVector();
+<span class="nocode"><a name="5">  5: </a></span>ProgressInputStream progressInputStream0 = new ProgressInputStream(dataInputStream0, inputStreamProgressListenerVector0);
+<span class="nocode"><a name="6">  6: </a></span>progressInputStream0.close();
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[0];
+<span class="nocode"><a name="2">  2: </a></span>ByteArrayInputStream byteArrayInputStream0 = new ByteArrayInputStream(byteArray0);
+<span class="nocode"><a name="3">  3: </a></span>PushbackInputStream pushbackInputStream0 = new PushbackInputStream(byteArrayInputStream0, 10000);
+<span class="nocode"><a name="4">  4: </a></span>DataInputStream dataInputStream0 = new DataInputStream(pushbackInputStream0);
+<span class="nocode"><a name="5">  5: </a></span>SequenceInputStream sequenceInputStream0 = new SequenceInputStream(pushbackInputStream0, dataInputStream0);
+<span class="nocode"><a name="6">  6: </a></span>BufferedInputStream bufferedInputStream0 = new BufferedInputStream(sequenceInputStream0);
+<span class="nocode"><a name="7">  7: </a></span>InputStreamProgressListenerVector inputStreamProgressListenerVector0 = new InputStreamProgressListenerVector();
+<span class="nocode"><a name="8">  8: </a></span>ProgressInputStream progressInputStream0 = new ProgressInputStream(bufferedInputStream0, inputStreamProgressListenerVector0);
+<span class="nocode"><a name="9">  9: </a></span>int int0 = progressInputStream0.read(byteArray0);
+<span class="nocode"><a name="10"> 10: </a></span>assertEquals(0, int0);
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[6];
+<span class="nocode"><a name="2">  2: </a></span>ByteArrayInputStream byteArrayInputStream0 = new ByteArrayInputStream(byteArray0);
+<span class="nocode"><a name="3">  3: </a></span>BufferedInputStream bufferedInputStream0 = new BufferedInputStream(byteArrayInputStream0);
+<span class="nocode"><a name="4">  4: </a></span>InputStreamProgressListenerVector inputStreamProgressListenerVector0 = new InputStreamProgressListenerVector();
+<span class="nocode"><a name="5">  5: </a></span>ProgressInputStream progressInputStream0 = new ProgressInputStream(bufferedInputStream0, inputStreamProgressListenerVector0);
+<span class="nocode"><a name="6">  6: </a></span>int int0 = progressInputStream0.read(byteArray0);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, byteArrayInputStream0.available());
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(6, int0);
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Enumeration&lt;InputStream&gt; enumeration0 = (Enumeration&lt;InputStream&gt;) mock(Enumeration.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="2">  2: </a></span>doReturn(false).when(enumeration0).hasMoreElements();
+<span class="nocode"><a name="3">  3: </a></span>SequenceInputStream sequenceInputStream0 = new SequenceInputStream(enumeration0);
+<span class="nocode"><a name="4">  4: </a></span>DataInputStream dataInputStream0 = new DataInputStream(sequenceInputStream0);
+<span class="nocode"><a name="5">  5: </a></span>ProgressInputStream progressInputStream0 = new ProgressInputStream(dataInputStream0, (InputStreamProgressListenerVector) null);
+<span class="nocode"><a name="6">  6: </a></span>byte[] byteArray0 = new byte[0];
+<span class="nocode"><a name="7">  7: </a></span>int int0 = progressInputStream0.read(byteArray0);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals((-1), int0);
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[6];
+<span class="nocode"><a name="2">  2: </a></span>ByteArrayInputStream byteArrayInputStream0 = new ByteArrayInputStream(byteArray0, (byte)0, (byte)0);
+<span class="nocode"><a name="3">  3: </a></span>SequenceInputStream sequenceInputStream0 = new SequenceInputStream(byteArrayInputStream0, byteArrayInputStream0);
+<span class="nocode"><a name="4">  4: </a></span>BufferedInputStream bufferedInputStream0 = new BufferedInputStream(sequenceInputStream0);
+<span class="nocode"><a name="5">  5: </a></span>InputStreamProgressListenerVector inputStreamProgressListenerVector0 = new InputStreamProgressListenerVector();
+<span class="nocode"><a name="6">  6: </a></span>inputStreamProgressListenerVector0.add((InputStreamProgressListener) null);
+<span class="nocode"><a name="7">  7: </a></span>ProgressInputStream progressInputStream0 = new ProgressInputStream(bufferedInputStream0, inputStreamProgressListenerVector0);
+<span class="nocode"><a name="8">  8: </a></span>progressInputStream0.read(byteArray0, (int) (byte)1, (int) (byte)1);
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>InputStreamProgressListenerVector inputStreamProgressListenerVector0 = new InputStreamProgressListenerVector();
+<span class="nocode"><a name="2">  2: </a></span>ProgressInputStream progressInputStream0 = new ProgressInputStream((InputStream) null, inputStreamProgressListenerVector0);
+<span class="nocode"><a name="3">  3: </a></span>progressInputStream0.close();
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>PipedInputStream pipedInputStream0 = new PipedInputStream(3206);
+<span class="nocode"><a name="2">  2: </a></span>InputStreamProgressListenerVector inputStreamProgressListenerVector0 = new InputStreamProgressListenerVector();
+<span class="nocode"><a name="3">  3: </a></span>ProgressInputStream progressInputStream0 = new ProgressInputStream(pipedInputStream0, inputStreamProgressListenerVector0);
+<span class="nocode"><a name="4">  4: </a></span>byte[] byteArray0 = new byte[1];
+<span class="nocode"><a name="5">  5: </a></span>progressInputStream0.read(byteArray0);
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[5];
+<span class="nocode"><a name="2">  2: </a></span>ByteArrayInputStream byteArrayInputStream0 = new ByteArrayInputStream(byteArray0, (-86), 16);
+<span class="nocode"><a name="3">  3: </a></span>DataInputStream dataInputStream0 = new DataInputStream(byteArrayInputStream0);
+<span class="nocode"><a name="4">  4: </a></span>InputStreamProgressListenerVector inputStreamProgressListenerVector0 = new InputStreamProgressListenerVector();
+<span class="nocode"><a name="5">  5: </a></span>ProgressInputStream progressInputStream0 = new ProgressInputStream(dataInputStream0, inputStreamProgressListenerVector0);
+<span class="nocode"><a name="6">  6: </a></span>progressInputStream0.read(byteArray0);
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>PipedInputStream pipedInputStream0 = new PipedInputStream();
+<span class="nocode"><a name="2">  2: </a></span>SequenceInputStream sequenceInputStream0 = new SequenceInputStream(pipedInputStream0, pipedInputStream0);
+<span class="nocode"><a name="3">  3: </a></span>InputStreamProgressListenerVector inputStreamProgressListenerVector0 = new InputStreamProgressListenerVector();
+<span class="nocode"><a name="4">  4: </a></span>ProgressInputStream progressInputStream0 = new ProgressInputStream(sequenceInputStream0, inputStreamProgressListenerVector0);
+<span class="nocode"><a name="5">  5: </a></span>progressInputStream0.read((byte[]) null);
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FileDescriptor fileDescriptor0 = new FileDescriptor();
+<span class="nocode"><a name="2">  2: </a></span>MockFileInputStream mockFileInputStream0 = new MockFileInputStream(fileDescriptor0);
+<span class="nocode"><a name="3">  3: </a></span>InputStreamProgressListenerVector inputStreamProgressListenerVector0 = new InputStreamProgressListenerVector();
+<span class="nocode"><a name="4">  4: </a></span>ProgressInputStream progressInputStream0 = new ProgressInputStream(mockFileInputStream0, inputStreamProgressListenerVector0);
+<span class="nocode"><a name="5">  5: </a></span>byte[] byteArray0 = new byte[3];
+<span class="nocode"><a name="6">  6: </a></span>progressInputStream0.read(byteArray0, (int) (byte)17, 4445);
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>PipedInputStream pipedInputStream0 = new PipedInputStream(1);
+<span class="nocode"><a name="2">  2: </a></span>InputStreamProgressListenerVector inputStreamProgressListenerVector0 = new InputStreamProgressListenerVector();
+<span class="nocode"><a name="3">  3: </a></span>ProgressInputStream progressInputStream0 = new ProgressInputStream(pipedInputStream0, inputStreamProgressListenerVector0);
+<span class="nocode"><a name="4">  4: </a></span>byte[] byteArray0 = new byte[0];
+<span class="nocode"><a name="5">  5: </a></span>progressInputStream0.read(byteArray0, 1362, 1362);
+</pre>
+<h3>Test case 13</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[7];
+<span class="nocode"><a name="2">  2: </a></span>ByteArrayInputStream byteArrayInputStream0 = new ByteArrayInputStream(byteArray0, 2472, (byte) (-46));
+<span class="nocode"><a name="3">  3: </a></span>InputStreamProgressListenerVector inputStreamProgressListenerVector0 = new InputStreamProgressListenerVector();
+<span class="nocode"><a name="4">  4: </a></span>ProgressInputStream progressInputStream0 = new ProgressInputStream(byteArrayInputStream0, inputStreamProgressListenerVector0);
+<span class="nocode"><a name="5">  5: </a></span>int int0 = progressInputStream0.read(byteArray0, 0, 0);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals((-1), int0);
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.util.ProgressInputStream
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.util.ProgressInputStream
+<li>Size: 13
+<li>Length: 76
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.8716269841269841
+<li>BranchCoverage: 0.8333333333333334
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 0.8333333333333334
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

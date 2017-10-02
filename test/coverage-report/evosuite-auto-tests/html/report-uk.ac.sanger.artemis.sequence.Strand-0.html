@@ -1,0 +1,582 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.sequence.Strand
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.sequence.Strand: 0.6526257093292201</ul>
+<ul>
+<li>663.3518152822501 fitness evaluations, 0 generations, null statements, 69 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;Problems connecting...&quot;, &quot; n[$y^:&lt;}@Amt&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = new Strand(bases0, 5);
+<span class="nocode"><a name="4">  4: </a></span>Range range0 = new Range(2);
+<span class="nocode"><a name="5">  5: </a></span>strand0.getTranslation(range0, true);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(2, strand0.getDirection());
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;r@1TY:&quot;, &quot;`G&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = new Strand(bases0, (-5));
+<span class="nocode"><a name="4">  4: </a></span>Range range0 = new Range(987);
+<span class="nocode"><a name="5">  5: </a></span>strand0.getSpacedTranslation(range0, true);
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;r8/ o= &quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="4">  4: </a></span>Range range0 = new Range(1658);
+<span class="nocode"><a name="5">  5: </a></span>String string0 = strand0.getRawSubSequence(range0);
+<span class="nocode"><a name="6">  6: </a></span>assertNotNull(string0);
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[3];
+<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short)0);
+<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = new Integer((-237));
+<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 206, (-1630), short0, integer0);
+<span class="nocode"><a name="5">  5: </a></span>Bases bases0 = new Bases(partialSequence0);
+<span class="nocode"><a name="6">  6: </a></span>Strand strand0 = new Strand(bases0, 5);
+<span class="nocode"><a name="7">  7: </a></span>MarkerRange markerRange0 = strand0.makeMarkerRangeFromPositions(1, 206);
+<span class="nocode"><a name="8">  8: </a></span>Strand.markerRangeBases(markerRange0);
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;r8/ o= &quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="4">  4: </a></span>Marker marker0 = strand0.makeMarkerFromRawPosition(3);
+<span class="nocode"><a name="5">  5: </a></span>String string0 = Strand.getCodonAtMarker(marker0);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;nny&quot;, string0);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(2, strand0.getDirection());
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;r8/ o= &quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="4">  4: </a></span>Range range0 = new Range(1658);
+<span class="nocode"><a name="5">  5: </a></span>String[] stringArray0 = new String[3];
+<span class="nocode"><a name="6">  6: </a></span>StringVector stringVector0 = new StringVector(stringArray0);
+<span class="nocode"><a name="7">  7: </a></span>strand0.getMatchingCodons(range0, stringVector0);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(2, strand0.getDirection());
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;r8/ o= &quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="4">  4: </a></span>int int0 = strand0.getRawPosition(0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(2, strand0.getDirection());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(8, int0);
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;Problems connecting...&quot;, &quot; n[$y^:&lt;}@Amt&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = new Strand(bases0, 5);
+<span class="nocode"><a name="4">  4: </a></span>MarkerRange markerRange0 = strand0.makeMarkerRangeFromPositions(2, 1);
+<span class="nocode"><a name="5">  5: </a></span>Strand.deleteRange(markerRange0);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(20, fastaStreamSequence0.length());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(16, fastaStreamSequence0.getOtherCount());
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[4];
+<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short)125);
+<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = JLayeredPane.DEFAULT_LAYER;
+<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 1253, 120, short0, integer0);
+<span class="nocode"><a name="5">  5: </a></span>Bases bases0 = new Bases(partialSequence0);
+<span class="nocode"><a name="6">  6: </a></span>Strand strand0 = new Strand(bases0, 2);
+<span class="nocode"><a name="7">  7: </a></span>MarkerRange markerRange0 = strand0.makeMarkerRangeFromPositions(1, (short)125);
+<span class="nocode"><a name="8">  8: </a></span>Strand.getOpenReadingFrameRanges(markerRange0, 0, 0, (-908));
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;r8/ o= &quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="4">  4: </a></span>Range range0 = new Range(1658);
+<span class="nocode"><a name="5">  5: </a></span>String[] stringArray0 = new String[3];
+<span class="nocode"><a name="6">  6: </a></span>StringVector stringVector0 = new StringVector(stringArray0);
+<span class="nocode"><a name="7">  7: </a></span>strand0.getStopOrStartCodons(range0, stringVector0);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(2, strand0.getDirection());
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;r8/ o= &quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="4">  4: </a></span>Range range0 = new Range(1658);
+<span class="nocode"><a name="5">  5: </a></span>strand0.getRawSubSequenceC(range0);
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;r8/ o= &quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="4">  4: </a></span>String string0 = strand0.getStrandBases();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;nnnnnny&quot;, string0);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(2, strand0.getDirection());
+</pre>
+<h3>Test case 13</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;r8/ o= &quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="4">  4: </a></span>String string0 = strand0.getStrandBases();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;rnnnnnn&quot;, string0);
+</pre>
+<h3>Test case 14</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;r8/ o= &quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = strand0.isForwardStrand();
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 15</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;r8/ o= &quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="4">  4: </a></span>Marker marker0 = strand0.makeMarkerFromRawPosition(3);
+<span class="nocode"><a name="5">  5: </a></span>MarkerRange markerRange0 = Strand.getORFAroundMarker(marker0, false);
+<span class="nocode"><a name="6">  6: </a></span>Strand.getOpenReadingFrameRanges(markerRange0, 0, 0, 3);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(5, marker0.getPosition());
+</pre>
+<h3>Test case 16</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;r8/ o= &quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="4">  4: </a></span>Marker marker0 = strand0.makeMarkerFromRawPosition(3);
+<span class="nocode"><a name="5">  5: </a></span>MarkerRange markerRange0 = Strand.getORFAroundMarker(marker0, false);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(3, marker0.getPosition());
+<span class="nocode"><a name="7">  7: </a></span>assertNotNull(markerRange0);
+</pre>
+<h3>Test case 17</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;sOgSu_Wk?yM I&quot;, &quot;sOgSu_Wk?yM I&quot;);
+<span class="nocode"><a name="2">  2: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="4">  4: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="5">  5: </a></span>MarkerRange markerRange0 = strand0.makeMarkerRangeFromRawPositions(1, 1);
+<span class="nocode"><a name="6">  6: </a></span>String string0 = Strand.markerRangeBases(markerRange0);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(&quot;s&quot;, string0);
+<span class="nocode"><a name="8">  8: </a></span>assertTrue(strand0.isForwardStrand());
+</pre>
+<h3>Test case 18</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;Problems connecting...&quot;, &quot; n[$y^:&lt;}@Amt&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = new Strand(bases0, 5);
+<span class="nocode"><a name="4">  4: </a></span>int int0 = strand0.getACount();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(2, strand0.getDirection());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(1, int0);
+</pre>
+<h3>Test case 19</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Bases bases0 = new Bases((Sequence) null);
+<span class="nocode"><a name="2">  2: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="3">  3: </a></span>strand0.getACount();
+</pre>
+<h3>Test case 20</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;r8/ o= &quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="4">  4: </a></span>strand0.getTCount();
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(strand0.isForwardStrand());
+</pre>
+<h3>Test case 21</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Bases bases0 = new Bases((Sequence) null);
+<span class="nocode"><a name="2">  2: </a></span>Strand strand0 = new Strand(bases0, 0);
+<span class="nocode"><a name="3">  3: </a></span>strand0.getGCount();
+</pre>
+<h3>Test case 22</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;r8/ o= &quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="4">  4: </a></span>strand0.getGCount();
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(strand0.isForwardStrand());
+</pre>
+<h3>Test case 23</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;Problems connecting...&quot;, &quot; n[$y^:&lt;}@Amt&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = new Strand(bases0, 5);
+<span class="nocode"><a name="4">  4: </a></span>int int0 = strand0.getCCount();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(2, strand0.getDirection());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(1, int0);
+</pre>
+<h3>Test case 24</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;r8/ o= &quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="4">  4: </a></span>strand0.getCCount();
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(strand0.isForwardStrand());
+</pre>
+<h3>Test case 25</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;r8/ o= &quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="4">  4: </a></span>Marker marker0 = strand0.makeMarker(2);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(2, marker0.getPosition());
+</pre>
+<h3>Test case 26</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;r8/ o= &quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="4">  4: </a></span>Bases bases1 = strand0.getBases();
+<span class="nocode"><a name="5">  5: </a></span>assertSame(bases0, bases1);
+</pre>
+<h3>Test case 27</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;sOgSu_Wk?yM I&quot;, &quot;sOgSu_Wk?yM I&quot;);
+<span class="nocode"><a name="2">  2: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="4">  4: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="5">  5: </a></span>int int0 = strand0.getSequenceLength();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(13, int0);
+</pre>
+<h3>Test case 28</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;Problems connecting...&quot;, &quot; n[$y^:&lt;}@Amt&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = new Strand(bases0, 5);
+<span class="nocode"><a name="4">  4: </a></span>Range range0 = new Range((-5));
+<span class="nocode"><a name="5">  5: </a></span>strand0.getSubSequence(range0);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(2, strand0.getDirection());
+</pre>
+<h3>Test case 29</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Bases bases0 = new Bases((Sequence) null);
+<span class="nocode"><a name="2">  2: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="3">  3: </a></span>int int0 = strand0.getDirection();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(2, int0);
+</pre>
+<h3>Test case 30</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;iA(}W9.I&quot;, &quot;iA(}W9.I&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>FeatureVector featureVector0 = new FeatureVector();
+<span class="nocode"><a name="5">  5: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, &quot;org.biojava.bio.seq.FeatureFilter$And&quot;);
+<span class="nocode"><a name="6">  6: </a></span>Entry entry0 = filteredEntryGroup0.createEntry();
+<span class="nocode"><a name="7">  7: </a></span>Feature feature0 = entry0.createFeature();
+<span class="nocode"><a name="8">  8: </a></span>Strand strand0 = feature0.getStrand();
+<span class="nocode"><a name="9">  9: </a></span>strand0.getDirection();
+</pre>
+<h3>Test case 31</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;r8/ o= &quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = strand0.isForwardStrand();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(2, strand0.getDirection());
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 32</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Strand.addBases((Marker) null, &quot;&quot;);
+</pre>
+<h3>Test case 33</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MarkerRange markerRange0 = new MarkerRange((Marker) null);
+<span class="nocode"><a name="2">  2: </a></span>Strand.deleteRange(markerRange0);
+</pre>
+<h3>Test case 34</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Strand strand0 = new Strand((Bases) null, 1042);
+<span class="nocode"><a name="2">  2: </a></span>strand0.getCCount();
+</pre>
+<h3>Test case 35</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimilarityPairFeature.EmptyPairwiseAlignment similarityPairFeature_EmptyPairwiseAlignment0 = (SimilarityPairFeature.EmptyPairwiseAlignment)SimilarityPairFeature.EMPTY_PAIRWISE;
+<span class="nocode"><a name="2">  2: </a></span>BioJavaSequence bioJavaSequence0 = new BioJavaSequence(similarityPairFeature_EmptyPairwiseAlignment0);
+<span class="nocode"><a name="3">  3: </a></span>Bases bases0 = new Bases(bioJavaSequence0);
+<span class="nocode"><a name="4">  4: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="5">  5: </a></span>strand0.getCCount();
+</pre>
+<h3>Test case 36</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Strand.getCodonAtMarker((Marker) null);
+</pre>
+<h3>Test case 37</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Strand strand0 = new Strand((Bases) null, 0);
+<span class="nocode"><a name="2">  2: </a></span>strand0.getDirection();
+</pre>
+<h3>Test case 38</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;Problems connecting...&quot;, &quot; n[$y^:&lt;}@Amt&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = new Strand(bases0, 5);
+<span class="nocode"><a name="4">  4: </a></span>Range range0 = new Range(2);
+<span class="nocode"><a name="5">  5: </a></span>strand0.getMatchingCodons(range0, (StringVector) null);
+</pre>
+<h3>Test case 39</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Strand.getORFAroundMarker((Marker) null, true);
+</pre>
+<h3>Test case 40</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Strand.getOpenReadingFrameRanges((MarkerRange) null, (-851), 1, 0);
+</pre>
+<h3>Test case 41</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Strand strand0 = new Strand((Bases) null, 0);
+<span class="nocode"><a name="2">  2: </a></span>strand0.getRawPosition(0);
+</pre>
+<h3>Test case 42</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;3)&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="4">  4: </a></span>strand0.getRawSubSequence((Range) null);
+</pre>
+<h3>Test case 43</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;R:!&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = new Strand(bases0, 0);
+<span class="nocode"><a name="4">  4: </a></span>strand0.getRawSubSequenceC((Range) null);
+</pre>
+<h3>Test case 44</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Strand strand0 = new Strand((Bases) null, 2458);
+<span class="nocode"><a name="2">  2: </a></span>strand0.getSequenceLength();
+</pre>
+<h3>Test case 45</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Strand strand0 = new Strand((Bases) null, 1);
+<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range((-3193));
+<span class="nocode"><a name="3">  3: </a></span>strand0.getStopOrStartCodons(range0, (StringVector) null);
+</pre>
+<h3>Test case 46</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Strand strand0 = new Strand((Bases) null, (-2055));
+<span class="nocode"><a name="2">  2: </a></span>strand0.getStrandBases();
+</pre>
+<h3>Test case 47</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[3];
+<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short)0);
+<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = new Integer((-237));
+<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 206, (-1630), short0, integer0);
+<span class="nocode"><a name="5">  5: </a></span>Bases bases0 = new Bases(partialSequence0);
+<span class="nocode"><a name="6">  6: </a></span>Strand strand0 = new Strand(bases0, 5);
+<span class="nocode"><a name="7">  7: </a></span>MarkerRange markerRange0 = strand0.makeMarkerRangeFromPositions(1, 206);
+<span class="nocode"><a name="8">  8: </a></span>Range range0 = markerRange0.getRange();
+<span class="nocode"><a name="9">  9: </a></span>strand0.getSubSequence(range0);
+</pre>
+<h3>Test case 48</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Strand strand0 = new Strand((Bases) null, 0);
+<span class="nocode"><a name="2">  2: </a></span>strand0.getSubSequence((Range) null);
+</pre>
+<h3>Test case 49</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Strand strand0 = new Strand((Bases) null, 500);
+<span class="nocode"><a name="2">  2: </a></span>strand0.getTCount();
+</pre>
+<h3>Test case 50</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;r8/ o= &quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="4">  4: </a></span>Range range0 = new Range(1658);
+<span class="nocode"><a name="5">  5: </a></span>strand0.getTranslation(range0, true);
+</pre>
+<h3>Test case 51</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Strand strand0 = new Strand((Bases) null, 0);
+<span class="nocode"><a name="2">  2: </a></span>strand0.getTranslation((Range) null, true);
+</pre>
+<h3>Test case 52</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Strand strand0 = new Strand((Bases) null, 2);
+<span class="nocode"><a name="2">  2: </a></span>strand0.isForwardStrand();
+</pre>
+<h3>Test case 53</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Bases bases0 = new Bases((Sequence) null);
+<span class="nocode"><a name="2">  2: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="3">  3: </a></span>strand0.makeMarker(2);
+</pre>
+<h3>Test case 54</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;ALTERNATIVE_YEAST_NUCLEAR&quot;, &quot;ALTERNATIVE_YEAST_NUCLEAR&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="4">  4: </a></span>strand0.makeMarker(55);
+</pre>
+<h3>Test case 55</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Bases bases0 = new Bases((Sequence) null);
+<span class="nocode"><a name="2">  2: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="3">  3: </a></span>strand0.makeMarkerFromRawPosition(56);
+</pre>
+<h3>Test case 56</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = new Strand(bases0, 75);
+<span class="nocode"><a name="4">  4: </a></span>strand0.makeMarkerFromRawPosition(2);
+</pre>
+<h3>Test case 57</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Strand strand0 = new Strand((Bases) null, (-283));
+<span class="nocode"><a name="2">  2: </a></span>strand0.makeMarkerRangeFromPositions(53, 53);
+</pre>
+<h3>Test case 58</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;$Z1{&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = new Strand(bases0, 2420);
+<span class="nocode"><a name="4">  4: </a></span>strand0.makeMarkerRangeFromPositions((-5), 0);
+</pre>
+<h3>Test case 59</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Bases bases0 = new Bases((Sequence) null);
+<span class="nocode"><a name="2">  2: </a></span>Strand strand0 = new Strand(bases0, 1);
+<span class="nocode"><a name="3">  3: </a></span>strand0.makeMarkerRangeFromRawPositions((-5), (-5));
+</pre>
+<h3>Test case 60</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;r8/ o= &quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="4">  4: </a></span>strand0.makeMarkerRangeFromRawPositions(4681, 0);
+</pre>
+<h3>Test case 61</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Strand.markerRangeBases((MarkerRange) null);
+</pre>
+<h3>Test case 62</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="4">  4: </a></span>strand0.getACount();
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(strand0.isForwardStrand());
+</pre>
+<h3>Test case 63</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Strand strand0 = new Strand((Bases) null, (-3322));
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = strand0.getBases();
+<span class="nocode"><a name="3">  3: </a></span>assertNull(bases0);
+</pre>
+<h3>Test case 64</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="4">  4: </a></span>int int0 = strand0.getRawPosition(56);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals((-55), int0);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(2, strand0.getDirection());
+</pre>
+<h3>Test case 65</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = new Strand(bases0, 56);
+<span class="nocode"><a name="4">  4: </a></span>int int0 = strand0.getRawPosition(1);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(2, strand0.getDirection());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, int0);
+</pre>
+<h3>Test case 66</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="4">  4: </a></span>int int0 = strand0.getSequenceLength();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, int0);
+</pre>
+<h3>Test case 67</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;uk.ac.sanger.artemis.sequence.Strand&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="4">  4: </a></span>int int0 = strand0.getTCount();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(4, int0);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(2, strand0.getDirection());
+</pre>
+<h3>Test case 68</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;i4-&quot;, &quot;gB8,7bNt$UCG=&amp;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="4">  4: </a></span>Range range0 = new Range(2, 120);
+<span class="nocode"><a name="5">  5: </a></span>AminoAcidSequence aminoAcidSequence0 = strand0.getTranslation(range0, false);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(2, strand0.getDirection());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(&quot;.......................................&quot;, aminoAcidSequence0.toString());
+</pre>
+<h3>Test case 69</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimilarityPairFeature.EmptyPairwiseAlignment similarityPairFeature_EmptyPairwiseAlignment0 = (SimilarityPairFeature.EmptyPairwiseAlignment)SimilarityPairFeature.EMPTY_PAIRWISE;
+<span class="nocode"><a name="2">  2: </a></span>BioJavaSequence bioJavaSequence0 = new BioJavaSequence(similarityPairFeature_EmptyPairwiseAlignment0);
+<span class="nocode"><a name="3">  3: </a></span>Bases bases0 = new Bases(bioJavaSequence0);
+<span class="nocode"><a name="4">  4: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="5">  5: </a></span>strand0.makeMarkerRangeFromRawPositions(56, 123);
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.sequence.Strand
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.sequence.Strand
+<li>Size: 69
+<li>Length: 272
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.6526257093292201
+<li>BranchCoverage: 0.5567010309278351
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 0.4230769230769231
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

@@ -1,0 +1,427 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.io.ChadoCanonicalGene
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.io.ChadoCanonicalGene: 0.46047145424708885</ul>
+<ul>
+<li>1623.2037168132113 fitness evaluations, 0 generations, null statements, 60 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>ChadoCanonicalGene.RangeComparator chadoCanonicalGene_RangeComparator0 = chadoCanonicalGene0.new RangeComparator();
+<span class="nocode"><a name="3">  3: </a></span>Range range0 = new Range((-1163), 0);
+<span class="nocode"><a name="4">  4: </a></span>int int0 = chadoCanonicalGene_RangeComparator0.compare(range0, range0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, int0);
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature();
+<span class="nocode"><a name="3">  3: </a></span>chadoCanonicalGene0.setGene(genbankStreamFeature0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, chadoCanonicalGene0.getSrcfeature_id());
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>Hashtable&lt;String, List&lt;Feature&gt;&gt; hashtable0 = (Hashtable&lt;String, List&lt;Feature&gt;&gt;)chadoCanonicalGene0.getSplicedFeatures();
+<span class="nocode"><a name="3">  3: </a></span>assertTrue(hashtable0.isEmpty());
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>int int0 = chadoCanonicalGene0.getSeqlen();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, int0);
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>chadoCanonicalGene0.setSeqlen((-1));
+<span class="nocode"><a name="3">  3: </a></span>assertEquals((-1), chadoCanonicalGene0.getSeqlen());
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>int int0 = chadoCanonicalGene0.getSrcfeature_id();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, int0);
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>chadoCanonicalGene0.autoGenerateSplicedFeatureName(&quot;JapBf%.0lKM,RX&quot;);
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>chadoCanonicalGene0.getGeneUniqueName();
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = new Key(&quot;Parent&quot;, false);
+<span class="nocode"><a name="3">  3: </a></span>Range range0 = new Range((-2170));
+<span class="nocode"><a name="4">  4: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
+<span class="nocode"><a name="5">  5: </a></span>Location location0 = new Location(rangeVector0, true);
+<span class="nocode"><a name="6">  6: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
+<span class="nocode"><a name="7">  7: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature(key0, location0, qualifierVector0);
+<span class="nocode"><a name="8">  8: </a></span>chadoCanonicalGene0.addTranscript(genbankStreamFeature0);
+<span class="nocode"><a name="9">  9: </a></span>chadoCanonicalGene0.containsTranscript((StringVector) null);
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>chadoCanonicalGene0.setSrcfeature_id(0);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, chadoCanonicalGene0.getSrcfeature_id());
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature();
+<span class="nocode"><a name="3">  3: </a></span>chadoCanonicalGene0.deleteFeature(genbankStreamFeature0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, chadoCanonicalGene0.getSrcfeature_id());
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>chadoCanonicalGene0.updateUniqueName(&quot;&quot;, &quot;``a{9L!khf k&quot;, (Set&lt;Feature&gt;) null);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, chadoCanonicalGene0.getSeqlen());
+</pre>
+<h3>Test case 13</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>LinkedHashSet&lt;Feature&gt; linkedHashSet0 = new LinkedHashSet&lt;Feature&gt;();
+<span class="nocode"><a name="3">  3: </a></span>chadoCanonicalGene0.updateUniqueName(&quot;&quot;, &quot;D?^S:*O=[x5}oJ+16K&quot;, linkedHashSet0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, linkedHashSet0.size());
+</pre>
+<h3>Test case 14</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>chadoCanonicalGene0.addSplicedFeatures(&quot;:&quot;, (Feature) null, false);
+<span class="nocode"><a name="3">  3: </a></span>Hashtable&lt;String, List&lt;Feature&gt;&gt; hashtable0 = (Hashtable&lt;String, List&lt;Feature&gt;&gt;)chadoCanonicalGene0.getSplicedFeatures();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1, hashtable0.size());
+</pre>
+<h3>Test case 15</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>chadoCanonicalGene0.addSplicedFeatures(&quot;pseudogenic_exon&quot;, (Feature) null, true);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, chadoCanonicalGene0.getSeqlen());
+</pre>
+<h3>Test case 16</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>chadoCanonicalGene0.addSplicedFeatures(&quot;cJd-\u0000@Taq3_v8&quot;, (Feature) null);
+<span class="nocode"><a name="3">  3: </a></span>chadoCanonicalGene0.addSplicedFeatures(&quot;cJd-\u0000@Taq3_v8&quot;, (Feature) null, false);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, chadoCanonicalGene0.getSeqlen());
+</pre>
+<h3>Test case 17</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>chadoCanonicalGene0.correctSpliceSiteAssignments();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, chadoCanonicalGene0.getSrcfeature_id());
+</pre>
+<h3>Test case 18</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>chadoCanonicalGene0.add3PrimeUtr(&quot;complement(&quot;, (Feature) null);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, chadoCanonicalGene0.getSeqlen());
+</pre>
+<h3>Test case 19</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>chadoCanonicalGene0.add5PrimeUtr(&quot;..&quot;, (Feature) null);
+<span class="nocode"><a name="3">  3: </a></span>chadoCanonicalGene0.isFirstUtr(&quot;SPQy(l.^J&quot;, true);
+</pre>
+<h3>Test case 20</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>chadoCanonicalGene0.addOtherFeatures(&quot;&quot;, (Feature) null);
+<span class="nocode"><a name="3">  3: </a></span>List&lt;Feature&gt; list0 = chadoCanonicalGene0.getOtherFeaturesOfTranscript(&quot;&quot;);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1, list0.size());
+</pre>
+<h3>Test case 21</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>List&lt;Feature&gt; list0 = chadoCanonicalGene0.getSpliceSitesOfTranscript(&quot;%T-VnA&gt;&lt;{Z69|uP[GD&quot;, &quot;%T-VnA&gt;&lt;{Z69|uP[GD&quot;);
+<span class="nocode"><a name="3">  3: </a></span>assertNull(list0);
+</pre>
+<h3>Test case 22</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>chadoCanonicalGene0.addSplicedFeatures(&quot;&quot;, (Feature) null);
+<span class="nocode"><a name="3">  3: </a></span>chadoCanonicalGene0.getSpliceSitesOfTranscript(&quot;&quot;, &quot;qv9(V[b&quot;);
+</pre>
+<h3>Test case 23</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>Set&lt;String&gt; set0 = chadoCanonicalGene0.getSpliceTypes(&quot;Parent&quot;);
+<span class="nocode"><a name="3">  3: </a></span>assertNull(set0);
+</pre>
+<h3>Test case 24</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>List&lt;Feature&gt; list0 = chadoCanonicalGene0.getSplicedFeaturesOfTranscript(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>assertNull(list0);
+</pre>
+<h3>Test case 25</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>Feature feature0 = chadoCanonicalGene0.getProteinOfTranscript(&quot;E#v;ifI&quot;);
+<span class="nocode"><a name="3">  3: </a></span>assertNull(feature0);
+</pre>
+<h3>Test case 26</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>List&lt;Feature&gt; list0 = chadoCanonicalGene0.get3UtrOfTranscript(&quot;POSITIVE&quot;);
+<span class="nocode"><a name="3">  3: </a></span>assertNull(list0);
+</pre>
+<h3>Test case 27</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>List&lt;Feature&gt; list0 = chadoCanonicalGene0.get5UtrOfTranscript(&quot;bH3&quot;);
+<span class="nocode"><a name="3">  3: </a></span>assertNull(list0);
+</pre>
+<h3>Test case 28</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = chadoCanonicalGene0.isFirstUtr(&quot;zE~8eKn2%-=N&quot;, false);
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 29</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>List&lt;Feature&gt; list0 = chadoCanonicalGene0.getOtherFeaturesOfTranscript(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>assertNull(list0);
+</pre>
+<h3>Test case 30</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = chadoCanonicalGene0.isTranscript(&quot;MOLD_MITOCHONDRIAL&quot;);
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 31</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>chadoCanonicalGene0.autoGenerateSplicedFeatureName(&quot;exon&quot;);
+</pre>
+<h3>Test case 32</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>chadoCanonicalGene0.autoGeneratePepName(&quot;.dna&quot;);
+</pre>
+<h3>Test case 33</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>chadoCanonicalGene0.autoGeneratePepName(&quot;%T-VnA&gt;&lt;{Z69|uP[GD&quot;);
+</pre>
+<h3>Test case 34</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>chadoCanonicalGene0.addTranscript((Feature) null);
+<span class="nocode"><a name="3">  3: </a></span>chadoCanonicalGene0.autoGeneratePepName(&quot;&quot;);
+</pre>
+<h3>Test case 35</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = Key.CDS;
+<span class="nocode"><a name="3">  3: </a></span>Range range0 = new Range(2017, 3439);
+<span class="nocode"><a name="4">  4: </a></span>Location location0 = new Location(range0);
+<span class="nocode"><a name="5">  5: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
+<span class="nocode"><a name="6">  6: </a></span>DatabaseInferredFeature databaseInferredFeature0 = new DatabaseInferredFeature(key0, location0, qualifierVector0, chadoCanonicalGene0);
+<span class="nocode"><a name="7">  7: </a></span>chadoCanonicalGene0.addSplicedFeatures(&quot;Couldn't tokenize&quot;, (Feature) databaseInferredFeature0);
+<span class="nocode"><a name="8">  8: </a></span>String string0 = chadoCanonicalGene0.getTranscriptFromName(&quot;&quot;);
+<span class="nocode"><a name="9">  9: </a></span>assertNull(string0);
+</pre>
+<h3>Test case 36</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>List&lt;Feature&gt; list0 = chadoCanonicalGene0.getTranscripts();
+<span class="nocode"><a name="3">  3: </a></span>assertTrue(list0.isEmpty());
+</pre>
+<h3>Test case 37</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>Feature feature0 = chadoCanonicalGene0.getGene();
+<span class="nocode"><a name="3">  3: </a></span>assertNull(feature0);
+</pre>
+<h3>Test case 38</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>chadoCanonicalGene0.deleteTranscript(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, chadoCanonicalGene0.getSrcfeature_id());
+</pre>
+<h3>Test case 39</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>StringVector stringVector0 = new StringVector();
+<span class="nocode"><a name="3">  3: </a></span>Feature feature0 = chadoCanonicalGene0.containsTranscript(stringVector0);
+<span class="nocode"><a name="4">  4: </a></span>assertNull(feature0);
+</pre>
+<h3>Test case 40</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>EmblStreamFeature emblStreamFeature0 = new EmblStreamFeature();
+<span class="nocode"><a name="3">  3: </a></span>String string0 = chadoCanonicalGene0.getQualifier(emblStreamFeature0, &quot;a#c)w:gi][|y!.bg&quot;);
+<span class="nocode"><a name="4">  4: </a></span>assertNull(string0);
+</pre>
+<h3>Test case 41</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>chadoCanonicalGene0.add3PrimeUtr((String) null, (Feature) null);
+</pre>
+<h3>Test case 42</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>chadoCanonicalGene0.add5PrimeUtr((String) null, (Feature) null);
+</pre>
+<h3>Test case 43</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature();
+<span class="nocode"><a name="3">  3: </a></span>chadoCanonicalGene0.addOtherFeatures((String) null, genbankStreamFeature0);
+</pre>
+<h3>Test case 44</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>EmblStreamFeature emblStreamFeature0 = new EmblStreamFeature();
+<span class="nocode"><a name="3">  3: </a></span>chadoCanonicalGene0.addSplicedFeatures((String) null, (Feature) emblStreamFeature0);
+</pre>
+<h3>Test case 45</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>chadoCanonicalGene0.autoGenerateFeatureName(&quot;v/p&lt;F&lt;l:$O==?7&quot;, &quot;v/p&lt;F&lt;l:$O==?7&quot;);
+</pre>
+<h3>Test case 46</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>chadoCanonicalGene0.autoGenerateTanscriptName(&quot;$ES&quot;);
+</pre>
+<h3>Test case 47</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>chadoCanonicalGene0.deleteFeature((Feature) null);
+</pre>
+<h3>Test case 48</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>chadoCanonicalGene0.get3UtrOfTranscript((String) null);
+</pre>
+<h3>Test case 49</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>chadoCanonicalGene0.getChildren((Feature) null);
+</pre>
+<h3>Test case 50</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>chadoCanonicalGene0.getFeatureFromId(&quot;&quot;);
+</pre>
+<h3>Test case 51</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>EmblStreamFeature emblStreamFeature0 = new EmblStreamFeature();
+<span class="nocode"><a name="3">  3: </a></span>FeatureLoc featureLoc0 = new FeatureLoc();
+<span class="nocode"><a name="4">  4: </a></span>chadoCanonicalGene0.getNucLocation(emblStreamFeature0, featureLoc0);
+</pre>
+<h3>Test case 52</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>chadoCanonicalGene0.getOtherFeaturesOfTranscript((String) null);
+</pre>
+<h3>Test case 53</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>chadoCanonicalGene0.getProteinOfTranscript((String) null);
+</pre>
+<h3>Test case 54</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>chadoCanonicalGene0.getQualifier((Feature) null, (String) null);
+</pre>
+<h3>Test case 55</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>chadoCanonicalGene0.getSpliceTypes((String) null);
+</pre>
+<h3>Test case 56</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>chadoCanonicalGene0.getSplicedFeaturesOfTranscript((String) null);
+</pre>
+<h3>Test case 57</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>chadoCanonicalGene0.addSplicedFeatures(&quot;&quot;, (Feature) null);
+<span class="nocode"><a name="3">  3: </a></span>chadoCanonicalGene0.getTranscriptFeatureFromName(&quot;y&quot;);
+</pre>
+<h3>Test case 58</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>chadoCanonicalGene0.addTranscript((Feature) null);
+<span class="nocode"><a name="3">  3: </a></span>List&lt;Feature&gt; list0 = chadoCanonicalGene0.getTranscripts();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1, list0.size());
+</pre>
+<h3>Test case 59</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>Feature feature0 = chadoCanonicalGene0.getTranscriptFeatureFromName(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>assertNull(feature0);
+</pre>
+<h3>Test case 60</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="2">  2: </a></span>ChadoCanonicalGene.RangeComparator chadoCanonicalGene_RangeComparator0 = chadoCanonicalGene0.new RangeComparator();
+<span class="nocode"><a name="3">  3: </a></span>Range range0 = new Range(0, 0);
+<span class="nocode"><a name="4">  4: </a></span>int int0 = chadoCanonicalGene_RangeComparator0.compare(range0, range0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, int0);
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.io.ChadoCanonicalGene
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.io.ChadoCanonicalGene
+<li>Size: 60
+<li>Length: 154
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.46047145424708885
+<li>BranchCoverage: 0.25177304964539005
+<li>MethodCoverage: 0.9767441860465116
+<li>OutputCoverage: 0.25742574257425743
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>
