@@ -6,6 +6,7 @@
 package uk.ac.sanger.artemis.components.variant;
 
 import org.junit.Test;
+import org.junit.Ignore;
 import static org.junit.Assert.*;
 import static org.evosuite.runtime.EvoAssertions.*;
 import com.sshtools.j2ssh.io.ByteArrayReader;
@@ -117,9 +118,10 @@ public class TabixReader_ESTest extends TabixReader_ESTest_scaffolding {
       }
   }
 
+  @Ignore("Not a cross-platform test")
   @Test(timeout = 4000)
   public void test07()  throws Throwable  {
-      EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile("/Users/kp11/workspace/applications/Artemis/test/.tbi");
+      EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(CURRENT_DIR + "/.tbi");
       FileSystemHandling.createFolder(evoSuiteFile0);
       TabixReader tabixReader0 = null;
       try {
@@ -149,10 +151,11 @@ public class TabixReader_ESTest extends TabixReader_ESTest_scaffolding {
       }
   }
 
+  @Ignore("Not a cross-platform test")
   @Test(timeout = 4000)
   public void test09()  throws Throwable  {
       URL uRL0 = MockURL.getHttpExample();
-      EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile("/Users/kp11/workspace/applications/Artemis/test/You can not retrieve part of an empty symbol list.tbi");
+      EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(CURRENT_DIR + "/You can not retrieve part of an empty symbol list.tbi");
       FileSystemHandling.createFolder(evoSuiteFile0);
       TabixReader tabixReader0 = null;
       try {
@@ -182,9 +185,10 @@ public class TabixReader_ESTest extends TabixReader_ESTest_scaffolding {
       }
   }
 
+  @Ignore("Not a cross-platform test")
   @Test(timeout = 4000)
   public void test11()  throws Throwable  {
-      EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile("/Users/kp11/workspace/applications/Artemis/test/.tbi");
+      EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(CURRENT_DIR + "/.tbi");
       FileSystemHandling.appendStringToFile(evoSuiteFile0, ";");
       TabixReader tabixReader0 = new TabixReader("", (SeekableStream) null);
       assertEquals(0, tabixReader0.getStartColumn());

@@ -31,6 +31,7 @@ public class FTPSeekableStream_ESTest_scaffolding {
 
   private org.evosuite.runtime.thread.ThreadStopper threadStopper =  new org.evosuite.runtime.thread.ThreadStopper (org.evosuite.runtime.thread.KillSwitchHandler.getInstance(), 3000);
 
+  protected final static String CURRENT_DIR = System.getProperty("user.dir");
 
   @BeforeClass 
   public static void initEvoSuiteFramework() { 

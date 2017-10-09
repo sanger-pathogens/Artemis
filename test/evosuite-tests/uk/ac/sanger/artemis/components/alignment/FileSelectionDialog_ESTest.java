@@ -82,7 +82,7 @@ public class FileSelectionDialog_ESTest extends FileSelectionDialog_ESTest_scaff
 
   @Test(timeout = 4000)
   public void test05()  throws Throwable  {
-      EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile("/Users/kp11/workspace/applications/Artemis/test/B_7");
+      EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(CURRENT_DIR + "/B_7");
       byte[] byteArray0 = new byte[8];
       FileSystemHandling.appendDataToFile(evoSuiteFile0, byteArray0);
       List<String> list0 = FileSelectionDialog.getListOfFiles("B_7");
@@ -91,7 +91,7 @@ public class FileSelectionDialog_ESTest extends FileSelectionDialog_ESTest_scaff
 
   @Test(timeout = 4000)
   public void test06()  throws Throwable  {
-      EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile("/Users/kp11/workspace/applications/Artemis/test/B_7");
+      EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(CURRENT_DIR + "/B_7");
       FileSystemHandling.appendLineToFile(evoSuiteFile0, "http://www.uk.embnet.org/Software/EMBOSS/Apps/");
       List<String> list0 = FileSelectionDialog.getListOfFiles("B_7");
       assertFalse(list0.isEmpty());
@@ -111,7 +111,7 @@ public class FileSelectionDialog_ESTest extends FileSelectionDialog_ESTest_scaff
 
   @Test(timeout = 4000)
   public void test09()  throws Throwable  {
-      EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile("/Users/kp11/workspace/applications/Artemis/test/B_7");
+      EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(CURRENT_DIR + "/B_7");
       byte[] byteArray0 = new byte[8];
       byteArray0[3] = (byte) (-89);
       FileSystemHandling.appendDataToFile(evoSuiteFile0, byteArray0);
@@ -121,7 +121,7 @@ public class FileSelectionDialog_ESTest extends FileSelectionDialog_ESTest_scaff
 
   @Test(timeout = 4000)
   public void test10()  throws Throwable  {
-      EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile("/Users/kp11/workspace/applications/Artemis/test/user.home");
+      EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(CURRENT_DIR + "/user.home");
       FileSystemHandling.appendStringToFile(evoSuiteFile0, "user.home");
       boolean boolean0 = FileSelectionDialog.isListOfFiles("user.home");
       assertTrue(boolean0);
@@ -129,7 +129,7 @@ public class FileSelectionDialog_ESTest extends FileSelectionDialog_ESTest_scaff
 
   @Test(timeout = 4000)
   public void test11()  throws Throwable  {
-      EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile("/Users/kp11/workspace/applications/Artemis/test/B_7");
+      EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(CURRENT_DIR + "/B_7");
       FileSystemHandling.appendLineToFile(evoSuiteFile0, "ftpftp");
       boolean boolean0 = FileSelectionDialog.isListOfFiles("B_7");
       assertTrue(boolean0);
@@ -137,7 +137,7 @@ public class FileSelectionDialog_ESTest extends FileSelectionDialog_ESTest_scaff
 
   @Test(timeout = 4000)
   public void test12()  throws Throwable  {
-      EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile("/Users/kp11/workspace/applications/Artemis/test/B_7");
+      EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(CURRENT_DIR + "/B_7");
       FileSystemHandling.appendLineToFile(evoSuiteFile0, "http://www.uk.embnet.org/Software/EMBOSS/Apps/");
       boolean boolean0 = FileSelectionDialog.isListOfFiles("B_7");
       assertTrue(boolean0);

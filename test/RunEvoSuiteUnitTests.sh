@@ -1,4 +1,5 @@
 #! /bin/bash
 
-ant -Dlib=jacoco-lib -DEMBOSS_ROOT=$EMBOSS_ROOT -buildfile build-test.xml run-evosuite-tests
+SCRIPT_DIR=$(dirname $0)
+ant -Dlib=${SCRIPT_DIR}/jacoco-lib -DEMBOSS_ROOT=$EMBOSS_ROOT -buildfile build-test.xml run-evosuite-tests
 

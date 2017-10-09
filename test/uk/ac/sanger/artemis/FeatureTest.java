@@ -368,6 +368,7 @@ public class FeatureTest
 		
 		egrp = null;
 		features = null;
+		System.gc();
 	}
 	
 	@Test

@@ -20,13 +20,13 @@ import uk.ac.sanger.artemis.io.SimpleEntryInformation;
 
 @RunWith(EvoRunner.class) @EvoRunnerParameters(mockJVMNonDeterminism = true, useVFS = true, useVNET = true, resetStaticState = true, separateClassLoader = true, useJEE = true) 
 public class IndexFastaStream_ESTest extends IndexFastaStream_ESTest_scaffolding {
-
+	
   @Test(timeout = 4000)
   public void test0()  throws Throwable  {
       SimpleEntryInformation simpleEntryInformation0 = new SimpleEntryInformation();
       EmblDocumentEntry emblDocumentEntry0 = new EmblDocumentEntry(simpleEntryInformation0);
       emblDocumentEntry0.setName("Use index");
-      EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile("/Users/kp11/workspace/applications/Artemis/test/Use index.fai");
+      EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(CURRENT_DIR + "/Use index.fai");
       FileSystemHandling.appendLineToFile(evoSuiteFile0, "");
       boolean boolean0 = IndexFastaStream.isIndexed(emblDocumentEntry0);
       assertTrue(boolean0);
@@ -66,9 +66,7 @@ public class IndexFastaStream_ESTest extends IndexFastaStream_ESTest_scaffolding
         fail("Expecting exception: RuntimeException");
       
       } catch(RuntimeException e) {
-         //
-         // Cannot read non-existent file: /Users/kp11/workspace/applications/Artemis/test/Use index.fai
-         //
+        
          verifyException("net.sf.picard.io.IoUtil", e);
       }
   }

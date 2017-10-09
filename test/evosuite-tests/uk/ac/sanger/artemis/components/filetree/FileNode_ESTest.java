@@ -26,6 +26,7 @@ import uk.ac.sanger.artemis.components.filetree.FileNode;
 @RunWith(EvoRunner.class) @EvoRunnerParameters(mockJVMNonDeterminism = true, useVFS = true, useVNET = true, resetStaticState = true, separateClassLoader = true, useJEE = true) 
 public class FileNode_ESTest extends FileNode_ESTest_scaffolding {
 
+	
   @Test(timeout = 4000)
   public void test00()  throws Throwable  {
       MockFile mockFile0 = new MockFile("");
@@ -63,7 +64,7 @@ public class FileNode_ESTest extends FileNode_ESTest_scaffolding {
   public void test04()  throws Throwable  {
       MockFile mockFile0 = new MockFile("B");
       FileNode fileNode0 = new FileNode(mockFile0);
-      EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile("/Users/kp11/workspace/applications/Artemis/test/B");
+      EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(CURRENT_DIR + "/B");
       FileSystemHandling.appendLineToFile(evoSuiteFile0, "B");
       File file0 = fileNode0.getFile();
       assertFalse(file0.isAbsolute());
@@ -202,7 +203,7 @@ public class FileNode_ESTest extends FileNode_ESTest_scaffolding {
       FileNode fileNode0 = new FileNode(mockFile0);
       DataFlavor dataFlavor0 = DataFlavor.stringFlavor;
       Object object0 = fileNode0.getTransferData(dataFlavor0);
-      assertEquals("/Users/kp11/workspace/applications/Artemis/test/B", object0);
+      assertEquals(CURRENT_DIR + "/B", object0);
   }
 
   @Test(timeout = 4000)

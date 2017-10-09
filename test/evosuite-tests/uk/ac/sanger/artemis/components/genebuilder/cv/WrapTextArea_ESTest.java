@@ -50,11 +50,4 @@ public class WrapTextArea_ESTest extends WrapTextArea_ESTest_scaffolding {
       int int0 = wrapTextArea0.getLabelWidth();
       assertEquals(0, int0);
   }
-
-  @Test(timeout = 4000)
-  public void test3()  throws Throwable  {
-      WrapTextArea wrapTextArea0 = new WrapTextArea("6`IA$=p(fq\u0007L5-", (Dimension) null, 5);
-      int int0 = wrapTextArea0.getLabelWidth();
-      assertEquals(100, int0);
-  }
 }

@@ -34,7 +34,9 @@ public class BamFrame_ESTest extends BamFrame_ESTest_scaffolding {
 
   @Test(timeout = 4000)
   public void test1()  throws Throwable  {
+	  boolean result = (System.getProperty("mrj.version") != null ||
+	             System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0);
       boolean boolean0 = BamFrame.isMac();
-      assertTrue(boolean0);
+      assertEquals(result, boolean0);
   }
 }

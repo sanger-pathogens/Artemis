@@ -18,10 +18,11 @@ import uk.ac.sanger.artemis.circular.digest.EmbossDigestParser;
 @RunWith(EvoRunner.class) @EvoRunnerParameters(mockJVMNonDeterminism = true, useVFS = true, useVNET = true, resetStaticState = true, separateClassLoader = true, useJEE = true) 
 public class EmbossDigestParser_ESTest extends EmbossDigestParser_ESTest_scaffolding {
 
+    
   @Test(timeout = 4000)
   public void test0()  throws Throwable  {
       EmbossDigestParser embossDigestParser0 = new EmbossDigestParser();
-      EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile("/Users/kp11/workspace/applications/Artemis/test/.B-GJ DOFo}f{REBASE/embossre.enz");
+      EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(CURRENT_DIR + "/.B-GJ DOFo}f{REBASE/embossre.enz");
       embossDigestParser0.setEmbossDir(".B-GJ DOFo}f{");
       byte[] byteArray0 = new byte[8];
       FileSystemHandling.appendDataToFile(evoSuiteFile0, byteArray0);
@@ -34,7 +35,7 @@ public class EmbossDigestParser_ESTest extends EmbossDigestParser_ESTest_scaffol
   @Test(timeout = 4000)
   public void test1()  throws Throwable  {
       EmbossDigestParser embossDigestParser0 = new EmbossDigestParser();
-      EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile("/Users/kp11/workspace/applications/Artemis/test/.B-GJ DOFo}f{REBASE/embossre.enz");
+      EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(CURRENT_DIR + "/.B-GJ DOFo}f{REBASE/embossre.enz");
       embossDigestParser0.setEmbossDir(".B-GJ DOFo}f{");
       byte[] byteArray0 = new byte[8];
       FileSystemHandling.appendDataToFile(evoSuiteFile0, byteArray0);
@@ -44,7 +45,7 @@ public class EmbossDigestParser_ESTest extends EmbossDigestParser_ESTest_scaffol
   @Test(timeout = 4000)
   public void test2()  throws Throwable  {
       EmbossDigestParser embossDigestParser0 = new EmbossDigestParser();
-      EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile("/Users/kp11/workspace/applications/Artemis/test/nullREBASE/embossre.enz");
+      EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(CURRENT_DIR + "/nullREBASE/embossre.enz");
       FileSystemHandling.appendLineToFile(evoSuiteFile0, "#<#");
       embossDigestParser0.afterPropertiesSet();
       List<String> list0 = embossDigestParser0.getDigests();

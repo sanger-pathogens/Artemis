@@ -20,7 +20,7 @@ import uk.ac.sanger.artemis.circular.EmbossCirdnaReader;
 
 @RunWith(EvoRunner.class) @EvoRunnerParameters(mockJVMNonDeterminism = true, useVFS = true, useVNET = true, resetStaticState = true, separateClassLoader = true, useJEE = true) 
 public class EmbossCirdnaReader_ESTest extends EmbossCirdnaReader_ESTest_scaffolding {
-
+	
   @Test(timeout = 4000)
   public void test00()  throws Throwable  {
       EmbossCirdnaReader embossCirdnaReader0 = null;
@@ -77,7 +77,7 @@ public class EmbossCirdnaReader_ESTest extends EmbossCirdnaReader_ESTest_scaffol
 
   @Test(timeout = 4000)
   public void test05()  throws Throwable  {
-      EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile("/Users/kp11/workspace/applications/Artemis/test/5");
+      EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(CURRENT_DIR + "/5");
       FileSystemHandling.appendStringToFile(evoSuiteFile0, "start 5");
       MockFile mockFile0 = new MockFile("5");
       EmbossCirdnaReader embossCirdnaReader0 = new EmbossCirdnaReader(mockFile0);
@@ -97,7 +97,7 @@ public class EmbossCirdnaReader_ESTest extends EmbossCirdnaReader_ESTest_scaffol
 
   @Test(timeout = 4000)
   public void test06()  throws Throwable  {
-      EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile("/Users/kp11/workspace/applications/Artemis/test/5");
+      EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(CURRENT_DIR + "/5");
       FileSystemHandling.appendStringToFile(evoSuiteFile0, "start 5");
       FileSystemHandling.appendStringToFile(evoSuiteFile0, "start 5");
       MockFile mockFile0 = new MockFile("5");
@@ -133,7 +133,7 @@ public class EmbossCirdnaReader_ESTest extends EmbossCirdnaReader_ESTest_scaffol
   public void test08()  throws Throwable  {
       MockFile mockFile0 = new MockFile("5");
       EmbossCirdnaReader embossCirdnaReader0 = new EmbossCirdnaReader(mockFile0);
-      EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile("/Users/kp11/workspace/applications/Artemis/test/5");
+      EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(CURRENT_DIR + "/5");
       FileSystemHandling.appendStringToFile(evoSuiteFile0, "group");
       FileSystemHandling.appendLineToFile(evoSuiteFile0, "5");
       FileSystemHandling.appendStringToFile(evoSuiteFile0, "5");
@@ -145,7 +145,7 @@ public class EmbossCirdnaReader_ESTest extends EmbossCirdnaReader_ESTest_scaffol
   public void test09()  throws Throwable  {
       MockFile mockFile0 = new MockFile("5");
       EmbossCirdnaReader embossCirdnaReader0 = new EmbossCirdnaReader(mockFile0);
-      EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile("/Users/kp11/workspace/applications/Artemis/test/5");
+      EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(CURRENT_DIR + "/5");
       FileSystemHandling.appendStringToFile(evoSuiteFile0, "5");
       Vector vector0 = embossCirdnaReader0.readFile();
       assertNull(vector0);

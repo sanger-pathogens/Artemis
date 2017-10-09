@@ -73,6 +73,8 @@ import uk.ac.sanger.artemis.util.StringVector;
 @RunWith(EvoRunner.class) @EvoRunnerParameters(mockJVMNonDeterminism = true, useVFS = true, useVNET = true, resetStaticState = true, separateClassLoader = true, useJEE = true) 
 public class Options_ESTest extends Options_ESTest_scaffolding {
 
+  private final String TEMP_DIR = System.getProperty("java.io.tmpdir");
+	
   @Test(timeout = 4000)
   public void test00()  throws Throwable  {
       Options options0 = new Options();
@@ -139,7 +141,7 @@ public class Options_ESTest extends Options_ESTest_scaffolding {
       Options options0 = Options.getOptions();
       options0.isEukaryoticMode();
       options0.getExtraQualifiers();
-      FileSystemHandling.appendStringToFile((EvoSuiteFile) null, "/Users/kp11/.artemis/cache/");
+      FileSystemHandling.appendStringToFile((EvoSuiteFile) null, TEMP_DIR + "/.artemis/cache/");
       options0.setHighlightActiveEntryFlag(true);
       Options.getDBEntryInformation();
       options0.getExtraQualifiers();
@@ -154,7 +156,7 @@ public class Options_ESTest extends Options_ESTest_scaffolding {
   @Test(timeout = 4000)
   public void test03()  throws Throwable  {
       Options options0 = Options.getOptions();
-      FileSystemHandling.appendLineToFile((EvoSuiteFile) null, "/Users/kp11/.artemis/cache/");
+      FileSystemHandling.appendLineToFile((EvoSuiteFile) null, TEMP_DIR + "/.artemis/cache/");
       options0.setSystematicQualifierNames("");
       options0.getDefaultSequenceFileName();
       options0.getUndoLevels();
@@ -171,7 +173,7 @@ public class Options_ESTest extends Options_ESTest_scaffolding {
       options0.getExtraQualifiers();
       FileSystemHandling.shouldAllThrowIOExceptions();
       options0.getDefaultFeatureFileName();
-      EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile("/Users/kp11/workspace/applications/Artemis/test/options");
+      EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(TEMP_DIR + "/options");
       byte[] byteArray0 = new byte[0];
       FileSystemHandling.appendDataToFile(evoSuiteFile0, byteArray0);
       options0.setGeneticCode("false");
@@ -205,7 +207,7 @@ public class Options_ESTest extends Options_ESTest_scaffolding {
   public void test05()  throws Throwable  {
       Options options0 = Options.getOptions();
       JSpinner jSpinner0 = new JSpinner();
-      JMenu jMenu0 = new JMenu("/Users/kp11/.artemis/cache/", true);
+      JMenu jMenu0 = new JMenu(TEMP_DIR + "/.artemis/cache/", true);
       byte[] byteArray0 = new byte[8];
       byteArray0[0] = (byte)19;
       byteArray0[1] = (byte)57;
@@ -310,7 +312,7 @@ public class Options_ESTest extends Options_ESTest_scaffolding {
       FileSystemHandling.createFolder((EvoSuiteFile) null);
       FileSystemHandling.createFolder((EvoSuiteFile) null);
       options0.getAllGeneNames();
-      Options.getPropertyValues(options0, "/Users/kp11/.artemis/cache/");
+      Options.getPropertyValues(options0, TEMP_DIR + "/.artemis/cache/");
       QualifierInfoVector qualifierInfoVector0 = options0.getExtraQualifiers();
       //  // Unstable assertion: assertEquals(128, qualifierInfoVector0.size());
       
@@ -651,12 +653,12 @@ public class Options_ESTest extends Options_ESTest_scaffolding {
       LogLog.setQuietMode(true);
       Key key0 = Key.CDS;
       options0.getDefaultFeatureColour(key0);
-      Splash.appendToLog("/Users/kp11/.artemis/cache/");
+      Splash.appendToLog(TEMP_DIR + "/.artemis/cache/");
       options0.getDisplayQualifierNames();
       Options.getOptions();
       TextField textField0 = null;
       try {
-        textField0 = new TextField("/Users/kp11/.artemis/cache/", 256);
+        textField0 = new TextField(TEMP_DIR + "/.artemis/cache/", 256);
         fail("Expecting exception: HeadlessException");
       
       } catch(HeadlessException e) {
@@ -794,7 +796,7 @@ public class Options_ESTest extends Options_ESTest_scaffolding {
   @Test(timeout = 4000)
   public void test33()  throws Throwable  {
       Options options0 = new Options();
-      DatabaseDocument.EXONMODEL = "/Users/kp11/.artemis/cache/";
+      DatabaseDocument.EXONMODEL = TEMP_DIR + "/.artemis/cache/";
       FileSystemHandling fileSystemHandling0 = new FileSystemHandling();
       options0.getAllGeneNames();
       FileSystemHandling.appendLineToFile((EvoSuiteFile) null, " ()");
@@ -888,7 +890,7 @@ public class Options_ESTest extends Options_ESTest_scaffolding {
       options0.setHighlightActiveEntryFlag(true);
       SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
       FeatureVector featureVector0 = new FeatureVector();
-      FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, "/Users/kp11/.artemis/cache/");
+      FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, TEMP_DIR + "/.artemis/cache/");
       FilteredEntryGroup filteredEntryGroup1 = new FilteredEntryGroup(filteredEntryGroup0, (FeaturePredicate) null, "_");
       filteredEntryGroup1.getBases();
       SimpleEntryGroup simpleEntryGroup1 = null;
@@ -920,7 +922,7 @@ public class Options_ESTest extends Options_ESTest_scaffolding {
       charArrayWriter1.close();
       MockPrintWriter mockPrintWriter0 = new MockPrintWriter(charArrayWriter1, true);
       mockPrintWriter0.println(24);
-      charArrayWriter0.write("/Users/kp11/.artemis/cache/");
+      charArrayWriter0.write(TEMP_DIR + "/.artemis/cache/");
       mockPrintWriter0.print((Object) charArrayWriter0);
       PrintWriter printWriter0 = mockPrintWriter0.append('M');
       options0.list(printWriter0);
@@ -948,7 +950,7 @@ public class Options_ESTest extends Options_ESTest_scaffolding {
       FeatureKeyPredicate featureKeyPredicate0 = new FeatureKeyPredicate(key0);
       FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureKeyPredicate0, "255 200 200");
       FeatureVector featureVector0 = new FeatureVector();
-      FilteredEntryGroup filteredEntryGroup1 = new FilteredEntryGroup(filteredEntryGroup0, featureVector0, "/Users/kp11/.artemis/cache/");
+      FilteredEntryGroup filteredEntryGroup1 = new FilteredEntryGroup(filteredEntryGroup0, featureVector0, TEMP_DIR + "/.artemis/cache/");
       filteredEntryGroup1.createEntry("stem_loop");
       Location location0 = null;
       try {

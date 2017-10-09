@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="corba"/>
 	<classpathentry including="uk" kind="src" path="test"/>
 	<classpathentry excluding="main/" kind="src" path="ant-build/src"/>
-	<classpathentry kind="src" path="lib"/>
-	<classpathentry including="nsdb/|seqdb/|type/" kind="src" path="ant-build/src/main"/>
-	<classpathentry excluding="ant-build/src/|ant-build/src/main/|uk/ac/sanger/artemis/ExternalProgramUtils.java|test/" including="nsdb/|org/|seqdb/|type/|uk/" kind="src" path=""/>
+	<classpathentry excluding="ant-build/src/|test/|uk/ac/sanger/artemis/ExternalProgramUtils.java" including="org/|uk/" kind="src" path=""/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/jemAlign.jar"/>
 	<classpathentry kind="lib" path="lib/jakarta-regexp-1.2.jar"/>

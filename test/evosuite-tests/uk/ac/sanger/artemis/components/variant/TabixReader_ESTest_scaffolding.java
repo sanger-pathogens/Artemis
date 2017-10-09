@@ -6,6 +6,8 @@
 
 package uk.ac.sanger.artemis.components.variant;
 
+import static org.junit.Assert.assertNotNull;
+
 import org.evosuite.runtime.annotation.EvoSuiteClassExclude;
 import org.junit.BeforeClass;
 import org.junit.Before;
@@ -24,10 +26,11 @@ public class TabixReader_ESTest_scaffolding {
 
   private org.evosuite.runtime.thread.ThreadStopper threadStopper =  new org.evosuite.runtime.thread.ThreadStopper (org.evosuite.runtime.thread.KillSwitchHandler.getInstance(), 3000);
 
-
+  protected final static String CURRENT_DIR = System.getProperty("user.dir");
+  
   @BeforeClass 
   public static void initEvoSuiteFramework() { 
-    org.evosuite.runtime.RuntimeSettings.className = "uk.ac.sanger.artemis.components.variant.TabixReader"; 
+	org.evosuite.runtime.RuntimeSettings.className = "uk.ac.sanger.artemis.components.variant.TabixReader"; 
     org.evosuite.runtime.GuiSupport.initialize(); 
     org.evosuite.runtime.RuntimeSettings.maxNumberOfThreads = 100; 
     org.evosuite.runtime.RuntimeSettings.maxNumberOfIterationsPerLoop = 10000; 

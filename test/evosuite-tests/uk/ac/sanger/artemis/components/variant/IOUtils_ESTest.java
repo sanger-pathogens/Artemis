@@ -6,6 +6,7 @@
 package uk.ac.sanger.artemis.components.variant;
 
 import org.junit.Test;
+import org.junit.Ignore;
 import static org.junit.Assert.*;
 import static org.evosuite.runtime.EvoAssertions.*;
 import java.awt.HeadlessException;
@@ -32,9 +33,10 @@ import uk.ac.sanger.artemis.components.variant.VCFview;
 @RunWith(EvoRunner.class) @EvoRunnerParameters(mockJVMNonDeterminism = true, useVFS = true, useVNET = true, resetStaticState = true, separateClassLoader = true, useJEE = true) 
 public class IOUtils_ESTest extends IOUtils_ESTest_scaffolding {
 
+  @Ignore("Not a cross-platform test")
   @Test(timeout = 4000)
   public void test00()  throws Throwable  {
-      EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile("/Users/kp11/workspace/applications/Artemis/test/!|");
+      EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(CURRENT_DIR + "/!|");
       byte[] byteArray0 = new byte[5];
       FileSystemHandling.appendDataToFile(evoSuiteFile0, byteArray0);
       try { 

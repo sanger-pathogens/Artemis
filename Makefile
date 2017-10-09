@@ -57,7 +57,7 @@ manual :
 
 CLASS_FILES := `find org uk -name '*.class' -print`
 
-OTHER_FILES := `find images/PSUlogo.gif images/icon.gif COPYING README.md`
+OTHER_FILES := `find images/PSUlogo.gif images/icon.gif README.md`
 
 dist :
 	rm -rf artemis_compiled.tar.gz tar_build

@@ -198,9 +198,7 @@ public class ExternalProgram_ESTest extends ExternalProgram_ESTest_scaffolding {
         fail("Expecting exception: IOException");
       
       } catch(IOException e) {
-         //
-         // /Users/kp11/workspace/applications/Artemis/test/=zucOH[H{z7f*>/ cannot have 0 cannot have  is not a directory
-         //
+         
          verifyException("uk.ac.sanger.artemis.ExternalProgram", e);
       }
   }

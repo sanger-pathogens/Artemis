@@ -7,6 +7,7 @@
 package uk.ac.sanger.artemis.circular;
 
 import org.evosuite.runtime.annotation.EvoSuiteClassExclude;
+import static org.junit.Assert.*;
 import org.junit.BeforeClass;
 import org.junit.Before;
 import org.junit.After;
@@ -24,10 +25,11 @@ public class EmbossCirdnaReader_ESTest_scaffolding {
 
   private org.evosuite.runtime.thread.ThreadStopper threadStopper =  new org.evosuite.runtime.thread.ThreadStopper (org.evosuite.runtime.thread.KillSwitchHandler.getInstance(), 3000);
 
+  protected final static String CURRENT_DIR = System.getProperty("user.dir");
 
   @BeforeClass 
   public static void initEvoSuiteFramework() { 
-    org.evosuite.runtime.RuntimeSettings.className = "uk.ac.sanger.artemis.circular.EmbossCirdnaReader"; 
+	org.evosuite.runtime.RuntimeSettings.className = "uk.ac.sanger.artemis.circular.EmbossCirdnaReader"; 
     org.evosuite.runtime.GuiSupport.initialize(); 
     org.evosuite.runtime.RuntimeSettings.maxNumberOfThreads = 100; 
     org.evosuite.runtime.RuntimeSettings.maxNumberOfIterationsPerLoop = 10000; 

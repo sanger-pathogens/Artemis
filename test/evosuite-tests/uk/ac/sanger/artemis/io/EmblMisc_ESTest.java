@@ -36,8 +36,9 @@ public class EmblMisc_ESTest extends EmblMisc_ESTest_scaffolding {
   }
 
   @Test(timeout = 4000)
+  // KJP: Manual modification of stream size as could cause heap exhaustion....
   public void test1()  throws Throwable  {
-      PipedReader pipedReader0 = new PipedReader(536870912);
+      PipedReader pipedReader0 = new PipedReader(2048);
       LinePushBackReader linePushBackReader0 = new LinePushBackReader(pipedReader0);
       EmblMisc emblMisc0 = null;
       try {

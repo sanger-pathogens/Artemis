@@ -6,6 +6,7 @@
 package uk.ac.sanger.artemis.editor;
 
 import org.junit.Test;
+import org.junit.Ignore;
 import static org.junit.Assert.*;
 import org.evosuite.runtime.EvoRunner;
 import org.evosuite.runtime.EvoRunnerParameters;
@@ -18,17 +19,17 @@ public class BrowserControl_ESTest extends BrowserControl_ESTest_scaffolding {
   @Test(timeout = 4000)
   public void test0()  throws Throwable  {
       boolean boolean0 = BrowserControl.isWindowsPlatform();
-      assertFalse(boolean0);
   }
 
   @Test(timeout = 4000)
   public void test1()  throws Throwable  {
-      BrowserControl.displayURL("g;]4HJos}P!EYor|");
+	  if (System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0) {
+		  BrowserControl.displayURL("g;]4HJos}P!EYor|");
+	  }
   }
 
   @Test(timeout = 4000)
   public void test2()  throws Throwable  {
       BrowserControl browserControl0 = new BrowserControl();
-      assertFalse(browserControl0.isWindowsPlatform());
   }
 }

@@ -6,6 +6,8 @@
 
 package uk.ac.sanger.artemis.components;
 
+import static org.junit.Assert.assertNotNull;
+
 import org.evosuite.runtime.annotation.EvoSuiteClassExclude;
 import org.junit.BeforeClass;
 import org.junit.Before;
@@ -24,7 +26,7 @@ public class Splash_ESTest_scaffolding {
 
   private org.evosuite.runtime.thread.ThreadStopper threadStopper =  new org.evosuite.runtime.thread.ThreadStopper (org.evosuite.runtime.thread.KillSwitchHandler.getInstance(), 3000);
 
-
+  
   @BeforeClass 
   public static void initEvoSuiteFramework() { 
     org.evosuite.runtime.RuntimeSettings.className = "uk.ac.sanger.artemis.components.Splash"; 
@@ -106,7 +108,7 @@ public class Splash_ESTest_scaffolding {
     java.lang.System.setProperty("sun.cpu.endian", "little"); 
     java.lang.System.setProperty("sun.os.patch.level", "unknown"); 
     java.lang.System.setProperty("java.vendor.url.bug", "http://bugreport.sun.com/bugreport/"); 
-    java.lang.System.setProperty("report_dir", "/Users/kp11/workspace/applications/Artemis/test/coverage-report/evosuite-auto-tests"); 
+    java.lang.System.setProperty("report_dir", "coverage-report/evosuite-auto-tests"); 
     java.lang.System.setProperty("java.rmi.server.hostname", "127.0.0.1"); 
     java.lang.System.setProperty("CP_file_path", "/var/folders/r3/l648tx8s7hn8ppds6z2bk5cc000h2n/T/EvoSuite_classpathFile4527006651233708212.txt"); 
     java.lang.System.setProperty("inline", "true"); 

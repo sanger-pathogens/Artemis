@@ -18,7 +18,7 @@ import uk.ac.sanger.artemis.io.GffToEMBL;
 
 @RunWith(EvoRunner.class) @EvoRunnerParameters(mockJVMNonDeterminism = true, useVFS = true, useVNET = true, resetStaticState = true, separateClassLoader = true, useJEE = true) 
 public class GffToEMBL_ESTest extends GffToEMBL_ESTest_scaffolding {
-
+	
   @Test(timeout = 4000)
   public void test0()  throws Throwable  {
       GffToEMBL gffToEMBL0 = null;
@@ -36,7 +36,7 @@ public class GffToEMBL_ESTest extends GffToEMBL_ESTest_scaffolding {
 
   @Test(timeout = 4000)
   public void test1()  throws Throwable  {
-      EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile("/Users/kp11/workspace/applications/Artemis/test/W");
+      EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(CURRENT_DIR + "/W");
       FileSystemHandling.appendStringToFile(evoSuiteFile0, " 0 %    ");
       GffToEMBL gffToEMBL0 = null;
       try {
@@ -68,9 +68,9 @@ public class GffToEMBL_ESTest extends GffToEMBL_ESTest_scaffolding {
 
   @Test(timeout = 4000)
   public void test3()  throws Throwable  {
-      EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile("/Users/kp11/workspace/applications/Artemis/test/BNZ,jS.tbi");
+      EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(CURRENT_DIR + "/BNZ,jS.tbi");
       FileSystemHandling.appendLineToFile(evoSuiteFile0, "BNZ,jS");
-      EvoSuiteFile evoSuiteFile1 = new EvoSuiteFile("/Users/kp11/workspace/applications/Artemis/test/BNZ,jS");
+      EvoSuiteFile evoSuiteFile1 = new EvoSuiteFile(CURRENT_DIR + "/BNZ,jS");
       FileSystemHandling.appendStringToFile(evoSuiteFile1, "BNZ,jS");
       GffToEMBL gffToEMBL0 = null;
       try {
@@ -87,7 +87,7 @@ public class GffToEMBL_ESTest extends GffToEMBL_ESTest_scaffolding {
 
   @Test(timeout = 4000)
   public void test4()  throws Throwable  {
-      EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile("/Users/kp11/workspace/applications/Artemis/test/BNZ,jS");
+      EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(CURRENT_DIR + "/BNZ,jS");
       FileSystemHandling.appendStringToFile(evoSuiteFile0, "BNZ,jS");
       GffToEMBL gffToEMBL0 = null;
       try {

@@ -11,14 +11,19 @@
   	-Drun.blast.test.flag=true 
   	
   	This ant script can be used to create Evosuite tests 
-  	using the "create-evotests" target, and
+  	from scratch using the "create-evotests" target, and
   	to run them along with the current set of manually 
   	constructed tests, producing coverage reports at the end.
   	These coverage reports are stored in the :
   	
   	ant-build/coverage-report 
   	
-  	folder. Jacoco is used for the manual unit tests and Evosuite
+  	folder. Note, however, that the EvoSuite tests may need some degree
+  	of manual modification after creation as a small number 
+  	may not be cross-platform compatible and I noticed one instance
+  	of heap exhaustion caused by incorrect object sizing.
+  	
+  	Jacoco is used for the manual unit tests and Evosuite
   	creates its own reports at the unit test creation stage. 
   	Unfortunately, neither Jacoco nor Cobertura work properly with
   	EvoSuite due to interactions at the bytecode instrumentation
@@ -152,7 +157,7 @@
 	</path>
 	
 	<taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml">
-	  	<classpath path="${src.lib.dir}/jacocoant.jar"/>
+	  	<classpath path="${jacoco.dir}/jacocoant.jar"/>
 	 </taskdef>
 	
 	<target name="get-java-version">
@@ -291,10 +296,12 @@
 			<junit description="Artemis JUnit Manual Tests" fork="yes" showoutput="yes" printsummary="yes" haltonerror="${halt.tests.on.error}">
 				<jvmarg value="-DEMBOSS_ROOT=${EMBOSS_ROOT}" />
 				<jvmarg value="-noverify" />
+				<jvmarg value="-Xmx4g" />
 				<batchtest fork="yes" todir="${junit.reports.dir}">
 					<fileset dir="${build.src.tests}">
 						<include name="${artemis.base.package.path}/**/**Test.java" />
 						<exclude name="${artemis.base.package.path}/**/RunBlastAtNCBITest.java" unless="${run.blast.test.flag}" />
+						<exclude name="**/*_ESTest*" />
 					</fileset>
 				</batchtest>
 				<formatter type="plain" usefile="false" />
@@ -316,11 +323,13 @@
 			<junit description="Artemis JUnit Headless Manual Tests" fork="yes" showoutput="yes" printsummary="yes" haltonerror="${halt.tests.on.error}">
 				<jvmarg value="-DEMBOSS_ROOT=${EMBOSS_ROOT}" />
 				<jvmarg value="-noverify" />
+				<jvmarg value="-Xmx4g" />
 				<jvmarg value="-Djava.awt.headless=true" />
 				<batchtest fork="yes" todir="${junit.reports.dir}">
 					<fileset dir="${build.src.tests}">
 						<include name="${artemis.base.package.path}/**/**Test.java" />
 						<exclude name="${artemis.base.package.path}/**/RunBlastAtNCBITest.java" unless="${run.blast.test.flag}" />
+						<exclude name="**/*_ESTest*" />
 					</fileset>
 				</batchtest>
 				<formatter type="plain" usefile="false" />
@@ -373,7 +382,7 @@
 	</target>
 	
 	<!-- Create Jacoco reports -->
-	<target name="jacoco-coverage-report" depends="run-manual-tests">
+	<target name="jacoco-coverage-report">
 
 		<delete dir="${coverage.report.jacoco.dir}" />
 		<mkdir dir="${coverage.report.jacoco.dir}" />
@@ -407,7 +416,7 @@
 	</target>
 
 	<!-- Run all manual and automated unit tests and create coverage reports -->
-	<target name="test" depends="run-evosuite-tests,jacoco-coverage-report" />
+	<target name="test" depends="run-evosuite-tests,run-manual-tests,jacoco-coverage-report" />
 
 	<!-- Cleans all temporary build related folders -->
 	<target name="clean">

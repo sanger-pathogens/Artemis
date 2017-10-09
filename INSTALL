@@ -68,4 +68,4 @@ Running the test suite
 ======================
 
 cd test
-ant -f build-test.xml
+RunAllUnitTests.sh
