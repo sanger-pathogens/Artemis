@@ -362,5 +362,28 @@ class BamUtils
     }
     return featureReadCount;
   }
+  
+  /**
+   * Check whether two SAM records are the same.
+   * @param bamRec1 SamViewRecord
+   * @param bamRec2 SamViewRecord
+   * @return boolean - true if equality holds.
+   */
+  public static boolean samRecordEqualityCheck(SAMRecord rec1, SAMRecord rec2)
+  {
+	  boolean result = false;
+	  
+	  if (rec1 == null && rec2 == null)
+		  return true;
+	  
+	  result = (
+		(rec1.getReadName().equals(rec2.getReadName())) &&
+		(rec1.getAlignmentStart() == rec2.getAlignmentStart()) &&
+		(rec1.getAlignmentEnd() == rec2.getAlignmentEnd()) &&
+		(rec1.getFlags() == rec2.getFlags())
+	  );
+	  
+	  return result;
+  }
 }
 

@@ -220,6 +220,7 @@ public class BamView extends JPanel
   private JCheckBoxMenuItem colourByCoverageColour = new JCheckBoxMenuItem("Coverage Plot Colours");
   private JCheckBoxMenuItem baseQualityColour = new JCheckBoxMenuItem("Base Quality");
   private JCheckBoxMenuItem markInsertions = new JCheckBoxMenuItem("Mark Insertions", true);
+  
   private AlphaComposite translucent = 
     AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f);
   
@@ -234,9 +235,11 @@ public class BamView extends JPanel
   private static Color DARK_ORANGE = new Color(255,140,0);
   private static Color DEEP_PINK   = new Color(139,10,80);
   
+  private static Color NON_SELECTED_READ_HIGHLIGHT_COLOUR = new Color(189,103,107);
+  
   private Point lastMousePoint = null;
-  private BamViewRecord mouseOverSAMRecord = null;
-  private BamViewRecord highlightSAMRecord = null;
+  private volatile BamViewRecord mouseOverSAMRecord = null;
+  private volatile BamViewRecord highlightSAMRecord = null;
   private String mouseOverInsertion;
   // record of where a mouse drag starts
   protected int dragStart = -1;
@@ -396,41 +399,41 @@ public class BamView extends JPanel
   }
   
   public String getToolTipText()
-  {
-    if(isCoverageView(getPixPerBaseByWidth()) && lastMousePoint != null)
-      return coverageView.getToolTipText(
-          lastMousePoint.y-getJspView().getViewport().getViewPosition().y);
-    
-    if(mouseOverSAMRecord == null)
-      return null;
-    
-    String msg = 
-        mouseOverSAMRecord.sam.getReadName() + "\n" + 
-        mouseOverSAMRecord.sam.getAlignmentStart() + ".." +
-        mouseOverSAMRecord.sam.getAlignmentEnd() + 
-       (mouseOverSAMRecord.sam.getReadGroup() != null ? "\nRG="+mouseOverSAMRecord.sam.getReadGroup().getId() : "") +
-        "\nisize=" + mouseOverSAMRecord.sam.getInferredInsertSize() + 
-        "\nmapq=" + mouseOverSAMRecord.sam.getMappingQuality()+
-        "\nrname="+ mouseOverSAMRecord.sam.getReferenceName();
+  {	
+		if(isCoverageView(getPixPerBaseByWidth()) && lastMousePoint != null)
+	      return coverageView.getToolTipText(
+	          lastMousePoint.y-getJspView().getViewport().getViewPosition().y);
+	    
+	    if(mouseOverSAMRecord == null)
+	      return null;
+	    
+	    String msg = 
+	        mouseOverSAMRecord.sam.getReadName() + "\n" + 
+	        mouseOverSAMRecord.sam.getAlignmentStart() + ".." +
+	        mouseOverSAMRecord.sam.getAlignmentEnd() + 
+	       (mouseOverSAMRecord.sam.getReadGroup() != null ? "\nRG="+mouseOverSAMRecord.sam.getReadGroup().getId() : "") +
+	        "\nisize=" + mouseOverSAMRecord.sam.getInferredInsertSize() + 
+	        "\nmapq=" + mouseOverSAMRecord.sam.getMappingQuality()+
+	        "\nrname="+ mouseOverSAMRecord.sam.getReferenceName();
 
-    if( mouseOverSAMRecord.sam.getReadPairedFlag() && 
-        mouseOverSAMRecord.sam.getProperPairFlag() && 
-       !mouseOverSAMRecord.sam.getMateUnmappedFlag())
-    {
-      msg = msg +
-        "\nstrand (read/mate): "+
-       (mouseOverSAMRecord.sam.getReadNegativeStrandFlag() ? "-" : "+")+" / "+
-       (mouseOverSAMRecord.sam.getMateNegativeStrandFlag() ? "-" : "+");
-    }
-    else
-      msg = msg +
-        "\nstrand (read/mate): "+
-       (mouseOverSAMRecord.sam.getReadNegativeStrandFlag() ? "-" : "+");
-    
-    if(msg != null && mouseOverInsertion != null)
-      msg = msg + "\nInsertion at:" +mouseOverInsertion;
-    
-    return msg;
+	    if( mouseOverSAMRecord.sam.getReadPairedFlag() && 
+	        mouseOverSAMRecord.sam.getProperPairFlag() && 
+	       !mouseOverSAMRecord.sam.getMateUnmappedFlag())
+	    {
+	      msg = msg +
+	        "\nstrand (read/mate): "+
+	       (mouseOverSAMRecord.sam.getReadNegativeStrandFlag() ? "-" : "+")+" / "+
+	       (mouseOverSAMRecord.sam.getMateNegativeStrandFlag() ? "-" : "+");
+	    }
+	    else
+	      msg = msg +
+	        "\nstrand (read/mate): "+
+	       (mouseOverSAMRecord.sam.getReadNegativeStrandFlag() ? "-" : "+");
+	    
+	    if(msg != null && mouseOverInsertion != null)
+	      msg = msg + "\nInsertion at:" +mouseOverInsertion;
+	    
+	    return msg;
   }
   
   /**
@@ -1021,11 +1024,11 @@ public class BamView extends JPanel
 	    if(isCoverageView(pixPerBase))
 	      drawCoverage(g2,start, end, pixPerBase);
   	    else if(isStackView())  
-	      drawStackView(g2, seqLength, pixPerBase, start, end);
+  	      drawStackView(g2, seqLength, pixPerBase, start, end);
 	    else if(isPairedStackView())
 	      drawPairedStackView(g2, seqLength, pixPerBase, start, end);
 	    else if(isStrandStackView())
-	      drawStrandStackView(g2, seqLength, pixPerBase, start, end);
+	    	  drawStrandStackView(g2, seqLength, pixPerBase, start, end);
 	    else
 	      drawLineView(g2, seqLength, pixPerBase, start, end);
 	  }
@@ -1202,17 +1205,17 @@ public class BamView extends JPanel
     int xpos;
     int len    = 0;
     int refPos = 0;
-    final String readSeq = samRecord.getReadString();
+    SAMRecordSequenceString readSeq = new SAMRecordSequenceString(samRecord.getReadString());
     final int offset = getSequenceOffset(samRecord.getReferenceName());
 
     byte[] phredQuality = null;
     if(baseQualityColour.isSelected())
       phredQuality = samRecord.getBaseQualities();
-
+    
     Hashtable<Integer, String> insertions = null;
     List<AlignmentBlock> blocks = samRecord.getAlignmentBlocks();
     for(int i=0; i<blocks.size(); i++)
-    {
+    {     
       AlignmentBlock block = blocks.get(i);
       int blockStart = block.getReadStart();
       len += block.getLength();
@@ -1222,19 +1225,22 @@ public class BamView extends JPanel
         xpos = block.getReferenceStart() - 1 + j + offset;
         refPos = xpos - refSeqStart + 1;
 
-        if(phredQuality != null)
+        if(phredQuality != null && phredQuality.length > 0)
           setColourByBaseQuality(g2, phredQuality[readPos]);
 
         if(isSNPs && refSeq != null && refPos > 0 && refPos < refSeq.length())
         { 
-          if(Character.toUpperCase(readSeq.charAt(readPos)) != refSeq.charAt(refPos))
+          if( 
+        		  (!readSeq.isSecondaryAlignment()) && 
+        		  (Character.toUpperCase(readSeq.charAt(readPos)) != refSeq.charAt(refPos)) 
+        	  )
             g2.setColor(Color.red);
           else
             g2.setColor(col);
         }
 
-        g2.drawString(readSeq.substring(readPos, readPos+1), 
-                      refPos*ALIGNMENT_PIX_PER_BASE, ypos);
+        	g2.drawString(readSeq.substring(readPos, readPos+1), 
+                   refPos*ALIGNMENT_PIX_PER_BASE, ypos);
         
         if(isSNPs)
           g2.setColor(col);
@@ -1265,16 +1271,27 @@ public class BamView extends JPanel
           g2.setColor(col);
         }
       }
-      
-      // highlight
-      if(highlightSAMRecord != null &&
-         highlightSAMRecord.sam.getReadName().equals(samRecord.getReadName()))
+
+      if(highlightSAMRecord != null && 
+    	       highlightSAMRecord.sam.getReadName().equals(bamViewRecord.sam.getReadName()))
       {
         refPos =  block.getReferenceStart() + offset - refSeqStart;
         int xstart = refPos*ALIGNMENT_PIX_PER_BASE;
         int width  = block.getLength()*ALIGNMENT_PIX_PER_BASE;
         Color col1 = g2.getColor();
-        g2.setColor(Color.red);
+        //g2.setColor(Color.red);
+        
+        if (isThisBamRecordHighlighted(bamViewRecord) )
+		{
+			// Selected read alignment
+			g2.setColor(Color.black);
+		}
+		else 
+		{
+			// For a read with the same name as selected one.
+			g2.setColor(NON_SELECTED_READ_HIGHLIGHT_COLOUR);
+		}
+        
         g2.drawRect(xstart, ypos-BASE_HEIGHT, width, BASE_HEIGHT);        
         if(i < blocks.size()-1)
         {
@@ -1361,7 +1378,7 @@ public class BamView extends JPanel
     
     int baseAtStartOfView = getBaseAtStartOfView();
     Rectangle r = jspView.getViewport().getViewRect();
-    
+ 
     for(int i=0; i<readsInView.size(); i++)
     {
       BamViewRecord bamViewRecord = readsInView.get(i);
@@ -1494,8 +1511,6 @@ public class BamView extends JPanel
     if(isOrientation)
       ydiff= 2*ydiff;
     int maxEnd = 0;
-    int lstStart = 0;
-    int lstEnd = 0;
     final int baseAtStartOfView = getBaseAtStartOfView();
     g2.setColor(Color.blue);
     final Rectangle r = jspView.getViewport().getViewRect();
@@ -1503,6 +1518,7 @@ public class BamView extends JPanel
     for(BamViewRecord bamViewRecord: readsInView)
     {
       SAMRecord samRecord = bamViewRecord.sam;
+      
       int offset = getSequenceOffset(samRecord.getReferenceName());
 
       int recordStart = samRecord.getAlignmentStart()+offset;
@@ -1510,53 +1526,40 @@ public class BamView extends JPanel
       
       List<Integer> snps = getSNPs(samRecord);
       
-      if(colourByCoverageColour.isSelected() || 
-         colourByStrandTag.isSelected() ||
-         colourByReadGrp.isSelected() ||
-         lstStart != recordStart || lstEnd != recordEnd || snps != null)
-      {
-        if(colourByStrandTag.isSelected())
-        {
-          if(samRecord.getAttribute("XS") == null)
-            g2.setColor(Color.BLACK); 
-          else if( ((Character)samRecord.getAttribute("XS")).equals('+') )
-            g2.setColor(Color.BLUE);
-          else if( ((Character)samRecord.getAttribute("XS")).equals('-') )
-            g2.setColor(Color.RED);
-          else 
-            g2.setColor(Color.BLACK); 
-        }
-        else if(colourByCoverageColour.isSelected())
-          g2.setColor(getColourByCoverageColour(bamViewRecord));
-        else if(colourByReadGrp.isSelected())
-          g2.setColor(getReadGroupFrame().getReadGroupColour(readGroups, samRecord.getReadGroup()));
-        else if (!samRecord.getReadPairedFlag() ||   // read is not paired in sequencing
-                  samRecord.getMateUnmappedFlag() )  // mate is unmapped )  // mate is unmapped 
-          g2.setColor(Color.black);
-        else
-          g2.setColor(Color.blue);
-        
-        if(maxEnd < recordStart || ypos < 0)
-        {
-          ypos = (getHeight() - scaleHeight)-ydiff;
-          maxEnd = recordEnd+2;
-        }
-        else
-          ypos = ypos-ydiff;
-      }
-      else
-        g2.setColor(DARK_GREEN);
+      if(colourByStrandTag.isSelected())
+	  {
+	      if(samRecord.getAttribute("XS") == null)
+	        g2.setColor(Color.BLACK); 
+	      else if( ((Character)samRecord.getAttribute("XS")).equals('+') )
+	        g2.setColor(Color.BLUE);
+	      else if( ((Character)samRecord.getAttribute("XS")).equals('-') )
+	        g2.setColor(Color.RED);
+	      else 
+	        g2.setColor(Color.BLACK); 
+	  }
+	  else if(colourByCoverageColour.isSelected())
+	      g2.setColor(getColourByCoverageColour(bamViewRecord));
+	  else if(colourByReadGrp.isSelected())
+	      g2.setColor(getReadGroupFrame().getReadGroupColour(readGroups, samRecord.getReadGroup()));
+	  else if (samRecord.getDuplicateReadFlag())
+			g2.setColor(DARK_GREEN); // Duplicate
+	  else if (!samRecord.getReadPairedFlag() ||   // read is not paired in sequencing
+	              samRecord.getMateUnmappedFlag() )  // mate is unmapped )  // mate is unmapped 
+	      g2.setColor(Color.black);
+	  else
+	      g2.setColor(Color.blue);
       
-      if(snps != null)
-        lstStart = -1;
-      else
+      if(maxEnd < recordStart || ypos < 0)
       {
-        lstStart = recordStart;
-        lstEnd   = recordEnd;
+        ypos = (getHeight() - scaleHeight)-ydiff;
+        maxEnd = recordEnd+2;
       }
+      else
+        ypos = ypos-ydiff;
       
       if(ypos > r.getMaxY() || ypos < r.getMinY())
         continue;
+      
       drawRead(g2, bamViewRecord, pixPerBase, ypos, baseAtStartOfView, snps, ydiff);
     }
   }
@@ -1614,8 +1617,6 @@ public class BamView extends JPanel
     int hgt = getHeight();
     int ypos = (hgt - scaleHeight);
     int maxEnd = 0;
-    int lstStart = 0;
-    int lstEnd = 0;
     int baseAtStartOfView = getBaseAtStartOfView();
     g2.setColor(Color.blue);
     Rectangle r = jspView.getViewport().getViewRect();
@@ -1623,6 +1624,7 @@ public class BamView extends JPanel
     for(BamViewRecord bamViewRecord: readsInView)
     {
       SAMRecord samRecord = bamViewRecord.sam;
+      
       if( isNegativeStrand(samRecord, colourByStrandTag.isSelected()) == isStrandNegative )
       {
         final int offset = getSequenceOffset(samRecord.getReferenceName());
@@ -1630,13 +1632,8 @@ public class BamView extends JPanel
         final int recordEnd   = samRecord.getAlignmentEnd()+offset;
         List<Integer> snps = getSNPs(samRecord);
         
-        if(colourByCoverageColour.isSelected() || 
-           colourByStrandTag.isSelected() ||
-           colourByReadGrp.isSelected() ||
-           lstStart != recordStart || lstEnd != recordEnd || snps != null)
+        if(colourByStrandTag.isSelected())
         {
-          if(colourByStrandTag.isSelected())
-          {
             if(samRecord.getAttribute("XS") == null)
               g2.setColor(Color.BLACK); 
             else if( ((Character)samRecord.getAttribute("XS")).equals('+') )
@@ -1645,36 +1642,27 @@ public class BamView extends JPanel
               g2.setColor(Color.RED);
             else 
               g2.setColor(Color.BLACK); 
-          }
-          else if(colourByCoverageColour.isSelected())
+        }
+        else if(colourByCoverageColour.isSelected())
             g2.setColor(getColourByCoverageColour(bamViewRecord));
-          else if(colourByReadGrp.isSelected())
+        else if(colourByReadGrp.isSelected())
             g2.setColor(getReadGroupFrame().getReadGroupColour(readGroups, samRecord.getReadGroup()));
-          else if (!samRecord.getReadPairedFlag() ||   // read is not paired in sequencing
+        else if (samRecord.getDuplicateReadFlag())
+			g2.setColor(DARK_GREEN); // Duplicate
+        else if (!samRecord.getReadPairedFlag() ||   // read is not paired in sequencing
                     samRecord.getMateUnmappedFlag() )  // mate is unmapped 
             g2.setColor(Color.black);
-          else
+        else
             g2.setColor(Color.blue);
         
-          if(maxEnd < recordStart || ypos < 0 || ypos > hgt)
-          {
-            ypos = ymid + ystep;
-            maxEnd = recordEnd+2;
-          }
-          else
-            ypos = ypos + ystep;
-        }
-        else
-          g2.setColor(DARK_GREEN);
-
-        if(snps != null)
-          lstStart = -1;
-        else
+        if(maxEnd < recordStart || ypos < 0 || ypos > hgt)
         {
-          lstStart = recordStart;
-          lstEnd   = recordEnd;
+          ypos = ymid + ystep;
+          maxEnd = recordEnd+2;
         }
-        
+        else
+          ypos = ypos + ystep;
+
         if(ypos > r.getMaxY() || ypos < r.getMinY())
           continue;
 
@@ -1700,7 +1688,7 @@ public class BamView extends JPanel
     drawSelectionRange(g2, pixPerBase,start, end, Color.PINK);
     if(isShowScale())
       drawScale(g2, start, end, pixPerBase, getHeight());
-
+    
     final Vector<PairedRead> pairedReads = new Vector<PairedRead>();   
     for(int i=0; i<readsInView.size(); i++)
     {
@@ -1779,8 +1767,8 @@ public class BamView extends JPanel
       
       g2.setStroke(originalStroke);
       
-      if(highlightSAMRecord != null && 
-          highlightSAMRecord.sam.getReadName().equals(pr.sam1.sam.getReadName()))
+      if( highlightSAMRecord != null && 
+      		highlightSAMRecord.sam.getReadName().equals(pr.sam1.sam.getReadName()) )
         g2.setColor(Color.black);
       else
         g2.setColor(Color.gray);
@@ -2133,22 +2121,34 @@ public class BamView extends JPanel
 
     int thisStart = thisRead.getAlignmentStart()+offset-baseAtStartOfView;
     int thisEnd   = thisRead.getAlignmentEnd()+offset-baseAtStartOfView;
-    
-    if(highlightSAMRecord != null && 
-       highlightSAMRecord.sam.getReadName().equals(thisRead.getReadName()))
-    {
-       Stroke originalStroke = g2.getStroke();
-       Stroke stroke =
-         new BasicStroke (readLnHgt*1.6f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND);
-       g2.setStroke(stroke);
-       Color c = g2.getColor();
-       g2.setColor(Color.black);
-       g2.drawLine((int)( thisStart * pixPerBase), ypos,
-                   (int)( thisEnd * pixPerBase), ypos);
-       g2.setColor(c);
-       g2.setStroke(originalStroke);
-    }
+        
+    	if(highlightSAMRecord != null && 
+    		highlightSAMRecord.sam.getReadName().equals(thisRead.getReadName()))
+	{
+    		Stroke originalStroke = g2.getStroke();
+		Stroke stroke =
+		  new BasicStroke (readLnHgt*1.6f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND);
+		g2.setStroke(stroke);
+		Color c = g2.getColor();
 
+		if (isThisBamRecordHighlighted(bamViewRecord) )
+		{
+			// Selected read alignment
+			g2.setColor(Color.black);
+		}
+		else 
+		{
+			// For a read with the same name as selected one.
+			g2.setColor(NON_SELECTED_READ_HIGHLIGHT_COLOUR);
+		}
+		
+		g2.drawLine((int)( thisStart * pixPerBase), ypos,
+		            (int)( thisEnd * pixPerBase), ypos);
+		g2.setColor(c);
+		g2.setStroke(originalStroke);
+	}
+    
+    
     if(thisRead.getCigar().getCigarElements().size() == 1)
       g2.drawLine((int)( thisStart * pixPerBase), ypos,
                   (int)( thisEnd * pixPerBase), ypos);
@@ -2178,19 +2178,21 @@ public class BamView extends JPanel
     
     if(isOrientation)
       drawArrow(g2, thisRead, thisStart, thisEnd, pixPerBase, ypos, ydiff);
-
+    
     // test if the mouse is over this read
     if(lastMousePoint != null)
     {
-      if(lastMousePoint.getY()+2 > ypos && lastMousePoint.getY()-2 < ypos)
-      if(lastMousePoint.getX() > thisStart * pixPerBase &&
-         lastMousePoint.getX() < thisEnd * pixPerBase)
-      {
-        mouseOverSAMRecord = bamViewRecord;
-      }
+	    	if(lastMousePoint.getY() > ypos-(Math.abs(ydiff)/2) && lastMousePoint.getY() < ypos+(Math.abs(ydiff)/2))
+	    	{
+		      if(lastMousePoint.getX() > thisStart * pixPerBase &&
+		         lastMousePoint.getX() < thisEnd * pixPerBase)
+		      {
+		    	  	mouseOverSAMRecord = bamViewRecord;
+		      }
+	    }
     }
     
-    if (isSNPs && snps != null)
+    if (isSNPs && snps != null && snps.size() > 0)
       showSNPsOnReads(snps, g2, pixPerBase, ypos);
   }
   
@@ -2341,6 +2343,12 @@ public class BamView extends JPanel
           new Range(rbeg+offset, rend+offset), Bases.FORWARD);
       final byte[] readSeq = samRecord.getReadBases();
 
+      if (readSeq == null || readSeq.length == 0) 
+      {
+    	  	// Can occur for secondary alignments
+    	  	return null;
+      }
+      
       offset = offset - getBaseAtStartOfView();
       final List<AlignmentBlock> blocks = samRecord.getAlignmentBlocks();
       for(AlignmentBlock block: blocks)
@@ -2843,8 +2851,12 @@ public class BamView extends JPanel
     colourMenu.add(baseQualityColour);
     menu.add(colourMenu);
     
-    //
+    // =============
+    // Show Menu 
+    // =============
+    
     JMenu showMenu = new JMenu("Show");
+
     JCheckBoxMenuItem checkBoxOrientation = new JCheckBoxMenuItem("Orientation");
     checkBoxOrientation.addActionListener(new ActionListener()
     {
@@ -3199,6 +3211,10 @@ public class BamView extends JPanel
           if (buttonAutoHide.isSelected() && topPanel.isVisible())
             topPanel.setVisible(false); 
         }
+        
+        // KJP - added these to make selecting work properly.
+        mainPanel.repaint();
+        mainPanel.revalidate();
       }
     };
     addMouseMotionListener(mouseMotionListener);
@@ -3506,7 +3522,10 @@ public class BamView extends JPanel
     if(event.getButton() == MouseEvent.BUTTON3 || bases == null) 
       return;
     
-    highlightSAMRecord = null;
+    // KJP: Removed this as it causes selection issues and
+    // doesn't seems strictly necessary.
+    // highlightSAMRecord = null;
+    
     if(event.getClickCount() > 1)
     {
       getSelection().clear();
@@ -3906,17 +3925,29 @@ public class BamView extends JPanel
         if(isCoverageView(getPixPerBaseByWidth()))
           coverageView.singleClick(e.isShiftDown(),
               e.getPoint().y-getJspView().getViewport().getViewPosition().y);
-        else
-          highlightSAMRecord = mouseOverSAMRecord;
+        //else
+        //{
+        	//	mouseHighlightSelectionMade.set(true);
+        	//	highlightSAMRecord = null;
+        //}
       }
       else
         highlightRange(e, MouseEvent.BUTTON2_DOWN_MASK);
-      repaint();
+      //repaint();
     }
     
-    public void mousePressed(MouseEvent e)
+    public void mousePressed(final MouseEvent e)
     {
-      maybeShowPopup(e);
+      highlightSAMRecord = mouseOverSAMRecord;
+
+    	  repaint();
+    	  
+    	  javax.swing.SwingUtilities.invokeLater(new Runnable() {
+    	        public void run() {
+    	        		maybeShowPopup(e);
+    	        }
+    	    });
+      
     }
 
     public void mouseReleased(MouseEvent e)
@@ -3985,9 +4016,12 @@ public class BamView extends JPanel
           popup.remove(showDetails);
 
         if( mouseOverSAMRecord != null && 
-            mouseOverSAMRecord.sam.getReadPairedFlag() &&
+        		mouseOverSAMRecord.sam.getReadPairedFlag() &&
            !mouseOverSAMRecord.sam.getMateUnmappedFlag() )
         {
+        	  // KJP: new
+      	  highlightSAMRecord = mouseOverSAMRecord;
+      	  
           final BamViewRecord thisSAMRecord = mouseOverSAMRecord;
           gotoMateMenuItem = new JMenuItem("Go to mate of : "+
               thisSAMRecord.sam.getReadName());
@@ -4015,6 +4049,9 @@ public class BamView extends JPanel
           
         if( mouseOverSAMRecord != null)
         {
+        	  // KJP: new
+        	  highlightSAMRecord = mouseOverSAMRecord;
+        	  
           final BamViewRecord thisSAMRecord = mouseOverSAMRecord;
           showDetails = new JMenuItem("Show details of : "+
               thisSAMRecord.sam.getReadName());
@@ -4193,6 +4230,21 @@ public class BamView extends JPanel
   protected boolean isConcatSequences()
   {
     return concatSequences;
+  }
+  
+  /**
+   * Check whether the given BAM record is highlighted currently.
+   * @param bamRec BamViewRecord
+   * @return boolean - true if highlighted
+   */
+  protected boolean isThisBamRecordHighlighted(BamViewRecord bamRec)
+  {
+	  if (highlightSAMRecord == null) 
+	  {
+		  return false;
+	  }
+	  
+	  return BamUtils.samRecordEqualityCheck(highlightSAMRecord.sam, bamRec.sam);
   }
 
   class PairedRead

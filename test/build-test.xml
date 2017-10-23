@@ -350,6 +350,9 @@
 				<jvmarg value="-Djava.awt.headless=true" />
 				<batchtest fork="yes" todir="${junit.reports.dir}">
 					<fileset dir="${evosuite.tests.src.dir}">
+						
+						<!--include name="**/*BamView_ESTest.java" if="${do.run.evosuite.tests}" /-->
+						
 						<include name="**/*_ESTest.java" if="${do.run.evosuite.tests}" />
 						
 						<!-- Exclude classes that currently produce broken tests -->
@@ -382,7 +385,7 @@
 	</target>
 	
 	<!-- Create Jacoco reports -->
-	<target name="jacoco-coverage-report">
+	<target name="jacoco-coverage-report" depends="run-manual-tests">
 
 		<delete dir="${coverage.report.jacoco.dir}" />
 		<mkdir dir="${coverage.report.jacoco.dir}" />
