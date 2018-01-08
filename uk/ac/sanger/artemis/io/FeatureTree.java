@@ -75,23 +75,23 @@ public class FeatureTree extends TreeSet {
     final ComparableFeature test_feature = new ComparableFeature () {
       public void set (final Key k, final Location l,
                        final QualifierVector qv) {}
-      public void setKey (final Key _) {}
-      public void setLocation (final Location _) {}
-      public void setLocation (final Location _, Entry entry) {}
-      public void setQualifiers (final QualifierVector _) {}
-      public void setQualifier (final Qualifier _) {}
-      public void removeQualifierByName (final String _) {}
+      public void setKey (final Key k) {}
+      public void setLocation (final Location loc) {}
+      public void setLocation (final Location loc, Entry entry) {}
+      public void setQualifiers (final QualifierVector qualVec) {}
+      public void setQualifier (final Qualifier qual) {}
+      public void removeQualifierByName (final String qualName) {}
       private final Key dummy_key = new Key ("_dummy_key_");
       public Key getKey () {return dummy_key;}
       public Location getLocation () {return null;}
       public QualifierVector getQualifiers () {return null;}
-      public Qualifier getQualifierByName (final String _) {return null;}
+      public Qualifier getQualifierByName (final String qualName) {return null;}
       public int getFirstBase () {return base;}
       public int getLastBase () {return base;}
       public long getNumericID () {return -1;}
       public Entry getEntry () {return null;}
       public Feature copy () {return null;}
-      public void setUserData (final Object _) {}
+      public void setUserData (final Object userData) {}
       public Object getUserData () {return null;}
       public boolean isReadOnly () {return false;}
     };

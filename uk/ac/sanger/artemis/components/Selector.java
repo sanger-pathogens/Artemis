@@ -162,7 +162,7 @@ public class Selector extends JFrame
 
     key_selector.addItemListener(new ItemListener() 
     {
-      public void itemStateChanged(ItemEvent _) 
+      public void itemStateChanged(ItemEvent itemEvent) 
       {
         by_key_button.setSelected(true);
       }
@@ -200,7 +200,7 @@ public class Selector extends JFrame
 
     qualifier_selector.addItemListener(new ItemListener() 
     {
-      public void itemStateChanged(ItemEvent _) 
+      public void itemStateChanged(ItemEvent itemEvent) 
       {
         by_qualifier_button.setSelected(true);
         by_key_button.setSelected(true);
@@ -209,7 +209,7 @@ public class Selector extends JFrame
 
     key_selector.addItemListener(new ItemListener() 
     {
-      public void itemStateChanged(ItemEvent _) 
+      public void itemStateChanged(ItemEvent itemEvent) 
       {
         qualifier_selector.setKey(key_selector.getSelectedItem());
       }
@@ -417,7 +417,7 @@ public class Selector extends JFrame
     strand_panel.add(forward_strand_checkbox);
     forward_strand_checkbox.addItemListener(new ItemListener()
     {
-      public void itemStateChanged(ItemEvent _)
+      public void itemStateChanged(ItemEvent itemEvent)
       {
         if(!forward_strand_checkbox.isSelected() &&
             !reverse_strand_checkbox.isSelected()) 
@@ -431,7 +431,7 @@ public class Selector extends JFrame
     strand_panel.add(reverse_strand_checkbox);
     reverse_strand_checkbox.addItemListener(new ItemListener() 
     {
-      public void itemStateChanged(ItemEvent _) 
+      public void itemStateChanged(ItemEvent itemEvent) 
       {
         if(!reverse_strand_checkbox.isSelected() &&
             !forward_strand_checkbox.isSelected()) 

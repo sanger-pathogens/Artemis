@@ -330,7 +330,7 @@ public class GraphPanel extends JPanel
     final JMenuItem setScale = new JMenuItem("Set the Window Size...");
     setScale.addActionListener(new ActionListener()
     {
-      public void actionPerformed(ActionEvent _)
+      public void actionPerformed(ActionEvent actionEvent)
       {
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();

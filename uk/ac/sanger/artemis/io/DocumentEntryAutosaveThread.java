@@ -65,7 +65,7 @@ public class DocumentEntryAutosaveThread extends Thread {
       // sleep for 240 seconds before starting - there is no point in attempting
       // to save straight away
       Thread.sleep (240000);
-    } catch (InterruptedException _) {
+    } catch (InterruptedException ie) {
     }
 
     while (true) {
@@ -137,7 +137,7 @@ public class DocumentEntryAutosaveThread extends Thread {
 
       try {
         Thread.sleep (SLEEP_TIME);
-      } catch (InterruptedException _) {
+      } catch (InterruptedException ie) {
       }
     }
   }

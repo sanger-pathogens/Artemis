@@ -126,7 +126,7 @@ class ReadGroupsFrame extends JFrame
       final JButton butt = new JButton("Select", bamView.getImageIcon(lnAttr.getLineColour()));
       butt.addActionListener(new ActionListener()
       {
-        public void actionPerformed(ActionEvent _)
+        public void actionPerformed(ActionEvent actionEvent)
         {
           Color newColour = JColorChooser.showDialog(null, "Colour Chooser",
               lnAttr.getLineColour());

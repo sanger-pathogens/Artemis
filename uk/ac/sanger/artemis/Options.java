@@ -449,7 +449,7 @@ public class Options extends Properties
         final File temp_file = File.createTempFile("dummy", "dummy");
         read_succeeded = new Boolean(true);
       }
-      catch(Throwable _) 
+      catch(Throwable t) 
       {
         read_succeeded = new Boolean(false);
       }

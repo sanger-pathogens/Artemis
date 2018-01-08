@@ -508,7 +508,7 @@ public class AlignmentViewer extends CanvasPanel
     final JMenuItem save_matches = new JMenuItem("Save Comparison File...");
     save_matches.addActionListener(new ActionListener()
     {
-      public void actionPerformed (ActionEvent _)
+      public void actionPerformed (ActionEvent actionEvent)
       {
         StickyFileChooser fc = new StickyFileChooser();
 
@@ -572,7 +572,7 @@ public class AlignmentViewer extends CanvasPanel
 
     alignmatch_list_item.addActionListener(new ActionListener() 
     {
-      public void actionPerformed (ActionEvent _) 
+      public void actionPerformed (ActionEvent actionEvent) 
       {
         if(selected_matches == null) 
           new MessageFrame("No matches selected").setVisible (true);
@@ -596,7 +596,7 @@ public class AlignmentViewer extends CanvasPanel
 
     flip_subject_item.addActionListener(new ActionListener() 
     {
-      public void actionPerformed(ActionEvent _) 
+      public void actionPerformed(ActionEvent actionEvent) 
       {
         if(getSubjectDisplay().isRevCompDisplay()) 
           getSubjectDisplay().setRevCompDisplay(false);
@@ -612,7 +612,7 @@ public class AlignmentViewer extends CanvasPanel
 
     flip_query_item.addActionListener(new ActionListener() 
     {
-      public void actionPerformed(ActionEvent _) 
+      public void actionPerformed(ActionEvent actionEvent) 
       {
         if(getQueryDisplay().isRevCompDisplay())
           getQueryDisplay().setRevCompDisplay(false);
@@ -626,7 +626,7 @@ public class AlignmentViewer extends CanvasPanel
 
     cutoffs_item.addActionListener(new ActionListener() 
     {
-      public void actionPerformed(ActionEvent _) 
+      public void actionPerformed(ActionEvent actionEvent) 
       {
         final ScoreChangeListener minimum_listener =
           new ScoreChangeListener() 
@@ -664,7 +664,7 @@ public class AlignmentViewer extends CanvasPanel
 
     percent_id_cutoffs_item.addActionListener(new ActionListener () 
     {
-      public void actionPerformed(ActionEvent _) 
+      public void actionPerformed(ActionEvent actionEvent) 
       {
         final ScoreChangeListener minimum_listener =
           new ScoreChangeListener()

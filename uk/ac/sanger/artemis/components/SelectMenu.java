@@ -590,7 +590,7 @@ public class SelectMenu extends SelectionMenu
                                   new Key ("misc_feature"));
 
     key_chooser.getKeyChoice ().addItemListener (new ItemListener () {
-      public void itemStateChanged (ItemEvent _) {
+      public void itemStateChanged (ItemEvent itemEvent) {
         selectByKey (key_chooser.getKeyChoice ().getSelectedItem ());
         key_chooser.setVisible (false);
         key_chooser.dispose ();
@@ -598,7 +598,7 @@ public class SelectMenu extends SelectionMenu
     });
 
     key_chooser.getOKButton ().addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent _) {
+      public void actionPerformed (ActionEvent actionEvent) {
         selectByKey (key_chooser.getKeyChoice ().getSelectedItem ());
         key_chooser.setVisible (false);
         key_chooser.dispose ();
@@ -699,14 +699,14 @@ public class SelectMenu extends SelectionMenu
         name_choice_frame.dispose ();
       }
 
-      public void itemStateChanged (ItemEvent _) {
+      public void itemStateChanged (ItemEvent itemEvent) {
         doStuff ();
         // need to remove() because itemStateChanged() is called twice on the
         // Tru64 1.4.1 JVM
         name_choice.removeItemListener (this);
       }
 
-      public void actionPerformed (ActionEvent _) {
+      public void actionPerformed (ActionEvent actionEvent) {
         doStuff ();
         name_choice_frame.getOKButton ().removeActionListener (this);
       }
@@ -756,7 +756,7 @@ public class SelectMenu extends SelectionMenu
       final JComboBox value_choice = value_choice_frame.getChoice ();
 
       value_choice.addItemListener (new ItemListener () {
-        public void itemStateChanged (ItemEvent _) {
+        public void itemStateChanged (ItemEvent itemEvent) {
           selectByQualifier (null, name,
                              (String) value_choice.getSelectedItem ());
           value_choice_frame.setVisible (false);
@@ -765,7 +765,7 @@ public class SelectMenu extends SelectionMenu
       });
 
       value_choice_frame.getOKButton ().addActionListener (new ActionListener () {
-        public void actionPerformed (ActionEvent _) {
+        public void actionPerformed (ActionEvent actionEvent) {
           selectByQualifier (null, name,
                              (String) value_choice.getSelectedItem ());
           value_choice_frame.setVisible (false);

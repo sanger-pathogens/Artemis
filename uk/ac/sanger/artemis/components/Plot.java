@@ -234,7 +234,7 @@ public abstract class Plot extends JPanel
         final JMenuItem config = new JMenuItem("Configure...");
         config.addActionListener(new ActionListener()
         {
-          public void actionPerformed(ActionEvent _)
+          public void actionPerformed(ActionEvent actionEvent)
           {
             lines = LineAttributes.configurePlots(numPlots, lines, Plot.this);
           }
@@ -245,7 +245,7 @@ public abstract class Plot extends JPanel
         final JMenuItem setScale = new JMenuItem("Set the Window Size...");
         setScale.addActionListener(new ActionListener()
         {
-          public void actionPerformed(ActionEvent _)
+          public void actionPerformed(ActionEvent actionEvent)
           {
             final JTextField newWinSize = new JTextField(Integer.toString(getWindowSize()));
             String window_options[] = { "Set Window Size", "Cancel" };
@@ -301,7 +301,7 @@ public abstract class Plot extends JPanel
           new JCheckBoxMenuItem("Scaling",getAlgorithm().scalingFlag());
         scaling_toggle.addItemListener(new ItemListener() 
         {
-          public void itemStateChanged(ItemEvent _) 
+          public void itemStateChanged(ItemEvent actionEvent) 
           {
             getAlgorithm().setScalingFlag(scaling_toggle.getState());
             recalculate_flag = true;
@@ -313,7 +313,7 @@ public abstract class Plot extends JPanel
         final JCheckBoxMenuItem showAverageLn = new JCheckBoxMenuItem("Show average", showAverage);
         showAverageLn.addItemListener(new ItemListener() 
         {
-          public void itemStateChanged(ItemEvent _) 
+          public void itemStateChanged(ItemEvent itemEvent) 
           {
             showAverage = showAverageLn.isSelected();
             repaint();
@@ -380,7 +380,7 @@ public abstract class Plot extends JPanel
 
           window_size_item.addActionListener(new ActionListener() 
           {
-            public void actionPerformed(ActionEvent _) 
+            public void actionPerformed(ActionEvent actionEvent) 
             {
               final int new_maximum = window_sizes[size];
               if(new_maximum > window_changer.getMinimum()) 

@@ -1328,7 +1328,7 @@ public class ViewMenu extends SelectionMenu
     });
 
     key_chooser.getOKButton ().addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent _) {
+      public void actionPerformed (ActionEvent actionEvent) {
         showFilterByKeyHelper (parent_frame,
                                key_chooser.getKeyChoice ().getSelectedItem (),
                                selection, entry_group, goto_source,

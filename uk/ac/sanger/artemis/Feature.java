@@ -1621,11 +1621,11 @@ public class Feature
       // the correct frame
       removeQualifierByName("codon_start");
     } 
-    catch(OutOfDateException _) 
+    catch(OutOfDateException ode) 
     {
       // do nothing
     } 
-    catch(EntryInformationException _) 
+    catch(EntryInformationException eie) 
     {
       // do nothing
     }

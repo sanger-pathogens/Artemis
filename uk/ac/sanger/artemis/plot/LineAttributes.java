@@ -291,7 +291,7 @@ public class LineAttributes
       JButton butt = new JButton("Select");
       butt.addActionListener(new ActionListener()
       {
-        public void actionPerformed(ActionEvent _)
+        public void actionPerformed(ActionEvent actionEvent)
         {
           Color newColour = JColorChooser.showDialog(null, "Colour Chooser",
               thislines[colourNumber].getLineColour());

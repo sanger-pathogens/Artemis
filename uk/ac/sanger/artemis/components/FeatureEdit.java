@@ -382,7 +382,7 @@ public class FeatureEdit extends JPanel
 
     key_choice.addItemListener(new ItemListener() 
     {
-      public void itemStateChanged(ItemEvent _) 
+      public void itemStateChanged(ItemEvent itemEvent) 
       {
         qualifier_choice.setKey(key_choice.getSelectedItem());
       }

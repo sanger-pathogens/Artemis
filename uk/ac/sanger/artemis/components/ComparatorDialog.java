@@ -232,7 +232,7 @@ public class ComparatorDialog extends JFrame
 
     choose_button.addActionListener(new ActionListener() 
     {
-      public void actionPerformed(ActionEvent _) 
+      public void actionPerformed(ActionEvent actionEvent) 
       {
         final StickyFileChooser file_dialog =
           new StickyFileChooser();
