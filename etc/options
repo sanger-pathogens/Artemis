@@ -858,6 +858,7 @@ hyperlinks = \
 bam_read_thread = 2
 # Max read coverage to display
 bam_max_coverage = 1000000
+bamview_ftp_buffer_size=10485760
 
 #
 # CHADO DATABASE OPTIONS 

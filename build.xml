@@ -101,6 +101,7 @@
     <javac
     	  target="1.8" 
       fork="true"
+    	  includeantruntime="false" 
       memoryinitialsize="256m"
       memorymaximumsize="256m"
       srcdir="${build.src.main}"

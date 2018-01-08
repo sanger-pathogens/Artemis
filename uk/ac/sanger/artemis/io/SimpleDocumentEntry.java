@@ -28,11 +28,14 @@ package uk.ac.sanger.artemis.io;
 import uk.ac.sanger.artemis.util.*;
 
 import java.io.*;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
 import java.util.Hashtable;
+import java.util.Map;
 
 /**
  *  This class contains the methods common to all DocumentEntry objects.

@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry including="uk" kind="src" path="test"/>
+	<classpathentry excluding="ant-build|cobertura-lib|coverage-report|data|docs|evosuite-dependencies|evosuite-libs|evosuite-tests|jacoco-lib|lib|evosuite-tests/" including="uk/**" kind="src" output="eclipse-classes" path="test"/>
+	<classpathentry including="uk/**" kind="src" output="eclipse-classes" path="test/evosuite-tests"/>
 	<classpathentry excluding="main/" kind="src" path="ant-build/src"/>
-	<classpathentry excluding="ant-build/src/|test/|uk/ac/sanger/artemis/ExternalProgramUtils.java" including="org/|uk/" kind="src" path=""/>
+	<classpathentry excluding="ant-build/classes/|ant-build/src/|docs|test|test/evosuite-tests/|uk/ac/sanger/artemis/ExternalProgramUtils.java" including="org/|uk/" kind="src" path=""/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/jemAlign.jar"/>
 	<classpathentry kind="lib" path="lib/jakarta-regexp-1.2.jar"/>
@@ -13,9 +14,6 @@
 	<classpathentry kind="lib" path="lib/ibatis/ibatis-2.3.4.726.jar"/>
 	<classpathentry kind="lib" path="lib/ibatis/log4j-1.2.14.jar"/>
 	<classpathentry kind="lib" path="lib/postgresql-8.4-701.jdbc3.jar"/>
-	<classpathentry kind="lib" path="lib/picard/picard.jar"/>
-	<classpathentry kind="lib" path="lib/picard/sam.jar"/>
-	<classpathentry kind="lib" path="lib/commons-net-2.2.jar"/>
 	<classpathentry kind="lib" path="lib/batik/batik-awt-util.jar"/>
 	<classpathentry kind="lib" path="lib/batik/batik-codec.jar"/>
 	<classpathentry kind="lib" path="lib/batik/batik-dom.jar"/>
@@ -25,5 +23,10 @@
 	<classpathentry kind="lib" path="lib/batik/batik-xml.jar"/>
 	<classpathentry kind="lib" path="lib/commons-lang-2.6.jar"/>
 	<classpathentry kind="lib" path="test/lib/junit-4.11.jar"/>
-	<classpathentry kind="output" path="ant-build/classes/main"/>
+	<classpathentry kind="lib" path="lib/picard/htsjdk-2.12.0.jar" sourcepath="/Users/kp11/workspace/jarbuilds/htsjdk/src/main/java"/>
+	<classpathentry kind="lib" path="lib/picard/picard-2.13.2.jar"/>
+	<classpathentry kind="lib" path="/Users/kp11/workspace/applications/Artemis/eclipse-classes"/>
+	<classpathentry kind="lib" path="test/evosuite-lib/evosuite-1.0.5.jar"/>
+	<classpathentry kind="lib" path="lib/commons-net-3.6.jar"/>
+	<classpathentry kind="output" path="eclipse-classes"/>
 </classpath>

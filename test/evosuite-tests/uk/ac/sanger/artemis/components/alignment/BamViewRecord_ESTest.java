@@ -7,8 +7,8 @@ package uk.ac.sanger.artemis.components.alignment;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
-import net.sf.samtools.SAMFileHeader;
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMFileHeader;
+import htsjdk.samtools.SAMRecord;
 import org.evosuite.runtime.EvoRunner;
 import org.evosuite.runtime.EvoRunnerParameters;
 import org.junit.runner.RunWith;

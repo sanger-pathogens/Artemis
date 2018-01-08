@@ -159,18 +159,15 @@ public class FileDocument extends Document {
   
 }
 
-/**
- * Requires Java 1.6
- */
 class DocumentBlockCompressed
 {
   protected static boolean isValidFile(BufferedInputStream ins) throws IOException
   {
-    return net.sf.samtools.util.BlockCompressedInputStream.isValidFile(ins);
+    return htsjdk.samtools.util.BlockCompressedInputStream.isValidFile(ins);
   }
   
   protected static InputStream getBlockCompressedInputStream(BufferedInputStream ins) throws IOException
   {
-    return new net.sf.samtools.util.BlockCompressedInputStream(ins);
+    return new htsjdk.samtools.util.BlockCompressedInputStream(ins);
   }
 }

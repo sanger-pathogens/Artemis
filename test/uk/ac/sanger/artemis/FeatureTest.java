@@ -22,9 +22,7 @@ package uk.ac.sanger.artemis;
 
 import static org.junit.Assert.*;
 
-import java.io.Writer;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Map;
 import java.util.HashMap;
 import java.io.StringWriter;
@@ -49,7 +47,6 @@ import uk.ac.sanger.artemis.sequence.AminoAcidSequence;
 import uk.ac.sanger.artemis.sequence.Bases;
 import uk.ac.sanger.artemis.sequence.Marker;
 import uk.ac.sanger.artemis.sequence.Strand;
-import uk.ac.sanger.artemis.util.ReadOnlyException;
 import uk.ac.sanger.artemis.util.StringVector;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
 
@@ -448,7 +445,6 @@ public class FeatureTest
 		final String upstreamBases = f.getUpstreamBases(154176);
 		
 		assertNotNull(upstreamBases);
-		//System.err.println("KEV: " + upstreamBases);
 	}
 	
 	@Test

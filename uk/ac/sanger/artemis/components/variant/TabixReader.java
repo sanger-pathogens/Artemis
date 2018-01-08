@@ -27,14 +27,13 @@ package uk.ac.sanger.artemis.components.variant;
 
 /* Contact: Heng Li <hengli@broadinstitute.org> */
 
-import net.sf.samtools.util.BlockCompressedInputStream;
-import net.sf.samtools.seekablestream.SeekableStream;
+import htsjdk.samtools.util.BlockCompressedInputStream;
+import htsjdk.samtools.seekablestream.SeekableStream;
 
 import java.io.*;
 import java.net.URL;
 import java.nio.*;
 import java.util.HashMap;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.lang.StringBuffer;
 

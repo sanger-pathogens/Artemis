@@ -52,7 +52,7 @@ import javax.swing.*;
 public class DbfetchEntrySource
     implements EntrySource 
 {
-  private static Pattern REFSEQ_PATTERN = Pattern.compile("[a-zA-Z]{2}?_\\w*");
+  private static Pattern REFSEQ_PATTERN = Pattern.compile("^[a-zA-Z]{2}?_\\w.*$");
   /**
    *  Create a new DbfetchEntrySource.
    *  @param frame The component that created this EntrySource.  (Used for
@@ -103,7 +103,7 @@ public class DbfetchEntrySource
         db = "refseq";
       
       final String url_string =
-        "http://www.ebi.ac.uk/cgi-bin/dbfetch?db="+db+"&id=" + embl_id +"&style=raw";
+    		  "https://www.ebi.ac.uk/Tools/dbfetch/dbfetch?db="+db+"&id=" + embl_id +"&format=fasta&style=raw";
 
       final Document url_document =
         DocumentFactory.makeDocument(url_string);

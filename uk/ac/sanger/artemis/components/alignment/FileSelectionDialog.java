@@ -168,7 +168,7 @@ public class FileSelectionDialog extends JDialog
 
       public String getDescription() 
       {
-        return "BAM / VCF files";
+        return "BAM / CRAM / VCF files";
       }
     };
     

@@ -1,3 +1,34 @@
+Version 17
+	Artemis/ACT and associated applications have been upgraded to Java 8. Java 7/6/5 are now no longer supported - RT ticket #589103
+	
+	BamView fixes/changes - 
+		Improved mouse selection of reads.
+		Fixed exceptions thrown when zooming into an area with secondary reads or SNPs enabled - RT ticket #596489: Problem zooming in using isoseq data
+		Upgraded Samtools (htsjdk) and Picard libraries.
+		Upgraded Apache Commons Net jar - used for ftp'ing. 
+		Added Cram file loading and fixed defects around that code area (also related RT ticket #560982: Artemis fails to build from source).
+		Added display of bam secondary alignment flag to read details pop-up window.
+		Improved error handling/reporting for standalone BamView application.
+		Added buffer sizing to FTPSeekableStream.
+		Increased BAM file index creation speed.
+		
+	Added EvoSuite unit tests and additional targeted tests (RT ticket #419534: Develop a test suite for Artemis).
+	
+	Added Jacoco unit test coverage reporting - manual tests only currently. This may be switched to Clover in the future if this proves compatible with EvoSuite.
+	
+	Removed redundant Corba libraries.
+	
+	Upgraded Apache Commons Net jar to latest release.
+	
+	Upgraded JUnit jar.
+	
+	Changed Travis yml build file. RT ticket #597497: Set up artemis tests to run on travis.
+	
+	Changed all build scripts.
+	
+	Fixed RT ticket #606061 - Using EBI-Dbfetch on ARTEMIS. Change to DbfetchEntrySource.java due to incorrect regular expression and EBI URL.
+
+
 Version 16
 	Add 'Features Within Selection' option to the 'Select' menu to select
 	features that are contained by a selected base range.

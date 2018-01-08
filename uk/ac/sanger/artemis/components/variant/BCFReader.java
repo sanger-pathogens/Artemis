@@ -34,7 +34,7 @@ import java.util.regex.Pattern;
 
 import uk.ac.sanger.artemis.util.FTPSeekableStream;
 
-import net.sf.samtools.util.BlockCompressedInputStream;
+import htsjdk.samtools.util.BlockCompressedInputStream;
 
 class BCFReader extends AbstractVCFReader
 {

@@ -10,7 +10,7 @@ import static org.junit.Assert.*;
 import static org.evosuite.runtime.EvoAssertions.*;
 import java.awt.HeadlessException;
 import java.util.LinkedList;
-import net.sf.samtools.SAMReadGroupRecord;
+import htsjdk.samtools.SAMReadGroupRecord;
 import org.evosuite.runtime.EvoRunner;
 import org.evosuite.runtime.EvoRunnerParameters;
 import org.junit.runner.RunWith;

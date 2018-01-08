@@ -30,10 +30,10 @@ import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
-import net.sf.picard.reference.FastaSequenceIndex;
-import net.sf.picard.reference.IndexedFastaSequenceFile;
-import net.sf.picard.reference.ReferenceSequence;
-import net.sf.picard.reference.ReferenceSequenceFileFactory;
+import htsjdk.samtools.reference.FastaSequenceIndex;
+import htsjdk.samtools.reference.IndexedFastaSequenceFile;
+import htsjdk.samtools.reference.ReferenceSequence;
+import htsjdk.samtools.reference.ReferenceSequenceFileFactory;
 
 import uk.ac.sanger.artemis.io.Entry;
 import uk.ac.sanger.artemis.Options;
@@ -116,7 +116,7 @@ public class IndexFastaStream extends StreamSequence
           catch(UnsupportedClassVersionError e)
           {
             System.err.println("Java version "+System.getProperty("java.version")+
-                " does not support indexed fasta - use Java 1.6 or higher.");
+                " does not support indexed fasta - use Java 1.8 or higher.");
             return false;
           }
           return true;

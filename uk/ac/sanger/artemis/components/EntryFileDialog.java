@@ -280,10 +280,8 @@ public class EntryFileDialog extends StickyFileChooser
 
     if(show_progress) 
     {
-// XXX FIXME
 
-// This doesn't work because getEntryFromFile() is called from the Swing
-// thread so the Dialog never gets updated
+    	   // TODO This doesn't work because getEntryFromFile() is called from the Swing thread so the Dialog never gets updated
 
        progress_dialog =
          new InputStreamProgressDialog(frame, "Reading ...",

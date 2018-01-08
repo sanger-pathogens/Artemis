@@ -5,7 +5,8 @@ test/ant-build
 **/.DS_Store
 **/*.log
 test/coverage-report
-test/coverage-report/**
 jar_build
 tar_build
 artemis_compiled.tar
+/eclipse-classes/
+/test-kjp/

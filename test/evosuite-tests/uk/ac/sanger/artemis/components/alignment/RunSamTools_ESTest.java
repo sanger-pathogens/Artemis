@@ -11,7 +11,7 @@ import static org.evosuite.runtime.EvoAssertions.*;
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMRecord;
 import org.evosuite.runtime.EvoRunner;
 import org.evosuite.runtime.EvoRunnerParameters;
 import org.evosuite.runtime.mock.java.io.MockFile;

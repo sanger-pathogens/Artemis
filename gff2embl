@@ -19,7 +19,7 @@ export CLASSPATH
 CLASSPATH=$CLASSPATH:$ARTEMIS_HOME/lib/batik/batik-awt-util.jar:$ARTEMIS_HOME/lib/batik/batik-dom.jar:$ARTEMIS_HOME/lib/batik/batik-ext.jar:$ARTEMIS_HOME/lib/batik/batik-svggen.jar:$ARTEMIS_HOME/lib/batik/batik-util.jar:$ARTEMIS_HOME/lib/batik/batik-xml.jar
 
 # picard jars
-CLASSPATH=$ARTEMIS_HOME/lib/picard/sam.jar:$ARTEMIS_HOME/lib/picard/picard.jar:$ARTEMIS_HOME/lib/commons-net-2.2.jar:$CLASSPATH
+CLASSPATH=$ARTEMIS_HOME/lib/picard/htsjdk-2.12.0.jar:$ARTEMIS_HOME/lib/picard/picard-2.13.2.jar:$ARTEMIS_HOME/lib/commons-net-3.6.jar:$CLASSPATH
 CLASSPATH="$ARTEMIS_HOME/lib/commons-lang-2.6.jar:$CLASSPATH"
 export CLASSPATH
 

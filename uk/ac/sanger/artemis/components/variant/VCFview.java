@@ -86,7 +86,7 @@ import javax.swing.JSeparator;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
-import net.sf.samtools.util.BlockCompressedInputStream;
+import htsjdk.samtools.util.BlockCompressedInputStream;
 
 import org.apache.log4j.Level;
 
@@ -252,7 +252,7 @@ public class VCFview extends JPanel
     catch(java.lang.UnsupportedClassVersionError err)
     {
       JOptionPane.showMessageDialog(null, 
-          "This requires Java 1.6 or higher.", 
+          "This requires Java 1.8 or higher.", 
           "Check Java Version", JOptionPane.WARNING_MESSAGE);
     }
 

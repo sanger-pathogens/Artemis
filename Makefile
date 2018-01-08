@@ -6,7 +6,7 @@ SHELL=/bin/sh
 
 JAVAC := javac -source 1.8 -target 1.8 $(OPT_FLAGS) $(EXTRA_FLAGS)
 
-REAL_CLASSPATH := CLASSPATH=lib/commons-lang-2.6.jar:lib/biojava.jar:lib/jemAlign.jar:lib/j2ssh/j2ssh-core.jar:lib/ibatis/ibatis-2.3.4.726.jar:lib/ibatis/log4j-1.2.14.jar:lib/postgresql-8.4-701.jdbc3.jar:lib/picard/picard.jar:lib/picard/sam.jar:lib/commons-net-2.2.jar:lib/batik/batik-awt-util.jar:lib/batik/batik-dom.jar:lib/batik/batik-ext.jar:lib/batik/batik-svggen.jar:lib/batik/batik-util.jar:lib/batik/batik-xml.jar:.
+REAL_CLASSPATH := CLASSPATH=lib/commons-lang-2.6.jar:lib/biojava.jar:lib/jemAlign.jar:lib/j2ssh/j2ssh-core.jar:lib/ibatis/ibatis-2.3.4.726.jar:lib/ibatis/log4j-1.2.14.jar:lib/postgresql-8.4-701.jdbc3.jar:lib/picard/picard-2.13.2.jar:lib/picard/htsjdk-2.12.0.jar:lib/commons-net-3.6.jar:lib/batik/batik-awt-util.jar:lib/batik/batik-dom.jar:lib/batik/batik-ext.jar:lib/batik/batik-svggen.jar:lib/batik/batik-util.jar:lib/batik/batik-xml.jar:.
 
 ARTEMIS_DIRS = uk/ac/sanger/artemis \
 uk/ac/sanger/artemis/chado \
@@ -79,23 +79,23 @@ artemis.jar : $(CLASSES)
 	    jar xvf $$fileJar; \
 	    rm -rf META-INF/MANIFEST.MF; \
 	  done; \
-          for fileJar in ../lib/j2ssh/*.jar; do \
-            jar xvf $$fileJar; \
-            rm -rf META-INF/MANIFEST.MF; \
-          done; \
-          for fileJar in ../lib/ibatis/*.jar; do \
-            jar xvf $$fileJar; \
-            rm -rf META-INF/MANIFEST.MF; \
-          done; \
-          for fileJar in ../lib/batik/*.jar; do \
-            jar xvf $$fileJar; \
-            rm -rf META-INF/MANIFEST.MF; \
-          done; \
-          for fileJar in ../lib/picard/*.jar; do \
-            jar xvf $$fileJar; \
-            rm -rf META-INF/MANIFEST.MF; \
-          done; \
-        fi; \
+      for fileJar in ../lib/j2ssh/*.jar; do \
+        jar xvf $$fileJar; \
+        rm -rf META-INF/MANIFEST.MF; \
+      done; \
+      for fileJar in ../lib/ibatis/*.jar; do \
+        jar xvf $$fileJar; \
+        rm -rf META-INF/MANIFEST.MF; \
+      done; \
+      for fileJar in ../lib/batik/*.jar; do \
+        jar xvf $$fileJar; \
+        rm -rf META-INF/MANIFEST.MF; \
+      done; \
+      for fileJar in ../lib/picard/*.jar; do \
+        jar xvf $$fileJar; \
+        rm -rf META-INF/MANIFEST.MF; \
+      done; \
+    fi; \
 	cp -R ../lib/LICENSE.Apache ../uk ../org ../etc ../images ../lib/j2ssh/j2ssh.properties \
 	      ../images/PSUlogo.gif ../images/icon.gif ../README.md ../artemis_sqlmap .
 	find jar_build -name '*.java' -print | xargs rm -f
@@ -104,18 +104,18 @@ artemis.jar : $(CLASSES)
 	rm -rf META-INF/MANIFEST.MF; \
 	echo "Main-Class: uk.ac.sanger.artemis.components.ArtemisMain\nPermissions: all-permissions" > manifest-art; \
 	jar cmf manifest-art artemis.jar META-INF/services images/PSUlogo.gif images/icon.gif README.md etc \
-	                     artemis_sqlmap org uk com net LICENSE.Apache j2ssh.properties; \
-        echo "Main-Class: uk.ac.sanger.artemis.circular.DNADraw\nPermissions: all-permissions" > manifest-circular; \
-        jar cmf manifest-circular DNAPlotter.jar images/PSUlogo.gif README.md etc \
-                             uk org/gmod org/w3c org/apache org/biojava/bio/ com/ibatis/common/jdbc/ net/sf/samtools/ LICENSE.Apache j2ssh.properties; \
+	                     artemis_sqlmap org uk com net htsjdk picard LICENSE.Apache j2ssh.properties; \
+    echo "Main-Class: uk.ac.sanger.artemis.circular.DNADraw\nPermissions: all-permissions" > manifest-circular; \
+    jar cmf manifest-circular DNAPlotter.jar images/PSUlogo.gif README.md etc \
+                         uk org/gmod org/w3c org/apache org/biojava/bio/ com/ibatis/common/jdbc/ htsjdk picard LICENSE.Apache j2ssh.properties; \
 	echo "Main-Class: uk.ac.sanger.artemis.components.alignment.BamView\nPermissions: all-permissions" > manifest-bamview; \
-	jar cmf manifest-bamview BamView.jar META-INF/services etc uk org/apache org/biojava org/biojavax org/gmod org/w3c net/sf com/ibatis; \
+	jar cmf manifest-bamview BamView.jar META-INF/services etc uk org/apache org/biojava org/biojavax org/gmod org/w3c net/sf htsjdk picard com/ibatis; \
 	echo "Main-Class: uk.ac.sanger.artemis.components.ActMain\nPermissions: all-permissions" > manifest-act; \
 	jar cmf manifest-act act.jar META-INF/services images/PSUlogo.gif images/icon.gif README.md etc \
-	                     artemis_sqlmap org uk com net LICENSE.Apache j2ssh.properties; \
+	                     artemis_sqlmap org uk com net htsjdk picard LICENSE.Apache j2ssh.properties; \
 	rm -f etc/log4j.properties; \
 	jar cmf manifest-art artemis_mac.jar images/PSUlogo.gif images/icon.gif README.md \
-	        uk org/gmod LICENSE.Apache artemis_sqlmap
+	        uk org/gmod htsjdk picard LICENSE.Apache artemis_sqlmap
 
 clean :
 	-rm -rf *.html artemis.jar resources uk/ac/sanger/jcon/ jar_build tar_build  artemis_compiled.tar

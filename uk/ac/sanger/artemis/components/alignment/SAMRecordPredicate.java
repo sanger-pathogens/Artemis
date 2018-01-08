@@ -21,7 +21,7 @@
 
 package uk.ac.sanger.artemis.components.alignment;
 
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMRecord;
 
 /**
  *  Each object that implements this interface represents a predicate that can

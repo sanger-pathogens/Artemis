@@ -52,8 +52,8 @@ import javax.swing.JTextField;
 
 import uk.ac.sanger.artemis.components.Plot;
 
-import net.sf.samtools.AlignmentBlock;
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.AlignmentBlock;
+import htsjdk.samtools.SAMRecord;
 
   public class CoveragePanel extends AbstractGraphPanel
   {

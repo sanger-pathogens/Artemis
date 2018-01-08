@@ -53,7 +53,7 @@ import uk.ac.sanger.artemis.components.SwingWorker;
 import uk.ac.sanger.artemis.components.alignment.BamViewRecord;
 
 
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMRecord;
 
 public class SAMRecordList extends JPanel
                            implements DisplayAdjustmentListener

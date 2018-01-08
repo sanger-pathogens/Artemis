@@ -69,3 +69,5 @@ Running the test suite
 
 cd test
 RunAllUnitTests.sh
+
+This will run manually written and EvoSuite generated unit tests. It will take a while to run.

@@ -31,7 +31,7 @@
 	
 ============================================================= -->
 
-<project name="artemis.test" default="test" basedir="." xmlns:jacoco="antlib:org.jacoco.ant">
+<project name="artemis.test" default="run-manual-tests" basedir="." xmlns:jacoco="antlib:org.jacoco.ant">
 
 	<property name="name" value="artemis test suite" />
 	<property name="version" value="live" />
@@ -232,7 +232,7 @@
 
 	<!-- Compile the manual tests -->
 	<target name="compile" depends="prepare-core">
-		<javac fork="true" target="${java.major.version}" srcdir="${build.src.tests}" destdir="${build.dest.tests}" deprecation="false" depend="no" debug="true">
+		<javac fork="true" includeantruntime="false" target="${java.major.version}" srcdir="${build.src.tests}" destdir="${build.dest.tests}" deprecation="false" depend="no" debug="true">
 			<classpath refid="compile.classpath" />
 		</javac>
 	</target>
@@ -261,13 +261,13 @@
 	</target>
 
 	<target name="compile-evotests" depends="prepare-evo">
-		<javac fork="true" target="${java.major.version}" srcdir="${evosuite.tests.src.dir}" destdir="${evosuite.tests.classes.dir}" deprecation="false" depend="no" debug="true">
+		<javac fork="true" includeantruntime="false" target="${java.major.version}" srcdir="${evosuite.tests.src.dir}" destdir="${evosuite.tests.classes.dir}" deprecation="false" depend="no" debug="true">
 			<classpath refid="evosuite.classpath" />
 		</javac>
 	</target>
 
 	<target name="compile-evotest-dependencies">
-		<javac fork="true" target="${java.major.version}" srcdir="${artemis.missing.dependency.src.dir}" destdir="${artemis.missing.dependency.classes.dir}" deprecation="false" depend="no" debug="true">
+		<javac fork="true" includeantruntime="false" target="${java.major.version}" srcdir="${artemis.missing.dependency.src.dir}" destdir="${artemis.missing.dependency.classes.dir}" deprecation="false" depend="no" debug="true">
 		</javac>
 	</target>
 	
@@ -350,8 +350,6 @@
 				<jvmarg value="-Djava.awt.headless=true" />
 				<batchtest fork="yes" todir="${junit.reports.dir}">
 					<fileset dir="${evosuite.tests.src.dir}">
-						
-						<!--include name="**/*BamView_ESTest.java" if="${do.run.evosuite.tests}" /-->
 						
 						<include name="**/*_ESTest.java" if="${do.run.evosuite.tests}" />
 						
