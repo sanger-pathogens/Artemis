@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.io.FeatureVector
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.io.FeatureVector: 0.7916666666666666</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.io.FeatureVector: 0.9166666666666666</ul>
 <ul>
-<li>4.5 fitness evaluations, 0 generations, null statements, 2 tests.
+<li>2.5 fitness evaluations, 0 generations, null statements, 2 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -41,7 +41,7 @@ uk.ac.sanger.artemis.io.FeatureVector
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FeatureVector featureVector0 = new FeatureVector();
-<span class="nocode"><a name="2">  2: </a></span>featureVector0.setSize(480);
+<span class="nocode"><a name="2">  2: </a></span>featureVector0.addElement((Feature) null);
 <span class="nocode"><a name="3">  3: </a></span>Feature feature0 = featureVector0.featureAt(0);
 <span class="nocode"><a name="4">  4: </a></span>assertNull(feature0);
 </pre>
@@ -59,7 +59,7 @@ uk.ac.sanger.artemis.io.FeatureVector
 <li>Size: 2
 <li>Length: 5
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.7916666666666666
+<li>Coverage: 0.9166666666666666
 <li>BranchCoverage: 1.0
 <li>MethodCoverage: 1.0
 <li>OutputCoverage: 0.3333333333333333

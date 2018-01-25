@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.components.genebuilder.ortholog.MatchPanel
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.components.genebuilder.ortholog.MatchPanel: 0.3462700808899503</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.components.genebuilder.ortholog.MatchPanel: 0.44772580886153646</ul>
 <ul>
-<li>1209.6635416570373 fitness evaluations, 0 generations, null statements, 15 tests.
+<li>1141.8634093128753 fitness evaluations, 0 generations, null statements, 16 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,22 +35,21 @@ uk.ac.sanger.artemis.components.genebuilder.ortholog.MatchPanel
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MatchPanel.isMatchTag((Qualifier) null);
+<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier(&quot;|YZ&quot;, &quot;|YZ&quot;);
+<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = MatchPanel.isMatchTag(qualifier0);
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(boolean0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = (SimpleEntryInformation)SimpleEntryInformation.getDefaultEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>PublicDBDocumentEntry publicDBDocumentEntry0 = new PublicDBDocumentEntry(simpleEntryInformation0);
-<span class="nocode"><a name="3">  3: </a></span>MatchPanel matchPanel0 = new MatchPanel((Feature) null, publicDBDocumentEntry0);
-<span class="nocode"><a name="4">  4: </a></span>matchPanel0.updateFromQualifiers((QualifierVector) null, (Feature) null);
+<span class="nocode"><a name="1">  1: </a></span>MatchPanel matchPanel0 = new MatchPanel((Feature) null, (DocumentEntry) null);
+<span class="nocode"><a name="2">  2: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
+<span class="nocode"><a name="3">  3: </a></span>matchPanel0.updateFromQualifiers(qualifierVector0, (Feature) null);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = (SimpleEntryInformation)SimpleEntryInformation.getDefaultEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>PublicDBDocumentEntry publicDBDocumentEntry0 = new PublicDBDocumentEntry(simpleEntryInformation0);
-<span class="nocode"><a name="3">  3: </a></span>MatchPanel matchPanel0 = new MatchPanel((Feature) null, publicDBDocumentEntry0);
-<span class="nocode"><a name="4">  4: </a></span>matchPanel0.getGeneNameList();
-<span class="nocode"><a name="5">  5: </a></span>assertTrue(matchPanel0.isEmpty());
+<span class="nocode"><a name="1">  1: </a></span>MatchPanel matchPanel0 = new MatchPanel((Feature) null, (DocumentEntry) null);
+<span class="nocode"><a name="2">  2: </a></span>matchPanel0.getGeneNameList();
+<span class="nocode"><a name="3">  3: </a></span>assertTrue(matchPanel0.isEmpty());
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
@@ -59,8 +58,11 @@ uk.ac.sanger.artemis.components.genebuilder.ortholog.MatchPanel
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>boolean boolean0 = MatchPanel.isMatchTag(&quot;Ortholog/Paralog/Similarity&quot;);
-<span class="nocode"><a name="2">  2: </a></span>assertFalse(boolean0);
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature();
+<span class="nocode"><a name="2">  2: </a></span>Feature feature0 = new Feature(genbankStreamFeature0);
+<span class="nocode"><a name="3">  3: </a></span>MatchPanel matchPanel0 = new MatchPanel(feature0, (DocumentEntry) null);
+<span class="nocode"><a name="4">  4: </a></span>matchPanel0.updateFromFeature(feature0);
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(matchPanel0.isEmpty());
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
@@ -69,41 +71,41 @@ uk.ac.sanger.artemis.components.genebuilder.ortholog.MatchPanel
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>boolean boolean0 = MatchPanel.isMatchTag(&quot;/paralogous_to=fasta&quot;);
-<span class="nocode"><a name="2">  2: </a></span>assertTrue(boolean0);
+<span class="nocode"><a name="1">  1: </a></span>boolean boolean0 = MatchPanel.isClusterTag(&quot;T)}:D&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertFalse(boolean0);
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>boolean boolean0 = MatchPanel.isClusterTag(&quot;Can't reset: &quot;);
-<span class="nocode"><a name="2">  2: </a></span>assertFalse(boolean0);
+<span class="nocode"><a name="1">  1: </a></span>boolean boolean0 = MatchPanel.isClusterTag(&quot;orthologous_to&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertTrue(boolean0);
 </pre>
 <h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>boolean boolean0 = MatchPanel.isClusterTag(&quot;paralogous_to&quot;);
-<span class="nocode"><a name="2">  2: </a></span>assertTrue(boolean0);
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = (SimpleEntryInformation)SimpleEntryInformation.getDefaultEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>GenbankDocumentEntry genbankDocumentEntry0 = new GenbankDocumentEntry(simpleEntryInformation0);
+<span class="nocode"><a name="3">  3: </a></span>MatchPanel matchPanel0 = new MatchPanel((Feature) null, genbankDocumentEntry0);
+<span class="nocode"><a name="4">  4: </a></span>matchPanel0.getMatchQualifiers();
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(matchPanel0.isEmpty());
 </pre>
 <h3>Test case 10</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = (SimpleEntryInformation)SimpleEntryInformation.getDefaultEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>BlastDocumentEntry blastDocumentEntry0 = new BlastDocumentEntry(simpleEntryInformation0);
-<span class="nocode"><a name="3">  3: </a></span>MatchPanel matchPanel0 = new MatchPanel((Feature) null, blastDocumentEntry0);
-<span class="nocode"><a name="4">  4: </a></span>matchPanel0.updateFromFeature((Feature) null);
+<span class="nocode"><a name="2">  2: </a></span>MSPcrunchDocumentEntry mSPcrunchDocumentEntry0 = new MSPcrunchDocumentEntry(simpleEntryInformation0);
+<span class="nocode"><a name="3">  3: </a></span>GenbankDocumentEntry genbankDocumentEntry0 = new GenbankDocumentEntry(simpleEntryInformation0, mSPcrunchDocumentEntry0, false);
+<span class="nocode"><a name="4">  4: </a></span>MatchPanel matchPanel0 = new MatchPanel((Feature) null, genbankDocumentEntry0);
+<span class="nocode"><a name="5">  5: </a></span>boolean boolean0 = matchPanel0.isEmpty();
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(boolean0);
 </pre>
 <h3>Test case 11</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = (SimpleEntryInformation)SimpleEntryInformation.getDefaultEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>PublicDBDocumentEntry publicDBDocumentEntry0 = new PublicDBDocumentEntry(simpleEntryInformation0);
-<span class="nocode"><a name="3">  3: </a></span>MatchPanel matchPanel0 = new MatchPanel((Feature) null, publicDBDocumentEntry0);
-<span class="nocode"><a name="4">  4: </a></span>matchPanel0.getMatchQualifiers();
-<span class="nocode"><a name="5">  5: </a></span>assertTrue(matchPanel0.isEmpty());
+<span class="nocode"><a name="1">  1: </a></span>boolean boolean0 = MatchPanel.isMatchTag(&quot;|YZ&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertFalse(boolean0);
 </pre>
 <h3>Test case 12</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MSPcrunchEntryInformation mSPcrunchEntryInformation0 = new MSPcrunchEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>EmblDocumentEntry emblDocumentEntry0 = new EmblDocumentEntry(mSPcrunchEntryInformation0);
-<span class="nocode"><a name="3">  3: </a></span>MatchPanel matchPanel0 = new MatchPanel((Feature) null, emblDocumentEntry0);
-<span class="nocode"><a name="4">  4: </a></span>matchPanel0.getGeneNameList(true);
-<span class="nocode"><a name="5">  5: </a></span>assertTrue(matchPanel0.isEmpty());
+<span class="nocode"><a name="1">  1: </a></span>MatchPanel matchPanel0 = new MatchPanel((Feature) null, (DocumentEntry) null);
+<span class="nocode"><a name="2">  2: </a></span>matchPanel0.getGeneNameList(true);
+<span class="nocode"><a name="3">  3: </a></span>assertTrue(matchPanel0.isEmpty());
 </pre>
 <h3>Test case 13</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
@@ -115,9 +117,19 @@ uk.ac.sanger.artemis.components.genebuilder.ortholog.MatchPanel
 </pre>
 <h3>Test case 15</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier(&quot;y#`l&gt;|j.3&quot;, &quot;y#`l&gt;|j.3&quot;);
-<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = MatchPanel.isMatchTag(qualifier0);
-<span class="nocode"><a name="3">  3: </a></span>assertFalse(boolean0);
+<span class="nocode"><a name="1">  1: </a></span>MatchPanel.isMatchTag((Qualifier) null);
+</pre>
+<h3>Test case 16</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = (SimpleEntryInformation)SimpleEntryInformation.getDefaultEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>MSPcrunchDocumentEntry mSPcrunchDocumentEntry0 = new MSPcrunchDocumentEntry(simpleEntryInformation0);
+<span class="nocode"><a name="3">  3: </a></span>GenbankDocumentEntry genbankDocumentEntry0 = new GenbankDocumentEntry(simpleEntryInformation0, mSPcrunchDocumentEntry0, false);
+<span class="nocode"><a name="4">  4: </a></span>MatchPanel matchPanel0 = new MatchPanel((Feature) null, genbankDocumentEntry0);
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(matchPanel0.isEmpty());
+<span class="nocode"><a name="6">  6: </a></span>
+<span class="nocode"><a name="7">  7: </a></span>matchPanel0.setEmpty(false);
+<span class="nocode"><a name="8">  8: </a></span>boolean boolean0 = matchPanel0.isEmpty();
+<span class="nocode"><a name="9">  9: </a></span>assertFalse(boolean0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -130,13 +142,13 @@ uk.ac.sanger.artemis.components.genebuilder.ortholog.MatchPanel
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.genebuilder.ortholog.MatchPanel
-<li>Size: 15
-<li>Length: 31
+<li>Size: 16
+<li>Length: 36
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.3462700808899503
-<li>BranchCoverage: 0.12987012987012986
-<li>MethodCoverage: 0.7692307692307693
-<li>OutputCoverage: 0.28125
+<li>Coverage: 0.44772580886153646
+<li>BranchCoverage: 0.15584415584415584
+<li>MethodCoverage: 0.9230769230769231
+<li>OutputCoverage: 0.34375
 </ul></div>
 </div>
 <p><br><a href="../report-generation.html">Back to Overview</a></p>

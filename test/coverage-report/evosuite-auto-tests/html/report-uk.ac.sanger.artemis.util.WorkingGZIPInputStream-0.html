@@ -23,7 +23,7 @@ uk.ac.sanger.artemis.util.WorkingGZIPInputStream
 <br><br><h2 class=title>Summary</h2>
 <ul><li>Target class: uk.ac.sanger.artemis.util.WorkingGZIPInputStream: 0.2708333333333333</ul>
 <ul>
-<li>46.971428571428575 fitness evaluations, 0 generations, null statements, 11 tests.
+<li>46.97692307692308 fitness evaluations, 0 generations, null statements, 10 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,67 +35,59 @@ uk.ac.sanger.artemis.util.WorkingGZIPInputStream
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>PipedInputStream pipedInputStream0 = new PipedInputStream();
-<span class="nocode"><a name="2">  2: </a></span>WorkingGZIPInputStream workingGZIPInputStream0 = new WorkingGZIPInputStream(pipedInputStream0);
+<span class="nocode"><a name="1">  1: </a></span>BufferedInputStream bufferedInputStream0 = new BufferedInputStream((InputStream) null);
+<span class="nocode"><a name="2">  2: </a></span>WorkingGZIPInputStream workingGZIPInputStream0 = new WorkingGZIPInputStream(bufferedInputStream0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>PipedInputStream pipedInputStream0 = new PipedInputStream(120);
-<span class="nocode"><a name="2">  2: </a></span>WorkingGZIPInputStream workingGZIPInputStream0 = new WorkingGZIPInputStream(pipedInputStream0, 120);
+<span class="nocode"><a name="1">  1: </a></span>Enumeration&lt;ByteArrayInputStream&gt; enumeration0 = (Enumeration&lt;ByteArrayInputStream&gt;) mock(Enumeration.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="2">  2: </a></span>doReturn(false).when(enumeration0).hasMoreElements();
+<span class="nocode"><a name="3">  3: </a></span>SequenceInputStream sequenceInputStream0 = new SequenceInputStream(enumeration0);
+<span class="nocode"><a name="4">  4: </a></span>DataInputStream dataInputStream0 = new DataInputStream(sequenceInputStream0);
+<span class="nocode"><a name="5">  5: </a></span>WorkingGZIPInputStream workingGZIPInputStream0 = new WorkingGZIPInputStream(dataInputStream0, (-2789));
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[6];
-<span class="nocode"><a name="2">  2: </a></span>ByteArrayInputStream byteArrayInputStream0 = new ByteArrayInputStream(byteArray0, 3881, (-1));
+<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[7];
+<span class="nocode"><a name="2">  2: </a></span>ByteArrayInputStream byteArrayInputStream0 = new ByteArrayInputStream(byteArray0, (-1531), (byte)0);
 <span class="nocode"><a name="3">  3: </a></span>WorkingGZIPInputStream workingGZIPInputStream0 = new WorkingGZIPInputStream(byteArrayInputStream0);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[6];
-<span class="nocode"><a name="2">  2: </a></span>ByteArrayInputStream byteArrayInputStream0 = new ByteArrayInputStream(byteArray0, (-1601), 116);
-<span class="nocode"><a name="3">  3: </a></span>BufferedInputStream bufferedInputStream0 = new BufferedInputStream(byteArrayInputStream0);
-<span class="nocode"><a name="4">  4: </a></span>WorkingGZIPInputStream workingGZIPInputStream0 = new WorkingGZIPInputStream(bufferedInputStream0);
+<span class="nocode"><a name="1">  1: </a></span>WorkingGZIPInputStream workingGZIPInputStream0 = new WorkingGZIPInputStream((InputStream) null);
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>WorkingGZIPInputStream workingGZIPInputStream0 = new WorkingGZIPInputStream((InputStream) null);
+<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[6];
+<span class="nocode"><a name="2">  2: </a></span>ByteArrayInputStream byteArrayInputStream0 = new ByteArrayInputStream(byteArray0);
+<span class="nocode"><a name="3">  3: </a></span>WorkingGZIPInputStream workingGZIPInputStream0 = new WorkingGZIPInputStream(byteArrayInputStream0);
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[4];
-<span class="nocode"><a name="2">  2: </a></span>ByteArrayInputStream byteArrayInputStream0 = new ByteArrayInputStream(byteArray0);
-<span class="nocode"><a name="3">  3: </a></span>PushbackInputStream pushbackInputStream0 = new PushbackInputStream(byteArrayInputStream0);
-<span class="nocode"><a name="4">  4: </a></span>WorkingGZIPInputStream workingGZIPInputStream0 = new WorkingGZIPInputStream(pushbackInputStream0);
+<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[7];
+<span class="nocode"><a name="2">  2: </a></span>ByteArrayInputStream byteArrayInputStream0 = new ByteArrayInputStream(byteArray0, (-2435), (byte) (-64));
+<span class="nocode"><a name="3">  3: </a></span>WorkingGZIPInputStream workingGZIPInputStream0 = new WorkingGZIPInputStream(byteArrayInputStream0, (byte)1);
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[5];
-<span class="nocode"><a name="2">  2: </a></span>ByteArrayInputStream byteArrayInputStream0 = new ByteArrayInputStream(byteArray0);
-<span class="nocode"><a name="3">  3: </a></span>byteArrayInputStream0.read(byteArray0);
-<span class="nocode"><a name="4">  4: </a></span>WorkingGZIPInputStream workingGZIPInputStream0 = new WorkingGZIPInputStream(byteArrayInputStream0, 1498);
+<span class="nocode"><a name="1">  1: </a></span>PipedInputStream pipedInputStream0 = new PipedInputStream(42);
+<span class="nocode"><a name="2">  2: </a></span>WorkingGZIPInputStream workingGZIPInputStream0 = new WorkingGZIPInputStream(pipedInputStream0, 42);
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[9];
-<span class="nocode"><a name="2">  2: </a></span>ByteArrayInputStream byteArrayInputStream0 = new ByteArrayInputStream(byteArray0, (-1), 2288);
-<span class="nocode"><a name="3">  3: </a></span>WorkingGZIPInputStream workingGZIPInputStream0 = new WorkingGZIPInputStream(byteArrayInputStream0, (byte)47);
+<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[3];
+<span class="nocode"><a name="2">  2: </a></span>ByteArrayInputStream byteArrayInputStream0 = new ByteArrayInputStream(byteArray0, (-1772), (byte)28);
+<span class="nocode"><a name="3">  3: </a></span>WorkingGZIPInputStream workingGZIPInputStream0 = new WorkingGZIPInputStream(byteArrayInputStream0, (byte)87);
 </pre>
 <h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Enumeration&lt;InputStream&gt; enumeration0 = (Enumeration&lt;InputStream&gt;) mock(Enumeration.class, new ViolatedAssumptionAnswer());
-<span class="nocode"><a name="2">  2: </a></span>doReturn(false).when(enumeration0).hasMoreElements();
-<span class="nocode"><a name="3">  3: </a></span>SequenceInputStream sequenceInputStream0 = new SequenceInputStream(enumeration0);
-<span class="nocode"><a name="4">  4: </a></span>WorkingGZIPInputStream workingGZIPInputStream0 = new WorkingGZIPInputStream(sequenceInputStream0, (-1));
+<span class="nocode"><a name="1">  1: </a></span>WorkingGZIPInputStream workingGZIPInputStream0 = new WorkingGZIPInputStream((InputStream) null, (-1372));
 </pre>
 <h3>Test case 10</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>WorkingGZIPInputStream workingGZIPInputStream0 = new WorkingGZIPInputStream((InputStream) null, (-1527));
-</pre>
-<h3>Test case 11</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[8];
+<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[9];
 <span class="nocode"><a name="2">  2: </a></span>ByteArrayInputStream byteArrayInputStream0 = new ByteArrayInputStream(byteArray0);
-<span class="nocode"><a name="3">  3: </a></span>WorkingGZIPInputStream workingGZIPInputStream0 = new WorkingGZIPInputStream(byteArrayInputStream0, 1);
+<span class="nocode"><a name="3">  3: </a></span>WorkingGZIPInputStream workingGZIPInputStream0 = new WorkingGZIPInputStream(byteArrayInputStream0, (byte)9);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -108,8 +100,8 @@ uk.ac.sanger.artemis.util.WorkingGZIPInputStream
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.util.WorkingGZIPInputStream
-<li>Size: 11
-<li>Length: 30
+<li>Size: 10
+<li>Length: 25
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.2708333333333333
 <li>BranchCoverage: 0.5

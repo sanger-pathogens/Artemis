@@ -23,7 +23,7 @@ uk.ac.sanger.artemis.io.EmblMisc
 <br><br><h2 class=title>Summary</h2>
 <ul><li>Target class: uk.ac.sanger.artemis.io.EmblMisc: 1.0</ul>
 <ul>
-<li>12.25 fitness evaluations, 0 generations, null statements, 4 tests.
+<li>0.5 fitness evaluations, 0 generations, null statements, 3 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,24 +35,17 @@ uk.ac.sanger.artemis.io.EmblMisc
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>EmblMisc emblMisc0 = new EmblMisc(&quot;LocationInfo&quot;);
-<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;LocationInfo&quot;, emblMisc0.getLine());
+<span class="nocode"><a name="1">  1: </a></span>EmblMisc emblMisc0 = new EmblMisc(&quot;HXe9qC--Sz77`2}J\&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;HXe9qC--Sz77`2}J\&quot;&quot;, emblMisc0.getLine());
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[4];
-<span class="nocode"><a name="2">  2: </a></span>CharArrayReader charArrayReader0 = new CharArrayReader(charArray0);
-<span class="nocode"><a name="3">  3: </a></span>LinePushBackReader linePushBackReader0 = new LinePushBackReader(charArrayReader0);
-<span class="nocode"><a name="4">  4: </a></span>EmblMisc emblMisc0 = new EmblMisc(linePushBackReader0);
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;\u0000\u0000\u0000\u0000&quot;, emblMisc0.getLine());
+<span class="nocode"><a name="1">  1: </a></span>StringReader stringReader0 = new StringReader(&quot;|$G6m&quot;);
+<span class="nocode"><a name="2">  2: </a></span>LinePushBackReader linePushBackReader0 = new LinePushBackReader(stringReader0);
+<span class="nocode"><a name="3">  3: </a></span>EmblMisc emblMisc0 = new EmblMisc(linePushBackReader0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;|$G6m&quot;, emblMisc0.getLine());
 </pre>
 <h3>Test case 3</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>PipedReader pipedReader0 = new PipedReader(536870912);
-<span class="nocode"><a name="2">  2: </a></span>LinePushBackReader linePushBackReader0 = new LinePushBackReader(pipedReader0);
-<span class="nocode"><a name="3">  3: </a></span>EmblMisc emblMisc0 = new EmblMisc(linePushBackReader0);
-</pre>
-<h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>EmblMisc emblMisc0 = new EmblMisc((LinePushBackReader) null);
 </pre>
@@ -67,8 +60,8 @@ uk.ac.sanger.artemis.io.EmblMisc
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.io.EmblMisc
-<li>Size: 4
-<li>Length: 9
+<li>Size: 3
+<li>Length: 5
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 1.0
 <li>BranchCoverage: 1.0

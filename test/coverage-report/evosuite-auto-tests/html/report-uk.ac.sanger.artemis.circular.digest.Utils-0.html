@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.circular.digest.Utils
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.circular.digest.Utils: 0.45560644868511124</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.circular.digest.Utils: 0.33616069024928663</ul>
 <ul>
-<li>358.5575268045328 fitness evaluations, 0 generations, null statements, 8 tests.
+<li>327.59892733256146 fitness evaluations, 0 generations, null statements, 10 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -39,42 +39,59 @@ uk.ac.sanger.artemis.circular.digest.Utils
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>PipedReader pipedReader0 = new PipedReader();
-<span class="nocode"><a name="2">  2: </a></span>BufferedReader bufferedReader0 = new BufferedReader(pipedReader0, 9999);
-<span class="nocode"><a name="3">  3: </a></span>Utils.findCutSitesFromEmbossReport(bufferedReader0);
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[4];
+<span class="nocode"><a name="2">  2: </a></span>CharArrayReader charArrayReader0 = new CharArrayReader(charArray0);
+<span class="nocode"><a name="3">  3: </a></span>Utils.findCutSitesFromEmbossReport(charArrayReader0);
+<span class="nocode"><a name="4">  4: </a></span>List&lt;FragmentBand&gt; list0 = Utils.findCutSitesFromExperiment(charArrayReader0);
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(list0.isEmpty());
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>StringReader stringReader0 = new StringReader(&quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>List&lt;FragmentBand&gt; list0 = Utils.findCutSitesFromExperiment(stringReader0);
-<span class="nocode"><a name="3">  3: </a></span>assertTrue(list0.isEmpty());
+<span class="nocode"><a name="1">  1: </a></span>StringReader stringReader0 = new StringReader(&quot;start&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Utils.findCutSitesFromExperiment(stringReader0);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[7];
-<span class="nocode"><a name="2">  2: </a></span>CharArrayReader charArrayReader0 = new CharArrayReader(charArray0);
-<span class="nocode"><a name="3">  3: </a></span>Utils.findCutSitesFromExperiment(charArrayReader0);
+<span class="nocode"><a name="1">  1: </a></span>ReportDetails reportDetails0 = new ReportDetails();
+<span class="nocode"><a name="2">  2: </a></span>reportDetails0.length = 32768;
+<span class="nocode"><a name="3">  3: </a></span>Utils.createDNADrawFromReportDetails(reportDetails0, (EntryGroup) null);
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>ReportDetails reportDetails0 = new ReportDetails();
-<span class="nocode"><a name="2">  2: </a></span>Utils.createDNADrawFromReportDetails(reportDetails0, (EntryGroup) null);
+<span class="nocode"><a name="2">  2: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;uk.ac.sanger.artemis.io.InvalidRelationException&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="4">  4: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="5">  5: </a></span>FeatureVector featureVector0 = new FeatureVector();
+<span class="nocode"><a name="6">  6: </a></span>FeatureFromVectorPredicate featureFromVectorPredicate0 = new FeatureFromVectorPredicate(featureVector0);
+<span class="nocode"><a name="7">  7: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureFromVectorPredicate0, &quot;uk.ac.sanger.artemis.io.InvalidRelationException&quot;);
+<span class="nocode"><a name="8">  8: </a></span>Utils.createDNADrawFromReportDetails(reportDetails0, filteredEntryGroup0);
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Utils.findCutSitesFromEmbossReport((Reader) null);
+<span class="nocode"><a name="1">  1: </a></span>ReportDetails reportDetails0 = new ReportDetails();
+<span class="nocode"><a name="2">  2: </a></span>reportDetails0.length = (-1367);
+<span class="nocode"><a name="3">  3: </a></span>Utils.createDNADrawFromReportDetails(reportDetails0, (EntryGroup) null);
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Utils.findCutSitesFromExperiment((Reader) null);
+<span class="nocode"><a name="1">  1: </a></span>FileDescriptor fileDescriptor0 = new FileDescriptor();
+<span class="nocode"><a name="2">  2: </a></span>MockFileReader mockFileReader0 = new MockFileReader(fileDescriptor0);
+<span class="nocode"><a name="3">  3: </a></span>Utils.findCutSitesFromEmbossReport(mockFileReader0);
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[2];
-<span class="nocode"><a name="2">  2: </a></span>CharArrayReader charArrayReader0 = new CharArrayReader(charArray0);
-<span class="nocode"><a name="3">  3: </a></span>BufferedReader bufferedReader0 = new BufferedReader(charArrayReader0);
-<span class="nocode"><a name="4">  4: </a></span>ReportDetails reportDetails0 = Utils.findCutSitesFromEmbossReport(bufferedReader0);
-<span class="nocode"><a name="5">  5: </a></span>assertNotNull(reportDetails0);
+<span class="nocode"><a name="1">  1: </a></span>PipedReader pipedReader0 = new PipedReader();
+<span class="nocode"><a name="2">  2: </a></span>Utils.findCutSitesFromEmbossReport(pipedReader0);
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>PipedReader pipedReader0 = new PipedReader(2510);
+<span class="nocode"><a name="2">  2: </a></span>Utils.findCutSitesFromExperiment(pipedReader0);
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Utils.findCutSitesFromExperiment((Reader) null);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -87,11 +104,11 @@ uk.ac.sanger.artemis.circular.digest.Utils
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.circular.digest.Utils
-<li>Size: 8
-<li>Length: 17
+<li>Size: 10
+<li>Length: 29
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.45560644868511124
-<li>BranchCoverage: 0.25
+<li>Coverage: 0.33616069024928663
+<li>BranchCoverage: 0.42857142857142855
 <li>MethodCoverage: 1.0
 <li>OutputCoverage: 0.07317073170731707
 </ul></div>

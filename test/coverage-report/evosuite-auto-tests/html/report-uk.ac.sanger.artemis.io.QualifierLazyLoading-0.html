@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.io.QualifierLazyLoading
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.io.QualifierLazyLoading: 0.6147536703887511</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.io.QualifierLazyLoading: 0.5231973738626965</ul>
 <ul>
-<li>66.31547619047619 fitness evaluations, 0 generations, null statements, 17 tests.
+<li>98.15 fitness evaluations, 0 generations, null statements, 14 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,111 +35,94 @@ uk.ac.sanger.artemis.io.QualifierLazyLoading
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>QualifierLazyLoading qualifierLazyLoading0 = new QualifierLazyLoading((String) null, (LazyQualifierValue) null);
-<span class="nocode"><a name="2">  2: </a></span>String string0 = qualifierLazyLoading0.getName();
-<span class="nocode"><a name="3">  3: </a></span>assertNull(string0);
+<span class="nocode"><a name="1">  1: </a></span>QualifierLazyLoading qualifierLazyLoading0 = new QualifierLazyLoading(&quot;&quot;, (List) null);
+<span class="nocode"><a name="2">  2: </a></span>QualifierLazyLoading qualifierLazyLoading1 = (QualifierLazyLoading)qualifierLazyLoading0.copy();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;&quot;, qualifierLazyLoading1.getName());
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FeatureLocLazyQualifierValue featureLocLazyQualifierValue0 = new FeatureLocLazyQualifierValue((Feature) null, 30000);
-<span class="nocode"><a name="2">  2: </a></span>QualifierLazyLoading qualifierLazyLoading0 = new QualifierLazyLoading((String) null, featureLocLazyQualifierValue0);
-<span class="nocode"><a name="3">  3: </a></span>qualifierLazyLoading0.getValue(30000);
+<span class="nocode"><a name="1">  1: </a></span>FeatureLocLazyQualifierValue featureLocLazyQualifierValue0 = new FeatureLocLazyQualifierValue((Feature) null, 0);
+<span class="nocode"><a name="2">  2: </a></span>QualifierLazyLoading qualifierLazyLoading0 = new QualifierLazyLoading(&quot;q;PO-|Y~&quot;, featureLocLazyQualifierValue0);
+<span class="nocode"><a name="3">  3: </a></span>FeatureLocLazyQualifierValue featureLocLazyQualifierValue1 = (FeatureLocLazyQualifierValue)qualifierLazyLoading0.getValue(0);
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(featureLocLazyQualifierValue1.isForceLoad());
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>QualifierLazyLoading qualifierLazyLoading0 = new QualifierLazyLoading(&quot;zciMfy]Jb\&quot;\&quot;&quot;, (LazyQualifierValue) null);
-<span class="nocode"><a name="2">  2: </a></span>List&lt;Object&gt; list0 = qualifierLazyLoading0.getLazyValues();
-<span class="nocode"><a name="3">  3: </a></span>qualifierLazyLoading0.addValues(list0);
+<span class="nocode"><a name="1">  1: </a></span>QualifierLazyLoading qualifierLazyLoading0 = new QualifierLazyLoading(&quot;&quot;, (List) null);
+<span class="nocode"><a name="2">  2: </a></span>qualifierLazyLoading0.setForceLoad(true);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;&quot;, qualifierLazyLoading0.getName());
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>QualifierLazyLoading qualifierLazyLoading0 = new QualifierLazyLoading(&quot;zciMfy]Jb\&quot;\&quot;&quot;, (LazyQualifierValue) null);
-<span class="nocode"><a name="2">  2: </a></span>QualifierLazyLoading qualifierLazyLoading1 = (QualifierLazyLoading)qualifierLazyLoading0.copy();
-<span class="nocode"><a name="3">  3: </a></span>assertNotSame(qualifierLazyLoading0, qualifierLazyLoading1);
+<span class="nocode"><a name="1">  1: </a></span>FeatureLocLazyQualifierValue featureLocLazyQualifierValue0 = new FeatureLocLazyQualifierValue((Feature) null, 0);
+<span class="nocode"><a name="2">  2: </a></span>QualifierLazyLoading qualifierLazyLoading0 = new QualifierLazyLoading(&quot;q;PO-|Y~&quot;, featureLocLazyQualifierValue0);
+<span class="nocode"><a name="3">  3: </a></span>List&lt;Object&gt; list0 = qualifierLazyLoading0.getLazyValues();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1, list0.size());
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>QualifierLazyLoading qualifierLazyLoading0 = new QualifierLazyLoading(&quot;&quot;, (List) null);
-<span class="nocode"><a name="2">  2: </a></span>StringVector stringVector0 = qualifierLazyLoading0.getValues();
-<span class="nocode"><a name="3">  3: </a></span>assertNull(stringVector0);
+<span class="nocode"><a name="1">  1: </a></span>KeyVector keyVector0 = new KeyVector();
+<span class="nocode"><a name="2">  2: </a></span>QualifierLazyLoading qualifierLazyLoading0 = new QualifierLazyLoading(&quot;{MHIMW;VH&quot;, keyVector0);
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MergeAnnotation mergeAnnotation0 = new MergeAnnotation();
-<span class="nocode"><a name="2">  2: </a></span>List&lt;Object&gt; list0 = mergeAnnotation0.getAnnotations();
-<span class="nocode"><a name="3">  3: </a></span>QualifierLazyLoading qualifierLazyLoading0 = new QualifierLazyLoading(&quot;)&lt;&quot;, list0);
+<span class="nocode"><a name="1">  1: </a></span>FeatureLocLazyQualifierValue featureLocLazyQualifierValue0 = new FeatureLocLazyQualifierValue((Feature) null, 0);
+<span class="nocode"><a name="2">  2: </a></span>QualifierLazyLoading qualifierLazyLoading0 = new QualifierLazyLoading(&quot;q;PO-|Y~&quot;, featureLocLazyQualifierValue0);
+<span class="nocode"><a name="3">  3: </a></span>StringVector stringVector0 = qualifierLazyLoading0.getValues();
+<span class="nocode"><a name="4">  4: </a></span>assertNotNull(stringVector0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;[LAZY LOADING...;]&quot;, stringVector0.toString());
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>ClusterLazyQualifierValue clusterLazyQualifierValue0 = new ClusterLazyQualifierValue(&quot;&quot;, &quot;9(=zj|nhkxR^G)/&gt;&quot;, (GFFStreamFeature) null);
-<span class="nocode"><a name="2">  2: </a></span>QualifierLazyLoading qualifierLazyLoading0 = new QualifierLazyLoading(&quot;&quot;, clusterLazyQualifierValue0);
-<span class="nocode"><a name="3">  3: </a></span>StringVector stringVector0 = qualifierLazyLoading0.getValues();
-<span class="nocode"><a name="4">  4: </a></span>assertFalse(stringVector0.isEmpty());
+<span class="nocode"><a name="1">  1: </a></span>QualifierLazyLoading qualifierLazyLoading0 = new QualifierLazyLoading(&quot;yUU_p~vCDX6&quot;, (List) null);
+<span class="nocode"><a name="2">  2: </a></span>qualifierLazyLoading0.addValues((List) null);
+<span class="nocode"><a name="3">  3: </a></span>qualifierLazyLoading0.addValues((List) null);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;yUU_p~vCDX6&quot;, qualifierLazyLoading0.getName());
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>QualifierLazyLoading qualifierLazyLoading0 = new QualifierLazyLoading(&quot;S&amp;\&quot;{u&gt;[n1=1^L/y{&quot;, (LazyQualifierValue) null);
-<span class="nocode"><a name="2">  2: </a></span>qualifierLazyLoading0.setForceLoad(true);
-<span class="nocode"><a name="3">  3: </a></span>qualifierLazyLoading0.getValues();
+<span class="nocode"><a name="1">  1: </a></span>FeatureLocLazyQualifierValue featureLocLazyQualifierValue0 = new FeatureLocLazyQualifierValue((Feature) null, 0);
+<span class="nocode"><a name="2">  2: </a></span>QualifierLazyLoading qualifierLazyLoading0 = new QualifierLazyLoading(&quot;q;PO-|Y~&quot;, featureLocLazyQualifierValue0);
+<span class="nocode"><a name="3">  3: </a></span>qualifierLazyLoading0.addValue((Object) &quot;q;PO-|Y~&quot;);
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(qualifierLazyLoading0.isAllLazyValuesLoaded());
 </pre>
 <h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>ClusterLazyQualifierValue clusterLazyQualifierValue0 = new ClusterLazyQualifierValue(&quot;&quot;, &quot;9(=zj|nhkxR^G)/&gt;&quot;, (GFFStreamFeature) null);
-<span class="nocode"><a name="2">  2: </a></span>QualifierLazyLoading qualifierLazyLoading0 = new QualifierLazyLoading(&quot;&quot;, clusterLazyQualifierValue0);
-<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = qualifierLazyLoading0.isAllLazyValuesLoaded();
-<span class="nocode"><a name="4">  4: </a></span>assertFalse(boolean0);
+<span class="nocode"><a name="1">  1: </a></span>QualifierLazyLoading qualifierLazyLoading0 = new QualifierLazyLoading(&quot;&quot;, (List) null);
+<span class="nocode"><a name="2">  2: </a></span>qualifierLazyLoading0.addValue((Object) null);
+<span class="nocode"><a name="3">  3: </a></span>qualifierLazyLoading0.removeValue(&quot;&quot;);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;&quot;, qualifierLazyLoading0.getName());
 </pre>
 <h3>Test case 10</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>QualifierLazyLoading qualifierLazyLoading0 = new QualifierLazyLoading(&quot;zciMfy]Jb\&quot;\&quot;&quot;, (LazyQualifierValue) null);
+<span class="nocode"><a name="1">  1: </a></span>QualifierLazyLoading qualifierLazyLoading0 = new QualifierLazyLoading(&quot;&quot;, (List) null);
 <span class="nocode"><a name="2">  2: </a></span>qualifierLazyLoading0.addValue((Object) null);
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;zciMfy]Jb\&quot;\&quot;&quot;, qualifierLazyLoading0.getName());
+<span class="nocode"><a name="3">  3: </a></span>qualifierLazyLoading0.removeValue((Object) null);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;&quot;, qualifierLazyLoading0.getName());
 </pre>
 <h3>Test case 11</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>QualifierLazyLoading qualifierLazyLoading0 = new QualifierLazyLoading(&quot;Signal &quot;, (List) null);
-<span class="nocode"><a name="2">  2: </a></span>qualifierLazyLoading0.addValue((Object) null);
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;Signal &quot;, qualifierLazyLoading0.getName());
+<span class="nocode"><a name="1">  1: </a></span>FeatureLocLazyQualifierValue featureLocLazyQualifierValue0 = new FeatureLocLazyQualifierValue((Feature) null, 0);
+<span class="nocode"><a name="2">  2: </a></span>QualifierLazyLoading qualifierLazyLoading0 = new QualifierLazyLoading(&quot;q;PO-|Y~&quot;, featureLocLazyQualifierValue0);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = qualifierLazyLoading0.getName();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;q;PO-|Y~&quot;, string0);
 </pre>
 <h3>Test case 12</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Feature feature0 = new Feature();
-<span class="nocode"><a name="2">  2: </a></span>FeatureLocLazyQualifierValue featureLocLazyQualifierValue0 = new FeatureLocLazyQualifierValue(feature0, 160);
-<span class="nocode"><a name="3">  3: </a></span>QualifierLazyLoading qualifierLazyLoading0 = new QualifierLazyLoading(&quot;vJ|lD]*OrOs1E2`&lt;&quot;, featureLocLazyQualifierValue0);
-<span class="nocode"><a name="4">  4: </a></span>qualifierLazyLoading0.removeValue((Object) null);
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;vJ|lD]*OrOs1E2`&lt;&quot;, qualifierLazyLoading0.getName());
+<span class="nocode"><a name="1">  1: </a></span>QualifierLazyLoading qualifierLazyLoading0 = new QualifierLazyLoading(&quot;&quot;, (List) null);
+<span class="nocode"><a name="2">  2: </a></span>qualifierLazyLoading0.addValues((List) null);
+<span class="nocode"><a name="3">  3: </a></span>qualifierLazyLoading0.getValues();
 </pre>
 <h3>Test case 13</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Key key0 = new Key(&quot;G2)kdz&amp; Z:et/&lt;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>KeyVector keyVector0 = new KeyVector(key0);
-<span class="nocode"><a name="3">  3: </a></span>QualifierLazyLoading qualifierLazyLoading0 = new QualifierLazyLoading(&quot;Cannot get the gene name of &quot;, keyVector0);
-<span class="nocode"><a name="4">  4: </a></span>qualifierLazyLoading0.getValue(0);
+<span class="nocode"><a name="1">  1: </a></span>QualifierLazyLoading qualifierLazyLoading0 = new QualifierLazyLoading(&quot;&quot;, (List) null);
+<span class="nocode"><a name="2">  2: </a></span>qualifierLazyLoading0.removeValue((Object) null);
 </pre>
 <h3>Test case 14</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>DoubleAlphabet doubleAlphabet0 = DoubleAlphabet.getInstance();
-<span class="nocode"><a name="2">  2: </a></span>List&lt;Object&gt; list0 = doubleAlphabet0.getAlphabets();
-<span class="nocode"><a name="3">  3: </a></span>QualifierLazyLoading qualifierLazyLoading0 = new QualifierLazyLoading(&quot;&quot;, list0);
-<span class="nocode"><a name="4">  4: </a></span>qualifierLazyLoading0.getValues();
-</pre>
-<h3>Test case 15</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>QualifierLazyLoading qualifierLazyLoading0 = new QualifierLazyLoading(&quot;&quot;, (List) null);
-<span class="nocode"><a name="2">  2: </a></span>MockHijrahDate mockHijrahDate0 = new MockHijrahDate();
-<span class="nocode"><a name="3">  3: </a></span>qualifierLazyLoading0.removeValue(mockHijrahDate0);
-</pre>
-<h3>Test case 16</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>QualifierLazyLoading qualifierLazyLoading0 = new QualifierLazyLoading(&quot;Signal &quot;, (List) null);
+<span class="nocode"><a name="1">  1: </a></span>QualifierLazyLoading qualifierLazyLoading0 = new QualifierLazyLoading(&quot;&amp;L,EF]&quot;, (List) null);
 <span class="nocode"><a name="2">  2: </a></span>List&lt;Object&gt; list0 = qualifierLazyLoading0.getLazyValues();
 <span class="nocode"><a name="3">  3: </a></span>assertNull(list0);
-</pre>
-<h3>Test case 17</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>QualifierLazyLoading qualifierLazyLoading0 = new QualifierLazyLoading(&quot;zciMfy]Jb\&quot;\&quot;&quot;, (LazyQualifierValue) null);
-<span class="nocode"><a name="2">  2: </a></span>String string0 = qualifierLazyLoading0.getName();
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;zciMfy]Jb\&quot;\&quot;&quot;, string0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -152,13 +135,13 @@ uk.ac.sanger.artemis.io.QualifierLazyLoading
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.io.QualifierLazyLoading
-<li>Size: 17
-<li>Length: 47
+<li>Size: 14
+<li>Length: 37
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.6147536703887511
-<li>BranchCoverage: 0.8064516129032258
-<li>MethodCoverage: 1.0
-<li>OutputCoverage: 0.44
+<li>Coverage: 0.5231973738626965
+<li>BranchCoverage: 0.7096774193548387
+<li>MethodCoverage: 0.9166666666666666
+<li>OutputCoverage: 0.36
 </ul></div>
 </div>
 <p><br><a href="../report-generation.html">Back to Overview</a></p>

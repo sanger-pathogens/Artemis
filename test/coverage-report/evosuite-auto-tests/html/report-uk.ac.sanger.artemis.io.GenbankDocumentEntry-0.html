@@ -23,7 +23,7 @@ uk.ac.sanger.artemis.io.GenbankDocumentEntry
 <br><br><h2 class=title>Summary</h2>
 <ul><li>Target class: uk.ac.sanger.artemis.io.GenbankDocumentEntry: 0.90625</ul>
 <ul>
-<li>2.8095238095238093 fitness evaluations, 0 generations, null statements, 9 tests.
+<li>2.757575757575758 fitness evaluations, 0 generations, null statements, 12 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,7 +35,10 @@ uk.ac.sanger.artemis.io.GenbankDocumentEntry
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankDocumentEntry genbankDocumentEntry0 = new GenbankDocumentEntry((EntryInformation) null);
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>GenbankDocumentEntry genbankDocumentEntry0 = new GenbankDocumentEntry(blastEntryInformation0);
+<span class="nocode"><a name="3">  3: </a></span>GenbankDocumentEntry genbankDocumentEntry1 = new GenbankDocumentEntry(blastEntryInformation0, genbankDocumentEntry0, false);
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(genbankDocumentEntry1.isReadOnly());
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
@@ -43,49 +46,81 @@ uk.ac.sanger.artemis.io.GenbankDocumentEntry
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = (SimpleEntryInformation)SimpleEntryInformation.getDefaultEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;);
-<span class="nocode"><a name="3">  3: </a></span>FileDocument fileDocument0 = new FileDocument(mockFile0);
-<span class="nocode"><a name="4">  4: </a></span>LogReadListener logReadListener0 = new LogReadListener(&quot;&quot;);
-<span class="nocode"><a name="5">  5: </a></span>GenbankDocumentEntry genbankDocumentEntry0 = new GenbankDocumentEntry(simpleEntryInformation0, fileDocument0, logReadListener0);
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>FeatureVector featureVector0 = new FeatureVector();
+<span class="nocode"><a name="3">  3: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, &quot; &quot;);
+<span class="nocode"><a name="4">  4: </a></span>Entry entry0 = filteredEntryGroup0.createEntry(&quot;p}&quot;);
+<span class="nocode"><a name="5">  5: </a></span>SimpleEntryInformation simpleEntryInformation0 = (SimpleEntryInformation)entry0.getEntryInformation();
+<span class="nocode"><a name="6">  6: </a></span>GenbankDocumentEntry genbankDocumentEntry0 = new GenbankDocumentEntry(simpleEntryInformation0);
+<span class="nocode"><a name="7">  7: </a></span>JPasswordField jPasswordField0 = new JPasswordField();
+<span class="nocode"><a name="8">  8: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;PRODUCT STORED AS A CV (product_cv=yes) IN &quot;, jPasswordField0, &quot;&quot;, &quot;&quot;, true);
+<span class="nocode"><a name="9">  9: </a></span>LogReadListener logReadListener0 = new LogReadListener(&quot;CDS&quot;);
+<span class="nocode"><a name="10"> 10: </a></span>GenbankDocumentEntry genbankDocumentEntry1 = new GenbankDocumentEntry(simpleEntryInformation0, databaseDocument0, logReadListener0);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>BlastDocumentEntry blastDocumentEntry0 = new BlastDocumentEntry(blastEntryInformation0);
-<span class="nocode"><a name="3">  3: </a></span>GenbankDocumentEntry genbankDocumentEntry0 = new GenbankDocumentEntry(blastEntryInformation0, blastDocumentEntry0, false);
+<span class="nocode"><a name="1">  1: </a></span>MSPcrunchEntryInformation mSPcrunchEntryInformation0 = new MSPcrunchEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>MSPcrunchDocumentEntry mSPcrunchDocumentEntry0 = new MSPcrunchDocumentEntry(mSPcrunchEntryInformation0);
+<span class="nocode"><a name="3">  3: </a></span>GenbankDocumentEntry genbankDocumentEntry0 = new GenbankDocumentEntry(mSPcrunchDocumentEntry0);
 <span class="nocode"><a name="4">  4: </a></span>assertTrue(PublicDBDocumentEntry.IGNORE_OBSOLETE_FEATURES);
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MSPcrunchEntryInformation mSPcrunchEntryInformation0 = new MSPcrunchEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>GenbankDocumentEntry genbankDocumentEntry0 = new GenbankDocumentEntry(mSPcrunchEntryInformation0);
-<span class="nocode"><a name="3">  3: </a></span>assertTrue(PublicDBDocumentEntry.IGNORE_OBSOLETE_FEATURES);
+<span class="nocode"><a name="1">  1: </a></span>GenbankDocumentEntry genbankDocumentEntry0 = new GenbankDocumentEntry((EntryInformation) null);
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = (SimpleEntryInformation)SimpleEntryInformation.getDefaultEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>MSPcrunchDocumentEntry mSPcrunchDocumentEntry0 = new MSPcrunchDocumentEntry(simpleEntryInformation0);
-<span class="nocode"><a name="3">  3: </a></span>EmblDocumentEntry emblDocumentEntry0 = new EmblDocumentEntry(mSPcrunchDocumentEntry0);
-<span class="nocode"><a name="4">  4: </a></span>GenbankDocumentEntry genbankDocumentEntry0 = new GenbankDocumentEntry(emblDocumentEntry0);
-<span class="nocode"><a name="5">  5: </a></span>assertTrue(PublicDBDocumentEntry.IGNORE_OBSOLETE_FEATURES);
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>Entry entry0 = simpleEntryGroup0.createEntry(&quot;;V-oi+Twl~~1&quot;);
+<span class="nocode"><a name="3">  3: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;-12-&quot;);
+<span class="nocode"><a name="4">  4: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="5">  5: </a></span>Range range0 = new Range(0);
+<span class="nocode"><a name="6">  6: </a></span>Entry entry1 = entry0.truncate(bases0, range0);
+<span class="nocode"><a name="7">  7: </a></span>SimpleEntryInformation simpleEntryInformation0 = (SimpleEntryInformation)entry1.getEntryInformation();
+<span class="nocode"><a name="8">  8: </a></span>GenbankDocumentEntry genbankDocumentEntry0 = new GenbankDocumentEntry(simpleEntryInformation0);
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MSPcrunchEntryInformation mSPcrunchEntryInformation0 = new MSPcrunchEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>GenbankDocumentEntry genbankDocumentEntry0 = new GenbankDocumentEntry(mSPcrunchEntryInformation0, (Entry) null, false);
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = (SimpleEntryInformation)SimpleEntryInformation.getDefaultEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>GenbankDocumentEntry genbankDocumentEntry0 = new GenbankDocumentEntry(simpleEntryInformation0, (Entry) null, true);
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = new SimpleEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>TextDocument textDocument0 = new TextDocument();
-<span class="nocode"><a name="3">  3: </a></span>GenbankDocumentEntry genbankDocumentEntry0 = new GenbankDocumentEntry(simpleEntryInformation0, textDocument0, (ReadListener) null);
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>Entry entry0 = simpleEntryGroup0.createEntry(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryInformation simpleEntryInformation0 = (SimpleEntryInformation)entry0.getEntryInformation();
+<span class="nocode"><a name="4">  4: </a></span>MSPcrunchDocumentEntry mSPcrunchDocumentEntry0 = new MSPcrunchDocumentEntry(simpleEntryInformation0);
+<span class="nocode"><a name="5">  5: </a></span>PublicDBDocumentEntry publicDBDocumentEntry0 = new PublicDBDocumentEntry(simpleEntryInformation0, mSPcrunchDocumentEntry0, false);
+<span class="nocode"><a name="6">  6: </a></span>GenbankDocumentEntry genbankDocumentEntry0 = new GenbankDocumentEntry(simpleEntryInformation0, mSPcrunchDocumentEntry0, true);
 </pre>
 <h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = new SimpleEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>LogReadListener logReadListener0 = new LogReadListener(&quot;&quot;);
-<span class="nocode"><a name="3">  3: </a></span>GenbankDocumentEntry genbankDocumentEntry0 = new GenbankDocumentEntry(simpleEntryInformation0, (Document) null, logReadListener0);
+<span class="nocode"><a name="2">  2: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>ZipFileDocument zipFileDocument0 = new ZipFileDocument(mockFile0, &quot;&quot;);
+<span class="nocode"><a name="4">  4: </a></span>LogReadListener logReadListener0 = new LogReadListener(&quot;&quot;);
+<span class="nocode"><a name="5">  5: </a></span>GenbankDocumentEntry genbankDocumentEntry0 = new GenbankDocumentEntry(simpleEntryInformation0, zipFileDocument0, logReadListener0);
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = (SimpleEntryInformation)SimpleEntryInformation.getDefaultEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>URL uRL0 = MockURL.getHttpExample();
+<span class="nocode"><a name="3">  3: </a></span>URLDocument uRLDocument0 = new URLDocument(uRL0);
+<span class="nocode"><a name="4">  4: </a></span>LogReadListener logReadListener0 = new LogReadListener(&quot;&quot;);
+<span class="nocode"><a name="5">  5: </a></span>GenbankDocumentEntry genbankDocumentEntry0 = new GenbankDocumentEntry(simpleEntryInformation0, uRLDocument0, logReadListener0);
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MSPcrunchEntryInformation mSPcrunchEntryInformation0 = new MSPcrunchEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>LogReadListener logReadListener0 = new LogReadListener(&quot;v&quot;);
+<span class="nocode"><a name="3">  3: </a></span>GenbankDocumentEntry genbankDocumentEntry0 = new GenbankDocumentEntry(mSPcrunchEntryInformation0, (Document) null, logReadListener0);
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = new SimpleEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;):w=N+))JU8|!&quot;, (JPasswordField) null);
+<span class="nocode"><a name="3">  3: </a></span>LogReadListener logReadListener0 = new LogReadListener(&quot;CC_&quot;);
+<span class="nocode"><a name="4">  4: </a></span>GenbankDocumentEntry genbankDocumentEntry0 = new GenbankDocumentEntry(simpleEntryInformation0, databaseDocument0, logReadListener0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -98,8 +133,8 @@ uk.ac.sanger.artemis.io.GenbankDocumentEntry
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.io.GenbankDocumentEntry
-<li>Size: 9
-<li>Length: 24
+<li>Size: 12
+<li>Length: 51
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.90625
 <li>BranchCoverage: 1.0

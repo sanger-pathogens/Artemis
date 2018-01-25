@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.components.filetree.RemoteFileNode
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.components.filetree.RemoteFileNode: 0.6852084333950261</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.components.filetree.RemoteFileNode: 0.6720968837073228</ul>
 <ul>
-<li>528.5666666588443 fitness evaluations, 0 generations, null statements, 48 tests.
+<li>534.5624999875331 fitness evaluations, 0 generations, null statements, 48 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,373 +35,359 @@ uk.ac.sanger.artemis.components.filetree.RemoteFileNode
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(&quot;&quot;, &quot;&quot;, (FileList) null, &quot;&quot;, true);
+<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(&quot;xK7h?+~A&lt;f&quot;, &quot;xK7h?+~A&lt;f&quot;, (FileList) null, &quot;&quot;, true);
 <span class="nocode"><a name="2">  2: </a></span>remoteFileNode0.getFile();
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;/&quot;, remoteFileNode0.getPathName());
-<span class="nocode"><a name="4">  4: </a></span>assertFalse(remoteFileNode0.isExplored());
-<span class="nocode"><a name="5">  5: </a></span>assertTrue(remoteFileNode0.getAllowsChildren());
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;xK7h?+~A&lt;f&quot;, remoteFileNode0.getRootDir());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;xK7h?+~A&lt;f/&quot;, remoteFileNode0.getPathName());
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(remoteFileNode0.isExplored());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;/xK7h?+~A&lt;f&quot;, remoteFileNode0.getFullName());
+<span class="nocode"><a name="7">  7: </a></span>assertTrue(remoteFileNode0.isDirectory());
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(true);
-<span class="nocode"><a name="2">  2: </a></span>remoteFileNode0.stat();
+<span class="nocode"><a name="1">  1: </a></span>FileAttributes fileAttributes0 = new FileAttributes();
+<span class="nocode"><a name="2">  2: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode((String) null, (String) null, (FileList) null, (String) null, fileAttributes0);
+<span class="nocode"><a name="3">  3: </a></span>MockDate mockDate0 = (MockDate)remoteFileNode0.getModifiedTime();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;Thu Jan 01 00:00:00 GMT 1970&quot;, mockDate0.toString());
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(remoteFileNode0.isExplored());
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(remoteFileNode0.isDirectory());
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FileAttributes fileAttributes0 = new FileAttributes();
-<span class="nocode"><a name="2">  2: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(&quot;&quot;, &quot;&quot;, (FileList) null, &quot;+nk&quot;, fileAttributes0);
-<span class="nocode"><a name="3">  3: </a></span>MockDate mockDate0 = (MockDate)remoteFileNode0.getModifiedTime();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;/+nk&quot;, remoteFileNode0.getPathName());
-<span class="nocode"><a name="5">  5: </a></span>assertFalse(remoteFileNode0.isExplored());
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;+nk/&quot;, remoteFileNode0.getFullName());
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(&quot;Thu Jan 01 00:00:00 GMT 1970&quot;, mockDate0.toString());
-<span class="nocode"><a name="8">  8: </a></span>assertFalse(remoteFileNode0.isDirectory());
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(&quot;&quot;, remoteFileNode0.getRootDir());
+<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(false);
+<span class="nocode"><a name="2">  2: </a></span>remoteFileNode0.rename((String) null);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(true);
-<span class="nocode"><a name="2">  2: </a></span>remoteFileNode0.rename(&quot;/&quot;);
+<span class="nocode"><a name="2">  2: </a></span>remoteFileNode0.getParentNode();
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(remoteFileNode0.isExplored());
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(remoteFileNode0.isDirectory());
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(&quot;5/.&quot;, &quot;URL:&quot;, (FileList) null, &quot;5/.&quot;, true);
-<span class="nocode"><a name="2">  2: </a></span>remoteFileNode0.getParentNode();
-<span class="nocode"><a name="3">  3: </a></span>assertFalse(remoteFileNode0.isLeaf());
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;5//URL:&quot;, remoteFileNode0.getFullName());
-<span class="nocode"><a name="5">  5: </a></span>assertFalse(remoteFileNode0.isExplored());
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;5/./5/&quot;, remoteFileNode0.getPathName());
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(&quot;5/.&quot;, remoteFileNode0.getRootDir());
+<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(true);
+<span class="nocode"><a name="2">  2: </a></span>JProgressBar jProgressBar0 = new JProgressBar();
+<span class="nocode"><a name="3">  3: </a></span>FTProgress fTProgress0 = new FTProgress(jProgressBar0, &quot;S.~.}&quot;);
+<span class="nocode"><a name="4">  4: </a></span>remoteFileNode0.getFileContents(fTProgress0);
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(true);
-<span class="nocode"><a name="2">  2: </a></span>remoteFileNode0.getFileContents((FTProgress) null);
+<span class="nocode"><a name="1">  1: </a></span>FileAttributes fileAttributes0 = new FileAttributes();
+<span class="nocode"><a name="2">  2: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode((String) null, (String) null, (FileList) null, (String) null, fileAttributes0);
+<span class="nocode"><a name="3">  3: </a></span>remoteFileNode0.length();
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(remoteFileNode0.isExplored());
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(remoteFileNode0.isDirectory());
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(&quot;~/&quot;, &quot;~/&quot;, (FileList) null, &quot;~/&quot;, true);
-<span class="nocode"><a name="2">  2: </a></span>remoteFileNode0.length();
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;~//~/&quot;, remoteFileNode0.getFullName());
-<span class="nocode"><a name="4">  4: </a></span>assertFalse(remoteFileNode0.isExplored());
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;~/~/&quot;, remoteFileNode0.getPathName());
-<span class="nocode"><a name="6">  6: </a></span>assertTrue(remoteFileNode0.isDirectory());
+<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(&quot;session/&quot;, &quot;session/&quot;, (FileList) null, &quot;session/&quot;, true);
+<span class="nocode"><a name="2">  2: </a></span>String string0 = remoteFileNode0.getPathName();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;session//session/&quot;, remoteFileNode0.getFullName());
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(remoteFileNode0.isLeaf());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;session/session/&quot;, string0);
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(remoteFileNode0.isExplored());
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(&quot;&quot;, &quot;~/&quot;, (FileList) null, (String) null, false);
-<span class="nocode"><a name="2">  2: </a></span>String string0 = remoteFileNode0.getPathName();
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;&quot;, string0);
-<span class="nocode"><a name="4">  4: </a></span>assertFalse(remoteFileNode0.isExplored());
-<span class="nocode"><a name="5">  5: </a></span>assertNotNull(string0);
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;&quot;, remoteFileNode0.getRootDir());
-<span class="nocode"><a name="7">  7: </a></span>assertTrue(remoteFileNode0.isLeaf());
+<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(false);
+<span class="nocode"><a name="2">  2: </a></span>remoteFileNode0.reset();
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(remoteFileNode0.isExplored());
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(remoteFileNode0.getAllowsChildren());
 </pre>
 <h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(&quot;&quot;, &quot;&quot;, (FileList) null, &quot;&quot;, true);
-<span class="nocode"><a name="2">  2: </a></span>remoteFileNode0.reset();
+<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(false);
+<span class="nocode"><a name="2">  2: </a></span>remoteFileNode0.getTransferDataFlavors();
 <span class="nocode"><a name="3">  3: </a></span>assertFalse(remoteFileNode0.isExplored());
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;/&quot;, remoteFileNode0.getPathName());
-<span class="nocode"><a name="5">  5: </a></span>assertTrue(remoteFileNode0.getAllowsChildren());
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(remoteFileNode0.getAllowsChildren());
 </pre>
 <h3>Test case 10</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FileAttributes fileAttributes0 = new FileAttributes();
-<span class="nocode"><a name="2">  2: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(&quot;&quot;, &quot;&quot;, (FileList) null, &quot;+nk&quot;, fileAttributes0);
-<span class="nocode"><a name="3">  3: </a></span>remoteFileNode0.getTransferDataFlavors();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;+nk/&quot;, remoteFileNode0.getFullName());
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;/+nk&quot;, remoteFileNode0.getPathName());
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;&quot;, remoteFileNode0.getRootDir());
-<span class="nocode"><a name="7">  7: </a></span>assertFalse(remoteFileNode0.isExplored());
-<span class="nocode"><a name="8">  8: </a></span>assertFalse(remoteFileNode0.getAllowsChildren());
+<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(false);
+<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = remoteFileNode0.getAllowsChildren();
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(boolean0);
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(remoteFileNode0.isExplored());
 </pre>
 <h3>Test case 11</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(false);
-<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = remoteFileNode0.getAllowsChildren();
-<span class="nocode"><a name="3">  3: </a></span>assertFalse(remoteFileNode0.isExplored());
-<span class="nocode"><a name="4">  4: </a></span>assertFalse(boolean0);
-</pre>
-<h3>Test case 12</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(&quot;&quot;, &quot;~/&quot;, (FileList) null, &quot;&quot;, false);
-<span class="nocode"><a name="2">  2: </a></span>String string0 = remoteFileNode0.getFullName();
-<span class="nocode"><a name="3">  3: </a></span>assertTrue(remoteFileNode0.isLeaf());
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;&quot;, remoteFileNode0.getRootDir());
-<span class="nocode"><a name="5">  5: </a></span>assertFalse(remoteFileNode0.isExplored());
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;/&quot;, remoteFileNode0.getPathName());
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(&quot;/~/&quot;, string0);
-</pre>
-<h3>Test case 13</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(true);
-<span class="nocode"><a name="2">  2: </a></span>remoteFileNode0.mkdir(&quot;r&quot;);
-</pre>
-<h3>Test case 14</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(false);
-<span class="nocode"><a name="2">  2: </a></span>remoteFileNode0.delete();
-</pre>
-<h3>Test case 15</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(false);
-<span class="nocode"><a name="2">  2: </a></span>JProgressBar jProgressBar0 = new JProgressBar((-3964), (-3964));
-<span class="nocode"><a name="3">  3: </a></span>FTProgress fTProgress0 = new FTProgress(jProgressBar0, &quot;&quot;);
-<span class="nocode"><a name="4">  4: </a></span>remoteFileNode0.getFileContents(fTProgress0, &quot;&quot;);
-</pre>
-<h3>Test case 16</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(&quot;&quot;, &quot;&quot;, (FileList) null, &quot;&quot;, true);
-<span class="nocode"><a name="2">  2: </a></span>remoteFileNode0.getRootDir();
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;/&quot;, remoteFileNode0.getPathName());
-<span class="nocode"><a name="4">  4: </a></span>assertFalse(remoteFileNode0.isLeaf());
-<span class="nocode"><a name="5">  5: </a></span>assertFalse(remoteFileNode0.isExplored());
-</pre>
-<h3>Test case 17</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(true);
-<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = remoteFileNode0.isDirectory();
-<span class="nocode"><a name="3">  3: </a></span>assertTrue(boolean0);
-<span class="nocode"><a name="4">  4: </a></span>assertFalse(remoteFileNode0.isExplored());
-</pre>
-<h3>Test case 18</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(true);
-<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = remoteFileNode0.isExplored();
-<span class="nocode"><a name="3">  3: </a></span>assertFalse(boolean0);
-<span class="nocode"><a name="4">  4: </a></span>assertTrue(remoteFileNode0.isDirectory());
-</pre>
-<h3>Test case 19</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FileList fileList0 = new FileList((SshFileManager) null);
-<span class="nocode"><a name="2">  2: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(&quot;.&quot;, &quot;&lt;vxG]9~}VeQ9^OgB&quot;, fileList0, &quot;.&quot;, false);
-</pre>
-<h3>Test case 20</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(&quot;&quot;, &quot;~/&quot;, (FileList) null, &quot;&quot;, false);
-<span class="nocode"><a name="2">  2: </a></span>String string0 = remoteFileNode0.getServerName();
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;&quot;, remoteFileNode0.getRootDir());
-<span class="nocode"><a name="4">  4: </a></span>assertFalse(remoteFileNode0.isExplored());
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;/&quot;, remoteFileNode0.getPathName());
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;/~/&quot;, remoteFileNode0.getFullName());
-<span class="nocode"><a name="7">  7: </a></span>assertFalse(remoteFileNode0.isDirectory());
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(&quot;/~/&quot;, string0);
-</pre>
-<h3>Test case 21</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(&quot;&quot;, &quot;~/&quot;, (FileList) null, (String) null, false);
-<span class="nocode"><a name="2">  2: </a></span>String string0 = remoteFileNode0.getServerName();
-<span class="nocode"><a name="3">  3: </a></span>assertTrue(remoteFileNode0.isLeaf());
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;&quot;, remoteFileNode0.getRootDir());
-<span class="nocode"><a name="5">  5: </a></span>assertFalse(remoteFileNode0.isExplored());
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;/&quot;, string0);
-</pre>
-<h3>Test case 22</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(&quot;&quot;, &quot;&quot;, (FileList) null, &quot;&quot;, true);
-<span class="nocode"><a name="2">  2: </a></span>remoteFileNode0.getChildren();
-</pre>
-<h3>Test case 23</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(false);
-<span class="nocode"><a name="2">  2: </a></span>Object[] objectArray0 = remoteFileNode0.getChildren();
-<span class="nocode"><a name="3">  3: </a></span>assertNull(objectArray0);
-<span class="nocode"><a name="4">  4: </a></span>assertFalse(remoteFileNode0.isExplored());
-</pre>
-<h3>Test case 24</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(true);
-<span class="nocode"><a name="2">  2: </a></span>Object[] objectArray0 = remoteFileNode0.getChildren();
-<span class="nocode"><a name="3">  3: </a></span>assertNotNull(objectArray0);
-<span class="nocode"><a name="4">  4: </a></span>assertFalse(remoteFileNode0.isExplored());
-</pre>
-<h3>Test case 25</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(true);
-<span class="nocode"><a name="2">  2: </a></span>MockFile mockFile0 = new MockFile(&quot;{F8`t^Rkcf/2&quot;, &quot;{F8`t^Rkcf/2&quot;);
-<span class="nocode"><a name="3">  3: </a></span>remoteFileNode0.put((File) mockFile0, (FTProgress) null);
-</pre>
-<h3>Test case 26</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(&quot;&quot;, &quot;~/&quot;, (FileList) null, (String) null, false);
-<span class="nocode"><a name="2">  2: </a></span>MockFile mockFile0 = new MockFile(&quot;~/&quot;);
-<span class="nocode"><a name="3">  3: </a></span>JProgressBar jProgressBar0 = new JProgressBar(870, 870);
-<span class="nocode"><a name="4">  4: </a></span>FTProgress fTProgress0 = new FTProgress(jProgressBar0, &quot;lp&quot;);
-<span class="nocode"><a name="5">  5: </a></span>remoteFileNode0.put((File) mockFile0, fTProgress0);
-</pre>
-<h3>Test case 27</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(false);
-<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = remoteFileNode0.isDataFlavorSupported(remoteFileNode0.REMOTEFILENODE);
-<span class="nocode"><a name="3">  3: </a></span>assertTrue(boolean0);
-<span class="nocode"><a name="4">  4: </a></span>assertFalse(remoteFileNode0.isDirectory());
-<span class="nocode"><a name="5">  5: </a></span>assertFalse(remoteFileNode0.isExplored());
-</pre>
-<h3>Test case 28</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(false);
-<span class="nocode"><a name="2">  2: </a></span>DataFlavor dataFlavor0 = DataFlavor.stringFlavor;
-<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = remoteFileNode0.isDataFlavorSupported(dataFlavor0);
-<span class="nocode"><a name="4">  4: </a></span>assertTrue(boolean0);
-<span class="nocode"><a name="5">  5: </a></span>assertFalse(remoteFileNode0.isExplored());
-<span class="nocode"><a name="6">  6: </a></span>assertFalse(remoteFileNode0.isDirectory());
-</pre>
-<h3>Test case 29</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(true);
-<span class="nocode"><a name="2">  2: </a></span>DataFlavor dataFlavor0 = DataFlavor.getTextPlainUnicodeFlavor();
-<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = remoteFileNode0.isDataFlavorSupported(dataFlavor0);
-<span class="nocode"><a name="4">  4: </a></span>assertFalse(remoteFileNode0.isExplored());
-<span class="nocode"><a name="5">  5: </a></span>assertFalse(boolean0);
-<span class="nocode"><a name="6">  6: </a></span>assertTrue(remoteFileNode0.isDirectory());
-</pre>
-<h3>Test case 30</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode((String) null, &quot;`7P}.Jw&quot;, (FileList) null, (String) null, true);
-<span class="nocode"><a name="2">  2: </a></span>DataFlavor dataFlavor0 = DataFlavor.stringFlavor;
-<span class="nocode"><a name="3">  3: </a></span>remoteFileNode0.getTransferData(dataFlavor0);
-</pre>
-<h3>Test case 31</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(&quot;&quot;, &quot;&quot;, (FileList) null, &quot;&quot;, true);
-<span class="nocode"><a name="2">  2: </a></span>RemoteFileNode remoteFileNode1 = (RemoteFileNode)remoteFileNode0.getTransferData(remoteFileNode0.REMOTEFILENODE);
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;/&quot;, remoteFileNode1.getPathName());
-<span class="nocode"><a name="4">  4: </a></span>assertFalse(remoteFileNode1.isLeaf());
-<span class="nocode"><a name="5">  5: </a></span>assertFalse(remoteFileNode1.isExplored());
-</pre>
-<h3>Test case 32</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(&quot;&gt;ninrW)|\&quot;vyx&quot;, &quot;&gt;ninrW)|\&quot;vyx&quot;, (FileList) null, &quot;&quot;, (FileAttributes) null);
-</pre>
-<h3>Test case 33</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(false);
-<span class="nocode"><a name="2">  2: </a></span>remoteFileNode0.getServerName();
-</pre>
-<h3>Test case 34</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(false);
-<span class="nocode"><a name="2">  2: </a></span>DataFlavor dataFlavor0 = new DataFlavor();
-<span class="nocode"><a name="3">  3: </a></span>remoteFileNode0.getTransferData(dataFlavor0);
-</pre>
-<h3>Test case 35</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(false);
-<span class="nocode"><a name="2">  2: </a></span>MockFile mockFile0 = new MockFile(&quot;aAZVZ=IP =&quot;, &quot;&gt;&quot;);
-<span class="nocode"><a name="3">  3: </a></span>JProgressBar jProgressBar0 = new JProgressBar();
-<span class="nocode"><a name="4">  4: </a></span>FTProgress fTProgress0 = new FTProgress(jProgressBar0, &quot;&quot;);
-<span class="nocode"><a name="5">  5: </a></span>remoteFileNode0.put(&quot;aAZVZ=IP =&quot;, (File) mockFile0, fTProgress0, false);
-</pre>
-<h3>Test case 36</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(true);
-<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = remoteFileNode0.getAllowsChildren();
-<span class="nocode"><a name="3">  3: </a></span>assertFalse(remoteFileNode0.isExplored());
-<span class="nocode"><a name="4">  4: </a></span>assertTrue(boolean0);
-</pre>
-<h3>Test case 37</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode((String) null, (String) null, (FileList) null, (String) null, false);
-<span class="nocode"><a name="2">  2: </a></span>remoteFileNode0.getFile();
-<span class="nocode"><a name="3">  3: </a></span>assertFalse(remoteFileNode0.isExplored());
-<span class="nocode"><a name="4">  4: </a></span>assertFalse(remoteFileNode0.isDirectory());
-</pre>
-<h3>Test case 38</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(false);
 <span class="nocode"><a name="2">  2: </a></span>remoteFileNode0.getFullName();
 <span class="nocode"><a name="3">  3: </a></span>assertFalse(remoteFileNode0.isExplored());
 <span class="nocode"><a name="4">  4: </a></span>assertFalse(remoteFileNode0.isDirectory());
 </pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(false);
+<span class="nocode"><a name="2">  2: </a></span>remoteFileNode0.mkdir(&quot;htsjdk.variant.vcf.VCFHeader$HEADER_FIELDS&quot;);
+</pre>
+<h3>Test case 13</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(&quot;xK7h?+~A&lt;f&quot;, &quot;xK7h?+~A&lt;f&quot;, (FileList) null, &quot;&quot;, true);
+<span class="nocode"><a name="2">  2: </a></span>remoteFileNode0.delete();
+</pre>
+<h3>Test case 14</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(false);
+<span class="nocode"><a name="2">  2: </a></span>JProgressBar jProgressBar0 = new JProgressBar();
+<span class="nocode"><a name="3">  3: </a></span>FTProgress fTProgress0 = new FTProgress(jProgressBar0, &quot;The channel is closed [&quot;);
+<span class="nocode"><a name="4">  4: </a></span>remoteFileNode0.getFileContents(fTProgress0, &quot;The channel is closed [&quot;);
+</pre>
+<h3>Test case 15</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FileAttributes fileAttributes0 = new FileAttributes();
+<span class="nocode"><a name="2">  2: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode((String) null, (String) null, (FileList) null, (String) null, fileAttributes0);
+<span class="nocode"><a name="3">  3: </a></span>remoteFileNode0.getRootDir();
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(remoteFileNode0.isDirectory());
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(remoteFileNode0.isExplored());
+</pre>
+<h3>Test case 16</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(false);
+<span class="nocode"><a name="2">  2: </a></span>JProgressBar jProgressBar0 = new JProgressBar(1);
+<span class="nocode"><a name="3">  3: </a></span>FTProgress fTProgress0 = new FTProgress(jProgressBar0, (String) null);
+<span class="nocode"><a name="4">  4: </a></span>remoteFileNode0.put((File) null, fTProgress0);
+</pre>
+<h3>Test case 17</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FileAttributes fileAttributes0 = new FileAttributes();
+<span class="nocode"><a name="2">  2: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode((String) null, (String) null, (FileList) null, (String) null, fileAttributes0);
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = remoteFileNode0.isExplored();
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(boolean0);
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(remoteFileNode0.isLeaf());
+</pre>
+<h3>Test case 18</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(&quot;g4Yd/./.&quot;, &quot;g4Yd/./.&quot;, (FileList) null, &quot;Mfl/.&quot;, false);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;g4Yd/././Mfl/&quot;, remoteFileNode0.getPathName());
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;g4Yd/./.&quot;, remoteFileNode0.getRootDir());
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(remoteFileNode0.isDirectory());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;Mfl//g4Yd/./.&quot;, remoteFileNode0.getFullName());
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(remoteFileNode0.isExplored());
+</pre>
+<h3>Test case 19</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FileList fileList0 = new FileList((SshFileManager) null);
+<span class="nocode"><a name="2">  2: </a></span>FileAttributes fileAttributes0 = new FileAttributes();
+<span class="nocode"><a name="3">  3: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(&quot;session&quot;, &quot;&quot;, fileList0, &quot;HHRo~%({1&quot;, fileAttributes0);
+</pre>
+<h3>Test case 20</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(true);
+<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = remoteFileNode0.isLeaf();
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(remoteFileNode0.isExplored());
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 21</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(&quot;/&quot;, &quot;/&quot;, (FileList) null, &quot;/&quot;, true);
+<span class="nocode"><a name="2">  2: </a></span>DataFlavor dataFlavor0 = DataFlavor.stringFlavor;
+<span class="nocode"><a name="3">  3: </a></span>String string0 = (String)remoteFileNode0.getTransferData(dataFlavor0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;///&quot;, remoteFileNode0.getFullName());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;///&quot;, string0);
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(remoteFileNode0.isExplored());
+<span class="nocode"><a name="7">  7: </a></span>assertFalse(remoteFileNode0.isLeaf());
+</pre>
+<h3>Test case 22</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(&quot;ac/KN6A[&quot;, &quot;ac/KN6A[&quot;, (FileList) null, &quot;ac/KN6A[&quot;, true);
+<span class="nocode"><a name="2">  2: </a></span>String string0 = remoteFileNode0.getServerName();
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(remoteFileNode0.isExplored());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;ac/KN6A[/ac/KN6A[/ac/KN6A[&quot;, string0);
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(remoteFileNode0.getAllowsChildren());
+</pre>
+<h3>Test case 23</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(&quot;/&quot;, &quot;/&quot;, (FileList) null, &quot;/&quot;, true);
+<span class="nocode"><a name="2">  2: </a></span>remoteFileNode0.getChildren();
+</pre>
+<h3>Test case 24</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FileAttributes fileAttributes0 = new FileAttributes();
+<span class="nocode"><a name="2">  2: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode((String) null, (String) null, (FileList) null, (String) null, fileAttributes0);
+<span class="nocode"><a name="3">  3: </a></span>Object[] objectArray0 = remoteFileNode0.getChildren();
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(remoteFileNode0.isExplored());
+<span class="nocode"><a name="5">  5: </a></span>assertNull(objectArray0);
+</pre>
+<h3>Test case 25</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(true);
+<span class="nocode"><a name="2">  2: </a></span>Object[] objectArray0 = remoteFileNode0.getChildren();
+<span class="nocode"><a name="3">  3: </a></span>assertNotNull(objectArray0);
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(remoteFileNode0.isExplored());
+</pre>
+<h3>Test case 26</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(true);
+<span class="nocode"><a name="2">  2: </a></span>JProgressBar jProgressBar0 = new JProgressBar();
+<span class="nocode"><a name="3">  3: </a></span>FTProgress fTProgress0 = new FTProgress(jProgressBar0, (String) null);
+<span class="nocode"><a name="4">  4: </a></span>remoteFileNode0.put((File) null, fTProgress0);
+</pre>
+<h3>Test case 27</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(false);
+<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = remoteFileNode0.isDataFlavorSupported(remoteFileNode0.REMOTEFILENODE);
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(remoteFileNode0.isExplored());
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(boolean0);
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(remoteFileNode0.isDirectory());
+</pre>
+<h3>Test case 28</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(true);
+<span class="nocode"><a name="2">  2: </a></span>DataFlavor dataFlavor0 = DataFlavor.allHtmlFlavor;
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = remoteFileNode0.isDataFlavorSupported(dataFlavor0);
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(boolean0);
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(remoteFileNode0.isDirectory());
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(remoteFileNode0.isExplored());
+</pre>
+<h3>Test case 29</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(false);
+<span class="nocode"><a name="2">  2: </a></span>RemoteFileNode remoteFileNode1 = (RemoteFileNode)remoteFileNode0.getTransferData(remoteFileNode0.REMOTEFILENODE);
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(remoteFileNode1.isExplored());
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(remoteFileNode1.isLeaf());
+</pre>
+<h3>Test case 30</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(false);
+<span class="nocode"><a name="2">  2: </a></span>DataFlavor dataFlavor0 = new DataFlavor();
+<span class="nocode"><a name="3">  3: </a></span>remoteFileNode0.getTransferData(dataFlavor0);
+</pre>
+<h3>Test case 31</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(false);
+<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = remoteFileNode0.isDirectory();
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(remoteFileNode0.isExplored());
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 32</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FileList fileList0 = new FileList((SshFileManager) null);
+<span class="nocode"><a name="2">  2: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(&quot;&quot;, &quot;&quot;, fileList0, &quot;g4Yd&quot;, true);
+</pre>
+<h3>Test case 33</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FileAttributes fileAttributes0 = new FileAttributes();
+<span class="nocode"><a name="2">  2: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode((String) null, (String) null, (FileList) null, (String) null, fileAttributes0);
+<span class="nocode"><a name="3">  3: </a></span>remoteFileNode0.getServerName();
+</pre>
+<h3>Test case 34</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(false);
+<span class="nocode"><a name="2">  2: </a></span>remoteFileNode0.getTransferData((DataFlavor) null);
+</pre>
+<h3>Test case 35</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(false);
+<span class="nocode"><a name="2">  2: </a></span>remoteFileNode0.isDataFlavorSupported((DataFlavor) null);
+</pre>
+<h3>Test case 36</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(true);
+<span class="nocode"><a name="2">  2: </a></span>MockFile mockFile0 = new MockFile(&quot;htsjdk.samtools.SAMSequenceRecord&quot;, &quot;htsjdk.samtools.SAMSequenceRecord&quot;);
+<span class="nocode"><a name="3">  3: </a></span>JProgressBar jProgressBar0 = new JProgressBar(43, 43);
+<span class="nocode"><a name="4">  4: </a></span>FTProgress fTProgress0 = new FTProgress(jProgressBar0, &quot;/&quot;);
+<span class="nocode"><a name="5">  5: </a></span>remoteFileNode0.put(&quot;/&quot;, (File) mockFile0, fTProgress0, true);
+</pre>
+<h3>Test case 37</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(true);
+<span class="nocode"><a name="2">  2: </a></span>remoteFileNode0.stat();
+</pre>
+<h3>Test case 38</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(true);
+<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = remoteFileNode0.getAllowsChildren();
+<span class="nocode"><a name="3">  3: </a></span>assertTrue(boolean0);
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(remoteFileNode0.isExplored());
+</pre>
 <h3>Test case 39</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(true);
-<span class="nocode"><a name="2">  2: </a></span>remoteFileNode0.getModifiedTime();
-<span class="nocode"><a name="3">  3: </a></span>assertFalse(remoteFileNode0.isExplored());
-<span class="nocode"><a name="4">  4: </a></span>assertTrue(remoteFileNode0.getAllowsChildren());
-</pre>
-<h3>Test case 40</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(true);
-<span class="nocode"><a name="2">  2: </a></span>remoteFileNode0.getPathName();
+<span class="nocode"><a name="2">  2: </a></span>remoteFileNode0.getFile();
 <span class="nocode"><a name="3">  3: </a></span>assertFalse(remoteFileNode0.isExplored());
 <span class="nocode"><a name="4">  4: </a></span>assertFalse(remoteFileNode0.isLeaf());
 </pre>
+<h3>Test case 40</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(&quot;/&quot;, &quot;/&quot;, (FileList) null, &quot;/&quot;, true);
+<span class="nocode"><a name="2">  2: </a></span>String string0 = remoteFileNode0.getFullName();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;///&quot;, string0);
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(remoteFileNode0.isLeaf());
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(remoteFileNode0.isExplored());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;//&quot;, remoteFileNode0.getPathName());
+</pre>
 <h3>Test case 41</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(&quot;T&quot;, &quot;&quot;, (FileList) null, &quot;&quot;, true);
-<span class="nocode"><a name="2">  2: </a></span>String string0 = remoteFileNode0.getRootDir();
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;/&quot;, remoteFileNode0.getFullName());
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;T/&quot;, remoteFileNode0.getPathName());
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;T&quot;, string0);
-<span class="nocode"><a name="6">  6: </a></span>assertFalse(remoteFileNode0.isLeaf());
-<span class="nocode"><a name="7">  7: </a></span>assertFalse(remoteFileNode0.isExplored());
+<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(false);
+<span class="nocode"><a name="2">  2: </a></span>remoteFileNode0.getModifiedTime();
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(remoteFileNode0.isExplored());
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(remoteFileNode0.isDirectory());
 </pre>
 <h3>Test case 42</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(false);
-<span class="nocode"><a name="2">  2: </a></span>remoteFileNode0.getRootDir();
+<span class="nocode"><a name="2">  2: </a></span>remoteFileNode0.getPathName();
 <span class="nocode"><a name="3">  3: </a></span>assertFalse(remoteFileNode0.isExplored());
-<span class="nocode"><a name="4">  4: </a></span>assertFalse(remoteFileNode0.getAllowsChildren());
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(remoteFileNode0.isDirectory());
 </pre>
 <h3>Test case 43</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(false);
-<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = remoteFileNode0.isDirectory();
-<span class="nocode"><a name="3">  3: </a></span>assertFalse(boolean0);
-<span class="nocode"><a name="4">  4: </a></span>assertFalse(remoteFileNode0.isExplored());
+<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(&quot;\u0003@uZW9&quot;, &quot;l$k,^mTDm8K/n/&lt;r&quot;, (FileList) null, &quot;resources/jemboss.properties&quot;, true);
+<span class="nocode"><a name="2">  2: </a></span>String string0 = remoteFileNode0.getRootDir();
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(remoteFileNode0.isExplored());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;\u0003@uZW9&quot;, string0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;resources/jemboss.properties/l$k,^mTDm8K/n/&lt;r&quot;, remoteFileNode0.getFullName());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;\u0003@uZW9/resources/jemboss.properties&quot;, remoteFileNode0.getPathName());
+<span class="nocode"><a name="7">  7: </a></span>assertTrue(remoteFileNode0.getAllowsChildren());
 </pre>
 <h3>Test case 44</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(&quot;&quot;, &quot;&quot;, (FileList) null, &quot;&quot;, true);
-<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = remoteFileNode0.isLeaf();
-<span class="nocode"><a name="3">  3: </a></span>assertFalse(boolean0);
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;/&quot;, remoteFileNode0.getPathName());
-<span class="nocode"><a name="5">  5: </a></span>assertFalse(remoteFileNode0.isExplored());
+<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(true);
+<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = remoteFileNode0.isDirectory();
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(remoteFileNode0.isExplored());
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(boolean0);
 </pre>
 <h3>Test case 45</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[4];
+<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[2];
 <span class="nocode"><a name="2">  2: </a></span>ByteArrayReader byteArrayReader0 = new ByteArrayReader(byteArray0);
 <span class="nocode"><a name="3">  3: </a></span>FileAttributes fileAttributes0 = new FileAttributes(byteArrayReader0);
-<span class="nocode"><a name="4">  4: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode((String) null, &quot;&gt;,&lt;eW^B/!G~EW&quot;, (FileList) null, (String) null, fileAttributes0);
+<span class="nocode"><a name="4">  4: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(&quot;s3ivo&lt;3Pm0ZUh!8|&quot;, &quot;8sf&gt;u59OE&quot;, (FileList) null, &quot;8sf&gt;u59OE&quot;, fileAttributes0);
 <span class="nocode"><a name="5">  5: </a></span>boolean boolean0 = remoteFileNode0.isLeaf();
 <span class="nocode"><a name="6">  6: </a></span>assertFalse(remoteFileNode0.isExplored());
-<span class="nocode"><a name="7">  7: </a></span>assertTrue(boolean0);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(&quot;s3ivo&lt;3Pm0ZUh!8|/8sf&gt;u59OE&quot;, remoteFileNode0.getPathName());
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(&quot;8sf&gt;u59OE/8sf&gt;u59OE&quot;, remoteFileNode0.getFullName());
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(&quot;s3ivo&lt;3Pm0ZUh!8|&quot;, remoteFileNode0.getRootDir());
+<span class="nocode"><a name="10"> 10: </a></span>assertTrue(boolean0);
 </pre>
 <h3>Test case 46</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[4];
-<span class="nocode"><a name="2">  2: </a></span>ByteArrayReader byteArrayReader0 = new ByteArrayReader(byteArray0);
-<span class="nocode"><a name="3">  3: </a></span>FileAttributes fileAttributes0 = new FileAttributes(byteArrayReader0);
-<span class="nocode"><a name="4">  4: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode((String) null, &quot;&gt;,&lt;eW^B/!G~EW&quot;, (FileList) null, (String) null, fileAttributes0);
-<span class="nocode"><a name="5">  5: </a></span>remoteFileNode0.length();
-<span class="nocode"><a name="6">  6: </a></span>assertFalse(remoteFileNode0.isExplored());
-<span class="nocode"><a name="7">  7: </a></span>assertTrue(remoteFileNode0.isLeaf());
+<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(false);
+<span class="nocode"><a name="2">  2: </a></span>remoteFileNode0.length();
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(remoteFileNode0.isExplored());
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(remoteFileNode0.isLeaf());
 </pre>
 <h3>Test case 47</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[4];
-<span class="nocode"><a name="2">  2: </a></span>ByteArrayReader byteArrayReader0 = new ByteArrayReader(byteArray0);
-<span class="nocode"><a name="3">  3: </a></span>FileAttributes fileAttributes0 = new FileAttributes(byteArrayReader0);
-<span class="nocode"><a name="4">  4: </a></span>UnsignedInteger32 unsignedInteger32_0 = new UnsignedInteger32(5);
-<span class="nocode"><a name="5">  5: </a></span>fileAttributes0.setTimes(unsignedInteger32_0, unsignedInteger32_0);
-<span class="nocode"><a name="6">  6: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(&quot;hp57FMx|&quot;, &quot;{&quot;, (FileList) null, &quot;hp57FMx|&quot;, fileAttributes0);
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(&quot;hp57FMx|/{&quot;, remoteFileNode0.getFullName());
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(&quot;hp57FMx|&quot;, remoteFileNode0.getRootDir());
-<span class="nocode"><a name="9">  9: </a></span>assertFalse(remoteFileNode0.isDirectory());
-<span class="nocode"><a name="10"> 10: </a></span>assertEquals(&quot;hp57FMx|/hp57FMx|&quot;, remoteFileNode0.getPathName());
-<span class="nocode"><a name="11"> 11: </a></span>assertFalse(remoteFileNode0.isExplored());
+<span class="nocode"><a name="1">  1: </a></span>FileAttributes fileAttributes0 = new FileAttributes();
+<span class="nocode"><a name="2">  2: </a></span>UnsignedInteger32 unsignedInteger32_0 = new UnsignedInteger32(40960);
+<span class="nocode"><a name="3">  3: </a></span>fileAttributes0.setTimes(unsignedInteger32_0, unsignedInteger32_0);
+<span class="nocode"><a name="4">  4: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode((String) null, (String) null, (FileList) null, (String) null, fileAttributes0);
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(remoteFileNode0.isDirectory());
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(remoteFileNode0.isExplored());
 </pre>
 <h3>Test case 48</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(true);
+<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(&quot;/&quot;, &quot;/&quot;, (FileList) null, &quot;/&quot;, true);
 <span class="nocode"><a name="2">  2: </a></span>RemoteFileNode remoteFileNode1 = new RemoteFileNode(true);
 <span class="nocode"><a name="3">  3: </a></span>remoteFileNode0.setParentNode(remoteFileNode1);
-<span class="nocode"><a name="4">  4: </a></span>assertFalse(remoteFileNode1.isExplored());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;///&quot;, remoteFileNode0.getFullName());
 <span class="nocode"><a name="5">  5: </a></span>assertFalse(remoteFileNode1.isLeaf());
-<span class="nocode"><a name="6">  6: </a></span>assertFalse(remoteFileNode0.isLeaf());
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(remoteFileNode0.isExplored());
+<span class="nocode"><a name="7">  7: </a></span>assertFalse(remoteFileNode1.isExplored());
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(&quot;//&quot;, remoteFileNode0.getPathName());
+<span class="nocode"><a name="9">  9: </a></span>assertFalse(remoteFileNode0.isLeaf());
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -415,12 +401,12 @@ uk.ac.sanger.artemis.components.filetree.RemoteFileNode
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.filetree.RemoteFileNode
 <li>Size: 48
-<li>Length: 121
+<li>Length: 122
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.6852084333950261
-<li>BranchCoverage: 0.76
+<li>Coverage: 0.6720968837073228
+<li>BranchCoverage: 0.72
 <li>MethodCoverage: 1.0
-<li>OutputCoverage: 0.4177215189873418
+<li>OutputCoverage: 0.3924050632911392
 </ul></div>
 </div>
 <p><br><a href="../report-generation.html">Back to Overview</a></p>

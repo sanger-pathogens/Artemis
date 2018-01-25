@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.AlignMatchVector
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.AlignMatchVector: 0.9868421052631579</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.AlignMatchVector: 0.9835526315789473</ul>
 <ul>
-<li>3.7 fitness evaluations, 0 generations, null statements, 21 tests.
+<li>4.7 fitness evaluations, 0 generations, null statements, 21 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -36,78 +36,81 @@ uk.ac.sanger.artemis.AlignMatchVector
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>AlignMatchVector alignMatchVector0 = new AlignMatchVector();
-<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range((-1));
-<span class="nocode"><a name="3">  3: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, false, (-1), (-1));
-<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = alignMatchVector0.remove(alignMatch0);
-<span class="nocode"><a name="5">  5: </a></span>assertFalse(boolean0);
+<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(2139);
+<span class="nocode"><a name="3">  3: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, false, 2139, (-1320));
+<span class="nocode"><a name="4">  4: </a></span>alignMatchVector0.addElement(alignMatch0);
+<span class="nocode"><a name="5">  5: </a></span>alignMatchVector0.addElement(alignMatch0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>AlignMatchVector alignMatchVector0 = new AlignMatchVector();
-<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(0, 0);
-<span class="nocode"><a name="3">  3: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, true, 0, 0);
-<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = alignMatchVector0.contains(alignMatch0);
+<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(67);
+<span class="nocode"><a name="3">  3: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, true, (-1), 4022);
+<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = alignMatchVector0.remove(alignMatch0);
 <span class="nocode"><a name="5">  5: </a></span>assertFalse(boolean0);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>AlignMatchVector alignMatchVector0 = new AlignMatchVector();
-<span class="nocode"><a name="2">  2: </a></span>AlignMatchVector alignMatchVector1 = (AlignMatchVector)alignMatchVector0.clone();
-<span class="nocode"><a name="3">  3: </a></span>assertNotSame(alignMatchVector1, alignMatchVector0);
+<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(2139);
+<span class="nocode"><a name="3">  3: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, false, 2139, (-1320));
+<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = alignMatchVector0.contains(alignMatch0);
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(boolean0);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>AlignMatchVector alignMatchVector0 = new AlignMatchVector();
-<span class="nocode"><a name="2">  2: </a></span>alignMatchVector0.removeAllElements();
+<span class="nocode"><a name="2">  2: </a></span>AlignMatchVector alignMatchVector1 = (AlignMatchVector)alignMatchVector0.clone();
+<span class="nocode"><a name="3">  3: </a></span>assertNotSame(alignMatchVector1, alignMatchVector0);
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>AlignMatchVector alignMatchVector0 = new AlignMatchVector();
-<span class="nocode"><a name="2">  2: </a></span>alignMatchVector0.elementAt(0);
+<span class="nocode"><a name="2">  2: </a></span>alignMatchVector0.removeAllElements();
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>AlignMatchVector alignMatchVector0 = new AlignMatchVector();
-<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(0, 0);
-<span class="nocode"><a name="3">  3: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, true, 0, 0);
+<span class="nocode"><a name="2">  2: </a></span>alignMatchVector0.elementAt(0);
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>AlignMatchVector alignMatchVector0 = new AlignMatchVector();
+<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(2139);
+<span class="nocode"><a name="3">  3: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, false, 2139, (-1320));
 <span class="nocode"><a name="4">  4: </a></span>int int0 = alignMatchVector0.indexOf(alignMatch0);
 <span class="nocode"><a name="5">  5: </a></span>assertEquals((-1), int0);
 </pre>
-<h3>Test case 7</h3>
+<h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>AlignMatchVector alignMatchVector0 = new AlignMatchVector();
 <span class="nocode"><a name="2">  2: </a></span>int int0 = alignMatchVector0.size();
 <span class="nocode"><a name="3">  3: </a></span>assertEquals(0, int0);
 </pre>
-<h3>Test case 8</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>AlignMatchVector alignMatchVector0 = new AlignMatchVector();
-<span class="nocode"><a name="2">  2: </a></span>Comparator&lt;FastVector&gt; comparator0 = (Comparator&lt;FastVector&gt;) mock(Comparator.class, new ViolatedAssumptionAnswer());
-<span class="nocode"><a name="3">  3: </a></span>alignMatchVector0.sort(comparator0);
-</pre>
 <h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>AlignMatchVector alignMatchVector0 = new AlignMatchVector();
-<span class="nocode"><a name="2">  2: </a></span>alignMatchVector0.add((AlignMatch) null);
+<span class="nocode"><a name="2">  2: </a></span>Comparator&lt;Object&gt; comparator0 = (Comparator&lt;Object&gt;) mock(Comparator.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="3">  3: </a></span>alignMatchVector0.sort(comparator0);
 </pre>
 <h3>Test case 10</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>AlignMatchVector alignMatchVector0 = new AlignMatchVector();
-<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range((-449));
-<span class="nocode"><a name="3">  3: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, false, (-449), 0);
+<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(0, 0);
+<span class="nocode"><a name="3">  3: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, true, (-832), (-2698));
 <span class="nocode"><a name="4">  4: </a></span>alignMatchVector0.add(alignMatch0);
-<span class="nocode"><a name="5">  5: </a></span>alignMatchVector0.addElement(alignMatch0);
+<span class="nocode"><a name="5">  5: </a></span>alignMatchVector0.add(alignMatch0);
 </pre>
 <h3>Test case 11</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>AlignMatchVector alignMatchVector0 = new AlignMatchVector();
-<span class="nocode"><a name="2">  2: </a></span>alignMatchVector0.elementAt((-17));
+<span class="nocode"><a name="2">  2: </a></span>alignMatchVector0.elementAt((-2139));
 </pre>
 <h3>Test case 12</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>AlignMatchVector alignMatchVector0 = new AlignMatchVector();
-<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(0, 0);
-<span class="nocode"><a name="3">  3: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, false, 0, 1737);
+<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(2139);
+<span class="nocode"><a name="3">  3: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, false, 2139, (-1320));
 <span class="nocode"><a name="4">  4: </a></span>alignMatchVector0.addElement(alignMatch0);
 <span class="nocode"><a name="5">  5: </a></span>boolean boolean0 = alignMatchVector0.contains(alignMatch0);
 <span class="nocode"><a name="6">  6: </a></span>assertTrue(boolean0);
@@ -115,70 +118,65 @@ uk.ac.sanger.artemis.AlignMatchVector
 <h3>Test case 13</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>AlignMatchVector alignMatchVector0 = new AlignMatchVector();
-<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(0, 0);
-<span class="nocode"><a name="3">  3: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, true, 0, 0);
-<span class="nocode"><a name="4">  4: </a></span>alignMatch0.setRange(0, 1069, true, true);
-<span class="nocode"><a name="5">  5: </a></span>AlignMatch alignMatch1 = AlignMatch.copy(alignMatch0);
-<span class="nocode"><a name="6">  6: </a></span>alignMatchVector0.addElement(alignMatch1);
-<span class="nocode"><a name="7">  7: </a></span>AlignMatch alignMatch2 = alignMatchVector0.elementAt(0);
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(0, alignMatch2.getSubjectSequenceStart());
+<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(67);
+<span class="nocode"><a name="3">  3: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, true, (-1), 4022);
+<span class="nocode"><a name="4">  4: </a></span>alignMatchVector0.addElement(alignMatch0);
+<span class="nocode"><a name="5">  5: </a></span>AlignMatch alignMatch1 = alignMatchVector0.elementAt(0);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(67, alignMatch1.getSubjectSequenceEnd());
 </pre>
 <h3>Test case 14</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>AlignMatchVector alignMatchVector0 = new AlignMatchVector();
 <span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(0, 0);
-<span class="nocode"><a name="3">  3: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, false, 0, 1737);
-<span class="nocode"><a name="4">  4: </a></span>alignMatchVector0.addElement(alignMatch0);
+<span class="nocode"><a name="3">  3: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, true, (-832), (-2698));
+<span class="nocode"><a name="4">  4: </a></span>alignMatchVector0.add(alignMatch0);
 <span class="nocode"><a name="5">  5: </a></span>AlignMatch alignMatch1 = alignMatchVector0.elementAt(0);
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, alignMatch1.getSubjectSequenceStart());
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(alignMatch1.isSelfMatch());
 </pre>
 <h3>Test case 15</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>AlignMatchVector alignMatchVector0 = new AlignMatchVector();
-<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range((-449));
-<span class="nocode"><a name="3">  3: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, false, (-449), (-449));
-<span class="nocode"><a name="4">  4: </a></span>alignMatchVector0.add(alignMatch0);
+<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range((-1));
+<span class="nocode"><a name="3">  3: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, false, 565, 1573);
+<span class="nocode"><a name="4">  4: </a></span>alignMatchVector0.addElement(alignMatch0);
 <span class="nocode"><a name="5">  5: </a></span>AlignMatch alignMatch1 = alignMatchVector0.elementAt(0);
-<span class="nocode"><a name="6">  6: </a></span>assertEquals((-449), alignMatch1.getPercentID());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(565, alignMatch1.getScore());
 </pre>
 <h3>Test case 16</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>AlignMatchVector alignMatchVector0 = new AlignMatchVector();
-<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range((-1));
-<span class="nocode"><a name="3">  3: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, false, 539, 1888);
+<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(0);
+<span class="nocode"><a name="3">  3: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, false, 0, 0);
 <span class="nocode"><a name="4">  4: </a></span>alignMatchVector0.add(alignMatch0);
-<span class="nocode"><a name="5">  5: </a></span>Range range1 = new Range(1);
-<span class="nocode"><a name="6">  6: </a></span>AlignMatch alignMatch1 = new AlignMatch(range1, range1, false, 1, 1);
-<span class="nocode"><a name="7">  7: </a></span>alignMatchVector0.addElement(alignMatch1);
-<span class="nocode"><a name="8">  8: </a></span>AlignMatch alignMatch2 = alignMatchVector0.elementAt(1);
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(1, alignMatch2.getSubjectSequenceEnd());
+<span class="nocode"><a name="5">  5: </a></span>AlignMatch alignMatch1 = alignMatchVector0.elementAt(0);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, alignMatch1.getSubjectSequenceEnd());
 </pre>
 <h3>Test case 17</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>AlignMatchVector alignMatchVector0 = new AlignMatchVector();
-<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(0, 0);
-<span class="nocode"><a name="3">  3: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, false, 0, 1737);
-<span class="nocode"><a name="4">  4: </a></span>alignMatch0.setRange(299, 0, true, true);
+<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(0);
+<span class="nocode"><a name="3">  3: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, false, 1344, 0);
+<span class="nocode"><a name="4">  4: </a></span>alignMatch0.setRange(0, 1344, false, false);
 <span class="nocode"><a name="5">  5: </a></span>alignMatchVector0.addElement(alignMatch0);
 <span class="nocode"><a name="6">  6: </a></span>AlignMatch alignMatch1 = alignMatchVector0.elementAt(0);
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(299, alignMatch1.getSubjectSequenceEnd());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, alignMatch1.getSubjectSequenceStart());
 </pre>
 <h3>Test case 18</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>AlignMatchVector alignMatchVector0 = new AlignMatchVector();
-<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range((-1));
-<span class="nocode"><a name="3">  3: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, false, 539, 1888);
-<span class="nocode"><a name="4">  4: </a></span>alignMatchVector0.add(alignMatch0);
-<span class="nocode"><a name="5">  5: </a></span>AlignMatch alignMatch1 = new AlignMatch(range0, range0, false, 1, 1);
-<span class="nocode"><a name="6">  6: </a></span>alignMatchVector0.addElement(alignMatch1);
-<span class="nocode"><a name="7">  7: </a></span>int int0 = alignMatchVector0.indexOf(alignMatch1);
+<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(2139);
+<span class="nocode"><a name="3">  3: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, false, 2139, (-1320));
+<span class="nocode"><a name="4">  4: </a></span>AlignMatch alignMatch1 = AlignMatch.copy(alignMatch0);
+<span class="nocode"><a name="5">  5: </a></span>alignMatchVector0.addElement(alignMatch1);
+<span class="nocode"><a name="6">  6: </a></span>alignMatchVector0.add(alignMatch0);
+<span class="nocode"><a name="7">  7: </a></span>int int0 = alignMatchVector0.indexOf(alignMatch0);
 <span class="nocode"><a name="8">  8: </a></span>assertEquals(1, int0);
 </pre>
 <h3>Test case 19</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>AlignMatchVector alignMatchVector0 = new AlignMatchVector();
-<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range((-449));
-<span class="nocode"><a name="3">  3: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, false, (-449), 0);
+<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(0);
+<span class="nocode"><a name="3">  3: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, false, 0, 0);
 <span class="nocode"><a name="4">  4: </a></span>alignMatchVector0.add(alignMatch0);
 <span class="nocode"><a name="5">  5: </a></span>int int0 = alignMatchVector0.indexOf(alignMatch0);
 <span class="nocode"><a name="6">  6: </a></span>assertEquals(0, int0);
@@ -186,17 +184,17 @@ uk.ac.sanger.artemis.AlignMatchVector
 <h3>Test case 20</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>AlignMatchVector alignMatchVector0 = new AlignMatchVector();
-<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range((-1));
-<span class="nocode"><a name="3">  3: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, false, (-1), (-1));
-<span class="nocode"><a name="4">  4: </a></span>alignMatchVector0.addElement(alignMatch0);
+<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(97);
+<span class="nocode"><a name="3">  3: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, false, 97, (-2156));
+<span class="nocode"><a name="4">  4: </a></span>alignMatchVector0.add(alignMatch0);
 <span class="nocode"><a name="5">  5: </a></span>boolean boolean0 = alignMatchVector0.remove(alignMatch0);
 <span class="nocode"><a name="6">  6: </a></span>assertTrue(boolean0);
 </pre>
 <h3>Test case 21</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>AlignMatchVector alignMatchVector0 = new AlignMatchVector();
-<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(0, 0);
-<span class="nocode"><a name="3">  3: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, false, 0, 1737);
+<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(0);
+<span class="nocode"><a name="3">  3: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, false, 1344, 0);
 <span class="nocode"><a name="4">  4: </a></span>alignMatchVector0.addElement(alignMatch0);
 <span class="nocode"><a name="5">  5: </a></span>int int0 = alignMatchVector0.size();
 <span class="nocode"><a name="6">  6: </a></span>assertEquals(1, int0);
@@ -213,12 +211,12 @@ uk.ac.sanger.artemis.AlignMatchVector
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.AlignMatchVector
 <li>Size: 21
-<li>Length: 90
+<li>Length: 88
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.9868421052631579
+<li>Coverage: 0.9835526315789473
 <li>BranchCoverage: 1.0
 <li>MethodCoverage: 1.0
-<li>OutputCoverage: 0.8947368421052632
+<li>OutputCoverage: 0.868421052631579
 </ul></div>
 </div>
 <p><br><a href="../report-generation.html">Back to Overview</a></p>

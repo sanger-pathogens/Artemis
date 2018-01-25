@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.editor.EvidenceViewer
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.editor.EvidenceViewer: 0.80932138382941</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.editor.EvidenceViewer: 0.5246581371283205</ul>
 <ul>
-<li>148.22715784628556 fitness evaluations, 0 generations, null statements, 9 tests.
+<li>739.4383462199313 fitness evaluations, 0 generations, null statements, 5 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,124 +35,68 @@ uk.ac.sanger.artemis.editor.EvidenceViewer
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;&gt;5&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = Entry.newEntry(bases0);
-<span class="nocode"><a name="4">  4: </a></span>Feature feature0 = entry0.createFeature();
-<span class="nocode"><a name="5">  5: </a></span>FeatureVector featureVector0 = new FeatureVector();
-<span class="nocode"><a name="6">  6: </a></span>JInternalFrame jInternalFrame0 = new JInternalFrame(&quot;&gt;5&quot;);
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature();
+<span class="nocode"><a name="2">  2: </a></span>GFFStreamFeature gFFStreamFeature0 = new GFFStreamFeature(genbankStreamFeature0, true);
+<span class="nocode"><a name="3">  3: </a></span>Feature feature0 = new Feature(gFFStreamFeature0);
+<span class="nocode"><a name="4">  4: </a></span>Clipboard clipboard0 = new Clipboard(&quot;&quot;);
+<span class="nocode"><a name="5">  5: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="6">  6: </a></span>FeatureVector featureVector0 = selection0.getAllFeatures();
 <span class="nocode"><a name="7">  7: </a></span>EvidenceViewer evidenceViewer0 = new EvidenceViewer(feature0, featureVector0, (JDesktopPane) null);
 <span class="nocode"><a name="8">  8: </a></span>EvidenceViewer.MouseClickListener evidenceViewer_MouseClickListener0 = evidenceViewer0.new MouseClickListener();
-<span class="nocode"><a name="9">  9: </a></span>MouseEvent mouseEvent0 = new MouseEvent(jInternalFrame0, (-957), (-957), 2, 1, 191, 5, true);
-<span class="nocode"><a name="10"> 10: </a></span>evidenceViewer_MouseClickListener0.mouseEntered(mouseEvent0);
+<span class="nocode"><a name="9">  9: </a></span>MouseWheelEvent mouseWheelEvent0 = new MouseWheelEvent(evidenceViewer0, 3485, 3485, 3485, 4913, 4913, 0, (-1396), (-1396), false, 4913, 4913, 155);
+<span class="nocode"><a name="10"> 10: </a></span>evidenceViewer_MouseClickListener0.mouseEntered(mouseWheelEvent0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;&gt;5&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = Entry.newEntry(bases0);
-<span class="nocode"><a name="4">  4: </a></span>Feature feature0 = entry0.createFeature();
-<span class="nocode"><a name="5">  5: </a></span>FeatureVector featureVector0 = new FeatureVector();
-<span class="nocode"><a name="6">  6: </a></span>JInternalFrame jInternalFrame0 = new JInternalFrame(&quot;&gt;5&quot;);
-<span class="nocode"><a name="7">  7: </a></span>EvidenceViewer evidenceViewer0 = new EvidenceViewer(feature0, featureVector0, (JDesktopPane) null);
-<span class="nocode"><a name="8">  8: </a></span>EvidenceViewer.MouseClickListener evidenceViewer_MouseClickListener0 = evidenceViewer0.new MouseClickListener();
-<span class="nocode"><a name="9">  9: </a></span>MenuElement[] menuElementArray0 = new MenuElement[3];
-<span class="nocode"><a name="10"> 10: </a></span>MenuSelectionManager menuSelectionManager0 = new MenuSelectionManager();
-<span class="nocode"><a name="11"> 11: </a></span>MenuDragMouseEvent menuDragMouseEvent0 = new MenuDragMouseEvent(jInternalFrame0, 5, 5, 629, (-1), 292552704, 334, 5, 292552704, false, menuElementArray0, menuSelectionManager0);
-<span class="nocode"><a name="12"> 12: </a></span>evidenceViewer_MouseClickListener0.mousePressed(menuDragMouseEvent0);
-<span class="nocode"><a name="13"> 13: </a></span>assertEquals(0, menuDragMouseEvent0.getButton());
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamFeature emblStreamFeature0 = new EmblStreamFeature();
+<span class="nocode"><a name="2">  2: </a></span>BlastStreamFeature blastStreamFeature0 = new BlastStreamFeature(emblStreamFeature0);
+<span class="nocode"><a name="3">  3: </a></span>Feature feature0 = new Feature(blastStreamFeature0);
+<span class="nocode"><a name="4">  4: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="5">  5: </a></span>Entry entry0 = simpleEntryGroup0.createEntry();
+<span class="nocode"><a name="6">  6: </a></span>FeatureVector featureVector0 = entry0.checkForNonEMBLKeys();
+<span class="nocode"><a name="7">  7: </a></span>JInternalFrame jInternalFrame0 = new JInternalFrame(&quot;]2`eG8vD)R&quot;);
+<span class="nocode"><a name="8">  8: </a></span>EvidenceViewer evidenceViewer0 = new EvidenceViewer(feature0, featureVector0, (JDesktopPane) null);
+<span class="nocode"><a name="9">  9: </a></span>EvidenceViewer.MouseClickListener evidenceViewer_MouseClickListener0 = evidenceViewer0.new MouseClickListener();
+<span class="nocode"><a name="10"> 10: </a></span>MouseWheelEvent mouseWheelEvent0 = new MouseWheelEvent(jInternalFrame0, (-2180), (-1L), 0, 390, 831, 1554, (-2180), 1554, true, 0, 831, 0);
+<span class="nocode"><a name="11"> 11: </a></span>evidenceViewer_MouseClickListener0.mouseExited(mouseWheelEvent0);
+<span class="nocode"><a name="12"> 12: </a></span>assertFalse(mouseWheelEvent0.isAltGraphDown());
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;&gt;5&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = Entry.newEntry(bases0);
-<span class="nocode"><a name="4">  4: </a></span>Feature feature0 = entry0.createFeature();
-<span class="nocode"><a name="5">  5: </a></span>FeatureVector featureVector0 = new FeatureVector();
-<span class="nocode"><a name="6">  6: </a></span>JInternalFrame jInternalFrame0 = new JInternalFrame(&quot;&gt;5&quot;);
-<span class="nocode"><a name="7">  7: </a></span>EvidenceViewer evidenceViewer0 = new EvidenceViewer(feature0, featureVector0, (JDesktopPane) null);
-<span class="nocode"><a name="8">  8: </a></span>EvidenceViewer.MouseClickListener evidenceViewer_MouseClickListener0 = evidenceViewer0.new MouseClickListener();
-<span class="nocode"><a name="9">  9: </a></span>MenuElement[] menuElementArray0 = new MenuElement[3];
-<span class="nocode"><a name="10"> 10: </a></span>MenuSelectionManager menuSelectionManager0 = new MenuSelectionManager();
-<span class="nocode"><a name="11"> 11: </a></span>MenuDragMouseEvent menuDragMouseEvent0 = new MenuDragMouseEvent(jInternalFrame0, 5, 5, 629, (-1), 292552704, 334, 5, 292552704, false, menuElementArray0, menuSelectionManager0);
-<span class="nocode"><a name="12"> 12: </a></span>evidenceViewer_MouseClickListener0.mouseExited(menuDragMouseEvent0);
-<span class="nocode"><a name="13"> 13: </a></span>assertEquals(5, menuDragMouseEvent0.getYOnScreen());
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature();
+<span class="nocode"><a name="2">  2: </a></span>GFFStreamFeature gFFStreamFeature0 = new GFFStreamFeature(genbankStreamFeature0, true);
+<span class="nocode"><a name="3">  3: </a></span>Feature feature0 = new Feature(gFFStreamFeature0);
+<span class="nocode"><a name="4">  4: </a></span>Clipboard clipboard0 = new Clipboard(&quot;&quot;);
+<span class="nocode"><a name="5">  5: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="6">  6: </a></span>FeatureVector featureVector0 = selection0.getAllFeatures();
+<span class="nocode"><a name="7">  7: </a></span>JInternalFrame jInternalFrame0 = new JInternalFrame(&quot;&quot;, true, true, true);
+<span class="nocode"><a name="8">  8: </a></span>EvidenceViewer evidenceViewer0 = new EvidenceViewer(feature0, featureVector0, (JDesktopPane) null);
+<span class="nocode"><a name="9">  9: </a></span>EvidenceViewer.MouseClickListener evidenceViewer_MouseClickListener0 = evidenceViewer0.new MouseClickListener();
+<span class="nocode"><a name="10"> 10: </a></span>MouseWheelEvent mouseWheelEvent0 = new MouseWheelEvent(jInternalFrame0, 3485, 2557L, (-1396), 4913, 0, 1554, 0, 97, true, 3485, 1554, 1340, 1.0);
+<span class="nocode"><a name="11"> 11: </a></span>evidenceViewer_MouseClickListener0.mouseReleased(mouseWheelEvent0);
+<span class="nocode"><a name="12"> 12: </a></span>assertEquals(97, mouseWheelEvent0.getClickCount());
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;&gt;5&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = Entry.newEntry(bases0);
-<span class="nocode"><a name="4">  4: </a></span>Feature feature0 = entry0.createFeature();
-<span class="nocode"><a name="5">  5: </a></span>FeatureVector featureVector0 = new FeatureVector();
-<span class="nocode"><a name="6">  6: </a></span>JInternalFrame jInternalFrame0 = new JInternalFrame(&quot;&gt;5&quot;);
-<span class="nocode"><a name="7">  7: </a></span>EvidenceViewer evidenceViewer0 = new EvidenceViewer(feature0, featureVector0, (JDesktopPane) null);
-<span class="nocode"><a name="8">  8: </a></span>EvidenceViewer.MouseClickListener evidenceViewer_MouseClickListener0 = evidenceViewer0.new MouseClickListener();
-<span class="nocode"><a name="9">  9: </a></span>MenuElement[] menuElementArray0 = new MenuElement[3];
-<span class="nocode"><a name="10"> 10: </a></span>MenuSelectionManager menuSelectionManager0 = new MenuSelectionManager();
-<span class="nocode"><a name="11"> 11: </a></span>MenuDragMouseEvent menuDragMouseEvent0 = new MenuDragMouseEvent(jInternalFrame0, 5, 5, 629, (-1), 292552704, 334, 5, 292552704, false, menuElementArray0, menuSelectionManager0);
-<span class="nocode"><a name="12"> 12: </a></span>evidenceViewer_MouseClickListener0.mouseReleased(menuDragMouseEvent0);
-<span class="nocode"><a name="13"> 13: </a></span>assertFalse(menuDragMouseEvent0.isControlDown());
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamFeature emblStreamFeature0 = new EmblStreamFeature();
+<span class="nocode"><a name="2">  2: </a></span>BlastStreamFeature blastStreamFeature0 = new BlastStreamFeature(emblStreamFeature0);
+<span class="nocode"><a name="3">  3: </a></span>Feature feature0 = new Feature(blastStreamFeature0);
+<span class="nocode"><a name="4">  4: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="5">  5: </a></span>Entry entry0 = simpleEntryGroup0.createEntry();
+<span class="nocode"><a name="6">  6: </a></span>FeatureVector featureVector0 = entry0.checkForNonEMBLKeys();
+<span class="nocode"><a name="7">  7: </a></span>JInternalFrame jInternalFrame0 = new JInternalFrame(&quot;]2`eG8vD)R&quot;);
+<span class="nocode"><a name="8">  8: </a></span>EvidenceViewer evidenceViewer0 = new EvidenceViewer(feature0, featureVector0, (JDesktopPane) null);
+<span class="nocode"><a name="9">  9: </a></span>EvidenceViewer.MouseClickListener evidenceViewer_MouseClickListener0 = evidenceViewer0.new MouseClickListener();
+<span class="nocode"><a name="10"> 10: </a></span>MouseWheelEvent mouseWheelEvent0 = new MouseWheelEvent(jInternalFrame0, (-2180), (-1L), 0, 390, 831, 1554, (-2180), 1554, true, 0, 831, 0);
+<span class="nocode"><a name="11"> 11: </a></span>evidenceViewer_MouseClickListener0.mouseClicked(mouseWheelEvent0);
+<span class="nocode"><a name="12"> 12: </a></span>assertEquals(1554, mouseWheelEvent0.getClickCount());
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;&gt;5&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = Entry.newEntry(bases0);
-<span class="nocode"><a name="4">  4: </a></span>Feature feature0 = entry0.createFeature();
-<span class="nocode"><a name="5">  5: </a></span>FeatureVector featureVector0 = new FeatureVector();
-<span class="nocode"><a name="6">  6: </a></span>EvidenceViewer evidenceViewer0 = new EvidenceViewer(feature0, featureVector0, (JDesktopPane) null);
-<span class="nocode"><a name="7">  7: </a></span>GenericDocumentType genericDocumentType0 = new GenericDocumentType(&quot;&gt;5&quot;, &quot;Y}H;iG}DE+u4v|&amp;k&quot;, &quot;kEy{?`/.rl:H0LDD[N&quot;);
-<span class="nocode"><a name="8">  8: </a></span>GenericDOMImplementation genericDOMImplementation0 = (GenericDOMImplementation)GenericDOMImplementation.getDOMImplementation();
-<span class="nocode"><a name="9">  9: </a></span>GenericDocument genericDocument0 = new GenericDocument(genericDocumentType0, genericDOMImplementation0);
-<span class="nocode"><a name="10"> 10: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(genericDocument0);
-<span class="nocode"><a name="11"> 11: </a></span>evidenceViewer0.paintComponent(sVGGraphics2D0);
-<span class="nocode"><a name="12"> 12: </a></span>assertEquals(3, SVGGraphics2D.DEFAULT_MAX_GC_OVERRIDES);
-</pre>
-<h3>Test case 6</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;&gt;5&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = Entry.newEntry(bases0);
-<span class="nocode"><a name="4">  4: </a></span>Feature feature0 = entry0.createFeature();
-<span class="nocode"><a name="5">  5: </a></span>FeatureVector featureVector0 = new FeatureVector();
-<span class="nocode"><a name="6">  6: </a></span>JInternalFrame jInternalFrame0 = new JInternalFrame(&quot;&gt;5&quot;);
-<span class="nocode"><a name="7">  7: </a></span>EvidenceViewer evidenceViewer0 = new EvidenceViewer(feature0, featureVector0, (JDesktopPane) null);
-<span class="nocode"><a name="8">  8: </a></span>EvidenceViewer.MouseClickListener evidenceViewer_MouseClickListener0 = evidenceViewer0.new MouseClickListener();
-<span class="nocode"><a name="9">  9: </a></span>MouseEvent mouseEvent0 = new MouseEvent(jInternalFrame0, 1, 1, 5, 1, 5, (-5), (-318), 1278, true, 1);
-<span class="nocode"><a name="10"> 10: </a></span>evidenceViewer_MouseClickListener0.mouseClicked(mouseEvent0);
-<span class="nocode"><a name="11"> 11: </a></span>assertFalse(mouseEvent0.isConsumed());
-</pre>
-<h3>Test case 7</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FeatureVector featureVector0 = new FeatureVector();
-<span class="nocode"><a name="2">  2: </a></span>JDesktopPane jDesktopPane0 = new JDesktopPane();
-<span class="nocode"><a name="3">  3: </a></span>EvidenceViewer evidenceViewer0 = new EvidenceViewer((Feature) null, featureVector0, jDesktopPane0);
-</pre>
-<h3>Test case 8</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;&gt;5&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = Entry.newEntry(bases0);
-<span class="nocode"><a name="4">  4: </a></span>Feature feature0 = entry0.createFeature();
-<span class="nocode"><a name="5">  5: </a></span>FeatureVector featureVector0 = new FeatureVector();
-<span class="nocode"><a name="6">  6: </a></span>EvidenceViewer evidenceViewer0 = new EvidenceViewer(feature0, featureVector0, (JDesktopPane) null);
-<span class="nocode"><a name="7">  7: </a></span>GenericDocumentType genericDocumentType0 = new GenericDocumentType(&quot;&quot;, &quot;Y}H;iG}DE+u4v|&amp;k&quot;, &quot;kEy{?`/.rl:H0LDD[N&quot;);
-<span class="nocode"><a name="8">  8: </a></span>GenericDOMImplementation genericDOMImplementation0 = (GenericDOMImplementation)GenericDOMImplementation.getDOMImplementation();
-<span class="nocode"><a name="9">  9: </a></span>GenericDocument genericDocument0 = new GenericDocument(genericDocumentType0, genericDOMImplementation0);
-<span class="nocode"><a name="10"> 10: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(genericDocument0);
-<span class="nocode"><a name="11"> 11: </a></span>DebugGraphics debugGraphics0 = new DebugGraphics(sVGGraphics2D0);
-<span class="nocode"><a name="12"> 12: </a></span>evidenceViewer0.paintComponent(debugGraphics0);
-</pre>
-<h3>Test case 9</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;&gt;5&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = Entry.newEntry(bases0);
-<span class="nocode"><a name="4">  4: </a></span>Feature feature0 = entry0.createFeature();
-<span class="nocode"><a name="5">  5: </a></span>FeatureVector featureVector0 = new FeatureVector();
-<span class="nocode"><a name="6">  6: </a></span>EvidenceViewer evidenceViewer0 = new EvidenceViewer(feature0, featureVector0, (JDesktopPane) null);
-<span class="nocode"><a name="7">  7: </a></span>evidenceViewer0.paintComponent((Graphics) null);
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;.Hu5iKm}SIaQu&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="3">  3: </a></span>FeatureVector featureVector0 = selection0.getAllFeatures();
+<span class="nocode"><a name="4">  4: </a></span>EvidenceViewer evidenceViewer0 = new EvidenceViewer((Feature) null, featureVector0, (JDesktopPane) null);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -165,12 +109,12 @@ uk.ac.sanger.artemis.editor.EvidenceViewer
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.editor.EvidenceViewer
-<li>Size: 9
-<li>Length: 89
+<li>Size: 5
+<li>Length: 47
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.80932138382941
-<li>BranchCoverage: 0.48484848484848486
-<li>MethodCoverage: 1.0
+<li>Coverage: 0.5246581371283205
+<li>BranchCoverage: 0.21212121212121213
+<li>MethodCoverage: 0.75
 <li>OutputCoverage: 1.0
 </ul></div>
 </div>

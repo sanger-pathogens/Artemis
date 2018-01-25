@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.io.GenbankStreamSequence
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.io.GenbankStreamSequence: 0.5281986497545008</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.io.GenbankStreamSequence: 0.612822863085496</ul>
 <ul>
-<li>337.0249210193305 fitness evaluations, 0 generations, null statements, 13 tests.
+<li>324.9999999961184 fitness evaluations, 0 generations, null statements, 16 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -41,44 +41,49 @@ uk.ac.sanger.artemis.io.GenbankStreamSequence
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;S$CQy=kPj\&quot;&lt;~)I1Ky&quot;);
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot; g&quot;);
 <span class="nocode"><a name="2">  2: </a></span>String string0 = genbankStreamSequence0.getHeader();
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(17, genbankStreamSequence0.length());
-<span class="nocode"><a name="4">  4: </a></span>assertNull(string0);
+<span class="nocode"><a name="3">  3: </a></span>assertNull(string0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1, genbankStreamSequence0.getOtherCount());
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>GenbankStreamSequence genbankStreamSequence1 = (GenbankStreamSequence)genbankStreamSequence0.copy();
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, genbankStreamSequence1.getOtherCount());
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>genbankStreamSequence0.readHeader((LinePushBackReader) null);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;\nORIGIN\n&quot;);
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;Genbank sequence data should begin with \&quot;BASE COUNT\&quot; or \&quot;ORIGIN\&quot;&quot;);
 <span class="nocode"><a name="2">  2: </a></span>int int0 = genbankStreamSequence0.getFormatType();
 <span class="nocode"><a name="3">  3: </a></span>assertEquals(2, int0);
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(8, genbankStreamSequence0.getOtherCount());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1, genbankStreamSequence0.getCCount());
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>StringReader stringReader0 = new StringReader(&quot;}.Nz$HfvvCE&quot;);
-<span class="nocode"><a name="2">  2: </a></span>LinePushBackReader linePushBackReader0 = new LinePushBackReader(stringReader0);
-<span class="nocode"><a name="3">  3: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(linePushBackReader0);
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>genbankStreamSequence0.copy();
+<span class="nocode"><a name="3">  3: </a></span>genbankStreamSequence0.setHeader(&quot;&quot;);
+<span class="nocode"><a name="4">  4: </a></span>JPasswordField jPasswordField0 = new JPasswordField((String) null, 0);
+<span class="nocode"><a name="5">  5: </a></span>InputStreamProgressListener inputStreamProgressListener0 = mock(InputStreamProgressListener.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="6">  6: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;GENBANK sequence file contains a character that is not a letter: &quot;, jPasswordField0, (String) null, &quot;GENBANK sequence file contains a character that is not a letter: &quot;, true, inputStreamProgressListener0);
+<span class="nocode"><a name="7">  7: </a></span>LinePushBackReader linePushBackReader0 = databaseDocument0.getLinePushBackReader();
+<span class="nocode"><a name="8">  8: </a></span>genbankStreamSequence0.readSequence(linePushBackReader0);
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;S$CQy=kPj\&quot;&lt;~)I1Ky&quot;);
-<span class="nocode"><a name="2">  2: </a></span>MockPrintWriter mockPrintWriter0 = new MockPrintWriter(&quot;&amp;s9TnJ+,C[&quot;);
-<span class="nocode"><a name="3">  3: </a></span>genbankStreamSequence0.writeToStream(mockPrintWriter0);
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(17, genbankStreamSequence0.length());
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[7];
+<span class="nocode"><a name="2">  2: </a></span>CharArrayReader charArrayReader0 = new CharArrayReader(charArray0, 0, 2402);
+<span class="nocode"><a name="3">  3: </a></span>LinePushBackReader linePushBackReader0 = new LinePushBackReader(charArrayReader0);
+<span class="nocode"><a name="4">  4: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(linePushBackReader0);
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[2];
-<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short)2018);
-<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = new Integer(99);
-<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, (-835), 0, short0, integer0);
-<span class="nocode"><a name="5">  5: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(partialSequence0);
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;Genbank sequence data should begin with \&quot;BASE COUNT\&quot; or \&quot;ORIGIN\&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>CharArrayWriter charArrayWriter0 = new CharArrayWriter();
+<span class="nocode"><a name="3">  3: </a></span>genbankStreamSequence0.writeToStream(charArrayWriter0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(147, charArrayWriter0.size());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;BASE COUNT        3 a      1 c      1 g      2 t\nORIGIN\n        1 nnnbanknsn nunncnndat anshnundnb ngnnnwnthn nnnnnnnnnn nnnnrnnnnn\n       61 nnnn\n&quot;, charArrayWriter0.toString());
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
@@ -86,58 +91,60 @@ uk.ac.sanger.artemis.io.GenbankStreamSequence
 </pre>
 <h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence((Sequence) null);
+<span class="nocode"><a name="1">  1: </a></span>double[] doubleArray0 = new double[5];
+<span class="nocode"><a name="2">  2: </a></span>SymbolList symbolList0 = DoubleAlphabet.fromArray(doubleArray0);
+<span class="nocode"><a name="3">  3: </a></span>BioJavaSequence bioJavaSequence0 = new BioJavaSequence(symbolList0);
+<span class="nocode"><a name="4">  4: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(bioJavaSequence0);
 </pre>
 <h3>Test case 10</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence((LinePushBackReader) null);
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence((Sequence) null);
 </pre>
 <h3>Test case 11</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;GENBANK sequence file contains a character that is not a letter: &quot;);
-<span class="nocode"><a name="2">  2: </a></span>GenbankStreamSequence genbankStreamSequence1 = (GenbankStreamSequence)genbankStreamSequence0.copy();
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(7, genbankStreamSequence1.getTCount());
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence((LinePushBackReader) null);
 </pre>
 <h3>Test case 12</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;k)&amp;sH)':ai&quot;);
-<span class="nocode"><a name="2">  2: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(emblStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>genbankStreamSequence0.setHeader(&quot;@57Y(((O3p@^YV{&quot;);
-<span class="nocode"><a name="4">  4: </a></span>String string0 = genbankStreamSequence0.getHeader();
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;@57Y(((O3p@^YV{&quot;, string0);
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;u$PcDPr}&amp;)&quot;);
+<span class="nocode"><a name="2">  2: </a></span>genbankStreamSequence0.writeToStream((Writer) null);
 </pre>
 <h3>Test case 13</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;Could not open sequence dictionary file: &quot;);
+<span class="nocode"><a name="2">  2: </a></span>GenbankStreamSequence genbankStreamSequence1 = (GenbankStreamSequence)genbankStreamSequence0.copy();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(2, genbankStreamSequence1.getTCount());
+</pre>
+<h3>Test case 14</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;\nORIGIN\n&quot;);
+<span class="nocode"><a name="2">  2: </a></span>genbankStreamSequence0.setHeader(&quot;\nORIGIN\n&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = genbankStreamSequence0.getHeader();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;\nORIGIN\n&quot;, string0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(8, genbankStreamSequence0.length());
+</pre>
+<h3>Test case 15</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String string0 = &quot;&quot;;
+<span class="nocode"><a name="2">  2: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(rawStreamSequence0);
+<span class="nocode"><a name="4">  4: </a></span>JPasswordField jPasswordField0 = new JPasswordField(&quot;&quot;, 1673);
+<span class="nocode"><a name="5">  5: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;&quot;, jPasswordField0, &quot;Failed to create a feature with a location &quot;, &quot;&quot;, (ByteBuffer) null, &quot;&quot;);
+<span class="nocode"><a name="6">  6: </a></span>Reader reader0 = databaseDocument0.getReader();
+<span class="nocode"><a name="7">  7: </a></span>LinePushBackReader linePushBackReader0 = new LinePushBackReader(reader0);
+<span class="nocode"><a name="8">  8: </a></span>genbankStreamSequence0.readHeader(linePushBackReader0);
+<span class="nocode"><a name="9">  9: </a></span>MockFileWriter mockFileWriter0 = new MockFileWriter(string0);
+<span class="nocode"><a name="10"> 10: </a></span>int int0 = (-2828);
+<span class="nocode"><a name="11"> 11: </a></span>mockFileWriter0.append((CharSequence) string0, int0, int0);
+<span class="nocode"><a name="12"> 12: </a></span>genbankStreamSequence0.writeToStream(mockFileWriter0);
+</pre>
+<h3>Test case 16</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>JPasswordField jPasswordField0 = new JPasswordField(&quot;v\&quot;CoV=*YXNv%'+}(&quot;);
-<span class="nocode"><a name="3">  3: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;&quot;, jPasswordField0, &quot;v\&quot;CoV=*YXNv%'+}(&quot;, &quot;&quot;, true);
-<span class="nocode"><a name="4">  4: </a></span>DatabaseDocument.EXONMODEL = &quot;v\&quot;CoV=*YXNv%'+}(&quot;;
-<span class="nocode"><a name="5">  5: </a></span>CharArrayWriter charArrayWriter0 = new CharArrayWriter();
-<span class="nocode"><a name="6">  6: </a></span>DatabaseDocument.RILEY_TAG_CVNAME = &quot;&quot;;
-<span class="nocode"><a name="7">  7: </a></span>charArrayWriter0.close();
-<span class="nocode"><a name="8">  8: </a></span>CharArrayWriter charArrayWriter1 = charArrayWriter0.append('f');
-<span class="nocode"><a name="9">  9: </a></span>MockPrintWriter mockPrintWriter0 = new MockPrintWriter(charArrayWriter1, true);
-<span class="nocode"><a name="10"> 10: </a></span>Locale locale0 = jPasswordField0.getLocale();
-<span class="nocode"><a name="11"> 11: </a></span>Object[] objectArray0 = new Object[4];
-<span class="nocode"><a name="12"> 12: </a></span>objectArray0[0] = (Object) charArrayWriter0;
-<span class="nocode"><a name="13"> 13: </a></span>objectArray0[1] = (Object) &quot;&quot;;
-<span class="nocode"><a name="14"> 14: </a></span>objectArray0[2] = (Object) &quot;v\&quot;CoV=*YXNv%'+}(&quot;;
-<span class="nocode"><a name="15"> 15: </a></span>jPasswordField0.getMinimumSize();
-<span class="nocode"><a name="16"> 16: </a></span>objectArray0[3] = (Object) locale0;
-<span class="nocode"><a name="17"> 17: </a></span>MockPrintWriter mockPrintWriter1 = (MockPrintWriter)mockPrintWriter0.printf(locale0, &quot;4m8@dUA+6bMuqN`&quot;, objectArray0);
-<span class="nocode"><a name="18"> 18: </a></span>genbankStreamSequence0.writeToStream(mockPrintWriter1);
-<span class="nocode"><a name="19"> 19: </a></span>LinePushBackReader linePushBackReader0 = databaseDocument0.getLinePushBackReader();
-<span class="nocode"><a name="20"> 20: </a></span>linePushBackReader0.reset();
-<span class="nocode"><a name="21"> 21: </a></span>linePushBackReader0.ready();
-<span class="nocode"><a name="22"> 22: </a></span>genbankStreamSequence0.readHeader(linePushBackReader0);
-<span class="nocode"><a name="23"> 23: </a></span>genbankStreamSequence0.readSequence(linePushBackReader0);
-<span class="nocode"><a name="24"> 24: </a></span>genbankStreamSequence0.readSequence(linePushBackReader0);
-<span class="nocode"><a name="25"> 25: </a></span>String string0 = &quot;&quot;;
-<span class="nocode"><a name="26"> 26: </a></span>genbankStreamSequence0.setHeader(string0);
-<span class="nocode"><a name="27"> 27: </a></span>genbankStreamSequence0.getHeader();
-<span class="nocode"><a name="28"> 28: </a></span>genbankStreamSequence0.copy();
-<span class="nocode"><a name="29"> 29: </a></span>genbankStreamSequence0.readHeader(linePushBackReader0);
-<span class="nocode"><a name="30"> 30: </a></span>genbankStreamSequence0.copy();
+<span class="nocode"><a name="2">  2: </a></span>CharArrayWriter charArrayWriter0 = new CharArrayWriter();
+<span class="nocode"><a name="3">  3: </a></span>genbankStreamSequence0.writeToStream(charArrayWriter0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;BASE COUNT        0 a      0 c      0 g      0 t\nORIGIN\n&quot;, charArrayWriter0.toString());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(56, charArrayWriter0.size());
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -150,11 +157,11 @@ uk.ac.sanger.artemis.io.GenbankStreamSequence
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.io.GenbankStreamSequence
-<li>Size: 13
-<li>Length: 59
+<li>Size: 16
+<li>Length: 54
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.5281986497545008
-<li>BranchCoverage: 0.3829787234042553
+<li>Coverage: 0.612822863085496
+<li>BranchCoverage: 0.40425531914893614
 <li>MethodCoverage: 1.0
 <li>OutputCoverage: 0.56
 </ul></div>

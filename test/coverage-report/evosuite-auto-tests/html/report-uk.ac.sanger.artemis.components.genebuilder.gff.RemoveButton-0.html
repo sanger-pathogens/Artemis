@@ -35,9 +35,9 @@ uk.ac.sanger.artemis.components.genebuilder.gff.RemoveButton
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>DefaultEditorKit.InsertContentAction defaultEditorKit_InsertContentAction0 = new DefaultEditorKit.InsertContentAction();
-<span class="nocode"><a name="2">  2: </a></span>RemoveButton removeButton0 = new RemoveButton(defaultEditorKit_InsertContentAction0);
-<span class="nocode"><a name="3">  3: </a></span>assertFalse(removeButton0.getIgnoreRepaint());
+<span class="nocode"><a name="1">  1: </a></span>StyledEditorKit.ItalicAction styledEditorKit_ItalicAction0 = new StyledEditorKit.ItalicAction();
+<span class="nocode"><a name="2">  2: </a></span>RemoveButton removeButton0 = new RemoveButton(styledEditorKit_ItalicAction0);
+<span class="nocode"><a name="3">  3: </a></span>assertTrue(removeButton0.getFocusTraversalKeysEnabled());
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>

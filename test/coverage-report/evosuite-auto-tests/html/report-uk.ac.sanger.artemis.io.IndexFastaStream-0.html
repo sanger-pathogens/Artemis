@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.io.IndexFastaStream
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.io.IndexFastaStream: 0.23461167845133007</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.io.IndexFastaStream: 0.1737189729953562</ul>
 <ul>
-<li>973.8233333333333 fitness evaluations, 0 generations, null statements, 6 tests.
+<li>1040.9915966386554 fitness evaluations, 0 generations, null statements, 3 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,46 +35,19 @@ uk.ac.sanger.artemis.io.IndexFastaStream
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = new SimpleEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>EmblDocumentEntry emblDocumentEntry0 = new EmblDocumentEntry(simpleEntryInformation0);
-<span class="nocode"><a name="3">  3: </a></span>IndexFastaStream indexFastaStream0 = new IndexFastaStream(emblDocumentEntry0);
-</pre>
-<h3>Test case 2</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = new SimpleEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>EmblDocumentEntry emblDocumentEntry0 = new EmblDocumentEntry(simpleEntryInformation0);
-<span class="nocode"><a name="3">  3: </a></span>emblDocumentEntry0.setName(&quot;Use index&quot;);
-<span class="nocode"><a name="4">  4: </a></span>IndexFastaStream indexFastaStream0 = new IndexFastaStream(emblDocumentEntry0);
-</pre>
-<h3>Test case 3</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>boolean boolean0 = IndexFastaStream.isIndexed((Entry) null);
 <span class="nocode"><a name="2">  2: </a></span>assertFalse(boolean0);
 </pre>
-<h3>Test case 4</h3>
+<h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = new SimpleEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>EmblDocumentEntry emblDocumentEntry0 = new EmblDocumentEntry(simpleEntryInformation0);
-<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = IndexFastaStream.isIndexed(emblDocumentEntry0);
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = (SimpleEntryInformation)SimpleEntryInformation.getDefaultEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>MSPcrunchDocumentEntry mSPcrunchDocumentEntry0 = new MSPcrunchDocumentEntry(simpleEntryInformation0);
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = IndexFastaStream.isIndexed(mSPcrunchDocumentEntry0);
 <span class="nocode"><a name="4">  4: </a></span>assertFalse(boolean0);
 </pre>
-<h3>Test case 5</h3>
+<h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = new SimpleEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>EmblDocumentEntry emblDocumentEntry0 = new EmblDocumentEntry(simpleEntryInformation0);
-<span class="nocode"><a name="3">  3: </a></span>emblDocumentEntry0.setName(&quot;Use index&quot;);
-<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = IndexFastaStream.isIndexed(emblDocumentEntry0);
-<span class="nocode"><a name="5">  5: </a></span>assertFalse(boolean0);
-</pre>
-<h3>Test case 6</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = new SimpleEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>EmblDocumentEntry emblDocumentEntry0 = new EmblDocumentEntry(simpleEntryInformation0);
-<span class="nocode"><a name="3">  3: </a></span>emblDocumentEntry0.setName(&quot;Use index&quot;);
-<span class="nocode"><a name="4">  4: </a></span>EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(&quot;/Users/kp11/workspace/applications/Artemis/test/Use index.fai&quot;);
-<span class="nocode"><a name="5">  5: </a></span>FileSystemHandling.appendLineToFile(evoSuiteFile0, &quot;&quot;);
-<span class="nocode"><a name="6">  6: </a></span>boolean boolean0 = IndexFastaStream.isIndexed(emblDocumentEntry0);
-<span class="nocode"><a name="7">  7: </a></span>assertTrue(boolean0);
+<span class="nocode"><a name="1">  1: </a></span>IndexFastaStream indexFastaStream0 = new IndexFastaStream((Entry) null);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -87,13 +60,13 @@ uk.ac.sanger.artemis.io.IndexFastaStream
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.io.IndexFastaStream
-<li>Size: 6
-<li>Length: 21
+<li>Size: 3
+<li>Length: 5
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.23461167845133007
-<li>BranchCoverage: 0.18032786885245902
+<li>Coverage: 0.1737189729953562
+<li>BranchCoverage: 0.06557377049180328
 <li>MethodCoverage: 0.11764705882352941
-<li>OutputCoverage: 0.03125
+<li>OutputCoverage: 0.015625
 </ul></div>
 </div>
 <p><br><a href="../report-generation.html">Back to Overview</a></p>

@@ -36,13 +36,15 @@ uk.ac.sanger.artemis.components.alignment.PairedReadComparator
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>PairedReadComparator pairedReadComparator0 = new PairedReadComparator();
-<span class="nocode"><a name="2">  2: </a></span>MockMinguoDate mockMinguoDate0 = new MockMinguoDate();
-<span class="nocode"><a name="3">  3: </a></span>pairedReadComparator0.compare(mockMinguoDate0, (Object) null);
+<span class="nocode"><a name="2">  2: </a></span>MockJapaneseDate mockJapaneseDate0 = new MockJapaneseDate();
+<span class="nocode"><a name="3">  3: </a></span>pairedReadComparator0.compare(mockJapaneseDate0, pairedReadComparator0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>PairedReadComparator pairedReadComparator0 = new PairedReadComparator();
-<span class="nocode"><a name="2">  2: </a></span>pairedReadComparator0.compare((Object) null, (Object) null);
+<span class="nocode"><a name="2">  2: </a></span>DefaultBoundedRangeModel defaultBoundedRangeModel0 = new DefaultBoundedRangeModel();
+<span class="nocode"><a name="3">  3: </a></span>JSlider jSlider0 = new JSlider(defaultBoundedRangeModel0);
+<span class="nocode"><a name="4">  4: </a></span>pairedReadComparator0.compare((Object) null, jSlider0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -56,7 +58,7 @@ uk.ac.sanger.artemis.components.alignment.PairedReadComparator
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.alignment.PairedReadComparator
 <li>Size: 2
-<li>Length: 5
+<li>Length: 7
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.3287878787878788
 <li>BranchCoverage: 0.2

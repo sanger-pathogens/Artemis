@@ -35,37 +35,29 @@ uk.ac.sanger.artemis.plot.FeatureAlgorithm
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Key key0 = new Key(&quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>RangeVector rangeVector0 = new RangeVector((Range) null);
-<span class="nocode"><a name="3">  3: </a></span>Location location0 = new Location(rangeVector0, true);
-<span class="nocode"><a name="4">  4: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
-<span class="nocode"><a name="5">  5: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature(key0, location0, qualifierVector0);
-<span class="nocode"><a name="6">  6: </a></span>Feature feature0 = new Feature(genbankStreamFeature0);
-<span class="nocode"><a name="7">  7: </a></span>HydrophilicityAlgorithm hydrophilicityAlgorithm0 = new HydrophilicityAlgorithm(feature0);
-<span class="nocode"><a name="8">  8: </a></span>hydrophilicityAlgorithm0.getFeature();
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature();
+<span class="nocode"><a name="2">  2: </a></span>GFFStreamFeature gFFStreamFeature0 = new GFFStreamFeature(genbankStreamFeature0, false);
+<span class="nocode"><a name="3">  3: </a></span>Feature feature0 = new Feature(gFFStreamFeature0);
+<span class="nocode"><a name="4">  4: </a></span>HydrophilicityAlgorithm hydrophilicityAlgorithm0 = new HydrophilicityAlgorithm(feature0);
+<span class="nocode"><a name="5">  5: </a></span>hydrophilicityAlgorithm0.getFeature();
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>HydrophobicityAlgorithm hydrophobicityAlgorithm0 = new HydrophobicityAlgorithm((Feature) null);
-<span class="nocode"><a name="2">  2: </a></span>hydrophobicityAlgorithm0.getValues(1, 1, (float[]) null);
+<span class="nocode"><a name="1">  1: </a></span>HydrophilicityAlgorithm hydrophilicityAlgorithm0 = new HydrophilicityAlgorithm((Feature) null);
+<span class="nocode"><a name="2">  2: </a></span>float[] floatArray0 = new float[5];
+<span class="nocode"><a name="3">  3: </a></span>hydrophilicityAlgorithm0.getValues(1, 1, floatArray0);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>HydrophobicityAlgorithm hydrophobicityAlgorithm0 = new HydrophobicityAlgorithm((Feature) null);
-<span class="nocode"><a name="2">  2: </a></span>Feature feature0 = hydrophobicityAlgorithm0.getFeature();
+<span class="nocode"><a name="1">  1: </a></span>CoilFeatureAlgorithm coilFeatureAlgorithm0 = new CoilFeatureAlgorithm((Feature) null);
+<span class="nocode"><a name="2">  2: </a></span>Feature feature0 = coilFeatureAlgorithm0.getFeature();
 <span class="nocode"><a name="3">  3: </a></span>assertNull(feature0);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Key key0 = new Key(&quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>RangeVector rangeVector0 = new RangeVector((Range) null);
-<span class="nocode"><a name="3">  3: </a></span>Location location0 = new Location(rangeVector0, true);
-<span class="nocode"><a name="4">  4: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
-<span class="nocode"><a name="5">  5: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature(key0, location0, qualifierVector0);
-<span class="nocode"><a name="6">  6: </a></span>Feature feature0 = new Feature(genbankStreamFeature0);
-<span class="nocode"><a name="7">  7: </a></span>HydrophobicityAlgorithm hydrophobicityAlgorithm0 = new HydrophobicityAlgorithm(feature0);
-<span class="nocode"><a name="8">  8: </a></span>int int0 = hydrophobicityAlgorithm0.getValueCount();
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(1, int0);
+<span class="nocode"><a name="1">  1: </a></span>HydrophilicityAlgorithm hydrophilicityAlgorithm0 = new HydrophilicityAlgorithm((Feature) null);
+<span class="nocode"><a name="2">  2: </a></span>int int0 = hydrophilicityAlgorithm0.getValueCount();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(1, int0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -79,7 +71,7 @@ uk.ac.sanger.artemis.plot.FeatureAlgorithm
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.plot.FeatureAlgorithm
 <li>Size: 4
-<li>Length: 20
+<li>Length: 12
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.7916666666666667
 <li>BranchCoverage: 1.0

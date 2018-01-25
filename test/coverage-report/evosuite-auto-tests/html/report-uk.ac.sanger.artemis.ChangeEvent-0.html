@@ -35,9 +35,12 @@ uk.ac.sanger.artemis.ChangeEvent
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MockHijrahDate mockHijrahDate0 = new MockHijrahDate();
-<span class="nocode"><a name="2">  2: </a></span>SelectionChangeEvent selectionChangeEvent0 = new SelectionChangeEvent(mockHijrahDate0, (-1408));
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(3, SelectionChangeEvent.OBJECT_CHANGED);
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;uk.ac.sanger.artemis.io.InvalidKeyException&quot;);
+<span class="nocode"><a name="2">  2: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
+<span class="nocode"><a name="4">  4: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="5">  5: </a></span>EntryGroupChangeEvent entryGroupChangeEvent0 = new EntryGroupChangeEvent(simpleEntryGroup0, (Entry) null, 1);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(3, EntryGroupChangeEvent.ENTRY_ACTIVE);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -51,7 +54,7 @@ uk.ac.sanger.artemis.ChangeEvent
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.ChangeEvent
 <li>Size: 1
-<li>Length: 2
+<li>Length: 5
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.875
 <li>BranchCoverage: 1.0

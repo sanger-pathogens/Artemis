@@ -36,13 +36,12 @@ uk.ac.sanger.artemis.io.ReadListener
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>LogReadListener logReadListener0 = new LogReadListener(&quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Object object0 = new Object();
-<span class="nocode"><a name="3">  3: </a></span>ReadEvent readEvent0 = new ReadEvent(object0, &quot;&quot;);
-<span class="nocode"><a name="4">  4: </a></span>logReadListener0.notify(readEvent0);
+<span class="nocode"><a name="2">  2: </a></span>ReadEvent readEvent0 = new ReadEvent(logReadListener0, &quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>logReadListener0.notify(readEvent0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>LogReadListener logReadListener0 = new LogReadListener(&quot;&quot;);
+<span class="nocode"><a name="1">  1: </a></span>LogReadListener logReadListener0 = new LogReadListener((String) null);
 <span class="nocode"><a name="2">  2: </a></span>logReadListener0.notify((ReadEvent) null);
 </pre>
 </div><div id="post">
@@ -57,7 +56,7 @@ uk.ac.sanger.artemis.io.ReadListener
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.io.ReadListener
 <li>Size: 2
-<li>Length: 6
+<li>Length: 5
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.75
 <li>BranchCoverage: 1.0

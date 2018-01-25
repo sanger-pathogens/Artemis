@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.FeatureSegment
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.FeatureSegment: 0.5075103705939815</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.FeatureSegment: 0.4196558630863547</ul>
 <ul>
-<li>390.20420168067227 fitness evaluations, 0 generations, null statements, 16 tests.
+<li>473.06446540880506 fitness evaluations, 0 generations, null statements, 10 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,185 +35,101 @@ uk.ac.sanger.artemis.FeatureSegment
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;^&gt;):YTxKEgGLb9&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="4">  4: </a></span>Entry entry0 = simpleEntryGroup0.createEntry();
-<span class="nocode"><a name="5">  5: </a></span>Feature feature0 = entry0.createFeature();
-<span class="nocode"><a name="6">  6: </a></span>Range range0 = feature0.getMaxRawRange();
-<span class="nocode"><a name="7">  7: </a></span>FeatureSegment featureSegment0 = new FeatureSegment(feature0, range0);
-<span class="nocode"><a name="8">  8: </a></span>featureSegment0.getRawRange();
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;AT~Wd\&quot;$$c)f!+/&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = Entry.newEntry(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Feature feature0 = entry0.createFeature();
+<span class="nocode"><a name="5">  5: </a></span>Range range0 = feature0.getMaxRawRange();
+<span class="nocode"><a name="6">  6: </a></span>FeatureSegment featureSegment0 = new FeatureSegment(feature0, range0);
+<span class="nocode"><a name="7">  7: </a></span>featureSegment0.setStartPosition(5);
+<span class="nocode"><a name="8">  8: </a></span>featureSegment0.getFrameID();
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;^&gt;):YTxKEgLb9&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="4">  4: </a></span>Entry entry0 = simpleEntryGroup0.createEntry();
-<span class="nocode"><a name="5">  5: </a></span>Feature feature0 = entry0.createFeature();
-<span class="nocode"><a name="6">  6: </a></span>Range range0 = feature0.getMaxRawRange();
-<span class="nocode"><a name="7">  7: </a></span>FeatureSegment featureSegment0 = new FeatureSegment(feature0, range0);
-<span class="nocode"><a name="8">  8: </a></span>featureSegment0.setStartPosition(0);
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;AT~Wd\&quot;$$c)f!+/&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = Entry.newEntry(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Feature feature0 = entry0.createFeature();
+<span class="nocode"><a name="5">  5: </a></span>Range range0 = feature0.getMaxRawRange();
+<span class="nocode"><a name="6">  6: </a></span>FeatureSegment featureSegment0 = new FeatureSegment(feature0, range0);
+<span class="nocode"><a name="7">  7: </a></span>String string0 = featureSegment0.getBases();
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(&quot;nnnndnnncnnnnn&quot;, string0);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;^&gt;):YTxKEgGLb9&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="4">  4: </a></span>Entry entry0 = simpleEntryGroup0.createEntry();
-<span class="nocode"><a name="5">  5: </a></span>Feature feature0 = entry0.createFeature();
-<span class="nocode"><a name="6">  6: </a></span>boolean boolean0 = feature0.trimStart(false, false);
-<span class="nocode"><a name="7">  7: </a></span>assertFalse(boolean0);
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;AT~Wd\&quot;$$c)f!+/&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = Entry.newEntry(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Feature feature0 = entry0.createFeature();
+<span class="nocode"><a name="5">  5: </a></span>Range range0 = feature0.getMaxRawRange();
+<span class="nocode"><a name="6">  6: </a></span>FeatureSegment featureSegment0 = new FeatureSegment(feature0, range0);
+<span class="nocode"><a name="7">  7: </a></span>featureSegment0.setEndPosition(2798);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;^&gt;):YTxKEgLb9&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="4">  4: </a></span>Entry entry0 = simpleEntryGroup0.createEntry(&quot;^&gt;):YTxKEgLb9&quot;);
-<span class="nocode"><a name="5">  5: </a></span>Feature feature0 = entry0.createFeature();
-<span class="nocode"><a name="6">  6: </a></span>Range range0 = feature0.getMaxRawRange();
-<span class="nocode"><a name="7">  7: </a></span>FeatureSegment featureSegment0 = new FeatureSegment(feature0, range0);
-<span class="nocode"><a name="8">  8: </a></span>featureSegment0.setEndPosition(1004);
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;AT~Wd\&quot;$$c)f!+/&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = Entry.newEntry(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Feature feature0 = entry0.createFeature();
+<span class="nocode"><a name="5">  5: </a></span>Range range0 = feature0.getMaxRawRange();
+<span class="nocode"><a name="6">  6: </a></span>FeatureSegment featureSegment0 = new FeatureSegment(feature0, range0);
+<span class="nocode"><a name="7">  7: </a></span>int int0 = featureSegment0.getFrameID();
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(14, range0.getCount());
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(1, int0);
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot; A; &quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="4">  4: </a></span>Entry entry0 = simpleEntryGroup0.createEntry(&quot; A; &quot;);
-<span class="nocode"><a name="5">  5: </a></span>Feature feature0 = entry0.createFeature();
-<span class="nocode"><a name="6">  6: </a></span>Marker marker0 = feature0.getFirstCodingBaseMarker();
-<span class="nocode"><a name="7">  7: </a></span>MarkerRange markerRange0 = new MarkerRange(marker0);
-<span class="nocode"><a name="8">  8: </a></span>Range range0 = markerRange0.getRange();
-<span class="nocode"><a name="9">  9: </a></span>FeatureSegment featureSegment0 = new FeatureSegment(feature0, range0);
-<span class="nocode"><a name="10"> 10: </a></span>featureSegment0.stopListening();
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(0, 0);
+<span class="nocode"><a name="2">  2: </a></span>FeatureSegment featureSegment0 = new FeatureSegment((Feature) null, range0);
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(131072);
-<span class="nocode"><a name="2">  2: </a></span>FeatureSegment featureSegment0 = new FeatureSegment((Feature) null, range0);
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;AT~Wd\&quot;$$c)f!+/&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = Entry.newEntry(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Feature feature0 = entry0.createFeature();
+<span class="nocode"><a name="5">  5: </a></span>Range range0 = feature0.getMaxRawRange();
+<span class="nocode"><a name="6">  6: </a></span>FeatureSegment featureSegment0 = new FeatureSegment(feature0, range0);
+<span class="nocode"><a name="7">  7: </a></span>boolean boolean0 = featureSegment0.canDirectEdit();
+<span class="nocode"><a name="8">  8: </a></span>assertTrue(boolean0);
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(14, range0.getCount());
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;^&gt;):YTxKEgGLb9&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="4">  4: </a></span>Entry entry0 = simpleEntryGroup0.createEntry();
-<span class="nocode"><a name="5">  5: </a></span>Feature feature0 = entry0.createFeature();
-<span class="nocode"><a name="6">  6: </a></span>Range range0 = feature0.getMaxRawRange();
-<span class="nocode"><a name="7">  7: </a></span>FeatureSegment featureSegment0 = new FeatureSegment(feature0, range0);
-<span class="nocode"><a name="8">  8: </a></span>featureSegment0.setRange(range0);
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(14, range0.getCount());
-<span class="nocode"><a name="10"> 10: </a></span>assertEquals(1, range0.getStart());
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature();
+<span class="nocode"><a name="2">  2: </a></span>EmblStreamFeature emblStreamFeature0 = new EmblStreamFeature(genbankStreamFeature0);
+<span class="nocode"><a name="3">  3: </a></span>Feature feature0 = new Feature(emblStreamFeature0);
+<span class="nocode"><a name="4">  4: </a></span>Range range0 = new Range((-72), 5);
+<span class="nocode"><a name="5">  5: </a></span>FeatureSegment featureSegment0 = new FeatureSegment(feature0, range0);
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;^&gt;):YTxKEgGLb9&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="4">  4: </a></span>Entry entry0 = simpleEntryGroup0.createEntry();
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;AT~Wd\&quot;$$c)f!+/&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Range range0 = new Range((-5));
+<span class="nocode"><a name="4">  4: </a></span>Entry entry0 = Entry.newEntry(bases0);
 <span class="nocode"><a name="5">  5: </a></span>Feature feature0 = entry0.createFeature();
-<span class="nocode"><a name="6">  6: </a></span>Range range0 = feature0.getMaxRawRange();
-<span class="nocode"><a name="7">  7: </a></span>FeatureSegment featureSegment0 = new FeatureSegment(feature0, range0);
-<span class="nocode"><a name="8">  8: </a></span>SequenceChangeEvent sequenceChangeEvent0 = new SequenceChangeEvent(bases0, 0, range0, (-5));
-<span class="nocode"><a name="9">  9: </a></span>featureSegment0.sequenceChanged(sequenceChangeEvent0);
-<span class="nocode"><a name="10"> 10: </a></span>assertEquals(14, range0.getCount());
+<span class="nocode"><a name="6">  6: </a></span>FeatureSegment featureSegment0 = new FeatureSegment(feature0, range0);
 </pre>
 <h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;^&gt;):YTxKEgGLb9&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="4">  4: </a></span>Entry entry0 = simpleEntryGroup0.createEntry();
-<span class="nocode"><a name="5">  5: </a></span>Feature feature0 = entry0.createFeature();
-<span class="nocode"><a name="6">  6: </a></span>Range range0 = feature0.getMaxRawRange();
-<span class="nocode"><a name="7">  7: </a></span>FeatureSegment featureSegment0 = new FeatureSegment(feature0, range0);
-<span class="nocode"><a name="8">  8: </a></span>int int0 = featureSegment0.getFrameID();
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(1, int0);
-<span class="nocode"><a name="10"> 10: </a></span>assertEquals(14, range0.getCount());
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;AT~Wd\&quot;$$c)f!+/&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = Entry.newEntry(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Feature feature0 = entry0.createFeature();
+<span class="nocode"><a name="5">  5: </a></span>Range range0 = feature0.getMaxRawRange();
+<span class="nocode"><a name="6">  6: </a></span>FeatureSegment featureSegment0 = new FeatureSegment(feature0, range0);
+<span class="nocode"><a name="7">  7: </a></span>featureSegment0.startListening();
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(14, range0.getCount());
 </pre>
 <h3>Test case 10</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;^&gt;):YTxKEgLb9&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="4">  4: </a></span>Entry entry0 = simpleEntryGroup0.createEntry();
-<span class="nocode"><a name="5">  5: </a></span>Feature feature0 = entry0.createFeature();
-<span class="nocode"><a name="6">  6: </a></span>Range range0 = feature0.getMaxRawRange();
-<span class="nocode"><a name="7">  7: </a></span>FeatureSegment featureSegment0 = new FeatureSegment(feature0, range0);
-<span class="nocode"><a name="8">  8: </a></span>int int0 = featureSegment0.getFrameID();
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(2, int0);
-<span class="nocode"><a name="10"> 10: </a></span>assertEquals(13, range0.getCount());
-</pre>
-<h3>Test case 11</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot; A; &quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="4">  4: </a></span>Entry entry0 = simpleEntryGroup0.createEntry(&quot; A; &quot;);
-<span class="nocode"><a name="5">  5: </a></span>Feature feature0 = entry0.createFeature();
-<span class="nocode"><a name="6">  6: </a></span>Marker marker0 = feature0.getFirstCodingBaseMarker();
-<span class="nocode"><a name="7">  7: </a></span>MarkerRange markerRange0 = new MarkerRange(marker0);
-<span class="nocode"><a name="8">  8: </a></span>Range range0 = markerRange0.getRange();
-<span class="nocode"><a name="9">  9: </a></span>FeatureSegment featureSegment0 = new FeatureSegment(feature0, range0);
-<span class="nocode"><a name="10"> 10: </a></span>featureSegment0.getStart();
-<span class="nocode"><a name="11"> 11: </a></span>assertEquals(1, range0.getStart());
-<span class="nocode"><a name="12"> 12: </a></span>assertEquals(1, range0.getEnd());
-</pre>
-<h3>Test case 12</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;^&gt;):YTxKEgGLb9&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="4">  4: </a></span>Entry entry0 = simpleEntryGroup0.createEntry();
-<span class="nocode"><a name="5">  5: </a></span>Feature feature0 = entry0.createFeature();
-<span class="nocode"><a name="6">  6: </a></span>Range range0 = feature0.getMaxRawRange();
-<span class="nocode"><a name="7">  7: </a></span>FeatureSegment featureSegment0 = new FeatureSegment(feature0, range0);
-<span class="nocode"><a name="8">  8: </a></span>featureSegment0.addMarkerChangeListener(feature0);
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(14, range0.getCount());
-<span class="nocode"><a name="10"> 10: </a></span>assertEquals(1, range0.getStart());
-</pre>
-<h3>Test case 13</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;^&gt;):YTxKEgGLb9&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="4">  4: </a></span>Entry entry0 = simpleEntryGroup0.createEntry();
-<span class="nocode"><a name="5">  5: </a></span>Feature feature0 = entry0.createFeature();
-<span class="nocode"><a name="6">  6: </a></span>Range range0 = feature0.getMaxRawRange();
-<span class="nocode"><a name="7">  7: </a></span>FeatureSegment featureSegment0 = new FeatureSegment(feature0, range0);
-<span class="nocode"><a name="8">  8: </a></span>boolean boolean0 = featureSegment0.isForwardSegment();
-<span class="nocode"><a name="9">  9: </a></span>assertTrue(boolean0);
-<span class="nocode"><a name="10"> 10: </a></span>assertEquals(14, range0.getCount());
-</pre>
-<h3>Test case 14</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
-<span class="nocode"><a name="2">  2: </a></span>MSPcrunchStreamFeature mSPcrunchStreamFeature0 = new MSPcrunchStreamFeature((Key) null, (Location) null, qualifierVector0);
-<span class="nocode"><a name="3">  3: </a></span>Feature feature0 = new Feature(mSPcrunchStreamFeature0);
-<span class="nocode"><a name="4">  4: </a></span>FeatureSegment featureSegment0 = new FeatureSegment(feature0, (Range) null);
-</pre>
-<h3>Test case 15</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;title, &quot;);
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;AT~oA\&quot;$$c)f\&quot;+/&quot;);
 <span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="4">  4: </a></span>Entry entry0 = simpleEntryGroup0.createEntry();
-<span class="nocode"><a name="5">  5: </a></span>Feature feature0 = entry0.createFeature();
-<span class="nocode"><a name="6">  6: </a></span>Range range0 = new Range(20000);
-<span class="nocode"><a name="7">  7: </a></span>FeatureSegment featureSegment0 = new FeatureSegment(feature0, range0);
-</pre>
-<h3>Test case 16</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;^&gt;):YTxKEgLb9&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="4">  4: </a></span>Entry entry0 = simpleEntryGroup0.createEntry(&quot;^&gt;):YTxKEgLb9&quot;);
-<span class="nocode"><a name="5">  5: </a></span>Feature feature0 = entry0.createFeature();
-<span class="nocode"><a name="6">  6: </a></span>Feature feature1 = feature0.duplicate(true);
-<span class="nocode"><a name="7">  7: </a></span>genbankStreamSequence0.setFromChar(bases0.letter_index);
-<span class="nocode"><a name="8">  8: </a></span>feature1.getMaxRawRange();
+<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = Entry.newEntry(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Feature feature0 = entry0.createFeature();
+<span class="nocode"><a name="5">  5: </a></span>Range range0 = new Range(0, 2);
+<span class="nocode"><a name="6">  6: </a></span>FeatureSegment featureSegment0 = new FeatureSegment(feature0, range0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -226,13 +142,13 @@ uk.ac.sanger.artemis.FeatureSegment
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.FeatureSegment
-<li>Size: 16
-<li>Length: 120
+<li>Size: 10
+<li>Length: 62
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.5075103705939815
-<li>BranchCoverage: 0.5066666666666667
-<li>MethodCoverage: 0.5238095238095238
-<li>OutputCoverage: 0.1875
+<li>Coverage: 0.4196558630863547
+<li>BranchCoverage: 0.44
+<li>MethodCoverage: 0.3333333333333333
+<li>OutputCoverage: 0.09375
 </ul></div>
 </div>
 <p><br><a href="../report-generation.html">Back to Overview</a></p>

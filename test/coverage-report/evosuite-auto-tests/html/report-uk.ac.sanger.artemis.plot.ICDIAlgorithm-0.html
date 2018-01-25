@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.plot.ICDIAlgorithm
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.plot.ICDIAlgorithm: 0.7571964805362638</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.plot.ICDIAlgorithm: 0.6056241785692249</ul>
 <ul>
-<li>181.56762749445676 fitness evaluations, 0 generations, null statements, 17 tests.
+<li>185.69193548387096 fitness evaluations, 0 generations, null statements, 13 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,181 +35,132 @@ uk.ac.sanger.artemis.plot.ICDIAlgorithm
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;Reverse Intrinsic Codon Deviation Index&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;a[7]Wq)P!pnxA[ZO&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
 <span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
 <span class="nocode"><a name="4">  4: </a></span>ICDIAlgorithm iCDIAlgorithm0 = new ICDIAlgorithm(strand0);
 <span class="nocode"><a name="5">  5: </a></span>iCDIAlgorithm0.getValueCount();
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;'=RQx3Pyq72xokV?Q`&quot;, &quot;d3rWPE9'4!ifqU2%&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;}(MXB1skCzi.Ep&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
 <span class="nocode"><a name="4">  4: </a></span>ICDIAlgorithm iCDIAlgorithm0 = new ICDIAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>DebugGraphics debugGraphics0 = new DebugGraphics();
-<span class="nocode"><a name="6">  6: </a></span>Color[] colorArray0 = new Color[1];
-<span class="nocode"><a name="7">  7: </a></span>iCDIAlgorithm0.drawLegend((Graphics) debugGraphics0, 4, 1698, colorArray0);
-<span class="nocode"><a name="8">  8: </a></span>assertTrue(iCDIAlgorithm0.scalingFlag());
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(&quot;Intrinsic Codon Deviation Index&quot;, iCDIAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="5">  5: </a></span>Float float0 = iCDIAlgorithm0.getMaximumInternal();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;Reverse Intrinsic Codon Deviation Index&quot;, iCDIAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="7">  7: </a></span>assertTrue(iCDIAlgorithm0.scalingFlag());
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(1000.0F, (float)float0, 0.01F);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;Reverse Intrinsic Codon Deviation Index&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
-<span class="nocode"><a name="4">  4: </a></span>ICDIAlgorithm iCDIAlgorithm0 = new ICDIAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>Float float0 = iCDIAlgorithm0.getMaximumInternal();
-<span class="nocode"><a name="6">  6: </a></span>assertTrue(iCDIAlgorithm0.scalingFlag());
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(&quot;Intrinsic Codon Deviation Index&quot;, iCDIAlgorithm0.getAlgorithmName());
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(1000.0F, (float)float0, 0.01F);
+<span class="nocode"><a name="1">  1: </a></span>Bases bases0 = new Bases((Sequence) null);
+<span class="nocode"><a name="2">  2: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="3">  3: </a></span>ICDIAlgorithm iCDIAlgorithm0 = new ICDIAlgorithm(strand0);
+<span class="nocode"><a name="4">  4: </a></span>Float float0 = iCDIAlgorithm0.getMinimumInternal();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0.0F, (float)float0, 0.01F);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;Intrinsic Codon Deviation Index&quot;, iCDIAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="7">  7: </a></span>assertTrue(iCDIAlgorithm0.scalingFlag());
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;:*I|&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;I['mJL5&lt;tVgngv/]-B7&quot;, &quot;I['mJL5&lt;tVgngv/]-B7&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
 <span class="nocode"><a name="4">  4: </a></span>ICDIAlgorithm iCDIAlgorithm0 = new ICDIAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>Float float0 = iCDIAlgorithm0.getMinimumInternal();
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;Intrinsic Codon Deviation Index&quot;, iCDIAlgorithm0.getAlgorithmName());
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(0.0F, (float)float0, 0.01F);
-<span class="nocode"><a name="8">  8: </a></span>assertTrue(iCDIAlgorithm0.scalingFlag());
+<span class="nocode"><a name="5">  5: </a></span>iCDIAlgorithm0.getAverage();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;Reverse Intrinsic Codon Deviation Index&quot;, iCDIAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="7">  7: </a></span>assertTrue(iCDIAlgorithm0.scalingFlag());
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[5];
-<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short)2162);
-<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = Integer.getInteger(&quot;&quot;, (-720));
-<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 0, (-720), short0, integer0);
-<span class="nocode"><a name="5">  5: </a></span>Bases bases0 = new Bases(partialSequence0);
-<span class="nocode"><a name="6">  6: </a></span>Strand strand0 = bases0.getReverseStrand();
-<span class="nocode"><a name="7">  7: </a></span>ICDIAlgorithm iCDIAlgorithm0 = new ICDIAlgorithm(strand0);
-<span class="nocode"><a name="8">  8: </a></span>iCDIAlgorithm0.getAverage();
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(&quot;Reverse Intrinsic Codon Deviation Index&quot;, iCDIAlgorithm0.getAlgorithmName());
-<span class="nocode"><a name="10"> 10: </a></span>assertTrue(iCDIAlgorithm0.scalingFlag());
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;I['mJL5&lt;tVgngv/]-B7&quot;, &quot;I['mJL5&lt;tVgngv/]-B7&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="4">  4: </a></span>ICDIAlgorithm iCDIAlgorithm0 = new ICDIAlgorithm(strand0);
+<span class="nocode"><a name="5">  5: </a></span>iCDIAlgorithm0.getValues(0, 2, (float[]) null);
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Bases bases0 = new Bases((Sequence) null);
-<span class="nocode"><a name="2">  2: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="2">  2: </a></span>Strand strand0 = bases0.getForwardStrand();
 <span class="nocode"><a name="3">  3: </a></span>ICDIAlgorithm iCDIAlgorithm0 = new ICDIAlgorithm(strand0);
-<span class="nocode"><a name="4">  4: </a></span>float[] floatArray0 = new float[3];
-<span class="nocode"><a name="5">  5: </a></span>iCDIAlgorithm0.getValues(21, 39, floatArray0);
+<span class="nocode"><a name="4">  4: </a></span>float[] floatArray0 = new float[9];
+<span class="nocode"><a name="5">  5: </a></span>iCDIAlgorithm0.getValues(2, 0, floatArray0);
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot; is not a member of the alphabet &quot;, &quot; is not a member of the alphabet &quot;);
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;N~LU@6x$/1C(3Ne&quot;);
 <span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
 <span class="nocode"><a name="4">  4: </a></span>ICDIAlgorithm iCDIAlgorithm0 = new ICDIAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>float[] floatArray0 = new float[2];
-<span class="nocode"><a name="6">  6: </a></span>iCDIAlgorithm0.getValues(2463, (-1256), floatArray0);
+<span class="nocode"><a name="5">  5: </a></span>float[] floatArray0 = new float[5];
+<span class="nocode"><a name="6">  6: </a></span>iCDIAlgorithm0.getValues(2, 627, floatArray0);
+<span class="nocode"><a name="7">  7: </a></span>assertTrue(iCDIAlgorithm0.scalingFlag());
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(&quot;Reverse Intrinsic Codon Deviation Index&quot;, iCDIAlgorithm0.getAlgorithmName());
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;|4q&quot;, &quot;|4q&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
-<span class="nocode"><a name="4">  4: </a></span>ICDIAlgorithm iCDIAlgorithm0 = new ICDIAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>iCDIAlgorithm0.getValues(87, 66, (float[]) null);
-</pre>
-<h3>Test case 9</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;|4q&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
-<span class="nocode"><a name="4">  4: </a></span>ICDIAlgorithm iCDIAlgorithm0 = new ICDIAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>float[] floatArray0 = new float[9];
-<span class="nocode"><a name="6">  6: </a></span>iCDIAlgorithm0.getValues(0, 2, floatArray0);
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(&quot;Reverse Intrinsic Codon Deviation Index&quot;, iCDIAlgorithm0.getAlgorithmName());
-<span class="nocode"><a name="8">  8: </a></span>assertTrue(iCDIAlgorithm0.scalingFlag());
-</pre>
-<h3>Test case 10</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;=0b(iK#EU8*C&amp;hk'&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
-<span class="nocode"><a name="4">  4: </a></span>ICDIAlgorithm iCDIAlgorithm0 = new ICDIAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>float[] floatArray0 = new float[0];
-<span class="nocode"><a name="6">  6: </a></span>iCDIAlgorithm0.getValues(2, 97, floatArray0);
-</pre>
-<h3>Test case 11</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;Reverse Intrinsic Codon Deviation Index&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
-<span class="nocode"><a name="4">  4: </a></span>ICDIAlgorithm iCDIAlgorithm0 = new ICDIAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>Integer integer0 = iCDIAlgorithm0.getDefaultWindowSize();
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;Intrinsic Codon Deviation Index&quot;, iCDIAlgorithm0.getAlgorithmName());
-<span class="nocode"><a name="7">  7: </a></span>assertTrue(iCDIAlgorithm0.scalingFlag());
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(500, (int)integer0);
-<span class="nocode"><a name="9">  9: </a></span>assertNotNull(integer0);
-</pre>
-<h3>Test case 12</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;&quot;);
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;a[7]Wq)P!pnxA[ZO&quot;);
 <span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
 <span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
 <span class="nocode"><a name="4">  4: </a></span>ICDIAlgorithm iCDIAlgorithm0 = new ICDIAlgorithm(strand0);
+<span class="nocode"><a name="5">  5: </a></span>Integer integer0 = iCDIAlgorithm0.getDefaultWindowSize();
+<span class="nocode"><a name="6">  6: </a></span>assertNotNull(integer0);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(500, (int)integer0);
+<span class="nocode"><a name="8">  8: </a></span>assertTrue(iCDIAlgorithm0.scalingFlag());
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(&quot;Intrinsic Codon Deviation Index&quot;, iCDIAlgorithm0.getAlgorithmName());
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;I['mJL5&lt;tVgngv/]-B7&quot;, &quot;I['mJL5&lt;tVgngv/]-B7&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="4">  4: </a></span>ICDIAlgorithm iCDIAlgorithm0 = new ICDIAlgorithm(strand0);
 <span class="nocode"><a name="5">  5: </a></span>Integer integer0 = iCDIAlgorithm0.getDefaultMaxWindowSize();
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(5000, (int)integer0);
-<span class="nocode"><a name="7">  7: </a></span>assertNotNull(integer0);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;Reverse Intrinsic Codon Deviation Index&quot;, iCDIAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="7">  7: </a></span>assertTrue(iCDIAlgorithm0.scalingFlag());
+<span class="nocode"><a name="8">  8: </a></span>assertNotNull(integer0);
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(5000, (int)integer0);
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;a[7]Wq)P!pnxA[ZO&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="4">  4: </a></span>ICDIAlgorithm iCDIAlgorithm0 = new ICDIAlgorithm(strand0);
+<span class="nocode"><a name="5">  5: </a></span>Integer integer0 = iCDIAlgorithm0.getDefaultMinWindowSize();
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(iCDIAlgorithm0.scalingFlag());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(&quot;Intrinsic Codon Deviation Index&quot;, iCDIAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="8">  8: </a></span>assertNotNull(integer0);
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(24, (int)integer0);
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;}(MXB1skCzi.Ep&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="4">  4: </a></span>ICDIAlgorithm iCDIAlgorithm0 = new ICDIAlgorithm(strand0);
+<span class="nocode"><a name="5">  5: </a></span>Integer integer0 = iCDIAlgorithm0.getDefaultStepSize((-2046));
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;Reverse Intrinsic Codon Deviation Index&quot;, iCDIAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="7">  7: </a></span>assertTrue(iCDIAlgorithm0.scalingFlag());
+<span class="nocode"><a name="8">  8: </a></span>assertNull(integer0);
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;a[7]Wq)P!pnxA[ZO&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="4">  4: </a></span>ICDIAlgorithm iCDIAlgorithm0 = new ICDIAlgorithm(strand0);
+<span class="nocode"><a name="5">  5: </a></span>Integer integer0 = iCDIAlgorithm0.getDefaultStepSize(52);
+<span class="nocode"><a name="6">  6: </a></span>assertNotNull(integer0);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(24, (int)integer0);
 <span class="nocode"><a name="8">  8: </a></span>assertTrue(iCDIAlgorithm0.scalingFlag());
 <span class="nocode"><a name="9">  9: </a></span>assertEquals(&quot;Intrinsic Codon Deviation Index&quot;, iCDIAlgorithm0.getAlgorithmName());
 </pre>
 <h3>Test case 13</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;Reverse Intrinsic Codon Deviation Index&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
-<span class="nocode"><a name="4">  4: </a></span>ICDIAlgorithm iCDIAlgorithm0 = new ICDIAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>Integer integer0 = iCDIAlgorithm0.getDefaultMinWindowSize();
-<span class="nocode"><a name="6">  6: </a></span>assertTrue(iCDIAlgorithm0.scalingFlag());
-<span class="nocode"><a name="7">  7: </a></span>assertNotNull(integer0);
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(&quot;Intrinsic Codon Deviation Index&quot;, iCDIAlgorithm0.getAlgorithmName());
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(24, (int)integer0);
-</pre>
-<h3>Test case 14</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[5];
-<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short)2162);
-<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = Integer.getInteger(&quot;&quot;, (-720));
-<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 0, (-720), short0, integer0);
-<span class="nocode"><a name="5">  5: </a></span>Bases bases0 = new Bases(partialSequence0);
-<span class="nocode"><a name="6">  6: </a></span>Strand strand0 = bases0.getReverseStrand();
-<span class="nocode"><a name="7">  7: </a></span>ICDIAlgorithm iCDIAlgorithm0 = new ICDIAlgorithm(strand0);
-<span class="nocode"><a name="8">  8: </a></span>Integer integer1 = iCDIAlgorithm0.getDefaultStepSize(0);
-<span class="nocode"><a name="9">  9: </a></span>assertNull(integer1);
-<span class="nocode"><a name="10"> 10: </a></span>assertTrue(iCDIAlgorithm0.scalingFlag());
-<span class="nocode"><a name="11"> 11: </a></span>assertEquals(&quot;Reverse Intrinsic Codon Deviation Index&quot;, iCDIAlgorithm0.getAlgorithmName());
-</pre>
-<h3>Test case 15</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;Reverse Intrinsic Codon Deviation Index&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
-<span class="nocode"><a name="4">  4: </a></span>ICDIAlgorithm iCDIAlgorithm0 = new ICDIAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>Integer integer0 = iCDIAlgorithm0.getDefaultStepSize(65536);
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;Intrinsic Codon Deviation Index&quot;, iCDIAlgorithm0.getAlgorithmName());
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(24, (int)integer0);
-<span class="nocode"><a name="8">  8: </a></span>assertTrue(iCDIAlgorithm0.scalingFlag());
-<span class="nocode"><a name="9">  9: </a></span>assertNotNull(integer0);
-</pre>
-<h3>Test case 16</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>ICDIAlgorithm iCDIAlgorithm0 = new ICDIAlgorithm((Strand) null);
-</pre>
-<h3>Test case 17</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[5];
-<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short)2162);
-<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = Integer.getInteger(&quot;&quot;, (-720));
-<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 0, (-720), short0, integer0);
-<span class="nocode"><a name="5">  5: </a></span>Bases bases0 = new Bases(partialSequence0);
-<span class="nocode"><a name="6">  6: </a></span>Strand strand0 = bases0.getReverseStrand();
-<span class="nocode"><a name="7">  7: </a></span>ICDIAlgorithm iCDIAlgorithm0 = new ICDIAlgorithm(strand0);
-<span class="nocode"><a name="8">  8: </a></span>float[] floatArray0 = new float[3];
-<span class="nocode"><a name="9">  9: </a></span>iCDIAlgorithm0.getValues(512, 1746, floatArray0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -222,12 +173,12 @@ uk.ac.sanger.artemis.plot.ICDIAlgorithm
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.plot.ICDIAlgorithm
-<li>Size: 17
-<li>Length: 96
+<li>Size: 13
+<li>Length: 61
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.7571964805362638
-<li>BranchCoverage: 0.6578947368421053
-<li>MethodCoverage: 1.0
+<li>Coverage: 0.6056241785692249
+<li>BranchCoverage: 0.6447368421052632
+<li>MethodCoverage: 0.9090909090909091
 <li>OutputCoverage: 0.2905405405405405
 </ul></div>
 </div>

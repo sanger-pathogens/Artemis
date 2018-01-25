@@ -23,7 +23,7 @@ uk.ac.sanger.artemis.SSAHAComparisonData
 <br><br><h2 class=title>Summary</h2>
 <ul><li>Target class: uk.ac.sanger.artemis.SSAHAComparisonData: 0.5294438106938106</ul>
 <ul>
-<li>176.9909090909091 fitness evaluations, 0 generations, null statements, 12 tests.
+<li>176.95714285714286 fitness evaluations, 0 generations, null statements, 11 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,76 +35,61 @@ uk.ac.sanger.artemis.SSAHAComparisonData
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FileDescriptor fileDescriptor0 = new FileDescriptor();
-<span class="nocode"><a name="2">  2: </a></span>MockFileInputStream mockFileInputStream0 = new MockFileInputStream(fileDescriptor0);
-<span class="nocode"><a name="3">  3: </a></span>PushbackInputStream pushbackInputStream0 = new PushbackInputStream(mockFileInputStream0, 35);
-<span class="nocode"><a name="4">  4: </a></span>Charset charset0 = Charset.defaultCharset();
-<span class="nocode"><a name="5">  5: </a></span>CharsetDecoder charsetDecoder0 = charset0.newDecoder();
-<span class="nocode"><a name="6">  6: </a></span>InputStreamReader inputStreamReader0 = new InputStreamReader(pushbackInputStream0, charsetDecoder0);
-<span class="nocode"><a name="7">  7: </a></span>LinePushBackReader linePushBackReader0 = new LinePushBackReader(inputStreamReader0);
-<span class="nocode"><a name="8">  8: </a></span>SSAHAComparisonData sSAHAComparisonData0 = new SSAHAComparisonData(linePushBackReader0);
+<span class="nocode"><a name="1">  1: </a></span>PipedReader pipedReader0 = new PipedReader();
+<span class="nocode"><a name="2">  2: </a></span>LinePushBackReader linePushBackReader0 = new LinePushBackReader(pipedReader0);
+<span class="nocode"><a name="3">  3: </a></span>SSAHAComparisonData sSAHAComparisonData0 = new SSAHAComparisonData(linePushBackReader0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SSAHAComparisonData sSAHAComparisonData0 = new SSAHAComparisonData();
 <span class="nocode"><a name="2">  2: </a></span>SSAHAComparisonData sSAHAComparisonData1 = (SSAHAComparisonData)sSAHAComparisonData0.getNewSimpleComparisonData();
-<span class="nocode"><a name="3">  3: </a></span>assertNotSame(sSAHAComparisonData1, sSAHAComparisonData0);
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(sSAHAComparisonData1.equals((Object)sSAHAComparisonData0));
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>boolean boolean0 = SSAHAComparisonData.formatCorrect(&quot;UKZJf#pR&gt;9&quot;);
+<span class="nocode"><a name="1">  1: </a></span>boolean boolean0 = SSAHAComparisonData.formatCorrect(&quot;&quot;);
 <span class="nocode"><a name="2">  2: </a></span>assertFalse(boolean0);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[6];
-<span class="nocode"><a name="2">  2: </a></span>charArray0[0] = 'I';
-<span class="nocode"><a name="3">  3: </a></span>CharArrayReader charArrayReader0 = new CharArrayReader(charArray0);
-<span class="nocode"><a name="4">  4: </a></span>LinePushBackReader linePushBackReader0 = new LinePushBackReader(charArrayReader0);
-<span class="nocode"><a name="5">  5: </a></span>SSAHAComparisonData sSAHAComparisonData0 = new SSAHAComparisonData(linePushBackReader0);
+<span class="nocode"><a name="1">  1: </a></span>StringReader stringReader0 = new StringReader(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>LinePushBackReader linePushBackReader0 = new LinePushBackReader(stringReader0);
+<span class="nocode"><a name="3">  3: </a></span>SSAHAComparisonData sSAHAComparisonData0 = new SSAHAComparisonData(linePushBackReader0);
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>StringReader stringReader0 = new StringReader(&quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>LineNumberReader lineNumberReader0 = new LineNumberReader(stringReader0);
-<span class="nocode"><a name="3">  3: </a></span>LinePushBackReader linePushBackReader0 = new LinePushBackReader(lineNumberReader0);
-<span class="nocode"><a name="4">  4: </a></span>SSAHAComparisonData sSAHAComparisonData0 = new SSAHAComparisonData(linePushBackReader0);
+<span class="nocode"><a name="1">  1: </a></span>SSAHAComparisonData.makeMatchFromStringStatic(&quot;.]&quot;);
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SSAHAComparisonData.makeMatchFromStringStatic(&quot;&quot;);
+<span class="nocode"><a name="1">  1: </a></span>SSAHAComparisonData sSAHAComparisonData0 = new SSAHAComparisonData((LinePushBackReader) null);
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SSAHAComparisonData sSAHAComparisonData0 = new SSAHAComparisonData((LinePushBackReader) null);
+<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[9];
+<span class="nocode"><a name="2">  2: </a></span>byteArray0[6] = (byte)54;
+<span class="nocode"><a name="3">  3: </a></span>ByteArrayInputStream byteArrayInputStream0 = new ByteArrayInputStream(byteArray0);
+<span class="nocode"><a name="4">  4: </a></span>DataInputStream dataInputStream0 = new DataInputStream(byteArrayInputStream0);
+<span class="nocode"><a name="5">  5: </a></span>Charset charset0 = Charset.defaultCharset();
+<span class="nocode"><a name="6">  6: </a></span>InputStreamReader inputStreamReader0 = new InputStreamReader(dataInputStream0, charset0);
+<span class="nocode"><a name="7">  7: </a></span>LinePushBackReader linePushBackReader0 = new LinePushBackReader(inputStreamReader0);
+<span class="nocode"><a name="8">  8: </a></span>SSAHAComparisonData sSAHAComparisonData0 = new SSAHAComparisonData(linePushBackReader0);
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[7];
-<span class="nocode"><a name="2">  2: </a></span>byteArray0[0] = (byte) (-121);
-<span class="nocode"><a name="3">  3: </a></span>ByteArrayInputStream byteArrayInputStream0 = new ByteArrayInputStream(byteArray0);
-<span class="nocode"><a name="4">  4: </a></span>PushbackInputStream pushbackInputStream0 = new PushbackInputStream(byteArrayInputStream0);
-<span class="nocode"><a name="5">  5: </a></span>Charset charset0 = Charset.defaultCharset();
-<span class="nocode"><a name="6">  6: </a></span>CharsetDecoder charsetDecoder0 = charset0.newDecoder();
-<span class="nocode"><a name="7">  7: </a></span>InputStreamReader inputStreamReader0 = new InputStreamReader(pushbackInputStream0, charsetDecoder0);
-<span class="nocode"><a name="8">  8: </a></span>LinePushBackReader linePushBackReader0 = new LinePushBackReader(inputStreamReader0);
-<span class="nocode"><a name="9">  9: </a></span>SSAHAComparisonData sSAHAComparisonData0 = new SSAHAComparisonData(linePushBackReader0);
-</pre>
-<h3>Test case 9</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SSAHAComparisonData.formatCorrect((String) null);
 </pre>
-<h3>Test case 10</h3>
+<h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SSAHAComparisonData sSAHAComparisonData0 = new SSAHAComparisonData();
 <span class="nocode"><a name="2">  2: </a></span>sSAHAComparisonData0.makeMatchFromString((String) null);
 </pre>
-<h3>Test case 11</h3>
+<h3>Test case 10</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SSAHAComparisonData sSAHAComparisonData0 = new SSAHAComparisonData();
-<span class="nocode"><a name="2">  2: </a></span>sSAHAComparisonData0.makeMatchFromString(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>sSAHAComparisonData0.makeMatchFromString(&quot; values but the header says this should have &quot;);
 </pre>
-<h3>Test case 12</h3>
+<h3>Test case 11</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SSAHAComparisonData.makeMatchFromStringStatic((String) null);
 </pre>
@@ -119,8 +104,8 @@ uk.ac.sanger.artemis.SSAHAComparisonData
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.SSAHAComparisonData
-<li>Size: 12
-<li>Length: 37
+<li>Size: 11
+<li>Length: 25
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.5294438106938106
 <li>BranchCoverage: 0.6666666666666666

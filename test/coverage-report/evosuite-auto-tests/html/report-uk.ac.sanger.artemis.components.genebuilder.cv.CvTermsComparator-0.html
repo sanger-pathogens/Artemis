@@ -37,36 +37,41 @@ uk.ac.sanger.artemis.components.genebuilder.cv.CvTermsComparator
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>CvTermsComparator cvTermsComparator0 = new CvTermsComparator();
 <span class="nocode"><a name="2">  2: </a></span>Cv cv0 = new Cv();
-<span class="nocode"><a name="3">  3: </a></span>DbXRef dbXRef0 = new DbXRef();
-<span class="nocode"><a name="4">  4: </a></span>CvTerm cvTerm0 = new CvTerm(cv0, dbXRef0, &quot;I!/#WrHJNq:cPji&quot;, &quot;I!/#WrHJNq:cPji&quot;);
-<span class="nocode"><a name="5">  5: </a></span>int int0 = cvTermsComparator0.compare(cvTerm0, cvTerm0);
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, int0);
+<span class="nocode"><a name="3">  3: </a></span>Db db0 = new Db();
+<span class="nocode"><a name="4">  4: </a></span>DbXRef dbXRef0 = new DbXRef(db0, &quot;&quot;);
+<span class="nocode"><a name="5">  5: </a></span>CvTerm cvTerm0 = new CvTerm(cv0, dbXRef0, &quot;&quot;, &quot;&quot;);
+<span class="nocode"><a name="6">  6: </a></span>int int0 = cvTermsComparator0.compare(cvTerm0, cvTerm0);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, int0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>CvTermsComparator cvTermsComparator0 = new CvTermsComparator();
-<span class="nocode"><a name="2">  2: </a></span>CvTerm cvTerm0 = new CvTerm();
-<span class="nocode"><a name="3">  3: </a></span>cvTermsComparator0.compare(cvTerm0, cvTerm0);
+<span class="nocode"><a name="2">  2: </a></span>Cv cv0 = new Cv();
+<span class="nocode"><a name="3">  3: </a></span>Db db0 = new Db();
+<span class="nocode"><a name="4">  4: </a></span>DbXRef dbXRef0 = new DbXRef(db0, &quot;&quot;);
+<span class="nocode"><a name="5">  5: </a></span>CvTerm cvTerm0 = new CvTerm(cv0, dbXRef0, &quot;&quot;, &quot;&quot;);
+<span class="nocode"><a name="6">  6: </a></span>CvTerm cvTerm1 = new CvTerm();
+<span class="nocode"><a name="7">  7: </a></span>cvTermsComparator0.compare(cvTerm0, cvTerm1);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>CvTermsComparator cvTermsComparator0 = new CvTermsComparator();
 <span class="nocode"><a name="2">  2: </a></span>Cv cv0 = new Cv();
 <span class="nocode"><a name="3">  3: </a></span>DbXRef dbXRef0 = new DbXRef();
-<span class="nocode"><a name="4">  4: </a></span>CvTerm cvTerm0 = new CvTerm(cv0, dbXRef0, &quot;I!/#WrHJNq:cPji&quot;, &quot;I!/#WrHJNq:cPji&quot;);
-<span class="nocode"><a name="5">  5: </a></span>CvTerm cvTerm1 = new CvTerm(cv0, dbXRef0, &quot;&quot;, &quot;%on&quot;);
+<span class="nocode"><a name="4">  4: </a></span>CvTerm cvTerm0 = new CvTerm(cv0, dbXRef0, &quot;;%%?G:#2I!@+EbFGHL&quot;, &quot;pe1P)eEq&quot;);
+<span class="nocode"><a name="5">  5: </a></span>CvTerm cvTerm1 = new CvTerm(cv0, dbXRef0, &quot;11Uz%Y=&quot;, &quot;&quot;);
 <span class="nocode"><a name="6">  6: </a></span>int int0 = cvTermsComparator0.compare(cvTerm1, cvTerm0);
-<span class="nocode"><a name="7">  7: </a></span>assertEquals((-15), int0);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals((-10), int0);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>CvTermsComparator cvTermsComparator0 = new CvTermsComparator();
 <span class="nocode"><a name="2">  2: </a></span>Cv cv0 = new Cv();
 <span class="nocode"><a name="3">  3: </a></span>DbXRef dbXRef0 = new DbXRef();
-<span class="nocode"><a name="4">  4: </a></span>CvTerm cvTerm0 = new CvTerm(cv0, dbXRef0, &quot;I!/#WrHJNq:cPji&quot;, &quot;I!/#WrHJNq:cPji&quot;);
-<span class="nocode"><a name="5">  5: </a></span>CvTerm cvTerm1 = new CvTerm(cv0, dbXRef0, &quot;&quot;, &quot;%on&quot;);
-<span class="nocode"><a name="6">  6: </a></span>int int0 = cvTermsComparator0.compare(cvTerm0, cvTerm1);
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(15, int0);
+<span class="nocode"><a name="4">  4: </a></span>CvTerm cvTerm0 = new CvTerm(cv0, dbXRef0, &quot;;%%?G:#2I!@+EbFGHL&quot;, &quot;pe1P)eEq&quot;);
+<span class="nocode"><a name="5">  5: </a></span>CvTerm cvTerm1 = new CvTerm(cv0, dbXRef0, &quot;HB&quot;, &quot;KMQT?c7qX6yM9T?m6&quot;);
+<span class="nocode"><a name="6">  6: </a></span>int int0 = cvTermsComparator0.compare(cvTerm1, cvTerm0);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(45, int0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -80,7 +85,7 @@ uk.ac.sanger.artemis.components.genebuilder.cv.CvTermsComparator
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.genebuilder.cv.CvTermsComparator
 <li>Size: 4
-<li>Length: 20
+<li>Length: 25
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 1.0
 <li>BranchCoverage: 1.0

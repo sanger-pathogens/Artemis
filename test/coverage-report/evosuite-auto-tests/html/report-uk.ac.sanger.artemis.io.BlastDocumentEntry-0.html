@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.io.BlastDocumentEntry
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.io.BlastDocumentEntry: 0.6402064119455423</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.io.BlastDocumentEntry: 0.8078886693017128</ul>
 <ul>
-<li>27.625 fitness evaluations, 0 generations, null statements, 12 tests.
+<li>20.791666666666664 fitness evaluations, 0 generations, null statements, 11 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,86 +35,77 @@ uk.ac.sanger.artemis.io.BlastDocumentEntry
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>JPasswordField jPasswordField0 = new JPasswordField(0);
-<span class="nocode"><a name="2">  2: </a></span>ByteBuffer byteBuffer0 = new ByteBuffer();
-<span class="nocode"><a name="3">  3: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;&quot;, jPasswordField0, &quot;&quot;, &quot;m&gt;v]Zn/:IN+cd&quot;, byteBuffer0, &quot;&quot;);
-<span class="nocode"><a name="4">  4: </a></span>LogReadListener logReadListener0 = new LogReadListener(&quot;mRNA&quot;);
-<span class="nocode"><a name="5">  5: </a></span>byteBuffer0.append(&quot; %&quot;);
-<span class="nocode"><a name="6">  6: </a></span>BlastDocumentEntry blastDocumentEntry0 = new BlastDocumentEntry(databaseDocument0, logReadListener0);
-<span class="nocode"><a name="7">  7: </a></span>BlastDocumentEntry blastDocumentEntry1 = new BlastDocumentEntry(blastDocumentEntry0, false);
-<span class="nocode"><a name="8">  8: </a></span>assertTrue(blastDocumentEntry1.isReadOnly());
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = new SimpleEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>GenbankDocumentEntry genbankDocumentEntry0 = new GenbankDocumentEntry(simpleEntryInformation0);
+<span class="nocode"><a name="3">  3: </a></span>BlastDocumentEntry blastDocumentEntry0 = new BlastDocumentEntry(genbankDocumentEntry0, true);
+<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = blastDocumentEntry0.isReadOnly();
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(boolean0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = new SimpleEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>BlastDocumentEntry blastDocumentEntry0 = new BlastDocumentEntry(simpleEntryInformation0);
-<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = blastDocumentEntry0.isReadOnly();
-<span class="nocode"><a name="4">  4: </a></span>assertTrue(boolean0);
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;zcGM6CH&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileDocument fileDocument0 = new FileDocument(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>LogReadListener logReadListener0 = new LogReadListener(&quot;public&quot;);
+<span class="nocode"><a name="4">  4: </a></span>BlastDocumentEntry blastDocumentEntry0 = new BlastDocumentEntry(fileDocument0, logReadListener0);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = (SimpleEntryInformation)SimpleEntryInformation.getDefaultEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>BlastDocumentEntry blastDocumentEntry0 = new BlastDocumentEntry(simpleEntryInformation0);
-<span class="nocode"><a name="3">  3: </a></span>blastDocumentEntry0.makeNativeFeature((Feature) null, true);
+<span class="nocode"><a name="1">  1: </a></span>MSPcrunchEntryInformation mSPcrunchEntryInformation0 = new MSPcrunchEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>BlastDocumentEntry blastDocumentEntry0 = new BlastDocumentEntry(mSPcrunchEntryInformation0);
+<span class="nocode"><a name="3">  3: </a></span>char[] charArray0 = new char[1];
+<span class="nocode"><a name="4">  4: </a></span>Short short0 = new Short((short)0);
+<span class="nocode"><a name="5">  5: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, (-538), 40000, short0, (Integer) null);
+<span class="nocode"><a name="6">  6: </a></span>blastDocumentEntry0.makeNativeSequence(partialSequence0);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>BlastDocumentEntry blastDocumentEntry0 = new BlastDocumentEntry((EntryInformation) null);
-<span class="nocode"><a name="2">  2: </a></span>blastDocumentEntry0.makeNativeFeature((Feature) null, false);
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>BlastDocumentEntry blastDocumentEntry0 = new BlastDocumentEntry(blastEntryInformation0);
+<span class="nocode"><a name="3">  3: </a></span>blastDocumentEntry0.makeNativeFeature((Feature) null, true);
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>BlastDocumentEntry blastDocumentEntry0 = new BlastDocumentEntry((Entry) null, true);
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>BlastDocumentEntry blastDocumentEntry0 = new BlastDocumentEntry(blastEntryInformation0);
+<span class="nocode"><a name="3">  3: </a></span>blastDocumentEntry0.makeNativeFeature((Feature) null, false);
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>JPasswordField jPasswordField0 = new JPasswordField();
-<span class="nocode"><a name="2">  2: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;O6?g-p_o/ NzdsZH&quot;, jPasswordField0);
-<span class="nocode"><a name="3">  3: </a></span>LogReadListener logReadListener0 = new LogReadListener((String) null);
-<span class="nocode"><a name="4">  4: </a></span>BlastDocumentEntry blastDocumentEntry0 = new BlastDocumentEntry(databaseDocument0, logReadListener0);
+<span class="nocode"><a name="1">  1: </a></span>BlastDocumentEntry blastDocumentEntry0 = new BlastDocumentEntry((Entry) null, false);
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;Indexed FASTA Found&quot;);
-<span class="nocode"><a name="2">  2: </a></span>FileDocument fileDocument0 = new FileDocument(mockFile0);
-<span class="nocode"><a name="3">  3: </a></span>BlastDocumentEntry blastDocumentEntry0 = new BlastDocumentEntry(fileDocument0, (ReadListener) null);
+<span class="nocode"><a name="1">  1: </a></span>TextDocument textDocument0 = new TextDocument();
+<span class="nocode"><a name="2">  2: </a></span>LogReadListener logReadListener0 = new LogReadListener(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>BlastDocumentEntry blastDocumentEntry0 = new BlastDocumentEntry(textDocument0, logReadListener0);
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>URL uRL0 = MockURL.getHttpExample();
-<span class="nocode"><a name="2">  2: </a></span>URLDocument uRLDocument0 = new URLDocument(uRL0);
-<span class="nocode"><a name="3">  3: </a></span>LogReadListener logReadListener0 = new LogReadListener(&quot;--Ln^c+&amp;&quot;);
-<span class="nocode"><a name="4">  4: </a></span>BlastDocumentEntry blastDocumentEntry0 = new BlastDocumentEntry(uRLDocument0, logReadListener0);
+<span class="nocode"><a name="1">  1: </a></span>LogReadListener logReadListener0 = new LogReadListener(&quot;x~i$4Oa&quot;);
+<span class="nocode"><a name="2">  2: </a></span>BlastDocumentEntry blastDocumentEntry0 = new BlastDocumentEntry((Document) null, logReadListener0);
 </pre>
 <h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = new SimpleEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>BlastDocumentEntry blastDocumentEntry0 = new BlastDocumentEntry(simpleEntryInformation0);
-<span class="nocode"><a name="3">  3: </a></span>blastDocumentEntry0.makeNativeSequence((Sequence) null);
+<span class="nocode"><a name="1">  1: </a></span>BlastDocumentEntry blastDocumentEntry0 = new BlastDocumentEntry((EntryInformation) null);
+<span class="nocode"><a name="2">  2: </a></span>blastDocumentEntry0.makeNativeSequence((Sequence) null);
 </pre>
 <h3>Test case 10</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>BlastDocumentEntry blastDocumentEntry0 = new BlastDocumentEntry(blastEntryInformation0);
+<span class="nocode"><a name="1">  1: </a></span>MSPcrunchEntryInformation mSPcrunchEntryInformation0 = new MSPcrunchEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>BlastDocumentEntry blastDocumentEntry0 = new BlastDocumentEntry(mSPcrunchEntryInformation0);
 <span class="nocode"><a name="3">  3: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;&quot;);
 <span class="nocode"><a name="4">  4: </a></span>FastaStreamSequence fastaStreamSequence0 = (FastaStreamSequence)blastDocumentEntry0.makeNativeSequence(genbankStreamSequence0);
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, fastaStreamSequence0.getTCount());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, fastaStreamSequence0.getCCount());
 </pre>
 <h3>Test case 11</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = new SimpleEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>BlastDocumentEntry blastDocumentEntry0 = new BlastDocumentEntry(simpleEntryInformation0);
-<span class="nocode"><a name="3">  3: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;`)&lt;NXlF R6x2U8Z&amp;t&quot;);
-<span class="nocode"><a name="4">  4: </a></span>FastaStreamSequence fastaStreamSequence0 = (FastaStreamSequence)blastDocumentEntry0.makeNativeSequence(genbankStreamSequence0);
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, fastaStreamSequence0.getGCount());
-</pre>
-<h3>Test case 12</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>JPasswordField jPasswordField0 = new JPasswordField(0);
-<span class="nocode"><a name="2">  2: </a></span>ByteBuffer byteBuffer0 = new ByteBuffer();
-<span class="nocode"><a name="3">  3: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;&quot;, jPasswordField0, &quot;&quot;, &quot;m&gt;v]Zn/:IN+cd&quot;, byteBuffer0, &quot;&quot;);
-<span class="nocode"><a name="4">  4: </a></span>LogReadListener logReadListener0 = new LogReadListener(&quot;mRNA&quot;);
-<span class="nocode"><a name="5">  5: </a></span>BlastDocumentEntry blastDocumentEntry0 = new BlastDocumentEntry(databaseDocument0, logReadListener0);
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>BlastDocumentEntry blastDocumentEntry0 = new BlastDocumentEntry(blastEntryInformation0);
+<span class="nocode"><a name="3">  3: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;p!ct'Y|YKK$Hq&quot;);
+<span class="nocode"><a name="4">  4: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(rawStreamSequence0);
+<span class="nocode"><a name="5">  5: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(genbankStreamSequence0);
+<span class="nocode"><a name="6">  6: </a></span>FastaStreamSequence fastaStreamSequence0 = (FastaStreamSequence)blastDocumentEntry0.makeNativeSequence(emblStreamSequence0);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(1, fastaStreamSequence0.getTCount());
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -127,13 +118,13 @@ uk.ac.sanger.artemis.io.BlastDocumentEntry
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.io.BlastDocumentEntry
-<li>Size: 12
-<li>Length: 43
+<li>Size: 11
+<li>Length: 38
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.6402064119455423
+<li>Coverage: 0.8078886693017128
 <li>BranchCoverage: 0.8888888888888888
 <li>MethodCoverage: 1.0
-<li>OutputCoverage: 0.43478260869565216
+<li>OutputCoverage: 0.4782608695652174
 </ul></div>
 </div>
 <p><br><a href="../report-generation.html">Back to Overview</a></p>

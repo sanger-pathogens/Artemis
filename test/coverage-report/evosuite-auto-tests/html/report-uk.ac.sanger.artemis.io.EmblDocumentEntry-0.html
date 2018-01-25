@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.io.EmblDocumentEntry
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.io.EmblDocumentEntry: 0.8052884615384616</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.io.EmblDocumentEntry: 0.6941773504273504</ul>
 <ul>
-<li>14.925 fitness evaluations, 0 generations, null statements, 9 tests.
+<li>41.125 fitness evaluations, 0 generations, null statements, 9 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,62 +35,62 @@ uk.ac.sanger.artemis.io.EmblDocumentEntry
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>EmblDocumentEntry emblDocumentEntry0 = new EmblDocumentEntry((Entry) null);
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>FeatureVector featureVector0 = new FeatureVector();
+<span class="nocode"><a name="3">  3: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, &quot;ID&quot;);
+<span class="nocode"><a name="4">  4: </a></span>Entry entry0 = filteredEntryGroup0.createEntry();
+<span class="nocode"><a name="5">  5: </a></span>SimpleEntryInformation simpleEntryInformation0 = (SimpleEntryInformation)entry0.getEntryInformation();
+<span class="nocode"><a name="6">  6: </a></span>MSPcrunchDocumentEntry mSPcrunchDocumentEntry0 = new MSPcrunchDocumentEntry(simpleEntryInformation0);
+<span class="nocode"><a name="7">  7: </a></span>EmblDocumentEntry emblDocumentEntry0 = new EmblDocumentEntry(simpleEntryInformation0, mSPcrunchDocumentEntry0, false);
+<span class="nocode"><a name="8">  8: </a></span>EmblDocumentEntry emblDocumentEntry1 = new EmblDocumentEntry(simpleEntryInformation0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>MSPcrunchEntryInformation mSPcrunchEntryInformation0 = new MSPcrunchEntryInformation();
 <span class="nocode"><a name="2">  2: </a></span>EmblDocumentEntry emblDocumentEntry0 = new EmblDocumentEntry(mSPcrunchEntryInformation0);
-<span class="nocode"><a name="3">  3: </a></span>MSPcrunchDocumentEntry mSPcrunchDocumentEntry0 = new MSPcrunchDocumentEntry(emblDocumentEntry0, true);
-<span class="nocode"><a name="4">  4: </a></span>EmblDocumentEntry emblDocumentEntry1 = new EmblDocumentEntry(mSPcrunchDocumentEntry0);
-<span class="nocode"><a name="5">  5: </a></span>assertFalse(emblDocumentEntry1.isReadOnly());
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(emblDocumentEntry0.isReadOnly());
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MSPcrunchEntryInformation mSPcrunchEntryInformation0 = new MSPcrunchEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>MockFile mockFile0 = new MockFile(&quot;ID&quot;, &quot;1@ZMbw.&quot;);
-<span class="nocode"><a name="3">  3: </a></span>FileDocument fileDocument0 = new FileDocument(mockFile0);
-<span class="nocode"><a name="4">  4: </a></span>LogReadListener logReadListener0 = new LogReadListener(&quot;urn:sequence/embl:&quot;);
-<span class="nocode"><a name="5">  5: </a></span>EmblDocumentEntry emblDocumentEntry0 = new EmblDocumentEntry(mSPcrunchEntryInformation0, fileDocument0, logReadListener0);
+<span class="nocode"><a name="1">  1: </a></span>EmblDocumentEntry emblDocumentEntry0 = new EmblDocumentEntry((Entry) null);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>EmblDocumentEntry emblDocumentEntry0 = new EmblDocumentEntry(blastEntryInformation0);
-<span class="nocode"><a name="3">  3: </a></span>EmblDocumentEntry emblDocumentEntry1 = new EmblDocumentEntry(blastEntryInformation0, emblDocumentEntry0, true);
-<span class="nocode"><a name="4">  4: </a></span>assertTrue(PublicDBDocumentEntry.IGNORE_OBSOLETE_FEATURES);
+<span class="nocode"><a name="1">  1: </a></span>EmblDocumentEntry emblDocumentEntry0 = new EmblDocumentEntry((EntryInformation) null);
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>EmblDocumentEntry emblDocumentEntry0 = new EmblDocumentEntry((EntryInformation) null);
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = new SimpleEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>EmblDocumentEntry emblDocumentEntry0 = new EmblDocumentEntry(simpleEntryInformation0, (Entry) null, true);
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>MSPcrunchEntryInformation mSPcrunchEntryInformation0 = new MSPcrunchEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>EmblDocumentEntry emblDocumentEntry0 = new EmblDocumentEntry(mSPcrunchEntryInformation0, (Entry) null, false);
+<span class="nocode"><a name="2">  2: </a></span>MockFile mockFile0 = new MockFile(&quot;vcK&quot;);
+<span class="nocode"><a name="3">  3: </a></span>ZipFileDocument zipFileDocument0 = new ZipFileDocument(mockFile0, &quot;vcK&quot;);
+<span class="nocode"><a name="4">  4: </a></span>LogReadListener logReadListener0 = new LogReadListener(&quot;ID&quot;);
+<span class="nocode"><a name="5">  5: </a></span>EmblDocumentEntry emblDocumentEntry0 = new EmblDocumentEntry(mSPcrunchEntryInformation0, zipFileDocument0, logReadListener0);
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = (SimpleEntryInformation)SimpleEntryInformation.getDefaultEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>TextDocument textDocument0 = new TextDocument();
-<span class="nocode"><a name="3">  3: </a></span>EmblDocumentEntry emblDocumentEntry0 = new EmblDocumentEntry(simpleEntryInformation0, textDocument0, (ReadListener) null);
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = new SimpleEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>URL uRL0 = MockURL.getHttpExample();
+<span class="nocode"><a name="3">  3: </a></span>URLDocument uRLDocument0 = new URLDocument(uRL0);
+<span class="nocode"><a name="4">  4: </a></span>LogReadListener logReadListener0 = new LogReadListener(&quot;tGF&quot;);
+<span class="nocode"><a name="5">  5: </a></span>EmblDocumentEntry emblDocumentEntry0 = new EmblDocumentEntry(simpleEntryInformation0, uRLDocument0, logReadListener0);
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MSPcrunchEntryInformation mSPcrunchEntryInformation0 = new MSPcrunchEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>LogReadListener logReadListener0 = new LogReadListener(&quot;&quot;);
-<span class="nocode"><a name="3">  3: </a></span>EmblDocumentEntry emblDocumentEntry0 = new EmblDocumentEntry(mSPcrunchEntryInformation0, (Document) null, logReadListener0);
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = (SimpleEntryInformation)SimpleEntryInformation.getDefaultEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>LogReadListener logReadListener0 = new LogReadListener(&quot;;V&quot;);
+<span class="nocode"><a name="3">  3: </a></span>EmblDocumentEntry emblDocumentEntry0 = new EmblDocumentEntry(simpleEntryInformation0, (Document) null, logReadListener0);
 </pre>
 <h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = new SimpleEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>JPasswordField jPasswordField0 = new JPasswordField();
-<span class="nocode"><a name="3">  3: </a></span>ByteBuffer byteBuffer0 = new ByteBuffer();
-<span class="nocode"><a name="4">  4: </a></span>byte[] byteArray0 = new byte[9];
-<span class="nocode"><a name="5">  5: </a></span>byteBuffer0.append(byteArray0);
-<span class="nocode"><a name="6">  6: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;YpJ00}0&lt;|?J[Q&quot;, jPasswordField0, (String) null, (String) null, byteBuffer0, (String) null);
-<span class="nocode"><a name="7">  7: </a></span>LogReadListener logReadListener0 = new LogReadListener(&quot;RILEY&quot;);
-<span class="nocode"><a name="8">  8: </a></span>EmblDocumentEntry emblDocumentEntry0 = new EmblDocumentEntry(simpleEntryInformation0, databaseDocument0, logReadListener0);
+<span class="nocode"><a name="2">  2: </a></span>BlastDocumentEntry blastDocumentEntry0 = new BlastDocumentEntry(simpleEntryInformation0);
+<span class="nocode"><a name="3">  3: </a></span>EmblDocumentEntry emblDocumentEntry0 = new EmblDocumentEntry(blastDocumentEntry0);
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(emblDocumentEntry0.isReadOnly());
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -106,7 +106,7 @@ uk.ac.sanger.artemis.io.EmblDocumentEntry
 <li>Size: 9
 <li>Length: 30
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.8052884615384616
+<li>Coverage: 0.6941773504273504
 <li>BranchCoverage: 0.5555555555555556
 <li>MethodCoverage: 1.0
 <li>OutputCoverage: 1.0

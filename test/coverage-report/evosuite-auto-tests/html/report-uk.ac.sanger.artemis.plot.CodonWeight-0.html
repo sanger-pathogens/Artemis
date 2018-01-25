@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.plot.CodonWeight
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.plot.CodonWeight: 0.6458333333333334</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.plot.CodonWeight: 0.5</ul>
 <ul>
-<li>7.666666666666666 fitness evaluations, 0 generations, null statements, 2 tests.
+<li>11.0 fitness evaluations, 0 generations, null statements, 1 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,22 +35,8 @@ uk.ac.sanger.artemis.plot.CodonWeight
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FileSystemHandling.shouldAllThrowIOExceptions();
-<span class="nocode"><a name="2">  2: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;&quot;);
-<span class="nocode"><a name="3">  3: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
-<span class="nocode"><a name="4">  4: </a></span>Strand strand0 = bases0.getReverseStrand();
-<span class="nocode"><a name="5">  5: </a></span>CodonUsageWeight codonUsageWeight0 = new CodonUsageWeight((File) null, strand0);
-<span class="nocode"><a name="6">  6: </a></span>codonUsageWeight0.getName();
-</pre>
-<h3>Test case 2</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FileSystemHandling.shouldAllThrowIOExceptions();
-<span class="nocode"><a name="2">  2: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;&quot;);
-<span class="nocode"><a name="3">  3: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
-<span class="nocode"><a name="4">  4: </a></span>Strand strand0 = bases0.getReverseStrand();
-<span class="nocode"><a name="5">  5: </a></span>CodonUsageWeight codonUsageWeight0 = new CodonUsageWeight((File) null, strand0);
-<span class="nocode"><a name="6">  6: </a></span>float float0 = codonUsageWeight0.getCodonValue('m', 'm', 'm');
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(1.0F, float0, 0.01F);
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>CodonUsageWeight codonUsageWeight0 = new CodonUsageWeight(mockFile0, (Strand) null);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -63,13 +49,13 @@ uk.ac.sanger.artemis.plot.CodonWeight
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.plot.CodonWeight
-<li>Size: 2
-<li>Length: 12
+<li>Size: 1
+<li>Length: 2
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.6458333333333334
+<li>Coverage: 0.5
 <li>BranchCoverage: 1.0
-<li>MethodCoverage: 1.0
-<li>OutputCoverage: 0.16666666666666666
+<li>MethodCoverage: 0.0
+<li>OutputCoverage: 0.0
 </ul></div>
 </div>
 <p><br><a href="../report-generation.html">Back to Overview</a></p>

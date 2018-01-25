@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.FeatureVector
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.FeatureVector: 0.8150101419878296</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.FeatureVector: 0.7772227856659905</ul>
 <ul>
-<li>28.85 fitness evaluations, 0 generations, null statements, 21 tests.
+<li>32.93333333333334 fitness evaluations, 0 generations, null statements, 18 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -36,135 +36,110 @@ uk.ac.sanger.artemis.FeatureVector
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FeatureVector featureVector0 = new FeatureVector();
-<span class="nocode"><a name="2">  2: </a></span>featureVector0.removeElementAt(0);
+<span class="nocode"><a name="2">  2: </a></span>featureVector0.addElementAtEnd((Feature) null);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FeatureVector featureVector0 = new FeatureVector();
-<span class="nocode"><a name="2">  2: </a></span>featureVector0.add((Feature) null);
+<span class="nocode"><a name="2">  2: </a></span>featureVector0.removeElementAt(3556);
 </pre>
 <h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FeatureVector featureVector0 = new FeatureVector();
+<span class="nocode"><a name="2">  2: </a></span>featureVector0.add((Feature) null);
+</pre>
+<h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FeatureVector featureVector0 = new FeatureVector();
 <span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = featureVector0.remove((Feature) null);
 <span class="nocode"><a name="3">  3: </a></span>assertFalse(boolean0);
 </pre>
-<h3>Test case 4</h3>
+<h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FeatureVector featureVector0 = new FeatureVector();
 <span class="nocode"><a name="2">  2: </a></span>FeatureVector featureVector1 = (FeatureVector)featureVector0.clone();
 <span class="nocode"><a name="3">  3: </a></span>assertNotSame(featureVector1, featureVector0);
 </pre>
-<h3>Test case 5</h3>
+<h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FeatureVector featureVector0 = new FeatureVector();
 <span class="nocode"><a name="2">  2: </a></span>int int0 = featureVector0.indexOf((Feature) null);
 <span class="nocode"><a name="3">  3: </a></span>assertEquals((-1), int0);
 </pre>
-<h3>Test case 6</h3>
+<h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;3H8w?&amp;UNH7+2;)V&quot;);
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;&quot;);
 <span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
 <span class="nocode"><a name="3">  3: </a></span>FeatureVector featureVector0 = selection0.getSelectedFeatures();
 <span class="nocode"><a name="4">  4: </a></span>featureVector0.removeAllElements();
 </pre>
-<h3>Test case 7</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FeatureVector featureVector0 = new FeatureVector();
-<span class="nocode"><a name="2">  2: </a></span>Feature.ByLocationComparator feature_ByLocationComparator0 = Feature.byLocationOrder;
-<span class="nocode"><a name="3">  3: </a></span>FeatureVector featureVector1 = featureVector0.sort(feature_ByLocationComparator0);
-<span class="nocode"><a name="4">  4: </a></span>assertNotSame(featureVector1, featureVector0);
-</pre>
 <h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, (FeaturePredicate) null, &quot;Q!]&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = filteredEntryGroup0.createEntry(&quot;&quot;);
+<span class="nocode"><a name="4">  4: </a></span>FeatureVector featureVector0 = entry0.checkFeatureStartCodons();
+<span class="nocode"><a name="5">  5: </a></span>Feature.ByLocationComparator feature_ByLocationComparator0 = Feature.byLocationOrder;
+<span class="nocode"><a name="6">  6: </a></span>featureVector0.sort(feature_ByLocationComparator0);
+</pre>
+<h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FeatureVector featureVector0 = new FeatureVector();
 <span class="nocode"><a name="2">  2: </a></span>int int0 = featureVector0.size();
 <span class="nocode"><a name="3">  3: </a></span>assertEquals(0, int0);
 </pre>
-<h3>Test case 9</h3>
+<h3>Test case 10</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FeatureVector featureVector0 = new FeatureVector();
 <span class="nocode"><a name="2">  2: </a></span>featureVector0.insertElementAt((Feature) null, 0);
-<span class="nocode"><a name="3">  3: </a></span>int int0 = featureVector0.indexOf((Feature) null);
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, int0);
-</pre>
-<h3>Test case 10</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;3H8w?&amp;UNH7+2;)V&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="3">  3: </a></span>FeatureVector featureVector0 = selection0.getSelectedFeatures();
-<span class="nocode"><a name="4">  4: </a></span>featureVector0.elementAt((-238));
+<span class="nocode"><a name="3">  3: </a></span>Feature feature0 = featureVector0.elementAt(0);
+<span class="nocode"><a name="4">  4: </a></span>assertNull(feature0);
 </pre>
 <h3>Test case 11</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FeatureVector featureVector0 = new FeatureVector();
-<span class="nocode"><a name="2">  2: </a></span>featureVector0.lastElement();
+<span class="nocode"><a name="2">  2: </a></span>featureVector0.elementAt(0);
 </pre>
 <h3>Test case 12</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FeatureVector featureVector0 = new FeatureVector();
-<span class="nocode"><a name="2">  2: </a></span>featureVector0.insertElementAfter((Feature) null, (Feature) null);
-<span class="nocode"><a name="3">  3: </a></span>Feature feature0 = featureVector0.lastElement();
-<span class="nocode"><a name="4">  4: </a></span>assertNull(feature0);
+<span class="nocode"><a name="2">  2: </a></span>featureVector0.lastElement();
 </pre>
 <h3>Test case 13</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FeatureVector featureVector0 = new FeatureVector();
-<span class="nocode"><a name="2">  2: </a></span>featureVector0.addElementAtEnd((Feature) null);
+<span class="nocode"><a name="2">  2: </a></span>featureVector0.insertElementAfter((Feature) null, (Feature) null);
 </pre>
 <h3>Test case 14</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;9;[Y@(W^5&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="3">  3: </a></span>FeatureVector featureVector0 = selection0.getAllFeatures();
-<span class="nocode"><a name="4">  4: </a></span>featureVector0.contains((Feature) null);
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>FeatureVector featureVector0 = simpleEntryGroup0.getAllFeatures();
+<span class="nocode"><a name="3">  3: </a></span>featureVector0.contains((Feature) null);
 </pre>
 <h3>Test case 15</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="3">  3: </a></span>FeatureVector featureVector0 = selection0.getSelectedFeatures();
-<span class="nocode"><a name="4">  4: </a></span>featureVector0.elementAt(0);
+<span class="nocode"><a name="1">  1: </a></span>FeatureVector featureVector0 = new FeatureVector();
+<span class="nocode"><a name="2">  2: </a></span>featureVector0.elementAt((-1));
 </pre>
 <h3>Test case 16</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FeatureVector featureVector0 = new FeatureVector();
-<span class="nocode"><a name="2">  2: </a></span>featureVector0.insertElementAt((Feature) null, 146);
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, (FeaturePredicate) null, &quot;Q!]&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = filteredEntryGroup0.createEntry(&quot;&quot;);
+<span class="nocode"><a name="4">  4: </a></span>FeatureVector featureVector0 = entry0.checkFeatureStartCodons();
+<span class="nocode"><a name="5">  5: </a></span>featureVector0.insertElementAt((Feature) null, (-3275));
 </pre>
 <h3>Test case 17</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FeatureVector featureVector0 = new FeatureVector();
-<span class="nocode"><a name="2">  2: </a></span>featureVector0.removeElementAt((-315));
+<span class="nocode"><a name="2">  2: </a></span>featureVector0.removeElementAt((-1521));
 </pre>
 <h3>Test case 18</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FeatureVector featureVector0 = new FeatureVector();
-<span class="nocode"><a name="2">  2: </a></span>featureVector0.insertElementAfter((Feature) null, (Feature) null);
-<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = featureVector0.remove((Feature) null);
-<span class="nocode"><a name="4">  4: </a></span>assertTrue(boolean0);
-</pre>
-<h3>Test case 19</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FeatureVector featureVector0 = new FeatureVector();
-<span class="nocode"><a name="2">  2: </a></span>featureVector0.insertElementAfter((Feature) null, (Feature) null);
-<span class="nocode"><a name="3">  3: </a></span>int int0 = featureVector0.size();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(1, int0);
-</pre>
-<h3>Test case 20</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FeatureVector featureVector0 = new FeatureVector();
-<span class="nocode"><a name="2">  2: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;?-[{NlK}q|qms&quot;);
-<span class="nocode"><a name="3">  3: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
-<span class="nocode"><a name="4">  4: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="5">  5: </a></span>Entry entry0 = simpleEntryGroup0.createEntry(&quot;insertFeatureLoc&quot;);
-<span class="nocode"><a name="6">  6: </a></span>Feature feature0 = entry0.createFeature();
-<span class="nocode"><a name="7">  7: </a></span>featureVector0.addElementAtEnd(feature0);
-</pre>
-<h3>Test case 21</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FeatureVector featureVector0 = new FeatureVector();
 <span class="nocode"><a name="2">  2: </a></span>featureVector0.insertElementAt((Feature) null, 0);
-<span class="nocode"><a name="3">  3: </a></span>featureVector0.removeElementAt(0);
+<span class="nocode"><a name="3">  3: </a></span>Feature feature0 = featureVector0.lastElement();
+<span class="nocode"><a name="4">  4: </a></span>assertNull(feature0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -177,13 +152,13 @@ uk.ac.sanger.artemis.FeatureVector
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.FeatureVector
-<li>Size: 21
-<li>Length: 61
+<li>Size: 18
+<li>Length: 48
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.8150101419878296
+<li>Coverage: 0.7772227856659905
 <li>BranchCoverage: 0.875
 <li>MethodCoverage: 1.0
-<li>OutputCoverage: 0.45
+<li>OutputCoverage: 0.35
 </ul></div>
 </div>
 <p><br><a href="../report-generation.html">Back to Overview</a></p>

@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.editor.DataViewInternalFrame
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.editor.DataViewInternalFrame: 0.3560230110588054</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.editor.DataViewInternalFrame: 0.3210613252350506</ul>
 <ul>
-<li>808.8267108126413 fitness evaluations, 0 generations, null statements, 8 tests.
+<li>814.8267973830602 fitness evaluations, 0 generations, null statements, 8 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,68 +35,77 @@ uk.ac.sanger.artemis.editor.DataViewInternalFrame
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Hashtable&lt;Dialog, Checkbox&gt; hashtable0 = new Hashtable&lt;Dialog, Checkbox&gt;();
+<span class="nocode"><a name="1">  1: </a></span>Hashtable&lt;Scrollbar, FileDialog&gt; hashtable0 = new Hashtable&lt;Scrollbar, FileDialog&gt;();
 <span class="nocode"><a name="2">  2: </a></span>JDesktopPane jDesktopPane0 = new JDesktopPane();
-<span class="nocode"><a name="3">  3: </a></span>DataViewInternalFrame dataViewInternalFrame0 = new DataViewInternalFrame(hashtable0, jDesktopPane0, (JScrollPane) null, 0, 0, &quot;ZbN&lt; =gSdIVDaa\&quot;'&quot;, (Feature) null);
-<span class="nocode"><a name="4">  4: </a></span>dataViewInternalFrame0.updateNote();
-<span class="nocode"><a name="5">  5: </a></span>assertFalse(dataViewInternalFrame0.getIgnoreRepaint());
+<span class="nocode"><a name="3">  3: </a></span>JScrollPane jScrollPane0 = new JScrollPane();
+<span class="nocode"><a name="4">  4: </a></span>DataViewInternalFrame dataViewInternalFrame0 = new DataViewInternalFrame(hashtable0, jDesktopPane0, jScrollPane0, 86, 0, &quot;[&quot;, (Feature) null);
+<span class="nocode"><a name="5">  5: </a></span>DataViewInternalFrame.TabChangeListener dataViewInternalFrame_TabChangeListener0 = dataViewInternalFrame0.new TabChangeListener();
+<span class="nocode"><a name="6">  6: </a></span>MockHijrahDate mockHijrahDate0 = new MockHijrahDate();
+<span class="nocode"><a name="7">  7: </a></span>ChangeEvent changeEvent0 = new ChangeEvent(mockHijrahDate0);
+<span class="nocode"><a name="8">  8: </a></span>dataViewInternalFrame_TabChangeListener0.stateChanged(changeEvent0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Hashtable&lt;Dialog, Checkbox&gt; hashtable0 = new Hashtable&lt;Dialog, Checkbox&gt;();
+<span class="nocode"><a name="1">  1: </a></span>Hashtable&lt;Scrollbar, FileDialog&gt; hashtable0 = new Hashtable&lt;Scrollbar, FileDialog&gt;();
 <span class="nocode"><a name="2">  2: </a></span>JDesktopPane jDesktopPane0 = new JDesktopPane();
-<span class="nocode"><a name="3">  3: </a></span>DataViewInternalFrame dataViewInternalFrame0 = new DataViewInternalFrame(hashtable0, jDesktopPane0, (JScrollPane) null, 0, 17, &quot;ZbN&lt; =gSdIVDaa\&quot;'&quot;, (Feature) null);
-<span class="nocode"><a name="4">  4: </a></span>DataViewInternalFrame.ActiveJSplitPane dataViewInternalFrame_ActiveJSplitPane0 = dataViewInternalFrame0.new ActiveJSplitPane(0, dataViewInternalFrame0, jDesktopPane0);
-<span class="nocode"><a name="5">  5: </a></span>dataViewInternalFrame_ActiveJSplitPane0.setActive(true);
+<span class="nocode"><a name="3">  3: </a></span>JScrollPane jScrollPane0 = new JScrollPane();
+<span class="nocode"><a name="4">  4: </a></span>DataViewInternalFrame dataViewInternalFrame0 = new DataViewInternalFrame(hashtable0, jDesktopPane0, jScrollPane0, 86, 0, &quot;[&quot;, (Feature) null);
+<span class="nocode"><a name="5">  5: </a></span>DataViewInternalFrame.ActiveJSplitPane dataViewInternalFrame_ActiveJSplitPane0 = dataViewInternalFrame0.new ActiveJSplitPane(0, jDesktopPane0, jDesktopPane0);
+<span class="nocode"><a name="6">  6: </a></span>dataViewInternalFrame_ActiveJSplitPane0.setActive(false);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Hashtable&lt;Dialog, Checkbox&gt; hashtable0 = new Hashtable&lt;Dialog, Checkbox&gt;();
+<span class="nocode"><a name="1">  1: </a></span>Hashtable&lt;Scrollbar, FileDialog&gt; hashtable0 = new Hashtable&lt;Scrollbar, FileDialog&gt;();
 <span class="nocode"><a name="2">  2: </a></span>JDesktopPane jDesktopPane0 = new JDesktopPane();
-<span class="nocode"><a name="3">  3: </a></span>DataViewInternalFrame dataViewInternalFrame0 = new DataViewInternalFrame(hashtable0, jDesktopPane0, (JScrollPane) null, 0, 17, &quot;ZbN&lt; =gSdIVDaa\&quot;'&quot;, (Feature) null);
-<span class="nocode"><a name="4">  4: </a></span>dataViewInternalFrame0.setAnnotationDividerLocation();
-<span class="nocode"><a name="5">  5: </a></span>assertTrue(dataViewInternalFrame0.isFocusTraversalPolicySet());
+<span class="nocode"><a name="3">  3: </a></span>JScrollPane jScrollPane0 = new JScrollPane();
+<span class="nocode"><a name="4">  4: </a></span>DataViewInternalFrame dataViewInternalFrame0 = new DataViewInternalFrame(hashtable0, jDesktopPane0, jScrollPane0, 86, 0, &quot;[&quot;, (Feature) null);
+<span class="nocode"><a name="5">  5: </a></span>dataViewInternalFrame0.updateNote();
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(dataViewInternalFrame0.getFocusTraversalKeysEnabled());
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Hashtable&lt;Dialog, Checkbox&gt; hashtable0 = new Hashtable&lt;Dialog, Checkbox&gt;();
+<span class="nocode"><a name="1">  1: </a></span>Hashtable&lt;Scrollbar, FileDialog&gt; hashtable0 = new Hashtable&lt;Scrollbar, FileDialog&gt;();
 <span class="nocode"><a name="2">  2: </a></span>JDesktopPane jDesktopPane0 = new JDesktopPane();
-<span class="nocode"><a name="3">  3: </a></span>DataViewInternalFrame dataViewInternalFrame0 = new DataViewInternalFrame(hashtable0, jDesktopPane0, (JScrollPane) null, 0, 0, &quot;ZbN&lt; =gSdIVDaa\&quot;'&quot;, (Feature) null);
-<span class="nocode"><a name="4">  4: </a></span>dataViewInternalFrame0.deleteNote();
-<span class="nocode"><a name="5">  5: </a></span>assertFalse(dataViewInternalFrame0.getIgnoreRepaint());
+<span class="nocode"><a name="3">  3: </a></span>JScrollPane jScrollPane0 = new JScrollPane();
+<span class="nocode"><a name="4">  4: </a></span>DataViewInternalFrame dataViewInternalFrame0 = new DataViewInternalFrame(hashtable0, jDesktopPane0, jScrollPane0, 86, 0, &quot;[&quot;, (Feature) null);
+<span class="nocode"><a name="5">  5: </a></span>dataViewInternalFrame0.deleteNote();
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(dataViewInternalFrame0.getFocusTraversalKeysEnabled());
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>JDesktopPane jDesktopPane0 = new JDesktopPane();
-<span class="nocode"><a name="2">  2: </a></span>JScrollPane jScrollPane0 = new JScrollPane();
-<span class="nocode"><a name="3">  3: </a></span>DefaultBoundedRangeModel defaultBoundedRangeModel0 = new DefaultBoundedRangeModel();
-<span class="nocode"><a name="4">  4: </a></span>JSlider jSlider0 = new JSlider(defaultBoundedRangeModel0);
-<span class="nocode"><a name="5">  5: </a></span>Hashtable&lt;Object, Object&gt; hashtable0 = jSlider0.createStandardLabels(150);
-<span class="nocode"><a name="6">  6: </a></span>DataViewInternalFrame dataViewInternalFrame0 = new DataViewInternalFrame(hashtable0, jDesktopPane0, jScrollPane0, 86, 86, &quot;' for use as a flush trigger for the cache model named '&quot;, (Feature) null);
+<span class="nocode"><a name="1">  1: </a></span>DefaultBoundedRangeModel defaultBoundedRangeModel0 = new DefaultBoundedRangeModel(138, 138, 138, 906);
+<span class="nocode"><a name="2">  2: </a></span>JSlider jSlider0 = new JSlider(defaultBoundedRangeModel0);
+<span class="nocode"><a name="3">  3: </a></span>Hashtable&lt;Object, Object&gt; hashtable0 = jSlider0.createStandardLabels(906, 138);
+<span class="nocode"><a name="4">  4: </a></span>JDesktopPane jDesktopPane0 = new JDesktopPane();
+<span class="nocode"><a name="5">  5: </a></span>JScrollPane jScrollPane0 = new JScrollPane(jDesktopPane0);
+<span class="nocode"><a name="6">  6: </a></span>EmblStreamFeature emblStreamFeature0 = new EmblStreamFeature();
+<span class="nocode"><a name="7">  7: </a></span>MSPcrunchStreamFeature mSPcrunchStreamFeature0 = new MSPcrunchStreamFeature(emblStreamFeature0);
+<span class="nocode"><a name="8">  8: </a></span>Feature feature0 = new Feature(mSPcrunchStreamFeature0);
+<span class="nocode"><a name="9">  9: </a></span>DataViewInternalFrame dataViewInternalFrame0 = new DataViewInternalFrame(hashtable0, jDesktopPane0, jScrollPane0, 8, 138, &quot;&quot;, feature0);
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Hashtable&lt;Dialog, Checkbox&gt; hashtable0 = new Hashtable&lt;Dialog, Checkbox&gt;();
+<span class="nocode"><a name="1">  1: </a></span>Hashtable&lt;Scrollbar, FileDialog&gt; hashtable0 = new Hashtable&lt;Scrollbar, FileDialog&gt;();
 <span class="nocode"><a name="2">  2: </a></span>JDesktopPane jDesktopPane0 = new JDesktopPane();
-<span class="nocode"><a name="3">  3: </a></span>DataViewInternalFrame dataViewInternalFrame0 = new DataViewInternalFrame(hashtable0, jDesktopPane0, (JScrollPane) null, 0, 0, &quot;ZbN&lt; =gSdIVDaa\&quot;'&quot;, (Feature) null);
-<span class="nocode"><a name="4">  4: </a></span>dataViewInternalFrame0.stopGetz();
-<span class="nocode"><a name="5">  5: </a></span>assertTrue(dataViewInternalFrame0.getFocusTraversalKeysEnabled());
+<span class="nocode"><a name="3">  3: </a></span>JScrollPane jScrollPane0 = new JScrollPane();
+<span class="nocode"><a name="4">  4: </a></span>DataViewInternalFrame dataViewInternalFrame0 = new DataViewInternalFrame(hashtable0, jDesktopPane0, jScrollPane0, 86, 0, &quot;[&quot;, (Feature) null);
+<span class="nocode"><a name="5">  5: </a></span>dataViewInternalFrame0.stopGetz();
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(dataViewInternalFrame0.isFocusTraversalPolicySet());
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Hashtable&lt;Dialog, Checkbox&gt; hashtable0 = new Hashtable&lt;Dialog, Checkbox&gt;();
+<span class="nocode"><a name="1">  1: </a></span>Hashtable&lt;Scrollbar, FileDialog&gt; hashtable0 = new Hashtable&lt;Scrollbar, FileDialog&gt;();
 <span class="nocode"><a name="2">  2: </a></span>JDesktopPane jDesktopPane0 = new JDesktopPane();
-<span class="nocode"><a name="3">  3: </a></span>DataViewInternalFrame dataViewInternalFrame0 = new DataViewInternalFrame(hashtable0, jDesktopPane0, (JScrollPane) null, 0, 0, &quot;ZbN&lt; =gSdIVDaa\&quot;'&quot;, (Feature) null);
-<span class="nocode"><a name="4">  4: </a></span>dataViewInternalFrame0.setDataDividerLocation();
-<span class="nocode"><a name="5">  5: </a></span>assertTrue(dataViewInternalFrame0.isFocusTraversalPolicySet());
+<span class="nocode"><a name="3">  3: </a></span>JScrollPane jScrollPane0 = new JScrollPane();
+<span class="nocode"><a name="4">  4: </a></span>DataViewInternalFrame dataViewInternalFrame0 = new DataViewInternalFrame(hashtable0, jDesktopPane0, jScrollPane0, 86, 0, &quot;[&quot;, (Feature) null);
+<span class="nocode"><a name="5">  5: </a></span>DataViewInternalFrame.ActiveJSplitPane dataViewInternalFrame_ActiveJSplitPane0 = dataViewInternalFrame0.new ActiveJSplitPane(0, jDesktopPane0, jDesktopPane0);
+<span class="nocode"><a name="6">  6: </a></span>dataViewInternalFrame_ActiveJSplitPane0.setActive(true);
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>JSlider jSlider0 = new JSlider();
-<span class="nocode"><a name="2">  2: </a></span>Hashtable&lt;Object, Object&gt; hashtable0 = jSlider0.createStandardLabels(8, 8);
-<span class="nocode"><a name="3">  3: </a></span>JDesktopPane jDesktopPane0 = new JDesktopPane();
-<span class="nocode"><a name="4">  4: </a></span>JScrollPane jScrollPane0 = new JScrollPane(jDesktopPane0);
-<span class="nocode"><a name="5">  5: </a></span>DataViewInternalFrame dataViewInternalFrame0 = new DataViewInternalFrame(hashtable0, jDesktopPane0, jScrollPane0, (-686), (-686), (String) null, (Feature) null);
+<span class="nocode"><a name="1">  1: </a></span>JDesktopPane jDesktopPane0 = new JDesktopPane();
+<span class="nocode"><a name="2">  2: </a></span>JScrollPane jScrollPane0 = new JScrollPane(jDesktopPane0);
+<span class="nocode"><a name="3">  3: </a></span>DataViewInternalFrame dataViewInternalFrame0 = new DataViewInternalFrame((Hashtable) null, jDesktopPane0, jScrollPane0, 1778, 1778, &quot;.&quot;, (Feature) null);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -110,9 +119,9 @@ uk.ac.sanger.artemis.editor.DataViewInternalFrame
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.editor.DataViewInternalFrame
 <li>Size: 8
-<li>Length: 36
+<li>Length: 47
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.3560230110588054
+<li>Coverage: 0.3210613252350506
 <li>BranchCoverage: 0.23809523809523808
 <li>MethodCoverage: 0.5714285714285714
 <li>OutputCoverage: 0.0

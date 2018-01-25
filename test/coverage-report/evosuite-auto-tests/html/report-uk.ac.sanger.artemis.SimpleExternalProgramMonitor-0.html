@@ -43,31 +43,31 @@ uk.ac.sanger.artemis.SimpleExternalProgramMonitor
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>LogViewer logViewer0 = new LogViewer();
-<span class="nocode"><a name="2">  2: </a></span>SimpleExternalProgramMonitor simpleExternalProgramMonitor0 = new SimpleExternalProgramMonitor(&quot;I&quot;, logViewer0);
-<span class="nocode"><a name="3">  3: </a></span>LogViewer logViewer1 = (LogViewer)simpleExternalProgramMonitor0.getLogger();
-<span class="nocode"><a name="4">  4: </a></span>assertSame(logViewer1, logViewer0);
+<span class="nocode"><a name="2">  2: </a></span>SimpleExternalProgramMonitor simpleExternalProgramMonitor0 = new SimpleExternalProgramMonitor(&quot;&quot;, logViewer0);
+<span class="nocode"><a name="3">  3: </a></span>simpleExternalProgramMonitor0.addExternalProgramListener((ExternalProgramListener) null);
+<span class="nocode"><a name="4">  4: </a></span>Process process0 = mock(Process.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="5">  5: </a></span>ExternalProgramEvent externalProgramEvent0 = new ExternalProgramEvent(5000, &quot;&quot;, process0);
+<span class="nocode"><a name="6">  6: </a></span>simpleExternalProgramMonitor0.sendEvent(externalProgramEvent0);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>LogViewer logViewer0 = new LogViewer();
-<span class="nocode"><a name="2">  2: </a></span>SimpleExternalProgramMonitor simpleExternalProgramMonitor0 = new SimpleExternalProgramMonitor(&quot;I&quot;, logViewer0);
-<span class="nocode"><a name="3">  3: </a></span>Process process0 = mock(Process.class, new ViolatedAssumptionAnswer());
-<span class="nocode"><a name="4">  4: </a></span>ExternalProgramEvent externalProgramEvent0 = new ExternalProgramEvent(0, &quot;I&quot;, process0);
-<span class="nocode"><a name="5">  5: </a></span>simpleExternalProgramMonitor0.sendEvent(externalProgramEvent0);
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, externalProgramEvent0.getType());
+<span class="nocode"><a name="2">  2: </a></span>SimpleExternalProgramMonitor simpleExternalProgramMonitor0 = new SimpleExternalProgramMonitor(&quot;&quot;, logViewer0);
+<span class="nocode"><a name="3">  3: </a></span>LogViewer logViewer1 = (LogViewer)simpleExternalProgramMonitor0.getLogger();
+<span class="nocode"><a name="4">  4: </a></span>assertSame(logViewer0, logViewer1);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>LogViewer logViewer0 = new LogViewer();
-<span class="nocode"><a name="2">  2: </a></span>SimpleExternalProgramMonitor simpleExternalProgramMonitor0 = new SimpleExternalProgramMonitor(&quot;I&quot;, logViewer0);
+<span class="nocode"><a name="2">  2: </a></span>SimpleExternalProgramMonitor simpleExternalProgramMonitor0 = new SimpleExternalProgramMonitor((String) null, logViewer0);
 <span class="nocode"><a name="3">  3: </a></span>Process process0 = mock(Process.class, new ViolatedAssumptionAnswer());
-<span class="nocode"><a name="4">  4: </a></span>ExternalProgramEvent externalProgramEvent0 = new ExternalProgramEvent(0, &quot;I&quot;, process0);
-<span class="nocode"><a name="5">  5: </a></span>simpleExternalProgramMonitor0.addExternalProgramListener((ExternalProgramListener) null);
-<span class="nocode"><a name="6">  6: </a></span>simpleExternalProgramMonitor0.sendEvent(externalProgramEvent0);
+<span class="nocode"><a name="4">  4: </a></span>ExternalProgramEvent externalProgramEvent0 = new ExternalProgramEvent(0, (String) null, process0);
+<span class="nocode"><a name="5">  5: </a></span>simpleExternalProgramMonitor0.sendEvent(externalProgramEvent0);
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(simpleExternalProgramMonitor0.isDaemon());
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleExternalProgramMonitor simpleExternalProgramMonitor0 = new SimpleExternalProgramMonitor(&quot;f{(4&quot;, (Logger) null);
+<span class="nocode"><a name="1">  1: </a></span>SimpleExternalProgramMonitor simpleExternalProgramMonitor0 = new SimpleExternalProgramMonitor((String) null, (Logger) null);
 <span class="nocode"><a name="2">  2: </a></span>Logger logger0 = simpleExternalProgramMonitor0.getLogger();
 <span class="nocode"><a name="3">  3: </a></span>assertNull(logger0);
 </pre>
@@ -81,9 +81,9 @@ uk.ac.sanger.artemis.SimpleExternalProgramMonitor
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>LogViewer logViewer0 = new LogViewer();
-<span class="nocode"><a name="2">  2: </a></span>SimpleExternalProgramMonitor simpleExternalProgramMonitor0 = new SimpleExternalProgramMonitor(&quot;I&quot;, logViewer0);
+<span class="nocode"><a name="2">  2: </a></span>SimpleExternalProgramMonitor simpleExternalProgramMonitor0 = new SimpleExternalProgramMonitor(&quot;e.XqM_OH(AkK$MF{&quot;, logViewer0);
 <span class="nocode"><a name="3">  3: </a></span>String string0 = simpleExternalProgramMonitor0.getProgramName();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;I&quot;, string0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;e.XqM_OH(AkK$MF{&quot;, string0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>

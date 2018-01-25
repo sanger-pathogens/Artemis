@@ -23,7 +23,7 @@ uk.ac.sanger.artemis.util.ByteBuffer
 <br><br><h2 class=title>Summary</h2>
 <ul><li>Target class: uk.ac.sanger.artemis.util.ByteBuffer: 0.9567307692307693</ul>
 <ul>
-<li>2.125 fitness evaluations, 0 generations, null statements, 15 tests.
+<li>2.125 fitness evaluations, 0 generations, null statements, 14 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -41,9 +41,7 @@ uk.ac.sanger.artemis.util.ByteBuffer
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>ByteBuffer byteBuffer0 = new ByteBuffer();
-<span class="nocode"><a name="2">  2: </a></span>byteBuffer0.append(&quot;&quot;);
-<span class="nocode"><a name="3">  3: </a></span>byteBuffer0.append(byteBuffer0);
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, byteBuffer0.size());
+<span class="nocode"><a name="2">  2: </a></span>byteBuffer0.append((String) null);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
@@ -54,81 +52,77 @@ uk.ac.sanger.artemis.util.ByteBuffer
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>ByteBuffer byteBuffer0 = new ByteBuffer();
-<span class="nocode"><a name="2">  2: </a></span>byte[] byteArray0 = new byte[1];
-<span class="nocode"><a name="3">  3: </a></span>byteBuffer0.append(byteArray0, (int) (byte)0, 0);
-<span class="nocode"><a name="4">  4: </a></span>byteBuffer0.append(&quot;&quot;);
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, byteBuffer0.size());
+<span class="nocode"><a name="2">  2: </a></span>byte[] byteArray0 = new byte[0];
+<span class="nocode"><a name="3">  3: </a></span>byteBuffer0.append(byteArray0);
+<span class="nocode"><a name="4">  4: </a></span>byte[] byteArray1 = byteBuffer0.getBytes();
+<span class="nocode"><a name="5">  5: </a></span>assertArrayEquals(new byte[] {}, byteArray1);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, byteBuffer0.size());
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>ByteBuffer byteBuffer0 = new ByteBuffer();
-<span class="nocode"><a name="2">  2: </a></span>byte[] byteArray0 = new byte[1];
-<span class="nocode"><a name="3">  3: </a></span>byteBuffer0.append(byteArray0);
-<span class="nocode"><a name="4">  4: </a></span>byteBuffer0.append(byteArray0, (-294), (-1));
+<span class="nocode"><a name="2">  2: </a></span>byteBuffer0.append(&quot;^-WIpk*N1y&quot;);
+<span class="nocode"><a name="3">  3: </a></span>byteBuffer0.append(&quot;&quot;);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(10, byteBuffer0.size());
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>ByteBuffer byteBuffer0 = new ByteBuffer();
-<span class="nocode"><a name="2">  2: </a></span>byteBuffer0.append((String) null);
+<span class="nocode"><a name="2">  2: </a></span>byte[] byteArray0 = new byte[0];
+<span class="nocode"><a name="3">  3: </a></span>byteBuffer0.append(&quot;VTwrQ&quot;);
+<span class="nocode"><a name="4">  4: </a></span>byteBuffer0.append(byteArray0, (-905), (-905));
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>ByteBuffer byteBuffer0 = new ByteBuffer();
-<span class="nocode"><a name="2">  2: </a></span>byteBuffer0.append((byte[]) null);
+<span class="nocode"><a name="2">  2: </a></span>byte[] byteArray0 = new byte[2];
+<span class="nocode"><a name="3">  3: </a></span>byteBuffer0.append(byteArray0);
+<span class="nocode"><a name="4">  4: </a></span>byteBuffer0.append(byteArray0, 2, 2);
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>ByteBuffer byteBuffer0 = new ByteBuffer();
-<span class="nocode"><a name="2">  2: </a></span>byte[] byteArray0 = new byte[7];
-<span class="nocode"><a name="3">  3: </a></span>byteBuffer0.append(byteArray0, (-4521), (int) (byte) (-104));
+<span class="nocode"><a name="2">  2: </a></span>byteBuffer0.append((byte[]) null);
 </pre>
 <h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>ByteBuffer byteBuffer0 = new ByteBuffer();
-<span class="nocode"><a name="2">  2: </a></span>byteBuffer0.append((byte[]) null, 0, 1269);
+<span class="nocode"><a name="2">  2: </a></span>byte[] byteArray0 = new byte[4];
+<span class="nocode"><a name="3">  3: </a></span>byteBuffer0.append(byteArray0, (int) (byte) (-54), (-1));
 </pre>
 <h3>Test case 10</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>ByteBuffer byteBuffer0 = new ByteBuffer();
-<span class="nocode"><a name="2">  2: </a></span>byte[] byteArray0 = new byte[0];
-<span class="nocode"><a name="3">  3: </a></span>byteBuffer0.append(byteArray0, 0, 0);
-<span class="nocode"><a name="4">  4: </a></span>byte[] byteArray1 = byteBuffer0.getBytes();
-<span class="nocode"><a name="5">  5: </a></span>assertArrayEquals(new byte[] {}, byteArray1);
+<span class="nocode"><a name="2">  2: </a></span>byteBuffer0.append((byte[]) null, 1, 0);
 </pre>
 <h3>Test case 11</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>ByteBuffer byteBuffer0 = new ByteBuffer();
-<span class="nocode"><a name="2">  2: </a></span>byteBuffer0.append(&quot;0&gt;p&quot;);
-<span class="nocode"><a name="3">  3: </a></span>byteBuffer0.getBytes();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(3, byteBuffer0.size());
+<span class="nocode"><a name="2">  2: </a></span>byte[] byteArray0 = new byte[3];
+<span class="nocode"><a name="3">  3: </a></span>byteBuffer0.append(byteArray0, 1, 1);
+<span class="nocode"><a name="4">  4: </a></span>byteBuffer0.getBytes();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(1, byteBuffer0.size());
 </pre>
 <h3>Test case 12</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>ByteBuffer byteBuffer0 = new ByteBuffer();
-<span class="nocode"><a name="2">  2: </a></span>byte[] byteArray0 = new byte[1];
+<span class="nocode"><a name="2">  2: </a></span>byte[] byteArray0 = new byte[2];
 <span class="nocode"><a name="3">  3: </a></span>byteBuffer0.append(byteArray0);
 <span class="nocode"><a name="4">  4: </a></span>int int0 = byteBuffer0.size();
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(1, int0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(2, int0);
 </pre>
 <h3>Test case 13</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>ByteBuffer byteBuffer0 = new ByteBuffer();
-<span class="nocode"><a name="2">  2: </a></span>byte[] byteArray0 = new byte[1];
-<span class="nocode"><a name="3">  3: </a></span>byteBuffer0.append(&quot;X*y&quot;);
-<span class="nocode"><a name="4">  4: </a></span>byteBuffer0.append(byteArray0, 128, 128);
+<span class="nocode"><a name="2">  2: </a></span>byteBuffer0.append(&quot;^-WIpk*N1y&quot;);
+<span class="nocode"><a name="3">  3: </a></span>byteBuffer0.append(byteBuffer0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(20, byteBuffer0.size());
 </pre>
 <h3>Test case 14</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>ByteBuffer byteBuffer0 = new ByteBuffer();
-<span class="nocode"><a name="2">  2: </a></span>byteBuffer0.append(&quot;igN}t_jXH&quot;);
-<span class="nocode"><a name="3">  3: </a></span>byteBuffer0.append(&quot;igN}t_jXH&quot;);
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(18, byteBuffer0.size());
-</pre>
-<h3>Test case 15</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>ByteBuffer byteBuffer0 = new ByteBuffer();
 <span class="nocode"><a name="2">  2: </a></span>ByteBuffer byteBuffer1 = new ByteBuffer();
-<span class="nocode"><a name="3">  3: </a></span>byteBuffer0.append(byteBuffer1);
+<span class="nocode"><a name="3">  3: </a></span>byteBuffer1.append(byteBuffer0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -141,8 +135,8 @@ uk.ac.sanger.artemis.util.ByteBuffer
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.util.ByteBuffer
-<li>Size: 15
-<li>Length: 45
+<li>Size: 14
+<li>Length: 42
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.9567307692307693
 <li>BranchCoverage: 1.0

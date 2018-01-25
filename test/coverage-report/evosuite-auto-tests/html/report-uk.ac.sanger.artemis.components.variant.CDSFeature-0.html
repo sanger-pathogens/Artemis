@@ -35,40 +35,40 @@ uk.ac.sanger.artemis.components.variant.CDSFeature
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;-&quot;);
-<span class="nocode"><a name="2">  2: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(genbankStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
-<span class="nocode"><a name="4">  4: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
-<span class="nocode"><a name="5">  5: </a></span>EmblDocumentEntry emblDocumentEntry0 = new EmblDocumentEntry(blastEntryInformation0);
-<span class="nocode"><a name="6">  6: </a></span>Entry entry0 = new Entry(bases0, emblDocumentEntry0);
-<span class="nocode"><a name="7">  7: </a></span>Feature feature0 = entry0.createFeature();
-<span class="nocode"><a name="8">  8: </a></span>CDSFeature cDSFeature0 = new CDSFeature(feature0);
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;HG:1/Fh[g-&amp;V&amp;rf&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Entry entry0 = simpleEntryGroup0.createEntry(&quot;HG:1/Fh[g-&amp;V&amp;rf&quot;);
+<span class="nocode"><a name="5">  5: </a></span>Feature feature0 = entry0.createFeature();
+<span class="nocode"><a name="6">  6: </a></span>CDSFeature cDSFeature0 = new CDSFeature(feature0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RangeVector rangeVector0 = new RangeVector((Range) null);
-<span class="nocode"><a name="2">  2: </a></span>CDSFeature cDSFeature0 = new CDSFeature(false, rangeVector0, 61, 61, &quot;Hkay'm/M^m{&quot;);
-<span class="nocode"><a name="3">  3: </a></span>cDSFeature0.toString();
+<span class="nocode"><a name="1">  1: </a></span>CDSFeature cDSFeature0 = new CDSFeature((Feature) null);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>CDSFeature cDSFeature0 = new CDSFeature((Feature) null);
+<span class="nocode"><a name="1">  1: </a></span>RangeVector rangeVector0 = new RangeVector();
+<span class="nocode"><a name="2">  2: </a></span>CDSFeature cDSFeature0 = new CDSFeature(true, rangeVector0, 0, 0, &quot;+1ERSYcku!@&quot;);
+<span class="nocode"><a name="3">  3: </a></span>rangeVector0.add((Range) null);
+<span class="nocode"><a name="4">  4: </a></span>cDSFeature0.toString();
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RangeVector rangeVector0 = new RangeVector();
-<span class="nocode"><a name="2">  2: </a></span>CDSFeature cDSFeature0 = new CDSFeature(false, rangeVector0, (-5), (-5), &quot;-&quot;);
-<span class="nocode"><a name="3">  3: </a></span>String string0 = cDSFeature0.toString();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;false\t-5\t-5\t-\t0\t&quot;, string0);
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(102, 102);
+<span class="nocode"><a name="2">  2: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
+<span class="nocode"><a name="3">  3: </a></span>CDSFeature cDSFeature0 = new CDSFeature(false, rangeVector0, 102, 102, &quot;&quot;);
+<span class="nocode"><a name="4">  4: </a></span>String string0 = cDSFeature0.toString();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;false\t102\t102\t\t1\t102-102\t&quot;, string0);
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(1168);
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range((-4414), 0);
 <span class="nocode"><a name="2">  2: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
 <span class="nocode"><a name="3">  3: </a></span>rangeVector0.add(range0);
-<span class="nocode"><a name="4">  4: </a></span>CDSFeature cDSFeature0 = new CDSFeature(true, rangeVector0, 8, (-3), &quot;n9SF$&gt;1GnT&quot;);
+<span class="nocode"><a name="4">  4: </a></span>CDSFeature cDSFeature0 = new CDSFeature(false, rangeVector0, 0, 99, &quot;/,5rQS{kh+&quot;);
 <span class="nocode"><a name="5">  5: </a></span>String string0 = cDSFeature0.toString();
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;true\t8\t-3\tn9SF$&gt;1GnT\t2\t1168-1168\t1168-1168\t&quot;, string0);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;false\t0\t99\t/,5rQS{kh+\t2\t-4414-0\t-4414-0\t&quot;, string0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>

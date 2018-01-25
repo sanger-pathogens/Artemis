@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.components.alignment.SAMRecordPositionComparator
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.components.alignment.SAMRecordPositionComparator: 0.36740196078431375</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.components.alignment.SAMRecordPositionComparator: 0.3569852941176471</ul>
 <ul>
-<li>74.69047619047619 fitness evaluations, 0 generations, null statements, 3 tests.
+<li>75.20833333333334 fitness evaluations, 0 generations, null statements, 2 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -36,25 +36,14 @@ uk.ac.sanger.artemis.components.alignment.SAMRecordPositionComparator
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SAMRecordPositionComparator sAMRecordPositionComparator0 = new SAMRecordPositionComparator((BamView) null);
-<span class="nocode"><a name="2">  2: </a></span>MaskFormatter maskFormatter0 = new MaskFormatter();
-<span class="nocode"><a name="3">  3: </a></span>DefaultFormatterFactory defaultFormatterFactory0 = new DefaultFormatterFactory(maskFormatter0);
-<span class="nocode"><a name="4">  4: </a></span>JFormattedTextField jFormattedTextField0 = new JFormattedTextField((JFormattedTextField.AbstractFormatterFactory) defaultFormatterFactory0);
-<span class="nocode"><a name="5">  5: </a></span>sAMRecordPositionComparator0.compare(jFormattedTextField0, jFormattedTextField0);
+<span class="nocode"><a name="2">  2: </a></span>sAMRecordPositionComparator0.compare((Object) null, (Object) null);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SAMRecordPositionComparator sAMRecordPositionComparator0 = new SAMRecordPositionComparator((BamView) null);
-<span class="nocode"><a name="2">  2: </a></span>SAMFileHeader sAMFileHeader0 = new SAMFileHeader();
-<span class="nocode"><a name="3">  3: </a></span>SAMRecord sAMRecord0 = new SAMRecord(sAMFileHeader0);
-<span class="nocode"><a name="4">  4: </a></span>BamViewRecord bamViewRecord0 = new BamViewRecord(sAMRecord0, (short)0);
-<span class="nocode"><a name="5">  5: </a></span>sAMRecordPositionComparator0.compare(bamViewRecord0, (Object) null);
-</pre>
-<h3>Test case 3</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SAMRecordPositionComparator sAMRecordPositionComparator0 = new SAMRecordPositionComparator((BamView) null);
-<span class="nocode"><a name="2">  2: </a></span>SAMRecord sAMRecord0 = new SAMRecord((SAMFileHeader) null);
-<span class="nocode"><a name="3">  3: </a></span>BamViewRecord bamViewRecord0 = new BamViewRecord(sAMRecord0, (short)0);
-<span class="nocode"><a name="4">  4: </a></span>sAMRecordPositionComparator0.compare(bamViewRecord0, bamViewRecord0);
+<span class="nocode"><a name="2">  2: </a></span>BamViewRecord bamViewRecord0 = new BamViewRecord((SAMRecord) null, (short)111);
+<span class="nocode"><a name="3">  3: </a></span>MockHijrahDate mockHijrahDate0 = new MockHijrahDate();
+<span class="nocode"><a name="4">  4: </a></span>sAMRecordPositionComparator0.compare(bamViewRecord0, mockHijrahDate0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -67,10 +56,10 @@ uk.ac.sanger.artemis.components.alignment.SAMRecordPositionComparator
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.alignment.SAMRecordPositionComparator
-<li>Size: 3
-<li>Length: 14
+<li>Size: 2
+<li>Length: 6
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.36740196078431375
+<li>Coverage: 0.3569852941176471
 <li>BranchCoverage: 0.2
 <li>MethodCoverage: 1.0
 <li>OutputCoverage: 0.0

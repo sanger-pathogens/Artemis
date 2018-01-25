@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.util.StringVector
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.util.StringVector: 0.8542833899264289</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.util.StringVector: 0.8509939162422184</ul>
 <ul>
-<li>68.05833333333334 fitness evaluations, 0 generations, null statements, 18 tests.
+<li>68.55833333333334 fitness evaluations, 0 generations, null statements, 20 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,103 +35,112 @@ uk.ac.sanger.artemis.util.StringVector
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>StringVector stringVector0 = new StringVector((String) null);
-<span class="nocode"><a name="2">  2: </a></span>StringVector stringVector1 = new StringVector(stringVector0);
-<span class="nocode"><a name="3">  3: </a></span>stringVector0.add(stringVector1);
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(2, stringVector0.size());
+<span class="nocode"><a name="1">  1: </a></span>StringVector stringVector0 = new StringVector(&quot;~AWxRh&quot;);
+<span class="nocode"><a name="2">  2: </a></span>stringVector0.add(stringVector0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>StringVector stringVector0 = new StringVector();
-<span class="nocode"><a name="2">  2: </a></span>StringVector stringVector1 = stringVector0.copy();
-<span class="nocode"><a name="3">  3: </a></span>assertNotSame(stringVector0, stringVector1);
+<span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = new String[8];
+<span class="nocode"><a name="2">  2: </a></span>StringVector stringVector0 = new StringVector(stringArray0);
+<span class="nocode"><a name="3">  3: </a></span>StringVector stringVector1 = stringVector0.copy();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;[null, null, null, null, null, null, null, null]&quot;, stringVector1.toString());
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>StringVector stringVector0 = StringVector.getStrings(&quot;N&quot;);
-<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;[N]&quot;, stringVector0.toString());
-</pre>
-<h3>Test case 4</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>StringVector stringVector0 = StringVector.getStrings(&quot;\&quot;`ewwF QNX&quot;, &quot;N&quot;);
-<span class="nocode"><a name="2">  2: </a></span>stringVector0.sort();
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;[\&quot;`ewwF Q, X]&quot;, stringVector0.toString());
-</pre>
-<h3>Test case 5</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = new String[6];
-<span class="nocode"><a name="2">  2: </a></span>StringVector stringVector0 = new StringVector(stringArray0);
-<span class="nocode"><a name="3">  3: </a></span>stringVector0.add(stringVector0);
-</pre>
-<h3>Test case 6</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>StringVector stringVector0 = new StringVector();
-<span class="nocode"><a name="2">  2: </a></span>String[] stringArray0 = new String[7];
-<span class="nocode"><a name="3">  3: </a></span>stringArray0[3] = &quot;&quot;;
-<span class="nocode"><a name="4">  4: </a></span>StringVector stringVector1 = new StringVector(stringArray0);
-<span class="nocode"><a name="5">  5: </a></span>stringVector0.add(stringVector1);
-<span class="nocode"><a name="6">  6: </a></span>stringVector0.sort();
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(7, stringVector0.size());
-</pre>
-<h3>Test case 7</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>StringVector stringVector0 = StringVector.getStrings(&quot;0M&quot;, &quot;0M&quot;, false);
-<span class="nocode"><a name="2">  2: </a></span>assertTrue(stringVector0.isEmpty());
-</pre>
-<h3>Test case 8</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>StringVector stringVector0 = StringVector.getStrings(&quot;wr&quot;, &quot;wr&quot;, true);
+<span class="nocode"><a name="1">  1: </a></span>StringVector stringVector0 = StringVector.getStrings(&quot;KT&quot;, &quot;KT&quot;, true);
 <span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;[]&quot;, stringVector0.toString());
 <span class="nocode"><a name="3">  3: </a></span>assertFalse(stringVector0.isEmpty());
 </pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>StringVector stringVector0 = StringVector.getStrings(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>stringVector0.add((StringVector) null);
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>StringVector stringVector0 = StringVector.getStrings(&quot;KT&quot;, &quot;KT&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertTrue(stringVector0.isEmpty());
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = new String[8];
+<span class="nocode"><a name="2">  2: </a></span>StringVector stringVector0 = new StringVector(stringArray0);
+<span class="nocode"><a name="3">  3: </a></span>StringVector stringVector1 = new StringVector(stringVector0);
+<span class="nocode"><a name="4">  4: </a></span>stringVector1.add(stringVector0);
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(stringVector1.equals((Object)stringVector0));
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = new String[8];
+<span class="nocode"><a name="2">  2: </a></span>stringArray0[3] = &quot;H%.}+r&quot;;
+<span class="nocode"><a name="3">  3: </a></span>StringVector stringVector0 = new StringVector(stringArray0);
+<span class="nocode"><a name="4">  4: </a></span>stringVector0.sort();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;[null, null, null, null, null, null, null, H%.}+r]&quot;, stringVector0.toString());
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = new String[8];
+<span class="nocode"><a name="2">  2: </a></span>stringArray0[0] = &quot;H%.}+r&quot;;
+<span class="nocode"><a name="3">  3: </a></span>stringArray0[3] = &quot;H%.}+r&quot;;
+<span class="nocode"><a name="4">  4: </a></span>StringVector stringVector0 = new StringVector(stringArray0);
+<span class="nocode"><a name="5">  5: </a></span>stringVector0.sort();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;[null, null, null, null, null, null, H%.}+r, H%.}+r]&quot;, stringVector0.toString());
+</pre>
 <h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>StringVector stringVector0 = StringVector.getStrings(&quot;\&quot;`ewwF QNX&quot;, &quot;N&quot;, true);
-<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;[\&quot;`ewwF Q, X]&quot;, stringVector0.toString());
+<span class="nocode"><a name="1">  1: </a></span>StringVector stringVector0 = StringVector.getStrings(&quot;alt name cannot be null&quot;, &quot; &quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;[alt, name, cannot, be, null]&quot;, stringVector0.toString());
 </pre>
 <h3>Test case 10</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>StringVector stringVector0 = new StringVector((StringVector) null);
+<span class="nocode"><a name="1">  1: </a></span>StringVector stringVector0 = StringVector.getStrings(&quot; {&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;[{]&quot;, stringVector0.toString());
 </pre>
 <h3>Test case 11</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>StringVector stringVector0 = new StringVector((String[]) null);
+<span class="nocode"><a name="1">  1: </a></span>StringVector stringVector0 = new StringVector();
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;[]&quot;, stringVector0.toString());
 </pre>
 <h3>Test case 12</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>StringVector stringVector0 = new StringVector();
-<span class="nocode"><a name="2">  2: </a></span>stringVector0.add((StringVector) null);
+<span class="nocode"><a name="1">  1: </a></span>StringVector stringVector0 = StringVector.getStrings(&quot;3q\&quot;d18Gmp;U5~2@-G&quot;, &quot;@Xx CkHOUMZ{fp2h&quot;, false);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;[3q\&quot;d18Gmp;U5~2@-G]&quot;, stringVector0.toString());
 </pre>
 <h3>Test case 13</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>StringVector.getStrings((String) null);
+<span class="nocode"><a name="1">  1: </a></span>StringVector stringVector0 = StringVector.getStrings(&quot;u&quot;, &quot;TIME TAKEN &quot;, true);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;[u]&quot;, stringVector0.toString());
 </pre>
 <h3>Test case 14</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>StringVector.getStrings((String) null, &quot;&quot;);
+<span class="nocode"><a name="1">  1: </a></span>StringVector stringVector0 = StringVector.getStrings(&quot;NA&quot;, &quot;NA&quot;, false);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(0, stringVector0.size());
 </pre>
 <h3>Test case 15</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>StringVector.getStrings((String) null, &quot;&quot;, false);
+<span class="nocode"><a name="1">  1: </a></span>StringVector stringVector0 = new StringVector((StringVector) null);
 </pre>
 <h3>Test case 16</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>StringVector stringVector0 = new StringVector();
-<span class="nocode"><a name="2">  2: </a></span>String[] stringArray0 = new String[7];
-<span class="nocode"><a name="3">  3: </a></span>StringVector stringVector1 = new StringVector(stringArray0);
-<span class="nocode"><a name="4">  4: </a></span>stringVector0.add(stringVector1);
-<span class="nocode"><a name="5">  5: </a></span>stringVector0.copy();
-<span class="nocode"><a name="6">  6: </a></span>assertFalse(stringVector0.isEmpty());
+<span class="nocode"><a name="1">  1: </a></span>StringVector stringVector0 = new StringVector((String[]) null);
 </pre>
 <h3>Test case 17</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>StringVector stringVector0 = StringVector.getStrings(&quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>assertTrue(stringVector0.isEmpty());
+<span class="nocode"><a name="1">  1: </a></span>StringVector.getStrings((String) null);
 </pre>
 <h3>Test case 18</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>StringVector stringVector0 = StringVector.getStrings(&quot;&quot;, &quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;[]&quot;, stringVector0.toString());
+<span class="nocode"><a name="1">  1: </a></span>StringVector.getStrings((String) null, &quot; of declared type &quot;);
+</pre>
+<h3>Test case 19</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>StringVector.getStrings((String) null, &quot;ET8igw/ZK]xvGYDDF|=&quot;, false);
+</pre>
+<h3>Test case 20</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>StringVector stringVector0 = StringVector.getStrings(&quot;&quot;, &quot;Zu_RCRSaz?Bjx-h;Y=4&quot;, true);
+<span class="nocode"><a name="2">  2: </a></span>StringVector stringVector1 = stringVector0.copy();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, stringVector1.capacity());
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -144,10 +153,10 @@ uk.ac.sanger.artemis.util.StringVector
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.util.StringVector
-<li>Size: 18
-<li>Length: 34
+<li>Size: 20
+<li>Length: 35
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.8542833899264289
+<li>Coverage: 0.8509939162422184
 <li>BranchCoverage: 0.8157894736842105
 <li>MethodCoverage: 1.0
 <li>OutputCoverage: 0.5833333333333334

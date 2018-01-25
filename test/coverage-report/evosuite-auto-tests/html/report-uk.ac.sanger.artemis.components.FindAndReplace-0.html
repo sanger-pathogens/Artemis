@@ -35,7 +35,9 @@ uk.ac.sanger.artemis.components.FindAndReplace
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FindAndReplace findAndReplace0 = new FindAndReplace((Selection) null, (GotoEventSource) null, (EntryGroup) null, (BasePlotGroup) null);
+<span class="nocode"><a name="1">  1: </a></span>BasePlotGroup basePlotGroup0 = mock(BasePlotGroup.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="2">  2: </a></span>SimpleGotoEventSource simpleGotoEventSource0 = new SimpleGotoEventSource((EntryGroup) null);
+<span class="nocode"><a name="3">  3: </a></span>FindAndReplace findAndReplace0 = new FindAndReplace((Selection) null, simpleGotoEventSource0, (EntryGroup) null, basePlotGroup0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -49,7 +51,7 @@ uk.ac.sanger.artemis.components.FindAndReplace
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.FindAndReplace
 <li>Size: 1
-<li>Length: 1
+<li>Length: 3
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.292725988700565
 <li>BranchCoverage: 0.00847457627118644

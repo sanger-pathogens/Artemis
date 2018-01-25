@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.circular.EmbossCirdnaReader
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.circular.EmbossCirdnaReader: 0.7141850490196078</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.circular.EmbossCirdnaReader: 0.6552236519607844</ul>
 <ul>
-<li>99.72872330173095 fitness evaluations, 0 generations, null statements, 15 tests.
+<li>132.31410237078669 fitness evaluations, 0 generations, null statements, 13 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,58 +35,55 @@ uk.ac.sanger.artemis.circular.EmbossCirdnaReader
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;^Aq&quot;);
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;);
 <span class="nocode"><a name="2">  2: </a></span>EmbossCirdnaReader embossCirdnaReader0 = new EmbossCirdnaReader(mockFile0);
 <span class="nocode"><a name="3">  3: </a></span>int int0 = embossCirdnaReader0.getEnd();
 <span class="nocode"><a name="4">  4: </a></span>assertEquals(0, int0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;^Aq&quot;);
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;);
 <span class="nocode"><a name="2">  2: </a></span>EmbossCirdnaReader embossCirdnaReader0 = new EmbossCirdnaReader(mockFile0);
 <span class="nocode"><a name="3">  3: </a></span>Vector&lt;Object&gt; vector0 = embossCirdnaReader0.getRestrictionEnzyme();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(10, vector0.capacity());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;[]&quot;, vector0.toString());
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;^Aq&quot;);
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;);
 <span class="nocode"><a name="2">  2: </a></span>EmbossCirdnaReader embossCirdnaReader0 = new EmbossCirdnaReader(mockFile0);
 <span class="nocode"><a name="3">  3: </a></span>Vector&lt;Object&gt; vector0 = embossCirdnaReader0.getBlock();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, vector0.size());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;[]&quot;, vector0.toString());
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;^Aq&quot;);
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;);
 <span class="nocode"><a name="2">  2: </a></span>EmbossCirdnaReader embossCirdnaReader0 = new EmbossCirdnaReader(mockFile0);
 <span class="nocode"><a name="3">  3: </a></span>int int0 = embossCirdnaReader0.getStart();
 <span class="nocode"><a name="4">  4: </a></span>assertEquals(0, int0);
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;5&quot;);
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;);
 <span class="nocode"><a name="2">  2: </a></span>EmbossCirdnaReader embossCirdnaReader0 = new EmbossCirdnaReader(mockFile0);
 <span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = embossCirdnaReader0.isReading();
 <span class="nocode"><a name="4">  4: </a></span>assertTrue(boolean0);
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;5&quot;);
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;p_p 35d&quot;);
 <span class="nocode"><a name="2">  2: </a></span>EmbossCirdnaReader embossCirdnaReader0 = new EmbossCirdnaReader(mockFile0);
-<span class="nocode"><a name="3">  3: </a></span>EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(&quot;/Users/kp11/workspace/applications/Artemis/test/5&quot;);
-<span class="nocode"><a name="4">  4: </a></span>FileSystemHandling.appendStringToFile(evoSuiteFile0, &quot;5&quot;);
+<span class="nocode"><a name="3">  3: </a></span>EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(&quot;/Users/kp11/workspace/applications/Artemis/test/p_p 35d&quot;);
+<span class="nocode"><a name="4">  4: </a></span>FileSystemHandling.appendStringToFile(evoSuiteFile0, &quot;p_p 35d&quot;);
 <span class="nocode"><a name="5">  5: </a></span>Vector&lt;Object&gt; vector0 = embossCirdnaReader0.readFile();
 <span class="nocode"><a name="6">  6: </a></span>assertNull(vector0);
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;5&quot;);
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;W?'{V@c8?eSA&quot;, &quot;W?'{V@c8?eSA&quot;);
 <span class="nocode"><a name="2">  2: </a></span>EmbossCirdnaReader embossCirdnaReader0 = new EmbossCirdnaReader(mockFile0);
-<span class="nocode"><a name="3">  3: </a></span>EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(&quot;/Users/kp11/workspace/applications/Artemis/test/5&quot;);
-<span class="nocode"><a name="4">  4: </a></span>FileSystemHandling.appendStringToFile(evoSuiteFile0, &quot;group&quot;);
-<span class="nocode"><a name="5">  5: </a></span>FileSystemHandling.appendLineToFile(evoSuiteFile0, &quot;5&quot;);
-<span class="nocode"><a name="6">  6: </a></span>FileSystemHandling.appendStringToFile(evoSuiteFile0, &quot;5&quot;);
-<span class="nocode"><a name="7">  7: </a></span>Vector&lt;Object&gt; vector0 = embossCirdnaReader0.readFile();
-<span class="nocode"><a name="8">  8: </a></span>assertNull(vector0);
+<span class="nocode"><a name="3">  3: </a></span>EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(&quot;/Users/kp11/workspace/applications/Artemis/test/W?'{V@c8?eSA/W?'{V@c8?eSA&quot;);
+<span class="nocode"><a name="4">  4: </a></span>FileSystemHandling.appendLineToFile(evoSuiteFile0, &quot;end contigcontig&quot;);
+<span class="nocode"><a name="5">  5: </a></span>embossCirdnaReader0.readFile();
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
@@ -94,57 +91,37 @@ uk.ac.sanger.artemis.circular.EmbossCirdnaReader
 </pre>
 <h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(&quot;/Users/kp11/workspace/applications/Artemis/test/5&quot;);
-<span class="nocode"><a name="2">  2: </a></span>FileSystemHandling.appendStringToFile(evoSuiteFile0, &quot;start 5&quot;);
-<span class="nocode"><a name="3">  3: </a></span>FileSystemHandling.appendStringToFile(evoSuiteFile0, &quot;start 5&quot;);
-<span class="nocode"><a name="4">  4: </a></span>MockFile mockFile0 = new MockFile(&quot;5&quot;);
-<span class="nocode"><a name="5">  5: </a></span>EmbossCirdnaReader embossCirdnaReader0 = new EmbossCirdnaReader(mockFile0);
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>EmbossCirdnaReader embossCirdnaReader0 = new EmbossCirdnaReader(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>embossCirdnaReader0.end = (-242);
+<span class="nocode"><a name="4">  4: </a></span>int int0 = embossCirdnaReader0.getEnd();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals((-242), int0);
 </pre>
 <h3>Test case 10</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(&quot;/Users/kp11/workspace/applications/Artemis/test/5&quot;);
-<span class="nocode"><a name="2">  2: </a></span>FileSystemHandling.appendStringToFile(evoSuiteFile0, &quot;start 5&quot;);
-<span class="nocode"><a name="3">  3: </a></span>MockFile mockFile0 = new MockFile(&quot;5&quot;);
-<span class="nocode"><a name="4">  4: </a></span>EmbossCirdnaReader embossCirdnaReader0 = new EmbossCirdnaReader(mockFile0);
-<span class="nocode"><a name="5">  5: </a></span>FileSystemHandling.appendLineToFile(evoSuiteFile0, &quot;start 5&quot;);
-<span class="nocode"><a name="6">  6: </a></span>embossCirdnaReader0.readFile();
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>EmbossCirdnaReader embossCirdnaReader0 = new EmbossCirdnaReader(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>embossCirdnaReader0.end = 1138;
+<span class="nocode"><a name="4">  4: </a></span>int int0 = embossCirdnaReader0.getEnd();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(1138, int0);
 </pre>
 <h3>Test case 11</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;^Aq&quot;);
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;*d&lt;&gt;&quot;, &quot;&quot;);
 <span class="nocode"><a name="2">  2: </a></span>EmbossCirdnaReader embossCirdnaReader0 = new EmbossCirdnaReader(mockFile0);
-<span class="nocode"><a name="3">  3: </a></span>embossCirdnaReader0.end = 4308;
-<span class="nocode"><a name="4">  4: </a></span>embossCirdnaReader0.end = 0;
-<span class="nocode"><a name="5">  5: </a></span>embossCirdnaReader0.end = (-33);
-<span class="nocode"><a name="6">  6: </a></span>int int0 = embossCirdnaReader0.getEnd();
-<span class="nocode"><a name="7">  7: </a></span>assertEquals((-33), int0);
+<span class="nocode"><a name="3">  3: </a></span>embossCirdnaReader0.start = (-1505);
+<span class="nocode"><a name="4">  4: </a></span>int int0 = embossCirdnaReader0.getStart();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals((-1505), int0);
 </pre>
 <h3>Test case 12</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;B$+6I^.HaNLczu&quot;);
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;);
 <span class="nocode"><a name="2">  2: </a></span>EmbossCirdnaReader embossCirdnaReader0 = new EmbossCirdnaReader(mockFile0);
-<span class="nocode"><a name="3">  3: </a></span>embossCirdnaReader0.end = 846;
-<span class="nocode"><a name="4">  4: </a></span>int int0 = embossCirdnaReader0.getEnd();
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(846, int0);
+<span class="nocode"><a name="3">  3: </a></span>embossCirdnaReader0.start = 3096;
+<span class="nocode"><a name="4">  4: </a></span>int int0 = embossCirdnaReader0.getStart();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(3096, int0);
 </pre>
 <h3>Test case 13</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;=x&quot;, &quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>EmbossCirdnaReader embossCirdnaReader0 = new EmbossCirdnaReader(mockFile0);
-<span class="nocode"><a name="3">  3: </a></span>embossCirdnaReader0.start = (-1465);
-<span class="nocode"><a name="4">  4: </a></span>int int0 = embossCirdnaReader0.getStart();
-<span class="nocode"><a name="5">  5: </a></span>assertEquals((-1465), int0);
-</pre>
-<h3>Test case 14</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;, &quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>EmbossCirdnaReader embossCirdnaReader0 = new EmbossCirdnaReader(mockFile0);
-<span class="nocode"><a name="3">  3: </a></span>embossCirdnaReader0.start = 0;
-<span class="nocode"><a name="4">  4: </a></span>embossCirdnaReader0.start = 6;
-<span class="nocode"><a name="5">  5: </a></span>int int0 = embossCirdnaReader0.getStart();
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(6, int0);
-</pre>
-<h3>Test case 15</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>EmbossCirdnaReader embossCirdnaReader0 = new EmbossCirdnaReader();
 </pre>
@@ -159,11 +136,11 @@ uk.ac.sanger.artemis.circular.EmbossCirdnaReader
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.circular.EmbossCirdnaReader
-<li>Size: 15
-<li>Length: 59
+<li>Size: 13
+<li>Length: 43
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.7141850490196078
-<li>BranchCoverage: 0.5588235294117647
+<li>Coverage: 0.6552236519607844
+<li>BranchCoverage: 0.38235294117647056
 <li>MethodCoverage: 1.0
 <li>OutputCoverage: 0.4
 </ul></div>

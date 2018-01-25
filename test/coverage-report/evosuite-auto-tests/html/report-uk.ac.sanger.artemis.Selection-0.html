@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.Selection
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.Selection: 0.5980476658330356</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.Selection: 0.5332987391166651</ul>
 <ul>
-<li>1250.211161367632 fitness evaluations, 0 generations, null statements, 53 tests.
+<li>922.547265994087 fitness evaluations, 0 generations, null statements, 41 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,33 +35,31 @@ uk.ac.sanger.artemis.Selection
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;P0Q}Y,'$8\&quot;+Pk&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="3">  3: </a></span>Marker marker0 = selection0.getHighestBaseOfSelection();
-<span class="nocode"><a name="4">  4: </a></span>assertNull(marker0);
+<span class="nocode"><a name="1">  1: </a></span>Selection selection0 = new Selection((Clipboard) null);
+<span class="nocode"><a name="2">  2: </a></span>FeatureVector featureVector0 = selection0.getSelectedFeatures();
+<span class="nocode"><a name="3">  3: </a></span>selection0.add(featureVector0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;P0Q}Y,'$8\&quot;+Pk&quot;);
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;&quot;);
 <span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
 <span class="nocode"><a name="3">  3: </a></span>DataFlavor[] dataFlavorArray0 = selection0.getTransferDataFlavors();
 <span class="nocode"><a name="4">  4: </a></span>assertNotNull(dataFlavorArray0);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;1Cw}d$&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Class&lt;ChronoLocalDate&gt; class0 = Class.class;
-<span class="nocode"><a name="3">  3: </a></span>DataFlavor dataFlavor0 = new DataFlavor(class0, (String) null);
-<span class="nocode"><a name="4">  4: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="5">  5: </a></span>boolean boolean0 = selection0.isDataFlavorSupported(dataFlavor0);
-<span class="nocode"><a name="6">  6: </a></span>assertFalse(boolean0);
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="3">  3: </a></span>DataFlavor dataFlavor0 = DataFlavor.selectionHtmlFlavor;
+<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = selection0.isDataFlavorSupported(dataFlavor0);
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(boolean0);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;HB9D&quot;);
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;m*~U#=v&gt;J+C&quot;);
 <span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="3">  3: </a></span>selection0.lostOwnership(clipboard0, selection0);
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;HB9D&quot;, clipboard0.getName());
+<span class="nocode"><a name="3">  3: </a></span>selection0.lostOwnership(clipboard0, (Transferable) null);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;m*~U#=v&gt;J+C&quot;, clipboard0.getName());
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
@@ -71,22 +69,15 @@ uk.ac.sanger.artemis.Selection
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;P0Q}Y,'$8\&quot;+Pk&quot;);
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;&quot;);
 <span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="3">  3: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;jt.j,[k7w*_j&quot;, &quot;.'e|qk5&quot;);
-<span class="nocode"><a name="4">  4: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(fastaStreamSequence0);
-<span class="nocode"><a name="5">  5: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
-<span class="nocode"><a name="6">  6: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="7">  7: </a></span>Entry entry0 = simpleEntryGroup0.createEntry();
-<span class="nocode"><a name="8">  8: </a></span>Feature feature0 = entry0.createFeature();
-<span class="nocode"><a name="9">  9: </a></span>selection0.add(feature0);
-<span class="nocode"><a name="10"> 10: </a></span>selection0.getSelectionText();
+<span class="nocode"><a name="3">  3: </a></span>selection0.addSelectionChangeListener((SelectionChangeListener) null);
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;{&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="3">  3: </a></span>selection0.addSelectionChangeListener((SelectionChangeListener) null);
+<span class="nocode"><a name="1">  1: </a></span>Selection selection0 = new Selection((Clipboard) null);
+<span class="nocode"><a name="2">  2: </a></span>RangeVector rangeVector0 = selection0.getSelectionRanges();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;[]&quot;, rangeVector0.toString());
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
@@ -96,408 +87,229 @@ uk.ac.sanger.artemis.Selection
 </pre>
 <h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;&quot;);
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard((String) null);
 <span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
 <span class="nocode"><a name="3">  3: </a></span>selection0.set((FeatureSegment) null);
 </pre>
 <h3>Test case 10</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;H]aP=W.%t&quot;);
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;_oqP&amp;Z! _|&quot;);
 <span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="3">  3: </a></span>DataFlavor dataFlavor0 = RemoteFileNode.REMOTEFILENODE;
-<span class="nocode"><a name="4">  4: </a></span>selection0.getTransferData(dataFlavor0);
+<span class="nocode"><a name="3">  3: </a></span>Class&lt;Canvas&gt; class0 = Class.class;
+<span class="nocode"><a name="4">  4: </a></span>DataFlavor dataFlavor0 = new DataFlavor(class0, &quot;&quot;);
+<span class="nocode"><a name="5">  5: </a></span>selection0.getTransferData(dataFlavor0);
 </pre>
 <h3>Test case 11</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;szV4Dqo)-WTg^${&quot;);
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;5'], ,&quot;);
 <span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="3">  3: </a></span>DataFlavor dataFlavor0 = DataFlavor.fragmentHtmlFlavor;
+<span class="nocode"><a name="3">  3: </a></span>DataFlavor dataFlavor0 = DataFlavor.stringFlavor;
 <span class="nocode"><a name="4">  4: </a></span>String string0 = (String)selection0.getTransferData(dataFlavor0);
 <span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;&quot;, string0);
 </pre>
 <h3>Test case 12</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;wu8sJ\&quot;d!|$D+VB,y&quot;);
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;2HSvt33 -]#&quot;);
 <span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
 <span class="nocode"><a name="3">  3: </a></span>selection0.featureChanged((FeatureChangeEvent) null);
 </pre>
 <h3>Test case 13</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;&quot;);
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard((String) null);
 <span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="4">  4: </a></span>Entry entry0 = simpleEntryGroup0.createEntry(&quot;&quot;);
-<span class="nocode"><a name="5">  5: </a></span>EntryChangeEvent entryChangeEvent0 = new EntryChangeEvent(selection0, entry0, 1);
+<span class="nocode"><a name="3">  3: </a></span>Bases bases0 = new Bases((Sequence) null);
+<span class="nocode"><a name="4">  4: </a></span>Entry entry0 = Entry.newEntry(bases0);
+<span class="nocode"><a name="5">  5: </a></span>EntryChangeEvent entryChangeEvent0 = new EntryChangeEvent(entry0, (Feature) null, false, 109);
 <span class="nocode"><a name="6">  6: </a></span>selection0.entryChanged(entryChangeEvent0);
 </pre>
 <h3>Test case 14</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;HB9D&quot;);
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;&quot;);
 <span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="3">  3: </a></span>Bases bases0 = new Bases((Sequence) null);
-<span class="nocode"><a name="4">  4: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="5">  5: </a></span>Entry entry0 = simpleEntryGroup0.createEntry(&quot;HB9D&quot;);
-<span class="nocode"><a name="6">  6: </a></span>EntryChangeEvent entryChangeEvent0 = new EntryChangeEvent(selection0, entry0, (-5));
-<span class="nocode"><a name="7">  7: </a></span>selection0.entryChanged(entryChangeEvent0);
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(2, EntryChangeEvent.FEATURE_ADDED);
+<span class="nocode"><a name="3">  3: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;&quot;);
+<span class="nocode"><a name="4">  4: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
+<span class="nocode"><a name="5">  5: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="6">  6: </a></span>Entry entry0 = simpleEntryGroup0.createEntry(&quot;&quot;);
+<span class="nocode"><a name="7">  7: </a></span>FeatureVector featureVector0 = entry0.checkForMissingQualifiers();
+<span class="nocode"><a name="8">  8: </a></span>selection0.set(featureVector0);
 </pre>
 <h3>Test case 15</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;P0Q}Y,'$8\&quot;+Pk&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="3">  3: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;jt.j,[k7w*_j&quot;, &quot;.'e|qk5&quot;);
-<span class="nocode"><a name="4">  4: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(fastaStreamSequence0);
-<span class="nocode"><a name="5">  5: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
-<span class="nocode"><a name="6">  6: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="7">  7: </a></span>Entry entry0 = simpleEntryGroup0.createEntry();
-<span class="nocode"><a name="8">  8: </a></span>Feature feature0 = entry0.createFeature();
-<span class="nocode"><a name="9">  9: </a></span>selection0.add(feature0);
-<span class="nocode"><a name="10"> 10: </a></span>selection0.add(feature0);
-<span class="nocode"><a name="11"> 11: </a></span>assertFalse(feature0.isReadOnly());
-</pre>
-<h3>Test case 16</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;BFquZGu6v&gt;^;g$lX&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="3">  3: </a></span>FeatureVector featureVector0 = selection0.getSelectedFeatures();
-<span class="nocode"><a name="4">  4: </a></span>selection0.add(featureVector0);
-</pre>
-<h3>Test case 17</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="3">  3: </a></span>FeatureVector featureVector0 = new FeatureVector();
-<span class="nocode"><a name="4">  4: </a></span>selection0.set(featureVector0);
-</pre>
-<h3>Test case 18</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;BFquZGu6v&gt;^;g$lX&quot;);
 <span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
 <span class="nocode"><a name="3">  3: </a></span>selection0.setMarkerRange((MarkerRange) null);
 </pre>
-<h3>Test case 19</h3>
+<h3>Test case 16</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;P0Q}Y,'$8\&quot;+Pk&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="3">  3: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;jt.j,[k7w*_j&quot;, &quot;.'e|qk5&quot;);
-<span class="nocode"><a name="4">  4: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(fastaStreamSequence0);
-<span class="nocode"><a name="5">  5: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
-<span class="nocode"><a name="6">  6: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="7">  7: </a></span>SimpleGotoEventSource simpleGotoEventSource0 = new SimpleGotoEventSource(simpleEntryGroup0);
-<span class="nocode"><a name="8">  8: </a></span>MarkerRange markerRange0 = simpleGotoEventSource0.gotoBase(7);
-<span class="nocode"><a name="9">  9: </a></span>selection0.setMarkerRange(markerRange0);
-<span class="nocode"><a name="10"> 10: </a></span>Marker marker0 = selection0.getHighestBaseOfSelection();
-<span class="nocode"><a name="11"> 11: </a></span>assertEquals(0, Marker.LISTENER_PRIORITY);
-</pre>
-<h3>Test case 20</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;P0Q}Y,'$8\&quot;+Pk&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="3">  3: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;jt.j,[k7w*_j&quot;, &quot;.'e|qk5&quot;);
-<span class="nocode"><a name="4">  4: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(fastaStreamSequence0);
-<span class="nocode"><a name="5">  5: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
-<span class="nocode"><a name="6">  6: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="7">  7: </a></span>Entry entry0 = simpleEntryGroup0.createEntry();
-<span class="nocode"><a name="8">  8: </a></span>Feature feature0 = entry0.createFeature();
-<span class="nocode"><a name="9">  9: </a></span>selection0.add(feature0);
-<span class="nocode"><a name="10"> 10: </a></span>boolean boolean0 = selection0.isEmpty();
-<span class="nocode"><a name="11"> 11: </a></span>assertFalse(boolean0);
-</pre>
-<h3>Test case 21</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;1Cw}d$&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = selection0.isEmpty();
-<span class="nocode"><a name="4">  4: </a></span>assertTrue(boolean0);
-</pre>
-<h3>Test case 22</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard((String) null);
-<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="3">  3: </a></span>MarkerRange markerRange0 = new MarkerRange((Marker) null);
-<span class="nocode"><a name="4">  4: </a></span>selection0.setMarkerRange(markerRange0);
-<span class="nocode"><a name="5">  5: </a></span>boolean boolean0 = selection0.isEmpty();
-<span class="nocode"><a name="6">  6: </a></span>assertFalse(boolean0);
-</pre>
-<h3>Test case 23</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;base_plot_height&quot;);
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;&quot;);
 <span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
 <span class="nocode"><a name="3">  3: </a></span>selection0.clear();
 </pre>
-<h3>Test case 24</h3>
+<h3>Test case 17</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;Hz:`h{/0xxavnYI'\&quot;%(&quot;);
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;Selection.fireAction () - unknown event&quot;);
 <span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
 <span class="nocode"><a name="3">  3: </a></span>selection0.remove((Feature) null);
 </pre>
-<h3>Test case 25</h3>
+<h3>Test case 18</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;Selection.fireAction () - unknown event&quot;);
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;&quot;);
 <span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="3">  3: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;Selection.fireAction () - unknown event&quot;);
-<span class="nocode"><a name="4">  4: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
-<span class="nocode"><a name="5">  5: </a></span>Entry entry0 = Entry.newEntry(bases0);
-<span class="nocode"><a name="6">  6: </a></span>Feature feature0 = entry0.createFeature();
-<span class="nocode"><a name="7">  7: </a></span>selection0.removeSegmentsOf(feature0);
-<span class="nocode"><a name="8">  8: </a></span>assertFalse(feature0.isReadOnly());
+<span class="nocode"><a name="3">  3: </a></span>selection0.remove((FeatureSegment) null);
 </pre>
-<h3>Test case 26</h3>
+<h3>Test case 19</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;Selection.fireAction () - unknown event&quot;);
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;bKR[V/?,U'z&quot;);
 <span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="3">  3: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;Selection.fireAction () - unknown event&quot;);
-<span class="nocode"><a name="4">  4: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
-<span class="nocode"><a name="5">  5: </a></span>Entry entry0 = Entry.newEntry(bases0);
-<span class="nocode"><a name="6">  6: </a></span>Feature feature0 = entry0.createFeature();
-<span class="nocode"><a name="7">  7: </a></span>boolean boolean0 = selection0.contains(feature0);
-<span class="nocode"><a name="8">  8: </a></span>assertFalse(boolean0);
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = selection0.contains((FeatureSegment) null);
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(boolean0);
 </pre>
-<h3>Test case 27</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;P0Q}Y,'$8\&quot;+Pk&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="3">  3: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;jt.j,[k7w*_j&quot;, &quot;.'e|qk5&quot;);
-<span class="nocode"><a name="4">  4: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(fastaStreamSequence0);
-<span class="nocode"><a name="5">  5: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
-<span class="nocode"><a name="6">  6: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="7">  7: </a></span>Entry entry0 = simpleEntryGroup0.createEntry();
-<span class="nocode"><a name="8">  8: </a></span>Feature feature0 = entry0.createFeature();
-<span class="nocode"><a name="9">  9: </a></span>selection0.add(feature0);
-<span class="nocode"><a name="10"> 10: </a></span>Range range0 = selection0.getSelectionRange();
-<span class="nocode"><a name="11"> 11: </a></span>assertNotNull(range0);
-<span class="nocode"><a name="12"> 12: </a></span>
-<span class="nocode"><a name="13"> 13: </a></span>FeatureSegment featureSegment0 = new FeatureSegment(feature0, range0);
-<span class="nocode"><a name="14"> 14: </a></span>boolean boolean0 = selection0.contains(featureSegment0);
-<span class="nocode"><a name="15"> 15: </a></span>assertFalse(boolean0);
-<span class="nocode"><a name="16"> 16: </a></span>assertEquals(12, range0.getCount());
-</pre>
-<h3>Test case 28</h3>
+<h3>Test case 20</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;&quot;);
 <span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
 <span class="nocode"><a name="3">  3: </a></span>Range range0 = selection0.getSelectionRange();
 <span class="nocode"><a name="4">  4: </a></span>assertNull(range0);
 </pre>
-<h3>Test case 29</h3>
+<h3>Test case 21</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="3">  3: </a></span>RangeVector rangeVector0 = selection0.getSelectionRanges();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, rangeVector0.size());
-</pre>
-<h3>Test case 30</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard((String) null);
-<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="3">  3: </a></span>MarkerRange markerRange0 = new MarkerRange((Marker) null);
-<span class="nocode"><a name="4">  4: </a></span>selection0.setMarkerRange(markerRange0);
-<span class="nocode"><a name="5">  5: </a></span>selection0.getSelectionRanges();
-</pre>
-<h3>Test case 31</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;P0Q}Y,'$8\&quot;+Pk&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="3">  3: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;jt.j,[k7w*_j&quot;, &quot;.'e|qk5&quot;);
-<span class="nocode"><a name="4">  4: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(fastaStreamSequence0);
-<span class="nocode"><a name="5">  5: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
-<span class="nocode"><a name="6">  6: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="7">  7: </a></span>Entry entry0 = simpleEntryGroup0.createEntry();
-<span class="nocode"><a name="8">  8: </a></span>Feature feature0 = entry0.createFeature();
-<span class="nocode"><a name="9">  9: </a></span>selection0.add(feature0);
-<span class="nocode"><a name="10"> 10: </a></span>selection0.getSelectionRange();
-<span class="nocode"><a name="11"> 11: </a></span>Marker marker0 = selection0.getLowestBaseOfSelection();
-<span class="nocode"><a name="12"> 12: </a></span>assertEquals(0, Marker.LISTENER_PRIORITY);
-</pre>
-<h3>Test case 32</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;P0Q}Y,'$8\&quot;+Pk&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="3">  3: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;jt.j,[k7w*_j&quot;, &quot;.'e|qk5&quot;);
-<span class="nocode"><a name="4">  4: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(fastaStreamSequence0);
-<span class="nocode"><a name="5">  5: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
-<span class="nocode"><a name="6">  6: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="7">  7: </a></span>Entry entry0 = simpleEntryGroup0.createEntry();
-<span class="nocode"><a name="8">  8: </a></span>Feature feature0 = entry0.createFeature();
-<span class="nocode"><a name="9">  9: </a></span>selection0.add(feature0);
-<span class="nocode"><a name="10"> 10: </a></span>selection0.getHighestBaseOfSelection();
-<span class="nocode"><a name="11"> 11: </a></span>Range range0 = selection0.getSelectionRange();
-<span class="nocode"><a name="12"> 12: </a></span>assertNotNull(range0);
-<span class="nocode"><a name="13"> 13: </a></span>assertEquals(12, range0.getCount());
-</pre>
-<h3>Test case 33</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;BFquZGu6v&gt;^;g$lX&quot;);
 <span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
 <span class="nocode"><a name="3">  3: </a></span>Marker marker0 = selection0.getStartBaseOfSelection();
 <span class="nocode"><a name="4">  4: </a></span>assertNull(marker0);
 </pre>
-<h3>Test case 34</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;P0Q}Y,'$8\&quot;+Pk&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="3">  3: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;jt.j,[k7w*_j&quot;, &quot;.'e|qk5&quot;);
-<span class="nocode"><a name="4">  4: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(fastaStreamSequence0);
-<span class="nocode"><a name="5">  5: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
-<span class="nocode"><a name="6">  6: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="7">  7: </a></span>Entry entry0 = simpleEntryGroup0.createEntry();
-<span class="nocode"><a name="8">  8: </a></span>Feature feature0 = entry0.createFeature();
-<span class="nocode"><a name="9">  9: </a></span>selection0.add(feature0);
-<span class="nocode"><a name="10"> 10: </a></span>Marker marker0 = selection0.getStartBaseOfSelection();
-<span class="nocode"><a name="11"> 11: </a></span>assertEquals(0, Marker.LISTENER_PRIORITY);
-</pre>
-<h3>Test case 35</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;P0Q}Y,'$8\&quot;+Pk&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="3">  3: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;jt.j,[k7w*_j&quot;, &quot;.'e|qk5&quot;);
-<span class="nocode"><a name="4">  4: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(fastaStreamSequence0);
-<span class="nocode"><a name="5">  5: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
-<span class="nocode"><a name="6">  6: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="7">  7: </a></span>Entry entry0 = simpleEntryGroup0.createEntry();
-<span class="nocode"><a name="8">  8: </a></span>Feature feature0 = entry0.createFeature();
-<span class="nocode"><a name="9">  9: </a></span>selection0.add(feature0);
-<span class="nocode"><a name="10"> 10: </a></span>Range range0 = selection0.getSelectionRange();
-<span class="nocode"><a name="11"> 11: </a></span>FeatureSegment featureSegment0 = new FeatureSegment(feature0, range0);
-<span class="nocode"><a name="12"> 12: </a></span>selection0.set(featureSegment0);
-<span class="nocode"><a name="13"> 13: </a></span>Marker marker0 = selection0.getStartBaseOfSelection();
-<span class="nocode"><a name="14"> 14: </a></span>assertEquals(0, Marker.LISTENER_PRIORITY);
-</pre>
-<h3>Test case 36</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard((String) null);
-<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="3">  3: </a></span>MarkerRange markerRange0 = new MarkerRange((Marker) null);
-<span class="nocode"><a name="4">  4: </a></span>selection0.setMarkerRange(markerRange0);
-<span class="nocode"><a name="5">  5: </a></span>Marker marker0 = selection0.getStartBaseOfSelection();
-<span class="nocode"><a name="6">  6: </a></span>assertNull(marker0);
-</pre>
-<h3>Test case 37</h3>
+<h3>Test case 22</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;&quot;);
 <span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
 <span class="nocode"><a name="3">  3: </a></span>Marker marker0 = selection0.getEndBaseOfSelection();
 <span class="nocode"><a name="4">  4: </a></span>assertNull(marker0);
 </pre>
-<h3>Test case 38</h3>
+<h3>Test case 23</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;P0Q}Y,'$8\&quot;+Pk&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="3">  3: </a></span>selection0.getSelectedBases();
-<span class="nocode"><a name="4">  4: </a></span>String string0 = selection0.getSelectionText();
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;&quot;, string0);
+<span class="nocode"><a name="1">  1: </a></span>Selection selection0 = new Selection((Clipboard) null);
+<span class="nocode"><a name="2">  2: </a></span>selection0.getAllFeatures();
+<span class="nocode"><a name="3">  3: </a></span>String string0 = selection0.getSelectedBases();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;&quot;, string0);
 </pre>
-<h3>Test case 39</h3>
+<h3>Test case 24</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;&quot;);
 <span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
 <span class="nocode"><a name="3">  3: </a></span>FeatureSegmentVector featureSegmentVector0 = selection0.getSelectedSegments();
 <span class="nocode"><a name="4">  4: </a></span>assertNotNull(featureSegmentVector0);
 </pre>
-<h3>Test case 40</h3>
+<h3>Test case 25</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;&amp;A[!.t&quot;);
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;&quot;);
 <span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
 <span class="nocode"><a name="3">  3: </a></span>MarkerRange markerRange0 = selection0.getMarkerRange();
 <span class="nocode"><a name="4">  4: </a></span>assertNull(markerRange0);
 </pre>
-<h3>Test case 41</h3>
+<h3>Test case 26</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;5'], ,&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = selection0.getSelectionText();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;&quot;, string0);
+</pre>
+<h3>Test case 27</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;&quot;);
 <span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="3">  3: </a></span>selection0.remove((FeatureSegment) null);
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = selection0.isEmpty();
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(boolean0);
 </pre>
-<h3>Test case 42</h3>
+<h3>Test case 28</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;&quot;);
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;org.biojava.utils.AssertionFailure&quot;);
 <span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
 <span class="nocode"><a name="3">  3: </a></span>Marker marker0 = selection0.getLowestBaseOfSelection();
 <span class="nocode"><a name="4">  4: </a></span>assertNull(marker0);
 </pre>
-<h3>Test case 43</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;P0Q}Y,'$8\&quot;+Pk&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="3">  3: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;jt.j,[k7w*_j&quot;, &quot;.'e|qk5&quot;);
-<span class="nocode"><a name="4">  4: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(fastaStreamSequence0);
-<span class="nocode"><a name="5">  5: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
-<span class="nocode"><a name="6">  6: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="7">  7: </a></span>Entry entry0 = simpleEntryGroup0.createEntry();
-<span class="nocode"><a name="8">  8: </a></span>Feature feature0 = entry0.createFeature();
-<span class="nocode"><a name="9">  9: </a></span>selection0.add(feature0);
-<span class="nocode"><a name="10"> 10: </a></span>FeatureSegmentVector featureSegmentVector0 = selection0.getAllSegments();
-<span class="nocode"><a name="11"> 11: </a></span>assertNotNull(featureSegmentVector0);
-</pre>
-<h3>Test case 44</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;base_plot_height&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="3">  3: </a></span>selection0.getSelectionText();
-<span class="nocode"><a name="4">  4: </a></span>FeatureVector featureVector0 = selection0.getAllFeatures();
-<span class="nocode"><a name="5">  5: </a></span>assertNotNull(featureVector0);
-</pre>
-<h3>Test case 45</h3>
+<h3>Test case 29</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;&quot;);
 <span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="3">  3: </a></span>Marker marker0 = selection0.getHighestBaseOfSelection();
+<span class="nocode"><a name="4">  4: </a></span>assertNull(marker0);
+</pre>
+<h3>Test case 30</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="3">  3: </a></span>FeatureSegmentVector featureSegmentVector0 = selection0.getAllSegments();
+<span class="nocode"><a name="4">  4: </a></span>assertNotNull(featureSegmentVector0);
+</pre>
+<h3>Test case 31</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;_oqP&amp;Z! _|&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
 <span class="nocode"><a name="3">  3: </a></span>FeatureVector featureVector0 = selection0.getAllFeatures();
-<span class="nocode"><a name="4">  4: </a></span>assertNotNull(featureVector0);
+<span class="nocode"><a name="4">  4: </a></span>FeatureVector featureVector1 = selection0.getAllFeatures();
+<span class="nocode"><a name="5">  5: </a></span>assertSame(featureVector1, featureVector0);
 </pre>
-<h3>Test case 46</h3>
+<h3>Test case 32</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Selection selection0 = new Selection((Clipboard) null);
-<span class="nocode"><a name="2">  2: </a></span>selection0.add((Feature) null);
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="3">  3: </a></span>selection0.add((Feature) null);
 </pre>
-<h3>Test case 47</h3>
+<h3>Test case 33</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;A&amp;o(4[W-?JW}w&gt;EoM{&quot;);
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;&quot;);
 <span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
 <span class="nocode"><a name="3">  3: </a></span>selection0.add((FeatureSegment) null);
 </pre>
-<h3>Test case 48</h3>
+<h3>Test case 34</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;x ^a&lt;]q(&quot;);
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;5'], ,&quot;);
 <span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
 <span class="nocode"><a name="3">  3: </a></span>selection0.add((FeatureVector) null);
 </pre>
-<h3>Test case 49</h3>
+<h3>Test case 35</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;&quot;);
 <span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
 <span class="nocode"><a name="3">  3: </a></span>selection0.contains((Feature) null);
 </pre>
-<h3>Test case 50</h3>
+<h3>Test case 36</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;false&quot;);
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;DG/14.&gt;%x\&quot;Lt+&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="3">  3: </a></span>selection0.entryChanged((EntryChangeEvent) null);
+</pre>
+<h3>Test case 37</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;&quot;);
 <span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
 <span class="nocode"><a name="3">  3: </a></span>selection0.getTransferData((DataFlavor) null);
 </pre>
-<h3>Test case 51</h3>
+<h3>Test case 38</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;s]f,E#Obrj/G2&quot;);
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;org.biojava.utils.AssertionFailure&quot;);
 <span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
 <span class="nocode"><a name="3">  3: </a></span>selection0.isDataFlavorSupported((DataFlavor) null);
 </pre>
-<h3>Test case 52</h3>
+<h3>Test case 39</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard((String) null);
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="3">  3: </a></span>selection0.removeSegmentsOf((Feature) null);
+</pre>
+<h3>Test case 40</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="3">  3: </a></span>selection0.set((FeatureVector) null);
+</pre>
+<h3>Test case 41</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;&quot;);
 <span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
 <span class="nocode"><a name="3">  3: </a></span>DataFlavor dataFlavor0 = DataFlavor.stringFlavor;
 <span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = selection0.isDataFlavorSupported(dataFlavor0);
 <span class="nocode"><a name="5">  5: </a></span>assertTrue(boolean0);
-</pre>
-<h3>Test case 53</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;P0Q}Y,'$8\&quot;+Pk&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="3">  3: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;jt.j,[k7w*_j&quot;, &quot;.'e|qk5&quot;);
-<span class="nocode"><a name="4">  4: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(fastaStreamSequence0);
-<span class="nocode"><a name="5">  5: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
-<span class="nocode"><a name="6">  6: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="7">  7: </a></span>Entry entry0 = simpleEntryGroup0.createEntry();
-<span class="nocode"><a name="8">  8: </a></span>Feature feature0 = entry0.createFeature();
-<span class="nocode"><a name="9">  9: </a></span>selection0.set(feature0);
-<span class="nocode"><a name="10"> 10: </a></span>assertFalse(feature0.isReadOnly());
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -510,13 +322,13 @@ uk.ac.sanger.artemis.Selection
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.Selection
-<li>Size: 53
-<li>Length: 271
+<li>Size: 41
+<li>Length: 136
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.5980476658330356
-<li>BranchCoverage: 0.5767195767195767
+<li>Coverage: 0.5332987391166651
+<li>BranchCoverage: 0.32275132275132273
 <li>MethodCoverage: 1.0
-<li>OutputCoverage: 0.5357142857142857
+<li>OutputCoverage: 0.375
 </ul></div>
 </div>
 <p><br><a href="../report-generation.html">Back to Overview</a></p>

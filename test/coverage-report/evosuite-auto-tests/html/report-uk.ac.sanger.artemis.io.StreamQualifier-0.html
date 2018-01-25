@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.io.StreamQualifier
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.io.StreamQualifier: 0.7432157078052615</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.io.StreamQualifier: 0.739930009066279</ul>
 <ul>
-<li>643.018816264132 fitness evaluations, 0 generations, null statements, 28 tests.
+<li>641.9920637726079 fitness evaluations, 0 generations, null statements, 25 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -40,179 +40,171 @@ uk.ac.sanger.artemis.io.StreamQualifier
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>QualifierInfo qualifierInfo0 = new QualifierInfo(&quot;\n&quot;, 2414, (KeyVector) null, (KeyVector) null, true);
-<span class="nocode"><a name="3">  3: </a></span>blastEntryInformation0.addQualifierInfo(qualifierInfo0);
-<span class="nocode"><a name="4">  4: </a></span>Qualifier qualifier0 = StreamQualifier.makeStreamQualifier(&quot;&quot;, &quot;ssk&quot;, blastEntryInformation0);
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;&quot;, qualifier0.getName());
+<span class="nocode"><a name="2">  2: </a></span>StreamQualifier.makeStreamQualifier(&quot;(jC&lt;Qmvh;g]Z&quot;, &quot;hit the end of line while looking for a \&quot;&quot;, blastEntryInformation0);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>QualifierInfo qualifierInfo0 = new QualifierInfo(&quot;\n&quot;, 2414, (KeyVector) null, (KeyVector) null, true);
-<span class="nocode"><a name="3">  3: </a></span>Qualifier qualifier0 = StreamQualifier.makeStreamQualifier(&quot;uk.ac.sanger.artemis.io.ReadFormatException&quot;, &quot;uk.ac.sanger.artemis.io.ReadFormatException&quot;, blastEntryInformation0);
-<span class="nocode"><a name="4">  4: </a></span>String string0 = StreamQualifier.toString(qualifierInfo0, qualifier0);
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;/uk.ac.sanger.artemis.io.ReadFormatException=uk.ac.sanger.artemis.io.ReadFormatException&quot;, string0);
+<span class="nocode"><a name="2">  2: </a></span>Qualifier qualifier0 = StreamQualifier.makeStreamQualifier(&quot;&quot;, &quot;w.&quot;, blastEntryInformation0);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = StreamQualifier.toString((QualifierInfo) null, qualifier0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;/=w.&quot;, string0);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>QualifierInfo qualifierInfo0 = new QualifierInfo(&quot;uk.ac.sanger.artemis.io.StreamQualifier&quot;, 0, (KeyVector) null, (KeyVector) null, true);
-<span class="nocode"><a name="3">  3: </a></span>Qualifier qualifier0 = StreamQualifier.makeStreamQualifier(&quot;&quot;, &quot;uk.ac.sanger.artemis.io.StreamQualifier&quot;, blastEntryInformation0);
-<span class="nocode"><a name="4">  4: </a></span>qualifier0.removeValue(&quot;uk.ac.sanger.artemis.io.StreamQualifier&quot;);
-<span class="nocode"><a name="5">  5: </a></span>String string0 = StreamQualifier.toString(qualifierInfo0, qualifier0);
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;/&quot;, string0);
-</pre>
-<h3>Test case 5</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier((String) null, (String) null);
+<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier();
 <span class="nocode"><a name="2">  2: </a></span>String string0 = StreamQualifier.toString((QualifierInfo) null, qualifier0);
 <span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;/null&quot;, string0);
 </pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>KeyVector keyVector0 = new KeyVector();
+<span class="nocode"><a name="2">  2: </a></span>QualifierInfo qualifierInfo0 = new QualifierInfo(&quot;&quot;, (-2444), keyVector0, keyVector0, true);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryInformation simpleEntryInformation0 = (SimpleEntryInformation)SimpleEntryInformation.getDefaultEntryInformation();
+<span class="nocode"><a name="4">  4: </a></span>Qualifier qualifier0 = StreamQualifier.makeStreamQualifier((String) null, &quot;Tg.ghS&quot;, simpleEntryInformation0);
+<span class="nocode"><a name="5">  5: </a></span>qualifier0.addValues((StringVector) null);
+<span class="nocode"><a name="6">  6: </a></span>String string0 = StreamQualifier.toString(qualifierInfo0, qualifier0);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(&quot;/null=Tg.ghS/null&quot;, string0);
+</pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>QualifierInfo qualifierInfo0 = new QualifierInfo(&quot;^F&quot;, 513, (KeyVector) null, (KeyVector) null, true);
-<span class="nocode"><a name="3">  3: </a></span>Qualifier qualifier0 = StreamQualifier.makeStreamQualifier(&quot;$1\&quot;\&quot;$2&quot;, &quot;s&quot;, blastEntryInformation0);
-<span class="nocode"><a name="4">  4: </a></span>StringVector stringVector0 = StreamQualifier.toStringVector(qualifierInfo0, qualifier0);
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;[/$1\&quot;\&quot;$2=s]&quot;, stringVector0.toString());
+<span class="nocode"><a name="1">  1: </a></span>QualifierInfo qualifierInfo0 = new QualifierInfo(&quot;F!v=+}BkPbm&quot;, 0, (KeyVector) null, (KeyVector) null, true);
+<span class="nocode"><a name="2">  2: </a></span>Qualifier qualifier0 = new Qualifier(&quot;F!v=+}BkPbm&quot;, (String) null);
+<span class="nocode"><a name="3">  3: </a></span>StringVector stringVector0 = StreamQualifier.toStringVector(qualifierInfo0, qualifier0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;[/F!v=+}BkPbm]&quot;, stringVector0.toString());
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Key key0 = new Key(&quot;^%&amp;V&quot;);
-<span class="nocode"><a name="2">  2: </a></span>KeyVector keyVector0 = new KeyVector(key0);
-<span class="nocode"><a name="3">  3: </a></span>QualifierInfo qualifierInfo0 = new QualifierInfo(&quot;^%&amp;V&quot;, 0, keyVector0, keyVector0, true);
-<span class="nocode"><a name="4">  4: </a></span>Qualifier qualifier0 = new Qualifier(&quot;u&quot;);
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = new SimpleEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>KeyVector keyVector0 = simpleEntryInformation0.getValidKeys();
+<span class="nocode"><a name="3">  3: </a></span>Qualifier qualifier0 = StreamQualifier.makeStreamQualifier(&quot;[$JA36sXD&amp;gx&quot;, &quot;&quot;, simpleEntryInformation0);
+<span class="nocode"><a name="4">  4: </a></span>QualifierInfo qualifierInfo0 = new QualifierInfo(&quot;&quot;, 597, keyVector0, keyVector0, true);
 <span class="nocode"><a name="5">  5: </a></span>StringVector stringVector0 = StreamQualifier.toStringVector(qualifierInfo0, qualifier0);
-<span class="nocode"><a name="6">  6: </a></span>assertNotNull(stringVector0);
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(&quot;[/u]&quot;, stringVector0.toString());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;[/[$JA36sXD&amp;gx=]&quot;, stringVector0.toString());
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier(&quot;OoKbd&gt;x,p~@~/&quot;, (String) null);
-<span class="nocode"><a name="2">  2: </a></span>StringVector stringVector0 = StreamQualifier.toStringVector((QualifierInfo) null, qualifier0);
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;[/OoKbd&gt;x,p~@~/]&quot;, stringVector0.toString());
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[1];
+<span class="nocode"><a name="2">  2: </a></span>CharArrayReader charArrayReader0 = new CharArrayReader(charArray0, 1, 47);
+<span class="nocode"><a name="3">  3: </a></span>BufferedReader bufferedReader0 = new BufferedReader(charArrayReader0, 47);
+<span class="nocode"><a name="4">  4: </a></span>String string0 = StreamQualifier.readName(bufferedReader0);
+<span class="nocode"><a name="5">  5: </a></span>assertNull(string0);
 </pre>
 <h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>StringReader stringReader0 = new StringReader(&quot;\n&quot;);
-<span class="nocode"><a name="2">  2: </a></span>BufferedReader bufferedReader0 = new BufferedReader(stringReader0);
-<span class="nocode"><a name="3">  3: </a></span>String string0 = StreamQualifier.readName(bufferedReader0);
-<span class="nocode"><a name="4">  4: </a></span>assertNull(string0);
+<span class="nocode"><a name="1">  1: </a></span>StringReader stringReader0 = new StringReader(&quot;n&quot;);
+<span class="nocode"><a name="2">  2: </a></span>LineNumberReader lineNumberReader0 = new LineNumberReader(stringReader0);
+<span class="nocode"><a name="3">  3: </a></span>StreamQualifier.readName(lineNumberReader0);
 </pre>
 <h3>Test case 10</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[2];
 <span class="nocode"><a name="2">  2: </a></span>CharArrayReader charArrayReader0 = new CharArrayReader(charArray0);
-<span class="nocode"><a name="3">  3: </a></span>BufferedReader bufferedReader0 = new BufferedReader(charArrayReader0);
-<span class="nocode"><a name="4">  4: </a></span>String string0 = StreamQualifier.readName(bufferedReader0);
-<span class="nocode"><a name="5">  5: </a></span>assertNull(string0);
+<span class="nocode"><a name="3">  3: </a></span>LineNumberReader lineNumberReader0 = new LineNumberReader(charArrayReader0, 1076);
+<span class="nocode"><a name="4">  4: </a></span>String string0 = StreamQualifier.readValue(lineNumberReader0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;&quot;, string0);
+<span class="nocode"><a name="6">  6: </a></span>
+<span class="nocode"><a name="7">  7: </a></span>String string1 = StreamQualifier.readValue(lineNumberReader0);
+<span class="nocode"><a name="8">  8: </a></span>assertTrue(string1.equals((Object)string0));
 </pre>
 <h3>Test case 11</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>StringReader stringReader0 = new StringReader(&quot;&lt;T77B5z8@cVSVk@:*O&quot;);
-<span class="nocode"><a name="2">  2: </a></span>BufferedReader bufferedReader0 = new BufferedReader(stringReader0);
-<span class="nocode"><a name="3">  3: </a></span>StreamQualifier.readName(bufferedReader0);
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>Qualifier qualifier0 = StreamQualifier.makeStreamQualifier(&quot;&quot;, &quot;&quot;, blastEntryInformation0);
+<span class="nocode"><a name="3">  3: </a></span>QualifierInfo qualifierInfo0 = new QualifierInfo(&quot;&quot;, 4, (KeyVector) null, (KeyVector) null, true);
+<span class="nocode"><a name="4">  4: </a></span>StringVector stringVector0 = StreamQualifier.toStringVector(qualifierInfo0, qualifier0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;[/=\&quot;\&quot;]&quot;, stringVector0.toString());
 </pre>
 <h3>Test case 12</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>StringReader stringReader0 = new StringReader(&quot;l&amp;aUydJmLUQ})sQP&quot;);
-<span class="nocode"><a name="2">  2: </a></span>BufferedReader bufferedReader0 = new BufferedReader(stringReader0, 1222);
-<span class="nocode"><a name="3">  3: </a></span>String string0 = StreamQualifier.readValue(bufferedReader0);
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;l&amp; aUydJmLUQ})sQP&quot;, string0);
+<span class="nocode"><a name="1">  1: </a></span>QualifierInfo qualifierInfo0 = new QualifierInfo(&quot;/-l[[&quot;, (-1884), (KeyVector) null, (KeyVector) null, false);
+<span class="nocode"><a name="2">  2: </a></span>Qualifier qualifier0 = new Qualifier(&quot;/-l[[&quot;, &quot;/-l[[&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = StreamQualifier.toString(qualifierInfo0, qualifier0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;//-l[[=\&quot;/-l[[\&quot;&quot;, string0);
 </pre>
 <h3>Test case 13</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[0];
-<span class="nocode"><a name="2">  2: </a></span>ByteArrayInputStream byteArrayInputStream0 = new ByteArrayInputStream(byteArray0, 702, 0);
-<span class="nocode"><a name="3">  3: </a></span>InputStreamReader inputStreamReader0 = new InputStreamReader(byteArrayInputStream0);
-<span class="nocode"><a name="4">  4: </a></span>BufferedReader bufferedReader0 = new BufferedReader(inputStreamReader0, 3);
-<span class="nocode"><a name="5">  5: </a></span>String string0 = StreamQualifier.readValue(bufferedReader0);
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;&quot;, string0);
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>StreamQualifier.makeStreamQualifier(&quot;&quot;, &quot;\&quot;A2s7HCJVH1!&quot;, blastEntryInformation0);
 </pre>
 <h3>Test case 14</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier(&quot;&quot;, &quot;/7H'qs=m&lt;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>StringVector stringVector0 = StreamQualifier.toStringVector((QualifierInfo) null, qualifier0);
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;[/=\&quot;/7H'qs=m&lt;\&quot;]&quot;, stringVector0.toString());
+<span class="nocode"><a name="1">  1: </a></span>MSPcrunchEntryInformation mSPcrunchEntryInformation0 = new MSPcrunchEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>StreamQualifier.makeStreamQualifier((String) null, (String) null, mSPcrunchEntryInformation0);
 </pre>
 <h3>Test case 15</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MSPcrunchEntryInformation mSPcrunchEntryInformation0 = new MSPcrunchEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>StreamQualifier.makeStreamQualifier(&quot;\&quot;/y^{~S@?(vz+saMk.2_&quot;, &quot;\&quot;/y^{~S@?(vz+saMk.2_&quot;, mSPcrunchEntryInformation0);
+<span class="nocode"><a name="1">  1: </a></span>PipedReader pipedReader0 = new PipedReader();
+<span class="nocode"><a name="2">  2: </a></span>BufferedReader bufferedReader0 = new BufferedReader(pipedReader0);
+<span class="nocode"><a name="3">  3: </a></span>StreamQualifier.readName(bufferedReader0);
 </pre>
 <h3>Test case 16</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>StreamQualifier.makeStreamQualifier(&quot;-zD@//1w&quot;, &quot;hit the end of line while looking for a \&quot;&quot;, blastEntryInformation0);
+<span class="nocode"><a name="1">  1: </a></span>StreamQualifier.readName((BufferedReader) null);
 </pre>
 <h3>Test case 17</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>StreamQualifier.makeStreamQualifier((String) null, (String) null, blastEntryInformation0);
+<span class="nocode"><a name="1">  1: </a></span>PipedReader pipedReader0 = new PipedReader();
+<span class="nocode"><a name="2">  2: </a></span>BufferedReader bufferedReader0 = new BufferedReader(pipedReader0);
+<span class="nocode"><a name="3">  3: </a></span>StreamQualifier.readValue(bufferedReader0);
 </pre>
 <h3>Test case 18</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[2];
-<span class="nocode"><a name="2">  2: </a></span>CharArrayReader charArrayReader0 = new CharArrayReader(charArray0);
-<span class="nocode"><a name="3">  3: </a></span>BufferedReader bufferedReader0 = new BufferedReader(charArrayReader0);
-<span class="nocode"><a name="4">  4: </a></span>charArrayReader0.close();
-<span class="nocode"><a name="5">  5: </a></span>StreamQualifier.readName(bufferedReader0);
+<span class="nocode"><a name="1">  1: </a></span>StreamQualifier.readValue((BufferedReader) null);
 </pre>
 <h3>Test case 19</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>StreamQualifier.readName((BufferedReader) null);
+<span class="nocode"><a name="1">  1: </a></span>StreamQualifier.toString((QualifierInfo) null, (Qualifier) null);
 </pre>
 <h3>Test case 20</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>PipedReader pipedReader0 = new PipedReader();
-<span class="nocode"><a name="2">  2: </a></span>LineNumberReader lineNumberReader0 = new LineNumberReader(pipedReader0);
-<span class="nocode"><a name="3">  3: </a></span>StreamQualifier.readValue(lineNumberReader0);
+<span class="nocode"><a name="1">  1: </a></span>StreamQualifier.toStringVector((QualifierInfo) null, (Qualifier) null);
 </pre>
 <h3>Test case 21</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>StreamQualifier.readValue((BufferedReader) null);
+<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[5];
+<span class="nocode"><a name="2">  2: </a></span>byteArray0[0] = (byte) (-75);
+<span class="nocode"><a name="3">  3: </a></span>ByteArrayInputStream byteArrayInputStream0 = new ByteArrayInputStream(byteArray0);
+<span class="nocode"><a name="4">  4: </a></span>BufferedInputStream bufferedInputStream0 = new BufferedInputStream(byteArrayInputStream0, 1006);
+<span class="nocode"><a name="5">  5: </a></span>Charset charset0 = Charset.defaultCharset();
+<span class="nocode"><a name="6">  6: </a></span>InputStreamReader inputStreamReader0 = new InputStreamReader(bufferedInputStream0, charset0);
+<span class="nocode"><a name="7">  7: </a></span>BufferedReader bufferedReader0 = new BufferedReader(inputStreamReader0);
+<span class="nocode"><a name="8">  8: </a></span>String string0 = StreamQualifier.readValue(bufferedReader0);
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(&quot;\uFFFD&quot;, string0);
 </pre>
 <h3>Test case 22</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>StreamQualifier.toString((QualifierInfo) null, (Qualifier) null);
+<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[5];
+<span class="nocode"><a name="2">  2: </a></span>byteArray0[3] = (byte)25;
+<span class="nocode"><a name="3">  3: </a></span>ByteArrayInputStream byteArrayInputStream0 = new ByteArrayInputStream(byteArray0);
+<span class="nocode"><a name="4">  4: </a></span>BufferedInputStream bufferedInputStream0 = new BufferedInputStream(byteArrayInputStream0, 1006);
+<span class="nocode"><a name="5">  5: </a></span>Charset charset0 = Charset.defaultCharset();
+<span class="nocode"><a name="6">  6: </a></span>InputStreamReader inputStreamReader0 = new InputStreamReader(bufferedInputStream0, charset0);
+<span class="nocode"><a name="7">  7: </a></span>BufferedReader bufferedReader0 = new BufferedReader(inputStreamReader0);
+<span class="nocode"><a name="8">  8: </a></span>String string0 = StreamQualifier.readValue(bufferedReader0);
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(&quot;&quot;, string0);
 </pre>
 <h3>Test case 23</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>QualifierInfo qualifierInfo0 = new QualifierInfo(&quot;oBz&quot;, (-2864), (KeyVector) null, (KeyVector) null, true);
-<span class="nocode"><a name="2">  2: </a></span>StreamQualifier.toStringVector(qualifierInfo0, (Qualifier) null);
+<span class="nocode"><a name="1">  1: </a></span>Key key0 = new Key(&quot;unbalanced quotes: &quot;, true);
+<span class="nocode"><a name="2">  2: </a></span>KeyVector keyVector0 = new KeyVector(key0);
+<span class="nocode"><a name="3">  3: </a></span>QualifierInfo qualifierInfo0 = new QualifierInfo(&quot;unbalanced quotes: &quot;, 2667, keyVector0, keyVector0, false);
+<span class="nocode"><a name="4">  4: </a></span>Qualifier qualifier0 = new Qualifier(&quot;0I\&quot;~15R1)pI 5Y-&quot;);
+<span class="nocode"><a name="5">  5: </a></span>StringVector stringVector0 = StreamQualifier.toStringVector(qualifierInfo0, qualifier0);
+<span class="nocode"><a name="6">  6: </a></span>Qualifier qualifier1 = new Qualifier(&quot;&quot;, stringVector0);
+<span class="nocode"><a name="7">  7: </a></span>StringVector stringVector1 = StreamQualifier.toStringVector(qualifierInfo0, qualifier1);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(&quot;[/=\&quot;/0I\&quot;\&quot;~15R1)pI 5Y-\&quot;]&quot;, stringVector1.toString());
+<span class="nocode"><a name="9">  9: </a></span>assertNotNull(stringVector1);
 </pre>
 <h3>Test case 24</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[4];
-<span class="nocode"><a name="2">  2: </a></span>CharArrayReader charArrayReader0 = new CharArrayReader(charArray0);
-<span class="nocode"><a name="3">  3: </a></span>LineNumberReader lineNumberReader0 = new LineNumberReader(charArrayReader0);
-<span class="nocode"><a name="4">  4: </a></span>String string0 = StreamQualifier.readValue(lineNumberReader0);
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;&quot;, string0);
+<span class="nocode"><a name="1">  1: </a></span>MSPcrunchEntryInformation mSPcrunchEntryInformation0 = new MSPcrunchEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>StreamQualifier.makeStreamQualifier(&quot;org.apache.log4j.Level&quot;, &quot;\&quot;-V&gt;o&lt;S`0MB&quot;, mSPcrunchEntryInformation0);
 </pre>
 <h3>Test case 25</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>QualifierInfo qualifierInfo0 = new QualifierInfo(&quot;1KI(&quot;, (-1321), (KeyVector) null, (KeyVector) null, false);
-<span class="nocode"><a name="2">  2: </a></span>Qualifier qualifier0 = new Qualifier(&quot;&quot;, &quot;/7H'qs=m&lt;&quot;);
-<span class="nocode"><a name="3">  3: </a></span>StringVector stringVector0 = StreamQualifier.toStringVector(qualifierInfo0, qualifier0);
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;[/=\&quot;/7H'qs=m&lt;\&quot;]&quot;, stringVector0.toString());
-</pre>
-<h3>Test case 26</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>Qualifier qualifier0 = StreamQualifier.makeStreamQualifier(&quot;Z'Ak&quot;, &quot;^F&quot;, blastEntryInformation0);
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;Z'Ak&quot;, qualifier0.getName());
-</pre>
-<h3>Test case 27</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>Qualifier qualifier0 = StreamQualifier.makeStreamQualifier((String) null, &quot; used with conflicting types&quot;, blastEntryInformation0);
-<span class="nocode"><a name="3">  3: </a></span>assertNull(qualifier0.getName());
-</pre>
-<h3>Test case 28</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = (SimpleEntryInformation)SimpleEntryInformation.getDefaultEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>Qualifier qualifier0 = StreamQualifier.makeStreamQualifier(&quot;E5X'Kbx$4t:yA3io60n&quot;, &quot;failed to read a qualifier name from this string: &quot;, simpleEntryInformation0);
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;E5X'Kbx$4t:yA3io60n&quot;, qualifier0.getName());
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = new SimpleEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>Qualifier qualifier0 = StreamQualifier.makeStreamQualifier(&quot;$1\&quot;\&quot;$2&quot;, &quot;Duplicate allele added to VariantContext: &quot;, simpleEntryInformation0);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;$1\&quot;\&quot;$2&quot;, qualifier0.getName());
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -225,11 +217,11 @@ uk.ac.sanger.artemis.io.StreamQualifier
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.io.StreamQualifier
-<li>Size: 28
-<li>Length: 79
+<li>Size: 25
+<li>Length: 82
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.7432157078052615
-<li>BranchCoverage: 0.6146788990825688
+<li>Coverage: 0.739930009066279
+<li>BranchCoverage: 0.5688073394495413
 <li>MethodCoverage: 1.0
 <li>OutputCoverage: 0.4
 </ul></div>

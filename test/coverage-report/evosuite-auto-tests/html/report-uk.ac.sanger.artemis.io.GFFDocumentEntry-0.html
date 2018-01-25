@@ -35,18 +35,19 @@ uk.ac.sanger.artemis.io.GFFDocumentEntry
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = new SimpleEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>GFFDocumentEntry gFFDocumentEntry0 = new GFFDocumentEntry(simpleEntryInformation0);
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>GFFDocumentEntry gFFDocumentEntry0 = new GFFDocumentEntry(blastEntryInformation0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GFFDocumentEntry gFFDocumentEntry0 = new GFFDocumentEntry((Entry) null, true);
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = (SimpleEntryInformation)SimpleEntryInformation.getDefaultEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>GenbankDocumentEntry genbankDocumentEntry0 = new GenbankDocumentEntry(simpleEntryInformation0);
+<span class="nocode"><a name="3">  3: </a></span>GFFDocumentEntry gFFDocumentEntry0 = new GFFDocumentEntry(genbankDocumentEntry0, true);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;&quot;, (JPasswordField) null, &quot;\n\nAverage Value(s)\n&quot;, &quot;8&quot;, true);
-<span class="nocode"><a name="2">  2: </a></span>LogReadListener logReadListener0 = new LogReadListener(&quot;&quot;);
-<span class="nocode"><a name="3">  3: </a></span>GFFDocumentEntry gFFDocumentEntry0 = new GFFDocumentEntry(databaseDocument0, logReadListener0);
+<span class="nocode"><a name="1">  1: </a></span>LogReadListener logReadListener0 = new LogReadListener(&quot;qj(F)W&gt;ADa@r&quot;);
+<span class="nocode"><a name="2">  2: </a></span>GFFDocumentEntry gFFDocumentEntry0 = new GFFDocumentEntry((Document) null, logReadListener0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -60,7 +61,7 @@ uk.ac.sanger.artemis.io.GFFDocumentEntry
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.io.GFFDocumentEntry
 <li>Size: 3
-<li>Length: 6
+<li>Length: 7
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.17288714574898786
 <li>BranchCoverage: 0.008097165991902834

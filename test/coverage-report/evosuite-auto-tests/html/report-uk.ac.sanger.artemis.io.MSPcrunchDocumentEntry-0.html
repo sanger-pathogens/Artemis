@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.io.MSPcrunchDocumentEntry
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.io.MSPcrunchDocumentEntry: 0.9347826086956522</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.io.MSPcrunchDocumentEntry: 0.7915843214756259</ul>
 <ul>
-<li>12.125 fitness evaluations, 0 generations, null statements, 13 tests.
+<li>22.291666666666668 fitness evaluations, 0 generations, null statements, 11 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -36,102 +36,74 @@ uk.ac.sanger.artemis.io.MSPcrunchDocumentEntry
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>MSPcrunchDocumentEntry mSPcrunchDocumentEntry0 = new MSPcrunchDocumentEntry(blastEntryInformation0);
-<span class="nocode"><a name="3">  3: </a></span>EmblDocumentEntry emblDocumentEntry0 = new EmblDocumentEntry(blastEntryInformation0, mSPcrunchDocumentEntry0, false);
-<span class="nocode"><a name="4">  4: </a></span>MSPcrunchDocumentEntry mSPcrunchDocumentEntry1 = new MSPcrunchDocumentEntry(emblDocumentEntry0, false);
-<span class="nocode"><a name="5">  5: </a></span>assertFalse(mSPcrunchDocumentEntry1.equals((Object)mSPcrunchDocumentEntry0));
+<span class="nocode"><a name="2">  2: </a></span>EmblDocumentEntry emblDocumentEntry0 = new EmblDocumentEntry(blastEntryInformation0);
+<span class="nocode"><a name="3">  3: </a></span>MSPcrunchDocumentEntry mSPcrunchDocumentEntry0 = new MSPcrunchDocumentEntry(emblDocumentEntry0, false);
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(mSPcrunchDocumentEntry0.isReadOnly());
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = (SimpleEntryInformation)SimpleEntryInformation.getDefaultEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>MSPcrunchDocumentEntry mSPcrunchDocumentEntry0 = new MSPcrunchDocumentEntry(simpleEntryInformation0);
-<span class="nocode"><a name="3">  3: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;' failed: &quot;);
-<span class="nocode"><a name="4">  4: </a></span>FastaStreamSequence fastaStreamSequence0 = (FastaStreamSequence)mSPcrunchDocumentEntry0.makeNativeSequence(emblStreamSequence0);
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, fastaStreamSequence0.getTCount());
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>MSPcrunchDocumentEntry mSPcrunchDocumentEntry0 = new MSPcrunchDocumentEntry(blastEntryInformation0);
+<span class="nocode"><a name="3">  3: </a></span>mSPcrunchDocumentEntry0.makeNativeFeature((Feature) null, true);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>JPasswordField jPasswordField0 = new JPasswordField(1794);
-<span class="nocode"><a name="2">  2: </a></span>ByteBuffer byteBuffer0 = new ByteBuffer();
-<span class="nocode"><a name="3">  3: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot; - &quot;, jPasswordField0, &quot; - &quot;, &quot; - &quot;, byteBuffer0, (String) null);
-<span class="nocode"><a name="4">  4: </a></span>MSPcrunchDocumentEntry mSPcrunchDocumentEntry0 = new MSPcrunchDocumentEntry(databaseDocument0, (ReadListener) null);
+<span class="nocode"><a name="1">  1: </a></span>MSPcrunchEntryInformation mSPcrunchEntryInformation0 = new MSPcrunchEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>MSPcrunchDocumentEntry mSPcrunchDocumentEntry0 = new MSPcrunchDocumentEntry(mSPcrunchEntryInformation0);
+<span class="nocode"><a name="3">  3: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;pSsU1)~E6u yOP`B[&quot;);
+<span class="nocode"><a name="4">  4: </a></span>FastaStreamSequence fastaStreamSequence0 = (FastaStreamSequence)mSPcrunchDocumentEntry0.makeNativeSequence(emblStreamSequence0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, fastaStreamSequence0.getTCount());
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MSPcrunchEntryInformation mSPcrunchEntryInformation0 = new MSPcrunchEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>MSPcrunchDocumentEntry mSPcrunchDocumentEntry0 = new MSPcrunchDocumentEntry(mSPcrunchEntryInformation0);
-<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = mSPcrunchDocumentEntry0.isReadOnly();
-<span class="nocode"><a name="4">  4: </a></span>assertTrue(boolean0);
+<span class="nocode"><a name="1">  1: </a></span>URL uRL0 = MockURL.getHttpExample();
+<span class="nocode"><a name="2">  2: </a></span>URLDocument uRLDocument0 = new URLDocument(uRL0);
+<span class="nocode"><a name="3">  3: </a></span>LogReadListener logReadListener0 = new LogReadListener(&quot;&quot;);
+<span class="nocode"><a name="4">  4: </a></span>MSPcrunchDocumentEntry mSPcrunchDocumentEntry0 = new MSPcrunchDocumentEntry(uRLDocument0, logReadListener0);
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>MSPcrunchDocumentEntry mSPcrunchDocumentEntry0 = new MSPcrunchDocumentEntry(blastEntryInformation0);
-<span class="nocode"><a name="3">  3: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature();
-<span class="nocode"><a name="4">  4: </a></span>MSPcrunchStreamFeature mSPcrunchStreamFeature0 = (MSPcrunchStreamFeature)mSPcrunchDocumentEntry0.makeNativeFeature(genbankStreamFeature0, true);
-<span class="nocode"><a name="5">  5: </a></span>MSPcrunchStreamFeature mSPcrunchStreamFeature1 = (MSPcrunchStreamFeature)mSPcrunchDocumentEntry0.makeNativeFeature(mSPcrunchStreamFeature0, false);
-<span class="nocode"><a name="6">  6: </a></span>assertSame(mSPcrunchStreamFeature1, mSPcrunchStreamFeature0);
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = new SimpleEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>MSPcrunchDocumentEntry mSPcrunchDocumentEntry0 = new MSPcrunchDocumentEntry(simpleEntryInformation0);
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = mSPcrunchDocumentEntry0.isReadOnly();
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(boolean0);
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = (SimpleEntryInformation)SimpleEntryInformation.getDefaultEntryInformation();
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = new SimpleEntryInformation();
 <span class="nocode"><a name="2">  2: </a></span>MSPcrunchDocumentEntry mSPcrunchDocumentEntry0 = new MSPcrunchDocumentEntry(simpleEntryInformation0);
-<span class="nocode"><a name="3">  3: </a></span>mSPcrunchDocumentEntry0.makeNativeFeature((Feature) null, false);
+<span class="nocode"><a name="3">  3: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature();
+<span class="nocode"><a name="4">  4: </a></span>MSPcrunchStreamFeature mSPcrunchStreamFeature0 = (MSPcrunchStreamFeature)mSPcrunchDocumentEntry0.makeNativeFeature(genbankStreamFeature0, false);
+<span class="nocode"><a name="5">  5: </a></span>assertNotNull(mSPcrunchStreamFeature0);
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>JPasswordField jPasswordField0 = new JPasswordField(0);
-<span class="nocode"><a name="2">  2: </a></span>ByteBuffer byteBuffer0 = new ByteBuffer();
-<span class="nocode"><a name="3">  3: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;/$D|&amp;/;M)&quot;, jPasswordField0, &quot;/$D|&amp;/;M)&quot;, &quot;/$D|&amp;/;M)&quot;, byteBuffer0, &quot;Complement&quot;);
-<span class="nocode"><a name="4">  4: </a></span>byteBuffer0.append(&quot;&gt;,bJ)NK&quot;);
-<span class="nocode"><a name="5">  5: </a></span>LogReadListener logReadListener0 = new LogReadListener(&quot;&gt;EPX-c&quot;);
-<span class="nocode"><a name="6">  6: </a></span>MSPcrunchDocumentEntry mSPcrunchDocumentEntry0 = new MSPcrunchDocumentEntry(databaseDocument0, logReadListener0);
-<span class="nocode"><a name="7">  7: </a></span>assertTrue(mSPcrunchDocumentEntry0.isReadOnly());
+<span class="nocode"><a name="1">  1: </a></span>MSPcrunchDocumentEntry mSPcrunchDocumentEntry0 = new MSPcrunchDocumentEntry((Entry) null, true);
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MSPcrunchDocumentEntry mSPcrunchDocumentEntry0 = new MSPcrunchDocumentEntry((Entry) null, true);
+<span class="nocode"><a name="1">  1: </a></span>TextDocument textDocument0 = new TextDocument();
+<span class="nocode"><a name="2">  2: </a></span>LogReadListener logReadListener0 = new LogReadListener(&quot;jEv.&quot;);
+<span class="nocode"><a name="3">  3: </a></span>MSPcrunchDocumentEntry mSPcrunchDocumentEntry0 = new MSPcrunchDocumentEntry(textDocument0, logReadListener0);
 </pre>
 <h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[0];
-<span class="nocode"><a name="2">  2: </a></span>ByteArrayReader byteArrayReader0 = new ByteArrayReader(byteArray0);
-<span class="nocode"><a name="3">  3: </a></span>FileAttributes fileAttributes0 = new FileAttributes(byteArrayReader0);
-<span class="nocode"><a name="4">  4: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode((String) null, &quot;hw\&quot;*[cgDjD]P&gt;&quot;, (FileList) null, (String) null, fileAttributes0);
-<span class="nocode"><a name="5">  5: </a></span>RemoteFileDocument remoteFileDocument0 = new RemoteFileDocument(remoteFileNode0);
-<span class="nocode"><a name="6">  6: </a></span>LogReadListener logReadListener0 = new LogReadListener(&quot;&gt;c(]Z%&quot;);
-<span class="nocode"><a name="7">  7: </a></span>MSPcrunchDocumentEntry mSPcrunchDocumentEntry0 = new MSPcrunchDocumentEntry(remoteFileDocument0, logReadListener0);
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;N;s|&gt;S.&quot;);
+<span class="nocode"><a name="2">  2: </a></span>ZipFileDocument zipFileDocument0 = new ZipFileDocument(mockFile0, &quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>MSPcrunchDocumentEntry mSPcrunchDocumentEntry0 = new MSPcrunchDocumentEntry(zipFileDocument0, (ReadListener) null);
 </pre>
 <h3>Test case 10</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;17aI&quot;);
-<span class="nocode"><a name="2">  2: </a></span>FileDocument fileDocument0 = new FileDocument(mockFile0);
-<span class="nocode"><a name="3">  3: </a></span>LogReadListener logReadListener0 = new LogReadListener(&quot;17aI&quot;);
-<span class="nocode"><a name="4">  4: </a></span>MSPcrunchDocumentEntry mSPcrunchDocumentEntry0 = new MSPcrunchDocumentEntry(fileDocument0, logReadListener0);
+<span class="nocode"><a name="1">  1: </a></span>LogReadListener logReadListener0 = new LogReadListener(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>MSPcrunchDocumentEntry mSPcrunchDocumentEntry0 = new MSPcrunchDocumentEntry((Document) null, logReadListener0);
 </pre>
 <h3>Test case 11</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>JPasswordField jPasswordField0 = new JPasswordField(1794);
-<span class="nocode"><a name="2">  2: </a></span>ByteBuffer byteBuffer0 = new ByteBuffer();
-<span class="nocode"><a name="3">  3: </a></span>byte[] byteArray0 = new byte[5];
-<span class="nocode"><a name="4">  4: </a></span>byteBuffer0.append(byteArray0);
-<span class="nocode"><a name="5">  5: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot; - &quot;, jPasswordField0, &quot; - &quot;, &quot; - &quot;, byteBuffer0, (String) null);
-<span class="nocode"><a name="6">  6: </a></span>MSPcrunchDocumentEntry mSPcrunchDocumentEntry0 = new MSPcrunchDocumentEntry(databaseDocument0, (ReadListener) null);
-</pre>
-<h3>Test case 12</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>MSPcrunchEntryInformation mSPcrunchEntryInformation0 = new MSPcrunchEntryInformation();
 <span class="nocode"><a name="2">  2: </a></span>MSPcrunchDocumentEntry mSPcrunchDocumentEntry0 = new MSPcrunchDocumentEntry(mSPcrunchEntryInformation0);
-<span class="nocode"><a name="3">  3: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;&quot;);
-<span class="nocode"><a name="4">  4: </a></span>mSPcrunchDocumentEntry0.makeNativeSequence(fastaStreamSequence0);
-</pre>
-<h3>Test case 13</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = (SimpleEntryInformation)SimpleEntryInformation.getDefaultEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>MSPcrunchDocumentEntry mSPcrunchDocumentEntry0 = new MSPcrunchDocumentEntry(simpleEntryInformation0);
-<span class="nocode"><a name="3">  3: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;&quot;);
-<span class="nocode"><a name="4">  4: </a></span>FastaStreamSequence fastaStreamSequence0 = (FastaStreamSequence)mSPcrunchDocumentEntry0.makeNativeSequence(genbankStreamSequence0);
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, fastaStreamSequence0.getGCount());
+<span class="nocode"><a name="3">  3: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;pSsU1)~E6u yOP`B[&quot;);
+<span class="nocode"><a name="4">  4: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(emblStreamSequence0);
+<span class="nocode"><a name="5">  5: </a></span>mSPcrunchDocumentEntry0.makeNativeSequence(fastaStreamSequence0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -144,13 +116,13 @@ uk.ac.sanger.artemis.io.MSPcrunchDocumentEntry
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.io.MSPcrunchDocumentEntry
-<li>Size: 13
-<li>Length: 55
+<li>Size: 11
+<li>Length: 35
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.9347826086956522
-<li>BranchCoverage: 1.0
+<li>Coverage: 0.7915843214756259
+<li>BranchCoverage: 0.8888888888888888
 <li>MethodCoverage: 1.0
-<li>OutputCoverage: 0.4782608695652174
+<li>OutputCoverage: 0.34782608695652173
 </ul></div>
 </div>
 <p><br><a href="../report-generation.html">Back to Overview</a></p>

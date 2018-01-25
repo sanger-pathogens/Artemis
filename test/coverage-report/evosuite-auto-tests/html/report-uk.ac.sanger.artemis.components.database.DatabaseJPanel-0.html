@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.components.database.DatabaseJPanel
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.components.database.DatabaseJPanel: 0.2146357400091461</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.components.database.DatabaseJPanel: 0.22893918925875212</ul>
 <ul>
-<li>1393.75 fitness evaluations, 0 generations, null statements, 4 tests.
+<li>1340.2499999990687 fitness evaluations, 0 generations, null statements, 4 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -36,23 +36,22 @@ uk.ac.sanger.artemis.components.database.DatabaseJPanel
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>DatabaseEntrySource databaseEntrySource0 = new DatabaseEntrySource();
-<span class="nocode"><a name="2">  2: </a></span>DatabaseJPanel.getEntryEditFromDatabase(databaseEntrySource0, (Splash) null, (Component) null, &quot; found -check the spelling!&quot;);
-<span class="nocode"><a name="3">  3: </a></span>assertTrue(databaseEntrySource0.isFullEntrySource());
+<span class="nocode"><a name="2">  2: </a></span>DatabaseJPanel.getEntryEditFromDatabase(databaseEntrySource0, (Splash) null, (Component) null, &quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(databaseEntrySource0.isReadOnly());
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>DatabaseEntrySource databaseEntrySource0 = new DatabaseEntrySource();
-<span class="nocode"><a name="2">  2: </a></span>DatabaseJPanel databaseJPanel0 = new DatabaseJPanel(databaseEntrySource0, (Splash) null);
+<span class="nocode"><a name="1">  1: </a></span>DatabaseJPanel databaseJPanel0 = new DatabaseJPanel((DatabaseEntrySource) null, (Splash) null);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>DatabaseEntrySource databaseEntrySource0 = new DatabaseEntrySource();
-<span class="nocode"><a name="2">  2: </a></span>databaseEntrySource0.setLocation(false);
-<span class="nocode"><a name="3">  3: </a></span>DatabaseJPanel databaseJPanel0 = new DatabaseJPanel(databaseEntrySource0, (Splash) null);
+<span class="nocode"><a name="2">  2: </a></span>DatabaseJPanel.show(databaseEntrySource0, (Splash) null, (InputStreamProgressListener) null, &quot;B^{:$j+&quot;);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>DatabaseJPanel databaseJPanel0 = new DatabaseJPanel((DatabaseEntrySource) null, (Splash) null);
+<span class="nocode"><a name="1">  1: </a></span>DatabaseEntrySource databaseEntrySource0 = new DatabaseEntrySource();
+<span class="nocode"><a name="2">  2: </a></span>DatabaseJPanel databaseJPanel0 = new DatabaseJPanel(databaseEntrySource0, (Splash) null);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -66,11 +65,11 @@ uk.ac.sanger.artemis.components.database.DatabaseJPanel
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.database.DatabaseJPanel
 <li>Size: 4
-<li>Length: 8
+<li>Length: 7
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.2146357400091461
-<li>BranchCoverage: 0.061946902654867256
-<li>MethodCoverage: 0.3333333333333333
+<li>Coverage: 0.22893918925875212
+<li>BranchCoverage: 0.05309734513274336
+<li>MethodCoverage: 0.5
 <li>OutputCoverage: 0.0
 </ul></div>
 </div>

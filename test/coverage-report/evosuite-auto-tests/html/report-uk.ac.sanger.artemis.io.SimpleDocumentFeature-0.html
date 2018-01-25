@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.io.SimpleDocumentFeature
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.io.SimpleDocumentFeature: 0.26444034551891277</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.io.SimpleDocumentFeature: 0.259143600539136</ul>
 <ul>
-<li>655.4880952380952 fitness evaluations, 0 generations, null statements, 7 tests.
+<li>632.4878048780488 fitness evaluations, 0 generations, null statements, 8 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -36,45 +36,51 @@ uk.ac.sanger.artemis.io.SimpleDocumentFeature
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature();
-<span class="nocode"><a name="2">  2: </a></span>BlastStreamFeature blastStreamFeature0 = new BlastStreamFeature(genbankStreamFeature0);
-<span class="nocode"><a name="3">  3: </a></span>DocumentEntry documentEntry0 = blastStreamFeature0.getDocumentEntry();
-<span class="nocode"><a name="4">  4: </a></span>assertNull(documentEntry0);
+<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = genbankStreamFeature0.isReadOnly();
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(boolean0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>EmblStreamFeature emblStreamFeature0 = new EmblStreamFeature();
-<span class="nocode"><a name="2">  2: </a></span>Qualifier qualifier0 = emblStreamFeature0.getQualifierByName(&quot;&quot;);
-<span class="nocode"><a name="3">  3: </a></span>assertNull(qualifier0);
+<span class="nocode"><a name="1">  1: </a></span>DatabaseStreamFeature databaseStreamFeature0 = new DatabaseStreamFeature((Key) null, (Location) null, (QualifierVector) null);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>Key key0 = blastEntryInformation0.getDefaultKey();
-<span class="nocode"><a name="3">  3: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
-<span class="nocode"><a name="4">  4: </a></span>DatabaseInferredFeature databaseInferredFeature0 = new DatabaseInferredFeature(key0, (Location) null, (QualifierVector) null, chadoCanonicalGene0);
+<span class="nocode"><a name="1">  1: </a></span>Key key0 = Key.CDS;
+<span class="nocode"><a name="2">  2: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
+<span class="nocode"><a name="3">  3: </a></span>qualifierVector0.add((Qualifier) null);
+<span class="nocode"><a name="4">  4: </a></span>GFFStreamFeature gFFStreamFeature0 = new GFFStreamFeature(key0, (Location) null, qualifierVector0);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>EmblStreamFeature emblStreamFeature0 = new EmblStreamFeature();
-<span class="nocode"><a name="2">  2: </a></span>GFFStreamFeature gFFStreamFeature0 = new GFFStreamFeature(emblStreamFeature0, true);
-<span class="nocode"><a name="3">  3: </a></span>assertNull(gFFStreamFeature0.getGffSource());
+<span class="nocode"><a name="2">  2: </a></span>emblStreamFeature0.removeQualifierByName(&quot;&lt;T~7@?h%]c)tW6F&quot;);
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature();
-<span class="nocode"><a name="2">  2: </a></span>genbankStreamFeature0.removeQualifierByName(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Feature feature0 = new Feature(genbankStreamFeature0);
+<span class="nocode"><a name="3">  3: </a></span>StringReader stringReader0 = (StringReader)feature0.toReader();
+<span class="nocode"><a name="4">  4: </a></span>assertNotNull(stringReader0);
 </pre>
 <h3>Test case 6</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>EmblStreamFeature emblStreamFeature0 = new EmblStreamFeature();
-<span class="nocode"><a name="2">  2: </a></span>SimpleEntryInformation simpleEntryInformation0 = (SimpleEntryInformation)emblStreamFeature0.getEntryInformation();
-<span class="nocode"><a name="3">  3: </a></span>assertFalse(simpleEntryInformation0.useEMBLFormat());
-</pre>
-<h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature();
 <span class="nocode"><a name="2">  2: </a></span>QualifierVector qualifierVector0 = genbankStreamFeature0.getQualifiers();
 <span class="nocode"><a name="3">  3: </a></span>assertEquals(0, qualifierVector0.capacity());
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature();
+<span class="nocode"><a name="2">  2: </a></span>GenbankStreamFeature genbankStreamFeature1 = (GenbankStreamFeature)genbankStreamFeature0.copy();
+<span class="nocode"><a name="3">  3: </a></span>assertNotSame(genbankStreamFeature0, genbankStreamFeature1);
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamFeature emblStreamFeature0 = new EmblStreamFeature();
+<span class="nocode"><a name="2">  2: </a></span>StringVector stringVector0 = new StringVector(&quot;Z&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Qualifier qualifier0 = new Qualifier(&quot;Z&quot;, stringVector0);
+<span class="nocode"><a name="4">  4: </a></span>emblStreamFeature0.setQualifier(qualifier0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;Z&quot;, qualifier0.getName());
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -87,13 +93,13 @@ uk.ac.sanger.artemis.io.SimpleDocumentFeature
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.io.SimpleDocumentFeature
-<li>Size: 7
-<li>Length: 17
+<li>Size: 8
+<li>Length: 20
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.26444034551891277
-<li>BranchCoverage: 0.2608695652173913
+<li>Coverage: 0.259143600539136
+<li>BranchCoverage: 0.2717391304347826
 <li>MethodCoverage: 0.22727272727272727
-<li>OutputCoverage: 0.14285714285714285
+<li>OutputCoverage: 0.09523809523809523
 </ul></div>
 </div>
 <p><br><a href="../report-generation.html">Back to Overview</a></p>

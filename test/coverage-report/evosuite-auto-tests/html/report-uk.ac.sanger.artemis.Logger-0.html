@@ -36,12 +36,15 @@ uk.ac.sanger.artemis.Logger
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>LogViewer logViewer0 = new LogViewer();
-<span class="nocode"><a name="2">  2: </a></span>logViewer0.log((Reader) null);
+<span class="nocode"><a name="2">  2: </a></span>char[] charArray0 = new char[6];
+<span class="nocode"><a name="3">  3: </a></span>CharArrayReader charArrayReader0 = new CharArrayReader(charArray0, 0, 0);
+<span class="nocode"><a name="4">  4: </a></span>LineNumberReader lineNumberReader0 = new LineNumberReader(charArrayReader0);
+<span class="nocode"><a name="5">  5: </a></span>logViewer0.log((Reader) lineNumberReader0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>LogViewer logViewer0 = new LogViewer();
-<span class="nocode"><a name="2">  2: </a></span>logViewer0.log(&quot;org.apache.log4j.helpers.DateLayout&quot;);
+<span class="nocode"><a name="2">  2: </a></span>logViewer0.log(&quot;&quot;);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -55,7 +58,7 @@ uk.ac.sanger.artemis.Logger
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.Logger
 <li>Size: 2
-<li>Length: 4
+<li>Length: 7
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.75
 <li>BranchCoverage: 1.0

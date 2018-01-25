@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.chado.ChadoTransactionManager
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.chado.ChadoTransactionManager: 0.22387009019723525</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.chado.ChadoTransactionManager: 0.3113510136065591</ul>
 <ul>
-<li>6365.892857132028 fitness evaluations, 0 generations, null statements, 21 tests.
+<li>6461.415554315962 fitness evaluations, 0 generations, null statements, 17 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -36,8 +36,9 @@ uk.ac.sanger.artemis.chado.ChadoTransactionManager
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>ChadoTransactionManager chadoTransactionManager0 = new ChadoTransactionManager();
-<span class="nocode"><a name="2">  2: </a></span>chadoTransactionManager0.setEntryGroup((EntryGroup) null);
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, ChadoTransactionManager.commitReturnValue);
+<span class="nocode"><a name="2">  2: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="3">  3: </a></span>chadoTransactionManager0.setEntryGroup(simpleEntryGroup0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, simpleEntryGroup0.size());
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
@@ -53,7 +54,7 @@ uk.ac.sanger.artemis.chado.ChadoTransactionManager
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>ChadoTransactionManager chadoTransactionManager0 = new ChadoTransactionManager();
-<span class="nocode"><a name="2">  2: </a></span>chadoTransactionManager0.getTransactionAt(7);
+<span class="nocode"><a name="2">  2: </a></span>chadoTransactionManager0.getTransactionAt((-142));
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
@@ -64,101 +65,69 @@ uk.ac.sanger.artemis.chado.ChadoTransactionManager
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>ChadoTransactionManager chadoTransactionManager0 = new ChadoTransactionManager();
-<span class="nocode"><a name="2">  2: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;genedb_products&quot;);
-<span class="nocode"><a name="3">  3: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
-<span class="nocode"><a name="4">  4: </a></span>SequenceChangeEvent sequenceChangeEvent0 = new SequenceChangeEvent(bases0, 0, (-5), &quot;Fz5qz+'=Rz+D:5=%&quot;);
-<span class="nocode"><a name="5">  5: </a></span>chadoTransactionManager0.sequenceChanged(sequenceChangeEvent0);
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, sequenceChangeEvent0.getLength());
+<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range((-639));
+<span class="nocode"><a name="3">  3: </a></span>SequenceChangeEvent sequenceChangeEvent0 = new SequenceChangeEvent((byte)1, (byte)9, range0);
+<span class="nocode"><a name="4">  4: </a></span>chadoTransactionManager0.sequenceChanged(sequenceChangeEvent0);
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>ChadoTransactionManager chadoTransactionManager0 = new ChadoTransactionManager();
-<span class="nocode"><a name="2">  2: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;annotation_change&quot;);
-<span class="nocode"><a name="3">  3: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
-<span class="nocode"><a name="4">  4: </a></span>SequenceChangeEvent sequenceChangeEvent0 = new SequenceChangeEvent(bases0, 1, 2084, &quot;#M45c5otMA&quot;);
-<span class="nocode"><a name="5">  5: </a></span>chadoTransactionManager0.sequenceChanged(sequenceChangeEvent0);
+<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(899);
+<span class="nocode"><a name="3">  3: </a></span>SequenceChangeEvent sequenceChangeEvent0 = new SequenceChangeEvent(899, 58, range0);
+<span class="nocode"><a name="4">  4: </a></span>chadoTransactionManager0.sequenceChanged(sequenceChangeEvent0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(4, SequenceChangeEvent.CONTIG_REVERSE_COMPLEMENT);
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>ChadoTransactionManager chadoTransactionManager0 = new ChadoTransactionManager();
-<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(2004);
-<span class="nocode"><a name="3">  3: </a></span>EntryChangeEvent entryChangeEvent0 = new EntryChangeEvent(range0, (Entry) null, (-3010));
-<span class="nocode"><a name="4">  4: </a></span>chadoTransactionManager0.entryChanged(entryChangeEvent0);
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(3, EntryChangeEvent.NAME_CHANGED);
+<span class="nocode"><a name="2">  2: </a></span>EntryChangeEvent entryChangeEvent0 = new EntryChangeEvent(chadoTransactionManager0, (Entry) null, 0);
+<span class="nocode"><a name="3">  3: </a></span>chadoTransactionManager0.entryChanged(entryChangeEvent0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1, EntryChangeEvent.FEATURE_DELETED);
 </pre>
 <h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>ChadoTransactionManager.isSpecialTag(&quot;q I&quot;);
+<span class="nocode"><a name="1">  1: </a></span>ChadoTransactionManager.isSpecialTag(&quot;}~!EME\&quot;&quot;);
 </pre>
 <h3>Test case 10</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>boolean boolean0 = ChadoTransactionManager.isCvTag(&quot;&quot;);
+<span class="nocode"><a name="1">  1: </a></span>boolean boolean0 = ChadoTransactionManager.isCvTag(&quot;COMMIT DONE &quot;);
 <span class="nocode"><a name="2">  2: </a></span>assertFalse(boolean0);
 </pre>
 <h3>Test case 11</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature();
-<span class="nocode"><a name="2">  2: </a></span>GFFStreamFeature gFFStreamFeature0 = new GFFStreamFeature(genbankStreamFeature0);
-<span class="nocode"><a name="3">  3: </a></span>ChadoTransactionManager.isSynonymTag(&quot;genedb_synonym_type&quot;, gFFStreamFeature0);
-<span class="nocode"><a name="4">  4: </a></span>String[] stringArray0 = ChadoTransactionManager.getSynonymTags();
-<span class="nocode"><a name="5">  5: </a></span>assertNotNull(stringArray0);
+<span class="nocode"><a name="1">  1: </a></span>CvTerm cvTerm0 = ChadoTransactionManager.getCvTerm(&quot;  in handleReservedTags() DELETE db=&quot;, &quot;8sl-\&quot;QI&lt;:l3&quot;, (String) null, (String) null);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;  in handleReservedTags() DELETE db=&quot;, cvTerm0.getName());
 </pre>
 <h3>Test case 12</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>CvTerm cvTerm0 = ChadoTransactionManager.getCvTerm((String) null, (String) null, (String) null, &quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>assertEquals(0, cvTerm0.getCvTermId());
+<span class="nocode"><a name="1">  1: </a></span>CvTerm cvTerm0 = ChadoTransactionManager.getCvTerm(&quot;&quot;, &quot;CCGEN&quot;, &quot;BVpn&gt;b+'vY&quot;, &quot;2o{S0fD~hO&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;BVpn&gt;b+'vY&quot;, cvTerm0.getDefinition());
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;&quot;, cvTerm0.getName());
 </pre>
 <h3>Test case 13</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>CvTerm cvTerm0 = ChadoTransactionManager.getCvTerm(&quot;N:x@&gt;l&lt;A?.l{o-~&quot;, &quot;PRODUCT&quot;, &quot;&quot;, &quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;N:x@&gt;l&lt;A?.l{o-~&quot;, cvTerm0.getName());
+<span class="nocode"><a name="1">  1: </a></span>CvTerm cvTerm0 = ChadoTransactionManager.getCvTerm(&quot;BLabrAP]:z6Fph?k&quot;, &quot;GKEhcB!SPM9&quot;, &quot;&quot;, &quot;BLabrAP]:z6Fph?k&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;BLabrAP]:z6Fph?k&quot;, cvTerm0.getName());
 </pre>
 <h3>Test case 14</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>CvTerm cvTerm0 = ChadoTransactionManager.getCvTerm(&quot;Fz5qz+'=Rz+D:5=%&quot;, &quot;&quot;, &quot;_9*HHsf_L&quot;, &quot;_9*HHsf_L&quot;);
-<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;_9*HHsf_L&quot;, cvTerm0.getDefinition());
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;Fz5qz+'=Rz+D:5=%&quot;, cvTerm0.getName());
-</pre>
-<h3>Test case 15</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>ChadoTransactionManager chadoTransactionManager0 = new ChadoTransactionManager();
 <span class="nocode"><a name="2">  2: </a></span>Vector&lt;String&gt; vector0 = chadoTransactionManager0.getFeatureInsertUpdate();
 <span class="nocode"><a name="3">  3: </a></span>assertNull(vector0);
 </pre>
-<h3>Test case 16</h3>
+<h3>Test case 15</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>ChadoTransactionManager chadoTransactionManager0 = new ChadoTransactionManager();
 <span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = chadoTransactionManager0.hasTransactions();
 <span class="nocode"><a name="3">  3: </a></span>assertFalse(boolean0);
 </pre>
+<h3>Test case 16</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ChadoTransactionManager.isSynonymTag(&quot; is not a valid qualifier!&quot;, (GFFStreamFeature) null);
+</pre>
 <h3>Test case 17</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>ChadoTransactionManager chadoTransactionManager0 = new ChadoTransactionManager();
-<span class="nocode"><a name="2">  2: </a></span>ChadoTransactionManager.commit((DatabaseDocument) null, true, chadoTransactionManager0);
-</pre>
-<h3>Test case 18</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>ChadoTransactionManager.isCvTag((String) null);
-</pre>
-<h3>Test case 19</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>ChadoTransactionManager.isSynonymTag(&quot;v QudgS%B!K:?pr&lt;20~&quot;, (GFFStreamFeature) null);
-</pre>
-<h3>Test case 20</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>ChadoTransactionManager chadoTransactionManager0 = new ChadoTransactionManager();
-<span class="nocode"><a name="2">  2: </a></span>ChadoTransactionManager.commitReturnValue = 1;
-<span class="nocode"><a name="3">  3: </a></span>int int0 = chadoTransactionManager0.getCommitReturnValue();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(1, int0);
-</pre>
-<h3>Test case 21</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>ChadoTransactionManager chadoTransactionManager0 = new ChadoTransactionManager();
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases((Sequence) null);
-<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="4">  4: </a></span>EntryChangeEvent entryChangeEvent0 = new EntryChangeEvent(simpleEntryGroup0, (Entry) null, 5336);
-<span class="nocode"><a name="5">  5: </a></span>chadoTransactionManager0.entryChanged(entryChangeEvent0);
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(3, EntryChangeEvent.NAME_CHANGED);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -171,13 +140,13 @@ uk.ac.sanger.artemis.chado.ChadoTransactionManager
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.chado.ChadoTransactionManager
-<li>Size: 21
-<li>Length: 48
+<li>Size: 17
+<li>Length: 32
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.22387009019723525
-<li>BranchCoverage: 0.04610951008645533
-<li>MethodCoverage: 0.9375
-<li>OutputCoverage: 0.3
+<li>Coverage: 0.3113510136065591
+<li>BranchCoverage: 0.037463976945244955
+<li>MethodCoverage: 0.875
+<li>OutputCoverage: 0.225
 </ul></div>
 </div>
 <p><br><a href="../report-generation.html">Back to Overview</a></p>

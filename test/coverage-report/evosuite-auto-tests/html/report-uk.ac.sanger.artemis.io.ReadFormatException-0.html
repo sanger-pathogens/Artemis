@@ -35,21 +35,21 @@ uk.ac.sanger.artemis.io.ReadFormatException
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>ReadFormatException readFormatException0 = new ReadFormatException((String) null, 1966);
+<span class="nocode"><a name="1">  1: </a></span>ReadFormatException readFormatException0 = new ReadFormatException(&quot;uk.ac.sanger.artemis.io.ReadFormatException&quot;, (-964));
 <span class="nocode"><a name="2">  2: </a></span>int int0 = readFormatException0.getLineNumber();
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(1966, int0);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals((-964), int0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>ReadFormatException readFormatException0 = new ReadFormatException((String) null);
+<span class="nocode"><a name="1">  1: </a></span>ReadFormatException readFormatException0 = new ReadFormatException(&quot;om&quot;);
 <span class="nocode"><a name="2">  2: </a></span>int int0 = readFormatException0.getLineNumber();
 <span class="nocode"><a name="3">  3: </a></span>assertEquals(0, int0);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>ReadFormatException readFormatException0 = new ReadFormatException(&quot;&gt;U;o_.L&quot;, (-1434));
+<span class="nocode"><a name="1">  1: </a></span>ReadFormatException readFormatException0 = new ReadFormatException(&quot;&quot;, 1);
 <span class="nocode"><a name="2">  2: </a></span>int int0 = readFormatException0.getLineNumber();
-<span class="nocode"><a name="3">  3: </a></span>assertEquals((-1434), int0);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(1, int0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>

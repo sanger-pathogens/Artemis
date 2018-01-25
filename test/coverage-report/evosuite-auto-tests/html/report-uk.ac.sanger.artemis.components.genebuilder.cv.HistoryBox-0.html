@@ -23,7 +23,7 @@ uk.ac.sanger.artemis.components.genebuilder.cv.HistoryBox
 <br><br><h2 class=title>Summary</h2>
 <ul><li>Target class: uk.ac.sanger.artemis.components.genebuilder.cv.HistoryBox: 0.28760534603223176</ul>
 <ul>
-<li>413.65897434826417 fitness evaluations, 0 generations, null statements, 9 tests.
+<li>412.15897434966115 fitness evaluations, 0 generations, null statements, 9 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,11 +35,9 @@ uk.ac.sanger.artemis.components.genebuilder.cv.HistoryBox
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = new String[17];
-<span class="nocode"><a name="2">  2: </a></span>StringVector stringVector0 = new StringVector(stringArray0);
-<span class="nocode"><a name="3">  3: </a></span>Qualifier qualifier0 = new Qualifier(&quot;curatorName=&quot;, stringVector0);
-<span class="nocode"><a name="4">  4: </a></span>Dimension dimension0 = new Dimension();
-<span class="nocode"><a name="5">  5: </a></span>HistoryBox historyBox0 = new HistoryBox(qualifier0, &quot;&quot;, 4930, dimension0, dimension0);
+<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier(&quot;date=&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Dimension dimension0 = new Dimension(24, 0);
+<span class="nocode"><a name="3">  3: </a></span>HistoryBox historyBox0 = new HistoryBox(qualifier0, &quot;;I9=8&lt;vY~\&quot;Lxa5we&quot;, 5, dimension0, dimension0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
@@ -47,47 +45,40 @@ uk.ac.sanger.artemis.components.genebuilder.cv.HistoryBox
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>StringVector stringVector0 = new StringVector();
-<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = HistoryBox.contains(stringVector0, (String) null);
-<span class="nocode"><a name="3">  3: </a></span>assertFalse(boolean0);
+<span class="nocode"><a name="1">  1: </a></span>StringVector stringVector0 = new StringVector(&quot;ucI+N..V;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = HistoryBox.contains(stringVector0, &quot;date=&quot;);
+<span class="nocode"><a name="3">  3: </a></span>assertTrue(boolean0);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = new String[17];
-<span class="nocode"><a name="2">  2: </a></span>stringArray0[0] = &quot;invisible_qualifiers_gff&quot;;
-<span class="nocode"><a name="3">  3: </a></span>StringVector stringVector0 = new StringVector(stringArray0);
-<span class="nocode"><a name="4">  4: </a></span>HistoryBox.contains(stringVector0, &quot;`GV5:cfg&quot;);
+<span class="nocode"><a name="1">  1: </a></span>StringVector stringVector0 = new StringVector();
+<span class="nocode"><a name="2">  2: </a></span>stringVector0.add(&quot;qualifier=&quot;);
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = HistoryBox.contains(stringVector0, &quot;JA6UzQn(s=ASH&quot;);
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(boolean0);
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>HistoryBox.getCvTermStrings();
+<span class="nocode"><a name="1">  1: </a></span>HistoryBox.contains((StringVector) null, &quot;curatorName=&quot;);
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>HistoryBox.getCvTerms();
+<span class="nocode"><a name="1">  1: </a></span>HistoryBox.getCvTermStrings();
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>StringVector stringVector0 = new StringVector();
-<span class="nocode"><a name="2">  2: </a></span>stringVector0.add(&quot;term=&quot;);
-<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = HistoryBox.contains(stringVector0, &quot;Show selected sequences&quot;);
-<span class="nocode"><a name="4">  4: </a></span>assertTrue(boolean0);
+<span class="nocode"><a name="1">  1: </a></span>HistoryBox.getCvTerms();
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = new String[2];
-<span class="nocode"><a name="2">  2: </a></span>stringArray0[0] = &quot;GO:0001234 [F] &quot;;
-<span class="nocode"><a name="3">  3: </a></span>StringVector stringVector0 = new StringVector(stringArray0);
-<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = HistoryBox.contains(stringVector0, &quot;date=&quot;);
-<span class="nocode"><a name="5">  5: </a></span>assertTrue(boolean0);
+<span class="nocode"><a name="1">  1: </a></span>StringVector stringVector0 = new StringVector(&quot;Oy;WY#&quot;);
+<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = HistoryBox.contains(stringVector0, &quot;term=&quot;);
+<span class="nocode"><a name="3">  3: </a></span>assertTrue(boolean0);
 </pre>
 <h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = new String[17];
-<span class="nocode"><a name="2">  2: </a></span>stringArray0[0] = &quot;s_gff&quot;;
-<span class="nocode"><a name="3">  3: </a></span>StringVector stringVector0 = new StringVector(stringArray0);
-<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = HistoryBox.contains(stringVector0, &quot;curatorName=&quot;);
-<span class="nocode"><a name="5">  5: </a></span>assertTrue(boolean0);
+<span class="nocode"><a name="1">  1: </a></span>StringVector stringVector0 = new StringVector(&quot;curatorName=&quot;);
+<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = HistoryBox.contains(stringVector0, &quot;curatorName=&quot;);
+<span class="nocode"><a name="3">  3: </a></span>assertTrue(boolean0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -101,7 +92,7 @@ uk.ac.sanger.artemis.components.genebuilder.cv.HistoryBox
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.genebuilder.cv.HistoryBox
 <li>Size: 9
-<li>Length: 25
+<li>Length: 16
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.28760534603223176
 <li>BranchCoverage: 0.15789473684210525

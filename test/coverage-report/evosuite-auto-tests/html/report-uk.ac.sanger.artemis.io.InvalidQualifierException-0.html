@@ -35,16 +35,16 @@ uk.ac.sanger.artemis.io.InvalidQualifierException
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>InvalidQualifierException invalidQualifierException0 = new InvalidQualifierException(&quot;H\&quot;i::1ykO&quot;, (Qualifier) null);
-<span class="nocode"><a name="2">  2: </a></span>Qualifier qualifier0 = invalidQualifierException0.getQualifier();
-<span class="nocode"><a name="3">  3: </a></span>assertNull(qualifier0);
+<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier(&quot;&quot;, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>InvalidQualifierException invalidQualifierException0 = new InvalidQualifierException(&quot;&quot;, qualifier0);
+<span class="nocode"><a name="3">  3: </a></span>Qualifier qualifier1 = invalidQualifierException0.getQualifier();
+<span class="nocode"><a name="4">  4: </a></span>assertSame(qualifier0, qualifier1);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier(&quot;M)T;&amp;$,jY24&quot;);
-<span class="nocode"><a name="2">  2: </a></span>InvalidQualifierException invalidQualifierException0 = new InvalidQualifierException(&quot;_xU(MS+.`4fuG&quot;, qualifier0);
-<span class="nocode"><a name="3">  3: </a></span>Qualifier qualifier1 = invalidQualifierException0.getQualifier();
-<span class="nocode"><a name="4">  4: </a></span>assertSame(qualifier1, qualifier0);
+<span class="nocode"><a name="1">  1: </a></span>InvalidQualifierException invalidQualifierException0 = new InvalidQualifierException((String) null, (Qualifier) null);
+<span class="nocode"><a name="2">  2: </a></span>Qualifier qualifier0 = invalidQualifierException0.getQualifier();
+<span class="nocode"><a name="3">  3: </a></span>assertNull(qualifier0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>

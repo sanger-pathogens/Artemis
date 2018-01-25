@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.io.SimpleDocumentEntry
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.io.SimpleDocumentEntry: 0.36918132834343637</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.io.SimpleDocumentEntry: 0.25581837024356197</ul>
 <ul>
-<li>1128.9957983193278 fitness evaluations, 0 generations, null statements, 27 tests.
+<li>1361.829736211031 fitness evaluations, 0 generations, null statements, 18 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,206 +35,125 @@ uk.ac.sanger.artemis.io.SimpleDocumentEntry
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = (SimpleEntryInformation)SimpleEntryInformation.getDefaultEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>EmblDocumentEntry emblDocumentEntry0 = new EmblDocumentEntry(simpleEntryInformation0);
-<span class="nocode"><a name="3">  3: </a></span>GenbankDocumentEntry genbankDocumentEntry0 = new GenbankDocumentEntry(simpleEntryInformation0, emblDocumentEntry0, false);
-<span class="nocode"><a name="4">  4: </a></span>genbankDocumentEntry0.setName(&quot;&lt;`f2&quot;);
-<span class="nocode"><a name="5">  5: </a></span>genbankDocumentEntry0.setDirtyFlag();
-<span class="nocode"><a name="6">  6: </a></span>assertTrue(PublicDBDocumentEntry.IGNORE_OBSOLETE_FEATURES);
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>simpleEntryGroup0.createEntry(&quot;f&quot;);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = (SimpleEntryInformation)SimpleEntryInformation.getDefaultEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>EmblDocumentEntry emblDocumentEntry0 = new EmblDocumentEntry(simpleEntryInformation0);
-<span class="nocode"><a name="3">  3: </a></span>GenbankDocumentEntry genbankDocumentEntry0 = new GenbankDocumentEntry(simpleEntryInformation0, emblDocumentEntry0, false);
-<span class="nocode"><a name="4">  4: </a></span>GenbankDocumentEntry genbankDocumentEntry1 = new GenbankDocumentEntry(genbankDocumentEntry0);
-<span class="nocode"><a name="5">  5: </a></span>assertFalse(genbankDocumentEntry1.equals((Object)genbankDocumentEntry0));
+<span class="nocode"><a name="2">  2: </a></span>PublicDBDocumentEntry publicDBDocumentEntry0 = new PublicDBDocumentEntry(simpleEntryInformation0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryInformation simpleEntryInformation1 = (SimpleEntryInformation)publicDBDocumentEntry0.getEntryInformation();
+<span class="nocode"><a name="4">  4: </a></span>assertNotSame(simpleEntryInformation1, simpleEntryInformation0);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = (SimpleEntryInformation)SimpleEntryInformation.getDefaultEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>GenbankDocumentEntry genbankDocumentEntry0 = new GenbankDocumentEntry(simpleEntryInformation0);
-<span class="nocode"><a name="3">  3: </a></span>Key key0 = Key.CDS;
-<span class="nocode"><a name="4">  4: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
-<span class="nocode"><a name="5">  5: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature(key0, (Location) null, qualifierVector0);
-<span class="nocode"><a name="6">  6: </a></span>genbankDocumentEntry0.add(genbankStreamFeature0);
+<span class="nocode"><a name="1">  1: </a></span>LogReadListener logReadListener0 = new LogReadListener(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>BlastDocumentEntry blastDocumentEntry0 = new BlastDocumentEntry((Document) null, logReadListener0);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>EmblDocumentEntry emblDocumentEntry0 = new EmblDocumentEntry(blastEntryInformation0);
-<span class="nocode"><a name="3">  3: </a></span>BlastDocumentEntry blastDocumentEntry0 = new BlastDocumentEntry(emblDocumentEntry0, true);
-<span class="nocode"><a name="4">  4: </a></span>blastDocumentEntry0.save();
-<span class="nocode"><a name="5">  5: </a></span>assertTrue(blastDocumentEntry0.isReadOnly());
+<span class="nocode"><a name="2">  2: </a></span>EmblDocumentEntry emblDocumentEntry0 = new EmblDocumentEntry(blastEntryInformation0, (Document) null, (ReadListener) null);
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>LogReadListener logReadListener0 = new LogReadListener(&quot; is not a valid key&quot;);
-<span class="nocode"><a name="2">  2: </a></span>MSPcrunchDocumentEntry mSPcrunchDocumentEntry0 = new MSPcrunchDocumentEntry((Document) null, logReadListener0);
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>BlastDocumentEntry blastDocumentEntry0 = new BlastDocumentEntry(blastEntryInformation0);
+<span class="nocode"><a name="3">  3: </a></span>EmblDocumentEntry emblDocumentEntry0 = new EmblDocumentEntry(blastDocumentEntry0);
+<span class="nocode"><a name="4">  4: </a></span>EmblDocumentEntry emblDocumentEntry1 = new EmblDocumentEntry(blastEntryInformation0, emblDocumentEntry0, true);
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(PublicDBDocumentEntry.IGNORE_OBSOLETE_FEATURES);
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = new SimpleEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>URL uRL0 = MockURL.getHttpExample();
-<span class="nocode"><a name="3">  3: </a></span>URLDocument uRLDocument0 = new URLDocument(uRL0);
-<span class="nocode"><a name="4">  4: </a></span>EmblDocumentEntry emblDocumentEntry0 = new EmblDocumentEntry(simpleEntryInformation0, uRLDocument0, (ReadListener) null);
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = (SimpleEntryInformation)SimpleEntryInformation.getDefaultEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>MSPcrunchDocumentEntry mSPcrunchDocumentEntry0 = new MSPcrunchDocumentEntry(simpleEntryInformation0);
+<span class="nocode"><a name="3">  3: </a></span>mSPcrunchDocumentEntry0.setHeaderText(&quot;v\&quot;t&gt;ZD}i&gt;9a?&quot;);
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MSPcrunchEntryInformation mSPcrunchEntryInformation0 = new MSPcrunchEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>GenbankDocumentEntry genbankDocumentEntry0 = new GenbankDocumentEntry(mSPcrunchEntryInformation0);
-<span class="nocode"><a name="3">  3: </a></span>genbankDocumentEntry0.writeToStream((Writer) null);
-<span class="nocode"><a name="4">  4: </a></span>genbankDocumentEntry0.dispose();
-<span class="nocode"><a name="5">  5: </a></span>assertTrue(PublicDBDocumentEntry.IGNORE_OBSOLETE_FEATURES);
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = (SimpleEntryInformation)SimpleEntryInformation.getDefaultEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>EmblDocumentEntry emblDocumentEntry0 = new EmblDocumentEntry(simpleEntryInformation0);
+<span class="nocode"><a name="3">  3: </a></span>PipedOutputStream pipedOutputStream0 = new PipedOutputStream();
+<span class="nocode"><a name="4">  4: </a></span>MockPrintStream mockPrintStream0 = new MockPrintStream(pipedOutputStream0, true);
+<span class="nocode"><a name="5">  5: </a></span>MockPrintWriter mockPrintWriter0 = new MockPrintWriter(mockPrintStream0, false);
+<span class="nocode"><a name="6">  6: </a></span>emblDocumentEntry0.writeToStream(mockPrintWriter0);
+<span class="nocode"><a name="7">  7: </a></span>assertTrue(PublicDBDocumentEntry.IGNORE_OBSOLETE_FEATURES);
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>EmblDocumentEntry emblDocumentEntry0 = new EmblDocumentEntry(blastEntryInformation0);
-<span class="nocode"><a name="3">  3: </a></span>int int0 = emblDocumentEntry0.getFeatureCount();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, int0);
+<span class="nocode"><a name="2">  2: </a></span>BlastDocumentEntry blastDocumentEntry0 = new BlastDocumentEntry(blastEntryInformation0);
+<span class="nocode"><a name="3">  3: </a></span>blastDocumentEntry0.add((Feature) null);
 </pre>
 <h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = (SimpleEntryInformation)SimpleEntryInformation.getDefaultEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>EmblDocumentEntry emblDocumentEntry0 = new EmblDocumentEntry(simpleEntryInformation0);
-<span class="nocode"><a name="3">  3: </a></span>Feature feature0 = emblDocumentEntry0.getFeatureAtIndex(1653);
+<span class="nocode"><a name="2">  2: </a></span>MSPcrunchDocumentEntry mSPcrunchDocumentEntry0 = new MSPcrunchDocumentEntry(simpleEntryInformation0);
+<span class="nocode"><a name="3">  3: </a></span>Feature feature0 = mSPcrunchDocumentEntry0.getFeatureAtIndex((-2334));
 <span class="nocode"><a name="4">  4: </a></span>assertNull(feature0);
 </pre>
 <h3>Test case 10</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MSPcrunchEntryInformation mSPcrunchEntryInformation0 = new MSPcrunchEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>MSPcrunchDocumentEntry mSPcrunchDocumentEntry0 = new MSPcrunchDocumentEntry(mSPcrunchEntryInformation0);
-<span class="nocode"><a name="3">  3: </a></span>int int0 = mSPcrunchDocumentEntry0.indexOf((Feature) null);
-<span class="nocode"><a name="4">  4: </a></span>assertEquals((-1), int0);
-</pre>
-<h3>Test case 11</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MSPcrunchEntryInformation mSPcrunchEntryInformation0 = new MSPcrunchEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>MSPcrunchDocumentEntry mSPcrunchDocumentEntry0 = new MSPcrunchDocumentEntry(mSPcrunchEntryInformation0);
-<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = mSPcrunchDocumentEntry0.contains((Feature) null);
-<span class="nocode"><a name="4">  4: </a></span>assertFalse(boolean0);
-</pre>
-<h3>Test case 12</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = (SimpleEntryInformation)SimpleEntryInformation.getDefaultEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>PublicDBDocumentEntry publicDBDocumentEntry0 = new PublicDBDocumentEntry(simpleEntryInformation0);
-<span class="nocode"><a name="3">  3: </a></span>Key key0 = Key.CDS;
-<span class="nocode"><a name="4">  4: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
-<span class="nocode"><a name="5">  5: </a></span>publicDBDocumentEntry0.createFeature(key0, (Location) null, qualifierVector0);
-</pre>
-<h3>Test case 13</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = (SimpleEntryInformation)SimpleEntryInformation.getDefaultEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>EmblDocumentEntry emblDocumentEntry0 = new EmblDocumentEntry(simpleEntryInformation0);
-<span class="nocode"><a name="3">  3: </a></span>Range range0 = new Range(703);
-<span class="nocode"><a name="4">  4: </a></span>FeatureVector featureVector0 = emblDocumentEntry0.getFeaturesInRange(range0);
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, featureVector0.size());
-</pre>
-<h3>Test case 14</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
 <span class="nocode"><a name="2">  2: </a></span>PublicDBDocumentEntry publicDBDocumentEntry0 = new PublicDBDocumentEntry(blastEntryInformation0);
-<span class="nocode"><a name="3">  3: </a></span>publicDBDocumentEntry0.setSequence((StreamSequence) null);
-<span class="nocode"><a name="4">  4: </a></span>assertTrue(PublicDBDocumentEntry.IGNORE_OBSOLETE_FEATURES);
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = publicDBDocumentEntry0.contains((Feature) null);
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(boolean0);
 </pre>
-<h3>Test case 15</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MSPcrunchDocumentEntry mSPcrunchDocumentEntry0 = new MSPcrunchDocumentEntry((EntryInformation) null);
-<span class="nocode"><a name="2">  2: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;N*efkV/&quot;, (String) null);
-<span class="nocode"><a name="3">  3: </a></span>mSPcrunchDocumentEntry0.setSequence(fastaStreamSequence0);
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(7, fastaStreamSequence0.length());
-</pre>
-<h3>Test case 16</h3>
+<h3>Test case 11</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
 <span class="nocode"><a name="2">  2: </a></span>GenbankDocumentEntry genbankDocumentEntry0 = new GenbankDocumentEntry(blastEntryInformation0);
 <span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = genbankDocumentEntry0.hasUnsavedChanges();
 <span class="nocode"><a name="4">  4: </a></span>assertFalse(boolean0);
 </pre>
-<h3>Test case 17</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MSPcrunchEntryInformation mSPcrunchEntryInformation0 = new MSPcrunchEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>GenbankDocumentEntry genbankDocumentEntry0 = new GenbankDocumentEntry(mSPcrunchEntryInformation0);
-<span class="nocode"><a name="3">  3: </a></span>genbankDocumentEntry0.dispose();
-<span class="nocode"><a name="4">  4: </a></span>assertFalse(genbankDocumentEntry0.isReadOnly());
-</pre>
-<h3>Test case 18</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>EmblDocumentEntry emblDocumentEntry0 = new EmblDocumentEntry(blastEntryInformation0);
-<span class="nocode"><a name="3">  3: </a></span>MockFile mockFile0 = new MockFile(&quot;.5`o&quot;, &quot;.5`o&quot;);
-<span class="nocode"><a name="4">  4: </a></span>URL uRL0 = mockFile0.toURL();
-<span class="nocode"><a name="5">  5: </a></span>URLDocument uRLDocument0 = new URLDocument(uRL0);
-<span class="nocode"><a name="6">  6: </a></span>emblDocumentEntry0.setDocument(uRLDocument0);
-<span class="nocode"><a name="7">  7: </a></span>assertFalse(uRLDocument0.writable());
-</pre>
-<h3>Test case 19</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = (SimpleEntryInformation)SimpleEntryInformation.getDefaultEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>MSPcrunchDocumentEntry mSPcrunchDocumentEntry0 = new MSPcrunchDocumentEntry(simpleEntryInformation0);
-<span class="nocode"><a name="3">  3: </a></span>SimpleEntryInformation simpleEntryInformation1 = (SimpleEntryInformation)mSPcrunchDocumentEntry0.getEntryInformation();
-<span class="nocode"><a name="4">  4: </a></span>assertNotSame(simpleEntryInformation0, simpleEntryInformation1);
-</pre>
-<h3>Test case 20</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MSPcrunchEntryInformation mSPcrunchEntryInformation0 = new MSPcrunchEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>MSPcrunchDocumentEntry mSPcrunchDocumentEntry0 = new MSPcrunchDocumentEntry(mSPcrunchEntryInformation0);
-<span class="nocode"><a name="3">  3: </a></span>Document document0 = mSPcrunchDocumentEntry0.getDocument();
-<span class="nocode"><a name="4">  4: </a></span>assertNull(document0);
-</pre>
-<h3>Test case 21</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>EmblDocumentEntry emblDocumentEntry0 = new EmblDocumentEntry(blastEntryInformation0);
-<span class="nocode"><a name="3">  3: </a></span>BlastDocumentEntry blastDocumentEntry0 = new BlastDocumentEntry(emblDocumentEntry0, true);
-<span class="nocode"><a name="4">  4: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;R2VljQ5q/&gt;Q&quot;, (JPasswordField) null);
-<span class="nocode"><a name="5">  5: </a></span>blastDocumentEntry0.save((Document) databaseDocument0);
-</pre>
-<h3>Test case 22</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = new SimpleEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>BlastDocumentEntry blastDocumentEntry0 = new BlastDocumentEntry(simpleEntryInformation0);
-<span class="nocode"><a name="3">  3: </a></span>PublicDBDocumentEntry publicDBDocumentEntry0 = new PublicDBDocumentEntry(simpleEntryInformation0, blastDocumentEntry0, false);
-<span class="nocode"><a name="4">  4: </a></span>GenbankDocumentEntry genbankDocumentEntry0 = new GenbankDocumentEntry(simpleEntryInformation0, publicDBDocumentEntry0, true);
-<span class="nocode"><a name="5">  5: </a></span>String string0 = genbankDocumentEntry0.getHeaderText();
-<span class="nocode"><a name="6">  6: </a></span>assertNull(string0);
-</pre>
-<h3>Test case 23</h3>
+<h3>Test case 12</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>MSPcrunchEntryInformation mSPcrunchEntryInformation0 = new MSPcrunchEntryInformation();
 <span class="nocode"><a name="2">  2: </a></span>MSPcrunchDocumentEntry mSPcrunchDocumentEntry0 = new MSPcrunchDocumentEntry(mSPcrunchEntryInformation0);
 <span class="nocode"><a name="3">  3: </a></span>FeatureEnumeration featureEnumeration0 = mSPcrunchDocumentEntry0.features();
 <span class="nocode"><a name="4">  4: </a></span>assertNotNull(featureEnumeration0);
 </pre>
-<h3>Test case 24</h3>
+<h3>Test case 13</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>EmblDocumentEntry emblDocumentEntry0 = new EmblDocumentEntry(blastEntryInformation0);
+<span class="nocode"><a name="1">  1: </a></span>MSPcrunchEntryInformation mSPcrunchEntryInformation0 = new MSPcrunchEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>EmblDocumentEntry emblDocumentEntry0 = new EmblDocumentEntry(mSPcrunchEntryInformation0);
 <span class="nocode"><a name="3">  3: </a></span>Sequence sequence0 = emblDocumentEntry0.getSequence();
 <span class="nocode"><a name="4">  4: </a></span>assertNull(sequence0);
 </pre>
-<h3>Test case 25</h3>
+<h3>Test case 14</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>EmblDocumentEntry emblDocumentEntry0 = new EmblDocumentEntry(blastEntryInformation0);
-<span class="nocode"><a name="3">  3: </a></span>String string0 = emblDocumentEntry0.getName();
+<span class="nocode"><a name="2">  2: </a></span>GenbankDocumentEntry genbankDocumentEntry0 = new GenbankDocumentEntry(blastEntryInformation0);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = genbankDocumentEntry0.getName();
 <span class="nocode"><a name="4">  4: </a></span>assertNull(string0);
 </pre>
-<h3>Test case 26</h3>
+<h3>Test case 15</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MSPcrunchEntryInformation mSPcrunchEntryInformation0 = new MSPcrunchEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>MSPcrunchDocumentEntry mSPcrunchDocumentEntry0 = new MSPcrunchDocumentEntry(mSPcrunchEntryInformation0);
-<span class="nocode"><a name="3">  3: </a></span>mSPcrunchDocumentEntry0.setDirtyFlag();
-<span class="nocode"><a name="4">  4: </a></span>assertTrue(mSPcrunchDocumentEntry0.isReadOnly());
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>PublicDBDocumentEntry publicDBDocumentEntry0 = new PublicDBDocumentEntry(blastEntryInformation0);
+<span class="nocode"><a name="3">  3: </a></span>publicDBDocumentEntry0.setDirtyFlag();
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(publicDBDocumentEntry0.isReadOnly());
 </pre>
-<h3>Test case 27</h3>
+<h3>Test case 16</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>MSPcrunchDocumentEntry mSPcrunchDocumentEntry0 = new MSPcrunchDocumentEntry(blastEntryInformation0);
+<span class="nocode"><a name="3">  3: </a></span>mSPcrunchDocumentEntry0.makeNativeFeature((Feature) null, true);
+</pre>
+<h3>Test case 17</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = (SimpleEntryInformation)SimpleEntryInformation.getDefaultEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>PublicDBDocumentEntry publicDBDocumentEntry0 = new PublicDBDocumentEntry(simpleEntryInformation0);
-<span class="nocode"><a name="3">  3: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;`a&quot;);
-<span class="nocode"><a name="4">  4: </a></span>GenbankStreamSequence genbankStreamSequence0 = (GenbankStreamSequence)publicDBDocumentEntry0.makeNativeSequence(fastaStreamSequence0);
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, genbankStreamSequence0.getGCount());
+<span class="nocode"><a name="2">  2: </a></span>BlastDocumentEntry blastDocumentEntry0 = new BlastDocumentEntry(simpleEntryInformation0);
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = blastDocumentEntry0.isReadOnly();
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 18</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>BlastDocumentEntry blastDocumentEntry0 = new BlastDocumentEntry(blastEntryInformation0);
+<span class="nocode"><a name="3">  3: </a></span>EmblDocumentEntry emblDocumentEntry0 = new EmblDocumentEntry(blastDocumentEntry0);
+<span class="nocode"><a name="4">  4: </a></span>emblDocumentEntry0.dispose();
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(PublicDBDocumentEntry.IGNORE_OBSOLETE_FEATURES);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -247,13 +166,13 @@ uk.ac.sanger.artemis.io.SimpleDocumentEntry
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.io.SimpleDocumentEntry
-<li>Size: 27
-<li>Length: 100
+<li>Size: 18
+<li>Length: 56
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.36918132834343637
-<li>BranchCoverage: 0.2892561983471074
-<li>MethodCoverage: 0.6774193548387096
-<li>OutputCoverage: 0.19318181818181818
+<li>Coverage: 0.25581837024356197
+<li>BranchCoverage: 0.19834710743801653
+<li>MethodCoverage: 0.3870967741935484
+<li>OutputCoverage: 0.07954545454545454
 </ul></div>
 </div>
 <p><br><a href="../report-generation.html">Back to Overview</a></p>

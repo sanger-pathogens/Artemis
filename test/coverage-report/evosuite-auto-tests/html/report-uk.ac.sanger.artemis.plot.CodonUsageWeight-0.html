@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.plot.CodonUsageWeight
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.plot.CodonUsageWeight: 0.6924852727832241</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.plot.CodonUsageWeight: 0.6715236258261164</ul>
 <ul>
-<li>373.56159420289856 fitness evaluations, 0 generations, null statements, 7 tests.
+<li>388.5583333333334 fitness evaluations, 0 generations, null statements, 7 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -36,65 +36,64 @@ uk.ac.sanger.artemis.plot.CodonUsageWeight
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;h4%rO$p.LQc~8KsV&quot;);
-<span class="nocode"><a name="3">  3: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
-<span class="nocode"><a name="4">  4: </a></span>Strand strand0 = bases0.getReverseStrand();
-<span class="nocode"><a name="5">  5: </a></span>CodonUsageWeight codonUsageWeight0 = new CodonUsageWeight(mockFile0, strand0);
+<span class="nocode"><a name="2">  2: </a></span>FileSystemHandling.shouldAllThrowIOExceptions();
+<span class="nocode"><a name="3">  3: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;s|&quot;);
+<span class="nocode"><a name="4">  4: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="5">  5: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="6">  6: </a></span>CodonUsageWeight codonUsageWeight0 = new CodonUsageWeight(mockFile0, strand0);
+<span class="nocode"><a name="7">  7: </a></span>codonUsageWeight0.getName();
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;h4%rO$p.LQc~8KsV&quot;);
-<span class="nocode"><a name="3">  3: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
-<span class="nocode"><a name="4">  4: </a></span>Strand strand0 = bases0.getReverseStrand();
-<span class="nocode"><a name="5">  5: </a></span>FileSystemHandling.shouldAllThrowIOExceptions();
+<span class="nocode"><a name="2">  2: </a></span>FileSystemHandling.shouldAllThrowIOExceptions();
+<span class="nocode"><a name="3">  3: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;(&quot;, &quot;s|&quot;);
+<span class="nocode"><a name="4">  4: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="5">  5: </a></span>Strand strand0 = bases0.getForwardStrand();
 <span class="nocode"><a name="6">  6: </a></span>CodonUsageWeight codonUsageWeight0 = new CodonUsageWeight(mockFile0, strand0);
-<span class="nocode"><a name="7">  7: </a></span>String string0 = codonUsageWeight0.getName();
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(&quot;&quot;, string0);
+<span class="nocode"><a name="7">  7: </a></span>float float0 = codonUsageWeight0.getCodonValue('i', 'i', 'y');
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(1.0F, float0, 0.01F);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;h4%rO$p.LQc~8KsV&quot;);
-<span class="nocode"><a name="3">  3: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
-<span class="nocode"><a name="4">  4: </a></span>Strand strand0 = bases0.getReverseStrand();
-<span class="nocode"><a name="5">  5: </a></span>FileSystemHandling.shouldAllThrowIOExceptions();
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;DBXREF: ID=&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;DBXREF: ID=&quot;, &quot;DBXREF: ID=&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="4">  4: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="5">  5: </a></span>MockFileWriter mockFileWriter0 = new MockFileWriter(&quot;DBXREF: ID=&quot;, false);
 <span class="nocode"><a name="6">  6: </a></span>CodonUsageWeight codonUsageWeight0 = new CodonUsageWeight(mockFile0, strand0);
-<span class="nocode"><a name="7">  7: </a></span>float float0 = codonUsageWeight0.getCodonValue('A', 'A', 'A');
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(1.0F, float0, 0.01F);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(&quot;DBXREF: ID=&quot;, codonUsageWeight0.getName());
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;, &quot;h4%rO$p.LQc~8KsV&quot;);
-<span class="nocode"><a name="2">  2: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;h4%rO$p.LQc~8KsV&quot;);
-<span class="nocode"><a name="3">  3: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
-<span class="nocode"><a name="4">  4: </a></span>Strand strand0 = bases0.getReverseStrand();
-<span class="nocode"><a name="5">  5: </a></span>FileSystemHandling.shouldAllThrowIOExceptions();
-<span class="nocode"><a name="6">  6: </a></span>CodonUsageWeight codonUsageWeight0 = new CodonUsageWeight(mockFile0, strand0);
-<span class="nocode"><a name="7">  7: </a></span>float float0 = codonUsageWeight0.getCodonValue('a', 'B', '-');
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(1.0F, float0, 0.01F);
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="4">  4: </a></span>CodonUsageWeight codonUsageWeight0 = new CodonUsageWeight((File) null, strand0);
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
-<span class="nocode"><a name="4">  4: </a></span>CodonUsageWeight codonUsageWeight0 = new CodonUsageWeight((File) null, strand0);
+<span class="nocode"><a name="1">  1: </a></span>CodonUsageWeight codonUsageWeight0 = new CodonUsageWeight((File) null, (Strand) null);
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>CodonUsageWeight codonUsageWeight0 = new CodonUsageWeight((File) null, (Strand) null);
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileSystemHandling.shouldAllThrowIOExceptions();
+<span class="nocode"><a name="3">  3: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;s|&quot;);
+<span class="nocode"><a name="4">  4: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="5">  5: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="6">  6: </a></span>CodonUsageWeight codonUsageWeight0 = new CodonUsageWeight(mockFile0, strand0);
+<span class="nocode"><a name="7">  7: </a></span>float float0 = codonUsageWeight0.getCodonValue('~', ',', '~');
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(1.0F, float0, 0.01F);
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;, &quot;h4%rO$p.LQc~8KsV&quot;);
-<span class="nocode"><a name="2">  2: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;h4%rO$p.LQc~8KsV&quot;);
-<span class="nocode"><a name="3">  3: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
-<span class="nocode"><a name="4">  4: </a></span>Strand strand0 = bases0.getReverseStrand();
-<span class="nocode"><a name="5">  5: </a></span>FileSystemHandling.shouldAllThrowIOExceptions();
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;org.biojava.bio.symbol.CompoundLocation&quot;, &quot;org.biojava.bio.symbol.CompoundLocation&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;org.biojava.bio.symbol.CompoundLocation&quot;, &quot;org.biojava.bio.symbol.CompoundLocation&quot;);
+<span class="nocode"><a name="3">  3: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(fastaStreamSequence0);
+<span class="nocode"><a name="4">  4: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
+<span class="nocode"><a name="5">  5: </a></span>Strand strand0 = bases0.getReverseStrand();
 <span class="nocode"><a name="6">  6: </a></span>CodonUsageWeight codonUsageWeight0 = new CodonUsageWeight(mockFile0, strand0);
-<span class="nocode"><a name="7">  7: </a></span>String string0 = codonUsageWeight0.getName();
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(&quot;h4%rO$p.LQc~8KsV&quot;, string0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -110,10 +109,10 @@ uk.ac.sanger.artemis.plot.CodonUsageWeight
 <li>Size: 7
 <li>Length: 38
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.6924852727832241
-<li>BranchCoverage: 0.55
+<li>Coverage: 0.6715236258261164
+<li>BranchCoverage: 0.525
 <li>MethodCoverage: 1.0
-<li>OutputCoverage: 0.5
+<li>OutputCoverage: 0.3333333333333333
 </ul></div>
 </div>
 <p><br><a href="../report-generation.html">Back to Overview</a></p>

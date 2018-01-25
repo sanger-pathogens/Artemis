@@ -48,33 +48,32 @@ uk.ac.sanger.artemis.FeaturePredicateVector
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FeaturePredicateVector featurePredicateVector0 = new FeaturePredicateVector();
-<span class="nocode"><a name="2">  2: </a></span>featurePredicateVector0.elementAt(0);
+<span class="nocode"><a name="2">  2: </a></span>featurePredicateVector0.elementAt(1);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FeaturePredicateVector featurePredicateVector0 = new FeaturePredicateVector();
 <span class="nocode"><a name="2">  2: </a></span>featurePredicateVector0.add((FeaturePredicate) null);
-<span class="nocode"><a name="3">  3: </a></span>FeaturePredicate featurePredicate0 = featurePredicateVector0.elementAt(0);
-<span class="nocode"><a name="4">  4: </a></span>assertNull(featurePredicate0);
+<span class="nocode"><a name="3">  3: </a></span>FeaturePredicateVector featurePredicateVector1 = featurePredicateVector0.copy();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1, featurePredicateVector1.size());
+<span class="nocode"><a name="5">  5: </a></span>assertNotSame(featurePredicateVector1, featurePredicateVector0);
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FeaturePredicateVector featurePredicateVector0 = new FeaturePredicateVector();
 <span class="nocode"><a name="2">  2: </a></span>Key key0 = Key.CDS;
-<span class="nocode"><a name="3">  3: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate(key0, (String) null);
-<span class="nocode"><a name="4">  4: </a></span>featurePredicateVector0.add(featureKeyQualifierPredicate0);
-<span class="nocode"><a name="5">  5: </a></span>FeaturePredicateVector featurePredicateVector1 = featurePredicateVector0.copy();
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(1, featurePredicateVector1.size());
-<span class="nocode"><a name="7">  7: </a></span>assertNotSame(featurePredicateVector1, featurePredicateVector0);
-</pre>
-<h3>Test case 6</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FeaturePredicateVector featurePredicateVector0 = new FeaturePredicateVector();
-<span class="nocode"><a name="2">  2: </a></span>Key key0 = new Key(&quot;&quot;);
 <span class="nocode"><a name="3">  3: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate(key0, &quot;&quot;, &quot;&quot;);
 <span class="nocode"><a name="4">  4: </a></span>featurePredicateVector0.add(featureKeyQualifierPredicate0);
 <span class="nocode"><a name="5">  5: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate1 = (FeatureKeyQualifierPredicate)featurePredicateVector0.elementAt(0);
 <span class="nocode"><a name="6">  6: </a></span>assertSame(featureKeyQualifierPredicate1, featureKeyQualifierPredicate0);
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FeaturePredicateVector featurePredicateVector0 = new FeaturePredicateVector();
+<span class="nocode"><a name="2">  2: </a></span>featurePredicateVector0.add((FeaturePredicate) null);
+<span class="nocode"><a name="3">  3: </a></span>featurePredicateVector0.add((FeaturePredicate) null);
+<span class="nocode"><a name="4">  4: </a></span>FeaturePredicate featurePredicate0 = featurePredicateVector0.elementAt(1);
+<span class="nocode"><a name="5">  5: </a></span>assertNull(featurePredicate0);
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
@@ -95,7 +94,7 @@ uk.ac.sanger.artemis.FeaturePredicateVector
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.FeaturePredicateVector
 <li>Size: 7
-<li>Length: 22
+<li>Length: 21
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.9583333333333334
 <li>BranchCoverage: 1.0

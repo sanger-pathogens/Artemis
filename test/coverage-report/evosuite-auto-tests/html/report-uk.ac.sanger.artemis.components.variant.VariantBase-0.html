@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.components.variant.VariantBase
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.components.variant.VariantBase: 0.8378323831154785</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.components.variant.VariantBase: 0.8159462779271346</ul>
 <ul>
-<li>93.91666638456061 fitness evaluations, 0 generations, null statements, 29 tests.
+<li>105.4166663167434 fitness evaluations, 0 generations, null statements, 28 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -36,167 +36,167 @@ uk.ac.sanger.artemis.components.variant.VariantBase
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
-<span class="nocode"><a name="2">  2: </a></span>VariantBase variantBase0 = new VariantBase(vCFRecord0, (String) null);
-<span class="nocode"><a name="3">  3: </a></span>variantBase0.length();
+<span class="nocode"><a name="2">  2: </a></span>VariantBase variantBase0 = new VariantBase(vCFRecord0, &quot;0&quot;);
+<span class="nocode"><a name="3">  3: </a></span>int int0 = variantBase0.getNumberOfIndels(false);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, int0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
-<span class="nocode"><a name="2">  2: </a></span>VariantBase variantBase0 = new VariantBase(vCFRecord0, (String) null);
-<span class="nocode"><a name="3">  3: </a></span>String string0 = variantBase0.toString();
-<span class="nocode"><a name="4">  4: </a></span>assertNull(string0);
+<span class="nocode"><a name="2">  2: </a></span>VariantBase variantBase0 = new VariantBase(vCFRecord0, &quot;D&quot;);
+<span class="nocode"><a name="3">  3: </a></span>int int0 = variantBase0.length();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1, int0);
 </pre>
 <h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>VariantBase variantBase0 = new VariantBase((VCFRecord) null, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>String string0 = variantBase0.toString();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;&quot;, string0);
+</pre>
+<h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
 <span class="nocode"><a name="2">  2: </a></span>VariantBase variantBase0 = new VariantBase(vCFRecord0, (String) null);
 <span class="nocode"><a name="3">  3: </a></span>variantBase0.getNumAlleles();
 </pre>
-<h3>Test case 4</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
-<span class="nocode"><a name="2">  2: </a></span>VariantBase variantBase0 = new VariantBase(vCFRecord0, &quot;[K&quot;);
-<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = variantBase0.isDeletion(false);
-<span class="nocode"><a name="4">  4: </a></span>assertFalse(boolean0);
-</pre>
 <h3>Test case 5</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
-<span class="nocode"><a name="2">  2: </a></span>VariantBase variantBase0 = new VariantBase(vCFRecord0, &quot;[K&quot;);
-<span class="nocode"><a name="3">  3: </a></span>variantBase0.isDeletion(true);
-</pre>
-<h3>Test case 6</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
-<span class="nocode"><a name="2">  2: </a></span>VariantBase variantBase0 = new VariantBase(vCFRecord0, &quot;aV&quot;);
-<span class="nocode"><a name="3">  3: </a></span>vCFRecord0.setRef(&quot;aV&quot;);
-<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = variantBase0.isDeletion(true);
-<span class="nocode"><a name="5">  5: </a></span>assertFalse(boolean0);
-</pre>
-<h3>Test case 7</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
-<span class="nocode"><a name="2">  2: </a></span>vCFRecord0.setRef(&quot;(9Sk{&quot;);
-<span class="nocode"><a name="3">  3: </a></span>VariantBase variantBase0 = new VariantBase(vCFRecord0, &quot;[K&quot;);
-<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = variantBase0.isDeletion(true);
-<span class="nocode"><a name="5">  5: </a></span>assertTrue(boolean0);
-</pre>
-<h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
 <span class="nocode"><a name="2">  2: </a></span>VariantBase variantBase0 = new VariantBase(vCFRecord0, &quot;D&quot;);
 <span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = variantBase0.isDeletion(false);
 <span class="nocode"><a name="4">  4: </a></span>assertTrue(boolean0);
 </pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>VariantBase variantBase0 = new VariantBase((VCFRecord) null, &quot;X&quot;);
+<span class="nocode"><a name="2">  2: </a></span>variantBase0.isDeletion(true);
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
+<span class="nocode"><a name="2">  2: </a></span>VariantBase variantBase0 = new VariantBase(vCFRecord0, &quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>vCFRecord0.setRef(&quot;&quot;);
+<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = variantBase0.isDeletion(true);
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
+<span class="nocode"><a name="2">  2: </a></span>VariantBase variantBase0 = new VariantBase(vCFRecord0, &quot;org.biojava.bio.seq.impl.SimpleFeature&quot;);
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = variantBase0.isDeletion(false);
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(boolean0);
+</pre>
 <h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
-<span class="nocode"><a name="2">  2: </a></span>VariantBase variantBase0 = new VariantBase(vCFRecord0, &quot;.&quot;);
+<span class="nocode"><a name="2">  2: </a></span>VariantBase variantBase0 = new VariantBase(vCFRecord0, &quot;org.biojava.bio.seq.impl.SimpleFeature&quot;);
 <span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = variantBase0.isInsertion(false);
 <span class="nocode"><a name="4">  4: </a></span>assertFalse(boolean0);
 </pre>
 <h3>Test case 10</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
-<span class="nocode"><a name="2">  2: </a></span>VariantBase variantBase0 = new VariantBase(vCFRecord0, &quot;[K&quot;);
+<span class="nocode"><a name="2">  2: </a></span>VariantBase variantBase0 = new VariantBase(vCFRecord0, (String) null);
 <span class="nocode"><a name="3">  3: </a></span>variantBase0.isInsertion(true);
 </pre>
 <h3>Test case 11</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
-<span class="nocode"><a name="2">  2: </a></span>vCFRecord0.setRef(&quot;(9Sk{&quot;);
-<span class="nocode"><a name="3">  3: </a></span>VariantBase variantBase0 = new VariantBase(vCFRecord0, &quot;[K&quot;);
+<span class="nocode"><a name="2">  2: </a></span>VariantBase variantBase0 = new VariantBase(vCFRecord0, &quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>vCFRecord0.setRef(&quot;&quot;);
 <span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = variantBase0.isInsertion(true);
 <span class="nocode"><a name="5">  5: </a></span>assertFalse(boolean0);
 </pre>
 <h3>Test case 12</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
-<span class="nocode"><a name="2">  2: </a></span>VariantBase variantBase0 = new VariantBase(vCFRecord0, &quot;Ign#ring  D90rve tag m-ssing : &quot;);
-<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = variantBase0.isInsertion(false);
-<span class="nocode"><a name="4">  4: </a></span>assertTrue(boolean0);
+<span class="nocode"><a name="2">  2: </a></span>VariantBase variantBase0 = new VariantBase(vCFRecord0, &quot;N&amp;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>vCFRecord0.setRef(&quot;&quot;);
+<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = variantBase0.isInsertion(true);
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(boolean0);
 </pre>
 <h3>Test case 13</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
-<span class="nocode"><a name="2">  2: </a></span>VariantBase variantBase0 = new VariantBase(vCFRecord0, &quot;.&quot;);
-<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = variantBase0.isMultiAllele((-815));
+<span class="nocode"><a name="2">  2: </a></span>VariantBase variantBase0 = new VariantBase(vCFRecord0, &quot;org.biojava.bio.seq.impl.SimpleFeature&quot;);
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = variantBase0.isMultiAllele((-1841862325));
 <span class="nocode"><a name="4">  4: </a></span>assertFalse(boolean0);
 </pre>
 <h3>Test case 14</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
-<span class="nocode"><a name="2">  2: </a></span>VariantBase variantBase0 = new VariantBase(vCFRecord0, &quot;aV&quot;);
-<span class="nocode"><a name="3">  3: </a></span>Pattern pattern0 = Pattern.compile(&quot;aV&quot;, (-5457));
+<span class="nocode"><a name="2">  2: </a></span>VariantBase variantBase0 = new VariantBase(vCFRecord0, &quot;N&amp;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Pattern pattern0 = VCFRecord.COLON_PATTERN;
 <span class="nocode"><a name="4">  4: </a></span>VCFRecord.MULTI_ALLELE_PATTERN = pattern0;
-<span class="nocode"><a name="5">  5: </a></span>boolean boolean0 = variantBase0.isMultiAllele((-5457));
-<span class="nocode"><a name="6">  6: </a></span>assertTrue(boolean0);
+<span class="nocode"><a name="5">  5: </a></span>Pattern pattern1 = Pattern.compile(&quot;N&amp;&quot;, 0);
+<span class="nocode"><a name="6">  6: </a></span>VCFRecord.MULTI_ALLELE_PATTERN = pattern1;
+<span class="nocode"><a name="7">  7: </a></span>boolean boolean0 = variantBase0.isMultiAllele(2);
+<span class="nocode"><a name="8">  8: </a></span>assertTrue(boolean0);
 </pre>
 <h3>Test case 15</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
-<span class="nocode"><a name="2">  2: </a></span>VariantBase variantBase0 = new VariantBase(vCFRecord0, &quot;[K&quot;);
-<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = variantBase0.isMultiAllele(44);
+<span class="nocode"><a name="2">  2: </a></span>VariantBase variantBase0 = new VariantBase(vCFRecord0, &quot;org.biojava.bio.seq.impl.SimpleFeature&quot;);
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = variantBase0.isMultiAllele(337);
 <span class="nocode"><a name="4">  4: </a></span>assertFalse(boolean0);
 </pre>
 <h3>Test case 16</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
-<span class="nocode"><a name="2">  2: </a></span>VariantBase variantBase0 = new VariantBase(vCFRecord0, &quot;D&quot;);
+<span class="nocode"><a name="2">  2: </a></span>VariantBase variantBase0 = new VariantBase(vCFRecord0, &quot;org.biojava.bio.seq.impl.SimpleFeature&quot;);
 <span class="nocode"><a name="3">  3: </a></span>int int0 = variantBase0.getNumberOfIndels(false);
 <span class="nocode"><a name="4">  4: </a></span>assertEquals(0, int0);
 </pre>
 <h3>Test case 17</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
-<span class="nocode"><a name="2">  2: </a></span>VariantBase variantBase0 = new VariantBase(vCFRecord0, &quot;[K&quot;);
+<span class="nocode"><a name="2">  2: </a></span>VariantBase variantBase0 = new VariantBase(vCFRecord0, &quot;D&quot;);
 <span class="nocode"><a name="3">  3: </a></span>variantBase0.getNumberOfIndels(true);
 </pre>
 <h3>Test case 18</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>VariantBase variantBase0 = new VariantBase((VCFRecord) null, &quot;Plot Options:&quot;);
-<span class="nocode"><a name="2">  2: </a></span>int int0 = variantBase0.getNumberOfIndels(false);
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, int0);
+<span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
+<span class="nocode"><a name="2">  2: </a></span>VariantBase variantBase0 = new VariantBase(vCFRecord0, &quot;D&quot;);
+<span class="nocode"><a name="3">  3: </a></span>int int0 = variantBase0.getNumberOfIndels(false);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, int0);
 </pre>
 <h3>Test case 19</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
-<span class="nocode"><a name="2">  2: </a></span>VariantBase variantBase0 = new VariantBase(vCFRecord0, &quot;.&quot;);
-<span class="nocode"><a name="3">  3: </a></span>variantBase0.isNonVariant();
-</pre>
-<h3>Test case 20</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
-<span class="nocode"><a name="2">  2: </a></span>VariantBase variantBase0 = new VariantBase(vCFRecord0, &quot;[K&quot;);
+<span class="nocode"><a name="2">  2: </a></span>VariantBase variantBase0 = new VariantBase(vCFRecord0, &quot;D&quot;);
 <span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = variantBase0.isNonVariant();
 <span class="nocode"><a name="4">  4: </a></span>assertFalse(boolean0);
 </pre>
+<h3>Test case 20</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>VariantBase variantBase0 = new VariantBase((VCFRecord) null, (String) null);
+<span class="nocode"><a name="2">  2: </a></span>variantBase0.isMultiAllele(3434);
+</pre>
 <h3>Test case 21</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>VariantBase variantBase0 = new VariantBase((VCFRecord) null, &quot;Plot Options:&quot;);
-<span class="nocode"><a name="2">  2: </a></span>variantBase0.isMultiAllele(0);
+<span class="nocode"><a name="1">  1: </a></span>VariantBase variantBase0 = new VariantBase((VCFRecord) null, (String) null);
+<span class="nocode"><a name="2">  2: </a></span>variantBase0.isNonVariant();
 </pre>
 <h3>Test case 22</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
-<span class="nocode"><a name="2">  2: </a></span>VariantBase variantBase0 = new VariantBase(vCFRecord0, &quot;&quot;);
-<span class="nocode"><a name="3">  3: </a></span>int int0 = variantBase0.getNumAlleles();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(2, int0);
+<span class="nocode"><a name="2">  2: </a></span>VariantBase variantBase0 = new VariantBase(vCFRecord0, (String) null);
+<span class="nocode"><a name="3">  3: </a></span>variantBase0.length();
 </pre>
 <h3>Test case 23</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
-<span class="nocode"><a name="2">  2: </a></span>vCFRecord0.setRef(&quot;(9Sk{&quot;);
-<span class="nocode"><a name="3">  3: </a></span>VariantBase variantBase0 = new VariantBase(vCFRecord0, &quot;[K&quot;);
-<span class="nocode"><a name="4">  4: </a></span>int int0 = variantBase0.getNumberOfIndels(true);
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(3, int0);
+<span class="nocode"><a name="2">  2: </a></span>VariantBase variantBase0 = new VariantBase(vCFRecord0, &quot;!+HqQY+q&gt;aeSD]1A&quot;);
+<span class="nocode"><a name="3">  3: </a></span>int int0 = variantBase0.getNumAlleles();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(2, int0);
 </pre>
 <h3>Test case 24</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
-<span class="nocode"><a name="2">  2: </a></span>VariantBase variantBase0 = new VariantBase(vCFRecord0, &quot;aV&quot;);
-<span class="nocode"><a name="3">  3: </a></span>int int0 = variantBase0.length();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(2, int0);
+<span class="nocode"><a name="2">  2: </a></span>VariantBase variantBase0 = new VariantBase(vCFRecord0, &quot;N&amp;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>vCFRecord0.setRef(&quot;&quot;);
+<span class="nocode"><a name="4">  4: </a></span>int int0 = variantBase0.getNumberOfIndels(true);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(2, int0);
 </pre>
 <h3>Test case 25</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
@@ -208,29 +208,21 @@ uk.ac.sanger.artemis.components.variant.VariantBase
 <h3>Test case 26</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
-<span class="nocode"><a name="2">  2: </a></span>VariantBase variantBase0 = new VariantBase(vCFRecord0, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>VariantBase variantBase0 = new VariantBase(vCFRecord0, &quot;!+HqQY+q&gt;aeSD]1A&quot;);
 <span class="nocode"><a name="3">  3: </a></span>String string0 = variantBase0.toString();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;&quot;, string0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;!+HqQY+q&gt;aeSD]1A&quot;, string0);
 </pre>
 <h3>Test case 27</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
-<span class="nocode"><a name="2">  2: </a></span>VariantBase variantBase0 = new VariantBase(vCFRecord0, &quot;aV&quot;);
-<span class="nocode"><a name="3">  3: </a></span>String string0 = variantBase0.toString();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;aV&quot;, string0);
+<span class="nocode"><a name="2">  2: </a></span>VariantBase variantBase0 = new VariantBase(vCFRecord0, &quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = variantBase0.isMultiAllele(0);
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(boolean0);
 </pre>
 <h3>Test case 28</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
-<span class="nocode"><a name="2">  2: </a></span>VariantBase variantBase0 = new VariantBase(vCFRecord0, &quot;aV&quot;);
-<span class="nocode"><a name="3">  3: </a></span>vCFRecord0.setRef(&quot;aV&quot;);
-<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = variantBase0.isInsertion(true);
-<span class="nocode"><a name="5">  5: </a></span>assertFalse(boolean0);
-</pre>
-<h3>Test case 29</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
-<span class="nocode"><a name="2">  2: </a></span>VariantBase variantBase0 = new VariantBase(vCFRecord0, &quot;Ign#ring  D90rve tag m-ssing : &quot;);
+<span class="nocode"><a name="2">  2: </a></span>VariantBase variantBase0 = new VariantBase(vCFRecord0, &quot;!+HqQY+q&gt;aeSD]1A&quot;);
 <span class="nocode"><a name="3">  3: </a></span>int int0 = variantBase0.getNumberOfIndels(false);
 <span class="nocode"><a name="4">  4: </a></span>assertEquals(0, int0);
 </pre>
@@ -245,13 +237,13 @@ uk.ac.sanger.artemis.components.variant.VariantBase
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.variant.VariantBase
-<li>Size: 29
-<li>Length: 92
+<li>Size: 28
+<li>Length: 88
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.8378323831154785
-<li>BranchCoverage: 0.6904761904761905
+<li>Coverage: 0.8159462779271346
+<li>BranchCoverage: 0.6428571428571429
 <li>MethodCoverage: 1.0
-<li>OutputCoverage: 0.75
+<li>OutputCoverage: 0.7
 </ul></div>
 </div>
 <p><br><a href="../report-generation.html">Back to Overview</a></p>

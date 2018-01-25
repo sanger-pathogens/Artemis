@@ -23,7 +23,7 @@ uk.ac.sanger.artemis.io.Qualifier
 <br><br><h2 class=title>Summary</h2>
 <ul><li>Target class: uk.ac.sanger.artemis.io.Qualifier: 0.9293831168831169</ul>
 <ul>
-<li>7.75 fitness evaluations, 0 generations, null statements, 13 tests.
+<li>7.833333333333333 fitness evaluations, 0 generations, null statements, 13 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,82 +35,80 @@ uk.ac.sanger.artemis.io.Qualifier
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier((String) null, (String) null);
-<span class="nocode"><a name="2">  2: </a></span>qualifier0.addValue((String) null);
-<span class="nocode"><a name="3">  3: </a></span>assertNull(qualifier0.getName());
+<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier(&quot;IegCrxXVkDB2ggYzkx&quot;, &quot;IegCrxXVkDB2ggYzkx&quot;);
+<span class="nocode"><a name="2">  2: </a></span>StringVector stringVector0 = new StringVector(&quot;IegCrxXVkDB2ggYzkx&quot;);
+<span class="nocode"><a name="3">  3: </a></span>qualifier0.addValues(stringVector0);
+<span class="nocode"><a name="4">  4: </a></span>qualifier0.removeValue(&quot;IegCrxXVkDB2ggYzkx&quot;);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;IegCrxXVkDB2ggYzkx&quot;, qualifier0.getName());
 </pre>
 <h3>Test case 2</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier();
-<span class="nocode"><a name="2">  2: </a></span>qualifier0.addValues((StringVector) null);
-<span class="nocode"><a name="3">  3: </a></span>assertNull(qualifier0.getName());
-</pre>
-<h3>Test case 3</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>StringVector stringVector0 = new StringVector();
-<span class="nocode"><a name="2">  2: </a></span>Qualifier qualifier0 = new Qualifier(&quot;=&gt;2@B_?`&quot;, stringVector0);
-</pre>
-<h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier(&quot;&quot;);
 <span class="nocode"><a name="2">  2: </a></span>Qualifier qualifier1 = qualifier0.copy();
 <span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;&quot;, qualifier1.getName());
 </pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier();
+<span class="nocode"><a name="2">  2: </a></span>qualifier0.addValues((StringVector) null);
+<span class="nocode"><a name="3">  3: </a></span>assertNull(qualifier0.getName());
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>StringVector stringVector0 = new StringVector();
+<span class="nocode"><a name="2">  2: </a></span>Qualifier qualifier0 = new Qualifier(&quot;eWS`-^SGCF&gt;na2T&quot;, stringVector0);
+</pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>StringVector stringVector0 = new StringVector(&quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Qualifier qualifier0 = new Qualifier(&quot;internal error - zero length values vector&quot;, stringVector0);
-<span class="nocode"><a name="3">  3: </a></span>qualifier0.removeValue(&quot;6|q,&quot;);
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;internal error - zero length values vector&quot;, qualifier0.getName());
+<span class="nocode"><a name="1">  1: </a></span>StringVector stringVector0 = new StringVector(&quot;g*fb7ko1&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Qualifier qualifier0 = new Qualifier(&quot;g*fb7ko1&quot;, stringVector0);
+<span class="nocode"><a name="3">  3: </a></span>StringVector stringVector1 = qualifier0.getValues();
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(stringVector1.equals((Object)stringVector0));
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier(&quot;internal error - zero length values vector&quot;, &quot;internal error - zero length values vector&quot;);
-<span class="nocode"><a name="2">  2: </a></span>qualifier0.removeValue(&quot;internal error - zero length values vector&quot;);
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;internal error - zero length values vector&quot;, qualifier0.getName());
+<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier(&quot;IegCrxXVkDB2ggYzkx&quot;, &quot;IegCrxXVkDB2ggYzkx&quot;);
+<span class="nocode"><a name="2">  2: </a></span>qualifier0.addValue(&quot;IegCrxXVkDB2ggYzkx&quot;);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;IegCrxXVkDB2ggYzkx&quot;, qualifier0.getName());
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier(&quot;|YT9@:2B@vya&quot;);
-<span class="nocode"><a name="2">  2: </a></span>String string0 = qualifier0.getName();
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;|YT9@:2B@vya&quot;, string0);
+<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier();
+<span class="nocode"><a name="2">  2: </a></span>qualifier0.addValue(&quot;d1z{uul&quot;);
+<span class="nocode"><a name="3">  3: </a></span>assertNull(qualifier0.getName());
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier(&quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>StringVector stringVector0 = qualifier0.getValues();
-<span class="nocode"><a name="3">  3: </a></span>assertNull(stringVector0);
+<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier(&quot;IegCrxXVkDB2ggYzkx&quot;, &quot;IegCrxXVkDB2ggYzkx&quot;);
+<span class="nocode"><a name="2">  2: </a></span>qualifier0.removeValue(&quot;IegCrxXVkDB2ggYzkx&quot;);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;IegCrxXVkDB2ggYzkx&quot;, qualifier0.getName());
 </pre>
 <h3>Test case 9</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier(&quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>qualifier0.addValue(&quot;&quot;);
-<span class="nocode"><a name="3">  3: </a></span>StringVector stringVector0 = qualifier0.getValues();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(1, stringVector0.capacity());
-</pre>
-<h3>Test case 10</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>StringVector stringVector0 = new StringVector(&quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Qualifier qualifier0 = new Qualifier(&quot;internal error - zero length values vector&quot;, stringVector0);
-<span class="nocode"><a name="3">  3: </a></span>stringVector0.setSize(4164);
-<span class="nocode"><a name="4">  4: </a></span>qualifier0.addValues(stringVector0);
-<span class="nocode"><a name="5">  5: </a></span>qualifier0.addValues(stringVector0);
-<span class="nocode"><a name="6">  6: </a></span>qualifier0.addValues(stringVector0);
-</pre>
-<h3>Test case 11</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier(&quot;ZK&quot;);
-<span class="nocode"><a name="2">  2: </a></span>qualifier0.removeValue(&quot;ZK&quot;);
-</pre>
-<h3>Test case 12</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier(&quot;&quot;);
 <span class="nocode"><a name="2">  2: </a></span>String string0 = qualifier0.getName();
 <span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;&quot;, string0);
 </pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier();
+<span class="nocode"><a name="2">  2: </a></span>StringVector stringVector0 = qualifier0.getValues();
+<span class="nocode"><a name="3">  3: </a></span>assertNull(stringVector0);
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier();
+<span class="nocode"><a name="2">  2: </a></span>qualifier0.removeValue(&quot;&quot;);
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier(&quot;IegCrxXVkDB2ggYzkx&quot;, &quot;IegCrxXVkDB2ggYzkx&quot;);
+<span class="nocode"><a name="2">  2: </a></span>String string0 = qualifier0.getName();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;IegCrxXVkDB2ggYzkx&quot;, string0);
+</pre>
 <h3>Test case 13</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier((String) null, (String) null);
+<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier();
 <span class="nocode"><a name="2">  2: </a></span>String string0 = qualifier0.getName();
 <span class="nocode"><a name="3">  3: </a></span>assertNull(string0);
 </pre>
@@ -126,7 +124,7 @@ uk.ac.sanger.artemis.io.Qualifier
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.io.Qualifier
 <li>Size: 13
-<li>Length: 32
+<li>Length: 29
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.9293831168831169
 <li>BranchCoverage: 1.0

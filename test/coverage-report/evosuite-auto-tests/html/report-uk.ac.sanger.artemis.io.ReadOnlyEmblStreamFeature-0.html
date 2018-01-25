@@ -23,7 +23,7 @@ uk.ac.sanger.artemis.io.ReadOnlyEmblStreamFeature
 <br><br><h2 class=title>Summary</h2>
 <ul><li>Target class: uk.ac.sanger.artemis.io.ReadOnlyEmblStreamFeature: 0.500046685340803</ul>
 <ul>
-<li>37.0 fitness evaluations, 0 generations, null statements, 9 tests.
+<li>40.0 fitness evaluations, 0 generations, null statements, 9 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,72 +35,75 @@ uk.ac.sanger.artemis.io.ReadOnlyEmblStreamFeature
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Key key0 = Key.CDS;
+<span class="nocode"><a name="1">  1: </a></span>Key key0 = new Key(&quot;&quot;);
 <span class="nocode"><a name="2">  2: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
 <span class="nocode"><a name="3">  3: </a></span>ReadOnlyEmblStreamFeature readOnlyEmblStreamFeature0 = new ReadOnlyEmblStreamFeature(key0, (Location) null, qualifierVector0);
-<span class="nocode"><a name="4">  4: </a></span>readOnlyEmblStreamFeature0.setKey(key0);
+<span class="nocode"><a name="4">  4: </a></span>readOnlyEmblStreamFeature0.setQualifiers(qualifierVector0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(1253);
-<span class="nocode"><a name="2">  2: </a></span>Location location0 = new Location(range0);
+<span class="nocode"><a name="1">  1: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
+<span class="nocode"><a name="2">  2: </a></span>MSPcrunchDocumentEntry mSPcrunchDocumentEntry0 = new MSPcrunchDocumentEntry((EntryInformation) null);
 <span class="nocode"><a name="3">  3: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
 <span class="nocode"><a name="4">  4: </a></span>Key key0 = blastEntryInformation0.getDefaultKey();
-<span class="nocode"><a name="5">  5: </a></span>ReadOnlyEmblStreamFeature readOnlyEmblStreamFeature0 = new ReadOnlyEmblStreamFeature(key0, location0, (QualifierVector) null);
-<span class="nocode"><a name="6">  6: </a></span>readOnlyEmblStreamFeature0.setDocumentEntry((DocumentEntry) null);
+<span class="nocode"><a name="5">  5: </a></span>ReadOnlyEmblStreamFeature readOnlyEmblStreamFeature0 = new ReadOnlyEmblStreamFeature(key0, (Location) null, qualifierVector0);
+<span class="nocode"><a name="6">  6: </a></span>readOnlyEmblStreamFeature0.setDocumentEntry(mSPcrunchDocumentEntry0);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Key key0 = Key.CDS;
-<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(1788);
-<span class="nocode"><a name="3">  3: </a></span>Location location0 = new Location(range0);
-<span class="nocode"><a name="4">  4: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
-<span class="nocode"><a name="5">  5: </a></span>ReadOnlyEmblStreamFeature readOnlyEmblStreamFeature0 = new ReadOnlyEmblStreamFeature(key0, location0, qualifierVector0);
-<span class="nocode"><a name="6">  6: </a></span>readOnlyEmblStreamFeature0.set(key0, location0, qualifierVector0);
+<span class="nocode"><a name="2">  2: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
+<span class="nocode"><a name="3">  3: </a></span>ReadOnlyEmblStreamFeature readOnlyEmblStreamFeature0 = new ReadOnlyEmblStreamFeature(key0, (Location) null, qualifierVector0);
+<span class="nocode"><a name="4">  4: </a></span>readOnlyEmblStreamFeature0.set(key0, (Location) null, (QualifierVector) null);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
-<span class="nocode"><a name="2">  2: </a></span>ReadOnlyEmblStreamFeature readOnlyEmblStreamFeature0 = new ReadOnlyEmblStreamFeature((Key) null, (Location) null, qualifierVector0);
-<span class="nocode"><a name="3">  3: </a></span>readOnlyEmblStreamFeature0.setLocation((Location) null);
+<span class="nocode"><a name="1">  1: </a></span>Key key0 = new Key(&quot;&quot;, false);
+<span class="nocode"><a name="2">  2: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
+<span class="nocode"><a name="3">  3: </a></span>ReadOnlyEmblStreamFeature readOnlyEmblStreamFeature0 = new ReadOnlyEmblStreamFeature(key0, (Location) null, qualifierVector0);
+<span class="nocode"><a name="4">  4: </a></span>readOnlyEmblStreamFeature0.setKey(key0);
 </pre>
 <h3>Test case 5</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Key key0 = new Key((String) null, false);
-<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(2860);
-<span class="nocode"><a name="3">  3: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
-<span class="nocode"><a name="4">  4: </a></span>Location location0 = new Location(rangeVector0, false);
-<span class="nocode"><a name="5">  5: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
-<span class="nocode"><a name="6">  6: </a></span>ReadOnlyEmblStreamFeature readOnlyEmblStreamFeature0 = new ReadOnlyEmblStreamFeature(key0, location0, qualifierVector0);
-<span class="nocode"><a name="7">  7: </a></span>readOnlyEmblStreamFeature0.setQualifiers((QualifierVector) null);
-</pre>
-<h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Key key0 = Key.CDS;
 <span class="nocode"><a name="2">  2: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
 <span class="nocode"><a name="3">  3: </a></span>ReadOnlyEmblStreamFeature readOnlyEmblStreamFeature0 = new ReadOnlyEmblStreamFeature(key0, (Location) null, qualifierVector0);
-<span class="nocode"><a name="4">  4: </a></span>Qualifier qualifier0 = new Qualifier(&quot;dUWi9 ~&quot;);
+<span class="nocode"><a name="4">  4: </a></span>readOnlyEmblStreamFeature0.setLocation((Location) null);
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Key key0 = new Key((String) null);
+<span class="nocode"><a name="2">  2: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
+<span class="nocode"><a name="3">  3: </a></span>ReadOnlyEmblStreamFeature readOnlyEmblStreamFeature0 = new ReadOnlyEmblStreamFeature(key0, (Location) null, qualifierVector0);
+<span class="nocode"><a name="4">  4: </a></span>Qualifier qualifier0 = new Qualifier((String) null, &quot;ISoM*h%V)P'j&quot;);
 <span class="nocode"><a name="5">  5: </a></span>readOnlyEmblStreamFeature0.setQualifier(qualifier0);
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
-<span class="nocode"><a name="2">  2: </a></span>ReadOnlyEmblStreamFeature readOnlyEmblStreamFeature0 = new ReadOnlyEmblStreamFeature((Key) null, (Location) null, qualifierVector0);
-<span class="nocode"><a name="3">  3: </a></span>readOnlyEmblStreamFeature0.removeQualiferByName(&quot;&quot;);
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = blastEntryInformation0.getDefaultKey();
+<span class="nocode"><a name="3">  3: </a></span>Range range0 = new Range(3121, 3121);
+<span class="nocode"><a name="4">  4: </a></span>Location location0 = new Location(range0);
+<span class="nocode"><a name="5">  5: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
+<span class="nocode"><a name="6">  6: </a></span>ReadOnlyEmblStreamFeature readOnlyEmblStreamFeature0 = new ReadOnlyEmblStreamFeature(key0, location0, qualifierVector0);
+<span class="nocode"><a name="7">  7: </a></span>readOnlyEmblStreamFeature0.removeQualiferByName(&quot;*?4-}1WLs{5b_&quot;);
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Key key0 = Key.CDS;
-<span class="nocode"><a name="2">  2: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
-<span class="nocode"><a name="3">  3: </a></span>ReadOnlyEmblStreamFeature readOnlyEmblStreamFeature0 = new ReadOnlyEmblStreamFeature(key0, (Location) null, qualifierVector0);
-<span class="nocode"><a name="4">  4: </a></span>Qualifier qualifier0 = new Qualifier(&quot;uH*8!:exWp&quot;, &quot;uH*8!:exWp&quot;);
-<span class="nocode"><a name="5">  5: </a></span>readOnlyEmblStreamFeature0.addQualifierValues(qualifier0);
+<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(3121, 3121);
+<span class="nocode"><a name="3">  3: </a></span>Location location0 = new Location(range0);
+<span class="nocode"><a name="4">  4: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
+<span class="nocode"><a name="5">  5: </a></span>ReadOnlyEmblStreamFeature readOnlyEmblStreamFeature0 = new ReadOnlyEmblStreamFeature(key0, location0, qualifierVector0);
+<span class="nocode"><a name="6">  6: </a></span>Qualifier qualifier0 = new Qualifier(&quot;)g[a?&quot;, &quot;{Q E&quot;);
+<span class="nocode"><a name="7">  7: </a></span>readOnlyEmblStreamFeature0.addQualifierValues(qualifier0);
 </pre>
 <h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
-<span class="nocode"><a name="2">  2: </a></span>qualifierVector0.add((Qualifier) null);
-<span class="nocode"><a name="3">  3: </a></span>ReadOnlyEmblStreamFeature readOnlyEmblStreamFeature0 = new ReadOnlyEmblStreamFeature((Key) null, (Location) null, qualifierVector0);
+<span class="nocode"><a name="1">  1: </a></span>Key key0 = new Key(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
+<span class="nocode"><a name="3">  3: </a></span>qualifierVector0.add((Qualifier) null);
+<span class="nocode"><a name="4">  4: </a></span>ReadOnlyEmblStreamFeature readOnlyEmblStreamFeature0 = new ReadOnlyEmblStreamFeature(key0, (Location) null, qualifierVector0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -114,7 +117,7 @@ uk.ac.sanger.artemis.io.ReadOnlyEmblStreamFeature
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.io.ReadOnlyEmblStreamFeature
 <li>Size: 9
-<li>Length: 42
+<li>Length: 45
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.500046685340803
 <li>BranchCoverage: 0.7058823529411765

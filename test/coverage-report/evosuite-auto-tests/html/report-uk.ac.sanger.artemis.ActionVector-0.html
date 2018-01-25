@@ -23,7 +23,7 @@ uk.ac.sanger.artemis.ActionVector
 <br><br><h2 class=title>Summary</h2>
 <ul><li>Target class: uk.ac.sanger.artemis.ActionVector: 0.9119123931623931</ul>
 <ul>
-<li>9.045238095238096 fitness evaluations, 0 generations, null statements, 11 tests.
+<li>9.441176470588236 fitness evaluations, 0 generations, null statements, 10 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -52,11 +52,56 @@ uk.ac.sanger.artemis.ActionVector
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>ActionVector actionVector0 = new ActionVector();
+<span class="nocode"><a name="2">  2: </a></span>Action action0 = new Action();
+<span class="nocode"><a name="3">  3: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;,Dj[g79&quot;, &quot;,Dj[g79&quot;);
+<span class="nocode"><a name="4">  4: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="5">  5: </a></span>Entry entry0 = Entry.newEntry(bases0);
+<span class="nocode"><a name="6">  6: </a></span>EntryChangeEvent entryChangeEvent0 = new EntryChangeEvent(entry0, (Feature) null, 1);
+<span class="nocode"><a name="7">  7: </a></span>action0.addEntryChangeEvent(entryChangeEvent0);
+<span class="nocode"><a name="8">  8: </a></span>actionVector0.add(action0);
+<span class="nocode"><a name="9">  9: </a></span>actionVector0.elementAt(0);
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ActionVector actionVector0 = new ActionVector();
+<span class="nocode"><a name="2">  2: </a></span>Action action0 = new Action();
+<span class="nocode"><a name="3">  3: </a></span>actionVector0.add(action0);
+<span class="nocode"><a name="4">  4: </a></span>Action action1 = actionVector0.elementAt(0);
+<span class="nocode"><a name="5">  5: </a></span>assertSame(action1, action0);
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ActionVector actionVector0 = new ActionVector();
 <span class="nocode"><a name="2">  2: </a></span>actionVector0.add((Action) null);
 <span class="nocode"><a name="3">  3: </a></span>Action action0 = actionVector0.elementAt(0);
 <span class="nocode"><a name="4">  4: </a></span>assertNull(action0);
 </pre>
-<h3>Test case 5</h3>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ActionVector actionVector0 = new ActionVector();
+<span class="nocode"><a name="2">  2: </a></span>Action action0 = new Action();
+<span class="nocode"><a name="3">  3: </a></span>actionVector0.add(action0);
+<span class="nocode"><a name="4">  4: </a></span>EntryChangeEvent entryChangeEvent0 = new EntryChangeEvent(action0, (Entry) null, 0);
+<span class="nocode"><a name="5">  5: </a></span>action0.addEntryChangeEvent(entryChangeEvent0);
+<span class="nocode"><a name="6">  6: </a></span>Action action1 = actionVector0.removeAndReturnLast();
+<span class="nocode"><a name="7">  7: </a></span>assertSame(action1, action0);
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ActionVector actionVector0 = new ActionVector();
+<span class="nocode"><a name="2">  2: </a></span>actionVector0.add((Action) null);
+<span class="nocode"><a name="3">  3: </a></span>Action action0 = actionVector0.removeAndReturnLast();
+<span class="nocode"><a name="4">  4: </a></span>assertNull(action0);
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ActionVector actionVector0 = new ActionVector();
+<span class="nocode"><a name="2">  2: </a></span>Action action0 = new Action();
+<span class="nocode"><a name="3">  3: </a></span>actionVector0.add(action0);
+<span class="nocode"><a name="4">  4: </a></span>int int0 = actionVector0.size();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(1, int0);
+</pre>
+<h3>Test case 10</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>ActionVector actionVector0 = new ActionVector();
 <span class="nocode"><a name="2">  2: </a></span>Action action0 = new Action();
@@ -64,65 +109,6 @@ uk.ac.sanger.artemis.ActionVector
 <span class="nocode"><a name="4">  4: </a></span>actionVector0.add(action0);
 <span class="nocode"><a name="5">  5: </a></span>actionVector0.removeAndReturnLast();
 <span class="nocode"><a name="6">  6: </a></span>assertEquals(1, actionVector0.size());
-</pre>
-<h3>Test case 6</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>ActionVector actionVector0 = new ActionVector();
-<span class="nocode"><a name="2">  2: </a></span>Action action0 = new Action();
-<span class="nocode"><a name="3">  3: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;&quot;);
-<span class="nocode"><a name="4">  4: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
-<span class="nocode"><a name="5">  5: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="6">  6: </a></span>Entry entry0 = simpleEntryGroup0.createEntry();
-<span class="nocode"><a name="7">  7: </a></span>EntryChangeEvent entryChangeEvent0 = new EntryChangeEvent(action0, entry0, 0);
-<span class="nocode"><a name="8">  8: </a></span>action0.addChangeEvent(entryChangeEvent0);
-<span class="nocode"><a name="9">  9: </a></span>actionVector0.add(action0);
-<span class="nocode"><a name="10"> 10: </a></span>Action action1 = actionVector0.elementAt(0);
-<span class="nocode"><a name="11"> 11: </a></span>assertSame(action1, action0);
-</pre>
-<h3>Test case 7</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>ActionVector actionVector0 = new ActionVector();
-<span class="nocode"><a name="2">  2: </a></span>Action action0 = new Action();
-<span class="nocode"><a name="3">  3: </a></span>actionVector0.add(action0);
-<span class="nocode"><a name="4">  4: </a></span>Action action1 = actionVector0.elementAt(0);
-<span class="nocode"><a name="5">  5: </a></span>assertTrue(action1.isEmpty());
-</pre>
-<h3>Test case 8</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>ActionVector actionVector0 = new ActionVector();
-<span class="nocode"><a name="2">  2: </a></span>Action action0 = new Action();
-<span class="nocode"><a name="3">  3: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;&quot;);
-<span class="nocode"><a name="4">  4: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
-<span class="nocode"><a name="5">  5: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="6">  6: </a></span>Entry entry0 = simpleEntryGroup0.createEntry();
-<span class="nocode"><a name="7">  7: </a></span>EntryChangeEvent entryChangeEvent0 = new EntryChangeEvent(action0, entry0, 0);
-<span class="nocode"><a name="8">  8: </a></span>action0.addChangeEvent(entryChangeEvent0);
-<span class="nocode"><a name="9">  9: </a></span>actionVector0.add(action0);
-<span class="nocode"><a name="10"> 10: </a></span>Action action1 = actionVector0.removeAndReturnLast();
-<span class="nocode"><a name="11"> 11: </a></span>assertSame(action1, action0);
-</pre>
-<h3>Test case 9</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>ActionVector actionVector0 = new ActionVector();
-<span class="nocode"><a name="2">  2: </a></span>Action action0 = new Action();
-<span class="nocode"><a name="3">  3: </a></span>actionVector0.add(action0);
-<span class="nocode"><a name="4">  4: </a></span>Action action1 = actionVector0.removeAndReturnLast();
-<span class="nocode"><a name="5">  5: </a></span>assertTrue(action1.isEmpty());
-</pre>
-<h3>Test case 10</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>ActionVector actionVector0 = new ActionVector();
-<span class="nocode"><a name="2">  2: </a></span>actionVector0.add((Action) null);
-<span class="nocode"><a name="3">  3: </a></span>Action action0 = actionVector0.removeAndReturnLast();
-<span class="nocode"><a name="4">  4: </a></span>assertNull(action0);
-</pre>
-<h3>Test case 11</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>ActionVector actionVector0 = new ActionVector();
-<span class="nocode"><a name="2">  2: </a></span>Action action0 = new Action();
-<span class="nocode"><a name="3">  3: </a></span>actionVector0.add(action0);
-<span class="nocode"><a name="4">  4: </a></span>int int0 = actionVector0.size();
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(1, int0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -135,8 +121,8 @@ uk.ac.sanger.artemis.ActionVector
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.ActionVector
-<li>Size: 11
-<li>Length: 49
+<li>Size: 10
+<li>Length: 40
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.9119123931623931
 <li>BranchCoverage: 0.875

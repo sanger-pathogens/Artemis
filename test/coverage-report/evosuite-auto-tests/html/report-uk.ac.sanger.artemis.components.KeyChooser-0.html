@@ -35,12 +35,15 @@ uk.ac.sanger.artemis.components.KeyChooser
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>KeyChooser keyChooser0 = new KeyChooser((EntryInformation) null);
+<span class="nocode"><a name="1">  1: </a></span>MSPcrunchEntryInformation mSPcrunchEntryInformation0 = new MSPcrunchEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>KeyChooser keyChooser0 = new KeyChooser(mSPcrunchEntryInformation0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Key key0 = new Key(&quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>KeyChooser keyChooser0 = new KeyChooser((EntryInformation) null, key0);
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = (SimpleEntryInformation)SimpleEntryInformation.getDefaultEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="3">  3: </a></span>Key key0 = blastEntryInformation0.getDefaultKey();
+<span class="nocode"><a name="4">  4: </a></span>KeyChooser keyChooser0 = new KeyChooser(simpleEntryInformation0, key0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -54,7 +57,7 @@ uk.ac.sanger.artemis.components.KeyChooser
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.KeyChooser
 <li>Size: 2
-<li>Length: 3
+<li>Length: 6
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.3375
 <li>BranchCoverage: 0.2

@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.components.genebuilder.MapPanel
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.components.genebuilder.MapPanel: 0.9444444444444444</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.components.genebuilder.MapPanel: 0.9166666666666666</ul>
 <ul>
-<li>3.556937340153453 fitness evaluations, 0 generations, null statements, 10 tests.
+<li>5.897874700119282 fitness evaluations, 0 generations, null statements, 10 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -41,12 +41,12 @@ uk.ac.sanger.artemis.components.genebuilder.MapPanel
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenericDocumentType genericDocumentType0 = new GenericDocumentType(&quot;table-row&quot;, &quot;table-row&quot;, &quot;uk.ac.sanger.artemis.components.genebuilder.MapPanel&quot;);
-<span class="nocode"><a name="2">  2: </a></span>GenericDOMImplementation genericDOMImplementation0 = new GenericDOMImplementation();
+<span class="nocode"><a name="1">  1: </a></span>GenericDocumentType genericDocumentType0 = new GenericDocumentType(&quot;&gt;DLIgp671&quot;, &quot;total bases &quot;, &quot;total bases &quot;);
+<span class="nocode"><a name="2">  2: </a></span>GenericDOMImplementation genericDOMImplementation0 = (GenericDOMImplementation)GenericDOMImplementation.getDOMImplementation();
 <span class="nocode"><a name="3">  3: </a></span>GenericDocument genericDocument0 = new GenericDocument(genericDocumentType0, genericDOMImplementation0);
 <span class="nocode"><a name="4">  4: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(genericDocument0);
-<span class="nocode"><a name="5">  5: </a></span>Color color0 = Color.orange;
-<span class="nocode"><a name="6">  6: </a></span>MapPanel.drawFeature(sVGGraphics2D0, (-1731), (-2832), (short)2, color0, (short)8, true, (-1.0F), 1);
+<span class="nocode"><a name="5">  5: </a></span>MapPanel.drawFeature(sVGGraphics2D0, (-1557), 3, 75, (Color) null, 675, true, 3229.98F, (short)8);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(3, SVGGraphics2D.DEFAULT_MAX_GC_OVERRIDES);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
@@ -56,52 +56,58 @@ uk.ac.sanger.artemis.components.genebuilder.MapPanel
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenericDOMImplementation genericDOMImplementation0 = new GenericDOMImplementation();
-<span class="nocode"><a name="2">  2: </a></span>GenericDocument genericDocument0 = new GenericDocument((DocumentType) null, genericDOMImplementation0);
-<span class="nocode"><a name="3">  3: </a></span>SVGGeneratorContext sVGGeneratorContext0 = SVGGeneratorContext.createDefault(genericDocument0);
-<span class="nocode"><a name="4">  4: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(sVGGeneratorContext0, true);
-<span class="nocode"><a name="5">  5: </a></span>MapPanel.drawFeature(sVGGraphics2D0, (short)16, (-2935), 15, (Color) null, (Color) null, (-1.0F), true, (-2935), 2);
+<span class="nocode"><a name="1">  1: </a></span>GenericDocumentType genericDocumentType0 = new GenericDocumentType(&quot;] in logger [&quot;, &quot;&quot;, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>GenericDOMImplementation genericDOMImplementation0 = (GenericDOMImplementation)GenericDOMImplementation.getDOMImplementation();
+<span class="nocode"><a name="3">  3: </a></span>GenericDocument genericDocument0 = new GenericDocument(genericDocumentType0, genericDOMImplementation0);
+<span class="nocode"><a name="4">  4: </a></span>SVGGeneratorContext sVGGeneratorContext0 = SVGGeneratorContext.createDefault(genericDocument0);
+<span class="nocode"><a name="5">  5: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(sVGGeneratorContext0, false);
+<span class="nocode"><a name="6">  6: </a></span>SystemColor systemColor0 = SystemColor.menu;
+<span class="nocode"><a name="7">  7: </a></span>MapPanel.drawFeature(sVGGraphics2D0, (-610), 0, (-1603), systemColor0, 761.83F, true, (-1603), (short)1);
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenericDOMImplementation genericDOMImplementation0 = new GenericDOMImplementation();
-<span class="nocode"><a name="2">  2: </a></span>GenericDocument genericDocument0 = new GenericDocument((DocumentType) null, genericDOMImplementation0);
-<span class="nocode"><a name="3">  3: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(genericDocument0);
-<span class="nocode"><a name="4">  4: </a></span>SystemColor systemColor0 = SystemColor.inactiveCaption;
-<span class="nocode"><a name="5">  5: </a></span>MapPanel.drawFeature(sVGGraphics2D0, (short)2, (-1618), (short)1, systemColor0, (short)2, false, 75, 0);
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(128, systemColor0.getRed());
+<span class="nocode"><a name="1">  1: </a></span>GenericDocumentType genericDocumentType0 = new GenericDocumentType(&quot;&gt;DLIgp671&quot;, &quot;total bases &quot;, &quot;total bases &quot;);
+<span class="nocode"><a name="2">  2: </a></span>GenericDOMImplementation genericDOMImplementation0 = (GenericDOMImplementation)GenericDOMImplementation.getDOMImplementation();
+<span class="nocode"><a name="3">  3: </a></span>GenericDocument genericDocument0 = new GenericDocument(genericDocumentType0, genericDOMImplementation0);
+<span class="nocode"><a name="4">  4: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(genericDocument0);
+<span class="nocode"><a name="5">  5: </a></span>MapPanel.drawFeature(sVGGraphics2D0, 13, 0, (short)2, (Color) null, (Color) null, 1.0F, false, 2690.6445F, (short)32);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(3, SVGGraphics2D.DEFAULT_MAX_GC_OVERRIDES);
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SystemColor systemColor0 = SystemColor.activeCaptionBorder;
-<span class="nocode"><a name="2">  2: </a></span>MapPanel.drawFeature((Graphics2D) null, 131072, 131072, 131072, systemColor0, 0.0F, false, 1032.4309F, 131072);
+<span class="nocode"><a name="1">  1: </a></span>Color color0 = Color.RED;
+<span class="nocode"><a name="2">  2: </a></span>MapPanel.drawFeature((Graphics2D) null, 136, (-1), 0, color0, (-1), true, (-1.0F), (-1));
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Color color0 = Color.green;
-<span class="nocode"><a name="2">  2: </a></span>MapPanel.drawFeature((Graphics2D) null, (-2481), 0, 0, color0, color0, 0, false, (-946.607F), 0);
+<span class="nocode"><a name="1">  1: </a></span>GenericDocumentType genericDocumentType0 = new GenericDocumentType(&quot;^@ErYw'=[&lt;&amp;=zkF01K~&quot;, &quot;^@ErYw'=[&lt;&amp;=zkF01K~&quot;, (String) null);
+<span class="nocode"><a name="2">  2: </a></span>GenericDocument genericDocument0 = new GenericDocument(genericDocumentType0, (DOMImplementation) null);
+<span class="nocode"><a name="3">  3: </a></span>SVGGeneratorContext sVGGeneratorContext0 = SVGGeneratorContext.createDefault(genericDocument0);
+<span class="nocode"><a name="4">  4: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(sVGGeneratorContext0, true);
+<span class="nocode"><a name="5">  5: </a></span>SystemColor systemColor0 = SystemColor.menuText;
+<span class="nocode"><a name="6">  6: </a></span>MapPanel.drawFeature(sVGGraphics2D0, 75, (short)8, (short)4, systemColor0, (Color) null, 0.0F, true, (-3662), (short)2);
 </pre>
 <h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenericDocumentType genericDocumentType0 = new GenericDocumentType(&quot;&quot;, &quot;-{a&quot;, &quot;@C#czW&gt;oqx&quot;);
+<span class="nocode"><a name="2">  2: </a></span>GenericDOMImplementation genericDOMImplementation0 = new GenericDOMImplementation();
+<span class="nocode"><a name="3">  3: </a></span>GenericDocument genericDocument0 = new GenericDocument(genericDocumentType0, genericDOMImplementation0);
+<span class="nocode"><a name="4">  4: </a></span>SVGGeneratorContext sVGGeneratorContext0 = SVGGeneratorContext.createDefault(genericDocument0);
+<span class="nocode"><a name="5">  5: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(sVGGeneratorContext0, false);
+<span class="nocode"><a name="6">  6: </a></span>sVGGraphics2D0.setComposite((Composite) null);
+<span class="nocode"><a name="7">  7: </a></span>MapPanel.drawFeature(sVGGraphics2D0, 0, 3187, 0, (Color) null, (Color) null, (-1478.473F), false, (-543.09F), (-1154));
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DefaultTreeCellRenderer defaultTreeCellRenderer0 = new DefaultTreeCellRenderer();
+<span class="nocode"><a name="2">  2: </a></span>PrintColorUIResource printColorUIResource0 = (PrintColorUIResource)defaultTreeCellRenderer0.getTextNonSelectionColor();
+<span class="nocode"><a name="3">  3: </a></span>MapPanel.drawFeature((Graphics2D) null, (-664), (-664), (-664), printColorUIResource0, printColorUIResource0, 1085.24F, false, 0.0F, (-664));
+</pre>
+<h3>Test case 10</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>MapPanel mapPanel0 = new MapPanel();
 <span class="nocode"><a name="2">  2: </a></span>int int0 = mapPanel0.getFontHeight();
 <span class="nocode"><a name="3">  3: </a></span>assertEquals(15, int0);
-</pre>
-<h3>Test case 9</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MapPanel mapPanel0 = new MapPanel();
-<span class="nocode"><a name="2">  2: </a></span>MapPanel.border = (-1688);
-<span class="nocode"><a name="3">  3: </a></span>int int0 = mapPanel0.getTranscriptSize();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals((-3331), int0);
-</pre>
-<h3>Test case 10</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenericDOMImplementation genericDOMImplementation0 = new GenericDOMImplementation();
-<span class="nocode"><a name="2">  2: </a></span>GenericDocument genericDocument0 = new GenericDocument((DocumentType) null, genericDOMImplementation0);
-<span class="nocode"><a name="3">  3: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(genericDocument0);
-<span class="nocode"><a name="4">  4: </a></span>SystemColor systemColor0 = SystemColor.inactiveCaption;
-<span class="nocode"><a name="5">  5: </a></span>MapPanel.drawFeature(sVGGraphics2D0, (-1618), 0, 260, systemColor0, systemColor0, (-1686.0F), false, (-730.1542F), (short)32);
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(3, SVGGraphics2D.DEFAULT_MAX_GC_OVERRIDES);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -115,12 +121,12 @@ uk.ac.sanger.artemis.components.genebuilder.MapPanel
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.genebuilder.MapPanel
 <li>Size: 10
-<li>Length: 34
+<li>Length: 41
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.9444444444444444
+<li>Coverage: 0.9166666666666666
 <li>BranchCoverage: 1.0
 <li>MethodCoverage: 1.0
-<li>OutputCoverage: 0.4444444444444444
+<li>OutputCoverage: 0.3333333333333333
 </ul></div>
 </div>
 <p><br><a href="../report-generation.html">Back to Overview</a></p>

@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.ComparisonDataFactory
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.ComparisonDataFactory: 0.2883522727272727</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.ComparisonDataFactory: 0.24168019480519481</ul>
 <ul>
-<li>67.13333333333333 fitness evaluations, 0 generations, null statements, 5 tests.
+<li>77.25 fitness evaluations, 0 generations, null statements, 4 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -39,26 +39,18 @@ uk.ac.sanger.artemis.ComparisonDataFactory
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>StringContent stringContent0 = new StringContent();
-<span class="nocode"><a name="2">  2: </a></span>StyleContext styleContext0 = StyleContext.getDefaultStyleContext();
-<span class="nocode"><a name="3">  3: </a></span>DefaultStyledDocument defaultStyledDocument0 = new DefaultStyledDocument(stringContent0, styleContext0);
-<span class="nocode"><a name="4">  4: </a></span>JPasswordField jPasswordField0 = new JPasswordField(defaultStyledDocument0, &quot;;2H`Oa7+8W.aF4x+&gt;W&quot;, 0);
-<span class="nocode"><a name="5">  5: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;Agent not found! 'sshtools.agent' system property should identify the agent location&quot;, jPasswordField0, &quot;org.biojava.utils.ChangeVetoException&quot;, &quot;;2H`Oa7+8W.aF4x+&gt;W&quot;);
-<span class="nocode"><a name="6">  6: </a></span>ComparisonDataFactory.readComparisonData(databaseDocument0);
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;BASE&quot;);
+<span class="nocode"><a name="2">  2: </a></span>ZipFileDocument zipFileDocument0 = new ZipFileDocument(mockFile0, &quot;BASE&quot;);
+<span class="nocode"><a name="3">  3: </a></span>zipFileDocument0.getWriter();
+<span class="nocode"><a name="4">  4: </a></span>ComparisonDataFactory.readComparisonData(zipFileDocument0);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot; :: &quot;);
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;k!N&lt;+b#J1dS&quot;);
 <span class="nocode"><a name="2">  2: </a></span>FileDocument fileDocument0 = new FileDocument(mockFile0);
 <span class="nocode"><a name="3">  3: </a></span>ComparisonDataFactory.readComparisonData(fileDocument0);
 </pre>
 <h3>Test case 4</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>URL uRL0 = MockURL.getHttpExample();
-<span class="nocode"><a name="2">  2: </a></span>URLDocument uRLDocument0 = new URLDocument(uRL0);
-<span class="nocode"><a name="3">  3: </a></span>ComparisonDataFactory.readComparisonData(uRLDocument0);
-</pre>
-<h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>ComparisonDataFactory.readComparisonData((Document) null);
 </pre>
@@ -73,11 +65,11 @@ uk.ac.sanger.artemis.ComparisonDataFactory
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.ComparisonDataFactory
-<li>Size: 5
-<li>Length: 14
+<li>Size: 4
+<li>Length: 9
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.2883522727272727
-<li>BranchCoverage: 0.09090909090909091
+<li>Coverage: 0.24168019480519481
+<li>BranchCoverage: 0.18181818181818182
 <li>MethodCoverage: 1.0
 <li>OutputCoverage: 0.0
 </ul></div>

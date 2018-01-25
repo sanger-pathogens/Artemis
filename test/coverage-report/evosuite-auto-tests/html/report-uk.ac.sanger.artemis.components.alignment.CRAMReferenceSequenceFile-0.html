@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.components.alignment.CRAMReferenceSequenceFile
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.components.alignment.CRAMReferenceSequenceFile: 0.6094852792901794</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.components.alignment.CRAMReferenceSequenceFile: 0.5962988624278946</ul>
 <ul>
-<li>66.22222222222223 fitness evaluations, 0 generations, null statements, 7 tests.
+<li>71.27083333333334 fitness evaluations, 0 generations, null statements, 7 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,52 +35,48 @@ uk.ac.sanger.artemis.components.alignment.CRAMReferenceSequenceFile
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>Entry entry0 = simpleEntryGroup0.createEntry((String) null);
-<span class="nocode"><a name="3">  3: </a></span>CRAMReferenceSequenceFile cRAMReferenceSequenceFile0 = new CRAMReferenceSequenceFile(entry0, (BamView) null);
-<span class="nocode"><a name="4">  4: </a></span>cRAMReferenceSequenceFile0.close();
+<span class="nocode"><a name="1">  1: </a></span>CRAMReferenceSequenceFile cRAMReferenceSequenceFile0 = new CRAMReferenceSequenceFile((Entry) null, (BamView) null);
+<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = cRAMReferenceSequenceFile0.isReferenceIndexed();
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(boolean0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>Entry entry0 = simpleEntryGroup0.createEntry();
-<span class="nocode"><a name="3">  3: </a></span>CRAMReferenceSequenceFile cRAMReferenceSequenceFile0 = new CRAMReferenceSequenceFile(entry0, (BamView) null);
-<span class="nocode"><a name="4">  4: </a></span>SAMSequenceDictionary sAMSequenceDictionary0 = cRAMReferenceSequenceFile0.getSequenceDictionary();
-<span class="nocode"><a name="5">  5: </a></span>assertNull(sAMSequenceDictionary0);
+<span class="nocode"><a name="1">  1: </a></span>CRAMReferenceSequenceFile cRAMReferenceSequenceFile0 = new CRAMReferenceSequenceFile((Entry) null, (BamView) null);
+<span class="nocode"><a name="2">  2: </a></span>ReferenceSequence referenceSequence0 = cRAMReferenceSequenceFile0.nextSequence();
+<span class="nocode"><a name="3">  3: </a></span>assertNull(referenceSequence0);
 </pre>
 <h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>CRAMReferenceSequenceFile cRAMReferenceSequenceFile0 = new CRAMReferenceSequenceFile((Entry) null, (BamView) null);
+<span class="nocode"><a name="2">  2: </a></span>SAMSequenceDictionary sAMSequenceDictionary0 = cRAMReferenceSequenceFile0.getSequenceDictionary();
+<span class="nocode"><a name="3">  3: </a></span>assertNull(sAMSequenceDictionary0);
+</pre>
+<h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>CRAMReferenceSequenceFile cRAMReferenceSequenceFile0 = new CRAMReferenceSequenceFile((Entry) null, (BamView) null);
 <span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = cRAMReferenceSequenceFile0.isIndexed();
 <span class="nocode"><a name="3">  3: </a></span>assertTrue(boolean0);
 </pre>
-<h3>Test case 4</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>Entry entry0 = simpleEntryGroup0.createEntry((String) null);
-<span class="nocode"><a name="3">  3: </a></span>CRAMReferenceSequenceFile cRAMReferenceSequenceFile0 = new CRAMReferenceSequenceFile(entry0, (BamView) null);
-<span class="nocode"><a name="4">  4: </a></span>cRAMReferenceSequenceFile0.reset();
-<span class="nocode"><a name="5">  5: </a></span>assertTrue(cRAMReferenceSequenceFile0.isIndexed());
-</pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>CRAMReferenceSequenceFile cRAMReferenceSequenceFile0 = new CRAMReferenceSequenceFile((Entry) null, (BamView) null);
-<span class="nocode"><a name="2">  2: </a></span>cRAMReferenceSequenceFile0.getSequence(&quot;Upstream Bases Of Selected Features&quot;);
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>Entry entry0 = simpleEntryGroup0.createEntry(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>CRAMReferenceSequenceFile cRAMReferenceSequenceFile0 = new CRAMReferenceSequenceFile(entry0, (BamView) null);
+<span class="nocode"><a name="4">  4: </a></span>cRAMReferenceSequenceFile0.reset();
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>Entry entry0 = simpleEntryGroup0.createEntry();
-<span class="nocode"><a name="3">  3: </a></span>CRAMReferenceSequenceFile cRAMReferenceSequenceFile0 = new CRAMReferenceSequenceFile(entry0, (BamView) null);
-<span class="nocode"><a name="4">  4: </a></span>ReferenceSequence referenceSequence0 = cRAMReferenceSequenceFile0.nextSequence();
-<span class="nocode"><a name="5">  5: </a></span>assertNull(referenceSequence0);
+<span class="nocode"><a name="1">  1: </a></span>CRAMReferenceSequenceFile cRAMReferenceSequenceFile0 = new CRAMReferenceSequenceFile((Entry) null, (BamView) null);
+<span class="nocode"><a name="2">  2: </a></span>cRAMReferenceSequenceFile0.getSubsequenceAt(&quot;&quot;, (-128L), 4294967295L);
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>Entry entry0 = simpleEntryGroup0.createEntry((String) null);
-<span class="nocode"><a name="3">  3: </a></span>CRAMReferenceSequenceFile cRAMReferenceSequenceFile0 = new CRAMReferenceSequenceFile(entry0, (BamView) null);
-<span class="nocode"><a name="4">  4: </a></span>cRAMReferenceSequenceFile0.getSubsequenceAt((String) null, 2574L, 2574L);
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;4O1rFYpRMn'@u&gt;\&quot;e4&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Entry entry0 = simpleEntryGroup0.createEntry(&quot;&quot;);
+<span class="nocode"><a name="5">  5: </a></span>CRAMReferenceSequenceFile cRAMReferenceSequenceFile0 = new CRAMReferenceSequenceFile(entry0, (BamView) null);
+<span class="nocode"><a name="6">  6: </a></span>cRAMReferenceSequenceFile0.getSequence(&quot;4O1rFYpRMn'@u&gt;\&quot;e4&quot;);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -94,12 +90,12 @@ uk.ac.sanger.artemis.components.alignment.CRAMReferenceSequenceFile
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.alignment.CRAMReferenceSequenceFile
 <li>Size: 7
-<li>Length: 24
+<li>Length: 20
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.6094852792901794
-<li>BranchCoverage: 0.7777777777777778
-<li>MethodCoverage: 1.0
-<li>OutputCoverage: 0.10344827586206896
+<li>Coverage: 0.5962988624278946
+<li>BranchCoverage: 0.7272727272727273
+<li>MethodCoverage: 0.8888888888888888
+<li>OutputCoverage: 0.12903225806451613
 </ul></div>
 </div>
 <p><br><a href="../report-generation.html">Back to Overview</a></p>

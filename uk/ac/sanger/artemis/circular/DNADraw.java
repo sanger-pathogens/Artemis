@@ -1922,12 +1922,25 @@ public class DNADraw extends ScrollPanel
     {
       public void run() 
       {
-        final Wizard wiz;
+        Wizard wiz = null;
         
         if(arg.length > 0 && arg[0].equals("-t"))
-          wiz = new Wizard(arg[1]);
+        {
+          try 
+        	  {
+        	    wiz = new Wizard(arg[1]);
+        	  } 
+        	  catch (Exception e) 
+        	  {
+            System.err.println("\nUnable to load template file: " + arg[1]);
+        	    System.exit(1);
+          }
+        }
         else
+        {
           wiz = new Wizard((DNADraw)null);
+        }
+        
         final DNADraw dna = wiz.getDNADraw();
         
         //

@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.util.Document
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.util.Document: 0.45464015151515147</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.util.Document: 0.44103219696969703</ul>
 <ul>
-<li>77.47619047619048 fitness evaluations, 0 generations, null statements, 13 tests.
+<li>138.2 fitness evaluations, 0 generations, null statements, 8 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,88 +35,54 @@ uk.ac.sanger.artemis.util.Document
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>JPasswordField jPasswordField0 = new JPasswordField((String) null, 100000);
-<span class="nocode"><a name="2">  2: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;#created &quot;, jPasswordField0, &quot;,4J17NP`7(r&quot;, (String) null, (ByteBuffer) null, &quot;&quot;);
-<span class="nocode"><a name="3">  3: </a></span>InputStreamProgressListenerVector inputStreamProgressListenerVector0 = databaseDocument0.getProgressListeners();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, inputStreamProgressListenerVector0.size());
+<span class="nocode"><a name="1">  1: </a></span>LargeObject largeObject0 = mock(LargeObject.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="2">  2: </a></span>LargeObjectDocument largeObjectDocument0 = new LargeObjectDocument(&quot;W8f?(L80,@,V)8v&quot;, &quot;W8f?(L80,@,V)8v&quot;, largeObject0);
+<span class="nocode"><a name="3">  3: </a></span>largeObjectDocument0.getReader();
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>LargeObject largeObject0 = mock(LargeObject.class, new ViolatedAssumptionAnswer());
-<span class="nocode"><a name="2">  2: </a></span>doReturn((InputStream) null).when(largeObject0).getInputStream();
-<span class="nocode"><a name="3">  3: </a></span>LargeObjectDocument largeObjectDocument0 = new LargeObjectDocument(&quot;t&gt;i1D57a&quot;, &quot;t&gt;i1D57a&quot;, largeObject0);
-<span class="nocode"><a name="4">  4: </a></span>largeObjectDocument0.getReader();
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;C_[xhFr^AH KrB&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileDocument fileDocument0 = new FileDocument(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>BufferedWriter bufferedWriter0 = (BufferedWriter)fileDocument0.getWriter();
+<span class="nocode"><a name="4">  4: </a></span>assertNotNull(bufferedWriter0);
 </pre>
 <h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DefaultStyledDocument defaultStyledDocument0 = new DefaultStyledDocument();
+<span class="nocode"><a name="2">  2: </a></span>JPasswordField jPasswordField0 = new JPasswordField(defaultStyledDocument0, &quot;&quot;, 0);
+<span class="nocode"><a name="3">  3: </a></span>InputStreamProgressListener inputStreamProgressListener0 = mock(InputStreamProgressListener.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="4">  4: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;        &quot;, jPasswordField0, &quot;&gt;&quot;, &quot; {&quot;, true, inputStreamProgressListener0);
+<span class="nocode"><a name="5">  5: </a></span>databaseDocument0.getInputStream();
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;C_[xhFr^AH KrB&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileDocument fileDocument0 = new FileDocument(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>InputStreamProgressListener inputStreamProgressListener0 = mock(InputStreamProgressListener.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="4">  4: </a></span>fileDocument0.addInputStreamProgressListener(inputStreamProgressListener0);
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(fileDocument0.writable());
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RemoteFileDocument remoteFileDocument0 = new RemoteFileDocument((RemoteFileNode) null);
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>TextDocument textDocument0 = new TextDocument();
+<span class="nocode"><a name="2">  2: </a></span>textDocument0.getReader();
+</pre>
+<h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>TextDocument textDocument0 = new TextDocument();
 <span class="nocode"><a name="2">  2: </a></span>textDocument0.getWriter();
 </pre>
-<h3>Test case 4</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>JPasswordField jPasswordField0 = new JPasswordField(&quot;&quot;, 0);
-<span class="nocode"><a name="2">  2: </a></span>InputStreamProgressListener inputStreamProgressListener0 = mock(InputStreamProgressListener.class, new ViolatedAssumptionAnswer());
-<span class="nocode"><a name="3">  3: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;%CrxH9p}'pn&quot;, jPasswordField0, &quot;&quot;, &quot;&quot;, false, inputStreamProgressListener0);
-<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = databaseDocument0.writable();
-<span class="nocode"><a name="5">  5: </a></span>assertTrue(boolean0);
-</pre>
-<h3>Test case 5</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>URL uRL0 = MockURL.getHttpExample();
-<span class="nocode"><a name="2">  2: </a></span>URLDocument uRLDocument0 = new URLDocument(uRL0);
-<span class="nocode"><a name="3">  3: </a></span>InputStreamProgressListener inputStreamProgressListener0 = mock(InputStreamProgressListener.class, new ViolatedAssumptionAnswer());
-<span class="nocode"><a name="4">  4: </a></span>uRLDocument0.addInputStreamProgressListener(inputStreamProgressListener0);
-<span class="nocode"><a name="5">  5: </a></span>assertFalse(uRLDocument0.writable());
-</pre>
-<h3>Test case 6</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>LargeObject largeObject0 = mock(LargeObject.class, new ViolatedAssumptionAnswer());
-<span class="nocode"><a name="2">  2: </a></span>LargeObjectDocument largeObjectDocument0 = new LargeObjectDocument(&quot;Add Qualifier:&quot;, &quot;Add Qualifier:&quot;, largeObject0);
-<span class="nocode"><a name="3">  3: </a></span>largeObjectDocument0.getLinePushBackReader();
-</pre>
-<h3>Test case 7</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SshLogin sshLogin0 = new SshLogin();
-<span class="nocode"><a name="2">  2: </a></span>JPasswordField jPasswordField0 = sshLogin0.getJPasswordField();
-<span class="nocode"><a name="3">  3: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument((String) null, jPasswordField0);
-</pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>TextDocument textDocument0 = new TextDocument();
-<span class="nocode"><a name="2">  2: </a></span>textDocument0.getLinePushBackReader();
-</pre>
-<h3>Test case 9</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile((File) null, &quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>ZipFileDocument zipFileDocument0 = new ZipFileDocument(mockFile0, &quot;&quot;);
-<span class="nocode"><a name="3">  3: </a></span>zipFileDocument0.getLinePushBackReader();
-</pre>
-<h3>Test case 10</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(&quot;&quot;, &quot;&quot;, (FileList) null, &quot;&quot;, false);
-<span class="nocode"><a name="2">  2: </a></span>RemoteFileDocument remoteFileDocument0 = new RemoteFileDocument(remoteFileNode0);
-<span class="nocode"><a name="3">  3: </a></span>remoteFileDocument0.getReader();
-</pre>
-<h3>Test case 11</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;x#w&amp;x}Q&quot;);
-<span class="nocode"><a name="2">  2: </a></span>ZipFileDocument zipFileDocument0 = new ZipFileDocument(mockFile0, &quot;dna&quot;);
-<span class="nocode"><a name="3">  3: </a></span>FileDocument fileDocument0 = (FileDocument)zipFileDocument0.append(&quot;x#w&amp;x}Q&quot;);
-<span class="nocode"><a name="4">  4: </a></span>assertFalse(fileDocument0.writable());
-</pre>
-<h3>Test case 12</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;x#w&amp;x}Q&quot;);
-<span class="nocode"><a name="2">  2: </a></span>ZipFileDocument zipFileDocument0 = new ZipFileDocument(mockFile0, &quot;dna&quot;);
-<span class="nocode"><a name="3">  3: </a></span>MockFileOutputStream mockFileOutputStream0 = (MockFileOutputStream)zipFileDocument0.getOutputStream();
-<span class="nocode"><a name="4">  4: </a></span>assertNotNull(mockFileOutputStream0);
-</pre>
-<h3>Test case 13</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;, &quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>ZipFileDocument zipFileDocument0 = new ZipFileDocument(mockFile0, &quot;&quot;);
-<span class="nocode"><a name="3">  3: </a></span>zipFileDocument0.setLocation(mockFile0);
-<span class="nocode"><a name="4">  4: </a></span>assertTrue(mockFile0.canRead());
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileDocument fileDocument0 = new FileDocument(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>FileDocument fileDocument1 = (FileDocument)fileDocument0.getParent();
+<span class="nocode"><a name="4">  4: </a></span>String string0 = fileDocument1.getName();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;Artemis&quot;, string0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -129,13 +95,13 @@ uk.ac.sanger.artemis.util.Document
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.util.Document
-<li>Size: 13
-<li>Length: 39
+<li>Size: 8
+<li>Length: 24
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.45464015151515147
-<li>BranchCoverage: 0.75
-<li>MethodCoverage: 0.6
-<li>OutputCoverage: 0.125
+<li>Coverage: 0.44103219696969703
+<li>BranchCoverage: 0.5833333333333334
+<li>MethodCoverage: 0.3333333333333333
+<li>OutputCoverage: 0.0625
 </ul></div>
 </div>
 <p><br><a href="../report-generation.html">Back to Overview</a></p>

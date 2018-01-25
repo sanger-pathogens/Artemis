@@ -36,27 +36,27 @@ uk.ac.sanger.artemis.io.ReadEvent
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Object object0 = new Object();
-<span class="nocode"><a name="2">  2: </a></span>ReadEvent readEvent0 = new ReadEvent(object0, (String) null);
-<span class="nocode"><a name="3">  3: </a></span>String string0 = readEvent0.getMessage();
-<span class="nocode"><a name="4">  4: </a></span>assertNull(string0);
-</pre>
-<h3>Test case 2</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>ReadEvent readEvent0 = new ReadEvent((Object) null, &quot;&quot;);
-</pre>
-<h3>Test case 3</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Object object0 = new Object();
 <span class="nocode"><a name="2">  2: </a></span>ReadEvent readEvent0 = new ReadEvent(object0, &quot;&quot;);
 <span class="nocode"><a name="3">  3: </a></span>String string0 = readEvent0.getMessage();
 <span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;&quot;, string0);
 </pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ReadEvent readEvent0 = new ReadEvent((Object) null, &quot;;PJ`(E6dUyh&quot;);
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Object object0 = new Object();
+<span class="nocode"><a name="2">  2: </a></span>ReadEvent readEvent0 = new ReadEvent(object0, &quot;!&lt;zCF&gt;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = readEvent0.getMessage();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;!&lt;zCF&gt;&quot;, string0);
+</pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Object object0 = new Object();
-<span class="nocode"><a name="2">  2: </a></span>ReadEvent readEvent0 = new ReadEvent(object0, &quot;uk.ac.sanger.artemis.io.ReadEvent&quot;);
+<span class="nocode"><a name="2">  2: </a></span>ReadEvent readEvent0 = new ReadEvent(object0, (String) null);
 <span class="nocode"><a name="3">  3: </a></span>String string0 = readEvent0.getMessage();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;uk.ac.sanger.artemis.io.ReadEvent&quot;, string0);
+<span class="nocode"><a name="4">  4: </a></span>assertNull(string0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>

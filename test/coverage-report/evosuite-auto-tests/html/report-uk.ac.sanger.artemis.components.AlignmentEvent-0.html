@@ -35,35 +35,35 @@ uk.ac.sanger.artemis.components.AlignmentEvent
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range((-1487), (-1487));
-<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, false, (-563), (-563));
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(1447, 1515);
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, true, 4602, 4602);
 <span class="nocode"><a name="3">  3: </a></span>AlignmentEvent alignmentEvent0 = new AlignmentEvent(alignMatch0);
 <span class="nocode"><a name="4">  4: </a></span>AlignMatch alignMatch1 = alignmentEvent0.getMatch();
-<span class="nocode"><a name="5">  5: </a></span>assertEquals((-563), alignMatch1.getScore());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(1515, alignMatch1.getQuerySequenceStart());
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range((-876), 2177);
-<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, true, 2177, 2177);
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(1);
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, true, 0, 1);
 <span class="nocode"><a name="3">  3: </a></span>AlignmentEvent alignmentEvent0 = new AlignmentEvent(alignMatch0);
 <span class="nocode"><a name="4">  4: </a></span>AlignMatch alignMatch1 = alignmentEvent0.getMatch();
-<span class="nocode"><a name="5">  5: </a></span>assertTrue(alignMatch1.isRevMatch());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(1, alignMatch1.getQuerySequenceEnd());
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(0);
-<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, false, 0, 0);
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range((-10));
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, false, (-10), (-10));
 <span class="nocode"><a name="3">  3: </a></span>AlignmentEvent alignmentEvent0 = new AlignmentEvent(alignMatch0);
 <span class="nocode"><a name="4">  4: </a></span>AlignMatch alignMatch1 = alignmentEvent0.getMatch();
-<span class="nocode"><a name="5">  5: </a></span>assertTrue(alignMatch1.isSelfMatch());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals((-10), alignMatch1.getSubjectSequenceStart());
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(5, 5);
-<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, true, 2201, 2201);
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(0);
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, true, 0, 0);
 <span class="nocode"><a name="3">  3: </a></span>AlignmentEvent alignmentEvent0 = new AlignmentEvent(alignMatch0);
 <span class="nocode"><a name="4">  4: </a></span>AlignMatch alignMatch1 = alignmentEvent0.getMatch();
-<span class="nocode"><a name="5">  5: </a></span>assertSame(alignMatch0, alignMatch1);
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(alignMatch1.isRevMatch());
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">

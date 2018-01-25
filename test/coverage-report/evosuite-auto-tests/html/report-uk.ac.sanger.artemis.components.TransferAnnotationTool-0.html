@@ -23,7 +23,7 @@ uk.ac.sanger.artemis.components.TransferAnnotationTool
 <br><br><h2 class=title>Summary</h2>
 <ul><li>Target class: uk.ac.sanger.artemis.components.TransferAnnotationTool: 0.38903266951942067</ul>
 <ul>
-<li>2489.8306737454855 fitness evaluations, 0 generations, null statements, 8 tests.
+<li>2490.3306737496046 fitness evaluations, 0 generations, null statements, 8 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,52 +35,56 @@ uk.ac.sanger.artemis.components.TransferAnnotationTool
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>boolean boolean0 = TransferAnnotationTool.isNonTransferable(&quot;&quot;);
+<span class="nocode"><a name="1">  1: </a></span>boolean boolean0 = TransferAnnotationTool.isNonTransferable(&quot;GBFeature_key&quot;);
 <span class="nocode"><a name="2">  2: </a></span>assertFalse(boolean0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>boolean boolean0 = TransferAnnotationTool.isNonTransferable(&quot;membrane_structure&quot;);
+<span class="nocode"><a name="1">  1: </a></span>boolean boolean0 = TransferAnnotationTool.isNonTransferable(&quot;transmembrane&quot;);
 <span class="nocode"><a name="2">  2: </a></span>assertTrue(boolean0);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = TransferAnnotationTool.getQualifierWithoutDuplicateValues((Qualifier) null, (StringVector) null);
-<span class="nocode"><a name="2">  2: </a></span>assertNull(qualifier0);
+<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier(&quot;Add&quot;, (StringVector) null);
+<span class="nocode"><a name="2">  2: </a></span>Qualifier qualifier1 = TransferAnnotationTool.getQualifierWithoutDuplicateValues(qualifier0, (StringVector) null);
+<span class="nocode"><a name="3">  3: </a></span>assertSame(qualifier0, qualifier1);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>StringVector stringVector0 = new StringVector(&quot;genban_ac3Fs8ions&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Qualifier qualifier0 = new Qualifier(&quot;&quot;);
+<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier(&quot;GBFeature_key&quot;);
+<span class="nocode"><a name="2">  2: </a></span>StringVector stringVector0 = SelectionViewer.getBaseSummary(&quot;GBFeature_key&quot;);
 <span class="nocode"><a name="3">  3: </a></span>TransferAnnotationTool.getQualifierWithoutDuplicateValues(qualifier0, stringVector0);
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FeatureVector featureVector0 = new FeatureVector();
-<span class="nocode"><a name="2">  2: </a></span>StringVector stringVector0 = Feature.getAllQualifierNames(featureVector0);
-<span class="nocode"><a name="3">  3: </a></span>Qualifier qualifier0 = new Qualifier(&quot;with=&quot;);
-<span class="nocode"><a name="4">  4: </a></span>Qualifier qualifier1 = TransferAnnotationTool.getQualifierWithoutDuplicateValues(qualifier0, stringVector0);
-<span class="nocode"><a name="5">  5: </a></span>assertSame(qualifier1, qualifier0);
+<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier(&quot;.VcTC$2lTB%a{S;aH&quot;, &quot;FbZ*4Ml;8BV$T6^P&quot;);
+<span class="nocode"><a name="2">  2: </a></span>StringVector stringVector0 = new StringVector();
+<span class="nocode"><a name="3">  3: </a></span>Qualifier qualifier1 = TransferAnnotationTool.getQualifierWithoutDuplicateValues(qualifier0, stringVector0);
+<span class="nocode"><a name="4">  4: </a></span>assertSame(qualifier1, qualifier0);
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>StringVector stringVector0 = new StringVector(&quot;genban_ac3Fs8ions&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Qualifier qualifier0 = new Qualifier(&quot;&quot;);
-<span class="nocode"><a name="3">  3: </a></span>qualifier0.addValue(&quot;yv/V:HBy1}1(olQMcg&quot;);
+<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier(&quot;GBFeature_key&quot;);
+<span class="nocode"><a name="2">  2: </a></span>StringVector stringVector0 = SelectionViewer.getBaseSummary(&quot;GBFeature_key&quot;);
+<span class="nocode"><a name="3">  3: </a></span>qualifier0.addValues(stringVector0);
 <span class="nocode"><a name="4">  4: </a></span>Qualifier qualifier1 = TransferAnnotationTool.getQualifierWithoutDuplicateValues(qualifier0, stringVector0);
-<span class="nocode"><a name="5">  5: </a></span>assertNotNull(qualifier1);
-<span class="nocode"><a name="6">  6: </a></span>assertNotSame(qualifier1, qualifier0);
+<span class="nocode"><a name="5">  5: </a></span>assertNotSame(qualifier1, qualifier0);
+<span class="nocode"><a name="6">  6: </a></span>assertNotNull(qualifier1);
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>StringVector stringVector0 = new StringVector(&quot;genban_ac3Fs8ions&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Qualifier qualifier0 = new Qualifier(&quot;&quot;, stringVector0);
+<span class="nocode"><a name="1">  1: </a></span>StringVector stringVector0 = new StringVector(&quot;Failed to read full set of sequence IDs file &quot;);
+<span class="nocode"><a name="2">  2: </a></span>Qualifier qualifier0 = new Qualifier(&quot; N 1heMp$cUgPV&quot;, stringVector0);
 <span class="nocode"><a name="3">  3: </a></span>Qualifier qualifier1 = TransferAnnotationTool.getQualifierWithoutDuplicateValues(qualifier0, stringVector0);
 <span class="nocode"><a name="4">  4: </a></span>assertNull(qualifier1);
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>TransferAnnotationTool transferAnnotationTool0 = new TransferAnnotationTool((Feature) null, (EntryGroup) null, (MatchPanel) null);
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>SimpleEntryInformation simpleEntryInformation0 = new SimpleEntryInformation();
+<span class="nocode"><a name="3">  3: </a></span>MSPcrunchDocumentEntry mSPcrunchDocumentEntry0 = new MSPcrunchDocumentEntry(simpleEntryInformation0);
+<span class="nocode"><a name="4">  4: </a></span>MatchPanel matchPanel0 = new MatchPanel((Feature) null, mSPcrunchDocumentEntry0);
+<span class="nocode"><a name="5">  5: </a></span>TransferAnnotationTool transferAnnotationTool0 = new TransferAnnotationTool((Feature) null, simpleEntryGroup0, matchPanel0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -94,7 +98,7 @@ uk.ac.sanger.artemis.components.TransferAnnotationTool
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.TransferAnnotationTool
 <li>Size: 8
-<li>Length: 18
+<li>Length: 22
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.38903266951942067
 <li>BranchCoverage: 0.08571428571428572

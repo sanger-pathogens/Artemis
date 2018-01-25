@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.components.genebuilder.cv.WrapTextArea
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.components.genebuilder.cv.WrapTextArea: 0.9572320117474302</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.components.genebuilder.cv.WrapTextArea: 0.998898678414097</ul>
 <ul>
-<li>2.0 fitness evaluations, 0 generations, null statements, 4 tests.
+<li>1.5 fitness evaluations, 0 generations, null statements, 5 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,27 +35,40 @@ uk.ac.sanger.artemis.components.genebuilder.cv.WrapTextArea
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>WrapTextArea wrapTextArea0 = new WrapTextArea(&quot;6`IA$=p(fq\u0007L5-&quot;, (Dimension) null, 5);
-<span class="nocode"><a name="2">  2: </a></span>int int0 = wrapTextArea0.getLabelWidth();
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(100, int0);
+<span class="nocode"><a name="1">  1: </a></span>BasicTreeUI basicTreeUI0 = new BasicTreeUI();
+<span class="nocode"><a name="2">  2: </a></span>Dimension dimension0 = basicTreeUI0.getMaximumSize((JComponent) null);
+<span class="nocode"><a name="3">  3: </a></span>WrapTextArea wrapTextArea0 = new WrapTextArea(&quot;user.dir&quot;, dimension0, (-1075));
+<span class="nocode"><a name="4">  4: </a></span>int int0 = wrapTextArea0.getLabelWidth();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, int0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MetalTreeUI metalTreeUI0 = new MetalTreeUI();
-<span class="nocode"><a name="2">  2: </a></span>JTree jTree0 = new JTree((Hashtable&lt;?, ?&gt;) null);
-<span class="nocode"><a name="3">  3: </a></span>Dimension dimension0 = metalTreeUI0.getMaximumSize(jTree0);
-<span class="nocode"><a name="4">  4: </a></span>WrapTextArea wrapTextArea0 = new WrapTextArea(&quot; &quot;, dimension0, 0);
-<span class="nocode"><a name="5">  5: </a></span>int int0 = wrapTextArea0.getLabelWidth();
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, int0);
+<span class="nocode"><a name="1">  1: </a></span>WrapTextArea wrapTextArea0 = new WrapTextArea(&quot;f;PRaDkW&quot;, (Dimension) null, (-42));
+<span class="nocode"><a name="2">  2: </a></span>assertFalse(wrapTextArea0.isFocusCycleRoot());
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>WrapTextArea wrapTextArea0 = new WrapTextArea((String) null, (Dimension) null, 58);
+<span class="nocode"><a name="1">  1: </a></span>JPopupMenu jPopupMenu0 = new JPopupMenu(&quot;GO:0001234 [F] &quot;);
+<span class="nocode"><a name="2">  2: </a></span>JMenuItem jMenuItem0 = jPopupMenu0.add(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Dimension dimension0 = jMenuItem0.getPreferredSize();
+<span class="nocode"><a name="4">  4: </a></span>WrapTextArea wrapTextArea0 = new WrapTextArea(&quot;GO:0001234 [F] &quot;, dimension0, 13);
+<span class="nocode"><a name="5">  5: </a></span>int int0 = wrapTextArea0.getLabelWidth();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(17, int0);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>WrapTextArea wrapTextArea0 = new WrapTextArea(&quot;c=bsu Z.GDWg.V:s+&quot;, (Dimension) null, 0);
-<span class="nocode"><a name="2">  2: </a></span>assertFalse(wrapTextArea0.isFocusTraversalPolicyProvider());
+<span class="nocode"><a name="1">  1: </a></span>WrapTextArea wrapTextArea0 = new WrapTextArea((String) null, (Dimension) null, (-42));
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FlowLayout flowLayout0 = new FlowLayout((-2088));
+<span class="nocode"><a name="2">  2: </a></span>DefaultEditorKit.BeepAction defaultEditorKit_BeepAction0 = new DefaultEditorKit.BeepAction();
+<span class="nocode"><a name="3">  3: </a></span>JCheckBoxMenuItem jCheckBoxMenuItem0 = new JCheckBoxMenuItem(defaultEditorKit_BeepAction0);
+<span class="nocode"><a name="4">  4: </a></span>Dimension dimension0 = flowLayout0.minimumLayoutSize(jCheckBoxMenuItem0);
+<span class="nocode"><a name="5">  5: </a></span>dimension0.setSize((-598.1364483113), (-957.0311));
+<span class="nocode"><a name="6">  6: </a></span>WrapTextArea wrapTextArea0 = new WrapTextArea(&quot;Forward&quot;, dimension0, (-598));
+<span class="nocode"><a name="7">  7: </a></span>int int0 = wrapTextArea0.getLabelWidth();
+<span class="nocode"><a name="8">  8: </a></span>assertEquals((-598), int0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -68,13 +81,13 @@ uk.ac.sanger.artemis.components.genebuilder.cv.WrapTextArea
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.genebuilder.cv.WrapTextArea
-<li>Size: 4
-<li>Length: 9
+<li>Size: 5
+<li>Length: 18
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.9572320117474302
+<li>Coverage: 0.998898678414097
 <li>BranchCoverage: 1.0
 <li>MethodCoverage: 1.0
-<li>OutputCoverage: 0.6666666666666666
+<li>OutputCoverage: 1.0
 </ul></div>
 </div>
 <p><br><a href="../report-generation.html">Back to Overview</a></p>

@@ -72,6 +72,7 @@ import java.util.Vector;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -270,8 +271,10 @@ public class BamView extends JPanel
   
   private int ftpSocketTimeout = BamUtils.getFtpSocketTimeout();
   
-  /** Whether we should validate properly the input BAM/CRAM file.*/
+  /** Whether we should strictly validate upfront the input BAM/CRAM file.*/
   boolean doInputFileValidation = false;
+  
+  private volatile AtomicBoolean foundFatalErrors = new AtomicBoolean(false);
   
   /** busy cursor */
   private Cursor cbusy = new Cursor(Cursor.WAIT_CURSOR);
@@ -344,7 +347,7 @@ public class BamView extends JPanel
     }
     
     doInputFileValidation = Options.getOptions().getPropertyTruthValue("bamview_perform_file_validation");
-    logger4j.debug("PERFORM INPUT FILE VALIDATION=" + doInputFileValidation);
+    logger4j.debug("PERFORM UP-FRONT INPUT FILE VALIDATION=" + doInputFileValidation);
     
     if(Options.getOptions().getIntegerProperty("bam_read_thread") != null)
     { 
@@ -933,6 +936,7 @@ public class BamView extends JPanel
       if(feature_display != null && nbasesInView < feature_display.getMaxVisibleBases())
         nbasesInView = feature_display.getMaxVisibleBases();
     }
+    
 
     final float pixPerBase = getPixPerBaseByWidth();
     boolean changeToStackView = false;
@@ -1000,19 +1004,7 @@ public class BamView extends JPanel
 	          
 	          if (foundErrors) 
 	          {
-	        	    JOptionPane.showMessageDialog(this, errorText);
-        		    readsInView.clear();
-        		    logger4j.error("BamView errors: " + errorText);
-        		    
-        		    if (BamView.isStandaloneMode())
-        		    {
-        		    	  System.exit(0);
-        		    }
-        		    else
-        		    {
-        		    	  closeBamPanel();
-        		      return;
-        		    }
+	        	    handleFatalError(errorText);
 	          }
 	          
 	          //System.out.println("===== NO. THREADS="+
@@ -1055,7 +1047,7 @@ public class BamView extends JPanel
 	          JOptionPane.showMessageDialog(this, re.getMessage());
 	        }
 	      }
-      } 
+      }
       finally
       {
     	    try 
@@ -4179,7 +4171,9 @@ public class BamView extends JPanel
     viewer.appendString("\nDuplicate Read        "+
         (sam.getDuplicateReadFlag() ? "yes" : "no"), Level.DEBUG);
     viewer.appendString("\nSecondary Alignment   "+
-            (sam.getNotPrimaryAlignmentFlag() ? "yes" : "no"), Level.DEBUG);
+            (sam.isSecondaryAlignment() ? "yes" : "no"), Level.DEBUG);
+    viewer.appendString("\nSupplementary Alignment   "+
+            (sam.getSupplementaryAlignmentFlag() ? "yes" : "no"), Level.DEBUG);
     
     viewer.appendString("\nRead Paired           "+
         (sam.getReadPairedFlag() ? "yes" : "no"), Level.DEBUG);
@@ -4407,7 +4401,7 @@ public class BamView extends JPanel
   }
  
   /**
-   * Is BamView is being used as a standalone application.
+   * Is BamView being used as a standalone application.
    * @return boolean
    */
   public static boolean isStandaloneMode()
@@ -4446,8 +4440,11 @@ public class BamView extends JPanel
 	  BamView.this.getRootPane().setCursor(cdone);
 	  
 	  final JPanel containerPanel = (JPanel) mainPanel.getParent();
-      feature_display.removeDisplayAdjustmentListener(BamView.this);
-      feature_display.getSelection().removeSelectionChangeListener(BamView.this);
+	  if (feature_display != null)
+	  {
+	    feature_display.removeDisplayAdjustmentListener(BamView.this);
+	    feature_display.getSelection().removeSelectionChangeListener(BamView.this);
+	  }
       containerPanel.remove(mainPanel);
       
       if(containerPanel.getComponentCount() > 0)
@@ -4460,7 +4457,42 @@ public class BamView extends JPanel
           containerPanel.setVisible(false);
       }
   }
+  
+  /**
+   * Called when we encounter a major error while loading a BAM or CRAM file.
+   * It will display the errors in an option pane and then close the panel,
+   * exiting completely of BamView is in standalone mode.
+   * @param errorText String - the error message to display.
+   */
+  protected void handleFatalError(final String errorText)
+  {
+	  if (!foundFatalErrors.get()) 
+	  {
+		 foundFatalErrors.set(true);
+  
+		 logger4j.error("BamView errors: " + errorText);
+  
+		 SwingUtilities.invokeLater(new Runnable() {
+	  
+		    public void run() {
+    	    		
+		    	  JOptionPane.showMessageDialog(null, errorText);
+		    	  readsInView.clear();
+		    	  closeBamPanel();
+		    	  
+		    	  if (BamView.isStandaloneMode())
+		    	  {
+		    	    System.exit(0);
+		    	  }
+		    }
+		 });
+	  }
+  }
 
+  /**
+   * Class main method.
+   * @param args
+   */
   public static void main(String[] args)
   {
     BamFrame frame = new BamFrame();

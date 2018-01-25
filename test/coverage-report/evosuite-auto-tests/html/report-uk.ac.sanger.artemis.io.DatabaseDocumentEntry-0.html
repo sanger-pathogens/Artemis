@@ -35,10 +35,10 @@ uk.ac.sanger.artemis.io.DatabaseDocumentEntry
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>LargeObject largeObject0 = mock(LargeObject.class, new ViolatedAssumptionAnswer());
-<span class="nocode"><a name="2">  2: </a></span>LargeObjectDocument largeObjectDocument0 = new LargeObjectDocument(&quot;&quot;, (String) null, largeObject0);
-<span class="nocode"><a name="3">  3: </a></span>LogReadListener logReadListener0 = new LogReadListener(&quot;'c-#T#YAF\tO=l&quot;);
-<span class="nocode"><a name="4">  4: </a></span>DatabaseDocumentEntry databaseDocumentEntry0 = new DatabaseDocumentEntry(largeObjectDocument0, logReadListener0);
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;O:IncC[T}w&quot;);
+<span class="nocode"><a name="2">  2: </a></span>ZipFileDocument zipFileDocument0 = new ZipFileDocument(mockFile0, &quot;O:IncC[T}w&quot;);
+<span class="nocode"><a name="3">  3: </a></span>LogReadListener logReadListener0 = new LogReadListener(&quot;&quot;);
+<span class="nocode"><a name="4">  4: </a></span>DatabaseDocumentEntry databaseDocumentEntry0 = new DatabaseDocumentEntry(zipFileDocument0, logReadListener0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">

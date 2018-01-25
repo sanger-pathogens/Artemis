@@ -35,21 +35,16 @@ uk.ac.sanger.artemis.EntryGroupChangeListener
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>ActionController actionController0 = simpleEntryGroup0.getActionController();
-<span class="nocode"><a name="3">  3: </a></span>actionController0.entryGroupChanged((EntryGroupChangeEvent) null);
+<span class="nocode"><a name="1">  1: </a></span>ActionController actionController0 = new ActionController();
+<span class="nocode"><a name="2">  2: </a></span>actionController0.entryGroupChanged((EntryGroupChangeEvent) null);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="4">  4: </a></span>FeatureVector featureVector0 = new FeatureVector();
-<span class="nocode"><a name="5">  5: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, &quot;XhWqT{&quot;);
-<span class="nocode"><a name="6">  6: </a></span>ActionController actionController0 = filteredEntryGroup0.getActionController();
-<span class="nocode"><a name="7">  7: </a></span>Entry entry0 = simpleEntryGroup0.createEntry();
-<span class="nocode"><a name="8">  8: </a></span>EntryGroupChangeEvent entryGroupChangeEvent0 = new EntryGroupChangeEvent(filteredEntryGroup0, entry0, 0);
-<span class="nocode"><a name="9">  9: </a></span>actionController0.entryGroupChanged(entryGroupChangeEvent0);
+<span class="nocode"><a name="1">  1: </a></span>ActionController actionController0 = new ActionController();
+<span class="nocode"><a name="2">  2: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="3">  3: </a></span>EntryGroupChangeEvent entryGroupChangeEvent0 = new EntryGroupChangeEvent(simpleEntryGroup0, (Entry) null, 0);
+<span class="nocode"><a name="4">  4: </a></span>actionController0.entryGroupChanged(entryGroupChangeEvent0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(4, EntryGroupChangeEvent.ENTRY_INACTIVE);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -63,7 +58,7 @@ uk.ac.sanger.artemis.EntryGroupChangeListener
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.EntryGroupChangeListener
 <li>Size: 2
-<li>Length: 12
+<li>Length: 6
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 1.0
 <li>BranchCoverage: 1.0

@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.util.RemoteFileDocument
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.util.RemoteFileDocument: 0.7406339031339031</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.util.RemoteFileDocument: 0.7360042735042734</ul>
 <ul>
-<li>55.532085539136425 fitness evaluations, 0 generations, null statements, 24 tests.
+<li>56.53208555202063 fitness evaluations, 0 generations, null statements, 22 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -37,32 +37,24 @@ uk.ac.sanger.artemis.util.RemoteFileDocument
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(false);
 <span class="nocode"><a name="2">  2: </a></span>RemoteFileDocument remoteFileDocument0 = new RemoteFileDocument(remoteFileNode0);
-<span class="nocode"><a name="3">  3: </a></span>MockFileOutputStream mockFileOutputStream0 = (MockFileOutputStream)remoteFileDocument0.getOutputStream();
-<span class="nocode"><a name="4">  4: </a></span>remoteFileDocument0.setLocation(mockFileOutputStream0);
-<span class="nocode"><a name="5">  5: </a></span>remoteFileDocument0.getName();
+<span class="nocode"><a name="3">  3: </a></span>Document document0 = remoteFileDocument0.getParent();
+<span class="nocode"><a name="4">  4: </a></span>assertNull(document0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(false);
 <span class="nocode"><a name="2">  2: </a></span>RemoteFileDocument remoteFileDocument0 = new RemoteFileDocument(remoteFileNode0);
-<span class="nocode"><a name="3">  3: </a></span>Document document0 = remoteFileDocument0.getParent();
-<span class="nocode"><a name="4">  4: </a></span>assertNull(document0);
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = remoteFileDocument0.readable();
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(boolean0);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(true);
 <span class="nocode"><a name="2">  2: </a></span>RemoteFileDocument remoteFileDocument0 = new RemoteFileDocument(remoteFileNode0);
-<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = remoteFileDocument0.readable();
-<span class="nocode"><a name="4">  4: </a></span>assertTrue(boolean0);
-</pre>
-<h3>Test case 4</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(false);
-<span class="nocode"><a name="2">  2: </a></span>RemoteFileDocument remoteFileDocument0 = new RemoteFileDocument(remoteFileNode0);
 <span class="nocode"><a name="3">  3: </a></span>String string0 = remoteFileDocument0.toString();
 <span class="nocode"><a name="4">  4: </a></span>assertNull(string0);
 </pre>
-<h3>Test case 5</h3>
+<h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(true);
 <span class="nocode"><a name="2">  2: </a></span>RemoteFileDocument remoteFileDocument0 = new RemoteFileDocument(remoteFileNode0);
@@ -70,124 +62,119 @@ uk.ac.sanger.artemis.util.RemoteFileDocument
 <span class="nocode"><a name="4">  4: </a></span>String string0 = remoteFileDocument0.toString();
 <span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;&quot;, string0);
 </pre>
-<h3>Test case 6</h3>
+<h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(true);
+<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(false);
 <span class="nocode"><a name="2">  2: </a></span>RemoteFileDocument remoteFileDocument0 = new RemoteFileDocument(remoteFileNode0);
-<span class="nocode"><a name="3">  3: </a></span>Document document0 = remoteFileDocument0.append((String) null);
+<span class="nocode"><a name="3">  3: </a></span>Document document0 = remoteFileDocument0.append(&quot;.gz&quot;);
 <span class="nocode"><a name="4">  4: </a></span>assertNull(document0);
 </pre>
-<h3>Test case 7</h3>
+<h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(true);
+<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(false);
 <span class="nocode"><a name="2">  2: </a></span>RemoteFileDocument remoteFileDocument0 = new RemoteFileDocument(remoteFileNode0);
 <span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = remoteFileDocument0.writable();
 <span class="nocode"><a name="4">  4: </a></span>assertTrue(boolean0);
 </pre>
-<h3>Test case 8</h3>
+<h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(true);
+<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(&quot;$sVh$]Q%U_&quot;, &quot;$sVh$]Q%U_&quot;, (FileList) null, &quot;$sVh$]Q%U_&quot;, true);
 <span class="nocode"><a name="2">  2: </a></span>RemoteFileDocument remoteFileDocument0 = new RemoteFileDocument(remoteFileNode0);
-<span class="nocode"><a name="3">  3: </a></span>remoteFileDocument0.getWriter();
+<span class="nocode"><a name="3">  3: </a></span>remoteFileDocument0.getOutputStream();
 <span class="nocode"><a name="4">  4: </a></span>remoteFileDocument0.getOutputStream();
 </pre>
-<h3>Test case 9</h3>
+<h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(&quot;port.gz&quot;, &quot;port.gz&quot;, (FileList) null, &quot;com.sshtools.j2ssh.sftp.SftpSubsystemClient&quot;, true);
+<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(false);
 <span class="nocode"><a name="2">  2: </a></span>RemoteFileDocument remoteFileDocument0 = new RemoteFileDocument(remoteFileNode0);
-<span class="nocode"><a name="3">  3: </a></span>GZIPOutputStream gZIPOutputStream0 = (GZIPOutputStream)remoteFileDocument0.getOutputStream();
-<span class="nocode"><a name="4">  4: </a></span>assertNotNull(gZIPOutputStream0);
-</pre>
-<h3>Test case 10</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(&quot;y2o~'buUzKA&quot;, &quot;y2o~'buUzKA&quot;, (FileList) null, &quot;&quot;, false);
-<span class="nocode"><a name="2">  2: </a></span>RemoteFileDocument remoteFileDocument0 = new RemoteFileDocument(remoteFileNode0);
-<span class="nocode"><a name="3">  3: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>MockFile mockFile0 = new MockFile(&quot;.gz&quot;, &quot;AZL1$P7\&quot;U2H\&quot;a&quot;);
 <span class="nocode"><a name="4">  4: </a></span>remoteFileDocument0.saveEntry(mockFile0);
 </pre>
-<h3>Test case 11</h3>
+<h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(false);
 <span class="nocode"><a name="2">  2: </a></span>RemoteFileDocument remoteFileDocument0 = new RemoteFileDocument(remoteFileNode0);
 <span class="nocode"><a name="3">  3: </a></span>RemoteFileNode remoteFileNode1 = remoteFileDocument0.getRemoteFileNode();
-<span class="nocode"><a name="4">  4: </a></span>assertTrue(remoteFileNode1.isLeaf());
+<span class="nocode"><a name="4">  4: </a></span>assertNull(remoteFileNode1.getPathName());
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(true);
+<span class="nocode"><a name="2">  2: </a></span>RemoteFileDocument remoteFileDocument0 = new RemoteFileDocument(remoteFileNode0);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = remoteFileDocument0.getName();
+<span class="nocode"><a name="4">  4: </a></span>assertNull(string0);
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RemoteFileDocument remoteFileDocument0 = new RemoteFileDocument((RemoteFileNode) null);
 </pre>
 <h3>Test case 12</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(false);
 <span class="nocode"><a name="2">  2: </a></span>RemoteFileDocument remoteFileDocument0 = new RemoteFileDocument(remoteFileNode0);
-<span class="nocode"><a name="3">  3: </a></span>String string0 = remoteFileDocument0.getName();
-<span class="nocode"><a name="4">  4: </a></span>assertNull(string0);
+<span class="nocode"><a name="3">  3: </a></span>remoteFileDocument0.getInputStream();
 </pre>
 <h3>Test case 13</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RemoteFileDocument remoteFileDocument0 = new RemoteFileDocument((RemoteFileNode) null);
+<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(false);
+<span class="nocode"><a name="2">  2: </a></span>RemoteFileDocument remoteFileDocument0 = new RemoteFileDocument(remoteFileNode0);
+<span class="nocode"><a name="3">  3: </a></span>MockHijrahDate mockHijrahDate0 = new MockHijrahDate();
+<span class="nocode"><a name="4">  4: </a></span>remoteFileDocument0.setLocation(mockHijrahDate0);
+<span class="nocode"><a name="5">  5: </a></span>remoteFileDocument0.getInputStream();
 </pre>
 <h3>Test case 14</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(true);
 <span class="nocode"><a name="2">  2: </a></span>RemoteFileDocument remoteFileDocument0 = new RemoteFileDocument(remoteFileNode0);
-<span class="nocode"><a name="3">  3: </a></span>remoteFileDocument0.getInputStream();
+<span class="nocode"><a name="3">  3: </a></span>BufferedWriter bufferedWriter0 = (BufferedWriter)remoteFileDocument0.getWriter();
+<span class="nocode"><a name="4">  4: </a></span>remoteFileDocument0.setLocation(bufferedWriter0);
+<span class="nocode"><a name="5">  5: </a></span>remoteFileDocument0.getName();
 </pre>
 <h3>Test case 15</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(true);
-<span class="nocode"><a name="2">  2: </a></span>RemoteFileDocument remoteFileDocument0 = new RemoteFileDocument(remoteFileNode0);
-<span class="nocode"><a name="3">  3: </a></span>DefaultTableModel defaultTableModel0 = new DefaultTableModel(2029, 2029);
-<span class="nocode"><a name="4">  4: </a></span>remoteFileDocument0.setLocation(defaultTableModel0);
-<span class="nocode"><a name="5">  5: </a></span>remoteFileDocument0.getInputStream();
-</pre>
-<h3>Test case 16</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FileSystemHandling.shouldAllThrowIOExceptions();
-<span class="nocode"><a name="2">  2: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(&quot;port.gz&quot;, &quot;port.gz&quot;, (FileList) null, &quot;com.sshtools.j2ssh.sftp.SftpSubsystemClient&quot;, true);
+<span class="nocode"><a name="2">  2: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(&quot;\nalready exists on the local disk.\nOverwrite?.gz&quot;, &quot;\nalready exists on the local disk.\nOverwrite?.gz&quot;, (FileList) null, (String) null, false);
 <span class="nocode"><a name="3">  3: </a></span>RemoteFileDocument remoteFileDocument0 = new RemoteFileDocument(remoteFileNode0);
 <span class="nocode"><a name="4">  4: </a></span>remoteFileDocument0.getOutputStream();
 </pre>
-<h3>Test case 17</h3>
+<h3>Test case 16</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(true);
+<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(false);
 <span class="nocode"><a name="2">  2: </a></span>RemoteFileDocument remoteFileDocument0 = new RemoteFileDocument(remoteFileNode0);
-<span class="nocode"><a name="3">  3: </a></span>MockMinguoDate mockMinguoDate0 = new MockMinguoDate();
-<span class="nocode"><a name="4">  4: </a></span>remoteFileDocument0.setLocation(mockMinguoDate0);
+<span class="nocode"><a name="3">  3: </a></span>MockHijrahDate mockHijrahDate0 = new MockHijrahDate();
+<span class="nocode"><a name="4">  4: </a></span>remoteFileDocument0.setLocation(mockHijrahDate0);
 <span class="nocode"><a name="5">  5: </a></span>remoteFileDocument0.getOutputStream();
 </pre>
-<h3>Test case 18</h3>
+<h3>Test case 17</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(false);
 <span class="nocode"><a name="2">  2: </a></span>RemoteFileDocument remoteFileDocument0 = new RemoteFileDocument(remoteFileNode0);
 <span class="nocode"><a name="3">  3: </a></span>remoteFileDocument0.setLocation((Object) null);
 <span class="nocode"><a name="4">  4: </a></span>remoteFileDocument0.getOutputStream();
 </pre>
+<h3>Test case 18</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(true);
+<span class="nocode"><a name="2">  2: </a></span>RemoteFileDocument remoteFileDocument0 = new RemoteFileDocument(remoteFileNode0);
+<span class="nocode"><a name="3">  3: </a></span>MockFileOutputStream mockFileOutputStream0 = (MockFileOutputStream)remoteFileDocument0.getOutputStream();
+<span class="nocode"><a name="4">  4: </a></span>remoteFileDocument0.setLocation(mockFileOutputStream0);
+<span class="nocode"><a name="5">  5: </a></span>remoteFileDocument0.getRemoteFileNode();
+</pre>
 <h3>Test case 19</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(false);
+<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(&quot;$sVh$]Q%U_&quot;, &quot;$sVh$]Q%U_&quot;, (FileList) null, &quot;$sVh$]Q%U_&quot;, true);
 <span class="nocode"><a name="2">  2: </a></span>RemoteFileDocument remoteFileDocument0 = new RemoteFileDocument(remoteFileNode0);
-<span class="nocode"><a name="3">  3: </a></span>remoteFileDocument0.setLocation(&quot;t.g&quot;);
-<span class="nocode"><a name="4">  4: </a></span>remoteFileDocument0.getRemoteFileNode();
+<span class="nocode"><a name="3">  3: </a></span>String string0 = remoteFileDocument0.getName();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;$sVh$]Q%U_&quot;, string0);
 </pre>
 <h3>Test case 20</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(&quot;&quot;, &quot;&quot;, (FileList) null, &quot;&quot;, false);
-<span class="nocode"><a name="2">  2: </a></span>RemoteFileDocument remoteFileDocument0 = new RemoteFileDocument(remoteFileNode0);
-<span class="nocode"><a name="3">  3: </a></span>String string0 = remoteFileDocument0.getName();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;&quot;, string0);
-</pre>
-<h3>Test case 21</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(&quot;y2o~'buUzKA&quot;, &quot;y2o~'buUzKA&quot;, (FileList) null, &quot;&quot;, false);
-<span class="nocode"><a name="2">  2: </a></span>RemoteFileDocument remoteFileDocument0 = new RemoteFileDocument(remoteFileNode0);
-<span class="nocode"><a name="3">  3: </a></span>String string0 = remoteFileDocument0.getName();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;y2o~'buUzKA&quot;, string0);
-</pre>
-<h3>Test case 22</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(true);
 <span class="nocode"><a name="2">  2: </a></span>RemoteFileDocument remoteFileDocument0 = new RemoteFileDocument(remoteFileNode0);
 <span class="nocode"><a name="3">  3: </a></span>RemoteFileNode remoteFileNode1 = remoteFileDocument0.getRemoteFileNode();
-<span class="nocode"><a name="4">  4: </a></span>assertTrue(remoteFileNode1.getAllowsChildren());
+<span class="nocode"><a name="4">  4: </a></span>assertSame(remoteFileNode1, remoteFileNode0);
 </pre>
-<h3>Test case 23</h3>
+<h3>Test case 21</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(false);
 <span class="nocode"><a name="2">  2: </a></span>RemoteFileDocument remoteFileDocument0 = new RemoteFileDocument(remoteFileNode0);
@@ -195,13 +182,13 @@ uk.ac.sanger.artemis.util.RemoteFileDocument
 <span class="nocode"><a name="4">  4: </a></span>RemoteFileNode remoteFileNode1 = remoteFileDocument0.getRemoteFileNode();
 <span class="nocode"><a name="5">  5: </a></span>assertNull(remoteFileNode1);
 </pre>
-<h3>Test case 24</h3>
+<h3>Test case 22</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(true);
+<span class="nocode"><a name="1">  1: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(false);
 <span class="nocode"><a name="2">  2: </a></span>RemoteFileDocument remoteFileDocument0 = new RemoteFileDocument(remoteFileNode0);
-<span class="nocode"><a name="3">  3: </a></span>remoteFileDocument0.setString(&quot;`tmB^tdvZSJ&lt;AVVEk\&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>remoteFileDocument0.setString(&quot;`d&lt;Crl\&quot;$r&amp;!A&quot;);
 <span class="nocode"><a name="4">  4: </a></span>String string0 = remoteFileDocument0.toString();
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;`tmB^tdvZSJ&lt;AVVEk\&quot;&quot;, string0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;`d&lt;Crl\&quot;$r&amp;!A&quot;, string0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -214,13 +201,13 @@ uk.ac.sanger.artemis.util.RemoteFileDocument
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.util.RemoteFileDocument
-<li>Size: 24
-<li>Length: 84
+<li>Size: 22
+<li>Length: 79
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.7406339031339031
+<li>Coverage: 0.7360042735042734
 <li>BranchCoverage: 0.6666666666666666
 <li>MethodCoverage: 1.0
-<li>OutputCoverage: 0.7037037037037037
+<li>OutputCoverage: 0.6666666666666666
 </ul></div>
 </div>
 <p><br><a href="../report-generation.html">Back to Overview</a></p>

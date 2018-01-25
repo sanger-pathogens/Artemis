@@ -35,33 +35,30 @@ uk.ac.sanger.artemis.components.alignment.SAMRecordMapQPredicate
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SAMRecordMapQPredicate sAMRecordMapQPredicate0 = new SAMRecordMapQPredicate(1339);
-<span class="nocode"><a name="2">  2: </a></span>sAMRecordMapQPredicate0.testPredicate((SAMRecord) null);
+<span class="nocode"><a name="1">  1: </a></span>SAMRecordMapQPredicate sAMRecordMapQPredicate0 = new SAMRecordMapQPredicate(0);
+<span class="nocode"><a name="2">  2: </a></span>SAMRecord sAMRecord0 = new SAMRecord((SAMFileHeader) null);
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = sAMRecordMapQPredicate0.testPredicate(sAMRecord0);
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(boolean0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SAMRecordMapQPredicate sAMRecordMapQPredicate0 = new SAMRecordMapQPredicate(4662);
-<span class="nocode"><a name="2">  2: </a></span>SAMFileHeader sAMFileHeader0 = new SAMFileHeader();
-<span class="nocode"><a name="3">  3: </a></span>SAMRecord sAMRecord0 = new SAMRecord(sAMFileHeader0);
+<span class="nocode"><a name="1">  1: </a></span>SAMRecordMapQPredicate sAMRecordMapQPredicate0 = new SAMRecordMapQPredicate(0);
+<span class="nocode"><a name="2">  2: </a></span>SAMRecord sAMRecord0 = new SAMRecord((SAMFileHeader) null);
+<span class="nocode"><a name="3">  3: </a></span>sAMRecordMapQPredicate0.cutOff = (-1);
 <span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = sAMRecordMapQPredicate0.testPredicate(sAMRecord0);
-<span class="nocode"><a name="5">  5: </a></span>assertFalse(boolean0);
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(boolean0);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SAMRecordMapQPredicate sAMRecordMapQPredicate0 = new SAMRecordMapQPredicate(4662);
-<span class="nocode"><a name="2">  2: </a></span>sAMRecordMapQPredicate0.cutOff = 647;
-<span class="nocode"><a name="3">  3: </a></span>SAMFileHeader sAMFileHeader0 = new SAMFileHeader();
-<span class="nocode"><a name="4">  4: </a></span>SAMRecord sAMRecord0 = new SAMRecord(sAMFileHeader0);
-<span class="nocode"><a name="5">  5: </a></span>sAMRecordMapQPredicate0.cutOff = (-2212);
-<span class="nocode"><a name="6">  6: </a></span>boolean boolean0 = sAMRecordMapQPredicate0.testPredicate(sAMRecord0);
-<span class="nocode"><a name="7">  7: </a></span>assertTrue(boolean0);
+<span class="nocode"><a name="1">  1: </a></span>SAMRecordMapQPredicate sAMRecordMapQPredicate0 = new SAMRecordMapQPredicate(0);
+<span class="nocode"><a name="2">  2: </a></span>sAMRecordMapQPredicate0.testPredicate((SAMRecord) null);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SAMRecordMapQPredicate sAMRecordMapQPredicate0 = new SAMRecordMapQPredicate(1975);
-<span class="nocode"><a name="2">  2: </a></span>SAMFileHeader sAMFileHeader0 = new SAMFileHeader();
-<span class="nocode"><a name="3">  3: </a></span>SAMRecord sAMRecord0 = new SAMRecord(sAMFileHeader0);
-<span class="nocode"><a name="4">  4: </a></span>sAMRecordMapQPredicate0.cutOff = 0;
+<span class="nocode"><a name="1">  1: </a></span>SAMRecordMapQPredicate sAMRecordMapQPredicate0 = new SAMRecordMapQPredicate(0);
+<span class="nocode"><a name="2">  2: </a></span>SAMRecord sAMRecord0 = new SAMRecord((SAMFileHeader) null);
+<span class="nocode"><a name="3">  3: </a></span>sAMRecordMapQPredicate0.cutOff = (-1);
+<span class="nocode"><a name="4">  4: </a></span>sAMRecordMapQPredicate0.cutOff = 536870912;
 <span class="nocode"><a name="5">  5: </a></span>boolean boolean0 = sAMRecordMapQPredicate0.testPredicate(sAMRecord0);
 <span class="nocode"><a name="6">  6: </a></span>assertFalse(boolean0);
 </pre>
@@ -77,7 +74,7 @@ uk.ac.sanger.artemis.components.alignment.SAMRecordMapQPredicate
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.alignment.SAMRecordMapQPredicate
 <li>Size: 4
-<li>Length: 17
+<li>Length: 14
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 1.0
 <li>BranchCoverage: 1.0

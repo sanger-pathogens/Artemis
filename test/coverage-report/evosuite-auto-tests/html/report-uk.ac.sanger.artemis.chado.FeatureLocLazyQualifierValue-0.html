@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.chado.FeatureLocLazyQualifierValue
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.chado.FeatureLocLazyQualifierValue: 0.4264128775431967</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.chado.FeatureLocLazyQualifierValue: 0.3408474013527205</ul>
 <ul>
-<li>541.1938650306748 fitness evaluations, 0 generations, null statements, 11 tests.
+<li>548.1938650306748 fitness evaluations, 0 generations, null statements, 11 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,84 +35,79 @@ uk.ac.sanger.artemis.chado.FeatureLocLazyQualifierValue
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FeatureLocLazyQualifierValue featureLocLazyQualifierValue0 = new FeatureLocLazyQualifierValue((Feature) null, 0);
+<span class="nocode"><a name="1">  1: </a></span>FeatureLocLazyQualifierValue featureLocLazyQualifierValue0 = new FeatureLocLazyQualifierValue((Feature) null, (-966));
 <span class="nocode"><a name="2">  2: </a></span>FeatureLocLazyQualifierValue.FeaturePropComparator featureLocLazyQualifierValue_FeaturePropComparator0 = featureLocLazyQualifierValue0.new FeaturePropComparator();
-<span class="nocode"><a name="3">  3: </a></span>featureLocLazyQualifierValue_FeaturePropComparator0.compare((Object) null, featureLocLazyQualifierValue0);
+<span class="nocode"><a name="3">  3: </a></span>JembossParams jembossParams0 = new JembossParams();
+<span class="nocode"><a name="4">  4: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.modeVector();
+<span class="nocode"><a name="5">  5: </a></span>featureLocLazyQualifierValue_FeaturePropComparator0.compare(vector0, jembossParams0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Feature feature0 = new Feature();
-<span class="nocode"><a name="2">  2: </a></span>FeatureLocLazyQualifierValue featureLocLazyQualifierValue0 = new FeatureLocLazyQualifierValue(feature0, 33);
-<span class="nocode"><a name="3">  3: </a></span>assertFalse(featureLocLazyQualifierValue0.isForceLoad());
-<span class="nocode"><a name="4">  4: </a></span>
-<span class="nocode"><a name="5">  5: </a></span>String string0 = featureLocLazyQualifierValue0.getString();
+<span class="nocode"><a name="1">  1: </a></span>FeatureLocLazyQualifierValue featureLocLazyQualifierValue0 = new FeatureLocLazyQualifierValue((Feature) null, (-715));
+<span class="nocode"><a name="2">  2: </a></span>assertFalse(featureLocLazyQualifierValue0.isForceLoad());
+<span class="nocode"><a name="3">  3: </a></span>
+<span class="nocode"><a name="4">  4: </a></span>String string0 = featureLocLazyQualifierValue0.getString();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;LAZY LOADING...;&quot;, string0);
 <span class="nocode"><a name="6">  6: </a></span>assertFalse(featureLocLazyQualifierValue0.isLazyLoaded());
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(&quot;LAZY LOADING...;&quot;, string0);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Feature feature0 = new Feature();
-<span class="nocode"><a name="2">  2: </a></span>FeatureLocLazyQualifierValue featureLocLazyQualifierValue0 = new FeatureLocLazyQualifierValue(feature0, 33);
+<span class="nocode"><a name="2">  2: </a></span>FeatureLocLazyQualifierValue featureLocLazyQualifierValue0 = new FeatureLocLazyQualifierValue(feature0, 956);
 <span class="nocode"><a name="3">  3: </a></span>featureLocLazyQualifierValue0.getMatchFeature();
 <span class="nocode"><a name="4">  4: </a></span>assertFalse(featureLocLazyQualifierValue0.isLazyLoaded());
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Feature feature0 = new Feature();
-<span class="nocode"><a name="2">  2: </a></span>FeatureLocLazyQualifierValue featureLocLazyQualifierValue0 = new FeatureLocLazyQualifierValue(feature0, 33);
+<span class="nocode"><a name="2">  2: </a></span>FeatureLocLazyQualifierValue featureLocLazyQualifierValue0 = new FeatureLocLazyQualifierValue(feature0, 956);
 <span class="nocode"><a name="3">  3: </a></span>featureLocLazyQualifierValue0.isForceLoad();
 <span class="nocode"><a name="4">  4: </a></span>assertFalse(featureLocLazyQualifierValue0.isLazyLoaded());
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Feature feature0 = new Feature();
-<span class="nocode"><a name="2">  2: </a></span>FeatureLocLazyQualifierValue featureLocLazyQualifierValue0 = new FeatureLocLazyQualifierValue(feature0, 33);
-<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = featureLocLazyQualifierValue0.isLazyLoaded();
-<span class="nocode"><a name="4">  4: </a></span>assertFalse(boolean0);
+<span class="nocode"><a name="1">  1: </a></span>FeatureLocLazyQualifierValue featureLocLazyQualifierValue0 = new FeatureLocLazyQualifierValue((Feature) null, 90);
+<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = featureLocLazyQualifierValue0.isLazyLoaded();
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(boolean0);
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Pattern pattern0 = Pattern.compile(&quot;'1:6,1A%M&amp;R/Q&quot;);
-<span class="nocode"><a name="2">  2: </a></span>RegexSplitter regexSplitter0 = new RegexSplitter(pattern0, 1969);
-<span class="nocode"><a name="3">  3: </a></span>List&lt;Object&gt; list0 = regexSplitter0.split(&quot;'1:6,1A%M&amp;R/Q&quot;);
-<span class="nocode"><a name="4">  4: </a></span>JPasswordField jPasswordField0 = new JPasswordField(&quot;H^1^Cry?,s&quot;, 1969);
-<span class="nocode"><a name="5">  5: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;&quot;, jPasswordField0, &quot;5pP?&amp;`*#6 |KA,=M~w,&quot;, &quot;H^1^Cry?,s&quot;, false);
-<span class="nocode"><a name="6">  6: </a></span>FeatureLocLazyQualifierValue.bulkRetrieve(list0, databaseDocument0);
+<span class="nocode"><a name="1">  1: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
+<span class="nocode"><a name="2">  2: </a></span>JPasswordField jPasswordField0 = new JPasswordField();
+<span class="nocode"><a name="3">  3: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;&lt;&quot;, jPasswordField0, &quot;&lt;&quot;, &quot;&lt;&quot;, true);
+<span class="nocode"><a name="4">  4: </a></span>FeatureLocLazyQualifierValue.bulkRetrieve(qualifierVector0, databaseDocument0);
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>IntegerAlphabet.SubIntegerAlphabet integerAlphabet_SubIntegerAlphabet0 = IntegerAlphabet.getSubAlphabet((-3131), 0);
-<span class="nocode"><a name="2">  2: </a></span>SoftMaskedAlphabet softMaskedAlphabet0 = SoftMaskedAlphabet.getInstance((FiniteAlphabet) integerAlphabet_SubIntegerAlphabet0);
-<span class="nocode"><a name="3">  3: </a></span>List&lt;Object&gt; list0 = softMaskedAlphabet0.getAlphabets();
-<span class="nocode"><a name="4">  4: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;;k+EG[&quot;, (JPasswordField) null, &quot;sequence is &quot;, &quot;I&quot;, true);
-<span class="nocode"><a name="5">  5: </a></span>FeatureLocLazyQualifierValue.bulkRetrieve(list0, databaseDocument0);
+<span class="nocode"><a name="1">  1: </a></span>IntegerAlphabet integerAlphabet0 = IntegerAlphabet.getInstance();
+<span class="nocode"><a name="2">  2: </a></span>IntegerAlphabet.IntegerSymbol integerAlphabet_IntegerSymbol0 = integerAlphabet0.getSymbol(2175);
+<span class="nocode"><a name="3">  3: </a></span>List&lt;Object&gt; list0 = integerAlphabet_IntegerSymbol0.getSymbols();
+<span class="nocode"><a name="4">  4: </a></span>FeatureLocLazyQualifierValue.bulkRetrieve(list0, (DatabaseDocument) null);
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FeatureLocLazyQualifierValue featureLocLazyQualifierValue0 = new FeatureLocLazyQualifierValue((Feature) null, (-480));
+<span class="nocode"><a name="1">  1: </a></span>FeatureLocLazyQualifierValue featureLocLazyQualifierValue0 = new FeatureLocLazyQualifierValue((Feature) null, (-2600));
 <span class="nocode"><a name="2">  2: </a></span>featureLocLazyQualifierValue0.setForceLoad(true);
 <span class="nocode"><a name="3">  3: </a></span>featureLocLazyQualifierValue0.getString();
 </pre>
 <h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>JembossParams jembossParams0 = new JembossParams();
-<span class="nocode"><a name="2">  2: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.getPublicServers();
-<span class="nocode"><a name="3">  3: </a></span>FeatureLocLazyQualifierValue.bulkRetrieve(vector0, (DatabaseDocument) null);
+<span class="nocode"><a name="1">  1: </a></span>JPasswordField jPasswordField0 = new JPasswordField(&quot;ID already in use: '&quot;);
+<span class="nocode"><a name="2">  2: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;ID already in use: '&quot;, jPasswordField0, &quot;5m[B&quot;, &quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>FeatureLocLazyQualifierValue.bulkRetrieve((List) null, databaseDocument0);
 </pre>
 <h3>Test case 10</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Feature feature0 = new Feature();
-<span class="nocode"><a name="2">  2: </a></span>FeatureLocLazyQualifierValue featureLocLazyQualifierValue0 = new FeatureLocLazyQualifierValue(feature0, 33);
-<span class="nocode"><a name="3">  3: </a></span>byte[] byteArray0 = new byte[3];
-<span class="nocode"><a name="4">  4: </a></span>feature0.setResidues(byteArray0);
-<span class="nocode"><a name="5">  5: </a></span>featureLocLazyQualifierValue0.getMatchFeature();
-<span class="nocode"><a name="6">  6: </a></span>assertFalse(featureLocLazyQualifierValue0.isLazyLoaded());
+<span class="nocode"><a name="1">  1: </a></span>FeatureLocLazyQualifierValue featureLocLazyQualifierValue0 = new FeatureLocLazyQualifierValue((Feature) null, (-715));
+<span class="nocode"><a name="2">  2: </a></span>featureLocLazyQualifierValue0.getMatchFeature();
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(featureLocLazyQualifierValue0.isLazyLoaded());
 </pre>
 <h3>Test case 11</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FeatureLocLazyQualifierValue featureLocLazyQualifierValue0 = new FeatureLocLazyQualifierValue((Feature) null, 0);
-<span class="nocode"><a name="2">  2: </a></span>featureLocLazyQualifierValue0.getMatchFeature();
-<span class="nocode"><a name="3">  3: </a></span>assertFalse(featureLocLazyQualifierValue0.isLazyLoaded());
+<span class="nocode"><a name="1">  1: </a></span>FeatureLocLazyQualifierValue featureLocLazyQualifierValue0 = new FeatureLocLazyQualifierValue((Feature) null, (-2600));
+<span class="nocode"><a name="2">  2: </a></span>featureLocLazyQualifierValue0.setForceLoad(true);
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = featureLocLazyQualifierValue0.isForceLoad();
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(boolean0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -126,9 +121,9 @@ uk.ac.sanger.artemis.chado.FeatureLocLazyQualifierValue
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.chado.FeatureLocLazyQualifierValue
 <li>Size: 11
-<li>Length: 39
+<li>Length: 34
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.4264128775431967
+<li>Coverage: 0.3408474013527205
 <li>BranchCoverage: 0.10714285714285714
 <li>MethodCoverage: 1.0
 <li>OutputCoverage: 0.5

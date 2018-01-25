@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.components.ProgressThread
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.components.ProgressThread: 0.6586309523809524</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.components.ProgressThread: 0.7419642857142856</ul>
 <ul>
-<li>32.92307692307692 fitness evaluations, 0 generations, null statements, 2 tests.
+<li>30.923076923076923 fitness evaluations, 0 generations, null statements, 3 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,14 +35,21 @@ uk.ac.sanger.artemis.components.ProgressThread
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>ProgressThread progressThread0 = new ProgressThread((JFrame) null, &quot;Rkd=suW MVnagk&quot;);
-<span class="nocode"><a name="2">  2: </a></span>progressThread0.run();
+<span class="nocode"><a name="1">  1: </a></span>ProgressThread progressThread0 = new ProgressThread((JFrame) null, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>progressThread0.finished();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, progressThread0.countStackFrames());
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>ProgressThread progressThread0 = new ProgressThread((JFrame) null, &quot;Rkd=suW MVnagk&quot;);
-<span class="nocode"><a name="2">  2: </a></span>progressThread0.finished();
-<span class="nocode"><a name="3">  3: </a></span>assertFalse(progressThread0.isDaemon());
+<span class="nocode"><a name="1">  1: </a></span>ProgressThread progressThread0 = new ProgressThread((JFrame) null, &quot;fjS(AJ5x#:/{.2[R&quot;);
+<span class="nocode"><a name="2">  2: </a></span>progressThread0.run();
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ProgressThread progressThread0 = new ProgressThread((JFrame) null, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>ThreadGroup threadGroup0 = (ThreadGroup)((MockThread) progressThread0).getUncaughtExceptionHandler();
+<span class="nocode"><a name="3">  3: </a></span>threadGroup0.interrupt();
+<span class="nocode"><a name="4">  4: </a></span>progressThread0.run();
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -55,10 +62,10 @@ uk.ac.sanger.artemis.components.ProgressThread
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.ProgressThread
-<li>Size: 2
-<li>Length: 4
+<li>Size: 3
+<li>Length: 8
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.6586309523809524
+<li>Coverage: 0.7419642857142856
 <li>BranchCoverage: 0.75
 <li>MethodCoverage: 1.0
 <li>OutputCoverage: 1.0

@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.io.GFFStreamFeature
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.io.GFFStreamFeature: 0.27918199111606473</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.io.GFFStreamFeature: 0.2801497752545492</ul>
 <ul>
-<li>4015.5833333333335 fitness evaluations, 0 generations, null statements, 26 tests.
+<li>3987.6111111111113 fitness evaluations, 0 generations, null statements, 21 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,188 +35,170 @@ uk.ac.sanger.artemis.io.GFFStreamFeature
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature();
-<span class="nocode"><a name="2">  2: </a></span>GFFStreamFeature gFFStreamFeature0 = new GFFStreamFeature(genbankStreamFeature0, false);
-<span class="nocode"><a name="3">  3: </a></span>GFF3AttributeBuilder gFF3AttributeBuilder0 = new GFF3AttributeBuilder();
-<span class="nocode"><a name="4">  4: </a></span>gFFStreamFeature0.prepareProcessors(gFF3AttributeBuilder0);
+<span class="nocode"><a name="1">  1: </a></span>Key key0 = new Key(&quot;}&quot;, false);
+<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(52);
+<span class="nocode"><a name="3">  3: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
+<span class="nocode"><a name="4">  4: </a></span>Location location0 = new Location(rangeVector0, false);
+<span class="nocode"><a name="5">  5: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
+<span class="nocode"><a name="6">  6: </a></span>GFFStreamFeature gFFStreamFeature0 = new GFFStreamFeature(key0, location0, qualifierVector0);
+<span class="nocode"><a name="7">  7: </a></span>GFF3AttributeBuilder gFF3AttributeBuilder0 = new GFF3AttributeBuilder();
+<span class="nocode"><a name="8">  8: </a></span>gFFStreamFeature0.prepareProcessors(gFF3AttributeBuilder0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Key key0 = new Key(&quot;&quot;, false);
-<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(81);
-<span class="nocode"><a name="3">  3: </a></span>Location location0 = new Location(range0);
-<span class="nocode"><a name="4">  4: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
-<span class="nocode"><a name="5">  5: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
-<span class="nocode"><a name="6">  6: </a></span>DatabaseInferredFeature databaseInferredFeature0 = new DatabaseInferredFeature(key0, location0, qualifierVector0, chadoCanonicalGene0);
-<span class="nocode"><a name="7">  7: </a></span>databaseInferredFeature0.setGffSeqName(&quot;U%Ck(.Lh&quot;);
-<span class="nocode"><a name="8">  8: </a></span>assertTrue(databaseInferredFeature0.isVisible());
-<span class="nocode"><a name="9">  9: </a></span>assertFalse(databaseInferredFeature0.isLazyLoaded());
-<span class="nocode"><a name="10"> 10: </a></span>assertEquals(&quot;U%Ck(.Lh&quot;, databaseInferredFeature0.getGffSeqName());
-<span class="nocode"><a name="11"> 11: </a></span>assertFalse(databaseInferredFeature0.isReadOnly());
+<span class="nocode"><a name="1">  1: </a></span>Key key0 = new Key(&quot;}&quot;, false);
+<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(52);
+<span class="nocode"><a name="3">  3: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
+<span class="nocode"><a name="4">  4: </a></span>Location location0 = new Location(rangeVector0, false);
+<span class="nocode"><a name="5">  5: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
+<span class="nocode"><a name="6">  6: </a></span>GFFStreamFeature gFFStreamFeature0 = new GFFStreamFeature(key0, location0, qualifierVector0);
+<span class="nocode"><a name="7">  7: </a></span>GFFStreamFeature gFFStreamFeature1 = new GFFStreamFeature(gFFStreamFeature0, false);
+<span class="nocode"><a name="8">  8: </a></span>assertFalse(gFFStreamFeature1.isLazyLoaded());
+<span class="nocode"><a name="9">  9: </a></span>assertTrue(gFFStreamFeature1.isVisible());
+<span class="nocode"><a name="10"> 10: </a></span>assertFalse(gFFStreamFeature1.isReadOnly());
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature();
-<span class="nocode"><a name="2">  2: </a></span>DatabaseStreamFeature databaseStreamFeature0 = new DatabaseStreamFeature(genbankStreamFeature0);
-<span class="nocode"><a name="3">  3: </a></span>DatabaseStreamFeature databaseStreamFeature1 = (DatabaseStreamFeature)databaseStreamFeature0.copy();
-<span class="nocode"><a name="4">  4: </a></span>assertFalse(databaseStreamFeature1.isReadOnly());
-<span class="nocode"><a name="5">  5: </a></span>assertFalse(databaseStreamFeature1.isLazyLoaded());
-<span class="nocode"><a name="6">  6: </a></span>assertTrue(databaseStreamFeature1.isVisible());
+<span class="nocode"><a name="1">  1: </a></span>GFFStreamFeature.includeAttribute(&quot;Y&quot;);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GFFStreamFeature.includeAttribute(&quot;h0GwBv)#]Hu!(b/O&quot;);
-</pre>
-<h3>Test case 5</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature();
-<span class="nocode"><a name="2">  2: </a></span>GFFStreamFeature gFFStreamFeature0 = new GFFStreamFeature(genbankStreamFeature0, false);
-<span class="nocode"><a name="3">  3: </a></span>gFFStreamFeature0.setReadOnlyFeature(false);
-<span class="nocode"><a name="4">  4: </a></span>assertTrue(gFFStreamFeature0.isVisible());
-<span class="nocode"><a name="5">  5: </a></span>assertFalse(gFFStreamFeature0.isReadOnly());
-<span class="nocode"><a name="6">  6: </a></span>assertFalse(gFFStreamFeature0.isLazyLoaded());
-</pre>
-<h3>Test case 6</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature();
-<span class="nocode"><a name="2">  2: </a></span>DatabaseStreamFeature databaseStreamFeature0 = new DatabaseStreamFeature(genbankStreamFeature0);
-<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = databaseStreamFeature0.isLazyLoaded();
-<span class="nocode"><a name="4">  4: </a></span>assertTrue(databaseStreamFeature0.isVisible());
-<span class="nocode"><a name="5">  5: </a></span>assertFalse(boolean0);
-<span class="nocode"><a name="6">  6: </a></span>assertFalse(databaseStreamFeature0.isReadOnly());
-</pre>
-<h3>Test case 7</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature();
-<span class="nocode"><a name="2">  2: </a></span>GFFStreamFeature gFFStreamFeature0 = new GFFStreamFeature(genbankStreamFeature0, false);
-<span class="nocode"><a name="3">  3: </a></span>gFFStreamFeature0.getNewIdMapToOldId();
-<span class="nocode"><a name="4">  4: </a></span>assertFalse(gFFStreamFeature0.isLazyLoaded());
-<span class="nocode"><a name="5">  5: </a></span>assertTrue(gFFStreamFeature0.isVisible());
-<span class="nocode"><a name="6">  6: </a></span>assertFalse(gFFStreamFeature0.isReadOnly());
-</pre>
-<h3>Test case 8</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature();
-<span class="nocode"><a name="2">  2: </a></span>DatabaseStreamFeature databaseStreamFeature0 = new DatabaseStreamFeature(genbankStreamFeature0);
-<span class="nocode"><a name="3">  3: </a></span>databaseStreamFeature0.setVisible(true);
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamFeature emblStreamFeature0 = new EmblStreamFeature();
+<span class="nocode"><a name="2">  2: </a></span>DatabaseStreamFeature databaseStreamFeature0 = new DatabaseStreamFeature(emblStreamFeature0);
+<span class="nocode"><a name="3">  3: </a></span>databaseStreamFeature0.getChadoGene();
 <span class="nocode"><a name="4">  4: </a></span>assertFalse(databaseStreamFeature0.isLazyLoaded());
 <span class="nocode"><a name="5">  5: </a></span>assertTrue(databaseStreamFeature0.isVisible());
 <span class="nocode"><a name="6">  6: </a></span>assertFalse(databaseStreamFeature0.isReadOnly());
 </pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GFFStreamFeature.removeAttribute((String) null);
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GFFStreamFeature gFFStreamFeature0 = new GFFStreamFeature(&quot;Auto hide scrollbar&quot;);
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamFeature emblStreamFeature0 = new EmblStreamFeature();
+<span class="nocode"><a name="2">  2: </a></span>DatabaseStreamFeature databaseStreamFeature0 = new DatabaseStreamFeature(emblStreamFeature0);
+<span class="nocode"><a name="3">  3: </a></span>Hashtable&lt;String, Range&gt; hashtable0 = databaseStreamFeature0.getSegmentRangeStore();
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(databaseStreamFeature0.isLazyLoaded());
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(databaseStreamFeature0.isVisible());
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(databaseStreamFeature0.isReadOnly());
+<span class="nocode"><a name="7">  7: </a></span>assertNotNull(hashtable0);
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Key key0 = new Key(&quot;}&quot;, false);
+<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(52);
+<span class="nocode"><a name="3">  3: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
+<span class="nocode"><a name="4">  4: </a></span>Location location0 = new Location(rangeVector0, false);
+<span class="nocode"><a name="5">  5: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
+<span class="nocode"><a name="6">  6: </a></span>GFFStreamFeature gFFStreamFeature0 = new GFFStreamFeature(key0, location0, qualifierVector0);
+<span class="nocode"><a name="7">  7: </a></span>String string0 = gFFStreamFeature0.getSegmentID(range0);
+<span class="nocode"><a name="8">  8: </a></span>assertNotNull(string0);
+<span class="nocode"><a name="9">  9: </a></span>assertTrue(gFFStreamFeature0.isVisible());
+<span class="nocode"><a name="10"> 10: </a></span>assertFalse(gFFStreamFeature0.isReadOnly());
+<span class="nocode"><a name="11"> 11: </a></span>assertFalse(gFFStreamFeature0.isLazyLoaded());
+</pre>
 <h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature();
-<span class="nocode"><a name="2">  2: </a></span>DatabaseStreamFeature databaseStreamFeature0 = new DatabaseStreamFeature(genbankStreamFeature0);
-<span class="nocode"><a name="3">  3: </a></span>databaseStreamFeature0.getChadoGene();
-<span class="nocode"><a name="4">  4: </a></span>assertTrue(databaseStreamFeature0.isVisible());
-<span class="nocode"><a name="5">  5: </a></span>assertFalse(databaseStreamFeature0.isLazyLoaded());
-<span class="nocode"><a name="6">  6: </a></span>assertFalse(databaseStreamFeature0.isReadOnly());
+<span class="nocode"><a name="1">  1: </a></span>Key key0 = new Key(&quot;}&quot;, false);
+<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(52);
+<span class="nocode"><a name="3">  3: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
+<span class="nocode"><a name="4">  4: </a></span>Location location0 = new Location(rangeVector0, false);
+<span class="nocode"><a name="5">  5: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
+<span class="nocode"><a name="6">  6: </a></span>GFFStreamFeature gFFStreamFeature0 = new GFFStreamFeature(key0, location0, qualifierVector0);
+<span class="nocode"><a name="7">  7: </a></span>gFFStreamFeature0.getSegmentID(rangeVector0);
+<span class="nocode"><a name="8">  8: </a></span>assertTrue(gFFStreamFeature0.isVisible());
+<span class="nocode"><a name="9">  9: </a></span>assertFalse(gFFStreamFeature0.isReadOnly());
+<span class="nocode"><a name="10"> 10: </a></span>assertFalse(gFFStreamFeature0.isLazyLoaded());
 </pre>
 <h3>Test case 10</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature();
-<span class="nocode"><a name="2">  2: </a></span>DatabaseStreamFeature databaseStreamFeature0 = new DatabaseStreamFeature(genbankStreamFeature0);
-<span class="nocode"><a name="3">  3: </a></span>Hashtable&lt;String, Range&gt; hashtable0 = new Hashtable&lt;String, Range&gt;();
-<span class="nocode"><a name="4">  4: </a></span>databaseStreamFeature0.setSegmentRangeStore(hashtable0);
-<span class="nocode"><a name="5">  5: </a></span>assertFalse(databaseStreamFeature0.isLazyLoaded());
-<span class="nocode"><a name="6">  6: </a></span>assertTrue(databaseStreamFeature0.isVisible());
-<span class="nocode"><a name="7">  7: </a></span>assertFalse(databaseStreamFeature0.isReadOnly());
+<span class="nocode"><a name="1">  1: </a></span>Key key0 = new Key(&quot;}&quot;, false);
+<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(52);
+<span class="nocode"><a name="3">  3: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
+<span class="nocode"><a name="4">  4: </a></span>Location location0 = new Location(rangeVector0, false);
+<span class="nocode"><a name="5">  5: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
+<span class="nocode"><a name="6">  6: </a></span>GFFStreamFeature gFFStreamFeature0 = new GFFStreamFeature(key0, location0, qualifierVector0);
+<span class="nocode"><a name="7">  7: </a></span>gFFStreamFeature0.getPrefix(&quot;&quot;, '6');
+<span class="nocode"><a name="8">  8: </a></span>assertFalse(gFFStreamFeature0.isReadOnly());
+<span class="nocode"><a name="9">  9: </a></span>assertFalse(gFFStreamFeature0.isLazyLoaded());
+<span class="nocode"><a name="10"> 10: </a></span>assertTrue(gFFStreamFeature0.isVisible());
 </pre>
 <h3>Test case 11</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature();
-<span class="nocode"><a name="2">  2: </a></span>DatabaseStreamFeature databaseStreamFeature0 = new DatabaseStreamFeature(genbankStreamFeature0);
-<span class="nocode"><a name="3">  3: </a></span>Feature feature0 = new Feature();
-<span class="nocode"><a name="4">  4: </a></span>databaseStreamFeature0.setChadoLazyFeature(feature0);
-<span class="nocode"><a name="5">  5: </a></span>assertFalse(databaseStreamFeature0.isLazyLoaded());
-<span class="nocode"><a name="6">  6: </a></span>assertTrue(databaseStreamFeature0.isVisible());
-<span class="nocode"><a name="7">  7: </a></span>assertFalse(databaseStreamFeature0.isReadOnly());
+<span class="nocode"><a name="1">  1: </a></span>StringReader stringReader0 = new StringReader(&quot;S|1yFU7m?(v&quot;);
+<span class="nocode"><a name="2">  2: </a></span>LinePushBackReader linePushBackReader0 = new LinePushBackReader(stringReader0);
+<span class="nocode"><a name="3">  3: </a></span>GFFStreamFeature.readFromStream(linePushBackReader0);
 </pre>
 <h3>Test case 12</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GFFStreamFeature.removeAttribute(&quot;&quot;);
+<span class="nocode"><a name="1">  1: </a></span>boolean boolean0 = GFFStreamFeature.isGTF((Feature) null);
+<span class="nocode"><a name="2">  2: </a></span>assertFalse(boolean0);
 </pre>
 <h3>Test case 13</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GFFStreamFeature gFFStreamFeature0 = new GFFStreamFeature(&quot;H59&gt;.qDtBp^dR*RS)&quot;);
+<span class="nocode"><a name="1">  1: </a></span>Key key0 = new Key(&quot;}&quot;, false);
+<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(52);
+<span class="nocode"><a name="3">  3: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
+<span class="nocode"><a name="4">  4: </a></span>Location location0 = new Location(rangeVector0, false);
+<span class="nocode"><a name="5">  5: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
+<span class="nocode"><a name="6">  6: </a></span>GFFStreamFeature gFFStreamFeature0 = new GFFStreamFeature(key0, location0, qualifierVector0);
+<span class="nocode"><a name="7">  7: </a></span>String string0 = gFFStreamFeature0.getGffSeqName();
+<span class="nocode"><a name="8">  8: </a></span>assertNull(string0);
+<span class="nocode"><a name="9">  9: </a></span>assertTrue(gFFStreamFeature0.isVisible());
+<span class="nocode"><a name="10"> 10: </a></span>assertFalse(gFFStreamFeature0.isLazyLoaded());
+<span class="nocode"><a name="11"> 11: </a></span>assertFalse(gFFStreamFeature0.isReadOnly());
 </pre>
 <h3>Test case 14</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[1];
-<span class="nocode"><a name="2">  2: </a></span>CharArrayReader charArrayReader0 = new CharArrayReader(charArray0);
-<span class="nocode"><a name="3">  3: </a></span>LinePushBackReader linePushBackReader0 = new LinePushBackReader(charArrayReader0);
-<span class="nocode"><a name="4">  4: </a></span>GFFStreamFeature.readFromStream(linePushBackReader0);
+<span class="nocode"><a name="1">  1: </a></span>Key key0 = new Key(&quot;}&quot;, false);
+<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(52);
+<span class="nocode"><a name="3">  3: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
+<span class="nocode"><a name="4">  4: </a></span>Location location0 = new Location(rangeVector0, false);
+<span class="nocode"><a name="5">  5: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
+<span class="nocode"><a name="6">  6: </a></span>GFFStreamFeature gFFStreamFeature0 = new GFFStreamFeature(key0, location0, qualifierVector0);
+<span class="nocode"><a name="7">  7: </a></span>gFFStreamFeature0.setGffSeqName(&quot;&quot;);
+<span class="nocode"><a name="8">  8: </a></span>assertFalse(gFFStreamFeature0.isLazyLoaded());
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(&quot;&quot;, gFFStreamFeature0.getGffSeqName());
+<span class="nocode"><a name="10"> 10: </a></span>assertTrue(gFFStreamFeature0.isVisible());
+<span class="nocode"><a name="11"> 11: </a></span>assertFalse(gFFStreamFeature0.isReadOnly());
 </pre>
 <h3>Test case 15</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>EmblStreamFeature emblStreamFeature0 = new EmblStreamFeature();
-<span class="nocode"><a name="2">  2: </a></span>DatabaseStreamFeature databaseStreamFeature0 = new DatabaseStreamFeature(emblStreamFeature0);
-<span class="nocode"><a name="3">  3: </a></span>databaseStreamFeature0.setLastModified((Timestamp) null);
+<span class="nocode"><a name="2">  2: </a></span>GFFStreamFeature gFFStreamFeature0 = new GFFStreamFeature(emblStreamFeature0);
+<span class="nocode"><a name="3">  3: </a></span>assertTrue(gFFStreamFeature0.isVisible());
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(gFFStreamFeature0.isReadOnly());
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(gFFStreamFeature0.isLazyLoaded());
 </pre>
 <h3>Test case 16</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature();
-<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = GFFStreamFeature.isGTF(genbankStreamFeature0);
-<span class="nocode"><a name="3">  3: </a></span>assertFalse(boolean0);
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamFeature emblStreamFeature0 = new EmblStreamFeature();
+<span class="nocode"><a name="2">  2: </a></span>GFFStreamFeature gFFStreamFeature0 = new GFFStreamFeature(emblStreamFeature0, false);
+<span class="nocode"><a name="3">  3: </a></span>gFFStreamFeature0.getAutoNumber(&quot;9L&quot;, '_');
 </pre>
 <h3>Test case 17</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature();
-<span class="nocode"><a name="2">  2: </a></span>DatabaseStreamFeature databaseStreamFeature0 = new DatabaseStreamFeature(genbankStreamFeature0);
-<span class="nocode"><a name="3">  3: </a></span>String string0 = databaseStreamFeature0.getGffSeqName();
-<span class="nocode"><a name="4">  4: </a></span>assertNull(string0);
-<span class="nocode"><a name="5">  5: </a></span>assertTrue(databaseStreamFeature0.isVisible());
-<span class="nocode"><a name="6">  6: </a></span>assertFalse(databaseStreamFeature0.isLazyLoaded());
-<span class="nocode"><a name="7">  7: </a></span>assertFalse(databaseStreamFeature0.isReadOnly());
+<span class="nocode"><a name="1">  1: </a></span>GFFStreamFeature gFFStreamFeature0 = new GFFStreamFeature((String) null);
 </pre>
 <h3>Test case 18</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature();
-<span class="nocode"><a name="2">  2: </a></span>DatabaseStreamFeature databaseStreamFeature0 = new DatabaseStreamFeature(genbankStreamFeature0);
-<span class="nocode"><a name="3">  3: </a></span>databaseStreamFeature0.setChadoGene((ChadoCanonicalGene) null);
-<span class="nocode"><a name="4">  4: </a></span>assertFalse(databaseStreamFeature0.isReadOnly());
-<span class="nocode"><a name="5">  5: </a></span>assertFalse(databaseStreamFeature0.isLazyLoaded());
-<span class="nocode"><a name="6">  6: </a></span>assertTrue(databaseStreamFeature0.isVisible());
+<span class="nocode"><a name="1">  1: </a></span>GFFStreamFeature gFFStreamFeature0 = new GFFStreamFeature((Feature) null);
 </pre>
 <h3>Test case 19</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>EmblStreamFeature emblStreamFeature0 = new EmblStreamFeature();
-<span class="nocode"><a name="2">  2: </a></span>GFFStreamFeature gFFStreamFeature0 = new GFFStreamFeature(emblStreamFeature0);
-<span class="nocode"><a name="3">  3: </a></span>assertFalse(gFFStreamFeature0.isReadOnly());
-<span class="nocode"><a name="4">  4: </a></span>assertFalse(gFFStreamFeature0.isLazyLoaded());
-<span class="nocode"><a name="5">  5: </a></span>assertTrue(gFFStreamFeature0.isVisible());
+<span class="nocode"><a name="1">  1: </a></span>GFFStreamFeature gFFStreamFeature0 = new GFFStreamFeature((Feature) null, true);
 </pre>
 <h3>Test case 20</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Key key0 = new Key(&quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
-<span class="nocode"><a name="3">  3: </a></span>GFFStreamFeature gFFStreamFeature0 = new GFFStreamFeature(key0, (Location) null, qualifierVector0);
+<span class="nocode"><a name="1">  1: </a></span>Key key0 = Key.CDS;
+<span class="nocode"><a name="2">  2: </a></span>GFFStreamFeature gFFStreamFeature0 = new GFFStreamFeature(key0, (Location) null, (QualifierVector) null);
 </pre>
 <h3>Test case 21</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GFFStreamFeature gFFStreamFeature0 = new GFFStreamFeature((String) null);
-</pre>
-<h3>Test case 22</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GFFStreamFeature gFFStreamFeature0 = new GFFStreamFeature((Feature) null);
-</pre>
-<h3>Test case 23</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GFFStreamFeature gFFStreamFeature0 = new GFFStreamFeature((Feature) null, true);
-</pre>
-<h3>Test case 24</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature();
-<span class="nocode"><a name="2">  2: </a></span>DatabaseStreamFeature databaseStreamFeature0 = new DatabaseStreamFeature(genbankStreamFeature0);
-<span class="nocode"><a name="3">  3: </a></span>databaseStreamFeature0.getAutoNumber((String) null, 'o');
-</pre>
-<h3>Test case 25</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>PipedReader pipedReader0 = new PipedReader(10);
-<span class="nocode"><a name="2">  2: </a></span>LinePushBackReader linePushBackReader0 = new LinePushBackReader(pipedReader0);
-<span class="nocode"><a name="3">  3: </a></span>GFFStreamFeature.readFromStream(linePushBackReader0);
-</pre>
-<h3>Test case 26</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>GFFStreamFeature.readFromStream((LinePushBackReader) null);
 </pre>
@@ -231,13 +213,13 @@ uk.ac.sanger.artemis.io.GFFStreamFeature
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.io.GFFStreamFeature
-<li>Size: 26
-<li>Length: 70
+<li>Size: 21
+<li>Length: 74
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.27918199111606473
-<li>BranchCoverage: 0.10290237467018469
-<li>MethodCoverage: 0.5526315789473685
-<li>OutputCoverage: 0.06578947368421052
+<li>Coverage: 0.2801497752545492
+<li>BranchCoverage: 0.09498680738786279
+<li>MethodCoverage: 0.4473684210526316
+<li>OutputCoverage: 0.10526315789473684
 </ul></div>
 </div>
 <p><br><a href="../report-generation.html">Back to Overview</a></p>

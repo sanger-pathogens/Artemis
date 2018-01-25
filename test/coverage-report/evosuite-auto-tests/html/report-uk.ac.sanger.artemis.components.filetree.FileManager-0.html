@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.components.filetree.FileManager
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.components.filetree.FileManager: 0.3742529875011252</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.components.filetree.FileManager: 0.35341965416779186</ul>
 <ul>
-<li>550.3240740740741 fitness evaluations, 0 generations, null statements, 4 tests.
+<li>551.3240740740741 fitness evaluations, 0 generations, null statements, 5 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -39,15 +39,20 @@ uk.ac.sanger.artemis.components.filetree.FileManager
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FileFilter fileFilter0 = FileManager.getFeatureFilter();
-<span class="nocode"><a name="2">  2: </a></span>FileManager fileManager0 = new FileManager((JFrame) null, fileFilter0);
+<span class="nocode"><a name="1">  1: </a></span>OrFileFilter orFileFilter0 = new OrFileFilter();
+<span class="nocode"><a name="2">  2: </a></span>FileManager fileManager0 = new FileManager((JFrame) null, orFileFilter0);
 </pre>
 <h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FileFilter fileFilter0 = FileManager.getFeatureFilter();
+<span class="nocode"><a name="2">  2: </a></span>assertNotNull(fileFilter0);
+</pre>
+<h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FileFilter fileFilter0 = FileManager.getSequenceFilter();
 <span class="nocode"><a name="2">  2: </a></span>assertNotNull(fileFilter0);
 </pre>
-<h3>Test case 4</h3>
+<h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FileFilter fileFilter0 = FileManager.getArtemisFilter();
 <span class="nocode"><a name="2">  2: </a></span>assertNotNull(fileFilter0);
@@ -63,10 +68,10 @@ uk.ac.sanger.artemis.components.filetree.FileManager
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.filetree.FileManager
-<li>Size: 4
-<li>Length: 5
+<li>Size: 5
+<li>Length: 6
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.3742529875011252
+<li>Coverage: 0.35341965416779186
 <li>BranchCoverage: 0.11764705882352941
 <li>MethodCoverage: 0.8333333333333334
 <li>OutputCoverage: 0.17647058823529413

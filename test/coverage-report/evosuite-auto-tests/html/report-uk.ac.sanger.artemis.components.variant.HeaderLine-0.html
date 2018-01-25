@@ -23,7 +23,7 @@ uk.ac.sanger.artemis.components.variant.HeaderLine
 <br><br><h2 class=title>Summary</h2>
 <ul><li>Target class: uk.ac.sanger.artemis.components.variant.HeaderLine: 0.9317204795770161</ul>
 <ul>
-<li>13.833333287550648 fitness evaluations, 0 generations, null statements, 18 tests.
+<li>13.833333251409531 fitness evaluations, 0 generations, null statements, 18 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -36,132 +36,132 @@ uk.ac.sanger.artemis.components.variant.HeaderLine
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Hashtable&lt;String, String&gt; hashtable0 = new Hashtable&lt;String, String&gt;();
-<span class="nocode"><a name="2">  2: </a></span>HeaderLine headerLine0 = new HeaderLine(&quot;Number&quot;, &quot;Number&quot;, hashtable0);
+<span class="nocode"><a name="2">  2: </a></span>HeaderLine headerLine0 = new HeaderLine(&quot;&quot;, &quot;&quot;, hashtable0);
 <span class="nocode"><a name="3">  3: </a></span>String string0 = headerLine0.getNumberString();
 <span class="nocode"><a name="4">  4: </a></span>assertNull(string0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Hashtable&lt;String, String&gt; hashtable0 = new Hashtable&lt;String, String&gt;();
-<span class="nocode"><a name="2">  2: </a></span>HeaderLine headerLine0 = new HeaderLine(&quot;Number&quot;, &quot;Number&quot;, hashtable0);
+<span class="nocode"><a name="2">  2: </a></span>HeaderLine headerLine0 = new HeaderLine((String) null, &quot;yZKP&quot;, hashtable0);
 <span class="nocode"><a name="3">  3: </a></span>String string0 = headerLine0.toString();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;Number&quot;, string0);
+<span class="nocode"><a name="4">  4: </a></span>assertNull(string0);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Hashtable&lt;String, String&gt; hashtable0 = new Hashtable&lt;String, String&gt;();
-<span class="nocode"><a name="2">  2: </a></span>HeaderLine headerLine0 = new HeaderLine(&quot;Number&quot;, &quot;Number&quot;, hashtable0);
+<span class="nocode"><a name="2">  2: </a></span>HeaderLine headerLine0 = new HeaderLine((String) null, &quot;yZKP&quot;, hashtable0);
 <span class="nocode"><a name="3">  3: </a></span>String string0 = headerLine0.getHeaderTypeStr();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;Number&quot;, string0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;yZKP&quot;, string0);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Hashtable&lt;String, String&gt; hashtable0 = new Hashtable&lt;String, String&gt;();
-<span class="nocode"><a name="2">  2: </a></span>HeaderLine headerLine0 = new HeaderLine(&quot;FILTER_HOMOZYG&quot;, &quot;FILTER_HOMOZYG&quot;, hashtable0);
+<span class="nocode"><a name="2">  2: </a></span>HeaderLine headerLine0 = new HeaderLine((String) null, &quot;yZKP&quot;, hashtable0);
 <span class="nocode"><a name="3">  3: </a></span>int int0 = headerLine0.getHeaderType();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(12, int0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, int0);
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Hashtable&lt;String, String&gt; hashtable0 = new Hashtable&lt;String, String&gt;();
-<span class="nocode"><a name="2">  2: </a></span>HeaderLine headerLine0 = new HeaderLine(&quot;Number&quot;, &quot;Number&quot;, hashtable0);
+<span class="nocode"><a name="2">  2: </a></span>HeaderLine headerLine0 = new HeaderLine(&quot;?w&quot;, &quot;?w&quot;, hashtable0);
 <span class="nocode"><a name="3">  3: </a></span>String string0 = headerLine0.getDescription();
 <span class="nocode"><a name="4">  4: </a></span>assertNull(string0);
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Hashtable&lt;String, String&gt; hashtable0 = new Hashtable&lt;String, String&gt;();
-<span class="nocode"><a name="2">  2: </a></span>HeaderLine headerLine0 = new HeaderLine(&quot;Description&quot;, &quot;Description&quot;, hashtable0);
+<span class="nocode"><a name="2">  2: </a></span>HeaderLine headerLine0 = new HeaderLine((String) null, &quot;yZKP&quot;, hashtable0);
 <span class="nocode"><a name="3">  3: </a></span>int int0 = headerLine0.getNumber();
 <span class="nocode"><a name="4">  4: </a></span>assertEquals(1, int0);
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Hashtable&lt;String, String&gt; hashtable0 = new Hashtable&lt;String, String&gt;();
-<span class="nocode"><a name="2">  2: </a></span>HeaderLine headerLine0 = new HeaderLine(&quot;Number&quot;, &quot;Number&quot;, hashtable0);
+<span class="nocode"><a name="2">  2: </a></span>HeaderLine headerLine0 = new HeaderLine(&quot;?w&quot;, &quot;?w&quot;, hashtable0);
 <span class="nocode"><a name="3">  3: </a></span>String string0 = headerLine0.getID();
 <span class="nocode"><a name="4">  4: </a></span>assertNull(string0);
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Hashtable&lt;String, String&gt; hashtable0 = new Hashtable&lt;String, String&gt;();
-<span class="nocode"><a name="2">  2: </a></span>HeaderLine headerLine0 = new HeaderLine((String) null, &quot;$iDuz)hS9W454Im#&quot;, hashtable0);
+<span class="nocode"><a name="2">  2: </a></span>HeaderLine headerLine0 = new HeaderLine((String) null, &quot;yZKP&quot;, hashtable0);
 <span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = headerLine0.isFlag();
 <span class="nocode"><a name="4">  4: </a></span>assertFalse(boolean0);
 </pre>
 <h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Hashtable&lt;String, String&gt; hashtable0 = new Hashtable&lt;String, String&gt;();
-<span class="nocode"><a name="2">  2: </a></span>HeaderLine headerLine0 = new HeaderLine(&quot;Number&quot;, &quot;Number&quot;, hashtable0);
+<span class="nocode"><a name="2">  2: </a></span>HeaderLine headerLine0 = new HeaderLine((String) null, &quot;yZKP&quot;, hashtable0);
 <span class="nocode"><a name="3">  3: </a></span>String string0 = headerLine0.getType();
 <span class="nocode"><a name="4">  4: </a></span>assertNull(string0);
 </pre>
 <h3>Test case 10</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Hashtable&lt;String, String&gt; hashtable0 = new Hashtable&lt;String, String&gt;();
-<span class="nocode"><a name="2">  2: </a></span>hashtable0.put(&quot;Type&quot;, &quot;Type&quot;);
-<span class="nocode"><a name="3">  3: </a></span>HeaderLine headerLine0 = new HeaderLine(&quot;Q&quot;, &quot;FILTER&quot;, hashtable0);
-<span class="nocode"><a name="4">  4: </a></span>String string0 = headerLine0.getType();
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;Q&quot;, headerLine0.toString());
-<span class="nocode"><a name="6">  6: </a></span>assertNotNull(string0);
+<span class="nocode"><a name="2">  2: </a></span>HeaderLine headerLine0 = new HeaderLine(&quot;FILTER_HOMOZYG&quot;, &quot;FILTER_HOMOZYG&quot;, hashtable0);
+<span class="nocode"><a name="3">  3: </a></span>int int0 = headerLine0.getHeaderType();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(12, int0);
 </pre>
 <h3>Test case 11</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Hashtable&lt;String, String&gt; hashtable0 = new Hashtable&lt;String, String&gt;();
-<span class="nocode"><a name="2">  2: </a></span>BiFunction&lt;String, Object, String&gt; biFunction0 = (BiFunction&lt;String, Object, String&gt;) mock(BiFunction.class, new ViolatedAssumptionAnswer());
-<span class="nocode"><a name="3">  3: </a></span>hashtable0.merge(&quot;Number&quot;, &quot;Number&quot;, biFunction0);
-<span class="nocode"><a name="4">  4: </a></span>HeaderLine headerLine0 = new HeaderLine(&quot;Number&quot;, &quot;Number&quot;, hashtable0);
-<span class="nocode"><a name="5">  5: </a></span>String string0 = headerLine0.getNumberString();
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;Number&quot;, string0);
+<span class="nocode"><a name="2">  2: </a></span>hashtable0.put(&quot;Type&quot;, &quot;?w&quot;);
+<span class="nocode"><a name="3">  3: </a></span>HeaderLine headerLine0 = new HeaderLine(&quot;?w&quot;, &quot;?w&quot;, hashtable0);
+<span class="nocode"><a name="4">  4: </a></span>String string0 = headerLine0.getType();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;?w&quot;, string0);
 </pre>
 <h3>Test case 12</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>HeaderLine headerLine0 = new HeaderLine(&quot;Ns7ACmR{@msH^&quot;, &quot;&quot;, (Hashtable&lt;String, String&gt;) null);
+<span class="nocode"><a name="1">  1: </a></span>Hashtable&lt;String, String&gt; hashtable0 = new Hashtable&lt;String, String&gt;();
+<span class="nocode"><a name="2">  2: </a></span>BiFunction&lt;Object, Object, String&gt; biFunction0 = (BiFunction&lt;Object, Object, String&gt;) mock(BiFunction.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="3">  3: </a></span>hashtable0.merge(&quot;Number&quot;, &quot;&quot;, biFunction0);
+<span class="nocode"><a name="4">  4: </a></span>HeaderLine headerLine0 = new HeaderLine(&quot;&quot;, &quot;&quot;, hashtable0);
+<span class="nocode"><a name="5">  5: </a></span>String string0 = headerLine0.getNumberString();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;&quot;, string0);
 </pre>
 <h3>Test case 13</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Hashtable&lt;String, String&gt; hashtable0 = new Hashtable&lt;String, String&gt;();
-<span class="nocode"><a name="2">  2: </a></span>hashtable0.put(&quot;Description&quot;, &quot;Description&quot;);
-<span class="nocode"><a name="3">  3: </a></span>HeaderLine headerLine0 = new HeaderLine(&quot;Description&quot;, &quot;Description&quot;, hashtable0);
-<span class="nocode"><a name="4">  4: </a></span>String string0 = headerLine0.getDescription();
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;Description&quot;, string0);
+<span class="nocode"><a name="2">  2: </a></span>HeaderLine headerLine0 = new HeaderLine((String) null, (String) null, hashtable0);
 </pre>
 <h3>Test case 14</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Hashtable&lt;String, String&gt; hashtable0 = new Hashtable&lt;String, String&gt;();
-<span class="nocode"><a name="2">  2: </a></span>HeaderLine headerLine0 = new HeaderLine((String) null, &quot;$iDuz)hS9W454Im#&quot;, hashtable0);
-<span class="nocode"><a name="3">  3: </a></span>int int0 = headerLine0.getHeaderType();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, int0);
-</pre>
-<h3>Test case 15</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Hashtable&lt;String, String&gt; hashtable0 = new Hashtable&lt;String, String&gt;();
 <span class="nocode"><a name="2">  2: </a></span>HeaderLine headerLine0 = new HeaderLine(&quot;&quot;, &quot;&quot;, hashtable0);
 <span class="nocode"><a name="3">  3: </a></span>String string0 = headerLine0.getHeaderTypeStr();
 <span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;&quot;, string0);
 </pre>
+<h3>Test case 15</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Hashtable&lt;String, String&gt; hashtable0 = new Hashtable&lt;String, String&gt;();
+<span class="nocode"><a name="2">  2: </a></span>BiFunction&lt;Object, Object, String&gt; biFunction0 = (BiFunction&lt;Object, Object, String&gt;) mock(BiFunction.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="3">  3: </a></span>hashtable0.merge(&quot;Number&quot;, &quot;CwZ%E&amp;k2Ji2&quot;, biFunction0);
+<span class="nocode"><a name="4">  4: </a></span>HeaderLine headerLine0 = new HeaderLine(&quot;CwZ%E&amp;k2Ji2&quot;, &quot;CwZ%E&amp;k2Ji2&quot;, hashtable0);
+<span class="nocode"><a name="5">  5: </a></span>String string0 = headerLine0.getNumberString();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;CwZ%E&amp;k2Ji2&quot;, string0);
+</pre>
 <h3>Test case 16</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Hashtable&lt;String, String&gt; hashtable0 = new Hashtable&lt;String, String&gt;();
-<span class="nocode"><a name="2">  2: </a></span>hashtable0.put(&quot;ID&quot;, &quot;FILTER&quot;);
-<span class="nocode"><a name="3">  3: </a></span>HeaderLine headerLine0 = new HeaderLine(&quot;Q&quot;, &quot;FILTER&quot;, hashtable0);
-<span class="nocode"><a name="4">  4: </a></span>String string0 = headerLine0.getID();
-<span class="nocode"><a name="5">  5: </a></span>assertNotNull(string0);
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;Q&quot;, headerLine0.toString());
+<span class="nocode"><a name="2">  2: </a></span>hashtable0.put(&quot;Type&quot;, &quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>HeaderLine headerLine0 = new HeaderLine(&quot;&quot;, &quot;&quot;, hashtable0);
+<span class="nocode"><a name="4">  4: </a></span>String string0 = headerLine0.getType();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;&quot;, string0);
 </pre>
 <h3>Test case 17</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Hashtable&lt;String, String&gt; hashtable0 = new Hashtable&lt;String, String&gt;();
-<span class="nocode"><a name="2">  2: </a></span>HeaderLine headerLine0 = new HeaderLine(&quot;&quot;, &quot;&quot;, hashtable0);
+<span class="nocode"><a name="2">  2: </a></span>HeaderLine headerLine0 = new HeaderLine(&quot;&quot;, &quot;FILTER_NONSYN&quot;, hashtable0);
 <span class="nocode"><a name="3">  3: </a></span>String string0 = headerLine0.toString();
 <span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;&quot;, string0);
 </pre>
 <h3>Test case 18</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Hashtable&lt;String, String&gt; hashtable0 = new Hashtable&lt;String, String&gt;();
-<span class="nocode"><a name="2">  2: </a></span>HeaderLine headerLine0 = new HeaderLine((String) null, &quot;$iDuz)hS9W454Im#&quot;, hashtable0);
+<span class="nocode"><a name="2">  2: </a></span>HeaderLine headerLine0 = new HeaderLine(&quot;v06&amp;[3O9dYok{fdZD+&quot;, &quot;v06&amp;[3O9dYok{fdZD+&quot;, hashtable0);
 <span class="nocode"><a name="3">  3: </a></span>String string0 = headerLine0.toString();
-<span class="nocode"><a name="4">  4: </a></span>assertNull(string0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;v06&amp;[3O9dYok{fdZD+&quot;, string0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -175,7 +175,7 @@ uk.ac.sanger.artemis.components.variant.HeaderLine
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.variant.HeaderLine
 <li>Size: 18
-<li>Length: 57
+<li>Length: 59
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.9317204795770161
 <li>BranchCoverage: 0.9473684210526315

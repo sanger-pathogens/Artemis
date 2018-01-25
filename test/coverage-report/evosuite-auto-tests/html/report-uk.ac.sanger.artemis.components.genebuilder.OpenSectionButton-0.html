@@ -23,7 +23,7 @@ uk.ac.sanger.artemis.components.genebuilder.OpenSectionButton
 <br><br><h2 class=title>Summary</h2>
 <ul><li>Target class: uk.ac.sanger.artemis.components.genebuilder.OpenSectionButton: 0.98125</ul>
 <ul>
-<li>3.499998805113672 fitness evaluations, 0 generations, null statements, 4 tests.
+<li>3.49999928195051 fitness evaluations, 0 generations, null statements, 4 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,31 +35,32 @@ uk.ac.sanger.artemis.components.genebuilder.OpenSectionButton
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>JToolBar jToolBar0 = new JToolBar();
-<span class="nocode"><a name="2">  2: </a></span>OpenSectionButton openSectionButton0 = new OpenSectionButton(&quot;.&quot;, jToolBar0);
-<span class="nocode"><a name="3">  3: </a></span>openSectionButton0.setOpen(true);
+<span class="nocode"><a name="1">  1: </a></span>JToolBar jToolBar0 = new JToolBar(&quot;&quot;, 0);
+<span class="nocode"><a name="2">  2: </a></span>OpenSectionButton openSectionButton0 = new OpenSectionButton(&quot;&quot;, jToolBar0);
+<span class="nocode"><a name="3">  3: </a></span>openSectionButton0.doClick();
 <span class="nocode"><a name="4">  4: </a></span>openSectionButton0.setOpen(false);
 <span class="nocode"><a name="5">  5: </a></span>openSectionButton0.setOpen(false);
 <span class="nocode"><a name="6">  6: </a></span>assertFalse(openSectionButton0.isFocusTraversalPolicySet());
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>JRadioButtonMenuItem jRadioButtonMenuItem0 = new JRadioButtonMenuItem();
-<span class="nocode"><a name="2">  2: </a></span>OpenSectionButton openSectionButton0 = new OpenSectionButton(&quot;+&quot;, jRadioButtonMenuItem0);
-<span class="nocode"><a name="3">  3: </a></span>openSectionButton0.doClick(40);
-<span class="nocode"><a name="4">  4: </a></span>assertFalse(openSectionButton0.isFocusTraversalPolicyProvider());
+<span class="nocode"><a name="1">  1: </a></span>JToolBar jToolBar0 = new JToolBar(&quot;&quot;, 0);
+<span class="nocode"><a name="2">  2: </a></span>OpenSectionButton openSectionButton0 = new OpenSectionButton(&quot;&quot;, jToolBar0);
+<span class="nocode"><a name="3">  3: </a></span>openSectionButton0.setOpen(true);
+<span class="nocode"><a name="4">  4: </a></span>openSectionButton0.setOpen(false);
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(openSectionButton0.getIgnoreRepaint());
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>JToolBar jToolBar0 = new JToolBar();
-<span class="nocode"><a name="2">  2: </a></span>OpenSectionButton openSectionButton0 = new OpenSectionButton(&quot;.&quot;, jToolBar0);
-<span class="nocode"><a name="3">  3: </a></span>openSectionButton0.setOpen(true);
+<span class="nocode"><a name="1">  1: </a></span>JToolBar jToolBar0 = new JToolBar(&quot;&quot;, 0);
+<span class="nocode"><a name="2">  2: </a></span>OpenSectionButton openSectionButton0 = new OpenSectionButton(&quot;&quot;, jToolBar0);
+<span class="nocode"><a name="3">  3: </a></span>openSectionButton0.doClick();
 <span class="nocode"><a name="4">  4: </a></span>openSectionButton0.setOpen(true);
-<span class="nocode"><a name="5">  5: </a></span>assertFalse(openSectionButton0.isFocusTraversalPolicyProvider());
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(openSectionButton0.getFocusTraversalKeysEnabled());
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>OpenSectionButton openSectionButton0 = new OpenSectionButton(&quot;#nE{6x&quot;, (JComponent) null);
+<span class="nocode"><a name="1">  1: </a></span>OpenSectionButton openSectionButton0 = new OpenSectionButton(&quot;JPM2*}@t&lt;3D\nrC]&quot;, (JComponent) null);
 <span class="nocode"><a name="2">  2: </a></span>openSectionButton0.setOpen(false);
 </pre>
 </div><div id="post">
@@ -74,7 +75,7 @@ uk.ac.sanger.artemis.components.genebuilder.OpenSectionButton
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.genebuilder.OpenSectionButton
 <li>Size: 4
-<li>Length: 14
+<li>Length: 15
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.98125
 <li>BranchCoverage: 1.0

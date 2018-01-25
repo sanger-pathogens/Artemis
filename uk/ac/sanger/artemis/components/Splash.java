@@ -240,7 +240,7 @@ abstract public class Splash extends JFrame
     }
     
     pack();
-    setSize(460, 250);
+    setSize(460, 280);
 
     final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
     setLocation(new Point((screen.width - getSize().width) / 2,
@@ -418,7 +418,7 @@ abstract public class Splash extends JFrame
         g.drawString(geneticCode,
                      left_margin, yPos+(font_height * 3));
 
-        g.drawString("Copyright 1998 - 2016",
+        g.drawString("Copyright 1998 - 2018",
                      left_margin, yPos+(font_height * 9 / 2));
         g.drawString("Genome Research Limited",
                      left_margin, yPos+(font_height * 11 / 2));

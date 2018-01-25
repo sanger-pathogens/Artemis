@@ -35,35 +35,35 @@ uk.ac.sanger.artemis.components.SelectionInfoDisplay
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;2/}=43~bbZ1UJ6E&quot;);
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>Clipboard clipboard0 = new Clipboard(&quot;embossData&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="4">  4: </a></span>SelectionInfoDisplay selectionInfoDisplay0 = new SelectionInfoDisplay(simpleEntryGroup0, selection0);
+<span class="nocode"><a name="5">  5: </a></span>Dimension dimension0 = selectionInfoDisplay0.getPreferredSize();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(10, dimension0.width);
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;-&quot;);
 <span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
 <span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
 <span class="nocode"><a name="4">  4: </a></span>SelectionInfoDisplay selectionInfoDisplay0 = new SelectionInfoDisplay(simpleEntryGroup0, selection0);
 <span class="nocode"><a name="5">  5: </a></span>Dimension dimension0 = selectionInfoDisplay0.getMinimumSize();
 <span class="nocode"><a name="6">  6: </a></span>assertEquals(10, dimension0.width);
 </pre>
-<h3>Test case 2</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;[&gt;pw&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="4">  4: </a></span>SelectionInfoDisplay selectionInfoDisplay0 = new SelectionInfoDisplay(simpleEntryGroup0, selection0);
-<span class="nocode"><a name="5">  5: </a></span>Dimension dimension0 = selectionInfoDisplay0.getPreferredSize();
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(10, dimension0.width);
-</pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;[&gt;pw&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>Clipboard clipboard0 = new Clipboard(&quot;embossData&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Selection selection0 = new Selection(clipboard0);
 <span class="nocode"><a name="4">  4: </a></span>SelectionInfoDisplay selectionInfoDisplay0 = new SelectionInfoDisplay(simpleEntryGroup0, selection0);
-<span class="nocode"><a name="5">  5: </a></span>SelectionChangeEvent selectionChangeEvent0 = new SelectionChangeEvent(clipboard0, 15);
+<span class="nocode"><a name="5">  5: </a></span>SelectionChangeEvent selectionChangeEvent0 = new SelectionChangeEvent(clipboard0, 688);
 <span class="nocode"><a name="6">  6: </a></span>selectionInfoDisplay0.selectionChanged(selectionChangeEvent0);
-<span class="nocode"><a name="7">  7: </a></span>assertFalse(selectionInfoDisplay0.isFocusTraversalPolicySet());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(3, SelectionChangeEvent.OBJECT_CHANGED);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;2/}=43~bbZ1UJ6E&quot;);
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;-&quot;);
 <span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
 <span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
 <span class="nocode"><a name="4">  4: </a></span>String string0 = SelectionInfoDisplay.markerRangeText(selection0, simpleEntryGroup0);
@@ -71,23 +71,22 @@ uk.ac.sanger.artemis.components.SelectionInfoDisplay
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SelectionInfoDisplay selectionInfoDisplay0 = new SelectionInfoDisplay((EntryGroup) null, (Selection) null);
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>SelectionInfoDisplay selectionInfoDisplay0 = new SelectionInfoDisplay(simpleEntryGroup0, (Selection) null);
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate((Key) null, &quot;G/Qq_(z|&quot;);
-<span class="nocode"><a name="3">  3: </a></span>FeaturePredicateConjunction featurePredicateConjunction0 = new FeaturePredicateConjunction(featureKeyQualifierPredicate0, featureKeyQualifierPredicate0, 0);
-<span class="nocode"><a name="4">  4: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featurePredicateConjunction0, &quot;zpz,V6z@&quot;);
-<span class="nocode"><a name="5">  5: </a></span>SelectionInfoDisplay.markerRangeText((Selection) null, filteredEntryGroup0);
+<span class="nocode"><a name="2">  2: </a></span>SelectionInfoDisplay.markerRangeText((Selection) null, simpleEntryGroup0);
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;[&gt;pw&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>Clipboard clipboard0 = new Clipboard(&quot;embossData&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Selection selection0 = new Selection(clipboard0);
 <span class="nocode"><a name="4">  4: </a></span>SelectionInfoDisplay selectionInfoDisplay0 = new SelectionInfoDisplay(simpleEntryGroup0, selection0);
-<span class="nocode"><a name="5">  5: </a></span>selectionInfoDisplay0.paintComponent((Graphics) null);
+<span class="nocode"><a name="5">  5: </a></span>DebugGraphics debugGraphics0 = new DebugGraphics();
+<span class="nocode"><a name="6">  6: </a></span>selectionInfoDisplay0.paintComponent(debugGraphics0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -101,7 +100,7 @@ uk.ac.sanger.artemis.components.SelectionInfoDisplay
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.SelectionInfoDisplay
 <li>Size: 7
-<li>Length: 31
+<li>Length: 30
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.40909973126306365
 <li>BranchCoverage: 0.06666666666666667

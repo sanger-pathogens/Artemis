@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.io.FeatureComparator
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.io.FeatureComparator: 0.6926396139851289</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.io.FeatureComparator: 0.7164273849074513</ul>
 <ul>
-<li>157.6296296287371 fitness evaluations, 0 generations, null statements, 5 tests.
+<li>137.28985507157125 fitness evaluations, 0 generations, null statements, 6 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -36,39 +36,46 @@ uk.ac.sanger.artemis.io.FeatureComparator
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FeatureComparator featureComparator0 = new FeatureComparator();
-<span class="nocode"><a name="2">  2: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature();
-<span class="nocode"><a name="3">  3: </a></span>BlastStreamFeature blastStreamFeature0 = new BlastStreamFeature(genbankStreamFeature0);
-<span class="nocode"><a name="4">  4: </a></span>int int0 = featureComparator0.compare(genbankStreamFeature0, blastStreamFeature0);
-<span class="nocode"><a name="5">  5: </a></span>assertEquals((-1), int0);
+<span class="nocode"><a name="2">  2: </a></span>Integer integer0 = JLayeredPane.FRAME_CONTENT_LAYER;
+<span class="nocode"><a name="3">  3: </a></span>featureComparator0.compare((Object) null, integer0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FeatureComparator featureComparator0 = new FeatureComparator();
-<span class="nocode"><a name="2">  2: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature();
-<span class="nocode"><a name="3">  3: </a></span>BlastStreamFeature blastStreamFeature0 = new BlastStreamFeature(genbankStreamFeature0);
-<span class="nocode"><a name="4">  4: </a></span>Integer integer0 = JLayeredPane.DEFAULT_LAYER;
-<span class="nocode"><a name="5">  5: </a></span>int int0 = featureComparator0.compare(integer0, blastStreamFeature0);
-<span class="nocode"><a name="6">  6: </a></span>assertEquals((-1), int0);
+<span class="nocode"><a name="2">  2: </a></span>Integer integer0 = JLayeredPane.FRAME_CONTENT_LAYER;
+<span class="nocode"><a name="3">  3: </a></span>int int0 = featureComparator0.compare(integer0, integer0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, int0);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FeatureComparator featureComparator0 = new FeatureComparator();
-<span class="nocode"><a name="2">  2: </a></span>MockMinguoDate mockMinguoDate0 = new MockMinguoDate();
-<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = new Integer(0);
-<span class="nocode"><a name="4">  4: </a></span>featureComparator0.compare(mockMinguoDate0, integer0);
+<span class="nocode"><a name="2">  2: </a></span>Integer integer0 = JLayeredPane.FRAME_CONTENT_LAYER;
+<span class="nocode"><a name="3">  3: </a></span>Key key0 = Key.CDS;
+<span class="nocode"><a name="4">  4: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
+<span class="nocode"><a name="5">  5: </a></span>BlastStreamFeature blastStreamFeature0 = new BlastStreamFeature(key0, (Location) null, qualifierVector0);
+<span class="nocode"><a name="6">  6: </a></span>featureComparator0.compare(integer0, blastStreamFeature0);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FeatureComparator featureComparator0 = new FeatureComparator();
 <span class="nocode"><a name="2">  2: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature();
-<span class="nocode"><a name="3">  3: </a></span>BlastStreamFeature blastStreamFeature0 = new BlastStreamFeature(genbankStreamFeature0);
-<span class="nocode"><a name="4">  4: </a></span>int int0 = featureComparator0.compare(blastStreamFeature0, blastStreamFeature0);
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, int0);
+<span class="nocode"><a name="3">  3: </a></span>GFFStreamFeature gFFStreamFeature0 = new GFFStreamFeature(genbankStreamFeature0);
+<span class="nocode"><a name="4">  4: </a></span>BlastStreamFeature blastStreamFeature0 = new BlastStreamFeature(gFFStreamFeature0);
+<span class="nocode"><a name="5">  5: </a></span>featureComparator0.compare(blastStreamFeature0, gFFStreamFeature0);
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FeatureComparator featureComparator0 = new FeatureComparator();
-<span class="nocode"><a name="2">  2: </a></span>featureComparator0.compare((Object) null, (Object) null);
+<span class="nocode"><a name="2">  2: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature();
+<span class="nocode"><a name="3">  3: </a></span>int int0 = featureComparator0.compare(genbankStreamFeature0, genbankStreamFeature0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, int0);
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FeatureComparator featureComparator0 = new FeatureComparator();
+<span class="nocode"><a name="2">  2: </a></span>FlowLayout flowLayout0 = new FlowLayout();
+<span class="nocode"><a name="3">  3: </a></span>Panel panel0 = new Panel(flowLayout0);
+<span class="nocode"><a name="4">  4: </a></span>featureComparator0.compare(panel0, flowLayout0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -81,11 +88,11 @@ uk.ac.sanger.artemis.io.FeatureComparator
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.io.FeatureComparator
-<li>Size: 5
-<li>Length: 19
+<li>Size: 6
+<li>Length: 24
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.6926396139851289
-<li>BranchCoverage: 0.46511627906976744
+<li>Coverage: 0.7164273849074513
+<li>BranchCoverage: 0.5116279069767442
 <li>MethodCoverage: 1.0
 <li>OutputCoverage: 0.6666666666666666
 </ul></div>

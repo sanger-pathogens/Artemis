@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.plot.CSCSAlgorithm
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.plot.CSCSAlgorithm: 0.810810675034813</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.plot.CSCSAlgorithm: 0.8645732806873391</ul>
 <ul>
-<li>173.62499999534336 fitness evaluations, 0 generations, null statements, 16 tests.
+<li>141.48333332867674 fitness evaluations, 0 generations, null statements, 16 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,164 +35,160 @@ uk.ac.sanger.artemis.plot.CSCSAlgorithm
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;Corrected Scaled Chi Square&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;Reverse Corrected Scaled Chi Square&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
 <span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
 <span class="nocode"><a name="4">  4: </a></span>CSCSAlgorithm cSCSAlgorithm0 = new CSCSAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>cSCSAlgorithm0.getAverage();
+<span class="nocode"><a name="5">  5: </a></span>cSCSAlgorithm0.getValueCount();
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;Corrected Scaled Chi Square&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
-<span class="nocode"><a name="4">  4: </a></span>CSCSAlgorithm cSCSAlgorithm0 = new CSCSAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>Float float0 = cSCSAlgorithm0.getMinimumInternal();
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;Reverse Corrected Scaled Chi Square&quot;, cSCSAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="1">  1: </a></span>Bases bases0 = new Bases((Sequence) null);
+<span class="nocode"><a name="2">  2: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="3">  3: </a></span>CSCSAlgorithm cSCSAlgorithm0 = new CSCSAlgorithm(strand0);
+<span class="nocode"><a name="4">  4: </a></span>DebugGraphics debugGraphics0 = new DebugGraphics();
+<span class="nocode"><a name="5">  5: </a></span>Color[] colorArray0 = new Color[7];
+<span class="nocode"><a name="6">  6: </a></span>cSCSAlgorithm0.drawLegend((Graphics) debugGraphics0, 1, 2, colorArray0);
 <span class="nocode"><a name="7">  7: </a></span>assertTrue(cSCSAlgorithm0.scalingFlag());
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(0.0F, (float)float0, 0.01F);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(&quot;Reverse Corrected Scaled Chi Square&quot;, cSCSAlgorithm0.getAlgorithmName());
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;Corrected Scaled Chi Square&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
-<span class="nocode"><a name="4">  4: </a></span>CSCSAlgorithm cSCSAlgorithm0 = new CSCSAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>int int0 = cSCSAlgorithm0.getValueCount();
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(3, int0);
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(&quot;Reverse Corrected Scaled Chi Square&quot;, cSCSAlgorithm0.getAlgorithmName());
-<span class="nocode"><a name="8">  8: </a></span>assertTrue(cSCSAlgorithm0.scalingFlag());
+<span class="nocode"><a name="1">  1: </a></span>Bases bases0 = new Bases((Sequence) null);
+<span class="nocode"><a name="2">  2: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="3">  3: </a></span>CSCSAlgorithm cSCSAlgorithm0 = new CSCSAlgorithm(strand0);
+<span class="nocode"><a name="4">  4: </a></span>cSCSAlgorithm0.getAverage();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;Corrected Scaled Chi Square&quot;, cSCSAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(cSCSAlgorithm0.scalingFlag());
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;Corrected Scaled Chi Square&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
-<span class="nocode"><a name="4">  4: </a></span>CSCSAlgorithm cSCSAlgorithm0 = new CSCSAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>float[] floatArray0 = new float[2];
-<span class="nocode"><a name="6">  6: </a></span>cSCSAlgorithm0.getValues((byte)2, 5, floatArray0);
+<span class="nocode"><a name="1">  1: </a></span>Bases bases0 = new Bases((Sequence) null);
+<span class="nocode"><a name="2">  2: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="3">  3: </a></span>CSCSAlgorithm cSCSAlgorithm0 = new CSCSAlgorithm(strand0);
+<span class="nocode"><a name="4">  4: </a></span>Float float0 = cSCSAlgorithm0.getMinimumInternal();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0.0F, (float)float0, 0.01F);
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(cSCSAlgorithm0.scalingFlag());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(&quot;Corrected Scaled Chi Square&quot;, cSCSAlgorithm0.getAlgorithmName());
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;4F&lt;&gt;}ftBWIkY&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
-<span class="nocode"><a name="4">  4: </a></span>CSCSAlgorithm cSCSAlgorithm0 = new CSCSAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>float[] floatArray0 = new float[2];
-<span class="nocode"><a name="6">  6: </a></span>cSCSAlgorithm0.getValues(2, 1, floatArray0);
+<span class="nocode"><a name="1">  1: </a></span>Bases bases0 = new Bases((Sequence) null);
+<span class="nocode"><a name="2">  2: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="3">  3: </a></span>CSCSAlgorithm cSCSAlgorithm0 = new CSCSAlgorithm(strand0);
+<span class="nocode"><a name="4">  4: </a></span>Float float0 = cSCSAlgorithm0.getMaximumInternal();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(1000.0F, (float)float0, 0.01F);
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(cSCSAlgorithm0.scalingFlag());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(&quot;Corrected Scaled Chi Square&quot;, cSCSAlgorithm0.getAlgorithmName());
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;Corrected Scaled Chi Square&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
-<span class="nocode"><a name="4">  4: </a></span>CSCSAlgorithm cSCSAlgorithm0 = new CSCSAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>cSCSAlgorithm0.getValues(42, 99, (float[]) null);
-</pre>
-<h3>Test case 7</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;Corrected Scaled Chi Square&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;Reverse Corrected Scaled Chi Square&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
 <span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
 <span class="nocode"><a name="4">  4: </a></span>CSCSAlgorithm cSCSAlgorithm0 = new CSCSAlgorithm(strand0);
 <span class="nocode"><a name="5">  5: </a></span>float[] floatArray0 = new float[6];
-<span class="nocode"><a name="6">  6: </a></span>cSCSAlgorithm0.getValues(0, 2, floatArray0);
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(&quot;Reverse Corrected Scaled Chi Square&quot;, cSCSAlgorithm0.getAlgorithmName());
-<span class="nocode"><a name="8">  8: </a></span>assertTrue(cSCSAlgorithm0.scalingFlag());
+<span class="nocode"><a name="6">  6: </a></span>cSCSAlgorithm0.getValues(2, 641, floatArray0);
+<span class="nocode"><a name="7">  7: </a></span>assertTrue(cSCSAlgorithm0.scalingFlag());
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(&quot;Reverse Corrected Scaled Chi Square&quot;, cSCSAlgorithm0.getAlgorithmName());
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[4];
+<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short) (-3417));
+<span class="nocode"><a name="3">  3: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 0, 0, short0, (Integer) null);
+<span class="nocode"><a name="4">  4: </a></span>Bases bases0 = new Bases(partialSequence0);
+<span class="nocode"><a name="5">  5: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="6">  6: </a></span>CSCSAlgorithm cSCSAlgorithm0 = new CSCSAlgorithm(strand0);
+<span class="nocode"><a name="7">  7: </a></span>cSCSAlgorithm0.getValues((short) (-3417), 0, (float[]) null);
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;Corrected Scaled Chi Square&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;Reverse Corrected Scaled Chi Square&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
 <span class="nocode"><a name="4">  4: </a></span>CSCSAlgorithm cSCSAlgorithm0 = new CSCSAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>Integer integer0 = cSCSAlgorithm0.getDefaultWindowSize();
-<span class="nocode"><a name="6">  6: </a></span>assertNotNull(integer0);
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(500, (int)integer0);
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(&quot;Reverse Corrected Scaled Chi Square&quot;, cSCSAlgorithm0.getAlgorithmName());
-<span class="nocode"><a name="9">  9: </a></span>assertTrue(cSCSAlgorithm0.scalingFlag());
+<span class="nocode"><a name="5">  5: </a></span>float[] floatArray0 = new float[6];
+<span class="nocode"><a name="6">  6: </a></span>cSCSAlgorithm0.getValues(2, 641, floatArray0);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(&quot;Corrected Scaled Chi Square&quot;, cSCSAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="8">  8: </a></span>assertTrue(cSCSAlgorithm0.scalingFlag());
 </pre>
 <h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;Corrected Scaled Chi Square&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
-<span class="nocode"><a name="4">  4: </a></span>CSCSAlgorithm cSCSAlgorithm0 = new CSCSAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>Integer integer0 = cSCSAlgorithm0.getDefaultMaxWindowSize();
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(5000, (int)integer0);
-<span class="nocode"><a name="7">  7: </a></span>assertNotNull(integer0);
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(&quot;Reverse Corrected Scaled Chi Square&quot;, cSCSAlgorithm0.getAlgorithmName());
-<span class="nocode"><a name="9">  9: </a></span>assertTrue(cSCSAlgorithm0.scalingFlag());
+<span class="nocode"><a name="1">  1: </a></span>Bases bases0 = new Bases((Sequence) null);
+<span class="nocode"><a name="2">  2: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="3">  3: </a></span>CSCSAlgorithm cSCSAlgorithm0 = new CSCSAlgorithm(strand0);
+<span class="nocode"><a name="4">  4: </a></span>Integer integer0 = cSCSAlgorithm0.getDefaultWindowSize();
+<span class="nocode"><a name="5">  5: </a></span>assertNotNull(integer0);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;Corrected Scaled Chi Square&quot;, cSCSAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="7">  7: </a></span>assertTrue(cSCSAlgorithm0.scalingFlag());
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(500, (int)integer0);
 </pre>
 <h3>Test case 10</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;Corrected Scaled Chi Square&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
-<span class="nocode"><a name="4">  4: </a></span>CSCSAlgorithm cSCSAlgorithm0 = new CSCSAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>Integer integer0 = cSCSAlgorithm0.getDefaultMinWindowSize();
-<span class="nocode"><a name="6">  6: </a></span>assertNotNull(integer0);
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(24, (int)integer0);
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(&quot;Reverse Corrected Scaled Chi Square&quot;, cSCSAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[4];
+<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short) (-3417));
+<span class="nocode"><a name="3">  3: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 0, 0, short0, (Integer) null);
+<span class="nocode"><a name="4">  4: </a></span>Bases bases0 = new Bases(partialSequence0);
+<span class="nocode"><a name="5">  5: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="6">  6: </a></span>CSCSAlgorithm cSCSAlgorithm0 = new CSCSAlgorithm(strand0);
+<span class="nocode"><a name="7">  7: </a></span>Integer integer0 = cSCSAlgorithm0.getDefaultMaxWindowSize();
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(&quot;Corrected Scaled Chi Square&quot;, cSCSAlgorithm0.getAlgorithmName());
 <span class="nocode"><a name="9">  9: </a></span>assertTrue(cSCSAlgorithm0.scalingFlag());
+<span class="nocode"><a name="10"> 10: </a></span>assertNotNull(integer0);
+<span class="nocode"><a name="11"> 11: </a></span>assertEquals(5000, (int)integer0);
 </pre>
 <h3>Test case 11</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;Corrected Scaled Chi Square&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
-<span class="nocode"><a name="4">  4: </a></span>CSCSAlgorithm cSCSAlgorithm0 = new CSCSAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>Integer integer0 = cSCSAlgorithm0.getDefaultStepSize(0);
-<span class="nocode"><a name="6">  6: </a></span>assertNull(integer0);
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(&quot;Reverse Corrected Scaled Chi Square&quot;, cSCSAlgorithm0.getAlgorithmName());
-<span class="nocode"><a name="8">  8: </a></span>assertTrue(cSCSAlgorithm0.scalingFlag());
+<span class="nocode"><a name="1">  1: </a></span>Bases bases0 = new Bases((Sequence) null);
+<span class="nocode"><a name="2">  2: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="3">  3: </a></span>CSCSAlgorithm cSCSAlgorithm0 = new CSCSAlgorithm(strand0);
+<span class="nocode"><a name="4">  4: </a></span>Integer integer0 = cSCSAlgorithm0.getDefaultMinWindowSize();
+<span class="nocode"><a name="5">  5: </a></span>assertNotNull(integer0);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(24, (int)integer0);
+<span class="nocode"><a name="7">  7: </a></span>assertTrue(cSCSAlgorithm0.scalingFlag());
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(&quot;Corrected Scaled Chi Square&quot;, cSCSAlgorithm0.getAlgorithmName());
 </pre>
 <h3>Test case 12</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;^&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
-<span class="nocode"><a name="4">  4: </a></span>CSCSAlgorithm cSCSAlgorithm0 = new CSCSAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>Integer integer0 = cSCSAlgorithm0.getDefaultStepSize(30);
-<span class="nocode"><a name="6">  6: </a></span>assertTrue(cSCSAlgorithm0.scalingFlag());
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(&quot;Corrected Scaled Chi Square&quot;, cSCSAlgorithm0.getAlgorithmName());
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(24, (int)integer0);
-<span class="nocode"><a name="9">  9: </a></span>assertNotNull(integer0);
+<span class="nocode"><a name="1">  1: </a></span>Bases bases0 = new Bases((Sequence) null);
+<span class="nocode"><a name="2">  2: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="3">  3: </a></span>CSCSAlgorithm cSCSAlgorithm0 = new CSCSAlgorithm(strand0);
+<span class="nocode"><a name="4">  4: </a></span>Integer integer0 = cSCSAlgorithm0.getDefaultStepSize(5);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;Corrected Scaled Chi Square&quot;, cSCSAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="6">  6: </a></span>assertNull(integer0);
+<span class="nocode"><a name="7">  7: </a></span>assertTrue(cSCSAlgorithm0.scalingFlag());
 </pre>
 <h3>Test case 13</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>CSCSAlgorithm cSCSAlgorithm0 = new CSCSAlgorithm((Strand) null);
+<span class="nocode"><a name="1">  1: </a></span>Bases bases0 = new Bases((Sequence) null);
+<span class="nocode"><a name="2">  2: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="3">  3: </a></span>CSCSAlgorithm cSCSAlgorithm0 = new CSCSAlgorithm(strand0);
+<span class="nocode"><a name="4">  4: </a></span>Integer integer0 = cSCSAlgorithm0.getDefaultStepSize(1628);
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(cSCSAlgorithm0.scalingFlag());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(24, (int)integer0);
+<span class="nocode"><a name="7">  7: </a></span>assertNotNull(integer0);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(&quot;Corrected Scaled Chi Square&quot;, cSCSAlgorithm0.getAlgorithmName());
 </pre>
 <h3>Test case 14</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;Corrected Scaled Chi Square&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
-<span class="nocode"><a name="4">  4: </a></span>CSCSAlgorithm cSCSAlgorithm0 = new CSCSAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>Float float0 = cSCSAlgorithm0.getMaximumInternal();
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;Reverse Corrected Scaled Chi Square&quot;, cSCSAlgorithm0.getAlgorithmName());
-<span class="nocode"><a name="7">  7: </a></span>assertTrue(cSCSAlgorithm0.scalingFlag());
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(1000.0F, (float)float0, 0.01F);
+<span class="nocode"><a name="1">  1: </a></span>CSCSAlgorithm cSCSAlgorithm0 = new CSCSAlgorithm((Strand) null);
 </pre>
 <h3>Test case 15</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;4F&lt;&gt;}ftBWIkY&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
-<span class="nocode"><a name="4">  4: </a></span>CSCSAlgorithm cSCSAlgorithm0 = new CSCSAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>float[] floatArray0 = new float[0];
-<span class="nocode"><a name="6">  6: </a></span>cSCSAlgorithm0.getValues(0, 0, floatArray0);
+<span class="nocode"><a name="1">  1: </a></span>Bases bases0 = new Bases((Sequence) null);
+<span class="nocode"><a name="2">  2: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="3">  3: </a></span>CSCSAlgorithm cSCSAlgorithm0 = new CSCSAlgorithm(strand0);
+<span class="nocode"><a name="4">  4: </a></span>float[] floatArray0 = new float[3];
+<span class="nocode"><a name="5">  5: </a></span>cSCSAlgorithm0.getValues(2, 2, floatArray0);
 </pre>
 <h3>Test case 16</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
-<span class="nocode"><a name="4">  4: </a></span>CSCSAlgorithm cSCSAlgorithm0 = new CSCSAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>Integer integer0 = cSCSAlgorithm0.getDefaultStepSize(10);
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;Corrected Scaled Chi Square&quot;, cSCSAlgorithm0.getAlgorithmName());
-<span class="nocode"><a name="7">  7: </a></span>assertTrue(cSCSAlgorithm0.scalingFlag());
-<span class="nocode"><a name="8">  8: </a></span>assertNull(integer0);
+<span class="nocode"><a name="1">  1: </a></span>Bases bases0 = new Bases((Sequence) null);
+<span class="nocode"><a name="2">  2: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="3">  3: </a></span>CSCSAlgorithm cSCSAlgorithm0 = new CSCSAlgorithm(strand0);
+<span class="nocode"><a name="4">  4: </a></span>float[] floatArray0 = new float[8];
+<span class="nocode"><a name="5">  5: </a></span>cSCSAlgorithm0.getValues((-5), 811, floatArray0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -206,11 +202,11 @@ uk.ac.sanger.artemis.plot.CSCSAlgorithm
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.plot.CSCSAlgorithm
 <li>Size: 16
-<li>Length: 80
+<li>Length: 76
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.810810675034813
-<li>BranchCoverage: 0.7241379310344828
-<li>MethodCoverage: 0.9090909090909091
+<li>Coverage: 0.8645732806873391
+<li>BranchCoverage: 0.8448275862068966
+<li>MethodCoverage: 1.0
 <li>OutputCoverage: 0.2905405405405405
 </ul></div>
 </div>

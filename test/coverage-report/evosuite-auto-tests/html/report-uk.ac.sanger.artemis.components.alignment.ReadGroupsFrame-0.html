@@ -35,8 +35,7 @@ uk.ac.sanger.artemis.components.alignment.ReadGroupsFrame
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>LinkedList&lt;SAMReadGroupRecord&gt; linkedList0 = new LinkedList&lt;SAMReadGroupRecord&gt;();
-<span class="nocode"><a name="2">  2: </a></span>ReadGroupsFrame readGroupsFrame0 = new ReadGroupsFrame(linkedList0, (BamView) null);
+<span class="nocode"><a name="1">  1: </a></span>ReadGroupsFrame readGroupsFrame0 = new ReadGroupsFrame((List&lt;SAMReadGroupRecord&gt;) null, (BamView) null);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -50,7 +49,7 @@ uk.ac.sanger.artemis.components.alignment.ReadGroupsFrame
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.alignment.ReadGroupsFrame
 <li>Size: 1
-<li>Length: 2
+<li>Length: 1
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.16666666666666666
 <li>BranchCoverage: 0.0

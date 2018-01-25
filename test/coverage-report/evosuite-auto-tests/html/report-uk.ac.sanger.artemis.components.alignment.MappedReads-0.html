@@ -35,16 +35,20 @@ uk.ac.sanger.artemis.components.alignment.MappedReads
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MappedReads mappedReads0 = new MappedReads((BamView) null, (GroupBamFrame) null, (-688), (-688), (-688), false, false);
+<span class="nocode"><a name="1">  1: </a></span>MappedReads mappedReads0 = new MappedReads((BamView) null, (GroupBamFrame) null, 500, 500, 1, true, false);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MappedReads mappedReads0 = new MappedReads((BamView) null, (FeatureVector) null, false, false, false);
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>FeatureVector featureVector0 = simpleEntryGroup0.getAllFeatures();
+<span class="nocode"><a name="3">  3: </a></span>MappedReads mappedReads0 = new MappedReads((BamView) null, featureVector0, true, true, false);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FeatureVector featureVector0 = new FeatureVector();
-<span class="nocode"><a name="2">  2: </a></span>MappedReads mappedReads0 = new MappedReads((BamView) null, featureVector0, 0, true, true, true, true);
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>Entry entry0 = simpleEntryGroup0.createEntry();
+<span class="nocode"><a name="3">  3: </a></span>FeatureVector featureVector0 = entry0.getFeaturesInRange((Range) null);
+<span class="nocode"><a name="4">  4: </a></span>MappedReads mappedReads0 = new MappedReads((BamView) null, featureVector0, 502, true, true, false, true);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -58,7 +62,7 @@ uk.ac.sanger.artemis.components.alignment.MappedReads
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.alignment.MappedReads
 <li>Size: 3
-<li>Length: 4
+<li>Length: 8
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.2903472286055704
 <li>BranchCoverage: 0.016304347826086956

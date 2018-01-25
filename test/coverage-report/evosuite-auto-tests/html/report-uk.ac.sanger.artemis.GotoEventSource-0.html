@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.GotoEventSource
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.GotoEventSource: 1.0</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.GotoEventSource: 0.9285714285714286</ul>
 <ul>
-<li>0.25 fitness evaluations, 0 generations, null statements, 10 tests.
+<li>4.2 fitness evaluations, 0 generations, null statements, 9 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -36,13 +36,12 @@ uk.ac.sanger.artemis.GotoEventSource
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SimpleGotoEventSource simpleGotoEventSource0 = new SimpleGotoEventSource((EntryGroup) null);
-<span class="nocode"><a name="2">  2: </a></span>simpleGotoEventSource0.gotoBase(4065);
+<span class="nocode"><a name="2">  2: </a></span>simpleGotoEventSource0.gotoBase(1066);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>SimpleGotoEventSource simpleGotoEventSource0 = new SimpleGotoEventSource(simpleEntryGroup0);
-<span class="nocode"><a name="3">  3: </a></span>simpleGotoEventSource0.gotoFirstBase();
+<span class="nocode"><a name="1">  1: </a></span>SimpleGotoEventSource simpleGotoEventSource0 = new SimpleGotoEventSource((EntryGroup) null);
+<span class="nocode"><a name="2">  2: </a></span>simpleGotoEventSource0.gotoFirstBase();
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
@@ -51,62 +50,46 @@ uk.ac.sanger.artemis.GotoEventSource
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleGotoEventSource simpleGotoEventSource0 = new SimpleGotoEventSource((EntryGroup) null);
+<span class="nocode"><a name="2">  2: </a></span>simpleGotoEventSource0.sendGotoEvent((GotoEvent) null);
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
 <span class="nocode"><a name="2">  2: </a></span>SimpleGotoEventSource simpleGotoEventSource0 = new SimpleGotoEventSource(simpleEntryGroup0);
 <span class="nocode"><a name="3">  3: </a></span>simpleGotoEventSource0.addGotoListener((GotoListener) null);
 </pre>
-<h3>Test case 5</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="4">  4: </a></span>SimpleGotoEventSource simpleGotoEventSource0 = new SimpleGotoEventSource(simpleEntryGroup0);
-<span class="nocode"><a name="5">  5: </a></span>simpleGotoEventSource0.gotoBase((Marker) null);
-</pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>Key key0 = Key.CDS;
-<span class="nocode"><a name="3">  3: </a></span>FeatureKeyPredicate featureKeyPredicate0 = new FeatureKeyPredicate(key0);
-<span class="nocode"><a name="4">  4: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureKeyPredicate0, &quot;e-B-me0GL5zk=J&quot;);
-<span class="nocode"><a name="5">  5: </a></span>SimpleGotoEventSource simpleGotoEventSource0 = new SimpleGotoEventSource(filteredEntryGroup0);
-<span class="nocode"><a name="6">  6: </a></span>simpleGotoEventSource0.removeGotoListener((GotoListener) null);
+<span class="nocode"><a name="1">  1: </a></span>SimpleGotoEventSource simpleGotoEventSource0 = new SimpleGotoEventSource((EntryGroup) null);
+<span class="nocode"><a name="2">  2: </a></span>simpleGotoEventSource0.gotoBase((Marker) null);
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>Clipboard clipboard0 = new Clipboard((String) null);
-<span class="nocode"><a name="3">  3: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="4">  4: </a></span>FeatureVector featureVector0 = selection0.getSelectedFeatures();
-<span class="nocode"><a name="5">  5: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, (String) null);
-<span class="nocode"><a name="6">  6: </a></span>SimpleGotoEventSource simpleGotoEventSource0 = new SimpleGotoEventSource(filteredEntryGroup0);
-<span class="nocode"><a name="7">  7: </a></span>GotoEvent gotoEvent0 = new GotoEvent(clipboard0, (Marker) null);
-<span class="nocode"><a name="8">  8: </a></span>simpleGotoEventSource0.sendGotoEvent(gotoEvent0);
+<span class="nocode"><a name="1">  1: </a></span>SimpleGotoEventSource simpleGotoEventSource0 = new SimpleGotoEventSource((EntryGroup) null);
+<span class="nocode"><a name="2">  2: </a></span>simpleGotoEventSource0.removeGotoListener((GotoListener) null);
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="4">  4: </a></span>SimpleGotoEventSource simpleGotoEventSource0 = new SimpleGotoEventSource(simpleEntryGroup0);
-<span class="nocode"><a name="5">  5: </a></span>MarkerRange markerRange0 = simpleGotoEventSource0.gotoBase(0);
-<span class="nocode"><a name="6">  6: </a></span>assertNull(markerRange0);
+<span class="nocode"><a name="1">  1: </a></span>Bases bases0 = new Bases((Sequence) null);
+<span class="nocode"><a name="2">  2: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="3">  3: </a></span>Key key0 = new Key(&quot;gi|&quot;);
+<span class="nocode"><a name="4">  4: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate(key0, &quot;Can't pack with alphabet &quot;, &quot;&quot;, true, true, true);
+<span class="nocode"><a name="5">  5: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureKeyQualifierPredicate0, &quot;&quot;);
+<span class="nocode"><a name="6">  6: </a></span>SimpleGotoEventSource simpleGotoEventSource0 = new SimpleGotoEventSource(filteredEntryGroup0);
+<span class="nocode"><a name="7">  7: </a></span>MarkerRange markerRange0 = simpleGotoEventSource0.gotoBase((-662));
+<span class="nocode"><a name="8">  8: </a></span>assertNull(markerRange0);
 </pre>
 <h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot; already contains &quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="4">  4: </a></span>SimpleGotoEventSource simpleGotoEventSource0 = new SimpleGotoEventSource(simpleEntryGroup0);
-<span class="nocode"><a name="5">  5: </a></span>simpleGotoEventSource0.gotoFirstBase();
-</pre>
-<h3>Test case 10</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;X2cmZZ{IwtB9U&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="4">  4: </a></span>SimpleGotoEventSource simpleGotoEventSource0 = new SimpleGotoEventSource(simpleEntryGroup0);
-<span class="nocode"><a name="5">  5: </a></span>simpleGotoEventSource0.gotoLastBase();
+<span class="nocode"><a name="1">  1: </a></span>Bases bases0 = new Bases((Sequence) null);
+<span class="nocode"><a name="2">  2: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="3">  3: </a></span>Key key0 = new Key(&quot;gi|&quot;);
+<span class="nocode"><a name="4">  4: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate(key0, &quot;Can't pack with alphabet &quot;, &quot;&quot;, true, true, true);
+<span class="nocode"><a name="5">  5: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureKeyQualifierPredicate0, &quot;&quot;);
+<span class="nocode"><a name="6">  6: </a></span>SimpleGotoEventSource simpleGotoEventSource0 = new SimpleGotoEventSource(filteredEntryGroup0);
+<span class="nocode"><a name="7">  7: </a></span>GotoEvent gotoEvent0 = new GotoEvent(featureKeyQualifierPredicate0, (Marker) null);
+<span class="nocode"><a name="8">  8: </a></span>simpleGotoEventSource0.sendGotoEvent(gotoEvent0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -119,10 +102,10 @@ uk.ac.sanger.artemis.GotoEventSource
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.GotoEventSource
-<li>Size: 10
-<li>Length: 44
+<li>Size: 9
+<li>Length: 30
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 1.0
+<li>Coverage: 0.9285714285714286
 <li>BranchCoverage: 1.0
 <li>MethodCoverage: 1.0
 <li>OutputCoverage: 1.0

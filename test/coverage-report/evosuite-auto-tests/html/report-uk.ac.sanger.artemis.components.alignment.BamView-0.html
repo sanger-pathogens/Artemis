@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.components.alignment.BamView
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.components.alignment.BamView: 0.00781547559472194</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.components.alignment.BamView: 0.016199997382381256</ul>
 <ul>
-<li>15442.832883288329 fitness evaluations, 0 generations, null statements, 3 tests.
+<li>15284.249548736461 fitness evaluations, 0 generations, null statements, 6 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,22 +35,28 @@ uk.ac.sanger.artemis.components.alignment.BamView
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>DefaultSAMRecordFactory defaultSAMRecordFactory0 = new DefaultSAMRecordFactory();
-<span class="nocode"><a name="2">  2: </a></span>SAMFileHeader sAMFileHeader0 = new SAMFileHeader();
-<span class="nocode"><a name="3">  3: </a></span>SAMRecord sAMRecord0 = defaultSAMRecordFactory0.createSAMRecord(sAMFileHeader0);
-<span class="nocode"><a name="4">  4: </a></span>BamView.openFileViewer(sAMRecord0, sAMRecord0, (List&lt;String&gt;) null);
+<span class="nocode"><a name="1">  1: </a></span>boolean boolean0 = BamView.isStandaloneMode();
+<span class="nocode"><a name="2">  2: </a></span>assertFalse(boolean0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>BamView.isNegativeStrand((SAMRecord) null, false);
+<span class="nocode"><a name="1">  1: </a></span>BamView.openFileViewer((SAMRecord) null, (SAMRecord) null, (List&lt;String&gt;) null);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>DefaultSAMRecordFactory defaultSAMRecordFactory0 = new DefaultSAMRecordFactory();
-<span class="nocode"><a name="2">  2: </a></span>SAMFileHeader sAMFileHeader0 = new SAMFileHeader();
-<span class="nocode"><a name="3">  3: </a></span>SAMRecord sAMRecord0 = defaultSAMRecordFactory0.createSAMRecord(sAMFileHeader0);
-<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = BamView.isNegativeStrand(sAMRecord0, true);
-<span class="nocode"><a name="5">  5: </a></span>assertFalse(boolean0);
+<span class="nocode"><a name="1">  1: </a></span>BamView.setStandaloneMode(true);
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BamView.isNegativeStrand((SAMRecord) null, false);
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BamView.isNegativeStrand((SAMRecord) null, true);
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BamView bamView0 = new BamView((List&lt;String&gt;) null, &quot;-8R$i'D`&amp;8dz_p{`d&quot;, 581, (FeatureDisplay) null, (Bases) null, (JPanel) null, (JFrame) null);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -63,13 +69,13 @@ uk.ac.sanger.artemis.components.alignment.BamView
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.alignment.BamView
-<li>Size: 3
-<li>Length: 9
+<li>Size: 6
+<li>Length: 6
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.00781547559472194
-<li>BranchCoverage: 0.0034602076124567475
-<li>MethodCoverage: 0.0425531914893617
-<li>OutputCoverage: 0.006369426751592357
+<li>Coverage: 0.016199997382381256
+<li>BranchCoverage: 0.004273504273504274
+<li>MethodCoverage: 0.09433962264150944
+<li>OutputCoverage: 0.0058823529411764705
 </ul></div>
 </div>
 <p><br><a href="../report-generation.html">Back to Overview</a></p>

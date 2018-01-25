@@ -36,57 +36,50 @@ uk.ac.sanger.artemis.components.ListSelectionPanel
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>String[] stringArray0 = new String[8];
+<span class="nocode"><a name="2">  2: </a></span>String[] stringArray0 = new String[2];
 <span class="nocode"><a name="3">  3: </a></span>ListSelectionPanel listSelectionPanel0 = new ListSelectionPanel(simpleEntryGroup0, stringArray0, stringArray0, true);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>simpleEntryGroup0.createEntry();
-<span class="nocode"><a name="3">  3: </a></span>Object[] objectArray0 = new Object[6];
-<span class="nocode"><a name="4">  4: </a></span>String[] stringArray0 = new String[8];
-<span class="nocode"><a name="5">  5: </a></span>ListSelectionPanel listSelectionPanel0 = new ListSelectionPanel(simpleEntryGroup0, objectArray0, stringArray0, true);
+<span class="nocode"><a name="2">  2: </a></span>String[] stringArray0 = new String[2];
+<span class="nocode"><a name="3">  3: </a></span>simpleEntryGroup0.createEntry(&quot;&quot;);
+<span class="nocode"><a name="4">  4: </a></span>ListSelectionPanel listSelectionPanel0 = new ListSelectionPanel(simpleEntryGroup0, stringArray0, stringArray0, true);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>FeatureVector featureVector0 = new FeatureVector();
-<span class="nocode"><a name="3">  3: </a></span>FeatureFromVectorPredicate featureFromVectorPredicate0 = new FeatureFromVectorPredicate(featureVector0);
-<span class="nocode"><a name="4">  4: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureFromVectorPredicate0, &quot;&quot;);
-<span class="nocode"><a name="5">  5: </a></span>Object[] objectArray0 = new Object[1];
-<span class="nocode"><a name="6">  6: </a></span>String[] stringArray0 = new String[3];
-<span class="nocode"><a name="7">  7: </a></span>Key key0 = Key.CDS;
-<span class="nocode"><a name="8">  8: </a></span>ListSelectionPanel listSelectionPanel0 = new ListSelectionPanel(filteredEntryGroup0, objectArray0, stringArray0, true, key0, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>String[] stringArray0 = new String[2];
+<span class="nocode"><a name="3">  3: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="4">  4: </a></span>Key key0 = blastEntryInformation0.getDefaultKey();
+<span class="nocode"><a name="5">  5: </a></span>ListSelectionPanel listSelectionPanel0 = new ListSelectionPanel(simpleEntryGroup0, stringArray0, stringArray0, false, key0, &quot;R6^W}&gt;}RX$L56{mf&quot;);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>simpleEntryGroup0.createEntry();
-<span class="nocode"><a name="3">  3: </a></span>Object[] objectArray0 = new Object[6];
-<span class="nocode"><a name="4">  4: </a></span>String[] stringArray0 = new String[8];
-<span class="nocode"><a name="5">  5: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
-<span class="nocode"><a name="6">  6: </a></span>Key key0 = blastEntryInformation0.getDefaultKey();
-<span class="nocode"><a name="7">  7: </a></span>ListSelectionPanel listSelectionPanel0 = new ListSelectionPanel(simpleEntryGroup0, objectArray0, stringArray0, true, key0, &quot;&amp; ]It'a&quot;);
+<span class="nocode"><a name="2">  2: </a></span>simpleEntryGroup0.createEntry(&quot;JT|@&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String[] stringArray0 = new String[2];
+<span class="nocode"><a name="4">  4: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="5">  5: </a></span>Key key0 = blastEntryInformation0.getDefaultKey();
+<span class="nocode"><a name="6">  6: </a></span>ListSelectionPanel listSelectionPanel0 = new ListSelectionPanel(simpleEntryGroup0, stringArray0, stringArray0, false, key0, &quot;R6^W}&gt;}RX$L56{mf&quot;);
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>simpleEntryGroup0.createEntry();
-<span class="nocode"><a name="3">  3: </a></span>Object[] objectArray0 = new Object[6];
-<span class="nocode"><a name="4">  4: </a></span>String[] stringArray0 = new String[8];
-<span class="nocode"><a name="5">  5: </a></span>simpleEntryGroup0.removeAllElements();
-<span class="nocode"><a name="6">  6: </a></span>ListSelectionPanel listSelectionPanel0 = new ListSelectionPanel(simpleEntryGroup0, objectArray0, stringArray0, true);
+<span class="nocode"><a name="2">  2: </a></span>String[] stringArray0 = new String[2];
+<span class="nocode"><a name="3">  3: </a></span>simpleEntryGroup0.createEntry(&quot;&quot;);
+<span class="nocode"><a name="4">  4: </a></span>simpleEntryGroup0.removeAllElements();
+<span class="nocode"><a name="5">  5: </a></span>ListSelectionPanel listSelectionPanel0 = new ListSelectionPanel(simpleEntryGroup0, stringArray0, stringArray0, true);
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>simpleEntryGroup0.createEntry();
-<span class="nocode"><a name="3">  3: </a></span>Object[] objectArray0 = new Object[6];
-<span class="nocode"><a name="4">  4: </a></span>String[] stringArray0 = new String[8];
-<span class="nocode"><a name="5">  5: </a></span>simpleEntryGroup0.removeAllElements();
-<span class="nocode"><a name="6">  6: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
-<span class="nocode"><a name="7">  7: </a></span>Key key0 = blastEntryInformation0.getDefaultKey();
-<span class="nocode"><a name="8">  8: </a></span>ListSelectionPanel listSelectionPanel0 = new ListSelectionPanel(simpleEntryGroup0, objectArray0, stringArray0, true, key0, &quot;&amp; ]It'a&quot;);
+<span class="nocode"><a name="2">  2: </a></span>simpleEntryGroup0.createEntry(&quot;JT|@&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String[] stringArray0 = new String[2];
+<span class="nocode"><a name="4">  4: </a></span>simpleEntryGroup0.removeAllElements();
+<span class="nocode"><a name="5">  5: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="6">  6: </a></span>Key key0 = blastEntryInformation0.getDefaultKey();
+<span class="nocode"><a name="7">  7: </a></span>ListSelectionPanel listSelectionPanel0 = new ListSelectionPanel(simpleEntryGroup0, stringArray0, stringArray0, false, key0, &quot;R6^W}&gt;}RX$L56{mf&quot;);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -100,7 +93,7 @@ uk.ac.sanger.artemis.components.ListSelectionPanel
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.ListSelectionPanel
 <li>Size: 6
-<li>Length: 37
+<li>Length: 30
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.3063883034773446
 <li>BranchCoverage: 0.34615384615384615

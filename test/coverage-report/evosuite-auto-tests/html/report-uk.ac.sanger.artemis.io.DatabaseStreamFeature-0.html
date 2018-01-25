@@ -35,19 +35,19 @@ uk.ac.sanger.artemis.io.DatabaseStreamFeature
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Key key0 = new Key(&quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range((-1999));
-<span class="nocode"><a name="3">  3: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
-<span class="nocode"><a name="4">  4: </a></span>Location location0 = new Location(rangeVector0, false);
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = blastEntryInformation0.getDefaultKey();
+<span class="nocode"><a name="3">  3: </a></span>Range range0 = new Range(61440);
+<span class="nocode"><a name="4">  4: </a></span>Location location0 = new Location(range0);
 <span class="nocode"><a name="5">  5: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
 <span class="nocode"><a name="6">  6: </a></span>DatabaseStreamFeature databaseStreamFeature0 = new DatabaseStreamFeature(key0, location0, qualifierVector0);
-<span class="nocode"><a name="7">  7: </a></span>databaseStreamFeature0.copy();
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature();
 <span class="nocode"><a name="2">  2: </a></span>DatabaseStreamFeature databaseStreamFeature0 = new DatabaseStreamFeature(genbankStreamFeature0);
-<span class="nocode"><a name="3">  3: </a></span>assertNull(databaseStreamFeature0.getGffSource());
+<span class="nocode"><a name="3">  3: </a></span>DatabaseStreamFeature databaseStreamFeature1 = (DatabaseStreamFeature)databaseStreamFeature0.copy();
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(databaseStreamFeature1.isVisible());
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
@@ -55,9 +55,8 @@ uk.ac.sanger.artemis.io.DatabaseStreamFeature
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Key key0 = new Key(&quot;?\&quot;]e1` &quot;);
-<span class="nocode"><a name="2">  2: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
-<span class="nocode"><a name="3">  3: </a></span>DatabaseStreamFeature databaseStreamFeature0 = new DatabaseStreamFeature(key0, (Location) null, qualifierVector0);
+<span class="nocode"><a name="1">  1: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
+<span class="nocode"><a name="2">  2: </a></span>DatabaseStreamFeature databaseStreamFeature0 = new DatabaseStreamFeature((Key) null, (Location) null, qualifierVector0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -71,7 +70,7 @@ uk.ac.sanger.artemis.io.DatabaseStreamFeature
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.io.DatabaseStreamFeature
 <li>Size: 4
-<li>Length: 13
+<li>Length: 12
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.9166666666666666
 <li>BranchCoverage: 1.0

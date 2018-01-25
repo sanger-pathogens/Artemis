@@ -23,7 +23,7 @@ uk.ac.sanger.artemis.components.ScoreScrollbar
 <br><br><h2 class=title>Summary</h2>
 <ul><li>Target class: uk.ac.sanger.artemis.components.ScoreScrollbar: 0.9626893939393939</ul>
 <ul>
-<li>4.916666666666666 fitness evaluations, 0 generations, null statements, 6 tests.
+<li>4.916666666666666 fitness evaluations, 0 generations, null statements, 8 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,39 +35,54 @@ uk.ac.sanger.artemis.components.ScoreScrollbar
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>ScoreScrollbar scoreScrollbar0 = new ScoreScrollbar(0, (-1572));
+<span class="nocode"><a name="1">  1: </a></span>ScoreScrollbar scoreScrollbar0 = new ScoreScrollbar((-2663), (-1967));
+<span class="nocode"><a name="2">  2: </a></span>scoreScrollbar0.removeScoreChangeListener((ScoreChangeListener) null);
+<span class="nocode"><a name="3">  3: </a></span>AdjustmentEvent adjustmentEvent0 = new AdjustmentEvent(scoreScrollbar0, 12, 12, 62);
+<span class="nocode"><a name="4">  4: </a></span>scoreScrollbar0.adjustmentValueChanged(adjustmentEvent0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>ScoreScrollbar scoreScrollbar0 = new ScoreScrollbar(0, 0, 2632, 0);
+<span class="nocode"><a name="1">  1: </a></span>ScoreScrollbar scoreScrollbar0 = new ScoreScrollbar(4535, 0, 4535, 4535);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>ScoreScrollbar scoreScrollbar0 = new ScoreScrollbar(15, 15);
-<span class="nocode"><a name="2">  2: </a></span>scoreScrollbar0.addScoreChangeListener((ScoreChangeListener) null);
-<span class="nocode"><a name="3">  3: </a></span>scoreScrollbar0.adjustmentValueChanged((AdjustmentEvent) null);
+<span class="nocode"><a name="1">  1: </a></span>ScoreScrollbar scoreScrollbar0 = new ScoreScrollbar(0, 230, 0, 0);
+<span class="nocode"><a name="2">  2: </a></span>assertTrue(scoreScrollbar0.getFocusTraversalKeysEnabled());
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>ScoreScrollbar scoreScrollbar0 = new ScoreScrollbar(0, 44, 0, 0);
+<span class="nocode"><a name="1">  1: </a></span>ScoreScrollbar scoreScrollbar0 = new ScoreScrollbar((-2216), (-2216));
 <span class="nocode"><a name="2">  2: </a></span>ScoreChangeListener scoreChangeListener0 = mock(ScoreChangeListener.class, new ViolatedAssumptionAnswer());
 <span class="nocode"><a name="3">  3: </a></span>scoreScrollbar0.removeScoreChangeListener(scoreChangeListener0);
-<span class="nocode"><a name="4">  4: </a></span>assertFalse(scoreScrollbar0.getIgnoreRepaint());
+<span class="nocode"><a name="4">  4: </a></span>ScoreChangeListener scoreChangeListener1 = mock(ScoreChangeListener.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="5">  5: </a></span>scoreScrollbar0.addScoreChangeListener(scoreChangeListener1);
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(scoreScrollbar0.getIgnoreRepaint());
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>ScoreScrollbar scoreScrollbar0 = new ScoreScrollbar(1483, 1483, 0, 3320);
+<span class="nocode"><a name="1">  1: </a></span>ScoreScrollbar scoreScrollbar0 = new ScoreScrollbar(1, 1);
+<span class="nocode"><a name="2">  2: </a></span>ScoreChangeListener scoreChangeListener0 = mock(ScoreChangeListener.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="3">  3: </a></span>scoreScrollbar0.addScoreChangeListener(scoreChangeListener0);
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(scoreScrollbar0.isFocusTraversalPolicyProvider());
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>ScoreScrollbar scoreScrollbar0 = new ScoreScrollbar(2183, 2183);
-<span class="nocode"><a name="2">  2: </a></span>ScoreChangeListener scoreChangeListener0 = mock(ScoreChangeListener.class, new ViolatedAssumptionAnswer());
-<span class="nocode"><a name="3">  3: </a></span>scoreScrollbar0.addScoreChangeListener(scoreChangeListener0);
-<span class="nocode"><a name="4">  4: </a></span>ScoreChangeListener scoreChangeListener1 = mock(ScoreChangeListener.class, new ViolatedAssumptionAnswer());
-<span class="nocode"><a name="5">  5: </a></span>scoreScrollbar0.addScoreChangeListener(scoreChangeListener1);
-<span class="nocode"><a name="6">  6: </a></span>AdjustmentEvent adjustmentEvent0 = new AdjustmentEvent(scoreScrollbar0, 2183, 2183, 2183);
+<span class="nocode"><a name="1">  1: </a></span>ScoreScrollbar scoreScrollbar0 = new ScoreScrollbar((-1), (-1), (-1), (-1));
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ScoreScrollbar scoreScrollbar0 = new ScoreScrollbar(75, 0);
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ScoreScrollbar scoreScrollbar0 = new ScoreScrollbar((-2216), (-2216));
+<span class="nocode"><a name="2">  2: </a></span>AdjustmentEvent adjustmentEvent0 = new AdjustmentEvent(scoreScrollbar0, 0, 12, (-2216));
+<span class="nocode"><a name="3">  3: </a></span>ScoreChangeListener scoreChangeListener0 = mock(ScoreChangeListener.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="4">  4: </a></span>scoreScrollbar0.removeScoreChangeListener(scoreChangeListener0);
+<span class="nocode"><a name="5">  5: </a></span>ScoreChangeListener scoreChangeListener1 = mock(ScoreChangeListener.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="6">  6: </a></span>scoreScrollbar0.removeScoreChangeListener(scoreChangeListener1);
 <span class="nocode"><a name="7">  7: </a></span>scoreScrollbar0.adjustmentValueChanged(adjustmentEvent0);
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(2183, adjustmentEvent0.getValue());
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(0, adjustmentEvent0.getID());
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -80,8 +95,8 @@ uk.ac.sanger.artemis.components.ScoreScrollbar
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.ScoreScrollbar
-<li>Size: 6
-<li>Length: 16
+<li>Size: 8
+<li>Length: 23
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.9626893939393939
 <li>BranchCoverage: 0.9090909090909091

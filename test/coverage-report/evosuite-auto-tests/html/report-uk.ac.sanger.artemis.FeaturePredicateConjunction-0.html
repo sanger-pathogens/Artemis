@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.FeaturePredicateConjunction
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.FeaturePredicateConjunction: 0.7912179487179488</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.FeaturePredicateConjunction: 0.621474358974359</ul>
 <ul>
-<li>41.49999999999999 fitness evaluations, 0 generations, null statements, 8 tests.
+<li>53.86666666666667 fitness evaluations, 0 generations, null statements, 8 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,19 +35,23 @@ uk.ac.sanger.artemis.FeaturePredicateConjunction
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FeaturePredicateConjunction featurePredicateConjunction0 = new FeaturePredicateConjunction((FeaturePredicate) null, (FeaturePredicate) null, 0);
-<span class="nocode"><a name="2">  2: </a></span>featurePredicateConjunction0.testPredicate((Feature) null);
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = blastEntryInformation0.getDefaultKey();
+<span class="nocode"><a name="3">  3: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate(key0, &quot;&quot;);
+<span class="nocode"><a name="4">  4: </a></span>FeaturePredicateConjunction featurePredicateConjunction0 = new FeaturePredicateConjunction(featureKeyQualifierPredicate0, featureKeyQualifierPredicate0, 0);
+<span class="nocode"><a name="5">  5: </a></span>featurePredicateConjunction0.testPredicate((Feature) null);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FeaturePredicateConjunction featurePredicateConjunction0 = new FeaturePredicateConjunction((FeaturePredicate) null, (FeaturePredicate) null, (-3920));
+<span class="nocode"><a name="1">  1: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate((Key) null, &quot;entropy&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FeaturePredicateConjunction featurePredicateConjunction0 = new FeaturePredicateConjunction(featureKeyQualifierPredicate0, featureKeyQualifierPredicate0, 120);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Key key0 = Key.CDS;
-<span class="nocode"><a name="2">  2: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate(key0, &quot;&amp;G5b&quot;, &quot;&amp;G5b&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate(key0, &quot;Type may not be null&quot;, &quot;Type may not be null&quot;);
 <span class="nocode"><a name="3">  3: </a></span>FeaturePredicateConjunction featurePredicateConjunction0 = new FeaturePredicateConjunction(featureKeyQualifierPredicate0, featureKeyQualifierPredicate0, 1);
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(1, FeaturePredicateConjunction.AND);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, FeaturePredicateConjunction.OR);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
@@ -57,29 +61,28 @@ uk.ac.sanger.artemis.FeaturePredicateConjunction
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FeaturePredicateVector featurePredicateVector0 = new FeaturePredicateVector();
-<span class="nocode"><a name="2">  2: </a></span>FeaturePredicateConjunction featurePredicateConjunction0 = new FeaturePredicateConjunction(featurePredicateVector0, 1);
+<span class="nocode"><a name="2">  2: </a></span>FeaturePredicateConjunction featurePredicateConjunction0 = new FeaturePredicateConjunction(featurePredicateVector0, 512);
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FeaturePredicateVector featurePredicateVector0 = new FeaturePredicateVector();
-<span class="nocode"><a name="2">  2: </a></span>FeaturePredicateConjunction featurePredicateConjunction0 = new FeaturePredicateConjunction(featurePredicateVector0, 290);
+<span class="nocode"><a name="2">  2: </a></span>FeaturePredicateConjunction featurePredicateConjunction0 = new FeaturePredicateConjunction(featurePredicateVector0, 1);
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FeaturePredicateVector featurePredicateVector0 = new FeaturePredicateVector();
-<span class="nocode"><a name="2">  2: </a></span>Key key0 = new Key(&quot;O76&gt;u&quot;);
-<span class="nocode"><a name="3">  3: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate(key0, &quot;O76&gt;u&quot;, true);
-<span class="nocode"><a name="4">  4: </a></span>featurePredicateVector0.add(featureKeyQualifierPredicate0);
-<span class="nocode"><a name="5">  5: </a></span>FeaturePredicateConjunction featurePredicateConjunction0 = new FeaturePredicateConjunction(featurePredicateVector0, 1);
-<span class="nocode"><a name="6">  6: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;internal error - no predicates given to FeaturePredicateConjunction constructor&quot;);
-<span class="nocode"><a name="7">  7: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
-<span class="nocode"><a name="8">  8: </a></span>Entry entry0 = Entry.newEntry(bases0);
-<span class="nocode"><a name="9">  9: </a></span>Feature feature0 = entry0.createFeature();
-<span class="nocode"><a name="10"> 10: </a></span>featurePredicateConjunction0.testPredicate(feature0);
+<span class="nocode"><a name="2">  2: </a></span>featurePredicateVector0.add((FeaturePredicate) null);
+<span class="nocode"><a name="3">  3: </a></span>FeaturePredicateConjunction featurePredicateConjunction0 = new FeaturePredicateConjunction(featurePredicateVector0, 1);
+<span class="nocode"><a name="4">  4: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot; values based on header record &quot;);
+<span class="nocode"><a name="5">  5: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="6">  6: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="7">  7: </a></span>simpleEntryGroup0.createEntry();
+<span class="nocode"><a name="8">  8: </a></span>Feature feature0 = simpleEntryGroup0.createFeature();
+<span class="nocode"><a name="9">  9: </a></span>featurePredicateConjunction0.testPredicate(feature0);
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FeaturePredicateConjunction featurePredicateConjunction0 = new FeaturePredicateConjunction((FeaturePredicateVector) null, 866);
+<span class="nocode"><a name="1">  1: </a></span>FeaturePredicateConjunction featurePredicateConjunction0 = new FeaturePredicateConjunction((FeaturePredicateVector) null, 0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -93,12 +96,12 @@ uk.ac.sanger.artemis.FeaturePredicateConjunction
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.FeaturePredicateConjunction
 <li>Size: 8
-<li>Length: 23
+<li>Length: 26
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.7912179487179488
-<li>BranchCoverage: 0.7
+<li>Coverage: 0.621474358974359
+<li>BranchCoverage: 0.65
 <li>MethodCoverage: 1.0
-<li>OutputCoverage: 0.5
+<li>OutputCoverage: 0.0
 </ul></div>
 </div>
 <p><br><a href="../report-generation.html">Back to Overview</a></p>

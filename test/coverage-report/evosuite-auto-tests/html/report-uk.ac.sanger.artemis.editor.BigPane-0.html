@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.editor.BigPane
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.editor.BigPane: 0.3567799789375675</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.editor.BigPane: 0.33594664560423415</ul>
 <ul>
-<li>1057.3295597484275 fitness evaluations, 0 generations, null statements, 3 tests.
+<li>1058.3295597484275 fitness evaluations, 0 generations, null statements, 3 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,17 +35,18 @@ uk.ac.sanger.artemis.editor.BigPane
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>BigPane bigPane0 = new BigPane((EntryInformation) null);
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = new SimpleEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>BigPane bigPane0 = new BigPane(simpleEntryInformation0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>JDesktopPane jDesktopPane0 = new JDesktopPane();
-<span class="nocode"><a name="2">  2: </a></span>BigPane.setUpSRSFrame(3056, jDesktopPane0);
-<span class="nocode"><a name="3">  3: </a></span>assertFalse(jDesktopPane0.getIgnoreRepaint());
+<span class="nocode"><a name="2">  2: </a></span>BigPane.setUpSRSFrame((-2613), jDesktopPane0);
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(jDesktopPane0.isFocusTraversalPolicyProvider());
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>BigPane.setUpSRSFrame(79, (JDesktopPane) null);
+<span class="nocode"><a name="1">  1: </a></span>BigPane.setUpSRSFrame(1004, (JDesktopPane) null);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -59,9 +60,9 @@ uk.ac.sanger.artemis.editor.BigPane
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.editor.BigPane
 <li>Size: 3
-<li>Length: 4
+<li>Length: 5
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.3567799789375675
+<li>Coverage: 0.33594664560423415
 <li>BranchCoverage: 0.02564102564102564
 <li>MethodCoverage: 0.3333333333333333
 <li>OutputCoverage: 1.0

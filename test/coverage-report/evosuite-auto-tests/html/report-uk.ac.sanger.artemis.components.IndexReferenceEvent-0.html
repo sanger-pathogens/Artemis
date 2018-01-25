@@ -35,11 +35,12 @@ uk.ac.sanger.artemis.components.IndexReferenceEvent
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>IndexReferenceEvent indexReferenceEvent0 = new IndexReferenceEvent(&quot;O:&lt;Gf;HI z)Gs&quot;);
+<span class="nocode"><a name="1">  1: </a></span>IndexReferenceEvent indexReferenceEvent0 = new IndexReferenceEvent((Object) null);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>IndexReferenceEvent indexReferenceEvent0 = new IndexReferenceEvent((Object) null);
+<span class="nocode"><a name="1">  1: </a></span>Object object0 = new Object();
+<span class="nocode"><a name="2">  2: </a></span>IndexReferenceEvent indexReferenceEvent0 = new IndexReferenceEvent(object0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -53,7 +54,7 @@ uk.ac.sanger.artemis.components.IndexReferenceEvent
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.IndexReferenceEvent
 <li>Size: 2
-<li>Length: 2
+<li>Length: 3
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 1.0
 <li>BranchCoverage: 1.0

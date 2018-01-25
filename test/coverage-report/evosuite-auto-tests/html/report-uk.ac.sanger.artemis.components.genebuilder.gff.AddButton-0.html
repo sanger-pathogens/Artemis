@@ -35,9 +35,9 @@ uk.ac.sanger.artemis.components.genebuilder.gff.AddButton
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>DefaultEditorKit.InsertContentAction defaultEditorKit_InsertContentAction0 = new DefaultEditorKit.InsertContentAction();
-<span class="nocode"><a name="2">  2: </a></span>AddButton addButton0 = new AddButton(defaultEditorKit_InsertContentAction0, &quot;proxyPort&quot;);
-<span class="nocode"><a name="3">  3: </a></span>assertFalse(addButton0.isFocusTraversalPolicyProvider());
+<span class="nocode"><a name="1">  1: </a></span>StyledEditorKit.FontSizeAction styledEditorKit_FontSizeAction0 = new StyledEditorKit.FontSizeAction(&quot;Flag is an unsupported type for format fields&quot;, 0);
+<span class="nocode"><a name="2">  2: </a></span>AddButton addButton0 = new AddButton(styledEditorKit_FontSizeAction0, &quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>assertTrue(addButton0.getFocusTraversalKeysEnabled());
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>

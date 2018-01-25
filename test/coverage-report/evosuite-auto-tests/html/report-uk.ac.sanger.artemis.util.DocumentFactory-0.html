@@ -39,23 +39,23 @@ uk.ac.sanger.artemis.util.DocumentFactory
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FileDocument fileDocument0 = (FileDocument)DocumentFactory.makeDocument(&quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>assertTrue(fileDocument0.writable());
+<span class="nocode"><a name="1">  1: </a></span>RemoteFileDocument remoteFileDocument0 = (RemoteFileDocument)DocumentFactory.makeDocument(&quot;*X0DM;J\&quot;Y4q`/&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertTrue(remoteFileDocument0.writable());
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RemoteFileDocument remoteFileDocument0 = (RemoteFileDocument)DocumentFactory.makeDocument(&quot;://&quot;);
-<span class="nocode"><a name="2">  2: </a></span>assertFalse(remoteFileDocument0.writable());
+<span class="nocode"><a name="1">  1: </a></span>FileDocument fileDocument0 = (FileDocument)DocumentFactory.makeDocument(&quot;://&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertFalse(fileDocument0.writable());
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FileDocument fileDocument0 = (FileDocument)DocumentFactory.makeDocument(&quot;b7Bil]4]&quot;);
+<span class="nocode"><a name="1">  1: </a></span>FileDocument fileDocument0 = (FileDocument)DocumentFactory.makeDocument(&quot;&quot;);
 <span class="nocode"><a name="2">  2: </a></span>assertTrue(fileDocument0.readable());
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RemoteFileDocument remoteFileDocument0 = (RemoteFileDocument)DocumentFactory.makeDocument(&quot;fx/h&quot;);
-<span class="nocode"><a name="2">  2: </a></span>assertTrue(remoteFileDocument0.writable());
+<span class="nocode"><a name="1">  1: </a></span>RemoteFileDocument remoteFileDocument0 = (RemoteFileDocument)DocumentFactory.makeDocument(&quot;o.{&amp;LZC,mR1n-dbgi&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertNull(remoteFileDocument0.toString());
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">

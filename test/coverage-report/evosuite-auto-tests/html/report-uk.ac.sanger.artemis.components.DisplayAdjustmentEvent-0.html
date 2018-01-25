@@ -36,275 +36,266 @@ uk.ac.sanger.artemis.components.DisplayAdjustmentEvent
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Object object0 = new Object();
-<span class="nocode"><a name="2">  2: </a></span>DisplayAdjustmentEvent displayAdjustmentEvent0 = new DisplayAdjustmentEvent(object0, 0, (-4013), 0, 0);
+<span class="nocode"><a name="2">  2: </a></span>DisplayAdjustmentEvent displayAdjustmentEvent0 = new DisplayAdjustmentEvent(object0, (-1789), 0, 3001, 3001, (-1789), false, (-1789));
 <span class="nocode"><a name="3">  3: </a></span>int int0 = displayAdjustmentEvent0.getStart();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, displayAdjustmentEvent0.getDropPosition());
-<span class="nocode"><a name="5">  5: </a></span>assertEquals((-4013), displayAdjustmentEvent0.getEnd());
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, int0);
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, displayAdjustmentEvent0.getType());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(3001.0F, displayAdjustmentEvent0.getBaseWidth(), 0.01F);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals((-1789), int0);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(3001, displayAdjustmentEvent0.getWidthInBases());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, displayAdjustmentEvent0.getEnd());
+<span class="nocode"><a name="8">  8: </a></span>assertEquals((-1789), displayAdjustmentEvent0.getScaleFactor());
+<span class="nocode"><a name="9">  9: </a></span>assertEquals((-1789), displayAdjustmentEvent0.getType());
+<span class="nocode"><a name="10"> 10: </a></span>assertFalse(displayAdjustmentEvent0.isRevCompDisplay());
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Object object0 = new Object();
-<span class="nocode"><a name="2">  2: </a></span>DisplayAdjustmentEvent displayAdjustmentEvent0 = new DisplayAdjustmentEvent(object0, 0, (-4013), 0, 0);
-<span class="nocode"><a name="3">  3: </a></span>displayAdjustmentEvent0.getBaseWidth();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, displayAdjustmentEvent0.getStart());
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, displayAdjustmentEvent0.getType());
-<span class="nocode"><a name="6">  6: </a></span>assertEquals((-4013), displayAdjustmentEvent0.getEnd());
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, displayAdjustmentEvent0.getDropPosition());
+<span class="nocode"><a name="1">  1: </a></span>DisplayAdjustmentEvent displayAdjustmentEvent0 = new DisplayAdjustmentEvent(&quot;6JJG&quot;, 4, 4, (-3290), (-3290), (-3290), true, 0);
+<span class="nocode"><a name="2">  2: </a></span>float float0 = displayAdjustmentEvent0.getBaseWidth();
+<span class="nocode"><a name="3">  3: </a></span>assertTrue(displayAdjustmentEvent0.isRevCompDisplay());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, displayAdjustmentEvent0.getType());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(4, displayAdjustmentEvent0.getEnd());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals((-3290), displayAdjustmentEvent0.getScaleFactor());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals((-3290.0F), float0, 0.01F);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals((-3290), displayAdjustmentEvent0.getWidthInBases());
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(4, displayAdjustmentEvent0.getStart());
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Object object0 = new Object();
-<span class="nocode"><a name="2">  2: </a></span>DisplayAdjustmentEvent displayAdjustmentEvent0 = new DisplayAdjustmentEvent(object0, 0, (-4013), 0, 0);
+<span class="nocode"><a name="2">  2: </a></span>DisplayAdjustmentEvent displayAdjustmentEvent0 = new DisplayAdjustmentEvent(object0, (-1060), (-1060), (-1060), 19);
 <span class="nocode"><a name="3">  3: </a></span>int int0 = displayAdjustmentEvent0.getDropPosition();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, int0);
-<span class="nocode"><a name="5">  5: </a></span>assertEquals((-4013), displayAdjustmentEvent0.getEnd());
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, displayAdjustmentEvent0.getStart());
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, displayAdjustmentEvent0.getType());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-1060), displayAdjustmentEvent0.getStart());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(19, displayAdjustmentEvent0.getType());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals((-1060), displayAdjustmentEvent0.getEnd());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals((-1060), int0);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Object object0 = new Object();
-<span class="nocode"><a name="2">  2: </a></span>DisplayAdjustmentEvent displayAdjustmentEvent0 = new DisplayAdjustmentEvent(object0, 0, (-4013), 0, 0);
+<span class="nocode"><a name="2">  2: </a></span>DisplayAdjustmentEvent displayAdjustmentEvent0 = new DisplayAdjustmentEvent(object0, (-1060), (-1060), (-1060), 19);
 <span class="nocode"><a name="3">  3: </a></span>int int0 = displayAdjustmentEvent0.getEnd();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals((-4013), int0);
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, displayAdjustmentEvent0.getStart());
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, displayAdjustmentEvent0.getDropPosition());
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, displayAdjustmentEvent0.getType());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(19, displayAdjustmentEvent0.getType());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals((-1060), displayAdjustmentEvent0.getDropPosition());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals((-1060), displayAdjustmentEvent0.getStart());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals((-1060), int0);
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Object object0 = new Object();
-<span class="nocode"><a name="2">  2: </a></span>DisplayAdjustmentEvent displayAdjustmentEvent0 = new DisplayAdjustmentEvent(object0, 0, (-4013), 0, 0);
+<span class="nocode"><a name="2">  2: </a></span>DisplayAdjustmentEvent displayAdjustmentEvent0 = new DisplayAdjustmentEvent(object0, (-1789), 0, 3001, 3001, (-1789), false, (-1789));
 <span class="nocode"><a name="3">  3: </a></span>int int0 = displayAdjustmentEvent0.getScaleFactor();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, int0);
-<span class="nocode"><a name="5">  5: </a></span>assertEquals((-4013), displayAdjustmentEvent0.getEnd());
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, displayAdjustmentEvent0.getStart());
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, displayAdjustmentEvent0.getDropPosition());
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(0, displayAdjustmentEvent0.getType());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(3001.0F, displayAdjustmentEvent0.getBaseWidth(), 0.01F);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals((-1789), displayAdjustmentEvent0.getStart());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(3001, displayAdjustmentEvent0.getWidthInBases());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, displayAdjustmentEvent0.getEnd());
+<span class="nocode"><a name="8">  8: </a></span>assertEquals((-1789), displayAdjustmentEvent0.getType());
+<span class="nocode"><a name="9">  9: </a></span>assertEquals((-1789), int0);
+<span class="nocode"><a name="10"> 10: </a></span>assertFalse(displayAdjustmentEvent0.isRevCompDisplay());
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Object object0 = new Object();
-<span class="nocode"><a name="2">  2: </a></span>DisplayAdjustmentEvent displayAdjustmentEvent0 = new DisplayAdjustmentEvent(object0, 0, (-4013), 0, 0);
+<span class="nocode"><a name="2">  2: </a></span>DisplayAdjustmentEvent displayAdjustmentEvent0 = new DisplayAdjustmentEvent(object0, (-1789), 0, 3001, 3001, (-1789), false, (-1789));
 <span class="nocode"><a name="3">  3: </a></span>int int0 = displayAdjustmentEvent0.getType();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals((-4013), displayAdjustmentEvent0.getEnd());
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, displayAdjustmentEvent0.getDropPosition());
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, displayAdjustmentEvent0.getStart());
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, int0);
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(displayAdjustmentEvent0.isRevCompDisplay());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals((-1789), displayAdjustmentEvent0.getStart());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals((-1789), displayAdjustmentEvent0.getScaleFactor());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, displayAdjustmentEvent0.getEnd());
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(3001.0F, displayAdjustmentEvent0.getBaseWidth(), 0.01F);
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(3001, displayAdjustmentEvent0.getWidthInBases());
+<span class="nocode"><a name="10"> 10: </a></span>assertEquals((-1789), int0);
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>DisplayAdjustmentEvent displayAdjustmentEvent0 = new DisplayAdjustmentEvent((Object) null, 879, 0, 879, 0, 879, true, 879);
+<span class="nocode"><a name="1">  1: </a></span>Object object0 = new Object();
+<span class="nocode"><a name="2">  2: </a></span>DisplayAdjustmentEvent displayAdjustmentEvent0 = new DisplayAdjustmentEvent(object0, (-1060), (-1060), (-1060), 19);
+<span class="nocode"><a name="3">  3: </a></span>displayAdjustmentEvent0.isRevCompDisplay();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-1060), displayAdjustmentEvent0.getDropPosition());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals((-1060), displayAdjustmentEvent0.getEnd());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(19, displayAdjustmentEvent0.getType());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals((-1060), displayAdjustmentEvent0.getStart());
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Object object0 = new Object();
-<span class="nocode"><a name="2">  2: </a></span>DisplayAdjustmentEvent displayAdjustmentEvent0 = new DisplayAdjustmentEvent(object0, 0, (-4013), 0, 0);
-<span class="nocode"><a name="3">  3: </a></span>displayAdjustmentEvent0.isRevCompDisplay();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, displayAdjustmentEvent0.getStart());
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, displayAdjustmentEvent0.getType());
-<span class="nocode"><a name="6">  6: </a></span>assertEquals((-4013), displayAdjustmentEvent0.getEnd());
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, displayAdjustmentEvent0.getDropPosition());
+<span class="nocode"><a name="2">  2: </a></span>DisplayAdjustmentEvent displayAdjustmentEvent0 = new DisplayAdjustmentEvent(object0, (-1060), (-1060), (-1060), 19);
+<span class="nocode"><a name="3">  3: </a></span>int int0 = displayAdjustmentEvent0.getWidthInBases();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-1060), displayAdjustmentEvent0.getEnd());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(19, displayAdjustmentEvent0.getType());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals((-1060), displayAdjustmentEvent0.getDropPosition());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, int0);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals((-1060), displayAdjustmentEvent0.getStart());
 </pre>
 <h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Object object0 = new Object();
-<span class="nocode"><a name="2">  2: </a></span>DisplayAdjustmentEvent displayAdjustmentEvent0 = new DisplayAdjustmentEvent(object0, 0, (-4013), 0, 0);
-<span class="nocode"><a name="3">  3: </a></span>int int0 = displayAdjustmentEvent0.getWidthInBases();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, displayAdjustmentEvent0.getStart());
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, displayAdjustmentEvent0.getDropPosition());
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, displayAdjustmentEvent0.getType());
-<span class="nocode"><a name="7">  7: </a></span>assertEquals((-4013), displayAdjustmentEvent0.getEnd());
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(0, int0);
+<span class="nocode"><a name="1">  1: </a></span>DisplayAdjustmentEvent displayAdjustmentEvent0 = new DisplayAdjustmentEvent((Object) null, 5, 5, 0, 4321.88F, 0, true, 0);
 </pre>
 <h3>Test case 10</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Object object0 = new Object();
-<span class="nocode"><a name="2">  2: </a></span>DisplayAdjustmentEvent displayAdjustmentEvent0 = new DisplayAdjustmentEvent(object0, (-1), (-1), (-1), (-1), (-4016), false, 0);
-<span class="nocode"><a name="3">  3: </a></span>float float0 = displayAdjustmentEvent0.getBaseWidth();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals((-1.0F), float0, 0.01F);
-<span class="nocode"><a name="5">  5: </a></span>assertEquals((-1), displayAdjustmentEvent0.getEnd());
-<span class="nocode"><a name="6">  6: </a></span>assertEquals((-4016), displayAdjustmentEvent0.getScaleFactor());
-<span class="nocode"><a name="7">  7: </a></span>assertEquals((-1), displayAdjustmentEvent0.getStart());
-<span class="nocode"><a name="8">  8: </a></span>assertFalse(displayAdjustmentEvent0.isRevCompDisplay());
-<span class="nocode"><a name="9">  9: </a></span>assertEquals((-1), displayAdjustmentEvent0.getWidthInBases());
-<span class="nocode"><a name="10"> 10: </a></span>assertEquals(0, displayAdjustmentEvent0.getType());
+<span class="nocode"><a name="1">  1: </a></span>DisplayAdjustmentEvent displayAdjustmentEvent0 = new DisplayAdjustmentEvent((Object) null, 5, (-1671), 0, 5);
 </pre>
 <h3>Test case 11</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>DisplayAdjustmentEvent displayAdjustmentEvent0 = new DisplayAdjustmentEvent((Object) null, 0, (-1697), 0, 0);
+<span class="nocode"><a name="1">  1: </a></span>DisplayAdjustmentEvent displayAdjustmentEvent0 = new DisplayAdjustmentEvent(&quot;uk.ac.sanger.artemis.components.DisplayAdjustmentEvent&quot;, 1780, (-242), 1780, 1780, 2, true, 1780);
+<span class="nocode"><a name="2">  2: </a></span>float float0 = displayAdjustmentEvent0.getBaseWidth();
+<span class="nocode"><a name="3">  3: </a></span>assertTrue(displayAdjustmentEvent0.isRevCompDisplay());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(2, displayAdjustmentEvent0.getScaleFactor());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(1780, displayAdjustmentEvent0.getType());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(1780, displayAdjustmentEvent0.getStart());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals((-242), displayAdjustmentEvent0.getEnd());
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(1780, displayAdjustmentEvent0.getWidthInBases());
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(1780.0F, float0, 0.01F);
 </pre>
 <h3>Test case 12</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Object object0 = new Object();
-<span class="nocode"><a name="2">  2: </a></span>DisplayAdjustmentEvent displayAdjustmentEvent0 = new DisplayAdjustmentEvent(object0, 1, 2, 2, 1, 1, false, 1);
-<span class="nocode"><a name="3">  3: </a></span>float float0 = displayAdjustmentEvent0.getBaseWidth();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(1, displayAdjustmentEvent0.getType());
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(1, displayAdjustmentEvent0.getStart());
-<span class="nocode"><a name="6">  6: </a></span>assertFalse(displayAdjustmentEvent0.isRevCompDisplay());
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(2, displayAdjustmentEvent0.getWidthInBases());
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(1.0F, float0, 0.01F);
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(2, displayAdjustmentEvent0.getEnd());
-<span class="nocode"><a name="10"> 10: </a></span>assertEquals(1, displayAdjustmentEvent0.getScaleFactor());
+<span class="nocode"><a name="1">  1: </a></span>DisplayAdjustmentEvent displayAdjustmentEvent0 = new DisplayAdjustmentEvent(&quot;c!6.}&gt;CLl9f3G&quot;, 0, 0, 0, 0);
+<span class="nocode"><a name="2">  2: </a></span>displayAdjustmentEvent0.getBaseWidth();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, displayAdjustmentEvent0.getType());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, displayAdjustmentEvent0.getStart());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, displayAdjustmentEvent0.getDropPosition());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, displayAdjustmentEvent0.getEnd());
 </pre>
 <h3>Test case 13</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Object object0 = new Object();
-<span class="nocode"><a name="2">  2: </a></span>DisplayAdjustmentEvent displayAdjustmentEvent0 = new DisplayAdjustmentEvent(object0, (-974), (-974), (-974), (-974));
+<span class="nocode"><a name="2">  2: </a></span>DisplayAdjustmentEvent displayAdjustmentEvent0 = new DisplayAdjustmentEvent(object0, (-1), (-1), 1, (-1));
 <span class="nocode"><a name="3">  3: </a></span>int int0 = displayAdjustmentEvent0.getDropPosition();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals((-974), displayAdjustmentEvent0.getStart());
-<span class="nocode"><a name="5">  5: </a></span>assertEquals((-974), displayAdjustmentEvent0.getType());
-<span class="nocode"><a name="6">  6: </a></span>assertEquals((-974), int0);
-<span class="nocode"><a name="7">  7: </a></span>assertEquals((-974), displayAdjustmentEvent0.getEnd());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-1), displayAdjustmentEvent0.getStart());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(1, int0);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals((-1), displayAdjustmentEvent0.getType());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals((-1), displayAdjustmentEvent0.getEnd());
 </pre>
 <h3>Test case 14</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Object object0 = new Object();
-<span class="nocode"><a name="2">  2: </a></span>DisplayAdjustmentEvent displayAdjustmentEvent0 = new DisplayAdjustmentEvent(object0, 0, 2, 1313, 1313);
+<span class="nocode"><a name="2">  2: </a></span>DisplayAdjustmentEvent displayAdjustmentEvent0 = new DisplayAdjustmentEvent(object0, (-537), 0, 540, 0, 0, false, 0);
 <span class="nocode"><a name="3">  3: </a></span>int int0 = displayAdjustmentEvent0.getDropPosition();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(1313, displayAdjustmentEvent0.getType());
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(2, displayAdjustmentEvent0.getEnd());
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(1313, int0);
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, displayAdjustmentEvent0.getStart());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, int0);
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(displayAdjustmentEvent0.isRevCompDisplay());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals((-537), displayAdjustmentEvent0.getStart());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, displayAdjustmentEvent0.getType());
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(0, displayAdjustmentEvent0.getScaleFactor());
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(540, displayAdjustmentEvent0.getWidthInBases());
+<span class="nocode"><a name="10"> 10: </a></span>assertEquals(0, displayAdjustmentEvent0.getEnd());
 </pre>
 <h3>Test case 15</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Object object0 = new Object();
-<span class="nocode"><a name="2">  2: </a></span>DisplayAdjustmentEvent displayAdjustmentEvent0 = new DisplayAdjustmentEvent(object0, 0, 2, 1313, 1313);
+<span class="nocode"><a name="2">  2: </a></span>DisplayAdjustmentEvent displayAdjustmentEvent0 = new DisplayAdjustmentEvent(object0, 1, 1, 1, 1, 1, true, 1);
 <span class="nocode"><a name="3">  3: </a></span>int int0 = displayAdjustmentEvent0.getEnd();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(1313, displayAdjustmentEvent0.getType());
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(2, int0);
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(1313, displayAdjustmentEvent0.getDropPosition());
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, displayAdjustmentEvent0.getStart());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1, displayAdjustmentEvent0.getStart());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(1, displayAdjustmentEvent0.getWidthInBases());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(1, displayAdjustmentEvent0.getType());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(1, displayAdjustmentEvent0.getScaleFactor());
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(1.0F, displayAdjustmentEvent0.getBaseWidth(), 0.01F);
+<span class="nocode"><a name="9">  9: </a></span>assertTrue(displayAdjustmentEvent0.isRevCompDisplay());
+<span class="nocode"><a name="10"> 10: </a></span>assertEquals(1, int0);
 </pre>
 <h3>Test case 16</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Object object0 = new Object();
-<span class="nocode"><a name="2">  2: </a></span>DisplayAdjustmentEvent displayAdjustmentEvent0 = new DisplayAdjustmentEvent(object0, 0, 0, 3218, (-3950.9F), 3, true, 1);
-<span class="nocode"><a name="3">  3: </a></span>int int0 = displayAdjustmentEvent0.getEnd();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(3, displayAdjustmentEvent0.getScaleFactor());
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(1, displayAdjustmentEvent0.getType());
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, int0);
-<span class="nocode"><a name="7">  7: </a></span>assertEquals((-3950.9F), displayAdjustmentEvent0.getBaseWidth(), 0.01F);
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(0, displayAdjustmentEvent0.getStart());
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(3218, displayAdjustmentEvent0.getWidthInBases());
-<span class="nocode"><a name="10"> 10: </a></span>assertTrue(displayAdjustmentEvent0.isRevCompDisplay());
+<span class="nocode"><a name="1">  1: </a></span>DisplayAdjustmentEvent displayAdjustmentEvent0 = new DisplayAdjustmentEvent(&quot;c!6.}&gt;CLl9f3G&quot;, 0, 0, 0, 0);
+<span class="nocode"><a name="2">  2: </a></span>int int0 = displayAdjustmentEvent0.getEnd();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, displayAdjustmentEvent0.getStart());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, displayAdjustmentEvent0.getDropPosition());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, int0);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, displayAdjustmentEvent0.getType());
 </pre>
 <h3>Test case 17</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Object object0 = new Object();
-<span class="nocode"><a name="2">  2: </a></span>DisplayAdjustmentEvent displayAdjustmentEvent0 = new DisplayAdjustmentEvent(object0, (-1), (-1), (-1), (-1), (-4016), false, 0);
-<span class="nocode"><a name="3">  3: </a></span>int int0 = displayAdjustmentEvent0.getScaleFactor();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals((-1), displayAdjustmentEvent0.getWidthInBases());
-<span class="nocode"><a name="5">  5: </a></span>assertFalse(displayAdjustmentEvent0.isRevCompDisplay());
-<span class="nocode"><a name="6">  6: </a></span>assertEquals((-1), displayAdjustmentEvent0.getStart());
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, displayAdjustmentEvent0.getType());
-<span class="nocode"><a name="8">  8: </a></span>assertEquals((-4016), int0);
-<span class="nocode"><a name="9">  9: </a></span>assertEquals((-1.0F), displayAdjustmentEvent0.getBaseWidth(), 0.01F);
-<span class="nocode"><a name="10"> 10: </a></span>assertEquals((-1), displayAdjustmentEvent0.getEnd());
+<span class="nocode"><a name="1">  1: </a></span>DisplayAdjustmentEvent displayAdjustmentEvent0 = new DisplayAdjustmentEvent(&quot;VRr&gt;&quot;, 3, 3, 3, 3, 3, false, 3);
+<span class="nocode"><a name="2">  2: </a></span>int int0 = displayAdjustmentEvent0.getScaleFactor();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(3, displayAdjustmentEvent0.getStart());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(3, displayAdjustmentEvent0.getType());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(3, displayAdjustmentEvent0.getWidthInBases());
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(displayAdjustmentEvent0.isRevCompDisplay());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(3.0F, displayAdjustmentEvent0.getBaseWidth(), 0.01F);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(3, int0);
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(3, displayAdjustmentEvent0.getEnd());
 </pre>
 <h3>Test case 18</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Object object0 = new Object();
-<span class="nocode"><a name="2">  2: </a></span>DisplayAdjustmentEvent displayAdjustmentEvent0 = new DisplayAdjustmentEvent(object0, 0, 0, 3218, (-3950.9F), 3, true, 1);
-<span class="nocode"><a name="3">  3: </a></span>int int0 = displayAdjustmentEvent0.getScaleFactor();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(1, displayAdjustmentEvent0.getType());
+<span class="nocode"><a name="1">  1: </a></span>DisplayAdjustmentEvent displayAdjustmentEvent0 = new DisplayAdjustmentEvent(&quot;c!6.}&gt;CLl9f3G&quot;, 0, 0, 0, 0);
+<span class="nocode"><a name="2">  2: </a></span>int int0 = displayAdjustmentEvent0.getScaleFactor();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, displayAdjustmentEvent0.getDropPosition());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, int0);
 <span class="nocode"><a name="5">  5: </a></span>assertEquals(0, displayAdjustmentEvent0.getStart());
-<span class="nocode"><a name="6">  6: </a></span>assertTrue(displayAdjustmentEvent0.isRevCompDisplay());
-<span class="nocode"><a name="7">  7: </a></span>assertEquals((-3950.9F), displayAdjustmentEvent0.getBaseWidth(), 0.01F);
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(0, displayAdjustmentEvent0.getEnd());
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(3, int0);
-<span class="nocode"><a name="10"> 10: </a></span>assertEquals(3218, displayAdjustmentEvent0.getWidthInBases());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, displayAdjustmentEvent0.getType());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, displayAdjustmentEvent0.getEnd());
 </pre>
 <h3>Test case 19</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Object object0 = new Object();
-<span class="nocode"><a name="2">  2: </a></span>DisplayAdjustmentEvent displayAdjustmentEvent0 = new DisplayAdjustmentEvent(object0, (-1), (-1), (-1), (-1), (-4016), false, 0);
+<span class="nocode"><a name="2">  2: </a></span>DisplayAdjustmentEvent displayAdjustmentEvent0 = new DisplayAdjustmentEvent(object0, 1, 1, 1, 1);
 <span class="nocode"><a name="3">  3: </a></span>int int0 = displayAdjustmentEvent0.getStart();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals((-1), int0);
-<span class="nocode"><a name="5">  5: </a></span>assertEquals((-1), displayAdjustmentEvent0.getWidthInBases());
-<span class="nocode"><a name="6">  6: </a></span>assertFalse(displayAdjustmentEvent0.isRevCompDisplay());
-<span class="nocode"><a name="7">  7: </a></span>assertEquals((-1), displayAdjustmentEvent0.getEnd());
-<span class="nocode"><a name="8">  8: </a></span>assertEquals((-1.0F), displayAdjustmentEvent0.getBaseWidth(), 0.01F);
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(0, displayAdjustmentEvent0.getType());
-<span class="nocode"><a name="10"> 10: </a></span>assertEquals((-4016), displayAdjustmentEvent0.getScaleFactor());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1, displayAdjustmentEvent0.getDropPosition());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(1, displayAdjustmentEvent0.getType());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(1, displayAdjustmentEvent0.getEnd());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(1, int0);
 </pre>
 <h3>Test case 20</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Object object0 = new Object();
-<span class="nocode"><a name="2">  2: </a></span>DisplayAdjustmentEvent displayAdjustmentEvent0 = new DisplayAdjustmentEvent(object0, 2312, 2312, 2312, 2312, 2312, true, 610);
-<span class="nocode"><a name="3">  3: </a></span>int int0 = displayAdjustmentEvent0.getStart();
-<span class="nocode"><a name="4">  4: </a></span>assertTrue(displayAdjustmentEvent0.isRevCompDisplay());
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(2312, displayAdjustmentEvent0.getEnd());
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(610, displayAdjustmentEvent0.getType());
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(2312, displayAdjustmentEvent0.getScaleFactor());
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(2312.0F, displayAdjustmentEvent0.getBaseWidth(), 0.01F);
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(2312, int0);
-<span class="nocode"><a name="10"> 10: </a></span>assertEquals(2312, displayAdjustmentEvent0.getWidthInBases());
+<span class="nocode"><a name="1">  1: </a></span>DisplayAdjustmentEvent displayAdjustmentEvent0 = new DisplayAdjustmentEvent(&quot;c!6.}&gt;CLl9f3G&quot;, 0, 0, 0, 0);
+<span class="nocode"><a name="2">  2: </a></span>int int0 = displayAdjustmentEvent0.getStart();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, displayAdjustmentEvent0.getDropPosition());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, displayAdjustmentEvent0.getEnd());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, displayAdjustmentEvent0.getType());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, int0);
 </pre>
 <h3>Test case 21</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Object object0 = new Object();
-<span class="nocode"><a name="2">  2: </a></span>DisplayAdjustmentEvent displayAdjustmentEvent0 = new DisplayAdjustmentEvent(object0, (-904), 0, 0, (-904));
-<span class="nocode"><a name="3">  3: </a></span>int int0 = displayAdjustmentEvent0.getType();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals((-904), int0);
-<span class="nocode"><a name="5">  5: </a></span>assertEquals((-904), displayAdjustmentEvent0.getStart());
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, displayAdjustmentEvent0.getEnd());
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, displayAdjustmentEvent0.getDropPosition());
+<span class="nocode"><a name="1">  1: </a></span>DisplayAdjustmentEvent displayAdjustmentEvent0 = new DisplayAdjustmentEvent(&quot;VRr&gt;&quot;, 3, 3, 3, 3, 3, false, 3);
+<span class="nocode"><a name="2">  2: </a></span>int int0 = displayAdjustmentEvent0.getType();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(3, displayAdjustmentEvent0.getStart());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(3, displayAdjustmentEvent0.getWidthInBases());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(3.0F, displayAdjustmentEvent0.getBaseWidth(), 0.01F);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(3, int0);
+<span class="nocode"><a name="7">  7: </a></span>assertFalse(displayAdjustmentEvent0.isRevCompDisplay());
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(3, displayAdjustmentEvent0.getScaleFactor());
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(3, displayAdjustmentEvent0.getEnd());
 </pre>
 <h3>Test case 22</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Object object0 = new Object();
-<span class="nocode"><a name="2">  2: </a></span>DisplayAdjustmentEvent displayAdjustmentEvent0 = new DisplayAdjustmentEvent(object0, 0, 0, 3218, (-3950.9F), 3, true, 1);
-<span class="nocode"><a name="3">  3: </a></span>int int0 = displayAdjustmentEvent0.getType();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(1, int0);
-<span class="nocode"><a name="5">  5: </a></span>assertEquals((-3950.9F), displayAdjustmentEvent0.getBaseWidth(), 0.01F);
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(3218, displayAdjustmentEvent0.getWidthInBases());
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, displayAdjustmentEvent0.getStart());
-<span class="nocode"><a name="8">  8: </a></span>assertTrue(displayAdjustmentEvent0.isRevCompDisplay());
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(0, displayAdjustmentEvent0.getEnd());
-<span class="nocode"><a name="10"> 10: </a></span>assertEquals(3, displayAdjustmentEvent0.getScaleFactor());
+<span class="nocode"><a name="1">  1: </a></span>DisplayAdjustmentEvent displayAdjustmentEvent0 = new DisplayAdjustmentEvent(&quot;c!6.}&gt;CLl9f3G&quot;, 0, 0, 0, 0);
+<span class="nocode"><a name="2">  2: </a></span>int int0 = displayAdjustmentEvent0.getType();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, displayAdjustmentEvent0.getStart());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, displayAdjustmentEvent0.getDropPosition());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, displayAdjustmentEvent0.getEnd());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, int0);
 </pre>
 <h3>Test case 23</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Object object0 = new Object();
-<span class="nocode"><a name="2">  2: </a></span>DisplayAdjustmentEvent displayAdjustmentEvent0 = new DisplayAdjustmentEvent(object0, (-1), (-1), (-1), (-1), (-4016), false, 0);
+<span class="nocode"><a name="2">  2: </a></span>DisplayAdjustmentEvent displayAdjustmentEvent0 = new DisplayAdjustmentEvent(object0, 0, 0, (-2749), 0, 0, true, (-2749));
 <span class="nocode"><a name="3">  3: </a></span>int int0 = displayAdjustmentEvent0.getWidthInBases();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, displayAdjustmentEvent0.getType());
-<span class="nocode"><a name="5">  5: </a></span>assertEquals((-1), displayAdjustmentEvent0.getStart());
-<span class="nocode"><a name="6">  6: </a></span>assertEquals((-1), displayAdjustmentEvent0.getEnd());
-<span class="nocode"><a name="7">  7: </a></span>assertEquals((-1.0F), displayAdjustmentEvent0.getBaseWidth(), 0.01F);
-<span class="nocode"><a name="8">  8: </a></span>assertEquals((-4016), displayAdjustmentEvent0.getScaleFactor());
-<span class="nocode"><a name="9">  9: </a></span>assertEquals((-1), int0);
-<span class="nocode"><a name="10"> 10: </a></span>assertFalse(displayAdjustmentEvent0.isRevCompDisplay());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, displayAdjustmentEvent0.getEnd());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals((-2749), int0);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, displayAdjustmentEvent0.getStart());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, displayAdjustmentEvent0.getScaleFactor());
+<span class="nocode"><a name="8">  8: </a></span>assertTrue(displayAdjustmentEvent0.isRevCompDisplay());
+<span class="nocode"><a name="9">  9: </a></span>assertEquals((-2749), displayAdjustmentEvent0.getType());
 </pre>
 <h3>Test case 24</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Object object0 = new Object();
-<span class="nocode"><a name="2">  2: </a></span>DisplayAdjustmentEvent displayAdjustmentEvent0 = new DisplayAdjustmentEvent(object0, 0, 0, 3218, (-3950.9F), 3, true, 1);
+<span class="nocode"><a name="2">  2: </a></span>DisplayAdjustmentEvent displayAdjustmentEvent0 = new DisplayAdjustmentEvent(object0, (-537), 0, 540, 0, 0, false, 0);
 <span class="nocode"><a name="3">  3: </a></span>int int0 = displayAdjustmentEvent0.getWidthInBases();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, displayAdjustmentEvent0.getEnd());
-<span class="nocode"><a name="5">  5: </a></span>assertTrue(displayAdjustmentEvent0.isRevCompDisplay());
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(3, displayAdjustmentEvent0.getScaleFactor());
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(1, displayAdjustmentEvent0.getType());
-<span class="nocode"><a name="8">  8: </a></span>assertEquals((-3950.9F), displayAdjustmentEvent0.getBaseWidth(), 0.01F);
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(3218, int0);
-<span class="nocode"><a name="10"> 10: </a></span>assertEquals(0, displayAdjustmentEvent0.getStart());
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(displayAdjustmentEvent0.isRevCompDisplay());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, displayAdjustmentEvent0.getType());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals((-537), displayAdjustmentEvent0.getStart());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(540, int0);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(0, displayAdjustmentEvent0.getEnd());
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(0, displayAdjustmentEvent0.getScaleFactor());
 </pre>
 <h3>Test case 25</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Object object0 = new Object();
-<span class="nocode"><a name="2">  2: </a></span>DisplayAdjustmentEvent displayAdjustmentEvent0 = new DisplayAdjustmentEvent(object0, 0, 0, 3218, (-3950.9F), 3, true, 1);
-<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = displayAdjustmentEvent0.isRevCompDisplay();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, displayAdjustmentEvent0.getEnd());
-<span class="nocode"><a name="5">  5: </a></span>assertTrue(boolean0);
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(3218, displayAdjustmentEvent0.getWidthInBases());
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(1, displayAdjustmentEvent0.getType());
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(3, displayAdjustmentEvent0.getScaleFactor());
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(0, displayAdjustmentEvent0.getStart());
-<span class="nocode"><a name="10"> 10: </a></span>assertEquals((-3950.9F), displayAdjustmentEvent0.getBaseWidth(), 0.01F);
+<span class="nocode"><a name="1">  1: </a></span>DisplayAdjustmentEvent displayAdjustmentEvent0 = new DisplayAdjustmentEvent(&quot;\&quot;+TWvnstj54q&quot;, 313, 313, 313, 2436.4644F, (-1366), true, 1120);
+<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = displayAdjustmentEvent0.isRevCompDisplay();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(313, displayAdjustmentEvent0.getWidthInBases());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1120, displayAdjustmentEvent0.getType());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(313, displayAdjustmentEvent0.getEnd());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals((-1366), displayAdjustmentEvent0.getScaleFactor());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(2436.4644F, displayAdjustmentEvent0.getBaseWidth(), 0.01F);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(313, displayAdjustmentEvent0.getStart());
+<span class="nocode"><a name="9">  9: </a></span>assertTrue(boolean0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -318,7 +309,7 @@ uk.ac.sanger.artemis.components.DisplayAdjustmentEvent
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.DisplayAdjustmentEvent
 <li>Size: 25
-<li>Length: 71
+<li>Length: 61
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 1.0
 <li>BranchCoverage: 1.0

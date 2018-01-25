@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.components.ProjectProperty
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.components.ProjectProperty: 0.31442768033327434</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.components.ProjectProperty: 0.30727310313592965</ul>
 <ul>
-<li>1914.164296993286 fitness evaluations, 0 generations, null statements, 11 tests.
+<li>1973.6643025593594 fitness evaluations, 0 generations, null statements, 10 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -39,75 +39,62 @@ uk.ac.sanger.artemis.components.ProjectProperty
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;T_)&gt;3nZM&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Properties properties0 = new Properties();
-<span class="nocode"><a name="3">  3: </a></span>properties0.put(mockFile0, mockFile0);
+<span class="nocode"><a name="1">  1: </a></span>Properties properties0 = new Properties();
+<span class="nocode"><a name="2">  2: </a></span>Integer integer0 = JLayeredPane.PALETTE_LAYER;
+<span class="nocode"><a name="3">  3: </a></span>properties0.put(integer0, integer0);
 <span class="nocode"><a name="4">  4: </a></span>ProjectProperty.getProjectMap(properties0);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Properties properties0 = new Properties();
-<span class="nocode"><a name="2">  2: </a></span>BiFunction&lt;Object, Object, Frame&gt; biFunction0 = (BiFunction&lt;Object, Object, Frame&gt;) mock(BiFunction.class, new ViolatedAssumptionAnswer());
-<span class="nocode"><a name="3">  3: </a></span>properties0.merge(&quot;c}&quot;, &quot;ZjDg&quot;, biFunction0);
-<span class="nocode"><a name="4">  4: </a></span>HashMap&lt;String, HashMap&lt;String, String&gt;&gt; hashMap0 = (HashMap&lt;String, HashMap&lt;String, String&gt;&gt;)ProjectProperty.getProjectMap(properties0);
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, hashMap0.size());
+<span class="nocode"><a name="2">  2: </a></span>properties0.put(&quot;class org.biojava.bio.seq.io.SequenceBuilderBaseERROR_FEATURES_PROPERTY&quot;, &quot;class org.biojava.bio.seq.io.SequenceBuilderBaseERROR_FEATURES_PROPERTY&quot;);
+<span class="nocode"><a name="3">  3: </a></span>HashMap&lt;String, HashMap&lt;String, String&gt;&gt; hashMap0 = (HashMap&lt;String, HashMap&lt;String, String&gt;&gt;)ProjectProperty.getProjectMap(properties0);
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(hashMap0.isEmpty());
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Properties properties0 = new Properties();
-<span class="nocode"><a name="2">  2: </a></span>BiFunction&lt;Object, Object, Frame&gt; biFunction0 = (BiFunction&lt;Object, Object, Frame&gt;) mock(BiFunction.class, new ViolatedAssumptionAnswer());
-<span class="nocode"><a name="3">  3: </a></span>properties0.merge(&quot;project.}}&quot;, &quot;ZjDg&quot;, biFunction0);
-<span class="nocode"><a name="4">  4: </a></span>HashMap&lt;String, HashMap&lt;String, String&gt;&gt; hashMap0 = (HashMap&lt;String, HashMap&lt;String, String&gt;&gt;)ProjectProperty.getProjectMap(properties0);
-<span class="nocode"><a name="5">  5: </a></span>assertTrue(hashMap0.isEmpty());
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = (MockFile)MockFile.createTempFile(&quot;INSERT failed &quot;, &quot;INSERT failed &quot;);
+<span class="nocode"><a name="2">  2: </a></span>HashMap&lt;String, HashMap&lt;String, String&gt;&gt; hashMap0 = new HashMap&lt;String, HashMap&lt;String, String&gt;&gt;();
+<span class="nocode"><a name="3">  3: </a></span>HashMap&lt;String, String&gt; hashMap1 = new HashMap&lt;String, String&gt;();
+<span class="nocode"><a name="4">  4: </a></span>hashMap1.put(&quot;INSERT failed &quot;, &quot;INSERT failed &quot;);
+<span class="nocode"><a name="5">  5: </a></span>hashMap0.put(&quot;INSERT failed &quot;, hashMap1);
+<span class="nocode"><a name="6">  6: </a></span>ProjectProperty.writeProperties(mockFile0, hashMap0);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(54L, mockFile0.length());
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;getFeatureCvTermPubByFeature&quot;);
-<span class="nocode"><a name="2">  2: </a></span>HashMap&lt;String, HashMap&lt;String, String&gt;&gt; hashMap0 = new HashMap&lt;String, HashMap&lt;String, String&gt;&gt;();
-<span class="nocode"><a name="3">  3: </a></span>ProjectProperty.writeProperties(mockFile0, hashMap0);
-<span class="nocode"><a name="4">  4: </a></span>assertFalse(mockFile0.canExecute());
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(0L, mockFile0.lastModified());
+<span class="nocode"><a name="1">  1: </a></span>ProjectProperty projectProperty0 = new ProjectProperty();
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;getFeatureCvTermPubByFeature&quot;);
-<span class="nocode"><a name="2">  2: </a></span>HashMap&lt;String, HashMap&lt;String, String&gt;&gt; hashMap0 = new HashMap&lt;String, HashMap&lt;String, String&gt;&gt;();
-<span class="nocode"><a name="3">  3: </a></span>HashMap&lt;String, String&gt; hashMap1 = new HashMap&lt;String, String&gt;();
-<span class="nocode"><a name="4">  4: </a></span>hashMap1.put(&quot;&quot;, &quot;sequence&quot;);
-<span class="nocode"><a name="5">  5: </a></span>hashMap0.put(&quot;sequence&quot;, hashMap1);
-<span class="nocode"><a name="6">  6: </a></span>ProjectProperty.writeProperties(mockFile0, hashMap0);
-<span class="nocode"><a name="7">  7: </a></span>assertTrue(mockFile0.canRead());
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(1392409281320L, mockFile0.lastModified());
+<span class="nocode"><a name="1">  1: </a></span>ProjectProperty projectProperty0 = new ProjectProperty((Splash) null);
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>ProjectProperty projectProperty0 = new ProjectProperty();
+<span class="nocode"><a name="1">  1: </a></span>ProjectProperty.getProjectMap((Properties) null);
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>ProjectProperty projectProperty0 = new ProjectProperty((Splash) null);
+<span class="nocode"><a name="1">  1: </a></span>HashMap&lt;String, HashMap&lt;String, String&gt;&gt; hashMap0 = new HashMap&lt;String, HashMap&lt;String, String&gt;&gt;(249);
+<span class="nocode"><a name="2">  2: </a></span>ProjectProperty.writeProperties((File) null, hashMap0);
 </pre>
 <h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>ProjectProperty.getProjectMap((Properties) null);
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>HashMap&lt;String, HashMap&lt;String, String&gt;&gt; hashMap0 = new HashMap&lt;String, HashMap&lt;String, String&gt;&gt;();
+<span class="nocode"><a name="3">  3: </a></span>HashMap&lt;String, String&gt; hashMap1 = new HashMap&lt;String, String&gt;();
+<span class="nocode"><a name="4">  4: </a></span>hashMap0.put(&quot;&quot;, hashMap1);
+<span class="nocode"><a name="5">  5: </a></span>ProjectProperty.writeProperties(mockFile0, hashMap0);
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(mockFile0.canRead());
 </pre>
 <h3>Test case 10</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;tRNA&quot;, &quot;tRNA&quot;);
-<span class="nocode"><a name="2">  2: </a></span>HashMap&lt;String, HashMap&lt;String, String&gt;&gt; hashMap0 = new HashMap&lt;String, HashMap&lt;String, String&gt;&gt;();
-<span class="nocode"><a name="3">  3: </a></span>hashMap0.put(&quot;tRNA&quot;, (HashMap&lt;String, String&gt;) null);
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;|CCy V5[%fK&quot;, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Properties properties0 = new Properties();
+<span class="nocode"><a name="3">  3: </a></span>HashMap&lt;String, HashMap&lt;String, String&gt;&gt; hashMap0 = (HashMap&lt;String, HashMap&lt;String, String&gt;&gt;)ProjectProperty.getProjectMap(properties0);
 <span class="nocode"><a name="4">  4: </a></span>ProjectProperty.writeProperties(mockFile0, hashMap0);
-</pre>
-<h3>Test case 11</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FileSystemHandling.shouldAllThrowIOExceptions();
-<span class="nocode"><a name="2">  2: </a></span>MockFile mockFile0 = new MockFile(&quot;getFeatureCvTermPubByFeature&quot;);
-<span class="nocode"><a name="3">  3: </a></span>HashMap&lt;String, HashMap&lt;String, String&gt;&gt; hashMap0 = new HashMap&lt;String, HashMap&lt;String, String&gt;&gt;();
-<span class="nocode"><a name="4">  4: </a></span>HashMap&lt;String, String&gt; hashMap1 = new HashMap&lt;String, String&gt;();
-<span class="nocode"><a name="5">  5: </a></span>hashMap0.put(&quot;sequence&quot;, hashMap1);
-<span class="nocode"><a name="6">  6: </a></span>ProjectProperty.writeProperties(mockFile0, hashMap0);
-<span class="nocode"><a name="7">  7: </a></span>assertTrue(mockFile0.canRead());
-<span class="nocode"><a name="8">  8: </a></span>assertTrue(mockFile0.canExecute());
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(mockFile0.canExecute());
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(mockFile0.exists());
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -120,11 +107,11 @@ uk.ac.sanger.artemis.components.ProjectProperty
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.ProjectProperty
-<li>Size: 11
-<li>Length: 35
+<li>Size: 10
+<li>Length: 28
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.31442768033327434
-<li>BranchCoverage: 0.07075471698113207
+<li>Coverage: 0.30727310313592965
+<li>BranchCoverage: 0.06132075471698113
 <li>MethodCoverage: 0.5555555555555556
 <li>OutputCoverage: 0.3333333333333333
 </ul></div>

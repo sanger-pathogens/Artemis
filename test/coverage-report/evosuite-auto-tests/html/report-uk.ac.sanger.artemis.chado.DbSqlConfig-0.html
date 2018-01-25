@@ -42,13 +42,12 @@ uk.ac.sanger.artemis.chado.DbSqlConfig
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>DbSqlConfig dbSqlConfig0 = new DbSqlConfig();
-<span class="nocode"><a name="2">  2: </a></span>JPasswordField jPasswordField0 = new JPasswordField(22);
-<span class="nocode"><a name="3">  3: </a></span>dbSqlConfig0.init2(jPasswordField0);
+<span class="nocode"><a name="2">  2: </a></span>dbSqlConfig0.init2((JPasswordField) null);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>DbSqlConfig dbSqlConfig0 = new DbSqlConfig();
-<span class="nocode"><a name="2">  2: </a></span>JPasswordField jPasswordField0 = new JPasswordField(5);
+<span class="nocode"><a name="2">  2: </a></span>JPasswordField jPasswordField0 = new JPasswordField();
 <span class="nocode"><a name="3">  3: </a></span>dbSqlConfig0.init(jPasswordField0);
 </pre>
 </div><div id="post">
@@ -63,7 +62,7 @@ uk.ac.sanger.artemis.chado.DbSqlConfig
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.chado.DbSqlConfig
 <li>Size: 3
-<li>Length: 8
+<li>Length: 7
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.5025462962962963
 <li>BranchCoverage: 0.4444444444444444

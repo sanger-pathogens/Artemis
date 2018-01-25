@@ -35,55 +35,48 @@ uk.ac.sanger.artemis.sequence.MarkerChangeEvent
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;\&quot;8C|/$s{Z*G]wu@&amp;H&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;uk.ac.sanger.artemis.sequence.MarkerChangeEvent&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
 <span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
-<span class="nocode"><a name="4">  4: </a></span>Marker marker0 = new Marker(strand0, 1);
-<span class="nocode"><a name="5">  5: </a></span>MarkerChangeEvent markerChangeEvent0 = new MarkerChangeEvent(marker0, strand0, 5);
+<span class="nocode"><a name="4">  4: </a></span>Marker marker0 = strand0.makeMarkerFromRawPosition(1);
+<span class="nocode"><a name="5">  5: </a></span>MarkerChangeEvent markerChangeEvent0 = new MarkerChangeEvent(marker0, strand0, 1089);
 <span class="nocode"><a name="6">  6: </a></span>Strand strand1 = markerChangeEvent0.getStrand();
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(1, strand1.getDirection());
+<span class="nocode"><a name="7">  7: </a></span>assertSame(strand0, strand1);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;dThWkb*&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>SimpleEntryInformation simpleEntryInformation0 = new SimpleEntryInformation();
-<span class="nocode"><a name="4">  4: </a></span>EmblDocumentEntry emblDocumentEntry0 = new EmblDocumentEntry(simpleEntryInformation0);
-<span class="nocode"><a name="5">  5: </a></span>Entry entry0 = new Entry(bases0, emblDocumentEntry0);
-<span class="nocode"><a name="6">  6: </a></span>Feature feature0 = entry0.createFeature();
-<span class="nocode"><a name="7">  7: </a></span>Marker marker0 = feature0.getFirstCodingBaseMarker();
-<span class="nocode"><a name="8">  8: </a></span>Strand strand0 = bases0.getReverseStrand();
-<span class="nocode"><a name="9">  9: </a></span>MarkerChangeEvent markerChangeEvent0 = new MarkerChangeEvent(marker0, strand0, (-1068));
-<span class="nocode"><a name="10"> 10: </a></span>markerChangeEvent0.getMarker();
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;TQeFCz^FW&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = Entry.newEntry(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Feature feature0 = entry0.createFeature();
+<span class="nocode"><a name="5">  5: </a></span>Marker marker0 = feature0.getFirstCodingBaseMarker();
+<span class="nocode"><a name="6">  6: </a></span>MarkerChangeEvent markerChangeEvent0 = new MarkerChangeEvent(marker0, (Strand) null, 5);
+<span class="nocode"><a name="7">  7: </a></span>markerChangeEvent0.getMarker();
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Strand strand0 = new Strand((Bases) null, 120);
-<span class="nocode"><a name="2">  2: </a></span>MarkerChangeEvent markerChangeEvent0 = new MarkerChangeEvent((Marker) null, strand0, 120);
+<span class="nocode"><a name="1">  1: </a></span>MarkerChangeEvent markerChangeEvent0 = new MarkerChangeEvent((Marker) null, (Strand) null, 0);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[4];
-<span class="nocode"><a name="2">  2: </a></span>Integer integer0 = new Integer(509);
-<span class="nocode"><a name="3">  3: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, (-16000), (-16000), (Short) null, integer0);
-<span class="nocode"><a name="4">  4: </a></span>Bases bases0 = new Bases(partialSequence0);
-<span class="nocode"><a name="5">  5: </a></span>Strand strand0 = bases0.getForwardStrand();
-<span class="nocode"><a name="6">  6: </a></span>Marker marker0 = new Marker(strand0, (-16000));
-<span class="nocode"><a name="7">  7: </a></span>MarkerChangeEvent markerChangeEvent0 = new MarkerChangeEvent(marker0, strand0, (-16000));
-<span class="nocode"><a name="8">  8: </a></span>Marker marker1 = markerChangeEvent0.getMarker();
-<span class="nocode"><a name="9">  9: </a></span>assertSame(marker0, marker1);
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;uk.ac.sanger.artemis.sequence.MarkerChangeEvent&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = new Strand(bases0, (-52));
+<span class="nocode"><a name="4">  4: </a></span>Marker marker0 = strand0.makeMarkerFromRawPosition(1);
+<span class="nocode"><a name="5">  5: </a></span>MarkerChangeEvent markerChangeEvent0 = new MarkerChangeEvent(marker0, strand0, 1089);
+<span class="nocode"><a name="6">  6: </a></span>Strand strand1 = markerChangeEvent0.getStrand();
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(1, Strand.FORWARD);
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Short short0 = new Short((short)44);
-<span class="nocode"><a name="2">  2: </a></span>Integer integer0 = JLayeredPane.PALETTE_LAYER;
-<span class="nocode"><a name="3">  3: </a></span>PartialSequence partialSequence0 = new PartialSequence((char[]) null, 966, (-1), short0, integer0);
-<span class="nocode"><a name="4">  4: </a></span>Bases bases0 = new Bases(partialSequence0);
-<span class="nocode"><a name="5">  5: </a></span>Strand strand0 = new Strand(bases0, 5);
-<span class="nocode"><a name="6">  6: </a></span>Marker marker0 = strand0.makeMarkerFromRawPosition(1);
-<span class="nocode"><a name="7">  7: </a></span>MarkerChangeEvent markerChangeEvent0 = new MarkerChangeEvent(marker0, strand0, 966);
-<span class="nocode"><a name="8">  8: </a></span>Strand strand1 = markerChangeEvent0.getStrand();
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(2, strand1.getDirection());
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;TQeFCz^FW&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = Entry.newEntry(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Feature feature0 = entry0.createFeature();
+<span class="nocode"><a name="5">  5: </a></span>Marker marker0 = feature0.getFirstCodingBaseMarker();
+<span class="nocode"><a name="6">  6: </a></span>MarkerChangeEvent markerChangeEvent0 = new MarkerChangeEvent(marker0, (Strand) null, 5);
+<span class="nocode"><a name="7">  7: </a></span>Strand strand0 = markerChangeEvent0.getStrand();
+<span class="nocode"><a name="8">  8: </a></span>assertNull(strand0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -97,7 +90,7 @@ uk.ac.sanger.artemis.sequence.MarkerChangeEvent
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.sequence.MarkerChangeEvent
 <li>Size: 5
-<li>Length: 34
+<li>Length: 27
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.9375
 <li>BranchCoverage: 1.0

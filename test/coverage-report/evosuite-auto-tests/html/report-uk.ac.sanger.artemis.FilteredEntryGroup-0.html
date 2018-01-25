@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.FilteredEntryGroup
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.FilteredEntryGroup: 0.7685123952989343</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.FilteredEntryGroup: 0.7467650645591029</ul>
 <ul>
-<li>158.00595238095238 fitness evaluations, 0 generations, null statements, 69 tests.
+<li>572.5454545454545 fitness evaluations, 0 generations, null statements, 67 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,606 +35,623 @@ uk.ac.sanger.artemis.FilteredEntryGroup
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;H=d|Y!vk6|b&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;empty attribute value for &quot;, (String) null);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
 <span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="4">  4: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, (FeatureVector) null, &quot;H=d|Y!vk6|b&quot;);
-<span class="nocode"><a name="5">  5: </a></span>simpleEntryGroup0.createEntry();
-<span class="nocode"><a name="6">  6: </a></span>filteredEntryGroup0.createFeature();
-<span class="nocode"><a name="7">  7: </a></span>filteredEntryGroup0.filterFeatures();
+<span class="nocode"><a name="4">  4: </a></span>Key key0 = new Key(&quot;10nl8OgX:&quot;);
+<span class="nocode"><a name="5">  5: </a></span>FeatureKeyPredicate featureKeyPredicate0 = new FeatureKeyPredicate(key0);
+<span class="nocode"><a name="6">  6: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureKeyPredicate0, (String) null);
+<span class="nocode"><a name="7">  7: </a></span>Entry entry0 = filteredEntryGroup0.createEntry((String) null);
+<span class="nocode"><a name="8">  8: </a></span>filteredEntryGroup0.indexOf(entry0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>Key key0 = Key.CDS;
-<span class="nocode"><a name="3">  3: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate(key0, &quot;D@ugYjz-ir9&quot;);
-<span class="nocode"><a name="4">  4: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureKeyQualifierPredicate0, &quot;D@ugYjz-ir9&quot;);
-<span class="nocode"><a name="5">  5: </a></span>int int0 = filteredEntryGroup0.size();
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, int0);
+<span class="nocode"><a name="2">  2: </a></span>FeatureVector featureVector0 = new FeatureVector();
+<span class="nocode"><a name="3">  3: </a></span>FeatureFromVectorPredicate featureFromVectorPredicate0 = new FeatureFromVectorPredicate(featureVector0);
+<span class="nocode"><a name="4">  4: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureFromVectorPredicate0, &quot;BOANX*3SWp&quot;);
+<span class="nocode"><a name="5">  5: </a></span>filteredEntryGroup0.featureChanged((FeatureChangeEvent) null);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;BOANX*3SWp&quot;, filteredEntryGroup0.getFilterName());
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>FeatureVector featureVector0 = new FeatureVector();
-<span class="nocode"><a name="3">  3: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, &quot;&quot;);
-<span class="nocode"><a name="4">  4: </a></span>filteredEntryGroup0.setDefaultEntry((Entry) null);
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;&quot;, filteredEntryGroup0.getFilterName());
+<span class="nocode"><a name="1">  1: </a></span>Bases bases0 = new Bases((Sequence) null);
+<span class="nocode"><a name="2">  2: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="3">  3: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, (FeatureVector) null, &quot;mL3pj1;[@s=Qdx&amp;&quot;);
+<span class="nocode"><a name="4">  4: </a></span>int int0 = filteredEntryGroup0.size();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, int0);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FeatureVector featureVector0 = new FeatureVector();
-<span class="nocode"><a name="2">  2: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="3">  3: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, &quot;X6c!J)&quot;);
-<span class="nocode"><a name="4">  4: </a></span>Entry entry0 = filteredEntryGroup0.getSequenceEntry();
-<span class="nocode"><a name="5">  5: </a></span>assertNull(entry0);
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>FeatureVector featureVector0 = simpleEntryGroup0.getAllFeatures();
+<span class="nocode"><a name="3">  3: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, (String) null);
+<span class="nocode"><a name="4">  4: </a></span>Entry entry0 = filteredEntryGroup0.createEntry(&quot;&amp;tZV`/lC*&quot;);
+<span class="nocode"><a name="5">  5: </a></span>filteredEntryGroup0.setDefaultEntry(entry0);
+<span class="nocode"><a name="6">  6: </a></span>assertNull(filteredEntryGroup0.getFilterName());
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, (FeatureVector) null, &quot;R{G3o&quot;);
-<span class="nocode"><a name="3">  3: </a></span>int int0 = filteredEntryGroup0.refCount();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, int0);
+<span class="nocode"><a name="2">  2: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="3">  3: </a></span>Key key0 = blastEntryInformation0.getDefaultKey();
+<span class="nocode"><a name="4">  4: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate(key0, &quot;8Lp|I9CGZBF;:&quot;, true);
+<span class="nocode"><a name="5">  5: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureKeyQualifierPredicate0, &quot;8Lp|I9CGZBF;:&quot;);
+<span class="nocode"><a name="6">  6: </a></span>Entry entry0 = filteredEntryGroup0.getSequenceEntry();
+<span class="nocode"><a name="7">  7: </a></span>assertNull(entry0);
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
-<span class="nocode"><a name="3">  3: </a></span>Key key0 = blastEntryInformation0.getDefaultKey();
-<span class="nocode"><a name="4">  4: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate(key0, &quot;&quot;, &quot;fC&lt;&gt;.5IopjgL&quot;, false, false);
-<span class="nocode"><a name="5">  5: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureKeyQualifierPredicate0, &quot;&quot;);
-<span class="nocode"><a name="6">  6: </a></span>filteredEntryGroup0.add((Entry) null);
+<span class="nocode"><a name="2">  2: </a></span>FeatureVector featureVector0 = new FeatureVector();
+<span class="nocode"><a name="3">  3: </a></span>FeatureFromVectorPredicate featureFromVectorPredicate0 = new FeatureFromVectorPredicate(featureVector0);
+<span class="nocode"><a name="4">  4: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureFromVectorPredicate0, &quot;&quot;);
+<span class="nocode"><a name="5">  5: </a></span>Entry entry0 = filteredEntryGroup0.createEntry(&quot;2u$Q:[vwN{i#x2&quot;);
+<span class="nocode"><a name="6">  6: </a></span>filteredEntryGroup0.add(entry0);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, entry0.getFeatureCount());
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate((Key) null, &quot;2P sAQBnEj[D*&quot;);
-<span class="nocode"><a name="3">  3: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureKeyQualifierPredicate0, &quot;2P sAQBnEj[D*&quot;);
-<span class="nocode"><a name="4">  4: </a></span>int int0 = filteredEntryGroup0.getAllFeaturesCount();
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, int0);
+<span class="nocode"><a name="2">  2: </a></span>Clipboard clipboard0 = new Clipboard(&quot;s4OI\u0002qN%%8?u&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="4">  4: </a></span>FeatureVector featureVector0 = selection0.getSelectedFeatures();
+<span class="nocode"><a name="5">  5: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, &quot;s4OI\u0002qN%%8?u&quot;);
+<span class="nocode"><a name="6">  6: </a></span>int int0 = filteredEntryGroup0.getAllFeaturesCount();
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, int0);
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Bases bases0 = new Bases((Sequence) null);
-<span class="nocode"><a name="2">  2: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="3">  3: </a></span>Key key0 = Key.CDS;
-<span class="nocode"><a name="4">  4: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate(key0, (String) null, &quot;Start_range=.,.;&quot;);
-<span class="nocode"><a name="5">  5: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureKeyQualifierPredicate0, &quot;Start_range=.,.;&quot;);
-<span class="nocode"><a name="6">  6: </a></span>Entry entry0 = filteredEntryGroup0.createEntry((String) null);
-<span class="nocode"><a name="7">  7: </a></span>int int0 = filteredEntryGroup0.indexOf(entry0);
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(0, int0);
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;empty attribute value for &quot;, (String) null);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Range range0 = new Range(2);
+<span class="nocode"><a name="5">  5: </a></span>Key key0 = new Key(&quot;10nl8OgX:&quot;);
+<span class="nocode"><a name="6">  6: </a></span>FeatureKeyPredicate featureKeyPredicate0 = new FeatureKeyPredicate(key0);
+<span class="nocode"><a name="7">  7: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureKeyPredicate0, (String) null);
+<span class="nocode"><a name="8">  8: </a></span>FeatureVector featureVector0 = simpleEntryGroup0.getFeaturesInRange(range0);
+<span class="nocode"><a name="9">  9: </a></span>FilteredEntryGroup filteredEntryGroup1 = new FilteredEntryGroup(filteredEntryGroup0, featureVector0, &quot;&quot;);
+<span class="nocode"><a name="10"> 10: </a></span>Entry entry0 = filteredEntryGroup1.createEntry((String) null);
+<span class="nocode"><a name="11"> 11: </a></span>Feature feature0 = entry0.createFeature();
+<span class="nocode"><a name="12"> 12: </a></span>int int0 = filteredEntryGroup1.indexOf(feature0);
+<span class="nocode"><a name="13"> 13: </a></span>assertEquals((-1), int0);
 </pre>
 <h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, (FeaturePredicate) null, &quot;&quot;);
-<span class="nocode"><a name="3">  3: </a></span>FilteredEntryGroup.FeatureEnumerator filteredEntryGroup_FeatureEnumerator0 = (FilteredEntryGroup.FeatureEnumerator)filteredEntryGroup0.features();
-<span class="nocode"><a name="4">  4: </a></span>assertNotNull(filteredEntryGroup_FeatureEnumerator0);
+<span class="nocode"><a name="2">  2: </a></span>Clipboard clipboard0 = new Clipboard(&quot;s4OI\u0002qN%%8?u&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="4">  4: </a></span>FeatureVector featureVector0 = selection0.getSelectedFeatures();
+<span class="nocode"><a name="5">  5: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, &quot;s4OI\u0002qN%%8?u&quot;);
+<span class="nocode"><a name="6">  6: </a></span>EntryVector entryVector0 = filteredEntryGroup0.getActiveEntries();
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, entryVector0.size());
 </pre>
 <h3>Test case 10</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>Clipboard clipboard0 = new Clipboard(&quot;+rP@a1&quot;);
-<span class="nocode"><a name="3">  3: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="4">  4: </a></span>FeatureVector featureVector0 = selection0.getSelectedFeatures();
-<span class="nocode"><a name="5">  5: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, &quot;UPDATE&quot;);
-<span class="nocode"><a name="6">  6: </a></span>EntryVector entryVector0 = filteredEntryGroup0.getActiveEntries();
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, entryVector0.size());
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Clipboard clipboard0 = new Clipboard(&quot;wq+Ok^|_&amp;uP=A=Q:lu&quot;);
+<span class="nocode"><a name="5">  5: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="6">  6: </a></span>FeatureVector featureVector0 = selection0.getSelectedFeatures();
+<span class="nocode"><a name="7">  7: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, &quot;&quot;);
+<span class="nocode"><a name="8">  8: </a></span>filteredEntryGroup0.unref();
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(0, filteredEntryGroup0.size());
 </pre>
 <h3>Test case 11</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, (FeaturePredicate) null, &quot;&quot;);
-<span class="nocode"><a name="3">  3: </a></span>FeatureVector featureVector0 = filteredEntryGroup0.getFeaturesInRange((Range) null);
-<span class="nocode"><a name="4">  4: </a></span>assertNotNull(featureVector0);
+<span class="nocode"><a name="2">  2: </a></span>FeatureVector featureVector0 = new FeatureVector();
+<span class="nocode"><a name="3">  3: </a></span>FeatureFromVectorPredicate featureFromVectorPredicate0 = new FeatureFromVectorPredicate(featureVector0);
+<span class="nocode"><a name="4">  4: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureFromVectorPredicate0, &quot;&quot;);
+<span class="nocode"><a name="5">  5: </a></span>FeatureVector featureVector1 = filteredEntryGroup0.getFeaturesInRange((Range) null);
+<span class="nocode"><a name="6">  6: </a></span>assertNotSame(featureVector0, featureVector1);
 </pre>
 <h3>Test case 12</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;H=d|Y!vk6|b&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="4">  4: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, (FeatureVector) null, &quot;H=d|Y!vk6|b&quot;);
-<span class="nocode"><a name="5">  5: </a></span>ActionController actionController0 = filteredEntryGroup0.getActionController();
-<span class="nocode"><a name="6">  6: </a></span>assertFalse(actionController0.canUndo());
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>Clipboard clipboard0 = new Clipboard(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="4">  4: </a></span>FeatureVector featureVector0 = selection0.getSelectedFeatures();
+<span class="nocode"><a name="5">  5: </a></span>FeatureFromVectorPredicate featureFromVectorPredicate0 = new FeatureFromVectorPredicate(featureVector0);
+<span class="nocode"><a name="6">  6: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureFromVectorPredicate0, &quot;&quot;);
+<span class="nocode"><a name="7">  7: </a></span>ActionController actionController0 = filteredEntryGroup0.getActionController();
+<span class="nocode"><a name="8">  8: </a></span>assertFalse(actionController0.canUndo());
 </pre>
 <h3>Test case 13</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
-<span class="nocode"><a name="3">  3: </a></span>Key key0 = blastEntryInformation0.getDefaultKey();
-<span class="nocode"><a name="4">  4: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate(key0, &quot; without symbol &quot;);
-<span class="nocode"><a name="5">  5: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureKeyQualifierPredicate0, &quot; without symbol &quot;);
-<span class="nocode"><a name="6">  6: </a></span>filteredEntryGroup0.setIsActive((Entry) null, true);
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>AminoAcidSequence aminoAcidSequence0 = AminoAcidSequence.getSpacedTranslation(bases0.letter_index, true);
+<span class="nocode"><a name="5">  5: </a></span>FeaturePatternPredicate featurePatternPredicate0 = new FeaturePatternPredicate(aminoAcidSequence0);
+<span class="nocode"><a name="6">  6: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featurePatternPredicate0, &quot;&quot;);
+<span class="nocode"><a name="7">  7: </a></span>filteredEntryGroup0.setIsActive(2, true);
 </pre>
 <h3>Test case 14</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>Key key0 = Key.CDS;
-<span class="nocode"><a name="3">  3: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate(key0, &quot;&quot;, &quot;&quot;, false, true);
-<span class="nocode"><a name="4">  4: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureKeyQualifierPredicate0, &quot;,o0$YZ&quot;);
-<span class="nocode"><a name="5">  5: </a></span>filteredEntryGroup0.elementAt(3358);
-</pre>
-<h3>Test case 15</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;Gw=M^(`K9&amp;hE%w?!oSk&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="4">  4: </a></span>Entry entry0 = simpleEntryGroup0.createEntry(&quot;r&quot;);
-<span class="nocode"><a name="5">  5: </a></span>FeatureVector featureVector0 = entry0.checkFeatureStopCodons();
-<span class="nocode"><a name="6">  6: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, &quot;4}@K5(7b@&quot;);
-<span class="nocode"><a name="7">  7: </a></span>filteredEntryGroup0.addEntryChangeListener(simpleEntryGroup0);
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(1, simpleEntryGroup0.size());
-</pre>
-<h3>Test case 16</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Key key0 = new Key(&quot;org.biojava.bio.taxa.WeakTaxonFactory&quot;);
-<span class="nocode"><a name="2">  2: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate(key0, &quot;org.biojava.bio.taxa.WeakTaxonFactory&quot;);
-<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="4">  4: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureKeyQualifierPredicate0, &quot;QMK/f}';D&amp;JAYn:!YmP&quot;);
-<span class="nocode"><a name="5">  5: </a></span>Clipboard clipboard0 = new Clipboard(&quot;QMK/f}';D&amp;JAYn:!YmP&quot;);
-<span class="nocode"><a name="6">  6: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="7">  7: </a></span>FeatureVector featureVector0 = selection0.getSelectedFeatures();
-<span class="nocode"><a name="8">  8: </a></span>FilteredEntryGroup filteredEntryGroup1 = new FilteredEntryGroup(filteredEntryGroup0, featureVector0, &quot;liQUb(iqrPR+~L5uqQ&quot;);
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(&quot;liQUb(iqrPR+~L5uqQ&quot;, filteredEntryGroup1.getFilterName());
-</pre>
-<h3>Test case 17</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>Clipboard clipboard0 = new Clipboard(&quot;515&quot;);
-<span class="nocode"><a name="3">  3: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="4">  4: </a></span>FeatureVector featureVector0 = selection0.getAllFeatures();
-<span class="nocode"><a name="5">  5: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, &quot;C~8jJ0o&quot;);
-<span class="nocode"><a name="6">  6: </a></span>boolean boolean0 = filteredEntryGroup0.hasUnsavedChanges();
-<span class="nocode"><a name="7">  7: </a></span>assertFalse(boolean0);
-</pre>
-<h3>Test case 18</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;H=d|Y!vk6|b&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="4">  4: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, (FeatureVector) null, &quot;H=d|Y!vk6|b&quot;);
-<span class="nocode"><a name="5">  5: </a></span>boolean boolean0 = filteredEntryGroup0.isReadOnly();
-<span class="nocode"><a name="6">  6: </a></span>assertFalse(boolean0);
-</pre>
-<h3>Test case 19</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, (FeatureVector) null, (String) null);
-<span class="nocode"><a name="3">  3: </a></span>filteredEntryGroup0.getSequenceLength();
-</pre>
-<h3>Test case 20</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>FeatureVector featureVector0 = new FeatureVector();
-<span class="nocode"><a name="3">  3: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, &quot;&quot;);
-<span class="nocode"><a name="4">  4: </a></span>filteredEntryGroup0.featureAt(1);
-</pre>
-<h3>Test case 21</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
-<span class="nocode"><a name="3">  3: </a></span>Key key0 = blastEntryInformation0.getDefaultKey();
-<span class="nocode"><a name="4">  4: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate(key0, &quot; without symbol &quot;);
-<span class="nocode"><a name="5">  5: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureKeyQualifierPredicate0, &quot; without symbol &quot;);
-<span class="nocode"><a name="6">  6: </a></span>filteredEntryGroup0.addElement((Entry) null);
-</pre>
-<h3>Test case 22</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>FeatureVector featureVector0 = new FeatureVector();
-<span class="nocode"><a name="3">  3: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, &quot;&quot;);
-<span class="nocode"><a name="4">  4: </a></span>Entry entry0 = filteredEntryGroup0.createEntry();
-<span class="nocode"><a name="5">  5: </a></span>filteredEntryGroup0.removeFeatureChangeListener(entry0);
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, filteredEntryGroup0.refCount());
-</pre>
-<h3>Test case 23</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>Key key0 = new Key(&quot;Cannot Load URL\n&quot;);
-<span class="nocode"><a name="3">  3: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate(key0, &quot;H4@d302K,FMcq!&quot;);
-<span class="nocode"><a name="4">  4: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureKeyQualifierPredicate0, &quot;Cannot Load URL\n&quot;);
-<span class="nocode"><a name="5">  5: </a></span>FeatureVector featureVector0 = filteredEntryGroup0.getAllFeatures();
-<span class="nocode"><a name="6">  6: </a></span>assertNotNull(featureVector0);
-</pre>
-<h3>Test case 24</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, (FeaturePredicate) null, &quot;&quot;);
-<span class="nocode"><a name="3">  3: </a></span>int int0 = filteredEntryGroup0.indexOf((Feature) null);
-<span class="nocode"><a name="4">  4: </a></span>assertEquals((-1), int0);
-</pre>
-<h3>Test case 25</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
 <span class="nocode"><a name="2">  2: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
 <span class="nocode"><a name="3">  3: </a></span>Key key0 = blastEntryInformation0.getDefaultKey();
 <span class="nocode"><a name="4">  4: </a></span>FeatureKeyPredicate featureKeyPredicate0 = new FeatureKeyPredicate(key0);
-<span class="nocode"><a name="5">  5: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureKeyPredicate0, &quot;8i.da|&quot;);
-<span class="nocode"><a name="6">  6: </a></span>ActionController actionController0 = simpleEntryGroup0.getActionController();
-<span class="nocode"><a name="7">  7: </a></span>filteredEntryGroup0.removeEntryGroupChangeListener(actionController0);
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(0, filteredEntryGroup0.refCount());
+<span class="nocode"><a name="5">  5: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureKeyPredicate0, &quot;?#&amp;c:7c)&quot;);
+<span class="nocode"><a name="6">  6: </a></span>filteredEntryGroup0.elementAt((-2223));
 </pre>
-<h3>Test case 26</h3>
+<h3>Test case 15</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, (FeatureVector) null, (String) null);
-<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = filteredEntryGroup0.getDefaultEntry();
-<span class="nocode"><a name="4">  4: </a></span>assertNull(entry0);
-</pre>
-<h3>Test case 27</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, (FeaturePredicate) null, &quot;&quot;);
-<span class="nocode"><a name="3">  3: </a></span>filteredEntryGroup0.entryChanged((EntryChangeEvent) null);
-</pre>
-<h3>Test case 28</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;Gw=M^(`K9&amp;hE%w?!oSk&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;)a=mi7]X}9JN&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
 <span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="4">  4: </a></span>Entry entry0 = simpleEntryGroup0.createEntry(&quot;r&quot;);
-<span class="nocode"><a name="5">  5: </a></span>FeatureVector featureVector0 = entry0.checkFeatureStopCodons();
-<span class="nocode"><a name="6">  6: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, &quot;4}@K5(7b@&quot;);
-<span class="nocode"><a name="7">  7: </a></span>String string0 = filteredEntryGroup0.getFilterName();
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(&quot;4}@K5(7b@&quot;, string0);
-</pre>
-<h3>Test case 29</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FeatureVector featureVector0 = new FeatureVector();
-<span class="nocode"><a name="2">  2: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="3">  3: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, &quot;X6c!J)&quot;);
-<span class="nocode"><a name="4">  4: </a></span>filteredEntryGroup0.entryGroupChanged((EntryGroupChangeEvent) null);
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;X6c!J)&quot;, filteredEntryGroup0.getFilterName());
-</pre>
-<h3>Test case 30</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>Key key0 = new Key(&quot;Cannot Load URL\n&quot;);
-<span class="nocode"><a name="3">  3: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate(key0, &quot;H4@d302K,FMcq!&quot;);
-<span class="nocode"><a name="4">  4: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureKeyQualifierPredicate0, &quot;Cannot Load URL\n&quot;);
-<span class="nocode"><a name="5">  5: </a></span>filteredEntryGroup0.ref();
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, filteredEntryGroup0.size());
-</pre>
-<h3>Test case 31</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, (FeaturePredicate) null, &quot;&quot;);
-<span class="nocode"><a name="3">  3: </a></span>filteredEntryGroup0.removeEntryChangeListener(simpleEntryGroup0);
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, filteredEntryGroup0.size());
-</pre>
-<h3>Test case 32</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Key key0 = new Key(&quot;org.biojava.bio.taxa.WeakTaxonFactory&quot;);
-<span class="nocode"><a name="2">  2: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate(key0, &quot;org.biojava.bio.taxa.WeakTaxonFactory&quot;);
-<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="4">  4: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureKeyQualifierPredicate0, &quot;QMK/f}';D&amp;JAYn:!YmP&quot;);
-<span class="nocode"><a name="5">  5: </a></span>boolean boolean0 = filteredEntryGroup0.isActive((Entry) null);
+<span class="nocode"><a name="4">  4: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, (FeatureVector) null, &quot;At,`:Cdi:}NXal&quot;);
+<span class="nocode"><a name="5">  5: </a></span>boolean boolean0 = filteredEntryGroup0.hasUnsavedChanges();
 <span class="nocode"><a name="6">  6: </a></span>assertFalse(boolean0);
 </pre>
-<h3>Test case 33</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;H=d|Y!vk6|b&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="4">  4: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, (FeatureVector) null, &quot;H=d|Y!vk6|b&quot;);
-<span class="nocode"><a name="5">  5: </a></span>filteredEntryGroup0.createFeature();
-</pre>
-<h3>Test case 34</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, (FeaturePredicate) null, &quot;&quot;);
-<span class="nocode"><a name="3">  3: </a></span>filteredEntryGroup0.reverseComplement();
-</pre>
-<h3>Test case 35</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;H=d|Y!vk6|b&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="4">  4: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, (FeatureVector) null, &quot;H=d|Y!vk6|b&quot;);
-<span class="nocode"><a name="5">  5: </a></span>Range range0 = new Range((-267));
-<span class="nocode"><a name="6">  6: </a></span>SimpleEntryGroup simpleEntryGroup1 = (SimpleEntryGroup)filteredEntryGroup0.truncate(range0);
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, simpleEntryGroup1.getAllFeaturesCount());
-</pre>
-<h3>Test case 36</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>Key key0 = Key.CDS;
-<span class="nocode"><a name="3">  3: </a></span>FeatureKeyPredicate featureKeyPredicate0 = new FeatureKeyPredicate(key0);
-<span class="nocode"><a name="4">  4: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureKeyPredicate0, &quot;GQ+\&quot;vx313&quot;);
-<span class="nocode"><a name="5">  5: </a></span>filteredEntryGroup0.remove((Entry) null);
-</pre>
-<h3>Test case 37</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>Key key0 = Key.CDS;
-<span class="nocode"><a name="3">  3: </a></span>FeatureKeyPredicate featureKeyPredicate0 = new FeatureKeyPredicate(key0);
-<span class="nocode"><a name="4">  4: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureKeyPredicate0, &quot;*M8{ Y&quot;);
-<span class="nocode"><a name="5">  5: </a></span>Entry entry0 = filteredEntryGroup0.createEntry();
-<span class="nocode"><a name="6">  6: </a></span>boolean boolean0 = filteredEntryGroup0.removeElement(entry0);
-<span class="nocode"><a name="7">  7: </a></span>assertTrue(boolean0);
-</pre>
-<h3>Test case 38</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;x3pP[m?4eE$8CA&quot;, &quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="4">  4: </a></span>AminoAcidSequence aminoAcidSequence0 = AminoAcidSequence.getSpacedTranslation(&quot;x3pP[m?4eE$8CA&quot;, false);
-<span class="nocode"><a name="5">  5: </a></span>FeaturePatternPredicate featurePatternPredicate0 = new FeaturePatternPredicate(aminoAcidSequence0);
-<span class="nocode"><a name="6">  6: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featurePatternPredicate0, &quot;c-OW&lt;~]&quot;);
-<span class="nocode"><a name="7">  7: </a></span>Bases bases1 = filteredEntryGroup0.getBases();
-<span class="nocode"><a name="8">  8: </a></span>assertSame(bases1, bases0);
-</pre>
-<h3>Test case 39</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;H=d|Y!vk6|b&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="4">  4: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, (FeatureVector) null, &quot;H=d|Y!vk6|b&quot;);
-<span class="nocode"><a name="5">  5: </a></span>simpleEntryGroup0.ref();
-<span class="nocode"><a name="6">  6: </a></span>filteredEntryGroup0.createEntry(&quot;wJ:.._F']1&lt;:r:&quot;);
-<span class="nocode"><a name="7">  7: </a></span>filteredEntryGroup0.createFeature();
-<span class="nocode"><a name="8">  8: </a></span>filteredEntryGroup0.unref();
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(0, filteredEntryGroup0.refCount());
-</pre>
-<h3>Test case 40</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, (FeatureVector) null, (String) null);
-<span class="nocode"><a name="3">  3: </a></span>FeatureVector featureVector0 = filteredEntryGroup0.getFeaturesInIndexRange(1, (-934));
-<span class="nocode"><a name="4">  4: </a></span>assertNotNull(featureVector0);
-</pre>
-<h3>Test case 41</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
-<span class="nocode"><a name="3">  3: </a></span>Key key0 = blastEntryInformation0.getDefaultKey();
-<span class="nocode"><a name="4">  4: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate(key0, &quot;m|+GMDZx\&quot;|zn&quot;);
-<span class="nocode"><a name="5">  5: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureKeyQualifierPredicate0, &quot;X1T W'ecKSk&quot;);
-<span class="nocode"><a name="6">  6: </a></span>filteredEntryGroup0.getFeaturesInIndexRange(0, 0);
-</pre>
-<h3>Test case 42</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, (FeatureVector) null, &quot;R{G3o&quot;);
-<span class="nocode"><a name="3">  3: </a></span>filteredEntryGroup0.createEntry((String) null);
-<span class="nocode"><a name="4">  4: </a></span>FilteredEntryGroup.FeatureEnumerator filteredEntryGroup_FeatureEnumerator0 = filteredEntryGroup0.new FeatureEnumerator();
-<span class="nocode"><a name="5">  5: </a></span>filteredEntryGroup_FeatureEnumerator0.nextFeature();
-</pre>
-<h3>Test case 43</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
-<span class="nocode"><a name="3">  3: </a></span>Key key0 = blastEntryInformation0.getDefaultKey();
-<span class="nocode"><a name="4">  4: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate(key0, &quot;m|+GMDZx\&quot;|zn&quot;);
-<span class="nocode"><a name="5">  5: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureKeyQualifierPredicate0, &quot;X1T W'ecKSk&quot;);
-<span class="nocode"><a name="6">  6: </a></span>filteredEntryGroup0.createEntry(&quot;m|+GMDZx\&quot;|zn&quot;);
-<span class="nocode"><a name="7">  7: </a></span>FilteredEntryGroup.FeatureEnumerator filteredEntryGroup_FeatureEnumerator0 = filteredEntryGroup0.new FeatureEnumerator();
-<span class="nocode"><a name="8">  8: </a></span>boolean boolean0 = filteredEntryGroup_FeatureEnumerator0.hasMoreFeatures();
-<span class="nocode"><a name="9">  9: </a></span>assertFalse(boolean0);
-</pre>
-<h3>Test case 44</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>FeatureVector featureVector0 = new FeatureVector();
-<span class="nocode"><a name="3">  3: </a></span>FeatureFromVectorPredicate featureFromVectorPredicate0 = new FeatureFromVectorPredicate(featureVector0);
-<span class="nocode"><a name="4">  4: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureFromVectorPredicate0, &quot;.16I4&quot;);
-<span class="nocode"><a name="5">  5: </a></span>FilteredEntryGroup.FeatureEnumerator filteredEntryGroup_FeatureEnumerator0 = filteredEntryGroup0.new FeatureEnumerator();
-<span class="nocode"><a name="6">  6: </a></span>boolean boolean0 = filteredEntryGroup_FeatureEnumerator0.hasMoreFeatures();
-<span class="nocode"><a name="7">  7: </a></span>assertFalse(boolean0);
-</pre>
-<h3>Test case 45</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>FeatureVector featureVector0 = new FeatureVector();
-<span class="nocode"><a name="3">  3: </a></span>FeatureFromVectorPredicate featureFromVectorPredicate0 = new FeatureFromVectorPredicate(featureVector0);
-<span class="nocode"><a name="4">  4: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureFromVectorPredicate0, &quot;.16I4&quot;);
-<span class="nocode"><a name="5">  5: </a></span>FilteredEntryGroup.FeatureEnumerator filteredEntryGroup_FeatureEnumerator0 = filteredEntryGroup0.new FeatureEnumerator();
-<span class="nocode"><a name="6">  6: </a></span>filteredEntryGroup_FeatureEnumerator0.nextFeature();
-</pre>
-<h3>Test case 46</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>ActionController actionController0 = new ActionController();
-<span class="nocode"><a name="3">  3: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, (FeatureVector) null, &quot;R{G3o&quot;);
-<span class="nocode"><a name="4">  4: </a></span>filteredEntryGroup0.addEntryGroupChangeListener(actionController0);
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;R{G3o&quot;, filteredEntryGroup0.getFilterName());
-</pre>
-<h3>Test case 47</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>Key key0 = Key.CDS;
-<span class="nocode"><a name="3">  3: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate(key0, &quot;&quot;, &quot;&quot;, false, true);
-<span class="nocode"><a name="4">  4: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureKeyQualifierPredicate0, &quot;,o0$YZ&quot;);
-<span class="nocode"><a name="5">  5: </a></span>filteredEntryGroup0.addFeatureChangeListener(simpleEntryGroup0);
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, filteredEntryGroup0.refCount());
-</pre>
-<h3>Test case 48</h3>
+<h3>Test case 16</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
 <span class="nocode"><a name="2">  2: </a></span>Clipboard clipboard0 = new Clipboard(&quot;&quot;);
 <span class="nocode"><a name="3">  3: </a></span>Selection selection0 = new Selection(clipboard0);
 <span class="nocode"><a name="4">  4: </a></span>FeatureVector featureVector0 = selection0.getSelectedFeatures();
-<span class="nocode"><a name="5">  5: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, &quot;dd.MM.yyyy hh:mm:ss z&quot;);
-<span class="nocode"><a name="6">  6: </a></span>filteredEntryGroup0.setIsActive(1, true);
+<span class="nocode"><a name="5">  5: </a></span>FeatureFromVectorPredicate featureFromVectorPredicate0 = new FeatureFromVectorPredicate(featureVector0);
+<span class="nocode"><a name="6">  6: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureFromVectorPredicate0, &quot;&quot;);
+<span class="nocode"><a name="7">  7: </a></span>boolean boolean0 = filteredEntryGroup0.isReadOnly();
+<span class="nocode"><a name="8">  8: </a></span>assertFalse(boolean0);
 </pre>
-<h3>Test case 49</h3>
+<h3>Test case 17</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;H=d|Y!vk6|b&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="4">  4: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, (FeatureVector) null, &quot;H=d|Y!vk6|b&quot;);
-<span class="nocode"><a name="5">  5: </a></span>filteredEntryGroup0.createEntry(&quot;wJ:.._F']1&lt;:r:&quot;);
-<span class="nocode"><a name="6">  6: </a></span>Range range0 = new Range((-267));
-<span class="nocode"><a name="7">  7: </a></span>SimpleEntryGroup simpleEntryGroup1 = (SimpleEntryGroup)filteredEntryGroup0.truncate(range0);
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(1, simpleEntryGroup1.size());
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>FeatureFromVectorPredicate featureFromVectorPredicate0 = new FeatureFromVectorPredicate((FeatureVector) null);
+<span class="nocode"><a name="3">  3: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureFromVectorPredicate0, (String) null);
+<span class="nocode"><a name="4">  4: </a></span>filteredEntryGroup0.setIsActive((Entry) null, true);
 </pre>
-<h3>Test case 50</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Key key0 = Key.CDS;
-<span class="nocode"><a name="2">  2: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate(key0, &quot;_S X{h3!i&quot;, &quot;t|5(/Hv~b*P#]f?lvr/&quot;, false, true, false);
-<span class="nocode"><a name="3">  3: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup((EntryGroup) null, featureKeyQualifierPredicate0, &quot;_S X{h3!i&quot;);
-</pre>
-<h3>Test case 51</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Selection selection0 = new Selection((Clipboard) null);
-<span class="nocode"><a name="2">  2: </a></span>FeatureVector featureVector0 = selection0.getSelectedFeatures();
-<span class="nocode"><a name="3">  3: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup((EntryGroup) null, featureVector0, &quot;@o#G&quot;);
-</pre>
-<h3>Test case 52</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;F#jn&amp;U&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="4">  4: </a></span>AminoAcidSequence aminoAcidSequence0 = AminoAcidSequence.getSpacedTranslation(bases0.letter_index, true);
-<span class="nocode"><a name="5">  5: </a></span>FeaturePatternPredicate featurePatternPredicate0 = new FeaturePatternPredicate(aminoAcidSequence0);
-<span class="nocode"><a name="6">  6: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featurePatternPredicate0, &quot;F#jn&amp;U&quot;);
-<span class="nocode"><a name="7">  7: </a></span>filteredEntryGroup0.createEntry();
-<span class="nocode"><a name="8">  8: </a></span>filteredEntryGroup0.createEntry();
-</pre>
-<h3>Test case 53</h3>
+<h3>Test case 18</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Bases bases0 = new Bases((Sequence) null);
 <span class="nocode"><a name="2">  2: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="3">  3: </a></span>Key key0 = Key.CDS;
-<span class="nocode"><a name="4">  4: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate(key0, (String) null, &quot;Start_range=.,.;&quot;);
-<span class="nocode"><a name="5">  5: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureKeyQualifierPredicate0, &quot;Start_range=.,.;&quot;);
-<span class="nocode"><a name="6">  6: </a></span>filteredEntryGroup0.createEntry((String) null);
-<span class="nocode"><a name="7">  7: </a></span>filteredEntryGroup0.createEntry((String) null);
+<span class="nocode"><a name="3">  3: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, (FeatureVector) null, &quot;Filters by class must be over Feature classes: &quot;);
+<span class="nocode"><a name="4">  4: </a></span>filteredEntryGroup0.getSequenceLength();
 </pre>
-<h3>Test case 54</h3>
+<h3>Test case 19</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, (FeatureVector) null, &quot;&quot;);
-<span class="nocode"><a name="3">  3: </a></span>filteredEntryGroup0.filterFeatures((FeatureVector) null);
+<span class="nocode"><a name="2">  2: </a></span>Clipboard clipboard0 = new Clipboard(&quot;A9v)Q,!&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="4">  4: </a></span>FeatureVector featureVector0 = selection0.getAllFeatures();
+<span class="nocode"><a name="5">  5: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, &quot;Yh&gt;Zj 3J,iw8zQ&quot;);
+<span class="nocode"><a name="6">  6: </a></span>filteredEntryGroup0.featureAt(0);
 </pre>
-<h3>Test case 55</h3>
+<h3>Test case 20</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, (FeatureVector) null, &quot;&quot;);
-<span class="nocode"><a name="3">  3: </a></span>filteredEntryGroup0.getFeaturesInIndexRange((-803), (-803));
+<span class="nocode"><a name="2">  2: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, (FeatureVector) null, &quot;1h, C\&quot;T$CaJZ^oW&quot;);
+<span class="nocode"><a name="3">  3: </a></span>filteredEntryGroup0.addElement((Entry) null);
 </pre>
-<h3>Test case 56</h3>
+<h3>Test case 21</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, (FeatureVector) null, &quot;4mo(=#6d2&quot;);
+<span class="nocode"><a name="3">  3: </a></span>filteredEntryGroup0.removeFeatureChangeListener(simpleEntryGroup0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, simpleEntryGroup0.size());
+</pre>
+<h3>Test case 22</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>FeatureVector featureVector0 = new FeatureVector();
+<span class="nocode"><a name="3">  3: </a></span>FeatureFromVectorPredicate featureFromVectorPredicate0 = new FeatureFromVectorPredicate(featureVector0);
+<span class="nocode"><a name="4">  4: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureFromVectorPredicate0, &quot;&quot;);
+<span class="nocode"><a name="5">  5: </a></span>FeatureVector featureVector1 = filteredEntryGroup0.getAllFeatures();
+<span class="nocode"><a name="6">  6: </a></span>assertNotSame(featureVector0, featureVector1);
+</pre>
+<h3>Test case 23</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;I&lt;M;D4|^;$U]&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate((Key) null, &quot;I&lt;M;D4|^;$U]&quot;, &quot;I&lt;M;D4|^;$U]&quot;, true, true);
+<span class="nocode"><a name="5">  5: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureKeyQualifierPredicate0, &quot;2G&quot;);
+<span class="nocode"><a name="6">  6: </a></span>ActionController actionController0 = new ActionController();
+<span class="nocode"><a name="7">  7: </a></span>filteredEntryGroup0.removeEntryGroupChangeListener(actionController0);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(0, filteredEntryGroup0.size());
+</pre>
+<h3>Test case 24</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>Clipboard clipboard0 = new Clipboard(&quot;BUG: VariantContextBuilder parent argument cannot be null in VariantContextBuilder&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="4">  4: </a></span>FeatureVector featureVector0 = selection0.getSelectedFeatures();
+<span class="nocode"><a name="5">  5: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, &quot;&quot;);
+<span class="nocode"><a name="6">  6: </a></span>Entry entry0 = filteredEntryGroup0.getDefaultEntry();
+<span class="nocode"><a name="7">  7: </a></span>assertNull(entry0);
+</pre>
+<h3>Test case 25</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, (FeatureVector) null, &quot;1h, C\&quot;T$CaJZ^oW&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Range range0 = new Range(2002, 2002);
+<span class="nocode"><a name="4">  4: </a></span>EntryChangeEvent entryChangeEvent0 = new EntryChangeEvent(range0, (Entry) null, 2002);
+<span class="nocode"><a name="5">  5: </a></span>filteredEntryGroup0.entryChanged(entryChangeEvent0);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(4, EntryChangeEvent.HEADER_CHANGED);
+</pre>
+<h3>Test case 26</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
 <span class="nocode"><a name="2">  2: </a></span>Clipboard clipboard0 = new Clipboard(&quot;&quot;);
 <span class="nocode"><a name="3">  3: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="4">  4: </a></span>FeatureVector featureVector0 = selection0.getAllFeatures();
-<span class="nocode"><a name="5">  5: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, &quot;&quot;);
-<span class="nocode"><a name="6">  6: </a></span>filteredEntryGroup0.truncate((Range) null);
+<span class="nocode"><a name="4">  4: </a></span>FeatureVector featureVector0 = selection0.getSelectedFeatures();
+<span class="nocode"><a name="5">  5: </a></span>FeatureFromVectorPredicate featureFromVectorPredicate0 = new FeatureFromVectorPredicate(featureVector0);
+<span class="nocode"><a name="6">  6: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureFromVectorPredicate0, &quot;&quot;);
+<span class="nocode"><a name="7">  7: </a></span>String string0 = filteredEntryGroup0.getFilterName();
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(&quot;&quot;, string0);
 </pre>
-<h3>Test case 57</h3>
+<h3>Test case 27</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>Entry entry0 = simpleEntryGroup0.createEntry(&quot;{bxbp2f;s5/hW`&quot;);
+<span class="nocode"><a name="3">  3: </a></span>FeatureVector featureVector0 = entry0.checkForMissingQualifiers();
+<span class="nocode"><a name="4">  4: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, &quot;+J+@*/;5|?X0$]!{&quot;);
+<span class="nocode"><a name="5">  5: </a></span>EntryGroupChangeEvent entryGroupChangeEvent0 = new EntryGroupChangeEvent(simpleEntryGroup0, entry0, 0);
+<span class="nocode"><a name="6">  6: </a></span>filteredEntryGroup0.entryGroupChanged(entryGroupChangeEvent0);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(2, EntryGroupChangeEvent.ENTRY_ADDED);
+</pre>
+<h3>Test case 28</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, (FeatureVector) null, &quot;the %s tag has the incorrect number of records at position %s:%d, %d vs. %d&quot;);
+<span class="nocode"><a name="3">  3: </a></span>filteredEntryGroup0.ref();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;the %s tag has the incorrect number of records at position %s:%d, %d vs. %d&quot;, filteredEntryGroup0.getFilterName());
+</pre>
+<h3>Test case 29</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;)a=mi7]X}9JN&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, (FeatureVector) null, &quot;At,`:Cdi:}NXal&quot;);
+<span class="nocode"><a name="5">  5: </a></span>filteredEntryGroup0.removeEntryChangeListener(simpleEntryGroup0);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, filteredEntryGroup0.size());
+</pre>
+<h3>Test case 30</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>Clipboard clipboard0 = new Clipboard(&quot;]:G&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="4">  4: </a></span>FeatureVector featureVector0 = selection0.getAllFeatures();
+<span class="nocode"><a name="5">  5: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, &quot;]:G&quot;);
+<span class="nocode"><a name="6">  6: </a></span>boolean boolean0 = filteredEntryGroup0.isActive((Entry) null);
+<span class="nocode"><a name="7">  7: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 31</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>FeatureVector featureVector0 = new FeatureVector();
+<span class="nocode"><a name="3">  3: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, &quot;&quot;);
+<span class="nocode"><a name="4">  4: </a></span>filteredEntryGroup0.createFeature();
+</pre>
+<h3>Test case 32</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Clipboard clipboard0 = new Clipboard(&quot;wq+Ok^|_&amp;uP=A=Q:lu&quot;);
+<span class="nocode"><a name="5">  5: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="6">  6: </a></span>FeatureVector featureVector0 = selection0.getSelectedFeatures();
+<span class="nocode"><a name="7">  7: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, &quot;&quot;);
+<span class="nocode"><a name="8">  8: </a></span>filteredEntryGroup0.reverseComplement();
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(&quot;&quot;, filteredEntryGroup0.getFilterName());
+</pre>
+<h3>Test case 33</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;empty attribute value for &quot;, (String) null);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Key key0 = new Key(&quot;10nl8OgX:&quot;);
+<span class="nocode"><a name="5">  5: </a></span>FeatureKeyPredicate featureKeyPredicate0 = new FeatureKeyPredicate(key0);
+<span class="nocode"><a name="6">  6: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureKeyPredicate0, (String) null);
+<span class="nocode"><a name="7">  7: </a></span>Entry entry0 = filteredEntryGroup0.createEntry();
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(0, entry0.getFeatureCount());
+</pre>
+<h3>Test case 34</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>FeatureVector featureVector0 = simpleEntryGroup0.getFeaturesInIndexRange((-1), (-930));
+<span class="nocode"><a name="3">  3: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, &quot;internal error in FeatureDisplay.setScaleValue() - scale value must be positive&quot;);
+<span class="nocode"><a name="4">  4: </a></span>Range range0 = new Range((-1577));
+<span class="nocode"><a name="5">  5: </a></span>filteredEntryGroup0.truncate(range0);
+</pre>
+<h3>Test case 35</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
 <span class="nocode"><a name="2">  2: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
 <span class="nocode"><a name="3">  3: </a></span>Key key0 = blastEntryInformation0.getDefaultKey();
-<span class="nocode"><a name="4">  4: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate(key0, &quot;m|+GMDZx\&quot;|zn&quot;);
-<span class="nocode"><a name="5">  5: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureKeyQualifierPredicate0, &quot;X1T W'ecKSk&quot;);
-<span class="nocode"><a name="6">  6: </a></span>FeatureVector featureVector0 = filteredEntryGroup0.filterFeatures();
+<span class="nocode"><a name="4">  4: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate(key0, &quot;8Lp|I9CGZBF;:&quot;, true);
+<span class="nocode"><a name="5">  5: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureKeyQualifierPredicate0, &quot;8Lp|I9CGZBF;:&quot;);
+<span class="nocode"><a name="6">  6: </a></span>filteredEntryGroup0.remove((Entry) null);
+</pre>
+<h3>Test case 36</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;)a=mi7]X}9JN&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, (FeatureVector) null, &quot;At,`:Cdi:}NXal&quot;);
+<span class="nocode"><a name="5">  5: </a></span>Entry entry0 = simpleEntryGroup0.createEntry(&quot;Options&quot;);
+<span class="nocode"><a name="6">  6: </a></span>boolean boolean0 = filteredEntryGroup0.removeElement(entry0);
+<span class="nocode"><a name="7">  7: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 37</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;)a=mi7]X}9JN&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, (FeatureVector) null, &quot;At,`:Cdi:}NXal&quot;);
+<span class="nocode"><a name="5">  5: </a></span>Bases bases1 = filteredEntryGroup0.getBases();
+<span class="nocode"><a name="6">  6: </a></span>assertSame(bases0, bases1);
+</pre>
+<h3>Test case 38</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;I&lt;M;D4|^;$U]&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate((Key) null, &quot;I&lt;M;D4|^;$U]&quot;, &quot;I&lt;M;D4|^;$U]&quot;, true, true);
+<span class="nocode"><a name="5">  5: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureKeyQualifierPredicate0, &quot;2G&quot;);
+<span class="nocode"><a name="6">  6: </a></span>FeatureVector featureVector0 = filteredEntryGroup0.getFeaturesInIndexRange(0, (-3374));
 <span class="nocode"><a name="7">  7: </a></span>assertNotNull(featureVector0);
 </pre>
-<h3>Test case 58</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>FeatureVector featureVector0 = new FeatureVector();
-<span class="nocode"><a name="3">  3: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, &quot;&quot;);
-<span class="nocode"><a name="4">  4: </a></span>FeatureVector featureVector1 = filteredEntryGroup0.filterFeatures(featureVector0);
-<span class="nocode"><a name="5">  5: </a></span>assertNotSame(featureVector1, featureVector0);
-</pre>
-<h3>Test case 59</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>simpleEntryGroup0.createEntry(&quot;org.biojava.bio.seq.io.SymbolTokenization&quot;);
-<span class="nocode"><a name="3">  3: </a></span>Clipboard clipboard0 = new Clipboard(&quot;&quot;);
-<span class="nocode"><a name="4">  4: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="5">  5: </a></span>FeatureVector featureVector0 = selection0.getAllFeatures();
-<span class="nocode"><a name="6">  6: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, &quot;&quot;);
-<span class="nocode"><a name="7">  7: </a></span>EntryVector entryVector0 = filteredEntryGroup0.getActiveEntries();
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(1, entryVector0.size());
-</pre>
-<h3>Test case 60</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>Key key0 = new Key(&quot;Cannot Load URL\n&quot;);
-<span class="nocode"><a name="3">  3: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate(key0, &quot;H4@d302K,FMcq!&quot;);
-<span class="nocode"><a name="4">  4: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureKeyQualifierPredicate0, &quot;Cannot Load URL\n&quot;);
-<span class="nocode"><a name="5">  5: </a></span>Bases bases0 = filteredEntryGroup0.getBases();
-<span class="nocode"><a name="6">  6: </a></span>assertNull(bases0);
-</pre>
-<h3>Test case 61</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>FeatureVector featureVector0 = new FeatureVector();
-<span class="nocode"><a name="3">  3: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, &quot;&quot;);
-<span class="nocode"><a name="4">  4: </a></span>String string0 = filteredEntryGroup0.getFilterName();
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;&quot;, string0);
-</pre>
-<h3>Test case 62</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, (FeatureVector) null, (String) null);
-<span class="nocode"><a name="3">  3: </a></span>int int0 = filteredEntryGroup0.indexOf((Entry) null);
-<span class="nocode"><a name="4">  4: </a></span>assertEquals((-1), int0);
-</pre>
-<h3>Test case 63</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, (FeatureVector) null, (String) null);
-<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = filteredEntryGroup0.createEntry();
-<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = filteredEntryGroup0.remove(entry0);
-<span class="nocode"><a name="5">  5: </a></span>assertTrue(boolean0);
-</pre>
-<h3>Test case 64</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, (FeaturePredicate) null, &quot;&quot;);
-<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = filteredEntryGroup0.createEntry();
-<span class="nocode"><a name="4">  4: </a></span>filteredEntryGroup0.add(entry0);
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;&quot;, filteredEntryGroup0.getFilterName());
-</pre>
-<h3>Test case 65</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>FeatureVector featureVector0 = new FeatureVector();
-<span class="nocode"><a name="3">  3: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, &quot;&quot;);
-<span class="nocode"><a name="4">  4: </a></span>Entry entry0 = simpleEntryGroup0.createEntry(&quot;&quot;);
-<span class="nocode"><a name="5">  5: </a></span>filteredEntryGroup0.addElement(entry0);
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, entry0.getFeatureCount());
-</pre>
-<h3>Test case 66</h3>
+<h3>Test case 39</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
 <span class="nocode"><a name="2">  2: </a></span>Clipboard clipboard0 = new Clipboard(&quot;&quot;);
 <span class="nocode"><a name="3">  3: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="4">  4: </a></span>FeatureVector featureVector0 = selection0.getSelectedFeatures();
+<span class="nocode"><a name="5">  5: </a></span>FeatureFromVectorPredicate featureFromVectorPredicate0 = new FeatureFromVectorPredicate(featureVector0);
+<span class="nocode"><a name="6">  6: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureFromVectorPredicate0, &quot;&quot;);
+<span class="nocode"><a name="7">  7: </a></span>filteredEntryGroup0.getFeaturesInIndexRange((-301), (-301));
+</pre>
+<h3>Test case 40</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>FeatureVector featureVector0 = new FeatureVector();
+<span class="nocode"><a name="3">  3: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, &quot;show_reverse_lines&quot;);
+<span class="nocode"><a name="4">  4: </a></span>FilteredEntryGroup.FeatureEnumerator filteredEntryGroup_FeatureEnumerator0 = filteredEntryGroup0.new FeatureEnumerator();
+<span class="nocode"><a name="5">  5: </a></span>boolean boolean0 = filteredEntryGroup_FeatureEnumerator0.hasMoreFeatures();
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 41</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>FeatureVector featureVector0 = simpleEntryGroup0.getAllFeatures();
+<span class="nocode"><a name="3">  3: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, (String) null);
+<span class="nocode"><a name="4">  4: </a></span>filteredEntryGroup0.createEntry(&quot;&amp;tZV`/lC*&quot;);
+<span class="nocode"><a name="5">  5: </a></span>FilteredEntryGroup.FeatureEnumerator filteredEntryGroup_FeatureEnumerator0 = filteredEntryGroup0.new FeatureEnumerator();
+<span class="nocode"><a name="6">  6: </a></span>filteredEntryGroup_FeatureEnumerator0.nextFeature();
+</pre>
+<h3>Test case 42</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Bases bases0 = new Bases((Sequence) null);
+<span class="nocode"><a name="2">  2: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="3">  3: </a></span>FeatureVector featureVector0 = simpleEntryGroup0.getAllFeatures();
+<span class="nocode"><a name="4">  4: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, &quot;Intrinsic Codon Deviation Index&quot;);
+<span class="nocode"><a name="5">  5: </a></span>FilteredEntryGroup.FeatureEnumerator filteredEntryGroup_FeatureEnumerator0 = filteredEntryGroup0.new FeatureEnumerator();
+<span class="nocode"><a name="6">  6: </a></span>filteredEntryGroup_FeatureEnumerator0.nextFeature();
+</pre>
+<h3>Test case 43</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;empty attribute value for &quot;, (String) null);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Key key0 = new Key(&quot;10nl8OgX:&quot;);
+<span class="nocode"><a name="5">  5: </a></span>FeatureKeyPredicate featureKeyPredicate0 = new FeatureKeyPredicate(key0);
+<span class="nocode"><a name="6">  6: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureKeyPredicate0, (String) null);
+<span class="nocode"><a name="7">  7: </a></span>FilteredEntryGroup.FeatureEnumerator filteredEntryGroup_FeatureEnumerator0 = (FilteredEntryGroup.FeatureEnumerator)filteredEntryGroup0.features();
+<span class="nocode"><a name="8">  8: </a></span>assertNotNull(filteredEntryGroup_FeatureEnumerator0);
+</pre>
+<h3>Test case 44</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, (FeaturePredicate) null, (String) null);
+<span class="nocode"><a name="3">  3: </a></span>ActionController actionController0 = simpleEntryGroup0.getActionController();
+<span class="nocode"><a name="4">  4: </a></span>filteredEntryGroup0.addEntryGroupChangeListener(actionController0);
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(actionController0.canUndo());
+</pre>
+<h3>Test case 45</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, (FeatureVector) null, &quot;4mo(=#6d2&quot;);
+<span class="nocode"><a name="3">  3: </a></span>filteredEntryGroup0.addFeatureChangeListener(simpleEntryGroup0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, simpleEntryGroup0.getAllFeaturesCount());
+</pre>
+<h3>Test case 46</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>Clipboard clipboard0 = new Clipboard(&quot;_qXxnkQVL\u0000i%-Fmg(t&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Selection selection0 = new Selection(clipboard0);
 <span class="nocode"><a name="4">  4: </a></span>FeatureVector featureVector0 = selection0.getAllFeatures();
 <span class="nocode"><a name="5">  5: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, &quot;&quot;);
-<span class="nocode"><a name="6">  6: </a></span>Entry entry0 = filteredEntryGroup0.createEntry();
-<span class="nocode"><a name="7">  7: </a></span>EntryChangeEvent entryChangeEvent0 = new EntryChangeEvent(entry0, (Feature) null, (-934));
-<span class="nocode"><a name="8">  8: </a></span>filteredEntryGroup0.entryChanged(entryChangeEvent0);
-<span class="nocode"><a name="9">  9: </a></span>assertFalse(entryChangeEvent0.isDuplicate());
+<span class="nocode"><a name="6">  6: </a></span>filteredEntryGroup0.addEntryChangeListener(selection0);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, filteredEntryGroup0.refCount());
+</pre>
+<h3>Test case 47</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FeaturePredicateConjunction featurePredicateConjunction0 = new FeaturePredicateConjunction((FeaturePredicate) null, (FeaturePredicate) null, 0);
+<span class="nocode"><a name="2">  2: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup((EntryGroup) null, featurePredicateConjunction0, &quot;&quot;);
+</pre>
+<h3>Test case 48</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FeatureVector featureVector0 = new FeatureVector();
+<span class="nocode"><a name="2">  2: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup((EntryGroup) null, featureVector0, &quot;$)lyzuq?5W&quot;);
+</pre>
+<h3>Test case 49</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, (FeatureVector) null, &quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>filteredEntryGroup0.contains((Feature) null);
+</pre>
+<h3>Test case 50</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>Clipboard clipboard0 = new Clipboard(&quot;s4OI\u0002qN%%8?u&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="4">  4: </a></span>FeatureVector featureVector0 = selection0.getSelectedFeatures();
+<span class="nocode"><a name="5">  5: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, &quot;s4OI\u0002qN%%8?u&quot;);
+<span class="nocode"><a name="6">  6: </a></span>filteredEntryGroup0.createEntry(&quot;s4OI\u0002qN%%8?u&quot;);
+<span class="nocode"><a name="7">  7: </a></span>filteredEntryGroup0.createEntry();
+</pre>
+<h3>Test case 51</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;empty attribute value for &quot;, (String) null);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Key key0 = new Key(&quot;10nl8OgX:&quot;);
+<span class="nocode"><a name="5">  5: </a></span>FeatureKeyPredicate featureKeyPredicate0 = new FeatureKeyPredicate(key0);
+<span class="nocode"><a name="6">  6: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureKeyPredicate0, (String) null);
+<span class="nocode"><a name="7">  7: </a></span>filteredEntryGroup0.createEntry((String) null);
+<span class="nocode"><a name="8">  8: </a></span>filteredEntryGroup0.createEntry(&quot;10nl8OgX:&quot;);
+</pre>
+<h3>Test case 52</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>FeatureVector featureVector0 = new FeatureVector();
+<span class="nocode"><a name="3">  3: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, &quot;show_reverse_lines&quot;);
+<span class="nocode"><a name="4">  4: </a></span>filteredEntryGroup0.entryChanged((EntryChangeEvent) null);
+</pre>
+<h3>Test case 53</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>FeatureVector featureVector0 = new FeatureVector();
+<span class="nocode"><a name="3">  3: </a></span>FeatureFromVectorPredicate featureFromVectorPredicate0 = new FeatureFromVectorPredicate(featureVector0);
+<span class="nocode"><a name="4">  4: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureFromVectorPredicate0, &quot;&quot;);
+<span class="nocode"><a name="5">  5: </a></span>filteredEntryGroup0.featureAt((-2953));
+</pre>
+<h3>Test case 54</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;)a=mi7]X}9JN&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, (FeatureVector) null, &quot;At,`:Cdi:}NXal&quot;);
+<span class="nocode"><a name="5">  5: </a></span>filteredEntryGroup0.filterFeatures((FeatureVector) null);
+</pre>
+<h3>Test case 55</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;I&lt;M;D4|^;$U]&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate((Key) null, &quot;I&lt;M;D4|^;$U]&quot;, &quot;I&lt;M;D4|^;$U]&quot;, true, true);
+<span class="nocode"><a name="5">  5: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureKeyQualifierPredicate0, &quot;2G&quot;);
+<span class="nocode"><a name="6">  6: </a></span>filteredEntryGroup0.getFeaturesInIndexRange(0, 0);
+</pre>
+<h3>Test case 56</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>Clipboard clipboard0 = new Clipboard(&quot;BUG: VariantContextBuilder parent argument cannot be null in VariantContextBuilder&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="4">  4: </a></span>FeatureVector featureVector0 = selection0.getSelectedFeatures();
+<span class="nocode"><a name="5">  5: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, &quot;&quot;);
+<span class="nocode"><a name="6">  6: </a></span>filteredEntryGroup0.removeElement((Entry) null);
+</pre>
+<h3>Test case 57</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, (FeatureVector) null, &quot;PHRED&quot;);
+<span class="nocode"><a name="3">  3: </a></span>filteredEntryGroup0.reverseComplement();
+</pre>
+<h3>Test case 58</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>FeatureVector featureVector0 = simpleEntryGroup0.getFeaturesInIndexRange((-1), (-930));
+<span class="nocode"><a name="3">  3: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, &quot;internal error in FeatureDisplay.setScaleValue() - scale value must be positive&quot;);
+<span class="nocode"><a name="4">  4: </a></span>FeatureVector featureVector1 = filteredEntryGroup0.filterFeatures();
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(featureVector1.equals((Object)featureVector0));
+</pre>
+<h3>Test case 59</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;empty attribute value for &quot;, (String) null);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Range range0 = new Range(2);
+<span class="nocode"><a name="5">  5: </a></span>Key key0 = new Key(&quot;10nl8OgX:&quot;);
+<span class="nocode"><a name="6">  6: </a></span>FeatureKeyPredicate featureKeyPredicate0 = new FeatureKeyPredicate(key0);
+<span class="nocode"><a name="7">  7: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureKeyPredicate0, (String) null);
+<span class="nocode"><a name="8">  8: </a></span>FeatureVector featureVector0 = simpleEntryGroup0.getFeaturesInRange(range0);
+<span class="nocode"><a name="9">  9: </a></span>FeatureVector featureVector1 = filteredEntryGroup0.filterFeatures(featureVector0);
+<span class="nocode"><a name="10"> 10: </a></span>assertNotSame(featureVector1, featureVector0);
+</pre>
+<h3>Test case 60</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>Clipboard clipboard0 = new Clipboard(&quot;s4OI\u0002qN%%8?u&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="4">  4: </a></span>FeatureVector featureVector0 = selection0.getSelectedFeatures();
+<span class="nocode"><a name="5">  5: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, &quot;s4OI\u0002qN%%8?u&quot;);
+<span class="nocode"><a name="6">  6: </a></span>filteredEntryGroup0.createEntry(&quot;s4OI\u0002qN%%8?u&quot;);
+<span class="nocode"><a name="7">  7: </a></span>EntryVector entryVector0 = filteredEntryGroup0.getActiveEntries();
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(1, entryVector0.size());
+</pre>
+<h3>Test case 61</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate((Key) null, &quot;~&quot;);
+<span class="nocode"><a name="3">  3: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureKeyQualifierPredicate0, &quot;O9Q4O.;#&amp; GG&quot;);
+<span class="nocode"><a name="4">  4: </a></span>Bases bases0 = filteredEntryGroup0.getBases();
+<span class="nocode"><a name="5">  5: </a></span>assertNull(bases0);
+</pre>
+<h3>Test case 62</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>Clipboard clipboard0 = new Clipboard(&quot;]:G&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="4">  4: </a></span>FeatureVector featureVector0 = selection0.getAllFeatures();
+<span class="nocode"><a name="5">  5: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, &quot;]:G&quot;);
+<span class="nocode"><a name="6">  6: </a></span>String string0 = filteredEntryGroup0.getFilterName();
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(&quot;]:G&quot;, string0);
+</pre>
+<h3>Test case 63</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, (FeaturePredicate) null, &quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = Entry.newEntry((Bases) null);
+<span class="nocode"><a name="4">  4: </a></span>filteredEntryGroup0.addElement(entry0);
+<span class="nocode"><a name="5">  5: </a></span>Entry entry1 = filteredEntryGroup0.getSequenceEntry();
+<span class="nocode"><a name="6">  6: </a></span>assertSame(entry1, entry0);
+</pre>
+<h3>Test case 64</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;)a=mi7]X}9JN&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, (FeatureVector) null, &quot;At,`:Cdi:}NXal&quot;);
+<span class="nocode"><a name="5">  5: </a></span>int int0 = filteredEntryGroup0.getSequenceLength();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(12, int0);
+</pre>
+<h3>Test case 65</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;empty attribute value for &quot;, (String) null);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Range range0 = new Range(2);
+<span class="nocode"><a name="5">  5: </a></span>Key key0 = new Key(&quot;10nl8OgX:&quot;);
+<span class="nocode"><a name="6">  6: </a></span>FeatureKeyPredicate featureKeyPredicate0 = new FeatureKeyPredicate(key0);
+<span class="nocode"><a name="7">  7: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureKeyPredicate0, (String) null);
+<span class="nocode"><a name="8">  8: </a></span>Entry entry0 = filteredEntryGroup0.createEntry((String) null);
+<span class="nocode"><a name="9">  9: </a></span>Entry entry1 = entry0.truncate(bases0, range0);
+<span class="nocode"><a name="10"> 10: </a></span>int int0 = filteredEntryGroup0.indexOf(entry1);
+<span class="nocode"><a name="11"> 11: </a></span>assertEquals((-1), int0);
+</pre>
+<h3>Test case 66</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>FeatureVector featureVector0 = new FeatureVector();
+<span class="nocode"><a name="3">  3: </a></span>FeatureFromVectorPredicate featureFromVectorPredicate0 = new FeatureFromVectorPredicate(featureVector0);
+<span class="nocode"><a name="4">  4: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureFromVectorPredicate0, &quot;yP~}-(\&quot;VZ&quot;);
+<span class="nocode"><a name="5">  5: </a></span>Entry entry0 = filteredEntryGroup0.createEntry(&quot;`wum;u^?~*&quot;);
+<span class="nocode"><a name="6">  6: </a></span>boolean boolean0 = filteredEntryGroup0.isActive(entry0);
+<span class="nocode"><a name="7">  7: </a></span>assertTrue(boolean0);
 </pre>
 <h3>Test case 67</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>FeatureVector featureVector0 = new FeatureVector();
-<span class="nocode"><a name="3">  3: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, &quot;&quot;);
-<span class="nocode"><a name="4">  4: </a></span>Entry entry0 = filteredEntryGroup0.createEntry();
-<span class="nocode"><a name="5">  5: </a></span>filteredEntryGroup0.setIsActive(entry0, false);
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(1, filteredEntryGroup0.size());
-</pre>
-<h3>Test case 68</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>Key key0 = new Key(&quot;VALUES &quot;);
-<span class="nocode"><a name="3">  3: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate(key0, &quot;&quot;, &quot;g8rC&quot;);
-<span class="nocode"><a name="4">  4: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureKeyQualifierPredicate0, &quot;g8rC&quot;);
-<span class="nocode"><a name="5">  5: </a></span>filteredEntryGroup0.createEntry(&quot;I-uEN(OuIjf~&quot;);
-<span class="nocode"><a name="6">  6: </a></span>filteredEntryGroup0.setIsActive(0, false);
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(1, filteredEntryGroup0.size());
-</pre>
-<h3>Test case 69</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, (FeatureVector) null, (String) null);
-<span class="nocode"><a name="3">  3: </a></span>filteredEntryGroup0.getFeaturesInIndexRange((-934), 2);
+<span class="nocode"><a name="2">  2: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, (FeaturePredicate) null, &quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = Entry.newEntry((Bases) null);
+<span class="nocode"><a name="4">  4: </a></span>filteredEntryGroup0.addElement(entry0);
+<span class="nocode"><a name="5">  5: </a></span>filteredEntryGroup0.setIsActive(entry0, true);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, entry0.getFeatureCount());
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -647,13 +664,13 @@ uk.ac.sanger.artemis.FilteredEntryGroup
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.FilteredEntryGroup
-<li>Size: 69
-<li>Length: 350
+<li>Size: 67
+<li>Length: 376
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.7685123952989343
-<li>BranchCoverage: 0.8255813953488372
-<li>MethodCoverage: 0.9615384615384616
-<li>OutputCoverage: 0.3764705882352941
+<li>Coverage: 0.7467650645591029
+<li>BranchCoverage: 0.8488372093023255
+<li>MethodCoverage: 0.9807692307692307
+<li>OutputCoverage: 0.3411764705882353
 </ul></div>
 </div>
 <p><br><a href="../report-generation.html">Back to Overview</a></p>

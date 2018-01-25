@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.io.IndexedGFFDocumentEntry
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.io.IndexedGFFDocumentEntry: 0.13912775262290428</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.io.IndexedGFFDocumentEntry: 0.13271749621264786</ul>
 <ul>
-<li>3249.2483922829583 fitness evaluations, 0 generations, null statements, 4 tests.
+<li>3251.331725616292 fitness evaluations, 0 generations, null statements, 3 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,23 +35,23 @@ uk.ac.sanger.artemis.io.IndexedGFFDocumentEntry
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>IndexedGFFDocumentEntry.isIndexed((File) null);
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = IndexedGFFDocumentEntry.isIndexed(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(boolean0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>URL uRL0 = MockURL.getHttpExample();
-<span class="nocode"><a name="2">  2: </a></span>URLDocument uRLDocument0 = new URLDocument(uRL0);
-<span class="nocode"><a name="3">  3: </a></span>IndexedGFFDocumentEntry indexedGFFDocumentEntry0 = new IndexedGFFDocumentEntry(uRLDocument0);
+<span class="nocode"><a name="1">  1: </a></span>JPasswordField jPasswordField0 = new JPasswordField(&quot;z{N!eG&quot;, 32);
+<span class="nocode"><a name="2">  2: </a></span>ByteBuffer byteBuffer0 = new ByteBuffer();
+<span class="nocode"><a name="3">  3: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;z{N!eG&quot;, jPasswordField0, &quot;pxuT-cTJV%yQ1_&quot;, &quot;&gt;QOqRv!\&quot;=*CQ&quot;, byteBuffer0, &quot;z{N!eG&quot;);
+<span class="nocode"><a name="4">  4: </a></span>IndexedGFFDocumentEntry indexedGFFDocumentEntry0 = new IndexedGFFDocumentEntry(databaseDocument0);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>IndexedGFFDocumentEntry.contains((Feature) null, (FeatureVector) null);
-</pre>
-<h3>Test case 4</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile((File) null, &quot;Nf5n{&quot;);
-<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = IndexedGFFDocumentEntry.isIndexed(mockFile0);
-<span class="nocode"><a name="3">  3: </a></span>assertFalse(boolean0);
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;org.biojava.bio.dist.AbstractOrderNDistribution$UniformNullModel&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="3">  3: </a></span>FeatureVector featureVector0 = selection0.getSelectedFeatures();
+<span class="nocode"><a name="4">  4: </a></span>IndexedGFFDocumentEntry.contains((Feature) null, featureVector0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -64,10 +64,10 @@ uk.ac.sanger.artemis.io.IndexedGFFDocumentEntry
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.io.IndexedGFFDocumentEntry
-<li>Size: 4
-<li>Length: 7
+<li>Size: 3
+<li>Length: 10
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.13912775262290428
+<li>Coverage: 0.13271749621264786
 <li>BranchCoverage: 0.0025252525252525255
 <li>MethodCoverage: 0.07692307692307693
 <li>OutputCoverage: 0.014084507042253521

@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.components.QualifierTextArea
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.components.QualifierTextArea: 0.35643179450836276</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.components.QualifierTextArea: 0.34578450053542303</ul>
 <ul>
-<li>1436.7413043478261 fitness evaluations, 0 generations, null statements, 8 tests.
+<li>1437.9913043478261 fitness evaluations, 0 generations, null statements, 7 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -39,35 +39,34 @@ uk.ac.sanger.artemis.components.QualifierTextArea
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>int int0 = QualifierTextArea.getEndOfLink(&quot;Fw;W_(T&gt;'b99z6,P&quot;, (-2873));
-<span class="nocode"><a name="2">  2: </a></span>assertEquals(2, int0);
+<span class="nocode"><a name="1">  1: </a></span>int int0 = QualifierTextArea.getEndOfLink(&quot;the Allele Number (AN) tag is incorrect for the record at position %s:%d, %d vs. %d&quot;, 0);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(3, int0);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>int int0 = QualifierTextArea.getEndOfLink(&quot;E)z&gt;;&quot;, (-2724));
-<span class="nocode"><a name="2">  2: </a></span>assertEquals(1, int0);
+<span class="nocode"><a name="1">  1: </a></span>int int0 = QualifierTextArea.getEndOfLink(&quot;rIa$T_:b|VJY6N)wx&quot;, (-943));
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(8, int0);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>QualifierTextArea.handleMouseSingleClick(&quot;4SM5Wuef*V&amp;1/i}9&quot;, (JComponent) null);
+<span class="nocode"><a name="1">  1: </a></span>JPanel jPanel0 = new JPanel();
+<span class="nocode"><a name="2">  2: </a></span>QualifierTextArea.handleMouseSingleClick(&quot;zA*(,A_&quot;, jPanel0);
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>QualifierTextArea.handleMouseSingleClick((String) null, (JComponent) null);
+<span class="nocode"><a name="1">  1: </a></span>JSpinner jSpinner0 = new JSpinner();
+<span class="nocode"><a name="2">  2: </a></span>JSpinner.NumberEditor jSpinner_NumberEditor0 = (JSpinner.NumberEditor)jSpinner0.getEditor();
+<span class="nocode"><a name="3">  3: </a></span>QualifierTextArea.handleMouseSingleClick((String) null, jSpinner_NumberEditor0);
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(jSpinner_NumberEditor0.isFocusTraversalPolicyProvider());
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>QualifierTextArea.getEndOfLink((String) null, 0);
+<span class="nocode"><a name="1">  1: </a></span>QualifierTextArea.getEndOfLink((String) null, 44);
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>int int0 = QualifierTextArea.getEndOfLink(&quot;srs_url&quot;, 2);
+<span class="nocode"><a name="1">  1: </a></span>int int0 = QualifierTextArea.getEndOfLink(&quot;*r8O'BdYI/&quot;, 2);
 <span class="nocode"><a name="2">  2: </a></span>assertEquals((-1), int0);
-</pre>
-<h3>Test case 8</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>int int0 = QualifierTextArea.getEndOfLink(&quot;]hG&quot;, (-586));
-<span class="nocode"><a name="2">  2: </a></span>assertEquals(0, int0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -80,13 +79,13 @@ uk.ac.sanger.artemis.components.QualifierTextArea
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.QualifierTextArea
-<li>Size: 8
-<li>Length: 8
+<li>Size: 7
+<li>Length: 10
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.35643179450836276
+<li>Coverage: 0.34578450053542303
 <li>BranchCoverage: 0.22727272727272727
 <li>MethodCoverage: 0.3333333333333333
-<li>OutputCoverage: 0.25
+<li>OutputCoverage: 0.16666666666666666
 </ul></div>
 </div>
 <p><br><a href="../report-generation.html">Back to Overview</a></p>

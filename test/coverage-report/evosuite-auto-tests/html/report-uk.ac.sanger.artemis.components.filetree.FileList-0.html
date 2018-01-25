@@ -36,28 +36,30 @@ uk.ac.sanger.artemis.components.filetree.FileList
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FileList fileList0 = new FileList((SshFileManager) null);
-<span class="nocode"><a name="2">  2: </a></span>fileList0.isDirectory(&quot;xc{(gv#1u'3{(H&quot;);
+<span class="nocode"><a name="2">  2: </a></span>fileList0.isDirectory(&quot;dbKB.jT9VbkC.8aDl}.&quot;);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FileList fileList0 = new FileList((SshFileManager) null);
-<span class="nocode"><a name="2">  2: </a></span>fileList0.getDirList(&quot;.gz&quot;);
+<span class="nocode"><a name="2">  2: </a></span>fileList0.getDirList(&quot;&quot;);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FileList fileList0 = new FileList((SshFileManager) null);
-<span class="nocode"><a name="2">  2: </a></span>fileList0.mkdir(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>fileList0.mkdir(&quot;jCC xmXHS::&quot;);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FileList fileList0 = new FileList((SshFileManager) null);
-<span class="nocode"><a name="2">  2: </a></span>fileList0.delete(&quot;X4ON7`J92K.!&quot;);
+<span class="nocode"><a name="2">  2: </a></span>fileList0.delete(&quot;R)gxA01UC@eV_JAm=j&quot;);
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FileList fileList0 = new FileList((SshFileManager) null);
-<span class="nocode"><a name="2">  2: </a></span>MockFile mockFile0 = new MockFile(&quot;X4ON7`J92K.!&quot;, &quot;X4ON7`J92K.!&quot;);
-<span class="nocode"><a name="3">  3: </a></span>fileList0.put(&quot;X4ON7`J92K.!&quot;, mockFile0, (FTProgress) null, false);
+<span class="nocode"><a name="2">  2: </a></span>MockFile mockFile0 = new MockFile((String) null, &quot;el(O&gt;m@[*{.nE|&quot;);
+<span class="nocode"><a name="3">  3: </a></span>JProgressBar jProgressBar0 = new JProgressBar();
+<span class="nocode"><a name="4">  4: </a></span>FTProgress fTProgress0 = new FTProgress(jProgressBar0, (String) null);
+<span class="nocode"><a name="5">  5: </a></span>fileList0.put(&quot;.gz&quot;, mockFile0, fTProgress0, true);
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
@@ -67,19 +69,19 @@ uk.ac.sanger.artemis.components.filetree.FileList
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FileList fileList0 = new FileList((SshFileManager) null);
-<span class="nocode"><a name="2">  2: </a></span>fileList0.rename(&quot;#gQ?N&amp;NI&gt;CwYC;D&quot;, &quot;qj&amp;x,7i!`O-f%*MUu-o&quot;);
+<span class="nocode"><a name="2">  2: </a></span>fileList0.rename(&quot;.gz | gunzip&quot;, (String) null);
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FileList fileList0 = new FileList((SshFileManager) null);
-<span class="nocode"><a name="2">  2: </a></span>JProgressBar jProgressBar0 = new JProgressBar();
-<span class="nocode"><a name="3">  3: </a></span>FTProgress fTProgress0 = new FTProgress(jProgressBar0, &quot;&quot;);
-<span class="nocode"><a name="4">  4: </a></span>fileList0.getFileContents(&quot;=f)OEAM0c&quot;, fTProgress0);
+<span class="nocode"><a name="2">  2: </a></span>JProgressBar jProgressBar0 = new JProgressBar(0, 47);
+<span class="nocode"><a name="3">  3: </a></span>FTProgress fTProgress0 = new FTProgress(jProgressBar0, &quot;9+dMMDW:Z'O*t[c,D]R&quot;);
+<span class="nocode"><a name="4">  4: </a></span>fileList0.getFileContents(&quot;9+dMMDW:Z'O*t[c,D]R&quot;, fTProgress0);
 </pre>
 <h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FileList fileList0 = new FileList((SshFileManager) null);
-<span class="nocode"><a name="2">  2: </a></span>fileList0.stat(&quot;unzip -p &quot;);
+<span class="nocode"><a name="2">  2: </a></span>fileList0.stat(&quot;Ia,c]&quot;);
 </pre>
 <h3>Test case 10</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
@@ -93,8 +95,8 @@ uk.ac.sanger.artemis.components.filetree.FileList
 <h3>Test case 12</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FileList fileList0 = new FileList((SshFileManager) null);
-<span class="nocode"><a name="2">  2: </a></span>MockFile mockFile0 = new MockFile((String) null, &quot;&quot;);
-<span class="nocode"><a name="3">  3: </a></span>fileList0.getZipEntryContents(&quot;}LBwu,fgL0:@qe3&quot;, &quot;&quot;, mockFile0);
+<span class="nocode"><a name="2">  2: </a></span>MockFile mockFile0 = new MockFile(&quot;o_JdLN(&gt;8NeT;E&lt;dot*&quot;);
+<span class="nocode"><a name="3">  3: </a></span>fileList0.getZipEntryContents(&quot;&quot;, &quot;o_JdLN(&gt;8NeT;E&lt;dot*&quot;, mockFile0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -108,7 +110,7 @@ uk.ac.sanger.artemis.components.filetree.FileList
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.filetree.FileList
 <li>Size: 12
-<li>Length: 26
+<li>Length: 28
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.36997441474630693
 <li>BranchCoverage: 0.42857142857142855

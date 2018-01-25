@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.io.GenbankMisc
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.io.GenbankMisc: 0.6038961038961039</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.io.GenbankMisc: 0.7873376623376623</ul>
 <ul>
-<li>20.666666666666668 fitness evaluations, 0 generations, null statements, 3 tests.
+<li>15.583333333333332 fitness evaluations, 0 generations, null statements, 3 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,21 +35,19 @@ uk.ac.sanger.artemis.io.GenbankMisc
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>JPasswordField jPasswordField0 = new JPasswordField();
-<span class="nocode"><a name="2">  2: </a></span>ByteBuffer byteBuffer0 = new ByteBuffer();
-<span class="nocode"><a name="3">  3: </a></span>byte[] byteArray0 = new byte[9];
-<span class="nocode"><a name="4">  4: </a></span>byteBuffer0.append(byteArray0);
-<span class="nocode"><a name="5">  5: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot; &quot;, jPasswordField0, &quot;$Oje(Oa\&quot;{9FYk&gt;CZwgH&quot;, &quot;Min correlation score of the selected features: &quot;, byteBuffer0, &quot;FEATURES &quot;);
-<span class="nocode"><a name="6">  6: </a></span>LinePushBackReader linePushBackReader0 = databaseDocument0.getLinePushBackReader();
-<span class="nocode"><a name="7">  7: </a></span>GenbankMisc genbankMisc0 = new GenbankMisc(linePushBackReader0);
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(&quot;\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000&quot;, genbankMisc0.getLine());
+<span class="nocode"><a name="1">  1: </a></span>StringReader stringReader0 = new StringReader(&quot;Property &quot;);
+<span class="nocode"><a name="2">  2: </a></span>LinePushBackReader linePushBackReader0 = new LinePushBackReader(stringReader0);
+<span class="nocode"><a name="3">  3: </a></span>GenbankMisc genbankMisc0 = new GenbankMisc(linePushBackReader0);
+<span class="nocode"><a name="4">  4: </a></span>MockFileWriter mockFileWriter0 = new MockFileWriter(&quot;\n&quot;);
+<span class="nocode"><a name="5">  5: </a></span>genbankMisc0.writeToStream(mockFileWriter0);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;Property &quot;, genbankMisc0.getLine());
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FileDescriptor fileDescriptor0 = new FileDescriptor();
-<span class="nocode"><a name="2">  2: </a></span>MockFileInputStream mockFileInputStream0 = new MockFileInputStream(fileDescriptor0);
+<span class="nocode"><a name="1">  1: </a></span>PipedInputStream pipedInputStream0 = new PipedInputStream(1076);
+<span class="nocode"><a name="2">  2: </a></span>BufferedInputStream bufferedInputStream0 = new BufferedInputStream(pipedInputStream0, 1076);
 <span class="nocode"><a name="3">  3: </a></span>Charset charset0 = Charset.defaultCharset();
-<span class="nocode"><a name="4">  4: </a></span>InputStreamReader inputStreamReader0 = new InputStreamReader(mockFileInputStream0, charset0);
+<span class="nocode"><a name="4">  4: </a></span>InputStreamReader inputStreamReader0 = new InputStreamReader(bufferedInputStream0, charset0);
 <span class="nocode"><a name="5">  5: </a></span>LinePushBackReader linePushBackReader0 = new LinePushBackReader(inputStreamReader0);
 <span class="nocode"><a name="6">  6: </a></span>GenbankMisc genbankMisc0 = new GenbankMisc(linePushBackReader0);
 </pre>
@@ -69,11 +67,11 @@ uk.ac.sanger.artemis.io.GenbankMisc
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.io.GenbankMisc
 <li>Size: 3
-<li>Length: 14
+<li>Length: 12
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.6038961038961039
-<li>BranchCoverage: 0.2857142857142857
-<li>MethodCoverage: 0.5
+<li>Coverage: 0.7873376623376623
+<li>BranchCoverage: 0.42857142857142855
+<li>MethodCoverage: 1.0
 <li>OutputCoverage: 1.0
 </ul></div>
 </div>

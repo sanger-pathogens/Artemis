@@ -36,38 +36,34 @@ uk.ac.sanger.artemis.components.EntryActionListener
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>DbfetchEntrySource dbfetchEntrySource0 = new DbfetchEntrySource((JFrame) null);
-<span class="nocode"><a name="2">  2: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;&quot;);
-<span class="nocode"><a name="3">  3: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
-<span class="nocode"><a name="4">  4: </a></span>ReadFeaturesActionListener readFeaturesActionListener0 = new ReadFeaturesActionListener((EntryEdit) null, dbfetchEntrySource0, (Entry) null);
-<span class="nocode"><a name="5">  5: </a></span>ActionEvent actionEvent0 = new ActionEvent(bases0, 1, &quot;&quot;);
-<span class="nocode"><a name="6">  6: </a></span>readFeaturesActionListener0.actionPerformed(actionEvent0);
+<span class="nocode"><a name="2">  2: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = simpleEntryGroup0.createEntry(&quot;]&quot;);
+<span class="nocode"><a name="4">  4: </a></span>ReadFeaturesActionListener readFeaturesActionListener0 = new ReadFeaturesActionListener((EntryEdit) null, dbfetchEntrySource0, entry0);
+<span class="nocode"><a name="5">  5: </a></span>readFeaturesActionListener0.getEntry();
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>Entry entry0 = simpleEntryGroup0.createEntry(&quot;&quot;);
-<span class="nocode"><a name="3">  3: </a></span>SaveEntryAsEMBLActionListener saveEntryAsEMBLActionListener0 = new SaveEntryAsEMBLActionListener((EntryEdit) null, entry0);
-<span class="nocode"><a name="4">  4: </a></span>saveEntryAsEMBLActionListener0.getEntryEdit();
+<span class="nocode"><a name="1">  1: </a></span>SaveEntryAsActionListener saveEntryAsActionListener0 = new SaveEntryAsActionListener((EntryEdit) null, (Entry) null);
+<span class="nocode"><a name="2">  2: </a></span>EntryEdit entryEdit0 = saveEntryAsActionListener0.getEntryEdit();
+<span class="nocode"><a name="3">  3: </a></span>assertNull(entryEdit0);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = new SimpleEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>MSPcrunchDocumentEntry mSPcrunchDocumentEntry0 = new MSPcrunchDocumentEntry(simpleEntryInformation0);
-<span class="nocode"><a name="3">  3: </a></span>PublicDBDocumentEntry publicDBDocumentEntry0 = new PublicDBDocumentEntry(simpleEntryInformation0, mSPcrunchDocumentEntry0, true);
-<span class="nocode"><a name="4">  4: </a></span>Entry entry0 = new Entry((Bases) null, publicDBDocumentEntry0);
-<span class="nocode"><a name="5">  5: </a></span>SaveEntryAsGenbankActionListener saveEntryAsGenbankActionListener0 = new SaveEntryAsGenbankActionListener((EntryEdit) null, entry0);
-<span class="nocode"><a name="6">  6: </a></span>Entry entry1 = saveEntryAsGenbankActionListener0.getEntry();
-<span class="nocode"><a name="7">  7: </a></span>assertFalse(entry1.isReadOnly());
+<span class="nocode"><a name="1">  1: </a></span>BioJavaEntrySource bioJavaEntrySource0 = new BioJavaEntrySource();
+<span class="nocode"><a name="2">  2: </a></span>ReadFeaturesActionListener readFeaturesActionListener0 = new ReadFeaturesActionListener((EntryEdit) null, bioJavaEntrySource0, (Entry) null);
+<span class="nocode"><a name="3">  3: </a></span>readFeaturesActionListener0.actionPerformed((ActionEvent) null);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SaveEntryAsEMBLActionListener saveEntryAsEMBLActionListener0 = new SaveEntryAsEMBLActionListener((EntryEdit) null, (Entry) null);
-<span class="nocode"><a name="2">  2: </a></span>saveEntryAsEMBLActionListener0.actionPerformed((ActionEvent) null);
+<span class="nocode"><a name="1">  1: </a></span>Integer integer0 = JLayeredPane.PALETTE_LAYER;
+<span class="nocode"><a name="2">  2: </a></span>SaveEntryActionListener saveEntryActionListener0 = new SaveEntryActionListener((EntryEdit) null, (Entry) null);
+<span class="nocode"><a name="3">  3: </a></span>ActionEvent actionEvent0 = new ActionEvent(integer0, 36, &quot;5&gt;.zlYRe&quot;);
+<span class="nocode"><a name="4">  4: </a></span>saveEntryActionListener0.actionPerformed(actionEvent0);
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SaveEntryActionListener saveEntryActionListener0 = new SaveEntryActionListener((EntryEdit) null, (Entry) null);
-<span class="nocode"><a name="2">  2: </a></span>Entry entry0 = saveEntryActionListener0.getEntry();
+<span class="nocode"><a name="1">  1: </a></span>SaveEntryAsActionListener saveEntryAsActionListener0 = new SaveEntryAsActionListener((EntryEdit) null, (Entry) null);
+<span class="nocode"><a name="2">  2: </a></span>Entry entry0 = saveEntryAsActionListener0.getEntry();
 <span class="nocode"><a name="3">  3: </a></span>assertNull(entry0);
 </pre>
 </div><div id="post">
@@ -82,7 +78,7 @@ uk.ac.sanger.artemis.components.EntryActionListener
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.EntryActionListener
 <li>Size: 5
-<li>Length: 20
+<li>Length: 16
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.800925925925926
 <li>BranchCoverage: 1.0

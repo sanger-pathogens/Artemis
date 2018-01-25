@@ -23,7 +23,7 @@ uk.ac.sanger.artemis.util.DatabaseLocationParser
 <br><br><h2 class=title>Summary</h2>
 <ul><li>Target class: uk.ac.sanger.artemis.util.DatabaseLocationParser: 0.9417600071287342</ul>
 <ul>
-<li>20.757575619748565 fitness evaluations, 0 generations, null statements, 35 tests.
+<li>20.757575588267734 fitness evaluations, 0 generations, null statements, 36 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,239 +35,247 @@ uk.ac.sanger.artemis.util.DatabaseLocationParser
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser(&quot;Could not read configuration file from URL [&quot;);
-<span class="nocode"><a name="2">  2: </a></span>databaseLocationParser0.getDatabase();
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;postgresql&quot;, databaseLocationParser0.getDBEngine());
+<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>databaseLocationParser0.setHost(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = databaseLocationParser0.getConnectionString();
 <span class="nocode"><a name="4">  4: </a></span>assertEquals(0, databaseLocationParser0.getPort());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;postgresql&quot;, databaseLocationParser0.getDBEngine());
+<span class="nocode"><a name="6">  6: </a></span>assertNull(string0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser();
-<span class="nocode"><a name="2">  2: </a></span>databaseLocationParser0.setHost((String) null);
+<span class="nocode"><a name="2">  2: </a></span>databaseLocationParser0.getDatabase();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;postgresql&quot;, databaseLocationParser0.getDBEngine());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, databaseLocationParser0.getPort());
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser(&quot;Could not read configuration file from URL [&quot;);
-<span class="nocode"><a name="2">  2: </a></span>databaseLocationParser0.setPort((-2752));
-<span class="nocode"><a name="3">  3: </a></span>int int0 = databaseLocationParser0.getPort();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals((-2752), int0);
+<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>databaseLocationParser0.getDBEngine();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, databaseLocationParser0.getPort());
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser(&quot;Could not read configuration file from URL [&quot;);
-<span class="nocode"><a name="2">  2: </a></span>String string0 = databaseLocationParser0.getDBEngine();
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, databaseLocationParser0.getPort());
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;postgresql&quot;, string0);
+<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>databaseLocationParser0.setDBEngine(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = databaseLocationParser0.getDBEngine();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;&quot;, string0);
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser(&quot;Could not read configuration file from URL [&quot;);
-<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;postgresql&quot;, databaseLocationParser0.getDBEngine());
-<span class="nocode"><a name="3">  3: </a></span>
-<span class="nocode"><a name="4">  4: </a></span>databaseLocationParser0.setDBEngine(&quot;&quot;);
-<span class="nocode"><a name="5">  5: </a></span>databaseLocationParser0.getDBEngine();
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, databaseLocationParser0.getPort());
+<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser();
+<span class="nocode"><a name="2">  2: </a></span>String string0 = databaseLocationParser0.getUnprefixedURL();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;postgresql&quot;, databaseLocationParser0.getDBEngine());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, databaseLocationParser0.getPort());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;ull?&quot;, string0);
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser(&quot;Could not read configuration file from URL [&quot;);
+<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser(&quot;&quot;);
 <span class="nocode"><a name="2">  2: </a></span>int int0 = databaseLocationParser0.getPort();
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;postgresql&quot;, databaseLocationParser0.getDBEngine());
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, int0);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, int0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;postgresql&quot;, databaseLocationParser0.getDBEngine());
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser(&quot;Could not read configuration file from URL [&quot;);
+<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser();
 <span class="nocode"><a name="2">  2: </a></span>databaseLocationParser0.getHost();
 <span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;postgresql&quot;, databaseLocationParser0.getDBEngine());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, databaseLocationParser0.getPort());
 </pre>
 <h3>Test case 8</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser(&quot;Could not read configuration file from URL [&quot;);
-<span class="nocode"><a name="2">  2: </a></span>String string0 = databaseLocationParser0.getConnectionString();
-<span class="nocode"><a name="3">  3: </a></span>assertNotNull(string0);
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;jdbc:postgresql:/null?&quot;, string0);
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, databaseLocationParser0.getPort());
-</pre>
-<h3>Test case 9</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser(&quot;Could not read configuration file from URL [&quot;);
-<span class="nocode"><a name="2">  2: </a></span>databaseLocationParser0.setUsername(&quot;&quot;);
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;&quot;, databaseLocationParser0.getUsername());
-</pre>
-<h3>Test case 10</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser();
-<span class="nocode"><a name="2">  2: </a></span>databaseLocationParser0.setPort(&quot;&quot;);
-</pre>
-<h3>Test case 11</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser();
-<span class="nocode"><a name="2">  2: </a></span>databaseLocationParser0.setFromURLString(&quot;jdbc:postgresql://getContextClafsLoar:0/null?ssl=true&quot;);
-<span class="nocode"><a name="3">  3: </a></span>assertTrue(databaseLocationParser0.isSSLEnabled());
-</pre>
-<h3>Test case 12</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser();
-<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = databaseLocationParser0.isSSLEnabled();
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, databaseLocationParser0.getPort());
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;postgresql&quot;, databaseLocationParser0.getDBEngine());
-<span class="nocode"><a name="5">  5: </a></span>assertFalse(boolean0);
-</pre>
-<h3>Test case 13</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser(&quot;Could not read configuration file from URL [&quot;);
-<span class="nocode"><a name="2">  2: </a></span>databaseLocationParser0.setSSL(true);
-<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = databaseLocationParser0.isSSLEnabled();
-<span class="nocode"><a name="4">  4: </a></span>assertTrue(boolean0);
-</pre>
-<h3>Test case 14</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser(&quot;io`U:p-&quot;);
-<span class="nocode"><a name="2">  2: </a></span>String string0 = databaseLocationParser0.getUsername();
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, databaseLocationParser0.getPort());
-<span class="nocode"><a name="4">  4: </a></span>assertNotNull(string0);
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;postgresql&quot;, databaseLocationParser0.getDBEngine());
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;chado&quot;, string0);
-</pre>
-<h3>Test case 15</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser(&quot;io`U:p-&quot;);
-<span class="nocode"><a name="2">  2: </a></span>databaseLocationParser0.setFromURLString(&quot;jdbc:postgresql:/null?&quot;);
-<span class="nocode"><a name="3">  3: </a></span>databaseLocationParser0.getUsername();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals((-1), databaseLocationParser0.getPort());
-</pre>
-<h3>Test case 16</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser(&quot;;yS]yFsSlDKZ|&quot;);
-<span class="nocode"><a name="2">  2: </a></span>databaseLocationParser0.setSSL(false);
-<span class="nocode"><a name="3">  3: </a></span>assertFalse(databaseLocationParser0.isSSLEnabled());
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;postgresql&quot;, databaseLocationParser0.getDBEngine());
-</pre>
-<h3>Test case 17</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser(&quot;io`U:p-&quot;);
-<span class="nocode"><a name="2">  2: </a></span>String string0 = databaseLocationParser0.getCompleteURL();
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;jdbc:postgresql:/null?&quot;, string0);
-<span class="nocode"><a name="4">  4: </a></span>assertNotNull(string0);
-</pre>
-<h3>Test case 18</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser();
-<span class="nocode"><a name="2">  2: </a></span>String string0 = databaseLocationParser0.getUnprefixedURL();
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, databaseLocationParser0.getPort());
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;ull?&quot;, string0);
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;postgresql&quot;, databaseLocationParser0.getDBEngine());
-</pre>
-<h3>Test case 19</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser((String) null);
-</pre>
-<h3>Test case 20</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser(&quot;TRACE&quot;);
-</pre>
-<h3>Test case 21</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser();
-<span class="nocode"><a name="2">  2: </a></span>databaseLocationParser0.setDBEngine((String) null);
-</pre>
-<h3>Test case 22</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser();
-<span class="nocode"><a name="2">  2: </a></span>databaseLocationParser0.setDatabase((String) null);
-</pre>
-<h3>Test case 23</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser();
-<span class="nocode"><a name="2">  2: </a></span>databaseLocationParser0.setFromURLString((String) null);
-</pre>
-<h3>Test case 24</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser(&quot;io`U:p-&quot;);
-<span class="nocode"><a name="2">  2: </a></span>databaseLocationParser0.setFromURLString(&quot;chado&quot;);
-</pre>
-<h3>Test case 25</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser(&quot;~d!y7&quot;);
-<span class="nocode"><a name="2">  2: </a></span>databaseLocationParser0.setPort((String) null);
-</pre>
-<h3>Test case 26</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser();
-<span class="nocode"><a name="2">  2: </a></span>databaseLocationParser0.setUsername((String) null);
-</pre>
-<h3>Test case 27</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser(&quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;postgresql&quot;, databaseLocationParser0.getDBEngine());
-<span class="nocode"><a name="3">  3: </a></span>
-<span class="nocode"><a name="4">  4: </a></span>databaseLocationParser0.setDBEngine(&quot;[fn:9)rE}d/2N41&gt;=5?&quot;);
-<span class="nocode"><a name="5">  5: </a></span>databaseLocationParser0.getCompleteURL();
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, databaseLocationParser0.getPort());
-</pre>
-<h3>Test case 28</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser(&quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;postgresql&quot;, databaseLocationParser0.getDBEngine());
-<span class="nocode"><a name="3">  3: </a></span>
-<span class="nocode"><a name="4">  4: </a></span>databaseLocationParser0.setDBEngine(&quot;[fn:9)rE}d/2N41&gt;=5?&quot;);
-<span class="nocode"><a name="5">  5: </a></span>databaseLocationParser0.getConnectionString();
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, databaseLocationParser0.getPort());
-</pre>
-<h3>Test case 29</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser();
 <span class="nocode"><a name="2">  2: </a></span>databaseLocationParser0.setDatabase(&quot;&quot;);
 <span class="nocode"><a name="3">  3: </a></span>databaseLocationParser0.getDatabase();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;postgresql&quot;, databaseLocationParser0.getDBEngine());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, databaseLocationParser0.getPort());
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>String string0 = databaseLocationParser0.getConnectionString();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;jdbc:postgresql:/null?&quot;, string0);
 <span class="nocode"><a name="4">  4: </a></span>assertEquals(0, databaseLocationParser0.getPort());
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;postgresql&quot;, databaseLocationParser0.getDBEngine());
+<span class="nocode"><a name="5">  5: </a></span>assertNotNull(string0);
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>databaseLocationParser0.setUsername(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, databaseLocationParser0.getPort());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;postgresql&quot;, databaseLocationParser0.getDBEngine());
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser();
+<span class="nocode"><a name="2">  2: </a></span>databaseLocationParser0.setPort(&quot;&quot;);
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser(&quot;,^&lt;IrmNR)ANw'^{;$z&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(0, databaseLocationParser0.getPort());
+<span class="nocode"><a name="3">  3: </a></span>
+<span class="nocode"><a name="4">  4: </a></span>databaseLocationParser0.setFromURLString(&quot;jdbc:postgresql:/null?&quot;);
+<span class="nocode"><a name="5">  5: </a></span>databaseLocationParser0.getUsername();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;&quot;, databaseLocationParser0.getUsername());
+</pre>
+<h3>Test case 13</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser(&quot;,^&lt;IrmNR)ANw'^{;$z&quot;);
+<span class="nocode"><a name="2">  2: </a></span>databaseLocationParser0.setFromURLString(&quot;postgresql://;}X^9Oi7crD?c\&quot;b{&quot;);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, databaseLocationParser0.getPort());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;postgresql&quot;, databaseLocationParser0.getDBEngine());
+</pre>
+<h3>Test case 14</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser();
+<span class="nocode"><a name="2">  2: </a></span>databaseLocationParser0.setFromURLString(&quot;jdbc:postgresql:/q7&amp;%7D%5B+a09%7C)7P-o(Dw?user=W(&quot;);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;W(&quot;, databaseLocationParser0.getUsername());
+</pre>
+<h3>Test case 15</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = databaseLocationParser0.isSSLEnabled();
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 16</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser();
+<span class="nocode"><a name="2">  2: </a></span>databaseLocationParser0.setSSL(true);
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = databaseLocationParser0.isSSLEnabled();
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 17</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser();
+<span class="nocode"><a name="2">  2: </a></span>String string0 = databaseLocationParser0.getUsername();
+<span class="nocode"><a name="3">  3: </a></span>assertNotNull(string0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;postgresql&quot;, databaseLocationParser0.getDBEngine());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;chado&quot;, string0);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, databaseLocationParser0.getPort());
+</pre>
+<h3>Test case 18</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>databaseLocationParser0.setSSL(false);
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(databaseLocationParser0.isSSLEnabled());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;postgresql&quot;, databaseLocationParser0.getDBEngine());
+</pre>
+<h3>Test case 19</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>String string0 = databaseLocationParser0.getCompleteURL();
+<span class="nocode"><a name="3">  3: </a></span>assertNotNull(string0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;jdbc:postgresql:/null?&quot;, string0);
+</pre>
+<h3>Test case 20</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser((String) null);
+</pre>
+<h3>Test case 21</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser(&quot;inherited&quot;);
+</pre>
+<h3>Test case 22</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser();
+<span class="nocode"><a name="2">  2: </a></span>databaseLocationParser0.setDBEngine((String) null);
+</pre>
+<h3>Test case 23</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser();
+<span class="nocode"><a name="2">  2: </a></span>databaseLocationParser0.setDatabase((String) null);
+</pre>
+<h3>Test case 24</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser(&quot;[TU'q&quot;);
+<span class="nocode"><a name="2">  2: </a></span>databaseLocationParser0.setDBEngine(&quot;ull?&quot;);
+<span class="nocode"><a name="3">  3: </a></span>databaseLocationParser0.setFromURLString(&quot;&quot;);
+</pre>
+<h3>Test case 25</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser();
+<span class="nocode"><a name="2">  2: </a></span>databaseLocationParser0.setFromURLString(&quot;:&quot;);
+</pre>
+<h3>Test case 26</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser();
+<span class="nocode"><a name="2">  2: </a></span>databaseLocationParser0.setHost((String) null);
+</pre>
+<h3>Test case 27</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser();
+<span class="nocode"><a name="2">  2: </a></span>databaseLocationParser0.setPort((String) null);
+</pre>
+<h3>Test case 28</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser();
+<span class="nocode"><a name="2">  2: </a></span>databaseLocationParser0.setUsername((String) null);
+</pre>
+<h3>Test case 29</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser();
+<span class="nocode"><a name="2">  2: </a></span>databaseLocationParser0.setHost(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = databaseLocationParser0.getCompleteURL();
+<span class="nocode"><a name="4">  4: </a></span>assertNull(string0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, databaseLocationParser0.getPort());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;postgresql&quot;, databaseLocationParser0.getDBEngine());
 </pre>
 <h3>Test case 30</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser();
-<span class="nocode"><a name="2">  2: </a></span>databaseLocationParser0.setDBEngine(&quot;postgresql://postgresql://getContextClassLoader:0/null?ssl=true&quot;);
-<span class="nocode"><a name="3">  3: </a></span>databaseLocationParser0.setFromURLString(&quot;&quot;);
-<span class="nocode"><a name="4">  4: </a></span>String string0 = databaseLocationParser0.getDatabase();
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;/getContextClassLoader:0/null&quot;, string0);
+<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser(&quot;qMuHcbzMNX&lt;N'z2x$&quot;);
+<span class="nocode"><a name="2">  2: </a></span>databaseLocationParser0.setDatabase(&quot;qMuHcbzMNX&lt;N'z2x$&quot;);
+<span class="nocode"><a name="3">  3: </a></span>databaseLocationParser0.getDatabase();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, databaseLocationParser0.getPort());
 </pre>
 <h3>Test case 31</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser(&quot;&quot;);
 <span class="nocode"><a name="2">  2: </a></span>databaseLocationParser0.setHost(&quot;&quot;);
 <span class="nocode"><a name="3">  3: </a></span>databaseLocationParser0.getHost();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;postgresql&quot;, databaseLocationParser0.getDBEngine());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, databaseLocationParser0.getPort());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;postgresql&quot;, databaseLocationParser0.getDBEngine());
 </pre>
 <h3>Test case 32</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser();
-<span class="nocode"><a name="2">  2: </a></span>databaseLocationParser0.setHost(&quot;getContextClafsLoar&quot;);
+<span class="nocode"><a name="2">  2: </a></span>databaseLocationParser0.setHost(&quot;0-jt4,0T&quot;);
 <span class="nocode"><a name="3">  3: </a></span>databaseLocationParser0.getHost();
 <span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;postgresql&quot;, databaseLocationParser0.getDBEngine());
 <span class="nocode"><a name="5">  5: </a></span>assertEquals(0, databaseLocationParser0.getPort());
 </pre>
 <h3>Test case 33</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser(&quot;;yS]yFsSlDKZ|&quot;);
-<span class="nocode"><a name="2">  2: </a></span>databaseLocationParser0.setPort(3093);
+<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser();
+<span class="nocode"><a name="2">  2: </a></span>databaseLocationParser0.setPort((-2051));
 <span class="nocode"><a name="3">  3: </a></span>int int0 = databaseLocationParser0.getPort();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(3093, int0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-2051), int0);
 </pre>
 <h3>Test case 34</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser(&quot;;yS]yFsSlDKZ|&quot;);
-<span class="nocode"><a name="2">  2: </a></span>databaseLocationParser0.setDatabase(&quot;&quot;);
-<span class="nocode"><a name="3">  3: </a></span>String string0 = databaseLocationParser0.getUnprefixedURL();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;&quot;, string0);
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;postgresql&quot;, databaseLocationParser0.getDBEngine());
+<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>databaseLocationParser0.setPort(6);
+<span class="nocode"><a name="3">  3: </a></span>int int0 = databaseLocationParser0.getPort();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(6, int0);
 </pre>
 <h3>Test case 35</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser();
-<span class="nocode"><a name="2">  2: </a></span>databaseLocationParser0.setHost(&quot;2F@(%/]m&quot;);
-<span class="nocode"><a name="3">  3: </a></span>databaseLocationParser0.getUnprefixedURL();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, databaseLocationParser0.getPort());
+<span class="nocode"><a name="2">  2: </a></span>databaseLocationParser0.setDatabase(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = databaseLocationParser0.getUnprefixedURL();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;&quot;, string0);
 <span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;postgresql&quot;, databaseLocationParser0.getDBEngine());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, databaseLocationParser0.getPort());
+</pre>
+<h3>Test case 36</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseLocationParser databaseLocationParser0 = new DatabaseLocationParser(&quot;qMuHcbzMNX&lt;N'z2x$&quot;);
+<span class="nocode"><a name="2">  2: </a></span>databaseLocationParser0.setHost(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = databaseLocationParser0.getUnprefixedURL();
+<span class="nocode"><a name="4">  4: </a></span>assertNull(string0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, databaseLocationParser0.getPort());
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -280,8 +288,8 @@ uk.ac.sanger.artemis.util.DatabaseLocationParser
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.util.DatabaseLocationParser
-<li>Size: 35
-<li>Length: 82
+<li>Size: 36
+<li>Length: 84
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.9417600071287342
 <li>BranchCoverage: 0.9387755102040817

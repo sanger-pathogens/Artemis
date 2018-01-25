@@ -23,7 +23,7 @@ uk.ac.sanger.artemis.io.DatabaseInferredFeature
 <br><br><h2 class=title>Summary</h2>
 <ul><li>Target class: uk.ac.sanger.artemis.io.DatabaseInferredFeature: 0.4457912107669389</ul>
 <ul>
-<li>1019.1189393913647 fitness evaluations, 0 generations, null statements, 11 tests.
+<li>1019.1367965342258 fitness evaluations, 0 generations, null statements, 10 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,67 +35,70 @@ uk.ac.sanger.artemis.io.DatabaseInferredFeature
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Key key0 = Key.CDS;
-<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(1511);
+<span class="nocode"><a name="1">  1: </a></span>Key key0 = new Key(&quot;eX&quot;, true);
+<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range((-808), (-808));
 <span class="nocode"><a name="3">  3: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
-<span class="nocode"><a name="4">  4: </a></span>Location location0 = new Location(rangeVector0, false);
-<span class="nocode"><a name="5">  5: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
-<span class="nocode"><a name="6">  6: </a></span>DatabaseInferredFeature databaseInferredFeature0 = new DatabaseInferredFeature(key0, location0, (QualifierVector) null, chadoCanonicalGene0);
-<span class="nocode"><a name="7">  7: </a></span>databaseInferredFeature0.setLocation(location0);
+<span class="nocode"><a name="4">  4: </a></span>Location location0 = new Location(rangeVector0, true);
+<span class="nocode"><a name="5">  5: </a></span>DatabaseInferredFeature databaseInferredFeature0 = new DatabaseInferredFeature(key0, location0, (QualifierVector) null, (ChadoCanonicalGene) null);
+<span class="nocode"><a name="6">  6: </a></span>databaseInferredFeature0.setLocation(location0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>EmblStreamFeature emblStreamFeature0 = new EmblStreamFeature();
-<span class="nocode"><a name="2">  2: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
-<span class="nocode"><a name="3">  3: </a></span>DatabaseInferredFeature.createFeature(&quot;Couldn't apply annotator &quot;, emblStreamFeature0, chadoCanonicalGene0, (Entry) null);
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature();
+<span class="nocode"><a name="2">  2: </a></span>BlastStreamFeature blastStreamFeature0 = new BlastStreamFeature(genbankStreamFeature0);
+<span class="nocode"><a name="3">  3: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="4">  4: </a></span>DatabaseInferredFeature.createFeature(&quot;&quot;, blastStreamFeature0, chadoCanonicalGene0, (Entry) null);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Key key0 = Key.CDS;
-<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(27);
-<span class="nocode"><a name="3">  3: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
-<span class="nocode"><a name="4">  4: </a></span>Location location0 = new Location(rangeVector0, false);
-<span class="nocode"><a name="5">  5: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
-<span class="nocode"><a name="6">  6: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
-<span class="nocode"><a name="7">  7: </a></span>DatabaseInferredFeature databaseInferredFeature0 = new DatabaseInferredFeature(key0, location0, qualifierVector0, chadoCanonicalGene0);
-<span class="nocode"><a name="8">  8: </a></span>databaseInferredFeature0.addFeatureListeners();
+<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(75);
+<span class="nocode"><a name="3">  3: </a></span>Location location0 = new Location(range0);
+<span class="nocode"><a name="4">  4: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
+<span class="nocode"><a name="5">  5: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="6">  6: </a></span>DatabaseInferredFeature databaseInferredFeature0 = new DatabaseInferredFeature(key0, location0, qualifierVector0, chadoCanonicalGene0);
+<span class="nocode"><a name="7">  7: </a></span>databaseInferredFeature0.addFeatureListeners();
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Key key0 = new Key(&quot;D==Y&quot;);
-<span class="nocode"><a name="2">  2: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
-<span class="nocode"><a name="3">  3: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
-<span class="nocode"><a name="4">  4: </a></span>Range range0 = new Range(4395, 4395);
-<span class="nocode"><a name="5">  5: </a></span>Location location0 = new Location(range0);
-<span class="nocode"><a name="6">  6: </a></span>DatabaseInferredFeature databaseInferredFeature0 = new DatabaseInferredFeature(key0, location0, qualifierVector0, chadoCanonicalGene0);
-<span class="nocode"><a name="7">  7: </a></span>databaseInferredFeature0.addFeatureListeners();
-<span class="nocode"><a name="8">  8: </a></span>assertFalse(databaseInferredFeature0.isLazyLoaded());
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = blastEntryInformation0.getDefaultKey();
+<span class="nocode"><a name="3">  3: </a></span>Range range0 = new Range(5);
+<span class="nocode"><a name="4">  4: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
+<span class="nocode"><a name="5">  5: </a></span>Location location0 = new Location(rangeVector0, false);
+<span class="nocode"><a name="6">  6: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
+<span class="nocode"><a name="7">  7: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="8">  8: </a></span>DatabaseInferredFeature databaseInferredFeature0 = new DatabaseInferredFeature(key0, location0, qualifierVector0, chadoCanonicalGene0);
+<span class="nocode"><a name="9">  9: </a></span>databaseInferredFeature0.addFeatureListeners();
+<span class="nocode"><a name="10"> 10: </a></span>assertTrue(databaseInferredFeature0.isVisible());
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;parse error after reading \&quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="4">  4: </a></span>DatabaseInferredFeature.addListenersToEntryGroup(simpleEntryGroup0);
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(27, simpleEntryGroup0.getSequenceLength());
+<span class="nocode"><a name="1">  1: </a></span>Key key0 = new Key(&quot;eX&quot;, true);
+<span class="nocode"><a name="2">  2: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="3">  3: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate(key0, &quot;eX&quot;, &quot;(U/gmq+c\&quot;^C&amp;&quot;, true, true);
+<span class="nocode"><a name="4">  4: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureKeyQualifierPredicate0, (String) null);
+<span class="nocode"><a name="5">  5: </a></span>DatabaseInferredFeature.addListenersToEntryGroup(filteredEntryGroup0);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, filteredEntryGroup0.size());
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Key key0 = new Key(&quot;D==Y&quot;);
-<span class="nocode"><a name="2">  2: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
-<span class="nocode"><a name="3">  3: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
-<span class="nocode"><a name="4">  4: </a></span>Range range0 = new Range(4395, 4395);
-<span class="nocode"><a name="5">  5: </a></span>Location location0 = new Location(range0);
+<span class="nocode"><a name="1">  1: </a></span>Key key0 = Key.CDS;
+<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(75);
+<span class="nocode"><a name="3">  3: </a></span>Location location0 = new Location(range0);
+<span class="nocode"><a name="4">  4: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
+<span class="nocode"><a name="5">  5: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
 <span class="nocode"><a name="6">  6: </a></span>DatabaseInferredFeature databaseInferredFeature0 = new DatabaseInferredFeature(key0, location0, qualifierVector0, chadoCanonicalGene0);
 <span class="nocode"><a name="7">  7: </a></span>databaseInferredFeature0.setLocation(location0);
-<span class="nocode"><a name="8">  8: </a></span>assertFalse(databaseInferredFeature0.isReadOnly());
+<span class="nocode"><a name="8">  8: </a></span>assertNull(databaseInferredFeature0.getGffSeqName());
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Key key0 = Key.CDS;
-<span class="nocode"><a name="2">  2: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
-<span class="nocode"><a name="3">  3: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
-<span class="nocode"><a name="4">  4: </a></span>DatabaseInferredFeature databaseInferredFeature0 = new DatabaseInferredFeature(key0, (Location) null, qualifierVector0, chadoCanonicalGene0);
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = blastEntryInformation0.getDefaultKey();
+<span class="nocode"><a name="3">  3: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
+<span class="nocode"><a name="4">  4: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="5">  5: </a></span>DatabaseInferredFeature databaseInferredFeature0 = new DatabaseInferredFeature(key0, (Location) null, qualifierVector0, chadoCanonicalGene0);
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
@@ -103,37 +106,25 @@ uk.ac.sanger.artemis.io.DatabaseInferredFeature
 </pre>
 <h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;parse error after reading \&quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="4">  4: </a></span>Key key0 = Key.CDS;
-<span class="nocode"><a name="5">  5: </a></span>Range range0 = new Range(1511);
-<span class="nocode"><a name="6">  6: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
-<span class="nocode"><a name="7">  7: </a></span>Location location0 = new Location(rangeVector0, false);
-<span class="nocode"><a name="8">  8: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
-<span class="nocode"><a name="9">  9: </a></span>DatabaseInferredFeature databaseInferredFeature0 = new DatabaseInferredFeature(key0, location0, (QualifierVector) null, chadoCanonicalGene0);
-<span class="nocode"><a name="10"> 10: </a></span>Entry entry0 = simpleEntryGroup0.createEntry();
-<span class="nocode"><a name="11"> 11: </a></span>DatabaseInferredFeature.createFeature(&quot;parse error after reading \&quot;&quot;, databaseInferredFeature0, chadoCanonicalGene0, entry0);
+<span class="nocode"><a name="1">  1: </a></span>Key key0 = Key.CDS;
+<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(75);
+<span class="nocode"><a name="3">  3: </a></span>Location location0 = new Location(range0);
+<span class="nocode"><a name="4">  4: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
+<span class="nocode"><a name="5">  5: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="6">  6: </a></span>DatabaseInferredFeature databaseInferredFeature0 = new DatabaseInferredFeature(key0, location0, qualifierVector0, chadoCanonicalGene0);
+<span class="nocode"><a name="7">  7: </a></span>databaseInferredFeature0.featureChanged((FeatureChangeEvent) null);
 </pre>
 <h3>Test case 10</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Key key0 = Key.CDS;
-<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(1511);
-<span class="nocode"><a name="3">  3: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
-<span class="nocode"><a name="4">  4: </a></span>Location location0 = new Location(rangeVector0, false);
-<span class="nocode"><a name="5">  5: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
-<span class="nocode"><a name="6">  6: </a></span>DatabaseInferredFeature databaseInferredFeature0 = new DatabaseInferredFeature(key0, location0, (QualifierVector) null, chadoCanonicalGene0);
-<span class="nocode"><a name="7">  7: </a></span>databaseInferredFeature0.featureChanged((FeatureChangeEvent) null);
-</pre>
-<h3>Test case 11</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Key key0 = Key.CDS;
-<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(1511);
-<span class="nocode"><a name="3">  3: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
-<span class="nocode"><a name="4">  4: </a></span>Location location0 = new Location(rangeVector0, false);
-<span class="nocode"><a name="5">  5: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
-<span class="nocode"><a name="6">  6: </a></span>DatabaseInferredFeature databaseInferredFeature0 = new DatabaseInferredFeature(key0, location0, (QualifierVector) null, chadoCanonicalGene0);
-<span class="nocode"><a name="7">  7: </a></span>databaseInferredFeature0.updateInferredLocations();
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = blastEntryInformation0.getDefaultKey();
+<span class="nocode"><a name="3">  3: </a></span>Range range0 = new Range(5);
+<span class="nocode"><a name="4">  4: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
+<span class="nocode"><a name="5">  5: </a></span>Location location0 = new Location(rangeVector0, false);
+<span class="nocode"><a name="6">  6: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
+<span class="nocode"><a name="7">  7: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="8">  8: </a></span>DatabaseInferredFeature databaseInferredFeature0 = new DatabaseInferredFeature(key0, location0, qualifierVector0, chadoCanonicalGene0);
+<span class="nocode"><a name="9">  9: </a></span>databaseInferredFeature0.updateInferredLocations();
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -146,8 +137,8 @@ uk.ac.sanger.artemis.io.DatabaseInferredFeature
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.io.DatabaseInferredFeature
-<li>Size: 11
-<li>Length: 66
+<li>Size: 10
+<li>Length: 60
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.4457912107669389
 <li>BranchCoverage: 0.11

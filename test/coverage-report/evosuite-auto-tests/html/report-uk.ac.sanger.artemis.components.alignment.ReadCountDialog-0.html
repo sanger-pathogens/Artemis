@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.components.alignment.ReadCountDialog
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.components.alignment.ReadCountDialog: 0.49250994103935275</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.components.alignment.ReadCountDialog: 0.26738824900589603</ul>
 <ul>
-<li>129.1499999911835 fitness evaluations, 0 generations, null statements, 2 tests.
+<li>235.13807189542482 fitness evaluations, 0 generations, null statements, 2 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,20 +35,12 @@ uk.ac.sanger.artemis.components.alignment.ReadCountDialog
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Key key0 = new Key(&quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(1185);
-<span class="nocode"><a name="3">  3: </a></span>Location location0 = new Location(range0);
-<span class="nocode"><a name="4">  4: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
-<span class="nocode"><a name="5">  5: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
-<span class="nocode"><a name="6">  6: </a></span>DatabaseInferredFeature databaseInferredFeature0 = new DatabaseInferredFeature(key0, location0, qualifierVector0, chadoCanonicalGene0);
-<span class="nocode"><a name="7">  7: </a></span>Feature feature0 = new Feature(databaseInferredFeature0);
-<span class="nocode"><a name="8">  8: </a></span>ReadCountDialog.getFeatureName(feature0);
-<span class="nocode"><a name="9">  9: </a></span>ReadCountDialog.getFeatureName((Feature) null);
+<span class="nocode"><a name="1">  1: </a></span>ReadCountDialog.getFeatureName((Feature) null);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Box box0 = Box.createHorizontalBox();
-<span class="nocode"><a name="2">  2: </a></span>ReadCountDialog readCountDialog0 = new ReadCountDialog((JFrame) null, &quot;HDrT&quot;, (FeatureDisplay) null, box0);
+<span class="nocode"><a name="1">  1: </a></span>Box box0 = Box.createVerticalBox();
+<span class="nocode"><a name="2">  2: </a></span>ReadCountDialog readCountDialog0 = new ReadCountDialog((JFrame) null, &quot;&quot;, (FeatureDisplay) null, box0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -62,12 +54,12 @@ uk.ac.sanger.artemis.components.alignment.ReadCountDialog
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.alignment.ReadCountDialog
 <li>Size: 2
-<li>Length: 11
+<li>Length: 3
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.49250994103935275
-<li>BranchCoverage: 0.4117647058823529
+<li>Coverage: 0.26738824900589603
+<li>BranchCoverage: 0.14705882352941177
 <li>MethodCoverage: 0.6666666666666666
-<li>OutputCoverage: 0.16666666666666666
+<li>OutputCoverage: 0.0
 </ul></div>
 </div>
 <p><br><a href="../report-generation.html">Back to Overview</a></p>

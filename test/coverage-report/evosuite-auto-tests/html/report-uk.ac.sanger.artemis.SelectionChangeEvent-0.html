@@ -36,27 +36,25 @@ uk.ac.sanger.artemis.SelectionChangeEvent
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Object object0 = new Object();
-<span class="nocode"><a name="2">  2: </a></span>SelectionChangeEvent selectionChangeEvent0 = new SelectionChangeEvent(object0, 0);
+<span class="nocode"><a name="2">  2: </a></span>SelectionChangeEvent selectionChangeEvent0 = new SelectionChangeEvent(object0, (-1));
 <span class="nocode"><a name="3">  3: </a></span>int int0 = selectionChangeEvent0.getType();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, int0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-1), int0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SelectionChangeEvent selectionChangeEvent0 = new SelectionChangeEvent((Object) null, 1);
+<span class="nocode"><a name="1">  1: </a></span>SelectionChangeEvent selectionChangeEvent0 = new SelectionChangeEvent((Object) null, 0);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Object object0 = new Object();
-<span class="nocode"><a name="2">  2: </a></span>SelectionChangeEvent selectionChangeEvent0 = new SelectionChangeEvent(object0, (-3501));
-<span class="nocode"><a name="3">  3: </a></span>int int0 = selectionChangeEvent0.getType();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals((-3501), int0);
+<span class="nocode"><a name="1">  1: </a></span>SelectionChangeEvent selectionChangeEvent0 = new SelectionChangeEvent(&quot;C_Cyn|g&quot;, 1028);
+<span class="nocode"><a name="2">  2: </a></span>int int0 = selectionChangeEvent0.getType();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(1028, int0);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Object object0 = new Object();
-<span class="nocode"><a name="2">  2: </a></span>SelectionChangeEvent selectionChangeEvent0 = new SelectionChangeEvent(object0, 1);
-<span class="nocode"><a name="3">  3: </a></span>int int0 = selectionChangeEvent0.getType();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(1, int0);
+<span class="nocode"><a name="1">  1: </a></span>SelectionChangeEvent selectionChangeEvent0 = new SelectionChangeEvent(&quot;&quot;, 0);
+<span class="nocode"><a name="2">  2: </a></span>int int0 = selectionChangeEvent0.getType();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, int0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -70,7 +68,7 @@ uk.ac.sanger.artemis.SelectionChangeEvent
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.SelectionChangeEvent
 <li>Size: 4
-<li>Length: 10
+<li>Length: 8
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 1.0
 <li>BranchCoverage: 1.0

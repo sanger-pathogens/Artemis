@@ -64,12 +64,14 @@ public class ReferenceSource implements CRAMReferenceSource {
 	private static List<PathPattern> refPatterns = new ArrayList<PathPattern>();
 
 	static {
-		if (REF_PATH == null)
-			REF_PATH = "http://www.ebi.ac.uk/ena/cram/md5/%s";
+		// Next line changed by kp11
+		if (REF_PATH == null || REF_PATH.trim().length() == 0)
+			REF_PATH = "https://www.ebi.ac.uk/ena/cram/md5/%s";
 
-		if (REF_CACHE != null)
+		// Next line changed by kp11
+		if (REF_CACHE != null && REF_CACHE.trim().length() > 0)
 			refPatterns.add(new PathPattern(REF_CACHE));
-		for (String s : REF_PATH.split("(?i)(?<!(http|ftp)):")) {
+		for (String s : REF_PATH.split("(?i)(?<!(https|ftp)):")) {
 			refPatterns.add(new PathPattern(s));
 		}
 

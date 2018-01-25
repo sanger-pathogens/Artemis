@@ -37,104 +37,104 @@ uk.ac.sanger.artemis.chado.FeatureForUpdatingResidues
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FeatureForUpdatingResidues featureForUpdatingResidues0 = new FeatureForUpdatingResidues();
 <span class="nocode"><a name="2">  2: </a></span>int int0 = featureForUpdatingResidues0.getLength();
-<span class="nocode"><a name="3">  3: </a></span>assertFalse(featureForUpdatingResidues0.isResidueUpdate());
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, int0);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, int0);
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(featureForUpdatingResidues0.isResidueUpdate());
 </pre>
 <h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FeatureForUpdatingResidues featureForUpdatingResidues0 = new FeatureForUpdatingResidues();
+<span class="nocode"><a name="2">  2: </a></span>featureForUpdatingResidues0.setNewSubSequence(&quot;$_eTDN?wFMw_S(Ag&quot;);
+<span class="nocode"><a name="3">  3: </a></span>featureForUpdatingResidues0.getNewSubSequence();
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(featureForUpdatingResidues0.isResidueUpdate());
+</pre>
+<h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FeatureForUpdatingResidues featureForUpdatingResidues0 = new FeatureForUpdatingResidues();
 <span class="nocode"><a name="2">  2: </a></span>featureForUpdatingResidues0.getNewSubSequence();
 <span class="nocode"><a name="3">  3: </a></span>assertFalse(featureForUpdatingResidues0.isResidueUpdate());
 </pre>
-<h3>Test case 3</h3>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FeatureForUpdatingResidues featureForUpdatingResidues0 = new FeatureForUpdatingResidues();
+<span class="nocode"><a name="2">  2: </a></span>featureForUpdatingResidues0.setLength(42);
+<span class="nocode"><a name="3">  3: </a></span>int int0 = featureForUpdatingResidues0.getLength();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(42, int0);
+</pre>
+<h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FeatureForUpdatingResidues featureForUpdatingResidues0 = new FeatureForUpdatingResidues();
 <span class="nocode"><a name="2">  2: </a></span>int int0 = featureForUpdatingResidues0.getEndBase();
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, int0);
-<span class="nocode"><a name="4">  4: </a></span>assertFalse(featureForUpdatingResidues0.isResidueUpdate());
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(featureForUpdatingResidues0.isResidueUpdate());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, int0);
 </pre>
-<h3>Test case 4</h3>
+<h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FeatureForUpdatingResidues featureForUpdatingResidues0 = new FeatureForUpdatingResidues();
 <span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = featureForUpdatingResidues0.isResidueUpdate();
 <span class="nocode"><a name="3">  3: </a></span>assertFalse(boolean0);
 </pre>
-<h3>Test case 5</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FeatureForUpdatingResidues featureForUpdatingResidues0 = new FeatureForUpdatingResidues();
-<span class="nocode"><a name="2">  2: </a></span>int int0 = featureForUpdatingResidues0.getBasesToEnd();
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, int0);
-<span class="nocode"><a name="4">  4: </a></span>assertFalse(featureForUpdatingResidues0.isResidueUpdate());
-</pre>
-<h3>Test case 6</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FeatureForUpdatingResidues featureForUpdatingResidues0 = new FeatureForUpdatingResidues();
-<span class="nocode"><a name="2">  2: </a></span>featureForUpdatingResidues0.setBasesToEnd(267);
-<span class="nocode"><a name="3">  3: </a></span>int int0 = featureForUpdatingResidues0.getBasesToEnd();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(267, int0);
-</pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FeatureForUpdatingResidues featureForUpdatingResidues0 = new FeatureForUpdatingResidues();
-<span class="nocode"><a name="2">  2: </a></span>int int0 = featureForUpdatingResidues0.getStartBase();
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, int0);
-<span class="nocode"><a name="4">  4: </a></span>assertFalse(featureForUpdatingResidues0.isResidueUpdate());
+<span class="nocode"><a name="2">  2: </a></span>int int0 = featureForUpdatingResidues0.getBasesToEnd();
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(featureForUpdatingResidues0.isResidueUpdate());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, int0);
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FeatureForUpdatingResidues featureForUpdatingResidues0 = new FeatureForUpdatingResidues();
-<span class="nocode"><a name="2">  2: </a></span>featureForUpdatingResidues0.setBasesToEnd((-1664));
-<span class="nocode"><a name="3">  3: </a></span>int int0 = featureForUpdatingResidues0.getBasesToEnd();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals((-1664), int0);
+<span class="nocode"><a name="2">  2: </a></span>featureForUpdatingResidues0.setEndBase((-719));
+<span class="nocode"><a name="3">  3: </a></span>int int0 = featureForUpdatingResidues0.getEndBase();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-719), int0);
 </pre>
 <h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FeatureForUpdatingResidues featureForUpdatingResidues0 = new FeatureForUpdatingResidues();
-<span class="nocode"><a name="2">  2: </a></span>featureForUpdatingResidues0.setEndBase((-1280));
-<span class="nocode"><a name="3">  3: </a></span>int int0 = featureForUpdatingResidues0.getEndBase();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals((-1280), int0);
+<span class="nocode"><a name="2">  2: </a></span>int int0 = featureForUpdatingResidues0.getStartBase();
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(featureForUpdatingResidues0.isResidueUpdate());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, int0);
 </pre>
 <h3>Test case 10</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FeatureForUpdatingResidues featureForUpdatingResidues0 = new FeatureForUpdatingResidues();
-<span class="nocode"><a name="2">  2: </a></span>featureForUpdatingResidues0.setEndBase(2924);
-<span class="nocode"><a name="3">  3: </a></span>int int0 = featureForUpdatingResidues0.getEndBase();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(2924, int0);
+<span class="nocode"><a name="2">  2: </a></span>featureForUpdatingResidues0.setBasesToEnd((-3257));
+<span class="nocode"><a name="3">  3: </a></span>int int0 = featureForUpdatingResidues0.getBasesToEnd();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-3257), int0);
 </pre>
 <h3>Test case 11</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FeatureForUpdatingResidues featureForUpdatingResidues0 = new FeatureForUpdatingResidues();
-<span class="nocode"><a name="2">  2: </a></span>featureForUpdatingResidues0.setLength((-1202));
-<span class="nocode"><a name="3">  3: </a></span>int int0 = featureForUpdatingResidues0.getLength();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals((-1202), int0);
+<span class="nocode"><a name="2">  2: </a></span>featureForUpdatingResidues0.setBasesToEnd(32);
+<span class="nocode"><a name="3">  3: </a></span>int int0 = featureForUpdatingResidues0.getBasesToEnd();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(32, int0);
 </pre>
 <h3>Test case 12</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FeatureForUpdatingResidues featureForUpdatingResidues0 = new FeatureForUpdatingResidues();
-<span class="nocode"><a name="2">  2: </a></span>featureForUpdatingResidues0.setLength(525);
-<span class="nocode"><a name="3">  3: </a></span>int int0 = featureForUpdatingResidues0.getLength();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(525, int0);
+<span class="nocode"><a name="2">  2: </a></span>featureForUpdatingResidues0.setEndBase(13);
+<span class="nocode"><a name="3">  3: </a></span>int int0 = featureForUpdatingResidues0.getEndBase();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(13, int0);
 </pre>
 <h3>Test case 13</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FeatureForUpdatingResidues featureForUpdatingResidues0 = new FeatureForUpdatingResidues();
+<span class="nocode"><a name="2">  2: </a></span>featureForUpdatingResidues0.setLength((-1));
+<span class="nocode"><a name="3">  3: </a></span>int int0 = featureForUpdatingResidues0.getLength();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-1), int0);
+</pre>
+<h3>Test case 14</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FeatureForUpdatingResidues featureForUpdatingResidues0 = new FeatureForUpdatingResidues();
 <span class="nocode"><a name="2">  2: </a></span>featureForUpdatingResidues0.setNewSubSequence(&quot;&quot;);
 <span class="nocode"><a name="3">  3: </a></span>featureForUpdatingResidues0.getNewSubSequence();
 <span class="nocode"><a name="4">  4: </a></span>assertFalse(featureForUpdatingResidues0.isResidueUpdate());
 </pre>
-<h3>Test case 14</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FeatureForUpdatingResidues featureForUpdatingResidues0 = new FeatureForUpdatingResidues();
-<span class="nocode"><a name="2">  2: </a></span>featureForUpdatingResidues0.setNewSubSequence(&quot;a(OX((b+$RE]^K:&quot;);
-<span class="nocode"><a name="3">  3: </a></span>featureForUpdatingResidues0.getNewSubSequence();
-<span class="nocode"><a name="4">  4: </a></span>assertFalse(featureForUpdatingResidues0.isResidueUpdate());
-</pre>
 <h3>Test case 15</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FeatureForUpdatingResidues featureForUpdatingResidues0 = new FeatureForUpdatingResidues();
-<span class="nocode"><a name="2">  2: </a></span>featureForUpdatingResidues0.setStartBase((-1280));
+<span class="nocode"><a name="2">  2: </a></span>featureForUpdatingResidues0.setStartBase((-1692));
 <span class="nocode"><a name="3">  3: </a></span>int int0 = featureForUpdatingResidues0.getStartBase();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals((-1280), int0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-1692), int0);
 </pre>
 <h3>Test case 16</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">

@@ -37,9 +37,10 @@ uk.ac.sanger.artemis.ExternalProgramMonitor
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Process process0 = mock(Process.class, new ViolatedAssumptionAnswer());
 <span class="nocode"><a name="2">  2: </a></span>LogViewer logViewer0 = new LogViewer();
-<span class="nocode"><a name="3">  3: </a></span>ProcessMonitor processMonitor0 = new ProcessMonitor(process0, &quot;&quot;, logViewer0);
-<span class="nocode"><a name="4">  4: </a></span>processMonitor0.addExternalProgramListener((ExternalProgramListener) null);
-<span class="nocode"><a name="5">  5: </a></span>assertFalse(processMonitor0.isDaemon());
+<span class="nocode"><a name="3">  3: </a></span>ProcessMonitor processMonitor0 = new ProcessMonitor(process0, &quot;Q&quot;, logViewer0);
+<span class="nocode"><a name="4">  4: </a></span>ExternalProgramListener externalProgramListener0 = mock(ExternalProgramListener.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="5">  5: </a></span>processMonitor0.addExternalProgramListener(externalProgramListener0);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, processMonitor0.countStackFrames());
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -53,7 +54,7 @@ uk.ac.sanger.artemis.ExternalProgramMonitor
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.ExternalProgramMonitor
 <li>Size: 1
-<li>Length: 4
+<li>Length: 5
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 1.0
 <li>BranchCoverage: 1.0

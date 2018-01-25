@@ -23,7 +23,7 @@ uk.ac.sanger.artemis.components.RunBlastAtNCBI
 <br><br><h2 class=title>Summary</h2>
 <ul><li>Target class: uk.ac.sanger.artemis.components.RunBlastAtNCBI: 0.606488841618152</ul>
 <ul>
-<li>159.23305068758063 fitness evaluations, 0 generations, null statements, 9 tests.
+<li>159.23305084449603 fitness evaluations, 0 generations, null statements, 8 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,45 +35,40 @@ uk.ac.sanger.artemis.components.RunBlastAtNCBI
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>String string0 = RunBlastAtNCBI.constructRequest(&quot;&quot;, &quot;I%:C&quot;, &quot;&quot;, &quot;&quot;, &quot;2RC[z)V&quot;, &quot;I%:C&quot;, &quot;I%:C&quot;, &quot;I%:C&quot;, &quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;CMD=Put&amp;QUERY=I%25%3AC&amp;DATABASE=&amp;HITLIST_SIZE=&amp;FILTER=2RC%5Bz%29V&amp;EXPECT=I%25%3AC&amp;FORMAT_TYPE=HTML&amp;PROGRAM=&amp;CLIENT=web&amp;SERVICE=I%25%3AC&amp;GAPCOSTS=I%25%3AC+&quot;, string0);
+<span class="nocode"><a name="1">  1: </a></span>String string0 = RunBlastAtNCBI.constructRequest(&quot;Human Repeats&quot;, &quot;Human Repeats&quot;, &quot;No reference allele found in VariantContext&quot;, &quot;&quot;, &quot;&quot;, &quot;No reference allele found in VariantContext&quot;, &quot;No reference allele found in VariantContext&quot;, &quot;&quot;, (String) null);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;CMD=Put&amp;QUERY=Human+Repeats&amp;DATABASE=No+reference+allele+found+in+VariantContext&amp;HITLIST_SIZE=&amp;FILTER=&amp;EXPECT=No+reference+allele+found+in+VariantContext&amp;FORMAT_TYPE=HTML&amp;PROGRAM=Human+Repeats&amp;CLIENT=web&amp;SERVICE=No+reference+allele+found+in+VariantContext&amp;GAPCOSTS=+null&quot;, string0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RunBlastAtNCBI.setData(&quot;]8^AA^&quot;, &quot;hp]Y4&quot;);
+<span class="nocode"><a name="1">  1: </a></span>RunBlastAtNCBI.setData(&quot;&quot;, &quot;&quot;);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RunBlastAtNCBI.setData(&quot;blastn&quot;, &quot;]8^AAg^&quot;);
+<span class="nocode"><a name="1">  1: </a></span>RunBlastAtNCBI.setData(&quot;blastn&quot;, &quot;blastn&quot;);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RunBlastAtNCBI.constructRequest(&quot;8`?}Bc+fG_DZ&quot;, &quot;8`?}Bc+fG_DZ&quot;, &quot;&quot;, &quot;500&quot;, (String) null, &quot;N{&gt;PT\&quot;qT_+Qorrt&quot;, (String) null, &quot;&quot;, &quot;&quot;);
+<span class="nocode"><a name="1">  1: </a></span>String string0 = RunBlastAtNCBI.constructRequest(&quot;Expect value&quot;, &quot;htsjdk.variant.variantcontext.VariantContext$Type&quot;, &quot;Put&quot;, &quot;htsjdk.variant.variantcontext.VariantContext$Type&quot;, (String) null, &quot;Q&quot;, &quot;wWm_FN3~0&quot;, &quot;CLIENT&quot;, &quot;DATABASE&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;CMD=Put&amp;QUERY=htsjdk.variant.variantcontext.VariantContext%24Type&amp;DATABASE=Put&amp;HITLIST_SIZE=htsjdk.variant.variantcontext.VariantContext%24Type&amp;EXPECT=Q&amp;FORMAT_TYPE=HTML&amp;PROGRAM=Expect+value&amp;CLIENT=web&amp;SERVICE=wWm_FN3%7E0&amp;GAPCOSTS=CLIENT+DATABASE&quot;, string0);
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>String string0 = RunBlastAtNCBI.constructRequest(&quot;megablast&quot;, &quot;megablast&quot;, &quot;megablast&quot;, &quot;megablast&quot;, &quot;megablast&quot;, &quot;megablast&quot;, &quot;megablast&quot;, &quot;megablast&quot;, (String) null);
-<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;CMD=Put&amp;QUERY=megablast&amp;DATABASE=megablast&amp;HITLIST_SIZE=megablast&amp;FILTER=megablast&amp;EXPECT=megablast&amp;FORMAT_TYPE=HTML&amp;PROGRAM=megablast&amp;CLIENT=web&amp;SERVICE=megablast&amp;MEGABLAST=yes&quot;, string0);
+<span class="nocode"><a name="1">  1: </a></span>String string0 = RunBlastAtNCBI.constructRequest(&quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;a*w5[icSQ+cvp*x^&quot;, &quot;&quot;, &quot;&quot;, &quot;megablast&quot;, &quot;gUMDi%M&quot;, &quot;Hw~,8T!Z!k-t:&lt;}M&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;CMD=Put&amp;QUERY=&amp;DATABASE=&amp;HITLIST_SIZE=a*w5%5BicSQ%2Bcvp*x%5E&amp;FILTER=&amp;EXPECT=&amp;FORMAT_TYPE=HTML&amp;PROGRAM=&amp;CLIENT=web&amp;SERVICE=megablast&amp;MEGABLAST=yes&quot;, string0);
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RunBlastAtNCBI.setData((String) null, &quot;e`2qt7:1n&quot;);
+<span class="nocode"><a name="1">  1: </a></span>RunBlastAtNCBI.constructRequest(&quot;) cannot be cast to Compilable. Do you use the SUN/Oracle Java Runtime ?&quot;, &quot;) cannot be cast to Compilable. Do you use the SUN/Oracle Java Runtime ?&quot;, (String) null, &quot;) cannot be cast to Compilable. Do you use the SUN/Oracle Java Runtime ?&quot;, &quot;,&quot;, &quot;#&quot;, &quot;#&quot;, (String) null, &quot;,&quot;);
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RunBlastAtNCBI runBlastAtNCBI0 = new RunBlastAtNCBI(&quot;1Kf0&quot;);
-<span class="nocode"><a name="2">  2: </a></span>runBlastAtNCBI0.run();
-<span class="nocode"><a name="3">  3: </a></span>assertFalse(runBlastAtNCBI0.isInterrupted());
+<span class="nocode"><a name="1">  1: </a></span>RunBlastAtNCBI.setData((String) null, (String) null);
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>String string0 = RunBlastAtNCBI.constructRequest(&quot;]8^AAg^&quot;, &quot;1Kf0&quot;, &quot;1Kf0&quot;, &quot;1Kf0&quot;, &quot;1Kf0&quot;, &quot;&quot;, &quot;]8^AAg^&quot;, &quot;1Kf0&quot;, &quot;1Kf0&quot;);
-<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;CMD=Put&amp;QUERY=1Kf0&amp;DATABASE=1Kf0&amp;HITLIST_SIZE=1Kf0&amp;FILTER=1Kf0&amp;EXPECT=&amp;FORMAT_TYPE=HTML&amp;PROGRAM=%5D8%5EAAg%5E&amp;CLIENT=web&amp;SERVICE=%5D8%5EAAg%5E&amp;GAPCOSTS=1Kf0+1Kf0&quot;, string0);
-</pre>
-<h3>Test case 9</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>String string0 = RunBlastAtNCBI.constructRequest(&quot;Human Repeats&quot;, &quot;Human Repeats&quot;, &quot;Human Repeats&quot;, &quot;Human Repeats&quot;, &quot;Human Repeats&quot;, &quot;Human Repeats&quot;, &quot;Human Repeats&quot;, &quot;Tb+S[%;Xle1\&quot;a|vt1U0&quot;, &quot;Tb+S[%;Xle1\&quot;a|vt1U0&quot;);
-<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;CMD=Put&amp;QUERY=Human+Repeats&amp;DATABASE=Human+Repeats&amp;HITLIST_SIZE=Human+Repeats&amp;FILTER=Human+Repeats&amp;EXPECT=Human+Repeats&amp;FORMAT_TYPE=HTML&amp;PROGRAM=Human+Repeats&amp;CLIENT=web&amp;SERVICE=Human+Repeats&amp;GAPCOSTS=Tb%2BS%5B%25%3BXle1%22a%7Cvt1U0+Tb%2BS%5B%25%3BXle1%22a%7Cvt1U0&quot;, string0);
+<span class="nocode"><a name="1">  1: </a></span>RunBlastAtNCBI runBlastAtNCBI0 = new RunBlastAtNCBI(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>runBlastAtNCBI0.run();
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(runBlastAtNCBI0.isDaemon());
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -86,8 +81,8 @@ uk.ac.sanger.artemis.components.RunBlastAtNCBI
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.RunBlastAtNCBI
-<li>Size: 9
-<li>Length: 10
+<li>Size: 8
+<li>Length: 9
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.606488841618152
 <li>BranchCoverage: 0.375

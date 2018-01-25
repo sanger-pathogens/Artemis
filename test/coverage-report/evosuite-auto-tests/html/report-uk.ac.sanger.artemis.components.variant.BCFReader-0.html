@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.components.variant.BCFReader
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.components.variant.BCFReader: 0.14647329414771276</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.components.variant.BCFReader: 0.14858764485077314</ul>
 <ul>
-<li>1829.195951417004 fitness evaluations, 0 generations, null statements, 4 tests.
+<li>1821.1959016393444 fitness evaluations, 0 generations, null statements, 4 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,11 +35,11 @@ uk.ac.sanger.artemis.components.variant.BCFReader
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>BCFReader bCFReader0 = new BCFReader(&quot;ftp:&quot;);
+<span class="nocode"><a name="1">  1: </a></span>BCFReader bCFReader0 = new BCFReader(&quot;ftp:gw$aRKzJFodD8u-pR&quot;);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>BCFReader bCFReader0 = new BCFReader(&quot;http:k&quot;);
+<span class="nocode"><a name="1">  1: </a></span>BCFReader bCFReader0 = new BCFReader(&quot;httpft:p^&quot;);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
@@ -47,7 +47,11 @@ uk.ac.sanger.artemis.components.variant.BCFReader
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>BCFReader bCFReader0 = new BCFReader(&quot;ftp&quot;);
+<span class="nocode"><a name="1">  1: </a></span>EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(&quot;/Users/kp11/workspace/applications/Artemis/test/.bci&quot;);
+<span class="nocode"><a name="2">  2: </a></span>byte[] byteArray0 = new byte[1];
+<span class="nocode"><a name="3">  3: </a></span>FileSystemHandling.shouldThrowIOException(evoSuiteFile0);
+<span class="nocode"><a name="4">  4: </a></span>FileSystemHandling.appendDataToFile(evoSuiteFile0, byteArray0);
+<span class="nocode"><a name="5">  5: </a></span>BCFReader bCFReader0 = new BCFReader(&quot;&quot;);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -61,9 +65,9 @@ uk.ac.sanger.artemis.components.variant.BCFReader
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.variant.BCFReader
 <li>Size: 4
-<li>Length: 4
+<li>Length: 8
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.14647329414771276
+<li>Coverage: 0.14858764485077314
 <li>BranchCoverage: 0.023255813953488372
 <li>MethodCoverage: 0.07142857142857142
 <li>OutputCoverage: 0.0

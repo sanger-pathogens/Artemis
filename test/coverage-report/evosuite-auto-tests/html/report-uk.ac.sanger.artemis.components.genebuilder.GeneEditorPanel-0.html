@@ -23,7 +23,7 @@ uk.ac.sanger.artemis.components.genebuilder.GeneEditorPanel
 <br><br><h2 class=title>Summary</h2>
 <ul><li>Target class: uk.ac.sanger.artemis.components.genebuilder.GeneEditorPanel: 0.3587056326026914</ul>
 <ul>
-<li>176.06060606060606 fitness evaluations, 0 generations, null statements, 13 tests.
+<li>176.0772727272727 fitness evaluations, 0 generations, null statements, 11 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,71 +35,61 @@ uk.ac.sanger.artemis.components.genebuilder.GeneEditorPanel
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>JSplitPane jSplitPane0 = new JSplitPane();
-<span class="nocode"><a name="2">  2: </a></span>GeneEditorPanel.addLightSeparator(jSplitPane0);
+<span class="nocode"><a name="1">  1: </a></span>GeneEditorPanel.addLightSeparator((JComponent) null);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>JLayer&lt;ScrollPane&gt; jLayer0 = new JLayer&lt;ScrollPane&gt;();
+<span class="nocode"><a name="1">  1: </a></span>JLayer&lt;List&gt; jLayer0 = new JLayer&lt;List&gt;();
 <span class="nocode"><a name="2">  2: </a></span>GeneEditorPanel.addDarkSeparator(jLayer0);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>JLayer&lt;ScrollPane&gt; jLayer0 = new JLayer&lt;ScrollPane&gt;();
-<span class="nocode"><a name="2">  2: </a></span>CardLayout cardLayout0 = new CardLayout((-975), (-975));
-<span class="nocode"><a name="3">  3: </a></span>JPanel jPanel0 = new JPanel(cardLayout0, false);
-<span class="nocode"><a name="4">  4: </a></span>OpenSectionButton openSectionButton0 = GeneEditorPanel.addOpenClosePanel((String) null, jLayer0, jPanel0, (String) null);
-<span class="nocode"><a name="5">  5: </a></span>assertFalse(openSectionButton0.isFocusTraversalPolicyProvider());
+<span class="nocode"><a name="1">  1: </a></span>JSeparator jSeparator0 = new JSeparator();
+<span class="nocode"><a name="2">  2: </a></span>JPanel jPanel0 = new JPanel();
+<span class="nocode"><a name="3">  3: </a></span>OpenSectionButton openSectionButton0 = GeneEditorPanel.addOpenClosePanel(&quot;7&quot;, jSeparator0, jPanel0, (String) null);
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(openSectionButton0.isFocusTraversalPolicySet());
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Dimension dimension0 = new Dimension();
-<span class="nocode"><a name="2">  2: </a></span>Box.Filler box_Filler0 = new Box.Filler(dimension0, dimension0, dimension0);
-<span class="nocode"><a name="3">  3: </a></span>JLayer&lt;Choice&gt; jLayer0 = new JLayer&lt;Choice&gt;((Choice) null);
-<span class="nocode"><a name="4">  4: </a></span>JPanel jPanel0 = jLayer0.getGlassPane();
-<span class="nocode"><a name="5">  5: </a></span>OpenSectionButton openSectionButton0 = GeneEditorPanel.addOpenClosePanel(&quot;&quot;, box_Filler0, jPanel0, &quot;&quot;);
-<span class="nocode"><a name="6">  6: </a></span>assertFalse(openSectionButton0.isFocusTraversalPolicyProvider());
+<span class="nocode"><a name="1">  1: </a></span>JLayeredPane jLayeredPane0 = new JLayeredPane();
+<span class="nocode"><a name="2">  2: </a></span>GeneEditorPanel.getSeparator(jLayeredPane0, true);
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>JDesktopPane jDesktopPane0 = new JDesktopPane();
-<span class="nocode"><a name="2">  2: </a></span>GeneEditorPanel.getSeparator(jDesktopPane0, true);
+<span class="nocode"><a name="1">  1: </a></span>GeneEditorPanel.getSeparator((JComponent) null, false);
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GeneEditorPanel.getSeparator((JComponent) null, false);
+<span class="nocode"><a name="1">  1: </a></span>JFormattedTextField jFormattedTextField0 = new JFormattedTextField();
+<span class="nocode"><a name="2">  2: </a></span>GeneEditorPanel.addDarkSeparator(jFormattedTextField0);
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>JList&lt;FileDialog&gt; jList0 = new JList&lt;FileDialog&gt;();
-<span class="nocode"><a name="2">  2: </a></span>GeneEditorPanel.addDarkSeparator(jList0);
+<span class="nocode"><a name="1">  1: </a></span>GeneEditorPanel.addDarkSeparator((JComponent) null);
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GeneEditorPanel.addDarkSeparator((JComponent) null);
+<span class="nocode"><a name="1">  1: </a></span>JRadioButton jRadioButton0 = new JRadioButton();
+<span class="nocode"><a name="2">  2: </a></span>JPanel jPanel0 = new JPanel();
+<span class="nocode"><a name="3">  3: </a></span>OpenSectionButton openSectionButton0 = GeneEditorPanel.addOpenClosePanel(&quot;Kkb\&quot;wMwS MfH0&amp;&quot;, jRadioButton0, jPanel0, &quot;Kkb\&quot;wMwS MfH0&amp;&quot;);
+<span class="nocode"><a name="4">  4: </a></span>GeneEditorPanel.addLightSeparator(openSectionButton0);
 </pre>
 <h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>JPanel jPanel0 = new JPanel();
-<span class="nocode"><a name="2">  2: </a></span>GeneEditorPanel.addLightSeparator(jPanel0);
+<span class="nocode"><a name="1">  1: </a></span>GeneEditorPanel.addOpenClosePanel(&quot;&quot;, (JComponent) null, (JPanel) null, &quot;&quot;);
 </pre>
 <h3>Test case 10</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GeneEditorPanel.addLightSeparator((JComponent) null);
+<span class="nocode"><a name="1">  1: </a></span>JSplitPane jSplitPane0 = new JSplitPane();
+<span class="nocode"><a name="2">  2: </a></span>GeneEditorPanel.getSeparator(jSplitPane0, false);
 </pre>
 <h3>Test case 11</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>JLayer&lt;Choice&gt; jLayer0 = new JLayer&lt;Choice&gt;((Choice) null);
-<span class="nocode"><a name="2">  2: </a></span>GeneEditorPanel.addLightSeparator(jLayer0);
-</pre>
-<h3>Test case 12</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GeneEditorPanel.addOpenClosePanel(&quot;&quot;, (JComponent) null, (JPanel) null, &quot;(&lt;h8&amp;8o2mLteX&quot;);
-</pre>
-<h3>Test case 13</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>JLayer&lt;ScrollPane&gt; jLayer0 = new JLayer&lt;ScrollPane&gt;();
-<span class="nocode"><a name="2">  2: </a></span>GeneEditorPanel.getSeparator(jLayer0, false);
+<span class="nocode"><a name="1">  1: </a></span>JPasswordField jPasswordField0 = new JPasswordField();
+<span class="nocode"><a name="2">  2: </a></span>JSpinner jSpinner0 = new JSpinner();
+<span class="nocode"><a name="3">  3: </a></span>JSpinner.NumberEditor jSpinner_NumberEditor0 = new JSpinner.NumberEditor(jSpinner0, &quot;ADD&quot;);
+<span class="nocode"><a name="4">  4: </a></span>OpenSectionButton openSectionButton0 = GeneEditorPanel.addOpenClosePanel(&quot;Controlled Vocabulary&quot;, jPasswordField0, jSpinner_NumberEditor0, &quot;&quot;);
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(openSectionButton0.isFocusTraversalPolicySet());
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -112,8 +102,8 @@ uk.ac.sanger.artemis.components.genebuilder.GeneEditorPanel
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.genebuilder.GeneEditorPanel
-<li>Size: 13
-<li>Length: 27
+<li>Size: 11
+<li>Length: 23
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.3587056326026914
 <li>BranchCoverage: 0.21428571428571427

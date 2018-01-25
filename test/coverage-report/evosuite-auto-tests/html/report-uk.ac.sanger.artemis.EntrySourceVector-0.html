@@ -36,80 +36,83 @@ uk.ac.sanger.artemis.EntrySourceVector
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>EntrySourceVector entrySourceVector0 = new EntrySourceVector();
-<span class="nocode"><a name="2">  2: </a></span>InputStreamProgressListener inputStreamProgressListener0 = mock(InputStreamProgressListener.class, new ViolatedAssumptionAnswer());
-<span class="nocode"><a name="3">  3: </a></span>FileDialogEntrySource fileDialogEntrySource0 = new FileDialogEntrySource((JFrame) null, inputStreamProgressListener0);
-<span class="nocode"><a name="4">  4: </a></span>entrySourceVector0.add(fileDialogEntrySource0);
-<span class="nocode"><a name="5">  5: </a></span>FileDialogEntrySource fileDialogEntrySource1 = (FileDialogEntrySource)entrySourceVector0.elementAt(0);
-<span class="nocode"><a name="6">  6: </a></span>assertSame(fileDialogEntrySource1, fileDialogEntrySource0);
-</pre>
-<h3>Test case 2</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>EntrySourceVector entrySourceVector0 = new EntrySourceVector();
 <span class="nocode"><a name="2">  2: </a></span>entrySourceVector0.elementAt(0);
 </pre>
-<h3>Test case 3</h3>
+<h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>EntrySourceVector entrySourceVector0 = new EntrySourceVector();
 <span class="nocode"><a name="2">  2: </a></span>int int0 = entrySourceVector0.size();
 <span class="nocode"><a name="3">  3: </a></span>assertEquals(0, int0);
 </pre>
-<h3>Test case 4</h3>
+<h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>EntrySourceVector entrySourceVector0 = new EntrySourceVector();
 <span class="nocode"><a name="2">  2: </a></span>EntrySourceVector entrySourceVector1 = (EntrySourceVector)entrySourceVector0.clone();
 <span class="nocode"><a name="3">  3: </a></span>assertNotSame(entrySourceVector1, entrySourceVector0);
 </pre>
-<h3>Test case 5</h3>
+<h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>EntrySourceVector entrySourceVector0 = new EntrySourceVector();
 <span class="nocode"><a name="2">  2: </a></span>entrySourceVector0.removeAllElements();
 <span class="nocode"><a name="3">  3: </a></span>assertEquals(0, entrySourceVector0.size());
 </pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EntrySourceVector entrySourceVector0 = new EntrySourceVector();
+<span class="nocode"><a name="2">  2: </a></span>BioJavaEntrySource bioJavaEntrySource0 = new BioJavaEntrySource();
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = entrySourceVector0.removeElement(bioJavaEntrySource0);
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(boolean0);
+</pre>
 <h3>Test case 6</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>EntrySourceVector entrySourceVector0 = new EntrySourceVector();
-<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = entrySourceVector0.removeElement((EntrySource) null);
-<span class="nocode"><a name="3">  3: </a></span>assertFalse(boolean0);
-</pre>
-<h3>Test case 7</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>EntrySourceVector entrySourceVector0 = new EntrySourceVector();
-<span class="nocode"><a name="2">  2: </a></span>entrySourceVector0.add((EntrySource) null);
-<span class="nocode"><a name="3">  3: </a></span>entrySourceVector0.addElement((EntrySource) null);
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(1, entrySourceVector0.size());
-</pre>
-<h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>EntrySourceVector entrySourceVector0 = new EntrySourceVector();
 <span class="nocode"><a name="2">  2: </a></span>entrySourceVector0.addElement((EntrySource) null);
 <span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = entrySourceVector0.contains((EntrySource) null);
-<span class="nocode"><a name="4">  4: </a></span>assertTrue(boolean0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1, entrySourceVector0.size());
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(boolean0);
 </pre>
-<h3>Test case 9</h3>
+<h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>EntrySourceVector entrySourceVector0 = new EntrySourceVector();
 <span class="nocode"><a name="2">  2: </a></span>BioJavaEntrySource bioJavaEntrySource0 = new BioJavaEntrySource();
 <span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = entrySourceVector0.contains(bioJavaEntrySource0);
 <span class="nocode"><a name="4">  4: </a></span>assertFalse(boolean0);
 </pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EntrySourceVector entrySourceVector0 = new EntrySourceVector();
+<span class="nocode"><a name="2">  2: </a></span>BioJavaEntrySource bioJavaEntrySource0 = new BioJavaEntrySource();
+<span class="nocode"><a name="3">  3: </a></span>int int0 = entrySourceVector0.indexOf(bioJavaEntrySource0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-1), int0);
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EntrySourceVector entrySourceVector0 = new EntrySourceVector();
+<span class="nocode"><a name="2">  2: </a></span>entrySourceVector0.add((EntrySource) null);
+<span class="nocode"><a name="3">  3: </a></span>entrySourceVector0.addElement((EntrySource) null);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1, entrySourceVector0.size());
+</pre>
 <h3>Test case 10</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>EntrySourceVector entrySourceVector0 = new EntrySourceVector();
-<span class="nocode"><a name="2">  2: </a></span>int int0 = entrySourceVector0.indexOf((EntrySource) null);
-<span class="nocode"><a name="3">  3: </a></span>assertEquals((-1), int0);
+<span class="nocode"><a name="2">  2: </a></span>InputStreamProgressListener inputStreamProgressListener0 = mock(InputStreamProgressListener.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="3">  3: </a></span>FileDialogEntrySource fileDialogEntrySource0 = new FileDialogEntrySource((JFrame) null, inputStreamProgressListener0);
+<span class="nocode"><a name="4">  4: </a></span>entrySourceVector0.add(fileDialogEntrySource0);
+<span class="nocode"><a name="5">  5: </a></span>FileDialogEntrySource fileDialogEntrySource1 = (FileDialogEntrySource)entrySourceVector0.elementAt(0);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;Filesystem&quot;, fileDialogEntrySource1.getSourceName());
 </pre>
 <h3>Test case 11</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>EntrySourceVector entrySourceVector0 = new EntrySourceVector();
 <span class="nocode"><a name="2">  2: </a></span>BioJavaEntrySource bioJavaEntrySource0 = new BioJavaEntrySource();
-<span class="nocode"><a name="3">  3: </a></span>entrySourceVector0.addElement(bioJavaEntrySource0);
+<span class="nocode"><a name="3">  3: </a></span>entrySourceVector0.add(bioJavaEntrySource0);
 <span class="nocode"><a name="4">  4: </a></span>BioJavaEntrySource bioJavaEntrySource1 = (BioJavaEntrySource)entrySourceVector0.elementAt(0);
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;BioJava&quot;, bioJavaEntrySource1.getSourceName());
+<span class="nocode"><a name="5">  5: </a></span>assertSame(bioJavaEntrySource1, bioJavaEntrySource0);
 </pre>
 <h3>Test case 12</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>EntrySourceVector entrySourceVector0 = new EntrySourceVector();
-<span class="nocode"><a name="2">  2: </a></span>entrySourceVector0.addElement((EntrySource) null);
+<span class="nocode"><a name="2">  2: </a></span>entrySourceVector0.add((EntrySource) null);
 <span class="nocode"><a name="3">  3: </a></span>EntrySource entrySource0 = entrySourceVector0.elementAt(0);
 <span class="nocode"><a name="4">  4: </a></span>assertNull(entrySource0);
 </pre>
@@ -117,32 +120,33 @@ uk.ac.sanger.artemis.EntrySourceVector
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>EntrySourceVector entrySourceVector0 = new EntrySourceVector();
 <span class="nocode"><a name="2">  2: </a></span>BioJavaEntrySource bioJavaEntrySource0 = new BioJavaEntrySource();
-<span class="nocode"><a name="3">  3: </a></span>entrySourceVector0.add(bioJavaEntrySource0);
-<span class="nocode"><a name="4">  4: </a></span>entrySourceVector0.addElement((EntrySource) null);
-<span class="nocode"><a name="5">  5: </a></span>int int0 = entrySourceVector0.indexOf((EntrySource) null);
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(1, int0);
+<span class="nocode"><a name="3">  3: </a></span>BioJavaEntrySource bioJavaEntrySource1 = new BioJavaEntrySource();
+<span class="nocode"><a name="4">  4: </a></span>entrySourceVector0.add(bioJavaEntrySource0);
+<span class="nocode"><a name="5">  5: </a></span>entrySourceVector0.add(bioJavaEntrySource1);
+<span class="nocode"><a name="6">  6: </a></span>int int0 = entrySourceVector0.indexOf(bioJavaEntrySource1);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(1, int0);
 </pre>
 <h3>Test case 14</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>EntrySourceVector entrySourceVector0 = new EntrySourceVector();
-<span class="nocode"><a name="2">  2: </a></span>entrySourceVector0.addElement((EntrySource) null);
+<span class="nocode"><a name="2">  2: </a></span>entrySourceVector0.add((EntrySource) null);
 <span class="nocode"><a name="3">  3: </a></span>int int0 = entrySourceVector0.indexOf((EntrySource) null);
 <span class="nocode"><a name="4">  4: </a></span>assertEquals(0, int0);
 </pre>
 <h3>Test case 15</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>EntrySourceVector entrySourceVector0 = new EntrySourceVector();
-<span class="nocode"><a name="2">  2: </a></span>entrySourceVector0.addElement((EntrySource) null);
-<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = entrySourceVector0.removeElement((EntrySource) null);
-<span class="nocode"><a name="4">  4: </a></span>assertTrue(boolean0);
+<span class="nocode"><a name="2">  2: </a></span>BioJavaEntrySource bioJavaEntrySource0 = new BioJavaEntrySource();
+<span class="nocode"><a name="3">  3: </a></span>entrySourceVector0.add(bioJavaEntrySource0);
+<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = entrySourceVector0.removeElement(bioJavaEntrySource0);
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(boolean0);
 </pre>
 <h3>Test case 16</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>EntrySourceVector entrySourceVector0 = new EntrySourceVector();
-<span class="nocode"><a name="2">  2: </a></span>BioJavaEntrySource bioJavaEntrySource0 = new BioJavaEntrySource();
-<span class="nocode"><a name="3">  3: </a></span>entrySourceVector0.add(bioJavaEntrySource0);
-<span class="nocode"><a name="4">  4: </a></span>int int0 = entrySourceVector0.size();
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(1, int0);
+<span class="nocode"><a name="2">  2: </a></span>entrySourceVector0.addElement((EntrySource) null);
+<span class="nocode"><a name="3">  3: </a></span>int int0 = entrySourceVector0.size();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1, int0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -156,7 +160,7 @@ uk.ac.sanger.artemis.EntrySourceVector
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.EntrySourceVector
 <li>Size: 16
-<li>Length: 48
+<li>Length: 51
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.9701754385964912
 <li>BranchCoverage: 1.0

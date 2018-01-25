@@ -35,18 +35,19 @@ uk.ac.sanger.artemis.components.WriteMenu
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;&quot;);
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard((String) null);
 <span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
 <span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="4">  4: </a></span>WriteMenu writeMenu0 = new WriteMenu((JFrame) null, selection0, simpleEntryGroup0, &quot;&quot;);
-<span class="nocode"><a name="5">  5: </a></span>assertFalse(writeMenu0.isFocusTraversalPolicySet());
+<span class="nocode"><a name="4">  4: </a></span>WriteMenu writeMenu0 = new WriteMenu((JFrame) null, selection0, simpleEntryGroup0, &quot;tdO].dx,&quot;);
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(writeMenu0.getFocusTraversalKeysEnabled());
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;]i&gt;8sdS~wiNh9&quot;);
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;TDrB&quot;);
 <span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="3">  3: </a></span>WriteMenu writeMenu0 = new WriteMenu((JFrame) null, selection0, (EntryGroup) null);
-<span class="nocode"><a name="4">  4: </a></span>assertFalse(writeMenu0.isFocusTraversalPolicySet());
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="4">  4: </a></span>WriteMenu writeMenu0 = new WriteMenu((JFrame) null, selection0, simpleEntryGroup0);
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(writeMenu0.isFocusTraversalPolicyProvider());
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -60,7 +61,7 @@ uk.ac.sanger.artemis.components.WriteMenu
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.WriteMenu
 <li>Size: 2
-<li>Length: 7
+<li>Length: 8
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.5493898374609035
 <li>BranchCoverage: 0.116751269035533

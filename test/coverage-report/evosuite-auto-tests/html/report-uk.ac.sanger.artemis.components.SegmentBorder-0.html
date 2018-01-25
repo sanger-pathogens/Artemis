@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.components.SegmentBorder
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.components.SegmentBorder: 1.0</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.components.SegmentBorder: 0.9299471797774006</ul>
 <ul>
-<li>0.25 fitness evaluations, 0 generations, null statements, 7 tests.
+<li>29.416666666666668 fitness evaluations, 0 generations, null statements, 5 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,64 +35,50 @@ uk.ac.sanger.artemis.components.SegmentBorder
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenericDocumentType genericDocumentType0 = new GenericDocumentType(&quot;4tU%uQ.'F5m8&quot;, &quot;&quot;, &quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>GenericDOMImplementation genericDOMImplementation0 = (GenericDOMImplementation)GenericDOMImplementation.getDOMImplementation();
-<span class="nocode"><a name="3">  3: </a></span>GenericDocument genericDocument0 = new GenericDocument(genericDocumentType0, genericDOMImplementation0);
-<span class="nocode"><a name="4">  4: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(genericDocument0);
-<span class="nocode"><a name="5">  5: </a></span>SegmentBorder segmentBorder0 = new SegmentBorder(false, false, true, (short)16, 2650, 127, (short)1);
-<span class="nocode"><a name="6">  6: </a></span>segmentBorder0.drawSegmentBorder(sVGGraphics2D0, 0, (short)4);
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(3, SVGGraphics2D.DEFAULT_MAX_GC_OVERRIDES);
+<span class="nocode"><a name="1">  1: </a></span>SegmentBorder segmentBorder0 = new SegmentBorder(false, false, false, (-1521), (-294), 978, (-1521));
+<span class="nocode"><a name="2">  2: </a></span>GenericDocumentType genericDocumentType0 = new GenericDocumentType(&quot;&quot;, &quot;&quot;, &quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>GenericDOMImplementation genericDOMImplementation0 = (GenericDOMImplementation)GenericDOMImplementation.getDOMImplementation();
+<span class="nocode"><a name="4">  4: </a></span>GenericDocument genericDocument0 = new GenericDocument(genericDocumentType0, genericDOMImplementation0);
+<span class="nocode"><a name="5">  5: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(genericDocument0);
+<span class="nocode"><a name="6">  6: </a></span>JList&lt;Label&gt; jList0 = new JList&lt;Label&gt;();
+<span class="nocode"><a name="7">  7: </a></span>DebugGraphics debugGraphics0 = new DebugGraphics(sVGGraphics2D0, jList0);
+<span class="nocode"><a name="8">  8: </a></span>segmentBorder0.drawSegmentBorder(debugGraphics0, 1598, (short)16);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SegmentBorder segmentBorder0 = new SegmentBorder(true, true, true, 0, (-95), 3376, 1);
-<span class="nocode"><a name="2">  2: </a></span>GenericDOMImplementation genericDOMImplementation0 = (GenericDOMImplementation)GenericDOMImplementation.getDOMImplementation();
-<span class="nocode"><a name="3">  3: </a></span>GenericDocument genericDocument0 = new GenericDocument((DocumentType) null, genericDOMImplementation0);
-<span class="nocode"><a name="4">  4: </a></span>SVGGeneratorContext sVGGeneratorContext0 = SVGGeneratorContext.createDefault(genericDocument0);
-<span class="nocode"><a name="5">  5: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(sVGGeneratorContext0, true);
-<span class="nocode"><a name="6">  6: </a></span>segmentBorder0.drawSegmentBorder(sVGGraphics2D0, 3376, 0);
+<span class="nocode"><a name="1">  1: </a></span>SegmentBorder segmentBorder0 = new SegmentBorder(false, false, false, 517, 517, 517, 517);
+<span class="nocode"><a name="2">  2: </a></span>GenericDOMImplementation genericDOMImplementation0 = new GenericDOMImplementation();
+<span class="nocode"><a name="3">  3: </a></span>GenericDocumentType genericDocumentType0 = new GenericDocumentType(&quot;dcjkH4/0)%L61|bQ&quot;, &quot;dcjkH4/0)%L61|bQ&quot;, &quot;Event&quot;);
+<span class="nocode"><a name="4">  4: </a></span>GenericDocument genericDocument0 = (GenericDocument)genericDOMImplementation0.createDocument(&quot;zoomAndPan&quot;, &quot;zoomAndPan&quot;, genericDocumentType0);
+<span class="nocode"><a name="5">  5: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(genericDocument0);
+<span class="nocode"><a name="6">  6: </a></span>segmentBorder0.drawSegmentBorder(sVGGraphics2D0, (-196), 0);
 <span class="nocode"><a name="7">  7: </a></span>assertEquals(3, SVGGraphics2D.DEFAULT_MAX_GC_OVERRIDES);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SegmentBorder segmentBorder0 = new SegmentBorder(true, false, true, (-3193), (-3193), (-215), (-215));
-<span class="nocode"><a name="2">  2: </a></span>GenericDocumentType genericDocumentType0 = new GenericDocumentType((String) null, (String) null, &quot;uk.ac.sanger.artemis.components.SegmentBorder&quot;);
-<span class="nocode"><a name="3">  3: </a></span>GenericDOMImplementation genericDOMImplementation0 = new GenericDOMImplementation();
+<span class="nocode"><a name="1">  1: </a></span>SegmentBorder segmentBorder0 = new SegmentBorder(true, true, true, 140, 140, 140, 0);
+<span class="nocode"><a name="2">  2: </a></span>GenericDocumentType genericDocumentType0 = new GenericDocumentType(&quot;U'f*W&quot;, &quot;U'f*W&quot;, &quot;U'f*W&quot;);
+<span class="nocode"><a name="3">  3: </a></span>GenericDOMImplementation genericDOMImplementation0 = (GenericDOMImplementation)GenericDOMImplementation.getDOMImplementation();
 <span class="nocode"><a name="4">  4: </a></span>GenericDocument genericDocument0 = new GenericDocument(genericDocumentType0, genericDOMImplementation0);
-<span class="nocode"><a name="5">  5: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(genericDocument0);
-<span class="nocode"><a name="6">  6: </a></span>segmentBorder0.drawSegmentBorder(sVGGraphics2D0, (-1493), (short)16);
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(3, SVGGraphics2D.DEFAULT_MAX_GC_OVERRIDES);
+<span class="nocode"><a name="5">  5: </a></span>SVGGeneratorContext sVGGeneratorContext0 = SVGGeneratorContext.createDefault(genericDocument0);
+<span class="nocode"><a name="6">  6: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(sVGGeneratorContext0, true);
+<span class="nocode"><a name="7">  7: </a></span>segmentBorder0.drawSegmentBorder(sVGGraphics2D0, 3, (short)4);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(3, SVGGraphics2D.DEFAULT_MAX_GC_OVERRIDES);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SegmentBorder segmentBorder0 = new SegmentBorder(false, false, false, 848, 848, 848, 848);
-<span class="nocode"><a name="2">  2: </a></span>GenericDocumentType genericDocumentType0 = new GenericDocumentType(&quot;n0dkXjSk+D\u0006]/a,e=p&quot;, &quot;menutext&quot;, &quot;menutext&quot;);
-<span class="nocode"><a name="3">  3: </a></span>GenericDocument genericDocument0 = new GenericDocument(genericDocumentType0, (DOMImplementation) null);
-<span class="nocode"><a name="4">  4: </a></span>SVGGeneratorContext sVGGeneratorContext0 = SVGGeneratorContext.createDefault(genericDocument0);
-<span class="nocode"><a name="5">  5: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(sVGGeneratorContext0, false);
-<span class="nocode"><a name="6">  6: </a></span>segmentBorder0.drawSegmentBorder(sVGGraphics2D0, (short)16, (-2580));
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(3, SVGGraphics2D.DEFAULT_MAX_GC_OVERRIDES);
+<span class="nocode"><a name="1">  1: </a></span>SegmentBorder segmentBorder0 = new SegmentBorder(true, true, true, 513, 513, 513, 513);
+<span class="nocode"><a name="2">  2: </a></span>segmentBorder0.drawSegmentBorder((Graphics) null, 513, 513);
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SegmentBorder segmentBorder0 = new SegmentBorder(false, false, true, (-2606), (-370), 0, (-2606));
-<span class="nocode"><a name="2">  2: </a></span>DebugGraphics debugGraphics0 = new DebugGraphics();
-<span class="nocode"><a name="3">  3: </a></span>segmentBorder0.drawSegmentBorder(debugGraphics0, (-370), 0);
-</pre>
-<h3>Test case 6</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SegmentBorder segmentBorder0 = new SegmentBorder(false, true, false, 2, 2, 2, 2);
-<span class="nocode"><a name="2">  2: </a></span>segmentBorder0.drawSegmentBorder((Graphics) null, 2, 2);
-</pre>
-<h3>Test case 7</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SegmentBorder segmentBorder0 = new SegmentBorder(true, false, true, (-3193), (-3193), (-215), (-215));
-<span class="nocode"><a name="2">  2: </a></span>GenericDocumentType genericDocumentType0 = new GenericDocumentType((String) null, (String) null, &quot;uk.ac.sanger.artemis.components.SegmentBorder&quot;);
+<span class="nocode"><a name="1">  1: </a></span>SegmentBorder segmentBorder0 = new SegmentBorder(true, false, true, (-2011), (-2011), (-619), (-3179));
+<span class="nocode"><a name="2">  2: </a></span>GenericDocumentType genericDocumentType0 = new GenericDocumentType(&quot;&quot;, &quot;,2}Ors&quot;, &quot;&quot;);
 <span class="nocode"><a name="3">  3: </a></span>GenericDOMImplementation genericDOMImplementation0 = new GenericDOMImplementation();
 <span class="nocode"><a name="4">  4: </a></span>GenericDocument genericDocument0 = new GenericDocument(genericDocumentType0, genericDOMImplementation0);
 <span class="nocode"><a name="5">  5: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(genericDocument0);
 <span class="nocode"><a name="6">  6: </a></span>genericDocumentType0.initializeEventSupport();
-<span class="nocode"><a name="7">  7: </a></span>segmentBorder0.drawSegmentBorder(sVGGraphics2D0, (-1493), (short)16);
+<span class="nocode"><a name="7">  7: </a></span>segmentBorder0.drawSegmentBorder(sVGGraphics2D0, 4870, (-520));
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -105,11 +91,11 @@ uk.ac.sanger.artemis.components.SegmentBorder
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.SegmentBorder
-<li>Size: 7
-<li>Length: 36
+<li>Size: 5
+<li>Length: 30
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 1.0
-<li>BranchCoverage: 1.0
+<li>Coverage: 0.9299471797774006
+<li>BranchCoverage: 0.8888888888888888
 <li>MethodCoverage: 1.0
 <li>OutputCoverage: 1.0
 </ul></div>

@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.components.FeatureEdit
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.components.FeatureEdit: 0.19522530761586376</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.components.FeatureEdit: 0.18629673618729234</ul>
 <ul>
-<li>2712.4987244897957 fitness evaluations, 0 generations, null statements, 3 tests.
+<li>2713.4987244897957 fitness evaluations, 0 generations, null statements, 3 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,21 +35,21 @@ uk.ac.sanger.artemis.components.FeatureEdit
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>boolean boolean0 = FeatureEdit.isTabbedView();
-<span class="nocode"><a name="2">  2: </a></span>assertFalse(boolean0);
-</pre>
-<h3>Test case 2</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="3">  3: </a></span>SimpleGotoEventSource simpleGotoEventSource0 = new SimpleGotoEventSource((EntryGroup) null);
-<span class="nocode"><a name="4">  4: </a></span>FeatureEdit featureEdit0 = new FeatureEdit((Feature) null, (EntryGroup) null, selection0, simpleGotoEventSource0, (JFrame) null);
-</pre>
-<h3>Test case 3</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FeatureEdit.setTabbedView(true);
 <span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = FeatureEdit.isTabbedView();
 <span class="nocode"><a name="3">  3: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>boolean boolean0 = FeatureEdit.isTabbedView();
+<span class="nocode"><a name="2">  2: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Bases bases0 = new Bases((Sequence) null);
+<span class="nocode"><a name="2">  2: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="3">  3: </a></span>Selection selection0 = new Selection((Clipboard) null);
+<span class="nocode"><a name="4">  4: </a></span>FeatureEdit featureEdit0 = new FeatureEdit((Feature) null, simpleEntryGroup0, selection0, (GotoEventSource) null, (JFrame) null);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -65,7 +65,7 @@ uk.ac.sanger.artemis.components.FeatureEdit
 <li>Size: 3
 <li>Length: 7
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.19522530761586376
+<li>Coverage: 0.18629673618729234
 <li>BranchCoverage: 0.005089058524173028
 <li>MethodCoverage: 0.21428571428571427
 <li>OutputCoverage: 0.10526315789473684

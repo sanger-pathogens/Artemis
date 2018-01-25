@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.plot.Codon12CorrelationAlgorithm
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.plot.Codon12CorrelationAlgorithm: 0.8548457273255661</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.plot.Codon12CorrelationAlgorithm: 0.7595148575995352</ul>
 <ul>
-<li>128.93333333333334 fitness evaluations, 0 generations, null statements, 17 tests.
+<li>155.02117794486216 fitness evaluations, 0 generations, null statements, 17 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,137 +35,130 @@ uk.ac.sanger.artemis.plot.Codon12CorrelationAlgorithm
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;Hu&quot;);
-<span class="nocode"><a name="2">  2: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(genbankStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
-<span class="nocode"><a name="4">  4: </a></span>Strand strand0 = bases0.getReverseStrand();
-<span class="nocode"><a name="5">  5: </a></span>Codon12CorrelationAlgorithm codon12CorrelationAlgorithm0 = new Codon12CorrelationAlgorithm(strand0);
-<span class="nocode"><a name="6">  6: </a></span>codon12CorrelationAlgorithm0.getMinimumInternal();
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;5&quot;, &quot;5&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="4">  4: </a></span>Codon12CorrelationAlgorithm codon12CorrelationAlgorithm0 = new Codon12CorrelationAlgorithm(strand0);
+<span class="nocode"><a name="5">  5: </a></span>codon12CorrelationAlgorithm0.getAverage();
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;Correlation Scores&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;5&quot;, &quot;5&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
 <span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
 <span class="nocode"><a name="4">  4: </a></span>Codon12CorrelationAlgorithm codon12CorrelationAlgorithm0 = new Codon12CorrelationAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>Float float0 = codon12CorrelationAlgorithm0.getAverage();
+<span class="nocode"><a name="5">  5: </a></span>Float float0 = codon12CorrelationAlgorithm0.getMinimumInternal();
 <span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;Reverse Correlation Scores&quot;, codon12CorrelationAlgorithm0.getAlgorithmName());
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(52.7F, (float)float0, 0.01F);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(0.0F, (float)float0, 0.01F);
 <span class="nocode"><a name="8">  8: </a></span>assertTrue(codon12CorrelationAlgorithm0.scalingFlag());
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
-<span class="nocode"><a name="4">  4: </a></span>Codon12CorrelationAlgorithm codon12CorrelationAlgorithm0 = new Codon12CorrelationAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>int int0 = codon12CorrelationAlgorithm0.getValueCount();
-<span class="nocode"><a name="6">  6: </a></span>assertTrue(codon12CorrelationAlgorithm0.scalingFlag());
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(&quot;Correlation Scores&quot;, codon12CorrelationAlgorithm0.getAlgorithmName());
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(3, int0);
-</pre>
-<h3>Test case 4</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;Hu&quot;);
-<span class="nocode"><a name="2">  2: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(genbankStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
-<span class="nocode"><a name="4">  4: </a></span>Strand strand0 = bases0.getReverseStrand();
-<span class="nocode"><a name="5">  5: </a></span>Codon12CorrelationAlgorithm codon12CorrelationAlgorithm0 = new Codon12CorrelationAlgorithm(strand0);
-<span class="nocode"><a name="6">  6: </a></span>Float float0 = codon12CorrelationAlgorithm0.getMaximumInternal();
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(100.0F, (float)float0, 0.01F);
-<span class="nocode"><a name="8">  8: </a></span>assertTrue(codon12CorrelationAlgorithm0.scalingFlag());
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(&quot;Reverse Correlation Scores&quot;, codon12CorrelationAlgorithm0.getAlgorithmName());
-</pre>
-<h3>Test case 5</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;Hu&quot;);
-<span class="nocode"><a name="2">  2: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(genbankStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
-<span class="nocode"><a name="4">  4: </a></span>Strand strand0 = bases0.getReverseStrand();
-<span class="nocode"><a name="5">  5: </a></span>Codon12CorrelationAlgorithm codon12CorrelationAlgorithm0 = new Codon12CorrelationAlgorithm(strand0);
-<span class="nocode"><a name="6">  6: </a></span>float[] floatArray0 = new float[2];
-<span class="nocode"><a name="7">  7: </a></span>codon12CorrelationAlgorithm0.getValues(1, 429, floatArray0);
-</pre>
-<h3>Test case 6</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;T&quot;);
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;&quot;);
 <span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
 <span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
 <span class="nocode"><a name="4">  4: </a></span>Codon12CorrelationAlgorithm codon12CorrelationAlgorithm0 = new Codon12CorrelationAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>float[] floatArray0 = new float[0];
-<span class="nocode"><a name="6">  6: </a></span>codon12CorrelationAlgorithm0.getValues(1, 1, floatArray0);
+<span class="nocode"><a name="5">  5: </a></span>int int0 = codon12CorrelationAlgorithm0.getValueCount();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;Correlation Scores&quot;, codon12CorrelationAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(3, int0);
+<span class="nocode"><a name="8">  8: </a></span>assertTrue(codon12CorrelationAlgorithm0.scalingFlag());
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Bases bases0 = new Bases((Sequence) null);
+<span class="nocode"><a name="2">  2: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="3">  3: </a></span>Codon12CorrelationAlgorithm codon12CorrelationAlgorithm0 = new Codon12CorrelationAlgorithm(strand0);
+<span class="nocode"><a name="4">  4: </a></span>Float float0 = codon12CorrelationAlgorithm0.getMaximumInternal();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;Reverse Correlation Scores&quot;, codon12CorrelationAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(100.0F, (float)float0, 0.01F);
+<span class="nocode"><a name="7">  7: </a></span>assertTrue(codon12CorrelationAlgorithm0.scalingFlag());
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="4">  4: </a></span>Codon12CorrelationAlgorithm codon12CorrelationAlgorithm0 = new Codon12CorrelationAlgorithm(strand0);
+<span class="nocode"><a name="5">  5: </a></span>codon12CorrelationAlgorithm0.getValues(0, 3663, (float[]) null);
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;IV},^^@Gh&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="4">  4: </a></span>Codon12CorrelationAlgorithm codon12CorrelationAlgorithm0 = new Codon12CorrelationAlgorithm(strand0);
+<span class="nocode"><a name="5">  5: </a></span>float[] floatArray0 = new float[7];
+<span class="nocode"><a name="6">  6: </a></span>codon12CorrelationAlgorithm0.getValues(830, 12, floatArray0);
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
-<span class="nocode"><a name="4">  4: </a></span>Codon12CorrelationAlgorithm codon12CorrelationAlgorithm0 = new Codon12CorrelationAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>fastaStreamSequence0.setFromChar(bases0.letter_index);
-<span class="nocode"><a name="6">  6: </a></span>float[] floatArray0 = new float[17];
-<span class="nocode"><a name="7">  7: </a></span>codon12CorrelationAlgorithm0.getValues(0, 9, floatArray0);
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;DE`Lx1$@]M&quot;);
+<span class="nocode"><a name="2">  2: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
+<span class="nocode"><a name="4">  4: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="5">  5: </a></span>Codon12CorrelationAlgorithm codon12CorrelationAlgorithm0 = new Codon12CorrelationAlgorithm(strand0);
+<span class="nocode"><a name="6">  6: </a></span>float[] floatArray0 = new float[16];
+<span class="nocode"><a name="7">  7: </a></span>codon12CorrelationAlgorithm0.getValues(4, 3975, floatArray0);
 <span class="nocode"><a name="8">  8: </a></span>assertEquals(&quot;Correlation Scores&quot;, codon12CorrelationAlgorithm0.getAlgorithmName());
 <span class="nocode"><a name="9">  9: </a></span>assertTrue(codon12CorrelationAlgorithm0.scalingFlag());
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;Hu&quot;);
-<span class="nocode"><a name="2">  2: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(genbankStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
-<span class="nocode"><a name="4">  4: </a></span>Strand strand0 = bases0.getReverseStrand();
-<span class="nocode"><a name="5">  5: </a></span>Codon12CorrelationAlgorithm codon12CorrelationAlgorithm0 = new Codon12CorrelationAlgorithm(strand0);
-<span class="nocode"><a name="6">  6: </a></span>Integer integer0 = codon12CorrelationAlgorithm0.getDefaultWindowSize();
-<span class="nocode"><a name="7">  7: </a></span>assertTrue(codon12CorrelationAlgorithm0.scalingFlag());
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(&quot;Reverse Correlation Scores&quot;, codon12CorrelationAlgorithm0.getAlgorithmName());
-<span class="nocode"><a name="9">  9: </a></span>assertNotNull(integer0);
-<span class="nocode"><a name="10"> 10: </a></span>assertEquals(240, (int)integer0);
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;5&quot;, &quot;5&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="4">  4: </a></span>Codon12CorrelationAlgorithm codon12CorrelationAlgorithm0 = new Codon12CorrelationAlgorithm(strand0);
+<span class="nocode"><a name="5">  5: </a></span>Integer integer0 = codon12CorrelationAlgorithm0.getDefaultWindowSize();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;Reverse Correlation Scores&quot;, codon12CorrelationAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="7">  7: </a></span>assertNotNull(integer0);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(240, (int)integer0);
+<span class="nocode"><a name="9">  9: </a></span>assertTrue(codon12CorrelationAlgorithm0.scalingFlag());
 </pre>
 <h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;Hu&quot;);
-<span class="nocode"><a name="2">  2: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(genbankStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
-<span class="nocode"><a name="4">  4: </a></span>Strand strand0 = bases0.getReverseStrand();
-<span class="nocode"><a name="5">  5: </a></span>Codon12CorrelationAlgorithm codon12CorrelationAlgorithm0 = new Codon12CorrelationAlgorithm(strand0);
-<span class="nocode"><a name="6">  6: </a></span>Integer integer0 = codon12CorrelationAlgorithm0.getDefaultMaxWindowSize();
-<span class="nocode"><a name="7">  7: </a></span>assertNotNull(integer0);
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(&quot;Reverse Correlation Scores&quot;, codon12CorrelationAlgorithm0.getAlgorithmName());
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(600, (int)integer0);
-<span class="nocode"><a name="10"> 10: </a></span>assertTrue(codon12CorrelationAlgorithm0.scalingFlag());
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="4">  4: </a></span>Codon12CorrelationAlgorithm codon12CorrelationAlgorithm0 = new Codon12CorrelationAlgorithm(strand0);
+<span class="nocode"><a name="5">  5: </a></span>Integer integer0 = codon12CorrelationAlgorithm0.getDefaultMaxWindowSize();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(600, (int)integer0);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(&quot;Correlation Scores&quot;, codon12CorrelationAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="8">  8: </a></span>assertNotNull(integer0);
+<span class="nocode"><a name="9">  9: </a></span>assertTrue(codon12CorrelationAlgorithm0.scalingFlag());
 </pre>
 <h3>Test case 10</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;Correlation Scores&quot;);
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;&quot;);
 <span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
 <span class="nocode"><a name="4">  4: </a></span>Codon12CorrelationAlgorithm codon12CorrelationAlgorithm0 = new Codon12CorrelationAlgorithm(strand0);
 <span class="nocode"><a name="5">  5: </a></span>Integer integer0 = codon12CorrelationAlgorithm0.getDefaultMinWindowSize();
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;Reverse Correlation Scores&quot;, codon12CorrelationAlgorithm0.getAlgorithmName());
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(48, (int)integer0);
-<span class="nocode"><a name="8">  8: </a></span>assertNotNull(integer0);
+<span class="nocode"><a name="6">  6: </a></span>assertNotNull(integer0);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(&quot;Correlation Scores&quot;, codon12CorrelationAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(48, (int)integer0);
 <span class="nocode"><a name="9">  9: </a></span>assertTrue(codon12CorrelationAlgorithm0.scalingFlag());
 </pre>
 <h3>Test case 11</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;&quot;);
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;5&quot;, &quot;5&quot;);
 <span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
 <span class="nocode"><a name="4">  4: </a></span>Codon12CorrelationAlgorithm codon12CorrelationAlgorithm0 = new Codon12CorrelationAlgorithm(strand0);
 <span class="nocode"><a name="5">  5: </a></span>Integer integer0 = codon12CorrelationAlgorithm0.getDefaultStepSize(2);
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;Correlation Scores&quot;, codon12CorrelationAlgorithm0.getAlgorithmName());
-<span class="nocode"><a name="7">  7: </a></span>assertTrue(codon12CorrelationAlgorithm0.scalingFlag());
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(codon12CorrelationAlgorithm0.scalingFlag());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(&quot;Reverse Correlation Scores&quot;, codon12CorrelationAlgorithm0.getAlgorithmName());
 <span class="nocode"><a name="8">  8: </a></span>assertNull(integer0);
 </pre>
 <h3>Test case 12</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;Correlation Scores&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;5&quot;, &quot;5&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
 <span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
 <span class="nocode"><a name="4">  4: </a></span>Codon12CorrelationAlgorithm codon12CorrelationAlgorithm0 = new Codon12CorrelationAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>Integer integer0 = codon12CorrelationAlgorithm0.getDefaultStepSize(536870912);
-<span class="nocode"><a name="6">  6: </a></span>assertNotNull(integer0);
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(&quot;Reverse Correlation Scores&quot;, codon12CorrelationAlgorithm0.getAlgorithmName());
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(67108864, (int)integer0);
+<span class="nocode"><a name="5">  5: </a></span>Integer integer0 = codon12CorrelationAlgorithm0.getDefaultStepSize(1048576);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;Reverse Correlation Scores&quot;, codon12CorrelationAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(131072, (int)integer0);
+<span class="nocode"><a name="8">  8: </a></span>assertNotNull(integer0);
 <span class="nocode"><a name="9">  9: </a></span>assertTrue(codon12CorrelationAlgorithm0.scalingFlag());
 </pre>
 <h3>Test case 13</h3>
@@ -174,50 +167,44 @@ uk.ac.sanger.artemis.plot.Codon12CorrelationAlgorithm
 </pre>
 <h3>Test case 14</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[1];
-<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short)314);
-<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = JLayeredPane.FRAME_CONTENT_LAYER;
-<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 809, 0, short0, integer0);
-<span class="nocode"><a name="5">  5: </a></span>Bases bases0 = new Bases(partialSequence0);
-<span class="nocode"><a name="6">  6: </a></span>Strand strand0 = bases0.getReverseStrand();
-<span class="nocode"><a name="7">  7: </a></span>Codon12CorrelationAlgorithm codon12CorrelationAlgorithm0 = new Codon12CorrelationAlgorithm(strand0);
-<span class="nocode"><a name="8">  8: </a></span>float[] floatArray0 = new float[7];
-<span class="nocode"><a name="9">  9: </a></span>codon12CorrelationAlgorithm0.getValues(2966, 1048576, floatArray0);
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;DE`Lx1$@]M&quot;);
+<span class="nocode"><a name="2">  2: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
+<span class="nocode"><a name="4">  4: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="5">  5: </a></span>Codon12CorrelationAlgorithm codon12CorrelationAlgorithm0 = new Codon12CorrelationAlgorithm(strand0);
+<span class="nocode"><a name="6">  6: </a></span>float[] floatArray0 = new float[1];
+<span class="nocode"><a name="7">  7: </a></span>codon12CorrelationAlgorithm0.getValues(4, 3975, floatArray0);
 </pre>
 <h3>Test case 15</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;Hu&quot;);
-<span class="nocode"><a name="2">  2: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(genbankStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
-<span class="nocode"><a name="4">  4: </a></span>Strand strand0 = bases0.getReverseStrand();
-<span class="nocode"><a name="5">  5: </a></span>Codon12CorrelationAlgorithm codon12CorrelationAlgorithm0 = new Codon12CorrelationAlgorithm(strand0);
-<span class="nocode"><a name="6">  6: </a></span>Integer integer0 = codon12CorrelationAlgorithm0.getDefaultStepSize(230);
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(&quot;Reverse Correlation Scores&quot;, codon12CorrelationAlgorithm0.getAlgorithmName());
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(28, (int)integer0);
-<span class="nocode"><a name="9">  9: </a></span>assertTrue(codon12CorrelationAlgorithm0.scalingFlag());
-<span class="nocode"><a name="10"> 10: </a></span>assertNotNull(integer0);
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="4">  4: </a></span>Codon12CorrelationAlgorithm codon12CorrelationAlgorithm0 = new Codon12CorrelationAlgorithm(strand0);
+<span class="nocode"><a name="5">  5: </a></span>codon12CorrelationAlgorithm0.getValues(1461, 3663, (float[]) null);
 </pre>
 <h3>Test case 16</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;Correlation Scores&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
-<span class="nocode"><a name="4">  4: </a></span>Codon12CorrelationAlgorithm codon12CorrelationAlgorithm0 = new Codon12CorrelationAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>float[] floatArray0 = new float[5];
-<span class="nocode"><a name="6">  6: </a></span>codon12CorrelationAlgorithm0.getValues(2, 1608, floatArray0);
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(&quot;Reverse Correlation Scores&quot;, codon12CorrelationAlgorithm0.getAlgorithmName());
-<span class="nocode"><a name="8">  8: </a></span>assertArrayEquals(new float[] {0.62504673F, 0.61457944F, 0.55065423F, 0.0F, 0.0F}, floatArray0, 0.01F);
-<span class="nocode"><a name="9">  9: </a></span>assertTrue(codon12CorrelationAlgorithm0.scalingFlag());
+<span class="nocode"><a name="1">  1: </a></span>Bases bases0 = new Bases((Sequence) null);
+<span class="nocode"><a name="2">  2: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="3">  3: </a></span>Codon12CorrelationAlgorithm codon12CorrelationAlgorithm0 = new Codon12CorrelationAlgorithm(strand0);
+<span class="nocode"><a name="4">  4: </a></span>Integer integer0 = codon12CorrelationAlgorithm0.getDefaultStepSize(3971);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(496, (int)integer0);
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(codon12CorrelationAlgorithm0.scalingFlag());
+<span class="nocode"><a name="7">  7: </a></span>assertNotNull(integer0);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(&quot;Reverse Correlation Scores&quot;, codon12CorrelationAlgorithm0.getAlgorithmName());
 </pre>
 <h3>Test case 17</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;Hu&quot;);
-<span class="nocode"><a name="2">  2: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(genbankStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
-<span class="nocode"><a name="4">  4: </a></span>Strand strand0 = bases0.getReverseStrand();
-<span class="nocode"><a name="5">  5: </a></span>Codon12CorrelationAlgorithm codon12CorrelationAlgorithm0 = new Codon12CorrelationAlgorithm(strand0);
-<span class="nocode"><a name="6">  6: </a></span>float[] floatArray0 = new float[8];
-<span class="nocode"><a name="7">  7: </a></span>codon12CorrelationAlgorithm0.getValues(2, 0, floatArray0);
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;T8Yh)cCY0&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="4">  4: </a></span>Codon12CorrelationAlgorithm codon12CorrelationAlgorithm0 = new Codon12CorrelationAlgorithm(strand0);
+<span class="nocode"><a name="5">  5: </a></span>Integer integer0 = codon12CorrelationAlgorithm0.getDefaultStepSize(114);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(14, (int)integer0);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(&quot;Correlation Scores&quot;, codon12CorrelationAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="8">  8: </a></span>assertTrue(codon12CorrelationAlgorithm0.scalingFlag());
+<span class="nocode"><a name="9">  9: </a></span>assertNotNull(integer0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -231,12 +218,12 @@ uk.ac.sanger.artemis.plot.Codon12CorrelationAlgorithm
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.plot.Codon12CorrelationAlgorithm
 <li>Size: 17
-<li>Length: 98
+<li>Length: 84
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.8548457273255661
-<li>BranchCoverage: 0.8787878787878788
+<li>Coverage: 0.7595148575995352
+<li>BranchCoverage: 0.6666666666666666
 <li>MethodCoverage: 1.0
-<li>OutputCoverage: 0.35135135135135137
+<li>OutputCoverage: 0.3581081081081081
 </ul></div>
 </div>
 <p><br><a href="../report-generation.html">Back to Overview</a></p>

@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.io.LocationLexer
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.io.LocationLexer: 0.8921731318457145</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.io.LocationLexer: 0.8784473762671436</ul>
 <ul>
-<li>107.83483188432794 fitness evaluations, 0 generations, null statements, 33 tests.
+<li>133.70268901149782 fitness evaluations, 0 generations, null statements, 25 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,52 +35,59 @@ uk.ac.sanger.artemis.io.LocationLexer
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>LocationLexer locationLexer0 = new LocationLexer(&quot;&lt;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>LocationLexer.TokenEnumeration locationLexer_TokenEnumeration0 = locationLexer0.new TokenEnumeration(&quot;&lt;&quot;);
-<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = locationLexer_TokenEnumeration0.eatToken('7');
-<span class="nocode"><a name="4">  4: </a></span>assertFalse(boolean0);
+<span class="nocode"><a name="1">  1: </a></span>LocationLexer locationLexer0 = new LocationLexer(&quot;dY@^%g@94o`&quot;);
+<span class="nocode"><a name="2">  2: </a></span>LocationLexer.TokenEnumeration locationLexer_TokenEnumeration0 = locationLexer0.new TokenEnumeration(&quot;dY@^%g@94o`&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = (String)locationLexer_TokenEnumeration0.nextElement();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;dY&quot;, string0);
+<span class="nocode"><a name="5">  5: </a></span>
+<span class="nocode"><a name="6">  6: </a></span>String string1 = (String)locationLexer_TokenEnumeration0.nextElement();
+<span class="nocode"><a name="7">  7: </a></span>assertNotNull(string1);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(&quot;@&quot;, string1);
+<span class="nocode"><a name="9">  9: </a></span>
+<span class="nocode"><a name="10"> 10: </a></span>boolean boolean0 = locationLexer_TokenEnumeration0.eatToken('#');
+<span class="nocode"><a name="11"> 11: </a></span>assertFalse(boolean0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>LocationLexer locationLexer0 = new LocationLexer(&quot;&quot;);
+<span class="nocode"><a name="1">  1: </a></span>LocationLexer locationLexer0 = new LocationLexer(&quot;dY@^%g@94o`&quot;);
 <span class="nocode"><a name="2">  2: </a></span>LocationLexer.TokenEnumeration locationLexer_TokenEnumeration0 = locationLexer0.getTokens();
-<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = locationLexer_TokenEnumeration0.eatToken(&quot;0ZXg 6/cioDn)?j^{&quot;);
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = locationLexer_TokenEnumeration0.eatToken(&quot;dY@^%g@94o`&quot;);
 <span class="nocode"><a name="4">  4: </a></span>assertFalse(boolean0);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>LocationLexer locationLexer0 = new LocationLexer(&quot;GFs&quot;);
-<span class="nocode"><a name="2">  2: </a></span>LocationLexer.TokenEnumeration locationLexer_TokenEnumeration0 = locationLexer0.new TokenEnumeration(&quot;GFs&quot;);
-<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = locationLexer_TokenEnumeration0.eatToken(&quot;GFs&quot;);
+<span class="nocode"><a name="1">  1: </a></span>LocationLexer locationLexer0 = new LocationLexer(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>LocationLexer.TokenEnumeration locationLexer_TokenEnumeration0 = locationLexer0.new TokenEnumeration(&quot;c&quot;);
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = locationLexer_TokenEnumeration0.eatToken(&quot;c&quot;);
 <span class="nocode"><a name="4">  4: </a></span>assertTrue(boolean0);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>LocationLexer locationLexer0 = new LocationLexer(&quot;&quot;);
+<span class="nocode"><a name="1">  1: </a></span>LocationLexer locationLexer0 = new LocationLexer(&quot;7B0'S3#jWV;PbV7&lt;%&quot;);
 <span class="nocode"><a name="2">  2: </a></span>LocationLexer.TokenEnumeration locationLexer_TokenEnumeration0 = locationLexer0.getTokens();
 <span class="nocode"><a name="3">  3: </a></span>String string0 = locationLexer_TokenEnumeration0.toString();
 <span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;&quot;, string0);
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>LocationLexer locationLexer0 = new LocationLexer(&quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>LocationLexer.TokenEnumeration locationLexer_TokenEnumeration0 = locationLexer0.new TokenEnumeration(&quot;H&lt;9CInCdLPK?gxMH2b&quot;);
+<span class="nocode"><a name="1">  1: </a></span>LocationLexer locationLexer0 = new LocationLexer(&quot;7B0'S3#jWV;PbV7&lt;%&quot;);
+<span class="nocode"><a name="2">  2: </a></span>LocationLexer.TokenEnumeration locationLexer_TokenEnumeration0 = locationLexer0.new TokenEnumeration(&quot;7B0'S3#jWV;PbV7&lt;%&quot;);
 <span class="nocode"><a name="3">  3: </a></span>String string0 = locationLexer_TokenEnumeration0.toString();
 <span class="nocode"><a name="4">  4: </a></span>assertNotNull(string0);
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>LocationLexer locationLexer0 = new LocationLexer(&quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>LocationLexer.TokenEnumeration locationLexer_TokenEnumeration0 = locationLexer0.new TokenEnumeration(&quot;c XHMe?DfC&quot;);
+<span class="nocode"><a name="1">  1: </a></span>LocationLexer locationLexer0 = new LocationLexer(&quot;VT &quot;);
+<span class="nocode"><a name="2">  2: </a></span>LocationLexer.TokenEnumeration locationLexer_TokenEnumeration0 = locationLexer0.new TokenEnumeration(&quot;VT &quot;);
 <span class="nocode"><a name="3">  3: </a></span>String string0 = locationLexer_TokenEnumeration0.toString();
 <span class="nocode"><a name="4">  4: </a></span>assertNotNull(string0);
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>LocationLexer locationLexer0 = new LocationLexer(&quot;E3SFzaRl9&lt;F!Mhx&quot;);
+<span class="nocode"><a name="1">  1: </a></span>LocationLexer locationLexer0 = new LocationLexer(&quot;KYh,ebL.KJ&quot;);
 <span class="nocode"><a name="2">  2: </a></span>assertNotNull(locationLexer0);
 <span class="nocode"><a name="3">  3: </a></span>
-<span class="nocode"><a name="4">  4: </a></span>LocationLexer.TokenEnumeration locationLexer_TokenEnumeration0 = locationLexer0.new TokenEnumeration(&quot;E3SFzaRl9&lt;F!Mhx&quot;);
+<span class="nocode"><a name="4">  4: </a></span>LocationLexer.TokenEnumeration locationLexer_TokenEnumeration0 = locationLexer0.new TokenEnumeration(&quot;H1+yV3e},U!&quot;);
 <span class="nocode"><a name="5">  5: </a></span>assertNotNull(locationLexer_TokenEnumeration0);
 <span class="nocode"><a name="6">  6: </a></span>
 <span class="nocode"><a name="7">  7: </a></span>String string0 = locationLexer_TokenEnumeration0.toString();
@@ -88,21 +95,21 @@ uk.ac.sanger.artemis.io.LocationLexer
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>LocationLexer locationLexer0 = new LocationLexer((String) null);
+<span class="nocode"><a name="1">  1: </a></span>LocationLexer locationLexer0 = new LocationLexer(&quot;;F&lt;\&quot;8'hm&quot;);
 <span class="nocode"><a name="2">  2: </a></span>assertNotNull(locationLexer0);
 <span class="nocode"><a name="3">  3: </a></span>
-<span class="nocode"><a name="4">  4: </a></span>LocationLexer.TokenEnumeration locationLexer_TokenEnumeration0 = locationLexer0.new TokenEnumeration(&quot;\&quot;eov8k)K_tF~`&lt;4gt&quot;);
+<span class="nocode"><a name="4">  4: </a></span>LocationLexer.TokenEnumeration locationLexer_TokenEnumeration0 = locationLexer0.new TokenEnumeration(&quot;;F&lt;\&quot;8'hm&quot;);
 <span class="nocode"><a name="5">  5: </a></span>assertNotNull(locationLexer_TokenEnumeration0);
 <span class="nocode"><a name="6">  6: </a></span>
-<span class="nocode"><a name="7">  7: </a></span>boolean boolean0 = locationLexer_TokenEnumeration0.eatToken('/');
-<span class="nocode"><a name="8">  8: </a></span>assertFalse(boolean0);
+<span class="nocode"><a name="7">  7: </a></span>String string0 = locationLexer_TokenEnumeration0.toString();
+<span class="nocode"><a name="8">  8: </a></span>assertNotNull(string0);
 </pre>
 <h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>LocationLexer locationLexer0 = new LocationLexer(&quot;&quot;);
+<span class="nocode"><a name="1">  1: </a></span>LocationLexer locationLexer0 = new LocationLexer(&quot;5!YLC$I^$@'+nAz?KY&quot;);
 <span class="nocode"><a name="2">  2: </a></span>assertNotNull(locationLexer0);
 <span class="nocode"><a name="3">  3: </a></span>
-<span class="nocode"><a name="4">  4: </a></span>LocationLexer.TokenEnumeration locationLexer_TokenEnumeration0 = locationLexer0.new TokenEnumeration(&quot;38HI#&quot;);
+<span class="nocode"><a name="4">  4: </a></span>LocationLexer.TokenEnumeration locationLexer_TokenEnumeration0 = locationLexer0.new TokenEnumeration(&quot;5!YLC$I^$@'+nAz?KY&quot;);
 <span class="nocode"><a name="5">  5: </a></span>assertNotNull(locationLexer_TokenEnumeration0);
 <span class="nocode"><a name="6">  6: </a></span>
 <span class="nocode"><a name="7">  7: </a></span>String string0 = locationLexer_TokenEnumeration0.toString();
@@ -110,10 +117,10 @@ uk.ac.sanger.artemis.io.LocationLexer
 </pre>
 <h3>Test case 10</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>LocationLexer locationLexer0 = new LocationLexer(&quot;O0OhC;!&gt;{ZG$lIt;C4&quot;);
+<span class="nocode"><a name="1">  1: </a></span>LocationLexer locationLexer0 = new LocationLexer(&quot;lpd_f/KN+&amp;Jw6T#,&quot;);
 <span class="nocode"><a name="2">  2: </a></span>assertNotNull(locationLexer0);
 <span class="nocode"><a name="3">  3: </a></span>
-<span class="nocode"><a name="4">  4: </a></span>LocationLexer.TokenEnumeration locationLexer_TokenEnumeration0 = locationLexer0.new TokenEnumeration(&quot;O0OhC;!&gt;{ZG$lIt;C4&quot;);
+<span class="nocode"><a name="4">  4: </a></span>LocationLexer.TokenEnumeration locationLexer_TokenEnumeration0 = locationLexer0.new TokenEnumeration(&quot;lpd_f/KN+&amp;Jw6T#,&quot;);
 <span class="nocode"><a name="5">  5: </a></span>assertNotNull(locationLexer_TokenEnumeration0);
 <span class="nocode"><a name="6">  6: </a></span>
 <span class="nocode"><a name="7">  7: </a></span>String string0 = locationLexer_TokenEnumeration0.toString();
@@ -121,10 +128,10 @@ uk.ac.sanger.artemis.io.LocationLexer
 </pre>
 <h3>Test case 11</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>LocationLexer locationLexer0 = new LocationLexer(&quot;^E-meM(.;cR%&quot;);
+<span class="nocode"><a name="1">  1: </a></span>LocationLexer locationLexer0 = new LocationLexer(&quot;dY@^%g@94o`&quot;);
 <span class="nocode"><a name="2">  2: </a></span>assertNotNull(locationLexer0);
 <span class="nocode"><a name="3">  3: </a></span>
-<span class="nocode"><a name="4">  4: </a></span>LocationLexer.TokenEnumeration locationLexer_TokenEnumeration0 = locationLexer0.new TokenEnumeration(&quot;(5[+x3FD%Q$Klt&quot;);
+<span class="nocode"><a name="4">  4: </a></span>LocationLexer.TokenEnumeration locationLexer_TokenEnumeration0 = locationLexer0.new TokenEnumeration(&quot;)9=2(j[e8;&quot;);
 <span class="nocode"><a name="5">  5: </a></span>assertNotNull(locationLexer_TokenEnumeration0);
 <span class="nocode"><a name="6">  6: </a></span>
 <span class="nocode"><a name="7">  7: </a></span>String string0 = locationLexer_TokenEnumeration0.toString();
@@ -132,10 +139,10 @@ uk.ac.sanger.artemis.io.LocationLexer
 </pre>
 <h3>Test case 12</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>LocationLexer locationLexer0 = new LocationLexer(&quot;&quot;);
+<span class="nocode"><a name="1">  1: </a></span>LocationLexer locationLexer0 = new LocationLexer(&quot;..&quot;);
 <span class="nocode"><a name="2">  2: </a></span>assertNotNull(locationLexer0);
 <span class="nocode"><a name="3">  3: </a></span>
-<span class="nocode"><a name="4">  4: </a></span>LocationLexer.TokenEnumeration locationLexer_TokenEnumeration0 = locationLexer0.new TokenEnumeration(&quot;^tZa*X{3WO=V)rWAT&quot;);
+<span class="nocode"><a name="4">  4: </a></span>LocationLexer.TokenEnumeration locationLexer_TokenEnumeration0 = locationLexer0.new TokenEnumeration(&quot;'.tT-N`}4$o:v!7-N=c&quot;);
 <span class="nocode"><a name="5">  5: </a></span>assertNotNull(locationLexer_TokenEnumeration0);
 <span class="nocode"><a name="6">  6: </a></span>
 <span class="nocode"><a name="7">  7: </a></span>String string0 = locationLexer_TokenEnumeration0.toString();
@@ -143,10 +150,10 @@ uk.ac.sanger.artemis.io.LocationLexer
 </pre>
 <h3>Test case 13</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>LocationLexer locationLexer0 = new LocationLexer(&quot;Vf]lii3\&quot;a&quot;);
+<span class="nocode"><a name="1">  1: </a></span>LocationLexer locationLexer0 = new LocationLexer(&quot;..&quot;);
 <span class="nocode"><a name="2">  2: </a></span>assertNotNull(locationLexer0);
 <span class="nocode"><a name="3">  3: </a></span>
-<span class="nocode"><a name="4">  4: </a></span>LocationLexer.TokenEnumeration locationLexer_TokenEnumeration0 = locationLexer0.new TokenEnumeration(&quot;QFkkT761,ruHX9_a&quot;);
+<span class="nocode"><a name="4">  4: </a></span>LocationLexer.TokenEnumeration locationLexer_TokenEnumeration0 = locationLexer0.new TokenEnumeration(&quot;NsV0a/c{}0+YXG+B&quot;);
 <span class="nocode"><a name="5">  5: </a></span>assertNotNull(locationLexer_TokenEnumeration0);
 <span class="nocode"><a name="6">  6: </a></span>
 <span class="nocode"><a name="7">  7: </a></span>String string0 = locationLexer_TokenEnumeration0.toString();
@@ -154,16 +161,105 @@ uk.ac.sanger.artemis.io.LocationLexer
 </pre>
 <h3>Test case 14</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>LocationLexer locationLexer0 = new LocationLexer(&quot;Oy?UFbt&lt;$&gt;&quot;);
+<span class="nocode"><a name="1">  1: </a></span>LocationLexer locationLexer0 = new LocationLexer(&quot;Z`1abg|^RPoP&quot;);
 <span class="nocode"><a name="2">  2: </a></span>assertNotNull(locationLexer0);
 <span class="nocode"><a name="3">  3: </a></span>
-<span class="nocode"><a name="4">  4: </a></span>LocationLexer.TokenEnumeration locationLexer_TokenEnumeration0 = locationLexer0.new TokenEnumeration(&quot;-O&quot;);
+<span class="nocode"><a name="4">  4: </a></span>LocationLexer.TokenEnumeration locationLexer_TokenEnumeration0 = locationLexer0.new TokenEnumeration(&quot;Z`1abg|^RPoP&quot;);
 <span class="nocode"><a name="5">  5: </a></span>assertNotNull(locationLexer_TokenEnumeration0);
 <span class="nocode"><a name="6">  6: </a></span>
-<span class="nocode"><a name="7">  7: </a></span>boolean boolean0 = locationLexer_TokenEnumeration0.eatToken(&quot;Oy?UFbt&lt;$&gt;&quot;);
-<span class="nocode"><a name="8">  8: </a></span>assertFalse(boolean0);
+<span class="nocode"><a name="7">  7: </a></span>String string0 = locationLexer_TokenEnumeration0.toString();
+<span class="nocode"><a name="8">  8: </a></span>assertNotNull(string0);
 </pre>
 <h3>Test case 15</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LocationLexer locationLexer0 = new LocationLexer(&quot;9Qm*A$qB.1H76^&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertNotNull(locationLexer0);
+<span class="nocode"><a name="3">  3: </a></span>
+<span class="nocode"><a name="4">  4: </a></span>LocationLexer.TokenEnumeration locationLexer_TokenEnumeration0 = locationLexer0.new TokenEnumeration(&quot;34&gt;&quot;);
+<span class="nocode"><a name="5">  5: </a></span>assertNotNull(locationLexer_TokenEnumeration0);
+<span class="nocode"><a name="6">  6: </a></span>
+<span class="nocode"><a name="7">  7: </a></span>Integer integer0 = (Integer)locationLexer_TokenEnumeration0.peekElement();
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(34, (int)integer0);
+<span class="nocode"><a name="9">  9: </a></span>assertNotNull(integer0);
+</pre>
+<h3>Test case 16</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LocationLexer locationLexer0 = new LocationLexer(&quot;dY@^%g@94o`&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertNotNull(locationLexer0);
+<span class="nocode"><a name="3">  3: </a></span>
+<span class="nocode"><a name="4">  4: </a></span>LocationLexer.TokenEnumeration locationLexer_TokenEnumeration0 = locationLexer0.new TokenEnumeration(&quot;u',X3zUs~W0Td@6~/&quot;);
+<span class="nocode"><a name="5">  5: </a></span>assertNotNull(locationLexer_TokenEnumeration0);
+<span class="nocode"><a name="6">  6: </a></span>
+<span class="nocode"><a name="7">  7: </a></span>String string0 = locationLexer_TokenEnumeration0.toString();
+<span class="nocode"><a name="8">  8: </a></span>assertNotNull(string0);
+</pre>
+<h3>Test case 17</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LocationLexer locationLexer0 = new LocationLexer((String) null);
+<span class="nocode"><a name="2">  2: </a></span>assertNotNull(locationLexer0);
+<span class="nocode"><a name="3">  3: </a></span>
+<span class="nocode"><a name="4">  4: </a></span>LocationLexer.TokenEnumeration locationLexer_TokenEnumeration0 = locationLexer0.new TokenEnumeration(&quot;#ms+!_8SJ;&gt;Rz3&quot;);
+<span class="nocode"><a name="5">  5: </a></span>assertNotNull(locationLexer_TokenEnumeration0);
+<span class="nocode"><a name="6">  6: </a></span>
+<span class="nocode"><a name="7">  7: </a></span>String string0 = locationLexer_TokenEnumeration0.toString();
+<span class="nocode"><a name="8">  8: </a></span>assertNotNull(string0);
+</pre>
+<h3>Test case 18</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LocationLexer locationLexer0 = new LocationLexer(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertNotNull(locationLexer0);
+<span class="nocode"><a name="3">  3: </a></span>
+<span class="nocode"><a name="4">  4: </a></span>LocationLexer.TokenEnumeration locationLexer_TokenEnumeration0 = locationLexer0.new TokenEnumeration(&quot;dx$Y0E(=lMmNDGGE-&quot;);
+<span class="nocode"><a name="5">  5: </a></span>assertNotNull(locationLexer_TokenEnumeration0);
+<span class="nocode"><a name="6">  6: </a></span>
+<span class="nocode"><a name="7">  7: </a></span>String string0 = locationLexer_TokenEnumeration0.toString();
+<span class="nocode"><a name="8">  8: </a></span>assertNotNull(string0);
+</pre>
+<h3>Test case 19</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LocationLexer locationLexer0 = new LocationLexer(&quot;&amp;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertNotNull(locationLexer0);
+<span class="nocode"><a name="3">  3: </a></span>
+<span class="nocode"><a name="4">  4: </a></span>LocationLexer.TokenEnumeration locationLexer_TokenEnumeration0 = locationLexer0.new TokenEnumeration(&quot;kYT!;~G&lt;B&quot;);
+<span class="nocode"><a name="5">  5: </a></span>assertNotNull(locationLexer_TokenEnumeration0);
+<span class="nocode"><a name="6">  6: </a></span>
+<span class="nocode"><a name="7">  7: </a></span>String string0 = locationLexer_TokenEnumeration0.toString();
+<span class="nocode"><a name="8">  8: </a></span>assertNotNull(string0);
+</pre>
+<h3>Test case 20</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LocationLexer locationLexer0 = new LocationLexer(&quot;z2m+;:%M@7Z*&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertNotNull(locationLexer0);
+<span class="nocode"><a name="3">  3: </a></span>
+<span class="nocode"><a name="4">  4: </a></span>LocationLexer.TokenEnumeration locationLexer_TokenEnumeration0 = locationLexer0.new TokenEnumeration(&quot;z2m+;:%M@7Z*&quot;);
+<span class="nocode"><a name="5">  5: </a></span>assertNotNull(locationLexer_TokenEnumeration0);
+<span class="nocode"><a name="6">  6: </a></span>
+<span class="nocode"><a name="7">  7: </a></span>String string0 = locationLexer_TokenEnumeration0.toString();
+<span class="nocode"><a name="8">  8: </a></span>assertNotNull(string0);
+</pre>
+<h3>Test case 21</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LocationLexer locationLexer0 = new LocationLexer(&quot;TZ&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertNotNull(locationLexer0);
+<span class="nocode"><a name="3">  3: </a></span>
+<span class="nocode"><a name="4">  4: </a></span>LocationLexer.TokenEnumeration locationLexer_TokenEnumeration0 = locationLexer0.new TokenEnumeration(&quot;TZ&quot;);
+<span class="nocode"><a name="5">  5: </a></span>assertNotNull(locationLexer_TokenEnumeration0);
+<span class="nocode"><a name="6">  6: </a></span>
+<span class="nocode"><a name="7">  7: </a></span>boolean boolean0 = locationLexer_TokenEnumeration0.eatToken(&quot;^n&quot;);
+<span class="nocode"><a name="8">  8: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 22</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LocationLexer locationLexer0 = new LocationLexer(&quot;IcMW6K&lt;M&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertNotNull(locationLexer0);
+<span class="nocode"><a name="3">  3: </a></span>
+<span class="nocode"><a name="4">  4: </a></span>LocationLexer.TokenEnumeration locationLexer_TokenEnumeration0 = locationLexer0.new TokenEnumeration(&quot;NI%EV]n&quot;);
+<span class="nocode"><a name="5">  5: </a></span>assertNotNull(locationLexer_TokenEnumeration0);
+<span class="nocode"><a name="6">  6: </a></span>
+<span class="nocode"><a name="7">  7: </a></span>String string0 = locationLexer_TokenEnumeration0.toString();
+<span class="nocode"><a name="8">  8: </a></span>assertNotNull(string0);
+</pre>
+<h3>Test case 23</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>LocationLexer locationLexer0 = new LocationLexer(&quot;..&quot;);
 <span class="nocode"><a name="2">  2: </a></span>assertNotNull(locationLexer0);
@@ -172,239 +268,33 @@ uk.ac.sanger.artemis.io.LocationLexer
 <span class="nocode"><a name="5">  5: </a></span>assertNotNull(locationLexer_TokenEnumeration0);
 <span class="nocode"><a name="6">  6: </a></span>
 <span class="nocode"><a name="7">  7: </a></span>String string0 = (String)locationLexer_TokenEnumeration0.peekElement();
-<span class="nocode"><a name="8">  8: </a></span>assertNotNull(string0);
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(&quot;..&quot;, string0);
-</pre>
-<h3>Test case 16</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>LocationLexer locationLexer0 = new LocationLexer(&quot;4[N}/.aKb&quot;);
-<span class="nocode"><a name="2">  2: </a></span>assertNotNull(locationLexer0);
-<span class="nocode"><a name="3">  3: </a></span>
-<span class="nocode"><a name="4">  4: </a></span>LocationLexer.TokenEnumeration locationLexer_TokenEnumeration0 = locationLexer0.new TokenEnumeration(&quot;4[N}/.aKb&quot;);
-<span class="nocode"><a name="5">  5: </a></span>assertNotNull(locationLexer_TokenEnumeration0);
-<span class="nocode"><a name="6">  6: </a></span>
-<span class="nocode"><a name="7">  7: </a></span>Integer integer0 = (Integer)locationLexer_TokenEnumeration0.nextElement();
-<span class="nocode"><a name="8">  8: </a></span>assertNotNull(integer0);
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(4, (int)integer0);
-<span class="nocode"><a name="10"> 10: </a></span>
-<span class="nocode"><a name="11"> 11: </a></span>String string0 = (String)locationLexer_TokenEnumeration0.nextElement();
-<span class="nocode"><a name="12"> 12: </a></span>assertNotNull(string0);
-<span class="nocode"><a name="13"> 13: </a></span>assertEquals(&quot;[&quot;, string0);
-<span class="nocode"><a name="14"> 14: </a></span>
-<span class="nocode"><a name="15"> 15: </a></span>String string1 = (String)locationLexer_TokenEnumeration0.nextElement();
-<span class="nocode"><a name="16"> 16: </a></span>assertNotNull(string1);
-<span class="nocode"><a name="17"> 17: </a></span>assertEquals(&quot;N&quot;, string1);
-<span class="nocode"><a name="18"> 18: </a></span>assertFalse(string1.equals((Object)string0));
-<span class="nocode"><a name="19"> 19: </a></span>
-<span class="nocode"><a name="20"> 20: </a></span>String string2 = (String)locationLexer_TokenEnumeration0.nextElement();
-<span class="nocode"><a name="21"> 21: </a></span>assertNotNull(string2);
-<span class="nocode"><a name="22"> 22: </a></span>assertEquals(&quot;}&quot;, string2);
-<span class="nocode"><a name="23"> 23: </a></span>assertFalse(string2.equals((Object)string0));
-<span class="nocode"><a name="24"> 24: </a></span>assertFalse(string2.equals((Object)string1));
-<span class="nocode"><a name="25"> 25: </a></span>
-<span class="nocode"><a name="26"> 26: </a></span>boolean boolean0 = locationLexer_TokenEnumeration0.eatToken(&quot;&quot;);
-<span class="nocode"><a name="27"> 27: </a></span>assertFalse(boolean0);
-</pre>
-<h3>Test case 17</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>LocationLexer locationLexer0 = new LocationLexer(&quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>assertNotNull(locationLexer0);
-<span class="nocode"><a name="3">  3: </a></span>
-<span class="nocode"><a name="4">  4: </a></span>LocationLexer.TokenEnumeration locationLexer_TokenEnumeration0 = locationLexer0.new TokenEnumeration(&quot;00c~nA&quot;);
-<span class="nocode"><a name="5">  5: </a></span>assertNotNull(locationLexer_TokenEnumeration0);
-<span class="nocode"><a name="6">  6: </a></span>
-<span class="nocode"><a name="7">  7: </a></span>boolean boolean0 = locationLexer_TokenEnumeration0.eatToken('P');
-<span class="nocode"><a name="8">  8: </a></span>assertFalse(boolean0);
-<span class="nocode"><a name="9">  9: </a></span>
-<span class="nocode"><a name="10"> 10: </a></span>Integer integer0 = (Integer)locationLexer_TokenEnumeration0.nextElement();
-<span class="nocode"><a name="11"> 11: </a></span>assertNotNull(integer0);
-<span class="nocode"><a name="12"> 12: </a></span>assertEquals(0, (int)integer0);
-</pre>
-<h3>Test case 18</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>LocationLexer locationLexer0 = new LocationLexer(&quot;^J?2zSA25 s+:@`+&quot;);
-<span class="nocode"><a name="2">  2: </a></span>assertNotNull(locationLexer0);
-<span class="nocode"><a name="3">  3: </a></span>
-<span class="nocode"><a name="4">  4: </a></span>LocationLexer.TokenEnumeration locationLexer_TokenEnumeration0 = locationLexer0.new TokenEnumeration(&quot;^J?2zSA25 s+:@`+&quot;);
-<span class="nocode"><a name="5">  5: </a></span>assertNotNull(locationLexer_TokenEnumeration0);
-<span class="nocode"><a name="6">  6: </a></span>
-<span class="nocode"><a name="7">  7: </a></span>String string0 = locationLexer_TokenEnumeration0.toString();
-<span class="nocode"><a name="8">  8: </a></span>assertNotNull(string0);
-</pre>
-<h3>Test case 19</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>LocationLexer locationLexer0 = new LocationLexer(&quot;Kq%)iVy/D/lJ`EVcl'&gt;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>assertNotNull(locationLexer0);
-<span class="nocode"><a name="3">  3: </a></span>
-<span class="nocode"><a name="4">  4: </a></span>LocationLexer.TokenEnumeration locationLexer_TokenEnumeration0 = locationLexer0.new TokenEnumeration(&quot;f{7JjS?&quot;);
-<span class="nocode"><a name="5">  5: </a></span>assertNotNull(locationLexer_TokenEnumeration0);
-<span class="nocode"><a name="6">  6: </a></span>
-<span class="nocode"><a name="7">  7: </a></span>String string0 = locationLexer_TokenEnumeration0.toString();
-<span class="nocode"><a name="8">  8: </a></span>assertNotNull(string0);
-</pre>
-<h3>Test case 20</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>LocationLexer locationLexer0 = new LocationLexer(&quot;5c&quot;);
-<span class="nocode"><a name="2">  2: </a></span>assertNotNull(locationLexer0);
-<span class="nocode"><a name="3">  3: </a></span>
-<span class="nocode"><a name="4">  4: </a></span>LocationLexer.TokenEnumeration locationLexer_TokenEnumeration0 = locationLexer0.new TokenEnumeration(&quot;K3$=8U?+:47|]&gt;~h&quot;);
-<span class="nocode"><a name="5">  5: </a></span>assertNotNull(locationLexer_TokenEnumeration0);
-<span class="nocode"><a name="6">  6: </a></span>
-<span class="nocode"><a name="7">  7: </a></span>String string0 = locationLexer_TokenEnumeration0.toString();
-<span class="nocode"><a name="8">  8: </a></span>assertNotNull(string0);
-</pre>
-<h3>Test case 21</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>LocationLexer locationLexer0 = new LocationLexer(&quot;'&amp;&gt;AR1 pEYC]&quot;);
-<span class="nocode"><a name="2">  2: </a></span>assertNotNull(locationLexer0);
-<span class="nocode"><a name="3">  3: </a></span>
-<span class="nocode"><a name="4">  4: </a></span>LocationLexer.TokenEnumeration locationLexer_TokenEnumeration0 = locationLexer0.new TokenEnumeration(&quot;'&amp;&gt;AR1 pEYC]&quot;);
-<span class="nocode"><a name="5">  5: </a></span>assertNotNull(locationLexer_TokenEnumeration0);
-<span class="nocode"><a name="6">  6: </a></span>
-<span class="nocode"><a name="7">  7: </a></span>String string0 = locationLexer_TokenEnumeration0.toString();
-<span class="nocode"><a name="8">  8: </a></span>assertNotNull(string0);
-</pre>
-<h3>Test case 22</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>LocationLexer locationLexer0 = new LocationLexer(&quot;aP~(=J+1qR/BYCPcF0&quot;);
-<span class="nocode"><a name="2">  2: </a></span>assertNotNull(locationLexer0);
-<span class="nocode"><a name="3">  3: </a></span>
-<span class="nocode"><a name="4">  4: </a></span>LocationLexer.TokenEnumeration locationLexer_TokenEnumeration0 = locationLexer0.new TokenEnumeration(&quot;aP~(=J+1qR/BYCPcF0&quot;);
-<span class="nocode"><a name="5">  5: </a></span>assertNotNull(locationLexer_TokenEnumeration0);
-<span class="nocode"><a name="6">  6: </a></span>
-<span class="nocode"><a name="7">  7: </a></span>String string0 = locationLexer_TokenEnumeration0.toString();
-<span class="nocode"><a name="8">  8: </a></span>assertNotNull(string0);
-</pre>
-<h3>Test case 23</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>LocationLexer locationLexer0 = new LocationLexer(&quot;j!#=pUcR9{`&quot;);
-<span class="nocode"><a name="2">  2: </a></span>assertNotNull(locationLexer0);
-<span class="nocode"><a name="3">  3: </a></span>
-<span class="nocode"><a name="4">  4: </a></span>LocationLexer.TokenEnumeration locationLexer_TokenEnumeration0 = locationLexer0.new TokenEnumeration(&quot;I5 T1t*&quot;);
-<span class="nocode"><a name="5">  5: </a></span>assertNotNull(locationLexer_TokenEnumeration0);
-<span class="nocode"><a name="6">  6: </a></span>
-<span class="nocode"><a name="7">  7: </a></span>String string0 = (String)locationLexer_TokenEnumeration0.nextElement();
-<span class="nocode"><a name="8">  8: </a></span>assertNotNull(string0);
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(&quot;I5&quot;, string0);
-<span class="nocode"><a name="10"> 10: </a></span>
-<span class="nocode"><a name="11"> 11: </a></span>boolean boolean0 = locationLexer_TokenEnumeration0.eatToken(&quot;j!#=pUcR9{`&quot;);
-<span class="nocode"><a name="12"> 12: </a></span>assertFalse(boolean0);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(&quot;..&quot;, string0);
+<span class="nocode"><a name="9">  9: </a></span>assertNotNull(string0);
 </pre>
 <h3>Test case 24</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>LocationLexer locationLexer0 = new LocationLexer((String) null);
+<span class="nocode"><a name="1">  1: </a></span>LocationLexer locationLexer0 = new LocationLexer(&quot;! s6ZKP&quot;);
 <span class="nocode"><a name="2">  2: </a></span>assertNotNull(locationLexer0);
 <span class="nocode"><a name="3">  3: </a></span>
-<span class="nocode"><a name="4">  4: </a></span>LocationLexer.TokenEnumeration locationLexer_TokenEnumeration0 = locationLexer0.new TokenEnumeration(&quot;C&gt;02L)(FhJl0}x7:&quot;);
+<span class="nocode"><a name="4">  4: </a></span>LocationLexer.TokenEnumeration locationLexer_TokenEnumeration0 = locationLexer0.new TokenEnumeration(&quot;}U&amp;y\&quot;DUd&lt;1o&quot;);
 <span class="nocode"><a name="5">  5: </a></span>assertNotNull(locationLexer_TokenEnumeration0);
 <span class="nocode"><a name="6">  6: </a></span>
-<span class="nocode"><a name="7">  7: </a></span>String string0 = locationLexer_TokenEnumeration0.toString();
-<span class="nocode"><a name="8">  8: </a></span>assertNotNull(string0);
+<span class="nocode"><a name="7">  7: </a></span>boolean boolean0 = locationLexer_TokenEnumeration0.eatToken('{');
+<span class="nocode"><a name="8">  8: </a></span>assertFalse(boolean0);
+<span class="nocode"><a name="9">  9: </a></span>
+<span class="nocode"><a name="10"> 10: </a></span>String string0 = (String)locationLexer_TokenEnumeration0.nextElement();
+<span class="nocode"><a name="11"> 11: </a></span>assertEquals(&quot;}&quot;, string0);
+<span class="nocode"><a name="12"> 12: </a></span>assertNotNull(string0);
 </pre>
 <h3>Test case 25</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>LocationLexer locationLexer0 = new LocationLexer(&quot;P`m\&quot;rQU9p kW9&quot;);
-<span class="nocode"><a name="2">  2: </a></span>assertNotNull(locationLexer0);
-<span class="nocode"><a name="3">  3: </a></span>
-<span class="nocode"><a name="4">  4: </a></span>LocationLexer.TokenEnumeration locationLexer_TokenEnumeration0 = locationLexer0.new TokenEnumeration(&quot;P`m\&quot;rQU9p kW9&quot;);
-<span class="nocode"><a name="5">  5: </a></span>assertNotNull(locationLexer_TokenEnumeration0);
-<span class="nocode"><a name="6">  6: </a></span>
-<span class="nocode"><a name="7">  7: </a></span>boolean boolean0 = locationLexer_TokenEnumeration0.eatToken('C');
-<span class="nocode"><a name="8">  8: </a></span>assertFalse(boolean0);
-</pre>
-<h3>Test case 26</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>LocationLexer locationLexer0 = new LocationLexer((String) null);
-<span class="nocode"><a name="2">  2: </a></span>assertNotNull(locationLexer0);
-<span class="nocode"><a name="3">  3: </a></span>
-<span class="nocode"><a name="4">  4: </a></span>LocationLexer.TokenEnumeration locationLexer_TokenEnumeration0 = locationLexer0.new TokenEnumeration(&quot;R }&quot;);
-<span class="nocode"><a name="5">  5: </a></span>assertNotNull(locationLexer_TokenEnumeration0);
-<span class="nocode"><a name="6">  6: </a></span>
-<span class="nocode"><a name="7">  7: </a></span>String string0 = (String)locationLexer_TokenEnumeration0.nextElement();
-<span class="nocode"><a name="8">  8: </a></span>assertNotNull(string0);
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(&quot;R&quot;, string0);
-</pre>
-<h3>Test case 27</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>LocationLexer locationLexer0 = new LocationLexer(&quot;YO*CS'mhC|(&quot;);
-<span class="nocode"><a name="2">  2: </a></span>assertNotNull(locationLexer0);
-<span class="nocode"><a name="3">  3: </a></span>
-<span class="nocode"><a name="4">  4: </a></span>LocationLexer.TokenEnumeration locationLexer_TokenEnumeration0 = locationLexer0.new TokenEnumeration(&quot;YO*CS'mhC|(&quot;);
-<span class="nocode"><a name="5">  5: </a></span>assertNotNull(locationLexer_TokenEnumeration0);
-<span class="nocode"><a name="6">  6: </a></span>
-<span class="nocode"><a name="7">  7: </a></span>String string0 = (String)locationLexer_TokenEnumeration0.peekElement();
-<span class="nocode"><a name="8">  8: </a></span>assertNotNull(string0);
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(&quot;YO*CS'mhC&quot;, string0);
-</pre>
-<h3>Test case 28</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>LocationLexer locationLexer0 = new LocationLexer(&quot;&quot;);
 <span class="nocode"><a name="2">  2: </a></span>assertNotNull(locationLexer0);
 <span class="nocode"><a name="3">  3: </a></span>
-<span class="nocode"><a name="4">  4: </a></span>LocationLexer.TokenEnumeration locationLexer_TokenEnumeration0 = locationLexer0.new TokenEnumeration(&quot;00c~nA&quot;);
+<span class="nocode"><a name="4">  4: </a></span>LocationLexer.TokenEnumeration locationLexer_TokenEnumeration0 = locationLexer0.new TokenEnumeration(&quot;)1&quot;);
 <span class="nocode"><a name="5">  5: </a></span>assertNotNull(locationLexer_TokenEnumeration0);
 <span class="nocode"><a name="6">  6: </a></span>
-<span class="nocode"><a name="7">  7: </a></span>Integer integer0 = (Integer)locationLexer_TokenEnumeration0.nextElement();
-<span class="nocode"><a name="8">  8: </a></span>assertNotNull(integer0);
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(0, (int)integer0);
-<span class="nocode"><a name="10"> 10: </a></span>
-<span class="nocode"><a name="11"> 11: </a></span>String string0 = (String)locationLexer_TokenEnumeration0.nextElement();
-<span class="nocode"><a name="12"> 12: </a></span>assertNotNull(string0);
-<span class="nocode"><a name="13"> 13: </a></span>assertEquals(&quot;c&quot;, string0);
-</pre>
-<h3>Test case 29</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>LocationLexer locationLexer0 = new LocationLexer(&quot;S0&gt;]&gt;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>assertNotNull(locationLexer0);
-<span class="nocode"><a name="3">  3: </a></span>
-<span class="nocode"><a name="4">  4: </a></span>LocationLexer.TokenEnumeration locationLexer_TokenEnumeration0 = locationLexer0.new TokenEnumeration(&quot;S0&gt;]&gt;&quot;);
-<span class="nocode"><a name="5">  5: </a></span>assertNotNull(locationLexer_TokenEnumeration0);
-<span class="nocode"><a name="6">  6: </a></span>
-<span class="nocode"><a name="7">  7: </a></span>String string0 = locationLexer_TokenEnumeration0.toString();
-<span class="nocode"><a name="8">  8: </a></span>assertNotNull(string0);
-</pre>
-<h3>Test case 30</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>LocationLexer locationLexer0 = new LocationLexer(&quot;qoM/6#X*x4,8&quot;);
-<span class="nocode"><a name="2">  2: </a></span>assertNotNull(locationLexer0);
-<span class="nocode"><a name="3">  3: </a></span>
-<span class="nocode"><a name="4">  4: </a></span>LocationLexer.TokenEnumeration locationLexer_TokenEnumeration0 = locationLexer0.new TokenEnumeration(&quot;4&quot;);
-<span class="nocode"><a name="5">  5: </a></span>assertNotNull(locationLexer_TokenEnumeration0);
-<span class="nocode"><a name="6">  6: </a></span>
-<span class="nocode"><a name="7">  7: </a></span>boolean boolean0 = locationLexer_TokenEnumeration0.eatToken('F');
-<span class="nocode"><a name="8">  8: </a></span>assertFalse(boolean0);
-</pre>
-<h3>Test case 31</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>LocationLexer locationLexer0 = new LocationLexer(&quot;E?k4]u.!my=|ANw2Q#&quot;);
-<span class="nocode"><a name="2">  2: </a></span>assertNotNull(locationLexer0);
-<span class="nocode"><a name="3">  3: </a></span>
-<span class="nocode"><a name="4">  4: </a></span>LocationLexer.TokenEnumeration locationLexer_TokenEnumeration0 = locationLexer0.new TokenEnumeration(&quot;E?k4]u.!my=|ANw2Q#&quot;);
-<span class="nocode"><a name="5">  5: </a></span>assertNotNull(locationLexer_TokenEnumeration0);
-<span class="nocode"><a name="6">  6: </a></span>
-<span class="nocode"><a name="7">  7: </a></span>String string0 = locationLexer_TokenEnumeration0.toString();
-<span class="nocode"><a name="8">  8: </a></span>assertNotNull(string0);
-</pre>
-<h3>Test case 32</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>LocationLexer locationLexer0 = new LocationLexer(&quot;*)WEE0B`~X1*=]&quot;);
-<span class="nocode"><a name="2">  2: </a></span>assertNotNull(locationLexer0);
-<span class="nocode"><a name="3">  3: </a></span>
-<span class="nocode"><a name="4">  4: </a></span>LocationLexer.TokenEnumeration locationLexer_TokenEnumeration0 = locationLexer0.new TokenEnumeration(&quot;Qz-$Tz{3Q=F']~&quot;);
-<span class="nocode"><a name="5">  5: </a></span>assertNotNull(locationLexer_TokenEnumeration0);
-<span class="nocode"><a name="6">  6: </a></span>
-<span class="nocode"><a name="7">  7: </a></span>boolean boolean0 = locationLexer_TokenEnumeration0.eatToken(&quot;Qz-$Tz{3Q=F']~&quot;);
-<span class="nocode"><a name="8">  8: </a></span>assertFalse(boolean0);
-</pre>
-<h3>Test case 33</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>LocationLexer locationLexer0 = new LocationLexer(&quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>assertNotNull(locationLexer0);
-<span class="nocode"><a name="3">  3: </a></span>
-<span class="nocode"><a name="4">  4: </a></span>LocationLexer.TokenEnumeration locationLexer_TokenEnumeration0 = locationLexer0.new TokenEnumeration(&quot;^tZa*X{3WO=V)rWAT&quot;);
-<span class="nocode"><a name="5">  5: </a></span>assertNotNull(locationLexer_TokenEnumeration0);
-<span class="nocode"><a name="6">  6: </a></span>
-<span class="nocode"><a name="7">  7: </a></span>boolean boolean0 = locationLexer_TokenEnumeration0.eatToken('t');
+<span class="nocode"><a name="7">  7: </a></span>boolean boolean0 = locationLexer_TokenEnumeration0.eatToken('{');
 <span class="nocode"><a name="8">  8: </a></span>assertFalse(boolean0);
 </pre>
 </div><div id="post">
@@ -418,11 +308,11 @@ uk.ac.sanger.artemis.io.LocationLexer
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.io.LocationLexer
-<li>Size: 33
-<li>Length: 106
+<li>Size: 25
+<li>Length: 78
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.8921731318457145
-<li>BranchCoverage: 0.868421052631579
+<li>Coverage: 0.8784473762671436
+<li>BranchCoverage: 0.8289473684210527
 <li>MethodCoverage: 1.0
 <li>OutputCoverage: 0.5
 </ul></div>

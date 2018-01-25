@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.components.ShortCut
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.components.ShortCut: 0.8743418743418744</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.components.ShortCut: 0.8800236925236926</ul>
 <ul>
-<li>11.409090306750763 fitness evaluations, 0 generations, null statements, 6 tests.
+<li>10.888888869862843 fitness evaluations, 0 generations, null statements, 6 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -40,37 +40,41 @@ uk.ac.sanger.artemis.components.ShortCut
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>KeyStroke keyStroke0 = KeyStroke.getKeyStroke(0, 0, false);
-<span class="nocode"><a name="2">  2: </a></span>ShortCut shortCut0 = new ShortCut(&quot;_&quot;, &quot;_&quot;, keyStroke0);
-<span class="nocode"><a name="3">  3: </a></span>ShortCut.applyShortCutFromCache((String) null, (JMenuItem) null);
+<span class="nocode"><a name="1">  1: </a></span>ShortCut shortCut0 = new ShortCut(&quot;qzkNX#|Y&quot;, &quot;qzkNX#|Y&quot;, (KeyStroke) null);
+<span class="nocode"><a name="2">  2: </a></span>byte[] byteArray0 = new byte[9];
+<span class="nocode"><a name="3">  3: </a></span>ImageIcon imageIcon0 = new ImageIcon(byteArray0, &quot;aue@GHtF3M~+T(CG;%R#:hZI}0w?;L`&quot;);
+<span class="nocode"><a name="4">  4: </a></span>JCheckBoxMenuItem jCheckBoxMenuItem0 = new JCheckBoxMenuItem(&quot;qzkNX#|Y&quot;, imageIcon0, false);
+<span class="nocode"><a name="5">  5: </a></span>ShortCut.applyShortCutFromCache(&quot;qzkNX#|Y&quot;, jCheckBoxMenuItem0);
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(jCheckBoxMenuItem0.getFocusTraversalKeysEnabled());
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>ShortCut shortCut0 = new ShortCut(&quot;u.8'-&quot;, &quot;Failed to read file &quot;, (KeyStroke) null);
-<span class="nocode"><a name="2">  2: </a></span>ShortCut shortCut1 = new ShortCut(&quot;CHARACTER&quot;, &quot;u.8'-&quot;, (KeyStroke) null);
-<span class="nocode"><a name="3">  3: </a></span>assertFalse(shortCut1.equals((Object)shortCut0));
+<span class="nocode"><a name="1">  1: </a></span>EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(&quot;/Users/kp11/.artemis/cache/MenuShortCuts/qz\\kNX#|Y#qz\\kNX#|Y&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileSystemHandling.createFolder(evoSuiteFile0);
+<span class="nocode"><a name="3">  3: </a></span>ShortCut shortCut0 = new ShortCut(&quot;qzkNX#|Y&quot;, &quot;qzkNX#|Y&quot;, (KeyStroke) null);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>StyledEditorKit.FontSizeAction styledEditorKit_FontSizeAction0 = new StyledEditorKit.FontSizeAction(&quot;Failed to read file &quot;, 0);
-<span class="nocode"><a name="2">  2: </a></span>JRadioButtonMenuItem jRadioButtonMenuItem0 = new JRadioButtonMenuItem(styledEditorKit_FontSizeAction0);
-<span class="nocode"><a name="3">  3: </a></span>ShortCut.applyShortCutFromCache(&quot;Failed to read file &quot;, jRadioButtonMenuItem0);
-<span class="nocode"><a name="4">  4: </a></span>assertFalse(jRadioButtonMenuItem0.isFocusTraversalPolicySet());
+<span class="nocode"><a name="1">  1: </a></span>ImageIcon imageIcon0 = new ImageIcon(&quot;hZI0w?`&quot;, &quot;hZI0w?`&quot;);
+<span class="nocode"><a name="2">  2: </a></span>JCheckBoxMenuItem jCheckBoxMenuItem0 = new JCheckBoxMenuItem(&quot;hZI0w?`&quot;, imageIcon0);
+<span class="nocode"><a name="3">  3: </a></span>ShortCut.applyShortCutFromCache(&quot;hZI0w?`&quot;, jCheckBoxMenuItem0);
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(jCheckBoxMenuItem0.isFocusTraversalPolicyProvider());
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>StyledEditorKit.FontSizeAction styledEditorKit_FontSizeAction0 = new StyledEditorKit.FontSizeAction(&quot;Failed to read file &quot;, 0);
-<span class="nocode"><a name="2">  2: </a></span>JRadioButtonMenuItem jRadioButtonMenuItem0 = new JRadioButtonMenuItem(styledEditorKit_FontSizeAction0);
-<span class="nocode"><a name="3">  3: </a></span>ShortCut shortCut0 = new ShortCut(&quot;u.8'-&quot;, &quot;Failed to read file &quot;, (KeyStroke) null);
-<span class="nocode"><a name="4">  4: </a></span>ShortCut.applyShortCutFromCache(&quot;CHARACTER&quot;, jRadioButtonMenuItem0);
-<span class="nocode"><a name="5">  5: </a></span>assertTrue(jRadioButtonMenuItem0.getFocusTraversalKeysEnabled());
+<span class="nocode"><a name="1">  1: </a></span>EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(&quot;/Users/kp11/.artemis/cache/MenuShortCuts/qz\\kNX#|Y#qz\\kNX#|Y&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileSystemHandling.createFolder(evoSuiteFile0);
+<span class="nocode"><a name="3">  3: </a></span>byte[] byteArray0 = new byte[9];
+<span class="nocode"><a name="4">  4: </a></span>ImageIcon imageIcon0 = new ImageIcon(byteArray0, &quot;aue@GHtF3M~+T(CG;%R#:hZI}0w?;L`&quot;);
+<span class="nocode"><a name="5">  5: </a></span>JCheckBoxMenuItem jCheckBoxMenuItem0 = new JCheckBoxMenuItem(&quot;qzkNX#|Y&quot;, imageIcon0, false);
+<span class="nocode"><a name="6">  6: </a></span>ShortCut.applyShortCutFromCache(&quot;qzkNX#|Y&quot;, jCheckBoxMenuItem0);
+<span class="nocode"><a name="7">  7: </a></span>assertFalse(jCheckBoxMenuItem0.isFocusCycleRoot());
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>JMenu jMenu0 = new JMenu(&quot;r&quot;, false);
-<span class="nocode"><a name="2">  2: </a></span>ShortCut shortCut0 = new ShortCut(&quot;r&quot;, &quot;r&quot;, (KeyStroke) null);
-<span class="nocode"><a name="3">  3: </a></span>ShortCut.applyShortCutFromCache(&quot;r&quot;, jMenu0);
-<span class="nocode"><a name="4">  4: </a></span>assertFalse(jMenu0.getIgnoreRepaint());
+<span class="nocode"><a name="1">  1: </a></span>KeyStroke keyStroke0 = KeyStroke.getKeyStroke('.');
+<span class="nocode"><a name="2">  2: </a></span>ShortCut shortCut0 = new ShortCut(&quot;&gt;u wc'Z8Ict&quot;, &quot;leTk.~)292pkau#zx&quot;, keyStroke0);
+<span class="nocode"><a name="3">  3: </a></span>ShortCut.applyShortCutFromCache(&quot;&gt;u wc'Z8Ict&quot;, (JMenuItem) null);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -84,9 +88,9 @@ uk.ac.sanger.artemis.components.ShortCut
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.ShortCut
 <li>Size: 6
-<li>Length: 16
+<li>Length: 21
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.8743418743418744
+<li>Coverage: 0.8800236925236926
 <li>BranchCoverage: 0.9285714285714286
 <li>MethodCoverage: 1.0
 <li>OutputCoverage: 0.5

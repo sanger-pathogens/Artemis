@@ -23,7 +23,7 @@ uk.ac.sanger.artemis.components.Splash
 <br><br><h2 class=title>Summary</h2>
 <ul><li>Target class: uk.ac.sanger.artemis.components.Splash: 0.12780528822364118</ul>
 <ul>
-<li>2307.164511144009 fitness evaluations, 0 generations, null statements, 9 tests.
+<li>2307.164511144699 fitness evaluations, 0 generations, null statements, 14 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,45 +35,283 @@ uk.ac.sanger.artemis.components.Splash
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>LogViewer logViewer0 = (LogViewer)Splash.getLogger();
-<span class="nocode"><a name="2">  2: </a></span>assertTrue(logViewer0.requiresLayout());
+<span class="nocode"><a name="1">  1: </a></span>JRootPane jRootPane0 = new JRootPane();
+<span class="nocode"><a name="2">  2: </a></span>JLayeredPane jLayeredPane0 = jRootPane0.getLayeredPane();
+<span class="nocode"><a name="3">  3: </a></span>InputMethodListener inputMethodListener0 = mock(InputMethodListener.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="4">  4: </a></span>AWTEventMulticaster.remove(inputMethodListener0, inputMethodListener0);
+<span class="nocode"><a name="5">  5: </a></span>InputMethodListener inputMethodListener1 = AWTEventMulticaster.remove(inputMethodListener0, (InputMethodListener) null);
+<span class="nocode"><a name="6">  6: </a></span>jLayeredPane0.removeInputMethodListener(inputMethodListener1);
+<span class="nocode"><a name="7">  7: </a></span>Splash.exitApp();
+<span class="nocode"><a name="8">  8: </a></span>Splash.exitApp();
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Splash.showLog();
+<span class="nocode"><a name="1">  1: </a></span>Splash.setWorkingDirectory();
+<span class="nocode"><a name="2">  2: </a></span>String[] stringArray0 = new String[2];
+<span class="nocode"><a name="3">  3: </a></span>String string0 = &quot;k*UB}R[5&quot;;
+<span class="nocode"><a name="4">  4: </a></span>stringArray0[0] = string0;
+<span class="nocode"><a name="5">  5: </a></span>String string1 = &quot;0an&quot;;
+<span class="nocode"><a name="6">  6: </a></span>stringArray0[1] = string1;
+<span class="nocode"><a name="7">  7: </a></span>ArtemisMain artemisMain0 = new ArtemisMain(stringArray0);
+<span class="nocode"><a name="8">  8: </a></span>JFrame jFrame0 = new JFrame(string1);
+<span class="nocode"><a name="9">  9: </a></span>jFrame0.remove((Component) artemisMain0);
+<span class="nocode"><a name="10"> 10: </a></span>boolean boolean0 = false;
+<span class="nocode"><a name="11"> 11: </a></span>jFrame0.setEnabled(boolean0);
+<span class="nocode"><a name="12"> 12: </a></span>artemisMain0.readArgsAndOptions(stringArray0, jFrame0);
+<span class="nocode"><a name="13"> 13: </a></span>artemisMain0.exit();
+<span class="nocode"><a name="14"> 14: </a></span>artemisMain0.exit();
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Splash.setWorkingDirectory();
+<span class="nocode"><a name="1">  1: </a></span>Splash.appendToLog(&quot;garbage at the end of the location string&quot;);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Splash.appendToLog(&quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Splash.appendToLog(&quot;&quot;);
+<span class="nocode"><a name="1">  1: </a></span>Splash.getLogger();
+<span class="nocode"><a name="2">  2: </a></span>ActMain actMain0 = new ActMain();
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="4">  4: </a></span>simpleEntryGroup0.unref();
+<span class="nocode"><a name="5">  5: </a></span>int int0 = 336;
+<span class="nocode"><a name="6">  6: </a></span>actMain0.toBack();
+<span class="nocode"><a name="7">  7: </a></span>Key key0 = new Key(actMain0.version);
+<span class="nocode"><a name="8">  8: </a></span>boolean boolean0 = true;
+<span class="nocode"><a name="9">  9: </a></span>boolean boolean1 = true;
+<span class="nocode"><a name="10"> 10: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate(key0, actMain0.version, actMain0.version, boolean0, boolean1);
+<span class="nocode"><a name="11"> 11: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureKeyQualifierPredicate0, actMain0.version);
+<span class="nocode"><a name="12"> 12: </a></span>Entry entry0 = filteredEntryGroup0.getSequenceEntry();
+<span class="nocode"><a name="13"> 13: </a></span>Bases bases0 = filteredEntryGroup0.getBases();
+<span class="nocode"><a name="14"> 14: </a></span>int int1 = 5;
+<span class="nocode"><a name="15"> 15: </a></span>Range range0 = new Range(int1);
+<span class="nocode"><a name="16"> 16: </a></span>Bases bases1 = bases0.truncate(range0);
+<span class="nocode"><a name="17"> 17: </a></span>Entry entry1 = entry0.truncate(bases1, range0);
+<span class="nocode"><a name="18"> 18: </a></span>simpleEntryGroup0.setDefaultEntry(entry1);
+<span class="nocode"><a name="19"> 19: </a></span>Entry entry2 = simpleEntryGroup0.elementAt(int0);
+<span class="nocode"><a name="20"> 20: </a></span>ArtemisMain.makeEntryEdit(entry2);
+<span class="nocode"><a name="21"> 21: </a></span>actMain0.exit();
+<span class="nocode"><a name="22"> 22: </a></span>ArtemisMain.makeEntryEdit(entry2);
+<span class="nocode"><a name="23"> 23: </a></span>String[] stringArray0 = new String[7];
+<span class="nocode"><a name="24"> 24: </a></span>stringArray0[0] = actMain0.version;
+<span class="nocode"><a name="25"> 25: </a></span>stringArray0[1] = actMain0.version;
+<span class="nocode"><a name="26"> 26: </a></span>stringArray0[2] = actMain0.version;
+<span class="nocode"><a name="27"> 27: </a></span>stringArray0[3] = actMain0.version;
+<span class="nocode"><a name="28"> 28: </a></span>stringArray0[4] = actMain0.version;
+<span class="nocode"><a name="29"> 29: </a></span>stringArray0[5] = actMain0.version;
+<span class="nocode"><a name="30"> 30: </a></span>stringArray0[6] = actMain0.version;
+<span class="nocode"><a name="31"> 31: </a></span>ArtemisMain artemisMain0 = new ArtemisMain(stringArray0);
+<span class="nocode"><a name="32"> 32: </a></span>artemisMain0.openClipboardContents();
+<span class="nocode"><a name="33"> 33: </a></span>artemisMain0.exit();
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Splash.processJnlpAttributes();
+<span class="nocode"><a name="1">  1: </a></span>String string0 = null;
+<span class="nocode"><a name="2">  2: </a></span>Splash.appendToLog((String) null);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="4">  4: </a></span>FeatureVector featureVector0 = new FeatureVector();
+<span class="nocode"><a name="5">  5: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, (String) null);
+<span class="nocode"><a name="6">  6: </a></span>filteredEntryGroup0.isReadOnly();
+<span class="nocode"><a name="7">  7: </a></span>filteredEntryGroup0.getBases();
+<span class="nocode"><a name="8">  8: </a></span>Entry entry0 = Entry.newEntry((Bases) null);
+<span class="nocode"><a name="9">  9: </a></span>EntryEdit entryEdit0 = ArtemisMain.makeEntryEdit(entry0);
+<span class="nocode"><a name="10"> 10: </a></span>Splash.initLogger();
+<span class="nocode"><a name="11"> 11: </a></span>String[] stringArray0 = new String[6];
+<span class="nocode"><a name="12"> 12: </a></span>stringArray0[0] = string0;
+<span class="nocode"><a name="13"> 13: </a></span>stringArray0[1] = string0;
+<span class="nocode"><a name="14"> 14: </a></span>String string1 = &quot;Q2&amp;&quot;;
+<span class="nocode"><a name="15"> 15: </a></span>stringArray0[2] = string1;
+<span class="nocode"><a name="16"> 16: </a></span>stringArray0[3] = string0;
+<span class="nocode"><a name="17"> 17: </a></span>stringArray0[4] = string0;
+<span class="nocode"><a name="18"> 18: </a></span>stringArray0[5] = string0;
+<span class="nocode"><a name="19"> 19: </a></span>ArtemisMain artemisMain0 = new ArtemisMain(stringArray0);
+<span class="nocode"><a name="20"> 20: </a></span>artemisMain0.getCanvas();
+<span class="nocode"><a name="21"> 21: </a></span>InputStreamProgressListener inputStreamProgressListener0 = artemisMain0.getInputStreamProgressListener();
+<span class="nocode"><a name="22"> 22: </a></span>ActMain.makeMultiComparator(artemisMain0, inputStreamProgressListener0, stringArray0);
+<span class="nocode"><a name="23"> 23: </a></span>artemisMain0.getEntrySources(entryEdit0);
+<span class="nocode"><a name="24"> 24: </a></span>artemisMain0.getCanvas();
+<span class="nocode"><a name="25"> 25: </a></span>Splash.getLogger();
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Splash.exitApp();
+<span class="nocode"><a name="1">  1: </a></span>Splash.processJnlpAttributes();
+<span class="nocode"><a name="2">  2: </a></span>ActMain actMain0 = new ActMain();
+<span class="nocode"><a name="3">  3: </a></span>InputStreamProgressListener inputStreamProgressListener0 = actMain0.getInputStreamProgressListener();
+<span class="nocode"><a name="4">  4: </a></span>Object[] objectArray0 = new Object[9];
+<span class="nocode"><a name="5">  5: </a></span>objectArray0[0] = (Object) inputStreamProgressListener0;
+<span class="nocode"><a name="6">  6: </a></span>objectArray0[1] = (Object) inputStreamProgressListener0;
+<span class="nocode"><a name="7">  7: </a></span>objectArray0[2] = (Object) actMain0;
+<span class="nocode"><a name="8">  8: </a></span>objectArray0[3] = (Object) inputStreamProgressListener0;
+<span class="nocode"><a name="9">  9: </a></span>objectArray0[4] = (Object) inputStreamProgressListener0;
+<span class="nocode"><a name="10"> 10: </a></span>objectArray0[5] = (Object) actMain0;
+<span class="nocode"><a name="11"> 11: </a></span>objectArray0[6] = (Object) actMain0;
+<span class="nocode"><a name="12"> 12: </a></span>objectArray0[7] = (Object) inputStreamProgressListener0;
+<span class="nocode"><a name="13"> 13: </a></span>objectArray0[8] = (Object) inputStreamProgressListener0;
+<span class="nocode"><a name="14"> 14: </a></span>ActMain.makeMultiComparator(actMain0, inputStreamProgressListener0, objectArray0);
+<span class="nocode"><a name="15"> 15: </a></span>long long0 = (-3511L);
+<span class="nocode"><a name="16"> 16: </a></span>System.setCurrentTimeMillis(long0);
+<span class="nocode"><a name="17"> 17: </a></span>actMain0.about();
+<span class="nocode"><a name="18"> 18: </a></span>BasicDesktopIconUI basicDesktopIconUI0 = new BasicDesktopIconUI();
+<span class="nocode"><a name="19"> 19: </a></span>DefaultTreeCellRenderer defaultTreeCellRenderer0 = new DefaultTreeCellRenderer();
+<span class="nocode"><a name="20"> 20: </a></span>basicDesktopIconUI0.getBaselineResizeBehavior(defaultTreeCellRenderer0);
+<span class="nocode"><a name="21"> 21: </a></span>Dimension dimension0 = basicDesktopIconUI0.getPreferredSize(defaultTreeCellRenderer0);
+<span class="nocode"><a name="22"> 22: </a></span>double double0 = (-4513.0892821);
+<span class="nocode"><a name="23"> 23: </a></span>dimension0.setSize(double0, double0);
+<span class="nocode"><a name="24"> 24: </a></span>actMain0.setMaximumSize(dimension0);
+<span class="nocode"><a name="25"> 25: </a></span>Dialog.ModalExclusionType dialog_ModalExclusionType0 = Dialog.ModalExclusionType.APPLICATION_EXCLUDE;
+<span class="nocode"><a name="26"> 26: </a></span>actMain0.setModalExclusionType(dialog_ModalExclusionType0);
+<span class="nocode"><a name="27"> 27: </a></span>actMain0.getToolkit();
+<span class="nocode"><a name="28"> 28: </a></span>actMain0.getBackground();
+<span class="nocode"><a name="29"> 29: </a></span>actMain0.toFront();
+<span class="nocode"><a name="30"> 30: </a></span>actMain0.getCanvas();
+<span class="nocode"><a name="31"> 31: </a></span>String string0 = &quot;j2ssh&quot;;
+<span class="nocode"><a name="32"> 32: </a></span>Splash.appendToLog(string0);
+<span class="nocode"><a name="33"> 33: </a></span>Splash.getLogger();
+<span class="nocode"><a name="34"> 34: </a></span>Splash.appendToLog(actMain0.version);
+<span class="nocode"><a name="35"> 35: </a></span>actMain0.exit();
+<span class="nocode"><a name="36"> 36: </a></span>actMain0.about();
+<span class="nocode"><a name="37"> 37: </a></span>System.setCurrentTimeMillis(dimension0.height);
+<span class="nocode"><a name="38"> 38: </a></span>Splash.exitApp();
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>JMenu jMenu0 = new JMenu(&quot;.dribble.&quot;, false);
-<span class="nocode"><a name="2">  2: </a></span>DefaultEditorKit.InsertBreakAction defaultEditorKit_InsertBreakAction0 = new DefaultEditorKit.InsertBreakAction();
-<span class="nocode"><a name="3">  3: </a></span>Splash.makeMenuItem(jMenu0, &quot; &quot;, defaultEditorKit_InsertBreakAction0);
-<span class="nocode"><a name="4">  4: </a></span>assertFalse(jMenu0.getIgnoreRepaint());
+<span class="nocode"><a name="1">  1: </a></span>JMenu jMenu0 = new JMenu(&quot;1) b4T`3V%WNjDz&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileSystemHandling.appendDataToFile((EvoSuiteFile) null, (byte[]) null);
+<span class="nocode"><a name="3">  3: </a></span>DefaultEditorKit.DefaultKeyTypedAction defaultEditorKit_DefaultKeyTypedAction0 = new DefaultEditorKit.DefaultKeyTypedAction();
+<span class="nocode"><a name="4">  4: </a></span>defaultEditorKit_DefaultKeyTypedAction0.getKeys();
+<span class="nocode"><a name="5">  5: </a></span>Object object0 = ColorSpaceHintKey.VALUE_COLORSPACE_ARGB;
+<span class="nocode"><a name="6">  6: </a></span>Splash.makeMenuItem(jMenu0, &quot;L06@\&quot;k&gt;x*n{uK&quot;, defaultEditorKit_DefaultKeyTypedAction0);
+<span class="nocode"><a name="7">  7: </a></span>Splash.showLog();
+<span class="nocode"><a name="8">  8: </a></span>ActMain actMain0 = new ActMain();
+<span class="nocode"><a name="9">  9: </a></span>JFrame jFrame0 = null;
+<span class="nocode"><a name="10"> 10: </a></span>actMain0.getEntrySources(jFrame0);
+<span class="nocode"><a name="11"> 11: </a></span>Splash.exitApp();
+<span class="nocode"><a name="12"> 12: </a></span>BasicScrollBarUI basicScrollBarUI0 = new BasicScrollBarUI();
+<span class="nocode"><a name="13"> 13: </a></span>actMain0.setLayout(basicScrollBarUI0);
+<span class="nocode"><a name="14"> 14: </a></span>actMain0.getStatusLabel();
+<span class="nocode"><a name="15"> 15: </a></span>actMain0.exit();
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Splash.initLogger();
+<span class="nocode"><a name="1">  1: </a></span>InputMethodListener inputMethodListener0 = mock(InputMethodListener.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="2">  2: </a></span>AWTEventMulticaster.remove(inputMethodListener0, inputMethodListener0);
+<span class="nocode"><a name="3">  3: </a></span>AWTEventMulticaster.add((InputMethodListener) null, (InputMethodListener) null);
+<span class="nocode"><a name="4">  4: </a></span>String string0 = &quot;MZk-*Z[/naTC &quot;;
+<span class="nocode"><a name="5">  5: </a></span>Object[] objectArray0 = new Object[10];
+<span class="nocode"><a name="6">  6: </a></span>objectArray0[3] = (Object) null;
+<span class="nocode"><a name="7">  7: </a></span>objectArray0[6] = (Object) &quot;MZk-*Z[/naTC &quot;;
+<span class="nocode"><a name="8">  8: </a></span>Splash.showLog();
+<span class="nocode"><a name="9">  9: </a></span>Splash.initLogger();
+<span class="nocode"><a name="10"> 10: </a></span>String string1 = &quot;&quot;;
+<span class="nocode"><a name="11"> 11: </a></span>Splash.appendToLog(string1);
+<span class="nocode"><a name="12"> 12: </a></span>String[] stringArray0 = new String[1];
+<span class="nocode"><a name="13"> 13: </a></span>stringArray0[0] = string0;
+<span class="nocode"><a name="14"> 14: </a></span>ArtemisMain artemisMain0 = new ArtemisMain(stringArray0);
+<span class="nocode"><a name="15"> 15: </a></span>artemisMain0.about();
 </pre>
 <h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Action action0 = TransferHandler.getCutAction();
-<span class="nocode"><a name="2">  2: </a></span>Splash.makeMenuItem((JMenu) null, &quot;db_xref=&quot;, action0);
+<span class="nocode"><a name="1">  1: </a></span>String string0 = &quot;org.biojava.bio.taxa.Taxon&quot;;
+<span class="nocode"><a name="2">  2: </a></span>FileSystemHandling.appendLineToFile((EvoSuiteFile) null, &quot;org.biojava.bio.taxa.Taxon&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string1 = &quot;f#?((34&lt;0R&quot;;
+<span class="nocode"><a name="4">  4: </a></span>FileSystemHandling.appendLineToFile((EvoSuiteFile) null, &quot;f#?((34&lt;0R&quot;);
+<span class="nocode"><a name="5">  5: </a></span>Splash.processJnlpAttributes();
+<span class="nocode"><a name="6">  6: </a></span>Splash.setWorkingDirectory();
+<span class="nocode"><a name="7">  7: </a></span>Splash.showLog();
+<span class="nocode"><a name="8">  8: </a></span>String[] stringArray0 = new String[9];
+<span class="nocode"><a name="9">  9: </a></span>stringArray0[0] = string0;
+<span class="nocode"><a name="10"> 10: </a></span>stringArray0[1] = string1;
+<span class="nocode"><a name="11"> 11: </a></span>stringArray0[2] = string1;
+<span class="nocode"><a name="12"> 12: </a></span>String string2 = &quot;?WVzkh&amp;T;?p]&quot;;
+<span class="nocode"><a name="13"> 13: </a></span>stringArray0[3] = string2;
+<span class="nocode"><a name="14"> 14: </a></span>stringArray0[4] = string0;
+<span class="nocode"><a name="15"> 15: </a></span>stringArray0[5] = string1;
+<span class="nocode"><a name="16"> 16: </a></span>stringArray0[6] = string0;
+<span class="nocode"><a name="17"> 17: </a></span>stringArray0[7] = string1;
+<span class="nocode"><a name="18"> 18: </a></span>stringArray0[8] = string1;
+<span class="nocode"><a name="19"> 19: </a></span>ArtemisMain artemisMain0 = new ArtemisMain(stringArray0);
+<span class="nocode"><a name="20"> 20: </a></span>artemisMain0.getCanvas();
+<span class="nocode"><a name="21"> 21: </a></span>Splash.showLog();
+<span class="nocode"><a name="22"> 22: </a></span>String string3 = &quot;6egM0NX{EYFH&quot;;
+<span class="nocode"><a name="23"> 23: </a></span>artemisMain0.loadFile(string3);
+<span class="nocode"><a name="24"> 24: </a></span>String string4 = &quot;Confirm Translation Table Change&quot;;
+<span class="nocode"><a name="25"> 25: </a></span>JembossParams jembossParams0 = new JembossParams();
+<span class="nocode"><a name="26"> 26: </a></span>MultiSliderUI multiSliderUI0 = new MultiSliderUI();
+<span class="nocode"><a name="27"> 27: </a></span>String string5 = &quot;?=4Wqa=ytIc]a`W&lt;8&quot;;
+<span class="nocode"><a name="28"> 28: </a></span>FileSystemView fileSystemView0 = MockFileSystemView.getFileSystemView();
+<span class="nocode"><a name="29"> 29: </a></span>MockJFileChooser mockJFileChooser0 = new MockJFileChooser(string5, fileSystemView0);
+<span class="nocode"><a name="30"> 30: </a></span>Dimension dimension0 = multiSliderUI0.getPreferredSize(mockJFileChooser0);
+<span class="nocode"><a name="31"> 31: </a></span>artemisMain0.getSize(dimension0);
+<span class="nocode"><a name="32"> 32: </a></span>int int0 = 2001;
+<span class="nocode"><a name="33"> 33: </a></span>jembossParams0.setServerStatus(string0, int0);
+<span class="nocode"><a name="34"> 34: </a></span>Browser browser0 = new Browser(string2, string4, jembossParams0);
+<span class="nocode"><a name="35"> 35: </a></span>artemisMain0.readArgsAndOptions(stringArray0, browser0);
+<span class="nocode"><a name="36"> 36: </a></span>Splash.getLogger();
+<span class="nocode"><a name="37"> 37: </a></span>long long0 = 1L;
+<span class="nocode"><a name="38"> 38: </a></span>System.setCurrentTimeMillis(long0);
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Splash.exitApp();
+<span class="nocode"><a name="2">  2: </a></span>long long0 = (-744L);
+<span class="nocode"><a name="3">  3: </a></span>System.setCurrentTimeMillis(long0);
+<span class="nocode"><a name="4">  4: </a></span>Splash.initLogger();
+<span class="nocode"><a name="5">  5: </a></span>EvoSuiteFile evoSuiteFile0 = null;
+<span class="nocode"><a name="6">  6: </a></span>String string0 = &quot;jnlp.show_line.separator&quot;;
+<span class="nocode"><a name="7">  7: </a></span>FileSystemHandling.appendStringToFile(evoSuiteFile0, string0);
+<span class="nocode"><a name="8">  8: </a></span>Splash.processJnlpAttributes();
+<span class="nocode"><a name="9">  9: </a></span>String[] stringArray0 = new String[8];
+<span class="nocode"><a name="10"> 10: </a></span>String string1 = &quot;java.vm.na&quot;;
+<span class="nocode"><a name="11"> 11: </a></span>stringArray0[0] = string1;
+<span class="nocode"><a name="12"> 12: </a></span>String string2 = &quot;j40#y'DI&quot;;
+<span class="nocode"><a name="13"> 13: </a></span>stringArray0[1] = string2;
+<span class="nocode"><a name="14"> 14: </a></span>String string3 = &quot;jnlp.bamjava.vm.name&quot;;
+<span class="nocode"><a name="15"> 15: </a></span>FileSystemHandling.shouldAllThrowIOExceptions();
+<span class="nocode"><a name="16"> 16: </a></span>stringArray0[2] = string3;
+<span class="nocode"><a name="17"> 17: </a></span>String string4 = &quot;q4%TkADI#k-z'@=ul{&quot;;
+<span class="nocode"><a name="18"> 18: </a></span>stringArray0[3] = string4;
+<span class="nocode"><a name="19"> 19: </a></span>String string5 = &quot;cosmid.pir&quot;;
+<span class="nocode"><a name="20"> 20: </a></span>stringArray0[4] = string5;
+<span class="nocode"><a name="21"> 21: </a></span>String string6 = &quot;J(]&quot;;
+<span class="nocode"><a name="22"> 22: </a></span>stringArray0[5] = string6;
+<span class="nocode"><a name="23"> 23: </a></span>String string7 = &quot;evosuite&quot;;
+<span class="nocode"><a name="24"> 24: </a></span>stringArray0[6] = string7;
+<span class="nocode"><a name="25"> 25: </a></span>String string8 = &quot;jnlp.offset&quot;;
+<span class="nocode"><a name="26"> 26: </a></span>stringArray0[7] = string8;
+<span class="nocode"><a name="27"> 27: </a></span>ArtemisMain artemisMain0 = new ArtemisMain(stringArray0);
+<span class="nocode"><a name="28"> 28: </a></span>artemisMain0.exit();
+<span class="nocode"><a name="29"> 29: </a></span>String string9 = &quot;Black Belt Mode&quot;;
+<span class="nocode"><a name="30"> 30: </a></span>Dialog.ModalExclusionType dialog_ModalExclusionType0 = Dialog.ModalExclusionType.TOOLKIT_EXCLUDE;
+<span class="nocode"><a name="31"> 31: </a></span>artemisMain0.setModalExclusionType(dialog_ModalExclusionType0);
+<span class="nocode"><a name="32"> 32: </a></span>int int0 = (-168162154);
+<span class="nocode"><a name="33"> 33: </a></span>artemisMain0.remove(int0);
+<span class="nocode"><a name="34"> 34: </a></span>artemisMain0.getMinimumSize();
+<span class="nocode"><a name="35"> 35: </a></span>artemisMain0.loadFile(string9);
+<span class="nocode"><a name="36"> 36: </a></span>artemisMain0.getCanvas();
+<span class="nocode"><a name="37"> 37: </a></span>Splash.initLogger();
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JMenu jMenu0 = new JMenu((String) null);
+<span class="nocode"><a name="2">  2: </a></span>Splash.makeMenuItem(jMenu0, &quot;S6@@\&quot;&quot;, (ActionListener) null);
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(jMenu0.isFocusCycleRoot());
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FileSystemHandling.createFolder((EvoSuiteFile) null);
+<span class="nocode"><a name="2">  2: </a></span>Splash.initLogger();
+<span class="nocode"><a name="3">  3: </a></span>ActMain actMain0 = new ActMain();
+</pre>
+<h3>Test case 13</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Splash.getLogger();
+<span class="nocode"><a name="2">  2: </a></span>Splash.getLogger();
+<span class="nocode"><a name="3">  3: </a></span>Splash.processJnlpAttributes();
+<span class="nocode"><a name="4">  4: </a></span>Splash.showLog();
+</pre>
+<h3>Test case 14</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Color color0 = Color.WHITE;
+<span class="nocode"><a name="2">  2: </a></span>StyledEditorKit.ForegroundAction styledEditorKit_ForegroundAction0 = new StyledEditorKit.ForegroundAction((String) null, color0);
+<span class="nocode"><a name="3">  3: </a></span>AWTEventMulticaster.remove((ActionListener) styledEditorKit_ForegroundAction0, (ActionListener) styledEditorKit_ForegroundAction0);
+<span class="nocode"><a name="4">  4: </a></span>Splash.makeMenuItem((JMenu) null, (String) null, (ActionListener) null);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -86,8 +324,8 @@ uk.ac.sanger.artemis.components.Splash
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.Splash
-<li>Size: 9
-<li>Length: 13
+<li>Size: 14
+<li>Length: 237
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.12780528822364118
 <li>BranchCoverage: 0.11788617886178862

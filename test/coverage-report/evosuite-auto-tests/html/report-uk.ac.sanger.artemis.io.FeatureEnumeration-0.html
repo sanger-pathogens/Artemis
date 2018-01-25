@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.io.FeatureEnumeration
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.io.FeatureEnumeration: 0.875</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.io.FeatureEnumeration: 0.75</ul>
 <ul>
-<li>2.5 fitness evaluations, 0 generations, null statements, 2 tests.
+<li>4.5 fitness evaluations, 0 generations, null statements, 1 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -40,14 +40,6 @@ uk.ac.sanger.artemis.io.FeatureEnumeration
 <span class="nocode"><a name="3">  3: </a></span>FeatureTree.FeatureEnumerator featureTree_FeatureEnumerator0 = featureTree0.new FeatureEnumerator();
 <span class="nocode"><a name="4">  4: </a></span>featureTree_FeatureEnumerator0.nextFeature();
 </pre>
-<h3>Test case 2</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Feature.ByLocationComparator feature_ByLocationComparator0 = Feature.byLocationOrder;
-<span class="nocode"><a name="2">  2: </a></span>FeatureTree featureTree0 = new FeatureTree(feature_ByLocationComparator0);
-<span class="nocode"><a name="3">  3: </a></span>FeatureTree.FeatureEnumerator featureTree_FeatureEnumerator0 = (FeatureTree.FeatureEnumerator)featureTree0.features();
-<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = featureTree_FeatureEnumerator0.hasMoreFeatures();
-<span class="nocode"><a name="5">  5: </a></span>assertFalse(boolean0);
-</pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
 <div class=source>
@@ -59,12 +51,12 @@ uk.ac.sanger.artemis.io.FeatureEnumeration
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.io.FeatureEnumeration
-<li>Size: 2
-<li>Length: 8
+<li>Size: 1
+<li>Length: 4
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.875
+<li>Coverage: 0.75
 <li>BranchCoverage: 1.0
-<li>MethodCoverage: 1.0
+<li>MethodCoverage: 0.5
 <li>OutputCoverage: 1.0
 </ul></div>
 </div>

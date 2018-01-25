@@ -23,7 +23,7 @@ uk.ac.sanger.artemis.chado.SqlMapClientWrapper
 <br><br><h2 class=title>Summary</h2>
 <ul><li>Target class: uk.ac.sanger.artemis.chado.SqlMapClientWrapper: 0.16021586017999218</ul>
 <ul>
-<li>128.47435897435898 fitness evaluations, 0 generations, null statements, 1 tests.
+<li>128.47435897435898 fitness evaluations, 0 generations, null statements, 6 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,8 +35,120 @@ uk.ac.sanger.artemis.chado.SqlMapClientWrapper
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JPasswordField jPasswordField0 = null;
+<span class="nocode"><a name="2">  2: </a></span>SqlMapClientWrapper sqlMapClientWrapper0 = new SqlMapClientWrapper((JPasswordField) null);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = &quot;3ae\\U&quot;;
+<span class="nocode"><a name="4">  4: </a></span>sqlMapClientWrapper0.queryForObject(string0, jPasswordField0);
+<span class="nocode"><a name="5">  5: </a></span>String string1 = &quot;&quot;;
+<span class="nocode"><a name="6">  6: </a></span>Object object0 = sqlMapClientWrapper0.insert(string1, string1);
+<span class="nocode"><a name="7">  7: </a></span>String string2 = &quot;MNP&quot;;
+<span class="nocode"><a name="8">  8: </a></span>sqlMapClientWrapper0.queryForList(string2, string2);
+<span class="nocode"><a name="9">  9: </a></span>String string3 = &quot;&quot;;
+<span class="nocode"><a name="10"> 10: </a></span>sqlMapClientWrapper0.insert(string3, object0);
+<span class="nocode"><a name="11"> 11: </a></span>String string4 = &quot;)&quot;;
+<span class="nocode"><a name="12"> 12: </a></span>int int0 = 0;
+<span class="nocode"><a name="13"> 13: </a></span>int int1 = (-2397);
+<span class="nocode"><a name="14"> 14: </a></span>TextArea textArea0 = new TextArea(string4, int0, int1);
+<span class="nocode"><a name="15"> 15: </a></span>sqlMapClientWrapper0.delete(string2, textArea0);
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JPasswordField jPasswordField0 = new JPasswordField();
+<span class="nocode"><a name="2">  2: </a></span>SqlMapClientWrapper sqlMapClientWrapper0 = new SqlMapClientWrapper(jPasswordField0);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = &quot;1k&amp;e&gt;t@?'&lt;D:w*&lt;,w)O&quot;;
+<span class="nocode"><a name="4">  4: </a></span>JPopupMenu jPopupMenu0 = new JPopupMenu(string0);
+<span class="nocode"><a name="5">  5: </a></span>jPasswordField0.setComponentPopupMenu(jPopupMenu0);
+<span class="nocode"><a name="6">  6: </a></span>jPasswordField0.getDropMode();
+<span class="nocode"><a name="7">  7: </a></span>String string1 = &quot;&quot;;
+<span class="nocode"><a name="8">  8: </a></span>sqlMapClientWrapper0.queryForList(string1, string1);
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>JPasswordField jPasswordField0 = new JPasswordField(0);
 <span class="nocode"><a name="2">  2: </a></span>SqlMapClientWrapper sqlMapClientWrapper0 = new SqlMapClientWrapper(jPasswordField0);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = &quot;queryForList() &quot;;
+<span class="nocode"><a name="4">  4: </a></span>sqlMapClientWrapper0.update(string0, string0);
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JPasswordField jPasswordField0 = new JPasswordField(&quot; \n&quot;);
+<span class="nocode"><a name="2">  2: </a></span>jPasswordField0.removeAncestorListener((AncestorListener) null);
+<span class="nocode"><a name="3">  3: </a></span>SqlMapClientWrapper sqlMapClientWrapper0 = new SqlMapClientWrapper(jPasswordField0);
+<span class="nocode"><a name="4">  4: </a></span>sqlMapClientWrapper0.getSqlMap();
+<span class="nocode"><a name="5">  5: </a></span>sqlMapClientWrapper0.close();
+<span class="nocode"><a name="6">  6: </a></span>String string0 = &quot;=:ll.u&lt;Y*!UVO&quot;;
+<span class="nocode"><a name="7">  7: </a></span>Object object0 = AttributeSet.NameAttribute;
+<span class="nocode"><a name="8">  8: </a></span>sqlMapClientWrapper0.delete(string0, object0);
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JPasswordField jPasswordField0 = new JPasswordField();
+<span class="nocode"><a name="2">  2: </a></span>SqlMapClientWrapper sqlMapClientWrapper0 = new SqlMapClientWrapper(jPasswordField0);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = &quot;X3;cu~~o|c 0&quot;;
+<span class="nocode"><a name="4">  4: </a></span>sqlMapClientWrapper0.delete(string0, string0);
+<span class="nocode"><a name="5">  5: </a></span>String string1 = &quot;queryForObject() &quot;;
+<span class="nocode"><a name="6">  6: </a></span>Object object0 = sqlMapClientWrapper0.queryForObject(string1, string0);
+<span class="nocode"><a name="7">  7: </a></span>jPasswordField0.setName(string0);
+<span class="nocode"><a name="8">  8: </a></span>String string2 = &quot;&quot;;
+<span class="nocode"><a name="9">  9: </a></span>sqlMapClientWrapper0.insert(string2, string2);
+<span class="nocode"><a name="10"> 10: </a></span>SqlMapClient sqlMapClient0 = sqlMapClientWrapper0.getSqlMap();
+<span class="nocode"><a name="11"> 11: </a></span>String string3 = &quot;htsjdk.samtools.util.Log&quot;;
+<span class="nocode"><a name="12"> 12: </a></span>sqlMapClientWrapper0.insert(string3, object0);
+<span class="nocode"><a name="13"> 13: </a></span>String string4 = &quot;0Ah5sShfd&quot;;
+<span class="nocode"><a name="14"> 14: </a></span>DateTimeFormatter dateTimeFormatter0 = DateTimeFormatter.ISO_INSTANT;
+<span class="nocode"><a name="15"> 15: </a></span>MonthDay monthDay0 = MockMonthDay.parse((CharSequence) string1, dateTimeFormatter0);
+<span class="nocode"><a name="16"> 16: </a></span>JapaneseDate japaneseDate0 = MockJapaneseDate.from(monthDay0);
+<span class="nocode"><a name="17"> 17: </a></span>Chronology chronology0 = japaneseDate0.getChronology();
+<span class="nocode"><a name="18"> 18: </a></span>String string5 = null;
+<span class="nocode"><a name="19"> 19: </a></span>String string6 = &quot;32Ah`7}&quot;;
+<span class="nocode"><a name="20"> 20: </a></span>int int0 = 0;
+<span class="nocode"><a name="21"> 21: </a></span>TextArea textArea0 = new TextArea(string6, int0, int0);
+<span class="nocode"><a name="22"> 22: </a></span>sqlMapClientWrapper0.delete(string5, textArea0);
+<span class="nocode"><a name="23"> 23: </a></span>ChronoLocalDate chronoLocalDate0 = chronology0.dateNow();
+<span class="nocode"><a name="24"> 24: </a></span>sqlMapClientWrapper0.update(string4, chronoLocalDate0);
+<span class="nocode"><a name="25"> 25: </a></span>sqlMapClientWrapper0.update(string1, jPasswordField0);
+<span class="nocode"><a name="26"> 26: </a></span>String string7 = &quot;text/html&quot;;
+<span class="nocode"><a name="27"> 27: </a></span>Object object1 = null;
+<span class="nocode"><a name="28"> 28: </a></span>sqlMapClientWrapper0.queryForList(string7, object1);
+<span class="nocode"><a name="29"> 29: </a></span>String string8 = &quot;&quot;;
+<span class="nocode"><a name="30"> 30: </a></span>sqlMapClientWrapper0.queryForObject(string8, sqlMapClient0);
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JPasswordField jPasswordField0 = new JPasswordField(1140);
+<span class="nocode"><a name="2">  2: </a></span>SqlMapClientWrapper sqlMapClientWrapper0 = new SqlMapClientWrapper(jPasswordField0);
+<span class="nocode"><a name="3">  3: </a></span>sqlMapClientWrapper0.commitTransaction();
+<span class="nocode"><a name="4">  4: </a></span>sqlMapClientWrapper0.startTransaction();
+<span class="nocode"><a name="5">  5: </a></span>String string0 = &quot;&quot;;
+<span class="nocode"><a name="6">  6: </a></span>String string1 = &quot;&quot;;
+<span class="nocode"><a name="7">  7: </a></span>List list0 = new List();
+<span class="nocode"><a name="8">  8: </a></span>ContainerListener containerListener0 = null;
+<span class="nocode"><a name="9">  9: </a></span>jPasswordField0.removeContainerListener(containerListener0);
+<span class="nocode"><a name="10"> 10: </a></span>sqlMapClientWrapper0.update(string1, list0);
+<span class="nocode"><a name="11"> 11: </a></span>String string2 = &quot;wUY_YVd.@?j+&quot;;
+<span class="nocode"><a name="12"> 12: </a></span>Object object0 = null;
+<span class="nocode"><a name="13"> 13: </a></span>sqlMapClientWrapper0.insert(string2, object0);
+<span class="nocode"><a name="14"> 14: </a></span>Frame frame0 = JOptionPane.getRootFrame();
+<span class="nocode"><a name="15"> 15: </a></span>FileDialog fileDialog0 = new FileDialog(frame0, string0);
+<span class="nocode"><a name="16"> 16: </a></span>sqlMapClientWrapper0.delete(string0, fileDialog0);
+<span class="nocode"><a name="17"> 17: </a></span>Object object1 = null;
+<span class="nocode"><a name="18"> 18: </a></span>sqlMapClientWrapper0.queryForList(string0, object1);
+<span class="nocode"><a name="19"> 19: </a></span>boolean boolean0 = true;
+<span class="nocode"><a name="20"> 20: </a></span>fileDialog0.setFocusTraversalPolicyProvider(boolean0);
+<span class="nocode"><a name="21"> 21: </a></span>sqlMapClientWrapper0.close();
+<span class="nocode"><a name="22"> 22: </a></span>sqlMapClientWrapper0.update(string0, fileDialog0);
+<span class="nocode"><a name="23"> 23: </a></span>int int0 = 0;
+<span class="nocode"><a name="24"> 24: </a></span>AncestorListener ancestorListener0 = mock(AncestorListener.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="25"> 25: </a></span>jPasswordField0.addAncestorListener(ancestorListener0);
+<span class="nocode"><a name="26"> 26: </a></span>ScrollPane scrollPane0 = new ScrollPane(int0);
+<span class="nocode"><a name="27"> 27: </a></span>ContainerListener containerListener1 = mock(ContainerListener.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="28"> 28: </a></span>ContainerListener containerListener2 = AWTEventMulticaster.add(containerListener1, containerListener1);
+<span class="nocode"><a name="29"> 29: </a></span>ContainerListener containerListener3 = AWTEventMulticaster.remove(containerListener2, containerListener2);
+<span class="nocode"><a name="30"> 30: </a></span>scrollPane0.removeContainerListener(containerListener3);
+<span class="nocode"><a name="31"> 31: </a></span>sqlMapClientWrapper0.queryForObject(string0, scrollPane0);
+<span class="nocode"><a name="32"> 32: </a></span>sqlMapClientWrapper0.commitTransaction();
+<span class="nocode"><a name="33"> 33: </a></span>sqlMapClientWrapper0.startTransaction();
+<span class="nocode"><a name="34"> 34: </a></span>sqlMapClientWrapper0.delete(string0, frame0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -49,12 +161,12 @@ uk.ac.sanger.artemis.chado.SqlMapClientWrapper
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.chado.SqlMapClientWrapper
-<li>Size: 1
-<li>Length: 2
+<li>Size: 6
+<li>Length: 99
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.16021586017999218
 <li>BranchCoverage: 0.058823529411764705
-<li>MethodCoverage: 0.09090909090909091
+<li>MethodCoverage: 0.9090909090909091
 <li>OutputCoverage: 0.0
 </ul></div>
 </div>

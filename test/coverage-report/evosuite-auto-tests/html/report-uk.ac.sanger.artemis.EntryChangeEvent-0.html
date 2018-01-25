@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.EntryChangeEvent
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.EntryChangeEvent: 0.9772727272727273</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.EntryChangeEvent: 0.9659090909090909</ul>
 <ul>
-<li>2.25 fitness evaluations, 0 generations, null statements, 12 tests.
+<li>3.25 fitness evaluations, 0 generations, null statements, 12 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,101 +35,92 @@ uk.ac.sanger.artemis.EntryChangeEvent
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot; bytesRead=&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = Entry.newEntry(bases0);
-<span class="nocode"><a name="4">  4: </a></span>Feature feature0 = entry0.createFeature();
-<span class="nocode"><a name="5">  5: </a></span>EntryChangeEvent entryChangeEvent0 = new EntryChangeEvent(entry0, feature0, true, 5);
-<span class="nocode"><a name="6">  6: </a></span>entryChangeEvent0.getFeature();
+<span class="nocode"><a name="1">  1: </a></span>MockMinguoDate mockMinguoDate0 = new MockMinguoDate();
+<span class="nocode"><a name="2">  2: </a></span>EntryChangeEvent entryChangeEvent0 = new EntryChangeEvent(mockMinguoDate0, (Entry) null, 0);
+<span class="nocode"><a name="3">  3: </a></span>entryChangeEvent0.getFeature();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, entryChangeEvent0.getType());
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>int[] intArray0 = new int[8];
-<span class="nocode"><a name="2">  2: </a></span>SymbolList symbolList0 = IntegerAlphabet.fromArray(intArray0);
-<span class="nocode"><a name="3">  3: </a></span>BioJavaSequence bioJavaSequence0 = new BioJavaSequence(symbolList0);
-<span class="nocode"><a name="4">  4: </a></span>Bases bases0 = new Bases(bioJavaSequence0);
-<span class="nocode"><a name="5">  5: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="6">  6: </a></span>Entry entry0 = simpleEntryGroup0.createEntry();
-<span class="nocode"><a name="7">  7: </a></span>EntryChangeEvent entryChangeEvent0 = new EntryChangeEvent(entry0, (Feature) null, true, 0);
-<span class="nocode"><a name="8">  8: </a></span>boolean boolean0 = entryChangeEvent0.isDuplicate();
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(0, entryChangeEvent0.getType());
-<span class="nocode"><a name="10"> 10: </a></span>assertTrue(boolean0);
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;9T)&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = Entry.newEntry(bases0);
+<span class="nocode"><a name="4">  4: </a></span>EntryChangeEvent entryChangeEvent0 = new EntryChangeEvent(entry0, (Feature) null, true, 1);
+<span class="nocode"><a name="5">  5: </a></span>entryChangeEvent0.isDuplicate();
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GridLayout gridLayout0 = new GridLayout();
-<span class="nocode"><a name="2">  2: </a></span>Panel panel0 = new Panel(gridLayout0);
-<span class="nocode"><a name="3">  3: </a></span>EntryChangeEvent entryChangeEvent0 = new EntryChangeEvent(panel0, (Entry) null, (-409));
-<span class="nocode"><a name="4">  4: </a></span>entryChangeEvent0.getEntry();
-<span class="nocode"><a name="5">  5: </a></span>assertEquals((-409), entryChangeEvent0.getType());
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;9T)&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = Entry.newEntry(bases0);
+<span class="nocode"><a name="4">  4: </a></span>EntryChangeEvent entryChangeEvent0 = new EntryChangeEvent(entry0, (Feature) null, true, 1);
+<span class="nocode"><a name="5">  5: </a></span>entryChangeEvent0.getEntry();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(1, entryChangeEvent0.getType());
+<span class="nocode"><a name="7">  7: </a></span>assertTrue(entryChangeEvent0.isDuplicate());
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, (FeatureVector) null, &quot;uk.ac.sanger.artemis.EntryChangeEvent&quot;);
-<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = filteredEntryGroup0.createEntry();
-<span class="nocode"><a name="4">  4: </a></span>EntryChangeEvent entryChangeEvent0 = new EntryChangeEvent(entry0, (Feature) null, false, 75);
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;9T)&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = Entry.newEntry(bases0);
+<span class="nocode"><a name="4">  4: </a></span>EntryChangeEvent entryChangeEvent0 = new EntryChangeEvent(entry0, (Feature) null, false, 1);
 <span class="nocode"><a name="5">  5: </a></span>int int0 = entryChangeEvent0.getType();
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(75, int0);
-<span class="nocode"><a name="7">  7: </a></span>assertFalse(entryChangeEvent0.isDuplicate());
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(entryChangeEvent0.isDuplicate());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(1, int0);
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>FeatureVector featureVector0 = new FeatureVector();
-<span class="nocode"><a name="3">  3: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, &quot; T; &quot;);
-<span class="nocode"><a name="4">  4: </a></span>Entry entry0 = filteredEntryGroup0.createEntry();
-<span class="nocode"><a name="5">  5: </a></span>EntryChangeEvent entryChangeEvent0 = new EntryChangeEvent(entry0, (Feature) null, (-701));
-<span class="nocode"><a name="6">  6: </a></span>int int0 = entryChangeEvent0.getType();
-<span class="nocode"><a name="7">  7: </a></span>assertEquals((-701), int0);
+<span class="nocode"><a name="2">  2: </a></span>Entry entry0 = simpleEntryGroup0.createEntry(&quot;JvIo-btS!FQ[A[o&quot;);
+<span class="nocode"><a name="3">  3: </a></span>EntryChangeEvent entryChangeEvent0 = new EntryChangeEvent(entry0, (Feature) null, (-1135));
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-1135), entryChangeEvent0.getType());
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>EntryChangeEvent entryChangeEvent0 = new EntryChangeEvent((Object) null, (Entry) null, (-427));
+<span class="nocode"><a name="1">  1: </a></span>EntryChangeEvent entryChangeEvent0 = new EntryChangeEvent((Object) null, (Entry) null, 0);
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>EntryChangeEvent entryChangeEvent0 = new EntryChangeEvent((Entry) null, (Feature) null, (-1953));
+<span class="nocode"><a name="1">  1: </a></span>EntryChangeEvent entryChangeEvent0 = new EntryChangeEvent((Entry) null, (Feature) null, 620);
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>EntryChangeEvent entryChangeEvent0 = new EntryChangeEvent((Entry) null, (Feature) null, true, 0);
+<span class="nocode"><a name="1">  1: </a></span>EntryChangeEvent entryChangeEvent0 = new EntryChangeEvent((Entry) null, (Feature) null, false, 0);
 </pre>
 <h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MockHijrahDate mockHijrahDate0 = new MockHijrahDate();
-<span class="nocode"><a name="2">  2: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = simpleEntryGroup0.createEntry();
-<span class="nocode"><a name="4">  4: </a></span>EntryChangeEvent entryChangeEvent0 = new EntryChangeEvent(mockHijrahDate0, entry0, 0);
-<span class="nocode"><a name="5">  5: </a></span>entryChangeEvent0.getEntry();
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, entryChangeEvent0.getType());
+<span class="nocode"><a name="1">  1: </a></span>MockMinguoDate mockMinguoDate0 = new MockMinguoDate();
+<span class="nocode"><a name="2">  2: </a></span>EntryChangeEvent entryChangeEvent0 = new EntryChangeEvent(mockMinguoDate0, (Entry) null, 0);
+<span class="nocode"><a name="3">  3: </a></span>entryChangeEvent0.getEntry();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, entryChangeEvent0.getType());
 </pre>
 <h3>Test case 10</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>Entry entry0 = simpleEntryGroup0.createEntry();
-<span class="nocode"><a name="3">  3: </a></span>EntryChangeEvent entryChangeEvent0 = new EntryChangeEvent(entry0, (Feature) null, false, 0);
-<span class="nocode"><a name="4">  4: </a></span>entryChangeEvent0.getFeature();
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, entryChangeEvent0.getType());
-<span class="nocode"><a name="6">  6: </a></span>assertFalse(entryChangeEvent0.isDuplicate());
+<span class="nocode"><a name="1">  1: </a></span>Object object0 = ColorSpaceHintKey.VALUE_COLORSPACE_ALPHA_CONVERT;
+<span class="nocode"><a name="2">  2: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = simpleEntryGroup0.createEntry(&quot;%QFGHG^B!J~!6rS. F&quot;);
+<span class="nocode"><a name="4">  4: </a></span>EntryChangeEvent entryChangeEvent0 = new EntryChangeEvent(object0, entry0, (-2358));
+<span class="nocode"><a name="5">  5: </a></span>int int0 = entryChangeEvent0.getType();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals((-2358), int0);
 </pre>
 <h3>Test case 11</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MockHijrahDate mockHijrahDate0 = new MockHijrahDate();
+<span class="nocode"><a name="1">  1: </a></span>Object object0 = new Object();
 <span class="nocode"><a name="2">  2: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
 <span class="nocode"><a name="3">  3: </a></span>Entry entry0 = simpleEntryGroup0.createEntry();
-<span class="nocode"><a name="4">  4: </a></span>EntryChangeEvent entryChangeEvent0 = new EntryChangeEvent(mockHijrahDate0, entry0, 0);
+<span class="nocode"><a name="4">  4: </a></span>EntryChangeEvent entryChangeEvent0 = new EntryChangeEvent(object0, entry0, 0);
 <span class="nocode"><a name="5">  5: </a></span>int int0 = entryChangeEvent0.getType();
 <span class="nocode"><a name="6">  6: </a></span>assertEquals(0, int0);
 </pre>
 <h3>Test case 12</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>Entry entry0 = simpleEntryGroup0.createEntry();
-<span class="nocode"><a name="3">  3: </a></span>EntryChangeEvent entryChangeEvent0 = new EntryChangeEvent(entry0, (Feature) null, false, 0);
-<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = entryChangeEvent0.isDuplicate();
-<span class="nocode"><a name="5">  5: </a></span>assertFalse(boolean0);
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, entryChangeEvent0.getType());
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;9T)&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = Entry.newEntry(bases0);
+<span class="nocode"><a name="4">  4: </a></span>EntryChangeEvent entryChangeEvent0 = new EntryChangeEvent(entry0, (Feature) null, false, 1);
+<span class="nocode"><a name="5">  5: </a></span>boolean boolean0 = entryChangeEvent0.isDuplicate();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(1, entryChangeEvent0.getType());
+<span class="nocode"><a name="7">  7: </a></span>assertFalse(boolean0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -143,12 +134,12 @@ uk.ac.sanger.artemis.EntryChangeEvent
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.EntryChangeEvent
 <li>Size: 12
-<li>Length: 50
+<li>Length: 42
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.9772727272727273
+<li>Coverage: 0.9659090909090909
 <li>BranchCoverage: 1.0
 <li>MethodCoverage: 1.0
-<li>OutputCoverage: 0.8181818181818182
+<li>OutputCoverage: 0.7272727272727273
 </ul></div>
 </div>
 <p><br><a href="../report-generation.html">Back to Overview</a></p>

@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.components.FeatureBaseViewer
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.components.FeatureBaseViewer: 0.19420289855072462</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.components.FeatureBaseViewer: 0.23586956521739127</ul>
 <ul>
-<li>144.30833333333334 fitness evaluations, 0 generations, null statements, 2 tests.
+<li>143.30833333333334 fitness evaluations, 0 generations, null statements, 2 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,20 +35,21 @@ uk.ac.sanger.artemis.components.FeatureBaseViewer
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;AoaZ/g6[B@{eMP&quot;, &quot;AoaZ/g6[B@{eMP&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="4">  4: </a></span>Entry entry0 = simpleEntryGroup0.createEntry();
-<span class="nocode"><a name="5">  5: </a></span>Feature feature0 = entry0.createFeature();
-<span class="nocode"><a name="6">  6: </a></span>Clipboard clipboard0 = new Clipboard(&quot;AoaZ/g6[B@{eMP&quot;);
-<span class="nocode"><a name="7">  7: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="8">  8: </a></span>FeatureSegmentVector featureSegmentVector0 = selection0.getAllSegments();
-<span class="nocode"><a name="9">  9: </a></span>FeatureBaseViewer featureBaseViewer0 = new FeatureBaseViewer(feature0, false, featureSegmentVector0);
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="3">  3: </a></span>FeatureSegmentVector featureSegmentVector0 = selection0.getSelectedSegments();
+<span class="nocode"><a name="4">  4: </a></span>FeatureBaseViewer featureBaseViewer0 = new FeatureBaseViewer((Feature) null, true, featureSegmentVector0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FeatureSegmentVector featureSegmentVector0 = new FeatureSegmentVector();
-<span class="nocode"><a name="2">  2: </a></span>FeatureBaseViewer featureBaseViewer0 = new FeatureBaseViewer((Feature) null, true, featureSegmentVector0);
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;&amp;hE[1m5-tBK2#QC'c&quot;, &quot;&amp;hE[1m5-tBK2#QC'c&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = Entry.newEntry(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Feature feature0 = entry0.createFeature();
+<span class="nocode"><a name="5">  5: </a></span>Clipboard clipboard0 = new Clipboard(&quot;&quot;);
+<span class="nocode"><a name="6">  6: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="7">  7: </a></span>FeatureSegmentVector featureSegmentVector0 = selection0.getAllSegments();
+<span class="nocode"><a name="8">  8: </a></span>FeatureBaseViewer featureBaseViewer0 = new FeatureBaseViewer(feature0, false, featureSegmentVector0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -62,9 +63,9 @@ uk.ac.sanger.artemis.components.FeatureBaseViewer
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.FeatureBaseViewer
 <li>Size: 2
-<li>Length: 11
+<li>Length: 12
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.19420289855072462
+<li>Coverage: 0.23586956521739127
 <li>BranchCoverage: 0.043478260869565216
 <li>MethodCoverage: 0.3333333333333333
 <li>OutputCoverage: 1.0

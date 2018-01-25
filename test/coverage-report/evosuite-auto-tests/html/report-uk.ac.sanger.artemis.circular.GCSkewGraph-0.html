@@ -37,7 +37,7 @@ uk.ac.sanger.artemis.circular.GCSkewGraph
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
 <span class="nocode"><a name="2">  2: </a></span>GCSkewGraph gCSkewGraph0 = new GCSkewGraph(dNADraw0);
-<span class="nocode"><a name="3">  3: </a></span>gCSkewGraph0.calculateValue(211, 0);
+<span class="nocode"><a name="3">  3: </a></span>gCSkewGraph0.calculateValue(0, 0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
@@ -45,10 +45,9 @@ uk.ac.sanger.artemis.circular.GCSkewGraph
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Stack&lt;Scrollbar&gt; stack0 = new Stack&lt;Scrollbar&gt;();
-<span class="nocode"><a name="2">  2: </a></span>DNADraw dNADraw0 = new DNADraw(stack0, stack0, stack0, stack0);
-<span class="nocode"><a name="3">  3: </a></span>GCSkewGraph gCSkewGraph0 = new GCSkewGraph(dNADraw0);
-<span class="nocode"><a name="4">  4: </a></span>gCSkewGraph0.calculateValue((-2763), (-2763));
+<span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="2">  2: </a></span>GCSkewGraph gCSkewGraph0 = new GCSkewGraph(dNADraw0);
+<span class="nocode"><a name="3">  3: </a></span>gCSkewGraph0.calculateValue(0, 1);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -62,7 +61,7 @@ uk.ac.sanger.artemis.circular.GCSkewGraph
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.circular.GCSkewGraph
 <li>Size: 3
-<li>Length: 8
+<li>Length: 7
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.306784188034188
 <li>BranchCoverage: 0.1111111111111111

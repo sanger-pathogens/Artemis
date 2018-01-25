@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.circular.Graph
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.circular.Graph: 0.4379330497390344</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.circular.Graph: 0.5334898617289963</ul>
 <ul>
-<li>885.3320600947468 fitness evaluations, 0 generations, null statements, 29 tests.
+<li>829.2596735405941 fitness evaluations, 0 generations, null statements, 30 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,308 +35,327 @@ uk.ac.sanger.artemis.circular.Graph
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
-<span class="nocode"><a name="2">  2: </a></span>GCGraph gCGraph0 = new GCGraph(dNADraw0);
-<span class="nocode"><a name="3">  3: </a></span>int int0 = gCGraph0.getWindowSize();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(200, gCGraph0.getBaseStepSize());
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(0.2F, gCGraph0.getGraphHeight(), 0.01F);
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(1, gCGraph0.getStrokeSize());
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(0.4, gCGraph0.getTrack(), 0.01);
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(3.4028235E38F, gCGraph0.getMinValue(), 0.01F);
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(1.4E-45F, gCGraph0.getMaxValue(), 0.01F);
-<span class="nocode"><a name="10"> 10: </a></span>assertEquals(10000, int0);
+<span class="nocode"><a name="1">  1: </a></span>JembossParams jembossParams0 = new JembossParams();
+<span class="nocode"><a name="2">  2: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.getPrivateServers();
+<span class="nocode"><a name="3">  3: </a></span>DNADraw dNADraw0 = new DNADraw(vector0, vector0, vector0, vector0);
+<span class="nocode"><a name="4">  4: </a></span>GCSkewGraph gCSkewGraph0 = new GCSkewGraph(dNADraw0);
+<span class="nocode"><a name="5">  5: </a></span>String string0 = gCSkewGraph0.getOptionsStr();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(1.4E-45F, gCSkewGraph0.getMaxValue(), 0.01F);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(3.4028235E38F, gCSkewGraph0.getMinValue(), 0.01F);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(&quot;height=0.2 window_size=10000 base_step_size=200 track=0.4 minus_colour=153:0:153 plus_colour=179:179:26&quot;, string0);
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(1, gCSkewGraph0.getStrokeSize());
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>JembossParams jembossParams0 = new JembossParams();
-<span class="nocode"><a name="2">  2: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.modeVector();
-<span class="nocode"><a name="3">  3: </a></span>DNADraw dNADraw0 = new DNADraw((Vector) null, vector0, vector0, vector0);
-<span class="nocode"><a name="4">  4: </a></span>GCSkewGraph gCSkewGraph0 = new GCSkewGraph(dNADraw0);
-<span class="nocode"><a name="5">  5: </a></span>String string0 = gCSkewGraph0.getOptionsStr();
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;height=0.2 window_size=10000 base_step_size=200 track=0.4 minus_colour=153:0:153 plus_colour=179:179:26&quot;, string0);
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(1.4E-45F, gCSkewGraph0.getMaxValue(), 0.01F);
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(3.4028235E38F, gCSkewGraph0.getMinValue(), 0.01F);
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(1, gCSkewGraph0.getStrokeSize());
+<span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="2">  2: </a></span>GCGraph gCGraph0 = new GCGraph(dNADraw0);
+<span class="nocode"><a name="3">  3: </a></span>gCGraph0.setWindowSize((-5077));
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1, gCGraph0.getStrokeSize());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0.4, gCGraph0.getTrack(), 0.01);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0.2F, gCGraph0.getGraphHeight(), 0.01F);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(200, gCGraph0.getBaseStepSize());
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(1.4E-45F, gCGraph0.getMaxValue(), 0.01F);
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(3.4028235E38F, gCGraph0.getMinValue(), 0.01F);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Vector&lt;Scrollbar&gt; vector0 = new Vector&lt;Scrollbar&gt;();
-<span class="nocode"><a name="2">  2: </a></span>DefaultTableModel defaultTableModel0 = new DefaultTableModel(vector0, 0);
-<span class="nocode"><a name="3">  3: </a></span>Vector&lt;Object&gt; vector1 = defaultTableModel0.getDataVector();
-<span class="nocode"><a name="4">  4: </a></span>DNADraw dNADraw0 = new DNADraw(vector1, vector1, vector0, vector0);
-<span class="nocode"><a name="5">  5: </a></span>GCSkewGraph gCSkewGraph0 = new GCSkewGraph(dNADraw0);
-<span class="nocode"><a name="6">  6: </a></span>gCSkewGraph0.setWindowSize((-3474));
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(0.2F, gCSkewGraph0.getGraphHeight(), 0.01F);
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(0.4, gCSkewGraph0.getTrack(), 0.01);
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(200, gCSkewGraph0.getBaseStepSize());
-<span class="nocode"><a name="10"> 10: </a></span>assertEquals(3.4028235E38F, gCSkewGraph0.getMinValue(), 0.01F);
-<span class="nocode"><a name="11"> 11: </a></span>assertEquals(1.4E-45F, gCSkewGraph0.getMaxValue(), 0.01F);
-<span class="nocode"><a name="12"> 12: </a></span>assertEquals(1, gCSkewGraph0.getStrokeSize());
+<span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="2">  2: </a></span>GCGraph gCGraph0 = new GCGraph(dNADraw0);
+<span class="nocode"><a name="3">  3: </a></span>GenericDocumentType genericDocumentType0 = new GenericDocumentType(&quot;uk.ac.sanger.artemis.circular.Graph&quot;, &quot;Complement position&quot;, &quot;uk.ac.sanger.artemis.circular.Graph&quot;);
+<span class="nocode"><a name="4">  4: </a></span>GenericDOMImplementation genericDOMImplementation0 = new GenericDOMImplementation();
+<span class="nocode"><a name="5">  5: </a></span>GenericDocument genericDocument0 = new GenericDocument(genericDocumentType0, genericDOMImplementation0);
+<span class="nocode"><a name="6">  6: </a></span>SVGGeneratorContext sVGGeneratorContext0 = SVGGeneratorContext.createDefault(genericDocument0);
+<span class="nocode"><a name="7">  7: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(sVGGeneratorContext0, false);
+<span class="nocode"><a name="8">  8: </a></span>gCGraph0.paintComponent(sVGGraphics2D0);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
 <span class="nocode"><a name="2">  2: </a></span>GCGraph gCGraph0 = new GCGraph(dNADraw0);
-<span class="nocode"><a name="3">  3: </a></span>GenericDocumentType genericDocumentType0 = new GenericDocumentType(&quot;E_2eu.0*{t&quot;, &quot;c*Pr!z&amp;R*kJD|`&quot;, &quot;E_2eu.0*{t&quot;);
-<span class="nocode"><a name="4">  4: </a></span>GenericDOMImplementation genericDOMImplementation0 = new GenericDOMImplementation();
-<span class="nocode"><a name="5">  5: </a></span>GenericDocument genericDocument0 = new GenericDocument(genericDocumentType0, genericDOMImplementation0);
-<span class="nocode"><a name="6">  6: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(genericDocument0);
-<span class="nocode"><a name="7">  7: </a></span>gCGraph0.drawLinear(sVGGraphics2D0);
+<span class="nocode"><a name="3">  3: </a></span>float float0 = gCGraph0.getMinValue();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1.4E-45F, gCGraph0.getMaxValue(), 0.01F);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(3.4028235E38F, float0, 0.01F);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(1, gCGraph0.getStrokeSize());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(200, gCGraph0.getBaseStepSize());
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(0.2F, gCGraph0.getGraphHeight(), 0.01F);
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(0.4, gCGraph0.getTrack(), 0.01);
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>JembossParams jembossParams0 = new JembossParams();
-<span class="nocode"><a name="2">  2: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.modeVector();
-<span class="nocode"><a name="3">  3: </a></span>DNADraw dNADraw0 = new DNADraw((Vector) null, vector0, vector0, vector0);
-<span class="nocode"><a name="4">  4: </a></span>GCSkewGraph gCSkewGraph0 = new GCSkewGraph(dNADraw0);
-<span class="nocode"><a name="5">  5: </a></span>Color color0 = Color.yellow;
-<span class="nocode"><a name="6">  6: </a></span>gCSkewGraph0.setPlusColour(color0);
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(0.4, gCSkewGraph0.getTrack(), 0.01);
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(0.2F, gCSkewGraph0.getGraphHeight(), 0.01F);
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(200, gCSkewGraph0.getBaseStepSize());
-<span class="nocode"><a name="10"> 10: </a></span>assertEquals(1.4E-45F, gCSkewGraph0.getMaxValue(), 0.01F);
-<span class="nocode"><a name="11"> 11: </a></span>assertEquals(3.4028235E38F, gCSkewGraph0.getMinValue(), 0.01F);
-<span class="nocode"><a name="12"> 12: </a></span>assertEquals(1, gCSkewGraph0.getStrokeSize());
+<span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="2">  2: </a></span>GCGraph gCGraph0 = new GCGraph(dNADraw0);
+<span class="nocode"><a name="3">  3: </a></span>SystemColor systemColor0 = SystemColor.window;
+<span class="nocode"><a name="4">  4: </a></span>gCGraph0.setPlusColour(systemColor0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0.2F, gCGraph0.getGraphHeight(), 0.01F);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(200, gCGraph0.getBaseStepSize());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(3.4028235E38F, gCGraph0.getMinValue(), 0.01F);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(1.4E-45F, gCGraph0.getMaxValue(), 0.01F);
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(1, gCGraph0.getStrokeSize());
+<span class="nocode"><a name="10"> 10: </a></span>assertEquals(0.4, gCGraph0.getTrack(), 0.01);
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>JembossParams jembossParams0 = new JembossParams();
-<span class="nocode"><a name="2">  2: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.modeVector();
-<span class="nocode"><a name="3">  3: </a></span>DNADraw dNADraw0 = new DNADraw((Vector) null, vector0, vector0, vector0);
-<span class="nocode"><a name="4">  4: </a></span>GCSkewGraph gCSkewGraph0 = new GCSkewGraph(dNADraw0);
-<span class="nocode"><a name="5">  5: </a></span>gCSkewGraph0.setTrack(2);
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(2.0, gCSkewGraph0.getTrack(), 0.01);
+<span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="2">  2: </a></span>GCSkewGraph gCSkewGraph0 = new GCSkewGraph(dNADraw0);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0.4, gCSkewGraph0.getTrack(), 0.01);
+<span class="nocode"><a name="4">  4: </a></span>
+<span class="nocode"><a name="5">  5: </a></span>gCSkewGraph0.setTrack(1.0);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(1.0, gCSkewGraph0.getTrack(), 0.01);
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
-<span class="nocode"><a name="2">  2: </a></span>GCGraph gCGraph0 = new GCGraph(dNADraw0);
-<span class="nocode"><a name="3">  3: </a></span>gCGraph0.setMaxValue(10000);
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(10000.0F, gCGraph0.getMaxValue(), 0.01F);
+<span class="nocode"><a name="2">  2: </a></span>GCSkewGraph gCSkewGraph0 = new GCSkewGraph(dNADraw0);
+<span class="nocode"><a name="3">  3: </a></span>gCSkewGraph0.setGraphHeight(2.456F);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(2.456F, gCSkewGraph0.getGraphHeight(), 0.01F);
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
 <span class="nocode"><a name="2">  2: </a></span>GCGraph gCGraph0 = new GCGraph(dNADraw0);
-<span class="nocode"><a name="3">  3: </a></span>gCGraph0.showOptions();
+<span class="nocode"><a name="3">  3: </a></span>gCGraph0.setMaxValue((-1313.541F));
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-1313.541F), gCGraph0.getMaxValue(), 0.01F);
 </pre>
 <h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
 <span class="nocode"><a name="2">  2: </a></span>GCGraph gCGraph0 = new GCGraph(dNADraw0);
-<span class="nocode"><a name="3">  3: </a></span>gCGraph0.setBaseStepSize(515);
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(515, gCGraph0.getBaseStepSize());
+<span class="nocode"><a name="3">  3: </a></span>gCGraph0.showOptions();
 </pre>
 <h3>Test case 10</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>JembossParams jembossParams0 = new JembossParams();
-<span class="nocode"><a name="2">  2: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.modeVector();
-<span class="nocode"><a name="3">  3: </a></span>DNADraw dNADraw0 = new DNADraw((Vector) null, vector0, vector0, vector0);
-<span class="nocode"><a name="4">  4: </a></span>GCSkewGraph gCSkewGraph0 = new GCSkewGraph(dNADraw0);
-<span class="nocode"><a name="5">  5: </a></span>int int0 = gCSkewGraph0.getStrokeSize();
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(1.4E-45F, gCSkewGraph0.getMaxValue(), 0.01F);
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(1, int0);
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(3.4028235E38F, gCSkewGraph0.getMinValue(), 0.01F);
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(0.4, gCSkewGraph0.getTrack(), 0.01);
-<span class="nocode"><a name="10"> 10: </a></span>assertEquals(0.2F, gCSkewGraph0.getGraphHeight(), 0.01F);
-<span class="nocode"><a name="11"> 11: </a></span>assertEquals(200, gCSkewGraph0.getBaseStepSize());
+<span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="2">  2: </a></span>GCSkewGraph gCSkewGraph0 = new GCSkewGraph(dNADraw0);
+<span class="nocode"><a name="3">  3: </a></span>gCSkewGraph0.setBaseStepSize((-662));
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-662), gCSkewGraph0.getBaseStepSize());
 </pre>
 <h3>Test case 11</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
-<span class="nocode"><a name="2">  2: </a></span>GCGraph gCGraph0 = new GCGraph(dNADraw0);
-<span class="nocode"><a name="3">  3: </a></span>float float0 = gCGraph0.getMaxValue();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(1, gCGraph0.getStrokeSize());
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(3.4028235E38F, gCGraph0.getMinValue(), 0.01F);
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(1.4E-45F, float0, 0.01F);
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(0.2F, gCGraph0.getGraphHeight(), 0.01F);
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(0.4, gCGraph0.getTrack(), 0.01);
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(200, gCGraph0.getBaseStepSize());
+<span class="nocode"><a name="1">  1: </a></span>JembossParams jembossParams0 = new JembossParams();
+<span class="nocode"><a name="2">  2: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.getPrivateServers();
+<span class="nocode"><a name="3">  3: </a></span>DNADraw dNADraw0 = new DNADraw(vector0, vector0, vector0, vector0);
+<span class="nocode"><a name="4">  4: </a></span>GCGraph gCGraph0 = new GCGraph(dNADraw0);
+<span class="nocode"><a name="5">  5: </a></span>int int0 = gCGraph0.getStrokeSize();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(3.4028235E38F, gCGraph0.getMinValue(), 0.01F);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(1.4E-45F, gCGraph0.getMaxValue(), 0.01F);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(1, int0);
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(0.4, gCGraph0.getTrack(), 0.01);
+<span class="nocode"><a name="10"> 10: </a></span>assertEquals(200, gCGraph0.getBaseStepSize());
+<span class="nocode"><a name="11"> 11: </a></span>assertEquals(0.2F, gCGraph0.getGraphHeight(), 0.01F);
 </pre>
 <h3>Test case 12</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>JembossParams jembossParams0 = new JembossParams();
-<span class="nocode"><a name="2">  2: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.modeVector();
-<span class="nocode"><a name="3">  3: </a></span>DNADraw dNADraw0 = new DNADraw((Vector) null, vector0, vector0, vector0);
-<span class="nocode"><a name="4">  4: </a></span>GCSkewGraph gCSkewGraph0 = new GCSkewGraph(dNADraw0);
-<span class="nocode"><a name="5">  5: </a></span>Color color0 = Color.yellow;
-<span class="nocode"><a name="6">  6: </a></span>gCSkewGraph0.setMinusColour(color0);
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(0.4, gCSkewGraph0.getTrack(), 0.01);
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(0.2F, gCSkewGraph0.getGraphHeight(), 0.01F);
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(1, gCSkewGraph0.getStrokeSize());
-<span class="nocode"><a name="10"> 10: </a></span>assertEquals(200, gCSkewGraph0.getBaseStepSize());
-<span class="nocode"><a name="11"> 11: </a></span>assertEquals(1.4E-45F, gCSkewGraph0.getMaxValue(), 0.01F);
-<span class="nocode"><a name="12"> 12: </a></span>assertEquals(3.4028235E38F, gCSkewGraph0.getMinValue(), 0.01F);
+<span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="2">  2: </a></span>GCSkewGraph gCSkewGraph0 = new GCSkewGraph(dNADraw0);
+<span class="nocode"><a name="3">  3: </a></span>float float0 = gCSkewGraph0.getMaxValue();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1, gCSkewGraph0.getStrokeSize());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(3.4028235E38F, gCSkewGraph0.getMinValue(), 0.01F);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(200, gCSkewGraph0.getBaseStepSize());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(0.2F, gCSkewGraph0.getGraphHeight(), 0.01F);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(0.4, gCSkewGraph0.getTrack(), 0.01);
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(1.4E-45F, float0, 0.01F);
 </pre>
 <h3>Test case 13</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
-<span class="nocode"><a name="2">  2: </a></span>GCGraph gCGraph0 = new GCGraph(dNADraw0);
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(1, gCGraph0.getStrokeSize());
-<span class="nocode"><a name="4">  4: </a></span>
-<span class="nocode"><a name="5">  5: </a></span>gCGraph0.setStrokeSize(0);
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, gCGraph0.getStrokeSize());
+<span class="nocode"><a name="2">  2: </a></span>GCSkewGraph gCSkewGraph0 = new GCSkewGraph(dNADraw0);
+<span class="nocode"><a name="3">  3: </a></span>Color color0 = Color.lightGray;
+<span class="nocode"><a name="4">  4: </a></span>gCSkewGraph0.setMinusColour(color0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(3.4028235E38F, gCSkewGraph0.getMinValue(), 0.01F);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0.4, gCSkewGraph0.getTrack(), 0.01);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(1.4E-45F, gCSkewGraph0.getMaxValue(), 0.01F);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(200, gCSkewGraph0.getBaseStepSize());
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(0.2F, gCSkewGraph0.getGraphHeight(), 0.01F);
+<span class="nocode"><a name="10"> 10: </a></span>assertEquals(1, gCSkewGraph0.getStrokeSize());
 </pre>
 <h3>Test case 14</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
 <span class="nocode"><a name="2">  2: </a></span>GCGraph gCGraph0 = new GCGraph(dNADraw0);
-<span class="nocode"><a name="3">  3: </a></span>String[] stringArray0 = new String[3];
-<span class="nocode"><a name="4">  4: </a></span>stringArray0[0] = &quot;=9/{j4[8\&quot;}0&quot;;
-<span class="nocode"><a name="5">  5: </a></span>stringArray0[1] = &quot;Graph Options&quot;;
-<span class="nocode"><a name="6">  6: </a></span>stringArray0[2] = &quot;8Iijj&gt;*$I`:W\&quot;}]s8nh&quot;;
-<span class="nocode"><a name="7">  7: </a></span>gCGraph0.setOptionsStr(stringArray0);
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(0.4, gCGraph0.getTrack(), 0.01);
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(1.4E-45F, gCGraph0.getMaxValue(), 0.01F);
-<span class="nocode"><a name="10"> 10: </a></span>assertEquals(3.4028235E38F, gCGraph0.getMinValue(), 0.01F);
-<span class="nocode"><a name="11"> 11: </a></span>assertEquals(1, gCGraph0.getStrokeSize());
-<span class="nocode"><a name="12"> 12: </a></span>assertEquals(200, gCGraph0.getBaseStepSize());
-<span class="nocode"><a name="13"> 13: </a></span>assertEquals(0.2F, gCGraph0.getGraphHeight(), 0.01F);
+<span class="nocode"><a name="3">  3: </a></span>gCGraph0.setStrokeSize(350);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(350, gCGraph0.getStrokeSize());
 </pre>
 <h3>Test case 15</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
-<span class="nocode"><a name="2">  2: </a></span>GCGraph gCGraph0 = new GCGraph(dNADraw0);
-<span class="nocode"><a name="3">  3: </a></span>String[] stringArray0 = new String[3];
-<span class="nocode"><a name="4">  4: </a></span>stringArray0[0] = &quot;track8Iijj&quot;;
-<span class="nocode"><a name="5">  5: </a></span>gCGraph0.setOptionsStr(stringArray0);
+<span class="nocode"><a name="2">  2: </a></span>GCSkewGraph gCSkewGraph0 = new GCSkewGraph(dNADraw0);
+<span class="nocode"><a name="3">  3: </a></span>String[] stringArray0 = new String[5];
+<span class="nocode"><a name="4">  4: </a></span>stringArray0[0] = &quot;aaLK\&quot;HhS#&quot;;
+<span class="nocode"><a name="5">  5: </a></span>stringArray0[1] = &quot;Malformed integer&quot;;
+<span class="nocode"><a name="6">  6: </a></span>stringArray0[2] = &quot;zPRPLZa'&quot;;
+<span class="nocode"><a name="7">  7: </a></span>stringArray0[3] = &quot;Y6/47zV NvX[&quot;;
+<span class="nocode"><a name="8">  8: </a></span>stringArray0[4] = &quot;GBSeq_database-reference&quot;;
+<span class="nocode"><a name="9">  9: </a></span>gCSkewGraph0.setOptionsStr(stringArray0);
+<span class="nocode"><a name="10"> 10: </a></span>assertEquals(1, gCSkewGraph0.getStrokeSize());
+<span class="nocode"><a name="11"> 11: </a></span>assertEquals(0.4, gCSkewGraph0.getTrack(), 0.01);
+<span class="nocode"><a name="12"> 12: </a></span>assertEquals(0.2F, gCSkewGraph0.getGraphHeight(), 0.01F);
+<span class="nocode"><a name="13"> 13: </a></span>assertEquals(1.4E-45F, gCSkewGraph0.getMaxValue(), 0.01F);
+<span class="nocode"><a name="14"> 14: </a></span>assertEquals(3.4028235E38F, gCSkewGraph0.getMinValue(), 0.01F);
+<span class="nocode"><a name="15"> 15: </a></span>assertEquals(200, gCSkewGraph0.getBaseStepSize());
 </pre>
 <h3>Test case 16</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
-<span class="nocode"><a name="2">  2: </a></span>GCGraph gCGraph0 = new GCGraph(dNADraw0);
-<span class="nocode"><a name="3">  3: </a></span>double double0 = gCGraph0.getTrack();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(200, gCGraph0.getBaseStepSize());
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(1, gCGraph0.getStrokeSize());
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(0.2F, gCGraph0.getGraphHeight(), 0.01F);
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(3.4028235E38F, gCGraph0.getMinValue(), 0.01F);
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(1.4E-45F, gCGraph0.getMaxValue(), 0.01F);
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(0.4, double0, 0.01);
+<span class="nocode"><a name="2">  2: </a></span>GCSkewGraph gCSkewGraph0 = new GCSkewGraph(dNADraw0);
+<span class="nocode"><a name="3">  3: </a></span>String[] stringArray0 = new String[5];
+<span class="nocode"><a name="4">  4: </a></span>stringArray0[0] = &quot;&quot;;
+<span class="nocode"><a name="5">  5: </a></span>stringArray0[1] = &quot;&quot;;
+<span class="nocode"><a name="6">  6: </a></span>stringArray0[2] = &quot;base_step_size&quot;;
+<span class="nocode"><a name="7">  7: </a></span>gCSkewGraph0.setOptionsStr(stringArray0);
 </pre>
 <h3>Test case 17</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
 <span class="nocode"><a name="2">  2: </a></span>GCSkewGraph gCSkewGraph0 = new GCSkewGraph(dNADraw0);
-<span class="nocode"><a name="3">  3: </a></span>float float0 = gCSkewGraph0.getGraphHeight();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(200, gCSkewGraph0.getBaseStepSize());
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(0.2F, float0, 0.01F);
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(3.4028235E38F, gCSkewGraph0.getMinValue(), 0.01F);
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(1.4E-45F, gCSkewGraph0.getMaxValue(), 0.01F);
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(1, gCSkewGraph0.getStrokeSize());
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(0.4, gCSkewGraph0.getTrack(), 0.01);
+<span class="nocode"><a name="3">  3: </a></span>double double0 = gCSkewGraph0.getTrack();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(3.4028235E38F, gCSkewGraph0.getMinValue(), 0.01F);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(200, gCSkewGraph0.getBaseStepSize());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(1, gCSkewGraph0.getStrokeSize());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(0.2F, gCSkewGraph0.getGraphHeight(), 0.01F);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(0.4, double0, 0.01);
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(1.4E-45F, gCSkewGraph0.getMaxValue(), 0.01F);
 </pre>
 <h3>Test case 18</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
 <span class="nocode"><a name="2">  2: </a></span>GCSkewGraph gCSkewGraph0 = new GCSkewGraph(dNADraw0);
-<span class="nocode"><a name="3">  3: </a></span>Color color0 = gCSkewGraph0.getMinusColour();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(1, gCSkewGraph0.getStrokeSize());
-<span class="nocode"><a name="5">  5: </a></span>assertEquals((-6750055), color0.getRGB());
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(0.4, gCSkewGraph0.getTrack(), 0.01);
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(0.2F, gCSkewGraph0.getGraphHeight(), 0.01F);
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(200, gCSkewGraph0.getBaseStepSize());
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(1.4E-45F, gCSkewGraph0.getMaxValue(), 0.01F);
-<span class="nocode"><a name="10"> 10: </a></span>assertEquals(3.4028235E38F, gCSkewGraph0.getMinValue(), 0.01F);
+<span class="nocode"><a name="3">  3: </a></span>float float0 = gCSkewGraph0.getGraphHeight();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0.4, gCSkewGraph0.getTrack(), 0.01);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0.2F, float0, 0.01F);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(1, gCSkewGraph0.getStrokeSize());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(200, gCSkewGraph0.getBaseStepSize());
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(1.4E-45F, gCSkewGraph0.getMaxValue(), 0.01F);
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(3.4028235E38F, gCSkewGraph0.getMinValue(), 0.01F);
 </pre>
 <h3>Test case 19</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
-<span class="nocode"><a name="2">  2: </a></span>GCGraph gCGraph0 = new GCGraph(dNADraw0);
-<span class="nocode"><a name="3">  3: </a></span>int int0 = gCGraph0.getBaseStepSize();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(1, gCGraph0.getStrokeSize());
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(3.4028235E38F, gCGraph0.getMinValue(), 0.01F);
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(1.4E-45F, gCGraph0.getMaxValue(), 0.01F);
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(0.2F, gCGraph0.getGraphHeight(), 0.01F);
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(0.4, gCGraph0.getTrack(), 0.01);
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(200, int0);
+<span class="nocode"><a name="1">  1: </a></span>JembossParams jembossParams0 = new JembossParams();
+<span class="nocode"><a name="2">  2: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.getPublicServers();
+<span class="nocode"><a name="3">  3: </a></span>DNADraw dNADraw0 = new DNADraw(vector0, vector0, vector0, vector0);
+<span class="nocode"><a name="4">  4: </a></span>GCGraph gCGraph0 = new GCGraph(dNADraw0);
+<span class="nocode"><a name="5">  5: </a></span>Color color0 = gCGraph0.getMinusColour();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0.2F, gCGraph0.getGraphHeight(), 0.01F);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(0.4, gCGraph0.getTrack(), 0.01);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals((-6750055), color0.getRGB());
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(1, gCGraph0.getStrokeSize());
+<span class="nocode"><a name="10"> 10: </a></span>assertEquals(1.4E-45F, gCGraph0.getMaxValue(), 0.01F);
+<span class="nocode"><a name="11"> 11: </a></span>assertEquals(200, gCGraph0.getBaseStepSize());
+<span class="nocode"><a name="12"> 12: </a></span>assertEquals(3.4028235E38F, gCGraph0.getMinValue(), 0.01F);
 </pre>
 <h3>Test case 20</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
-<span class="nocode"><a name="2">  2: </a></span>GCGraph gCGraph0 = new GCGraph(dNADraw0);
-<span class="nocode"><a name="3">  3: </a></span>Color color0 = gCGraph0.getPlusColour();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(200, gCGraph0.getBaseStepSize());
-<span class="nocode"><a name="5">  5: </a></span>assertEquals((-5000422), color0.getRGB());
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(1, gCGraph0.getStrokeSize());
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(0.2F, gCGraph0.getGraphHeight(), 0.01F);
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(1.4E-45F, gCGraph0.getMaxValue(), 0.01F);
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(3.4028235E38F, gCGraph0.getMinValue(), 0.01F);
-<span class="nocode"><a name="10"> 10: </a></span>assertEquals(0.4, gCGraph0.getTrack(), 0.01);
+<span class="nocode"><a name="2">  2: </a></span>GCSkewGraph gCSkewGraph0 = new GCSkewGraph(dNADraw0);
+<span class="nocode"><a name="3">  3: </a></span>int int0 = gCSkewGraph0.getBaseStepSize();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(200, int0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0.2F, gCSkewGraph0.getGraphHeight(), 0.01F);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(1, gCSkewGraph0.getStrokeSize());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(3.4028235E38F, gCSkewGraph0.getMinValue(), 0.01F);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(1.4E-45F, gCSkewGraph0.getMaxValue(), 0.01F);
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(0.4, gCSkewGraph0.getTrack(), 0.01);
 </pre>
 <h3>Test case 21</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
 <span class="nocode"><a name="2">  2: </a></span>GCGraph gCGraph0 = new GCGraph(dNADraw0);
-<span class="nocode"><a name="3">  3: </a></span>gCGraph0.calcGraphValues();
+<span class="nocode"><a name="3">  3: </a></span>gCGraph0.getCurrentDna();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(3.4028235E38F, gCGraph0.getMinValue(), 0.01F);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(1, gCGraph0.getStrokeSize());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(200, gCGraph0.getBaseStepSize());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(0.2F, gCGraph0.getGraphHeight(), 0.01F);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(1.4E-45F, gCGraph0.getMaxValue(), 0.01F);
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(0.4, gCGraph0.getTrack(), 0.01);
 </pre>
 <h3>Test case 22</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
-<span class="nocode"><a name="2">  2: </a></span>GCGraph gCGraph0 = new GCGraph(dNADraw0);
-<span class="nocode"><a name="3">  3: </a></span>gCGraph0.calculateValue((-5), 2);
+<span class="nocode"><a name="1">  1: </a></span>JembossParams jembossParams0 = new JembossParams();
+<span class="nocode"><a name="2">  2: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.getPublicServers();
+<span class="nocode"><a name="3">  3: </a></span>DNADraw dNADraw0 = new DNADraw(vector0, vector0, vector0, vector0);
+<span class="nocode"><a name="4">  4: </a></span>GCGraph gCGraph0 = new GCGraph(dNADraw0);
+<span class="nocode"><a name="5">  5: </a></span>Color color0 = gCGraph0.getPlusColour();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(200, gCGraph0.getBaseStepSize());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(0.4, gCGraph0.getTrack(), 0.01);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals((-5000422), color0.getRGB());
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(1.4E-45F, gCGraph0.getMaxValue(), 0.01F);
+<span class="nocode"><a name="10"> 10: </a></span>assertEquals(1, gCGraph0.getStrokeSize());
+<span class="nocode"><a name="11"> 11: </a></span>assertEquals(0.2F, gCGraph0.getGraphHeight(), 0.01F);
+<span class="nocode"><a name="12"> 12: </a></span>assertEquals(3.4028235E38F, gCGraph0.getMinValue(), 0.01F);
 </pre>
 <h3>Test case 23</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Vector&lt;Panel&gt; vector0 = new Vector&lt;Panel&gt;();
-<span class="nocode"><a name="2">  2: </a></span>DNADraw dNADraw0 = new DNADraw(vector0, vector0, vector0, vector0);
-<span class="nocode"><a name="3">  3: </a></span>GCSkewGraph gCSkewGraph0 = new GCSkewGraph(dNADraw0);
-<span class="nocode"><a name="4">  4: </a></span>GenericDOMImplementation genericDOMImplementation0 = (GenericDOMImplementation)GenericDOMImplementation.getDOMImplementation();
-<span class="nocode"><a name="5">  5: </a></span>GenericDocument genericDocument0 = new GenericDocument((DocumentType) null, genericDOMImplementation0);
-<span class="nocode"><a name="6">  6: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(genericDocument0);
-<span class="nocode"><a name="7">  7: </a></span>gCSkewGraph0.draw(sVGGraphics2D0);
+<span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="2">  2: </a></span>GCSkewGraph gCSkewGraph0 = new GCSkewGraph(dNADraw0);
+<span class="nocode"><a name="3">  3: </a></span>gCSkewGraph0.calcGraphValues();
 </pre>
 <h3>Test case 24</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
 <span class="nocode"><a name="2">  2: </a></span>GCGraph gCGraph0 = new GCGraph(dNADraw0);
-<span class="nocode"><a name="3">  3: </a></span>GenericDocumentType genericDocumentType0 = new GenericDocumentType(&quot;height=0.2 window_size=10000 base_step_size=200 track=0.4 minus_colour=153:0:153 plus_colour=179:179:26&quot;, &quot;height=0.2 window_size=10000 base_step_size=200 track=0.4 minus_colour=153:0:153 plus_colour=179:179:26&quot;, &quot;height=0.2 window_size=10000 base_step_size=200 track=0.4 minus_colour=153:0:153 plus_colour=179:179:26&quot;);
-<span class="nocode"><a name="4">  4: </a></span>GenericDOMImplementation genericDOMImplementation0 = new GenericDOMImplementation();
-<span class="nocode"><a name="5">  5: </a></span>GenericDocument genericDocument0 = new GenericDocument(genericDocumentType0, genericDOMImplementation0);
-<span class="nocode"><a name="6">  6: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(genericDocument0);
-<span class="nocode"><a name="7">  7: </a></span>DebugGraphics debugGraphics0 = new DebugGraphics(sVGGraphics2D0, gCGraph0);
-<span class="nocode"><a name="8">  8: </a></span>gCGraph0.paintComponent(debugGraphics0);
+<span class="nocode"><a name="3">  3: </a></span>gCGraph0.calculateValue(4, 4);
 </pre>
 <h3>Test case 25</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
-<span class="nocode"><a name="2">  2: </a></span>GCGraph gCGraph0 = new GCGraph(dNADraw0);
-<span class="nocode"><a name="3">  3: </a></span>DebugGraphics debugGraphics0 = new DebugGraphics();
-<span class="nocode"><a name="4">  4: </a></span>gCGraph0.paintComponent(debugGraphics0);
+<span class="nocode"><a name="2">  2: </a></span>GCSkewGraph gCSkewGraph0 = new GCSkewGraph(dNADraw0);
+<span class="nocode"><a name="3">  3: </a></span>GenericDocumentType genericDocumentType0 = new GenericDocumentType(&quot;RETRIEVE SOURCE FEATURE FROM: &quot;, &quot;RETRIEVE SOURCE FEATURE FROM: &quot;, &quot;&quot;);
+<span class="nocode"><a name="4">  4: </a></span>GenericDOMImplementation genericDOMImplementation0 = new GenericDOMImplementation();
+<span class="nocode"><a name="5">  5: </a></span>GenericDocument genericDocument0 = new GenericDocument(genericDocumentType0, genericDOMImplementation0);
+<span class="nocode"><a name="6">  6: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(genericDocument0);
+<span class="nocode"><a name="7">  7: </a></span>gCSkewGraph0.draw(sVGGraphics2D0);
 </pre>
 <h3>Test case 26</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
-<span class="nocode"><a name="2">  2: </a></span>GCGraph gCGraph0 = new GCGraph(dNADraw0);
-<span class="nocode"><a name="3">  3: </a></span>String[] stringArray0 = new String[3];
-<span class="nocode"><a name="4">  4: </a></span>stringArray0[0] = &quot;track8Iijj&quot;;
-<span class="nocode"><a name="5">  5: </a></span>stringArray0[1] = &quot;Graph Options&quot;;
-<span class="nocode"><a name="6">  6: </a></span>gCGraph0.setOptionsStr(stringArray0);
+<span class="nocode"><a name="1">  1: </a></span>JembossParams jembossParams0 = new JembossParams();
+<span class="nocode"><a name="2">  2: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.getPublicServers();
+<span class="nocode"><a name="3">  3: </a></span>DNADraw dNADraw0 = new DNADraw(vector0, vector0, vector0, vector0);
+<span class="nocode"><a name="4">  4: </a></span>GCGraph gCGraph0 = new GCGraph(dNADraw0);
+<span class="nocode"><a name="5">  5: </a></span>GenericDocumentType genericDocumentType0 = new GenericDocumentType(&quot; minus_colour=&quot;, &quot; does not cut upstream of the recognition site&quot;, &quot; minus_colour=&quot;);
+<span class="nocode"><a name="6">  6: </a></span>GenericDOMImplementation genericDOMImplementation0 = (GenericDOMImplementation)GenericDOMImplementation.getDOMImplementation();
+<span class="nocode"><a name="7">  7: </a></span>GenericDocument genericDocument0 = new GenericDocument(genericDocumentType0, genericDOMImplementation0);
+<span class="nocode"><a name="8">  8: </a></span>SVGGeneratorContext sVGGeneratorContext0 = SVGGeneratorContext.createDefault(genericDocument0);
+<span class="nocode"><a name="9">  9: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(sVGGeneratorContext0, false);
+<span class="nocode"><a name="10"> 10: </a></span>gCGraph0.drawLinear(sVGGraphics2D0);
 </pre>
 <h3>Test case 27</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
-<span class="nocode"><a name="2">  2: </a></span>GCGraph gCGraph0 = new GCGraph(dNADraw0);
-<span class="nocode"><a name="3">  3: </a></span>gCGraph0.getBases();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(0.2F, gCGraph0.getGraphHeight(), 0.01F);
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(3.4028235E38F, gCGraph0.getMinValue(), 0.01F);
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(200, gCGraph0.getBaseStepSize());
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(1, gCGraph0.getStrokeSize());
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(1.4E-45F, gCGraph0.getMaxValue(), 0.01F);
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(0.4, gCGraph0.getTrack(), 0.01);
+<span class="nocode"><a name="2">  2: </a></span>GCSkewGraph gCSkewGraph0 = new GCSkewGraph(dNADraw0);
+<span class="nocode"><a name="3">  3: </a></span>String[] stringArray0 = new String[4];
+<span class="nocode"><a name="4">  4: </a></span>gCSkewGraph0.setOptionsStr(stringArray0);
 </pre>
 <h3>Test case 28</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
 <span class="nocode"><a name="2">  2: </a></span>GCGraph gCGraph0 = new GCGraph(dNADraw0);
-<span class="nocode"><a name="3">  3: </a></span>gCGraph0.setStrokeSize(2);
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(2, gCGraph0.getStrokeSize());
+<span class="nocode"><a name="3">  3: </a></span>gCGraph0.getBases();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(3.4028235E38F, gCGraph0.getMinValue(), 0.01F);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(1.4E-45F, gCGraph0.getMaxValue(), 0.01F);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0.2F, gCGraph0.getGraphHeight(), 0.01F);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(1, gCGraph0.getStrokeSize());
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(200, gCGraph0.getBaseStepSize());
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(0.4, gCGraph0.getTrack(), 0.01);
 </pre>
 <h3>Test case 29</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JembossParams jembossParams0 = new JembossParams();
+<span class="nocode"><a name="2">  2: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.getPublicServers();
+<span class="nocode"><a name="3">  3: </a></span>DNADraw dNADraw0 = new DNADraw(vector0, vector0, vector0, vector0);
+<span class="nocode"><a name="4">  4: </a></span>GCGraph gCGraph0 = new GCGraph(dNADraw0);
+<span class="nocode"><a name="5">  5: </a></span>int int0 = gCGraph0.getWindowSize();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(1, gCGraph0.getStrokeSize());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(10000, int0);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(3.4028235E38F, gCGraph0.getMinValue(), 0.01F);
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(1.4E-45F, gCGraph0.getMaxValue(), 0.01F);
+<span class="nocode"><a name="10"> 10: </a></span>assertEquals(200, gCGraph0.getBaseStepSize());
+<span class="nocode"><a name="11"> 11: </a></span>assertEquals(0.2F, gCGraph0.getGraphHeight(), 0.01F);
+<span class="nocode"><a name="12"> 12: </a></span>assertEquals(0.4, gCGraph0.getTrack(), 0.01);
+</pre>
+<h3>Test case 30</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
-<span class="nocode"><a name="2">  2: </a></span>GCSkewGraph gCSkewGraph0 = new GCSkewGraph(dNADraw0);
-<span class="nocode"><a name="3">  3: </a></span>gCSkewGraph0.setGraphHeight(131.18F);
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(131.18F, gCSkewGraph0.getGraphHeight(), 0.01F);
+<span class="nocode"><a name="2">  2: </a></span>GCGraph gCGraph0 = new GCGraph(dNADraw0);
+<span class="nocode"><a name="3">  3: </a></span>gCGraph0.setMinValue(2);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(2.0F, gCGraph0.getMinValue(), 0.01F);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -349,13 +368,13 @@ uk.ac.sanger.artemis.circular.Graph
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.circular.Graph
-<li>Size: 29
-<li>Length: 125
+<li>Size: 30
+<li>Length: 129
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.4379330497390344
-<li>BranchCoverage: 0.39473684210526316
-<li>MethodCoverage: 0.8928571428571429
-<li>OutputCoverage: 0.2
+<li>Coverage: 0.5334898617289963
+<li>BranchCoverage: 0.4342105263157895
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 0.34
 </ul></div>
 </div>
 <p><br><a href="../report-generation.html">Back to Overview</a></p>

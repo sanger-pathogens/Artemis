@@ -35,9 +35,7 @@ uk.ac.sanger.artemis.components.alignment.BamViewRecord
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SAMFileHeader sAMFileHeader0 = new SAMFileHeader();
-<span class="nocode"><a name="2">  2: </a></span>SAMRecord sAMRecord0 = new SAMRecord(sAMFileHeader0);
-<span class="nocode"><a name="3">  3: </a></span>BamViewRecord bamViewRecord0 = new BamViewRecord(sAMRecord0, (short)27);
+<span class="nocode"><a name="1">  1: </a></span>BamViewRecord bamViewRecord0 = new BamViewRecord((SAMRecord) null, (short)8);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -51,7 +49,7 @@ uk.ac.sanger.artemis.components.alignment.BamViewRecord
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.alignment.BamViewRecord
 <li>Size: 1
-<li>Length: 3
+<li>Length: 1
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 1.0
 <li>BranchCoverage: 1.0

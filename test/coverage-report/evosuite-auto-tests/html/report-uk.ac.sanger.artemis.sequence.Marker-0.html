@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.sequence.Marker
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.sequence.Marker: 0.9000735429306858</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.sequence.Marker: 0.8412109126394841</ul>
 <ul>
-<li>25.333333333333336 fitness evaluations, 0 generations, null statements, 25 tests.
+<li>36.14285714285714 fitness evaluations, 0 generations, null statements, 20 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,301 +35,189 @@ uk.ac.sanger.artemis.sequence.Marker
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[9];
-<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short) (-182));
-<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = JLayeredPane.DRAG_LAYER;
-<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 1800, 1800, short0, integer0);
-<span class="nocode"><a name="5">  5: </a></span>Bases bases0 = new Bases(partialSequence0);
-<span class="nocode"><a name="6">  6: </a></span>Strand strand0 = bases0.getReverseStrand();
-<span class="nocode"><a name="7">  7: </a></span>Marker marker0 = strand0.makeMarkerFromRawPosition(2);
-<span class="nocode"><a name="8">  8: </a></span>marker0.setRawPosition(1048576);
-<span class="nocode"><a name="9">  9: </a></span>assertEquals((-1046775), marker0.getPosition());
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;RMZ&lt;&gt;;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = Entry.newEntry(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Feature feature0 = entry0.createFeature();
+<span class="nocode"><a name="5">  5: </a></span>Marker marker0 = feature0.getFirstBaseMarker();
+<span class="nocode"><a name="6">  6: </a></span>marker0.setRawPosition(1);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[9];
-<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short) (-182));
-<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = JLayeredPane.DRAG_LAYER;
-<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 1800, 1800, short0, integer0);
-<span class="nocode"><a name="5">  5: </a></span>Bases bases0 = new Bases(partialSequence0);
-<span class="nocode"><a name="6">  6: </a></span>Strand strand0 = bases0.getReverseStrand();
-<span class="nocode"><a name="7">  7: </a></span>Marker marker0 = strand0.makeMarkerFromRawPosition(2);
-<span class="nocode"><a name="8">  8: </a></span>marker0.setPosition((-1422));
-<span class="nocode"><a name="9">  9: </a></span>int int0 = marker0.getPosition();
-<span class="nocode"><a name="10"> 10: </a></span>assertEquals((-1422), int0);
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;RMZ&lt;&gt;;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = Entry.newEntry(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Feature feature0 = entry0.createFeature();
+<span class="nocode"><a name="5">  5: </a></span>Marker marker0 = feature0.getFirstBaseMarker();
+<span class="nocode"><a name="6">  6: </a></span>marker0.setPosition(1);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(1, marker0.getPosition());
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[9];
-<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short) (-182));
-<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = JLayeredPane.DRAG_LAYER;
-<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 1759, 1759, short0, integer0);
-<span class="nocode"><a name="5">  5: </a></span>Bases bases0 = new Bases(partialSequence0);
-<span class="nocode"><a name="6">  6: </a></span>Strand strand0 = bases0.getReverseStrand();
-<span class="nocode"><a name="7">  7: </a></span>Marker marker0 = strand0.makeMarkerFromRawPosition(2);
-<span class="nocode"><a name="8">  8: </a></span>marker0.finalize();
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(1758, marker0.getPosition());
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;RMZ&lt;&gt;;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = Entry.newEntry(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Feature feature0 = entry0.createFeature();
+<span class="nocode"><a name="5">  5: </a></span>Marker marker0 = feature0.getFirstBaseMarker();
+<span class="nocode"><a name="6">  6: </a></span>marker0.finalize();
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, Marker.LISTENER_PRIORITY);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[9];
-<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short) (-182));
-<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = JLayeredPane.DRAG_LAYER;
-<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 1800, 1800, short0, integer0);
-<span class="nocode"><a name="5">  5: </a></span>Bases bases0 = new Bases(partialSequence0);
-<span class="nocode"><a name="6">  6: </a></span>Strand strand0 = bases0.getReverseStrand();
-<span class="nocode"><a name="7">  7: </a></span>Marker marker0 = strand0.makeMarkerFromRawPosition(2);
-<span class="nocode"><a name="8">  8: </a></span>Marker marker1 = marker0.moveBy(0);
-<span class="nocode"><a name="9">  9: </a></span>boolean boolean0 = marker0.equals(marker1);
-<span class="nocode"><a name="10"> 10: </a></span>assertEquals(1799, marker1.getPosition());
-<span class="nocode"><a name="11"> 11: </a></span>assertTrue(boolean0);
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;RMZ&lt;&gt;;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = Entry.newEntry(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Feature feature0 = entry0.createFeature();
+<span class="nocode"><a name="5">  5: </a></span>Marker marker0 = feature0.getFirstBaseMarker();
+<span class="nocode"><a name="6">  6: </a></span>marker0.moveBy((-5));
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[9];
-<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short) (-182));
-<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = JLayeredPane.DRAG_LAYER;
-<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 1800, 1800, short0, integer0);
-<span class="nocode"><a name="5">  5: </a></span>Bases bases0 = new Bases(partialSequence0);
-<span class="nocode"><a name="6">  6: </a></span>Strand strand0 = bases0.getReverseStrand();
-<span class="nocode"><a name="7">  7: </a></span>Marker marker0 = strand0.makeMarkerFromRawPosition(2);
-<span class="nocode"><a name="8">  8: </a></span>Marker marker1 = strand0.makeMarkerFromRawPosition((-4934));
-<span class="nocode"><a name="9">  9: </a></span>boolean boolean0 = marker1.equals(marker0);
-<span class="nocode"><a name="10"> 10: </a></span>assertFalse(boolean0);
-<span class="nocode"><a name="11"> 11: </a></span>assertEquals(6735, marker1.getPosition());
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;RMZ&lt;&gt;;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = Entry.newEntry(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Feature feature0 = entry0.createFeature();
+<span class="nocode"><a name="5">  5: </a></span>Marker marker0 = feature0.getFirstBaseMarker();
+<span class="nocode"><a name="6">  6: </a></span>Marker marker1 = feature0.getLastBaseMarker();
+<span class="nocode"><a name="7">  7: </a></span>boolean boolean0 = marker0.equals(marker1);
+<span class="nocode"><a name="8">  8: </a></span>assertFalse(boolean0);
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[9];
-<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short) (-182));
-<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = JLayeredPane.DRAG_LAYER;
-<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 1800, 1800, short0, integer0);
-<span class="nocode"><a name="5">  5: </a></span>Bases bases0 = new Bases(partialSequence0);
-<span class="nocode"><a name="6">  6: </a></span>Strand strand0 = bases0.getReverseStrand();
-<span class="nocode"><a name="7">  7: </a></span>Marker marker0 = strand0.makeMarkerFromRawPosition(2);
-<span class="nocode"><a name="8">  8: </a></span>boolean boolean0 = marker0.equals(marker0);
-<span class="nocode"><a name="9">  9: </a></span>assertTrue(boolean0);
-<span class="nocode"><a name="10"> 10: </a></span>assertEquals(1799, marker0.getPosition());
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;RMZ&lt;&gt;;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = Entry.newEntry(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Feature feature0 = entry0.createFeature();
+<span class="nocode"><a name="5">  5: </a></span>Marker marker0 = feature0.getFirstBaseMarker();
+<span class="nocode"><a name="6">  6: </a></span>marker0.removeMarkerChangeListener(feature0);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(1, marker0.getPosition());
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[9];
-<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short) (-182));
-<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = JLayeredPane.DRAG_LAYER;
-<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 1800, 1800, short0, integer0);
-<span class="nocode"><a name="5">  5: </a></span>Bases bases0 = new Bases(partialSequence0);
-<span class="nocode"><a name="6">  6: </a></span>Strand strand0 = bases0.getReverseStrand();
-<span class="nocode"><a name="7">  7: </a></span>Marker marker0 = strand0.makeMarkerFromRawPosition(2);
-<span class="nocode"><a name="8">  8: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature();
-<span class="nocode"><a name="9">  9: </a></span>Feature feature0 = new Feature(genbankStreamFeature0);
-<span class="nocode"><a name="10"> 10: </a></span>marker0.addMarkerChangeListener(feature0);
-<span class="nocode"><a name="11"> 11: </a></span>marker0.addMarkerChangeListener(feature0);
-<span class="nocode"><a name="12"> 12: </a></span>assertEquals(1799, marker0.getPosition());
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;RMZ&lt;&gt;;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = Entry.newEntry(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Feature feature0 = entry0.createFeature();
+<span class="nocode"><a name="5">  5: </a></span>Marker marker0 = feature0.getPositionInSequence(5);
+<span class="nocode"><a name="6">  6: </a></span>marker0.removeMarkerChangeListener(feature0);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(5, marker0.getPosition());
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[9];
-<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short) (-182));
-<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = JLayeredPane.DRAG_LAYER;
-<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 1800, 1800, short0, integer0);
-<span class="nocode"><a name="5">  5: </a></span>Bases bases0 = new Bases(partialSequence0);
-<span class="nocode"><a name="6">  6: </a></span>Strand strand0 = bases0.getReverseStrand();
-<span class="nocode"><a name="7">  7: </a></span>Marker marker0 = strand0.makeMarkerFromRawPosition(2);
-<span class="nocode"><a name="8">  8: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature();
-<span class="nocode"><a name="9">  9: </a></span>Feature feature0 = new Feature(genbankStreamFeature0);
-<span class="nocode"><a name="10"> 10: </a></span>marker0.removeMarkerChangeListener(feature0);
-<span class="nocode"><a name="11"> 11: </a></span>assertEquals(1799, marker0.getPosition());
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;RMZ&lt;&gt;;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = Entry.newEntry(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Feature feature0 = entry0.createFeature();
+<span class="nocode"><a name="5">  5: </a></span>Marker marker0 = feature0.getFirstBaseMarker();
+<span class="nocode"><a name="6">  6: </a></span>Marker marker1 = Marker.getRawLowest(marker0, marker0);
+<span class="nocode"><a name="7">  7: </a></span>assertSame(marker0, marker1);
 </pre>
 <h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[9];
-<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short) (-182));
-<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = JLayeredPane.DRAG_LAYER;
-<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 1800, 1800, short0, integer0);
-<span class="nocode"><a name="5">  5: </a></span>Bases bases0 = new Bases(partialSequence0);
-<span class="nocode"><a name="6">  6: </a></span>Strand strand0 = bases0.getReverseStrand();
-<span class="nocode"><a name="7">  7: </a></span>Marker marker0 = strand0.makeMarkerFromRawPosition(2);
-<span class="nocode"><a name="8">  8: </a></span>Marker marker1 = marker0.moveBy((-25));
-<span class="nocode"><a name="9">  9: </a></span>Marker marker2 = Marker.getRawLowest(marker1, marker0);
-<span class="nocode"><a name="10"> 10: </a></span>assertEquals(1799, marker2.getPosition());
-<span class="nocode"><a name="11"> 11: </a></span>assertEquals(1774, marker1.getPosition());
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;RMZ&lt;&gt;;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = Entry.newEntry(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Feature feature0 = entry0.createFeature();
+<span class="nocode"><a name="5">  5: </a></span>Marker marker0 = feature0.getFirstBaseMarker();
+<span class="nocode"><a name="6">  6: </a></span>Strand strand0 = marker0.getStrand();
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, strand0.getTCount());
 </pre>
 <h3>Test case 10</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[9];
-<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short) (-182));
-<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = JLayeredPane.DRAG_LAYER;
-<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 1800, 1800, short0, integer0);
-<span class="nocode"><a name="5">  5: </a></span>Bases bases0 = new Bases(partialSequence0);
-<span class="nocode"><a name="6">  6: </a></span>Strand strand0 = bases0.getReverseStrand();
-<span class="nocode"><a name="7">  7: </a></span>Marker marker0 = strand0.makeMarkerFromRawPosition(2);
-<span class="nocode"><a name="8">  8: </a></span>MarkerChangeEvent markerChangeEvent0 = new MarkerChangeEvent(marker0, strand0, 256);
-<span class="nocode"><a name="9">  9: </a></span>marker0.fireEvent(markerChangeEvent0);
-<span class="nocode"><a name="10"> 10: </a></span>assertEquals(1799, marker0.getPosition());
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;RMZ&lt;&gt;;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = Entry.newEntry(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Feature feature0 = entry0.createFeature();
+<span class="nocode"><a name="5">  5: </a></span>Marker marker0 = feature0.getFirstBaseMarker();
+<span class="nocode"><a name="6">  6: </a></span>int int0 = marker0.getPosition();
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(1, int0);
 </pre>
 <h3>Test case 11</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[9];
-<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short) (-182));
-<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = JLayeredPane.DRAG_LAYER;
-<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 1800, 1800, short0, integer0);
-<span class="nocode"><a name="5">  5: </a></span>Bases bases0 = new Bases(partialSequence0);
-<span class="nocode"><a name="6">  6: </a></span>Strand strand0 = bases0.getReverseStrand();
-<span class="nocode"><a name="7">  7: </a></span>Marker marker0 = strand0.makeMarkerFromRawPosition(2);
-<span class="nocode"><a name="8">  8: </a></span>marker0.getStrand();
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(1799, marker0.getPosition());
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;RMZ&lt;&gt;;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = Entry.newEntry(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Feature feature0 = entry0.createFeature();
+<span class="nocode"><a name="5">  5: </a></span>Marker marker0 = feature0.getFirstBaseMarker();
+<span class="nocode"><a name="6">  6: </a></span>int int0 = marker0.getRawPosition();
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(1, int0);
 </pre>
 <h3>Test case 12</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[9];
-<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short) (-182));
-<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = JLayeredPane.DRAG_LAYER;
-<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 1800, 1800, short0, integer0);
-<span class="nocode"><a name="5">  5: </a></span>Bases bases0 = new Bases(partialSequence0);
-<span class="nocode"><a name="6">  6: </a></span>Strand strand0 = bases0.getReverseStrand();
-<span class="nocode"><a name="7">  7: </a></span>Marker marker0 = strand0.makeMarkerFromRawPosition(2);
-<span class="nocode"><a name="8">  8: </a></span>int int0 = marker0.getPosition();
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(1799, int0);
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;RMZ&lt;&gt;;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = Entry.newEntry(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Feature feature0 = entry0.createFeature();
+<span class="nocode"><a name="5">  5: </a></span>Marker marker0 = feature0.getFirstBaseMarker();
+<span class="nocode"><a name="6">  6: </a></span>marker0.addMarkerChangeListener(feature0);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, Marker.LISTENER_PRIORITY);
 </pre>
 <h3>Test case 13</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[9];
-<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short) (-182));
-<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = JLayeredPane.DRAG_LAYER;
-<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 1800, 1800, short0, integer0);
-<span class="nocode"><a name="5">  5: </a></span>Bases bases0 = new Bases(partialSequence0);
-<span class="nocode"><a name="6">  6: </a></span>Strand strand0 = bases0.getReverseStrand();
-<span class="nocode"><a name="7">  7: </a></span>Marker marker0 = strand0.makeMarkerFromRawPosition(2);
-<span class="nocode"><a name="8">  8: </a></span>int int0 = marker0.getRawPosition();
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(2, int0);
+<span class="nocode"><a name="1">  1: </a></span>Marker marker0 = new Marker((Strand) null, (-6516));
 </pre>
 <h3>Test case 14</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[9];
-<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short) (-182));
-<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = JLayeredPane.DRAG_LAYER;
-<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 1800, 1800, short0, integer0);
-<span class="nocode"><a name="5">  5: </a></span>Bases bases0 = new Bases(partialSequence0);
-<span class="nocode"><a name="6">  6: </a></span>Strand strand0 = bases0.getReverseStrand();
-<span class="nocode"><a name="7">  7: </a></span>Marker marker0 = strand0.makeMarkerFromRawPosition(2);
-<span class="nocode"><a name="8">  8: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature();
-<span class="nocode"><a name="9">  9: </a></span>Feature feature0 = new Feature(genbankStreamFeature0);
-<span class="nocode"><a name="10"> 10: </a></span>marker0.addMarkerChangeListener(feature0);
-<span class="nocode"><a name="11"> 11: </a></span>MarkerChangeEvent markerChangeEvent0 = new MarkerChangeEvent(marker0, strand0, 256);
-<span class="nocode"><a name="12"> 12: </a></span>marker0.fireEvent(markerChangeEvent0);
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;RMZ&lt;&gt;;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = Entry.newEntry(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Feature feature0 = entry0.createFeature();
+<span class="nocode"><a name="5">  5: </a></span>Marker marker0 = feature0.getFirstBaseMarker();
+<span class="nocode"><a name="6">  6: </a></span>marker0.equals((Marker) null);
 </pre>
 <h3>Test case 15</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Marker marker0 = new Marker((Strand) null, 49);
+<span class="nocode"><a name="1">  1: </a></span>Marker.getRawLowest((Marker) null, (Marker) null);
 </pre>
 <h3>Test case 16</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;8R!lEGX^HQziu8s[C&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = new Strand(bases0, 0);
-<span class="nocode"><a name="4">  4: </a></span>Marker marker0 = new Marker(strand0, 1383);
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;MZ&lt;&gt;;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = Entry.newEntry(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Feature feature0 = entry0.createFeature();
+<span class="nocode"><a name="5">  5: </a></span>Marker marker0 = feature0.getFirstBaseMarker();
+<span class="nocode"><a name="6">  6: </a></span>marker0.setPosition((-2));
 </pre>
 <h3>Test case 17</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[9];
-<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short) (-182));
-<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = JLayeredPane.DRAG_LAYER;
-<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 1800, 1800, short0, integer0);
-<span class="nocode"><a name="5">  5: </a></span>Bases bases0 = new Bases(partialSequence0);
-<span class="nocode"><a name="6">  6: </a></span>Strand strand0 = bases0.getReverseStrand();
-<span class="nocode"><a name="7">  7: </a></span>Marker marker0 = strand0.makeMarkerFromRawPosition(2);
-<span class="nocode"><a name="8">  8: </a></span>marker0.equals((Marker) null);
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;DELETE FROM feature WHERE uniquename='&quot;, (String) null);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = new Strand(bases0, 2);
+<span class="nocode"><a name="4">  4: </a></span>Marker marker0 = strand0.makeMarkerFromRawPosition(1);
+<span class="nocode"><a name="5">  5: </a></span>marker0.setRawPosition(1500);
 </pre>
 <h3>Test case 18</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Marker.getRawLowest((Marker) null, (Marker) null);
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;DELETE FROM feature WHERE uniquename='&quot;, (String) null);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = new Strand(bases0, 2);
+<span class="nocode"><a name="4">  4: </a></span>Marker marker0 = new Marker(strand0, 1);
+<span class="nocode"><a name="5">  5: </a></span>Marker marker1 = marker0.moveBy(2);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(3, marker1.getPosition());
 </pre>
 <h3>Test case 19</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[13];
-<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short) (-182));
-<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = JLayeredPane.DRAG_LAYER;
-<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 1800, 1800, short0, integer0);
-<span class="nocode"><a name="5">  5: </a></span>Bases bases0 = new Bases(partialSequence0);
-<span class="nocode"><a name="6">  6: </a></span>Strand strand0 = bases0.getReverseStrand();
-<span class="nocode"><a name="7">  7: </a></span>Marker marker0 = strand0.makeMarker((short) (-182));
-<span class="nocode"><a name="8">  8: </a></span>Marker marker1 = Marker.getRawLowest(marker0, marker0);
-<span class="nocode"><a name="9">  9: </a></span>assertEquals((-182), marker1.getPosition());
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;RMZ&lt;&gt;;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = Entry.newEntry(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Feature feature0 = entry0.createFeature();
+<span class="nocode"><a name="5">  5: </a></span>Marker marker0 = feature0.getFirstBaseMarker();
+<span class="nocode"><a name="6">  6: </a></span>Strand strand0 = new Strand(bases0, 0);
+<span class="nocode"><a name="7">  7: </a></span>MarkerChangeEvent markerChangeEvent0 = new MarkerChangeEvent(marker0, strand0, 0);
+<span class="nocode"><a name="8">  8: </a></span>marker0.fireEvent(markerChangeEvent0);
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(0, Marker.LISTENER_PRIORITY);
 </pre>
 <h3>Test case 20</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[9];
-<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short) (-182));
-<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = JLayeredPane.DRAG_LAYER;
-<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 1800, 1800, short0, integer0);
-<span class="nocode"><a name="5">  5: </a></span>Bases bases0 = new Bases(partialSequence0);
-<span class="nocode"><a name="6">  6: </a></span>Strand strand0 = bases0.getReverseStrand();
-<span class="nocode"><a name="7">  7: </a></span>Marker marker0 = strand0.makeMarker(0);
-<span class="nocode"><a name="8">  8: </a></span>Marker marker1 = Marker.getRawLowest(marker0, marker0);
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(0, marker1.getPosition());
-</pre>
-<h3>Test case 21</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[9];
-<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short) (-182));
-<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = JLayeredPane.DRAG_LAYER;
-<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 1800, 1800, short0, integer0);
-<span class="nocode"><a name="5">  5: </a></span>Bases bases0 = new Bases(partialSequence0);
-<span class="nocode"><a name="6">  6: </a></span>Strand strand0 = bases0.getReverseStrand();
-<span class="nocode"><a name="7">  7: </a></span>Marker marker0 = strand0.makeMarkerFromRawPosition((-4934));
-<span class="nocode"><a name="8">  8: </a></span>int int0 = marker0.getRawPosition();
-<span class="nocode"><a name="9">  9: </a></span>assertEquals((-4934), int0);
-</pre>
-<h3>Test case 22</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[9];
-<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short) (-182));
-<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = JLayeredPane.DRAG_LAYER;
-<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 1800, 1800, short0, integer0);
-<span class="nocode"><a name="5">  5: </a></span>Bases bases0 = new Bases(partialSequence0);
-<span class="nocode"><a name="6">  6: </a></span>Strand strand0 = bases0.getReverseStrand();
-<span class="nocode"><a name="7">  7: </a></span>Marker marker0 = strand0.makeMarkerFromRawPosition(2);
-<span class="nocode"><a name="8">  8: </a></span>Marker marker1 = marker0.moveBy((-4934));
-<span class="nocode"><a name="9">  9: </a></span>assertEquals((-3135), marker1.getPosition());
-</pre>
-<h3>Test case 23</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[9];
-<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short) (-182));
-<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = JLayeredPane.DRAG_LAYER;
-<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 1800, 1800, short0, integer0);
-<span class="nocode"><a name="5">  5: </a></span>Bases bases0 = new Bases(partialSequence0);
-<span class="nocode"><a name="6">  6: </a></span>Strand strand0 = bases0.getReverseStrand();
-<span class="nocode"><a name="7">  7: </a></span>Marker marker0 = new Marker(strand0, 0);
-<span class="nocode"><a name="8">  8: </a></span>Marker marker1 = marker0.moveBy(0);
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(0, marker1.getPosition());
-</pre>
-<h3>Test case 24</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[9];
-<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short) (-182));
-<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = JLayeredPane.DRAG_LAYER;
-<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 1800, 1800, short0, integer0);
-<span class="nocode"><a name="5">  5: </a></span>Bases bases0 = new Bases(partialSequence0);
-<span class="nocode"><a name="6">  6: </a></span>Strand strand0 = bases0.getReverseStrand();
-<span class="nocode"><a name="7">  7: </a></span>Marker marker0 = strand0.makeMarkerFromRawPosition(2);
-<span class="nocode"><a name="8">  8: </a></span>Marker marker1 = marker0.moveBy(1);
-<span class="nocode"><a name="9">  9: </a></span>boolean boolean0 = marker0.equals(marker1);
-<span class="nocode"><a name="10"> 10: </a></span>assertFalse(boolean0);
-<span class="nocode"><a name="11"> 11: </a></span>assertEquals(1800, marker1.getPosition());
-</pre>
-<h3>Test case 25</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[9];
-<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short) (-182));
-<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = JLayeredPane.DRAG_LAYER;
-<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 1800, 1800, short0, integer0);
-<span class="nocode"><a name="5">  5: </a></span>Bases bases0 = new Bases(partialSequence0);
-<span class="nocode"><a name="6">  6: </a></span>Strand strand0 = bases0.getReverseStrand();
-<span class="nocode"><a name="7">  7: </a></span>Marker marker0 = strand0.makeMarkerFromRawPosition(2);
-<span class="nocode"><a name="8">  8: </a></span>Marker marker1 = strand0.makeMarkerFromRawPosition((-4934));
-<span class="nocode"><a name="9">  9: </a></span>Marker marker2 = Marker.getRawLowest(marker1, marker0);
-<span class="nocode"><a name="10"> 10: </a></span>assertEquals(6735, marker2.getPosition());
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;RMZ&lt;&gt;;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = Entry.newEntry(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Feature feature0 = entry0.createFeature();
+<span class="nocode"><a name="5">  5: </a></span>Marker marker0 = feature0.getFirstBaseMarker();
+<span class="nocode"><a name="6">  6: </a></span>Marker marker1 = feature0.getFirstCodingBaseMarker();
+<span class="nocode"><a name="7">  7: </a></span>boolean boolean0 = marker0.equals(marker1);
+<span class="nocode"><a name="8">  8: </a></span>assertNotSame(marker1, marker0);
+<span class="nocode"><a name="9">  9: </a></span>assertTrue(boolean0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -342,13 +230,13 @@ uk.ac.sanger.artemis.sequence.Marker
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.sequence.Marker
-<li>Size: 25
-<li>Length: 198
+<li>Size: 20
+<li>Length: 112
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.9000735429306858
+<li>Coverage: 0.8412109126394841
 <li>BranchCoverage: 0.9047619047619048
 <li>MethodCoverage: 1.0
-<li>OutputCoverage: 0.5135135135135135
+<li>OutputCoverage: 0.35135135135135137
 </ul></div>
 </div>
 <p><br><a href="../report-generation.html">Back to Overview</a></p>

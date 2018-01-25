@@ -35,73 +35,73 @@ uk.ac.sanger.artemis.components.alignment.BamOSXAdapter
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>String string0 = &quot;&quot;;
-<span class="nocode"><a name="2">  2: </a></span>BamOSXAdapter.setFileHandler(string0, (Method) null);
+<span class="nocode"><a name="1">  1: </a></span>BamOSXAdapter bamOSXAdapter0 = new BamOSXAdapter(&quot; isn't annotated.&quot;, &quot; isn't annotated.&quot;, (Method) null);
+<span class="nocode"><a name="2">  2: </a></span>BamOSXAdapter.setFileHandler(bamOSXAdapter0.targetObject, (Method) null);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>BamOSXAdapter.setQuitHandler(&quot;dubt}o/,a&quot;, (Method) null);
+<span class="nocode"><a name="1">  1: </a></span>Object object0 = new Object();
+<span class="nocode"><a name="2">  2: </a></span>BamOSXAdapter bamOSXAdapter0 = new BamOSXAdapter(&quot;&quot;, object0, (Method) null);
+<span class="nocode"><a name="3">  3: </a></span>BamOSXAdapter.setQuitHandler(bamOSXAdapter0, (Method) null);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Method method0 = null;
-<span class="nocode"><a name="2">  2: </a></span>BamOSXAdapter.setAboutHandler(method0, (Method) null);
+<span class="nocode"><a name="1">  1: </a></span>BamOSXAdapter.setAboutHandler((Object) null, (Method) null);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Method method0 = null;
-<span class="nocode"><a name="2">  2: </a></span>BamOSXAdapter.setPreferencesHandler(method0, (Method) null);
+<span class="nocode"><a name="1">  1: </a></span>BamOSXAdapter bamOSXAdapter0 = new BamOSXAdapter(&quot;/Dg,f~OWLRG&gt;N T j&quot;, &quot;/Dg,f~OWLRG&gt;N T j&quot;, (Method) null);
+<span class="nocode"><a name="2">  2: </a></span>BamOSXAdapter.macOSXApplication = (Object) bamOSXAdapter0;
+<span class="nocode"><a name="3">  3: </a></span>BamOSXAdapter.setAboutHandler(BamOSXAdapter.macOSXApplication, (Method) null);
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>BamOSXAdapter bamOSXAdapter0 = new BamOSXAdapter(&quot;H'\&quot;r[&amp;&gt;c{&quot;, &quot;H'\&quot;r[&amp;&gt;c{&quot;, (Method) null);
-<span class="nocode"><a name="2">  2: </a></span>BamOSXAdapter.setPreferencesHandler(bamOSXAdapter0, (Method) null);
+<span class="nocode"><a name="1">  1: </a></span>BamOSXAdapter.setPreferencesHandler((Object) null, (Method) null);
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>BamOSXAdapter bamOSXAdapter0 = new BamOSXAdapter(&quot;&quot;, &quot;&quot;, (Method) null);
-<span class="nocode"><a name="2">  2: </a></span>Object[] objectArray0 = new Object[7];
+<span class="nocode"><a name="1">  1: </a></span>BamOSXAdapter bamOSXAdapter0 = new BamOSXAdapter(&quot;8 mc(!lsC&lt;9]|y&quot;, &quot;8 mc(!lsC&lt;9]|y&quot;, (Method) null);
+<span class="nocode"><a name="2">  2: </a></span>Object[] objectArray0 = new Object[3];
 <span class="nocode"><a name="3">  3: </a></span>Object object0 = bamOSXAdapter0.invoke((Object) null, (Method) null, objectArray0);
 <span class="nocode"><a name="4">  4: </a></span>assertNull(object0);
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>BamOSXAdapter bamOSXAdapter0 = new BamOSXAdapter(&quot;&quot;, (Object) null, (Method) null);
+<span class="nocode"><a name="1">  1: </a></span>BamOSXAdapter bamOSXAdapter0 = new BamOSXAdapter((String) null, (Object) null, (Method) null);
 <span class="nocode"><a name="2">  2: </a></span>bamOSXAdapter0.setApplicationEventHandled((Object) null, false);
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>BamOSXAdapter bamOSXAdapter0 = new BamOSXAdapter(&quot;&quot;, &quot;&quot;, (Method) null);
-<span class="nocode"><a name="2">  2: </a></span>bamOSXAdapter0.callTarget((Object) null);
+<span class="nocode"><a name="1">  1: </a></span>BamOSXAdapter bamOSXAdapter0 = new BamOSXAdapter(&quot;/Dg,f~OWLRG&gt;N T j&quot;, &quot;/Dg,f~OWLRG&gt;N T j&quot;, (Method) null);
+<span class="nocode"><a name="2">  2: </a></span>bamOSXAdapter0.setApplicationEventHandled(&quot;/Dg,f~OWLRG&gt;N T j&quot;, false);
 </pre>
 <h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>BamOSXAdapter bamOSXAdapter0 = new BamOSXAdapter(&quot;&quot;, &quot;&quot;, (Method) null);
-<span class="nocode"><a name="2">  2: </a></span>BamOSXAdapter.setHandler(bamOSXAdapter0);
+<span class="nocode"><a name="1">  1: </a></span>BamOSXAdapter bamOSXAdapter0 = new BamOSXAdapter(&quot;/Dg,f~OWLRG&gt;N T j&quot;, &quot;/Dg,f~OWLRG&gt;N T j&quot;, (Method) null);
+<span class="nocode"><a name="2">  2: </a></span>bamOSXAdapter0.callTarget((Object) null);
 </pre>
 <h3>Test case 10</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>BamOSXAdapter bamOSXAdapter0 = new BamOSXAdapter(&quot;H'\&quot;r[&amp;&gt;c{&quot;, &quot;H'\&quot;r[&amp;&gt;c{&quot;, (Method) null);
-<span class="nocode"><a name="2">  2: </a></span>Object[] objectArray0 = new Object[9];
-<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = bamOSXAdapter0.isCorrectMethod((Method) null, objectArray0);
-<span class="nocode"><a name="4">  4: </a></span>assertFalse(boolean0);
+<span class="nocode"><a name="1">  1: </a></span>BamOSXAdapter bamOSXAdapter0 = new BamOSXAdapter(&quot;8 mc(!lsC&lt;9]|y&quot;, &quot;8 mc(!lsC&lt;9]|y&quot;, (Method) null);
+<span class="nocode"><a name="2">  2: </a></span>BamOSXAdapter.setHandler(bamOSXAdapter0);
 </pre>
 <h3>Test case 11</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>BamOSXAdapter bamOSXAdapter0 = new BamOSXAdapter(&quot;?b[vOt\&quot;2w=,*{Zi2bu&quot;, &quot;?b[vOt\&quot;2w=,*{Zi2bu&quot;, (Method) null);
-<span class="nocode"><a name="2">  2: </a></span>BamOSXAdapter.macOSXApplication = (Object) &quot;?b[vOt\&quot;2w=,*{Zi2bu&quot;;
-<span class="nocode"><a name="3">  3: </a></span>BamOSXAdapter.setAboutHandler(bamOSXAdapter0, (Method) null);
+<span class="nocode"><a name="1">  1: </a></span>BamOSXAdapter bamOSXAdapter0 = new BamOSXAdapter((String) null, (Object) null, (Method) null);
+<span class="nocode"><a name="2">  2: </a></span>Object[] objectArray0 = new Object[0];
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = bamOSXAdapter0.isCorrectMethod((Method) null, objectArray0);
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(boolean0);
 </pre>
 <h3>Test case 12</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>BamOSXAdapter bamOSXAdapter0 = new BamOSXAdapter(&quot;H'\&quot;r[&amp;&gt;c{&quot;, &quot;H'\&quot;r[&amp;&gt;c{&quot;, (Method) null);
-<span class="nocode"><a name="2">  2: </a></span>BamOSXAdapter.macOSXApplication = (Object) bamOSXAdapter0;
-<span class="nocode"><a name="3">  3: </a></span>BamOSXAdapter.setPreferencesHandler(bamOSXAdapter0, (Method) null);
+<span class="nocode"><a name="1">  1: </a></span>BamOSXAdapter.macOSXApplication = (Object) null;
+<span class="nocode"><a name="2">  2: </a></span>BamOSXAdapter.macOSXApplication = (Object) &quot;&quot;;
+<span class="nocode"><a name="3">  3: </a></span>BamOSXAdapter.setPreferencesHandler(&quot;&quot;, (Method) null);
 </pre>
 <h3>Test case 13</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>BamOSXAdapter bamOSXAdapter0 = new BamOSXAdapter((String) null, (Object) null, (Method) null);
-<span class="nocode"><a name="2">  2: </a></span>bamOSXAdapter0.setApplicationEventHandled(&quot;&amp;]S/^rY&gt;&amp;0#c;&quot;, false);
+<span class="nocode"><a name="1">  1: </a></span>Object object0 = new Object();
+<span class="nocode"><a name="2">  2: </a></span>BamOSXAdapter.setAboutHandler(object0, (Method) null);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>

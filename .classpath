@@ -23,10 +23,9 @@
 	<classpathentry kind="lib" path="lib/batik/batik-xml.jar"/>
 	<classpathentry kind="lib" path="lib/commons-lang-2.6.jar"/>
 	<classpathentry kind="lib" path="test/lib/junit-4.11.jar"/>
-	<classpathentry kind="lib" path="lib/picard/htsjdk-2.12.0.jar" sourcepath="/Users/kp11/workspace/jarbuilds/htsjdk/src/main/java"/>
 	<classpathentry kind="lib" path="/Users/kp11/workspace/applications/Artemis/eclipse-classes"/>
 	<classpathentry kind="lib" path="test/evosuite-lib/evosuite-1.0.5.jar"/>
 	<classpathentry kind="lib" path="lib/commons-net-3.6.jar"/>
-	<classpathentry kind="lib" path="lib/picard/picard-2.13.2.jar"/>
+	<classpathentry kind="lib" path="lib/picard/picard.jar"/>
 	<classpathentry kind="output" path="eclipse-classes"/>
 </classpath>

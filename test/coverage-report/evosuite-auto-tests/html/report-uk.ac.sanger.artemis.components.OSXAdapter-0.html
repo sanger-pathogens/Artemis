@@ -23,7 +23,7 @@ uk.ac.sanger.artemis.components.OSXAdapter
 <br><br><h2 class=title>Summary</h2>
 <ul><li>Target class: uk.ac.sanger.artemis.components.OSXAdapter: 0.4213109354413702</ul>
 <ul>
-<li>150.6767441860465 fitness evaluations, 0 generations, null statements, 12 tests.
+<li>150.6767441860465 fitness evaluations, 0 generations, null statements, 14 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -36,7 +36,7 @@ uk.ac.sanger.artemis.components.OSXAdapter
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Object object0 = new Object();
-<span class="nocode"><a name="2">  2: </a></span>OSXAdapter.setQuitHandler(object0, (Method) null);
+<span class="nocode"><a name="2">  2: </a></span>OSXAdapter.setFileHandler(object0, (Method) null);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
@@ -44,61 +44,71 @@ uk.ac.sanger.artemis.components.OSXAdapter
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Object[] objectArray0 = new Object[6];
-<span class="nocode"><a name="2">  2: </a></span>OSXAdapter.setPreferencesHandler(objectArray0[4], (Method) null);
+<span class="nocode"><a name="1">  1: </a></span>Object object0 = new Object();
+<span class="nocode"><a name="2">  2: </a></span>OSXAdapter.macOSXApplication = object0;
+<span class="nocode"><a name="3">  3: </a></span>OSXAdapter.setAboutHandler(OSXAdapter.macOSXApplication, (Method) null);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>OSXAdapter oSXAdapter0 = new OSXAdapter(&quot;v&gt;`7'\&quot;nuro(k&quot;, &quot;v&gt;`7'\&quot;nuro(k&quot;, (Method) null);
-<span class="nocode"><a name="2">  2: </a></span>Object[] objectArray0 = new Object[4];
-<span class="nocode"><a name="3">  3: </a></span>Object object0 = oSXAdapter0.invoke(OSXAdapter.macOSXApplication, (Method) null, objectArray0);
-<span class="nocode"><a name="4">  4: </a></span>assertNull(object0);
+<span class="nocode"><a name="1">  1: </a></span>Object[] objectArray0 = new Object[3];
+<span class="nocode"><a name="2">  2: </a></span>OSXAdapter.setPreferencesHandler(objectArray0[0], (Method) null);
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>OSXAdapter oSXAdapter0 = new OSXAdapter(&quot;v&gt;`7'\&quot;nuro(k&quot;, &quot;v&gt;`7'\&quot;nuro(k&quot;, (Method) null);
-<span class="nocode"><a name="2">  2: </a></span>oSXAdapter0.setApplicationEventHandled((Object) null, true);
+<span class="nocode"><a name="1">  1: </a></span>Object object0 = new Object();
+<span class="nocode"><a name="2">  2: </a></span>OSXAdapter oSXAdapter0 = new OSXAdapter(&quot;YJukC&quot;, object0, (Method) null);
+<span class="nocode"><a name="3">  3: </a></span>OSXAdapter.setPreferencesHandler(oSXAdapter0, (Method) null);
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>OSXAdapter oSXAdapter0 = new OSXAdapter(&quot;v&gt;`7'\&quot;nuro(k&quot;, &quot;v&gt;`7'\&quot;nuro(k&quot;, (Method) null);
-<span class="nocode"><a name="2">  2: </a></span>Object object0 = new Object();
-<span class="nocode"><a name="3">  3: </a></span>oSXAdapter0.setApplicationEventHandled(object0, true);
+<span class="nocode"><a name="1">  1: </a></span>Object object0 = new Object();
+<span class="nocode"><a name="2">  2: </a></span>OSXAdapter oSXAdapter0 = new OSXAdapter(&quot;YJukC&quot;, object0, (Method) null);
+<span class="nocode"><a name="3">  3: </a></span>Object[] objectArray0 = new Object[4];
+<span class="nocode"><a name="4">  4: </a></span>Object object1 = oSXAdapter0.invoke(oSXAdapter0, (Method) null, objectArray0);
+<span class="nocode"><a name="5">  5: </a></span>assertNull(object1);
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Object object0 = new Object();
-<span class="nocode"><a name="2">  2: </a></span>OSXAdapter oSXAdapter0 = new OSXAdapter(&quot;}RGS&quot;, object0, (Method) null);
-<span class="nocode"><a name="3">  3: </a></span>oSXAdapter0.callTarget((Object) null);
+<span class="nocode"><a name="1">  1: </a></span>OSXAdapter oSXAdapter0 = new OSXAdapter(&quot;No annotation was provided&quot;, &quot;No annotation was provided&quot;, (Method) null);
+<span class="nocode"><a name="2">  2: </a></span>oSXAdapter0.setApplicationEventHandled((Object) null, false);
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>OSXAdapter.setHandler((OSXAdapter) null);
+<span class="nocode"><a name="1">  1: </a></span>OSXAdapter oSXAdapter0 = new OSXAdapter(&quot;Mac OS X Adapter could not talk to EAWT:&quot;, &quot;Mac OS X Adapter could not talk to EAWT:&quot;, (Method) null);
+<span class="nocode"><a name="2">  2: </a></span>oSXAdapter0.setApplicationEventHandled(&quot;&quot;, true);
 </pre>
 <h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>OSXAdapter oSXAdapter0 = new OSXAdapter(&quot;)&quot;, &quot;)&quot;, (Method) null);
-<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = oSXAdapter0.isCorrectMethod((Method) null, (Object[]) null);
-<span class="nocode"><a name="3">  3: </a></span>assertFalse(boolean0);
+<span class="nocode"><a name="1">  1: </a></span>OSXAdapter oSXAdapter0 = new OSXAdapter(&quot;'X3&quot;, &quot;'X3&quot;, (Method) null);
+<span class="nocode"><a name="2">  2: </a></span>oSXAdapter0.callTarget(OSXAdapter.macOSXApplication);
 </pre>
 <h3>Test case 10</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>OSXAdapter oSXAdapter0 = new OSXAdapter(&quot;v&gt;`7'\&quot;nuro(k&quot;, &quot;v&gt;`7'\&quot;nuro(k&quot;, (Method) null);
-<span class="nocode"><a name="2">  2: </a></span>Object object0 = new Object();
-<span class="nocode"><a name="3">  3: </a></span>OSXAdapter.macOSXApplication = (Object) oSXAdapter0;
-<span class="nocode"><a name="4">  4: </a></span>OSXAdapter.setAboutHandler(object0, (Method) null);
+<span class="nocode"><a name="1">  1: </a></span>OSXAdapter oSXAdapter0 = new OSXAdapter(&quot;No annotation was provided&quot;, &quot;No annotation was provided&quot;, (Method) null);
+<span class="nocode"><a name="2">  2: </a></span>OSXAdapter.setHandler(oSXAdapter0);
 </pre>
 <h3>Test case 11</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Object object0 = new Object();
-<span class="nocode"><a name="2">  2: </a></span>OSXAdapter.macOSXApplication = object0;
-<span class="nocode"><a name="3">  3: </a></span>OSXAdapter.setPreferencesHandler(&quot;w=IkoA,&quot;, (Method) null);
+<span class="nocode"><a name="1">  1: </a></span>OSXAdapter oSXAdapter0 = new OSXAdapter(&quot;'X3&quot;, &quot;'X3&quot;, (Method) null);
+<span class="nocode"><a name="2">  2: </a></span>Object[] objectArray0 = new Object[4];
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = oSXAdapter0.isCorrectMethod((Method) null, objectArray0);
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(boolean0);
 </pre>
 <h3>Test case 12</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>OSXAdapter oSXAdapter0 = new OSXAdapter(&quot;v&gt;`7'\&quot;nuro(k&quot;, &quot;v&gt;`7'\&quot;nuro(k&quot;, (Method) null);
-<span class="nocode"><a name="2">  2: </a></span>OSXAdapter.macOSXApplication = (Object) oSXAdapter0;
-<span class="nocode"><a name="3">  3: </a></span>OSXAdapter.setFileHandler((Object) null, (Method) null);
+<span class="nocode"><a name="1">  1: </a></span>Object object0 = new Object();
+<span class="nocode"><a name="2">  2: </a></span>OSXAdapter.macOSXApplication = object0;
+<span class="nocode"><a name="3">  3: </a></span>OSXAdapter.setPreferencesHandler(object0, (Method) null);
+</pre>
+<h3>Test case 13</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>OSXAdapter oSXAdapter0 = new OSXAdapter(&quot;&amp; $HAT`&lt;\&quot;@J&quot;, &quot;&amp; $HAT`&lt;\&quot;@J&quot;, (Method) null);
+<span class="nocode"><a name="2">  2: </a></span>OSXAdapter.setQuitHandler(oSXAdapter0, (Method) null);
+</pre>
+<h3>Test case 14</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>OSXAdapter oSXAdapter0 = new OSXAdapter(&quot;No annotation was provided&quot;, &quot;No annotation was provided&quot;, (Method) null);
+<span class="nocode"><a name="2">  2: </a></span>OSXAdapter.setAboutHandler(oSXAdapter0, (Method) null);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -111,8 +121,8 @@ uk.ac.sanger.artemis.components.OSXAdapter
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.OSXAdapter
-<li>Size: 12
-<li>Length: 29
+<li>Size: 14
+<li>Length: 33
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.4213109354413702
 <li>BranchCoverage: 0.5

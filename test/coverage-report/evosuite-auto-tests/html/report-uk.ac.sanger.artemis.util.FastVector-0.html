@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.util.FastVector
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.util.FastVector: 0.9592105263157895</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.util.FastVector: 0.9467105263157894</ul>
 <ul>
-<li>3.611111111111111 fitness evaluations, 0 generations, null statements, 14 tests.
+<li>4.666666666666667 fitness evaluations, 0 generations, null statements, 11 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -41,24 +41,23 @@ uk.ac.sanger.artemis.util.FastVector
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FastVector fastVector0 = new FastVector();
-<span class="nocode"><a name="2">  2: </a></span>Comparator&lt;Object&gt; comparator0 = (Comparator&lt;Object&gt;) mock(Comparator.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="2">  2: </a></span>Comparator&lt;Integer&gt; comparator0 = (Comparator&lt;Integer&gt;) mock(Comparator.class, new ViolatedAssumptionAnswer());
 <span class="nocode"><a name="3">  3: </a></span>FastVector fastVector1 = fastVector0.mysort(comparator0);
-<span class="nocode"><a name="4">  4: </a></span>fastVector1.add((Object) fastVector0);
-<span class="nocode"><a name="5">  5: </a></span>fastVector0.add(0, (Object) fastVector1);
-<span class="nocode"><a name="6">  6: </a></span>fastVector1.add((Object) fastVector1);
+<span class="nocode"><a name="4">  4: </a></span>assertNotSame(fastVector1, fastVector0);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FastVector fastVector0 = new FastVector();
-<span class="nocode"><a name="2">  2: </a></span>fastVector0.setElementAt(fastVector0, 0);
+<span class="nocode"><a name="2">  2: </a></span>fastVector0.setElementAt((Object) null, 0);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FastVector fastVector0 = new FastVector();
-<span class="nocode"><a name="2">  2: </a></span>fastVector0.add((Object) fastVector0);
-<span class="nocode"><a name="3">  3: </a></span>Comparator&lt;Object&gt; comparator0 = (Comparator&lt;Object&gt;) mock(Comparator.class, new ViolatedAssumptionAnswer());
-<span class="nocode"><a name="4">  4: </a></span>FastVector fastVector1 = fastVector0.mysort(comparator0);
-<span class="nocode"><a name="5">  5: </a></span>assertNotSame(fastVector1, fastVector0);
+<span class="nocode"><a name="2">  2: </a></span>Object object0 = new Object();
+<span class="nocode"><a name="3">  3: </a></span>fastVector0.add(object0);
+<span class="nocode"><a name="4">  4: </a></span>Stream&lt;Object&gt; stream0 = fastVector0.stream();
+<span class="nocode"><a name="5">  5: </a></span>fastVector0.insertElementAfter(object0, stream0);
+<span class="nocode"><a name="6">  6: </a></span>fastVector0.mysort((Comparator) null);
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
@@ -68,72 +67,46 @@ uk.ac.sanger.artemis.util.FastVector
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FastVector fastVector0 = new FastVector();
-<span class="nocode"><a name="2">  2: </a></span>Object object0 = new Object();
-<span class="nocode"><a name="3">  3: </a></span>fastVector0.insertElementAfter(object0, object0);
-<span class="nocode"><a name="4">  4: </a></span>fastVector0.add(object0);
+<span class="nocode"><a name="2">  2: </a></span>MockMinguoDate mockMinguoDate0 = new MockMinguoDate();
+<span class="nocode"><a name="3">  3: </a></span>fastVector0.add((Object) mockMinguoDate0);
+<span class="nocode"><a name="4">  4: </a></span>fastVector0.add((Object) mockMinguoDate0);
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FastVector fastVector0 = new FastVector();
-<span class="nocode"><a name="2">  2: </a></span>fastVector0.add(0, (Object) fastVector0);
-<span class="nocode"><a name="3">  3: </a></span>Object object0 = new Object();
-<span class="nocode"><a name="4">  4: </a></span>fastVector0.insertElementAfter(fastVector0, object0);
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(2, fastVector0.size());
+<span class="nocode"><a name="2">  2: </a></span>MockMinguoDate mockMinguoDate0 = new MockMinguoDate();
+<span class="nocode"><a name="3">  3: </a></span>fastVector0.add((Object) mockMinguoDate0);
+<span class="nocode"><a name="4">  4: </a></span>fastVector0.insertElementAfter(mockMinguoDate0, mockMinguoDate0);
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(fastVector0.isEmpty());
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FastVector fastVector0 = new FastVector();
-<span class="nocode"><a name="2">  2: </a></span>Comparator&lt;Object&gt; comparator0 = (Comparator&lt;Object&gt;) mock(Comparator.class, new ViolatedAssumptionAnswer());
-<span class="nocode"><a name="3">  3: </a></span>FastVector fastVector1 = fastVector0.mysort(comparator0);
-<span class="nocode"><a name="4">  4: </a></span>fastVector1.add((Object) fastVector0);
-<span class="nocode"><a name="5">  5: </a></span>fastVector0.add(0, (Object) fastVector1);
-<span class="nocode"><a name="6">  6: </a></span>Object object0 = new Object();
-<span class="nocode"><a name="7">  7: </a></span>fastVector0.insertElementAfter(fastVector0, object0);
+<span class="nocode"><a name="2">  2: </a></span>fastVector0.setElementAt(fastVector0, (-2695));
 </pre>
 <h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FastVector fastVector0 = new FastVector();
-<span class="nocode"><a name="2">  2: </a></span>Object object0 = new Object();
-<span class="nocode"><a name="3">  3: </a></span>Object object1 = new Object();
-<span class="nocode"><a name="4">  4: </a></span>fastVector0.insertElementAfter(object0, object1);
-<span class="nocode"><a name="5">  5: </a></span>fastVector0.add(object0);
-<span class="nocode"><a name="6">  6: </a></span>fastVector0.mysort((Comparator) null);
+<span class="nocode"><a name="2">  2: </a></span>fastVector0.add((Object) fastVector0);
+<span class="nocode"><a name="3">  3: </a></span>FastVector fastVector1 = (FastVector)fastVector0.lastElement();
+<span class="nocode"><a name="4">  4: </a></span>assertSame(fastVector1, fastVector0);
 </pre>
 <h3>Test case 10</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FastVector fastVector0 = new FastVector();
-<span class="nocode"><a name="2">  2: </a></span>Object[] objectArray0 = new Object[6];
-<span class="nocode"><a name="3">  3: </a></span>fastVector0.insertElementAfter(objectArray0[0], objectArray0[0]);
-<span class="nocode"><a name="4">  4: </a></span>fastVector0.insertElementAfter(objectArray0[3], objectArray0[2]);
-<span class="nocode"><a name="5">  5: </a></span>fastVector0.mysort((Comparator) null);
+<span class="nocode"><a name="2">  2: </a></span>Object object0 = new Object();
+<span class="nocode"><a name="3">  3: </a></span>Stream&lt;Object&gt; stream0 = fastVector0.stream();
+<span class="nocode"><a name="4">  4: </a></span>fastVector0.insertElementAfter(object0, stream0);
+<span class="nocode"><a name="5">  5: </a></span>FastVector fastVector1 = fastVector0.mysort((Comparator) null);
+<span class="nocode"><a name="6">  6: </a></span>assertNotSame(fastVector1, fastVector0);
 </pre>
 <h3>Test case 11</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FastVector fastVector0 = new FastVector();
 <span class="nocode"><a name="2">  2: </a></span>Object object0 = new Object();
-<span class="nocode"><a name="3">  3: </a></span>fastVector0.setElementAt(object0, (-90));
-</pre>
-<h3>Test case 12</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FastVector fastVector0 = new FastVector();
-<span class="nocode"><a name="2">  2: </a></span>fastVector0.add(0, (Object) fastVector0);
-<span class="nocode"><a name="3">  3: </a></span>FastVector fastVector1 = (FastVector)fastVector0.lastElement();
-<span class="nocode"><a name="4">  4: </a></span>assertSame(fastVector1, fastVector0);
-</pre>
-<h3>Test case 13</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FastVector fastVector0 = new FastVector();
-<span class="nocode"><a name="2">  2: </a></span>Object[] objectArray0 = new Object[6];
-<span class="nocode"><a name="3">  3: </a></span>fastVector0.insertElementAfter(objectArray0[0], objectArray0[0]);
-<span class="nocode"><a name="4">  4: </a></span>Object object0 = fastVector0.lastElement();
-<span class="nocode"><a name="5">  5: </a></span>assertNull(object0);
-</pre>
-<h3>Test case 14</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FastVector fastVector0 = new FastVector();
-<span class="nocode"><a name="2">  2: </a></span>fastVector0.add(0, (Object) fastVector0);
-<span class="nocode"><a name="3">  3: </a></span>fastVector0.setElementAt(fastVector0, 0);
-<span class="nocode"><a name="4">  4: </a></span>assertFalse(fastVector0.isEmpty());
+<span class="nocode"><a name="3">  3: </a></span>fastVector0.add(object0);
+<span class="nocode"><a name="4">  4: </a></span>fastVector0.setElementAt((Object) null, 0);
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(fastVector0.isEmpty());
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -146,13 +119,13 @@ uk.ac.sanger.artemis.util.FastVector
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.util.FastVector
-<li>Size: 14
-<li>Length: 55
+<li>Size: 11
+<li>Length: 37
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.9592105263157895
+<li>Coverage: 0.9467105263157894
 <li>BranchCoverage: 1.0
 <li>MethodCoverage: 1.0
-<li>OutputCoverage: 0.7
+<li>OutputCoverage: 0.6
 </ul></div>
 </div>
 <p><br><a href="../report-generation.html">Back to Overview</a></p>

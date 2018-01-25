@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.circular.MemoryComboBox
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.circular.MemoryComboBox: 0.9504076086956521</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.circular.MemoryComboBox: 0.9113451086956521</ul>
 <ul>
-<li>8.16 fitness evaluations, 0 generations, null statements, 17 tests.
+<li>11.162962962962963 fitness evaluations, 0 generations, null statements, 17 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -38,72 +38,76 @@ uk.ac.sanger.artemis.circular.MemoryComboBox
 <span class="nocode"><a name="1">  1: </a></span>JembossParams jembossParams0 = new JembossParams();
 <span class="nocode"><a name="2">  2: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.modeVector();
 <span class="nocode"><a name="3">  3: </a></span>MemoryComboBox memoryComboBox0 = new MemoryComboBox(vector0);
-<span class="nocode"><a name="4">  4: </a></span>int int0 = memoryComboBox0.getIndexOf(&quot;jemboss.debug&quot;);
+<span class="nocode"><a name="4">  4: </a></span>int int0 = memoryComboBox0.getIndexOf(jembossParams0);
 <span class="nocode"><a name="5">  5: </a></span>assertEquals((-1), int0);
 </pre>
 <h3>Test case 2</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Vector&lt;DefaultTableModel&gt; vector0 = new Vector&lt;DefaultTableModel&gt;();
-<span class="nocode"><a name="2">  2: </a></span>MemoryComboBox memoryComboBox0 = new MemoryComboBox(vector0);
-<span class="nocode"><a name="3">  3: </a></span>memoryComboBox0.getURLAt(1);
-</pre>
-<h3>Test case 3</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>DefaultTableModel defaultTableModel0 = new DefaultTableModel(298, 1828);
-<span class="nocode"><a name="2">  2: </a></span>Vector&lt;Object&gt; vector0 = defaultTableModel0.getDataVector();
-<span class="nocode"><a name="3">  3: </a></span>MemoryComboBox memoryComboBox0 = new MemoryComboBox(vector0);
-<span class="nocode"><a name="4">  4: </a></span>memoryComboBox0.addURL(vector0);
-<span class="nocode"><a name="5">  5: </a></span>boolean boolean0 = memoryComboBox0.isBackPage();
-<span class="nocode"><a name="6">  6: </a></span>assertTrue(boolean0);
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(298, vector0.size());
-</pre>
-<h3>Test case 4</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>JembossParams jembossParams0 = new JembossParams();
-<span class="nocode"><a name="2">  2: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.getPublicServers();
-<span class="nocode"><a name="3">  3: </a></span>MemoryComboBox memoryComboBox0 = new MemoryComboBox(vector0);
-<span class="nocode"><a name="4">  4: </a></span>ImageIcon imageIcon0 = new ImageIcon(&quot;&quot;);
-<span class="nocode"><a name="5">  5: </a></span>JMenuItem jMenuItem0 = new JMenuItem(imageIcon0);
-<span class="nocode"><a name="6">  6: </a></span>memoryComboBox0.setLastIndex(jMenuItem0);
-<span class="nocode"><a name="7">  7: </a></span>assertFalse(memoryComboBox0.getIgnoreRepaint());
-</pre>
-<h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>JembossParams jembossParams0 = new JembossParams();
 <span class="nocode"><a name="2">  2: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.modeVector();
 <span class="nocode"><a name="3">  3: </a></span>MemoryComboBox memoryComboBox0 = new MemoryComboBox(vector0);
 <span class="nocode"><a name="4">  4: </a></span>memoryComboBox0.addURL(jembossParams0);
-<span class="nocode"><a name="5">  5: </a></span>memoryComboBox0.setLastIndex(jembossParams0);
+<span class="nocode"><a name="5">  5: </a></span>boolean boolean0 = memoryComboBox0.isBackPage();
 <span class="nocode"><a name="6">  6: </a></span>assertEquals(3, vector0.size());
+<span class="nocode"><a name="7">  7: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DefaultTableModel defaultTableModel0 = new DefaultTableModel();
+<span class="nocode"><a name="2">  2: </a></span>defaultTableModel0.setNumRows(1761);
+<span class="nocode"><a name="3">  3: </a></span>Vector&lt;Object&gt; vector0 = defaultTableModel0.getDataVector();
+<span class="nocode"><a name="4">  4: </a></span>MemoryComboBox memoryComboBox0 = new MemoryComboBox(vector0);
+<span class="nocode"><a name="5">  5: </a></span>memoryComboBox0.addURL(defaultTableModel0);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(1761, vector0.size());
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Stack&lt;Canvas&gt; stack0 = new Stack&lt;Canvas&gt;();
+<span class="nocode"><a name="2">  2: </a></span>Canvas canvas0 = new Canvas();
+<span class="nocode"><a name="3">  3: </a></span>MemoryComboBox memoryComboBox0 = new MemoryComboBox(stack0);
+<span class="nocode"><a name="4">  4: </a></span>memoryComboBox0.setLastIndex(canvas0);
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(memoryComboBox0.isFocusTraversalPolicyProvider());
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Vector&lt;TextField&gt; vector0 = new Vector&lt;TextField&gt;(24, 0);
+<span class="nocode"><a name="2">  2: </a></span>DefaultTableModel defaultTableModel0 = new DefaultTableModel(vector0, vector0);
+<span class="nocode"><a name="3">  3: </a></span>Vector&lt;Object&gt; vector1 = defaultTableModel0.getDataVector();
+<span class="nocode"><a name="4">  4: </a></span>defaultTableModel0.addColumn((Object) vector0, (Vector) vector0);
+<span class="nocode"><a name="5">  5: </a></span>MemoryComboBox memoryComboBox0 = new MemoryComboBox(vector1);
+<span class="nocode"><a name="6">  6: </a></span>memoryComboBox0.setLastIndex(vector1);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(&quot;[(this Collection)]&quot;, vector1.toString());
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>JembossParams jembossParams0 = new JembossParams();
-<span class="nocode"><a name="2">  2: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.getPublicServers();
-<span class="nocode"><a name="3">  3: </a></span>MemoryComboBox memoryComboBox0 = new MemoryComboBox(vector0);
-<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = memoryComboBox0.isBackPage();
-<span class="nocode"><a name="5">  5: </a></span>assertFalse(boolean0);
+<span class="nocode"><a name="1">  1: </a></span>Vector&lt;TextField&gt; vector0 = new Vector&lt;TextField&gt;(24, 0);
+<span class="nocode"><a name="2">  2: </a></span>DefaultTableModel defaultTableModel0 = new DefaultTableModel(vector0, vector0);
+<span class="nocode"><a name="3">  3: </a></span>Vector&lt;Object&gt; vector1 = defaultTableModel0.getDataVector();
+<span class="nocode"><a name="4">  4: </a></span>MemoryComboBox memoryComboBox0 = new MemoryComboBox(vector1);
+<span class="nocode"><a name="5">  5: </a></span>boolean boolean0 = memoryComboBox0.isBackPage();
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(boolean0);
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>DefaultTableModel defaultTableModel0 = new DefaultTableModel(298, 1828);
-<span class="nocode"><a name="2">  2: </a></span>Vector&lt;Object&gt; vector0 = defaultTableModel0.getDataVector();
+<span class="nocode"><a name="1">  1: </a></span>JembossParams jembossParams0 = new JembossParams();
+<span class="nocode"><a name="2">  2: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.modeVector();
 <span class="nocode"><a name="3">  3: </a></span>MemoryComboBox memoryComboBox0 = new MemoryComboBox(vector0);
 <span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = memoryComboBox0.isBackPage();
 <span class="nocode"><a name="5">  5: </a></span>assertFalse(boolean0);
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>JembossParams jembossParams0 = new JembossParams();
-<span class="nocode"><a name="2">  2: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.getPublicServers();
-<span class="nocode"><a name="3">  3: </a></span>MemoryComboBox memoryComboBox0 = new MemoryComboBox(vector0);
-<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = memoryComboBox0.isForwardPage();
-<span class="nocode"><a name="5">  5: </a></span>assertFalse(boolean0);
+<span class="nocode"><a name="1">  1: </a></span>Vector&lt;TextField&gt; vector0 = new Vector&lt;TextField&gt;(24, 0);
+<span class="nocode"><a name="2">  2: </a></span>DefaultTableModel defaultTableModel0 = new DefaultTableModel(vector0, vector0);
+<span class="nocode"><a name="3">  3: </a></span>Vector&lt;Object&gt; vector1 = defaultTableModel0.getDataVector();
+<span class="nocode"><a name="4">  4: </a></span>MemoryComboBox memoryComboBox0 = new MemoryComboBox(vector1);
+<span class="nocode"><a name="5">  5: </a></span>boolean boolean0 = memoryComboBox0.isForwardPage();
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(boolean0);
 </pre>
 <h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>DefaultTableModel defaultTableModel0 = new DefaultTableModel(298, 1828);
-<span class="nocode"><a name="2">  2: </a></span>Vector&lt;Object&gt; vector0 = defaultTableModel0.getDataVector();
+<span class="nocode"><a name="1">  1: </a></span>JembossParams jembossParams0 = new JembossParams();
+<span class="nocode"><a name="2">  2: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.modeVector();
 <span class="nocode"><a name="3">  3: </a></span>MemoryComboBox memoryComboBox0 = new MemoryComboBox(vector0);
 <span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = memoryComboBox0.isForwardPage();
 <span class="nocode"><a name="5">  5: </a></span>assertTrue(boolean0);
@@ -113,17 +117,18 @@ uk.ac.sanger.artemis.circular.MemoryComboBox
 <span class="nocode"><a name="1">  1: </a></span>JembossParams jembossParams0 = new JembossParams();
 <span class="nocode"><a name="2">  2: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.modeVector();
 <span class="nocode"><a name="3">  3: </a></span>MemoryComboBox memoryComboBox0 = new MemoryComboBox(vector0);
-<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = memoryComboBox0.isItem(vector0);
+<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = memoryComboBox0.isItem(&quot;bbbb&quot;);
 <span class="nocode"><a name="5">  5: </a></span>assertFalse(boolean0);
 </pre>
 <h3>Test case 11</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Vector&lt;MockThaiBuddhistDate&gt; vector0 = new Vector&lt;MockThaiBuddhistDate&gt;();
-<span class="nocode"><a name="2">  2: </a></span>MockThaiBuddhistDate mockThaiBuddhistDate0 = new MockThaiBuddhistDate();
-<span class="nocode"><a name="3">  3: </a></span>vector0.add(mockThaiBuddhistDate0);
-<span class="nocode"><a name="4">  4: </a></span>MemoryComboBox memoryComboBox0 = new MemoryComboBox(vector0);
-<span class="nocode"><a name="5">  5: </a></span>boolean boolean0 = memoryComboBox0.isItem(mockThaiBuddhistDate0);
-<span class="nocode"><a name="6">  6: </a></span>assertTrue(boolean0);
+<span class="nocode"><a name="1">  1: </a></span>JembossParams jembossParams0 = new JembossParams();
+<span class="nocode"><a name="2">  2: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.modeVector();
+<span class="nocode"><a name="3">  3: </a></span>MemoryComboBox memoryComboBox0 = new MemoryComboBox(vector0);
+<span class="nocode"><a name="4">  4: </a></span>memoryComboBox0.addURL(&quot;&quot;);
+<span class="nocode"><a name="5">  5: </a></span>boolean boolean0 = memoryComboBox0.isItem(&quot;&quot;);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(3, vector0.size());
+<span class="nocode"><a name="7">  7: </a></span>assertTrue(boolean0);
 </pre>
 <h3>Test case 12</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
@@ -131,10 +136,10 @@ uk.ac.sanger.artemis.circular.MemoryComboBox
 </pre>
 <h3>Test case 13</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>JembossParams jembossParams0 = new JembossParams();
-<span class="nocode"><a name="2">  2: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.getPublicServers();
-<span class="nocode"><a name="3">  3: </a></span>MemoryComboBox memoryComboBox0 = new MemoryComboBox(vector0);
-<span class="nocode"><a name="4">  4: </a></span>memoryComboBox0.addURL(vector0);
+<span class="nocode"><a name="1">  1: </a></span>Stack&lt;Canvas&gt; stack0 = new Stack&lt;Canvas&gt;();
+<span class="nocode"><a name="2">  2: </a></span>Canvas canvas0 = new Canvas();
+<span class="nocode"><a name="3">  3: </a></span>stack0.add(canvas0);
+<span class="nocode"><a name="4">  4: </a></span>MemoryComboBox memoryComboBox0 = new MemoryComboBox(stack0);
 <span class="nocode"><a name="5">  5: </a></span>memoryComboBox0.getURLAt(0);
 </pre>
 <h3>Test case 14</h3>
@@ -146,31 +151,29 @@ uk.ac.sanger.artemis.circular.MemoryComboBox
 </pre>
 <h3>Test case 15</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Vector&lt;MockThaiBuddhistDate&gt; vector0 = new Vector&lt;MockThaiBuddhistDate&gt;();
-<span class="nocode"><a name="2">  2: </a></span>MockThaiBuddhistDate mockThaiBuddhistDate0 = new MockThaiBuddhistDate();
-<span class="nocode"><a name="3">  3: </a></span>vector0.add(mockThaiBuddhistDate0);
-<span class="nocode"><a name="4">  4: </a></span>MemoryComboBox memoryComboBox0 = new MemoryComboBox(vector0);
-<span class="nocode"><a name="5">  5: </a></span>memoryComboBox0.addURL(vector0);
-<span class="nocode"><a name="6">  6: </a></span>int int0 = memoryComboBox0.getIndexOf(vector0);
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(2, vector0.size());
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(1, int0);
+<span class="nocode"><a name="1">  1: </a></span>JembossParams jembossParams0 = new JembossParams();
+<span class="nocode"><a name="2">  2: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.modeVector();
+<span class="nocode"><a name="3">  3: </a></span>MemoryComboBox memoryComboBox0 = new MemoryComboBox(vector0);
+<span class="nocode"><a name="4">  4: </a></span>memoryComboBox0.addURL(jembossParams0);
+<span class="nocode"><a name="5">  5: </a></span>int int0 = memoryComboBox0.getIndexOf(jembossParams0);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(3, vector0.size());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(2, int0);
 </pre>
 <h3>Test case 16</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Vector&lt;Label&gt; vector0 = new Vector&lt;Label&gt;();
-<span class="nocode"><a name="2">  2: </a></span>vector0.add((Label) null);
-<span class="nocode"><a name="3">  3: </a></span>MemoryComboBox memoryComboBox0 = new MemoryComboBox(vector0);
-<span class="nocode"><a name="4">  4: </a></span>int int0 = memoryComboBox0.getIndexOf((Object) null);
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, int0);
+<span class="nocode"><a name="1">  1: </a></span>Stack&lt;Canvas&gt; stack0 = new Stack&lt;Canvas&gt;();
+<span class="nocode"><a name="2">  2: </a></span>Canvas canvas0 = new Canvas();
+<span class="nocode"><a name="3">  3: </a></span>stack0.add(canvas0);
+<span class="nocode"><a name="4">  4: </a></span>MemoryComboBox memoryComboBox0 = new MemoryComboBox(stack0);
+<span class="nocode"><a name="5">  5: </a></span>int int0 = memoryComboBox0.getIndexOf(canvas0);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;[java.awt.Canvas[canvas90,0,0,0x0,invalid]]&quot;, stack0.toString());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, int0);
 </pre>
 <h3>Test case 17</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Vector&lt;DefaultTableModel&gt; vector0 = new Vector&lt;DefaultTableModel&gt;();
-<span class="nocode"><a name="2">  2: </a></span>vector0.add((DefaultTableModel) null);
-<span class="nocode"><a name="3">  3: </a></span>vector0.add((DefaultTableModel) null);
-<span class="nocode"><a name="4">  4: </a></span>MemoryComboBox memoryComboBox0 = new MemoryComboBox(vector0);
-<span class="nocode"><a name="5">  5: </a></span>URL uRL0 = memoryComboBox0.getURLAt(1);
-<span class="nocode"><a name="6">  6: </a></span>assertNull(uRL0);
+<span class="nocode"><a name="1">  1: </a></span>Vector&lt;ScrollPane&gt; vector0 = new Vector&lt;ScrollPane&gt;();
+<span class="nocode"><a name="2">  2: </a></span>MemoryComboBox memoryComboBox0 = new MemoryComboBox(vector0);
+<span class="nocode"><a name="3">  3: </a></span>memoryComboBox0.getURLAt(2);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -184,12 +187,12 @@ uk.ac.sanger.artemis.circular.MemoryComboBox
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.circular.MemoryComboBox
 <li>Size: 17
-<li>Length: 73
+<li>Length: 74
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.9504076086956521
+<li>Coverage: 0.9113451086956521
 <li>BranchCoverage: 1.0
 <li>MethodCoverage: 1.0
-<li>OutputCoverage: 0.625
+<li>OutputCoverage: 0.5625
 </ul></div>
 </div>
 <p><br><a href="../report-generation.html">Back to Overview</a></p>

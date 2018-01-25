@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.components.filetree.FileSystemModel
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.components.filetree.FileSystemModel: 0.5907865244613365</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.components.filetree.FileSystemModel: 0.6920997778328606</ul>
 <ul>
-<li>204.46508029666452 fitness evaluations, 0 generations, null statements, 22 tests.
+<li>141.91881032033365 fitness evaluations, 0 generations, null statements, 27 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,25 +35,34 @@ uk.ac.sanger.artemis.components.filetree.FileSystemModel
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FileSystemModel fileSystemModel0 = new FileSystemModel((JFrame) null);
-<span class="nocode"><a name="2">  2: </a></span>MockHijrahDate mockHijrahDate0 = new MockHijrahDate();
-<span class="nocode"><a name="3">  3: </a></span>fileSystemModel0.isLeaf(mockHijrahDate0);
+<span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = new String[8];
+<span class="nocode"><a name="2">  2: </a></span>stringArray0[0] = &quot;org.apache.commons.io.filefilter.NameFileFilter&quot;;
+<span class="nocode"><a name="3">  3: </a></span>stringArray0[1] = &quot;org.apache.commons.io.filefilter.NameFileFilter&quot;;
+<span class="nocode"><a name="4">  4: </a></span>stringArray0[2] = &quot;&quot;;
+<span class="nocode"><a name="5">  5: </a></span>stringArray0[3] = &quot;{,3&quot;;
+<span class="nocode"><a name="6">  6: </a></span>stringArray0[4] = &quot;&quot;;
+<span class="nocode"><a name="7">  7: </a></span>stringArray0[5] = &quot;user.home&quot;;
+<span class="nocode"><a name="8">  8: </a></span>stringArray0[6] = &quot;uk.ac.sanger.artemis.components.filetree.FileSystemModel&quot;;
+<span class="nocode"><a name="9">  9: </a></span>stringArray0[7] = &quot;user.home&quot;;
+<span class="nocode"><a name="10"> 10: </a></span>FileSystemModel fileSystemModel0 = new FileSystemModel(stringArray0, (JFrame) null);
+<span class="nocode"><a name="11"> 11: </a></span>DefaultMutableTreeNode defaultMutableTreeNode0 = new DefaultMutableTreeNode();
+<span class="nocode"><a name="12"> 12: </a></span>boolean boolean0 = fileSystemModel0.isLeaf(defaultMutableTreeNode0);
+<span class="nocode"><a name="13"> 13: </a></span>assertTrue(boolean0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = new String[9];
-<span class="nocode"><a name="2">  2: </a></span>stringArray0[0] = &quot;\&quot;y&quot;;
-<span class="nocode"><a name="3">  3: </a></span>stringArray0[1] = &quot;\&quot;y&quot;;
-<span class="nocode"><a name="4">  4: </a></span>stringArray0[2] = &quot;Modified&quot;;
-<span class="nocode"><a name="5">  5: </a></span>stringArray0[3] = &quot;SKO1G$S:+T&quot;;
+<span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = new String[8];
+<span class="nocode"><a name="2">  2: </a></span>stringArray0[0] = &quot;org.apache.commons.io.filefilter.NameFileFilter&quot;;
+<span class="nocode"><a name="3">  3: </a></span>stringArray0[1] = &quot;&quot;;
+<span class="nocode"><a name="4">  4: </a></span>stringArray0[2] = &quot;&quot;;
+<span class="nocode"><a name="5">  5: </a></span>stringArray0[3] = &quot;{,3&quot;;
 <span class="nocode"><a name="6">  6: </a></span>stringArray0[4] = &quot;&quot;;
-<span class="nocode"><a name="7">  7: </a></span>stringArray0[5] = &quot;k.Um.0zvJK$KXe&quot;;
-<span class="nocode"><a name="8">  8: </a></span>stringArray0[6] = &quot;8&quot;;
-<span class="nocode"><a name="9">  9: </a></span>stringArray0[7] = &quot;?X&lt;4LnE&quot;;
-<span class="nocode"><a name="10"> 10: </a></span>stringArray0[8] = &quot;&quot;;
-<span class="nocode"><a name="11"> 11: </a></span>FileSystemModel fileSystemModel0 = new FileSystemModel(stringArray0, (JFrame) null);
-<span class="nocode"><a name="12"> 12: </a></span>FileFilter fileFilter0 = fileSystemModel0.getFilter();
-<span class="nocode"><a name="13"> 13: </a></span>assertNull(fileFilter0);
+<span class="nocode"><a name="7">  7: </a></span>stringArray0[5] = &quot;user.home&quot;;
+<span class="nocode"><a name="8">  8: </a></span>stringArray0[6] = &quot;uk.ac.sanger.artemis.components.filetree.FileSystemModel&quot;;
+<span class="nocode"><a name="9">  9: </a></span>stringArray0[7] = &quot;user.home&quot;;
+<span class="nocode"><a name="10"> 10: </a></span>FileSystemModel fileSystemModel0 = new FileSystemModel(stringArray0, (JFrame) null);
+<span class="nocode"><a name="11"> 11: </a></span>RegexFileFilter regexFileFilter0 = (RegexFileFilter)fileSystemModel0.getFilter();
+<span class="nocode"><a name="12"> 12: </a></span>assertNull(regexFileFilter0);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
@@ -63,200 +72,193 @@ uk.ac.sanger.artemis.components.filetree.FileSystemModel
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>File[] fileArray0 = new File[2];
-<span class="nocode"><a name="2">  2: </a></span>MockFile mockFile0 = new MockFile((String) null, &quot;4])3P[[|4~w.ZpM({*O&quot;);
-<span class="nocode"><a name="3">  3: </a></span>fileArray0[0] = (File) mockFile0;
-<span class="nocode"><a name="4">  4: </a></span>fileArray0[1] = (File) mockFile0;
-<span class="nocode"><a name="5">  5: </a></span>FileFilter fileFilter0 = mock(FileFilter.class, new ViolatedAssumptionAnswer());
-<span class="nocode"><a name="6">  6: </a></span>FileSystemModel fileSystemModel0 = new FileSystemModel(fileArray0, fileFilter0, (JFrame) null);
-<span class="nocode"><a name="7">  7: </a></span>int int0 = fileSystemModel0.getColumnCount();
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(3, int0);
+<span class="nocode"><a name="1">  1: </a></span>FileSystemModel fileSystemModel0 = new FileSystemModel((JFrame) null);
+<span class="nocode"><a name="2">  2: </a></span>int int0 = fileSystemModel0.getColumnCount();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(3, int0);
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>File[] fileArray0 = new File[2];
-<span class="nocode"><a name="2">  2: </a></span>MockFile mockFile0 = new MockFile((String) null, &quot;4])3P[[|4~w.ZpM({*O&quot;);
-<span class="nocode"><a name="3">  3: </a></span>fileArray0[0] = (File) mockFile0;
-<span class="nocode"><a name="4">  4: </a></span>fileArray0[1] = (File) mockFile0;
-<span class="nocode"><a name="5">  5: </a></span>FileFilter fileFilter0 = mock(FileFilter.class, new ViolatedAssumptionAnswer());
-<span class="nocode"><a name="6">  6: </a></span>FileSystemModel fileSystemModel0 = new FileSystemModel(fileArray0, fileFilter0, (JFrame) null);
-<span class="nocode"><a name="7">  7: </a></span>fileSystemModel0.getChild(fileArray0[1], 1914);
+<span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = new String[8];
+<span class="nocode"><a name="2">  2: </a></span>stringArray0[0] = &quot;org.apache.commons.io.filefilter.NameFileFilter&quot;;
+<span class="nocode"><a name="3">  3: </a></span>stringArray0[1] = &quot;&quot;;
+<span class="nocode"><a name="4">  4: </a></span>stringArray0[2] = &quot;&quot;;
+<span class="nocode"><a name="5">  5: </a></span>stringArray0[3] = &quot;{,3&quot;;
+<span class="nocode"><a name="6">  6: </a></span>stringArray0[4] = &quot;&quot;;
+<span class="nocode"><a name="7">  7: </a></span>stringArray0[5] = &quot;user.home&quot;;
+<span class="nocode"><a name="8">  8: </a></span>stringArray0[6] = &quot;uk.ac.sanger.artemis.components.filetree.FileSystemModel&quot;;
+<span class="nocode"><a name="9">  9: </a></span>stringArray0[7] = &quot;user.home&quot;;
+<span class="nocode"><a name="10"> 10: </a></span>FileSystemModel fileSystemModel0 = new FileSystemModel(stringArray0, (JFrame) null);
+<span class="nocode"><a name="11"> 11: </a></span>RemoteFileNode remoteFileNode0 = (RemoteFileNode)fileSystemModel0.getRoot();
+<span class="nocode"><a name="12"> 12: </a></span>fileSystemModel0.getChild(remoteFileNode0, 433);
 </pre>
 <h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FileSystemModel fileSystemModel0 = new FileSystemModel((JFrame) null);
+<span class="nocode"><a name="2">  2: </a></span>fileSystemModel0.getColumnName((-1008));
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>File[] fileArray0 = new File[2];
+<span class="nocode"><a name="2">  2: </a></span>MockFile mockFile0 = new MockFile(&quot;65VM&quot;, &quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>fileArray0[0] = (File) mockFile0;
+<span class="nocode"><a name="4">  4: </a></span>fileArray0[1] = (File) mockFile0;
+<span class="nocode"><a name="5">  5: </a></span>RegexFileFilter regexFileFilter0 = new RegexFileFilter(&quot;|CYEp,]@g4Z&quot;);
+<span class="nocode"><a name="6">  6: </a></span>FileSystemModel fileSystemModel0 = new FileSystemModel(fileArray0, regexFileFilter0, (JFrame) null);
+<span class="nocode"><a name="7">  7: </a></span>fileSystemModel0.isLeaf(regexFileFilter0);
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FileSystemModel fileSystemModel0 = new FileSystemModel((JFrame) null);
+<span class="nocode"><a name="2">  2: </a></span>JTree jTree0 = new JTree(fileSystemModel0);
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(jTree0.getIgnoreRepaint());
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = new String[8];
+<span class="nocode"><a name="2">  2: </a></span>stringArray0[0] = &quot;org.apache.commons.io.filefilter.NameFileFilter&quot;;
+<span class="nocode"><a name="3">  3: </a></span>stringArray0[1] = &quot;&quot;;
+<span class="nocode"><a name="4">  4: </a></span>stringArray0[2] = &quot;&quot;;
+<span class="nocode"><a name="5">  5: </a></span>stringArray0[3] = &quot;{,3&quot;;
+<span class="nocode"><a name="6">  6: </a></span>stringArray0[4] = &quot;&quot;;
+<span class="nocode"><a name="7">  7: </a></span>stringArray0[5] = &quot;user.home&quot;;
+<span class="nocode"><a name="8">  8: </a></span>stringArray0[6] = &quot;uk.ac.sanger.artemis.components.filetree.FileSystemModel&quot;;
+<span class="nocode"><a name="9">  9: </a></span>stringArray0[7] = &quot;user.home&quot;;
+<span class="nocode"><a name="10"> 10: </a></span>FileSystemModel fileSystemModel0 = new FileSystemModel(stringArray0, (JFrame) null);
+<span class="nocode"><a name="11"> 11: </a></span>Object object0 = fileSystemModel0.getValueAt(&quot;uk.ac.sanger.artemis.components.filetree.FileSystemModel&quot;, 433);
+<span class="nocode"><a name="12"> 12: </a></span>assertNull(object0);
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = new String[8];
+<span class="nocode"><a name="2">  2: </a></span>stringArray0[0] = &quot;~9)09[&quot;;
+<span class="nocode"><a name="3">  3: </a></span>stringArray0[1] = &quot;Size&quot;;
+<span class="nocode"><a name="4">  4: </a></span>stringArray0[2] = &quot;Z.f~vMNAZ fY&quot;;
+<span class="nocode"><a name="5">  5: </a></span>stringArray0[3] = &quot;_d^aW+&quot;;
+<span class="nocode"><a name="6">  6: </a></span>stringArray0[4] = &quot;|G&amp;dawe[&lt;3N?w&quot;;
+<span class="nocode"><a name="7">  7: </a></span>stringArray0[5] = &quot;&quot;;
+<span class="nocode"><a name="8">  8: </a></span>stringArray0[6] = &quot;7#z?L8S&quot;;
+<span class="nocode"><a name="9">  9: </a></span>stringArray0[7] = &quot;Name&quot;;
+<span class="nocode"><a name="10"> 10: </a></span>FileSystemModel fileSystemModel0 = new FileSystemModel(stringArray0, (JFrame) null);
+<span class="nocode"><a name="11"> 11: </a></span>MockFile mockFile0 = (MockFile)MockFile.createTempFile(&quot;Size&quot;, &quot;k??)]_1D$aJJw@&lt;s&quot;);
+<span class="nocode"><a name="12"> 12: </a></span>FileNode fileNode0 = new FileNode(mockFile0);
+<span class="nocode"><a name="13"> 13: </a></span>Object object0 = fileSystemModel0.getValueAt(fileNode0, (-255));
+<span class="nocode"><a name="14"> 14: </a></span>assertNull(object0);
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FileSystemModel fileSystemModel0 = new FileSystemModel((JFrame) null);
+<span class="nocode"><a name="2">  2: </a></span>fileSystemModel0.getValueAt((Object) null, 0);
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FileSystemModel fileSystemModel0 = new FileSystemModel((JFrame) null);
+<span class="nocode"><a name="2">  2: </a></span>DefaultTableModel defaultTableModel0 = new DefaultTableModel();
+<span class="nocode"><a name="3">  3: </a></span>fileSystemModel0.getValueAt(defaultTableModel0, 1);
+</pre>
+<h3>Test case 13</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FileSystemModel fileSystemModel0 = new FileSystemModel((JFrame) null);
+<span class="nocode"><a name="2">  2: </a></span>fileSystemModel0.getValueAt((Object) null, 2);
+</pre>
+<h3>Test case 14</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = new String[3];
+<span class="nocode"><a name="2">  2: </a></span>stringArray0[0] = &quot;UFJ6q(Ch'(cfD#C&quot;;
+<span class="nocode"><a name="3">  3: </a></span>stringArray0[1] = &quot;user.dir&quot;;
+<span class="nocode"><a name="4">  4: </a></span>stringArray0[2] = &quot;ABo@:X]a?69f m&quot;;
+<span class="nocode"><a name="5">  5: </a></span>FileSystemModel fileSystemModel0 = new FileSystemModel(stringArray0, (JFrame) null);
+<span class="nocode"><a name="6">  6: </a></span>SynthTreeUI synthTreeUI0 = new SynthTreeUI();
+<span class="nocode"><a name="7">  7: </a></span>fileSystemModel0.getChild(synthTreeUI0, (-3684));
+</pre>
+<h3>Test case 15</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FileSystemModel fileSystemModel0 = new FileSystemModel((JFrame) null);
+<span class="nocode"><a name="2">  2: </a></span>fileSystemModel0.getChild((Object) null, (-2715));
+</pre>
+<h3>Test case 16</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FileSystemModel fileSystemModel0 = new FileSystemModel((JFrame) null);
+<span class="nocode"><a name="2">  2: </a></span>HiddenFileFilter hiddenFileFilter0 = (HiddenFileFilter)HiddenFileFilter.HIDDEN;
+<span class="nocode"><a name="3">  3: </a></span>fileSystemModel0.getChildCount(hiddenFileFilter0);
+</pre>
+<h3>Test case 17</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FileSystemModel fileSystemModel0 = new FileSystemModel((JFrame) null);
+<span class="nocode"><a name="2">  2: </a></span>fileSystemModel0.getChildCount((Object) null);
+</pre>
+<h3>Test case 18</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = new String[8];
+<span class="nocode"><a name="2">  2: </a></span>stringArray0[0] = &quot;org.apache.commons.io.filefilter.NameFileFilter&quot;;
+<span class="nocode"><a name="3">  3: </a></span>stringArray0[1] = &quot;&quot;;
+<span class="nocode"><a name="4">  4: </a></span>stringArray0[2] = &quot;&quot;;
+<span class="nocode"><a name="5">  5: </a></span>stringArray0[3] = &quot;{,3&quot;;
+<span class="nocode"><a name="6">  6: </a></span>stringArray0[4] = &quot;&quot;;
+<span class="nocode"><a name="7">  7: </a></span>stringArray0[5] = &quot;user.home&quot;;
+<span class="nocode"><a name="8">  8: </a></span>stringArray0[6] = &quot;uk.ac.sanger.artemis.components.filetree.FileSystemModel&quot;;
+<span class="nocode"><a name="9">  9: </a></span>stringArray0[7] = &quot;user.home&quot;;
+<span class="nocode"><a name="10"> 10: </a></span>FileSystemModel fileSystemModel0 = new FileSystemModel(stringArray0, (JFrame) null);
+<span class="nocode"><a name="11"> 11: </a></span>fileSystemModel0.getChildren(&quot;uk.ac.sanger.artemis.components.filetree.FileSystemModel&quot;);
+</pre>
+<h3>Test case 19</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FileSystemModel fileSystemModel0 = new FileSystemModel((JFrame) null);
+<span class="nocode"><a name="2">  2: </a></span>fileSystemModel0.getChildren((Object) null);
+</pre>
+<h3>Test case 20</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FileSystemModel fileSystemModel0 = new FileSystemModel((JFrame) null);
+<span class="nocode"><a name="2">  2: </a></span>fileSystemModel0.getColumnClass(3);
+</pre>
+<h3>Test case 21</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FileSystemModel fileSystemModel0 = new FileSystemModel((JFrame) null);
+<span class="nocode"><a name="2">  2: </a></span>FileSystemModel.cNames = null;
+<span class="nocode"><a name="3">  3: </a></span>fileSystemModel0.getColumnCount();
+</pre>
+<h3>Test case 22</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FileSystemModel fileSystemModel0 = new FileSystemModel((JFrame) null);
+<span class="nocode"><a name="2">  2: </a></span>fileSystemModel0.isLeaf((Object) null);
+</pre>
+<h3>Test case 23</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FileSystemModel fileSystemModel0 = new FileSystemModel((JFrame) null);
+<span class="nocode"><a name="2">  2: </a></span>Class&lt;Object&gt; class0 = fileSystemModel0.getColumnClass(2);
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(class0.isInterface());
+</pre>
+<h3>Test case 24</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FileSystemModel fileSystemModel0 = new FileSystemModel((JFrame) null);
 <span class="nocode"><a name="2">  2: </a></span>String string0 = fileSystemModel0.getColumnName(0);
 <span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;Name&quot;, string0);
 </pre>
-<h3>Test case 7</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = new String[9];
-<span class="nocode"><a name="2">  2: </a></span>stringArray0[0] = &quot;\&quot;y&quot;;
-<span class="nocode"><a name="3">  3: </a></span>stringArray0[1] = &quot;$vYE){@gaAqvt&amp;)&quot;;
-<span class="nocode"><a name="4">  4: </a></span>stringArray0[2] = &quot;Modified&quot;;
-<span class="nocode"><a name="5">  5: </a></span>stringArray0[3] = &quot;SKO1G$S:+T&quot;;
-<span class="nocode"><a name="6">  6: </a></span>stringArray0[4] = &quot;&quot;;
-<span class="nocode"><a name="7">  7: </a></span>stringArray0[5] = &quot;k.Um.0zvJK$KXe&quot;;
-<span class="nocode"><a name="8">  8: </a></span>stringArray0[6] = &quot;8&quot;;
-<span class="nocode"><a name="9">  9: </a></span>stringArray0[7] = &quot;?X&lt;4LnE&quot;;
-<span class="nocode"><a name="10"> 10: </a></span>stringArray0[8] = &quot;&quot;;
-<span class="nocode"><a name="11"> 11: </a></span>FileSystemModel fileSystemModel0 = new FileSystemModel(stringArray0, (JFrame) null);
-<span class="nocode"><a name="12"> 12: </a></span>MockFile mockFile0 = new MockFile(&quot;SKO1G$S:+T&quot;);
-<span class="nocode"><a name="13"> 13: </a></span>FileNode fileNode0 = new FileNode(mockFile0);
-<span class="nocode"><a name="14"> 14: </a></span>fileSystemModel0.getChild(fileNode0, 5);
-</pre>
-<h3>Test case 8</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = new String[9];
-<span class="nocode"><a name="2">  2: </a></span>stringArray0[0] = &quot;\&quot;y&quot;;
-<span class="nocode"><a name="3">  3: </a></span>stringArray0[1] = &quot;\&quot;y&quot;;
-<span class="nocode"><a name="4">  4: </a></span>stringArray0[2] = &quot;Modified&quot;;
-<span class="nocode"><a name="5">  5: </a></span>stringArray0[3] = &quot;SKO1G$S:+T&quot;;
-<span class="nocode"><a name="6">  6: </a></span>stringArray0[4] = &quot;&quot;;
-<span class="nocode"><a name="7">  7: </a></span>stringArray0[5] = &quot;k.Um.0zvJK$KXe&quot;;
-<span class="nocode"><a name="8">  8: </a></span>stringArray0[6] = &quot;8&quot;;
-<span class="nocode"><a name="9">  9: </a></span>stringArray0[7] = &quot;?X&lt;4LnE&quot;;
-<span class="nocode"><a name="10"> 10: </a></span>stringArray0[8] = &quot;&quot;;
-<span class="nocode"><a name="11"> 11: </a></span>FileSystemModel fileSystemModel0 = new FileSystemModel(stringArray0, (JFrame) null);
-<span class="nocode"><a name="12"> 12: </a></span>fileSystemModel0.getChildCount((Object) null);
-</pre>
-<h3>Test case 9</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = new String[2];
-<span class="nocode"><a name="2">  2: </a></span>stringArray0[0] = &quot;&quot;;
-<span class="nocode"><a name="3">  3: </a></span>stringArray0[1] = &quot;&quot;;
-<span class="nocode"><a name="4">  4: </a></span>FileSystemModel fileSystemModel0 = new FileSystemModel(stringArray0, (JFrame) null);
-<span class="nocode"><a name="5">  5: </a></span>fileSystemModel0.getValueAt(&quot;&quot;, 2);
-</pre>
-<h3>Test case 10</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FileSystemModel fileSystemModel0 = new FileSystemModel((JFrame) null);
-<span class="nocode"><a name="2">  2: </a></span>fileSystemModel0.getValueAt((Object) null, 0);
-</pre>
-<h3>Test case 11</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Object object0 = ColorSpaceHintKey.VALUE_COLORSPACE_AGREY;
-<span class="nocode"><a name="2">  2: </a></span>String[] stringArray0 = new String[8];
-<span class="nocode"><a name="3">  3: </a></span>stringArray0[0] = &quot;&quot;;
-<span class="nocode"><a name="4">  4: </a></span>stringArray0[1] = &quot;Modified&quot;;
-<span class="nocode"><a name="5">  5: </a></span>stringArray0[2] = &quot;?X&lt;4LnE&quot;;
-<span class="nocode"><a name="6">  6: </a></span>stringArray0[3] = &quot;\&quot;y&quot;;
-<span class="nocode"><a name="7">  7: </a></span>stringArray0[4] = &quot;&quot;;
-<span class="nocode"><a name="8">  8: </a></span>stringArray0[5] = &quot;k.Um.0zvJK$KXe&quot;;
-<span class="nocode"><a name="9">  9: </a></span>stringArray0[6] = &quot;\&quot;y&quot;;
-<span class="nocode"><a name="10"> 10: </a></span>stringArray0[7] = &quot;SKO1G$S:+T&quot;;
-<span class="nocode"><a name="11"> 11: </a></span>FileSystemModel fileSystemModel0 = new FileSystemModel(stringArray0, (JFrame) null);
-<span class="nocode"><a name="12"> 12: </a></span>fileSystemModel0.getValueAt(object0, 1);
-</pre>
-<h3>Test case 12</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = new String[9];
-<span class="nocode"><a name="2">  2: </a></span>stringArray0[0] = &quot;\&quot;y&quot;;
-<span class="nocode"><a name="3">  3: </a></span>stringArray0[1] = &quot;\&quot;y&quot;;
-<span class="nocode"><a name="4">  4: </a></span>stringArray0[2] = &quot;Modified&quot;;
-<span class="nocode"><a name="5">  5: </a></span>stringArray0[3] = &quot;SKO1G$S:+T&quot;;
-<span class="nocode"><a name="6">  6: </a></span>stringArray0[4] = &quot;&quot;;
-<span class="nocode"><a name="7">  7: </a></span>stringArray0[5] = &quot;k.Um.0zvJK$KXe&quot;;
-<span class="nocode"><a name="8">  8: </a></span>stringArray0[6] = &quot;8&quot;;
-<span class="nocode"><a name="9">  9: </a></span>stringArray0[7] = &quot;?X&lt;4LnE&quot;;
-<span class="nocode"><a name="10"> 10: </a></span>stringArray0[8] = &quot;&quot;;
-<span class="nocode"><a name="11"> 11: </a></span>FileSystemModel fileSystemModel0 = new FileSystemModel(stringArray0, (JFrame) null);
-<span class="nocode"><a name="12"> 12: </a></span>Object object0 = fileSystemModel0.getValueAt(&quot;SKO1G$S:+T&quot;, 120);
-<span class="nocode"><a name="13"> 13: </a></span>assertNull(object0);
-</pre>
-<h3>Test case 13</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>File[] fileArray0 = new File[2];
-<span class="nocode"><a name="2">  2: </a></span>FileFilter fileFilter0 = mock(FileFilter.class, new ViolatedAssumptionAnswer());
-<span class="nocode"><a name="3">  3: </a></span>FileSystemModel fileSystemModel0 = new FileSystemModel(fileArray0, fileFilter0, (JFrame) null);
-</pre>
-<h3>Test case 14</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = new String[9];
-<span class="nocode"><a name="2">  2: </a></span>stringArray0[0] = &quot;\&quot;y&quot;;
-<span class="nocode"><a name="3">  3: </a></span>stringArray0[1] = &quot;$vYE){@gaAqvt&amp;)&quot;;
-<span class="nocode"><a name="4">  4: </a></span>stringArray0[2] = &quot;Modified&quot;;
-<span class="nocode"><a name="5">  5: </a></span>stringArray0[3] = &quot;SKO1G$S:+T&quot;;
-<span class="nocode"><a name="6">  6: </a></span>stringArray0[4] = &quot;&quot;;
-<span class="nocode"><a name="7">  7: </a></span>stringArray0[5] = &quot;k.Um.0zvJK$KXe&quot;;
-<span class="nocode"><a name="8">  8: </a></span>stringArray0[6] = &quot;8&quot;;
-<span class="nocode"><a name="9">  9: </a></span>stringArray0[7] = &quot;?X&lt;4LnE&quot;;
-<span class="nocode"><a name="10"> 10: </a></span>stringArray0[8] = &quot;&quot;;
-<span class="nocode"><a name="11"> 11: </a></span>FileSystemModel fileSystemModel0 = new FileSystemModel(stringArray0, (JFrame) null);
-<span class="nocode"><a name="12"> 12: </a></span>fileSystemModel0.getChildCount(&quot;&quot;);
-</pre>
-<h3>Test case 15</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = new String[2];
-<span class="nocode"><a name="2">  2: </a></span>stringArray0[0] = &quot;The SFTP subsystem failed to start&quot;;
-<span class="nocode"><a name="3">  3: </a></span>stringArray0[1] = &quot;j]|Eq*rV^&quot;;
-<span class="nocode"><a name="4">  4: </a></span>FileSystemModel fileSystemModel0 = new FileSystemModel(stringArray0, (JFrame) null);
-<span class="nocode"><a name="5">  5: </a></span>fileSystemModel0.getChildren(&quot;j]|Eq*rV^&quot;);
-</pre>
-<h3>Test case 16</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FileSystemModel fileSystemModel0 = new FileSystemModel((JFrame) null);
-<span class="nocode"><a name="2">  2: </a></span>fileSystemModel0.getChildren((Object) null);
-</pre>
-<h3>Test case 17</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FileSystemModel fileSystemModel0 = new FileSystemModel((JFrame) null);
-<span class="nocode"><a name="2">  2: </a></span>fileSystemModel0.getColumnClass((-4213));
-</pre>
-<h3>Test case 18</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = new String[2];
-<span class="nocode"><a name="2">  2: </a></span>stringArray0[0] = &quot;The SFTP subsystem failed to start&quot;;
-<span class="nocode"><a name="3">  3: </a></span>stringArray0[1] = &quot;j]|Eq*rV^&quot;;
-<span class="nocode"><a name="4">  4: </a></span>FileSystemModel fileSystemModel0 = new FileSystemModel(stringArray0, (JFrame) null);
-<span class="nocode"><a name="5">  5: </a></span>fileSystemModel0.getColumnName(3839);
-</pre>
-<h3>Test case 19</h3>
+<h3>Test case 25</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = new String[8];
-<span class="nocode"><a name="2">  2: </a></span>stringArray0[0] = &quot;b:b&quot;;
-<span class="nocode"><a name="3">  3: </a></span>stringArray0[1] = &quot;e'N\&quot;vOCl4P&quot;;
-<span class="nocode"><a name="4">  4: </a></span>stringArray0[2] = &quot;@],8]zu{w_47AH[._K&amp;&quot;;
-<span class="nocode"><a name="5">  5: </a></span>stringArray0[3] = &quot;Q*pEdDI7&lt;K=&quot;;
-<span class="nocode"><a name="6">  6: </a></span>stringArray0[4] = &quot;78!H?4wr.Dkh&quot;;
-<span class="nocode"><a name="7">  7: </a></span>stringArray0[5] = &quot;proxyHost&quot;;
-<span class="nocode"><a name="8">  8: </a></span>stringArray0[6] = &quot;&quot;;
-<span class="nocode"><a name="9">  9: </a></span>stringArray0[7] = &quot;&quot;;
-<span class="nocode"><a name="10"> 10: </a></span>FileSystemModel fileSystemModel0 = new FileSystemModel(stringArray0, (JFrame) null);
-<span class="nocode"><a name="11"> 11: </a></span>fileSystemModel0.isLeaf((Object) null);
-</pre>
-<h3>Test case 20</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FileSystemModel fileSystemModel0 = new FileSystemModel((JFrame) null);
-<span class="nocode"><a name="2">  2: </a></span>Class[] classArray0 = (Class[]) Array.newInstance(Class.class, 7);
-<span class="nocode"><a name="3">  3: </a></span>Class&lt;Panel&gt; class0 = Class.class;
-<span class="nocode"><a name="4">  4: </a></span>classArray0[0] = class0;
-<span class="nocode"><a name="5">  5: </a></span>FileSystemModel.cTypes = classArray0;
-<span class="nocode"><a name="6">  6: </a></span>Class&lt;Object&gt; class1 = fileSystemModel0.getColumnClass(0);
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(&quot;class java.awt.Panel&quot;, class1.toString());
-</pre>
-<h3>Test case 21</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = new String[9];
-<span class="nocode"><a name="2">  2: </a></span>stringArray0[0] = &quot;\&quot;y&quot;;
-<span class="nocode"><a name="3">  3: </a></span>stringArray0[1] = &quot;\&quot;y&quot;;
-<span class="nocode"><a name="4">  4: </a></span>stringArray0[2] = &quot;Modified&quot;;
-<span class="nocode"><a name="5">  5: </a></span>stringArray0[3] = &quot;SKO1G$S:+T&quot;;
+<span class="nocode"><a name="2">  2: </a></span>stringArray0[0] = &quot;org.apache.commons.io.filefilter.NameFileFilter&quot;;
+<span class="nocode"><a name="3">  3: </a></span>stringArray0[1] = &quot;&quot;;
+<span class="nocode"><a name="4">  4: </a></span>stringArray0[2] = &quot;&quot;;
+<span class="nocode"><a name="5">  5: </a></span>stringArray0[3] = &quot;{,3&quot;;
 <span class="nocode"><a name="6">  6: </a></span>stringArray0[4] = &quot;&quot;;
-<span class="nocode"><a name="7">  7: </a></span>stringArray0[5] = &quot;k.Um.0zvJK$KXe&quot;;
-<span class="nocode"><a name="8">  8: </a></span>stringArray0[6] = &quot;8&quot;;
-<span class="nocode"><a name="9">  9: </a></span>stringArray0[7] = &quot;?X&lt;4LnE&quot;;
-<span class="nocode"><a name="10"> 10: </a></span>stringArray0[8] = &quot;&quot;;
-<span class="nocode"><a name="11"> 11: </a></span>FileSystemModel fileSystemModel0 = new FileSystemModel(stringArray0, (JFrame) null);
-<span class="nocode"><a name="12"> 12: </a></span>FileFilter fileFilter0 = mock(FileFilter.class, new ViolatedAssumptionAnswer());
-<span class="nocode"><a name="13"> 13: </a></span>doReturn((String) null).when(fileFilter0).toString();
-<span class="nocode"><a name="14"> 14: </a></span>fileSystemModel0.setFilter(fileFilter0);
-<span class="nocode"><a name="15"> 15: </a></span>FileFilter fileFilter1 = fileSystemModel0.getFilter();
-<span class="nocode"><a name="16"> 16: </a></span>assertSame(fileFilter1, fileFilter0);
+<span class="nocode"><a name="7">  7: </a></span>stringArray0[5] = &quot;user.home&quot;;
+<span class="nocode"><a name="8">  8: </a></span>stringArray0[6] = &quot;uk.ac.sanger.artemis.components.filetree.FileSystemModel&quot;;
+<span class="nocode"><a name="9">  9: </a></span>stringArray0[7] = &quot;user.home&quot;;
+<span class="nocode"><a name="10"> 10: </a></span>FileSystemModel fileSystemModel0 = new FileSystemModel(stringArray0, (JFrame) null);
+<span class="nocode"><a name="11"> 11: </a></span>RegexFileFilter regexFileFilter0 = new RegexFileFilter(&quot;Z&quot;, 1655);
+<span class="nocode"><a name="12"> 12: </a></span>fileSystemModel0.setFilter(regexFileFilter0);
+<span class="nocode"><a name="13"> 13: </a></span>RegexFileFilter regexFileFilter1 = (RegexFileFilter)fileSystemModel0.getFilter();
+<span class="nocode"><a name="14"> 14: </a></span>assertSame(regexFileFilter1, regexFileFilter0);
 </pre>
-<h3>Test case 22</h3>
+<h3>Test case 26</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = new String[2];
+<span class="nocode"><a name="1">  1: </a></span>File[] fileArray0 = new File[2];
+<span class="nocode"><a name="2">  2: </a></span>RegexFileFilter regexFileFilter0 = new RegexFileFilter(&quot;|CYEp,]@g4Z&quot;);
+<span class="nocode"><a name="3">  3: </a></span>FileSystemModel fileSystemModel0 = new FileSystemModel(fileArray0, regexFileFilter0, (JFrame) null);
+</pre>
+<h3>Test case 27</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = new String[3];
 <span class="nocode"><a name="2">  2: </a></span>FileSystemModel fileSystemModel0 = new FileSystemModel(stringArray0, (JFrame) null);
 </pre>
 </div><div id="post">
@@ -270,13 +272,13 @@ uk.ac.sanger.artemis.components.filetree.FileSystemModel
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.filetree.FileSystemModel
-<li>Size: 22
-<li>Length: 152
+<li>Size: 27
+<li>Length: 137
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.5907865244613365
-<li>BranchCoverage: 0.47368421052631576
+<li>Coverage: 0.6920997778328606
+<li>BranchCoverage: 0.631578947368421
 <li>MethodCoverage: 1.0
-<li>OutputCoverage: 0.3611111111111111
+<li>OutputCoverage: 0.3888888888888889
 </ul></div>
 </div>
 <p><br><a href="../report-generation.html">Back to Overview</a></p>

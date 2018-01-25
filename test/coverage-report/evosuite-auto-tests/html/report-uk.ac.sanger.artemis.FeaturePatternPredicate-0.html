@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.FeaturePatternPredicate
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.FeaturePatternPredicate: 1.0</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.FeaturePatternPredicate: 0.9375</ul>
 <ul>
-<li>0.5 fitness evaluations, 0 generations, null statements, 3 tests.
+<li>1.5 fitness evaluations, 0 generations, null statements, 2 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,32 +35,21 @@ uk.ac.sanger.artemis.FeaturePatternPredicate
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[0];
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[6];
 <span class="nocode"><a name="2">  2: </a></span>AminoAcidSequence aminoAcidSequence0 = AminoAcidSequence.getTranslation(charArray0, false);
 <span class="nocode"><a name="3">  3: </a></span>FeaturePatternPredicate featurePatternPredicate0 = new FeaturePatternPredicate(aminoAcidSequence0);
-<span class="nocode"><a name="4">  4: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;(9lHQn&quot;, &quot;uk.ac.sanger.artemis.io.LocationParseNode&quot;);
-<span class="nocode"><a name="5">  5: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="4">  4: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;Asp&quot;);
+<span class="nocode"><a name="5">  5: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
 <span class="nocode"><a name="6">  6: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="7">  7: </a></span>Entry entry0 = simpleEntryGroup0.createEntry(&quot;Q3xf&quot;);
+<span class="nocode"><a name="7">  7: </a></span>Entry entry0 = simpleEntryGroup0.createEntry();
 <span class="nocode"><a name="8">  8: </a></span>Feature feature0 = entry0.createFeature();
 <span class="nocode"><a name="9">  9: </a></span>featurePatternPredicate0.testPredicate(feature0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FeaturePatternPredicate featurePatternPredicate0 = new FeaturePatternPredicate((AminoAcidSequence) null);
-<span class="nocode"><a name="2">  2: </a></span>featurePatternPredicate0.testPredicate((Feature) null);
-</pre>
-<h3>Test case 3</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>AminoAcidSequence aminoAcidSequence0 = AminoAcidSequence.getSpacedTranslation(&quot;73-kJud#&lt;Dx(?bOfkd&amp;&quot;, false);
+<span class="nocode"><a name="1">  1: </a></span>AminoAcidSequence aminoAcidSequence0 = AminoAcidSequence.getTranslation(&quot;owe&quot;, false);
 <span class="nocode"><a name="2">  2: </a></span>FeaturePatternPredicate featurePatternPredicate0 = new FeaturePatternPredicate(aminoAcidSequence0);
-<span class="nocode"><a name="3">  3: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;f-&quot;);
-<span class="nocode"><a name="4">  4: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
-<span class="nocode"><a name="5">  5: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="6">  6: </a></span>Entry entry0 = simpleEntryGroup0.createEntry((String) null);
-<span class="nocode"><a name="7">  7: </a></span>Feature feature0 = entry0.createFeature();
-<span class="nocode"><a name="8">  8: </a></span>boolean boolean0 = featurePatternPredicate0.testPredicate(feature0);
-<span class="nocode"><a name="9">  9: </a></span>assertFalse(boolean0);
+<span class="nocode"><a name="3">  3: </a></span>featurePatternPredicate0.testPredicate((Feature) null);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -73,13 +62,13 @@ uk.ac.sanger.artemis.FeaturePatternPredicate
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.FeaturePatternPredicate
-<li>Size: 3
-<li>Length: 19
+<li>Size: 2
+<li>Length: 12
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 1.0
+<li>Coverage: 0.9375
 <li>BranchCoverage: 1.0
 <li>MethodCoverage: 1.0
-<li>OutputCoverage: 1.0
+<li>OutputCoverage: 0.5
 </ul></div>
 </div>
 <p><br><a href="../report-generation.html">Back to Overview</a></p>

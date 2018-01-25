@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.components.variant.TabixReader
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.components.variant.TabixReader: 0.24952723043727645</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.components.variant.TabixReader: 0.4456596327072362</ul>
 <ul>
-<li>2051.0333333333333 fitness evaluations, 0 generations, null statements, 18 tests.
+<li>1895.5416666666667 fitness evaluations, 0 generations, null statements, 40 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,105 +35,317 @@ uk.ac.sanger.artemis.components.variant.TabixReader
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[3];
-<span class="nocode"><a name="2">  2: </a></span>ByteArrayReader byteArrayReader0 = new ByteArrayReader(byteArray0);
-<span class="nocode"><a name="3">  3: </a></span>long long0 = TabixReader.readLong(byteArrayReader0);
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(0L, long0);
+<span class="nocode"><a name="1">  1: </a></span>EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(&quot;/Users/kp11/workspace/applications/Artemis/test/.tbi&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileSystemHandling.appendStringToFile(evoSuiteFile0, &quot;shared_id&quot;);
+<span class="nocode"><a name="3">  3: </a></span>TabixReader tabixReader0 = new TabixReader(&quot;&quot;);
+<span class="nocode"><a name="4">  4: </a></span>char char0 = tabixReader0.getCommentChar();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals('\u0000', char0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>TabixReader tabixReader0 = new TabixReader(&quot;&quot;, (SeekableStream) null);
+<span class="nocode"><a name="1">  1: </a></span>TabixReader.readLong((InputStream) null);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>TabixReader.readInt((InputStream) null);
+<span class="nocode"><a name="1">  1: </a></span>EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(&quot;/Users/kp11/workspace/applications/Artemis/test/.tbi&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileSystemHandling.appendStringToFile(evoSuiteFile0, &quot;shared_id&quot;);
+<span class="nocode"><a name="3">  3: </a></span>TabixReader tabixReader0 = new TabixReader(&quot;&quot;);
+<span class="nocode"><a name="4">  4: </a></span>VCFRecord vCFRecord0 = tabixReader0.getNextRecord(&quot;&quot;, (-966), 685);
+<span class="nocode"><a name="5">  5: </a></span>assertNull(vCFRecord0);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>URL uRL0 = MockURL.getHttpExample();
-<span class="nocode"><a name="2">  2: </a></span>TabixReader tabixReader0 = new TabixReader(&quot;You can not retrieve part of an empty symbol list&quot;, uRL0);
+<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[0];
+<span class="nocode"><a name="2">  2: </a></span>ByteArraySeekableStream byteArraySeekableStream0 = new ByteArraySeekableStream(byteArray0);
+<span class="nocode"><a name="3">  3: </a></span>EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(&quot;/Users/kp11/workspace/applications/Artemis/test/INSERT INTO feature_cvterm ( feature_cvterm_id, feature_id, cvterm_id, pub_id, rank, is_not ) VALUES ( nextval('feature_cvterm_feature_cvterm_id_seq'), (SELECT feature_id FROM feature WHERE uniquename='.tbi&quot;);
+<span class="nocode"><a name="4">  4: </a></span>FileSystemHandling.appendLineToFile(evoSuiteFile0, &quot;20!t=k'va,z.q4x!&quot;);
+<span class="nocode"><a name="5">  5: </a></span>SeekableBufferedStream seekableBufferedStream0 = new SeekableBufferedStream(byteArraySeekableStream0, 66);
+<span class="nocode"><a name="6">  6: </a></span>TabixReader tabixReader0 = new TabixReader(&quot;INSERT INTO feature_cvterm ( feature_cvterm_id, feature_id, cvterm_id, pub_id, rank, is_not ) VALUES ( nextval('feature_cvterm_feature_cvterm_id_seq'), (SELECT feature_id FROM feature WHERE uniquename='&quot;, seekableBufferedStream0);
+<span class="nocode"><a name="7">  7: </a></span>String[] stringArray0 = tabixReader0.getSeqNames();
+<span class="nocode"><a name="8">  8: </a></span>assertNotNull(stringArray0);
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>TabixReader tabixReader0 = new TabixReader(&quot;&quot;);
+<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[0];
+<span class="nocode"><a name="2">  2: </a></span>ByteArraySeekableStream byteArraySeekableStream0 = new ByteArraySeekableStream(byteArray0);
+<span class="nocode"><a name="3">  3: </a></span>EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(&quot;/Users/kp11/workspace/applications/Artemis/test/INSERT INTO feature_cvterm ( feature_cvterm_id, feature_id, cvterm_id, pub_id, rank, is_not ) VALUES ( nextval('feature_cvterm_feature_cvterm_id_seq'), (SELECT feature_id FROM feature WHERE uniquename='.tbi&quot;);
+<span class="nocode"><a name="4">  4: </a></span>FileSystemHandling.appendLineToFile(evoSuiteFile0, &quot;20!t=k'va,z.q4x!&quot;);
+<span class="nocode"><a name="5">  5: </a></span>SeekableBufferedStream seekableBufferedStream0 = new SeekableBufferedStream(byteArraySeekableStream0, 66);
+<span class="nocode"><a name="6">  6: </a></span>TabixReader tabixReader0 = new TabixReader(&quot;INSERT INTO feature_cvterm ( feature_cvterm_id, feature_id, cvterm_id, pub_id, rank, is_not ) VALUES ( nextval('feature_cvterm_feature_cvterm_id_seq'), (SELECT feature_id FROM feature WHERE uniquename='&quot;, seekableBufferedStream0);
+<span class="nocode"><a name="7">  7: </a></span>int int0 = tabixReader0.getEndColumn();
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(0, int0);
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[3];
-<span class="nocode"><a name="2">  2: </a></span>ByteArrayReader byteArrayReader0 = new ByteArrayReader(byteArray0);
-<span class="nocode"><a name="3">  3: </a></span>TabixReader.readLine((InputStream) byteArrayReader0);
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, byteArrayReader0.available());
+<span class="nocode"><a name="1">  1: </a></span>URL uRL0 = MockURL.getHttpExample();
+<span class="nocode"><a name="2">  2: </a></span>TabixReader tabixReader0 = new TabixReader(&quot;blast&quot;, uRL0);
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(&quot;/Users/kp11/workspace/applications/Artemis/test/.tbi&quot;);
-<span class="nocode"><a name="2">  2: </a></span>FileSystemHandling.appendStringToFile(evoSuiteFile0, &quot;;&quot;);
-<span class="nocode"><a name="3">  3: </a></span>TabixReader tabixReader0 = new TabixReader(&quot;&quot;, (SeekableStream) null);
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, tabixReader0.getStartColumn());
+<span class="nocode"><a name="2">  2: </a></span>byte[] byteArray0 = new byte[7];
+<span class="nocode"><a name="3">  3: </a></span>FileSystemHandling.appendDataToFile(evoSuiteFile0, byteArray0);
+<span class="nocode"><a name="4">  4: </a></span>TabixReader tabixReader0 = new TabixReader(&quot;&quot;);
+<span class="nocode"><a name="5">  5: </a></span>tabixReader0.readLine();
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>TabixReader tabixReader0 = new TabixReader((String) null);
+<span class="nocode"><a name="1">  1: </a></span>EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(&quot;/Users/kp11/workspace/applications/Artemis/test/.tbi&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileSystemHandling.appendStringToFile(evoSuiteFile0, &quot;shared_id&quot;);
+<span class="nocode"><a name="3">  3: </a></span>TabixReader tabixReader0 = new TabixReader(&quot;&quot;);
+<span class="nocode"><a name="4">  4: </a></span>int int0 = tabixReader0.getSeqColumn();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, int0);
 </pre>
 <h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>URL uRL0 = MockURL.getHttpExample();
-<span class="nocode"><a name="2">  2: </a></span>EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(&quot;/Users/kp11/workspace/applications/Artemis/test/You can not retrieve part of an empty symbol list.tbi&quot;);
-<span class="nocode"><a name="3">  3: </a></span>FileSystemHandling.createFolder(evoSuiteFile0);
-<span class="nocode"><a name="4">  4: </a></span>TabixReader tabixReader0 = new TabixReader(&quot;You can not retrieve part of an empty symbol list&quot;, uRL0);
+<span class="nocode"><a name="1">  1: </a></span>EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(&quot;/Users/kp11/workspace/applications/Artemis/test/.tbi&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileSystemHandling.appendStringToFile(evoSuiteFile0, &quot;shared_id&quot;);
+<span class="nocode"><a name="3">  3: </a></span>TabixReader tabixReader0 = new TabixReader(&quot;&quot;);
+<span class="nocode"><a name="4">  4: </a></span>int int0 = tabixReader0.getStartColumn();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, int0);
 </pre>
 <h3>Test case 10</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>TabixReader tabixReader0 = new TabixReader(&quot;&quot;, (URL) null);
+<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[0];
+<span class="nocode"><a name="2">  2: </a></span>ByteArraySeekableStream byteArraySeekableStream0 = new ByteArraySeekableStream(byteArray0);
+<span class="nocode"><a name="3">  3: </a></span>EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(&quot;/Users/kp11/workspace/applications/Artemis/test/INSERT INTO feature_cvterm ( feature_cvterm_id, feature_id, cvterm_id, pub_id, rank, is_not ) VALUES ( nextval('feature_cvterm_feature_cvterm_id_seq'), (SELECT feature_id FROM feature WHERE uniquename='.tbi&quot;);
+<span class="nocode"><a name="4">  4: </a></span>FileSystemHandling.appendLineToFile(evoSuiteFile0, &quot;20!t=k'va,z.q4x!&quot;);
+<span class="nocode"><a name="5">  5: </a></span>SeekableBufferedStream seekableBufferedStream0 = new SeekableBufferedStream(byteArraySeekableStream0, 66);
+<span class="nocode"><a name="6">  6: </a></span>TabixReader tabixReader0 = new TabixReader(&quot;INSERT INTO feature_cvterm ( feature_cvterm_id, feature_id, cvterm_id, pub_id, rank, is_not ) VALUES ( nextval('feature_cvterm_feature_cvterm_id_seq'), (SELECT feature_id FROM feature WHERE uniquename='&quot;, seekableBufferedStream0);
+<span class="nocode"><a name="7">  7: </a></span>String string0 = tabixReader0.readLine();
+<span class="nocode"><a name="8">  8: </a></span>assertNull(string0);
 </pre>
 <h3>Test case 11</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(&quot;/Users/kp11/workspace/applications/Artemis/test/.tbi&quot;);
-<span class="nocode"><a name="2">  2: </a></span>FileSystemHandling.createFolder(evoSuiteFile0);
-<span class="nocode"><a name="3">  3: </a></span>TabixReader tabixReader0 = new TabixReader(&quot;&quot;, (SeekableStream) null);
+<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[5];
+<span class="nocode"><a name="2">  2: </a></span>byteArray0[0] = (byte)10;
+<span class="nocode"><a name="3">  3: </a></span>ByteArraySeekableStream byteArraySeekableStream0 = new ByteArraySeekableStream(byteArray0);
+<span class="nocode"><a name="4">  4: </a></span>String string0 = TabixReader.readLine((InputStream) byteArraySeekableStream0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(1L, byteArraySeekableStream0.position());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;&quot;, string0);
 </pre>
 <h3>Test case 12</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>PushbackInputStream pushbackInputStream0 = new PushbackInputStream((InputStream) null, 1094);
-<span class="nocode"><a name="2">  2: </a></span>DataInputStream dataInputStream0 = new DataInputStream(pushbackInputStream0);
-<span class="nocode"><a name="3">  3: </a></span>TabixReader.readInt(dataInputStream0);
+<span class="nocode"><a name="1">  1: </a></span>EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(&quot;/Users/kp11/workspace/applications/Artemis/test/.tbi&quot;);
+<span class="nocode"><a name="2">  2: </a></span>byte[] byteArray0 = new byte[7];
+<span class="nocode"><a name="3">  3: </a></span>FileSystemHandling.appendDataToFile(evoSuiteFile0, byteArray0);
+<span class="nocode"><a name="4">  4: </a></span>TabixReader tabixReader0 = new TabixReader(&quot;&quot;);
+<span class="nocode"><a name="5">  5: </a></span>tabixReader0.query(&quot;&quot;);
 </pre>
 <h3>Test case 13</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>PipedInputStream pipedInputStream0 = new PipedInputStream();
-<span class="nocode"><a name="2">  2: </a></span>DataInputStream dataInputStream0 = new DataInputStream(pipedInputStream0);
-<span class="nocode"><a name="3">  3: </a></span>TabixReader.readLine((InputStream) dataInputStream0);
+<span class="nocode"><a name="1">  1: </a></span>EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(&quot;/Users/kp11/workspace/applications/Artemis/test/.tbi&quot;);
+<span class="nocode"><a name="2">  2: </a></span>byte[] byteArray0 = new byte[7];
+<span class="nocode"><a name="3">  3: </a></span>FileSystemHandling.appendDataToFile(evoSuiteFile0, byteArray0);
+<span class="nocode"><a name="4">  4: </a></span>TabixReader tabixReader0 = new TabixReader(&quot;&quot;);
+<span class="nocode"><a name="5">  5: </a></span>tabixReader0.readIndex();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, tabixReader0.getSeqColumn());
 </pre>
 <h3>Test case 14</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>TabixReader.readLine((InputStream) null);
+<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[0];
+<span class="nocode"><a name="2">  2: </a></span>ByteArraySeekableStream byteArraySeekableStream0 = new ByteArraySeekableStream(byteArray0);
+<span class="nocode"><a name="3">  3: </a></span>EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(&quot;/Users/kp11/workspace/applications/Artemis/test/INSERT INTO feature_cvterm ( feature_cvterm_id, feature_id, cvterm_id, pub_id, rank, is_not ) VALUES ( nextval('feature_cvterm_feature_cvterm_id_seq'), (SELECT feature_id FROM feature WHERE uniquename='.tbi&quot;);
+<span class="nocode"><a name="4">  4: </a></span>FileSystemHandling.appendLineToFile(evoSuiteFile0, &quot;20!t=k'va,z.q4x!&quot;);
+<span class="nocode"><a name="5">  5: </a></span>SeekableBufferedStream seekableBufferedStream0 = new SeekableBufferedStream(byteArraySeekableStream0, 66);
+<span class="nocode"><a name="6">  6: </a></span>TabixReader tabixReader0 = new TabixReader(&quot;INSERT INTO feature_cvterm ( feature_cvterm_id, feature_id, cvterm_id, pub_id, rank, is_not ) VALUES ( nextval('feature_cvterm_feature_cvterm_id_seq'), (SELECT feature_id FROM feature WHERE uniquename='&quot;, seekableBufferedStream0);
+<span class="nocode"><a name="7">  7: </a></span>String string0 = tabixReader0.getFileName();
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(&quot;INSERT INTO feature_cvterm ( feature_cvterm_id, feature_id, cvterm_id, pub_id, rank, is_not ) VALUES ( nextval('feature_cvterm_feature_cvterm_id_seq'), (SELECT feature_id FROM feature WHERE uniquename='&quot;, string0);
 </pre>
 <h3>Test case 15</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>TabixReader.readLong((InputStream) null);
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Path path0 = mockFile0.toPath();
+<span class="nocode"><a name="3">  3: </a></span>SeekablePathStream seekablePathStream0 = new SeekablePathStream(path0);
+<span class="nocode"><a name="4">  4: </a></span>SeekableBufferedStream seekableBufferedStream0 = new SeekableBufferedStream(seekablePathStream0, 4);
+<span class="nocode"><a name="5">  5: </a></span>TabixReader.readInt(seekableBufferedStream0);
 </pre>
 <h3>Test case 16</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[1];
-<span class="nocode"><a name="2">  2: </a></span>ByteArrayInputStream byteArrayInputStream0 = new ByteArrayInputStream(byteArray0, (byte) (-113), 0);
-<span class="nocode"><a name="3">  3: </a></span>int int0 = TabixReader.readInt(byteArrayInputStream0);
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, int0);
+<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[0];
+<span class="nocode"><a name="2">  2: </a></span>ByteArraySeekableStream byteArraySeekableStream0 = new ByteArraySeekableStream(byteArray0);
+<span class="nocode"><a name="3">  3: </a></span>EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(&quot;/Users/kp11/workspace/applications/Artemis/test/INSERT INTO feature_cvterm ( feature_cvterm_id, feature_id, cvterm_id, pub_id, rank, is_not ) VALUES ( nextval('feature_cvterm_feature_cvterm_id_seq'), (SELECT feature_id FROM feature WHERE uniquename='.tbi&quot;);
+<span class="nocode"><a name="4">  4: </a></span>FileSystemHandling.appendLineToFile(evoSuiteFile0, &quot;20!t=k'va,z.q4x!&quot;);
+<span class="nocode"><a name="5">  5: </a></span>SeekableBufferedStream seekableBufferedStream0 = new SeekableBufferedStream(byteArraySeekableStream0, 66);
+<span class="nocode"><a name="6">  6: </a></span>TabixReader tabixReader0 = new TabixReader(&quot;INSERT INTO feature_cvterm ( feature_cvterm_id, feature_id, cvterm_id, pub_id, rank, is_not ) VALUES ( nextval('feature_cvterm_feature_cvterm_id_seq'), (SELECT feature_id FROM feature WHERE uniquename='&quot;, seekableBufferedStream0);
+<span class="nocode"><a name="7">  7: </a></span>int[] intArray0 = tabixReader0.parseReg(&quot;INSERT INTO feature_cvterm ( feature_cvterm_id, feature_id, cvterm_id, pub_id, rank, is_not ) VALUES ( nextval('feature_cvterm_feature_cvterm_id_seq'), (SELECT feature_id FROM feature WHERE uniquename='&quot;);
+<span class="nocode"><a name="8">  8: </a></span>assertArrayEquals(new int[] {(-1), 0, Integer.MAX_VALUE}, intArray0);
 </pre>
 <h3>Test case 17</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[3];
-<span class="nocode"><a name="2">  2: </a></span>byteArray0[0] = (byte)69;
-<span class="nocode"><a name="3">  3: </a></span>ByteArrayReader byteArrayReader0 = new ByteArrayReader(byteArray0);
-<span class="nocode"><a name="4">  4: </a></span>long long0 = TabixReader.readLong(byteArrayReader0);
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(69L, long0);
+<span class="nocode"><a name="1">  1: </a></span>TabixReader tabixReader0 = new TabixReader(&quot;aD=&quot;);
 </pre>
 <h3>Test case 18</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[1];
-<span class="nocode"><a name="2">  2: </a></span>byteArray0[0] = (byte)73;
+<span class="nocode"><a name="1">  1: </a></span>EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(&quot;/Users/kp11/workspace/applications/Artemis/test/.tbi&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileSystemHandling.createFolder(evoSuiteFile0);
+<span class="nocode"><a name="3">  3: </a></span>TabixReader tabixReader0 = new TabixReader(&quot;&quot;);
+</pre>
+<h3>Test case 19</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>TabixReader tabixReader0 = new TabixReader((String) null);
+</pre>
+<h3>Test case 20</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[0];
+<span class="nocode"><a name="2">  2: </a></span>ByteArraySeekableStream byteArraySeekableStream0 = new ByteArraySeekableStream(byteArray0);
+<span class="nocode"><a name="3">  3: </a></span>EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(&quot;/Users/kp11/workspace/applications/Artemis/test/INSERT INTO feature_cvterm ( feature_cvterm_id, feature_id, cvterm_id, pub_id, rank, is_not ) VALUES ( nextval('feature_cvterm_feature_cvterm_id_seq'), (SELECT feature_id FROM feature WHERE uniquename='.tbi&quot;);
+<span class="nocode"><a name="4">  4: </a></span>FileSystemHandling.appendLineToFile(evoSuiteFile0, &quot;INSERT INTO feature_cvterm ( feature_cvterm_id, feature_id, cvterm_id, pub_id, rank, is_not ) VALUES ( nextval('feature_cvterm_feature_cvterm_id_seq'), (SELECT feature_id FROM feature WHERE uniquename='&quot;);
+<span class="nocode"><a name="5">  5: </a></span>SeekableBufferedStream seekableBufferedStream0 = new SeekableBufferedStream(byteArraySeekableStream0, 66);
+<span class="nocode"><a name="6">  6: </a></span>TabixReader tabixReader0 = new TabixReader(&quot;INSERT INTO feature_cvterm ( feature_cvterm_id, feature_id, cvterm_id, pub_id, rank, is_not ) VALUES ( nextval('feature_cvterm_feature_cvterm_id_seq'), (SELECT feature_id FROM feature WHERE uniquename='&quot;, seekableBufferedStream0);
+</pre>
+<h3>Test case 21</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[14];
+<span class="nocode"><a name="2">  2: </a></span>ByteArraySeekableStream byteArraySeekableStream0 = new ByteArraySeekableStream(byteArray0);
+<span class="nocode"><a name="3">  3: </a></span>TabixReader tabixReader0 = new TabixReader((String) null, byteArraySeekableStream0);
+</pre>
+<h3>Test case 22</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[7];
+<span class="nocode"><a name="2">  2: </a></span>EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(&quot;/Users/kp11/workspace/applications/Artemis/test/|C8!S.tbi&quot;);
+<span class="nocode"><a name="3">  3: </a></span>FileSystemHandling.createFolder(evoSuiteFile0);
+<span class="nocode"><a name="4">  4: </a></span>ByteArraySeekableStream byteArraySeekableStream0 = new ByteArraySeekableStream(byteArray0);
+<span class="nocode"><a name="5">  5: </a></span>TabixReader tabixReader0 = new TabixReader(&quot;|C8!S&quot;, byteArraySeekableStream0);
+</pre>
+<h3>Test case 23</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(&quot;/Users/kp11/workspace/applications/Artemis/test/blast.tbi&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileSystemHandling.createFolder(evoSuiteFile0);
+<span class="nocode"><a name="3">  3: </a></span>URL uRL0 = MockURL.getHttpExample();
+<span class="nocode"><a name="4">  4: </a></span>TabixReader tabixReader0 = new TabixReader(&quot;blast&quot;, uRL0);
+</pre>
+<h3>Test case 24</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>TabixReader tabixReader0 = new TabixReader((String) null, (URL) null);
+</pre>
+<h3>Test case 25</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(&quot;/Users/kp11/workspace/applications/Artemis/test/.tbi&quot;);
+<span class="nocode"><a name="2">  2: </a></span>byte[] byteArray0 = new byte[7];
+<span class="nocode"><a name="3">  3: </a></span>FileSystemHandling.appendDataToFile(evoSuiteFile0, byteArray0);
+<span class="nocode"><a name="4">  4: </a></span>TabixReader tabixReader0 = new TabixReader(&quot;&quot;);
+<span class="nocode"><a name="5">  5: </a></span>tabixReader0.query((int) (byte) (-128), 6, (int) (byte) (-58));
+</pre>
+<h3>Test case 26</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[0];
+<span class="nocode"><a name="2">  2: </a></span>ByteArraySeekableStream byteArraySeekableStream0 = new ByteArraySeekableStream(byteArray0);
+<span class="nocode"><a name="3">  3: </a></span>EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(&quot;/Users/kp11/workspace/applications/Artemis/test/INSERT INTO feature_cvterm ( feature_cvterm_id, feature_id, cvterm_id, pub_id, rank, is_not ) VALUES ( nextval('feature_cvterm_feature_cvterm_id_seq'), (SELECT feature_id FROM feature WHERE uniquename='.tbi&quot;);
+<span class="nocode"><a name="4">  4: </a></span>FileSystemHandling.appendLineToFile(evoSuiteFile0, &quot;20!t=k'va,z.q4x!&quot;);
+<span class="nocode"><a name="5">  5: </a></span>SeekableBufferedStream seekableBufferedStream0 = new SeekableBufferedStream(byteArraySeekableStream0, 66);
+<span class="nocode"><a name="6">  6: </a></span>TabixReader tabixReader0 = new TabixReader(&quot;INSERT INTO feature_cvterm ( feature_cvterm_id, feature_id, cvterm_id, pub_id, rank, is_not ) VALUES ( nextval('feature_cvterm_feature_cvterm_id_seq'), (SELECT feature_id FROM feature WHERE uniquename='&quot;, seekableBufferedStream0);
+<span class="nocode"><a name="7">  7: </a></span>tabixReader0.query(&quot;Usage: java -cp .:sam.jar TabixReader &lt;in.gz&gt; [region]&quot;);
+</pre>
+<h3>Test case 27</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(&quot;/Users/kp11/workspace/applications/Artemis/test/.tbi&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileSystemHandling.appendStringToFile(evoSuiteFile0, &quot;shared_id&quot;);
+<span class="nocode"><a name="3">  3: </a></span>TabixReader tabixReader0 = new TabixReader(&quot;&quot;);
+<span class="nocode"><a name="4">  4: </a></span>tabixReader0.query(&quot;A6+,:,#KU^&quot;);
+</pre>
+<h3>Test case 28</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[0];
+<span class="nocode"><a name="2">  2: </a></span>ByteArraySeekableStream byteArraySeekableStream0 = new ByteArraySeekableStream(byteArray0);
+<span class="nocode"><a name="3">  3: </a></span>EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(&quot;/Users/kp11/workspace/applications/Artemis/test/INSERT INTO feature_cvterm ( feature_cvterm_id, feature_id, cvterm_id, pub_id, rank, is_not ) VALUES ( nextval('feature_cvterm_feature_cvterm_id_seq'), (SELECT feature_id FROM feature WHERE uniquename='.tbi&quot;);
+<span class="nocode"><a name="4">  4: </a></span>FileSystemHandling.appendLineToFile(evoSuiteFile0, &quot;20!t=k'va,z.q4x!&quot;);
+<span class="nocode"><a name="5">  5: </a></span>SeekableBufferedStream seekableBufferedStream0 = new SeekableBufferedStream(byteArraySeekableStream0, 66);
+<span class="nocode"><a name="6">  6: </a></span>TabixReader tabixReader0 = new TabixReader(&quot;INSERT INTO feature_cvterm ( feature_cvterm_id, feature_id, cvterm_id, pub_id, rank, is_not ) VALUES ( nextval('feature_cvterm_feature_cvterm_id_seq'), (SELECT feature_id FROM feature WHERE uniquename='&quot;, seekableBufferedStream0);
+<span class="nocode"><a name="7">  7: </a></span>MockFile mockFile0 = new MockFile((File) null, &quot;Usage: java -cp .:sam.jar TabixReader &lt;in.gz&gt; [region]&quot;);
+<span class="nocode"><a name="8">  8: </a></span>tabixReader0.readIndex((File) mockFile0);
+</pre>
+<h3>Test case 29</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>TabixReader.readInt((InputStream) null);
+</pre>
+<h3>Test case 30</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[0];
+<span class="nocode"><a name="2">  2: </a></span>ByteArraySeekableStream byteArraySeekableStream0 = new ByteArraySeekableStream(byteArray0);
+<span class="nocode"><a name="3">  3: </a></span>EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(&quot;/Users/kp11/workspace/applications/Artemis/test/INSERT INTO feature_cvterm ( feature_cvterm_id, feature_id, cvterm_id, pub_id, rank, is_not ) VALUES ( nextval('feature_cvterm_feature_cvterm_id_seq'), (SELECT feature_id FROM feature WHERE uniquename='.tbi&quot;);
+<span class="nocode"><a name="4">  4: </a></span>FileSystemHandling.appendLineToFile(evoSuiteFile0, &quot;20!t=k'va,z.q4x!&quot;);
+<span class="nocode"><a name="5">  5: </a></span>SeekableBufferedStream seekableBufferedStream0 = new SeekableBufferedStream(byteArraySeekableStream0, 66);
+<span class="nocode"><a name="6">  6: </a></span>TabixReader tabixReader0 = new TabixReader(&quot;INSERT INTO feature_cvterm ( feature_cvterm_id, feature_id, cvterm_id, pub_id, rank, is_not ) VALUES ( nextval('feature_cvterm_feature_cvterm_id_seq'), (SELECT feature_id FROM feature WHERE uniquename='&quot;, seekableBufferedStream0);
+<span class="nocode"><a name="7">  7: </a></span>byteArraySeekableStream0.close();
+<span class="nocode"><a name="8">  8: </a></span>tabixReader0.readLine();
+</pre>
+<h3>Test case 31</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Path path0 = mockFile0.toPath();
+<span class="nocode"><a name="3">  3: </a></span>UnaryOperator&lt;SeekableByteChannel&gt; unaryOperator0 = UnaryOperator.identity();
+<span class="nocode"><a name="4">  4: </a></span>SeekablePathStream seekablePathStream0 = new SeekablePathStream(path0, unaryOperator0);
+<span class="nocode"><a name="5">  5: </a></span>DataInputStream dataInputStream0 = new DataInputStream(seekablePathStream0);
+<span class="nocode"><a name="6">  6: </a></span>SequenceInputStream sequenceInputStream0 = new SequenceInputStream(dataInputStream0, seekablePathStream0);
+<span class="nocode"><a name="7">  7: </a></span>TabixReader.readLine((InputStream) sequenceInputStream0);
+</pre>
+<h3>Test case 32</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>TabixReader.readLine((InputStream) null);
+</pre>
+<h3>Test case 33</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>URL uRL0 = MockURL.getHttpExample();
+<span class="nocode"><a name="2">  2: </a></span>SeekableHTTPStream seekableHTTPStream0 = new SeekableHTTPStream(uRL0);
+<span class="nocode"><a name="3">  3: </a></span>TabixReader.readLong(seekableHTTPStream0);
+</pre>
+<h3>Test case 34</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[5];
+<span class="nocode"><a name="2">  2: </a></span>byteArray0[3] = (byte) (-127);
+<span class="nocode"><a name="3">  3: </a></span>ByteArrayInputStream byteArrayInputStream0 = new ByteArrayInputStream(byteArray0);
+<span class="nocode"><a name="4">  4: </a></span>TabixReader.readInt(byteArrayInputStream0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(1, byteArrayInputStream0.available());
+</pre>
+<h3>Test case 35</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[2];
+<span class="nocode"><a name="2">  2: </a></span>byteArray0[0] = (byte) (-36);
+<span class="nocode"><a name="3">  3: </a></span>SeekableMemoryStream seekableMemoryStream0 = new SeekableMemoryStream(byteArray0, &quot;cbw% 2O2&quot;);
+<span class="nocode"><a name="4">  4: </a></span>int int0 = TabixReader.readInt(seekableMemoryStream0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(220, int0);
+</pre>
+<h3>Test case 36</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[0];
+<span class="nocode"><a name="2">  2: </a></span>ByteArraySeekableStream byteArraySeekableStream0 = new ByteArraySeekableStream(byteArray0);
+<span class="nocode"><a name="3">  3: </a></span>int int0 = TabixReader.readInt(byteArraySeekableStream0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, int0);
+</pre>
+<h3>Test case 37</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[5];
+<span class="nocode"><a name="2">  2: </a></span>byteArray0[3] = (byte)10;
+<span class="nocode"><a name="3">  3: </a></span>ByteArraySeekableStream byteArraySeekableStream0 = new ByteArraySeekableStream(byteArray0);
+<span class="nocode"><a name="4">  4: </a></span>String string0 = TabixReader.readLine((InputStream) byteArraySeekableStream0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(4L, byteArraySeekableStream0.position());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;\u0000\u0000\u0000&quot;, string0);
+</pre>
+<h3>Test case 38</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[7];
+<span class="nocode"><a name="2">  2: </a></span>byteArray0[0] = (byte)30;
 <span class="nocode"><a name="3">  3: </a></span>ByteArrayReader byteArrayReader0 = new ByteArrayReader(byteArray0);
-<span class="nocode"><a name="4">  4: </a></span>String string0 = TabixReader.readLine((InputStream) byteArrayReader0);
-<span class="nocode"><a name="5">  5: </a></span>assertNull(string0);
+<span class="nocode"><a name="4">  4: </a></span>long long0 = TabixReader.readLong(byteArrayReader0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(30L, long0);
+</pre>
+<h3>Test case 39</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[0];
+<span class="nocode"><a name="2">  2: </a></span>ByteArraySeekableStream byteArraySeekableStream0 = new ByteArraySeekableStream(byteArray0);
+<span class="nocode"><a name="3">  3: </a></span>SeekableBufferedStream seekableBufferedStream0 = new SeekableBufferedStream(byteArraySeekableStream0, 66);
+<span class="nocode"><a name="4">  4: </a></span>long long0 = TabixReader.readLong(seekableBufferedStream0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0L, long0);
+</pre>
+<h3>Test case 40</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[14];
+<span class="nocode"><a name="2">  2: </a></span>byteArray0[1] = (byte) (-12);
+<span class="nocode"><a name="3">  3: </a></span>ByteArraySeekableStream byteArraySeekableStream0 = new ByteArraySeekableStream(byteArray0);
+<span class="nocode"><a name="4">  4: </a></span>TabixReader.readLine((InputStream) byteArraySeekableStream0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(14L, byteArraySeekableStream0.position());
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(byteArraySeekableStream0.eof());
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -146,13 +358,13 @@ uk.ac.sanger.artemis.components.variant.TabixReader
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.variant.TabixReader
-<li>Size: 18
-<li>Length: 42
+<li>Size: 40
+<li>Length: 173
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.24952723043727645
-<li>BranchCoverage: 0.06735751295336788
-<li>MethodCoverage: 0.3
-<li>OutputCoverage: 0.10810810810810811
+<li>Coverage: 0.4456596327072362
+<li>BranchCoverage: 0.15544041450777202
+<li>MethodCoverage: 0.9
+<li>OutputCoverage: 0.43243243243243246
 </ul></div>
 </div>
 <p><br><a href="../report-generation.html">Back to Overview</a></p>

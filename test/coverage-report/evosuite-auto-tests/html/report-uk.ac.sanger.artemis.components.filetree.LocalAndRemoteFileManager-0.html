@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.components.filetree.LocalAndRemoteFileManager
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.components.filetree.LocalAndRemoteFileManager: 0.32032845605801674</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.components.filetree.LocalAndRemoteFileManager: 0.30991178939135006</ul>
 <ul>
-<li>1285.3302752293578 fitness evaluations, 0 generations, null statements, 6 tests.
+<li>1286.3302752293578 fitness evaluations, 0 generations, null statements, 7 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -57,8 +57,13 @@ uk.ac.sanger.artemis.components.filetree.LocalAndRemoteFileManager
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DirectoryFileFilter directoryFileFilter0 = (DirectoryFileFilter)DirectoryFileFilter.INSTANCE;
+<span class="nocode"><a name="2">  2: </a></span>LocalAndRemoteFileManager localAndRemoteFileManager0 = new LocalAndRemoteFileManager((JFrame) null, directoryFileFilter0);
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>FileFilter fileFilter0 = LocalAndRemoteFileManager.getArtemisFilter();
-<span class="nocode"><a name="2">  2: </a></span>LocalAndRemoteFileManager localAndRemoteFileManager0 = new LocalAndRemoteFileManager((JFrame) null, fileFilter0);
+<span class="nocode"><a name="2">  2: </a></span>assertNotNull(fileFilter0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -71,10 +76,10 @@ uk.ac.sanger.artemis.components.filetree.LocalAndRemoteFileManager
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.filetree.LocalAndRemoteFileManager
-<li>Size: 6
-<li>Length: 7
+<li>Size: 7
+<li>Length: 8
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.32032845605801674
+<li>Coverage: 0.30991178939135006
 <li>BranchCoverage: 0.0703125
 <li>MethodCoverage: 0.5833333333333334
 <li>OutputCoverage: 0.16666666666666666

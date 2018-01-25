@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.j2ssh.SshLogin
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.j2ssh.SshLogin: 0.6838040893206563</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.j2ssh.SshLogin: 0.6637287254952925</ul>
 <ul>
-<li>159.38095237927084 fitness evaluations, 0 generations, null statements, 13 tests.
+<li>170.8782579700942 fitness evaluations, 0 generations, null statements, 12 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -63,50 +63,43 @@ uk.ac.sanger.artemis.j2ssh.SshLogin
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SshLogin sshLogin0 = new SshLogin();
 <span class="nocode"><a name="2">  2: </a></span>JPasswordField jPasswordField0 = sshLogin0.getJPasswordField();
-<span class="nocode"><a name="3">  3: </a></span>assertTrue(jPasswordField0.getFocusTraversalKeysEnabled());
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(jPasswordField0.isFocusCycleRoot());
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SshLogin sshLogin0 = new SshLogin();
-<span class="nocode"><a name="2">  2: </a></span>SshLogin sshLogin1 = new SshLogin();
-<span class="nocode"><a name="3">  3: </a></span>JPanel jPanel0 = sshLogin1.getLogin();
-<span class="nocode"><a name="4">  4: </a></span>assertFalse(jPanel0.getIgnoreRepaint());
+<span class="nocode"><a name="2">  2: </a></span>sshLogin0.getLogin();
+<span class="nocode"><a name="3">  3: </a></span>sshLogin0.getSshClient(false);
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SshLogin sshLogin0 = new SshLogin();
 <span class="nocode"><a name="2">  2: </a></span>sshLogin0.getLogin();
-<span class="nocode"><a name="3">  3: </a></span>sshLogin0.getSshClient(true);
+<span class="nocode"><a name="3">  3: </a></span>JPanel jPanel0 = sshLogin0.getLogin();
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(jPanel0.isFocusTraversalPolicyProvider());
 </pre>
 <h3>Test case 9</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SshLogin sshLogin0 = new SshLogin();
-<span class="nocode"><a name="2">  2: </a></span>sshLogin0.getLogin();
-<span class="nocode"><a name="3">  3: </a></span>JPanel jPanel0 = sshLogin0.getLogin();
-<span class="nocode"><a name="4">  4: </a></span>assertFalse(jPanel0.getIgnoreRepaint());
-</pre>
-<h3>Test case 10</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SshLogin sshLogin0 = new SshLogin();
 <span class="nocode"><a name="2">  2: </a></span>sshLogin0.getLogin();
 <span class="nocode"><a name="3">  3: </a></span>String string0 = SshLogin.getHostname();
 <span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;localhost&quot;, string0);
 </pre>
-<h3>Test case 11</h3>
+<h3>Test case 10</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SshLogin sshLogin0 = new SshLogin();
 <span class="nocode"><a name="2">  2: </a></span>sshLogin0.getLogin();
 <span class="nocode"><a name="3">  3: </a></span>String string0 = SshLogin.getPort();
 <span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;2224&quot;, string0);
 </pre>
-<h3>Test case 12</h3>
+<h3>Test case 11</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SshLogin sshLogin0 = new SshLogin();
 <span class="nocode"><a name="2">  2: </a></span>Properties properties0 = SshLogin.getProperties();
 <span class="nocode"><a name="3">  3: </a></span>assertEquals(24, properties0.size());
 <span class="nocode"><a name="4">  4: </a></span>assertNotNull(properties0);
 </pre>
-<h3>Test case 13</h3>
+<h3>Test case 12</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SshLogin sshLogin0 = new SshLogin();
 <span class="nocode"><a name="2">  2: </a></span>sshLogin0.getLogin();
@@ -124,11 +117,11 @@ uk.ac.sanger.artemis.j2ssh.SshLogin
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.j2ssh.SshLogin
-<li>Size: 13
-<li>Length: 29
+<li>Size: 12
+<li>Length: 26
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.6838040893206563
-<li>BranchCoverage: 0.5576923076923077
+<li>Coverage: 0.6637287254952925
+<li>BranchCoverage: 0.4807692307692308
 <li>MethodCoverage: 1.0
 <li>OutputCoverage: 0.3584905660377358
 </ul></div>

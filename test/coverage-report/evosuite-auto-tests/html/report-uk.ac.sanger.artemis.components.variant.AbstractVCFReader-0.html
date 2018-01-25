@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.components.variant.AbstractVCFReader
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.components.variant.AbstractVCFReader: 0.2694042780636035</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.components.variant.AbstractVCFReader: 0.2747775471785945</ul>
 <ul>
-<li>673.117125981545 fitness evaluations, 0 generations, null statements, 15 tests.
+<li>669.092063472884 fitness evaluations, 0 generations, null statements, 19 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,38 +35,38 @@ uk.ac.sanger.artemis.components.variant.AbstractVCFReader
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[9];
-<span class="nocode"><a name="2">  2: </a></span>ByteArrayReader byteArrayReader0 = new ByteArrayReader(byteArray0);
-<span class="nocode"><a name="3">  3: </a></span>PushbackInputStream pushbackInputStream0 = new PushbackInputStream(byteArrayReader0, 1233);
-<span class="nocode"><a name="4">  4: </a></span>AbstractVCFReader.readFloat(pushbackInputStream0);
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(5, byteArrayReader0.available());
+<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[7];
+<span class="nocode"><a name="2">  2: </a></span>ByteArrayInputStream byteArrayInputStream0 = new ByteArrayInputStream(byteArray0, (byte)0, (byte)51);
+<span class="nocode"><a name="3">  3: </a></span>AbstractVCFReader.readFloat(byteArrayInputStream0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(3, byteArrayInputStream0.available());
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>TabixReader tabixReader0 = new TabixReader(&quot;_2^Us9?[_BD/&amp;S&quot;);
+<span class="nocode"><a name="1">  1: </a></span>BCFReader bCFReader0 = new BCFReader((String) null);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[1];
-<span class="nocode"><a name="2">  2: </a></span>ByteArrayInputStream byteArrayInputStream0 = new ByteArrayInputStream(byteArray0, (byte) (-36), 2457);
-<span class="nocode"><a name="3">  3: </a></span>AbstractVCFReader.readInt(byteArrayInputStream0);
+<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[2];
+<span class="nocode"><a name="2">  2: </a></span>ByteArraySeekableStream byteArraySeekableStream0 = new ByteArraySeekableStream(byteArray0);
+<span class="nocode"><a name="3">  3: </a></span>SeekableBufferedStream seekableBufferedStream0 = new SeekableBufferedStream(byteArraySeekableStream0);
+<span class="nocode"><a name="4">  4: </a></span>int int0 = AbstractVCFReader.readInt(seekableBufferedStream0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, int0);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[9];
-<span class="nocode"><a name="2">  2: </a></span>ByteArrayReader byteArrayReader0 = new ByteArrayReader(byteArray0);
-<span class="nocode"><a name="3">  3: </a></span>PushbackInputStream pushbackInputStream0 = new PushbackInputStream(byteArrayReader0, 1233);
-<span class="nocode"><a name="4">  4: </a></span>AbstractVCFReader.readLong(pushbackInputStream0);
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(1, byteArrayReader0.available());
+<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[7];
+<span class="nocode"><a name="2">  2: </a></span>ByteArrayInputStream byteArrayInputStream0 = new ByteArrayInputStream(byteArray0, (byte)0, (byte)51);
+<span class="nocode"><a name="3">  3: </a></span>long long0 = AbstractVCFReader.readLong(byteArrayInputStream0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0L, long0);
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Hashtable&lt;String, String&gt; hashtable0 = AbstractVCFReader.getLineHash(&quot; steN=&quot;, &quot;SR9t]vOX|q\&quot;zl&quot;);
-<span class="nocode"><a name="2">  2: </a></span>assertEquals(1, hashtable0.size());
+<span class="nocode"><a name="1">  1: </a></span>Hashtable&lt;String, String&gt; hashtable0 = AbstractVCFReader.getLineHash(&quot;8&quot;, &quot;DescriLpptionG^u* 8&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertFalse(hashtable0.isEmpty());
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Hashtable&lt;String, String&gt; hashtable0 = AbstractVCFReader.getLineHash(&quot; tep&quot;, &quot;|,NV#3#z=S&lt;?I~&quot;);
+<span class="nocode"><a name="1">  1: </a></span>Hashtable&lt;String, String&gt; hashtable0 = AbstractVCFReader.getLineHash(&quot;=&quot;, &quot;iNjq%4PNN5=ZIjfA?eT&quot;);
 <span class="nocode"><a name="2">  2: </a></span>assertEquals(2, hashtable0.size());
 </pre>
 <h3>Test case 7</h3>
@@ -75,7 +75,7 @@ uk.ac.sanger.artemis.components.variant.AbstractVCFReader
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>AbstractVCFReader.getLineHash(&quot;z_.DOO?Q}omLkX}G&quot;, &quot;|,NV#3#z=S&lt;?I~&quot;);
+<span class="nocode"><a name="1">  1: </a></span>AbstractVCFReader.getLineHash(&quot;Discordant field size detected for field &quot;, &quot;ei1wW+A&quot;);
 </pre>
 <h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
@@ -84,39 +84,67 @@ uk.ac.sanger.artemis.components.variant.AbstractVCFReader
 </pre>
 <h3>Test case 10</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>AbstractVCFReader.readFloat((InputStream) null);
+<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[7];
+<span class="nocode"><a name="2">  2: </a></span>ByteArrayInputStream byteArrayInputStream0 = new ByteArrayInputStream(byteArray0, (-1932923024), (byte)51);
+<span class="nocode"><a name="3">  3: </a></span>AbstractVCFReader.readFloat(byteArrayInputStream0);
 </pre>
 <h3>Test case 11</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>AbstractVCFReader.readInt((InputStream) null);
+<span class="nocode"><a name="1">  1: </a></span>AbstractVCFReader.readFloat((InputStream) null);
 </pre>
 <h3>Test case 12</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>AbstractVCFReader.readLong((InputStream) null);
+<span class="nocode"><a name="1">  1: </a></span>SeekableBufferedStream seekableBufferedStream0 = new SeekableBufferedStream((SeekableStream) null);
+<span class="nocode"><a name="2">  2: </a></span>AbstractVCFReader.readInt(seekableBufferedStream0);
 </pre>
 <h3>Test case 13</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[3];
-<span class="nocode"><a name="2">  2: </a></span>byteArray0[0] = (byte) (-4);
-<span class="nocode"><a name="3">  3: </a></span>ByteArrayInputStream byteArrayInputStream0 = new ByteArrayInputStream(byteArray0);
-<span class="nocode"><a name="4">  4: </a></span>float float0 = AbstractVCFReader.readFloat(byteArrayInputStream0);
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(3.53E-43F, float0, 0.01F);
+<span class="nocode"><a name="1">  1: </a></span>AbstractVCFReader.readInt((InputStream) null);
 </pre>
 <h3>Test case 14</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[1];
-<span class="nocode"><a name="2">  2: </a></span>ByteArrayInputStream byteArrayInputStream0 = new ByteArrayInputStream(byteArray0, (byte)0, 2457);
-<span class="nocode"><a name="3">  3: </a></span>int int0 = AbstractVCFReader.readInt(byteArrayInputStream0);
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, int0);
+<span class="nocode"><a name="1">  1: </a></span>AbstractVCFReader.readLong((InputStream) null);
 </pre>
 <h3>Test case 15</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[0];
-<span class="nocode"><a name="2">  2: </a></span>ByteArrayReader byteArrayReader0 = new ByteArrayReader(byteArray0);
-<span class="nocode"><a name="3">  3: </a></span>PushbackInputStream pushbackInputStream0 = new PushbackInputStream(byteArrayReader0, 1233);
-<span class="nocode"><a name="4">  4: </a></span>pushbackInputStream0.unread(2966);
+<span class="nocode"><a name="1">  1: </a></span>HashMap&lt;String, Boolean&gt; hashMap0 = new HashMap&lt;String, Boolean&gt;();
+<span class="nocode"><a name="2">  2: </a></span>CharArrayWriter charArrayWriter0 = new CharArrayWriter();
+<span class="nocode"><a name="3">  3: </a></span>FeatureVector featureVector0 = new FeatureVector();
+<span class="nocode"><a name="4">  4: </a></span>AbstractVCFReader.write(hashMap0, &quot;A&quot;, 8, charArrayWriter0, (VCFview) null, featureVector0);
+</pre>
+<h3>Test case 16</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[2];
+<span class="nocode"><a name="2">  2: </a></span>byteArray0[0] = (byte) (-74);
+<span class="nocode"><a name="3">  3: </a></span>ByteArrayInputStream byteArrayInputStream0 = new ByteArrayInputStream(byteArray0);
+<span class="nocode"><a name="4">  4: </a></span>float float0 = AbstractVCFReader.readFloat(byteArrayInputStream0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(2.55E-43F, float0, 0.01F);
+</pre>
+<h3>Test case 17</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[2];
+<span class="nocode"><a name="2">  2: </a></span>byteArray0[1] = (byte) (-72);
+<span class="nocode"><a name="3">  3: </a></span>ByteArraySeekableStream byteArraySeekableStream0 = new ByteArraySeekableStream(byteArray0);
+<span class="nocode"><a name="4">  4: </a></span>SeekableBufferedStream seekableBufferedStream0 = new SeekableBufferedStream(byteArraySeekableStream0);
+<span class="nocode"><a name="5">  5: </a></span>int int0 = AbstractVCFReader.readInt(seekableBufferedStream0);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(47104, int0);
+</pre>
+<h3>Test case 18</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[8];
+<span class="nocode"><a name="2">  2: </a></span>byteArray0[7] = (byte) (-92);
+<span class="nocode"><a name="3">  3: </a></span>ByteArrayReader byteArrayReader0 = new ByteArrayReader(byteArray0);
+<span class="nocode"><a name="4">  4: </a></span>PushbackInputStream pushbackInputStream0 = new PushbackInputStream(byteArrayReader0);
 <span class="nocode"><a name="5">  5: </a></span>long long0 = AbstractVCFReader.readLong(pushbackInputStream0);
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(150L, long0);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals((-6629298651489370112L), long0);
+</pre>
+<h3>Test case 19</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[7];
+<span class="nocode"><a name="2">  2: </a></span>byteArray0[2] = (byte)94;
+<span class="nocode"><a name="3">  3: </a></span>ByteArrayInputStream byteArrayInputStream0 = new ByteArrayInputStream(byteArray0, (byte)0, (byte)51);
+<span class="nocode"><a name="4">  4: </a></span>long long0 = AbstractVCFReader.readLong(byteArrayInputStream0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(6160384L, long0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -129,13 +157,13 @@ uk.ac.sanger.artemis.components.variant.AbstractVCFReader
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.variant.AbstractVCFReader
-<li>Size: 15
-<li>Length: 33
+<li>Size: 19
+<li>Length: 47
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.2694042780636035
+<li>Coverage: 0.2747775471785945
 <li>BranchCoverage: 0.10465116279069768
-<li>MethodCoverage: 0.2222222222222222
-<li>OutputCoverage: 0.12727272727272726
+<li>MethodCoverage: 0.2777777777777778
+<li>OutputCoverage: 0.16363636363636364
 </ul></div>
 </div>
 <p><br><a href="../report-generation.html">Back to Overview</a></p>

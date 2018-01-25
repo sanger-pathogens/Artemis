@@ -35,13 +35,13 @@ uk.ac.sanger.artemis.io.GFF3Encoder
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>String string0 = GFF3Encoder.encode(&quot;w_&quot;);
-<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;w_&quot;, string0);
+<span class="nocode"><a name="1">  1: </a></span>String string0 = GFF3Encoder.encode((String) null);
+<span class="nocode"><a name="2">  2: </a></span>assertNull(string0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>String string0 = GFF3Encoder.decode(&quot;w_&quot;);
-<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;w_&quot;, string0);
+<span class="nocode"><a name="1">  1: </a></span>String string0 = GFF3Encoder.decode((String) null);
+<span class="nocode"><a name="2">  2: </a></span>assertNull(string0);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
@@ -54,8 +54,8 @@ uk.ac.sanger.artemis.io.GFF3Encoder
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>String string0 = GFF3Encoder.decode((String) null);
-<span class="nocode"><a name="2">  2: </a></span>assertNull(string0);
+<span class="nocode"><a name="1">  1: </a></span>String string0 = GFF3Encoder.decode(&quot;9&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;9&quot;, string0);
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
@@ -64,8 +64,8 @@ uk.ac.sanger.artemis.io.GFF3Encoder
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>String string0 = GFF3Encoder.encode((String) null);
-<span class="nocode"><a name="2">  2: </a></span>assertNull(string0);
+<span class="nocode"><a name="1">  1: </a></span>String string0 = GFF3Encoder.encode(&quot;%09&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;%2509&quot;, string0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>

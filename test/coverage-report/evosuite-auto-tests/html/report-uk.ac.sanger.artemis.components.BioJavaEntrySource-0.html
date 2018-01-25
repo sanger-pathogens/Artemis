@@ -21,7 +21,7 @@ uk.ac.sanger.artemis.components.BioJavaEntrySource
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.components.BioJavaEntrySource: 0.6039915966386554</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.components.BioJavaEntrySource: 0.7289915966386555</ul>
 <ul>
 <li>23.791666666666664 fitness evaluations, 0 generations, null statements, 9 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
@@ -48,47 +48,47 @@ uk.ac.sanger.artemis.components.BioJavaEntrySource
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>BioJavaEntrySource bioJavaEntrySource0 = new BioJavaEntrySource();
-<span class="nocode"><a name="2">  2: </a></span>bioJavaEntrySource0.getEntry(true, (ProgressThread) null);
+<span class="nocode"><a name="2">  2: </a></span>bioJavaEntrySource0.getEntry(false);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>BioJavaEntrySource bioJavaEntrySource0 = new BioJavaEntrySource();
-<span class="nocode"><a name="2">  2: </a></span>bioJavaEntrySource0.getEntry((Bases) null, true);
+<span class="nocode"><a name="2">  2: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;/nfs/team81/kmr/pow/java2/AE002734.game&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="4">  4: </a></span>bioJavaEntrySource0.getEntry(bases0, (ProgressThread) null, true);
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>BioJavaEntrySource bioJavaEntrySource0 = new BioJavaEntrySource();
-<span class="nocode"><a name="2">  2: </a></span>bioJavaEntrySource0.getEntry(false);
+<span class="nocode"><a name="2">  2: </a></span>bioJavaEntrySource0.getEntry((Bases) null, true);
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>BioJavaEntrySource bioJavaEntrySource0 = new BioJavaEntrySource();
-<span class="nocode"><a name="2">  2: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;&quot;);
-<span class="nocode"><a name="3">  3: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
-<span class="nocode"><a name="4">  4: </a></span>ProgressThread progressThread0 = new ProgressThread((JFrame) null, &quot;&quot;);
-<span class="nocode"><a name="5">  5: </a></span>bioJavaEntrySource0.getEntry(bases0, progressThread0, false);
+<span class="nocode"><a name="2">  2: </a></span>ProgressThread progressThread0 = new ProgressThread((JFrame) null, &quot;w@c&quot;);
+<span class="nocode"><a name="3">  3: </a></span>bioJavaEntrySource0.getEntry(true, progressThread0);
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>BioJavaEntrySource bioJavaEntrySource0 = new BioJavaEntrySource();
 <span class="nocode"><a name="2">  2: </a></span>EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(&quot;/nfs/team81/kmr/pow/java2/AB000095.embl&quot;);
-<span class="nocode"><a name="3">  3: </a></span>FileSystemHandling.appendLineToFile(evoSuiteFile0, &quot;3'V6n\&quot;|;{AFT&quot;);
+<span class="nocode"><a name="3">  3: </a></span>FileSystemHandling.appendLineToFile(evoSuiteFile0, &quot;&quot;);
 <span class="nocode"><a name="4">  4: </a></span>bioJavaEntrySource0.getEntry((Bases) null, true);
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(&quot;/nfs/team81/kmr/pow/java2/AE002734.game&quot;);
-<span class="nocode"><a name="2">  2: </a></span>byte[] byteArray0 = new byte[3];
-<span class="nocode"><a name="3">  3: </a></span>FileSystemHandling.appendDataToFile(evoSuiteFile0, byteArray0);
-<span class="nocode"><a name="4">  4: </a></span>BioJavaEntrySource bioJavaEntrySource0 = new BioJavaEntrySource();
-<span class="nocode"><a name="5">  5: </a></span>bioJavaEntrySource0.getEntry(false);
+<span class="nocode"><a name="1">  1: </a></span>BioJavaEntrySource bioJavaEntrySource0 = new BioJavaEntrySource();
+<span class="nocode"><a name="2">  2: </a></span>EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(&quot;/nfs/team81/kmr/pow/java2/AE002734.game&quot;);
+<span class="nocode"><a name="3">  3: </a></span>FileSystemHandling.appendLineToFile(evoSuiteFile0, &quot;|/)YF.Lrq,USMZe&quot;);
+<span class="nocode"><a name="4">  4: </a></span>bioJavaEntrySource0.getEntry(false);
 </pre>
 <h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(&quot;/nfs/team81/kmr/pow/java2/AE002734.game&quot;);
-<span class="nocode"><a name="2">  2: </a></span>FileSystemHandling.appendLineToFile(evoSuiteFile0, &quot;&quot;);
-<span class="nocode"><a name="3">  3: </a></span>BioJavaEntrySource bioJavaEntrySource0 = new BioJavaEntrySource();
-<span class="nocode"><a name="4">  4: </a></span>bioJavaEntrySource0.getEntry(true, (ProgressThread) null);
+<span class="nocode"><a name="1">  1: </a></span>BioJavaEntrySource bioJavaEntrySource0 = new BioJavaEntrySource();
+<span class="nocode"><a name="2">  2: </a></span>EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(&quot;/nfs/team81/kmr/pow/java2/AE002734.game&quot;);
+<span class="nocode"><a name="3">  3: </a></span>FileSystemHandling.appendStringToFile(evoSuiteFile0, &quot;&quot;);
+<span class="nocode"><a name="4">  4: </a></span>ProgressThread progressThread0 = new ProgressThread((JFrame) null, &quot;w@c&quot;);
+<span class="nocode"><a name="5">  5: </a></span>bioJavaEntrySource0.getEntry(true, progressThread0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -104,7 +104,7 @@ uk.ac.sanger.artemis.components.BioJavaEntrySource
 <li>Size: 9
 <li>Length: 28
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.6039915966386554
+<li>Coverage: 0.7289915966386555
 <li>BranchCoverage: 1.0
 <li>MethodCoverage: 1.0
 <li>OutputCoverage: 0.11764705882352941

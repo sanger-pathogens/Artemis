@@ -36,12 +36,13 @@ uk.ac.sanger.artemis.components.variant.PrintVCFview
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>PrintVCFview printVCFview0 = new PrintVCFview((VCFview) null);
-<span class="nocode"><a name="2">  2: </a></span>GenericDOMImplementation genericDOMImplementation0 = (GenericDOMImplementation)GenericDOMImplementation.getDOMImplementation();
-<span class="nocode"><a name="3">  3: </a></span>GenericDocument genericDocument0 = new GenericDocument((DocumentType) null, genericDOMImplementation0);
-<span class="nocode"><a name="4">  4: </a></span>DefaultImageHandler defaultImageHandler0 = new DefaultImageHandler();
-<span class="nocode"><a name="5">  5: </a></span>DefaultExtensionHandler defaultExtensionHandler0 = new DefaultExtensionHandler();
-<span class="nocode"><a name="6">  6: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(genericDocument0, defaultImageHandler0, defaultExtensionHandler0, false);
-<span class="nocode"><a name="7">  7: </a></span>printVCFview0.print((Graphics) sVGGraphics2D0, (PageFormat) null, 2357);
+<span class="nocode"><a name="2">  2: </a></span>GenericDocumentType genericDocumentType0 = new GenericDocumentType(&quot;&quot;, &quot;&quot;, (String) null);
+<span class="nocode"><a name="3">  3: </a></span>GenericDOMImplementation genericDOMImplementation0 = new GenericDOMImplementation();
+<span class="nocode"><a name="4">  4: </a></span>GenericDocument genericDocument0 = new GenericDocument(genericDocumentType0, genericDOMImplementation0);
+<span class="nocode"><a name="5">  5: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(genericDocument0);
+<span class="nocode"><a name="6">  6: </a></span>DebugGraphics debugGraphics0 = new DebugGraphics(sVGGraphics2D0);
+<span class="nocode"><a name="7">  7: </a></span>PageFormat pageFormat0 = new PageFormat();
+<span class="nocode"><a name="8">  8: </a></span>printVCFview0.print((Graphics) debugGraphics0, pageFormat0, 0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
@@ -56,11 +57,12 @@ uk.ac.sanger.artemis.components.variant.PrintVCFview
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>PrintVCFview printVCFview0 = new PrintVCFview((VCFview) null);
-<span class="nocode"><a name="2">  2: </a></span>GenericDocumentType genericDocumentType0 = new GenericDocumentType(&quot;&quot;, &quot;&quot;, &quot;&quot;);
-<span class="nocode"><a name="3">  3: </a></span>GenericDOMImplementation genericDOMImplementation0 = (GenericDOMImplementation)GenericDOMImplementation.getDOMImplementation();
+<span class="nocode"><a name="2">  2: </a></span>GenericDocumentType genericDocumentType0 = new GenericDocumentType((String) null, (String) null, (String) null);
+<span class="nocode"><a name="3">  3: </a></span>GenericDOMImplementation genericDOMImplementation0 = new GenericDOMImplementation();
 <span class="nocode"><a name="4">  4: </a></span>GenericDocument genericDocument0 = new GenericDocument(genericDocumentType0, genericDOMImplementation0);
-<span class="nocode"><a name="5">  5: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(genericDocument0);
-<span class="nocode"><a name="6">  6: </a></span>printVCFview0.paintComponent(sVGGraphics2D0);
+<span class="nocode"><a name="5">  5: </a></span>SVGGeneratorContext sVGGeneratorContext0 = SVGGeneratorContext.createDefault(genericDocument0);
+<span class="nocode"><a name="6">  6: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(sVGGeneratorContext0, false);
+<span class="nocode"><a name="7">  7: </a></span>printVCFview0.paintComponent(sVGGraphics2D0);
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
@@ -79,7 +81,7 @@ uk.ac.sanger.artemis.components.variant.PrintVCFview
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.variant.PrintVCFview
 <li>Size: 5
-<li>Length: 19
+<li>Length: 21
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.25558562408014057
 <li>BranchCoverage: 0.2

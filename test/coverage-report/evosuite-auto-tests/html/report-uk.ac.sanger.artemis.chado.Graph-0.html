@@ -36,34 +36,33 @@ uk.ac.sanger.artemis.chado.Graph
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Graph graph0 = new Graph();
-<span class="nocode"><a name="2">  2: </a></span>String string0 = graph0.getName();
-<span class="nocode"><a name="3">  3: </a></span>assertNull(string0);
+<span class="nocode"><a name="2">  2: </a></span>graph0.setGraphId(3700);
+<span class="nocode"><a name="3">  3: </a></span>int int0 = graph0.getGraphId();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(3700, int0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Graph graph0 = new Graph();
-<span class="nocode"><a name="2">  2: </a></span>String string0 = graph0.getDescription();
+<span class="nocode"><a name="2">  2: </a></span>String string0 = graph0.getName();
 <span class="nocode"><a name="3">  3: </a></span>assertNull(string0);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Graph graph0 = new Graph();
-<span class="nocode"><a name="2">  2: </a></span>byte[] byteArray0 = graph0.getData();
-<span class="nocode"><a name="3">  3: </a></span>assertNull(byteArray0);
+<span class="nocode"><a name="2">  2: </a></span>String string0 = graph0.getDescription();
+<span class="nocode"><a name="3">  3: </a></span>assertNull(string0);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Graph graph0 = new Graph();
-<span class="nocode"><a name="2">  2: </a></span>int int0 = graph0.getFeatureId();
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, int0);
+<span class="nocode"><a name="2">  2: </a></span>byte[] byteArray0 = graph0.getData();
+<span class="nocode"><a name="3">  3: </a></span>assertNull(byteArray0);
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Graph graph0 = new Graph();
-<span class="nocode"><a name="2">  2: </a></span>byte[] byteArray0 = new byte[0];
-<span class="nocode"><a name="3">  3: </a></span>graph0.setData(byteArray0);
-<span class="nocode"><a name="4">  4: </a></span>byte[] byteArray1 = graph0.getData();
-<span class="nocode"><a name="5">  5: </a></span>assertArrayEquals(new byte[] {}, byteArray1);
+<span class="nocode"><a name="2">  2: </a></span>int int0 = graph0.getFeatureId();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, int0);
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
@@ -74,52 +73,53 @@ uk.ac.sanger.artemis.chado.Graph
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Graph graph0 = new Graph();
-<span class="nocode"><a name="2">  2: </a></span>byte[] byteArray0 = new byte[2];
+<span class="nocode"><a name="2">  2: </a></span>byte[] byteArray0 = new byte[0];
 <span class="nocode"><a name="3">  3: </a></span>graph0.setData(byteArray0);
 <span class="nocode"><a name="4">  4: </a></span>byte[] byteArray1 = graph0.getData();
-<span class="nocode"><a name="5">  5: </a></span>assertArrayEquals(new byte[] {(byte)0, (byte)0}, byteArray1);
+<span class="nocode"><a name="5">  5: </a></span>assertSame(byteArray1, byteArray0);
 </pre>
 <h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Graph graph0 = new Graph();
+<span class="nocode"><a name="2">  2: </a></span>byte[] byteArray0 = new byte[8];
+<span class="nocode"><a name="3">  3: </a></span>graph0.setData(byteArray0);
+<span class="nocode"><a name="4">  4: </a></span>byte[] byteArray1 = graph0.getData();
+<span class="nocode"><a name="5">  5: </a></span>assertSame(byteArray1, byteArray0);
+</pre>
+<h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Graph graph0 = new Graph();
 <span class="nocode"><a name="2">  2: </a></span>graph0.setDescription(&quot;&quot;);
 <span class="nocode"><a name="3">  3: </a></span>String string0 = graph0.getDescription();
 <span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;&quot;, string0);
 </pre>
-<h3>Test case 9</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Graph graph0 = new Graph();
-<span class="nocode"><a name="2">  2: </a></span>graph0.setDescription(&quot;+a]#B4'N]6p&quot;);
-<span class="nocode"><a name="3">  3: </a></span>String string0 = graph0.getDescription();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;+a]#B4'N]6p&quot;, string0);
-</pre>
 <h3>Test case 10</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Graph graph0 = new Graph();
-<span class="nocode"><a name="2">  2: </a></span>graph0.setFeatureId((-1));
-<span class="nocode"><a name="3">  3: </a></span>int int0 = graph0.getFeatureId();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals((-1), int0);
+<span class="nocode"><a name="2">  2: </a></span>graph0.setDescription(&quot;'9yEEm7@SqtI@E&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = graph0.getDescription();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;'9yEEm7@SqtI@E&quot;, string0);
 </pre>
 <h3>Test case 11</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Graph graph0 = new Graph();
-<span class="nocode"><a name="2">  2: </a></span>graph0.setFeatureId(1658);
+<span class="nocode"><a name="2">  2: </a></span>graph0.setFeatureId((-100));
 <span class="nocode"><a name="3">  3: </a></span>int int0 = graph0.getFeatureId();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(1658, int0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-100), int0);
 </pre>
 <h3>Test case 12</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Graph graph0 = new Graph();
-<span class="nocode"><a name="2">  2: </a></span>graph0.setGraphId((-1147));
-<span class="nocode"><a name="3">  3: </a></span>int int0 = graph0.getGraphId();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals((-1147), int0);
+<span class="nocode"><a name="2">  2: </a></span>graph0.setFeatureId(2078);
+<span class="nocode"><a name="3">  3: </a></span>int int0 = graph0.getFeatureId();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(2078, int0);
 </pre>
 <h3>Test case 13</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Graph graph0 = new Graph();
-<span class="nocode"><a name="2">  2: </a></span>graph0.setGraphId(1229);
+<span class="nocode"><a name="2">  2: </a></span>graph0.setGraphId((-1757));
 <span class="nocode"><a name="3">  3: </a></span>int int0 = graph0.getGraphId();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(1229, int0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-1757), int0);
 </pre>
 <h3>Test case 14</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
@@ -131,9 +131,9 @@ uk.ac.sanger.artemis.chado.Graph
 <h3>Test case 15</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Graph graph0 = new Graph();
-<span class="nocode"><a name="2">  2: </a></span>graph0.setName(&quot;mkSW&lt;Lqxr4?;HMGK*&quot;);
+<span class="nocode"><a name="2">  2: </a></span>graph0.setName(&quot;_{bN@j[{xVJL5w7&amp;&quot;);
 <span class="nocode"><a name="3">  3: </a></span>String string0 = graph0.getName();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;mkSW&lt;Lqxr4?;HMGK*&quot;, string0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;_{bN@j[{xVJL5w7&amp;&quot;, string0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>

@@ -66,7 +66,7 @@ cd ~/artemis
 
     <PARA>
       <COMMAND>
-java  -mx500m -ms100m -classpath lib/biojava.jar:lib/jemAlign.jar:lib/j2ssh/j2ssh-core.jar:lib/ibatis/ibatis-2.3.4.726.jar:lib/ibatis/log4j-1.2.14.jar:lib/ibatis/cglib-nodep-2.2.jar:lib/postgresql-8.4-701.jdbc3.jar:lib/picard-2.13.2.jar:lib/picard/htsjdk-2.12.0.jar:lib/batik/batik-awt-util.jar:lib/batik/batik-codec.jar:lib/batik/batik-dom.jar:lib/batik/batik-ext.jar:lib/batik/batik-svggen.jar:lib/batik/batik-util.jar:lib/batik/batik-xml.jar:lib/commons-lang-2.6.jar:lib/commons-net-3.6.jar:. -Dartemis.environment=UNIX uk.ac.sanger.artemis.components.ArtemisMain
+java  -mx500m -ms100m -classpath lib/biojava.jar:lib/jemAlign.jar:lib/j2ssh/j2ssh-core.jar:lib/ibatis/ibatis-2.3.4.726.jar:lib/ibatis/log4j-1.2.14.jar:lib/ibatis/cglib-nodep-2.2.jar:lib/postgresql-8.4-701.jdbc3.jar:lib/picard/picard.jar:lib/batik/batik-awt-util.jar:lib/batik/batik-codec.jar:lib/batik/batik-dom.jar:lib/batik/batik-ext.jar:lib/batik/batik-svggen.jar:lib/batik/batik-util.jar:lib/batik/batik-xml.jar:lib/commons-lang-2.6.jar:lib/commons-net-3.6.jar:. -Dartemis.environment=UNIX uk.ac.sanger.artemis.components.ArtemisMain
       </COMMAND>
     </PARA>
   </SECT1>

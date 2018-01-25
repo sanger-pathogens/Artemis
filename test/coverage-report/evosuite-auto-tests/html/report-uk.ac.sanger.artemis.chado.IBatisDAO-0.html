@@ -35,7 +35,8 @@ uk.ac.sanger.artemis.chado.IBatisDAO
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>IBatisDAO iBatisDAO0 = new IBatisDAO((JPasswordField) null);
+<span class="nocode"><a name="1">  1: </a></span>JPasswordField jPasswordField0 = new JPasswordField();
+<span class="nocode"><a name="2">  2: </a></span>IBatisDAO iBatisDAO0 = new IBatisDAO(jPasswordField0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -49,7 +50,7 @@ uk.ac.sanger.artemis.chado.IBatisDAO
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.chado.IBatisDAO
 <li>Size: 1
-<li>Length: 1
+<li>Length: 2
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.12876039774703402
 <li>BranchCoverage: 0.004424778761061947

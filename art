@@ -1,170 +1,146 @@
-#!/bin/sh -
+#!/bin/bash -
 
-# This script will start Artemis on a UNIX system.  This script should
-# be left in the same directory as the rest of the Artemis
-# distribution, so that the java class files can be found.  If
-# necessary a symbolic link can be made to this script from
-# /usr/local/bin/ or elsewhere. 
-
-# resolve links - $0 may be a link
-PRG=$0
-progname=`basename $0`
-
-#PSU_PROD_JAVA_VERSION=1.4.2
-#. $PSU_CONFIG_DIR/shell/java_environment.sh
-
-while [ -h "$PRG" ] ; do
-  ls=`ls -ld "$PRG"`
-  link=`expr "$ls" : '.*-> \(.*\)$'`
-  if expr "$link" : '.*/.*' > /dev/null; then
-    PRG="$link"
-  else
-    PRG="`dirname $PRG`/$link"
-  fi
-done
-
-ARTEMIS_HOME=`dirname "$PRG"`/.
-LIBDIR=/nfs/pathsoft/prod/javalibs
-
-CLASSPATH=$ARTEMIS_HOME:$ARTEMIS_HOME/lib/biojava.jar:$ARTEMIS_HOME/lib/jemAlign.jar:$ARTEMIS_HOME/lib/jakarta-regexp-1.2.jar:$ARTEMIS_HOME/lib/macos.jar:$ARTEMIS_HOME/lib/postgresql-8.4-701.jdbc3.jar:$CLASSPATH
-
-# batik jars
-CLASSPATH=$CLASSPATH:$ARTEMIS_HOME/lib/batik/batik-awt-util.jar:$ARTEMIS_HOME/lib/batik/batik-dom.jar:$ARTEMIS_HOME/lib/batik/batik-ext.jar:$ARTEMIS_HOME/lib/batik/batik-svggen.jar:$ARTEMIS_HOME/lib/batik/batik-util.jar:$ARTEMIS_HOME/lib/batik/batik-xml.jar:$ARTEMIS_HOME/lib/batik/batik-codec.jar
-
-# j2ssh jars
-CLASSPATH=$CLASSPATH:$ARTEMIS_HOME/lib/j2ssh/commons-logging.jar:$ARTEMIS_HOME/lib/j2ssh/j2ssh-core.jar:$ARTEMIS_HOME/lib/j2ssh/
-
-# iBatis jars
-CLASSPATH=$CLASSPATH:$ARTEMIS_HOME/lib/ibatis/ibatis-2.3.4.726.jar:$ARTEMIS_HOME/lib/ibatis/:$ARTEMIS_HOME/lib/ibatis/log4j-1.2.14.jar:$ARTEMIS_HOME/lib/ibatis/cglib-nodep-2.2.jar
-export CLASSPATH
-
-# picard jars
-CLASSPATH=$ARTEMIS_HOME/lib/picard/htsjdk-2.12.0.jar:$ARTEMIS_HOME/lib/picard/picard-2.13.2.jar:$ARTEMIS_HOME/lib/commons-net-3.6.jar:$CLASSPATH
-
-CLASSPATH="$ARTEMIS_HOME/lib/commons-lang-2.6.jar:$CLASSPATH"
-
-export CLASSPATH
-
-
-ARTEMIS_PROPERTIES="-Dartemis.environment=UNIX"
-
-# Allow URLs to work from behind firewalls
-if [ "$http_proxy" = "" ]
-then
-  http_proxy=$HTTP_PROXY
-fi
-
-if [ "$http_proxy" = "" ]
-then
-  http_proxy=$HTTP_proxy
-fi
-
-if [ "$http_proxy" != "" ]
-then
-  ARTEMIS_PROPERTIES="$ARTEMIS_PROPERTIES -DproxySet=true "`echo $http_proxy | sed 's/http:\/\/\(.*\):\(.*\)/ -Dhttp.proxyHost=\1 -Dhttp.proxyPort=\2/'`
-fi
-
-
-# "-mx500m" sets the maximum amount of memory that Artemis can use.  This may
-# need to be increased when dealing with large files
-MEM="-mx500m -ms20m"
-
-if [ "$JVM_FLAGS" = "" ]
-then
-    FLAGS="$MEM -noverify"
-else
-    FLAGS="$MEM -noverify $JVM_FLAGS"
-fi
-
+#
+# This script will start Artemis on a UNIX system.
+#
 
 QUIET=no
-DEBUG=no
+PRG=$0
 
-if [ $# = 0 ]
+usage () {
+    echo "SYNOPSIS"
+    echo "        Artemis: Genome Browser and Annotation Tool"
+    echo "USAGE"
+    echo "        $0 [options] <SEQUENCE_FILE> [+FEATURE_FILE ...]"
+    echo "OPTIONS"
+    echo "        SEQUENCE_FILE                  An EMBL, GenBank, FASTA, or GFF3 file"
+    echo "        FEATURE_FILE                   An Artemis TAB file, or GFF file"
+    echo
+    echo "        -options FILE                  Read a text file of options from FILE"
+    echo "        -chado                         Connect to a Chado database (using PGHOST, PGPORT, PGDATABASE, PGUSER environment variables)"
+    echo
+    echo "        -Dblack_belt_mode=?            Keep warning messages to a minimum [true,false]"
+    echo "        -Doffset=XXX                   Open viewer at base position XXX [integer >= 1]"
+    echo "        -Duserplot=FILE[,FILE2]        Open one or more userplots"
+    echo "        -Dloguserplot=FILE[,FILE2]     Open one or more userplots, take log(data)"
+    echo "        -Dbam=FILE[,FILE2,...]         Open one or more BAM, CRAM, VCF or BCF files"
+    echo "        -DbamClone=n                   Open all BAM, CRAM, VCF or BCF files in multiple (n > 1) panels"
+    echo "        -Dbam[1,2,..]=FILE[,FILE2,..]  Open BAM, CRAM, VCF or BCF files in separate panels"
+    echo "        -Dshow_snps                    Show SNP marks in BamView"
+    echo "        -Dshow_snp_plot                Open SNP plot in BamView"
+    echo "        -Dshow_cov_plot                Open coverage plot in BamView"
+    echo "        -Dshow_forward_lines=?         Hide/show forward frame lines [true,false]"
+    echo "        -Dshow_reverse_lines=?         Hide/show reverse frame lines [true,false]"
+    echo "        -Dchado="h:p/d?u"              Get Artemis to open this CHADO database"
+    echo "        -Dread_only                    Open CHADO database read-only"
+    echo "EXAMPLES"
+    echo "        % art AJ006275.embl" 
+    echo "        % art contigs.fa +annotation.gff +islands.tab"
+    echo "        % art -Dblack_belt_mode=true -Dbam=ecoli_hiseq.bam E_coli_K12.gbk"
+    echo "        % art -Duserplot=repeatmap.plot,geecee.plot Plasmid.gff3"
+    echo "HOMEPAGE"
+    echo "        http://www.sanger.ac.uk/resources/software/artemis/"
+    echo   
+    
+    exit 1
+}
+
+add_proxy_properties() {
+
+	if [[ "$http_proxy" = "" ]]
+	then
+		http_proxy=$HTTP_PROXY
+	fi
+	
+	if [[ "$http_proxy" = "" ]]
+	then
+	 	http_proxy=$HTTP_proxy
+	fi
+	
+	if [[ "$http_proxy" != "" ]]
+	then
+		APPLICATION_PROPERTIES="$APPLICATION_PROPERTIES -DproxySet=true "`echo $http_proxy | sed 's/http:\/\/\(.*\):\(.*\)/ -Dhttp.proxyHost=\1 -Dhttp.proxyPort=\2/'`
+	fi
+}
+
+#
+# Resolve links - $0 may be a link
+#
+while [ -h "$PRG" ] ; do
+	ls=`ls -ld "$PRG"`
+	link=`expr "$ls" : '.*-> \(.*\)$'`
+	if expr "$link" : '.*/.*' > /dev/null; then
+		PRG="$link"
+	else
+		PRG="`dirname $PRG`/$link"
+	fi
+done
+
+#
+# Parse arguments.
+#
+APPLICATION_PROPERTIES="-Djdbc.drivers=org.postgresql.Driver -Dartemis.environment=UNIX $SANGER_ARTEMIS_OPTIONS"
+while test $# != 0
+do
+    case $1 in
+    		-options)   APPLICATION_PROPERTIES="$APPLICATION_PROPERTIES -Dextra_options=$2"; shift ;;
+    		-chado)     APPLICATION_PROPERTIES="$APPLICATION_PROPERTIES -Dchado=$PGHOST:$PGPORT/$PGDATABASE?$PGUSER -Dibatis" ;;
+	    -D*)        APPLICATION_PROPERTIES="$APPLICATION_PROPERTIES $1" ;;
+	    -quiet)     QUIET=yes ; APPLICATION_PROPERTIES="$APPLICATION_PROPERTIES -Drun_quietly=true" ;;
+	    -help)      usage ;;
+	    --help)     usage ;;
+	    -h)         usage ;;
+	    *)          break ;;
+    esac
+    shift
+done
+
+APPLICATION_HOME=`dirname "$PRG"`
+CLASSPATH=$APPLICATION_HOME:$APPLICATION_HOME/lib/biojava.jar:$APPLICATION_HOME/lib/jemAlign.jar:$APPLICATION_HOME/lib/jakarta-regexp-1.2.jar:$APPLICATION_HOME/lib/postgresql-8.4-701.jdbc3.jar:$CLASSPATH
+CLASSPATH=$CLASSPATH:$APPLICATION_HOME/lib/batik/batik-awt-util.jar:$APPLICATION_HOME/lib/batik/batik-dom.jar:$APPLICATION_HOME/lib/batik/batik-ext.jar:$APPLICATION_HOME/lib/batik/batik-svggen.jar:$APPLICATION_HOME/lib/batik/batik-util.jar:$APPLICATION_HOME/lib/batik/batik-xml.jar:$APPLICATION_HOME/lib/batik/batik-codec.jar
+CLASSPATH=$CLASSPATH:$APPLICATION_HOME/lib/j2ssh/commons-logging.jar:$APPLICATION_HOME/lib/j2ssh/j2ssh-core.jar:$APPLICATION_HOME/lib/j2ssh/
+CLASSPATH=$CLASSPATH:$APPLICATION_HOME/lib/ibatis/ibatis-2.3.4.726.jar:$APPLICATION_HOME/lib/ibatis/:$APPLICATION_HOME/lib/ibatis/log4j-1.2.14.jar:$APPLICATION_HOME/lib/ibatis/cglib-nodep-2.2.jar
+CLASSPATH=$APPLICATION_HOME/lib/picard/picard.jar:$APPLICATION_HOME/lib/commons-net-3.6.jar:$CLASSPATH
+CLASSPATH=$APPLICATION_HOME/lib/commons-lang-2.6.jar:$CLASSPATH
+export CLASSPATH
+
+#
+# Use a custom Java version if necessary
+#
+if [[ "$ARTEMIS_JAVA_JRE" = "" ]]
 then
-    :
+	JAVA=`which java`
 else
-    if [ "$1" = "-h" -o "$1" = "--help" -o "$1" = "-help" ]
-    then
-        cat <<EOF
-
-SYNOPSIS
-        Artemis: Genome Browser and Annotation Tool
-USAGE
-        $0 [options] <SEQUENCE_FILE> [+FEATURE_FILE ...]
-OPTIONS
-        SEQUENCE_FILE                  An EMBL, GenBank, FASTA, or GFF3 file
-        FEATURE_FILE                   An Artemis TAB file, or GFF file
-
-        -options FILE                  Read a text file of options from FILE
-        -debug                         Run using the debugging JVM instead
-        -fast | -fast64                Use the FastVM (hp Tru64 UNIX) with 32/64 bit pointers
-
-        -Dblack_belt_mode=?            Keep warning messages to a minimum [true,false]
-        -Doffset=XXX                   Open viewer at base position XXX [integer >= 1]
-        -Duserplot=FILE[,FILE2]        Open one or more userplots
-        -Dloguserplot=FILE[,FILE2]     Open one or more userplots, take log(data)
-        -Dbam=FILE[,FILE2,...]         Open one or more BAM, VCF or BCF files
-        -DbamClone=n                   Open all BAMs in multiple (n > 1) panels
-        -Dbam[1,2,..]=FILE[,FILE2,..]  Open BAMs in separate panels
-        -Dshow_snps                    Show SNP marks in BamView
-        -Dshow_snp_plot                Open SNP plot in BamView
-        -Dshow_cov_plot                Open coverage plot in BamView
-        -Dshow_forward_lines=?         Hide/show forward frame lines [true,false]
-        -Dshow_reverse_lines=?         Hide/show reverse frame lines [true,false]
-        -Dchado="h:p/d?u"              Get Artemis to open this CHADO database
-        -Dread_only                    Open CHADO database read-only
-EXAMPLES
-        % art AJ006275.embl 
-        % art contigs.fa +annotation.gff +islands.tab
-        % art -Dblack_belt_mode=true -Dbam=ecoli_hiseq.bam E_coli_K12.gbk
-        % art -Duserplot=repeatmap.plot,geecee.plot Plasmid.gff3
-HOMEPAGE
-        http://www.sanger.ac.uk/resources/software/artemis/
-
-EOF
-        exit 0
-    fi
-
-
-    while test $# != 0
-    do
-        case $1 in
-        -options) FLAGS="$FLAGS -Dextra_options=$2"; shift ;;
-        -D*) FLAGS="$FLAGS $1" ;;
-        -fast) FAST_FLAG="-fast " ;; # -fast must be the first argument
-        -fast64) FAST_FLAG="-fast64 " ;; # -fast64 must be the first argument
-        -quiet) QUIET=yes ; FLAGS="$FLAGS -Drun_quietly=true" ;;
-        -debug) DEBUG=yes ;;
-        *) break ;;
-        esac
-        shift
-    done
+	JAVA_HOME=$ARTEMIS_JAVA_JRE
+	JAVA=$ARTEMIS_JAVA_JRE/bin/java
 fi
 
-FLAGS=$FAST_FLAG$FLAGS
+#
+# Allow URLs to work from behind firewalls.
+#
+add_proxy_properties
 
-if [ "$JAVA_VM" = "" ]
+#
+# "-mx1g" sets the maximum amount of memory to use. 
+# This may need to be increased when dealing with large files
+#
+if [[ "$ARTEMIS_JVM_FLAGS" = "" ]]
 then
-    if [ "$DEBUG" = yes ]
-    then
-        JAVA=java_g
-    else
-	JAVA=java
-    fi
+    FLAGS="-mx1g -ms100m -noverify"
 else
-    JAVA=$JAVA_VM
+    FLAGS="$ARTEMIS_JVM_FLAGS -noverify"
 fi
 
 PLATTMP=`uname`
-if [ "$PLATTMP" = "Darwin" ]
+if [[ "$PLATTMP" = "Darwin" ]]
 then
-  FLAGS="$FLAGS -Dapple.laf.useScreenMenuBar=true -Dcom.apple.mrj.application.apple.menu.about.name=Artemis"
+  	APPLICATION_PROPERTIES="$APPLICATION_PROPERTIES -Dapple.laf.useScreenMenuBar=true -Dcom.apple.mrj.application.apple.menu.about.name=Artemis"
 fi
 
-if [ "$QUIET" = no ]
+if [[ "$QUIET" = "no" ]]
 then
-    echo starting Artemis with flags: $FLAGS $ARTEMIS_PROPERTIES 1>&2
+    echo "Starting Artemis with arguments: $FLAGS $APPLICATION_PROPERTIES $*"
 fi
 
-$JAVA -Djdbc.drivers=org.postgresql.Driver $FLAGS $ARTEMIS_PROPERTIES uk.ac.sanger.artemis.components.ArtemisMain $*
+$JAVA $FLAGS $APPLICATION_PROPERTIES uk.ac.sanger.artemis.components.ArtemisMain $*
+exit $?

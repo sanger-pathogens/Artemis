@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.components.SelectionMenu
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.components.SelectionMenu: 0.5008436920832952</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.components.SelectionMenu: 0.5364407705523143</ul>
 <ul>
-<li>1158.0763077165525 fitness evaluations, 0 generations, null statements, 25 tests.
+<li>942.9556826849733 fitness evaluations, 0 generations, null statements, 31 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -37,147 +37,186 @@ uk.ac.sanger.artemis.components.SelectionMenu
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;&quot;);
 <span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="3">  3: </a></span>SelectionMenu selectionMenu0 = new SelectionMenu((JFrame) null, &quot;VTWdEeG&gt;B/106LR[&quot;, selection0);
-<span class="nocode"><a name="4">  4: </a></span>DefaultTreeCellRenderer defaultTreeCellRenderer0 = new DefaultTreeCellRenderer();
-<span class="nocode"><a name="5">  5: </a></span>ImageIconUIResource imageIconUIResource0 = (ImageIconUIResource)defaultTreeCellRenderer0.getDefaultLeafIcon();
-<span class="nocode"><a name="6">  6: </a></span>JCheckBoxMenuItem jCheckBoxMenuItem0 = new JCheckBoxMenuItem(imageIconUIResource0);
-<span class="nocode"><a name="7">  7: </a></span>selectionMenu0.add((JMenuItem) jCheckBoxMenuItem0);
-<span class="nocode"><a name="8">  8: </a></span>Vector&lt;String&gt; vector0 = selectionMenu0.getUsedShortCutKeys();
-<span class="nocode"><a name="9">  9: </a></span>selectionMenu0.getShortCuts(vector0);
+<span class="nocode"><a name="3">  3: </a></span>SelectionMenu selectionMenu0 = new SelectionMenu((JFrame) null, &quot;&quot;, selection0);
+<span class="nocode"><a name="4">  4: </a></span>JMenuItem jMenuItem0 = new JMenuItem((Icon) null);
+<span class="nocode"><a name="5">  5: </a></span>selectionMenu0.add(jMenuItem0);
+<span class="nocode"><a name="6">  6: </a></span>StringVector stringVector0 = new StringVector(&quot;&quot;);
+<span class="nocode"><a name="7">  7: </a></span>selectionMenu0.getShortCuts(stringVector0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SelectionMenu.makeMenuKeyStroke(2);
+<span class="nocode"><a name="1">  1: </a></span>SelectionMenu.makeMenuKeyStroke(224);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;&quot;);
 <span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="3">  3: </a></span>SelectionMenu selectionMenu0 = new SelectionMenu((JFrame) null, &quot;VTWdEeG&gt;B/106LR[&quot;, selection0);
-<span class="nocode"><a name="4">  4: </a></span>selectionMenu0.checkForSelectionFeatures();
+<span class="nocode"><a name="3">  3: </a></span>SelectionMenu selectionMenu0 = new SelectionMenu((JFrame) null, &quot;&quot;, selection0);
+<span class="nocode"><a name="4">  4: </a></span>JFrame jFrame0 = selectionMenu0.getParentFrame();
+<span class="nocode"><a name="5">  5: </a></span>assertNull(jFrame0);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;&quot;);
 <span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="3">  3: </a></span>SelectionMenu selectionMenu0 = new SelectionMenu((JFrame) null, &quot;VTWdEeG&gt;B/106LR[&quot;, selection0);
-<span class="nocode"><a name="4">  4: </a></span>selectionMenu0.checkForSelectionRange();
+<span class="nocode"><a name="3">  3: </a></span>SelectionMenu selectionMenu0 = new SelectionMenu((JFrame) null, &quot;&quot;, selection0);
+<span class="nocode"><a name="4">  4: </a></span>selectionMenu0.checkForSelectionFeatures(0, (String) null);
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;&quot;);
 <span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="3">  3: </a></span>SelectionMenu selectionMenu0 = new SelectionMenu((JFrame) null, &quot;VTWdEeG&gt;B/106LR[&quot;, selection0);
-<span class="nocode"><a name="4">  4: </a></span>selectionMenu0.checkForSelectionFeatures((-1264), &quot;M&quot;);
+<span class="nocode"><a name="3">  3: </a></span>SelectionMenu selectionMenu0 = new SelectionMenu((JFrame) null, &quot;&quot;, selection0);
+<span class="nocode"><a name="4">  4: </a></span>selectionMenu0.checkForSelectionRange();
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;&quot;);
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;DELETE&quot;);
 <span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="3">  3: </a></span>SelectionMenu.checkForSelectionCDSFeatures((JFrame) null, selection0, (-2195), &quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>SelectionMenu selectionMenu0 = new SelectionMenu((JFrame) null, &quot;DELETE&quot;, selection0);
+<span class="nocode"><a name="4">  4: </a></span>selectionMenu0.checkForSelectionFeatures();
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;&quot;);
 <span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="3">  3: </a></span>SelectionMenu selectionMenu0 = new SelectionMenu((JFrame) null, &quot;VTWdEeG&gt;B/106LR[&quot;, selection0);
-<span class="nocode"><a name="4">  4: </a></span>selectionMenu0.checkForSelectionFeatureSegments(589, &quot;B3;)]\&quot;^h*O2ih_~[p&lt;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>SelectionMenu.checkForSelectionCDSFeatures((JFrame) null, selection0, 0, &quot;KP_RIGHT&quot;);
 </pre>
 <h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="3">  3: </a></span>SelectionMenu selectionMenu0 = new SelectionMenu((JFrame) null, &quot;&quot;, selection0);
+<span class="nocode"><a name="4">  4: </a></span>selectionMenu0.checkForSelectionFeatureSegments(0, &quot;&quot;);
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="3">  3: </a></span>SelectionMenu selectionMenu0 = new SelectionMenu((JFrame) null, &quot;&quot;, selection0);
+<span class="nocode"><a name="4">  4: </a></span>SelectionMenu selectionMenu1 = (SelectionMenu)selectionMenu0.add((JMenuItem) selectionMenu0);
+<span class="nocode"><a name="5">  5: </a></span>Vector&lt;String&gt; vector0 = selectionMenu1.getUsedShortCutKeys();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, vector0.size());
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;f&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="3">  3: </a></span>SelectionMenu selectionMenu0 = new SelectionMenu((JFrame) null, &quot;f&quot;, selection0);
+<span class="nocode"><a name="4">  4: </a></span>selectionMenu0.add((JMenuItem) selectionMenu0);
+<span class="nocode"><a name="5">  5: </a></span>StringVector stringVector0 = new StringVector(&quot;f&quot;);
+<span class="nocode"><a name="6">  6: </a></span>selectionMenu0.getShortCuts(stringVector0);
+</pre>
+<h3>Test case 11</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>String string0 = SelectionMenu.getKeyText(0);
 <span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;unknown(0x0)&quot;, string0);
 </pre>
-<h3>Test case 9</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>String string0 = SelectionMenu.getKeyText(226);
-<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;KP_LEFT&quot;, string0);
-</pre>
-<h3>Test case 10</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>String string0 = SelectionMenu.getKeyText(55);
-<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;7&quot;, string0);
-</pre>
-<h3>Test case 11</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>String string0 = SelectionMenu.getKeyText(82);
-<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;R&quot;, string0);
-</pre>
 <h3>Test case 12</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>String string0 = SelectionMenu.getKeyText(8);
-<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;BACK_SPACE&quot;, string0);
+<span class="nocode"><a name="1">  1: </a></span>String string0 = SelectionMenu.getKeyText(224);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;KP_UP&quot;, string0);
 </pre>
 <h3>Test case 13</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>String string0 = SelectionMenu.getKeyText(192);
-<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;BACK_QUOTE&quot;, string0);
+<span class="nocode"><a name="1">  1: </a></span>String string0 = SelectionMenu.getKeyText(48);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;0&quot;, string0);
 </pre>
 <h3>Test case 14</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String string0 = SelectionMenu.getKeyText(65);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;A&quot;, string0);
+</pre>
+<h3>Test case 15</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String string0 = SelectionMenu.getKeyText(38);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;UP&quot;, string0);
+</pre>
+<h3>Test case 16</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String string0 = SelectionMenu.getKeyText(39);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;RIGHT&quot;, string0);
+</pre>
+<h3>Test case 17</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String string0 = SelectionMenu.getKeyText(40);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;DOWN&quot;, string0);
+</pre>
+<h3>Test case 18</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String string0 = SelectionMenu.getKeyText(127);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;DELETE&quot;, string0);
+</pre>
+<h3>Test case 19</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String string0 = SelectionMenu.getKeyText(225);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;KP_DOWN&quot;, string0);
+</pre>
+<h3>Test case 20</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>String string0 = SelectionMenu.getKeyText(227);
 <span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;KP_RIGHT&quot;, string0);
 </pre>
-<h3>Test case 15</h3>
+<h3>Test case 21</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;&quot;);
 <span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="3">  3: </a></span>SelectionMenu selectionMenu0 = new SelectionMenu((JFrame) null, &quot;VTWdEeG&gt;B/106LR[&quot;, selection0);
-<span class="nocode"><a name="4">  4: </a></span>JFrame jFrame0 = selectionMenu0.getParentFrame();
-<span class="nocode"><a name="5">  5: </a></span>assertNull(jFrame0);
-</pre>
-<h3>Test case 16</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;DSqPc&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
 <span class="nocode"><a name="3">  3: </a></span>SelectionMenu.checkForSelectionRange((JFrame) null, selection0);
-</pre>
-<h3>Test case 17</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SelectionMenu.checkForSelectionCDSFeatures((JFrame) null, (Selection) null, 471, &quot;CREATE FeatureCvTermDbXRef for &quot;);
-</pre>
-<h3>Test case 18</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;f&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="3">  3: </a></span>SelectionMenu.checkForSelectionFeatures((JFrame) null, selection0);
-</pre>
-<h3>Test case 19</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SelectionMenu.checkForSelectionFeatures((JFrame) null, (Selection) null);
-</pre>
-<h3>Test case 20</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;unknown(0x9bd)&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="3">  3: </a></span>SelectionMenu.checkForSelectionFeatures((JFrame) null, selection0, 2493, &quot;+tW{&amp;kOg+s,PYfT&quot;);
-</pre>
-<h3>Test case 21</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SelectionMenu.checkForSelectionFeatures((JFrame) null, (Selection) null, 8, &quot;BACK_SPACE&quot;);
 </pre>
 <h3>Test case 22</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;`&quot;);
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;&quot;);
 <span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="3">  3: </a></span>SelectionMenu selectionMenu0 = new SelectionMenu((JFrame) null, &quot;`&quot;, selection0);
-<span class="nocode"><a name="4">  4: </a></span>Selection selection1 = selectionMenu0.getSelection();
-<span class="nocode"><a name="5">  5: </a></span>assertSame(selection1, selection0);
+<span class="nocode"><a name="3">  3: </a></span>SelectionMenu.checkForSelectionFeatures((JFrame) null, selection0);
 </pre>
 <h3>Test case 23</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;fE&quot;);
+<span class="nocode"><a name="1">  1: </a></span>SelectionMenu.checkForSelectionFeatures((JFrame) null, (Selection) null);
+</pre>
+<h3>Test case 24</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard((String) null);
 <span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="3">  3: </a></span>SelectionMenu selectionMenu0 = new SelectionMenu((JFrame) null, &quot;No features selected&quot;, selection0);
+<span class="nocode"><a name="3">  3: </a></span>SelectionMenu.checkForSelectionFeatures((JFrame) null, selection0, 1218, &quot;No bases selected&quot;);
+</pre>
+<h3>Test case 25</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SelectionMenu selectionMenu0 = new SelectionMenu((JFrame) null, &quot;&quot;, (Selection) null);
+<span class="nocode"><a name="2">  2: </a></span>selectionMenu0.checkForSelectionRange();
+</pre>
+<h3>Test case 26</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SelectionMenu.checkForSelectionRange((JFrame) null, (Selection) null);
+</pre>
+<h3>Test case 27</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="3">  3: </a></span>SelectionMenu selectionMenu0 = new SelectionMenu((JFrame) null, &quot;&quot;, selection0);
+<span class="nocode"><a name="4">  4: </a></span>selectionMenu0.getShortCuts((Vector&lt;String&gt;) null);
+</pre>
+<h3>Test case 28</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;Select a qualifer name&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="3">  3: </a></span>SelectionMenu selectionMenu0 = new SelectionMenu((JFrame) null, &quot;G&quot;, selection0);
+<span class="nocode"><a name="4">  4: </a></span>Selection selection1 = selectionMenu0.getSelection();
+<span class="nocode"><a name="5">  5: </a></span>assertSame(selection1, selection0);
+</pre>
+<h3>Test case 29</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="3">  3: </a></span>SelectionMenu selectionMenu0 = new SelectionMenu((JFrame) null, &quot;&quot;, selection0);
 <span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = selectionMenu0.isEditableShortCutMenu();
 <span class="nocode"><a name="5">  5: </a></span>assertFalse(boolean0);
 </pre>
-<h3>Test case 24</h3>
+<h3>Test case 30</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>String string0 = SelectionMenu.getKeyText(57);
 <span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;9&quot;, string0);
 </pre>
-<h3>Test case 25</h3>
+<h3>Test case 31</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>String string0 = SelectionMenu.getKeyText(90);
 <span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;Z&quot;, string0);
@@ -193,11 +232,11 @@ uk.ac.sanger.artemis.components.SelectionMenu
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.SelectionMenu
-<li>Size: 25
-<li>Length: 62
+<li>Size: 31
+<li>Length: 79
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.5008436920832952
-<li>BranchCoverage: 0.48672566371681414
+<li>Coverage: 0.5364407705523143
+<li>BranchCoverage: 0.5575221238938053
 <li>MethodCoverage: 1.0
 <li>OutputCoverage: 0.10434782608695652
 </ul></div>

@@ -35,14 +35,15 @@ uk.ac.sanger.artemis.GotoEvent
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Canvas canvas0 = new Canvas();
-<span class="nocode"><a name="2">  2: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;label&quot;);
+<span class="nocode"><a name="1">  1: </a></span>MockJapaneseDate mockJapaneseDate0 = new MockJapaneseDate();
+<span class="nocode"><a name="2">  2: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;*XPG((L #q]&quot;, &quot;*XPG((L #q]&quot;);
 <span class="nocode"><a name="3">  3: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
-<span class="nocode"><a name="4">  4: </a></span>Entry entry0 = Entry.newEntry(bases0);
-<span class="nocode"><a name="5">  5: </a></span>Feature feature0 = entry0.createFeature();
-<span class="nocode"><a name="6">  6: </a></span>Marker marker0 = feature0.getPositionInSequence(1);
-<span class="nocode"><a name="7">  7: </a></span>GotoEvent gotoEvent0 = new GotoEvent(canvas0, marker0);
-<span class="nocode"><a name="8">  8: </a></span>gotoEvent0.getMarker();
+<span class="nocode"><a name="4">  4: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="5">  5: </a></span>Entry entry0 = simpleEntryGroup0.createEntry();
+<span class="nocode"><a name="6">  6: </a></span>Feature feature0 = entry0.createFeature();
+<span class="nocode"><a name="7">  7: </a></span>Marker marker0 = feature0.getLastBaseMarker();
+<span class="nocode"><a name="8">  8: </a></span>GotoEvent gotoEvent0 = new GotoEvent(mockJapaneseDate0, marker0);
+<span class="nocode"><a name="9">  9: </a></span>gotoEvent0.getMarker();
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
@@ -50,10 +51,9 @@ uk.ac.sanger.artemis.GotoEvent
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Integer integer0 = JLayeredPane.MODAL_LAYER;
-<span class="nocode"><a name="2">  2: </a></span>GotoEvent gotoEvent0 = new GotoEvent(integer0, (Marker) null);
-<span class="nocode"><a name="3">  3: </a></span>Marker marker0 = gotoEvent0.getMarker();
-<span class="nocode"><a name="4">  4: </a></span>assertNull(marker0);
+<span class="nocode"><a name="1">  1: </a></span>GotoEvent gotoEvent0 = new GotoEvent(&quot;uk.ac.sanger.artemis.GotoEvent&quot;, (Marker) null);
+<span class="nocode"><a name="2">  2: </a></span>Marker marker0 = gotoEvent0.getMarker();
+<span class="nocode"><a name="3">  3: </a></span>assertNull(marker0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>

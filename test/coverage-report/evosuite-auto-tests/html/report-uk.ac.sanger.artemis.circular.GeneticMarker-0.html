@@ -36,22 +36,24 @@ uk.ac.sanger.artemis.circular.GeneticMarker
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
-<span class="nocode"><a name="2">  2: </a></span>Stack&lt;Label&gt; stack0 = new Stack&lt;Label&gt;();
-<span class="nocode"><a name="3">  3: </a></span>GeneticMarker geneticMarker0 = new GeneticMarker(dNADraw0, stack0);
+<span class="nocode"><a name="2">  2: </a></span>Vector&lt;Object&gt; vector0 = new Vector&lt;Object&gt;();
+<span class="nocode"><a name="3">  3: </a></span>GeneticMarker geneticMarker0 = new GeneticMarker(dNADraw0, vector0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GeneticMarker.setUpColorButton((Color) null);
+<span class="nocode"><a name="1">  1: </a></span>SystemColor systemColor0 = SystemColor.textText;
+<span class="nocode"><a name="2">  2: </a></span>GeneticMarker.setUpColorButton(systemColor0);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>JembossParams jembossParams0 = new JembossParams();
-<span class="nocode"><a name="2">  2: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.modeVector();
-<span class="nocode"><a name="3">  3: </a></span>GeneticMarker geneticMarker0 = new GeneticMarker((DNADraw) null, vector0);
+<span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="2">  2: </a></span>JembossParams jembossParams0 = new JembossParams();
+<span class="nocode"><a name="3">  3: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.modeVector();
+<span class="nocode"><a name="4">  4: </a></span>GeneticMarker geneticMarker0 = new GeneticMarker(dNADraw0, vector0);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw((Vector) null, (Vector) null, (Vector) null, (Vector) null);
 <span class="nocode"><a name="2">  2: </a></span>GeneticMarker geneticMarker0 = new GeneticMarker(dNADraw0, (Vector) null);
 </pre>
 </div><div id="post">
@@ -66,7 +68,7 @@ uk.ac.sanger.artemis.circular.GeneticMarker
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.circular.GeneticMarker
 <li>Size: 4
-<li>Length: 9
+<li>Length: 11
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.23805549730900957
 <li>BranchCoverage: 0.21333333333333335

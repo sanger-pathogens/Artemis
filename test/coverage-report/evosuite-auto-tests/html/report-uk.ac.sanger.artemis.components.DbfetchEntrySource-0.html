@@ -48,8 +48,7 @@ uk.ac.sanger.artemis.components.DbfetchEntrySource
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>DbfetchEntrySource dbfetchEntrySource0 = new DbfetchEntrySource((JFrame) null);
-<span class="nocode"><a name="2">  2: </a></span>JFrame jFrame0 = dbfetchEntrySource0.getFrame();
-<span class="nocode"><a name="3">  3: </a></span>assertNull(jFrame0);
+<span class="nocode"><a name="2">  2: </a></span>dbfetchEntrySource0.getEntry((Bases) null, true);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
@@ -59,12 +58,8 @@ uk.ac.sanger.artemis.components.DbfetchEntrySource
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>DbfetchEntrySource dbfetchEntrySource0 = new DbfetchEntrySource((JFrame) null);
-<span class="nocode"><a name="2">  2: </a></span>StringReader stringReader0 = new StringReader(&quot;w[h`4MmQq-M`,+IM#&quot;);
-<span class="nocode"><a name="3">  3: </a></span>PushbackReader pushbackReader0 = new PushbackReader(stringReader0, 4066);
-<span class="nocode"><a name="4">  4: </a></span>LinePushBackReader linePushBackReader0 = new LinePushBackReader(pushbackReader0);
-<span class="nocode"><a name="5">  5: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(linePushBackReader0);
-<span class="nocode"><a name="6">  6: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
-<span class="nocode"><a name="7">  7: </a></span>dbfetchEntrySource0.getEntry(bases0, true);
+<span class="nocode"><a name="2">  2: </a></span>JFrame jFrame0 = dbfetchEntrySource0.getFrame();
+<span class="nocode"><a name="3">  3: </a></span>assertNull(jFrame0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -78,7 +73,7 @@ uk.ac.sanger.artemis.components.DbfetchEntrySource
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.DbfetchEntrySource
 <li>Size: 5
-<li>Length: 15
+<li>Length: 10
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.4300255847953216
 <li>BranchCoverage: 0.2631578947368421

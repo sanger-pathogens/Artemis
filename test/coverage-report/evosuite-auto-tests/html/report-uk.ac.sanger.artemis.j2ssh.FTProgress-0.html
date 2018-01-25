@@ -35,68 +35,69 @@ uk.ac.sanger.artemis.j2ssh.FTProgress
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>JProgressBar jProgressBar0 = new JProgressBar(3, 3);
-<span class="nocode"><a name="2">  2: </a></span>FTProgress fTProgress0 = new FTProgress(jProgressBar0, &quot;&quot;);
+<span class="nocode"><a name="1">  1: </a></span>JProgressBar jProgressBar0 = new JProgressBar();
+<span class="nocode"><a name="2">  2: </a></span>FTProgress fTProgress0 = new FTProgress(jProgressBar0, &quot;\&quot;]J%T,&gt;+M`zB&quot;);
 <span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = fTProgress0.isCancelled();
 <span class="nocode"><a name="4">  4: </a></span>assertFalse(boolean0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>DefaultBoundedRangeModel defaultBoundedRangeModel0 = new DefaultBoundedRangeModel();
-<span class="nocode"><a name="2">  2: </a></span>JProgressBar jProgressBar0 = new JProgressBar(defaultBoundedRangeModel0);
-<span class="nocode"><a name="3">  3: </a></span>FTProgress fTProgress0 = new FTProgress(jProgressBar0, &quot;&quot;);
-<span class="nocode"><a name="4">  4: </a></span>long long0 = fTProgress0.getProgress();
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(0L, long0);
+<span class="nocode"><a name="1">  1: </a></span>JProgressBar jProgressBar0 = new JProgressBar(100, 233);
+<span class="nocode"><a name="2">  2: </a></span>FTProgress fTProgress0 = new FTProgress(jProgressBar0, &quot; &quot;);
+<span class="nocode"><a name="3">  3: </a></span>long long0 = fTProgress0.getProgress();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(100L, long0);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>JProgressBar jProgressBar0 = new JProgressBar((-3), (-3));
-<span class="nocode"><a name="2">  2: </a></span>FTProgress fTProgress0 = new FTProgress(jProgressBar0, &quot;]mg/ne]$[h-B\rWDTlN&quot;);
-<span class="nocode"><a name="3">  3: </a></span>fTProgress0.started((-3), &quot;]mg/ne]$[h-B\rWDTlN&quot;);
-<span class="nocode"><a name="4">  4: </a></span>fTProgress0.progressed((-3));
-<span class="nocode"><a name="5">  5: </a></span>assertFalse(fTProgress0.isCancelled());
+<span class="nocode"><a name="1">  1: </a></span>JProgressBar jProgressBar0 = new JProgressBar();
+<span class="nocode"><a name="2">  2: </a></span>FTProgress fTProgress0 = new FTProgress(jProgressBar0, &quot;\&quot;]J%T,&gt;+M`zB&quot;);
+<span class="nocode"><a name="3">  3: </a></span>fTProgress0.started((-43L), &quot;\&quot;]J%T,&gt;+M`zB&quot;);
+<span class="nocode"><a name="4">  4: </a></span>long long0 = fTProgress0.getProgress();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals((-43L), long0);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>JProgressBar jProgressBar0 = new JProgressBar((-3), (-3));
-<span class="nocode"><a name="2">  2: </a></span>FTProgress fTProgress0 = new FTProgress(jProgressBar0, &quot;]mg/ne]$[h-B\rWDTlN&quot;);
+<span class="nocode"><a name="1">  1: </a></span>JProgressBar jProgressBar0 = new JProgressBar();
+<span class="nocode"><a name="2">  2: </a></span>FTProgress fTProgress0 = new FTProgress(jProgressBar0, &quot;\&quot;]J%T,&gt;+M`zB&quot;);
 <span class="nocode"><a name="3">  3: </a></span>fTProgress0.completed();
 <span class="nocode"><a name="4">  4: </a></span>assertFalse(fTProgress0.isCancelled());
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>JProgressBar jProgressBar0 = new JProgressBar((-3), (-3));
-<span class="nocode"><a name="2">  2: </a></span>FTProgress fTProgress0 = new FTProgress(jProgressBar0, &quot;]mg/ne]$[h-B\rWDTlN&quot;);
-<span class="nocode"><a name="3">  3: </a></span>fTProgress0.progressed((-3));
+<span class="nocode"><a name="1">  1: </a></span>JProgressBar jProgressBar0 = new JProgressBar();
+<span class="nocode"><a name="2">  2: </a></span>FTProgress fTProgress0 = new FTProgress(jProgressBar0, &quot;\&quot;]J%T,&gt;+M`zB&quot;);
+<span class="nocode"><a name="3">  3: </a></span>fTProgress0.progressed((-43L));
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FTProgress fTProgress0 = new FTProgress((JProgressBar) null, &quot;tfm.use&quot;);
+<span class="nocode"><a name="1">  1: </a></span>FTProgress fTProgress0 = new FTProgress((JProgressBar) null, &quot;GT&quot;);
 <span class="nocode"><a name="2">  2: </a></span>fTProgress0.getProgress();
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FTProgress fTProgress0 = new FTProgress((JProgressBar) null, &quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>fTProgress0.progressed(0L);
+<span class="nocode"><a name="1">  1: </a></span>JProgressBar jProgressBar0 = new JProgressBar((BoundedRangeModel) null);
+<span class="nocode"><a name="2">  2: </a></span>FTProgress fTProgress0 = new FTProgress(jProgressBar0, &quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>fTProgress0.progressed(0L);
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FTProgress fTProgress0 = new FTProgress((JProgressBar) null, &quot;Ig&amp;,^h/x6{&lt;d!&quot;);
-<span class="nocode"><a name="2">  2: </a></span>fTProgress0.started(591L, &quot;Ig&amp;,^h/x6{&lt;d!&quot;);
+<span class="nocode"><a name="1">  1: </a></span>FTProgress fTProgress0 = new FTProgress((JProgressBar) null, (String) null);
+<span class="nocode"><a name="2">  2: </a></span>fTProgress0.started((-1246L), &quot;&quot;);
 </pre>
 <h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>JProgressBar jProgressBar0 = new JProgressBar((-3), (-3));
-<span class="nocode"><a name="2">  2: </a></span>FTProgress fTProgress0 = new FTProgress(jProgressBar0, &quot;]mg/ne]$[h-B\rWDTlN&quot;);
+<span class="nocode"><a name="1">  1: </a></span>JProgressBar jProgressBar0 = new JProgressBar();
+<span class="nocode"><a name="2">  2: </a></span>FTProgress fTProgress0 = new FTProgress(jProgressBar0, &quot;&quot;);
 <span class="nocode"><a name="3">  3: </a></span>long long0 = fTProgress0.getProgress();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals((-3L), long0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0L, long0);
 </pre>
 <h3>Test case 10</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>JProgressBar jProgressBar0 = new JProgressBar(3, 3);
-<span class="nocode"><a name="2">  2: </a></span>FTProgress fTProgress0 = new FTProgress(jProgressBar0, &quot;&quot;);
-<span class="nocode"><a name="3">  3: </a></span>long long0 = fTProgress0.getProgress();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(3L, long0);
+<span class="nocode"><a name="1">  1: </a></span>JProgressBar jProgressBar0 = new JProgressBar();
+<span class="nocode"><a name="2">  2: </a></span>FTProgress fTProgress0 = new FTProgress(jProgressBar0, &quot;\&quot;]J%T,&gt;+M`zB&quot;);
+<span class="nocode"><a name="3">  3: </a></span>fTProgress0.started((-43L), &quot;\&quot;]J%T,&gt;+M`zB&quot;);
+<span class="nocode"><a name="4">  4: </a></span>fTProgress0.progressed((-43L));
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(fTProgress0.isCancelled());
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -110,7 +111,7 @@ uk.ac.sanger.artemis.j2ssh.FTProgress
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.j2ssh.FTProgress
 <li>Size: 10
-<li>Length: 29
+<li>Length: 30
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.975
 <li>BranchCoverage: 1.0

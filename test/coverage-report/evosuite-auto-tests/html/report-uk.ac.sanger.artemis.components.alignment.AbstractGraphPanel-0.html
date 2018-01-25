@@ -23,7 +23,7 @@ uk.ac.sanger.artemis.components.alignment.AbstractGraphPanel
 <br><br><h2 class=title>Summary</h2>
 <ul><li>Target class: uk.ac.sanger.artemis.components.alignment.AbstractGraphPanel: 0.6487952367867226</ul>
 <ul>
-<li>489.1811320754717 fitness evaluations, 0 generations, null statements, 18 tests.
+<li>489.2311320754717 fitness evaluations, 0 generations, null statements, 14 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -36,41 +36,47 @@ uk.ac.sanger.artemis.components.alignment.AbstractGraphPanel
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>AbstractGraphPanel abstractGraphPanel0 = new AbstractGraphPanel();
-<span class="nocode"><a name="2">  2: </a></span>abstractGraphPanel0.setPixPerBase(35);
-<span class="nocode"><a name="3">  3: </a></span>assertFalse(abstractGraphPanel0.isFocusCycleRoot());
+<span class="nocode"><a name="2">  2: </a></span>abstractGraphPanel0.setPixPerBase(5408);
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(abstractGraphPanel0.isFocusTraversalPolicyProvider());
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>AbstractGraphPanel abstractGraphPanel0 = new AbstractGraphPanel();
-<span class="nocode"><a name="2">  2: </a></span>abstractGraphPanel0.setStartAndEnd(64000, 64000);
-<span class="nocode"><a name="3">  3: </a></span>abstractGraphPanel0.drawMax((Graphics2D) null);
+<span class="nocode"><a name="2">  2: </a></span>abstractGraphPanel0.setStartAndEnd(5, 3);
+<span class="nocode"><a name="3">  3: </a></span>GenericDocumentType genericDocumentType0 = new GenericDocumentType(&quot;Filter minimum score must be less than maximum score&quot;, &quot;Window Size&quot;, &quot;GBReference_reference&quot;);
+<span class="nocode"><a name="4">  4: </a></span>GenericDOMImplementation genericDOMImplementation0 = (GenericDOMImplementation)GenericDOMImplementation.getDOMImplementation();
+<span class="nocode"><a name="5">  5: </a></span>GenericDocument genericDocument0 = new GenericDocument(genericDocumentType0, genericDOMImplementation0);
+<span class="nocode"><a name="6">  6: </a></span>SVGGeneratorContext sVGGeneratorContext0 = SVGGeneratorContext.createDefault(genericDocument0);
+<span class="nocode"><a name="7">  7: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(sVGGeneratorContext0, false);
+<span class="nocode"><a name="8">  8: </a></span>abstractGraphPanel0.drawMax(sVGGraphics2D0);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>AbstractGraphPanel abstractGraphPanel0 = new AbstractGraphPanel();
-<span class="nocode"><a name="2">  2: </a></span>JSplitPane jSplitPane0 = new JSplitPane();
-<span class="nocode"><a name="3">  3: </a></span>abstractGraphPanel0.initPopupMenu(jSplitPane0);
+<span class="nocode"><a name="2">  2: </a></span>JTree jTree0 = new JTree((TreeModel) null);
+<span class="nocode"><a name="3">  3: </a></span>abstractGraphPanel0.initPopupMenu(jTree0);
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(jTree0.getIgnoreRepaint());
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>AbstractGraphPanel abstractGraphPanel0 = new AbstractGraphPanel();
 <span class="nocode"><a name="2">  2: </a></span>AbstractGraphPanel.PopupListener abstractGraphPanel_PopupListener0 = abstractGraphPanel0.new PopupListener();
-<span class="nocode"><a name="3">  3: </a></span>MouseEvent mouseEvent0 = new MouseEvent(abstractGraphPanel0, 10, 0L, 0, 40960, 10, 0, false);
+<span class="nocode"><a name="3">  3: </a></span>MouseEvent mouseEvent0 = new MouseEvent(abstractGraphPanel0, 2753, 1000L, 342, (-874), (-1687), 1123, false);
 <span class="nocode"><a name="4">  4: </a></span>abstractGraphPanel_PopupListener0.mousePressed(mouseEvent0);
-<span class="nocode"><a name="5">  5: </a></span>assertFalse(mouseEvent0.isMetaDown());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, mouseEvent0.getYOnScreen());
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>AbstractGraphPanel abstractGraphPanel0 = new AbstractGraphPanel();
 <span class="nocode"><a name="2">  2: </a></span>AbstractGraphPanel.PopupListener abstractGraphPanel_PopupListener0 = abstractGraphPanel0.new PopupListener();
-<span class="nocode"><a name="3">  3: </a></span>MouseWheelEvent mouseWheelEvent0 = new MouseWheelEvent(abstractGraphPanel0, (-3370), (-3370), (-3370), (-3370), (-3370), (-3370), 2408, (-3370), false, 1, (-3370), 2408, (-519.0));
+<span class="nocode"><a name="3">  3: </a></span>MouseWheelEvent mouseWheelEvent0 = new MouseWheelEvent(abstractGraphPanel0, 2315, 2315, 3, 2315, 8000, 2315, (-1509), 8000, false, (-1509), (-712), 8000);
 <span class="nocode"><a name="4">  4: </a></span>abstractGraphPanel_PopupListener0.mouseReleased(mouseWheelEvent0);
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>AbstractGraphPanel abstractGraphPanel0 = new AbstractGraphPanel();
-<span class="nocode"><a name="2">  2: </a></span>float float0 = abstractGraphPanel0.getValue(29, true);
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(3.3672957F, float0, 0.01F);
+<span class="nocode"><a name="2">  2: </a></span>float float0 = abstractGraphPanel0.getValue((-2672), false);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals((-2672.0F), float0, 0.01F);
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
@@ -81,85 +87,63 @@ uk.ac.sanger.artemis.components.alignment.AbstractGraphPanel
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>AbstractGraphPanel abstractGraphPanel0 = new AbstractGraphPanel();
-<span class="nocode"><a name="2">  2: </a></span>float float0 = abstractGraphPanel0.getValue(1683, false);
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(1683.0F, float0, 0.01F);
+<span class="nocode"><a name="2">  2: </a></span>float float0 = abstractGraphPanel0.getValue(126, true);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(4.836282F, float0, 0.01F);
 </pre>
 <h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>AbstractGraphPanel abstractGraphPanel0 = new AbstractGraphPanel();
-<span class="nocode"><a name="2">  2: </a></span>GenericDocumentType genericDocumentType0 = new GenericDocumentType(&quot;*4?aDckj]t7AmE#xS&quot;, &quot;draw_feature_borders&quot;, &quot;*4?aDckj]t7AmE#xS&quot;);
-<span class="nocode"><a name="3">  3: </a></span>GenericDOMImplementation genericDOMImplementation0 = (GenericDOMImplementation)GenericDOMImplementation.getDOMImplementation();
+<span class="nocode"><a name="2">  2: </a></span>GenericDocumentType genericDocumentType0 = new GenericDocumentType(&quot;.LC#T3wt97$.h0&amp;&quot;, (String) null, &quot;.LC#T3wt97$.h0&amp;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>GenericDOMImplementation genericDOMImplementation0 = new GenericDOMImplementation();
 <span class="nocode"><a name="4">  4: </a></span>GenericDocument genericDocument0 = new GenericDocument(genericDocumentType0, genericDOMImplementation0);
-<span class="nocode"><a name="5">  5: </a></span>SVGGeneratorContext sVGGeneratorContext0 = SVGGeneratorContext.createDefault(genericDocument0);
-<span class="nocode"><a name="6">  6: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(sVGGeneratorContext0, false);
-<span class="nocode"><a name="7">  7: </a></span>SystemColor systemColor0 = SystemColor.textText;
-<span class="nocode"><a name="8">  8: </a></span>abstractGraphPanel0.drawSelectionRange(sVGGraphics2D0, 0.0F, (-1129), (short)4, (short)16, systemColor0);
-<span class="nocode"><a name="9">  9: </a></span>assertFalse(abstractGraphPanel0.isFocusTraversalPolicySet());
+<span class="nocode"><a name="5">  5: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(genericDocument0);
+<span class="nocode"><a name="6">  6: </a></span>SystemColor systemColor0 = SystemColor.desktop;
+<span class="nocode"><a name="7">  7: </a></span>abstractGraphPanel0.drawSelectionRange(sVGGraphics2D0, 3, (-811), (-811), (short)16, systemColor0);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(3, SVGGraphics2D.DEFAULT_MAX_GC_OVERRIDES);
 </pre>
 <h3>Test case 10</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>AbstractGraphPanel abstractGraphPanel0 = new AbstractGraphPanel();
 <span class="nocode"><a name="2">  2: </a></span>AbstractGraphPanel.PopupListener abstractGraphPanel_PopupListener0 = abstractGraphPanel0.new PopupListener();
-<span class="nocode"><a name="3">  3: </a></span>MenuElement[] menuElementArray0 = new MenuElement[0];
-<span class="nocode"><a name="4">  4: </a></span>MenuSelectionManager menuSelectionManager0 = MenuSelectionManager.defaultManager();
-<span class="nocode"><a name="5">  5: </a></span>MenuDragMouseEvent menuDragMouseEvent0 = new MenuDragMouseEvent(abstractGraphPanel0, 0, 0, 1767, 0, 0, 5, 0, 0, true, menuElementArray0, menuSelectionManager0);
-<span class="nocode"><a name="6">  6: </a></span>abstractGraphPanel_PopupListener0.mouseClicked(menuDragMouseEvent0);
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, menuDragMouseEvent0.getClickCount());
+<span class="nocode"><a name="3">  3: </a></span>DefaultBoundedRangeModel defaultBoundedRangeModel0 = new DefaultBoundedRangeModel();
+<span class="nocode"><a name="4">  4: </a></span>JSlider jSlider0 = new JSlider(defaultBoundedRangeModel0);
+<span class="nocode"><a name="5">  5: </a></span>MenuSelectionManager menuSelectionManager0 = MenuSelectionManager.defaultManager();
+<span class="nocode"><a name="6">  6: </a></span>MenuDragMouseEvent menuDragMouseEvent0 = new MenuDragMouseEvent(jSlider0, (-39), (-39), 25, 25, 25, (-39), (-39), (-1681), true, (MenuElement[]) null, menuSelectionManager0);
+<span class="nocode"><a name="7">  7: </a></span>abstractGraphPanel_PopupListener0.mouseClicked(menuDragMouseEvent0);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals((-39), menuDragMouseEvent0.getID());
 </pre>
 <h3>Test case 11</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>AbstractGraphPanel abstractGraphPanel0 = new AbstractGraphPanel();
 <span class="nocode"><a name="2">  2: </a></span>AbstractGraphPanel.PopupListener abstractGraphPanel_PopupListener0 = abstractGraphPanel0.new PopupListener();
-<span class="nocode"><a name="3">  3: </a></span>MouseWheelEvent mouseWheelEvent0 = new MouseWheelEvent(abstractGraphPanel0, 929, (-2147483648L), 929, 0, 0, 131, false, (-547), 0, 0);
-<span class="nocode"><a name="4">  4: </a></span>abstractGraphPanel_PopupListener0.mouseClicked(mouseWheelEvent0);
+<span class="nocode"><a name="3">  3: </a></span>MouseEvent mouseEvent0 = new MouseEvent(abstractGraphPanel0, 2753, 1000L, 342, (-874), (-1687), 1123, false);
+<span class="nocode"><a name="4">  4: </a></span>abstractGraphPanel_PopupListener0.mouseClicked(mouseEvent0);
 </pre>
 <h3>Test case 12</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>AbstractGraphPanel abstractGraphPanel0 = new AbstractGraphPanel();
 <span class="nocode"><a name="2">  2: </a></span>AbstractGraphPanel.PopupListener abstractGraphPanel_PopupListener0 = abstractGraphPanel0.new PopupListener();
-<span class="nocode"><a name="3">  3: </a></span>MenuElement[] menuElementArray0 = new MenuElement[0];
-<span class="nocode"><a name="4">  4: </a></span>MenuSelectionManager menuSelectionManager0 = MenuSelectionManager.defaultManager();
-<span class="nocode"><a name="5">  5: </a></span>MenuDragMouseEvent menuDragMouseEvent0 = new MenuDragMouseEvent(abstractGraphPanel0, 0, 0, 1767, 0, 0, 5, 0, 0, true, menuElementArray0, menuSelectionManager0);
-<span class="nocode"><a name="6">  6: </a></span>abstractGraphPanel_PopupListener0.mouseReleased(menuDragMouseEvent0);
+<span class="nocode"><a name="3">  3: </a></span>DefaultBoundedRangeModel defaultBoundedRangeModel0 = new DefaultBoundedRangeModel();
+<span class="nocode"><a name="4">  4: </a></span>JSlider jSlider0 = new JSlider(defaultBoundedRangeModel0);
+<span class="nocode"><a name="5">  5: </a></span>MenuSelectionManager menuSelectionManager0 = MenuSelectionManager.defaultManager();
+<span class="nocode"><a name="6">  6: </a></span>MenuDragMouseEvent menuDragMouseEvent0 = new MenuDragMouseEvent(jSlider0, (-39), (-39), 25, 25, 25, (-39), (-39), (-1681), true, (MenuElement[]) null, menuSelectionManager0);
+<span class="nocode"><a name="7">  7: </a></span>abstractGraphPanel_PopupListener0.mouseReleased(menuDragMouseEvent0);
 </pre>
 <h3>Test case 13</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>AbstractGraphPanel abstractGraphPanel0 = new AbstractGraphPanel();
-<span class="nocode"><a name="2">  2: </a></span>abstractGraphPanel0.drawMax((Graphics2D) null, (-2267.214F));
+<span class="nocode"><a name="2">  2: </a></span>GenericDocumentType genericDocumentType0 = new GenericDocumentType(&quot;9R-6Z+&gt;&quot;, &quot;Using cached index &quot;, &quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>GenericDOMImplementation genericDOMImplementation0 = new GenericDOMImplementation();
+<span class="nocode"><a name="4">  4: </a></span>GenericDocument genericDocument0 = new GenericDocument(genericDocumentType0, genericDOMImplementation0);
+<span class="nocode"><a name="5">  5: </a></span>ImageHandlerBase64Encoder imageHandlerBase64Encoder0 = new ImageHandlerBase64Encoder();
+<span class="nocode"><a name="6">  6: </a></span>DefaultExtensionHandler defaultExtensionHandler0 = new DefaultExtensionHandler();
+<span class="nocode"><a name="7">  7: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(genericDocument0, imageHandlerBase64Encoder0, defaultExtensionHandler0, true);
+<span class="nocode"><a name="8">  8: </a></span>abstractGraphPanel0.drawMax(sVGGraphics2D0, 843);
 </pre>
 <h3>Test case 14</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>AbstractGraphPanel abstractGraphPanel0 = new AbstractGraphPanel();
 <span class="nocode"><a name="2">  2: </a></span>abstractGraphPanel0.initPopupMenu((JComponent) null);
-</pre>
-<h3>Test case 15</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>AbstractGraphPanel abstractGraphPanel0 = new AbstractGraphPanel();
-<span class="nocode"><a name="2">  2: </a></span>float float0 = abstractGraphPanel0.getValue((-3370), false);
-<span class="nocode"><a name="3">  3: </a></span>assertEquals((-3370.0F), float0, 0.01F);
-</pre>
-<h3>Test case 16</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>AbstractGraphPanel abstractGraphPanel0 = new AbstractGraphPanel();
-<span class="nocode"><a name="2">  2: </a></span>GenericDocumentType genericDocumentType0 = new GenericDocumentType(&quot;*4?aDckj]t7AmE#xS&quot;, &quot;draw_feature_borders&quot;, &quot;*4?aDckj]t7AmE#xS&quot;);
-<span class="nocode"><a name="3">  3: </a></span>GenericDOMImplementation genericDOMImplementation0 = (GenericDOMImplementation)GenericDOMImplementation.getDOMImplementation();
-<span class="nocode"><a name="4">  4: </a></span>GenericDocument genericDocument0 = new GenericDocument(genericDocumentType0, genericDOMImplementation0);
-<span class="nocode"><a name="5">  5: </a></span>SVGGeneratorContext sVGGeneratorContext0 = SVGGeneratorContext.createDefault(genericDocument0);
-<span class="nocode"><a name="6">  6: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(sVGGeneratorContext0, false);
-<span class="nocode"><a name="7">  7: </a></span>abstractGraphPanel0.drawMax(sVGGraphics2D0);
-</pre>
-<h3>Test case 17</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>AbstractGraphPanel abstractGraphPanel0 = new AbstractGraphPanel();
-<span class="nocode"><a name="2">  2: </a></span>JCheckBoxMenuItem jCheckBoxMenuItem0 = new JCheckBoxMenuItem(&quot;additive&quot;);
-<span class="nocode"><a name="3">  3: </a></span>abstractGraphPanel0.initPopupMenu(jCheckBoxMenuItem0);
-<span class="nocode"><a name="4">  4: </a></span>assertFalse(abstractGraphPanel0.getIgnoreRepaint());
-</pre>
-<h3>Test case 18</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>AbstractGraphPanel abstractGraphPanel0 = new AbstractGraphPanel();
-<span class="nocode"><a name="2">  2: </a></span>abstractGraphPanel0.setStartAndEnd(0, 63);
-<span class="nocode"><a name="3">  3: </a></span>assertFalse(abstractGraphPanel0.getIgnoreRepaint());
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -172,8 +156,8 @@ uk.ac.sanger.artemis.components.alignment.AbstractGraphPanel
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.alignment.AbstractGraphPanel
-<li>Size: 18
-<li>Length: 64
+<li>Size: 14
+<li>Length: 62
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.6487952367867226
 <li>BranchCoverage: 0.46511627906976744

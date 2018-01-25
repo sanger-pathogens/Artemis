@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.plot.AGWindowAlgorithm
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.plot.AGWindowAlgorithm: 0.8710830502098444</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.plot.AGWindowAlgorithm: 0.8560475030271681</ul>
 <ul>
-<li>98.91666666666666 fitness evaluations, 0 generations, null statements, 18 tests.
+<li>106.78333333333333 fitness evaluations, 0 generations, null statements, 16 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,29 +35,28 @@ uk.ac.sanger.artemis.plot.AGWindowAlgorithm
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;!Y`.JZk&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
-<span class="nocode"><a name="4">  4: </a></span>AGWindowAlgorithm aGWindowAlgorithm0 = new AGWindowAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>aGWindowAlgorithm0.getValueCount();
+<span class="nocode"><a name="1">  1: </a></span>Bases bases0 = new Bases((Sequence) null);
+<span class="nocode"><a name="2">  2: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="3">  3: </a></span>AGWindowAlgorithm aGWindowAlgorithm0 = new AGWindowAlgorithm(strand0);
+<span class="nocode"><a name="4">  4: </a></span>aGWindowAlgorithm0.getValueCount();
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;#Z&quot;);
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;Joz- ^$d](\&quot;INZS+&quot;);
 <span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
 <span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
 <span class="nocode"><a name="4">  4: </a></span>AGWindowAlgorithm aGWindowAlgorithm0 = new AGWindowAlgorithm(strand0);
 <span class="nocode"><a name="5">  5: </a></span>Float float0 = aGWindowAlgorithm0.getMaximumInternal();
-<span class="nocode"><a name="6">  6: </a></span>assertTrue(aGWindowAlgorithm0.scalingFlag());
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(100.0F, (float)float0, 0.01F);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(100.0F, (float)float0, 0.01F);
+<span class="nocode"><a name="7">  7: </a></span>assertTrue(aGWindowAlgorithm0.scalingFlag());
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[9];
-<span class="nocode"><a name="2">  2: </a></span>Integer integer0 = JLayeredPane.MODAL_LAYER;
-<span class="nocode"><a name="3">  3: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 1531, 1531, (Short) null, integer0);
+<span class="nocode"><a name="1">  1: </a></span>Short short0 = new Short((short)2953);
+<span class="nocode"><a name="2">  2: </a></span>Integer integer0 = new Integer(103);
+<span class="nocode"><a name="3">  3: </a></span>PartialSequence partialSequence0 = new PartialSequence((char[]) null, 0, 0, short0, integer0);
 <span class="nocode"><a name="4">  4: </a></span>Bases bases0 = new Bases(partialSequence0);
-<span class="nocode"><a name="5">  5: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="5">  5: </a></span>Strand strand0 = bases0.getReverseStrand();
 <span class="nocode"><a name="6">  6: </a></span>AGWindowAlgorithm aGWindowAlgorithm0 = new AGWindowAlgorithm(strand0);
 <span class="nocode"><a name="7">  7: </a></span>Float float0 = aGWindowAlgorithm0.getMinimumInternal();
 <span class="nocode"><a name="8">  8: </a></span>assertTrue(aGWindowAlgorithm0.scalingFlag());
@@ -65,8 +64,8 @@ uk.ac.sanger.artemis.plot.AGWindowAlgorithm
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;1pcn$UN;1yK$\u0000&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;Joz- ^$d](\&quot;INZS+&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
 <span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
 <span class="nocode"><a name="4">  4: </a></span>AGWindowAlgorithm aGWindowAlgorithm0 = new AGWindowAlgorithm(strand0);
 <span class="nocode"><a name="5">  5: </a></span>aGWindowAlgorithm0.getAverage();
@@ -74,141 +73,943 @@ uk.ac.sanger.artemis.plot.AGWindowAlgorithm
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;#Z&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
-<span class="nocode"><a name="4">  4: </a></span>AGWindowAlgorithm aGWindowAlgorithm0 = new AGWindowAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>float[] floatArray0 = new float[0];
-<span class="nocode"><a name="6">  6: </a></span>aGWindowAlgorithm0.getValues((-222), 1237, floatArray0);
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;Reverse GC Frame Plot&quot;);
+<span class="nocode"><a name="2">  2: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(rawStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
+<span class="nocode"><a name="4">  4: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="5">  5: </a></span>AGWindowAlgorithm aGWindowAlgorithm0 = new AGWindowAlgorithm(strand0);
+<span class="nocode"><a name="6">  6: </a></span>float[] floatArray0 = new float[3];
+<span class="nocode"><a name="7">  7: </a></span>aGWindowAlgorithm0.getValues(2, 3294, floatArray0);
+<span class="nocode"><a name="8">  8: </a></span>assertArrayEquals(new float[] {0.030367445F, 0.0F, 0.0F}, floatArray0, 0.01F);
+<span class="nocode"><a name="9">  9: </a></span>assertTrue(aGWindowAlgorithm0.scalingFlag());
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;ag_content&quot;);
-<span class="nocode"><a name="2">  2: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(emblStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
-<span class="nocode"><a name="4">  4: </a></span>Strand strand0 = bases0.getReverseStrand();
-<span class="nocode"><a name="5">  5: </a></span>AGWindowAlgorithm aGWindowAlgorithm0 = new AGWindowAlgorithm(strand0);
-<span class="nocode"><a name="6">  6: </a></span>float[] floatArray0 = new float[2];
-<span class="nocode"><a name="7">  7: </a></span>aGWindowAlgorithm0.getValues((-1230), 430, floatArray0);
-<span class="nocode"><a name="8">  8: </a></span>assertArrayEquals(new float[] {0.18061408F, 0.0F}, floatArray0, 0.01F);
-<span class="nocode"><a name="9">  9: </a></span>assertTrue(aGWindowAlgorithm0.scalingFlag());
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(0, emblStreamSequence0.getGCount());
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, emblStreamSequence0.getOtherCount());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, emblStreamSequence0.getACount());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, emblStreamSequence0.getCCount());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, emblStreamSequence0.length());
+<span class="nocode"><a name="7">  7: </a></span>assertNull(emblStreamSequence0.getHeader());
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(1, emblStreamSequence0.getFormatType());
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(0, emblStreamSequence0.getTCount());
+<span class="nocode"><a name="10"> 10: </a></span>assertNotNull(emblStreamSequence0);
+<span class="nocode"><a name="11"> 11: </a></span>
+<span class="nocode"><a name="12"> 12: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
+<span class="nocode"><a name="13"> 13: </a></span>assertEquals(0, emblStreamSequence0.getGCount());
+<span class="nocode"><a name="14"> 14: </a></span>assertEquals(0, emblStreamSequence0.getOtherCount());
+<span class="nocode"><a name="15"> 15: </a></span>assertEquals(0, emblStreamSequence0.getACount());
+<span class="nocode"><a name="16"> 16: </a></span>assertEquals(0, emblStreamSequence0.getCCount());
+<span class="nocode"><a name="17"> 17: </a></span>assertEquals(0, emblStreamSequence0.length());
+<span class="nocode"><a name="18"> 18: </a></span>assertNull(emblStreamSequence0.getHeader());
+<span class="nocode"><a name="19"> 19: </a></span>assertEquals(1, emblStreamSequence0.getFormatType());
+<span class="nocode"><a name="20"> 20: </a></span>assertEquals(0, emblStreamSequence0.getTCount());
+<span class="nocode"><a name="21"> 21: </a></span>assertNotNull(bases0);
+<span class="nocode"><a name="22"> 22: </a></span>assertEquals((-5), Bases.MIN_PRIORITY);
+<span class="nocode"><a name="23"> 23: </a></span>assertEquals(0, Bases.MEDIUM_PRIORITY);
+<span class="nocode"><a name="24"> 24: </a></span>assertEquals(2, Bases.REVERSE);
+<span class="nocode"><a name="25"> 25: </a></span>assertEquals(5, Bases.MAX_PRIORITY);
+<span class="nocode"><a name="26"> 26: </a></span>assertEquals(1, Bases.FORWARD);
+<span class="nocode"><a name="27"> 27: </a></span>
+<span class="nocode"><a name="28"> 28: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="29"> 29: </a></span>assertEquals(0, emblStreamSequence0.getGCount());
+<span class="nocode"><a name="30"> 30: </a></span>assertEquals(0, emblStreamSequence0.getOtherCount());
+<span class="nocode"><a name="31"> 31: </a></span>assertEquals(0, emblStreamSequence0.getACount());
+<span class="nocode"><a name="32"> 32: </a></span>assertEquals(0, emblStreamSequence0.getCCount());
+<span class="nocode"><a name="33"> 33: </a></span>assertEquals(0, emblStreamSequence0.length());
+<span class="nocode"><a name="34"> 34: </a></span>assertNull(emblStreamSequence0.getHeader());
+<span class="nocode"><a name="35"> 35: </a></span>assertEquals(1, emblStreamSequence0.getFormatType());
+<span class="nocode"><a name="36"> 36: </a></span>assertEquals(0, emblStreamSequence0.getTCount());
+<span class="nocode"><a name="37"> 37: </a></span>assertFalse(strand0.isForwardStrand());
+<span class="nocode"><a name="38"> 38: </a></span>assertEquals(2, strand0.getDirection());
+<span class="nocode"><a name="39"> 39: </a></span>assertNotNull(strand0);
+<span class="nocode"><a name="40"> 40: </a></span>assertEquals((-5), Bases.MIN_PRIORITY);
+<span class="nocode"><a name="41"> 41: </a></span>assertEquals(0, Bases.MEDIUM_PRIORITY);
+<span class="nocode"><a name="42"> 42: </a></span>assertEquals(2, Bases.REVERSE);
+<span class="nocode"><a name="43"> 43: </a></span>assertEquals(5, Bases.MAX_PRIORITY);
+<span class="nocode"><a name="44"> 44: </a></span>assertEquals(1, Bases.FORWARD);
+<span class="nocode"><a name="45"> 45: </a></span>assertEquals(2, Strand.REVERSE);
+<span class="nocode"><a name="46"> 46: </a></span>assertEquals(1, Strand.FORWARD);
+<span class="nocode"><a name="47"> 47: </a></span>
+<span class="nocode"><a name="48"> 48: </a></span>AGWindowAlgorithm aGWindowAlgorithm0 = new AGWindowAlgorithm(strand0);
+<span class="nocode"><a name="49"> 49: </a></span>assertEquals(0, emblStreamSequence0.getGCount());
+<span class="nocode"><a name="50"> 50: </a></span>assertEquals(0, emblStreamSequence0.getOtherCount());
+<span class="nocode"><a name="51"> 51: </a></span>assertEquals(0, emblStreamSequence0.getACount());
+<span class="nocode"><a name="52"> 52: </a></span>assertEquals(0, emblStreamSequence0.getCCount());
+<span class="nocode"><a name="53"> 53: </a></span>assertEquals(0, emblStreamSequence0.length());
+<span class="nocode"><a name="54"> 54: </a></span>assertNull(emblStreamSequence0.getHeader());
+<span class="nocode"><a name="55"> 55: </a></span>assertEquals(1, emblStreamSequence0.getFormatType());
+<span class="nocode"><a name="56"> 56: </a></span>assertEquals(0, emblStreamSequence0.getTCount());
+<span class="nocode"><a name="57"> 57: </a></span>assertFalse(strand0.isForwardStrand());
+<span class="nocode"><a name="58"> 58: </a></span>assertEquals(2, strand0.getDirection());
+<span class="nocode"><a name="59"> 59: </a></span>assertEquals(1.4E-45F, aGWindowAlgorithm0.getUserMin(), 0.01F);
+<span class="nocode"><a name="60"> 60: </a></span>assertFalse(aGWindowAlgorithm0.isUserMaxMin());
+<span class="nocode"><a name="61"> 61: </a></span>assertEquals(&quot;AG Content (%)&quot;, aGWindowAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="62"> 62: </a></span>assertEquals(3.4028235E38F, aGWindowAlgorithm0.getUserMax(), 0.01F);
+<span class="nocode"><a name="63"> 63: </a></span>assertFalse(aGWindowAlgorithm0.isRevCompDisplay());
+<span class="nocode"><a name="64"> 64: </a></span>assertTrue(aGWindowAlgorithm0.scalingFlag());
+<span class="nocode"><a name="65"> 65: </a></span>assertEquals(1, aGWindowAlgorithm0.getValueCount());
+<span class="nocode"><a name="66"> 66: </a></span>assertEquals(&quot;ag_content&quot;, aGWindowAlgorithm0.getAlgorithmShortName());
+<span class="nocode"><a name="67"> 67: </a></span>assertNotNull(aGWindowAlgorithm0);
+<span class="nocode"><a name="68"> 68: </a></span>assertEquals((-5), Bases.MIN_PRIORITY);
+<span class="nocode"><a name="69"> 69: </a></span>assertEquals(0, Bases.MEDIUM_PRIORITY);
+<span class="nocode"><a name="70"> 70: </a></span>assertEquals(2, Bases.REVERSE);
+<span class="nocode"><a name="71"> 71: </a></span>assertEquals(5, Bases.MAX_PRIORITY);
+<span class="nocode"><a name="72"> 72: </a></span>assertEquals(1, Bases.FORWARD);
+<span class="nocode"><a name="73"> 73: </a></span>assertEquals(2, Strand.REVERSE);
+<span class="nocode"><a name="74"> 74: </a></span>assertEquals(1, Strand.FORWARD);
+<span class="nocode"><a name="75"> 75: </a></span>
+<span class="nocode"><a name="76"> 76: </a></span>Integer integer0 = aGWindowAlgorithm0.getDefaultWindowSize();
+<span class="nocode"><a name="77"> 77: </a></span>assertEquals(0, emblStreamSequence0.getGCount());
+<span class="nocode"><a name="78"> 78: </a></span>assertEquals(0, emblStreamSequence0.getOtherCount());
+<span class="nocode"><a name="79"> 79: </a></span>assertEquals(0, emblStreamSequence0.getACount());
+<span class="nocode"><a name="80"> 80: </a></span>assertEquals(0, emblStreamSequence0.getCCount());
+<span class="nocode"><a name="81"> 81: </a></span>assertEquals(0, emblStreamSequence0.length());
+<span class="nocode"><a name="82"> 82: </a></span>assertNull(emblStreamSequence0.getHeader());
+<span class="nocode"><a name="83"> 83: </a></span>assertEquals(1, emblStreamSequence0.getFormatType());
+<span class="nocode"><a name="84"> 84: </a></span>assertEquals(0, emblStreamSequence0.getTCount());
+<span class="nocode"><a name="85"> 85: </a></span>assertFalse(strand0.isForwardStrand());
+<span class="nocode"><a name="86"> 86: </a></span>assertEquals(2, strand0.getDirection());
+<span class="nocode"><a name="87"> 87: </a></span>assertEquals(1.4E-45F, aGWindowAlgorithm0.getUserMin(), 0.01F);
+<span class="nocode"><a name="88"> 88: </a></span>assertFalse(aGWindowAlgorithm0.isUserMaxMin());
+<span class="nocode"><a name="89"> 89: </a></span>assertEquals(&quot;AG Content (%)&quot;, aGWindowAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="90"> 90: </a></span>assertEquals(3.4028235E38F, aGWindowAlgorithm0.getUserMax(), 0.01F);
+<span class="nocode"><a name="91"> 91: </a></span>assertFalse(aGWindowAlgorithm0.isRevCompDisplay());
+<span class="nocode"><a name="92"> 92: </a></span>assertTrue(aGWindowAlgorithm0.scalingFlag());
+<span class="nocode"><a name="93"> 93: </a></span>assertEquals(1, aGWindowAlgorithm0.getValueCount());
+<span class="nocode"><a name="94"> 94: </a></span>assertEquals(&quot;ag_content&quot;, aGWindowAlgorithm0.getAlgorithmShortName());
+<span class="nocode"><a name="95"> 95: </a></span>assertNotNull(integer0);
+<span class="nocode"><a name="96"> 96: </a></span>assertEquals(120, (int)integer0);
+<span class="nocode"><a name="97"> 97: </a></span>assertEquals((-5), Bases.MIN_PRIORITY);
+<span class="nocode"><a name="98"> 98: </a></span>assertEquals(0, Bases.MEDIUM_PRIORITY);
+<span class="nocode"><a name="99"> 99: </a></span>assertEquals(2, Bases.REVERSE);
+<span class="nocode"><a name="100">100: </a></span>assertEquals(5, Bases.MAX_PRIORITY);
+<span class="nocode"><a name="101">101: </a></span>assertEquals(1, Bases.FORWARD);
+<span class="nocode"><a name="102">102: </a></span>assertEquals(2, Strand.REVERSE);
+<span class="nocode"><a name="103">103: </a></span>assertEquals(1, Strand.FORWARD);
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;ag_content&quot;);
-<span class="nocode"><a name="2">  2: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(emblStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
-<span class="nocode"><a name="4">  4: </a></span>Strand strand0 = bases0.getReverseStrand();
-<span class="nocode"><a name="5">  5: </a></span>AGWindowAlgorithm aGWindowAlgorithm0 = new AGWindowAlgorithm(strand0);
-<span class="nocode"><a name="6">  6: </a></span>Integer integer0 = aGWindowAlgorithm0.getDefaultWindowSize();
-<span class="nocode"><a name="7">  7: </a></span>assertTrue(aGWindowAlgorithm0.scalingFlag());
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(120, (int)integer0);
-<span class="nocode"><a name="9">  9: </a></span>assertNotNull(integer0);
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;Cannot find the 'token' Tokenization for RNA!?&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(4, rawStreamSequence0.getTCount());
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(46, rawStreamSequence0.length());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(40, rawStreamSequence0.getOtherCount());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(2, rawStreamSequence0.getACount());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, rawStreamSequence0.getGCount());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, rawStreamSequence0.getCCount());
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(3, rawStreamSequence0.getFormatType());
+<span class="nocode"><a name="9">  9: </a></span>assertNotNull(rawStreamSequence0);
+<span class="nocode"><a name="10"> 10: </a></span>
+<span class="nocode"><a name="11"> 11: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="12"> 12: </a></span>assertEquals(4, rawStreamSequence0.getTCount());
+<span class="nocode"><a name="13"> 13: </a></span>assertEquals(46, rawStreamSequence0.length());
+<span class="nocode"><a name="14"> 14: </a></span>assertEquals(40, rawStreamSequence0.getOtherCount());
+<span class="nocode"><a name="15"> 15: </a></span>assertEquals(2, rawStreamSequence0.getACount());
+<span class="nocode"><a name="16"> 16: </a></span>assertEquals(0, rawStreamSequence0.getGCount());
+<span class="nocode"><a name="17"> 17: </a></span>assertEquals(0, rawStreamSequence0.getCCount());
+<span class="nocode"><a name="18"> 18: </a></span>assertEquals(3, rawStreamSequence0.getFormatType());
+<span class="nocode"><a name="19"> 19: </a></span>assertNotNull(bases0);
+<span class="nocode"><a name="20"> 20: </a></span>assertEquals((-5), Bases.MIN_PRIORITY);
+<span class="nocode"><a name="21"> 21: </a></span>assertEquals(0, Bases.MEDIUM_PRIORITY);
+<span class="nocode"><a name="22"> 22: </a></span>assertEquals(2, Bases.REVERSE);
+<span class="nocode"><a name="23"> 23: </a></span>assertEquals(1, Bases.FORWARD);
+<span class="nocode"><a name="24"> 24: </a></span>assertEquals(5, Bases.MAX_PRIORITY);
+<span class="nocode"><a name="25"> 25: </a></span>
+<span class="nocode"><a name="26"> 26: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="27"> 27: </a></span>assertEquals(4, rawStreamSequence0.getTCount());
+<span class="nocode"><a name="28"> 28: </a></span>assertEquals(46, rawStreamSequence0.length());
+<span class="nocode"><a name="29"> 29: </a></span>assertEquals(40, rawStreamSequence0.getOtherCount());
+<span class="nocode"><a name="30"> 30: </a></span>assertEquals(2, rawStreamSequence0.getACount());
+<span class="nocode"><a name="31"> 31: </a></span>assertEquals(0, rawStreamSequence0.getGCount());
+<span class="nocode"><a name="32"> 32: </a></span>assertEquals(0, rawStreamSequence0.getCCount());
+<span class="nocode"><a name="33"> 33: </a></span>assertEquals(3, rawStreamSequence0.getFormatType());
+<span class="nocode"><a name="34"> 34: </a></span>assertEquals(2, strand0.getDirection());
+<span class="nocode"><a name="35"> 35: </a></span>assertFalse(strand0.isForwardStrand());
+<span class="nocode"><a name="36"> 36: </a></span>assertNotNull(strand0);
+<span class="nocode"><a name="37"> 37: </a></span>assertEquals((-5), Bases.MIN_PRIORITY);
+<span class="nocode"><a name="38"> 38: </a></span>assertEquals(0, Bases.MEDIUM_PRIORITY);
+<span class="nocode"><a name="39"> 39: </a></span>assertEquals(2, Bases.REVERSE);
+<span class="nocode"><a name="40"> 40: </a></span>assertEquals(1, Bases.FORWARD);
+<span class="nocode"><a name="41"> 41: </a></span>assertEquals(5, Bases.MAX_PRIORITY);
+<span class="nocode"><a name="42"> 42: </a></span>assertEquals(2, Strand.REVERSE);
+<span class="nocode"><a name="43"> 43: </a></span>assertEquals(1, Strand.FORWARD);
+<span class="nocode"><a name="44"> 44: </a></span>
+<span class="nocode"><a name="45"> 45: </a></span>AGWindowAlgorithm aGWindowAlgorithm0 = new AGWindowAlgorithm(strand0);
+<span class="nocode"><a name="46"> 46: </a></span>assertEquals(4, rawStreamSequence0.getTCount());
+<span class="nocode"><a name="47"> 47: </a></span>assertEquals(46, rawStreamSequence0.length());
+<span class="nocode"><a name="48"> 48: </a></span>assertEquals(40, rawStreamSequence0.getOtherCount());
+<span class="nocode"><a name="49"> 49: </a></span>assertEquals(2, rawStreamSequence0.getACount());
+<span class="nocode"><a name="50"> 50: </a></span>assertEquals(0, rawStreamSequence0.getGCount());
+<span class="nocode"><a name="51"> 51: </a></span>assertEquals(0, rawStreamSequence0.getCCount());
+<span class="nocode"><a name="52"> 52: </a></span>assertEquals(3, rawStreamSequence0.getFormatType());
+<span class="nocode"><a name="53"> 53: </a></span>assertEquals(2, strand0.getDirection());
+<span class="nocode"><a name="54"> 54: </a></span>assertFalse(strand0.isForwardStrand());
+<span class="nocode"><a name="55"> 55: </a></span>assertEquals(&quot;AG Content (%)&quot;, aGWindowAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="56"> 56: </a></span>assertEquals(1, aGWindowAlgorithm0.getValueCount());
+<span class="nocode"><a name="57"> 57: </a></span>assertFalse(aGWindowAlgorithm0.isRevCompDisplay());
+<span class="nocode"><a name="58"> 58: </a></span>assertEquals(3.4028235E38F, aGWindowAlgorithm0.getUserMax(), 0.01F);
+<span class="nocode"><a name="59"> 59: </a></span>assertFalse(aGWindowAlgorithm0.isUserMaxMin());
+<span class="nocode"><a name="60"> 60: </a></span>assertEquals(&quot;ag_content&quot;, aGWindowAlgorithm0.getAlgorithmShortName());
+<span class="nocode"><a name="61"> 61: </a></span>assertTrue(aGWindowAlgorithm0.scalingFlag());
+<span class="nocode"><a name="62"> 62: </a></span>assertEquals(1.4E-45F, aGWindowAlgorithm0.getUserMin(), 0.01F);
+<span class="nocode"><a name="63"> 63: </a></span>assertNotNull(aGWindowAlgorithm0);
+<span class="nocode"><a name="64"> 64: </a></span>assertEquals((-5), Bases.MIN_PRIORITY);
+<span class="nocode"><a name="65"> 65: </a></span>assertEquals(0, Bases.MEDIUM_PRIORITY);
+<span class="nocode"><a name="66"> 66: </a></span>assertEquals(2, Bases.REVERSE);
+<span class="nocode"><a name="67"> 67: </a></span>assertEquals(1, Bases.FORWARD);
+<span class="nocode"><a name="68"> 68: </a></span>assertEquals(5, Bases.MAX_PRIORITY);
+<span class="nocode"><a name="69"> 69: </a></span>assertEquals(2, Strand.REVERSE);
+<span class="nocode"><a name="70"> 70: </a></span>assertEquals(1, Strand.FORWARD);
+<span class="nocode"><a name="71"> 71: </a></span>
+<span class="nocode"><a name="72"> 72: </a></span>Integer integer0 = aGWindowAlgorithm0.getDefaultMaxWindowSize();
+<span class="nocode"><a name="73"> 73: </a></span>assertEquals(4, rawStreamSequence0.getTCount());
+<span class="nocode"><a name="74"> 74: </a></span>assertEquals(46, rawStreamSequence0.length());
+<span class="nocode"><a name="75"> 75: </a></span>assertEquals(40, rawStreamSequence0.getOtherCount());
+<span class="nocode"><a name="76"> 76: </a></span>assertEquals(2, rawStreamSequence0.getACount());
+<span class="nocode"><a name="77"> 77: </a></span>assertEquals(0, rawStreamSequence0.getGCount());
+<span class="nocode"><a name="78"> 78: </a></span>assertEquals(0, rawStreamSequence0.getCCount());
+<span class="nocode"><a name="79"> 79: </a></span>assertEquals(3, rawStreamSequence0.getFormatType());
+<span class="nocode"><a name="80"> 80: </a></span>assertEquals(2, strand0.getDirection());
+<span class="nocode"><a name="81"> 81: </a></span>assertFalse(strand0.isForwardStrand());
+<span class="nocode"><a name="82"> 82: </a></span>assertEquals(&quot;AG Content (%)&quot;, aGWindowAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="83"> 83: </a></span>assertEquals(1, aGWindowAlgorithm0.getValueCount());
+<span class="nocode"><a name="84"> 84: </a></span>assertFalse(aGWindowAlgorithm0.isRevCompDisplay());
+<span class="nocode"><a name="85"> 85: </a></span>assertEquals(3.4028235E38F, aGWindowAlgorithm0.getUserMax(), 0.01F);
+<span class="nocode"><a name="86"> 86: </a></span>assertFalse(aGWindowAlgorithm0.isUserMaxMin());
+<span class="nocode"><a name="87"> 87: </a></span>assertEquals(&quot;ag_content&quot;, aGWindowAlgorithm0.getAlgorithmShortName());
+<span class="nocode"><a name="88"> 88: </a></span>assertTrue(aGWindowAlgorithm0.scalingFlag());
+<span class="nocode"><a name="89"> 89: </a></span>assertEquals(1.4E-45F, aGWindowAlgorithm0.getUserMin(), 0.01F);
+<span class="nocode"><a name="90"> 90: </a></span>assertNotNull(integer0);
+<span class="nocode"><a name="91"> 91: </a></span>assertEquals(500, (int)integer0);
+<span class="nocode"><a name="92"> 92: </a></span>assertEquals((-5), Bases.MIN_PRIORITY);
+<span class="nocode"><a name="93"> 93: </a></span>assertEquals(0, Bases.MEDIUM_PRIORITY);
+<span class="nocode"><a name="94"> 94: </a></span>assertEquals(2, Bases.REVERSE);
+<span class="nocode"><a name="95"> 95: </a></span>assertEquals(1, Bases.FORWARD);
+<span class="nocode"><a name="96"> 96: </a></span>assertEquals(5, Bases.MAX_PRIORITY);
+<span class="nocode"><a name="97"> 97: </a></span>assertEquals(2, Strand.REVERSE);
+<span class="nocode"><a name="98"> 98: </a></span>assertEquals(1, Strand.FORWARD);
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;#Z&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
-<span class="nocode"><a name="4">  4: </a></span>AGWindowAlgorithm aGWindowAlgorithm0 = new AGWindowAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>Integer integer0 = aGWindowAlgorithm0.getDefaultMaxWindowSize();
-<span class="nocode"><a name="6">  6: </a></span>assertTrue(aGWindowAlgorithm0.scalingFlag());
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(500, (int)integer0);
-<span class="nocode"><a name="8">  8: </a></span>assertNotNull(integer0);
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;Joz- ^$d](\&quot;INZS+&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(0, fastaStreamSequence0.getCCount());
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(4, fastaStreamSequence0.getFormatType());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, fastaStreamSequence0.getGCount());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, fastaStreamSequence0.getACount());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(16, fastaStreamSequence0.getOtherCount());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, fastaStreamSequence0.getTCount());
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(16, fastaStreamSequence0.length());
+<span class="nocode"><a name="9">  9: </a></span>assertNotNull(fastaStreamSequence0);
+<span class="nocode"><a name="10"> 10: </a></span>
+<span class="nocode"><a name="11"> 11: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="12"> 12: </a></span>assertEquals(0, fastaStreamSequence0.getCCount());
+<span class="nocode"><a name="13"> 13: </a></span>assertEquals(4, fastaStreamSequence0.getFormatType());
+<span class="nocode"><a name="14"> 14: </a></span>assertEquals(0, fastaStreamSequence0.getGCount());
+<span class="nocode"><a name="15"> 15: </a></span>assertEquals(0, fastaStreamSequence0.getACount());
+<span class="nocode"><a name="16"> 16: </a></span>assertEquals(16, fastaStreamSequence0.getOtherCount());
+<span class="nocode"><a name="17"> 17: </a></span>assertEquals(0, fastaStreamSequence0.getTCount());
+<span class="nocode"><a name="18"> 18: </a></span>assertEquals(16, fastaStreamSequence0.length());
+<span class="nocode"><a name="19"> 19: </a></span>assertNotNull(bases0);
+<span class="nocode"><a name="20"> 20: </a></span>assertEquals((-5), Bases.MIN_PRIORITY);
+<span class="nocode"><a name="21"> 21: </a></span>assertEquals(0, Bases.MEDIUM_PRIORITY);
+<span class="nocode"><a name="22"> 22: </a></span>assertEquals(1, Bases.FORWARD);
+<span class="nocode"><a name="23"> 23: </a></span>assertEquals(5, Bases.MAX_PRIORITY);
+<span class="nocode"><a name="24"> 24: </a></span>assertEquals(2, Bases.REVERSE);
+<span class="nocode"><a name="25"> 25: </a></span>
+<span class="nocode"><a name="26"> 26: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="27"> 27: </a></span>assertEquals(0, fastaStreamSequence0.getCCount());
+<span class="nocode"><a name="28"> 28: </a></span>assertEquals(4, fastaStreamSequence0.getFormatType());
+<span class="nocode"><a name="29"> 29: </a></span>assertEquals(0, fastaStreamSequence0.getGCount());
+<span class="nocode"><a name="30"> 30: </a></span>assertEquals(0, fastaStreamSequence0.getACount());
+<span class="nocode"><a name="31"> 31: </a></span>assertEquals(16, fastaStreamSequence0.getOtherCount());
+<span class="nocode"><a name="32"> 32: </a></span>assertEquals(0, fastaStreamSequence0.getTCount());
+<span class="nocode"><a name="33"> 33: </a></span>assertEquals(16, fastaStreamSequence0.length());
+<span class="nocode"><a name="34"> 34: </a></span>assertTrue(strand0.isForwardStrand());
+<span class="nocode"><a name="35"> 35: </a></span>assertEquals(1, strand0.getDirection());
+<span class="nocode"><a name="36"> 36: </a></span>assertNotNull(strand0);
+<span class="nocode"><a name="37"> 37: </a></span>assertEquals((-5), Bases.MIN_PRIORITY);
+<span class="nocode"><a name="38"> 38: </a></span>assertEquals(0, Bases.MEDIUM_PRIORITY);
+<span class="nocode"><a name="39"> 39: </a></span>assertEquals(1, Bases.FORWARD);
+<span class="nocode"><a name="40"> 40: </a></span>assertEquals(5, Bases.MAX_PRIORITY);
+<span class="nocode"><a name="41"> 41: </a></span>assertEquals(2, Bases.REVERSE);
+<span class="nocode"><a name="42"> 42: </a></span>assertEquals(1, Strand.FORWARD);
+<span class="nocode"><a name="43"> 43: </a></span>assertEquals(2, Strand.REVERSE);
+<span class="nocode"><a name="44"> 44: </a></span>
+<span class="nocode"><a name="45"> 45: </a></span>AGWindowAlgorithm aGWindowAlgorithm0 = new AGWindowAlgorithm(strand0);
+<span class="nocode"><a name="46"> 46: </a></span>assertEquals(0, fastaStreamSequence0.getCCount());
+<span class="nocode"><a name="47"> 47: </a></span>assertEquals(4, fastaStreamSequence0.getFormatType());
+<span class="nocode"><a name="48"> 48: </a></span>assertEquals(0, fastaStreamSequence0.getGCount());
+<span class="nocode"><a name="49"> 49: </a></span>assertEquals(0, fastaStreamSequence0.getACount());
+<span class="nocode"><a name="50"> 50: </a></span>assertEquals(16, fastaStreamSequence0.getOtherCount());
+<span class="nocode"><a name="51"> 51: </a></span>assertEquals(0, fastaStreamSequence0.getTCount());
+<span class="nocode"><a name="52"> 52: </a></span>assertEquals(16, fastaStreamSequence0.length());
+<span class="nocode"><a name="53"> 53: </a></span>assertTrue(strand0.isForwardStrand());
+<span class="nocode"><a name="54"> 54: </a></span>assertEquals(1, strand0.getDirection());
+<span class="nocode"><a name="55"> 55: </a></span>assertFalse(aGWindowAlgorithm0.isUserMaxMin());
+<span class="nocode"><a name="56"> 56: </a></span>assertTrue(aGWindowAlgorithm0.scalingFlag());
+<span class="nocode"><a name="57"> 57: </a></span>assertEquals(&quot;AG Content (%)&quot;, aGWindowAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="58"> 58: </a></span>assertEquals(1, aGWindowAlgorithm0.getValueCount());
+<span class="nocode"><a name="59"> 59: </a></span>assertFalse(aGWindowAlgorithm0.isRevCompDisplay());
+<span class="nocode"><a name="60"> 60: </a></span>assertEquals(3.4028235E38F, aGWindowAlgorithm0.getUserMax(), 0.01F);
+<span class="nocode"><a name="61"> 61: </a></span>assertEquals(&quot;ag_content&quot;, aGWindowAlgorithm0.getAlgorithmShortName());
+<span class="nocode"><a name="62"> 62: </a></span>assertEquals(1.4E-45F, aGWindowAlgorithm0.getUserMin(), 0.01F);
+<span class="nocode"><a name="63"> 63: </a></span>assertNotNull(aGWindowAlgorithm0);
+<span class="nocode"><a name="64"> 64: </a></span>assertEquals((-5), Bases.MIN_PRIORITY);
+<span class="nocode"><a name="65"> 65: </a></span>assertEquals(0, Bases.MEDIUM_PRIORITY);
+<span class="nocode"><a name="66"> 66: </a></span>assertEquals(1, Bases.FORWARD);
+<span class="nocode"><a name="67"> 67: </a></span>assertEquals(5, Bases.MAX_PRIORITY);
+<span class="nocode"><a name="68"> 68: </a></span>assertEquals(2, Bases.REVERSE);
+<span class="nocode"><a name="69"> 69: </a></span>assertEquals(1, Strand.FORWARD);
+<span class="nocode"><a name="70"> 70: </a></span>assertEquals(2, Strand.REVERSE);
+<span class="nocode"><a name="71"> 71: </a></span>
+<span class="nocode"><a name="72"> 72: </a></span>Integer integer0 = aGWindowAlgorithm0.getDefaultMinWindowSize();
+<span class="nocode"><a name="73"> 73: </a></span>assertEquals(0, fastaStreamSequence0.getCCount());
+<span class="nocode"><a name="74"> 74: </a></span>assertEquals(4, fastaStreamSequence0.getFormatType());
+<span class="nocode"><a name="75"> 75: </a></span>assertEquals(0, fastaStreamSequence0.getGCount());
+<span class="nocode"><a name="76"> 76: </a></span>assertEquals(0, fastaStreamSequence0.getACount());
+<span class="nocode"><a name="77"> 77: </a></span>assertEquals(16, fastaStreamSequence0.getOtherCount());
+<span class="nocode"><a name="78"> 78: </a></span>assertEquals(0, fastaStreamSequence0.getTCount());
+<span class="nocode"><a name="79"> 79: </a></span>assertEquals(16, fastaStreamSequence0.length());
+<span class="nocode"><a name="80"> 80: </a></span>assertTrue(strand0.isForwardStrand());
+<span class="nocode"><a name="81"> 81: </a></span>assertEquals(1, strand0.getDirection());
+<span class="nocode"><a name="82"> 82: </a></span>assertFalse(aGWindowAlgorithm0.isUserMaxMin());
+<span class="nocode"><a name="83"> 83: </a></span>assertTrue(aGWindowAlgorithm0.scalingFlag());
+<span class="nocode"><a name="84"> 84: </a></span>assertEquals(&quot;AG Content (%)&quot;, aGWindowAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="85"> 85: </a></span>assertEquals(1, aGWindowAlgorithm0.getValueCount());
+<span class="nocode"><a name="86"> 86: </a></span>assertFalse(aGWindowAlgorithm0.isRevCompDisplay());
+<span class="nocode"><a name="87"> 87: </a></span>assertEquals(3.4028235E38F, aGWindowAlgorithm0.getUserMax(), 0.01F);
+<span class="nocode"><a name="88"> 88: </a></span>assertEquals(&quot;ag_content&quot;, aGWindowAlgorithm0.getAlgorithmShortName());
+<span class="nocode"><a name="89"> 89: </a></span>assertEquals(1.4E-45F, aGWindowAlgorithm0.getUserMin(), 0.01F);
+<span class="nocode"><a name="90"> 90: </a></span>assertNotNull(integer0);
+<span class="nocode"><a name="91"> 91: </a></span>assertEquals(24, (int)integer0);
+<span class="nocode"><a name="92"> 92: </a></span>assertEquals((-5), Bases.MIN_PRIORITY);
+<span class="nocode"><a name="93"> 93: </a></span>assertEquals(0, Bases.MEDIUM_PRIORITY);
+<span class="nocode"><a name="94"> 94: </a></span>assertEquals(1, Bases.FORWARD);
+<span class="nocode"><a name="95"> 95: </a></span>assertEquals(5, Bases.MAX_PRIORITY);
+<span class="nocode"><a name="96"> 96: </a></span>assertEquals(2, Bases.REVERSE);
+<span class="nocode"><a name="97"> 97: </a></span>assertEquals(1, Strand.FORWARD);
+<span class="nocode"><a name="98"> 98: </a></span>assertEquals(2, Strand.REVERSE);
 </pre>
 <h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;#Z&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
-<span class="nocode"><a name="4">  4: </a></span>AGWindowAlgorithm aGWindowAlgorithm0 = new AGWindowAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>Integer integer0 = aGWindowAlgorithm0.getDefaultMinWindowSize();
-<span class="nocode"><a name="6">  6: </a></span>assertTrue(aGWindowAlgorithm0.scalingFlag());
-<span class="nocode"><a name="7">  7: </a></span>assertNotNull(integer0);
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(24, (int)integer0);
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;Joz- ^$d](\&quot;INZS+&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(4, fastaStreamSequence0.getFormatType());
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, fastaStreamSequence0.getACount());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, fastaStreamSequence0.getCCount());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, fastaStreamSequence0.getTCount());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(16, fastaStreamSequence0.length());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(16, fastaStreamSequence0.getOtherCount());
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(0, fastaStreamSequence0.getGCount());
+<span class="nocode"><a name="9">  9: </a></span>assertNotNull(fastaStreamSequence0);
+<span class="nocode"><a name="10"> 10: </a></span>
+<span class="nocode"><a name="11"> 11: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="12"> 12: </a></span>assertEquals(4, fastaStreamSequence0.getFormatType());
+<span class="nocode"><a name="13"> 13: </a></span>assertEquals(0, fastaStreamSequence0.getACount());
+<span class="nocode"><a name="14"> 14: </a></span>assertEquals(0, fastaStreamSequence0.getCCount());
+<span class="nocode"><a name="15"> 15: </a></span>assertEquals(0, fastaStreamSequence0.getTCount());
+<span class="nocode"><a name="16"> 16: </a></span>assertEquals(16, fastaStreamSequence0.length());
+<span class="nocode"><a name="17"> 17: </a></span>assertEquals(16, fastaStreamSequence0.getOtherCount());
+<span class="nocode"><a name="18"> 18: </a></span>assertEquals(0, fastaStreamSequence0.getGCount());
+<span class="nocode"><a name="19"> 19: </a></span>assertNotNull(bases0);
+<span class="nocode"><a name="20"> 20: </a></span>assertEquals(1, Bases.FORWARD);
+<span class="nocode"><a name="21"> 21: </a></span>assertEquals(2, Bases.REVERSE);
+<span class="nocode"><a name="22"> 22: </a></span>assertEquals((-5), Bases.MIN_PRIORITY);
+<span class="nocode"><a name="23"> 23: </a></span>assertEquals(0, Bases.MEDIUM_PRIORITY);
+<span class="nocode"><a name="24"> 24: </a></span>assertEquals(5, Bases.MAX_PRIORITY);
+<span class="nocode"><a name="25"> 25: </a></span>
+<span class="nocode"><a name="26"> 26: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="27"> 27: </a></span>assertEquals(4, fastaStreamSequence0.getFormatType());
+<span class="nocode"><a name="28"> 28: </a></span>assertEquals(0, fastaStreamSequence0.getACount());
+<span class="nocode"><a name="29"> 29: </a></span>assertEquals(0, fastaStreamSequence0.getCCount());
+<span class="nocode"><a name="30"> 30: </a></span>assertEquals(0, fastaStreamSequence0.getTCount());
+<span class="nocode"><a name="31"> 31: </a></span>assertEquals(16, fastaStreamSequence0.length());
+<span class="nocode"><a name="32"> 32: </a></span>assertEquals(16, fastaStreamSequence0.getOtherCount());
+<span class="nocode"><a name="33"> 33: </a></span>assertEquals(0, fastaStreamSequence0.getGCount());
+<span class="nocode"><a name="34"> 34: </a></span>assertEquals(1, strand0.getDirection());
+<span class="nocode"><a name="35"> 35: </a></span>assertTrue(strand0.isForwardStrand());
+<span class="nocode"><a name="36"> 36: </a></span>assertNotNull(strand0);
+<span class="nocode"><a name="37"> 37: </a></span>assertEquals(1, Bases.FORWARD);
+<span class="nocode"><a name="38"> 38: </a></span>assertEquals(2, Bases.REVERSE);
+<span class="nocode"><a name="39"> 39: </a></span>assertEquals((-5), Bases.MIN_PRIORITY);
+<span class="nocode"><a name="40"> 40: </a></span>assertEquals(0, Bases.MEDIUM_PRIORITY);
+<span class="nocode"><a name="41"> 41: </a></span>assertEquals(5, Bases.MAX_PRIORITY);
+<span class="nocode"><a name="42"> 42: </a></span>assertEquals(2, Strand.REVERSE);
+<span class="nocode"><a name="43"> 43: </a></span>assertEquals(1, Strand.FORWARD);
+<span class="nocode"><a name="44"> 44: </a></span>
+<span class="nocode"><a name="45"> 45: </a></span>AGWindowAlgorithm aGWindowAlgorithm0 = new AGWindowAlgorithm(strand0);
+<span class="nocode"><a name="46"> 46: </a></span>assertEquals(4, fastaStreamSequence0.getFormatType());
+<span class="nocode"><a name="47"> 47: </a></span>assertEquals(0, fastaStreamSequence0.getACount());
+<span class="nocode"><a name="48"> 48: </a></span>assertEquals(0, fastaStreamSequence0.getCCount());
+<span class="nocode"><a name="49"> 49: </a></span>assertEquals(0, fastaStreamSequence0.getTCount());
+<span class="nocode"><a name="50"> 50: </a></span>assertEquals(16, fastaStreamSequence0.length());
+<span class="nocode"><a name="51"> 51: </a></span>assertEquals(16, fastaStreamSequence0.getOtherCount());
+<span class="nocode"><a name="52"> 52: </a></span>assertEquals(0, fastaStreamSequence0.getGCount());
+<span class="nocode"><a name="53"> 53: </a></span>assertEquals(1, strand0.getDirection());
+<span class="nocode"><a name="54"> 54: </a></span>assertTrue(strand0.isForwardStrand());
+<span class="nocode"><a name="55"> 55: </a></span>assertFalse(aGWindowAlgorithm0.isRevCompDisplay());
+<span class="nocode"><a name="56"> 56: </a></span>assertEquals(&quot;ag_content&quot;, aGWindowAlgorithm0.getAlgorithmShortName());
+<span class="nocode"><a name="57"> 57: </a></span>assertTrue(aGWindowAlgorithm0.scalingFlag());
+<span class="nocode"><a name="58"> 58: </a></span>assertEquals(1.4E-45F, aGWindowAlgorithm0.getUserMin(), 0.01F);
+<span class="nocode"><a name="59"> 59: </a></span>assertFalse(aGWindowAlgorithm0.isUserMaxMin());
+<span class="nocode"><a name="60"> 60: </a></span>assertEquals(&quot;AG Content (%)&quot;, aGWindowAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="61"> 61: </a></span>assertEquals(1, aGWindowAlgorithm0.getValueCount());
+<span class="nocode"><a name="62"> 62: </a></span>assertEquals(3.4028235E38F, aGWindowAlgorithm0.getUserMax(), 0.01F);
+<span class="nocode"><a name="63"> 63: </a></span>assertNotNull(aGWindowAlgorithm0);
+<span class="nocode"><a name="64"> 64: </a></span>assertEquals(1, Bases.FORWARD);
+<span class="nocode"><a name="65"> 65: </a></span>assertEquals(2, Bases.REVERSE);
+<span class="nocode"><a name="66"> 66: </a></span>assertEquals((-5), Bases.MIN_PRIORITY);
+<span class="nocode"><a name="67"> 67: </a></span>assertEquals(0, Bases.MEDIUM_PRIORITY);
+<span class="nocode"><a name="68"> 68: </a></span>assertEquals(5, Bases.MAX_PRIORITY);
+<span class="nocode"><a name="69"> 69: </a></span>assertEquals(2, Strand.REVERSE);
+<span class="nocode"><a name="70"> 70: </a></span>assertEquals(1, Strand.FORWARD);
+<span class="nocode"><a name="71"> 71: </a></span>
+<span class="nocode"><a name="72"> 72: </a></span>Integer integer0 = aGWindowAlgorithm0.getDefaultStepSize(0);
+<span class="nocode"><a name="73"> 73: </a></span>assertEquals(4, fastaStreamSequence0.getFormatType());
+<span class="nocode"><a name="74"> 74: </a></span>assertEquals(0, fastaStreamSequence0.getACount());
+<span class="nocode"><a name="75"> 75: </a></span>assertEquals(0, fastaStreamSequence0.getCCount());
+<span class="nocode"><a name="76"> 76: </a></span>assertEquals(0, fastaStreamSequence0.getTCount());
+<span class="nocode"><a name="77"> 77: </a></span>assertEquals(16, fastaStreamSequence0.length());
+<span class="nocode"><a name="78"> 78: </a></span>assertEquals(16, fastaStreamSequence0.getOtherCount());
+<span class="nocode"><a name="79"> 79: </a></span>assertEquals(0, fastaStreamSequence0.getGCount());
+<span class="nocode"><a name="80"> 80: </a></span>assertEquals(1, strand0.getDirection());
+<span class="nocode"><a name="81"> 81: </a></span>assertTrue(strand0.isForwardStrand());
+<span class="nocode"><a name="82"> 82: </a></span>assertFalse(aGWindowAlgorithm0.isRevCompDisplay());
+<span class="nocode"><a name="83"> 83: </a></span>assertEquals(&quot;ag_content&quot;, aGWindowAlgorithm0.getAlgorithmShortName());
+<span class="nocode"><a name="84"> 84: </a></span>assertTrue(aGWindowAlgorithm0.scalingFlag());
+<span class="nocode"><a name="85"> 85: </a></span>assertEquals(1.4E-45F, aGWindowAlgorithm0.getUserMin(), 0.01F);
+<span class="nocode"><a name="86"> 86: </a></span>assertFalse(aGWindowAlgorithm0.isUserMaxMin());
+<span class="nocode"><a name="87"> 87: </a></span>assertEquals(&quot;AG Content (%)&quot;, aGWindowAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="88"> 88: </a></span>assertEquals(1, aGWindowAlgorithm0.getValueCount());
+<span class="nocode"><a name="89"> 89: </a></span>assertEquals(3.4028235E38F, aGWindowAlgorithm0.getUserMax(), 0.01F);
+<span class="nocode"><a name="90"> 90: </a></span>assertNull(integer0);
+<span class="nocode"><a name="91"> 91: </a></span>assertEquals(1, Bases.FORWARD);
+<span class="nocode"><a name="92"> 92: </a></span>assertEquals(2, Bases.REVERSE);
+<span class="nocode"><a name="93"> 93: </a></span>assertEquals((-5), Bases.MIN_PRIORITY);
+<span class="nocode"><a name="94"> 94: </a></span>assertEquals(0, Bases.MEDIUM_PRIORITY);
+<span class="nocode"><a name="95"> 95: </a></span>assertEquals(5, Bases.MAX_PRIORITY);
+<span class="nocode"><a name="96"> 96: </a></span>assertEquals(2, Strand.REVERSE);
+<span class="nocode"><a name="97"> 97: </a></span>assertEquals(1, Strand.FORWARD);
 </pre>
 <h3>Test case 10</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;#Z&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
-<span class="nocode"><a name="4">  4: </a></span>AGWindowAlgorithm aGWindowAlgorithm0 = new AGWindowAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>Integer integer0 = aGWindowAlgorithm0.getDefaultStepSize((-5));
-<span class="nocode"><a name="6">  6: </a></span>assertTrue(aGWindowAlgorithm0.scalingFlag());
-<span class="nocode"><a name="7">  7: </a></span>assertNull(integer0);
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;Joz- ^$d]-(\&quot;INZS+&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(4, fastaStreamSequence0.getFormatType());
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(17, fastaStreamSequence0.length());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, fastaStreamSequence0.getACount());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, fastaStreamSequence0.getCCount());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, fastaStreamSequence0.getTCount());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, fastaStreamSequence0.getGCount());
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(17, fastaStreamSequence0.getOtherCount());
+<span class="nocode"><a name="9">  9: </a></span>assertNotNull(fastaStreamSequence0);
+<span class="nocode"><a name="10"> 10: </a></span>
+<span class="nocode"><a name="11"> 11: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="12"> 12: </a></span>assertEquals(4, fastaStreamSequence0.getFormatType());
+<span class="nocode"><a name="13"> 13: </a></span>assertEquals(17, fastaStreamSequence0.length());
+<span class="nocode"><a name="14"> 14: </a></span>assertEquals(0, fastaStreamSequence0.getACount());
+<span class="nocode"><a name="15"> 15: </a></span>assertEquals(0, fastaStreamSequence0.getCCount());
+<span class="nocode"><a name="16"> 16: </a></span>assertEquals(0, fastaStreamSequence0.getTCount());
+<span class="nocode"><a name="17"> 17: </a></span>assertEquals(0, fastaStreamSequence0.getGCount());
+<span class="nocode"><a name="18"> 18: </a></span>assertEquals(17, fastaStreamSequence0.getOtherCount());
+<span class="nocode"><a name="19"> 19: </a></span>assertNotNull(bases0);
+<span class="nocode"><a name="20"> 20: </a></span>assertEquals((-5), Bases.MIN_PRIORITY);
+<span class="nocode"><a name="21"> 21: </a></span>assertEquals(0, Bases.MEDIUM_PRIORITY);
+<span class="nocode"><a name="22"> 22: </a></span>assertEquals(5, Bases.MAX_PRIORITY);
+<span class="nocode"><a name="23"> 23: </a></span>assertEquals(1, Bases.FORWARD);
+<span class="nocode"><a name="24"> 24: </a></span>assertEquals(2, Bases.REVERSE);
+<span class="nocode"><a name="25"> 25: </a></span>
+<span class="nocode"><a name="26"> 26: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="27"> 27: </a></span>assertEquals(4, fastaStreamSequence0.getFormatType());
+<span class="nocode"><a name="28"> 28: </a></span>assertEquals(17, fastaStreamSequence0.length());
+<span class="nocode"><a name="29"> 29: </a></span>assertEquals(0, fastaStreamSequence0.getACount());
+<span class="nocode"><a name="30"> 30: </a></span>assertEquals(0, fastaStreamSequence0.getCCount());
+<span class="nocode"><a name="31"> 31: </a></span>assertEquals(0, fastaStreamSequence0.getTCount());
+<span class="nocode"><a name="32"> 32: </a></span>assertEquals(0, fastaStreamSequence0.getGCount());
+<span class="nocode"><a name="33"> 33: </a></span>assertEquals(17, fastaStreamSequence0.getOtherCount());
+<span class="nocode"><a name="34"> 34: </a></span>assertTrue(strand0.isForwardStrand());
+<span class="nocode"><a name="35"> 35: </a></span>assertEquals(1, strand0.getDirection());
+<span class="nocode"><a name="36"> 36: </a></span>assertNotNull(strand0);
+<span class="nocode"><a name="37"> 37: </a></span>assertEquals((-5), Bases.MIN_PRIORITY);
+<span class="nocode"><a name="38"> 38: </a></span>assertEquals(0, Bases.MEDIUM_PRIORITY);
+<span class="nocode"><a name="39"> 39: </a></span>assertEquals(5, Bases.MAX_PRIORITY);
+<span class="nocode"><a name="40"> 40: </a></span>assertEquals(1, Bases.FORWARD);
+<span class="nocode"><a name="41"> 41: </a></span>assertEquals(2, Bases.REVERSE);
+<span class="nocode"><a name="42"> 42: </a></span>assertEquals(2, Strand.REVERSE);
+<span class="nocode"><a name="43"> 43: </a></span>assertEquals(1, Strand.FORWARD);
+<span class="nocode"><a name="44"> 44: </a></span>
+<span class="nocode"><a name="45"> 45: </a></span>AGWindowAlgorithm aGWindowAlgorithm0 = new AGWindowAlgorithm(strand0);
+<span class="nocode"><a name="46"> 46: </a></span>assertEquals(4, fastaStreamSequence0.getFormatType());
+<span class="nocode"><a name="47"> 47: </a></span>assertEquals(17, fastaStreamSequence0.length());
+<span class="nocode"><a name="48"> 48: </a></span>assertEquals(0, fastaStreamSequence0.getACount());
+<span class="nocode"><a name="49"> 49: </a></span>assertEquals(0, fastaStreamSequence0.getCCount());
+<span class="nocode"><a name="50"> 50: </a></span>assertEquals(0, fastaStreamSequence0.getTCount());
+<span class="nocode"><a name="51"> 51: </a></span>assertEquals(0, fastaStreamSequence0.getGCount());
+<span class="nocode"><a name="52"> 52: </a></span>assertEquals(17, fastaStreamSequence0.getOtherCount());
+<span class="nocode"><a name="53"> 53: </a></span>assertTrue(strand0.isForwardStrand());
+<span class="nocode"><a name="54"> 54: </a></span>assertEquals(1, strand0.getDirection());
+<span class="nocode"><a name="55"> 55: </a></span>assertEquals(1, aGWindowAlgorithm0.getValueCount());
+<span class="nocode"><a name="56"> 56: </a></span>assertEquals(&quot;ag_content&quot;, aGWindowAlgorithm0.getAlgorithmShortName());
+<span class="nocode"><a name="57"> 57: </a></span>assertEquals(1.4E-45F, aGWindowAlgorithm0.getUserMin(), 0.01F);
+<span class="nocode"><a name="58"> 58: </a></span>assertFalse(aGWindowAlgorithm0.isUserMaxMin());
+<span class="nocode"><a name="59"> 59: </a></span>assertTrue(aGWindowAlgorithm0.scalingFlag());
+<span class="nocode"><a name="60"> 60: </a></span>assertEquals(&quot;AG Content (%)&quot;, aGWindowAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="61"> 61: </a></span>assertEquals(3.4028235E38F, aGWindowAlgorithm0.getUserMax(), 0.01F);
+<span class="nocode"><a name="62"> 62: </a></span>assertFalse(aGWindowAlgorithm0.isRevCompDisplay());
+<span class="nocode"><a name="63"> 63: </a></span>assertNotNull(aGWindowAlgorithm0);
+<span class="nocode"><a name="64"> 64: </a></span>assertEquals((-5), Bases.MIN_PRIORITY);
+<span class="nocode"><a name="65"> 65: </a></span>assertEquals(0, Bases.MEDIUM_PRIORITY);
+<span class="nocode"><a name="66"> 66: </a></span>assertEquals(5, Bases.MAX_PRIORITY);
+<span class="nocode"><a name="67"> 67: </a></span>assertEquals(1, Bases.FORWARD);
+<span class="nocode"><a name="68"> 68: </a></span>assertEquals(2, Bases.REVERSE);
+<span class="nocode"><a name="69"> 69: </a></span>assertEquals(2, Strand.REVERSE);
+<span class="nocode"><a name="70"> 70: </a></span>assertEquals(1, Strand.FORWARD);
+<span class="nocode"><a name="71"> 71: </a></span>
+<span class="nocode"><a name="72"> 72: </a></span>Integer integer0 = aGWindowAlgorithm0.getDefaultStepSize(78);
+<span class="nocode"><a name="73"> 73: </a></span>assertEquals(4, fastaStreamSequence0.getFormatType());
+<span class="nocode"><a name="74"> 74: </a></span>assertEquals(17, fastaStreamSequence0.length());
+<span class="nocode"><a name="75"> 75: </a></span>assertEquals(0, fastaStreamSequence0.getACount());
+<span class="nocode"><a name="76"> 76: </a></span>assertEquals(0, fastaStreamSequence0.getCCount());
+<span class="nocode"><a name="77"> 77: </a></span>assertEquals(0, fastaStreamSequence0.getTCount());
+<span class="nocode"><a name="78"> 78: </a></span>assertEquals(0, fastaStreamSequence0.getGCount());
+<span class="nocode"><a name="79"> 79: </a></span>assertEquals(17, fastaStreamSequence0.getOtherCount());
+<span class="nocode"><a name="80"> 80: </a></span>assertTrue(strand0.isForwardStrand());
+<span class="nocode"><a name="81"> 81: </a></span>assertEquals(1, strand0.getDirection());
+<span class="nocode"><a name="82"> 82: </a></span>assertEquals(1, aGWindowAlgorithm0.getValueCount());
+<span class="nocode"><a name="83"> 83: </a></span>assertEquals(&quot;ag_content&quot;, aGWindowAlgorithm0.getAlgorithmShortName());
+<span class="nocode"><a name="84"> 84: </a></span>assertEquals(1.4E-45F, aGWindowAlgorithm0.getUserMin(), 0.01F);
+<span class="nocode"><a name="85"> 85: </a></span>assertFalse(aGWindowAlgorithm0.isUserMaxMin());
+<span class="nocode"><a name="86"> 86: </a></span>assertTrue(aGWindowAlgorithm0.scalingFlag());
+<span class="nocode"><a name="87"> 87: </a></span>assertEquals(&quot;AG Content (%)&quot;, aGWindowAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="88"> 88: </a></span>assertEquals(3.4028235E38F, aGWindowAlgorithm0.getUserMax(), 0.01F);
+<span class="nocode"><a name="89"> 89: </a></span>assertFalse(aGWindowAlgorithm0.isRevCompDisplay());
+<span class="nocode"><a name="90"> 90: </a></span>assertNotNull(integer0);
+<span class="nocode"><a name="91"> 91: </a></span>assertEquals(7, (int)integer0);
+<span class="nocode"><a name="92"> 92: </a></span>assertEquals((-5), Bases.MIN_PRIORITY);
+<span class="nocode"><a name="93"> 93: </a></span>assertEquals(0, Bases.MEDIUM_PRIORITY);
+<span class="nocode"><a name="94"> 94: </a></span>assertEquals(5, Bases.MAX_PRIORITY);
+<span class="nocode"><a name="95"> 95: </a></span>assertEquals(1, Bases.FORWARD);
+<span class="nocode"><a name="96"> 96: </a></span>assertEquals(2, Bases.REVERSE);
+<span class="nocode"><a name="97"> 97: </a></span>assertEquals(2, Strand.REVERSE);
+<span class="nocode"><a name="98"> 98: </a></span>assertEquals(1, Strand.FORWARD);
 </pre>
 <h3>Test case 11</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;#Z&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
-<span class="nocode"><a name="4">  4: </a></span>AGWindowAlgorithm aGWindowAlgorithm0 = new AGWindowAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>Integer integer0 = aGWindowAlgorithm0.getDefaultStepSize(643);
-<span class="nocode"><a name="6">  6: </a></span>assertNotNull(integer0);
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(64, (int)integer0);
-<span class="nocode"><a name="8">  8: </a></span>assertTrue(aGWindowAlgorithm0.scalingFlag());
+<span class="nocode"><a name="1">  1: </a></span>AGWindowAlgorithm aGWindowAlgorithm0 = new AGWindowAlgorithm((Strand) null);
 </pre>
 <h3>Test case 12</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>AGWindowAlgorithm aGWindowAlgorithm0 = new AGWindowAlgorithm((Strand) null);
+<span class="nocode"><a name="1">  1: </a></span>Bases bases0 = new Bases((Sequence) null);
+<span class="nocode"><a name="2">  2: </a></span>assertNotNull(bases0);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(1, Bases.FORWARD);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, Bases.MEDIUM_PRIORITY);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(5, Bases.MAX_PRIORITY);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals((-5), Bases.MIN_PRIORITY);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(2, Bases.REVERSE);
+<span class="nocode"><a name="8">  8: </a></span>
+<span class="nocode"><a name="9">  9: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="10"> 10: </a></span>assertEquals(2, strand0.getDirection());
+<span class="nocode"><a name="11"> 11: </a></span>assertFalse(strand0.isForwardStrand());
+<span class="nocode"><a name="12"> 12: </a></span>assertNotNull(strand0);
+<span class="nocode"><a name="13"> 13: </a></span>assertEquals(1, Bases.FORWARD);
+<span class="nocode"><a name="14"> 14: </a></span>assertEquals(0, Bases.MEDIUM_PRIORITY);
+<span class="nocode"><a name="15"> 15: </a></span>assertEquals(5, Bases.MAX_PRIORITY);
+<span class="nocode"><a name="16"> 16: </a></span>assertEquals((-5), Bases.MIN_PRIORITY);
+<span class="nocode"><a name="17"> 17: </a></span>assertEquals(2, Bases.REVERSE);
+<span class="nocode"><a name="18"> 18: </a></span>assertEquals(2, Strand.REVERSE);
+<span class="nocode"><a name="19"> 19: </a></span>assertEquals(1, Strand.FORWARD);
+<span class="nocode"><a name="20"> 20: </a></span>
+<span class="nocode"><a name="21"> 21: </a></span>AGWindowAlgorithm aGWindowAlgorithm0 = new AGWindowAlgorithm(strand0);
+<span class="nocode"><a name="22"> 22: </a></span>assertEquals(2, strand0.getDirection());
+<span class="nocode"><a name="23"> 23: </a></span>assertFalse(strand0.isForwardStrand());
+<span class="nocode"><a name="24"> 24: </a></span>assertEquals(1, aGWindowAlgorithm0.getValueCount());
+<span class="nocode"><a name="25"> 25: </a></span>assertEquals(&quot;AG Content (%)&quot;, aGWindowAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="26"> 26: </a></span>assertFalse(aGWindowAlgorithm0.isUserMaxMin());
+<span class="nocode"><a name="27"> 27: </a></span>assertEquals(1.4E-45F, aGWindowAlgorithm0.getUserMin(), 0.01F);
+<span class="nocode"><a name="28"> 28: </a></span>assertFalse(aGWindowAlgorithm0.isRevCompDisplay());
+<span class="nocode"><a name="29"> 29: </a></span>assertEquals(&quot;ag_content&quot;, aGWindowAlgorithm0.getAlgorithmShortName());
+<span class="nocode"><a name="30"> 30: </a></span>assertTrue(aGWindowAlgorithm0.scalingFlag());
+<span class="nocode"><a name="31"> 31: </a></span>assertEquals(3.4028235E38F, aGWindowAlgorithm0.getUserMax(), 0.01F);
+<span class="nocode"><a name="32"> 32: </a></span>assertNotNull(aGWindowAlgorithm0);
+<span class="nocode"><a name="33"> 33: </a></span>assertEquals(1, Bases.FORWARD);
+<span class="nocode"><a name="34"> 34: </a></span>assertEquals(0, Bases.MEDIUM_PRIORITY);
+<span class="nocode"><a name="35"> 35: </a></span>assertEquals(5, Bases.MAX_PRIORITY);
+<span class="nocode"><a name="36"> 36: </a></span>assertEquals((-5), Bases.MIN_PRIORITY);
+<span class="nocode"><a name="37"> 37: </a></span>assertEquals(2, Bases.REVERSE);
+<span class="nocode"><a name="38"> 38: </a></span>assertEquals(2, Strand.REVERSE);
+<span class="nocode"><a name="39"> 39: </a></span>assertEquals(1, Strand.FORWARD);
+<span class="nocode"><a name="40"> 40: </a></span>
+<span class="nocode"><a name="41"> 41: </a></span>aGWindowAlgorithm0.getAverage();
 </pre>
 <h3>Test case 13</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Bases bases0 = new Bases((Sequence) null);
-<span class="nocode"><a name="2">  2: </a></span>Strand strand0 = bases0.getForwardStrand();
-<span class="nocode"><a name="3">  3: </a></span>AGWindowAlgorithm aGWindowAlgorithm0 = new AGWindowAlgorithm(strand0);
-<span class="nocode"><a name="4">  4: </a></span>aGWindowAlgorithm0.getAverage();
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;j^Phtr2iwDtYs&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(11, emblStreamSequence0.getOtherCount());
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, emblStreamSequence0.getCCount());
+<span class="nocode"><a name="4">  4: </a></span>assertNull(emblStreamSequence0.getHeader());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(2, emblStreamSequence0.getTCount());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(13, emblStreamSequence0.length());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(1, emblStreamSequence0.getFormatType());
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(0, emblStreamSequence0.getGCount());
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(0, emblStreamSequence0.getACount());
+<span class="nocode"><a name="10"> 10: </a></span>assertNotNull(emblStreamSequence0);
+<span class="nocode"><a name="11"> 11: </a></span>
+<span class="nocode"><a name="12"> 12: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
+<span class="nocode"><a name="13"> 13: </a></span>assertEquals(11, emblStreamSequence0.getOtherCount());
+<span class="nocode"><a name="14"> 14: </a></span>assertEquals(0, emblStreamSequence0.getCCount());
+<span class="nocode"><a name="15"> 15: </a></span>assertNull(emblStreamSequence0.getHeader());
+<span class="nocode"><a name="16"> 16: </a></span>assertEquals(2, emblStreamSequence0.getTCount());
+<span class="nocode"><a name="17"> 17: </a></span>assertEquals(13, emblStreamSequence0.length());
+<span class="nocode"><a name="18"> 18: </a></span>assertEquals(1, emblStreamSequence0.getFormatType());
+<span class="nocode"><a name="19"> 19: </a></span>assertEquals(0, emblStreamSequence0.getGCount());
+<span class="nocode"><a name="20"> 20: </a></span>assertEquals(0, emblStreamSequence0.getACount());
+<span class="nocode"><a name="21"> 21: </a></span>assertNotNull(bases0);
+<span class="nocode"><a name="22"> 22: </a></span>assertEquals(2, Bases.REVERSE);
+<span class="nocode"><a name="23"> 23: </a></span>assertEquals(0, Bases.MEDIUM_PRIORITY);
+<span class="nocode"><a name="24"> 24: </a></span>assertEquals(5, Bases.MAX_PRIORITY);
+<span class="nocode"><a name="25"> 25: </a></span>assertEquals((-5), Bases.MIN_PRIORITY);
+<span class="nocode"><a name="26"> 26: </a></span>assertEquals(1, Bases.FORWARD);
+<span class="nocode"><a name="27"> 27: </a></span>
+<span class="nocode"><a name="28"> 28: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="29"> 29: </a></span>assertEquals(11, emblStreamSequence0.getOtherCount());
+<span class="nocode"><a name="30"> 30: </a></span>assertEquals(0, emblStreamSequence0.getCCount());
+<span class="nocode"><a name="31"> 31: </a></span>assertNull(emblStreamSequence0.getHeader());
+<span class="nocode"><a name="32"> 32: </a></span>assertEquals(2, emblStreamSequence0.getTCount());
+<span class="nocode"><a name="33"> 33: </a></span>assertEquals(13, emblStreamSequence0.length());
+<span class="nocode"><a name="34"> 34: </a></span>assertEquals(1, emblStreamSequence0.getFormatType());
+<span class="nocode"><a name="35"> 35: </a></span>assertEquals(0, emblStreamSequence0.getGCount());
+<span class="nocode"><a name="36"> 36: </a></span>assertEquals(0, emblStreamSequence0.getACount());
+<span class="nocode"><a name="37"> 37: </a></span>assertEquals(1, strand0.getDirection());
+<span class="nocode"><a name="38"> 38: </a></span>assertTrue(strand0.isForwardStrand());
+<span class="nocode"><a name="39"> 39: </a></span>assertNotNull(strand0);
+<span class="nocode"><a name="40"> 40: </a></span>assertEquals(2, Bases.REVERSE);
+<span class="nocode"><a name="41"> 41: </a></span>assertEquals(0, Bases.MEDIUM_PRIORITY);
+<span class="nocode"><a name="42"> 42: </a></span>assertEquals(5, Bases.MAX_PRIORITY);
+<span class="nocode"><a name="43"> 43: </a></span>assertEquals((-5), Bases.MIN_PRIORITY);
+<span class="nocode"><a name="44"> 44: </a></span>assertEquals(1, Bases.FORWARD);
+<span class="nocode"><a name="45"> 45: </a></span>assertEquals(1, Strand.FORWARD);
+<span class="nocode"><a name="46"> 46: </a></span>assertEquals(2, Strand.REVERSE);
+<span class="nocode"><a name="47"> 47: </a></span>
+<span class="nocode"><a name="48"> 48: </a></span>AGWindowAlgorithm aGWindowAlgorithm0 = new AGWindowAlgorithm(strand0);
+<span class="nocode"><a name="49"> 49: </a></span>assertEquals(11, emblStreamSequence0.getOtherCount());
+<span class="nocode"><a name="50"> 50: </a></span>assertEquals(0, emblStreamSequence0.getCCount());
+<span class="nocode"><a name="51"> 51: </a></span>assertNull(emblStreamSequence0.getHeader());
+<span class="nocode"><a name="52"> 52: </a></span>assertEquals(2, emblStreamSequence0.getTCount());
+<span class="nocode"><a name="53"> 53: </a></span>assertEquals(13, emblStreamSequence0.length());
+<span class="nocode"><a name="54"> 54: </a></span>assertEquals(1, emblStreamSequence0.getFormatType());
+<span class="nocode"><a name="55"> 55: </a></span>assertEquals(0, emblStreamSequence0.getGCount());
+<span class="nocode"><a name="56"> 56: </a></span>assertEquals(0, emblStreamSequence0.getACount());
+<span class="nocode"><a name="57"> 57: </a></span>assertEquals(1, strand0.getDirection());
+<span class="nocode"><a name="58"> 58: </a></span>assertTrue(strand0.isForwardStrand());
+<span class="nocode"><a name="59"> 59: </a></span>assertEquals(&quot;AG Content (%)&quot;, aGWindowAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="60"> 60: </a></span>assertEquals(1.4E-45F, aGWindowAlgorithm0.getUserMin(), 0.01F);
+<span class="nocode"><a name="61"> 61: </a></span>assertTrue(aGWindowAlgorithm0.scalingFlag());
+<span class="nocode"><a name="62"> 62: </a></span>assertEquals(3.4028235E38F, aGWindowAlgorithm0.getUserMax(), 0.01F);
+<span class="nocode"><a name="63"> 63: </a></span>assertFalse(aGWindowAlgorithm0.isRevCompDisplay());
+<span class="nocode"><a name="64"> 64: </a></span>assertEquals(1, aGWindowAlgorithm0.getValueCount());
+<span class="nocode"><a name="65"> 65: </a></span>assertFalse(aGWindowAlgorithm0.isUserMaxMin());
+<span class="nocode"><a name="66"> 66: </a></span>assertEquals(&quot;ag_content&quot;, aGWindowAlgorithm0.getAlgorithmShortName());
+<span class="nocode"><a name="67"> 67: </a></span>assertNotNull(aGWindowAlgorithm0);
+<span class="nocode"><a name="68"> 68: </a></span>assertEquals(2, Bases.REVERSE);
+<span class="nocode"><a name="69"> 69: </a></span>assertEquals(0, Bases.MEDIUM_PRIORITY);
+<span class="nocode"><a name="70"> 70: </a></span>assertEquals(5, Bases.MAX_PRIORITY);
+<span class="nocode"><a name="71"> 71: </a></span>assertEquals((-5), Bases.MIN_PRIORITY);
+<span class="nocode"><a name="72"> 72: </a></span>assertEquals(1, Bases.FORWARD);
+<span class="nocode"><a name="73"> 73: </a></span>assertEquals(1, Strand.FORWARD);
+<span class="nocode"><a name="74"> 74: </a></span>assertEquals(2, Strand.REVERSE);
+<span class="nocode"><a name="75"> 75: </a></span>
+<span class="nocode"><a name="76"> 76: </a></span>float[] floatArray0 = new float[6];
+<span class="nocode"><a name="77"> 77: </a></span>aGWindowAlgorithm0.getValues(0, (-5), floatArray0);
 </pre>
 <h3>Test case 14</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;!Y`.JZk&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
-<span class="nocode"><a name="4">  4: </a></span>AGWindowAlgorithm aGWindowAlgorithm0 = new AGWindowAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>float[] floatArray0 = new float[7];
-<span class="nocode"><a name="6">  6: </a></span>aGWindowAlgorithm0.getValues(1302, 5, floatArray0);
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;}])1@Fg&quot;, &quot;m&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(0, fastaStreamSequence0.getCCount());
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, fastaStreamSequence0.getTCount());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(6, fastaStreamSequence0.getOtherCount());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(4, fastaStreamSequence0.getFormatType());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(1, fastaStreamSequence0.getGCount());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(7, fastaStreamSequence0.length());
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(0, fastaStreamSequence0.getACount());
+<span class="nocode"><a name="9">  9: </a></span>assertNotNull(fastaStreamSequence0);
+<span class="nocode"><a name="10"> 10: </a></span>
+<span class="nocode"><a name="11"> 11: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="12"> 12: </a></span>assertEquals(0, fastaStreamSequence0.getCCount());
+<span class="nocode"><a name="13"> 13: </a></span>assertEquals(0, fastaStreamSequence0.getTCount());
+<span class="nocode"><a name="14"> 14: </a></span>assertEquals(6, fastaStreamSequence0.getOtherCount());
+<span class="nocode"><a name="15"> 15: </a></span>assertEquals(4, fastaStreamSequence0.getFormatType());
+<span class="nocode"><a name="16"> 16: </a></span>assertEquals(1, fastaStreamSequence0.getGCount());
+<span class="nocode"><a name="17"> 17: </a></span>assertEquals(7, fastaStreamSequence0.length());
+<span class="nocode"><a name="18"> 18: </a></span>assertEquals(0, fastaStreamSequence0.getACount());
+<span class="nocode"><a name="19"> 19: </a></span>assertNotNull(bases0);
+<span class="nocode"><a name="20"> 20: </a></span>assertEquals(2, Bases.REVERSE);
+<span class="nocode"><a name="21"> 21: </a></span>assertEquals(0, Bases.MEDIUM_PRIORITY);
+<span class="nocode"><a name="22"> 22: </a></span>assertEquals(5, Bases.MAX_PRIORITY);
+<span class="nocode"><a name="23"> 23: </a></span>assertEquals(1, Bases.FORWARD);
+<span class="nocode"><a name="24"> 24: </a></span>assertEquals((-5), Bases.MIN_PRIORITY);
+<span class="nocode"><a name="25"> 25: </a></span>
+<span class="nocode"><a name="26"> 26: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="27"> 27: </a></span>assertEquals(0, fastaStreamSequence0.getCCount());
+<span class="nocode"><a name="28"> 28: </a></span>assertEquals(0, fastaStreamSequence0.getTCount());
+<span class="nocode"><a name="29"> 29: </a></span>assertEquals(6, fastaStreamSequence0.getOtherCount());
+<span class="nocode"><a name="30"> 30: </a></span>assertEquals(4, fastaStreamSequence0.getFormatType());
+<span class="nocode"><a name="31"> 31: </a></span>assertEquals(1, fastaStreamSequence0.getGCount());
+<span class="nocode"><a name="32"> 32: </a></span>assertEquals(7, fastaStreamSequence0.length());
+<span class="nocode"><a name="33"> 33: </a></span>assertEquals(0, fastaStreamSequence0.getACount());
+<span class="nocode"><a name="34"> 34: </a></span>assertFalse(strand0.isForwardStrand());
+<span class="nocode"><a name="35"> 35: </a></span>assertEquals(2, strand0.getDirection());
+<span class="nocode"><a name="36"> 36: </a></span>assertNotNull(strand0);
+<span class="nocode"><a name="37"> 37: </a></span>assertEquals(2, Bases.REVERSE);
+<span class="nocode"><a name="38"> 38: </a></span>assertEquals(0, Bases.MEDIUM_PRIORITY);
+<span class="nocode"><a name="39"> 39: </a></span>assertEquals(5, Bases.MAX_PRIORITY);
+<span class="nocode"><a name="40"> 40: </a></span>assertEquals(1, Bases.FORWARD);
+<span class="nocode"><a name="41"> 41: </a></span>assertEquals((-5), Bases.MIN_PRIORITY);
+<span class="nocode"><a name="42"> 42: </a></span>assertEquals(1, Strand.FORWARD);
+<span class="nocode"><a name="43"> 43: </a></span>assertEquals(2, Strand.REVERSE);
+<span class="nocode"><a name="44"> 44: </a></span>
+<span class="nocode"><a name="45"> 45: </a></span>AGWindowAlgorithm aGWindowAlgorithm0 = new AGWindowAlgorithm(strand0);
+<span class="nocode"><a name="46"> 46: </a></span>assertEquals(0, fastaStreamSequence0.getCCount());
+<span class="nocode"><a name="47"> 47: </a></span>assertEquals(0, fastaStreamSequence0.getTCount());
+<span class="nocode"><a name="48"> 48: </a></span>assertEquals(6, fastaStreamSequence0.getOtherCount());
+<span class="nocode"><a name="49"> 49: </a></span>assertEquals(4, fastaStreamSequence0.getFormatType());
+<span class="nocode"><a name="50"> 50: </a></span>assertEquals(1, fastaStreamSequence0.getGCount());
+<span class="nocode"><a name="51"> 51: </a></span>assertEquals(7, fastaStreamSequence0.length());
+<span class="nocode"><a name="52"> 52: </a></span>assertEquals(0, fastaStreamSequence0.getACount());
+<span class="nocode"><a name="53"> 53: </a></span>assertFalse(strand0.isForwardStrand());
+<span class="nocode"><a name="54"> 54: </a></span>assertEquals(2, strand0.getDirection());
+<span class="nocode"><a name="55"> 55: </a></span>assertEquals(3.4028235E38F, aGWindowAlgorithm0.getUserMax(), 0.01F);
+<span class="nocode"><a name="56"> 56: </a></span>assertEquals(1.4E-45F, aGWindowAlgorithm0.getUserMin(), 0.01F);
+<span class="nocode"><a name="57"> 57: </a></span>assertFalse(aGWindowAlgorithm0.isUserMaxMin());
+<span class="nocode"><a name="58"> 58: </a></span>assertEquals(&quot;ag_content&quot;, aGWindowAlgorithm0.getAlgorithmShortName());
+<span class="nocode"><a name="59"> 59: </a></span>assertTrue(aGWindowAlgorithm0.scalingFlag());
+<span class="nocode"><a name="60"> 60: </a></span>assertFalse(aGWindowAlgorithm0.isRevCompDisplay());
+<span class="nocode"><a name="61"> 61: </a></span>assertEquals(1, aGWindowAlgorithm0.getValueCount());
+<span class="nocode"><a name="62"> 62: </a></span>assertEquals(&quot;AG Content (%)&quot;, aGWindowAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="63"> 63: </a></span>assertNotNull(aGWindowAlgorithm0);
+<span class="nocode"><a name="64"> 64: </a></span>assertEquals(2, Bases.REVERSE);
+<span class="nocode"><a name="65"> 65: </a></span>assertEquals(0, Bases.MEDIUM_PRIORITY);
+<span class="nocode"><a name="66"> 66: </a></span>assertEquals(5, Bases.MAX_PRIORITY);
+<span class="nocode"><a name="67"> 67: </a></span>assertEquals(1, Bases.FORWARD);
+<span class="nocode"><a name="68"> 68: </a></span>assertEquals((-5), Bases.MIN_PRIORITY);
+<span class="nocode"><a name="69"> 69: </a></span>assertEquals(1, Strand.FORWARD);
+<span class="nocode"><a name="70"> 70: </a></span>assertEquals(2, Strand.REVERSE);
+<span class="nocode"><a name="71"> 71: </a></span>
+<span class="nocode"><a name="72"> 72: </a></span>float[] floatArray0 = new float[8];
+<span class="nocode"><a name="73"> 73: </a></span>aGWindowAlgorithm0.getValues((-798), 50000, floatArray0);
 </pre>
 <h3>Test case 15</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[9];
-<span class="nocode"><a name="2">  2: </a></span>Integer integer0 = JLayeredPane.MODAL_LAYER;
-<span class="nocode"><a name="3">  3: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 1531, 1531, (Short) null, integer0);
-<span class="nocode"><a name="4">  4: </a></span>Bases bases0 = new Bases(partialSequence0);
-<span class="nocode"><a name="5">  5: </a></span>Strand strand0 = bases0.getForwardStrand();
-<span class="nocode"><a name="6">  6: </a></span>AGWindowAlgorithm aGWindowAlgorithm0 = new AGWindowAlgorithm(strand0);
-<span class="nocode"><a name="7">  7: </a></span>float[] floatArray0 = new float[1];
-<span class="nocode"><a name="8">  8: </a></span>aGWindowAlgorithm0.getValues(0, 0, floatArray0);
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;Cannot find the 'token' Tokenization for RNA!?&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(0, rawStreamSequence0.getGCount());
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(4, rawStreamSequence0.getTCount());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(3, rawStreamSequence0.getFormatType());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(2, rawStreamSequence0.getACount());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, rawStreamSequence0.getCCount());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(46, rawStreamSequence0.length());
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(40, rawStreamSequence0.getOtherCount());
+<span class="nocode"><a name="9">  9: </a></span>assertNotNull(rawStreamSequence0);
+<span class="nocode"><a name="10"> 10: </a></span>
+<span class="nocode"><a name="11"> 11: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="12"> 12: </a></span>assertEquals(0, rawStreamSequence0.getGCount());
+<span class="nocode"><a name="13"> 13: </a></span>assertEquals(4, rawStreamSequence0.getTCount());
+<span class="nocode"><a name="14"> 14: </a></span>assertEquals(3, rawStreamSequence0.getFormatType());
+<span class="nocode"><a name="15"> 15: </a></span>assertEquals(2, rawStreamSequence0.getACount());
+<span class="nocode"><a name="16"> 16: </a></span>assertEquals(0, rawStreamSequence0.getCCount());
+<span class="nocode"><a name="17"> 17: </a></span>assertEquals(46, rawStreamSequence0.length());
+<span class="nocode"><a name="18"> 18: </a></span>assertEquals(40, rawStreamSequence0.getOtherCount());
+<span class="nocode"><a name="19"> 19: </a></span>assertNotNull(bases0);
+<span class="nocode"><a name="20"> 20: </a></span>assertEquals((-5), Bases.MIN_PRIORITY);
+<span class="nocode"><a name="21"> 21: </a></span>assertEquals(1, Bases.FORWARD);
+<span class="nocode"><a name="22"> 22: </a></span>assertEquals(0, Bases.MEDIUM_PRIORITY);
+<span class="nocode"><a name="23"> 23: </a></span>assertEquals(5, Bases.MAX_PRIORITY);
+<span class="nocode"><a name="24"> 24: </a></span>assertEquals(2, Bases.REVERSE);
+<span class="nocode"><a name="25"> 25: </a></span>
+<span class="nocode"><a name="26"> 26: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="27"> 27: </a></span>assertEquals(0, rawStreamSequence0.getGCount());
+<span class="nocode"><a name="28"> 28: </a></span>assertEquals(4, rawStreamSequence0.getTCount());
+<span class="nocode"><a name="29"> 29: </a></span>assertEquals(3, rawStreamSequence0.getFormatType());
+<span class="nocode"><a name="30"> 30: </a></span>assertEquals(2, rawStreamSequence0.getACount());
+<span class="nocode"><a name="31"> 31: </a></span>assertEquals(0, rawStreamSequence0.getCCount());
+<span class="nocode"><a name="32"> 32: </a></span>assertEquals(46, rawStreamSequence0.length());
+<span class="nocode"><a name="33"> 33: </a></span>assertEquals(40, rawStreamSequence0.getOtherCount());
+<span class="nocode"><a name="34"> 34: </a></span>assertFalse(strand0.isForwardStrand());
+<span class="nocode"><a name="35"> 35: </a></span>assertEquals(2, strand0.getDirection());
+<span class="nocode"><a name="36"> 36: </a></span>assertNotNull(strand0);
+<span class="nocode"><a name="37"> 37: </a></span>assertEquals((-5), Bases.MIN_PRIORITY);
+<span class="nocode"><a name="38"> 38: </a></span>assertEquals(1, Bases.FORWARD);
+<span class="nocode"><a name="39"> 39: </a></span>assertEquals(0, Bases.MEDIUM_PRIORITY);
+<span class="nocode"><a name="40"> 40: </a></span>assertEquals(5, Bases.MAX_PRIORITY);
+<span class="nocode"><a name="41"> 41: </a></span>assertEquals(2, Bases.REVERSE);
+<span class="nocode"><a name="42"> 42: </a></span>assertEquals(1, Strand.FORWARD);
+<span class="nocode"><a name="43"> 43: </a></span>assertEquals(2, Strand.REVERSE);
+<span class="nocode"><a name="44"> 44: </a></span>
+<span class="nocode"><a name="45"> 45: </a></span>AGWindowAlgorithm aGWindowAlgorithm0 = new AGWindowAlgorithm(strand0);
+<span class="nocode"><a name="46"> 46: </a></span>assertEquals(0, rawStreamSequence0.getGCount());
+<span class="nocode"><a name="47"> 47: </a></span>assertEquals(4, rawStreamSequence0.getTCount());
+<span class="nocode"><a name="48"> 48: </a></span>assertEquals(3, rawStreamSequence0.getFormatType());
+<span class="nocode"><a name="49"> 49: </a></span>assertEquals(2, rawStreamSequence0.getACount());
+<span class="nocode"><a name="50"> 50: </a></span>assertEquals(0, rawStreamSequence0.getCCount());
+<span class="nocode"><a name="51"> 51: </a></span>assertEquals(46, rawStreamSequence0.length());
+<span class="nocode"><a name="52"> 52: </a></span>assertEquals(40, rawStreamSequence0.getOtherCount());
+<span class="nocode"><a name="53"> 53: </a></span>assertFalse(strand0.isForwardStrand());
+<span class="nocode"><a name="54"> 54: </a></span>assertEquals(2, strand0.getDirection());
+<span class="nocode"><a name="55"> 55: </a></span>assertFalse(aGWindowAlgorithm0.isRevCompDisplay());
+<span class="nocode"><a name="56"> 56: </a></span>assertEquals(1, aGWindowAlgorithm0.getValueCount());
+<span class="nocode"><a name="57"> 57: </a></span>assertEquals(&quot;AG Content (%)&quot;, aGWindowAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="58"> 58: </a></span>assertEquals(1.4E-45F, aGWindowAlgorithm0.getUserMin(), 0.01F);
+<span class="nocode"><a name="59"> 59: </a></span>assertFalse(aGWindowAlgorithm0.isUserMaxMin());
+<span class="nocode"><a name="60"> 60: </a></span>assertEquals(&quot;ag_content&quot;, aGWindowAlgorithm0.getAlgorithmShortName());
+<span class="nocode"><a name="61"> 61: </a></span>assertTrue(aGWindowAlgorithm0.scalingFlag());
+<span class="nocode"><a name="62"> 62: </a></span>assertEquals(3.4028235E38F, aGWindowAlgorithm0.getUserMax(), 0.01F);
+<span class="nocode"><a name="63"> 63: </a></span>assertNotNull(aGWindowAlgorithm0);
+<span class="nocode"><a name="64"> 64: </a></span>assertEquals((-5), Bases.MIN_PRIORITY);
+<span class="nocode"><a name="65"> 65: </a></span>assertEquals(1, Bases.FORWARD);
+<span class="nocode"><a name="66"> 66: </a></span>assertEquals(0, Bases.MEDIUM_PRIORITY);
+<span class="nocode"><a name="67"> 67: </a></span>assertEquals(5, Bases.MAX_PRIORITY);
+<span class="nocode"><a name="68"> 68: </a></span>assertEquals(2, Bases.REVERSE);
+<span class="nocode"><a name="69"> 69: </a></span>assertEquals(1, Strand.FORWARD);
+<span class="nocode"><a name="70"> 70: </a></span>assertEquals(2, Strand.REVERSE);
+<span class="nocode"><a name="71"> 71: </a></span>
+<span class="nocode"><a name="72"> 72: </a></span>Float float0 = aGWindowAlgorithm0.getAverage();
+<span class="nocode"><a name="73"> 73: </a></span>assertEquals(0, rawStreamSequence0.getGCount());
+<span class="nocode"><a name="74"> 74: </a></span>assertEquals(4, rawStreamSequence0.getTCount());
+<span class="nocode"><a name="75"> 75: </a></span>assertEquals(3, rawStreamSequence0.getFormatType());
+<span class="nocode"><a name="76"> 76: </a></span>assertEquals(2, rawStreamSequence0.getACount());
+<span class="nocode"><a name="77"> 77: </a></span>assertEquals(0, rawStreamSequence0.getCCount());
+<span class="nocode"><a name="78"> 78: </a></span>assertEquals(46, rawStreamSequence0.length());
+<span class="nocode"><a name="79"> 79: </a></span>assertEquals(40, rawStreamSequence0.getOtherCount());
+<span class="nocode"><a name="80"> 80: </a></span>assertFalse(strand0.isForwardStrand());
+<span class="nocode"><a name="81"> 81: </a></span>assertEquals(2, strand0.getDirection());
+<span class="nocode"><a name="82"> 82: </a></span>assertFalse(aGWindowAlgorithm0.isRevCompDisplay());
+<span class="nocode"><a name="83"> 83: </a></span>assertEquals(1, aGWindowAlgorithm0.getValueCount());
+<span class="nocode"><a name="84"> 84: </a></span>assertEquals(&quot;AG Content (%)&quot;, aGWindowAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="85"> 85: </a></span>assertEquals(1.4E-45F, aGWindowAlgorithm0.getUserMin(), 0.01F);
+<span class="nocode"><a name="86"> 86: </a></span>assertFalse(aGWindowAlgorithm0.isUserMaxMin());
+<span class="nocode"><a name="87"> 87: </a></span>assertEquals(&quot;ag_content&quot;, aGWindowAlgorithm0.getAlgorithmShortName());
+<span class="nocode"><a name="88"> 88: </a></span>assertTrue(aGWindowAlgorithm0.scalingFlag());
+<span class="nocode"><a name="89"> 89: </a></span>assertEquals(3.4028235E38F, aGWindowAlgorithm0.getUserMax(), 0.01F);
+<span class="nocode"><a name="90"> 90: </a></span>assertNotNull(float0);
+<span class="nocode"><a name="91"> 91: </a></span>assertEquals(4.347826F, (float)float0, 0.01F);
+<span class="nocode"><a name="92"> 92: </a></span>assertEquals((-5), Bases.MIN_PRIORITY);
+<span class="nocode"><a name="93"> 93: </a></span>assertEquals(1, Bases.FORWARD);
+<span class="nocode"><a name="94"> 94: </a></span>assertEquals(0, Bases.MEDIUM_PRIORITY);
+<span class="nocode"><a name="95"> 95: </a></span>assertEquals(5, Bases.MAX_PRIORITY);
+<span class="nocode"><a name="96"> 96: </a></span>assertEquals(2, Bases.REVERSE);
+<span class="nocode"><a name="97"> 97: </a></span>assertEquals(1, Strand.FORWARD);
+<span class="nocode"><a name="98"> 98: </a></span>assertEquals(2, Strand.REVERSE);
 </pre>
 <h3>Test case 16</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;F.gE;rk+m`.ERMl&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
-<span class="nocode"><a name="4">  4: </a></span>AGWindowAlgorithm aGWindowAlgorithm0 = new AGWindowAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>aGWindowAlgorithm0.getAverage();
-<span class="nocode"><a name="6">  6: </a></span>assertTrue(aGWindowAlgorithm0.scalingFlag());
-</pre>
-<h3>Test case 17</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;1pcn$UN;1yK$\u0000&quot;);
-<span class="nocode"><a name="2">  2: </a></span>char[] charArray0 = new char[0];
-<span class="nocode"><a name="3">  3: </a></span>genbankStreamSequence0.setFromChar(charArray0);
-<span class="nocode"><a name="4">  4: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
-<span class="nocode"><a name="5">  5: </a></span>Strand strand0 = bases0.getForwardStrand();
-<span class="nocode"><a name="6">  6: </a></span>AGWindowAlgorithm aGWindowAlgorithm0 = new AGWindowAlgorithm(strand0);
-<span class="nocode"><a name="7">  7: </a></span>aGWindowAlgorithm0.getAverage();
-<span class="nocode"><a name="8">  8: </a></span>assertTrue(aGWindowAlgorithm0.scalingFlag());
-</pre>
-<h3>Test case 18</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>BioJavaSequence bioJavaSequence0 = new BioJavaSequence((SymbolList) null);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(bioJavaSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
-<span class="nocode"><a name="4">  4: </a></span>AGWindowAlgorithm aGWindowAlgorithm0 = new AGWindowAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>Integer integer0 = aGWindowAlgorithm0.getDefaultStepSize(1334);
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(133, (int)integer0);
-<span class="nocode"><a name="7">  7: </a></span>assertNotNull(integer0);
-<span class="nocode"><a name="8">  8: </a></span>assertTrue(aGWindowAlgorithm0.scalingFlag());
+<span class="nocode"><a name="1">  1: </a></span>Short short0 = new Short((short)2953);
+<span class="nocode"><a name="2">  2: </a></span>assertNotNull(short0);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals((short)2953, (short)short0);
+<span class="nocode"><a name="4">  4: </a></span>
+<span class="nocode"><a name="5">  5: </a></span>Integer integer0 = new Integer(103);
+<span class="nocode"><a name="6">  6: </a></span>assertNotNull(integer0);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(103, (int)integer0);
+<span class="nocode"><a name="8">  8: </a></span>
+<span class="nocode"><a name="9">  9: </a></span>PartialSequence partialSequence0 = new PartialSequence((char[]) null, 0, 0, short0, integer0);
+<span class="nocode"><a name="10"> 10: </a></span>assertEquals(103, (int)partialSequence0.getPhase());
+<span class="nocode"><a name="11"> 11: </a></span>assertEquals(0, partialSequence0.length());
+<span class="nocode"><a name="12"> 12: </a></span>assertEquals(0, partialSequence0.getACount());
+<span class="nocode"><a name="13"> 13: </a></span>assertFalse(partialSequence0.isComplement());
+<span class="nocode"><a name="14"> 14: </a></span>assertEquals(0, partialSequence0.getGCount());
+<span class="nocode"><a name="15"> 15: </a></span>assertEquals(0, partialSequence0.getCCount());
+<span class="nocode"><a name="16"> 16: </a></span>assertEquals(0, partialSequence0.getTCount());
+<span class="nocode"><a name="17"> 17: </a></span>assertEquals((short)2953, (short)partialSequence0.getStrand());
+<span class="nocode"><a name="18"> 18: </a></span>assertNotNull(partialSequence0);
+<span class="nocode"><a name="19"> 19: </a></span>
+<span class="nocode"><a name="20"> 20: </a></span>Bases bases0 = new Bases(partialSequence0);
+<span class="nocode"><a name="21"> 21: </a></span>assertEquals(103, (int)partialSequence0.getPhase());
+<span class="nocode"><a name="22"> 22: </a></span>assertEquals(0, partialSequence0.length());
+<span class="nocode"><a name="23"> 23: </a></span>assertEquals(0, partialSequence0.getACount());
+<span class="nocode"><a name="24"> 24: </a></span>assertFalse(partialSequence0.isComplement());
+<span class="nocode"><a name="25"> 25: </a></span>assertEquals(0, partialSequence0.getGCount());
+<span class="nocode"><a name="26"> 26: </a></span>assertEquals(0, partialSequence0.getCCount());
+<span class="nocode"><a name="27"> 27: </a></span>assertEquals(0, partialSequence0.getTCount());
+<span class="nocode"><a name="28"> 28: </a></span>assertEquals((short)2953, (short)partialSequence0.getStrand());
+<span class="nocode"><a name="29"> 29: </a></span>assertNotNull(bases0);
+<span class="nocode"><a name="30"> 30: </a></span>assertEquals(2, Bases.REVERSE);
+<span class="nocode"><a name="31"> 31: </a></span>assertEquals(5, Bases.MAX_PRIORITY);
+<span class="nocode"><a name="32"> 32: </a></span>assertEquals((-5), Bases.MIN_PRIORITY);
+<span class="nocode"><a name="33"> 33: </a></span>assertEquals(0, Bases.MEDIUM_PRIORITY);
+<span class="nocode"><a name="34"> 34: </a></span>assertEquals(1, Bases.FORWARD);
+<span class="nocode"><a name="35"> 35: </a></span>
+<span class="nocode"><a name="36"> 36: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="37"> 37: </a></span>assertEquals(103, (int)partialSequence0.getPhase());
+<span class="nocode"><a name="38"> 38: </a></span>assertEquals(0, partialSequence0.length());
+<span class="nocode"><a name="39"> 39: </a></span>assertEquals(0, partialSequence0.getACount());
+<span class="nocode"><a name="40"> 40: </a></span>assertFalse(partialSequence0.isComplement());
+<span class="nocode"><a name="41"> 41: </a></span>assertEquals(0, partialSequence0.getGCount());
+<span class="nocode"><a name="42"> 42: </a></span>assertEquals(0, partialSequence0.getCCount());
+<span class="nocode"><a name="43"> 43: </a></span>assertEquals(0, partialSequence0.getTCount());
+<span class="nocode"><a name="44"> 44: </a></span>assertEquals((short)2953, (short)partialSequence0.getStrand());
+<span class="nocode"><a name="45"> 45: </a></span>assertFalse(strand0.isForwardStrand());
+<span class="nocode"><a name="46"> 46: </a></span>assertEquals(2, strand0.getDirection());
+<span class="nocode"><a name="47"> 47: </a></span>assertNotNull(strand0);
+<span class="nocode"><a name="48"> 48: </a></span>assertEquals(2, Bases.REVERSE);
+<span class="nocode"><a name="49"> 49: </a></span>assertEquals(5, Bases.MAX_PRIORITY);
+<span class="nocode"><a name="50"> 50: </a></span>assertEquals((-5), Bases.MIN_PRIORITY);
+<span class="nocode"><a name="51"> 51: </a></span>assertEquals(0, Bases.MEDIUM_PRIORITY);
+<span class="nocode"><a name="52"> 52: </a></span>assertEquals(1, Bases.FORWARD);
+<span class="nocode"><a name="53"> 53: </a></span>assertEquals(2, Strand.REVERSE);
+<span class="nocode"><a name="54"> 54: </a></span>assertEquals(1, Strand.FORWARD);
+<span class="nocode"><a name="55"> 55: </a></span>
+<span class="nocode"><a name="56"> 56: </a></span>AGWindowAlgorithm aGWindowAlgorithm0 = new AGWindowAlgorithm(strand0);
+<span class="nocode"><a name="57"> 57: </a></span>assertEquals(103, (int)partialSequence0.getPhase());
+<span class="nocode"><a name="58"> 58: </a></span>assertEquals(0, partialSequence0.length());
+<span class="nocode"><a name="59"> 59: </a></span>assertEquals(0, partialSequence0.getACount());
+<span class="nocode"><a name="60"> 60: </a></span>assertFalse(partialSequence0.isComplement());
+<span class="nocode"><a name="61"> 61: </a></span>assertEquals(0, partialSequence0.getGCount());
+<span class="nocode"><a name="62"> 62: </a></span>assertEquals(0, partialSequence0.getCCount());
+<span class="nocode"><a name="63"> 63: </a></span>assertEquals(0, partialSequence0.getTCount());
+<span class="nocode"><a name="64"> 64: </a></span>assertEquals((short)2953, (short)partialSequence0.getStrand());
+<span class="nocode"><a name="65"> 65: </a></span>assertFalse(strand0.isForwardStrand());
+<span class="nocode"><a name="66"> 66: </a></span>assertEquals(2, strand0.getDirection());
+<span class="nocode"><a name="67"> 67: </a></span>assertEquals(3.4028235E38F, aGWindowAlgorithm0.getUserMax(), 0.01F);
+<span class="nocode"><a name="68"> 68: </a></span>assertEquals(&quot;AG Content (%)&quot;, aGWindowAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="69"> 69: </a></span>assertEquals(1, aGWindowAlgorithm0.getValueCount());
+<span class="nocode"><a name="70"> 70: </a></span>assertFalse(aGWindowAlgorithm0.isRevCompDisplay());
+<span class="nocode"><a name="71"> 71: </a></span>assertTrue(aGWindowAlgorithm0.scalingFlag());
+<span class="nocode"><a name="72"> 72: </a></span>assertEquals(1.4E-45F, aGWindowAlgorithm0.getUserMin(), 0.01F);
+<span class="nocode"><a name="73"> 73: </a></span>assertFalse(aGWindowAlgorithm0.isUserMaxMin());
+<span class="nocode"><a name="74"> 74: </a></span>assertEquals(&quot;ag_content&quot;, aGWindowAlgorithm0.getAlgorithmShortName());
+<span class="nocode"><a name="75"> 75: </a></span>assertNotNull(aGWindowAlgorithm0);
+<span class="nocode"><a name="76"> 76: </a></span>assertEquals(2, Bases.REVERSE);
+<span class="nocode"><a name="77"> 77: </a></span>assertEquals(5, Bases.MAX_PRIORITY);
+<span class="nocode"><a name="78"> 78: </a></span>assertEquals((-5), Bases.MIN_PRIORITY);
+<span class="nocode"><a name="79"> 79: </a></span>assertEquals(0, Bases.MEDIUM_PRIORITY);
+<span class="nocode"><a name="80"> 80: </a></span>assertEquals(1, Bases.FORWARD);
+<span class="nocode"><a name="81"> 81: </a></span>assertEquals(2, Strand.REVERSE);
+<span class="nocode"><a name="82"> 82: </a></span>assertEquals(1, Strand.FORWARD);
+<span class="nocode"><a name="83"> 83: </a></span>
+<span class="nocode"><a name="84"> 84: </a></span>Float float0 = aGWindowAlgorithm0.getAverage();
+<span class="nocode"><a name="85"> 85: </a></span>assertEquals(103, (int)partialSequence0.getPhase());
+<span class="nocode"><a name="86"> 86: </a></span>assertEquals(0, partialSequence0.length());
+<span class="nocode"><a name="87"> 87: </a></span>assertEquals(0, partialSequence0.getACount());
+<span class="nocode"><a name="88"> 88: </a></span>assertFalse(partialSequence0.isComplement());
+<span class="nocode"><a name="89"> 89: </a></span>assertEquals(0, partialSequence0.getGCount());
+<span class="nocode"><a name="90"> 90: </a></span>assertEquals(0, partialSequence0.getCCount());
+<span class="nocode"><a name="91"> 91: </a></span>assertEquals(0, partialSequence0.getTCount());
+<span class="nocode"><a name="92"> 92: </a></span>assertEquals((short)2953, (short)partialSequence0.getStrand());
+<span class="nocode"><a name="93"> 93: </a></span>assertFalse(strand0.isForwardStrand());
+<span class="nocode"><a name="94"> 94: </a></span>assertEquals(2, strand0.getDirection());
+<span class="nocode"><a name="95"> 95: </a></span>assertEquals(3.4028235E38F, aGWindowAlgorithm0.getUserMax(), 0.01F);
+<span class="nocode"><a name="96"> 96: </a></span>assertEquals(&quot;AG Content (%)&quot;, aGWindowAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="97"> 97: </a></span>assertEquals(1, aGWindowAlgorithm0.getValueCount());
+<span class="nocode"><a name="98"> 98: </a></span>assertFalse(aGWindowAlgorithm0.isRevCompDisplay());
+<span class="nocode"><a name="99"> 99: </a></span>assertTrue(aGWindowAlgorithm0.scalingFlag());
+<span class="nocode"><a name="100">100: </a></span>assertEquals(1.4E-45F, aGWindowAlgorithm0.getUserMin(), 0.01F);
+<span class="nocode"><a name="101">101: </a></span>assertFalse(aGWindowAlgorithm0.isUserMaxMin());
+<span class="nocode"><a name="102">102: </a></span>assertEquals(&quot;ag_content&quot;, aGWindowAlgorithm0.getAlgorithmShortName());
+<span class="nocode"><a name="103">103: </a></span>assertNotNull(float0);
+<span class="nocode"><a name="104">104: </a></span>assertEquals(Float.NaN, (float)float0, 0.01F);
+<span class="nocode"><a name="105">105: </a></span>assertEquals(2, Bases.REVERSE);
+<span class="nocode"><a name="106">106: </a></span>assertEquals(5, Bases.MAX_PRIORITY);
+<span class="nocode"><a name="107">107: </a></span>assertEquals((-5), Bases.MIN_PRIORITY);
+<span class="nocode"><a name="108">108: </a></span>assertEquals(0, Bases.MEDIUM_PRIORITY);
+<span class="nocode"><a name="109">109: </a></span>assertEquals(1, Bases.FORWARD);
+<span class="nocode"><a name="110">110: </a></span>assertEquals(2, Strand.REVERSE);
+<span class="nocode"><a name="111">111: </a></span>assertEquals(1, Strand.FORWARD);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -221,13 +1022,13 @@ uk.ac.sanger.artemis.plot.AGWindowAlgorithm
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.plot.AGWindowAlgorithm
-<li>Size: 18
-<li>Length: 97
+<li>Size: 16
+<li>Length: 82
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.8710830502098444
-<li>BranchCoverage: 0.8421052631578947
+<li>Coverage: 0.8560475030271681
+<li>BranchCoverage: 0.7894736842105263
 <li>MethodCoverage: 1.0
-<li>OutputCoverage: 0.3918918918918919
+<li>OutputCoverage: 0.38513513513513514
 </ul></div>
 </div>
 <p><br><a href="../report-generation.html">Back to Overview</a></p>

@@ -1,0 +1,90 @@
+#!/bin/bash -
+
+#
+# This script will start Bam View on a UNIX system.
+#
+
+QUIET=no
+PRG=$0
+
+add_proxy_properties() {
+
+	if [[ "$http_proxy" = "" ]]
+	then
+		http_proxy=$HTTP_PROXY
+	fi
+	
+	if [[ "$http_proxy" = "" ]]
+	then
+	 	http_proxy=$HTTP_proxy
+	fi
+	
+	if [[ "$http_proxy" != "" ]]
+	then
+		APPLICATION_PROPERTIES="$APPLICATION_PROPERTIES -DproxySet=true "`echo $http_proxy | sed 's/http:\/\/\(.*\):\(.*\)/ -Dhttp.proxyHost=\1 -Dhttp.proxyPort=\2/'`
+	fi
+}
+
+#
+# Resolve links - $0 may be a link
+#
+while [ -h "$PRG" ] ; do
+	ls=`ls -ld "$PRG"`
+	link=`expr "$ls" : '.*-> \(.*\)$'`
+	if expr "$link" : '.*/.*' > /dev/null; then
+		PRG="$link"
+	else
+		PRG="`dirname $PRG`/$link"
+	fi
+done
+
+APPLICATION_PROPERTIES="-Djdbc.drivers=org.postgresql.Driver -Dartemis.environment=UNIX $SANGER_ARTEMIS_OPTIONS"
+APPLICATION_HOME=`dirname "$PRG"`
+CLASSPATH=$APPLICATION_HOME:$APPLICATION_HOME/lib/biojava.jar:$APPLICATION_HOME/lib/jemAlign.jar:$APPLICATION_HOME/lib/jakarta-regexp-1.2.jar:$APPLICATION_HOME/lib/postgresql-8.4-701.jdbc3.jar:$CLASSPATH
+CLASSPATH=$CLASSPATH:$APPLICATION_HOME/lib/batik/batik-awt-util.jar:$APPLICATION_HOME/lib/batik/batik-dom.jar:$APPLICATION_HOME/lib/batik/batik-ext.jar:$APPLICATION_HOME/lib/batik/batik-svggen.jar:$APPLICATION_HOME/lib/batik/batik-util.jar:$APPLICATION_HOME/lib/batik/batik-xml.jar:$APPLICATION_HOME/lib/batik/batik-codec.jar
+CLASSPATH=$CLASSPATH:$APPLICATION_HOME/lib/j2ssh/commons-logging.jar:$APPLICATION_HOME/lib/j2ssh/j2ssh-core.jar:$APPLICATION_HOME/lib/j2ssh/
+CLASSPATH=$CLASSPATH:$APPLICATION_HOME/lib/ibatis/ibatis-2.3.4.726.jar:$APPLICATION_HOME/lib/ibatis/:$APPLICATION_HOME/lib/ibatis/log4j-1.2.14.jar:$APPLICATION_HOME/lib/ibatis/cglib-nodep-2.2.jar
+CLASSPATH=$APPLICATION_HOME/lib/picard/picard.jar:$APPLICATION_HOME/lib/commons-net-3.6.jar:$CLASSPATH
+CLASSPATH=$APPLICATION_HOME/lib/commons-lang-2.6.jar:$CLASSPATH
+export CLASSPATH
+
+#
+# Use a custom Java version if necessary
+#
+if [[ "$ARTEMIS_JAVA_JRE" = "" ]]
+then
+	JAVA=`which java`
+else
+	JAVA_HOME=$ARTEMIS_JAVA_JRE
+	JAVA=$ARTEMIS_JAVA_JRE/bin/java
+fi
+
+#
+# Allow URLs to work from behind firewalls.
+#
+add_proxy_properties
+
+#
+# "-mx1g" sets the maximum amount of memory to use. 
+# This may need to be increased when dealing with large files
+#
+if [[ "$ARTEMIS_JVM_FLAGS" = "" ]]
+then
+    FLAGS="-mx1g -ms100m -noverify"
+else
+    FLAGS="$ARTEMIS_JVM_FLAGS -noverify"
+fi
+
+PLATTMP=`uname`
+if [[ "$PLATTMP" = "Darwin" ]]
+then
+  	APPLICATION_PROPERTIES="$APPLICATION_PROPERTIES -Dcom.apple.mrj.application.apple.menu.about.name=BamView"
+fi
+
+if [[ "$QUIET" = "no" ]]
+then
+    echo "Starting BamView with arguments: $FLAGS $APPLICATION_PROPERTIES $*"
+fi
+
+$JAVA $FLAGS $APPLICATION_PROPERTIES uk.ac.sanger.artemis.components.alignment.BamView $*
+exit $?

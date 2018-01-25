@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.circular.digest.EmbossDigestParser
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.circular.digest.EmbossDigestParser: 0.9533333333333334</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.circular.digest.EmbossDigestParser: 0.8657142857142858</ul>
 <ul>
-<li>2.999999522231751 fitness evaluations, 0 generations, null statements, 4 tests.
+<li>11.999999951384964 fitness evaluations, 0 generations, null statements, 3 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -41,32 +41,22 @@ uk.ac.sanger.artemis.circular.digest.EmbossDigestParser
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>EmbossDigestParser embossDigestParser0 = new EmbossDigestParser();
-<span class="nocode"><a name="2">  2: </a></span>EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(&quot;/Users/kp11/workspace/applications/Artemis/test/nullREBASE/embossre.enz&quot;);
-<span class="nocode"><a name="3">  3: </a></span>FileSystemHandling.appendLineToFile(evoSuiteFile0, &quot;#&lt;#&quot;);
-<span class="nocode"><a name="4">  4: </a></span>embossDigestParser0.afterPropertiesSet();
-<span class="nocode"><a name="5">  5: </a></span>List&lt;String&gt; list0 = embossDigestParser0.getDigests();
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, list0.size());
+<span class="nocode"><a name="2">  2: </a></span>EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(&quot;/Users/kp11/workspace/applications/Artemis/test/N=bG;qz;y+REBASE/embossre.enz&quot;);
+<span class="nocode"><a name="3">  3: </a></span>FileSystemHandling.appendLineToFile(evoSuiteFile0, &quot;Handlng log4j.additivit.&quot;);
+<span class="nocode"><a name="4">  4: </a></span>embossDigestParser0.setEmbossDir(&quot;N=bG;qz;y+&quot;);
+<span class="nocode"><a name="5">  5: </a></span>embossDigestParser0.afterPropertiesSet();
+<span class="nocode"><a name="6">  6: </a></span>List&lt;String&gt; list0 = embossDigestParser0.getDigests();
+<span class="nocode"><a name="7">  7: </a></span>assertTrue(list0.isEmpty());
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>EmbossDigestParser embossDigestParser0 = new EmbossDigestParser();
-<span class="nocode"><a name="2">  2: </a></span>EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(&quot;/Users/kp11/workspace/applications/Artemis/test/.B-GJ DOFo}f{REBASE/embossre.enz&quot;);
-<span class="nocode"><a name="3">  3: </a></span>embossDigestParser0.setEmbossDir(&quot;.B-GJ DOFo}f{&quot;);
-<span class="nocode"><a name="4">  4: </a></span>byte[] byteArray0 = new byte[8];
+<span class="nocode"><a name="2">  2: </a></span>EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(&quot;/Users/kp11/workspace/applications/Artemis/test/N=bG;qz;y+REBASE/embossre.enz&quot;);
+<span class="nocode"><a name="3">  3: </a></span>byte[] byteArray0 = new byte[6];
+<span class="nocode"><a name="4">  4: </a></span>byteArray0[0] = (byte)35;
 <span class="nocode"><a name="5">  5: </a></span>FileSystemHandling.appendDataToFile(evoSuiteFile0, byteArray0);
-<span class="nocode"><a name="6">  6: </a></span>embossDigestParser0.afterPropertiesSet();
-</pre>
-<h3>Test case 4</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>EmbossDigestParser embossDigestParser0 = new EmbossDigestParser();
-<span class="nocode"><a name="2">  2: </a></span>EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(&quot;/Users/kp11/workspace/applications/Artemis/test/.B-GJ DOFo}f{REBASE/embossre.enz&quot;);
-<span class="nocode"><a name="3">  3: </a></span>embossDigestParser0.setEmbossDir(&quot;.B-GJ DOFo}f{&quot;);
-<span class="nocode"><a name="4">  4: </a></span>byte[] byteArray0 = new byte[8];
-<span class="nocode"><a name="5">  5: </a></span>FileSystemHandling.appendDataToFile(evoSuiteFile0, byteArray0);
-<span class="nocode"><a name="6">  6: </a></span>FileSystemHandling.appendStringToFile(evoSuiteFile0, &quot;\t&quot;);
+<span class="nocode"><a name="6">  6: </a></span>embossDigestParser0.setEmbossDir(&quot;N=bG;qz;y+&quot;);
 <span class="nocode"><a name="7">  7: </a></span>embossDigestParser0.afterPropertiesSet();
-<span class="nocode"><a name="8">  8: </a></span>List&lt;String&gt; list0 = embossDigestParser0.getDigests();
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(1, list0.size());
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -79,13 +69,13 @@ uk.ac.sanger.artemis.circular.digest.EmbossDigestParser
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.circular.digest.EmbossDigestParser
-<li>Size: 4
-<li>Length: 21
+<li>Size: 3
+<li>Length: 15
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.9533333333333334
-<li>BranchCoverage: 1.0
+<li>Coverage: 0.8657142857142858
+<li>BranchCoverage: 0.9
 <li>MethodCoverage: 1.0
-<li>OutputCoverage: 0.6666666666666666
+<li>OutputCoverage: 0.3333333333333333
 </ul></div>
 </div>
 <p><br><a href="../report-generation.html">Back to Overview</a></p>

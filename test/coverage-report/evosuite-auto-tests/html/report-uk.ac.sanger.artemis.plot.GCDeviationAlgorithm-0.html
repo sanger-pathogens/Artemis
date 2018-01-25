@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.plot.GCDeviationAlgorithm
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.plot.GCDeviationAlgorithm: 0.840743321993322</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.plot.GCDeviationAlgorithm: 0.8626401751401751</ul>
 <ul>
-<li>133.45 fitness evaluations, 0 generations, null statements, 16 tests.
+<li>115.16120218579235 fitness evaluations, 0 generations, null statements, 16 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,17 +35,16 @@ uk.ac.sanger.artemis.plot.GCDeviationAlgorithm
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;OUn-57k&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
-<span class="nocode"><a name="4">  4: </a></span>GCDeviationAlgorithm gCDeviationAlgorithm0 = new GCDeviationAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>gCDeviationAlgorithm0.getMinimumInternal();
+<span class="nocode"><a name="1">  1: </a></span>Bases bases0 = new Bases((Sequence) null);
+<span class="nocode"><a name="2">  2: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="3">  3: </a></span>GCDeviationAlgorithm gCDeviationAlgorithm0 = new GCDeviationAlgorithm(strand0);
+<span class="nocode"><a name="4">  4: </a></span>gCDeviationAlgorithm0.getMinimumInternal();
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;6JlH  /\&quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;gc_deviation&quot;, &quot;k2RqfQFW&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
 <span class="nocode"><a name="4">  4: </a></span>GCDeviationAlgorithm gCDeviationAlgorithm0 = new GCDeviationAlgorithm(strand0);
 <span class="nocode"><a name="5">  5: </a></span>Float float0 = gCDeviationAlgorithm0.getMaximumInternal();
 <span class="nocode"><a name="6">  6: </a></span>assertTrue(gCDeviationAlgorithm0.scalingFlag());
@@ -53,8 +52,8 @@ uk.ac.sanger.artemis.plot.GCDeviationAlgorithm
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;6JlH  /\&quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;3f/&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
 <span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
 <span class="nocode"><a name="4">  4: </a></span>GCDeviationAlgorithm gCDeviationAlgorithm0 = new GCDeviationAlgorithm(strand0);
 <span class="nocode"><a name="5">  5: </a></span>int int0 = gCDeviationAlgorithm0.getValueCount();
@@ -63,132 +62,101 @@ uk.ac.sanger.artemis.plot.GCDeviationAlgorithm
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;6JlH  /\&quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;gc_deviation&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
 <span class="nocode"><a name="4">  4: </a></span>GCDeviationAlgorithm gCDeviationAlgorithm0 = new GCDeviationAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>float[] floatArray0 = new float[7];
-<span class="nocode"><a name="6">  6: </a></span>gCDeviationAlgorithm0.getValues(2, 5, floatArray0);
-<span class="nocode"><a name="7">  7: </a></span>assertArrayEquals(new float[] {0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F}, floatArray0, 0.01F);
-<span class="nocode"><a name="8">  8: </a></span>assertTrue(gCDeviationAlgorithm0.scalingFlag());
+<span class="nocode"><a name="5">  5: </a></span>gCDeviationAlgorithm0.getValues(2, 2721, (float[]) null);
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;6JlH  /\&quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;3f/&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
 <span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
 <span class="nocode"><a name="4">  4: </a></span>GCDeviationAlgorithm gCDeviationAlgorithm0 = new GCDeviationAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>float[] floatArray0 = new float[7];
-<span class="nocode"><a name="6">  6: </a></span>rawStreamSequence0.setFromChar(bases0.letter_index);
-<span class="nocode"><a name="7">  7: </a></span>gCDeviationAlgorithm0.getValues(2, 5, floatArray0);
-<span class="nocode"><a name="8">  8: </a></span>assertArrayEquals(new float[] {0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F}, floatArray0, 0.01F);
-<span class="nocode"><a name="9">  9: </a></span>assertTrue(gCDeviationAlgorithm0.scalingFlag());
+<span class="nocode"><a name="5">  5: </a></span>float[] floatArray0 = new float[1];
+<span class="nocode"><a name="6">  6: </a></span>gCDeviationAlgorithm0.getValues(1, 2, floatArray0);
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;6JlH  /\&quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
-<span class="nocode"><a name="4">  4: </a></span>GCDeviationAlgorithm gCDeviationAlgorithm0 = new GCDeviationAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>Integer integer0 = gCDeviationAlgorithm0.getDefaultWindowSize();
-<span class="nocode"><a name="6">  6: </a></span>assertTrue(gCDeviationAlgorithm0.scalingFlag());
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(30, (int)integer0);
-<span class="nocode"><a name="8">  8: </a></span>assertNotNull(integer0);
+<span class="nocode"><a name="1">  1: </a></span>Bases bases0 = new Bases((Sequence) null);
+<span class="nocode"><a name="2">  2: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="3">  3: </a></span>GCDeviationAlgorithm gCDeviationAlgorithm0 = new GCDeviationAlgorithm(strand0);
+<span class="nocode"><a name="4">  4: </a></span>gCDeviationAlgorithm0.getDefaultWindowSize();
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;6JlH  /\&quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
-<span class="nocode"><a name="4">  4: </a></span>GCDeviationAlgorithm gCDeviationAlgorithm0 = new GCDeviationAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>Integer integer0 = gCDeviationAlgorithm0.getDefaultMaxWindowSize();
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(5000, (int)integer0);
-<span class="nocode"><a name="7">  7: </a></span>assertNotNull(integer0);
-<span class="nocode"><a name="8">  8: </a></span>assertTrue(gCDeviationAlgorithm0.scalingFlag());
+<span class="nocode"><a name="1">  1: </a></span>Bases bases0 = new Bases((Sequence) null);
+<span class="nocode"><a name="2">  2: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="3">  3: </a></span>GCDeviationAlgorithm gCDeviationAlgorithm0 = new GCDeviationAlgorithm(strand0);
+<span class="nocode"><a name="4">  4: </a></span>gCDeviationAlgorithm0.getDefaultMaxWindowSize();
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;6JlH  /\&quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;3f/&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
 <span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
 <span class="nocode"><a name="4">  4: </a></span>GCDeviationAlgorithm gCDeviationAlgorithm0 = new GCDeviationAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>Integer integer0 = gCDeviationAlgorithm0.getDefaultMinWindowSize();
-<span class="nocode"><a name="6">  6: </a></span>assertNotNull(integer0);
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(10, (int)integer0);
-<span class="nocode"><a name="8">  8: </a></span>assertTrue(gCDeviationAlgorithm0.scalingFlag());
+<span class="nocode"><a name="5">  5: </a></span>gCDeviationAlgorithm0.getDefaultMinWindowSize();
 </pre>
 <h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;6JlH  /\&quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;gc_deviation&quot;, &quot;k2RqfQFW&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
 <span class="nocode"><a name="4">  4: </a></span>GCDeviationAlgorithm gCDeviationAlgorithm0 = new GCDeviationAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>Integer integer0 = gCDeviationAlgorithm0.getDefaultStepSize(0);
-<span class="nocode"><a name="6">  6: </a></span>assertNull(integer0);
-<span class="nocode"><a name="7">  7: </a></span>assertTrue(gCDeviationAlgorithm0.scalingFlag());
+<span class="nocode"><a name="5">  5: </a></span>gCDeviationAlgorithm0.getDefaultStepSize((-4153));
 </pre>
 <h3>Test case 10</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;6JlH  /\&quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
-<span class="nocode"><a name="4">  4: </a></span>GCDeviationAlgorithm gCDeviationAlgorithm0 = new GCDeviationAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>Integer integer0 = gCDeviationAlgorithm0.getDefaultStepSize(103);
-<span class="nocode"><a name="6">  6: </a></span>assertNotNull(integer0);
-<span class="nocode"><a name="7">  7: </a></span>assertTrue(gCDeviationAlgorithm0.scalingFlag());
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(10, (int)integer0);
+<span class="nocode"><a name="1">  1: </a></span>Bases bases0 = new Bases((Sequence) null);
+<span class="nocode"><a name="2">  2: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="3">  3: </a></span>GCDeviationAlgorithm gCDeviationAlgorithm0 = new GCDeviationAlgorithm(strand0);
+<span class="nocode"><a name="4">  4: </a></span>gCDeviationAlgorithm0.getDefaultStepSize(4060);
 </pre>
 <h3>Test case 11</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;OUn-57k&quot;);
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;3f/&quot;);
 <span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
 <span class="nocode"><a name="4">  4: </a></span>GCDeviationAlgorithm gCDeviationAlgorithm0 = new GCDeviationAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>Float float0 = gCDeviationAlgorithm0.getAverage();
-<span class="nocode"><a name="6">  6: </a></span>assertTrue(gCDeviationAlgorithm0.scalingFlag());
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(0.0F, (float)float0, 0.01F);
+<span class="nocode"><a name="5">  5: </a></span>gCDeviationAlgorithm0.getAverage();
 </pre>
 <h3>Test case 12</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GCDeviationAlgorithm gCDeviationAlgorithm0 = new GCDeviationAlgorithm((Strand) null);
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;gc_deviation&quot;, &quot;k2RqfQFW&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="4">  4: </a></span>GCDeviationAlgorithm gCDeviationAlgorithm0 = new GCDeviationAlgorithm(strand0);
+<span class="nocode"><a name="5">  5: </a></span>gCDeviationAlgorithm0.getAverage();
 </pre>
 <h3>Test case 13</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Bases bases0 = new Bases((Sequence) null);
-<span class="nocode"><a name="2">  2: </a></span>Strand strand0 = bases0.getForwardStrand();
-<span class="nocode"><a name="3">  3: </a></span>GCDeviationAlgorithm gCDeviationAlgorithm0 = new GCDeviationAlgorithm(strand0);
-<span class="nocode"><a name="4">  4: </a></span>gCDeviationAlgorithm0.getAverage();
+<span class="nocode"><a name="1">  1: </a></span>GCDeviationAlgorithm gCDeviationAlgorithm0 = new GCDeviationAlgorithm((Strand) null);
 </pre>
 <h3>Test case 14</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;rc;|0` Z(W]&quot;);
-<span class="nocode"><a name="2">  2: </a></span>float[] floatArray0 = new float[7];
-<span class="nocode"><a name="3">  3: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
-<span class="nocode"><a name="4">  4: </a></span>Strand strand0 = bases0.getForwardStrand();
-<span class="nocode"><a name="5">  5: </a></span>GCDeviationAlgorithm gCDeviationAlgorithm0 = new GCDeviationAlgorithm(strand0);
-<span class="nocode"><a name="6">  6: </a></span>gCDeviationAlgorithm0.getValues(936, (-5), floatArray0);
+<span class="nocode"><a name="1">  1: </a></span>Bases bases0 = new Bases((Sequence) null);
+<span class="nocode"><a name="2">  2: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="3">  3: </a></span>GCDeviationAlgorithm gCDeviationAlgorithm0 = new GCDeviationAlgorithm(strand0);
+<span class="nocode"><a name="4">  4: </a></span>float[] floatArray0 = new float[1];
+<span class="nocode"><a name="5">  5: </a></span>gCDeviationAlgorithm0.getValues((-337), (-609), floatArray0);
 </pre>
 <h3>Test case 15</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;OUn-57k&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
-<span class="nocode"><a name="4">  4: </a></span>GCDeviationAlgorithm gCDeviationAlgorithm0 = new GCDeviationAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>Integer integer0 = gCDeviationAlgorithm0.getDefaultStepSize(2282);
-<span class="nocode"><a name="6">  6: </a></span>assertNotNull(integer0);
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(228, (int)integer0);
-<span class="nocode"><a name="8">  8: </a></span>assertTrue(gCDeviationAlgorithm0.scalingFlag());
+<span class="nocode"><a name="1">  1: </a></span>Bases bases0 = new Bases((Sequence) null);
+<span class="nocode"><a name="2">  2: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="3">  3: </a></span>GCDeviationAlgorithm gCDeviationAlgorithm0 = new GCDeviationAlgorithm(strand0);
+<span class="nocode"><a name="4">  4: </a></span>gCDeviationAlgorithm0.getDefaultStepSize(16000);
 </pre>
 <h3>Test case 16</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;rc;|0` Z(W]&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
-<span class="nocode"><a name="4">  4: </a></span>GCDeviationAlgorithm gCDeviationAlgorithm0 = new GCDeviationAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>float[] floatArray0 = new float[7];
-<span class="nocode"><a name="6">  6: </a></span>gCDeviationAlgorithm0.getValues(2, 5, floatArray0);
-<span class="nocode"><a name="7">  7: </a></span>assertTrue(gCDeviationAlgorithm0.scalingFlag());
-<span class="nocode"><a name="8">  8: </a></span>assertArrayEquals(new float[] {(-1.0F), 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F}, floatArray0, 0.01F);
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;gc_deviation&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>genbankStreamSequence0.setFromChar(bases0.letter_index);
+<span class="nocode"><a name="4">  4: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="5">  5: </a></span>GCDeviationAlgorithm gCDeviationAlgorithm0 = new GCDeviationAlgorithm(strand0);
+<span class="nocode"><a name="6">  6: </a></span>gCDeviationAlgorithm0.getValues(2, 2721, (float[]) null);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -202,10 +170,10 @@ uk.ac.sanger.artemis.plot.GCDeviationAlgorithm
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.plot.GCDeviationAlgorithm
 <li>Size: 16
-<li>Length: 80
+<li>Length: 73
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.840743321993322
-<li>BranchCoverage: 0.8181818181818182
+<li>Coverage: 0.8626401751401751
+<li>BranchCoverage: 0.8636363636363636
 <li>MethodCoverage: 1.0
 <li>OutputCoverage: 0.34459459459459457
 </ul></div>

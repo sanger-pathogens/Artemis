@@ -68,6 +68,8 @@ Running the test suite
 ======================
 
 cd test
-RunAllUnitTests.sh
 
-This will run manually written and EvoSuite generated unit tests. It will take a while to run.
+RunDefaultUnitTests.sh - this runs all hand-written unit tests.
+RunEvoSuiteUnitTests.sh - this runs all EvoSuite generated unit tests. It will take well over 30 mins to run.
+RunAllUnitTests.sh - this runs all hand-written and EvoSuite generated unit tests. It will take well over 30 mins to run.
+

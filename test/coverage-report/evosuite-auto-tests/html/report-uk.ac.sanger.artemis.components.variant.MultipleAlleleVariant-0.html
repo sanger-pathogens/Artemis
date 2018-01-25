@@ -40,20 +40,21 @@ uk.ac.sanger.artemis.components.variant.MultipleAlleleVariant
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
-<span class="nocode"><a name="2">  2: </a></span>vCFRecord0.setAlt(&quot;|CY,mTL#z_O[xz928Vp&quot;);
+<span class="nocode"><a name="2">  2: </a></span>vCFRecord0.setAlt(&quot;D/&quot;);
 <span class="nocode"><a name="3">  3: </a></span>String string0 = MultipleAlleleVariant.getIUBCode(vCFRecord0);
 <span class="nocode"><a name="4">  4: </a></span>assertNull(string0);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
-<span class="nocode"><a name="2">  2: </a></span>vCFRecord0.setAlt(&quot;c&quot;);
+<span class="nocode"><a name="2">  2: </a></span>vCFRecord0.setAlt(&quot;&quot;);
 <span class="nocode"><a name="3">  3: </a></span>String string0 = MultipleAlleleVariant.getIUBCode(vCFRecord0);
 <span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;n&quot;, string0);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MultipleAlleleVariant.getIUBCode((VCFRecord) null);
+<span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
+<span class="nocode"><a name="2">  2: </a></span>MultipleAlleleVariant.getIUBCode(vCFRecord0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -67,7 +68,7 @@ uk.ac.sanger.artemis.components.variant.MultipleAlleleVariant
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.variant.MultipleAlleleVariant
 <li>Size: 4
-<li>Length: 8
+<li>Length: 9
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.6226524410605757
 <li>BranchCoverage: 0.2028985507246377

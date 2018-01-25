@@ -35,28 +35,28 @@ uk.ac.sanger.artemis.components.ProcessWatcherEvent
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>ProcessWatcherEvent processWatcherEvent0 = new ProcessWatcherEvent((Process) null, (-1));
+<span class="nocode"><a name="1">  1: </a></span>ProcessWatcherEvent processWatcherEvent0 = new ProcessWatcherEvent((Process) null, 0);
 <span class="nocode"><a name="2">  2: </a></span>processWatcherEvent0.getProcess();
-<span class="nocode"><a name="3">  3: </a></span>assertEquals((-1), processWatcherEvent0.getExitCode());
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, processWatcherEvent0.getExitCode());
 </pre>
 <h3>Test case 2</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>ProcessWatcherEvent processWatcherEvent0 = new ProcessWatcherEvent((Process) null, (-1));
-<span class="nocode"><a name="2">  2: </a></span>int int0 = processWatcherEvent0.getExitCode();
-<span class="nocode"><a name="3">  3: </a></span>assertEquals((-1), int0);
-</pre>
-<h3>Test case 3</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Process process0 = mock(Process.class, new ViolatedAssumptionAnswer());
-<span class="nocode"><a name="2">  2: </a></span>ProcessWatcherEvent processWatcherEvent0 = new ProcessWatcherEvent(process0, 1027);
-<span class="nocode"><a name="3">  3: </a></span>int int0 = processWatcherEvent0.getExitCode();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(1027, int0);
-</pre>
-<h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>ProcessWatcherEvent processWatcherEvent0 = new ProcessWatcherEvent((Process) null, 0);
 <span class="nocode"><a name="2">  2: </a></span>int int0 = processWatcherEvent0.getExitCode();
 <span class="nocode"><a name="3">  3: </a></span>assertEquals(0, int0);
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ProcessWatcherEvent processWatcherEvent0 = new ProcessWatcherEvent((Process) null, (-26));
+<span class="nocode"><a name="2">  2: </a></span>int int0 = processWatcherEvent0.getExitCode();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals((-26), int0);
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Process process0 = mock(Process.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="2">  2: </a></span>ProcessWatcherEvent processWatcherEvent0 = new ProcessWatcherEvent(process0, 3486);
+<span class="nocode"><a name="3">  3: </a></span>int int0 = processWatcherEvent0.getExitCode();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(3486, int0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>

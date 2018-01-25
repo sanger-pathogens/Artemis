@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.io.StreamSequenceFactory
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.io.StreamSequenceFactory: 0.5898762469414643</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.io.StreamSequenceFactory: 0.3663098375054897</ul>
 <ul>
-<li>100.33333314756186 fitness evaluations, 0 generations, null statements, 5 tests.
+<li>167.3333333209623 fitness evaluations, 0 generations, null statements, 2 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,36 +35,18 @@ uk.ac.sanger.artemis.io.StreamSequenceFactory
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>StringReader stringReader0 = new StringReader(&quot;-t5xR`OPp#$YCX&quot;);
-<span class="nocode"><a name="2">  2: </a></span>LinePushBackReader linePushBackReader0 = new LinePushBackReader(stringReader0);
-<span class="nocode"><a name="3">  3: </a></span>MSPcrunchDocumentEntry mSPcrunchDocumentEntry0 = new MSPcrunchDocumentEntry((EntryInformation) null);
-<span class="nocode"><a name="4">  4: </a></span>FastaStreamSequence fastaStreamSequence0 = (FastaStreamSequence)StreamSequenceFactory.makeStreamSequence(linePushBackReader0, mSPcrunchDocumentEntry0);
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, fastaStreamSequence0.getGCount());
+<span class="nocode"><a name="1">  1: </a></span>DataFlavor dataFlavor0 = DataFlavor.stringFlavor;
+<span class="nocode"><a name="2">  2: </a></span>StringSelection stringSelection0 = new StringSelection(&quot;qifb&quot;);
+<span class="nocode"><a name="3">  3: </a></span>StringReader stringReader0 = (StringReader)dataFlavor0.getReaderForText(stringSelection0);
+<span class="nocode"><a name="4">  4: </a></span>LinePushBackReader linePushBackReader0 = new LinePushBackReader(stringReader0);
+<span class="nocode"><a name="5">  5: </a></span>int int0 = StreamSequenceFactory.getSequenceType(linePushBackReader0);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(3, int0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[5];
-<span class="nocode"><a name="2">  2: </a></span>CharArrayReader charArrayReader0 = new CharArrayReader(charArray0, 0, 1155);
-<span class="nocode"><a name="3">  3: </a></span>LinePushBackReader linePushBackReader0 = new LinePushBackReader(charArrayReader0);
-<span class="nocode"><a name="4">  4: </a></span>int int0 = StreamSequenceFactory.getSequenceType(linePushBackReader0);
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(3, int0);
-</pre>
-<h3>Test case 3</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>StringReader stringReader0 = new StringReader(&quot;misc_feature&quot;);
+<span class="nocode"><a name="1">  1: </a></span>StringReader stringReader0 = new StringReader(&quot;&quot;);
 <span class="nocode"><a name="2">  2: </a></span>LinePushBackReader linePushBackReader0 = new LinePushBackReader(stringReader0);
-<span class="nocode"><a name="3">  3: </a></span>stringReader0.close();
-<span class="nocode"><a name="4">  4: </a></span>StreamSequenceFactory.getSequenceType(linePushBackReader0);
-</pre>
-<h3>Test case 4</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>StreamSequenceFactory.getSequenceType((LinePushBackReader) null);
-</pre>
-<h3>Test case 5</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = (SimpleEntryInformation)SimpleEntryInformation.getDefaultEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>GenbankDocumentEntry genbankDocumentEntry0 = new GenbankDocumentEntry(simpleEntryInformation0);
-<span class="nocode"><a name="3">  3: </a></span>StreamSequenceFactory.makeStreamSequence((LinePushBackReader) null, genbankDocumentEntry0);
+<span class="nocode"><a name="3">  3: </a></span>StreamSequenceFactory.getSequenceType(linePushBackReader0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -77,13 +59,13 @@ uk.ac.sanger.artemis.io.StreamSequenceFactory
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.io.StreamSequenceFactory
-<li>Size: 5
-<li>Length: 16
+<li>Size: 2
+<li>Length: 8
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.5898762469414643
-<li>BranchCoverage: 0.391304347826087
-<li>MethodCoverage: 1.0
-<li>OutputCoverage: 0.3181818181818182
+<li>Coverage: 0.3663098375054897
+<li>BranchCoverage: 0.17391304347826086
+<li>MethodCoverage: 0.5
+<li>OutputCoverage: 0.045454545454545456
 </ul></div>
 </div>
 <p><br><a href="../report-generation.html">Back to Overview</a></p>

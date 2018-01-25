@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.components.Plot
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.components.Plot: 0.31563713030547896</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.components.Plot: 0.20113636669507928</ul>
 <ul>
-<li>2598.168183286432 fitness evaluations, 0 generations, null statements, 11 tests.
+<li>3174.8308144416455 fitness evaluations, 0 generations, null statements, 7 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,15 +35,13 @@ uk.ac.sanger.artemis.components.Plot
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature();
-<span class="nocode"><a name="2">  2: </a></span>Feature feature0 = new Feature(genbankStreamFeature0);
-<span class="nocode"><a name="3">  3: </a></span>HydrophilicityAlgorithm hydrophilicityAlgorithm0 = new HydrophilicityAlgorithm(feature0);
-<span class="nocode"><a name="4">  4: </a></span>FeaturePlot featurePlot0 = new FeaturePlot(hydrophilicityAlgorithm0);
-<span class="nocode"><a name="5">  5: </a></span>GenericDocumentType genericDocumentType0 = new GenericDocumentType(&quot;&quot;, &quot;&quot;, &quot;q#Y`0 M@GY&quot;);
-<span class="nocode"><a name="6">  6: </a></span>GenericDOMImplementation genericDOMImplementation0 = new GenericDOMImplementation();
-<span class="nocode"><a name="7">  7: </a></span>GenericDocument genericDocument0 = new GenericDocument(genericDocumentType0, genericDOMImplementation0);
-<span class="nocode"><a name="8">  8: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(genericDocument0);
-<span class="nocode"><a name="9">  9: </a></span>featurePlot0.drawMinMax(sVGGraphics2D0, 0.0F, 68.04106F);
+<span class="nocode"><a name="1">  1: </a></span>Key key0 = new Key(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
+<span class="nocode"><a name="3">  3: </a></span>MSPcrunchStreamFeature mSPcrunchStreamFeature0 = new MSPcrunchStreamFeature(key0, (Location) null, qualifierVector0);
+<span class="nocode"><a name="4">  4: </a></span>Feature feature0 = new Feature(mSPcrunchStreamFeature0);
+<span class="nocode"><a name="5">  5: </a></span>HydrophilicityAlgorithm hydrophilicityAlgorithm0 = new HydrophilicityAlgorithm(feature0);
+<span class="nocode"><a name="6">  6: </a></span>FeaturePlot featurePlot0 = new FeaturePlot(hydrophilicityAlgorithm0);
+<span class="nocode"><a name="7">  7: </a></span>featurePlot0.calculateFeatures(true);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
@@ -52,408 +50,28 @@ uk.ac.sanger.artemis.components.Plot
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature();
-<span class="nocode"><a name="2">  2: </a></span>Feature feature0 = new Feature(genbankStreamFeature0);
-<span class="nocode"><a name="3">  3: </a></span>HydrophilicityAlgorithm hydrophilicityAlgorithm0 = new HydrophilicityAlgorithm(feature0);
-<span class="nocode"><a name="4">  4: </a></span>FeaturePlot featurePlot0 = new FeaturePlot(hydrophilicityAlgorithm0);
-<span class="nocode"><a name="5">  5: </a></span>int int0 = featurePlot0.getCrossHairPosition();
-<span class="nocode"><a name="6">  6: </a></span>assertEquals((-1), int0);
+<span class="nocode"><a name="1">  1: </a></span>Color color0 = Color.blue;
+<span class="nocode"><a name="2">  2: </a></span>Color[] colorArray0 = Plot.makeColours(color0, 1175);
+<span class="nocode"><a name="3">  3: </a></span>assertNotNull(colorArray0);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SystemColor systemColor0 = SystemColor.windowText;
-<span class="nocode"><a name="2">  2: </a></span>Color[] colorArray0 = Plot.makeColours(systemColor0, 0);
-<span class="nocode"><a name="3">  3: </a></span>assertNotNull(colorArray0);
+<span class="nocode"><a name="1">  1: </a></span>Color color0 = new Color(0, 255, 0);
+<span class="nocode"><a name="2">  2: </a></span>Plot.makeColours(color0, 255);
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SystemColor systemColor0 = SystemColor.infoText;
-<span class="nocode"><a name="2">  2: </a></span>Color[] colorArray0 = Plot.makeColours(systemColor0, 774);
-<span class="nocode"><a name="3">  3: </a></span>assertNotNull(colorArray0);
+<span class="nocode"><a name="1">  1: </a></span>Color color0 = Color.RED;
+<span class="nocode"><a name="2">  2: </a></span>Plot.makeColours(color0, (-177));
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature();
-<span class="nocode"><a name="2">  2: </a></span>assertNotNull(genbankStreamFeature0);
-<span class="nocode"><a name="3">  3: </a></span>
-<span class="nocode"><a name="4">  4: </a></span>Feature feature0 = new Feature(genbankStreamFeature0);
-<span class="nocode"><a name="5">  5: </a></span>assertNotNull(feature0);
-<span class="nocode"><a name="6">  6: </a></span>
-<span class="nocode"><a name="7">  7: </a></span>HydrophilicityAlgorithm hydrophilicityAlgorithm0 = new HydrophilicityAlgorithm(feature0);
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(1, hydrophilicityAlgorithm0.getValueCount());
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(1.4E-45F, hydrophilicityAlgorithm0.getUserMin(), 0.01F);
-<span class="nocode"><a name="10"> 10: </a></span>assertEquals(&quot;Hopp-Woods Hydrophilicity&quot;, hydrophilicityAlgorithm0.getAlgorithmName());
-<span class="nocode"><a name="11"> 11: </a></span>assertFalse(hydrophilicityAlgorithm0.isUserMaxMin());
-<span class="nocode"><a name="12"> 12: </a></span>assertFalse(hydrophilicityAlgorithm0.scalingFlag());
-<span class="nocode"><a name="13"> 13: </a></span>assertEquals(&quot;hydrophilicity&quot;, hydrophilicityAlgorithm0.getAlgorithmShortName());
-<span class="nocode"><a name="14"> 14: </a></span>assertEquals(3.4028235E38F, hydrophilicityAlgorithm0.getUserMax(), 0.01F);
-<span class="nocode"><a name="15"> 15: </a></span>assertNotNull(hydrophilicityAlgorithm0);
-<span class="nocode"><a name="16"> 16: </a></span>
-<span class="nocode"><a name="17"> 17: </a></span>FeaturePlot featurePlot0 = new FeaturePlot(hydrophilicityAlgorithm0);
-<span class="nocode"><a name="18"> 18: </a></span>assertEquals(1, hydrophilicityAlgorithm0.getValueCount());
-<span class="nocode"><a name="19"> 19: </a></span>assertEquals(1.4E-45F, hydrophilicityAlgorithm0.getUserMin(), 0.01F);
-<span class="nocode"><a name="20"> 20: </a></span>assertEquals(&quot;Hopp-Woods Hydrophilicity&quot;, hydrophilicityAlgorithm0.getAlgorithmName());
-<span class="nocode"><a name="21"> 21: </a></span>assertFalse(hydrophilicityAlgorithm0.isUserMaxMin());
-<span class="nocode"><a name="22"> 22: </a></span>assertFalse(hydrophilicityAlgorithm0.scalingFlag());
-<span class="nocode"><a name="23"> 23: </a></span>assertEquals(&quot;hydrophilicity&quot;, hydrophilicityAlgorithm0.getAlgorithmShortName());
-<span class="nocode"><a name="24"> 24: </a></span>assertEquals(3.4028235E38F, hydrophilicityAlgorithm0.getUserMax(), 0.01F);
-<span class="nocode"><a name="25"> 25: </a></span>assertTrue(featurePlot0.getFocusTraversalKeysEnabled());
-<span class="nocode"><a name="26"> 26: </a></span>assertFalse(featurePlot0.isFocusCycleRoot());
-<span class="nocode"><a name="27"> 27: </a></span>assertFalse(featurePlot0.isFocusTraversalPolicyProvider());
-<span class="nocode"><a name="28"> 28: </a></span>assertFalse(featurePlot0.isFocusTraversalPolicySet());
-<span class="nocode"><a name="29"> 29: </a></span>assertFalse(featurePlot0.getIgnoreRepaint());
-<span class="nocode"><a name="30"> 30: </a></span>assertNotNull(featurePlot0);
-<span class="nocode"><a name="31"> 31: </a></span>
-<span class="nocode"><a name="32"> 32: </a></span>GenericDocumentType genericDocumentType0 = new GenericDocumentType(&quot;&quot;, &quot;&quot;, &quot;q#Y`0 M@GY&quot;);
-<span class="nocode"><a name="33"> 33: </a></span>assertNull(genericDocumentType0.getInternalSubset());
-<span class="nocode"><a name="34"> 34: </a></span>assertEquals(&quot;&quot;, genericDocumentType0.getNodeName());
-<span class="nocode"><a name="35"> 35: </a></span>assertNull(genericDocumentType0.getName());
-<span class="nocode"><a name="36"> 36: </a></span>assertTrue(genericDocumentType0.isReadonly());
-<span class="nocode"><a name="37"> 37: </a></span>assertEquals((short)10, genericDocumentType0.getNodeType());
-<span class="nocode"><a name="38"> 38: </a></span>assertEquals(&quot;&quot;, genericDocumentType0.getPublicId());
-<span class="nocode"><a name="39"> 39: </a></span>assertNull(genericDocumentType0.getNamespaceURI());
-<span class="nocode"><a name="40"> 40: </a></span>assertFalse(genericDocumentType0.hasChildNodes());
-<span class="nocode"><a name="41"> 41: </a></span>assertEquals(&quot;q#Y`0 M@GY&quot;, genericDocumentType0.getSystemId());
-<span class="nocode"><a name="42"> 42: </a></span>assertEquals((short)16, AbstractNode.DOCUMENT_POSITION_CONTAINED_BY);
-<span class="nocode"><a name="43"> 43: </a></span>assertEquals((short)32, AbstractNode.DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC);
-<span class="nocode"><a name="44"> 44: </a></span>assertEquals((short)8, AbstractNode.DOCUMENT_POSITION_CONTAINS);
-<span class="nocode"><a name="45"> 45: </a></span>assertEquals((short)4, AbstractNode.DOCUMENT_POSITION_FOLLOWING);
-<span class="nocode"><a name="46"> 46: </a></span>assertEquals((short)2, AbstractNode.DOCUMENT_POSITION_PRECEDING);
-<span class="nocode"><a name="47"> 47: </a></span>assertEquals((short)1, AbstractNode.DOCUMENT_POSITION_DISCONNECTED);
-<span class="nocode"><a name="48"> 48: </a></span>assertNotNull(genericDocumentType0);
-<span class="nocode"><a name="49"> 49: </a></span>
-<span class="nocode"><a name="50"> 50: </a></span>GenericDOMImplementation genericDOMImplementation0 = new GenericDOMImplementation();
-<span class="nocode"><a name="51"> 51: </a></span>assertNotNull(genericDOMImplementation0);
-<span class="nocode"><a name="52"> 52: </a></span>
-<span class="nocode"><a name="53"> 53: </a></span>GenericDocument genericDocument0 = new GenericDocument(genericDocumentType0, genericDOMImplementation0);
-<span class="nocode"><a name="54"> 54: </a></span>assertNull(genericDocumentType0.getInternalSubset());
-<span class="nocode"><a name="55"> 55: </a></span>assertEquals(&quot;&quot;, genericDocumentType0.getNodeName());
-<span class="nocode"><a name="56"> 56: </a></span>assertNull(genericDocumentType0.getName());
-<span class="nocode"><a name="57"> 57: </a></span>assertTrue(genericDocumentType0.isReadonly());
-<span class="nocode"><a name="58"> 58: </a></span>assertEquals((short)10, genericDocumentType0.getNodeType());
-<span class="nocode"><a name="59"> 59: </a></span>assertEquals(&quot;&quot;, genericDocumentType0.getPublicId());
-<span class="nocode"><a name="60"> 60: </a></span>assertNull(genericDocumentType0.getNamespaceURI());
-<span class="nocode"><a name="61"> 61: </a></span>assertFalse(genericDocumentType0.hasChildNodes());
-<span class="nocode"><a name="62"> 62: </a></span>assertEquals(&quot;q#Y`0 M@GY&quot;, genericDocumentType0.getSystemId());
-<span class="nocode"><a name="63"> 63: </a></span>assertNull(genericDocument0.getInputEncoding());
-<span class="nocode"><a name="64"> 64: </a></span>assertTrue(genericDocument0.hasChildNodes());
-<span class="nocode"><a name="65"> 65: </a></span>assertEquals(&quot;1.0&quot;, genericDocument0.getXmlVersion());
-<span class="nocode"><a name="66"> 66: </a></span>assertNull(genericDocument0.getDocumentURI());
-<span class="nocode"><a name="67"> 67: </a></span>assertNull(genericDocument0.getXmlEncoding());
-<span class="nocode"><a name="68"> 68: </a></span>assertFalse(genericDocument0.isReadonly());
-<span class="nocode"><a name="69"> 69: </a></span>assertNull(genericDocument0.getNamespaceURI());
-<span class="nocode"><a name="70"> 70: </a></span>assertEquals(&quot;#document&quot;, genericDocument0.getNodeName());
-<span class="nocode"><a name="71"> 71: </a></span>assertTrue(genericDocument0.getStrictErrorChecking());
-<span class="nocode"><a name="72"> 72: </a></span>assertEquals((short)9, genericDocument0.getNodeType());
-<span class="nocode"><a name="73"> 73: </a></span>assertFalse(genericDocument0.getEventsEnabled());
-<span class="nocode"><a name="74"> 74: </a></span>assertFalse(genericDocument0.getXmlStandalone());
-<span class="nocode"><a name="75"> 75: </a></span>assertEquals((short)16, AbstractNode.DOCUMENT_POSITION_CONTAINED_BY);
-<span class="nocode"><a name="76"> 76: </a></span>assertEquals((short)32, AbstractNode.DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC);
-<span class="nocode"><a name="77"> 77: </a></span>assertEquals((short)8, AbstractNode.DOCUMENT_POSITION_CONTAINS);
-<span class="nocode"><a name="78"> 78: </a></span>assertEquals((short)4, AbstractNode.DOCUMENT_POSITION_FOLLOWING);
-<span class="nocode"><a name="79"> 79: </a></span>assertEquals((short)2, AbstractNode.DOCUMENT_POSITION_PRECEDING);
-<span class="nocode"><a name="80"> 80: </a></span>assertEquals((short)1, AbstractNode.DOCUMENT_POSITION_DISCONNECTED);
-<span class="nocode"><a name="81"> 81: </a></span>assertEquals((short)16, AbstractNode.DOCUMENT_POSITION_CONTAINED_BY);
-<span class="nocode"><a name="82"> 82: </a></span>assertEquals((short)8, AbstractNode.DOCUMENT_POSITION_CONTAINS);
-<span class="nocode"><a name="83"> 83: </a></span>assertEquals((short)4, AbstractNode.DOCUMENT_POSITION_FOLLOWING);
-<span class="nocode"><a name="84"> 84: </a></span>assertEquals((short)1, AbstractNode.DOCUMENT_POSITION_DISCONNECTED);
-<span class="nocode"><a name="85"> 85: </a></span>assertEquals((short)2, AbstractNode.DOCUMENT_POSITION_PRECEDING);
-<span class="nocode"><a name="86"> 86: </a></span>assertEquals((short)32, AbstractNode.DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC);
-<span class="nocode"><a name="87"> 87: </a></span>assertNotNull(genericDocument0);
-<span class="nocode"><a name="88"> 88: </a></span>
-<span class="nocode"><a name="89"> 89: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(genericDocument0);
-<span class="nocode"><a name="90"> 90: </a></span>assertNull(genericDocumentType0.getInternalSubset());
-<span class="nocode"><a name="91"> 91: </a></span>assertEquals(&quot;&quot;, genericDocumentType0.getNodeName());
-<span class="nocode"><a name="92"> 92: </a></span>assertNull(genericDocumentType0.getName());
-<span class="nocode"><a name="93"> 93: </a></span>assertTrue(genericDocumentType0.isReadonly());
-<span class="nocode"><a name="94"> 94: </a></span>assertEquals((short)10, genericDocumentType0.getNodeType());
-<span class="nocode"><a name="95"> 95: </a></span>assertEquals(&quot;&quot;, genericDocumentType0.getPublicId());
-<span class="nocode"><a name="96"> 96: </a></span>assertNull(genericDocumentType0.getNamespaceURI());
-<span class="nocode"><a name="97"> 97: </a></span>assertFalse(genericDocumentType0.hasChildNodes());
-<span class="nocode"><a name="98"> 98: </a></span>assertEquals(&quot;q#Y`0 M@GY&quot;, genericDocumentType0.getSystemId());
-<span class="nocode"><a name="99"> 99: </a></span>assertNull(genericDocument0.getInputEncoding());
-<span class="nocode"><a name="100">100: </a></span>assertTrue(genericDocument0.hasChildNodes());
-<span class="nocode"><a name="101">101: </a></span>assertEquals(&quot;1.0&quot;, genericDocument0.getXmlVersion());
-<span class="nocode"><a name="102">102: </a></span>assertNull(genericDocument0.getDocumentURI());
-<span class="nocode"><a name="103">103: </a></span>assertNull(genericDocument0.getXmlEncoding());
-<span class="nocode"><a name="104">104: </a></span>assertFalse(genericDocument0.isReadonly());
-<span class="nocode"><a name="105">105: </a></span>assertNull(genericDocument0.getNamespaceURI());
-<span class="nocode"><a name="106">106: </a></span>assertEquals(&quot;#document&quot;, genericDocument0.getNodeName());
-<span class="nocode"><a name="107">107: </a></span>assertTrue(genericDocument0.getStrictErrorChecking());
-<span class="nocode"><a name="108">108: </a></span>assertEquals((short)9, genericDocument0.getNodeType());
-<span class="nocode"><a name="109">109: </a></span>assertFalse(genericDocument0.getEventsEnabled());
-<span class="nocode"><a name="110">110: </a></span>assertFalse(genericDocument0.getXmlStandalone());
-<span class="nocode"><a name="111">111: </a></span>assertEquals((short)16, AbstractNode.DOCUMENT_POSITION_CONTAINED_BY);
-<span class="nocode"><a name="112">112: </a></span>assertEquals((short)32, AbstractNode.DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC);
-<span class="nocode"><a name="113">113: </a></span>assertEquals((short)8, AbstractNode.DOCUMENT_POSITION_CONTAINS);
-<span class="nocode"><a name="114">114: </a></span>assertEquals((short)4, AbstractNode.DOCUMENT_POSITION_FOLLOWING);
-<span class="nocode"><a name="115">115: </a></span>assertEquals((short)2, AbstractNode.DOCUMENT_POSITION_PRECEDING);
-<span class="nocode"><a name="116">116: </a></span>assertEquals((short)1, AbstractNode.DOCUMENT_POSITION_DISCONNECTED);
-<span class="nocode"><a name="117">117: </a></span>assertEquals((short)16, AbstractNode.DOCUMENT_POSITION_CONTAINED_BY);
-<span class="nocode"><a name="118">118: </a></span>assertEquals((short)8, AbstractNode.DOCUMENT_POSITION_CONTAINS);
-<span class="nocode"><a name="119">119: </a></span>assertEquals((short)4, AbstractNode.DOCUMENT_POSITION_FOLLOWING);
-<span class="nocode"><a name="120">120: </a></span>assertEquals((short)1, AbstractNode.DOCUMENT_POSITION_DISCONNECTED);
-<span class="nocode"><a name="121">121: </a></span>assertEquals((short)2, AbstractNode.DOCUMENT_POSITION_PRECEDING);
-<span class="nocode"><a name="122">122: </a></span>assertEquals((short)32, AbstractNode.DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC);
-<span class="nocode"><a name="123">123: </a></span>assertEquals(3, SVGGraphics2D.DEFAULT_MAX_GC_OVERRIDES);
-<span class="nocode"><a name="124">124: </a></span>assertNotNull(sVGGraphics2D0);
-<span class="nocode"><a name="125">125: </a></span>
-<span class="nocode"><a name="126">126: </a></span>featurePlot0.drawCrossHair(sVGGraphics2D0, (short)32, (String) null, 1000000);
-<span class="nocode"><a name="127">127: </a></span>assertEquals(1, hydrophilicityAlgorithm0.getValueCount());
-<span class="nocode"><a name="128">128: </a></span>assertEquals(1.4E-45F, hydrophilicityAlgorithm0.getUserMin(), 0.01F);
-<span class="nocode"><a name="129">129: </a></span>assertEquals(&quot;Hopp-Woods Hydrophilicity&quot;, hydrophilicityAlgorithm0.getAlgorithmName());
-<span class="nocode"><a name="130">130: </a></span>assertFalse(hydrophilicityAlgorithm0.isUserMaxMin());
-<span class="nocode"><a name="131">131: </a></span>assertFalse(hydrophilicityAlgorithm0.scalingFlag());
-<span class="nocode"><a name="132">132: </a></span>assertEquals(&quot;hydrophilicity&quot;, hydrophilicityAlgorithm0.getAlgorithmShortName());
-<span class="nocode"><a name="133">133: </a></span>assertEquals(3.4028235E38F, hydrophilicityAlgorithm0.getUserMax(), 0.01F);
-<span class="nocode"><a name="134">134: </a></span>assertTrue(featurePlot0.getFocusTraversalKeysEnabled());
-<span class="nocode"><a name="135">135: </a></span>assertFalse(featurePlot0.isFocusCycleRoot());
-<span class="nocode"><a name="136">136: </a></span>assertFalse(featurePlot0.isFocusTraversalPolicyProvider());
-<span class="nocode"><a name="137">137: </a></span>assertFalse(featurePlot0.isFocusTraversalPolicySet());
-<span class="nocode"><a name="138">138: </a></span>assertFalse(featurePlot0.getIgnoreRepaint());
-<span class="nocode"><a name="139">139: </a></span>assertNull(genericDocumentType0.getInternalSubset());
-<span class="nocode"><a name="140">140: </a></span>assertEquals(&quot;&quot;, genericDocumentType0.getNodeName());
-<span class="nocode"><a name="141">141: </a></span>assertNull(genericDocumentType0.getName());
-<span class="nocode"><a name="142">142: </a></span>assertTrue(genericDocumentType0.isReadonly());
-<span class="nocode"><a name="143">143: </a></span>assertEquals((short)10, genericDocumentType0.getNodeType());
-<span class="nocode"><a name="144">144: </a></span>assertEquals(&quot;&quot;, genericDocumentType0.getPublicId());
-<span class="nocode"><a name="145">145: </a></span>assertNull(genericDocumentType0.getNamespaceURI());
-<span class="nocode"><a name="146">146: </a></span>assertFalse(genericDocumentType0.hasChildNodes());
-<span class="nocode"><a name="147">147: </a></span>assertEquals(&quot;q#Y`0 M@GY&quot;, genericDocumentType0.getSystemId());
-<span class="nocode"><a name="148">148: </a></span>assertNull(genericDocument0.getInputEncoding());
-<span class="nocode"><a name="149">149: </a></span>assertTrue(genericDocument0.hasChildNodes());
-<span class="nocode"><a name="150">150: </a></span>assertEquals(&quot;1.0&quot;, genericDocument0.getXmlVersion());
-<span class="nocode"><a name="151">151: </a></span>assertNull(genericDocument0.getDocumentURI());
-<span class="nocode"><a name="152">152: </a></span>assertNull(genericDocument0.getXmlEncoding());
-<span class="nocode"><a name="153">153: </a></span>assertFalse(genericDocument0.isReadonly());
-<span class="nocode"><a name="154">154: </a></span>assertNull(genericDocument0.getNamespaceURI());
-<span class="nocode"><a name="155">155: </a></span>assertEquals(&quot;#document&quot;, genericDocument0.getNodeName());
-<span class="nocode"><a name="156">156: </a></span>assertTrue(genericDocument0.getStrictErrorChecking());
-<span class="nocode"><a name="157">157: </a></span>assertEquals((short)9, genericDocument0.getNodeType());
-<span class="nocode"><a name="158">158: </a></span>assertFalse(genericDocument0.getEventsEnabled());
-<span class="nocode"><a name="159">159: </a></span>assertFalse(genericDocument0.getXmlStandalone());
-<span class="nocode"><a name="160">160: </a></span>assertEquals((short)16, AbstractNode.DOCUMENT_POSITION_CONTAINED_BY);
-<span class="nocode"><a name="161">161: </a></span>assertEquals((short)32, AbstractNode.DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC);
-<span class="nocode"><a name="162">162: </a></span>assertEquals((short)8, AbstractNode.DOCUMENT_POSITION_CONTAINS);
-<span class="nocode"><a name="163">163: </a></span>assertEquals((short)4, AbstractNode.DOCUMENT_POSITION_FOLLOWING);
-<span class="nocode"><a name="164">164: </a></span>assertEquals((short)2, AbstractNode.DOCUMENT_POSITION_PRECEDING);
-<span class="nocode"><a name="165">165: </a></span>assertEquals((short)1, AbstractNode.DOCUMENT_POSITION_DISCONNECTED);
-<span class="nocode"><a name="166">166: </a></span>assertEquals((short)16, AbstractNode.DOCUMENT_POSITION_CONTAINED_BY);
-<span class="nocode"><a name="167">167: </a></span>assertEquals((short)8, AbstractNode.DOCUMENT_POSITION_CONTAINS);
-<span class="nocode"><a name="168">168: </a></span>assertEquals((short)4, AbstractNode.DOCUMENT_POSITION_FOLLOWING);
-<span class="nocode"><a name="169">169: </a></span>assertEquals((short)1, AbstractNode.DOCUMENT_POSITION_DISCONNECTED);
-<span class="nocode"><a name="170">170: </a></span>assertEquals((short)2, AbstractNode.DOCUMENT_POSITION_PRECEDING);
-<span class="nocode"><a name="171">171: </a></span>assertEquals((short)32, AbstractNode.DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC);
-<span class="nocode"><a name="172">172: </a></span>assertEquals(3, SVGGraphics2D.DEFAULT_MAX_GC_OVERRIDES);
+<span class="nocode"><a name="1">  1: </a></span>Plot.makeColours((Color) null, 2);
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature();
-<span class="nocode"><a name="2">  2: </a></span>assertNotNull(genbankStreamFeature0);
-<span class="nocode"><a name="3">  3: </a></span>
-<span class="nocode"><a name="4">  4: </a></span>Feature feature0 = new Feature(genbankStreamFeature0);
-<span class="nocode"><a name="5">  5: </a></span>assertNotNull(feature0);
-<span class="nocode"><a name="6">  6: </a></span>
-<span class="nocode"><a name="7">  7: </a></span>HydrophilicityAlgorithm hydrophilicityAlgorithm0 = new HydrophilicityAlgorithm(feature0);
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(3.4028235E38F, hydrophilicityAlgorithm0.getUserMax(), 0.01F);
-<span class="nocode"><a name="9">  9: </a></span>assertFalse(hydrophilicityAlgorithm0.isUserMaxMin());
-<span class="nocode"><a name="10"> 10: </a></span>assertEquals(1.4E-45F, hydrophilicityAlgorithm0.getUserMin(), 0.01F);
-<span class="nocode"><a name="11"> 11: </a></span>assertFalse(hydrophilicityAlgorithm0.scalingFlag());
-<span class="nocode"><a name="12"> 12: </a></span>assertEquals(&quot;Hopp-Woods Hydrophilicity&quot;, hydrophilicityAlgorithm0.getAlgorithmName());
-<span class="nocode"><a name="13"> 13: </a></span>assertEquals(1, hydrophilicityAlgorithm0.getValueCount());
-<span class="nocode"><a name="14"> 14: </a></span>assertEquals(&quot;hydrophilicity&quot;, hydrophilicityAlgorithm0.getAlgorithmShortName());
-<span class="nocode"><a name="15"> 15: </a></span>assertNotNull(hydrophilicityAlgorithm0);
-<span class="nocode"><a name="16"> 16: </a></span>
-<span class="nocode"><a name="17"> 17: </a></span>FeaturePlot featurePlot0 = new FeaturePlot(hydrophilicityAlgorithm0);
-<span class="nocode"><a name="18"> 18: </a></span>assertEquals(3.4028235E38F, hydrophilicityAlgorithm0.getUserMax(), 0.01F);
-<span class="nocode"><a name="19"> 19: </a></span>assertFalse(hydrophilicityAlgorithm0.isUserMaxMin());
-<span class="nocode"><a name="20"> 20: </a></span>assertEquals(1.4E-45F, hydrophilicityAlgorithm0.getUserMin(), 0.01F);
-<span class="nocode"><a name="21"> 21: </a></span>assertFalse(hydrophilicityAlgorithm0.scalingFlag());
-<span class="nocode"><a name="22"> 22: </a></span>assertEquals(&quot;Hopp-Woods Hydrophilicity&quot;, hydrophilicityAlgorithm0.getAlgorithmName());
-<span class="nocode"><a name="23"> 23: </a></span>assertEquals(1, hydrophilicityAlgorithm0.getValueCount());
-<span class="nocode"><a name="24"> 24: </a></span>assertEquals(&quot;hydrophilicity&quot;, hydrophilicityAlgorithm0.getAlgorithmShortName());
-<span class="nocode"><a name="25"> 25: </a></span>assertFalse(featurePlot0.isFocusTraversalPolicySet());
-<span class="nocode"><a name="26"> 26: </a></span>assertTrue(featurePlot0.getFocusTraversalKeysEnabled());
-<span class="nocode"><a name="27"> 27: </a></span>assertFalse(featurePlot0.getIgnoreRepaint());
-<span class="nocode"><a name="28"> 28: </a></span>assertFalse(featurePlot0.isFocusTraversalPolicyProvider());
-<span class="nocode"><a name="29"> 29: </a></span>assertFalse(featurePlot0.isFocusCycleRoot());
-<span class="nocode"><a name="30"> 30: </a></span>assertNotNull(featurePlot0);
-<span class="nocode"><a name="31"> 31: </a></span>
-<span class="nocode"><a name="32"> 32: </a></span>float[] floatArray0 = new float[5];
-<span class="nocode"><a name="33"> 33: </a></span>float float0 = featurePlot0.getYCoordinate((short)32, 500, 4096, floatArray0, (short)8);
-<span class="nocode"><a name="34"> 34: </a></span>assertEquals(0.0F, float0, 0.01F);
-<span class="nocode"><a name="35"> 35: </a></span>assertArrayEquals(new float[] {0.0F, 0.0F, 0.0F, 0.0F, 0.0F}, floatArray0, 0.01F);
-<span class="nocode"><a name="36"> 36: </a></span>assertEquals(3.4028235E38F, hydrophilicityAlgorithm0.getUserMax(), 0.01F);
-<span class="nocode"><a name="37"> 37: </a></span>assertFalse(hydrophilicityAlgorithm0.isUserMaxMin());
-<span class="nocode"><a name="38"> 38: </a></span>assertEquals(1.4E-45F, hydrophilicityAlgorithm0.getUserMin(), 0.01F);
-<span class="nocode"><a name="39"> 39: </a></span>assertFalse(hydrophilicityAlgorithm0.scalingFlag());
-<span class="nocode"><a name="40"> 40: </a></span>assertEquals(&quot;Hopp-Woods Hydrophilicity&quot;, hydrophilicityAlgorithm0.getAlgorithmName());
-<span class="nocode"><a name="41"> 41: </a></span>assertEquals(1, hydrophilicityAlgorithm0.getValueCount());
-<span class="nocode"><a name="42"> 42: </a></span>assertEquals(&quot;hydrophilicity&quot;, hydrophilicityAlgorithm0.getAlgorithmShortName());
-<span class="nocode"><a name="43"> 43: </a></span>assertFalse(featurePlot0.isFocusTraversalPolicySet());
-<span class="nocode"><a name="44"> 44: </a></span>assertTrue(featurePlot0.getFocusTraversalKeysEnabled());
-<span class="nocode"><a name="45"> 45: </a></span>assertFalse(featurePlot0.getIgnoreRepaint());
-<span class="nocode"><a name="46"> 46: </a></span>assertFalse(featurePlot0.isFocusTraversalPolicyProvider());
-<span class="nocode"><a name="47"> 47: </a></span>assertFalse(featurePlot0.isFocusCycleRoot());
-</pre>
-<h3>Test case 8</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Color color0 = Color.getHSBColor(2.0F, 0.0F, 2.0F);
-<span class="nocode"><a name="2">  2: </a></span>assertEquals(255, color0.getRed());
-<span class="nocode"><a name="3">  3: </a></span>assertEquals((-2), color0.getRGB());
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(1, color0.getTransparency());
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(255, color0.getAlpha());
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(254, color0.getBlue());
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(255, color0.getGreen());
-<span class="nocode"><a name="8">  8: </a></span>assertNotNull(color0);
-<span class="nocode"><a name="9">  9: </a></span>
-<span class="nocode"><a name="10"> 10: </a></span>Plot.makeColours(color0, (-1380));
-</pre>
-<h3>Test case 9</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature();
-<span class="nocode"><a name="2">  2: </a></span>assertNotNull(genbankStreamFeature0);
-<span class="nocode"><a name="3">  3: </a></span>
-<span class="nocode"><a name="4">  4: </a></span>Feature feature0 = new Feature(genbankStreamFeature0);
-<span class="nocode"><a name="5">  5: </a></span>assertNotNull(feature0);
-<span class="nocode"><a name="6">  6: </a></span>
-<span class="nocode"><a name="7">  7: </a></span>HydrophilicityAlgorithm hydrophilicityAlgorithm0 = new HydrophilicityAlgorithm(feature0);
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(1, hydrophilicityAlgorithm0.getValueCount());
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(1.4E-45F, hydrophilicityAlgorithm0.getUserMin(), 0.01F);
-<span class="nocode"><a name="10"> 10: </a></span>assertFalse(hydrophilicityAlgorithm0.isUserMaxMin());
-<span class="nocode"><a name="11"> 11: </a></span>assertEquals(&quot;Hopp-Woods Hydrophilicity&quot;, hydrophilicityAlgorithm0.getAlgorithmName());
-<span class="nocode"><a name="12"> 12: </a></span>assertFalse(hydrophilicityAlgorithm0.scalingFlag());
-<span class="nocode"><a name="13"> 13: </a></span>assertEquals(&quot;hydrophilicity&quot;, hydrophilicityAlgorithm0.getAlgorithmShortName());
-<span class="nocode"><a name="14"> 14: </a></span>assertEquals(3.4028235E38F, hydrophilicityAlgorithm0.getUserMax(), 0.01F);
-<span class="nocode"><a name="15"> 15: </a></span>assertNotNull(hydrophilicityAlgorithm0);
-<span class="nocode"><a name="16"> 16: </a></span>
-<span class="nocode"><a name="17"> 17: </a></span>FeaturePlot featurePlot0 = new FeaturePlot(hydrophilicityAlgorithm0);
-<span class="nocode"><a name="18"> 18: </a></span>assertEquals(1, hydrophilicityAlgorithm0.getValueCount());
-<span class="nocode"><a name="19"> 19: </a></span>assertEquals(1.4E-45F, hydrophilicityAlgorithm0.getUserMin(), 0.01F);
-<span class="nocode"><a name="20"> 20: </a></span>assertFalse(hydrophilicityAlgorithm0.isUserMaxMin());
-<span class="nocode"><a name="21"> 21: </a></span>assertEquals(&quot;Hopp-Woods Hydrophilicity&quot;, hydrophilicityAlgorithm0.getAlgorithmName());
-<span class="nocode"><a name="22"> 22: </a></span>assertFalse(hydrophilicityAlgorithm0.scalingFlag());
-<span class="nocode"><a name="23"> 23: </a></span>assertEquals(&quot;hydrophilicity&quot;, hydrophilicityAlgorithm0.getAlgorithmShortName());
-<span class="nocode"><a name="24"> 24: </a></span>assertEquals(3.4028235E38F, hydrophilicityAlgorithm0.getUserMax(), 0.01F);
-<span class="nocode"><a name="25"> 25: </a></span>assertFalse(featurePlot0.getIgnoreRepaint());
-<span class="nocode"><a name="26"> 26: </a></span>assertFalse(featurePlot0.isFocusTraversalPolicyProvider());
-<span class="nocode"><a name="27"> 27: </a></span>assertFalse(featurePlot0.isFocusCycleRoot());
-<span class="nocode"><a name="28"> 28: </a></span>assertFalse(featurePlot0.isFocusTraversalPolicySet());
-<span class="nocode"><a name="29"> 29: </a></span>assertTrue(featurePlot0.getFocusTraversalKeysEnabled());
-<span class="nocode"><a name="30"> 30: </a></span>assertNotNull(featurePlot0);
-<span class="nocode"><a name="31"> 31: </a></span>
-<span class="nocode"><a name="32"> 32: </a></span>int int0 = featurePlot0.getScaleHeight();
-<span class="nocode"><a name="33"> 33: </a></span>assertEquals(17, int0);
-<span class="nocode"><a name="34"> 34: </a></span>assertEquals(1, hydrophilicityAlgorithm0.getValueCount());
-<span class="nocode"><a name="35"> 35: </a></span>assertEquals(1.4E-45F, hydrophilicityAlgorithm0.getUserMin(), 0.01F);
-<span class="nocode"><a name="36"> 36: </a></span>assertFalse(hydrophilicityAlgorithm0.isUserMaxMin());
-<span class="nocode"><a name="37"> 37: </a></span>assertEquals(&quot;Hopp-Woods Hydrophilicity&quot;, hydrophilicityAlgorithm0.getAlgorithmName());
-<span class="nocode"><a name="38"> 38: </a></span>assertFalse(hydrophilicityAlgorithm0.scalingFlag());
-<span class="nocode"><a name="39"> 39: </a></span>assertEquals(&quot;hydrophilicity&quot;, hydrophilicityAlgorithm0.getAlgorithmShortName());
-<span class="nocode"><a name="40"> 40: </a></span>assertEquals(3.4028235E38F, hydrophilicityAlgorithm0.getUserMax(), 0.01F);
-<span class="nocode"><a name="41"> 41: </a></span>assertFalse(featurePlot0.getIgnoreRepaint());
-<span class="nocode"><a name="42"> 42: </a></span>assertFalse(featurePlot0.isFocusTraversalPolicyProvider());
-<span class="nocode"><a name="43"> 43: </a></span>assertFalse(featurePlot0.isFocusCycleRoot());
-<span class="nocode"><a name="44"> 44: </a></span>assertFalse(featurePlot0.isFocusTraversalPolicySet());
-<span class="nocode"><a name="45"> 45: </a></span>assertTrue(featurePlot0.getFocusTraversalKeysEnabled());
-</pre>
-<h3>Test case 10</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature();
-<span class="nocode"><a name="2">  2: </a></span>assertNotNull(genbankStreamFeature0);
-<span class="nocode"><a name="3">  3: </a></span>
-<span class="nocode"><a name="4">  4: </a></span>Feature feature0 = new Feature(genbankStreamFeature0);
-<span class="nocode"><a name="5">  5: </a></span>assertNotNull(feature0);
-<span class="nocode"><a name="6">  6: </a></span>
-<span class="nocode"><a name="7">  7: </a></span>HydrophilicityAlgorithm hydrophilicityAlgorithm0 = new HydrophilicityAlgorithm(feature0);
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(3.4028235E38F, hydrophilicityAlgorithm0.getUserMax(), 0.01F);
-<span class="nocode"><a name="9">  9: </a></span>assertFalse(hydrophilicityAlgorithm0.scalingFlag());
-<span class="nocode"><a name="10"> 10: </a></span>assertEquals(1.4E-45F, hydrophilicityAlgorithm0.getUserMin(), 0.01F);
-<span class="nocode"><a name="11"> 11: </a></span>assertFalse(hydrophilicityAlgorithm0.isUserMaxMin());
-<span class="nocode"><a name="12"> 12: </a></span>assertEquals(&quot;hydrophilicity&quot;, hydrophilicityAlgorithm0.getAlgorithmShortName());
-<span class="nocode"><a name="13"> 13: </a></span>assertEquals(&quot;Hopp-Woods Hydrophilicity&quot;, hydrophilicityAlgorithm0.getAlgorithmName());
-<span class="nocode"><a name="14"> 14: </a></span>assertEquals(1, hydrophilicityAlgorithm0.getValueCount());
-<span class="nocode"><a name="15"> 15: </a></span>assertNotNull(hydrophilicityAlgorithm0);
-<span class="nocode"><a name="16"> 16: </a></span>
-<span class="nocode"><a name="17"> 17: </a></span>FeaturePlot featurePlot0 = new FeaturePlot(hydrophilicityAlgorithm0);
-<span class="nocode"><a name="18"> 18: </a></span>assertEquals(3.4028235E38F, hydrophilicityAlgorithm0.getUserMax(), 0.01F);
-<span class="nocode"><a name="19"> 19: </a></span>assertFalse(hydrophilicityAlgorithm0.scalingFlag());
-<span class="nocode"><a name="20"> 20: </a></span>assertEquals(1.4E-45F, hydrophilicityAlgorithm0.getUserMin(), 0.01F);
-<span class="nocode"><a name="21"> 21: </a></span>assertFalse(hydrophilicityAlgorithm0.isUserMaxMin());
-<span class="nocode"><a name="22"> 22: </a></span>assertEquals(&quot;hydrophilicity&quot;, hydrophilicityAlgorithm0.getAlgorithmShortName());
-<span class="nocode"><a name="23"> 23: </a></span>assertEquals(&quot;Hopp-Woods Hydrophilicity&quot;, hydrophilicityAlgorithm0.getAlgorithmName());
-<span class="nocode"><a name="24"> 24: </a></span>assertEquals(1, hydrophilicityAlgorithm0.getValueCount());
-<span class="nocode"><a name="25"> 25: </a></span>assertFalse(featurePlot0.isFocusTraversalPolicyProvider());
-<span class="nocode"><a name="26"> 26: </a></span>assertFalse(featurePlot0.isFocusCycleRoot());
-<span class="nocode"><a name="27"> 27: </a></span>assertFalse(featurePlot0.getIgnoreRepaint());
-<span class="nocode"><a name="28"> 28: </a></span>assertTrue(featurePlot0.getFocusTraversalKeysEnabled());
-<span class="nocode"><a name="29"> 29: </a></span>assertFalse(featurePlot0.isFocusTraversalPolicySet());
-<span class="nocode"><a name="30"> 30: </a></span>assertNotNull(featurePlot0);
-<span class="nocode"><a name="31"> 31: </a></span>
-<span class="nocode"><a name="32"> 32: </a></span>float[] floatArray0 = new float[5];
-<span class="nocode"><a name="33"> 33: </a></span>floatArray0[0] = (float) (short)8;
-<span class="nocode"><a name="34"> 34: </a></span>float float0 = featurePlot0.getYCoordinate((short)32, 500, 4096, floatArray0, (short)8);
-<span class="nocode"><a name="35"> 35: </a></span>assertEquals(8.0F, float0, 0.01F);
-<span class="nocode"><a name="36"> 36: </a></span>assertArrayEquals(new float[] {8.0F, 0.0F, 0.0F, 0.0F, 0.0F}, floatArray0, 0.01F);
-<span class="nocode"><a name="37"> 37: </a></span>assertEquals(3.4028235E38F, hydrophilicityAlgorithm0.getUserMax(), 0.01F);
-<span class="nocode"><a name="38"> 38: </a></span>assertFalse(hydrophilicityAlgorithm0.scalingFlag());
-<span class="nocode"><a name="39"> 39: </a></span>assertEquals(1.4E-45F, hydrophilicityAlgorithm0.getUserMin(), 0.01F);
-<span class="nocode"><a name="40"> 40: </a></span>assertFalse(hydrophilicityAlgorithm0.isUserMaxMin());
-<span class="nocode"><a name="41"> 41: </a></span>assertEquals(&quot;hydrophilicity&quot;, hydrophilicityAlgorithm0.getAlgorithmShortName());
-<span class="nocode"><a name="42"> 42: </a></span>assertEquals(&quot;Hopp-Woods Hydrophilicity&quot;, hydrophilicityAlgorithm0.getAlgorithmName());
-<span class="nocode"><a name="43"> 43: </a></span>assertEquals(1, hydrophilicityAlgorithm0.getValueCount());
-<span class="nocode"><a name="44"> 44: </a></span>assertFalse(featurePlot0.isFocusTraversalPolicyProvider());
-<span class="nocode"><a name="45"> 45: </a></span>assertFalse(featurePlot0.isFocusCycleRoot());
-<span class="nocode"><a name="46"> 46: </a></span>assertFalse(featurePlot0.getIgnoreRepaint());
-<span class="nocode"><a name="47"> 47: </a></span>assertTrue(featurePlot0.getFocusTraversalKeysEnabled());
-<span class="nocode"><a name="48"> 48: </a></span>assertFalse(featurePlot0.isFocusTraversalPolicySet());
-</pre>
-<h3>Test case 11</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature();
-<span class="nocode"><a name="2">  2: </a></span>assertNotNull(genbankStreamFeature0);
-<span class="nocode"><a name="3">  3: </a></span>
-<span class="nocode"><a name="4">  4: </a></span>Feature feature0 = new Feature(genbankStreamFeature0);
-<span class="nocode"><a name="5">  5: </a></span>assertNotNull(feature0);
-<span class="nocode"><a name="6">  6: </a></span>
-<span class="nocode"><a name="7">  7: </a></span>HydrophilicityAlgorithm hydrophilicityAlgorithm0 = new HydrophilicityAlgorithm(feature0);
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(1, hydrophilicityAlgorithm0.getValueCount());
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(1.4E-45F, hydrophilicityAlgorithm0.getUserMin(), 0.01F);
-<span class="nocode"><a name="10"> 10: </a></span>assertEquals(&quot;Hopp-Woods Hydrophilicity&quot;, hydrophilicityAlgorithm0.getAlgorithmName());
-<span class="nocode"><a name="11"> 11: </a></span>assertFalse(hydrophilicityAlgorithm0.scalingFlag());
-<span class="nocode"><a name="12"> 12: </a></span>assertFalse(hydrophilicityAlgorithm0.isUserMaxMin());
-<span class="nocode"><a name="13"> 13: </a></span>assertEquals(&quot;hydrophilicity&quot;, hydrophilicityAlgorithm0.getAlgorithmShortName());
-<span class="nocode"><a name="14"> 14: </a></span>assertEquals(3.4028235E38F, hydrophilicityAlgorithm0.getUserMax(), 0.01F);
-<span class="nocode"><a name="15"> 15: </a></span>assertNotNull(hydrophilicityAlgorithm0);
-<span class="nocode"><a name="16"> 16: </a></span>
-<span class="nocode"><a name="17"> 17: </a></span>FeaturePlot featurePlot0 = new FeaturePlot(hydrophilicityAlgorithm0);
-<span class="nocode"><a name="18"> 18: </a></span>assertEquals(1, hydrophilicityAlgorithm0.getValueCount());
-<span class="nocode"><a name="19"> 19: </a></span>assertEquals(1.4E-45F, hydrophilicityAlgorithm0.getUserMin(), 0.01F);
-<span class="nocode"><a name="20"> 20: </a></span>assertEquals(&quot;Hopp-Woods Hydrophilicity&quot;, hydrophilicityAlgorithm0.getAlgorithmName());
-<span class="nocode"><a name="21"> 21: </a></span>assertFalse(hydrophilicityAlgorithm0.scalingFlag());
-<span class="nocode"><a name="22"> 22: </a></span>assertFalse(hydrophilicityAlgorithm0.isUserMaxMin());
-<span class="nocode"><a name="23"> 23: </a></span>assertEquals(&quot;hydrophilicity&quot;, hydrophilicityAlgorithm0.getAlgorithmShortName());
-<span class="nocode"><a name="24"> 24: </a></span>assertEquals(3.4028235E38F, hydrophilicityAlgorithm0.getUserMax(), 0.01F);
-<span class="nocode"><a name="25"> 25: </a></span>assertFalse(featurePlot0.isFocusTraversalPolicySet());
-<span class="nocode"><a name="26"> 26: </a></span>assertTrue(featurePlot0.getFocusTraversalKeysEnabled());
-<span class="nocode"><a name="27"> 27: </a></span>assertFalse(featurePlot0.getIgnoreRepaint());
-<span class="nocode"><a name="28"> 28: </a></span>assertFalse(featurePlot0.isFocusTraversalPolicyProvider());
-<span class="nocode"><a name="29"> 29: </a></span>assertFalse(featurePlot0.isFocusCycleRoot());
-<span class="nocode"><a name="30"> 30: </a></span>assertNotNull(featurePlot0);
-<span class="nocode"><a name="31"> 31: </a></span>
-<span class="nocode"><a name="32"> 32: </a></span>featurePlot0.showAveragesForRange();
-<span class="nocode"><a name="33"> 33: </a></span>assertEquals(1, hydrophilicityAlgorithm0.getValueCount());
-<span class="nocode"><a name="34"> 34: </a></span>assertEquals(1.4E-45F, hydrophilicityAlgorithm0.getUserMin(), 0.01F);
-<span class="nocode"><a name="35"> 35: </a></span>assertEquals(&quot;Hopp-Woods Hydrophilicity&quot;, hydrophilicityAlgorithm0.getAlgorithmName());
-<span class="nocode"><a name="36"> 36: </a></span>assertFalse(hydrophilicityAlgorithm0.scalingFlag());
-<span class="nocode"><a name="37"> 37: </a></span>assertFalse(hydrophilicityAlgorithm0.isUserMaxMin());
-<span class="nocode"><a name="38"> 38: </a></span>assertEquals(&quot;hydrophilicity&quot;, hydrophilicityAlgorithm0.getAlgorithmShortName());
-<span class="nocode"><a name="39"> 39: </a></span>assertEquals(3.4028235E38F, hydrophilicityAlgorithm0.getUserMax(), 0.01F);
-<span class="nocode"><a name="40"> 40: </a></span>assertFalse(featurePlot0.isFocusTraversalPolicySet());
-<span class="nocode"><a name="41"> 41: </a></span>assertTrue(featurePlot0.getFocusTraversalKeysEnabled());
-<span class="nocode"><a name="42"> 42: </a></span>assertFalse(featurePlot0.getIgnoreRepaint());
-<span class="nocode"><a name="43"> 43: </a></span>assertFalse(featurePlot0.isFocusTraversalPolicyProvider());
-<span class="nocode"><a name="44"> 44: </a></span>assertFalse(featurePlot0.isFocusCycleRoot());
+<span class="nocode"><a name="1">  1: </a></span>SystemColor systemColor0 = SystemColor.menu;
+<span class="nocode"><a name="2">  2: </a></span>Plot.makeColours(systemColor0, 0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -466,13 +84,13 @@ uk.ac.sanger.artemis.components.Plot
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.Plot
-<li>Size: 11
-<li>Length: 54
+<li>Size: 7
+<li>Length: 18
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.31563713030547896
-<li>BranchCoverage: 0.1282051282051282
-<li>MethodCoverage: 0.3181818181818182
-<li>OutputCoverage: 0.17142857142857143
+<li>Coverage: 0.20113636669507928
+<li>BranchCoverage: 0.09230769230769231
+<li>MethodCoverage: 0.09090909090909091
+<li>OutputCoverage: 0.05714285714285714
 </ul></div>
 </div>
 <p><br><a href="../report-generation.html">Back to Overview</a></p>

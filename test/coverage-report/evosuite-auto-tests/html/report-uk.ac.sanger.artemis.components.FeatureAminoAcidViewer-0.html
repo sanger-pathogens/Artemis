@@ -35,16 +35,13 @@ uk.ac.sanger.artemis.components.FeatureAminoAcidViewer
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;V=F&quot;);
-<span class="nocode"><a name="2">  2: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(emblStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
-<span class="nocode"><a name="4">  4: </a></span>Entry entry0 = Entry.newEntry(bases0);
-<span class="nocode"><a name="5">  5: </a></span>Feature feature0 = entry0.createFeature();
-<span class="nocode"><a name="6">  6: </a></span>FeatureAminoAcidViewer featureAminoAcidViewer0 = new FeatureAminoAcidViewer(feature0, true);
+<span class="nocode"><a name="1">  1: </a></span>FeatureAminoAcidViewer featureAminoAcidViewer0 = new FeatureAminoAcidViewer((Feature) null, true);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FeatureAminoAcidViewer featureAminoAcidViewer0 = new FeatureAminoAcidViewer((Feature) null, true);
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature();
+<span class="nocode"><a name="2">  2: </a></span>Feature feature0 = new Feature(genbankStreamFeature0);
+<span class="nocode"><a name="3">  3: </a></span>FeatureAminoAcidViewer featureAminoAcidViewer0 = new FeatureAminoAcidViewer(feature0, false);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -58,7 +55,7 @@ uk.ac.sanger.artemis.components.FeatureAminoAcidViewer
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.FeatureAminoAcidViewer
 <li>Size: 2
-<li>Length: 7
+<li>Length: 4
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.23948658410732712
 <li>BranchCoverage: 0.058823529411764705

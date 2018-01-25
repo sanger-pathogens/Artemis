@@ -23,7 +23,7 @@ uk.ac.sanger.artemis.components.genebuilder.cv.ProductBox
 <br><br><h2 class=title>Summary</h2>
 <ul><li>Target class: uk.ac.sanger.artemis.components.genebuilder.cv.ProductBox: 0.7037440435670526</ul>
 <ul>
-<li>191.18333330911895 fitness evaluations, 0 generations, null statements, 8 tests.
+<li>191.13333330911894 fitness evaluations, 0 generations, null statements, 9 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,67 +35,77 @@ uk.ac.sanger.artemis.components.genebuilder.cv.ProductBox
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier(&quot;~&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Dimension dimension0 = new Dimension();
-<span class="nocode"><a name="3">  3: </a></span>ProductBox productBox0 = new ProductBox(qualifier0, &quot;~&quot;, 0, dimension0, dimension0);
+<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier(&quot;org.apache.log4j.PatternLayout&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Dimension dimension0 = new Dimension((-1393), (-1393));
+<span class="nocode"><a name="3">  3: </a></span>ProductBox productBox0 = new ProductBox(qualifier0, &quot;3$VV2qo1~M*TqxaSpP&quot;, 135, dimension0, dimension0);
 <span class="nocode"><a name="4">  4: </a></span>JCheckBox jCheckBox0 = productBox0.getRecommended();
-<span class="nocode"><a name="5">  5: </a></span>assertFalse(jCheckBox0.isFocusTraversalPolicyProvider());
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(jCheckBox0.isFocusCycleRoot());
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier(&quot;~&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Dimension dimension0 = new Dimension();
-<span class="nocode"><a name="3">  3: </a></span>ProductBox productBox0 = new ProductBox(qualifier0, &quot;~&quot;, 0, dimension0, dimension0);
+<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier(&quot;org.apache.log4j.PatternLayout&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Dimension dimension0 = new Dimension((-1393), (-1393));
+<span class="nocode"><a name="3">  3: </a></span>ProductBox productBox0 = new ProductBox(qualifier0, &quot;3$VV2qo1~M*TqxaSpP&quot;, 135, dimension0, dimension0);
 <span class="nocode"><a name="4">  4: </a></span>Box box0 = productBox0.getBox();
-<span class="nocode"><a name="5">  5: </a></span>assertFalse(box0.getIgnoreRepaint());
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(box0.isFocusTraversalPolicyProvider());
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier(&quot;~&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Dimension dimension0 = new Dimension();
-<span class="nocode"><a name="3">  3: </a></span>ProductBox productBox0 = new ProductBox(qualifier0, &quot;~&quot;, 0, dimension0, dimension0);
+<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier(&quot;org.apache.log4j.PatternLayout&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Dimension dimension0 = new Dimension((-1393), (-1393));
+<span class="nocode"><a name="3">  3: </a></span>ProductBox productBox0 = new ProductBox(qualifier0, &quot;3$VV2qo1~M*TqxaSpP&quot;, 135, dimension0, dimension0);
 <span class="nocode"><a name="4">  4: </a></span>Box box0 = productBox0.getHeadingsBox();
-<span class="nocode"><a name="5">  5: </a></span>assertFalse(box0.isFocusCycleRoot());
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(box0.getFocusTraversalKeysEnabled());
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier(&quot;~&quot;);
+<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier(&quot;F4h{INK;[0@&quot;, &quot;F4h{INK;[0@&quot;);
 <span class="nocode"><a name="2">  2: </a></span>Dimension dimension0 = new Dimension();
-<span class="nocode"><a name="3">  3: </a></span>ProductBox productBox0 = new ProductBox(qualifier0, &quot;~&quot;, 0, dimension0, dimension0);
+<span class="nocode"><a name="3">  3: </a></span>ProductBox productBox0 = new ProductBox(qualifier0, &quot;F4h{INK;[0@&quot;, 103, dimension0, dimension0);
 <span class="nocode"><a name="4">  4: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
 <span class="nocode"><a name="5">  5: </a></span>productBox0.updateQualifier(qualifierVector0);
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier(&quot;S81|37%5N&lt;.Ox&gt;%j&quot;, &quot;S81|37%5N&lt;.Ox&gt;%j&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Dimension dimension0 = new Dimension();
-<span class="nocode"><a name="3">  3: </a></span>ProductBox productBox0 = new ProductBox(qualifier0, &quot;WITH/FROM&quot;, 8, dimension0, dimension0);
-<span class="nocode"><a name="4">  4: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
-<span class="nocode"><a name="5">  5: </a></span>qualifierVector0.add(qualifier0);
-<span class="nocode"><a name="6">  6: </a></span>productBox0.updateQualifier(qualifierVector0);
-</pre>
-<h3>Test case 6</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier(&quot;~&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Dimension dimension0 = new Dimension();
-<span class="nocode"><a name="3">  3: </a></span>ProductBox productBox0 = new ProductBox(qualifier0, &quot;~&quot;, 0, dimension0, dimension0);
+<span class="nocode"><a name="1">  1: </a></span>Dimension dimension0 = new Dimension();
+<span class="nocode"><a name="2">  2: </a></span>Qualifier qualifier0 = new Qualifier(&quot;* g/@'&quot;);
+<span class="nocode"><a name="3">  3: </a></span>ProductBox productBox0 = new ProductBox(qualifier0, &quot;* g/@'&quot;, 0, dimension0, dimension0);
 <span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = productBox0.isQualifierChanged();
 <span class="nocode"><a name="5">  5: </a></span>assertTrue(boolean0);
 </pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier(&quot;l5!l;zK)FnG#&quot;, &quot;l5!l;zK)FnG#&quot;);
+<span class="nocode"><a name="2">  2: </a></span>StringVector stringVector0 = new StringVector(&quot;l5!l;zK)FnG#&quot;);
+<span class="nocode"><a name="3">  3: </a></span>qualifier0.addValues(stringVector0);
+<span class="nocode"><a name="4">  4: </a></span>Dimension dimension0 = new Dimension();
+<span class="nocode"><a name="5">  5: </a></span>ProductBox productBox0 = new ProductBox(qualifier0, &quot;l5!l;zK)FnG#&quot;, 1, dimension0, dimension0);
+<span class="nocode"><a name="6">  6: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
+<span class="nocode"><a name="7">  7: </a></span>qualifierVector0.add(qualifier0);
+<span class="nocode"><a name="8">  8: </a></span>productBox0.updateQualifier(qualifierVector0);
+<span class="nocode"><a name="9">  9: </a></span>assertFalse(qualifierVector0.isEmpty());
+</pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier(&quot;~&quot;);
+<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier((String) null, &quot;BUG: Attempting to add null filter &quot;);
 <span class="nocode"><a name="2">  2: </a></span>Dimension dimension0 = new Dimension();
-<span class="nocode"><a name="3">  3: </a></span>qualifier0.addValue(&quot;~&quot;);
-<span class="nocode"><a name="4">  4: </a></span>ProductBox productBox0 = new ProductBox(qualifier0, &quot;~&quot;, 0, dimension0, dimension0);
-<span class="nocode"><a name="5">  5: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
-<span class="nocode"><a name="6">  6: </a></span>qualifierVector0.add(qualifier0);
-<span class="nocode"><a name="7">  7: </a></span>productBox0.updateQualifier(qualifierVector0);
-<span class="nocode"><a name="8">  8: </a></span>assertFalse(qualifierVector0.isEmpty());
+<span class="nocode"><a name="3">  3: </a></span>String[][] stringArray0 = new String[0][5];
+<span class="nocode"><a name="4">  4: </a></span>GoBox.evidenceCodes = stringArray0;
+<span class="nocode"><a name="5">  5: </a></span>ProductBox productBox0 = new ProductBox(qualifier0, &quot;0&quot;, (-399), dimension0, dimension0);
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>ProductBox productBox0 = new ProductBox((Qualifier) null, (String) null, 200, (Dimension) null, (Dimension) null);
+<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>ProductBox productBox0 = new ProductBox(qualifier0, &quot;&quot;, 2, (Dimension) null, (Dimension) null);
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier(&quot;F4h{INK;[0@&quot;, &quot;F4h{INK;[0@&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Dimension dimension0 = new Dimension();
+<span class="nocode"><a name="3">  3: </a></span>ProductBox productBox0 = new ProductBox(qualifier0, &quot;F4h{INK;[0@&quot;, 103, dimension0, dimension0);
+<span class="nocode"><a name="4">  4: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
+<span class="nocode"><a name="5">  5: </a></span>qualifierVector0.add(qualifier0);
+<span class="nocode"><a name="6">  6: </a></span>productBox0.updateQualifier(qualifierVector0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -108,8 +118,8 @@ uk.ac.sanger.artemis.components.genebuilder.cv.ProductBox
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.genebuilder.cv.ProductBox
-<li>Size: 8
-<li>Length: 35
+<li>Size: 9
+<li>Length: 42
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.7037440435670526
 <li>BranchCoverage: 0.4230769230769231

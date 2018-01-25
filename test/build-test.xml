@@ -35,7 +35,7 @@
 
 	<property name="name" value="artemis test suite" />
 	<property name="version" value="live" />
-	<property name="halt.tests.on.error" value="yes" />
+	<property name="halt.tests.on.error" value="no" />
 	<property name="java.major.version" value="1.8" />
 	<property name="build.compiler" value="modern" />
 	<property name="classpath" value="." />
@@ -353,7 +353,32 @@
 						
 						<include name="**/*_ESTest.java" if="${do.run.evosuite.tests}" />
 						
-						<!-- Exclude classes that currently produce broken tests -->
+						<!-- Default excludes -->
+						<exclude name="**/chado/*"/>
+						<exclude name="**/*Database*"/>
+						<exclude name="**/DNADraw_ESTest.*"/>
+						
+						<!-- TODO The following excluded evosuite tests need fixing -->
+						
+						<!-- core dump issue on Java 1.6.181 -->
+						<exclude name="**/BamUtils_ESTest.*"/>
+						<exclude name="**/BamView_ESTest.*"/>
+						<exclude name="**/CRAMReferenceSequenceFile_ESTest.*"/>
+						<exclude name="**/CoveragePanel_ESTest.*"/>
+						<exclude name="**/PairedReadComparator_ESTest.*"/>
+						<exclude name="**/SAMRecordFilter_ESTest.*"/>
+						<exclude name="**/SAMRecordPositionComparator_ESTest.*"/>
+						<exclude name="**/SnpPanel_ESTest.*"/>
+						
+						<!-- Failed after JDK update -->
+						<exclude name="**/DocumentFeature_ESTest.*"/>
+						<exclude name="**/Options_ESTest.*"/>
+						<exclude name="**/LazyQualifierValue_ESTest.*"/>
+						<exclude name="**/OSXAdapter_ESTest.*"/>
+						<exclude name="**/BamOSXAdapter_ESTest.*"/>
+						<exclude name="**/DocumentEntry_ESTest.*"/>
+						
+						<!-- Always produce broken tests -->
 						<exclude name="**/ChangeListener_ESTest.*"/>
 						<exclude name="**/EntryChangeListener_ESTest.*"/>
 						<exclude name="**/FeatureChangeListener_ESTest.*"/>
@@ -361,17 +386,15 @@
 						<exclude name="**/OptionChangeListener_ESTest.*"/>
 						<exclude name="**/Selectable_ESTest.*"/>
 						<exclude name="**/SelectionChangeListener_ESTest.*"/>
-						<exclude name="**/CommitFrame_ESTest.*"/>
 						<exclude name="**/DisplayAdjustmentListener_ESTest.*"/>
 						<exclude name="**/DisplayComponent_ESTest.*"/>
 						<exclude name="**/FeatureListFrame_ESTest.*"/>
-						<exclude name="**/FindAndReplace_ESTest.*"/>
+						<exclude name="**/GraphMenu_ESTest.*"/>
 						<exclude name="**/MultiComparator_ESTest.*"/>
 						<exclude name="**/ComparableFeature_ESTest.*"/>
-						<exclude name="**/DocumentEntry_ESTest.*"/>
-						<exclude name="**/Sequence_ESTest.*"/>
 						<exclude name="**/StreamFeature_ESTest.*"/>
 						<exclude name="**/MarkerChangeListener_ESTest.*"/>
+					
 					</fileset>
 				</batchtest>
 				<formatter type="plain" usefile="false" />
@@ -417,7 +440,7 @@
 	</target>
 
 	<!-- Run all manual and automated unit tests and create coverage reports -->
-	<target name="test" depends="run-evosuite-tests,run-manual-tests,jacoco-coverage-report" />
+	<target name="testall" depends="run-evosuite-tests,run-manual-tests,jacoco-coverage-report" />
 
 	<!-- Cleans all temporary build related folders -->
 	<target name="clean">

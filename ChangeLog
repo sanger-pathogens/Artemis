@@ -4,13 +4,13 @@ Version 17
 	BamView fixes/changes - 
 		Improved mouse selection of reads.
 		Fixed exceptions thrown when zooming into an area with secondary reads or SNPs enabled - RT ticket #596489: Problem zooming in using isoseq data
-		Upgraded Samtools (htsjdk) and Picard libraries.
+		Removed Samtools (htsjdk) jar and updated Picard jar (which includes htsjdk).
 		Upgraded Apache Commons Net jar - used for ftp'ing. 
 		Added Cram file loading and fixed defects around that code area (also related RT ticket #560982: Artemis fails to build from source).
 		Added display of bam secondary alignment flag to read details pop-up window.
 		Improved error handling/reporting for standalone BamView application.
 		Added buffer sizing to FTPSeekableStream.
-		Increased BAM file index creation speed.
+		Performance tweak for BAM file indexing.
 		
 	Added EvoSuite unit tests and additional targeted tests (RT ticket #419534: Develop a test suite for Artemis).
 	
@@ -18,16 +18,18 @@ Version 17
 	
 	Removed redundant Corba libraries.
 	
-	Upgraded Apache Commons Net jar to latest release.
-	
 	Upgraded JUnit jar.
 	
 	Changed Travis yml build file. RT ticket #597497: Set up artemis tests to run on travis.
 	
-	Changed all build scripts.
+	Changed all build scripts and startup scripts. Removed building of artemis_mac.jar which is not used. 
+	Removed etc/gene_builder script and the gff2embl script (and documentation references) - no longer supported. RT ticket #598617.
 	
 	Fixed RT ticket #606061 - Using EBI-Dbfetch on ARTEMIS. Change to DbfetchEntrySource.java due to incorrect regular expression and EBI URL.
-
+	
+	Resized splash screen.
+	
+	Added error handling for dnaplotter template file loading in standalone mode.
 
 Version 16
 	Add 'Features Within Selection' option to the 'Select' menu to select

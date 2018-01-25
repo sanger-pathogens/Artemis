@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.editor.FastaTextPane
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.editor.FastaTextPane: 0.3049785743243259</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.editor.FastaTextPane: 0.3153214922549689</ul>
 <ul>
-<li>2989.6231949458484 fitness evaluations, 0 generations, null statements, 22 tests.
+<li>3420.1666666666665 fitness evaluations, 0 generations, null statements, 18 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -40,9 +40,9 @@ uk.ac.sanger.artemis.editor.FastaTextPane
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot; NOT FOUND&quot;);
-<span class="nocode"><a name="2">  2: </a></span>ZipFileDocument zipFileDocument0 = new ZipFileDocument(mockFile0, &quot; NOT FOUND&quot;);
-<span class="nocode"><a name="3">  3: </a></span>FastaTextPane fastaTextPane0 = new FastaTextPane(zipFileDocument0);
+<span class="nocode"><a name="1">  1: </a></span>URL uRL0 = MockURL.getHttpExample();
+<span class="nocode"><a name="2">  2: </a></span>URLDocument uRLDocument0 = new URLDocument(uRL0);
+<span class="nocode"><a name="3">  3: </a></span>FastaTextPane fastaTextPane0 = new FastaTextPane(uRLDocument0);
 <span class="nocode"><a name="4">  4: </a></span>int int0 = fastaTextPane0.getQueryLength();
 <span class="nocode"><a name="5">  5: </a></span>assertEquals(0, int0);
 </pre>
@@ -53,29 +53,26 @@ uk.ac.sanger.artemis.editor.FastaTextPane
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>URL uRL0 = MockURL.getHttpExample();
-<span class="nocode"><a name="2">  2: </a></span>URLDocument uRLDocument0 = new URLDocument(uRL0);
-<span class="nocode"><a name="3">  3: </a></span>FastaTextPane fastaTextPane0 = new FastaTextPane(uRLDocument0);
-<span class="nocode"><a name="4">  4: </a></span>String string0 = fastaTextPane0.getFormat();
-<span class="nocode"><a name="5">  5: </a></span>assertNull(string0);
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;2QYG(h5m0]]2q(N+&quot;, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileDocument fileDocument0 = new FileDocument(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>FastaTextPane fastaTextPane0 = new FastaTextPane(fileDocument0);
+<span class="nocode"><a name="4">  4: </a></span>fastaTextPane0.addFastaListener((FastaListener) null);
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(fastaTextPane0.isFocusTraversalPolicySet());
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FastaTextPane.setForceUrl(true);
+<span class="nocode"><a name="1">  1: </a></span>FastaTextPane.setForceUrl(false);
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = (MockFile)FastaTextPane.getMfetchExecutable();
-<span class="nocode"><a name="2">  2: </a></span>FileDocument fileDocument0 = new FileDocument(mockFile0);
-<span class="nocode"><a name="3">  3: </a></span>fileDocument0.getOutputStream();
-<span class="nocode"><a name="4">  4: </a></span>FastaTextPane fastaTextPane0 = new FastaTextPane(fileDocument0);
-<span class="nocode"><a name="5">  5: </a></span>assertFalse(fastaTextPane0.isForceUrl());
+<span class="nocode"><a name="2">  2: </a></span>assertTrue(mockFile0.isFile());
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot; NOT FOUND&quot;);
-<span class="nocode"><a name="2">  2: </a></span>ZipFileDocument zipFileDocument0 = new ZipFileDocument(mockFile0, &quot; NOT FOUND&quot;);
-<span class="nocode"><a name="3">  3: </a></span>FastaTextPane fastaTextPane0 = new FastaTextPane(zipFileDocument0);
+<span class="nocode"><a name="1">  1: </a></span>URL uRL0 = MockURL.getHttpExample();
+<span class="nocode"><a name="2">  2: </a></span>URLDocument uRLDocument0 = new URLDocument(uRL0);
+<span class="nocode"><a name="3">  3: </a></span>FastaTextPane fastaTextPane0 = new FastaTextPane(uRLDocument0);
 <span class="nocode"><a name="4">  4: </a></span>Vector&lt;HitInfo&gt; vector0 = fastaTextPane0.getHitCollection();
 <span class="nocode"><a name="5">  5: </a></span>assertNull(vector0);
 </pre>
@@ -85,86 +82,59 @@ uk.ac.sanger.artemis.editor.FastaTextPane
 </pre>
 <h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>URL uRL0 = MockURL.getHttpExample();
-<span class="nocode"><a name="2">  2: </a></span>URLDocument uRLDocument0 = new URLDocument(uRL0);
-<span class="nocode"><a name="3">  3: </a></span>FastaTextPane fastaTextPane0 = new FastaTextPane(uRLDocument0);
-<span class="nocode"><a name="4">  4: </a></span>fastaTextPane0.stopGetz();
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, FastaTextPane.nCacheHits);
-</pre>
-<h3>Test case 10</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;Retrieved early from cache &quot;, &quot;Retrieved early from cache &quot;);
+<span class="nocode"><a name="1">  1: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;Wp6`OY&quot;, &quot;Wp6`OY&quot;);
 <span class="nocode"><a name="2">  2: </a></span>HitInfo hitInfo1 = FastaTextPane.checkCache(hitInfo0);
 <span class="nocode"><a name="3">  3: </a></span>assertNull(hitInfo1);
 </pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String string0 = FastaTextPane.insertNewline(&quot;f&quot;, &quot;f&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;f&quot;, string0);
+</pre>
 <h3>Test case 11</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>String string0 = FastaTextPane.insertNewline(&quot; NOT FOUND&quot;, &quot; NOT FOUND&quot;);
-<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot; NOT FOUND&quot;, string0);
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;f&quot;, &quot;getz&quot;);
+<span class="nocode"><a name="2">  2: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;&quot;, &quot;q|&gt; ?}d&amp;d*T:$~L6%&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String[] stringArray0 = new String[6];
+<span class="nocode"><a name="4">  4: </a></span>FastaTextPane.getUniprotLinkToDatabase(mockFile0, false, hitInfo0, stringArray0, &quot;q|&gt; ?}d&amp;d*T:$~L6%&quot;);
 </pre>
 <h3>Test case 12</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;^0/}MU&quot;);
-<span class="nocode"><a name="2">  2: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;resources/seqList.html&quot;, &quot;resources/seqList.html&quot;);
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;, &quot;&lt;s&quot;);
+<span class="nocode"><a name="2">  2: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;internal error - a JOIN should have &gt; 1 child&quot;, &quot;&quot;);
 <span class="nocode"><a name="3">  3: </a></span>String[] stringArray0 = new String[2];
-<span class="nocode"><a name="4">  4: </a></span>String string0 = FastaTextPane.getUniprotLinkToDatabase(mockFile0, false, hitInfo0, stringArray0, &quot;^0/}MU&quot;);
-<span class="nocode"><a name="5">  5: </a></span>assertNull(string0);
+<span class="nocode"><a name="4">  4: </a></span>FastaTextPane.getUniprotLinkToDatabase(mockFile0, true, hitInfo0, stringArray0, &quot;internal error - a JOIN should have &gt; 1 child&quot;);
 </pre>
 <h3>Test case 13</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>HitInfo hitInfo0 = new HitInfo(&quot;acc org des gen&quot;, &quot;&quot;);
-<span class="nocode"><a name="3">  3: </a></span>String[] stringArray0 = new String[4];
-<span class="nocode"><a name="4">  4: </a></span>FastaTextPane.getUniprotLinkToDatabase(mockFile0, true, hitInfo0, stringArray0, &quot;8h2$&quot;);
+<span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = new String[1];
+<span class="nocode"><a name="2">  2: </a></span>String string0 = FastaTextPane.getUniprotLinkToDatabaseByMFetch(false, &quot;&quot;, stringArray0, &quot;p2&gt;j!GF]5tv)&lt;3&quot;);
+<span class="nocode"><a name="3">  3: </a></span>assertNull(string0);
 </pre>
 <h3>Test case 14</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = new String[1];
-<span class="nocode"><a name="2">  2: </a></span>String string0 = FastaTextPane.getUniprotLinkToDatabaseByMFetch(false, (String) null, stringArray0, (String) null);
-<span class="nocode"><a name="3">  3: </a></span>assertNull(string0);
+<span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = new String[7];
+<span class="nocode"><a name="2">  2: </a></span>FastaTextPane.getUniprotLinkToDatabaseByMFetch(true, &quot;!ptd}\&quot;Pw^(^u1&quot;, stringArray0, &quot;&quot;);
 </pre>
 <h3>Test case 15</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = new String[4];
-<span class="nocode"><a name="2">  2: </a></span>FastaTextPane.getUniprotLinkToDatabaseByMFetch(true, &quot;6x+.`0D?~:&quot;, stringArray0, &quot;6x+.`0D?~:&quot;);
+<span class="nocode"><a name="1">  1: </a></span>TextDocument textDocument0 = new TextDocument();
+<span class="nocode"><a name="2">  2: </a></span>FastaTextPane fastaTextPane0 = new FastaTextPane(textDocument0);
 </pre>
 <h3>Test case 16</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>URL uRL0 = MockURL.getHttpExample();
-<span class="nocode"><a name="2">  2: </a></span>URLDocument uRLDocument0 = new URLDocument(uRL0);
-<span class="nocode"><a name="3">  3: </a></span>FastaTextPane fastaTextPane0 = new FastaTextPane(uRLDocument0);
-<span class="nocode"><a name="4">  4: </a></span>fastaTextPane0.show((Object) uRL0);
-<span class="nocode"><a name="5">  5: </a></span>assertEquals((-1), uRL0.getPort());
+<span class="nocode"><a name="1">  1: </a></span>FastaTextPane fastaTextPane0 = new FastaTextPane((Document) null);
 </pre>
 <h3>Test case 17</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>PlainDocument plainDocument0 = new PlainDocument();
-<span class="nocode"><a name="2">  2: </a></span>JPasswordField jPasswordField0 = new JPasswordField(plainDocument0, &quot;&quot;, 0);
-<span class="nocode"><a name="3">  3: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;l:]?BVG&quot;, jPasswordField0);
-<span class="nocode"><a name="4">  4: </a></span>FastaTextPane fastaTextPane0 = new FastaTextPane(databaseDocument0);
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;2QYG(h5m0]]2q(N+&quot;, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileDocument fileDocument0 = new FileDocument(mockFile0);
+<span class="nocode"><a name="3">  3: </a></span>FastaTextPane fastaTextPane0 = new FastaTextPane(fileDocument0);
+<span class="nocode"><a name="4">  4: </a></span>fastaTextPane0.reRead();
 </pre>
 <h3>Test case 18</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FastaTextPane fastaTextPane0 = new FastaTextPane((Document) null);
-</pre>
-<h3>Test case 19</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FastaTextPane.insertNewline((String) null, &quot;yyyy/MM/dd HH:mm:ss&quot;);
-</pre>
-<h3>Test case 20</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FastaTextPane.insertNewline(&quot;&quot;, &quot;&quot;);
-</pre>
-<h3>Test case 21</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>URL uRL0 = MockURL.getHttpExample();
-<span class="nocode"><a name="2">  2: </a></span>URLDocument uRLDocument0 = new URLDocument(uRL0);
-<span class="nocode"><a name="3">  3: </a></span>FastaTextPane fastaTextPane0 = new FastaTextPane(uRLDocument0);
-<span class="nocode"><a name="4">  4: </a></span>fastaTextPane0.reRead();
-</pre>
-<h3>Test case 22</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>String string0 = FastaTextPane.insertNewline(&quot;&quot;, &quot;9Z6OeygnE4{Bxl&quot;);
+<span class="nocode"><a name="1">  1: </a></span>String string0 = FastaTextPane.insertNewline(&quot;&quot;, &quot;acc org des gen&quot;);
 <span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;&quot;, string0);
 </pre>
 </div><div id="post">
@@ -178,13 +148,13 @@ uk.ac.sanger.artemis.editor.FastaTextPane
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.editor.FastaTextPane
-<li>Size: 22
-<li>Length: 55
+<li>Size: 18
+<li>Length: 40
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.3049785743243259
-<li>BranchCoverage: 0.07418397626112759
-<li>MethodCoverage: 0.8
-<li>OutputCoverage: 0.3709677419354839
+<li>Coverage: 0.3153214922549689
+<li>BranchCoverage: 0.06528189910979229
+<li>MethodCoverage: 0.7
+<li>OutputCoverage: 0.3548387096774194
 </ul></div>
 </div>
 <p><br><a href="../report-generation.html">Back to Overview</a></p>

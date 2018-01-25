@@ -23,7 +23,7 @@ uk.ac.sanger.artemis.io.BetweenRange
 <br><br><h2 class=title>Summary</h2>
 <ul><li>Target class: uk.ac.sanger.artemis.io.BetweenRange: 0.9270833333333334</ul>
 <ul>
-<li>7.166666666666666 fitness evaluations, 0 generations, null statements, 12 tests.
+<li>7.166666666666666 fitness evaluations, 0 generations, null statements, 11 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,77 +35,71 @@ uk.ac.sanger.artemis.io.BetweenRange
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>BetweenRange betweenRange0 = new BetweenRange((-3663), (-3663));
+<span class="nocode"><a name="1">  1: </a></span>BetweenRange betweenRange0 = new BetweenRange(0, 0);
 <span class="nocode"><a name="2">  2: </a></span>String string0 = betweenRange0.toString();
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;-3663^-3663&quot;, string0);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;0^0&quot;, string0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>BetweenRange betweenRange0 = new BetweenRange((-2238), (-2238));
+<span class="nocode"><a name="1">  1: </a></span>BetweenRange betweenRange0 = new BetweenRange(0, 0);
 <span class="nocode"><a name="2">  2: </a></span>BetweenRange betweenRange1 = (BetweenRange)betweenRange0.copy();
-<span class="nocode"><a name="3">  3: </a></span>assertFalse(betweenRange1.equals((Object)betweenRange0));
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(1, betweenRange1.getCount());
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>BetweenRange betweenRange0 = new BetweenRange((-3663), (-3663));
-<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range((-3663), (-3663));
+<span class="nocode"><a name="1">  1: </a></span>BetweenRange betweenRange0 = new BetweenRange(0, 0);
+<span class="nocode"><a name="2">  2: </a></span>Range range0 = betweenRange0.truncate(betweenRange0);
 <span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = betweenRange0.equals(range0);
 <span class="nocode"><a name="4">  4: </a></span>assertFalse(boolean0);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>BetweenRange betweenRange0 = new BetweenRange((-2238), (-2238));
+<span class="nocode"><a name="1">  1: </a></span>BetweenRange betweenRange0 = new BetweenRange(0, 0);
 <span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = betweenRange0.equals((Range) betweenRange0);
 <span class="nocode"><a name="3">  3: </a></span>assertTrue(boolean0);
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>BetweenRange betweenRange0 = new BetweenRange((-3663), (-3663));
-<span class="nocode"><a name="2">  2: </a></span>BetweenRange betweenRange1 = new BetweenRange((-31), (-31));
+<span class="nocode"><a name="1">  1: </a></span>BetweenRange betweenRange0 = new BetweenRange(0, 0);
+<span class="nocode"><a name="2">  2: </a></span>BetweenRange betweenRange1 = new BetweenRange(1, 1);
 <span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = betweenRange0.equals((Range) betweenRange1);
 <span class="nocode"><a name="4">  4: </a></span>assertFalse(boolean0);
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>BetweenRange betweenRange0 = new BetweenRange((-2238), (-2238));
-<span class="nocode"><a name="2">  2: </a></span>BetweenRange betweenRange1 = new BetweenRange((-2238), 0);
+<span class="nocode"><a name="1">  1: </a></span>BetweenRange betweenRange0 = new BetweenRange(0, 0);
+<span class="nocode"><a name="2">  2: </a></span>BetweenRange betweenRange1 = new BetweenRange(0, 1);
 <span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = betweenRange0.equals((Range) betweenRange1);
 <span class="nocode"><a name="4">  4: </a></span>assertFalse(boolean0);
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>BetweenRange betweenRange0 = new BetweenRange(1, 0);
+<span class="nocode"><a name="1">  1: </a></span>BetweenRange betweenRange0 = new BetweenRange(2103, 0);
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>BetweenRange betweenRange0 = new BetweenRange(0, 2401);
+<span class="nocode"><a name="1">  1: </a></span>BetweenRange betweenRange0 = new BetweenRange((-404), (-404));
 <span class="nocode"><a name="2">  2: </a></span>BetweenRange betweenRange1 = (BetweenRange)betweenRange0.copy();
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, betweenRange1.getStart());
+<span class="nocode"><a name="3">  3: </a></span>assertEquals((-404), betweenRange1.getEnd());
 </pre>
 <h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>BetweenRange betweenRange0 = new BetweenRange((-2238), 0);
+<span class="nocode"><a name="1">  1: </a></span>BetweenRange betweenRange0 = new BetweenRange(1518, 1518);
 <span class="nocode"><a name="2">  2: </a></span>BetweenRange betweenRange1 = (BetweenRange)betweenRange0.copy();
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, betweenRange1.getEnd());
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(1518, betweenRange1.getStart());
 </pre>
 <h3>Test case 10</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>BetweenRange betweenRange0 = new BetweenRange(2273, 2273);
-<span class="nocode"><a name="2">  2: </a></span>BetweenRange betweenRange1 = (BetweenRange)betweenRange0.copy();
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(2273, betweenRange1.getEnd());
-</pre>
-<h3>Test case 11</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>BetweenRange betweenRange0 = new BetweenRange(28, 28);
-<span class="nocode"><a name="2">  2: </a></span>BetweenRange betweenRange1 = new BetweenRange((-2238), (-2238));
+<span class="nocode"><a name="1">  1: </a></span>BetweenRange betweenRange0 = new BetweenRange(0, 0);
+<span class="nocode"><a name="2">  2: </a></span>BetweenRange betweenRange1 = new BetweenRange((-50), 0);
 <span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = betweenRange0.equals((Range) betweenRange1);
 <span class="nocode"><a name="4">  4: </a></span>assertFalse(boolean0);
 </pre>
-<h3>Test case 12</h3>
+<h3>Test case 11</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>BetweenRange betweenRange0 = new BetweenRange((-2236), 1347);
-<span class="nocode"><a name="2">  2: </a></span>BetweenRange betweenRange1 = new BetweenRange((-2236), (-2236));
-<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = betweenRange0.equals((Range) betweenRange1);
+<span class="nocode"><a name="1">  1: </a></span>BetweenRange betweenRange0 = new BetweenRange((-1217), (-1217));
+<span class="nocode"><a name="2">  2: </a></span>BetweenRange betweenRange1 = new BetweenRange((-1217), 2070);
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = betweenRange1.equals((Range) betweenRange0);
 <span class="nocode"><a name="4">  4: </a></span>assertFalse(boolean0);
 </pre>
 </div><div id="post">
@@ -119,8 +113,8 @@ uk.ac.sanger.artemis.io.BetweenRange
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.io.BetweenRange
-<li>Size: 12
-<li>Length: 28
+<li>Size: 11
+<li>Length: 26
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.9270833333333334
 <li>BranchCoverage: 1.0

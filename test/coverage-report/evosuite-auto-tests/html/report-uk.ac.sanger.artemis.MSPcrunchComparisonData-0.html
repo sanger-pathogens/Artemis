@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.MSPcrunchComparisonData
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.MSPcrunchComparisonData: 0.8115384615384615</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.MSPcrunchComparisonData: 0.7487179487179487</ul>
 <ul>
-<li>113.0909090909091 fitness evaluations, 0 generations, null statements, 12 tests.
+<li>137.0909090909091 fitness evaluations, 0 generations, null statements, 13 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -37,73 +37,75 @@ uk.ac.sanger.artemis.MSPcrunchComparisonData
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>MSPcrunchComparisonData mSPcrunchComparisonData0 = new MSPcrunchComparisonData();
 <span class="nocode"><a name="2">  2: </a></span>MSPcrunchComparisonData mSPcrunchComparisonData1 = (MSPcrunchComparisonData)mSPcrunchComparisonData0.getNewSimpleComparisonData();
-<span class="nocode"><a name="3">  3: </a></span>assertNotSame(mSPcrunchComparisonData1, mSPcrunchComparisonData0);
+<span class="nocode"><a name="3">  3: </a></span>assertNotSame(mSPcrunchComparisonData0, mSPcrunchComparisonData1);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>boolean boolean0 = MSPcrunchComparisonData.formatCorrect(&quot;uk.ac.sanger.artemis.ComparisonDataParseException&quot;);
-<span class="nocode"><a name="2">  2: </a></span>assertFalse(boolean0);
+<span class="nocode"><a name="1">  1: </a></span>AlignMatch alignMatch0 = SimpleComparisonData.makeAlignMatch(0, 0, (-1149), 735, 735, (-1149));
+<span class="nocode"><a name="2">  2: </a></span>PipedWriter pipedWriter0 = new PipedWriter();
+<span class="nocode"><a name="3">  3: </a></span>MSPcrunchComparisonData.writeMatchFromAlignMatch(alignMatch0, &quot;&quot;, &quot;&quot;, pipedWriter0);
 </pre>
 <h3>Test case 3</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>AlignMatch alignMatch0 = SimpleComparisonData.makeAlignMatch(0, 5205, 5205, 0, 1652, 0);
-<span class="nocode"><a name="2">  2: </a></span>PipedReader pipedReader0 = new PipedReader();
-<span class="nocode"><a name="3">  3: </a></span>PipedWriter pipedWriter0 = new PipedWriter(pipedReader0);
-<span class="nocode"><a name="4">  4: </a></span>MSPcrunchComparisonData.writeMatchFromAlignMatch(alignMatch0, &quot;#gRNQxZWVdM5 z\&quot;y0v&quot;, &quot;#gRNQxZWVdM5 z\&quot;y0v&quot;, pipedWriter0);
-<span class="nocode"><a name="5">  5: </a></span>LinePushBackReader linePushBackReader0 = new LinePushBackReader(pipedReader0);
-<span class="nocode"><a name="6">  6: </a></span>MSPcrunchComparisonData mSPcrunchComparisonData0 = new MSPcrunchComparisonData(linePushBackReader0);
-</pre>
-<h3>Test case 4</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>StringReader stringReader0 = new StringReader(&quot;;)_rDx&quot;);
-<span class="nocode"><a name="2">  2: </a></span>LinePushBackReader linePushBackReader0 = new LinePushBackReader(stringReader0);
-<span class="nocode"><a name="3">  3: </a></span>linePushBackReader0.readLine();
-<span class="nocode"><a name="4">  4: </a></span>MSPcrunchComparisonData mSPcrunchComparisonData0 = new MSPcrunchComparisonData(linePushBackReader0);
-<span class="nocode"><a name="5">  5: </a></span>mSPcrunchComparisonData0.makeMatchFromString(&quot;&quot;);
-</pre>
-<h3>Test case 5</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MSPcrunchComparisonData mSPcrunchComparisonData0 = new MSPcrunchComparisonData((LinePushBackReader) null);
-</pre>
-<h3>Test case 6</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>StringReader stringReader0 = new StringReader(&quot; &gt; end: &quot;);
-<span class="nocode"><a name="2">  2: </a></span>LinePushBackReader linePushBackReader0 = new LinePushBackReader(stringReader0);
-<span class="nocode"><a name="3">  3: </a></span>MSPcrunchComparisonData mSPcrunchComparisonData0 = new MSPcrunchComparisonData(linePushBackReader0);
-</pre>
-<h3>Test case 7</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MSPcrunchComparisonData.formatCorrect((String) null);
-</pre>
-<h3>Test case 8</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MSPcrunchComparisonData mSPcrunchComparisonData0 = new MSPcrunchComparisonData();
-<span class="nocode"><a name="2">  2: </a></span>mSPcrunchComparisonData0.makeMatchFromString(&quot;LinePushBackReader.pushBack () called twice before calling readLine ()&quot;);
-</pre>
-<h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>MSPcrunchComparisonData mSPcrunchComparisonData0 = new MSPcrunchComparisonData();
 <span class="nocode"><a name="2">  2: </a></span>mSPcrunchComparisonData0.makeMatchFromString((String) null);
 </pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MSPcrunchComparisonData mSPcrunchComparisonData0 = new MSPcrunchComparisonData((LinePushBackReader) null);
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MSPcrunchComparisonData mSPcrunchComparisonData0 = new MSPcrunchComparisonData();
+<span class="nocode"><a name="2">  2: </a></span>mSPcrunchComparisonData0.makeMatchFromString(&quot;The list of prefixes must not be null&quot;);
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[9];
+<span class="nocode"><a name="2">  2: </a></span>CharArrayReader charArrayReader0 = new CharArrayReader(charArray0, 0, 0);
+<span class="nocode"><a name="3">  3: </a></span>LinePushBackReader linePushBackReader0 = new LinePushBackReader(charArrayReader0);
+<span class="nocode"><a name="4">  4: </a></span>MSPcrunchComparisonData mSPcrunchComparisonData0 = new MSPcrunchComparisonData(linePushBackReader0);
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>PipedReader pipedReader0 = new PipedReader();
+<span class="nocode"><a name="2">  2: </a></span>LinePushBackReader linePushBackReader0 = new LinePushBackReader(pipedReader0);
+<span class="nocode"><a name="3">  3: </a></span>MSPcrunchComparisonData mSPcrunchComparisonData0 = new MSPcrunchComparisonData(linePushBackReader0);
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[8];
+<span class="nocode"><a name="2">  2: </a></span>charArray0[0] = '|';
+<span class="nocode"><a name="3">  3: </a></span>CharArrayReader charArrayReader0 = new CharArrayReader(charArray0);
+<span class="nocode"><a name="4">  4: </a></span>LinePushBackReader linePushBackReader0 = new LinePushBackReader(charArrayReader0);
+<span class="nocode"><a name="5">  5: </a></span>MSPcrunchComparisonData mSPcrunchComparisonData0 = new MSPcrunchComparisonData(linePushBackReader0);
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MSPcrunchComparisonData.formatCorrect((String) null);
+</pre>
 <h3>Test case 10</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>AlignMatch alignMatch0 = SimpleComparisonData.makeAlignMatch(0, 5199, 5199, 0, 1652, 0);
-<span class="nocode"><a name="2">  2: </a></span>PipedWriter pipedWriter0 = new PipedWriter();
-<span class="nocode"><a name="3">  3: </a></span>MSPcrunchComparisonData.writeMatchFromAlignMatch(alignMatch0, &quot;#gRNQxZWVdM5 z\&quot;y0v&quot;, &quot;#gRNQxZWVdM5 z\&quot;y0v&quot;, pipedWriter0);
+<span class="nocode"><a name="1">  1: </a></span>MSPcrunchComparisonData mSPcrunchComparisonData0 = new MSPcrunchComparisonData();
+<span class="nocode"><a name="2">  2: </a></span>mSPcrunchComparisonData0.makeMatchFromString(&quot;wR0,o/riUUI&amp;,a43H$&quot;);
 </pre>
 <h3>Test case 11</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(97, 97);
-<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, false, 460, 3);
-<span class="nocode"><a name="3">  3: </a></span>MSPcrunchComparisonData.writeMatchFromAlignMatch(alignMatch0, &quot;while reading MSPcrunch data: not enough fields in this line: &quot;, &quot;while reading MSPcrunch data: not enough fields in this line: &quot;, (Writer) null);
+<span class="nocode"><a name="1">  1: </a></span>AlignMatch alignMatch0 = SimpleComparisonData.makeAlignMatch(0, 0, 394, 394, 1738, 1738);
+<span class="nocode"><a name="2">  2: </a></span>MSPcrunchComparisonData.writeMatchFromAlignMatch(alignMatch0, &quot;nY]&gt;098Xe=H?SU.&quot;, &quot;se+m&quot;, (Writer) null);
 </pre>
 <h3>Test case 12</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>AlignMatch alignMatch0 = SimpleComparisonData.makeAlignMatch(0, (-2310), 99, 0, (-2310), 99);
-<span class="nocode"><a name="2">  2: </a></span>MockFileWriter mockFileWriter0 = new MockFileWriter(&quot;uk.ac.sanger.artemis.util.PushBackException&quot;);
-<span class="nocode"><a name="3">  3: </a></span>MockPrintWriter mockPrintWriter0 = new MockPrintWriter(mockFileWriter0, false);
-<span class="nocode"><a name="4">  4: </a></span>MSPcrunchComparisonData.writeMatchFromAlignMatch(alignMatch0, &quot;%Tx*a_D&quot;, &quot;\&quot;jR8g&gt;y]pA6$&quot;, mockPrintWriter0);
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, alignMatch0.getQuerySequenceStart());
+<span class="nocode"><a name="1">  1: </a></span>AlignMatch alignMatch0 = SimpleComparisonData.makeAlignMatch(38, 38, 38, (-4349), (-4349), (-4349));
+<span class="nocode"><a name="2">  2: </a></span>CharArrayWriter charArrayWriter0 = new CharArrayWriter();
+<span class="nocode"><a name="3">  3: </a></span>MSPcrunchComparisonData.writeMatchFromAlignMatch(alignMatch0, &quot; not in this VariantContex &quot;, &quot;\n&quot;, charArrayWriter0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(57, charArrayWriter0.size());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;-4349 -4349 38 -4349  not in this VariantContex  38 38 \n\n&quot;, charArrayWriter0.toString());
+</pre>
+<h3>Test case 13</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>boolean boolean0 = MSPcrunchComparisonData.formatCorrect(&quot;One or more contigs must be in the contig list.&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertFalse(boolean0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -116,10 +118,10 @@ uk.ac.sanger.artemis.MSPcrunchComparisonData
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.MSPcrunchComparisonData
-<li>Size: 12
-<li>Length: 33
+<li>Size: 13
+<li>Length: 31
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.8115384615384615
+<li>Coverage: 0.7487179487179487
 <li>BranchCoverage: 1.0
 <li>MethodCoverage: 1.0
 <li>OutputCoverage: 0.06666666666666667

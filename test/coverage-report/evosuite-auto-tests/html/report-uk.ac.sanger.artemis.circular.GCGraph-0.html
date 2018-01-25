@@ -23,7 +23,7 @@ uk.ac.sanger.artemis.circular.GCGraph
 <br><br><h2 class=title>Summary</h2>
 <ul><li>Target class: uk.ac.sanger.artemis.circular.GCGraph: 0.30998888557114895</ul>
 <ul>
-<li>225.26666666666668 fitness evaluations, 0 generations, null statements, 3 tests.
+<li>225.26666666666668 fitness evaluations, 0 generations, null statements, 2 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -37,19 +37,11 @@ uk.ac.sanger.artemis.circular.GCGraph
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
 <span class="nocode"><a name="2">  2: </a></span>GCGraph gCGraph0 = new GCGraph(dNADraw0);
-<span class="nocode"><a name="3">  3: </a></span>gCGraph0.calculateValue(2247, 2247);
+<span class="nocode"><a name="3">  3: </a></span>gCGraph0.calculateValue(10000000, 227);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>GCGraph gCGraph0 = new GCGraph((DNADraw) null);
-</pre>
-<h3>Test case 3</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>JembossParams jembossParams0 = new JembossParams();
-<span class="nocode"><a name="2">  2: </a></span>Vector&lt;Object&gt; vector0 = jembossParams0.getPrivateServers();
-<span class="nocode"><a name="3">  3: </a></span>DNADraw dNADraw0 = new DNADraw(vector0, vector0, vector0, vector0);
-<span class="nocode"><a name="4">  4: </a></span>GCGraph gCGraph0 = new GCGraph(dNADraw0);
-<span class="nocode"><a name="5">  5: </a></span>gCGraph0.calculateValue(99, 0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -62,8 +54,8 @@ uk.ac.sanger.artemis.circular.GCGraph
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.circular.GCGraph
-<li>Size: 3
-<li>Length: 9
+<li>Size: 2
+<li>Length: 4
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.30998888557114895
 <li>BranchCoverage: 0.1111111111111111

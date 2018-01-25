@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.components.genebuilder.cv.CVPanel
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.components.genebuilder.cv.CVPanel: 0.2952127953568543</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.components.genebuilder.cv.CVPanel: 0.2882683509124098</ul>
 <ul>
-<li>1050.196794632445 fitness evaluations, 0 generations, null statements, 9 tests.
+<li>1051.1967947516541 fitness evaluations, 0 generations, null statements, 8 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,11 +35,9 @@ uk.ac.sanger.artemis.components.genebuilder.cv.CVPanel
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Key key0 = Key.CDS;
-<span class="nocode"><a name="2">  2: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
-<span class="nocode"><a name="3">  3: </a></span>ReadOnlyEmblStreamFeature readOnlyEmblStreamFeature0 = new ReadOnlyEmblStreamFeature(key0, (Location) null, qualifierVector0);
-<span class="nocode"><a name="4">  4: </a></span>Feature feature0 = new Feature(readOnlyEmblStreamFeature0);
-<span class="nocode"><a name="5">  5: </a></span>CVPanel cVPanel0 = new CVPanel(feature0);
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamFeature emblStreamFeature0 = new EmblStreamFeature();
+<span class="nocode"><a name="2">  2: </a></span>Feature feature0 = new Feature(emblStreamFeature0);
+<span class="nocode"><a name="3">  3: </a></span>CVPanel cVPanel0 = new CVPanel(feature0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
@@ -48,18 +46,18 @@ uk.ac.sanger.artemis.components.genebuilder.cv.CVPanel
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier(&quot;Section for controlled vocabulary qualifiers:\nGO, controlled_curation, product, Riley class&quot;, &quot;&quot;);
+<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier(&quot;=?D%(I8jrG4Ig&gt;&quot;, (String) null);
 <span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = CVPanel.isCvTag(qualifier0);
 <span class="nocode"><a name="3">  3: </a></span>assertFalse(boolean0);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>boolean boolean0 = CVPanel.isCvTag(&quot;/Ot{w{I&quot;);
+<span class="nocode"><a name="1">  1: </a></span>boolean boolean0 = CVPanel.isCvTag(&quot;/+Kx#&gt;y#y,=&quot;);
 <span class="nocode"><a name="2">  2: </a></span>assertFalse(boolean0);
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>boolean boolean0 = CVPanel.isCvTag(&quot;\n\nA Exception Has Occurred During Parsing. \nPlease submit the details that follow to biojava-l@biojava.org or post a bug report to http://bugzilla.open-bio.org/ \n\n&quot;);
+<span class="nocode"><a name="1">  1: </a></span>boolean boolean0 = CVPanel.isCvTag(&quot;8k{6tpxDNP43V1}^Wt&quot;);
 <span class="nocode"><a name="2">  2: </a></span>assertFalse(boolean0);
 </pre>
 <h3>Test case 6</h3>
@@ -74,11 +72,6 @@ uk.ac.sanger.artemis.components.genebuilder.cv.CVPanel
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>CVPanel.isCvTag((Qualifier) null);
 </pre>
-<h3>Test case 9</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>boolean boolean0 = CVPanel.isCvTag(&quot;GO&quot;);
-<span class="nocode"><a name="2">  2: </a></span>assertTrue(boolean0);
-</pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
 <div class=source>
@@ -90,13 +83,13 @@ uk.ac.sanger.artemis.components.genebuilder.cv.CVPanel
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.genebuilder.cv.CVPanel
-<li>Size: 9
-<li>Length: 14
+<li>Size: 8
+<li>Length: 11
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.2952127953568543
+<li>Coverage: 0.2882683509124098
 <li>BranchCoverage: 0.14285714285714285
 <li>MethodCoverage: 0.3333333333333333
-<li>OutputCoverage: 0.2222222222222222
+<li>OutputCoverage: 0.16666666666666666
 </ul></div>
 </div>
 <p><br><a href="../report-generation.html">Back to Overview</a></p>

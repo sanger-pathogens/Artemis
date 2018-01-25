@@ -35,19 +35,19 @@ uk.ac.sanger.artemis.io.LocationParseException
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>LocationLexer locationLexer0 = new LocationLexer(&quot;..&quot;);
-<span class="nocode"><a name="2">  2: </a></span>LocationLexer.TokenEnumeration locationLexer_TokenEnumeration0 = locationLexer0.new TokenEnumeration(&quot;&gt;CZx#9sV+v&amp;&quot;);
-<span class="nocode"><a name="3">  3: </a></span>LocationParseException locationParseException0 = new LocationParseException(&quot;&quot;, locationLexer_TokenEnumeration0);
+<span class="nocode"><a name="1">  1: </a></span>LocationLexer locationLexer0 = new LocationLexer(&quot;1O&quot;);
+<span class="nocode"><a name="2">  2: </a></span>LocationLexer.TokenEnumeration locationLexer_TokenEnumeration0 = locationLexer0.new TokenEnumeration(&quot;,5[zhNsu8!8pMgn&quot;);
+<span class="nocode"><a name="3">  3: </a></span>LocationParseException locationParseException0 = new LocationParseException(&quot;,5[zhNsu8!8pMgn&quot;, locationLexer_TokenEnumeration0);
 <span class="nocode"><a name="4">  4: </a></span>assertEquals(0, locationParseException0.getLineNumber());
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>LocationParseException locationParseException0 = new LocationParseException(&quot;..&quot;, &quot;&quot;);
+<span class="nocode"><a name="1">  1: </a></span>LocationParseException locationParseException0 = new LocationParseException(&quot;java.lang.Character@0000000003java.lang.Integer@0000000004java.lang.String@0000000005java.lang.String@0000000006java.lang.String@0000000007java.lang.Integer@0000000008java.lang.String@0000000009&quot;, &quot;java.lang.Character@0000000003java.lang.Integer@0000000004java.lang.String@0000000005java.lang.String@0000000006java.lang.String@0000000007java.lang.Integer@0000000008java.lang.String@0000000009&quot;);
 <span class="nocode"><a name="2">  2: </a></span>assertEquals(0, locationParseException0.getLineNumber());
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>LocationParseException locationParseException0 = new LocationParseException(&quot;uk.ac.sanger.artemis.io.ReadFormatException&quot;, (LocationLexer.TokenEnumeration) null);
+<span class="nocode"><a name="1">  1: </a></span>LocationParseException locationParseException0 = new LocationParseException(&quot; T%X*PD&quot;, (LocationLexer.TokenEnumeration) null);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>

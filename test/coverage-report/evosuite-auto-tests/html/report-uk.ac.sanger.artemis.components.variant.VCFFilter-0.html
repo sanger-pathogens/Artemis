@@ -23,7 +23,7 @@ uk.ac.sanger.artemis.components.variant.VCFFilter
 <br><br><h2 class=title>Summary</h2>
 <ul><li>Target class: uk.ac.sanger.artemis.components.variant.VCFFilter: 0.2650477834894805</ul>
 <ul>
-<li>2407.247802195319 fitness evaluations, 0 generations, null statements, 7 tests.
+<li>2407.2478021946977 fitness evaluations, 0 generations, null statements, 6 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,46 +35,42 @@ uk.ac.sanger.artemis.components.variant.VCFFilter
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
-<span class="nocode"><a name="2">  2: </a></span>VCFFilter.checkManualHash((Map&lt;String, Boolean&gt;) null, vCFRecord0, 0);
+<span class="nocode"><a name="1">  1: </a></span>HashMap&lt;String, Boolean&gt; hashMap0 = new HashMap&lt;String, Boolean&gt;();
+<span class="nocode"><a name="2">  2: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
+<span class="nocode"><a name="3">  3: </a></span>int int0 = VCFFilter.checkManualHash(hashMap0, vCFRecord0, 598);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, int0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Hashtable&lt;String, Boolean&gt; hashtable0 = new Hashtable&lt;String, Boolean&gt;();
+<span class="nocode"><a name="1">  1: </a></span>HashMap&lt;String, Boolean&gt; hashMap0 = new HashMap&lt;String, Boolean&gt;();
 <span class="nocode"><a name="2">  2: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
-<span class="nocode"><a name="3">  3: </a></span>int int0 = VCFFilter.checkManualHash(hashtable0, vCFRecord0, (-3126), true);
+<span class="nocode"><a name="3">  3: </a></span>int int0 = VCFFilter.checkManualHash(hashMap0, vCFRecord0, (-348), true);
 <span class="nocode"><a name="4">  4: </a></span>assertEquals(0, int0);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>HashMap&lt;String, Boolean&gt; hashMap0 = new HashMap&lt;String, Boolean&gt;();
 <span class="nocode"><a name="2">  2: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
-<span class="nocode"><a name="3">  3: </a></span>Boolean boolean0 = Boolean.valueOf(false);
-<span class="nocode"><a name="4">  4: </a></span>hashMap0.put(&quot;KVP!?iIVPLiR_!}&quot;, boolean0);
-<span class="nocode"><a name="5">  5: </a></span>int int0 = VCFFilter.checkManualHash(hashMap0, vCFRecord0, (-2125), false);
+<span class="nocode"><a name="3">  3: </a></span>Boolean boolean0 = Boolean.valueOf((String) null);
+<span class="nocode"><a name="4">  4: </a></span>hashMap0.put(&quot;0:null:1504&quot;, boolean0);
+<span class="nocode"><a name="5">  5: </a></span>int int0 = VCFFilter.checkManualHash(hashMap0, vCFRecord0, 598);
 <span class="nocode"><a name="6">  6: </a></span>assertEquals(0, int0);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Hashtable&lt;String, Boolean&gt; hashtable0 = new Hashtable&lt;String, Boolean&gt;();
-<span class="nocode"><a name="2">  2: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
-<span class="nocode"><a name="3">  3: </a></span>int int0 = VCFFilter.checkManualHash(hashtable0, vCFRecord0, 0, false);
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, int0);
+<span class="nocode"><a name="1">  1: </a></span>VCFFilter vCFFilter0 = new VCFFilter((VCFview) null);
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>VCFFilter vCFFilter0 = new VCFFilter((VCFview) null);
+<span class="nocode"><a name="1">  1: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
+<span class="nocode"><a name="2">  2: </a></span>VCFFilter.checkManualHash((Map&lt;String, Boolean&gt;) null, vCFRecord0, 150);
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>VCFFilter.checkManualHash((Map&lt;String, Boolean&gt;) null, (VCFRecord) null, Integer.MAX_VALUE, false);
-</pre>
-<h3>Test case 7</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>HashMap&lt;String, Boolean&gt; hashMap0 = new HashMap&lt;String, Boolean&gt;();
-<span class="nocode"><a name="2">  2: </a></span>VCFRecord vCFRecord0 = new VCFRecord();
-<span class="nocode"><a name="3">  3: </a></span>int int0 = VCFFilter.checkManualHash(hashMap0, vCFRecord0, 982);
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, int0);
+<span class="nocode"><a name="2">  2: </a></span>Boolean boolean0 = Boolean.TRUE;
+<span class="nocode"><a name="3">  3: </a></span>hashMap0.putIfAbsent(&quot;&quot;, boolean0);
+<span class="nocode"><a name="4">  4: </a></span>VCFFilter.checkManualHash(hashMap0, (VCFRecord) null, 97, false);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -87,7 +83,7 @@ uk.ac.sanger.artemis.components.variant.VCFFilter
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.variant.VCFFilter
-<li>Size: 7
+<li>Size: 6
 <li>Length: 18
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.2650477834894805

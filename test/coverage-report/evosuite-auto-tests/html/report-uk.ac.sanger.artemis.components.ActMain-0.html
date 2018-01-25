@@ -35,8 +35,9 @@ uk.ac.sanger.artemis.components.ActMain
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>boolean boolean0 = ActMain.makeMultiComparator((JFrame) null, (InputStreamProgressListener) null, (Object[]) null);
-<span class="nocode"><a name="2">  2: </a></span>assertTrue(boolean0);
+<span class="nocode"><a name="1">  1: </a></span>Object[] objectArray0 = new Object[1];
+<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = ActMain.makeMultiComparator((JFrame) null, (InputStreamProgressListener) null, objectArray0);
+<span class="nocode"><a name="3">  3: </a></span>assertTrue(boolean0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
@@ -54,7 +55,7 @@ uk.ac.sanger.artemis.components.ActMain
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.ActMain
 <li>Size: 2
-<li>Length: 2
+<li>Length: 3
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.33219894849641685
 <li>BranchCoverage: 0.047619047619047616

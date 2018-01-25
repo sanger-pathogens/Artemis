@@ -48,14 +48,14 @@ uk.ac.sanger.artemis.components.TransferableContig
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>TransferableContig transferableContig0 = new TransferableContig((Feature) null);
-<span class="nocode"><a name="2">  2: </a></span>DataFlavor dataFlavor0 = RemoteFileNode.REMOTEFILENODE;
+<span class="nocode"><a name="2">  2: </a></span>DataFlavor dataFlavor0 = DataFlavor.imageFlavor;
 <span class="nocode"><a name="3">  3: </a></span>transferableContig0.getTransferData(dataFlavor0);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>TransferableContig transferableContig0 = new TransferableContig((Feature) null);
 <span class="nocode"><a name="2">  2: </a></span>TransferableContig transferableContig1 = (TransferableContig)transferableContig0.getTransferData(transferableContig0.TRANSFERABLECONTIG);
-<span class="nocode"><a name="3">  3: </a></span>assertSame(transferableContig0, transferableContig1);
+<span class="nocode"><a name="3">  3: </a></span>assertSame(transferableContig1, transferableContig0);
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
@@ -65,22 +65,26 @@ uk.ac.sanger.artemis.components.TransferableContig
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>TransferableContig transferableContig0 = new TransferableContig((Feature) null);
-<span class="nocode"><a name="2">  2: </a></span>transferableContig0.isDataFlavorSupported((DataFlavor) null);
+<span class="nocode"><a name="2">  2: </a></span>DataFlavor[] dataFlavorArray0 = new DataFlavor[2];
+<span class="nocode"><a name="3">  3: </a></span>TransferableContig.contig_flavors = dataFlavorArray0;
+<span class="nocode"><a name="4">  4: </a></span>DataFlavor[] dataFlavorArray1 = new DataFlavor[0];
+<span class="nocode"><a name="5">  5: </a></span>TransferableContig.contig_flavors = dataFlavorArray1;
+<span class="nocode"><a name="6">  6: </a></span>DataFlavor[] dataFlavorArray2 = transferableContig0.getTransferDataFlavors();
+<span class="nocode"><a name="7">  7: </a></span>assertSame(dataFlavorArray2, dataFlavorArray1);
 </pre>
 <h3>Test case 7</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>TransferableContig transferableContig0 = new TransferableContig((Feature) null);
-<span class="nocode"><a name="2">  2: </a></span>DataFlavor[] dataFlavorArray0 = new DataFlavor[0];
-<span class="nocode"><a name="3">  3: </a></span>TransferableContig.contig_flavors = dataFlavorArray0;
-<span class="nocode"><a name="4">  4: </a></span>DataFlavor[] dataFlavorArray1 = transferableContig0.getTransferDataFlavors();
-<span class="nocode"><a name="5">  5: </a></span>assertSame(dataFlavorArray1, dataFlavorArray0);
-</pre>
-<h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>TransferableContig transferableContig0 = new TransferableContig((Feature) null);
 <span class="nocode"><a name="2">  2: </a></span>TransferableContig.contig_flavors = null;
 <span class="nocode"><a name="3">  3: </a></span>DataFlavor[] dataFlavorArray0 = transferableContig0.getTransferDataFlavors();
 <span class="nocode"><a name="4">  4: </a></span>assertNull(dataFlavorArray0);
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>TransferableContig transferableContig0 = new TransferableContig((Feature) null);
+<span class="nocode"><a name="2">  2: </a></span>DataFlavor dataFlavor0 = DataFlavor.imageFlavor;
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = transferableContig0.isDataFlavorSupported(dataFlavor0);
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(boolean0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -94,12 +98,12 @@ uk.ac.sanger.artemis.components.TransferableContig
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.TransferableContig
 <li>Size: 8
-<li>Length: 20
+<li>Length: 23
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.8690476190476191
 <li>BranchCoverage: 0.7142857142857143
 <li>MethodCoverage: 1.0
-<li>OutputCoverage: 0.7142857142857143
+<li>OutputCoverage: 0.8571428571428571
 </ul></div>
 </div>
 <p><br><a href="../report-generation.html">Back to Overview</a></p>

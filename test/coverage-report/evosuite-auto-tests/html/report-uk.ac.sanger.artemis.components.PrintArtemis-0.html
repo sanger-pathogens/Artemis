@@ -41,8 +41,13 @@ uk.ac.sanger.artemis.components.PrintArtemis
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>PrintArtemis printArtemis0 = new PrintArtemis((EntryEdit) null);
-<span class="nocode"><a name="2">  2: </a></span>PageFormat pageFormat0 = new PageFormat();
-<span class="nocode"><a name="3">  3: </a></span>printArtemis0.print((Graphics) null, pageFormat0, 2386);
+<span class="nocode"><a name="2">  2: </a></span>GenericDocumentType genericDocumentType0 = new GenericDocumentType(&quot;WdIKDM*]YfC1WB'SKKe_&quot;, &quot;&quot;, &quot;WdIKDM*]YfC1WB'SKKe_&quot;);
+<span class="nocode"><a name="3">  3: </a></span>GenericDOMImplementation genericDOMImplementation0 = (GenericDOMImplementation)GenericDOMImplementation.getDOMImplementation();
+<span class="nocode"><a name="4">  4: </a></span>GenericDocument genericDocument0 = new GenericDocument(genericDocumentType0, genericDOMImplementation0);
+<span class="nocode"><a name="5">  5: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(genericDocument0);
+<span class="nocode"><a name="6">  6: </a></span>DebugGraphics debugGraphics0 = new DebugGraphics(sVGGraphics2D0, printArtemis0);
+<span class="nocode"><a name="7">  7: </a></span>PageFormat pageFormat0 = new PageFormat();
+<span class="nocode"><a name="8">  8: </a></span>printArtemis0.print((Graphics) debugGraphics0, pageFormat0, (int) (short)32);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
@@ -52,12 +57,13 @@ uk.ac.sanger.artemis.components.PrintArtemis
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>PrintArtemis printArtemis0 = new PrintArtemis((EntryEdit) null);
-<span class="nocode"><a name="2">  2: </a></span>GenericDocumentType genericDocumentType0 = new GenericDocumentType(&quot;JL5&quot;, &quot;JL5&quot;, &quot;JL5&quot;);
+<span class="nocode"><a name="2">  2: </a></span>GenericDocumentType genericDocumentType0 = new GenericDocumentType(&quot;9vz~@&lt;l:&gt;i{&quot;, &quot;9vz~@&lt;l:&gt;i{&quot;, &quot;9vz~@&lt;l:&gt;i{&quot;);
 <span class="nocode"><a name="3">  3: </a></span>GenericDOMImplementation genericDOMImplementation0 = (GenericDOMImplementation)GenericDOMImplementation.getDOMImplementation();
 <span class="nocode"><a name="4">  4: </a></span>GenericDocument genericDocument0 = new GenericDocument(genericDocumentType0, genericDOMImplementation0);
 <span class="nocode"><a name="5">  5: </a></span>SVGGeneratorContext sVGGeneratorContext0 = SVGGeneratorContext.createDefault(genericDocument0);
 <span class="nocode"><a name="6">  6: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(sVGGeneratorContext0, false);
-<span class="nocode"><a name="7">  7: </a></span>printArtemis0.paintComponent(sVGGraphics2D0);
+<span class="nocode"><a name="7">  7: </a></span>DebugGraphics debugGraphics0 = new DebugGraphics(sVGGraphics2D0, printArtemis0);
+<span class="nocode"><a name="8">  8: </a></span>printArtemis0.paintComponent(debugGraphics0);
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
@@ -81,7 +87,7 @@ uk.ac.sanger.artemis.components.PrintArtemis
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.PrintArtemis
 <li>Size: 6
-<li>Length: 17
+<li>Length: 23
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.26337728802760674
 <li>BranchCoverage: 0.04375

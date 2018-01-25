@@ -23,7 +23,7 @@ uk.ac.sanger.artemis.editor.ScrollPanel
 <br><br><h2 class=title>Summary</h2>
 <ul><li>Target class: uk.ac.sanger.artemis.editor.ScrollPanel: 0.9485294117647058</ul>
 <ul>
-<li>6.993235100876561 fitness evaluations, 0 generations, null statements, 11 tests.
+<li>7.126568434209894 fitness evaluations, 0 generations, null statements, 9 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,10 +35,10 @@ uk.ac.sanger.artemis.editor.ScrollPanel
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Box box0 = new Box(0);
-<span class="nocode"><a name="2">  2: </a></span>BoxLayout boxLayout0 = (BoxLayout)box0.getLayout();
-<span class="nocode"><a name="3">  3: </a></span>ScrollPanel scrollPanel0 = new ScrollPanel(boxLayout0);
-<span class="nocode"><a name="4">  4: </a></span>int int0 = scrollPanel0.getScrollableUnitIncrement((Rectangle) null, (-345), 1556);
+<span class="nocode"><a name="1">  1: </a></span>SynthScrollBarUI synthScrollBarUI0 = new SynthScrollBarUI();
+<span class="nocode"><a name="2">  2: </a></span>ScrollPanel scrollPanel0 = new ScrollPanel(synthScrollBarUI0);
+<span class="nocode"><a name="3">  3: </a></span>Rectangle rectangle0 = new Rectangle();
+<span class="nocode"><a name="4">  4: </a></span>int int0 = scrollPanel0.getScrollableUnitIncrement(rectangle0, 4844, 4844);
 <span class="nocode"><a name="5">  5: </a></span>assertEquals(10, int0);
 </pre>
 <h3>Test case 2</h3>
@@ -49,63 +49,52 @@ uk.ac.sanger.artemis.editor.ScrollPanel
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Box box0 = new Box(0);
-<span class="nocode"><a name="2">  2: </a></span>BoxLayout boxLayout0 = (BoxLayout)box0.getLayout();
-<span class="nocode"><a name="3">  3: </a></span>ScrollPanel scrollPanel0 = new ScrollPanel(boxLayout0);
-<span class="nocode"><a name="4">  4: </a></span>scrollPanel0.getPreferredScrollableViewportSize();
+<span class="nocode"><a name="1">  1: </a></span>CardLayout cardLayout0 = new CardLayout(2151, (-2943));
+<span class="nocode"><a name="2">  2: </a></span>ScrollPanel scrollPanel0 = new ScrollPanel(cardLayout0);
+<span class="nocode"><a name="3">  3: </a></span>Dimension dimension0 = scrollPanel0.getPreferredScrollableViewportSize();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-5886.0), dimension0.getHeight(), 0.01);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SynthScrollBarUI synthScrollBarUI0 = new SynthScrollBarUI();
 <span class="nocode"><a name="2">  2: </a></span>ScrollPanel scrollPanel0 = new ScrollPanel(synthScrollBarUI0);
-<span class="nocode"><a name="3">  3: </a></span>int int0 = scrollPanel0.getScrollableBlockIncrement((Rectangle) null, 0, 0);
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(60, int0);
+<span class="nocode"><a name="3">  3: </a></span>Rectangle rectangle0 = new Rectangle();
+<span class="nocode"><a name="4">  4: </a></span>int int0 = scrollPanel0.getScrollableBlockIncrement(rectangle0, 4844, 0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(60, int0);
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>CardLayout cardLayout0 = new CardLayout((-2301), (-4714));
-<span class="nocode"><a name="2">  2: </a></span>ScrollPanel scrollPanel0 = new ScrollPanel(cardLayout0);
+<span class="nocode"><a name="1">  1: </a></span>SynthScrollBarUI synthScrollBarUI0 = new SynthScrollBarUI();
+<span class="nocode"><a name="2">  2: </a></span>ScrollPanel scrollPanel0 = new ScrollPanel(synthScrollBarUI0);
 <span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = scrollPanel0.getScrollableTracksViewportWidth();
 <span class="nocode"><a name="4">  4: </a></span>assertFalse(boolean0);
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>ScrollPanel scrollPanel0 = new ScrollPanel((LayoutManager) null);
-<span class="nocode"><a name="2">  2: </a></span>MultiPanelUI multiPanelUI0 = new MultiPanelUI();
-<span class="nocode"><a name="3">  3: </a></span>scrollPanel0.setUI(multiPanelUI0);
-<span class="nocode"><a name="4">  4: </a></span>scrollPanel0.getPreferredScrollableViewportSize();
-</pre>
-<h3>Test case 7</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SynthScrollBarUI synthScrollBarUI0 = new SynthScrollBarUI();
 <span class="nocode"><a name="2">  2: </a></span>ScrollPanel scrollPanel0 = new ScrollPanel(synthScrollBarUI0);
 <span class="nocode"><a name="3">  3: </a></span>scrollPanel0.getPreferredScrollableViewportSize();
 </pre>
-<h3>Test case 8</h3>
+<h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>MetalComboBoxUI metalComboBoxUI0 = new MetalComboBoxUI();
 <span class="nocode"><a name="2">  2: </a></span>MetalComboBoxUI.MetalComboBoxLayoutManager metalComboBoxUI_MetalComboBoxLayoutManager0 = metalComboBoxUI0.new MetalComboBoxLayoutManager();
 <span class="nocode"><a name="3">  3: </a></span>ScrollPanel scrollPanel0 = new ScrollPanel(metalComboBoxUI_MetalComboBoxLayoutManager0);
 <span class="nocode"><a name="4">  4: </a></span>scrollPanel0.getPreferredScrollableViewportSize();
 </pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GridLayout gridLayout0 = new GridLayout(15, 166, 788, 166);
+<span class="nocode"><a name="2">  2: </a></span>ScrollPanel scrollPanel0 = new ScrollPanel(gridLayout0);
+<span class="nocode"><a name="3">  3: </a></span>Dimension dimension0 = scrollPanel0.getPreferredScrollableViewportSize();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(2324, dimension0.height);
+</pre>
 <h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>CardLayout cardLayout0 = new CardLayout((-2301), (-4714));
-<span class="nocode"><a name="2">  2: </a></span>ScrollPanel scrollPanel0 = new ScrollPanel(cardLayout0);
+<span class="nocode"><a name="1">  1: </a></span>GridBagLayout gridBagLayout0 = new GridBagLayout();
+<span class="nocode"><a name="2">  2: </a></span>ScrollPanel scrollPanel0 = new ScrollPanel(gridBagLayout0);
 <span class="nocode"><a name="3">  3: </a></span>Dimension dimension0 = scrollPanel0.getPreferredScrollableViewportSize();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals((-9428), dimension0.height);
-</pre>
-<h3>Test case 10</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>ScrollPanel scrollPanel0 = new ScrollPanel();
-<span class="nocode"><a name="2">  2: </a></span>Dimension dimension0 = scrollPanel0.getPreferredScrollableViewportSize();
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(10, dimension0.width);
-</pre>
-<h3>Test case 11</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>ScrollPanel scrollPanel0 = new ScrollPanel((LayoutManager) null);
-<span class="nocode"><a name="2">  2: </a></span>Dimension dimension0 = scrollPanel0.getPreferredScrollableViewportSize();
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, dimension0.width);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, dimension0.height);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -118,8 +107,8 @@ uk.ac.sanger.artemis.editor.ScrollPanel
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.editor.ScrollPanel
-<li>Size: 11
-<li>Length: 34
+<li>Size: 9
+<li>Length: 29
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.9485294117647058
 <li>BranchCoverage: 1.0

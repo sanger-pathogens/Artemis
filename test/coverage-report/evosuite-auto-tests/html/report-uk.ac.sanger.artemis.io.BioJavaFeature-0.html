@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.io.BioJavaFeature
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.io.BioJavaFeature: 0.4648400786205665</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.io.BioJavaFeature: 0.4231734119538998</ul>
 <ul>
-<li>379.6173076923077 fitness evaluations, 0 generations, null statements, 24 tests.
+<li>398.1175373134328 fitness evaluations, 0 generations, null statements, 18 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -36,8 +36,9 @@ uk.ac.sanger.artemis.io.BioJavaFeature
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>BioJavaFeature bioJavaFeature0 = new BioJavaFeature((Feature) null, (BioJavaEntry) null);
-<span class="nocode"><a name="2">  2: </a></span>bioJavaFeature0.removeQualifierByName(&quot;cannot understand this number: &quot;);
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(0L, bioJavaFeature0.getNumericID());
+<span class="nocode"><a name="2">  2: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
+<span class="nocode"><a name="3">  3: </a></span>bioJavaFeature0.setQualifiers(qualifierVector0);
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(bioJavaFeature0.isReadOnly());
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
@@ -47,141 +48,101 @@ uk.ac.sanger.artemis.io.BioJavaFeature
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>BioJavaFeature bioJavaFeature0 = new BioJavaFeature((Feature) null, (BioJavaEntry) null);
-<span class="nocode"><a name="2">  2: </a></span>bioJavaFeature0.setBioJavaEntry((BioJavaEntry) null);
-<span class="nocode"><a name="3">  3: </a></span>assertFalse(bioJavaFeature0.isReadOnly());
-</pre>
-<h3>Test case 4</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>BioJavaFeature bioJavaFeature0 = new BioJavaFeature((Feature) null, (BioJavaEntry) null);
 <span class="nocode"><a name="2">  2: </a></span>Feature feature0 = bioJavaFeature0.getBioJavaFeature();
 <span class="nocode"><a name="3">  3: </a></span>assertNull(feature0);
 </pre>
-<h3>Test case 5</h3>
+<h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>BioJavaFeature bioJavaFeature0 = new BioJavaFeature((Feature) null, (BioJavaEntry) null);
 <span class="nocode"><a name="2">  2: </a></span>long long0 = bioJavaFeature0.getNumericID();
 <span class="nocode"><a name="3">  3: </a></span>assertEquals(0L, long0);
 </pre>
-<h3>Test case 6</h3>
+<h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>BioJavaFeature bioJavaFeature0 = new BioJavaFeature((Feature) null, (BioJavaEntry) null);
 <span class="nocode"><a name="2">  2: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
-<span class="nocode"><a name="3">  3: </a></span>Range range0 = new Range(1741);
-<span class="nocode"><a name="4">  4: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
-<span class="nocode"><a name="5">  5: </a></span>Location location0 = new Location(rangeVector0, false);
-<span class="nocode"><a name="6">  6: </a></span>Key key0 = Key.CDS;
+<span class="nocode"><a name="3">  3: </a></span>Range range0 = new Range(1);
+<span class="nocode"><a name="4">  4: </a></span>Location location0 = new Location(range0);
+<span class="nocode"><a name="5">  5: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="6">  6: </a></span>Key key0 = blastEntryInformation0.getDefaultKey();
 <span class="nocode"><a name="7">  7: </a></span>bioJavaFeature0.set(key0, location0, qualifierVector0);
-<span class="nocode"><a name="8">  8: </a></span>assertTrue(qualifierVector0.isEmpty());
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(&quot;misc_feature&quot;, key0.toString());
 </pre>
-<h3>Test case 7</h3>
+<h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>BioJavaFeature bioJavaFeature0 = new BioJavaFeature((Feature) null, (BioJavaEntry) null);
 <span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = bioJavaFeature0.isReadOnly();
 <span class="nocode"><a name="3">  3: </a></span>assertFalse(boolean0);
 </pre>
-<h3>Test case 8</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>BioJavaFeature bioJavaFeature0 = new BioJavaFeature((Feature) null, (BioJavaEntry) null);
-<span class="nocode"><a name="2">  2: </a></span>bioJavaFeature0.getKey();
-</pre>
-<h3>Test case 9</h3>
+<h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>BioJavaFeature bioJavaFeature0 = new BioJavaFeature((Feature) null, (BioJavaEntry) null);
 <span class="nocode"><a name="2">  2: </a></span>BioJavaFeature bioJavaFeature1 = (BioJavaFeature)bioJavaFeature0.copy();
 <span class="nocode"><a name="3">  3: </a></span>long long0 = bioJavaFeature1.getNumericID();
 <span class="nocode"><a name="4">  4: </a></span>assertEquals(1L, long0);
 </pre>
-<h3>Test case 10</h3>
+<h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>BioJavaFeature bioJavaFeature0 = new BioJavaFeature((Feature) null, (BioJavaEntry) null);
 <span class="nocode"><a name="2">  2: </a></span>bioJavaFeature0.getLastBase();
 </pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BioJavaFeature bioJavaFeature0 = new BioJavaFeature((Feature) null, (BioJavaEntry) null);
+<span class="nocode"><a name="2">  2: </a></span>bioJavaFeature0.removeQualifierByName(&quot;e3iCC?8&gt;od&quot;);
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(bioJavaFeature0.isReadOnly());
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(1465);
+<span class="nocode"><a name="2">  2: </a></span>Location location0 = new Location(range0);
+<span class="nocode"><a name="3">  3: </a></span>PointLocation pointLocation0 = (PointLocation)BioJavaFeature.makeBioJavaLocation(location0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;1465&quot;, pointLocation0.toString());
+</pre>
 <h3>Test case 11</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>BioJavaFeature bioJavaFeature0 = new BioJavaFeature((Feature) null, (BioJavaEntry) null);
-<span class="nocode"><a name="2">  2: </a></span>bioJavaFeature0.setKey((Key) null);
-<span class="nocode"><a name="3">  3: </a></span>assertFalse(bioJavaFeature0.isReadOnly());
+<span class="nocode"><a name="2">  2: </a></span>Qualifier qualifier0 = new Qualifier((String) null, (String) null);
+<span class="nocode"><a name="3">  3: </a></span>bioJavaFeature0.setQualifier(qualifier0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0L, bioJavaFeature0.getNumericID());
 </pre>
 <h3>Test case 12</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>BioJavaFeature bioJavaFeature0 = new BioJavaFeature((Feature) null, (BioJavaEntry) null);
-<span class="nocode"><a name="2">  2: </a></span>bioJavaFeature0.setLocation((Location) null, (Entry) null);
-<span class="nocode"><a name="3">  3: </a></span>assertFalse(bioJavaFeature0.isReadOnly());
-</pre>
-<h3>Test case 13</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(Integer.MIN_VALUE, 321);
-<span class="nocode"><a name="2">  2: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
-<span class="nocode"><a name="3">  3: </a></span>Location location0 = new Location(rangeVector0, false);
-<span class="nocode"><a name="4">  4: </a></span>RangeLocation rangeLocation0 = (RangeLocation)BioJavaFeature.makeBioJavaLocation(location0);
-<span class="nocode"><a name="5">  5: </a></span>assertTrue(rangeLocation0.isContiguous());
-</pre>
-<h3>Test case 14</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>BioJavaFeature bioJavaFeature0 = new BioJavaFeature((Feature) null, (BioJavaEntry) null);
-<span class="nocode"><a name="2">  2: </a></span>bioJavaFeature0.setQualifier((Qualifier) null);
-<span class="nocode"><a name="3">  3: </a></span>assertFalse(bioJavaFeature0.isReadOnly());
-</pre>
-<h3>Test case 15</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>BioJavaFeature bioJavaFeature0 = new BioJavaFeature((Feature) null, (BioJavaEntry) null);
-<span class="nocode"><a name="2">  2: </a></span>bioJavaFeature0.setQualifiers((QualifierVector) null);
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(0L, bioJavaFeature0.getNumericID());
-</pre>
-<h3>Test case 16</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>BioJavaFeature bioJavaFeature0 = new BioJavaFeature((Feature) null, (BioJavaEntry) null);
 <span class="nocode"><a name="2">  2: </a></span>bioJavaFeature0.getLocation();
 </pre>
-<h3>Test case 17</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>BioJavaFeature bioJavaFeature0 = new BioJavaFeature((Feature) null, (BioJavaEntry) null);
-<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(1741);
-<span class="nocode"><a name="3">  3: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
-<span class="nocode"><a name="4">  4: </a></span>Location location0 = new Location(rangeVector0, false);
-<span class="nocode"><a name="5">  5: </a></span>bioJavaFeature0.setLocation(location0);
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(0L, bioJavaFeature0.getNumericID());
-</pre>
-<h3>Test case 18</h3>
+<h3>Test case 13</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>BioJavaFeature bioJavaFeature0 = new BioJavaFeature((Feature) null, (BioJavaEntry) null);
 <span class="nocode"><a name="2">  2: </a></span>Entry entry0 = bioJavaFeature0.getEntry();
 <span class="nocode"><a name="3">  3: </a></span>assertNull(entry0);
 </pre>
-<h3>Test case 19</h3>
+<h3>Test case 14</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>BioJavaFeature bioJavaFeature0 = new BioJavaFeature((Feature) null, (BioJavaEntry) null);
-<span class="nocode"><a name="2">  2: </a></span>Key key0 = new Key(&quot;4&gt;Rmg%75&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = new Key((String) null);
 <span class="nocode"><a name="3">  3: </a></span>bioJavaFeature0.setKey(key0);
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(8, key0.length());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0L, bioJavaFeature0.getNumericID());
 </pre>
-<h3>Test case 20</h3>
+<h3>Test case 15</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>BioJavaFeature bioJavaFeature0 = new BioJavaFeature((Feature) null, (BioJavaEntry) null);
-<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(1741);
-<span class="nocode"><a name="3">  3: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
-<span class="nocode"><a name="4">  4: </a></span>Location location0 = new Location(rangeVector0, false);
-<span class="nocode"><a name="5">  5: </a></span>bioJavaFeature0.setLocation(location0, (Entry) null);
-<span class="nocode"><a name="6">  6: </a></span>assertFalse(bioJavaFeature0.isReadOnly());
+<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(1);
+<span class="nocode"><a name="3">  3: </a></span>Location location0 = new Location(range0);
+<span class="nocode"><a name="4">  4: </a></span>bioJavaFeature0.setLocation(location0, (Entry) null);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0L, bioJavaFeature0.getNumericID());
 </pre>
-<h3>Test case 21</h3>
+<h3>Test case 16</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>BioJavaFeature bioJavaFeature0 = new BioJavaFeature((Feature) null, (BioJavaEntry) null);
-<span class="nocode"><a name="2">  2: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
-<span class="nocode"><a name="3">  3: </a></span>bioJavaFeature0.setQualifiers(qualifierVector0);
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, qualifierVector0.size());
+<span class="nocode"><a name="2">  2: </a></span>bioJavaFeature0.getQualifierByName(&quot;c$&quot;);
 </pre>
-<h3>Test case 22</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>BioJavaFeature bioJavaFeature0 = new BioJavaFeature((Feature) null, (BioJavaEntry) null);
-<span class="nocode"><a name="2">  2: </a></span>bioJavaFeature0.getQualifierByName((String) null);
-</pre>
-<h3>Test case 23</h3>
+<h3>Test case 17</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>BioJavaFeature bioJavaFeature0 = new BioJavaFeature((Feature) null, (BioJavaEntry) null);
 <span class="nocode"><a name="2">  2: </a></span>bioJavaFeature0.getQualifiers();
 </pre>
-<h3>Test case 24</h3>
+<h3>Test case 18</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>BioJavaFeature.makeBioJavaLocation((Location) null);
 </pre>
@@ -196,12 +157,12 @@ uk.ac.sanger.artemis.io.BioJavaFeature
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.io.BioJavaFeature
-<li>Size: 24
-<li>Length: 63
+<li>Size: 18
+<li>Length: 47
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.4648400786205665
-<li>BranchCoverage: 0.3466666666666667
-<li>MethodCoverage: 1.0
+<li>Coverage: 0.4231734119538998
+<li>BranchCoverage: 0.28
+<li>MethodCoverage: 0.8571428571428571
 <li>OutputCoverage: 0.1794871794871795
 </ul></div>
 </div>

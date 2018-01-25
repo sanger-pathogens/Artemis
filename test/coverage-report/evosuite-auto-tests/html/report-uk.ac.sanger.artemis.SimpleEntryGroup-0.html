@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.SimpleEntryGroup
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.SimpleEntryGroup: 0.659054012146912</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.SimpleEntryGroup: 0.6633870155044571</ul>
 <ul>
-<li>559.8780053142902 fitness evaluations, 0 generations, null statements, 65 tests.
+<li>1266.2222222222222 fitness evaluations, 0 generations, null statements, 57 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -36,72 +36,62 @@ uk.ac.sanger.artemis.SimpleEntryGroup
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>ActionController actionController0 = new ActionController();
+<span class="nocode"><a name="2">  2: </a></span>ActionController actionController0 = simpleEntryGroup0.getActionController();
 <span class="nocode"><a name="3">  3: </a></span>simpleEntryGroup0.removeEntryChangeListener(actionController0);
 <span class="nocode"><a name="4">  4: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>simpleEntryGroup0.ref();
-<span class="nocode"><a name="3">  3: </a></span>simpleEntryGroup0.createEntry();
-<span class="nocode"><a name="4">  4: </a></span>simpleEntryGroup0.unref();
+<span class="nocode"><a name="2">  2: </a></span>SimpleEntryGroup.FeatureEnumerator simpleEntryGroup_FeatureEnumerator0 = (SimpleEntryGroup.FeatureEnumerator)simpleEntryGroup0.features();
+<span class="nocode"><a name="3">  3: </a></span>simpleEntryGroup_FeatureEnumerator0.nextFeature();
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;Warning&quot;, &quot;[28N{nR!;)&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;/ ~\&quot;N2q@E+k!\&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
 <span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="4">  4: </a></span>simpleEntryGroup0.features();
+<span class="nocode"><a name="4">  4: </a></span>simpleEntryGroup0.getSequenceLength();
 <span class="nocode"><a name="5">  5: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;[SyR4&quot;, &quot;Error instantiating class. Cause: &quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="4">  4: </a></span>simpleEntryGroup0.createFeature();
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>simpleEntryGroup0.createFeature();
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;Warning&quot;, &quot;[28N{nR!;)&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="4">  4: </a></span>int int0 = simpleEntryGroup0.refCount();
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, int0);
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>int int0 = simpleEntryGroup0.refCount();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, int0);
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>ActionController actionController0 = simpleEntryGroup0.getActionController();
-<span class="nocode"><a name="3">  3: </a></span>simpleEntryGroup0.removeFeatureChangeListener(actionController0);
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="2">  2: </a></span>Entry entry0 = simpleEntryGroup0.createEntry();
+<span class="nocode"><a name="3">  3: </a></span>simpleEntryGroup0.removeFeatureChangeListener(entry0);
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>ActionController actionController0 = simpleEntryGroup0.getActionController();
-<span class="nocode"><a name="3">  3: </a></span>simpleEntryGroup0.removeEntryGroupChangeListener(actionController0);
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = Key.CDS;
+<span class="nocode"><a name="3">  3: </a></span>FeatureKeyPredicate featureKeyPredicate0 = new FeatureKeyPredicate(key0);
+<span class="nocode"><a name="4">  4: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureKeyPredicate0, &quot;Object is not in this ontology: &quot;);
+<span class="nocode"><a name="5">  5: </a></span>ActionController actionController0 = filteredEntryGroup0.getActionController();
+<span class="nocode"><a name="6">  6: </a></span>simpleEntryGroup0.removeEntryGroupChangeListener(actionController0);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, filteredEntryGroup0.refCount());
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, (FeaturePredicate) null, &quot;&quot;);
-<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = filteredEntryGroup0.createEntry();
-<span class="nocode"><a name="4">  4: </a></span>assertNotNull(entry0);
-<span class="nocode"><a name="5">  5: </a></span>
-<span class="nocode"><a name="6">  6: </a></span>simpleEntryGroup0.setIsActive(entry0, false);
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, filteredEntryGroup0.refCount());
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="2">  2: </a></span>Entry entry0 = simpleEntryGroup0.createEntry(&quot;M.ity`KBzoEEELYvL@&quot;);
+<span class="nocode"><a name="3">  3: </a></span>simpleEntryGroup0.setIsActive(entry0, false);
+<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = simpleEntryGroup0.remove(entry0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(boolean0);
 </pre>
 <h3>Test case 9</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>simpleEntryGroup0.featureChanged((FeatureChangeEvent) null);
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
-</pre>
-<h3>Test case 10</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
 <span class="nocode"><a name="2">  2: </a></span>simpleEntryGroup0.createEntry();
@@ -109,264 +99,50 @@ uk.ac.sanger.artemis.SimpleEntryGroup
 <span class="nocode"><a name="4">  4: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
 <span class="nocode"><a name="5">  5: </a></span>assertFalse(boolean0);
 </pre>
-<h3>Test case 11</h3>
+<h3>Test case 10</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="4">  4: </a></span>Entry entry0 = simpleEntryGroup0.createEntry();
-<span class="nocode"><a name="5">  5: </a></span>boolean boolean0 = simpleEntryGroup0.removeElement(entry0);
-<span class="nocode"><a name="6">  6: </a></span>assertTrue(boolean0);
-<span class="nocode"><a name="7">  7: </a></span>
-<span class="nocode"><a name="8">  8: </a></span>simpleEntryGroup0.setDefaultEntry(entry0);
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>Entry entry0 = simpleEntryGroup0.createEntry(&quot;46&quot;);
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = simpleEntryGroup0.removeElement(entry0);
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(boolean0);
+<span class="nocode"><a name="5">  5: </a></span>
+<span class="nocode"><a name="6">  6: </a></span>simpleEntryGroup0.setDefaultEntry(entry0);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
 </pre>
-<h3>Test case 12</h3>
+<h3>Test case 11</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
 <span class="nocode"><a name="2">  2: </a></span>int int0 = simpleEntryGroup0.indexOf((Feature) null);
 <span class="nocode"><a name="3">  3: </a></span>assertEquals((-1), int0);
 <span class="nocode"><a name="4">  4: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
 </pre>
-<h3>Test case 13</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>simpleEntryGroup0.createEntry((String) null);
-<span class="nocode"><a name="3">  3: </a></span>simpleEntryGroup0.indexOf((Feature) null);
-</pre>
-<h3>Test case 14</h3>
+<h3>Test case 12</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
 <span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = simpleEntryGroup0.contains((Feature) null);
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
-<span class="nocode"><a name="4">  4: </a></span>assertFalse(boolean0);
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(boolean0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
 </pre>
-<h3>Test case 15</h3>
+<h3>Test case 13</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>simpleEntryGroup0.createEntry(&quot;`a xteNU&quot;);
+<span class="nocode"><a name="2">  2: </a></span>simpleEntryGroup0.createEntry();
 <span class="nocode"><a name="3">  3: </a></span>Entry entry0 = simpleEntryGroup0.getSequenceEntry();
 <span class="nocode"><a name="4">  4: </a></span>assertNotNull(entry0);
 <span class="nocode"><a name="5">  5: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
 </pre>
-<h3>Test case 16</h3>
+<h3>Test case 14</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
 <span class="nocode"><a name="2">  2: </a></span>simpleEntryGroup0.getSequenceEntry();
 <span class="nocode"><a name="3">  3: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
 </pre>
-<h3>Test case 17</h3>
+<h3>Test case 15</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>simpleEntryGroup0.createEntry();
-<span class="nocode"><a name="3">  3: </a></span>simpleEntryGroup0.reverseComplement();
+<span class="nocode"><a name="2">  2: </a></span>simpleEntryGroup0.reverseComplement();
 </pre>
-<h3>Test case 18</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;[SyR4&quot;, &quot;Error instantiating class. Cause: &quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="4">  4: </a></span>simpleEntryGroup0.unref();
-<span class="nocode"><a name="5">  5: </a></span>assertEquals((-1), simpleEntryGroup0.refCount());
-</pre>
-<h3>Test case 19</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;Warning&quot;, &quot;[28N{nR!;)&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="4">  4: </a></span>simpleEntryGroup0.getFeaturesInIndexRange((-5), 0);
-</pre>
-<h3>Test case 20</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>simpleEntryGroup0.createEntry(&quot;:hmT}She(O&quot;);
-<span class="nocode"><a name="3">  3: </a></span>simpleEntryGroup0.featureAt(2);
-</pre>
-<h3>Test case 21</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>simpleEntryGroup0.getFeaturesInIndexRange(758, 98);
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
-</pre>
-<h3>Test case 22</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>simpleEntryGroup0.createEntry(&quot;`a xteNU&quot;);
-<span class="nocode"><a name="3">  3: </a></span>simpleEntryGroup0.getFeaturesInRange((Range) null);
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
-</pre>
-<h3>Test case 23</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>simpleEntryGroup0.createEntry();
-<span class="nocode"><a name="3">  3: </a></span>simpleEntryGroup0.getAllFeatures();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
-</pre>
-<h3>Test case 24</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>simpleEntryGroup0.createEntry(&quot;debug&quot;);
-<span class="nocode"><a name="3">  3: </a></span>int int0 = simpleEntryGroup0.getAllFeaturesCount();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, int0);
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
-</pre>
-<h3>Test case 25</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>Entry entry0 = simpleEntryGroup0.createEntry();
-<span class="nocode"><a name="3">  3: </a></span>simpleEntryGroup0.addElement(entry0);
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
-</pre>
-<h3>Test case 26</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>simpleEntryGroup0.createEntry();
-<span class="nocode"><a name="3">  3: </a></span>simpleEntryGroup0.createEntry((String) null);
-</pre>
-<h3>Test case 27</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;5r70_vJBA`&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="4">  4: </a></span>SimpleEntryGroup.FeatureEnumerator simpleEntryGroup_FeatureEnumerator0 = simpleEntryGroup0.new FeatureEnumerator();
-<span class="nocode"><a name="5">  5: </a></span>boolean boolean0 = simpleEntryGroup_FeatureEnumerator0.hasMoreFeatures();
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
-<span class="nocode"><a name="7">  7: </a></span>assertFalse(boolean0);
-</pre>
-<h3>Test case 28</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>simpleEntryGroup0.createEntry(&quot;Overlaying a GFF with a sequence onto an entry with a sequence.&quot;);
-<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup.FeatureEnumerator simpleEntryGroup_FeatureEnumerator0 = simpleEntryGroup0.new FeatureEnumerator();
-<span class="nocode"><a name="4">  4: </a></span>simpleEntryGroup_FeatureEnumerator0.hasMoreFeatures();
-<span class="nocode"><a name="5">  5: </a></span>simpleEntryGroup_FeatureEnumerator0.hasMoreFeatures();
-</pre>
-<h3>Test case 29</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>simpleEntryGroup0.createEntry(&quot;&quot;);
-<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup.FeatureEnumerator simpleEntryGroup_FeatureEnumerator0 = simpleEntryGroup0.new FeatureEnumerator();
-<span class="nocode"><a name="4">  4: </a></span>simpleEntryGroup_FeatureEnumerator0.nextFeature();
-</pre>
-<h3>Test case 30</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>SimpleEntryGroup.FeatureEnumerator simpleEntryGroup_FeatureEnumerator0 = simpleEntryGroup0.new FeatureEnumerator();
-<span class="nocode"><a name="3">  3: </a></span>simpleEntryGroup_FeatureEnumerator0.nextFeature();
-</pre>
-<h3>Test case 31</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;&quot;, &quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="4">  4: </a></span>Range range0 = new Range(1, 5);
-<span class="nocode"><a name="5">  5: </a></span>SimpleEntryGroup simpleEntryGroup1 = (SimpleEntryGroup)simpleEntryGroup0.truncate(range0);
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, simpleEntryGroup1.refCount());
-</pre>
-<h3>Test case 32</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, (FeaturePredicate) null, &quot;&quot;);
-<span class="nocode"><a name="3">  3: </a></span>simpleEntryGroup0.addEntryChangeListener(filteredEntryGroup0);
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, filteredEntryGroup0.refCount());
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
-</pre>
-<h3>Test case 33</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>Entry entry0 = simpleEntryGroup0.createEntry();
-<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = simpleEntryGroup0.remove(entry0);
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
-<span class="nocode"><a name="5">  5: </a></span>assertTrue(boolean0);
-</pre>
-<h3>Test case 34</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[3];
-<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short)4);
-<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = JLayeredPane.DEFAULT_LAYER;
-<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, (-1106), (-1106), short0, integer0);
-<span class="nocode"><a name="5">  5: </a></span>Bases bases0 = new Bases(partialSequence0);
-<span class="nocode"><a name="6">  6: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="7">  7: </a></span>simpleEntryGroup0.getSequenceLength();
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
-</pre>
-<h3>Test case 35</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>simpleEntryGroup0.getActiveEntries();
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
-</pre>
-<h3>Test case 36</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>EntryChangeEvent entryChangeEvent0 = new EntryChangeEvent(simpleEntryGroup0, (Entry) null, (-1324));
-<span class="nocode"><a name="3">  3: </a></span>simpleEntryGroup0.entryChanged(entryChangeEvent0);
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
-</pre>
-<h3>Test case 37</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;5r70_vJBA`&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="4">  4: </a></span>simpleEntryGroup0.getBases();
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
-</pre>
-<h3>Test case 38</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="4">  4: </a></span>simpleEntryGroup0.getDefaultEntry();
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
-</pre>
-<h3>Test case 39</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>ActionController actionController0 = new ActionController();
-<span class="nocode"><a name="3">  3: </a></span>simpleEntryGroup0.addFeatureChangeListener(actionController0);
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
-</pre>
-<h3>Test case 40</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>ActionController actionController0 = new ActionController();
-<span class="nocode"><a name="3">  3: </a></span>simpleEntryGroup0.addEntryGroupChangeListener(actionController0);
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
-</pre>
-<h3>Test case 41</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="4">  4: </a></span>simpleEntryGroup0.setDefaultEntry((Entry) null);
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
-</pre>
-<h3>Test case 42</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>Entry entry0 = simpleEntryGroup0.createEntry();
-<span class="nocode"><a name="3">  3: </a></span>simpleEntryGroup0.setDefaultEntry(entry0);
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
-</pre>
-<h3>Test case 43</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="4">  4: </a></span>Entry entry0 = Entry.newEntry(bases0);
-<span class="nocode"><a name="5">  5: </a></span>boolean boolean0 = simpleEntryGroup0.isActive(entry0);
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
-<span class="nocode"><a name="7">  7: </a></span>assertFalse(boolean0);
-</pre>
-<h3>Test case 44</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>Entry entry0 = simpleEntryGroup0.createEntry(&quot;last &quot;);
-<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = simpleEntryGroup0.isActive(entry0);
-<span class="nocode"><a name="4">  4: </a></span>assertTrue(boolean0);
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
-</pre>
-<h3>Test case 45</h3>
+<h3>Test case 16</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
 <span class="nocode"><a name="2">  2: </a></span>simpleEntryGroup0.createEntry();
@@ -374,131 +150,817 @@ uk.ac.sanger.artemis.SimpleEntryGroup
 <span class="nocode"><a name="4">  4: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
 <span class="nocode"><a name="5">  5: </a></span>assertFalse(boolean0);
 </pre>
+<h3>Test case 17</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>simpleEntryGroup0.unref();
+<span class="nocode"><a name="3">  3: </a></span>int int0 = simpleEntryGroup0.refCount();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-1), int0);
+</pre>
+<h3>Test case 18</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>simpleEntryGroup0.createEntry();
+<span class="nocode"><a name="3">  3: </a></span>simpleEntryGroup0.ref();
+<span class="nocode"><a name="4">  4: </a></span>simpleEntryGroup0.unref();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+</pre>
+<h3>Test case 19</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>simpleEntryGroup0.featureAt((-2872));
+</pre>
+<h3>Test case 20</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>simpleEntryGroup0.createEntry();
+<span class="nocode"><a name="3">  3: </a></span>simpleEntryGroup0.getFeaturesInIndexRange(5, 5);
+</pre>
+<h3>Test case 21</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Bases bases0 = new Bases((Sequence) null);
+<span class="nocode"><a name="2">  2: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="3">  3: </a></span>simpleEntryGroup0.getFeaturesInIndexRange(5, (-1418));
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+</pre>
+<h3>Test case 22</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>simpleEntryGroup0.createEntry();
+<span class="nocode"><a name="3">  3: </a></span>Range range0 = new Range(1167);
+<span class="nocode"><a name="4">  4: </a></span>simpleEntryGroup0.getFeaturesInRange(range0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+</pre>
+<h3>Test case 23</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>simpleEntryGroup0.createEntry(&quot;Overlaying a GFF with a sequence onto an entry with a sequence.&quot;);
+<span class="nocode"><a name="3">  3: </a></span>simpleEntryGroup0.getAllFeatures();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+</pre>
+<h3>Test case 24</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>simpleEntryGroup0.createEntry();
+<span class="nocode"><a name="3">  3: </a></span>int int0 = simpleEntryGroup0.getAllFeaturesCount();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, int0);
+</pre>
+<h3>Test case 25</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>assertNotNull(simpleEntryGroup0);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, simpleEntryGroup0.size());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="5">  5: </a></span>
+<span class="nocode"><a name="6">  6: </a></span>Key key0 = Key.CDS;
+<span class="nocode"><a name="7">  7: </a></span>assertNotNull(key0);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(&quot;CDS&quot;, key0.toString());
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(3, key0.length());
+<span class="nocode"><a name="10"> 10: </a></span>assertEquals(&quot;CDS&quot;, key0.getKeyString());
+<span class="nocode"><a name="11"> 11: </a></span>
+<span class="nocode"><a name="12"> 12: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate(key0, &quot;sP&quot;, false);
+<span class="nocode"><a name="13"> 13: </a></span>assertNotNull(featureKeyQualifierPredicate0);
+<span class="nocode"><a name="14"> 14: </a></span>assertEquals(&quot;CDS&quot;, key0.toString());
+<span class="nocode"><a name="15"> 15: </a></span>assertEquals(3, key0.length());
+<span class="nocode"><a name="16"> 16: </a></span>assertEquals(&quot;CDS&quot;, key0.getKeyString());
+<span class="nocode"><a name="17"> 17: </a></span>
+<span class="nocode"><a name="18"> 18: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureKeyQualifierPredicate0, &quot;sP&quot;);
+<span class="nocode"><a name="19"> 19: </a></span>assertNotNull(filteredEntryGroup0);
+<span class="nocode"><a name="20"> 20: </a></span>assertEquals(0, simpleEntryGroup0.size());
+<span class="nocode"><a name="21"> 21: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="22"> 22: </a></span>assertEquals(&quot;CDS&quot;, key0.toString());
+<span class="nocode"><a name="23"> 23: </a></span>assertEquals(3, key0.length());
+<span class="nocode"><a name="24"> 24: </a></span>assertEquals(&quot;CDS&quot;, key0.getKeyString());
+<span class="nocode"><a name="25"> 25: </a></span>assertEquals(0, filteredEntryGroup0.size());
+<span class="nocode"><a name="26"> 26: </a></span>assertEquals(&quot;sP&quot;, filteredEntryGroup0.getFilterName());
+<span class="nocode"><a name="27"> 27: </a></span>assertEquals(0, filteredEntryGroup0.refCount());
+<span class="nocode"><a name="28"> 28: </a></span>
+<span class="nocode"><a name="29"> 29: </a></span>Entry entry0 = filteredEntryGroup0.createEntry(&quot;Warning&quot;);
+<span class="nocode"><a name="30"> 30: </a></span>assertNotNull(entry0);
+<span class="nocode"><a name="31"> 31: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="32"> 32: </a></span>assertEquals(1, simpleEntryGroup0.size());
+<span class="nocode"><a name="33"> 33: </a></span>assertEquals(&quot;CDS&quot;, key0.toString());
+<span class="nocode"><a name="34"> 34: </a></span>assertEquals(3, key0.length());
+<span class="nocode"><a name="35"> 35: </a></span>assertEquals(&quot;CDS&quot;, key0.getKeyString());
+<span class="nocode"><a name="36"> 36: </a></span>assertEquals(1, filteredEntryGroup0.size());
+<span class="nocode"><a name="37"> 37: </a></span>assertEquals(&quot;sP&quot;, filteredEntryGroup0.getFilterName());
+<span class="nocode"><a name="38"> 38: </a></span>assertEquals(0, filteredEntryGroup0.refCount());
+<span class="nocode"><a name="39"> 39: </a></span>assertFalse(entry0.isReadOnly());
+<span class="nocode"><a name="40"> 40: </a></span>
+<span class="nocode"><a name="41"> 41: </a></span>simpleEntryGroup0.addElement(entry0);
+<span class="nocode"><a name="42"> 42: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="43"> 43: </a></span>assertEquals(1, simpleEntryGroup0.size());
+<span class="nocode"><a name="44"> 44: </a></span>assertEquals(&quot;CDS&quot;, key0.toString());
+<span class="nocode"><a name="45"> 45: </a></span>assertEquals(3, key0.length());
+<span class="nocode"><a name="46"> 46: </a></span>assertEquals(&quot;CDS&quot;, key0.getKeyString());
+<span class="nocode"><a name="47"> 47: </a></span>assertEquals(1, filteredEntryGroup0.size());
+<span class="nocode"><a name="48"> 48: </a></span>assertEquals(&quot;sP&quot;, filteredEntryGroup0.getFilterName());
+<span class="nocode"><a name="49"> 49: </a></span>assertEquals(0, filteredEntryGroup0.refCount());
+<span class="nocode"><a name="50"> 50: </a></span>assertFalse(entry0.isReadOnly());
+</pre>
+<h3>Test case 26</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>assertNotNull(simpleEntryGroup0);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, simpleEntryGroup0.size());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="5">  5: </a></span>
+<span class="nocode"><a name="6">  6: </a></span>Entry entry0 = simpleEntryGroup0.createEntry();
+<span class="nocode"><a name="7">  7: </a></span>assertNotNull(entry0);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(1, simpleEntryGroup0.size());
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="10"> 10: </a></span>assertFalse(entry0.isReadOnly());
+<span class="nocode"><a name="11"> 11: </a></span>
+<span class="nocode"><a name="12"> 12: </a></span>simpleEntryGroup0.createEntry();
+</pre>
+<h3>Test case 27</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>assertNotNull(simpleEntryGroup0);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, simpleEntryGroup0.size());
+<span class="nocode"><a name="5">  5: </a></span>
+<span class="nocode"><a name="6">  6: </a></span>Entry entry0 = simpleEntryGroup0.createEntry();
+<span class="nocode"><a name="7">  7: </a></span>assertNotNull(entry0);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(1, simpleEntryGroup0.size());
+<span class="nocode"><a name="10"> 10: </a></span>assertFalse(entry0.isReadOnly());
+<span class="nocode"><a name="11"> 11: </a></span>
+<span class="nocode"><a name="12"> 12: </a></span>SimpleEntryGroup.FeatureEnumerator simpleEntryGroup_FeatureEnumerator0 = (SimpleEntryGroup.FeatureEnumerator)simpleEntryGroup0.features();
+<span class="nocode"><a name="13"> 13: </a></span>assertNotNull(simpleEntryGroup_FeatureEnumerator0);
+<span class="nocode"><a name="14"> 14: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="15"> 15: </a></span>assertEquals(1, simpleEntryGroup0.size());
+</pre>
+<h3>Test case 28</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>assertNotNull(simpleEntryGroup0);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, simpleEntryGroup0.size());
+<span class="nocode"><a name="5">  5: </a></span>
+<span class="nocode"><a name="6">  6: </a></span>Entry entry0 = simpleEntryGroup0.createEntry();
+<span class="nocode"><a name="7">  7: </a></span>assertNotNull(entry0);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(1, simpleEntryGroup0.size());
+<span class="nocode"><a name="10"> 10: </a></span>assertFalse(entry0.isReadOnly());
+<span class="nocode"><a name="11"> 11: </a></span>
+<span class="nocode"><a name="12"> 12: </a></span>SimpleEntryGroup.FeatureEnumerator simpleEntryGroup_FeatureEnumerator0 = simpleEntryGroup0.new FeatureEnumerator();
+<span class="nocode"><a name="13"> 13: </a></span>assertNotNull(simpleEntryGroup_FeatureEnumerator0);
+<span class="nocode"><a name="14"> 14: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="15"> 15: </a></span>assertEquals(1, simpleEntryGroup0.size());
+<span class="nocode"><a name="16"> 16: </a></span>
+<span class="nocode"><a name="17"> 17: </a></span>boolean boolean0 = simpleEntryGroup_FeatureEnumerator0.hasMoreFeatures();
+<span class="nocode"><a name="18"> 18: </a></span>assertFalse(boolean0);
+<span class="nocode"><a name="19"> 19: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="20"> 20: </a></span>assertEquals(1, simpleEntryGroup0.size());
+<span class="nocode"><a name="21"> 21: </a></span>
+<span class="nocode"><a name="22"> 22: </a></span>simpleEntryGroup_FeatureEnumerator0.hasMoreFeatures();
+</pre>
+<h3>Test case 29</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>assertNotNull(simpleEntryGroup0);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, simpleEntryGroup0.size());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="5">  5: </a></span>
+<span class="nocode"><a name="6">  6: </a></span>SimpleEntryGroup.FeatureEnumerator simpleEntryGroup_FeatureEnumerator0 = simpleEntryGroup0.new FeatureEnumerator();
+<span class="nocode"><a name="7">  7: </a></span>assertNotNull(simpleEntryGroup_FeatureEnumerator0);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(0, simpleEntryGroup0.size());
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="10"> 10: </a></span>
+<span class="nocode"><a name="11"> 11: </a></span>boolean boolean0 = simpleEntryGroup_FeatureEnumerator0.hasMoreFeatures();
+<span class="nocode"><a name="12"> 12: </a></span>assertFalse(boolean0);
+<span class="nocode"><a name="13"> 13: </a></span>assertEquals(0, simpleEntryGroup0.size());
+<span class="nocode"><a name="14"> 14: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+</pre>
+<h3>Test case 30</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>assertNotNull(simpleEntryGroup0);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, simpleEntryGroup0.size());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="5">  5: </a></span>
+<span class="nocode"><a name="6">  6: </a></span>Entry entry0 = simpleEntryGroup0.createEntry();
+<span class="nocode"><a name="7">  7: </a></span>assertNotNull(entry0);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(1, simpleEntryGroup0.size());
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="10"> 10: </a></span>assertFalse(entry0.isReadOnly());
+<span class="nocode"><a name="11"> 11: </a></span>
+<span class="nocode"><a name="12"> 12: </a></span>SimpleEntryGroup.FeatureEnumerator simpleEntryGroup_FeatureEnumerator0 = simpleEntryGroup0.new FeatureEnumerator();
+<span class="nocode"><a name="13"> 13: </a></span>assertNotNull(simpleEntryGroup_FeatureEnumerator0);
+<span class="nocode"><a name="14"> 14: </a></span>assertEquals(1, simpleEntryGroup0.size());
+<span class="nocode"><a name="15"> 15: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="16"> 16: </a></span>
+<span class="nocode"><a name="17"> 17: </a></span>simpleEntryGroup_FeatureEnumerator0.nextFeature();
+</pre>
+<h3>Test case 31</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Bases bases0 = new Bases((Sequence) null);
+<span class="nocode"><a name="2">  2: </a></span>assertNotNull(bases0);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals((-5), Bases.MIN_PRIORITY);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, Bases.MEDIUM_PRIORITY);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(1, Bases.FORWARD);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(5, Bases.MAX_PRIORITY);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(2, Bases.REVERSE);
+<span class="nocode"><a name="8">  8: </a></span>
+<span class="nocode"><a name="9">  9: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="10"> 10: </a></span>assertNotNull(simpleEntryGroup0);
+<span class="nocode"><a name="11"> 11: </a></span>assertEquals((-5), Bases.MIN_PRIORITY);
+<span class="nocode"><a name="12"> 12: </a></span>assertEquals(0, Bases.MEDIUM_PRIORITY);
+<span class="nocode"><a name="13"> 13: </a></span>assertEquals(1, Bases.FORWARD);
+<span class="nocode"><a name="14"> 14: </a></span>assertEquals(5, Bases.MAX_PRIORITY);
+<span class="nocode"><a name="15"> 15: </a></span>assertEquals(2, Bases.REVERSE);
+<span class="nocode"><a name="16"> 16: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="17"> 17: </a></span>assertEquals(0, simpleEntryGroup0.size());
+<span class="nocode"><a name="18"> 18: </a></span>
+<span class="nocode"><a name="19"> 19: </a></span>simpleEntryGroup0.entryChanged((EntryChangeEvent) null);
+<span class="nocode"><a name="20"> 20: </a></span>assertEquals((-5), Bases.MIN_PRIORITY);
+<span class="nocode"><a name="21"> 21: </a></span>assertEquals(0, Bases.MEDIUM_PRIORITY);
+<span class="nocode"><a name="22"> 22: </a></span>assertEquals(1, Bases.FORWARD);
+<span class="nocode"><a name="23"> 23: </a></span>assertEquals(5, Bases.MAX_PRIORITY);
+<span class="nocode"><a name="24"> 24: </a></span>assertEquals(2, Bases.REVERSE);
+<span class="nocode"><a name="25"> 25: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="26"> 26: </a></span>assertEquals(0, simpleEntryGroup0.size());
+</pre>
+<h3>Test case 32</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>assertNotNull(simpleEntryGroup0);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, simpleEntryGroup0.size());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="5">  5: </a></span>
+<span class="nocode"><a name="6">  6: </a></span>ActionController actionController0 = simpleEntryGroup0.getActionController();
+<span class="nocode"><a name="7">  7: </a></span>assertNotNull(actionController0);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(0, simpleEntryGroup0.size());
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="10"> 10: </a></span>assertFalse(actionController0.canUndo());
+<span class="nocode"><a name="11"> 11: </a></span>
+<span class="nocode"><a name="12"> 12: </a></span>simpleEntryGroup0.addEntryChangeListener(actionController0);
+<span class="nocode"><a name="13"> 13: </a></span>assertEquals(0, simpleEntryGroup0.size());
+<span class="nocode"><a name="14"> 14: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="15"> 15: </a></span>assertFalse(actionController0.canUndo());
+</pre>
+<h3>Test case 33</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Bases bases0 = new Bases((Sequence) null);
+<span class="nocode"><a name="2">  2: </a></span>assertNotNull(bases0);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, Bases.MEDIUM_PRIORITY);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1, Bases.FORWARD);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals((-5), Bases.MIN_PRIORITY);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(5, Bases.MAX_PRIORITY);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(2, Bases.REVERSE);
+<span class="nocode"><a name="8">  8: </a></span>
+<span class="nocode"><a name="9">  9: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="10"> 10: </a></span>assertNotNull(simpleEntryGroup0);
+<span class="nocode"><a name="11"> 11: </a></span>assertEquals(0, Bases.MEDIUM_PRIORITY);
+<span class="nocode"><a name="12"> 12: </a></span>assertEquals(1, Bases.FORWARD);
+<span class="nocode"><a name="13"> 13: </a></span>assertEquals((-5), Bases.MIN_PRIORITY);
+<span class="nocode"><a name="14"> 14: </a></span>assertEquals(5, Bases.MAX_PRIORITY);
+<span class="nocode"><a name="15"> 15: </a></span>assertEquals(2, Bases.REVERSE);
+<span class="nocode"><a name="16"> 16: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="17"> 17: </a></span>assertEquals(0, simpleEntryGroup0.size());
+<span class="nocode"><a name="18"> 18: </a></span>
+<span class="nocode"><a name="19"> 19: </a></span>EntryVector entryVector0 = simpleEntryGroup0.getActiveEntries();
+<span class="nocode"><a name="20"> 20: </a></span>assertNotNull(entryVector0);
+<span class="nocode"><a name="21"> 21: </a></span>assertEquals(0, Bases.MEDIUM_PRIORITY);
+<span class="nocode"><a name="22"> 22: </a></span>assertEquals(1, Bases.FORWARD);
+<span class="nocode"><a name="23"> 23: </a></span>assertEquals((-5), Bases.MIN_PRIORITY);
+<span class="nocode"><a name="24"> 24: </a></span>assertEquals(5, Bases.MAX_PRIORITY);
+<span class="nocode"><a name="25"> 25: </a></span>assertEquals(2, Bases.REVERSE);
+<span class="nocode"><a name="26"> 26: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="27"> 27: </a></span>assertEquals(0, simpleEntryGroup0.size());
+<span class="nocode"><a name="28"> 28: </a></span>assertEquals(0, entryVector0.size());
+</pre>
+<h3>Test case 34</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>assertNotNull(simpleEntryGroup0);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, simpleEntryGroup0.size());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="5">  5: </a></span>
+<span class="nocode"><a name="6">  6: </a></span>Bases bases0 = simpleEntryGroup0.getBases();
+<span class="nocode"><a name="7">  7: </a></span>assertNull(bases0);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(0, simpleEntryGroup0.size());
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+</pre>
+<h3>Test case 35</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>assertNotNull(simpleEntryGroup0);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, simpleEntryGroup0.size());
+<span class="nocode"><a name="5">  5: </a></span>
+<span class="nocode"><a name="6">  6: </a></span>Entry entry0 = simpleEntryGroup0.getDefaultEntry();
+<span class="nocode"><a name="7">  7: </a></span>assertNull(entry0);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(0, simpleEntryGroup0.size());
+</pre>
+<h3>Test case 36</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>assertNotNull(simpleEntryGroup0);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, simpleEntryGroup0.size());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="5">  5: </a></span>
+<span class="nocode"><a name="6">  6: </a></span>FeatureVector featureVector0 = new FeatureVector();
+<span class="nocode"><a name="7">  7: </a></span>assertNotNull(featureVector0);
+<span class="nocode"><a name="8">  8: </a></span>
+<span class="nocode"><a name="9">  9: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, &quot;s;m9&gt;i\&quot;~d[m\&quot;&gt;gp&quot;);
+<span class="nocode"><a name="10"> 10: </a></span>assertNotNull(filteredEntryGroup0);
+<span class="nocode"><a name="11"> 11: </a></span>assertEquals(0, simpleEntryGroup0.size());
+<span class="nocode"><a name="12"> 12: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="13"> 13: </a></span>assertEquals(0, filteredEntryGroup0.refCount());
+<span class="nocode"><a name="14"> 14: </a></span>assertEquals(0, filteredEntryGroup0.size());
+<span class="nocode"><a name="15"> 15: </a></span>assertEquals(&quot;s;m9&gt;i\&quot;~d[m\&quot;&gt;gp&quot;, filteredEntryGroup0.getFilterName());
+<span class="nocode"><a name="16"> 16: </a></span>
+<span class="nocode"><a name="17"> 17: </a></span>Entry entry0 = filteredEntryGroup0.createEntry(&quot;s;m9&gt;i\&quot;~d[m\&quot;&gt;gp&quot;);
+<span class="nocode"><a name="18"> 18: </a></span>assertNotNull(entry0);
+<span class="nocode"><a name="19"> 19: </a></span>assertEquals(1, simpleEntryGroup0.size());
+<span class="nocode"><a name="20"> 20: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="21"> 21: </a></span>assertEquals(0, filteredEntryGroup0.refCount());
+<span class="nocode"><a name="22"> 22: </a></span>assertEquals(1, filteredEntryGroup0.size());
+<span class="nocode"><a name="23"> 23: </a></span>assertEquals(&quot;s;m9&gt;i\&quot;~d[m\&quot;&gt;gp&quot;, filteredEntryGroup0.getFilterName());
+<span class="nocode"><a name="24"> 24: </a></span>assertFalse(entry0.isReadOnly());
+<span class="nocode"><a name="25"> 25: </a></span>
+<span class="nocode"><a name="26"> 26: </a></span>simpleEntryGroup0.addFeatureChangeListener(entry0);
+<span class="nocode"><a name="27"> 27: </a></span>assertEquals(1, simpleEntryGroup0.size());
+<span class="nocode"><a name="28"> 28: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="29"> 29: </a></span>assertEquals(0, filteredEntryGroup0.refCount());
+<span class="nocode"><a name="30"> 30: </a></span>assertEquals(1, filteredEntryGroup0.size());
+<span class="nocode"><a name="31"> 31: </a></span>assertEquals(&quot;s;m9&gt;i\&quot;~d[m\&quot;&gt;gp&quot;, filteredEntryGroup0.getFilterName());
+<span class="nocode"><a name="32"> 32: </a></span>assertFalse(entry0.isReadOnly());
+</pre>
+<h3>Test case 37</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>assertNotNull(simpleEntryGroup0);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, simpleEntryGroup0.size());
+<span class="nocode"><a name="5">  5: </a></span>
+<span class="nocode"><a name="6">  6: </a></span>Selection selection0 = new Selection((Clipboard) null);
+<span class="nocode"><a name="7">  7: </a></span>assertNotNull(selection0);
+<span class="nocode"><a name="8">  8: </a></span>
+<span class="nocode"><a name="9">  9: </a></span>FeatureVector featureVector0 = selection0.getAllFeatures();
+<span class="nocode"><a name="10"> 10: </a></span>assertNotNull(featureVector0);
+<span class="nocode"><a name="11"> 11: </a></span>
+<span class="nocode"><a name="12"> 12: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, &quot;vJMxKhS{zxVtM&quot;);
+<span class="nocode"><a name="13"> 13: </a></span>assertNotNull(filteredEntryGroup0);
+<span class="nocode"><a name="14"> 14: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="15"> 15: </a></span>assertEquals(0, simpleEntryGroup0.size());
+<span class="nocode"><a name="16"> 16: </a></span>assertEquals(&quot;vJMxKhS{zxVtM&quot;, filteredEntryGroup0.getFilterName());
+<span class="nocode"><a name="17"> 17: </a></span>assertEquals(0, filteredEntryGroup0.refCount());
+<span class="nocode"><a name="18"> 18: </a></span>assertEquals(0, filteredEntryGroup0.size());
+<span class="nocode"><a name="19"> 19: </a></span>
+<span class="nocode"><a name="20"> 20: </a></span>Entry entry0 = filteredEntryGroup0.createEntry(&quot;vJMxKhS{zxVtM&quot;);
+<span class="nocode"><a name="21"> 21: </a></span>assertNotNull(entry0);
+<span class="nocode"><a name="22"> 22: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="23"> 23: </a></span>assertEquals(1, simpleEntryGroup0.size());
+<span class="nocode"><a name="24"> 24: </a></span>assertEquals(&quot;vJMxKhS{zxVtM&quot;, filteredEntryGroup0.getFilterName());
+<span class="nocode"><a name="25"> 25: </a></span>assertEquals(0, filteredEntryGroup0.refCount());
+<span class="nocode"><a name="26"> 26: </a></span>assertEquals(1, filteredEntryGroup0.size());
+<span class="nocode"><a name="27"> 27: </a></span>assertFalse(entry0.isReadOnly());
+<span class="nocode"><a name="28"> 28: </a></span>
+<span class="nocode"><a name="29"> 29: </a></span>simpleEntryGroup0.setDefaultEntry(entry0);
+<span class="nocode"><a name="30"> 30: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="31"> 31: </a></span>assertEquals(1, simpleEntryGroup0.size());
+<span class="nocode"><a name="32"> 32: </a></span>assertEquals(&quot;vJMxKhS{zxVtM&quot;, filteredEntryGroup0.getFilterName());
+<span class="nocode"><a name="33"> 33: </a></span>assertEquals(0, filteredEntryGroup0.refCount());
+<span class="nocode"><a name="34"> 34: </a></span>assertEquals(1, filteredEntryGroup0.size());
+<span class="nocode"><a name="35"> 35: </a></span>assertFalse(entry0.isReadOnly());
+</pre>
+<h3>Test case 38</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>assertNotNull(simpleEntryGroup0);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, simpleEntryGroup0.size());
+<span class="nocode"><a name="5">  5: </a></span>
+<span class="nocode"><a name="6">  6: </a></span>boolean boolean0 = simpleEntryGroup0.isActive((Entry) null);
+<span class="nocode"><a name="7">  7: </a></span>assertFalse(boolean0);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(0, simpleEntryGroup0.size());
+</pre>
+<h3>Test case 39</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>assertNotNull(simpleEntryGroup0);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, simpleEntryGroup0.size());
+<span class="nocode"><a name="5">  5: </a></span>
+<span class="nocode"><a name="6">  6: </a></span>Entry entry0 = simpleEntryGroup0.createEntry(&quot;&quot;);
+<span class="nocode"><a name="7">  7: </a></span>assertNotNull(entry0);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(1, simpleEntryGroup0.size());
+<span class="nocode"><a name="10"> 10: </a></span>assertFalse(entry0.isReadOnly());
+<span class="nocode"><a name="11"> 11: </a></span>
+<span class="nocode"><a name="12"> 12: </a></span>boolean boolean0 = simpleEntryGroup0.isActive(entry0);
+<span class="nocode"><a name="13"> 13: </a></span>assertTrue(boolean0);
+<span class="nocode"><a name="14"> 14: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="15"> 15: </a></span>assertEquals(1, simpleEntryGroup0.size());
+<span class="nocode"><a name="16"> 16: </a></span>assertFalse(entry0.isReadOnly());
+</pre>
+<h3>Test case 40</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>assertNotNull(simpleEntryGroup0);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, simpleEntryGroup0.size());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="5">  5: </a></span>
+<span class="nocode"><a name="6">  6: </a></span>simpleEntryGroup0.featureAt(2312);
+</pre>
+<h3>Test case 41</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>assertNotNull(simpleEntryGroup0);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, simpleEntryGroup0.size());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="5">  5: </a></span>
+<span class="nocode"><a name="6">  6: </a></span>Entry entry0 = simpleEntryGroup0.createEntry();
+<span class="nocode"><a name="7">  7: </a></span>assertNotNull(entry0);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(1, simpleEntryGroup0.size());
+<span class="nocode"><a name="10"> 10: </a></span>assertFalse(entry0.isReadOnly());
+<span class="nocode"><a name="11"> 11: </a></span>
+<span class="nocode"><a name="12"> 12: </a></span>boolean boolean0 = simpleEntryGroup0.remove(entry0);
+<span class="nocode"><a name="13"> 13: </a></span>assertTrue(boolean0);
+<span class="nocode"><a name="14"> 14: </a></span>assertEquals(0, simpleEntryGroup0.size());
+<span class="nocode"><a name="15"> 15: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="16"> 16: </a></span>assertFalse(entry0.isReadOnly());
+<span class="nocode"><a name="17"> 17: </a></span>
+<span class="nocode"><a name="18"> 18: </a></span>simpleEntryGroup0.addElement(entry0);
+<span class="nocode"><a name="19"> 19: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="20"> 20: </a></span>assertEquals(1, simpleEntryGroup0.size());
+<span class="nocode"><a name="21"> 21: </a></span>assertFalse(entry0.isReadOnly());
+</pre>
+<h3>Test case 42</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>assertNotNull(simpleEntryGroup0);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, simpleEntryGroup0.size());
+<span class="nocode"><a name="5">  5: </a></span>
+<span class="nocode"><a name="6">  6: </a></span>Key key0 = new Key(&quot;q7,L9'\&quot;uf?S/X?TG'&quot;);
+<span class="nocode"><a name="7">  7: </a></span>assertNotNull(key0);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(&quot;q7,L9'\&quot;uf?S/X?TG'&quot;, key0.toString());
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(17, key0.length());
+<span class="nocode"><a name="10"> 10: </a></span>assertEquals(&quot;q7,L9'\&quot;uf?S/X?TG'&quot;, key0.getKeyString());
+<span class="nocode"><a name="11"> 11: </a></span>
+<span class="nocode"><a name="12"> 12: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate(key0, &quot;q7,L9'\&quot;uf?S/X?TG'&quot;);
+<span class="nocode"><a name="13"> 13: </a></span>assertNotNull(featureKeyQualifierPredicate0);
+<span class="nocode"><a name="14"> 14: </a></span>assertEquals(&quot;q7,L9'\&quot;uf?S/X?TG'&quot;, key0.toString());
+<span class="nocode"><a name="15"> 15: </a></span>assertEquals(17, key0.length());
+<span class="nocode"><a name="16"> 16: </a></span>assertEquals(&quot;q7,L9'\&quot;uf?S/X?TG'&quot;, key0.getKeyString());
+<span class="nocode"><a name="17"> 17: </a></span>
+<span class="nocode"><a name="18"> 18: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureKeyQualifierPredicate0, &quot;%]cF-42!!i&quot;);
+<span class="nocode"><a name="19"> 19: </a></span>assertNotNull(filteredEntryGroup0);
+<span class="nocode"><a name="20"> 20: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="21"> 21: </a></span>assertEquals(0, simpleEntryGroup0.size());
+<span class="nocode"><a name="22"> 22: </a></span>assertEquals(&quot;q7,L9'\&quot;uf?S/X?TG'&quot;, key0.toString());
+<span class="nocode"><a name="23"> 23: </a></span>assertEquals(17, key0.length());
+<span class="nocode"><a name="24"> 24: </a></span>assertEquals(&quot;q7,L9'\&quot;uf?S/X?TG'&quot;, key0.getKeyString());
+<span class="nocode"><a name="25"> 25: </a></span>assertEquals(0, filteredEntryGroup0.size());
+<span class="nocode"><a name="26"> 26: </a></span>assertEquals(0, filteredEntryGroup0.refCount());
+<span class="nocode"><a name="27"> 27: </a></span>assertEquals(&quot;%]cF-42!!i&quot;, filteredEntryGroup0.getFilterName());
+<span class="nocode"><a name="28"> 28: </a></span>
+<span class="nocode"><a name="29"> 29: </a></span>Entry entry0 = filteredEntryGroup0.createEntry(&quot;Cannot apply changes: &quot;);
+<span class="nocode"><a name="30"> 30: </a></span>assertNotNull(entry0);
+<span class="nocode"><a name="31"> 31: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="32"> 32: </a></span>assertEquals(1, simpleEntryGroup0.size());
+<span class="nocode"><a name="33"> 33: </a></span>assertEquals(&quot;q7,L9'\&quot;uf?S/X?TG'&quot;, key0.toString());
+<span class="nocode"><a name="34"> 34: </a></span>assertEquals(17, key0.length());
+<span class="nocode"><a name="35"> 35: </a></span>assertEquals(&quot;q7,L9'\&quot;uf?S/X?TG'&quot;, key0.getKeyString());
+<span class="nocode"><a name="36"> 36: </a></span>assertEquals(1, filteredEntryGroup0.size());
+<span class="nocode"><a name="37"> 37: </a></span>assertEquals(0, filteredEntryGroup0.refCount());
+<span class="nocode"><a name="38"> 38: </a></span>assertEquals(&quot;%]cF-42!!i&quot;, filteredEntryGroup0.getFilterName());
+<span class="nocode"><a name="39"> 39: </a></span>assertFalse(entry0.isReadOnly());
+<span class="nocode"><a name="40"> 40: </a></span>
+<span class="nocode"><a name="41"> 41: </a></span>simpleEntryGroup0.add(entry0);
+<span class="nocode"><a name="42"> 42: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="43"> 43: </a></span>assertEquals(1, simpleEntryGroup0.size());
+<span class="nocode"><a name="44"> 44: </a></span>assertEquals(&quot;q7,L9'\&quot;uf?S/X?TG'&quot;, key0.toString());
+<span class="nocode"><a name="45"> 45: </a></span>assertEquals(17, key0.length());
+<span class="nocode"><a name="46"> 46: </a></span>assertEquals(&quot;q7,L9'\&quot;uf?S/X?TG'&quot;, key0.getKeyString());
+<span class="nocode"><a name="47"> 47: </a></span>assertEquals(1, filteredEntryGroup0.size());
+<span class="nocode"><a name="48"> 48: </a></span>assertEquals(0, filteredEntryGroup0.refCount());
+<span class="nocode"><a name="49"> 49: </a></span>assertEquals(&quot;%]cF-42!!i&quot;, filteredEntryGroup0.getFilterName());
+<span class="nocode"><a name="50"> 50: </a></span>assertFalse(entry0.isReadOnly());
+</pre>
+<h3>Test case 43</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup((Bases) null);
+</pre>
+<h3>Test case 44</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>assertNotNull(simpleEntryGroup0);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, simpleEntryGroup0.size());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="5">  5: </a></span>
+<span class="nocode"><a name="6">  6: </a></span>simpleEntryGroup0.add((Entry) null);
+</pre>
+<h3>Test case 45</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>assertNotNull(simpleEntryGroup0);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, simpleEntryGroup0.size());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="5">  5: </a></span>
+<span class="nocode"><a name="6">  6: </a></span>simpleEntryGroup0.addElement((Entry) null);
+</pre>
 <h3>Test case 46</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>simpleEntryGroup0.featureAt((-538));
+<span class="nocode"><a name="2">  2: </a></span>assertNotNull(simpleEntryGroup0);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, simpleEntryGroup0.size());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="5">  5: </a></span>
+<span class="nocode"><a name="6">  6: </a></span>Entry entry0 = simpleEntryGroup0.createEntry(&quot;Warning&quot;);
+<span class="nocode"><a name="7">  7: </a></span>assertNotNull(entry0);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(1, simpleEntryGroup0.size());
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="10"> 10: </a></span>assertFalse(entry0.isReadOnly());
+<span class="nocode"><a name="11"> 11: </a></span>
+<span class="nocode"><a name="12"> 12: </a></span>simpleEntryGroup0.createEntry(&quot;Overlaying a GFF with a sequence onto an entry with a sequence.&quot;);
 </pre>
 <h3>Test case 47</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>simpleEntryGroup0.addElement((Entry) null);
+<span class="nocode"><a name="2">  2: </a></span>assertNotNull(simpleEntryGroup0);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, simpleEntryGroup0.size());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="5">  5: </a></span>
+<span class="nocode"><a name="6">  6: </a></span>Key key0 = Key.CDS;
+<span class="nocode"><a name="7">  7: </a></span>assertNotNull(key0);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(&quot;CDS&quot;, key0.getKeyString());
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(3, key0.length());
+<span class="nocode"><a name="10"> 10: </a></span>assertEquals(&quot;CDS&quot;, key0.toString());
+<span class="nocode"><a name="11"> 11: </a></span>
+<span class="nocode"><a name="12"> 12: </a></span>FeatureKeyPredicate featureKeyPredicate0 = new FeatureKeyPredicate(key0);
+<span class="nocode"><a name="13"> 13: </a></span>assertNotNull(featureKeyPredicate0);
+<span class="nocode"><a name="14"> 14: </a></span>assertEquals(&quot;CDS&quot;, key0.getKeyString());
+<span class="nocode"><a name="15"> 15: </a></span>assertEquals(3, key0.length());
+<span class="nocode"><a name="16"> 16: </a></span>assertEquals(&quot;CDS&quot;, key0.toString());
+<span class="nocode"><a name="17"> 17: </a></span>
+<span class="nocode"><a name="18"> 18: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureKeyPredicate0, &quot;Object is not in this ontology: &quot;);
+<span class="nocode"><a name="19"> 19: </a></span>assertNotNull(filteredEntryGroup0);
+<span class="nocode"><a name="20"> 20: </a></span>assertEquals(0, simpleEntryGroup0.size());
+<span class="nocode"><a name="21"> 21: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="22"> 22: </a></span>assertEquals(&quot;CDS&quot;, key0.getKeyString());
+<span class="nocode"><a name="23"> 23: </a></span>assertEquals(3, key0.length());
+<span class="nocode"><a name="24"> 24: </a></span>assertEquals(&quot;CDS&quot;, key0.toString());
+<span class="nocode"><a name="25"> 25: </a></span>assertEquals(&quot;Object is not in this ontology: &quot;, filteredEntryGroup0.getFilterName());
+<span class="nocode"><a name="26"> 26: </a></span>assertEquals(0, filteredEntryGroup0.size());
+<span class="nocode"><a name="27"> 27: </a></span>assertEquals(0, filteredEntryGroup0.refCount());
+<span class="nocode"><a name="28"> 28: </a></span>
+<span class="nocode"><a name="29"> 29: </a></span>simpleEntryGroup0.entryChanged((EntryChangeEvent) null);
 </pre>
 <h3>Test case 48</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>Entry entry0 = simpleEntryGroup0.createEntry(&quot;&quot;);
-<span class="nocode"><a name="3">  3: </a></span>simpleEntryGroup0.add(entry0);
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="2">  2: </a></span>assertNotNull(simpleEntryGroup0);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, simpleEntryGroup0.size());
+<span class="nocode"><a name="5">  5: </a></span>
+<span class="nocode"><a name="6">  6: </a></span>simpleEntryGroup0.getSequenceLength();
 </pre>
 <h3>Test case 49</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>simpleEntryGroup0.createEntry(&quot;DTRiu{6G3n!St/oaNc&quot;);
-<span class="nocode"><a name="3">  3: </a></span>simpleEntryGroup0.createEntry();
+<span class="nocode"><a name="2">  2: </a></span>assertNotNull(simpleEntryGroup0);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, simpleEntryGroup0.size());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="5">  5: </a></span>
+<span class="nocode"><a name="6">  6: </a></span>simpleEntryGroup0.removeElement((Entry) null);
 </pre>
 <h3>Test case 50</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup((Bases) null);
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>assertNotNull(simpleEntryGroup0);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, simpleEntryGroup0.size());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="5">  5: </a></span>
+<span class="nocode"><a name="6">  6: </a></span>simpleEntryGroup0.setIsActive(2312, true);
 </pre>
 <h3>Test case 51</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>simpleEntryGroup0.add((Entry) null);
+<span class="nocode"><a name="2">  2: </a></span>assertNotNull(simpleEntryGroup0);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, simpleEntryGroup0.size());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="5">  5: </a></span>
+<span class="nocode"><a name="6">  6: </a></span>simpleEntryGroup0.setIsActive((Entry) null, false);
 </pre>
 <h3>Test case 52</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>simpleEntryGroup0.getSequenceLength();
+<span class="nocode"><a name="2">  2: </a></span>assertNotNull(simpleEntryGroup0);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, simpleEntryGroup0.size());
+<span class="nocode"><a name="5">  5: </a></span>
+<span class="nocode"><a name="6">  6: </a></span>Range range0 = new Range((-2561));
+<span class="nocode"><a name="7">  7: </a></span>assertNotNull(range0);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(1, range0.getCount());
+<span class="nocode"><a name="9">  9: </a></span>assertEquals((-2561), range0.getStart());
+<span class="nocode"><a name="10"> 10: </a></span>assertEquals((-2561), range0.getEnd());
+<span class="nocode"><a name="11"> 11: </a></span>
+<span class="nocode"><a name="12"> 12: </a></span>simpleEntryGroup0.truncate(range0);
 </pre>
 <h3>Test case 53</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>simpleEntryGroup0.remove((Entry) null);
+<span class="nocode"><a name="2">  2: </a></span>assertNotNull(simpleEntryGroup0);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, simpleEntryGroup0.size());
+<span class="nocode"><a name="5">  5: </a></span>
+<span class="nocode"><a name="6">  6: </a></span>simpleEntryGroup0.ref();
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(1, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(0, simpleEntryGroup0.size());
+<span class="nocode"><a name="9">  9: </a></span>
+<span class="nocode"><a name="10"> 10: </a></span>simpleEntryGroup0.addEntryGroupChangeListener((EntryGroupChangeListener) null);
+<span class="nocode"><a name="11"> 11: </a></span>assertEquals(1, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="12"> 12: </a></span>assertEquals(0, simpleEntryGroup0.size());
+<span class="nocode"><a name="13"> 13: </a></span>
+<span class="nocode"><a name="14"> 14: </a></span>simpleEntryGroup0.unref();
 </pre>
 <h3>Test case 54</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>simpleEntryGroup0.removeElement((Entry) null);
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;5_3Xe&lt;vy\&quot;?Ro)bhS&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertNotNull(emblStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, emblStreamSequence0.getACount());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1, emblStreamSequence0.getFormatType());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, emblStreamSequence0.getCCount());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, emblStreamSequence0.getTCount());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(16, emblStreamSequence0.getOtherCount());
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(16, emblStreamSequence0.length());
+<span class="nocode"><a name="9">  9: </a></span>assertNull(emblStreamSequence0.getHeader());
+<span class="nocode"><a name="10"> 10: </a></span>assertEquals(0, emblStreamSequence0.getGCount());
+<span class="nocode"><a name="11"> 11: </a></span>
+<span class="nocode"><a name="12"> 12: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(emblStreamSequence0);
+<span class="nocode"><a name="13"> 13: </a></span>assertNotNull(rawStreamSequence0);
+<span class="nocode"><a name="14"> 14: </a></span>assertEquals(0, emblStreamSequence0.getACount());
+<span class="nocode"><a name="15"> 15: </a></span>assertEquals(1, emblStreamSequence0.getFormatType());
+<span class="nocode"><a name="16"> 16: </a></span>assertEquals(0, emblStreamSequence0.getCCount());
+<span class="nocode"><a name="17"> 17: </a></span>assertEquals(0, emblStreamSequence0.getTCount());
+<span class="nocode"><a name="18"> 18: </a></span>assertEquals(16, emblStreamSequence0.getOtherCount());
+<span class="nocode"><a name="19"> 19: </a></span>assertEquals(16, emblStreamSequence0.length());
+<span class="nocode"><a name="20"> 20: </a></span>assertNull(emblStreamSequence0.getHeader());
+<span class="nocode"><a name="21"> 21: </a></span>assertEquals(0, emblStreamSequence0.getGCount());
+<span class="nocode"><a name="22"> 22: </a></span>assertEquals(3, rawStreamSequence0.getFormatType());
+<span class="nocode"><a name="23"> 23: </a></span>assertEquals(0, rawStreamSequence0.getGCount());
+<span class="nocode"><a name="24"> 24: </a></span>assertEquals(16, rawStreamSequence0.getOtherCount());
+<span class="nocode"><a name="25"> 25: </a></span>assertEquals(0, rawStreamSequence0.getCCount());
+<span class="nocode"><a name="26"> 26: </a></span>assertEquals(0, rawStreamSequence0.getTCount());
+<span class="nocode"><a name="27"> 27: </a></span>assertEquals(16, rawStreamSequence0.length());
+<span class="nocode"><a name="28"> 28: </a></span>assertEquals(0, rawStreamSequence0.getACount());
+<span class="nocode"><a name="29"> 29: </a></span>
+<span class="nocode"><a name="30"> 30: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="31"> 31: </a></span>assertNotNull(bases0);
+<span class="nocode"><a name="32"> 32: </a></span>assertEquals((-5), Bases.MIN_PRIORITY);
+<span class="nocode"><a name="33"> 33: </a></span>assertEquals(0, Bases.MEDIUM_PRIORITY);
+<span class="nocode"><a name="34"> 34: </a></span>assertEquals(5, Bases.MAX_PRIORITY);
+<span class="nocode"><a name="35"> 35: </a></span>assertEquals(1, Bases.FORWARD);
+<span class="nocode"><a name="36"> 36: </a></span>assertEquals(2, Bases.REVERSE);
+<span class="nocode"><a name="37"> 37: </a></span>assertEquals(0, emblStreamSequence0.getACount());
+<span class="nocode"><a name="38"> 38: </a></span>assertEquals(1, emblStreamSequence0.getFormatType());
+<span class="nocode"><a name="39"> 39: </a></span>assertEquals(0, emblStreamSequence0.getCCount());
+<span class="nocode"><a name="40"> 40: </a></span>assertEquals(0, emblStreamSequence0.getTCount());
+<span class="nocode"><a name="41"> 41: </a></span>assertEquals(16, emblStreamSequence0.getOtherCount());
+<span class="nocode"><a name="42"> 42: </a></span>assertEquals(16, emblStreamSequence0.length());
+<span class="nocode"><a name="43"> 43: </a></span>assertNull(emblStreamSequence0.getHeader());
+<span class="nocode"><a name="44"> 44: </a></span>assertEquals(0, emblStreamSequence0.getGCount());
+<span class="nocode"><a name="45"> 45: </a></span>assertEquals(3, rawStreamSequence0.getFormatType());
+<span class="nocode"><a name="46"> 46: </a></span>assertEquals(0, rawStreamSequence0.getGCount());
+<span class="nocode"><a name="47"> 47: </a></span>assertEquals(16, rawStreamSequence0.getOtherCount());
+<span class="nocode"><a name="48"> 48: </a></span>assertEquals(0, rawStreamSequence0.getCCount());
+<span class="nocode"><a name="49"> 49: </a></span>assertEquals(0, rawStreamSequence0.getTCount());
+<span class="nocode"><a name="50"> 50: </a></span>assertEquals(16, rawStreamSequence0.length());
+<span class="nocode"><a name="51"> 51: </a></span>assertEquals(0, rawStreamSequence0.getACount());
+<span class="nocode"><a name="52"> 52: </a></span>assertEquals(16, bases0.getLength());
+<span class="nocode"><a name="53"> 53: </a></span>
+<span class="nocode"><a name="54"> 54: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="55"> 55: </a></span>assertNotNull(simpleEntryGroup0);
+<span class="nocode"><a name="56"> 56: </a></span>assertEquals((-5), Bases.MIN_PRIORITY);
+<span class="nocode"><a name="57"> 57: </a></span>assertEquals(0, Bases.MEDIUM_PRIORITY);
+<span class="nocode"><a name="58"> 58: </a></span>assertEquals(5, Bases.MAX_PRIORITY);
+<span class="nocode"><a name="59"> 59: </a></span>assertEquals(1, Bases.FORWARD);
+<span class="nocode"><a name="60"> 60: </a></span>assertEquals(2, Bases.REVERSE);
+<span class="nocode"><a name="61"> 61: </a></span>assertEquals(0, emblStreamSequence0.getACount());
+<span class="nocode"><a name="62"> 62: </a></span>assertEquals(1, emblStreamSequence0.getFormatType());
+<span class="nocode"><a name="63"> 63: </a></span>assertEquals(0, emblStreamSequence0.getCCount());
+<span class="nocode"><a name="64"> 64: </a></span>assertEquals(0, emblStreamSequence0.getTCount());
+<span class="nocode"><a name="65"> 65: </a></span>assertEquals(16, emblStreamSequence0.getOtherCount());
+<span class="nocode"><a name="66"> 66: </a></span>assertEquals(16, emblStreamSequence0.length());
+<span class="nocode"><a name="67"> 67: </a></span>assertNull(emblStreamSequence0.getHeader());
+<span class="nocode"><a name="68"> 68: </a></span>assertEquals(0, emblStreamSequence0.getGCount());
+<span class="nocode"><a name="69"> 69: </a></span>assertEquals(3, rawStreamSequence0.getFormatType());
+<span class="nocode"><a name="70"> 70: </a></span>assertEquals(0, rawStreamSequence0.getGCount());
+<span class="nocode"><a name="71"> 71: </a></span>assertEquals(16, rawStreamSequence0.getOtherCount());
+<span class="nocode"><a name="72"> 72: </a></span>assertEquals(0, rawStreamSequence0.getCCount());
+<span class="nocode"><a name="73"> 73: </a></span>assertEquals(0, rawStreamSequence0.getTCount());
+<span class="nocode"><a name="74"> 74: </a></span>assertEquals(16, rawStreamSequence0.length());
+<span class="nocode"><a name="75"> 75: </a></span>assertEquals(0, rawStreamSequence0.getACount());
+<span class="nocode"><a name="76"> 76: </a></span>assertEquals(16, bases0.getLength());
+<span class="nocode"><a name="77"> 77: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="78"> 78: </a></span>assertEquals(16, simpleEntryGroup0.getSequenceLength());
+<span class="nocode"><a name="79"> 79: </a></span>assertEquals(0, simpleEntryGroup0.size());
+<span class="nocode"><a name="80"> 80: </a></span>
+<span class="nocode"><a name="81"> 81: </a></span>Entry entry0 = simpleEntryGroup0.createEntry();
+<span class="nocode"><a name="82"> 82: </a></span>assertNotNull(entry0);
+<span class="nocode"><a name="83"> 83: </a></span>assertEquals((-5), Bases.MIN_PRIORITY);
+<span class="nocode"><a name="84"> 84: </a></span>assertEquals(0, Bases.MEDIUM_PRIORITY);
+<span class="nocode"><a name="85"> 85: </a></span>assertEquals(5, Bases.MAX_PRIORITY);
+<span class="nocode"><a name="86"> 86: </a></span>assertEquals(1, Bases.FORWARD);
+<span class="nocode"><a name="87"> 87: </a></span>assertEquals(2, Bases.REVERSE);
+<span class="nocode"><a name="88"> 88: </a></span>assertEquals(0, emblStreamSequence0.getACount());
+<span class="nocode"><a name="89"> 89: </a></span>assertEquals(1, emblStreamSequence0.getFormatType());
+<span class="nocode"><a name="90"> 90: </a></span>assertEquals(0, emblStreamSequence0.getCCount());
+<span class="nocode"><a name="91"> 91: </a></span>assertEquals(0, emblStreamSequence0.getTCount());
+<span class="nocode"><a name="92"> 92: </a></span>assertEquals(16, emblStreamSequence0.getOtherCount());
+<span class="nocode"><a name="93"> 93: </a></span>assertEquals(16, emblStreamSequence0.length());
+<span class="nocode"><a name="94"> 94: </a></span>assertNull(emblStreamSequence0.getHeader());
+<span class="nocode"><a name="95"> 95: </a></span>assertEquals(0, emblStreamSequence0.getGCount());
+<span class="nocode"><a name="96"> 96: </a></span>assertEquals(3, rawStreamSequence0.getFormatType());
+<span class="nocode"><a name="97"> 97: </a></span>assertEquals(0, rawStreamSequence0.getGCount());
+<span class="nocode"><a name="98"> 98: </a></span>assertEquals(16, rawStreamSequence0.getOtherCount());
+<span class="nocode"><a name="99"> 99: </a></span>assertEquals(0, rawStreamSequence0.getCCount());
+<span class="nocode"><a name="100">100: </a></span>assertEquals(0, rawStreamSequence0.getTCount());
+<span class="nocode"><a name="101">101: </a></span>assertEquals(16, rawStreamSequence0.length());
+<span class="nocode"><a name="102">102: </a></span>assertEquals(0, rawStreamSequence0.getACount());
+<span class="nocode"><a name="103">103: </a></span>assertEquals(16, bases0.getLength());
+<span class="nocode"><a name="104">104: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="105">105: </a></span>assertEquals(1, simpleEntryGroup0.size());
+<span class="nocode"><a name="106">106: </a></span>assertEquals(16, simpleEntryGroup0.getSequenceLength());
+<span class="nocode"><a name="107">107: </a></span>assertFalse(entry0.isReadOnly());
+<span class="nocode"><a name="108">108: </a></span>
+<span class="nocode"><a name="109">109: </a></span>Entry entry1 = simpleEntryGroup0.getDefaultEntry();
+<span class="nocode"><a name="110">110: </a></span>assertNotNull(entry1);
+<span class="nocode"><a name="111">111: </a></span>assertEquals((-5), Bases.MIN_PRIORITY);
+<span class="nocode"><a name="112">112: </a></span>assertEquals(0, Bases.MEDIUM_PRIORITY);
+<span class="nocode"><a name="113">113: </a></span>assertEquals(5, Bases.MAX_PRIORITY);
+<span class="nocode"><a name="114">114: </a></span>assertEquals(1, Bases.FORWARD);
+<span class="nocode"><a name="115">115: </a></span>assertEquals(2, Bases.REVERSE);
+<span class="nocode"><a name="116">116: </a></span>assertSame(entry1, entry0);
+<span class="nocode"><a name="117">117: </a></span>assertEquals(0, emblStreamSequence0.getACount());
+<span class="nocode"><a name="118">118: </a></span>assertEquals(1, emblStreamSequence0.getFormatType());
+<span class="nocode"><a name="119">119: </a></span>assertEquals(0, emblStreamSequence0.getCCount());
+<span class="nocode"><a name="120">120: </a></span>assertEquals(0, emblStreamSequence0.getTCount());
+<span class="nocode"><a name="121">121: </a></span>assertEquals(16, emblStreamSequence0.getOtherCount());
+<span class="nocode"><a name="122">122: </a></span>assertEquals(16, emblStreamSequence0.length());
+<span class="nocode"><a name="123">123: </a></span>assertNull(emblStreamSequence0.getHeader());
+<span class="nocode"><a name="124">124: </a></span>assertEquals(0, emblStreamSequence0.getGCount());
+<span class="nocode"><a name="125">125: </a></span>assertEquals(3, rawStreamSequence0.getFormatType());
+<span class="nocode"><a name="126">126: </a></span>assertEquals(0, rawStreamSequence0.getGCount());
+<span class="nocode"><a name="127">127: </a></span>assertEquals(16, rawStreamSequence0.getOtherCount());
+<span class="nocode"><a name="128">128: </a></span>assertEquals(0, rawStreamSequence0.getCCount());
+<span class="nocode"><a name="129">129: </a></span>assertEquals(0, rawStreamSequence0.getTCount());
+<span class="nocode"><a name="130">130: </a></span>assertEquals(16, rawStreamSequence0.length());
+<span class="nocode"><a name="131">131: </a></span>assertEquals(0, rawStreamSequence0.getACount());
+<span class="nocode"><a name="132">132: </a></span>assertEquals(16, bases0.getLength());
+<span class="nocode"><a name="133">133: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="134">134: </a></span>assertEquals(1, simpleEntryGroup0.size());
+<span class="nocode"><a name="135">135: </a></span>assertEquals(16, simpleEntryGroup0.getSequenceLength());
+<span class="nocode"><a name="136">136: </a></span>assertFalse(entry1.isReadOnly());
 </pre>
 <h3>Test case 55</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="4">  4: </a></span>simpleEntryGroup0.setIsActive(2, false);
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>assertNotNull(simpleEntryGroup0);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, simpleEntryGroup0.size());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="5">  5: </a></span>
+<span class="nocode"><a name="6">  6: </a></span>simpleEntryGroup0.ref();
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, simpleEntryGroup0.size());
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(1, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="9">  9: </a></span>
+<span class="nocode"><a name="10"> 10: </a></span>int int0 = simpleEntryGroup0.refCount();
+<span class="nocode"><a name="11"> 11: </a></span>assertEquals(1, int0);
+<span class="nocode"><a name="12"> 12: </a></span>assertEquals(0, simpleEntryGroup0.size());
+<span class="nocode"><a name="13"> 13: </a></span>assertEquals(1, simpleEntryGroup0.refCount());
 </pre>
 <h3>Test case 56</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>simpleEntryGroup0.setIsActive((Entry) null, false);
+<span class="nocode"><a name="2">  2: </a></span>assertNotNull(simpleEntryGroup0);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, simpleEntryGroup0.size());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="5">  5: </a></span>
+<span class="nocode"><a name="6">  6: </a></span>Entry entry0 = simpleEntryGroup0.createEntry();
+<span class="nocode"><a name="7">  7: </a></span>assertNotNull(entry0);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(1, simpleEntryGroup0.size());
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
+<span class="nocode"><a name="10"> 10: </a></span>assertFalse(entry0.isReadOnly());
+<span class="nocode"><a name="11"> 11: </a></span>
+<span class="nocode"><a name="12"> 12: </a></span>simpleEntryGroup0.getFeaturesInIndexRange(0, 0);
 </pre>
 <h3>Test case 57</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[3];
-<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short)4);
-<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = JLayeredPane.DEFAULT_LAYER;
-<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, (-1106), (-1106), short0, integer0);
-<span class="nocode"><a name="5">  5: </a></span>Bases bases0 = new Bases(partialSequence0);
-<span class="nocode"><a name="6">  6: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="7">  7: </a></span>simpleEntryGroup0.truncate((Range) null);
-</pre>
-<h3>Test case 58</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;[SyR4&quot;, &quot;Error instantiating class. Cause: &quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="4">  4: </a></span>simpleEntryGroup0.createEntry(&quot;BxQQVG&quot;);
-<span class="nocode"><a name="5">  5: </a></span>simpleEntryGroup0.createFeature();
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
-</pre>
-<h3>Test case 59</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>simpleEntryGroup0.createEntry(&quot;cannot set qualifiers&quot;);
-<span class="nocode"><a name="3">  3: </a></span>simpleEntryGroup0.getActiveEntries();
+<span class="nocode"><a name="2">  2: </a></span>assertNotNull(simpleEntryGroup0);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, simpleEntryGroup0.size());
 <span class="nocode"><a name="4">  4: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
-</pre>
-<h3>Test case 60</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="4">  4: </a></span>simpleEntryGroup0.getBases();
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
-</pre>
-<h3>Test case 61</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>simpleEntryGroup0.getBases();
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
-</pre>
-<h3>Test case 62</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>simpleEntryGroup0.createEntry();
-<span class="nocode"><a name="3">  3: </a></span>simpleEntryGroup0.getDefaultEntry();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, simpleEntryGroup0.refCount());
-</pre>
-<h3>Test case 63</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;Warning&quot;, &quot;[28N{nR!;)&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
-<span class="nocode"><a name="4">  4: </a></span>simpleEntryGroup0.ref();
-<span class="nocode"><a name="5">  5: </a></span>int int0 = simpleEntryGroup0.refCount();
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(1, int0);
-</pre>
-<h3>Test case 64</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>simpleEntryGroup0.createEntry();
-<span class="nocode"><a name="3">  3: </a></span>simpleEntryGroup0.featureAt(0);
-</pre>
-<h3>Test case 65</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>simpleEntryGroup0.getFeaturesInIndexRange(1074, 1074);
+<span class="nocode"><a name="5">  5: </a></span>
+<span class="nocode"><a name="6">  6: </a></span>simpleEntryGroup0.getFeaturesInIndexRange((-481), 0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -511,13 +973,13 @@ uk.ac.sanger.artemis.SimpleEntryGroup
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.SimpleEntryGroup
-<li>Size: 65
-<li>Length: 214
+<li>Size: 57
+<li>Length: 180
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.659054012146912
-<li>BranchCoverage: 0.5878787878787879
-<li>MethodCoverage: 1.0
-<li>OutputCoverage: 0.4507042253521127
+<li>Coverage: 0.6633870155044571
+<li>BranchCoverage: 0.5696969696969697
+<li>MethodCoverage: 0.9777777777777777
+<li>OutputCoverage: 0.36619718309859156
 </ul></div>
 </div>
 <p><br><a href="../report-generation.html">Back to Overview</a></p>

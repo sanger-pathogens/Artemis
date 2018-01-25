@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.components.QualifierEditor
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.components.QualifierEditor: 0.4893675753883643</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.components.QualifierEditor: 0.43294052695705143</ul>
 <ul>
-<li>344.298613998614 fitness evaluations, 0 generations, null statements, 4 tests.
+<li>406.326139088729 fitness evaluations, 0 generations, null statements, 2 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,36 +35,15 @@ uk.ac.sanger.artemis.components.QualifierEditor
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>FeatureVector featureVector0 = new FeatureVector();
+<span class="nocode"><a name="1">  1: </a></span>FeatureVector featureVector0 = new FeatureVector();
+<span class="nocode"><a name="2">  2: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
 <span class="nocode"><a name="3">  3: </a></span>QualifierEditor qualifierEditor0 = new QualifierEditor(featureVector0, simpleEntryGroup0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>FeatureVector featureVector0 = new FeatureVector();
-<span class="nocode"><a name="3">  3: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature();
-<span class="nocode"><a name="4">  4: </a></span>GFFStreamFeature gFFStreamFeature0 = new GFFStreamFeature(genbankStreamFeature0);
-<span class="nocode"><a name="5">  5: </a></span>Feature feature0 = new Feature(gFFStreamFeature0);
-<span class="nocode"><a name="6">  6: </a></span>featureVector0.insertElementAt(feature0, 0);
-<span class="nocode"><a name="7">  7: </a></span>QualifierEditor qualifierEditor0 = new QualifierEditor(featureVector0, simpleEntryGroup0);
-</pre>
-<h3>Test case 3</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>FeatureVector featureVector0 = new FeatureVector();
-<span class="nocode"><a name="3">  3: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature();
-<span class="nocode"><a name="4">  4: </a></span>GFFStreamFeature gFFStreamFeature0 = new GFFStreamFeature(genbankStreamFeature0);
-<span class="nocode"><a name="5">  5: </a></span>Feature feature0 = new Feature(gFFStreamFeature0);
-<span class="nocode"><a name="6">  6: </a></span>featureVector0.insertElementAfter(feature0, feature0);
-<span class="nocode"><a name="7">  7: </a></span>featureVector0.insertElementAt(feature0, 0);
-<span class="nocode"><a name="8">  8: </a></span>QualifierEditor qualifierEditor0 = new QualifierEditor(featureVector0, simpleEntryGroup0);
-</pre>
-<h3>Test case 4</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>FeatureVector featureVector0 = new FeatureVector();
-<span class="nocode"><a name="3">  3: </a></span>featureVector0.insertElementAfter((Feature) null, (Feature) null);
+<span class="nocode"><a name="1">  1: </a></span>FeatureVector featureVector0 = new FeatureVector();
+<span class="nocode"><a name="2">  2: </a></span>featureVector0.insertElementAfter((Feature) null, (Feature) null);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
 <span class="nocode"><a name="4">  4: </a></span>QualifierEditor qualifierEditor0 = new QualifierEditor(featureVector0, simpleEntryGroup0);
 </pre>
 </div><div id="post">
@@ -78,11 +57,11 @@ uk.ac.sanger.artemis.components.QualifierEditor
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.QualifierEditor
-<li>Size: 4
-<li>Length: 22
+<li>Size: 2
+<li>Length: 7
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.4893675753883643
-<li>BranchCoverage: 0.20408163265306123
+<li>Coverage: 0.43294052695705143
+<li>BranchCoverage: 0.061224489795918366
 <li>MethodCoverage: 1.0
 <li>OutputCoverage: 1.0
 </ul></div>

@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.components.variant.IOUtils
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.components.variant.IOUtils: 0.22427141608984186</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.components.variant.IOUtils: 0.22190152943813546</ul>
 <ul>
-<li>4176.810268680157 fitness evaluations, 0 generations, null statements, 16 tests.
+<li>4198.098712462241 fitness evaluations, 0 generations, null statements, 15 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -39,85 +39,79 @@ uk.ac.sanger.artemis.components.variant.IOUtils
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>File file0 = IOUtils.writeVCF((Map&lt;String, Boolean&gt;) null, &quot;&quot;, 71, (VCFview) null, (FeatureVector) null, 71);
-<span class="nocode"><a name="2">  2: </a></span>assertNull(file0);
+<span class="nocode"><a name="1">  1: </a></span>HashMap&lt;String, Boolean&gt; hashMap0 = new HashMap&lt;String, Boolean&gt;();
+<span class="nocode"><a name="2">  2: </a></span>File file0 = IOUtils.writeVCF(hashMap0, &quot;ovnga,+&quot;, 1597, (VCFview) null, (FeatureVector) null, 1597);
+<span class="nocode"><a name="3">  3: </a></span>assertNull(file0);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;dNjqkSNsunhfEn1WN&quot;);
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;No base range selected.&quot;);
 <span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="3">  3: </a></span>IOUtils.exportFastaByRange((VCFview) null, selection0, false, (Writer) null);
+<span class="nocode"><a name="3">  3: </a></span>FeatureVector featureVector0 = selection0.getAllFeatures();
+<span class="nocode"><a name="4">  4: </a></span>IOUtils.writeVCF((Map&lt;String, Boolean&gt;) null, (String) null, (-878), (VCFview) null, featureVector0, (-1611522464));
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;PASS&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="3">  3: </a></span>FeatureVector featureVector0 = selection0.getAllFeatures();
-<span class="nocode"><a name="4">  4: </a></span>CharArrayWriter charArrayWriter0 = new CharArrayWriter(0);
-<span class="nocode"><a name="5">  5: </a></span>IOUtils.exportFasta((VCFview) null, featureVector0, false, charArrayWriter0);
+<span class="nocode"><a name="1">  1: </a></span>StringWriter stringWriter0 = new StringWriter();
+<span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection((Clipboard) null);
+<span class="nocode"><a name="3">  3: </a></span>IOUtils.exportFastaByRange((VCFview) null, selection0, true, stringWriter0);
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;synonym_id&quot;);
+<span class="nocode"><a name="1">  1: </a></span>Clipboard clipboard0 = new Clipboard(&quot;org.biojava.bio.seq.homol.SimilarityPairFeature$Template&quot;);
 <span class="nocode"><a name="2">  2: </a></span>Selection selection0 = new Selection(clipboard0);
-<span class="nocode"><a name="3">  3: </a></span>FeatureVector featureVector0 = selection0.getAllFeatures();
+<span class="nocode"><a name="3">  3: </a></span>FeatureVector featureVector0 = selection0.getSelectedFeatures();
 <span class="nocode"><a name="4">  4: </a></span>IOUtils.countVariants((VCFview) null, featureVector0);
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>StringBuffer stringBuffer0 = new StringBuffer(&quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>IOUtils.wrapString(&quot;&quot;, stringBuffer0);
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;&quot;, stringBuffer0.toString());
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, stringBuffer0.length());
+<span class="nocode"><a name="1">  1: </a></span>StringBuffer stringBuffer0 = new StringBuffer((CharSequence) &quot;GAME1.2&quot;);
+<span class="nocode"><a name="2">  2: </a></span>IOUtils.wrapString(&quot;ftp:Reverse Correlation Scores&quot;, stringBuffer0);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(38, stringBuffer0.length());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;GAME1.2ftp:Reverse Correlation Scores\n&quot;, stringBuffer0.toString());
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>IOUtils.wrapString(&quot;^[AGCTNMRWSYKBDHVagctnmrwsykbdhv]+,[AGCTNMRWSYKBDHVagctnmrwsykbdhv,]+$&quot;, (StringBuffer) null);
+<span class="nocode"><a name="1">  1: </a></span>IOUtils.isBCF(&quot;ftp:v&amp;&quot;);
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>StringBuffer stringBuffer0 = new StringBuffer();
-<span class="nocode"><a name="2">  2: </a></span>IOUtils.wrapString(&quot;INFO FIELDS:&quot;, stringBuffer0);
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(13, stringBuffer0.length());
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;INFO FIELDS:\n&quot;, stringBuffer0.toString());
+<span class="nocode"><a name="1">  1: </a></span>IOUtils.countVariants((VCFview) null, (FeatureVector) null);
 </pre>
 <h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>IOUtils.isBCF(&quot;http:SEQUENCE DELETE AT &quot;);
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>IOUtils.createFeatures((VCFview) null, simpleEntryGroup0);
 </pre>
 <h3>Test case 10</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>IOUtils.isBCF(&quot;ftp:pseudo&quot;);
+<span class="nocode"><a name="1">  1: </a></span>CharArrayWriter charArrayWriter0 = new CharArrayWriter();
+<span class="nocode"><a name="2">  2: </a></span>IOUtils.exportFastaByRange((VCFview) null, (Selection) null, false, charArrayWriter0);
 </pre>
 <h3>Test case 11</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>IOUtils.countVariants((VCFview) null, (FeatureVector) null);
+<span class="nocode"><a name="1">  1: </a></span>IOUtils.exportVariantFasta((VCFview) null);
 </pre>
 <h3>Test case 12</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
-<span class="nocode"><a name="2">  2: </a></span>FeatureVector featureVector0 = simpleEntryGroup0.getAllFeatures();
-<span class="nocode"><a name="3">  3: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, &quot;:inb^U%4#*&quot;);
-<span class="nocode"><a name="4">  4: </a></span>IOUtils.createFeatures((VCFview) null, filteredEntryGroup0);
+<span class="nocode"><a name="1">  1: </a></span>IOUtils.isBCF(&quot;_&quot;);
 </pre>
 <h3>Test case 13</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>IOUtils.export((Map&lt;String, Boolean&gt;) null, (List&lt;String&gt;) null, (VCFview) null);
+<span class="nocode"><a name="1">  1: </a></span>IOUtils.wrapString(&quot;JM&quot;, (StringBuffer) null);
 </pre>
 <h3>Test case 14</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>IOUtils.exportVariantFasta((VCFview) null);
+<span class="nocode"><a name="1">  1: </a></span>EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(&quot;/Users/kp11/workspace/applications/Artemis/test/Nlt5#ivM5j=oR$Ruy&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileSystemHandling.appendLineToFile(evoSuiteFile0, &quot;org.emboss.jemboss.gui.Browser$JIconButton&quot;);
+<span class="nocode"><a name="3">  3: </a></span>IOUtils.isBCF(&quot;Nlt5#ivM5j=oR$Ruy&quot;);
 </pre>
 <h3>Test case 15</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>IOUtils.isBCF(&quot;&quot;);
-</pre>
-<h3>Test case 16</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(&quot;/Users/kp11/workspace/applications/Artemis/test/!|&quot;);
-<span class="nocode"><a name="2">  2: </a></span>byte[] byteArray0 = new byte[5];
-<span class="nocode"><a name="3">  3: </a></span>FileSystemHandling.appendDataToFile(evoSuiteFile0, byteArray0);
-<span class="nocode"><a name="4">  4: </a></span>IOUtils.isBCF(&quot;!|&quot;);
+<span class="nocode"><a name="1">  1: </a></span>StringBuffer stringBuffer0 = new StringBuffer();
+<span class="nocode"><a name="2">  2: </a></span>IOUtils.wrapString(&quot;&quot;, stringBuffer0);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, stringBuffer0.length());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;&quot;, stringBuffer0.toString());
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -130,12 +124,12 @@ uk.ac.sanger.artemis.components.variant.IOUtils
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.variant.IOUtils
-<li>Size: 16
-<li>Length: 33
+<li>Size: 15
+<li>Length: 30
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.22427141608984186
-<li>BranchCoverage: 0.034013605442176874
-<li>MethodCoverage: 0.9090909090909091
+<li>Coverage: 0.22190152943813546
+<li>BranchCoverage: 0.031746031746031744
+<li>MethodCoverage: 0.7272727272727273
 <li>OutputCoverage: 0.029411764705882353
 </ul></div>
 </div>

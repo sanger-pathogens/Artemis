@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.plot.Algorithm
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.plot.Algorithm: 0.5617393581292622</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.plot.Algorithm: 0.3978276049197187</ul>
 <ul>
-<li>478.5 fitness evaluations, 0 generations, null statements, 17 tests.
+<li>387.97222222222223 fitness evaluations, 0 generations, null statements, 10 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,201 +35,130 @@ uk.ac.sanger.artemis.plot.Algorithm
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>CoilFeatureAlgorithm coilFeatureAlgorithm0 = new CoilFeatureAlgorithm((Feature) null);
-<span class="nocode"><a name="2">  2: </a></span>coilFeatureAlgorithm0.getMinimum();
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;g&quot;, &quot;g&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="4">  4: </a></span>CSCSAlgorithm cSCSAlgorithm0 = new CSCSAlgorithm(strand0);
+<span class="nocode"><a name="5">  5: </a></span>cSCSAlgorithm0.getAlgorithmShortName();
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;2\&quot;rpSPi&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
-<span class="nocode"><a name="4">  4: </a></span>GCSDWindowAlgorithm gCSDWindowAlgorithm0 = new GCSDWindowAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>Float float0 = gCSDWindowAlgorithm0.getMinimum();
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(1.4E-45F, gCSDWindowAlgorithm0.getUserMin(), 0.01F);
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(0.0F, (float)float0, 0.01F);
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(3.4028235E38F, gCSDWindowAlgorithm0.getUserMax(), 0.01F);
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(&quot;sd_gc_content&quot;, gCSDWindowAlgorithm0.getAlgorithmShortName());
-<span class="nocode"><a name="10"> 10: </a></span>assertEquals(&quot;GC Content (%) With A 2.5 SD Cutoff&quot;, gCSDWindowAlgorithm0.getAlgorithmName());
-<span class="nocode"><a name="11"> 11: </a></span>assertNotNull(float0);
+<span class="nocode"><a name="1">  1: </a></span>StringReader stringReader0 = new StringReader(&quot;7` nrwtm$FM^iy}ql&quot;);
+<span class="nocode"><a name="2">  2: </a></span>LinePushBackReader linePushBackReader0 = new LinePushBackReader(stringReader0);
+<span class="nocode"><a name="3">  3: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(linePushBackReader0);
+<span class="nocode"><a name="4">  4: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
+<span class="nocode"><a name="5">  5: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="6">  6: </a></span>GCSDWindowAlgorithm gCSDWindowAlgorithm0 = new GCSDWindowAlgorithm(strand0);
+<span class="nocode"><a name="7">  7: </a></span>gCSDWindowAlgorithm0.getDefaultWindowSize();
+<span class="nocode"><a name="8">  8: </a></span>assertFalse(gCSDWindowAlgorithm0.isUserMaxMin());
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(&quot;GC Content (%) With A 2.5 SD Cutoff&quot;, gCSDWindowAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="10"> 10: </a></span>assertEquals(3.4028235E38F, gCSDWindowAlgorithm0.getUserMax(), 0.01F);
+<span class="nocode"><a name="11"> 11: </a></span>assertFalse(gCSDWindowAlgorithm0.scalingFlag());
+<span class="nocode"><a name="12"> 12: </a></span>assertEquals(&quot;sd_gc_content&quot;, gCSDWindowAlgorithm0.getAlgorithmShortName());
+<span class="nocode"><a name="13"> 13: </a></span>assertEquals(1.4E-45F, gCSDWindowAlgorithm0.getUserMin(), 0.01F);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>CoilFeatureAlgorithm coilFeatureAlgorithm0 = new CoilFeatureAlgorithm((Feature) null);
-<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;Coiled Coils&quot;, coilFeatureAlgorithm0.getAlgorithmName());
-<span class="nocode"><a name="3">  3: </a></span>
-<span class="nocode"><a name="4">  4: </a></span>coilFeatureAlgorithm0.setAlgorithmName(&quot;+@XfS&quot;);
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(3.4028235E38F, coilFeatureAlgorithm0.getUserMax(), 0.01F);
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;g&quot;, &quot;g&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="4">  4: </a></span>EntropyAlgorithm entropyAlgorithm0 = new EntropyAlgorithm(strand0);
+<span class="nocode"><a name="5">  5: </a></span>float float0 = entropyAlgorithm0.getUserMax();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(1.4E-45F, entropyAlgorithm0.getUserMin(), 0.01F);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(&quot;Reverse Informational Entropy&quot;, entropyAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="8">  8: </a></span>assertTrue(entropyAlgorithm0.scalingFlag());
+<span class="nocode"><a name="9">  9: </a></span>assertFalse(entropyAlgorithm0.isUserMaxMin());
+<span class="nocode"><a name="10"> 10: </a></span>assertEquals(&quot;entropy&quot;, entropyAlgorithm0.getAlgorithmShortName());
+<span class="nocode"><a name="11"> 11: </a></span>assertEquals(3.4028235E38F, float0, 0.01F);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;2\&quot;rpSPi&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
-<span class="nocode"><a name="4">  4: </a></span>NcAlgorithm ncAlgorithm0 = new NcAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>ncAlgorithm0.getDefaultMinWindowSize();
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(3.4028235E38F, ncAlgorithm0.getUserMax(), 0.01F);
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(1.4E-45F, ncAlgorithm0.getUserMin(), 0.01F);
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(&quot;Nc&quot;, ncAlgorithm0.getAlgorithmShortName());
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(&quot;Effective Codon Number(Nc)&quot;, ncAlgorithm0.getAlgorithmName());
-<span class="nocode"><a name="10"> 10: </a></span>assertTrue(ncAlgorithm0.scalingFlag());
-<span class="nocode"><a name="11"> 11: </a></span>assertFalse(ncAlgorithm0.isUserMaxMin());
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;g&quot;, &quot;g&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="4">  4: </a></span>EntropyAlgorithm entropyAlgorithm0 = new EntropyAlgorithm(strand0);
+<span class="nocode"><a name="5">  5: </a></span>entropyAlgorithm0.getDefaultMinWindowSize();
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(entropyAlgorithm0.isUserMaxMin());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(3.4028235E38F, entropyAlgorithm0.getUserMax(), 0.01F);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(1.4E-45F, entropyAlgorithm0.getUserMin(), 0.01F);
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(&quot;Reverse Informational Entropy&quot;, entropyAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="10"> 10: </a></span>assertEquals(&quot;entropy&quot;, entropyAlgorithm0.getAlgorithmShortName());
+<span class="nocode"><a name="11"> 11: </a></span>assertTrue(entropyAlgorithm0.scalingFlag());
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;2\&quot;rpSPi&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
-<span class="nocode"><a name="4">  4: </a></span>Codon12CorrelationAlgorithm codon12CorrelationAlgorithm0 = new Codon12CorrelationAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>codon12CorrelationAlgorithm0.getDefaultWindowSize();
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;Correlation Scores&quot;, codon12CorrelationAlgorithm0.getAlgorithmName());
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(3.4028235E38F, codon12CorrelationAlgorithm0.getUserMax(), 0.01F);
-<span class="nocode"><a name="8">  8: </a></span>assertFalse(codon12CorrelationAlgorithm0.isUserMaxMin());
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(1.4E-45F, codon12CorrelationAlgorithm0.getUserMin(), 0.01F);
-<span class="nocode"><a name="10"> 10: </a></span>assertTrue(codon12CorrelationAlgorithm0.scalingFlag());
-<span class="nocode"><a name="11"> 11: </a></span>assertEquals(&quot;correlation_score&quot;, codon12CorrelationAlgorithm0.getAlgorithmShortName());
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;g&quot;, &quot;g&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="4">  4: </a></span>AGWindowAlgorithm aGWindowAlgorithm0 = new AGWindowAlgorithm(strand0);
+<span class="nocode"><a name="5">  5: </a></span>aGWindowAlgorithm0.setUserMaxMin(false);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;AG Content (%)&quot;, aGWindowAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(1.4E-45F, aGWindowAlgorithm0.getUserMin(), 0.01F);
+<span class="nocode"><a name="8">  8: </a></span>assertFalse(aGWindowAlgorithm0.isUserMaxMin());
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(&quot;ag_content&quot;, aGWindowAlgorithm0.getAlgorithmShortName());
+<span class="nocode"><a name="10"> 10: </a></span>assertEquals(3.4028235E38F, aGWindowAlgorithm0.getUserMax(), 0.01F);
+<span class="nocode"><a name="11"> 11: </a></span>assertTrue(aGWindowAlgorithm0.scalingFlag());
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;getGraphs&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
-<span class="nocode"><a name="4">  4: </a></span>PositionalAsymmetryAlgorithm positionalAsymmetryAlgorithm0 = new PositionalAsymmetryAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>float float0 = positionalAsymmetryAlgorithm0.getUserMin();
-<span class="nocode"><a name="6">  6: </a></span>assertTrue(positionalAsymmetryAlgorithm0.scalingFlag());
-<span class="nocode"><a name="7">  7: </a></span>assertFalse(positionalAsymmetryAlgorithm0.isUserMaxMin());
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(&quot;Positional Asymmetry&quot;, positionalAsymmetryAlgorithm0.getAlgorithmName());
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(3.4028235E38F, positionalAsymmetryAlgorithm0.getUserMax(), 0.01F);
-<span class="nocode"><a name="10"> 10: </a></span>assertEquals(1.4E-45F, float0, 0.01F);
-<span class="nocode"><a name="11"> 11: </a></span>assertEquals(&quot;positional_asymmetry&quot;, positionalAsymmetryAlgorithm0.getAlgorithmShortName());
+<span class="nocode"><a name="1">  1: </a></span>StringReader stringReader0 = new StringReader(&quot;7` nrwtm$FM^iy}ql&quot;);
+<span class="nocode"><a name="2">  2: </a></span>LinePushBackReader linePushBackReader0 = new LinePushBackReader(stringReader0);
+<span class="nocode"><a name="3">  3: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(linePushBackReader0);
+<span class="nocode"><a name="4">  4: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
+<span class="nocode"><a name="5">  5: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="6">  6: </a></span>GCSDWindowAlgorithm gCSDWindowAlgorithm0 = new GCSDWindowAlgorithm(strand0);
+<span class="nocode"><a name="7">  7: </a></span>gCSDWindowAlgorithm0.setUserMax(5);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(5.0F, gCSDWindowAlgorithm0.getUserMax(), 0.01F);
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>CoilFeatureAlgorithm coilFeatureAlgorithm0 = new CoilFeatureAlgorithm((Feature) null);
-<span class="nocode"><a name="2">  2: </a></span>coilFeatureAlgorithm0.setUserMax((-2665.0F));
-<span class="nocode"><a name="3">  3: </a></span>assertEquals((-2665.0F), coilFeatureAlgorithm0.getUserMax(), 0.01F);
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;g&quot;, &quot;g&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="4">  4: </a></span>AGWindowAlgorithm aGWindowAlgorithm0 = new AGWindowAlgorithm(strand0);
+<span class="nocode"><a name="5">  5: </a></span>boolean boolean0 = aGWindowAlgorithm0.isUserMaxMin();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;ag_content&quot;, aGWindowAlgorithm0.getAlgorithmShortName());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(1.4E-45F, aGWindowAlgorithm0.getUserMin(), 0.01F);
+<span class="nocode"><a name="8">  8: </a></span>assertTrue(aGWindowAlgorithm0.scalingFlag());
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(&quot;AG Content (%)&quot;, aGWindowAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="10"> 10: </a></span>assertEquals(3.4028235E38F, aGWindowAlgorithm0.getUserMax(), 0.01F);
+<span class="nocode"><a name="11"> 11: </a></span>assertFalse(boolean0);
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>CoilFeatureAlgorithm coilFeatureAlgorithm0 = new CoilFeatureAlgorithm((Feature) null);
-<span class="nocode"><a name="2">  2: </a></span>Float float0 = coilFeatureAlgorithm0.getMaximum();
-<span class="nocode"><a name="3">  3: </a></span>assertNotNull(float0);
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;coiled_coil&quot;, coilFeatureAlgorithm0.getAlgorithmShortName());
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(3.4028235E38F, coilFeatureAlgorithm0.getUserMax(), 0.01F);
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(1.01F, (float)float0, 0.01F);
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(1.4E-45F, coilFeatureAlgorithm0.getUserMin(), 0.01F);
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(&quot;Coiled Coils&quot;, coilFeatureAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="1">  1: </a></span>StringReader stringReader0 = new StringReader(&quot;7` nrwtm$FM^iy}ql&quot;);
+<span class="nocode"><a name="2">  2: </a></span>LinePushBackReader linePushBackReader0 = new LinePushBackReader(stringReader0);
+<span class="nocode"><a name="3">  3: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(linePushBackReader0);
+<span class="nocode"><a name="4">  4: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
+<span class="nocode"><a name="5">  5: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="6">  6: </a></span>GCSDWindowAlgorithm gCSDWindowAlgorithm0 = new GCSDWindowAlgorithm(strand0);
+<span class="nocode"><a name="7">  7: </a></span>gCSDWindowAlgorithm0.setScalingFlag(true);
+<span class="nocode"><a name="8">  8: </a></span>assertTrue(gCSDWindowAlgorithm0.scalingFlag());
 </pre>
 <h3>Test case 9</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;2\&quot;rpSPi&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
-<span class="nocode"><a name="4">  4: </a></span>Codon12CorrelationAlgorithm codon12CorrelationAlgorithm0 = new Codon12CorrelationAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>Float float0 = codon12CorrelationAlgorithm0.getMaximum();
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;correlation_score&quot;, codon12CorrelationAlgorithm0.getAlgorithmShortName());
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(1.4E-45F, codon12CorrelationAlgorithm0.getUserMin(), 0.01F);
-<span class="nocode"><a name="8">  8: </a></span>assertNull(float0);
-<span class="nocode"><a name="9">  9: </a></span>assertFalse(codon12CorrelationAlgorithm0.isUserMaxMin());
-<span class="nocode"><a name="10"> 10: </a></span>assertEquals(&quot;Correlation Scores&quot;, codon12CorrelationAlgorithm0.getAlgorithmName());
-<span class="nocode"><a name="11"> 11: </a></span>assertEquals(3.4028235E38F, codon12CorrelationAlgorithm0.getUserMax(), 0.01F);
+<span class="nocode"><a name="1">  1: </a></span>HydrophilicityAlgorithm hydrophilicityAlgorithm0 = new HydrophilicityAlgorithm((Feature) null);
+<span class="nocode"><a name="2">  2: </a></span>hydrophilicityAlgorithm0.getMinimumInternal();
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(hydrophilicityAlgorithm0.isUserMaxMin());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(3.4028235E38F, hydrophilicityAlgorithm0.getUserMax(), 0.01F);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(1.4E-45F, hydrophilicityAlgorithm0.getUserMin(), 0.01F);
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(hydrophilicityAlgorithm0.scalingFlag());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(&quot;hydrophilicity&quot;, hydrophilicityAlgorithm0.getAlgorithmShortName());
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(&quot;Hopp-Woods Hydrophilicity&quot;, hydrophilicityAlgorithm0.getAlgorithmName());
 </pre>
 <h3>Test case 10</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;getGraphs&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
-<span class="nocode"><a name="4">  4: </a></span>ScaledChiAlgorithm scaledChiAlgorithm0 = new ScaledChiAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>Float float0 = scaledChiAlgorithm0.getMinimum();
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(3.4028235E38F, scaledChiAlgorithm0.getUserMax(), 0.01F);
-<span class="nocode"><a name="7">  7: </a></span>assertFalse(scaledChiAlgorithm0.isUserMaxMin());
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(1.4E-45F, scaledChiAlgorithm0.getUserMin(), 0.01F);
-<span class="nocode"><a name="9">  9: </a></span>assertNull(float0);
-</pre>
-<h3>Test case 11</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>HydrophilicityAlgorithm hydrophilicityAlgorithm0 = new HydrophilicityAlgorithm((Feature) null);
-<span class="nocode"><a name="2">  2: </a></span>hydrophilicityAlgorithm0.setScalingFlag(false);
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(1.4E-45F, hydrophilicityAlgorithm0.getUserMin(), 0.01F);
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;Hopp-Woods Hydrophilicity&quot;, hydrophilicityAlgorithm0.getAlgorithmName());
-<span class="nocode"><a name="5">  5: </a></span>assertFalse(hydrophilicityAlgorithm0.scalingFlag());
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(3.4028235E38F, hydrophilicityAlgorithm0.getUserMax(), 0.01F);
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(&quot;hydrophilicity&quot;, hydrophilicityAlgorithm0.getAlgorithmShortName());
-<span class="nocode"><a name="8">  8: </a></span>assertFalse(hydrophilicityAlgorithm0.isUserMaxMin());
-</pre>
-<h3>Test case 12</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;&quot;);
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;g&quot;, &quot;g&quot;);
 <span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
-<span class="nocode"><a name="4">  4: </a></span>Codon12CorrelationAlgorithm codon12CorrelationAlgorithm0 = new Codon12CorrelationAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>boolean boolean0 = codon12CorrelationAlgorithm0.scalingFlag();
-<span class="nocode"><a name="6">  6: </a></span>assertTrue(boolean0);
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(&quot;correlation_score&quot;, codon12CorrelationAlgorithm0.getAlgorithmShortName());
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(1.4E-45F, codon12CorrelationAlgorithm0.getUserMin(), 0.01F);
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(3.4028235E38F, codon12CorrelationAlgorithm0.getUserMax(), 0.01F);
-<span class="nocode"><a name="10"> 10: </a></span>assertEquals(&quot;Correlation Scores&quot;, codon12CorrelationAlgorithm0.getAlgorithmName());
-<span class="nocode"><a name="11"> 11: </a></span>assertFalse(codon12CorrelationAlgorithm0.isUserMaxMin());
-</pre>
-<h3>Test case 13</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;2\&quot;rpSPi&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
-<span class="nocode"><a name="4">  4: </a></span>Codon12CorrelationAlgorithm codon12CorrelationAlgorithm0 = new Codon12CorrelationAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>codon12CorrelationAlgorithm0.getDefaultMaxWindowSize();
-<span class="nocode"><a name="6">  6: </a></span>assertFalse(codon12CorrelationAlgorithm0.isUserMaxMin());
-<span class="nocode"><a name="7">  7: </a></span>assertTrue(codon12CorrelationAlgorithm0.scalingFlag());
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(1.4E-45F, codon12CorrelationAlgorithm0.getUserMin(), 0.01F);
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(&quot;Correlation Scores&quot;, codon12CorrelationAlgorithm0.getAlgorithmName());
-<span class="nocode"><a name="10"> 10: </a></span>assertEquals(&quot;correlation_score&quot;, codon12CorrelationAlgorithm0.getAlgorithmShortName());
-<span class="nocode"><a name="11"> 11: </a></span>assertEquals(3.4028235E38F, codon12CorrelationAlgorithm0.getUserMax(), 0.01F);
-</pre>
-<h3>Test case 14</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;2\&quot;rpSPi&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
-<span class="nocode"><a name="4">  4: </a></span>NcAlgorithm ncAlgorithm0 = new NcAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>ncAlgorithm0.getDefaultStepSize((-2146));
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;Effective Codon Number(Nc)&quot;, ncAlgorithm0.getAlgorithmName());
-<span class="nocode"><a name="7">  7: </a></span>assertFalse(ncAlgorithm0.isUserMaxMin());
-<span class="nocode"><a name="8">  8: </a></span>assertTrue(ncAlgorithm0.scalingFlag());
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(3.4028235E38F, ncAlgorithm0.getUserMax(), 0.01F);
-<span class="nocode"><a name="10"> 10: </a></span>assertEquals(&quot;Nc&quot;, ncAlgorithm0.getAlgorithmShortName());
-<span class="nocode"><a name="11"> 11: </a></span>assertEquals(1.4E-45F, ncAlgorithm0.getUserMin(), 0.01F);
-</pre>
-<h3>Test case 15</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>CoilFeatureAlgorithm coilFeatureAlgorithm0 = new CoilFeatureAlgorithm((Feature) null);
-<span class="nocode"><a name="2">  2: </a></span>coilFeatureAlgorithm0.getMinimumInternal();
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(1.4E-45F, coilFeatureAlgorithm0.getUserMin(), 0.01F);
-<span class="nocode"><a name="4">  4: </a></span>assertFalse(coilFeatureAlgorithm0.scalingFlag());
-<span class="nocode"><a name="5">  5: </a></span>assertEquals(3.4028235E38F, coilFeatureAlgorithm0.getUserMax(), 0.01F);
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;coiled_coil&quot;, coilFeatureAlgorithm0.getAlgorithmShortName());
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(&quot;Coiled Coils&quot;, coilFeatureAlgorithm0.getAlgorithmName());
-<span class="nocode"><a name="8">  8: </a></span>assertFalse(coilFeatureAlgorithm0.isUserMaxMin());
-</pre>
-<h3>Test case 16</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;2\&quot;rpSPi&quot;);
-<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
-<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
-<span class="nocode"><a name="4">  4: </a></span>GCWindowAlgorithm gCWindowAlgorithm0 = new GCWindowAlgorithm(strand0);
-<span class="nocode"><a name="5">  5: </a></span>gCWindowAlgorithm0.getMinimumInternal();
-<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;GC Content (%)&quot;, gCWindowAlgorithm0.getAlgorithmName());
-<span class="nocode"><a name="7">  7: </a></span>assertEquals(1.4E-45F, gCWindowAlgorithm0.getUserMin(), 0.01F);
-<span class="nocode"><a name="8">  8: </a></span>assertEquals(&quot;gc_content&quot;, gCWindowAlgorithm0.getAlgorithmShortName());
-<span class="nocode"><a name="9">  9: </a></span>assertEquals(3.4028235E38F, gCWindowAlgorithm0.getUserMax(), 0.01F);
-<span class="nocode"><a name="10"> 10: </a></span>assertTrue(gCWindowAlgorithm0.scalingFlag());
-<span class="nocode"><a name="11"> 11: </a></span>assertFalse(gCWindowAlgorithm0.isUserMaxMin());
-</pre>
-<h3>Test case 17</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>CoilFeatureAlgorithm coilFeatureAlgorithm0 = new CoilFeatureAlgorithm((Feature) null);
-<span class="nocode"><a name="2">  2: </a></span>assertFalse(coilFeatureAlgorithm0.isUserMaxMin());
-<span class="nocode"><a name="3">  3: </a></span>
-<span class="nocode"><a name="4">  4: </a></span>coilFeatureAlgorithm0.setUserMaxMin(true);
-<span class="nocode"><a name="5">  5: </a></span>assertTrue(coilFeatureAlgorithm0.isUserMaxMin());
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="4">  4: </a></span>AGWindowAlgorithm aGWindowAlgorithm0 = new AGWindowAlgorithm(strand0);
+<span class="nocode"><a name="5">  5: </a></span>aGWindowAlgorithm0.getMinimumInternal();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;AG Content (%)&quot;, aGWindowAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(&quot;ag_content&quot;, aGWindowAlgorithm0.getAlgorithmShortName());
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(1.4E-45F, aGWindowAlgorithm0.getUserMin(), 0.01F);
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(3.4028235E38F, aGWindowAlgorithm0.getUserMax(), 0.01F);
+<span class="nocode"><a name="10"> 10: </a></span>assertTrue(aGWindowAlgorithm0.scalingFlag());
+<span class="nocode"><a name="11"> 11: </a></span>assertFalse(aGWindowAlgorithm0.isUserMaxMin());
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -242,13 +171,13 @@ uk.ac.sanger.artemis.plot.Algorithm
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.plot.Algorithm
-<li>Size: 17
-<li>Length: 64
+<li>Size: 10
+<li>Length: 53
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.5617393581292622
-<li>BranchCoverage: 0.43478260869565216
-<li>MethodCoverage: 0.55
-<li>OutputCoverage: 0.18840579710144928
+<li>Coverage: 0.3978276049197187
+<li>BranchCoverage: 0.2608695652173913
+<li>MethodCoverage: 0.35
+<li>OutputCoverage: 0.0821256038647343
 </ul></div>
 </div>
 <p><br><a href="../report-generation.html">Back to Overview</a></p>

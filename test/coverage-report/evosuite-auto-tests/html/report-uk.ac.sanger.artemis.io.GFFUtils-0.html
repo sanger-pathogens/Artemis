@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.io.GFFUtils
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.io.GFFUtils: 0.6470810439560439</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.io.GFFUtils: 0.48615551115551114</ul>
 <ul>
-<li>132.46153846153845 fitness evaluations, 0 generations, null statements, 7 tests.
+<li>88.95238095238095 fitness evaluations, 0 generations, null statements, 7 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -40,58 +40,62 @@ uk.ac.sanger.artemis.io.GFFUtils
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Key key0 = Key.CDS;
-<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(1002);
-<span class="nocode"><a name="3">  3: </a></span>Location location0 = new Location(range0);
-<span class="nocode"><a name="4">  4: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
-<span class="nocode"><a name="5">  5: </a></span>DatabaseStreamFeature databaseStreamFeature0 = new DatabaseStreamFeature(key0, location0, qualifierVector0);
-<span class="nocode"><a name="6">  6: </a></span>GFFUtils.isSelenocysteine(databaseStreamFeature0);
+<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(524);
+<span class="nocode"><a name="3">  3: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
+<span class="nocode"><a name="4">  4: </a></span>Location location0 = new Location(rangeVector0, true);
+<span class="nocode"><a name="5">  5: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
+<span class="nocode"><a name="6">  6: </a></span>GFFStreamFeature gFFStreamFeature0 = new GFFStreamFeature(key0, location0, qualifierVector0);
+<span class="nocode"><a name="7">  7: </a></span>GFFUtils.isSelenocysteine(gFFStreamFeature0);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>boolean boolean0 = GFFUtils.isSelenocysteine((Feature) null);
-<span class="nocode"><a name="2">  2: </a></span>assertFalse(boolean0);
+<span class="nocode"><a name="1">  1: </a></span>Key key0 = new Key(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(76);
+<span class="nocode"><a name="3">  3: </a></span>Location location0 = new Location(range0);
+<span class="nocode"><a name="4">  4: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
+<span class="nocode"><a name="5">  5: </a></span>BlastStreamFeature blastStreamFeature0 = new BlastStreamFeature(key0, location0, qualifierVector0);
+<span class="nocode"><a name="6">  6: </a></span>boolean boolean0 = GFFUtils.isSelenocysteine(blastStreamFeature0);
+<span class="nocode"><a name="7">  7: </a></span>assertFalse(boolean0);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Key key0 = Key.CDS;
-<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(1002, 1002);
-<span class="nocode"><a name="3">  3: </a></span>Location location0 = new Location(range0);
-<span class="nocode"><a name="4">  4: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
-<span class="nocode"><a name="5">  5: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
-<span class="nocode"><a name="6">  6: </a></span>DatabaseInferredFeature databaseInferredFeature0 = new DatabaseInferredFeature(key0, location0, qualifierVector0, chadoCanonicalGene0);
-<span class="nocode"><a name="7">  7: </a></span>boolean boolean0 = GFFUtils.isSelenocysteine(databaseInferredFeature0);
-<span class="nocode"><a name="8">  8: </a></span>assertFalse(boolean0);
+<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(524);
+<span class="nocode"><a name="3">  3: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
+<span class="nocode"><a name="4">  4: </a></span>Location location0 = new Location(rangeVector0, true);
+<span class="nocode"><a name="5">  5: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
+<span class="nocode"><a name="6">  6: </a></span>GFFStreamFeature gFFStreamFeature0 = new GFFStreamFeature(key0, location0, qualifierVector0);
+<span class="nocode"><a name="7">  7: </a></span>GFFUtils.updateSegmentRangeStore(gFFStreamFeature0, location0, location0);
+<span class="nocode"><a name="8">  8: </a></span>assertNull(gFFStreamFeature0.getGffSeqName());
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Key key0 = Key.CDS;
-<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(1002);
+<span class="nocode"><a name="1">  1: </a></span>Key key0 = new Key(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(76);
 <span class="nocode"><a name="3">  3: </a></span>Location location0 = new Location(range0);
 <span class="nocode"><a name="4">  4: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
-<span class="nocode"><a name="5">  5: </a></span>DatabaseStreamFeature databaseStreamFeature0 = new DatabaseStreamFeature(key0, location0, qualifierVector0);
-<span class="nocode"><a name="6">  6: </a></span>GFFUtils.updateSegmentRangeStore(databaseStreamFeature0, location0, location0);
-<span class="nocode"><a name="7">  7: </a></span>assertNull(databaseStreamFeature0.getGffSeqName());
+<span class="nocode"><a name="5">  5: </a></span>BlastStreamFeature blastStreamFeature0 = new BlastStreamFeature(key0, location0, qualifierVector0);
+<span class="nocode"><a name="6">  6: </a></span>GFFStreamFeature gFFStreamFeature0 = new GFFStreamFeature(blastStreamFeature0, false);
+<span class="nocode"><a name="7">  7: </a></span>Location location1 = location0.addRange(range0);
+<span class="nocode"><a name="8">  8: </a></span>GFFUtils.updateSegmentRangeStore(gFFStreamFeature0, location0, location1);
+<span class="nocode"><a name="9">  9: </a></span>assertNull(gFFStreamFeature0.getGffSeqName());
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Key key0 = Key.CDS;
-<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(1002);
-<span class="nocode"><a name="3">  3: </a></span>Location location0 = new Location(range0);
-<span class="nocode"><a name="4">  4: </a></span>Location location1 = location0.reverseComplement(0);
-<span class="nocode"><a name="5">  5: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
-<span class="nocode"><a name="6">  6: </a></span>DatabaseStreamFeature databaseStreamFeature0 = new DatabaseStreamFeature(key0, location0, qualifierVector0);
-<span class="nocode"><a name="7">  7: </a></span>GFFUtils.updateSegmentRangeStore(databaseStreamFeature0, location1, location0);
-<span class="nocode"><a name="8">  8: </a></span>assertNull(databaseStreamFeature0.getGffSource());
+<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(524);
+<span class="nocode"><a name="3">  3: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
+<span class="nocode"><a name="4">  4: </a></span>Location location0 = new Location(rangeVector0, true);
+<span class="nocode"><a name="5">  5: </a></span>Location location1 = location0.getComplement();
+<span class="nocode"><a name="6">  6: </a></span>Location location2 = location1.copy();
+<span class="nocode"><a name="7">  7: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
+<span class="nocode"><a name="8">  8: </a></span>GFFStreamFeature gFFStreamFeature0 = new GFFStreamFeature(key0, location2, qualifierVector0);
+<span class="nocode"><a name="9">  9: </a></span>GFFUtils.updateSegmentRangeStore(gFFStreamFeature0, location2, location0);
+<span class="nocode"><a name="10"> 10: </a></span>assertFalse(location0.equals((Object)location1));
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Key key0 = Key.CDS;
-<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(1002, 1002);
-<span class="nocode"><a name="3">  3: </a></span>Location location0 = new Location(range0);
-<span class="nocode"><a name="4">  4: </a></span>Location location1 = location0.reverseComplement(0);
-<span class="nocode"><a name="5">  5: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
-<span class="nocode"><a name="6">  6: </a></span>DatabaseStreamFeature databaseStreamFeature0 = new DatabaseStreamFeature(key0, location1, qualifierVector0);
-<span class="nocode"><a name="7">  7: </a></span>GFFUtils.updateSegmentRangeStore(databaseStreamFeature0, location1, location0);
+<span class="nocode"><a name="1">  1: </a></span>GFFUtils.updateSegmentRangeStore((GFFStreamFeature) null, (Location) null, (Location) null);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -105,10 +109,10 @@ uk.ac.sanger.artemis.io.GFFUtils
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.io.GFFUtils
 <li>Size: 7
-<li>Length: 35
+<li>Length: 39
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.6470810439560439
-<li>BranchCoverage: 0.46153846153846156
+<li>Coverage: 0.48615551115551114
+<li>BranchCoverage: 0.6153846153846154
 <li>MethodCoverage: 1.0
 <li>OutputCoverage: 0.5
 </ul></div>

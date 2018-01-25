@@ -42,19 +42,19 @@ uk.ac.sanger.artemis.components.LogReadListener
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>LogReadListener logReadListener0 = new LogReadListener(&quot;&quot;);
-<span class="nocode"><a name="2">  2: </a></span>ReadEvent readEvent0 = new ReadEvent(&quot;&quot;, (String) null);
-<span class="nocode"><a name="3">  3: </a></span>logReadListener0.notify(readEvent0);
+<span class="nocode"><a name="2">  2: </a></span>Object object0 = new Object();
+<span class="nocode"><a name="3">  3: </a></span>ReadEvent readEvent0 = new ReadEvent(object0, &quot;&quot;);
+<span class="nocode"><a name="4">  4: </a></span>logReadListener0.notify(readEvent0);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>LogReadListener logReadListener0 = new LogReadListener((String) null);
-<span class="nocode"><a name="2">  2: </a></span>Object object0 = new Object();
-<span class="nocode"><a name="3">  3: </a></span>ReadEvent readEvent0 = new ReadEvent(object0, (String) null);
-<span class="nocode"><a name="4">  4: </a></span>logReadListener0.notify(readEvent0);
+<span class="nocode"><a name="1">  1: </a></span>ReadEvent readEvent0 = new ReadEvent(&quot;of~Qdekw0Bj=x]Pg&quot;, &quot;of~Qdekw0Bj=x]Pg&quot;);
+<span class="nocode"><a name="2">  2: </a></span>LogReadListener logReadListener0 = new LogReadListener((String) null);
+<span class="nocode"><a name="3">  3: </a></span>logReadListener0.notify(readEvent0);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>LogReadListener logReadListener0 = new LogReadListener((String) null);
+<span class="nocode"><a name="1">  1: </a></span>LogReadListener logReadListener0 = new LogReadListener(&quot;2aF i-qQW&quot;);
 <span class="nocode"><a name="2">  2: </a></span>logReadListener0.notify((ReadEvent) null);
 </pre>
 </div><div id="post">

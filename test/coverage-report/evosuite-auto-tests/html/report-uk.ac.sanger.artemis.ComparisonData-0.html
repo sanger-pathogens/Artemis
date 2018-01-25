@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.ComparisonData
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.ComparisonData: 0.8125</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.ComparisonData: 0.75</ul>
 <ul>
-<li>6.25 fitness evaluations, 0 generations, null statements, 4 tests.
+<li>8.25 fitness evaluations, 0 generations, null statements, 3 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,24 +35,20 @@ uk.ac.sanger.artemis.ComparisonData
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SSAHAComparisonData sSAHAComparisonData0 = new SSAHAComparisonData();
-<span class="nocode"><a name="2">  2: </a></span>sSAHAComparisonData0.flipMatchesIfNeeded((Bases) null, (Bases) null);
+<span class="nocode"><a name="1">  1: </a></span>MegaBlastComparisonData megaBlastComparisonData0 = new MegaBlastComparisonData();
+<span class="nocode"><a name="2">  2: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;wD&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
+<span class="nocode"><a name="4">  4: </a></span>megaBlastComparisonData0.flipMatchesIfNeeded(bases0, bases0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MSPcrunchComparisonData mSPcrunchComparisonData0 = new MSPcrunchComparisonData();
-<span class="nocode"><a name="2">  2: </a></span>mSPcrunchComparisonData0.getMaximumScore();
+<span class="nocode"><a name="1">  1: </a></span>MUMmerComparisonData mUMmerComparisonData0 = new MUMmerComparisonData();
+<span class="nocode"><a name="2">  2: </a></span>mUMmerComparisonData0.getMaximumScore();
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MSPcrunchComparisonData mSPcrunchComparisonData0 = new MSPcrunchComparisonData();
-<span class="nocode"><a name="2">  2: </a></span>mSPcrunchComparisonData0.getMinimumScore();
-</pre>
-<h3>Test case 4</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MSPcrunchComparisonData mSPcrunchComparisonData0 = new MSPcrunchComparisonData();
-<span class="nocode"><a name="2">  2: </a></span>AlignMatch[] alignMatchArray0 = mSPcrunchComparisonData0.getMatches();
-<span class="nocode"><a name="3">  3: </a></span>assertNull(alignMatchArray0);
+<span class="nocode"><a name="1">  1: </a></span>MUMmerComparisonData mUMmerComparisonData0 = new MUMmerComparisonData();
+<span class="nocode"><a name="2">  2: </a></span>mUMmerComparisonData0.getMinimumScore();
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -65,12 +61,12 @@ uk.ac.sanger.artemis.ComparisonData
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.ComparisonData
-<li>Size: 4
+<li>Size: 3
 <li>Length: 8
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.8125
+<li>Coverage: 0.75
 <li>BranchCoverage: 1.0
-<li>MethodCoverage: 1.0
+<li>MethodCoverage: 0.75
 <li>OutputCoverage: 1.0
 </ul></div>
 </div>

@@ -23,7 +23,7 @@ uk.ac.sanger.artemis.io.UpperInteger
 <br><br><h2 class=title>Summary</h2>
 <ul><li>Target class: uk.ac.sanger.artemis.io.UpperInteger: 0.9583333333333334</ul>
 <ul>
-<li>2.5 fitness evaluations, 0 generations, null statements, 6 tests.
+<li>2.5 fitness evaluations, 0 generations, null statements, 5 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,36 +35,32 @@ uk.ac.sanger.artemis.io.UpperInteger
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>UpperInteger upperInteger0 = new UpperInteger(885);
+<span class="nocode"><a name="2">  2: </a></span>int int0 = upperInteger0.getPosition();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(885, int0);
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Integer integer0 = new Integer(0);
+<span class="nocode"><a name="2">  2: </a></span>UpperInteger upperInteger0 = new UpperInteger(integer0);
+<span class="nocode"><a name="3">  3: </a></span>int int0 = upperInteger0.getPosition();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, int0);
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>UpperInteger upperInteger0 = new UpperInteger(0);
 <span class="nocode"><a name="2">  2: </a></span>String string0 = upperInteger0.toString();
 <span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;&gt;0&quot;, string0);
 </pre>
-<h3>Test case 2</h3>
+<h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>UpperInteger upperInteger0 = new UpperInteger((Integer) null);
 </pre>
-<h3>Test case 3</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>UpperInteger upperInteger0 = new UpperInteger((-48));
-<span class="nocode"><a name="2">  2: </a></span>int int0 = upperInteger0.getPosition();
-<span class="nocode"><a name="3">  3: </a></span>assertEquals((-48), int0);
-</pre>
-<h3>Test case 4</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>UpperInteger upperInteger0 = new UpperInteger(1364);
-<span class="nocode"><a name="2">  2: </a></span>int int0 = upperInteger0.getPosition();
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(1364, int0);
-</pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>UpperInteger upperInteger0 = new UpperInteger(0);
+<span class="nocode"><a name="1">  1: </a></span>UpperInteger upperInteger0 = new UpperInteger((-676));
 <span class="nocode"><a name="2">  2: </a></span>int int0 = upperInteger0.getPosition();
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, int0);
-</pre>
-<h3>Test case 6</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Integer integer0 = new Integer((-80));
-<span class="nocode"><a name="2">  2: </a></span>UpperInteger upperInteger0 = new UpperInteger(integer0);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals((-676), int0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -77,8 +73,8 @@ uk.ac.sanger.artemis.io.UpperInteger
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.io.UpperInteger
-<li>Size: 6
-<li>Length: 11
+<li>Size: 5
+<li>Length: 10
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.9583333333333334
 <li>BranchCoverage: 1.0

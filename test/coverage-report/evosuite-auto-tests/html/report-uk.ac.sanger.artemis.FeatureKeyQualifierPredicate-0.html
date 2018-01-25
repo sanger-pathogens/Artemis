@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.FeatureKeyQualifierPredicate
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.FeatureKeyQualifierPredicate: 0.9602465986394558</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.FeatureKeyQualifierPredicate: 0.8331207482993197</ul>
 <ul>
-<li>9.25 fitness evaluations, 0 generations, null statements, 9 tests.
+<li>28.5 fitness evaluations, 0 generations, null statements, 7 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,64 +35,47 @@ uk.ac.sanger.artemis.FeatureKeyQualifierPredicate
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate((Key) null, &quot;G,&quot;, true);
+<span class="nocode"><a name="1">  1: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate((Key) null, &quot;&quot;, false);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Key key0 = Key.CDS;
-<span class="nocode"><a name="2">  2: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate(key0, (String) null, (String) null);
-<span class="nocode"><a name="3">  3: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature();
-<span class="nocode"><a name="4">  4: </a></span>EmblStreamFeature emblStreamFeature0 = new EmblStreamFeature(genbankStreamFeature0);
-<span class="nocode"><a name="5">  5: </a></span>Feature feature0 = new Feature(emblStreamFeature0);
-<span class="nocode"><a name="6">  6: </a></span>boolean boolean0 = featureKeyQualifierPredicate0.testPredicate(feature0);
-<span class="nocode"><a name="7">  7: </a></span>assertTrue(boolean0);
+<span class="nocode"><a name="1">  1: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate((Key) null, &quot;&quot;, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>featureKeyQualifierPredicate0.testPredicate((Feature) null);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
-<span class="nocode"><a name="2">  2: </a></span>Key key0 = blastEntryInformation0.getDefaultKey();
-<span class="nocode"><a name="3">  3: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate(key0, (String) null);
-<span class="nocode"><a name="4">  4: </a></span>EmblStreamFeature emblStreamFeature0 = new EmblStreamFeature();
+<span class="nocode"><a name="1">  1: </a></span>Key key0 = Key.CDS;
+<span class="nocode"><a name="2">  2: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate(key0, &quot;ZG&lt;s&quot;);
+<span class="nocode"><a name="3">  3: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature();
+<span class="nocode"><a name="4">  4: </a></span>EmblStreamFeature emblStreamFeature0 = new EmblStreamFeature(genbankStreamFeature0);
 <span class="nocode"><a name="5">  5: </a></span>Feature feature0 = new Feature(emblStreamFeature0);
 <span class="nocode"><a name="6">  6: </a></span>boolean boolean0 = featureKeyQualifierPredicate0.testPredicate(feature0);
 <span class="nocode"><a name="7">  7: </a></span>assertFalse(boolean0);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Key key0 = Key.CDS;
-<span class="nocode"><a name="2">  2: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate(key0, &quot;O/y:U%TkE&quot;, &quot;O/y:U%TkE&quot;, false, false, false);
-<span class="nocode"><a name="3">  3: </a></span>featureKeyQualifierPredicate0.testPredicate((Feature) null);
+<span class="nocode"><a name="1">  1: </a></span>Key key0 = new Key((String) null);
+<span class="nocode"><a name="2">  2: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate(key0, (String) null, (String) null, true, true);
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>EmblStreamFeature emblStreamFeature0 = new EmblStreamFeature();
-<span class="nocode"><a name="2">  2: </a></span>Feature feature0 = new Feature(emblStreamFeature0);
-<span class="nocode"><a name="3">  3: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate((Key) null, (String) null, &quot;@WEl&amp;m?&quot;, true, true);
-<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = featureKeyQualifierPredicate0.testPredicate(feature0);
-<span class="nocode"><a name="5">  5: </a></span>assertFalse(boolean0);
+<span class="nocode"><a name="1">  1: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate((Key) null, &quot;2(.F&quot;, &quot;ffG&gt;&quot;, false, false, false);
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Key key0 = Key.CDS;
-<span class="nocode"><a name="2">  2: </a></span>EmblStreamFeature emblStreamFeature0 = new EmblStreamFeature();
-<span class="nocode"><a name="3">  3: </a></span>Feature feature0 = new Feature(emblStreamFeature0);
-<span class="nocode"><a name="4">  4: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate(key0, &quot;org.biojava.bio.dist.GapDistribution&quot;);
-<span class="nocode"><a name="5">  5: </a></span>boolean boolean0 = featureKeyQualifierPredicate0.testPredicate(feature0);
-<span class="nocode"><a name="6">  6: </a></span>assertFalse(boolean0);
+<span class="nocode"><a name="2">  2: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate(key0, &quot;Results Manager&quot;, &quot;Results Manager&quot;, true, true);
+<span class="nocode"><a name="3">  3: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;Results Manager&quot;);
+<span class="nocode"><a name="4">  4: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="5">  5: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="6">  6: </a></span>Entry entry0 = simpleEntryGroup0.createEntry(&quot;db_id&quot;);
+<span class="nocode"><a name="7">  7: </a></span>Feature feature0 = entry0.createFeature();
+<span class="nocode"><a name="8">  8: </a></span>featureKeyQualifierPredicate0.testPredicate(feature0);
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate((Key) null, &quot;&quot;, &quot;&quot;, false, true);
-<span class="nocode"><a name="2">  2: </a></span>featureKeyQualifierPredicate0.testPredicate((Feature) null);
-</pre>
-<h3>Test case 8</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate((Key) null, (String) null, (String) null, true, true, true);
-</pre>
-<h3>Test case 9</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Key key0 = new Key((String) null);
-<span class="nocode"><a name="2">  2: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate(key0, (String) null, (String) null, true, true);
+<span class="nocode"><a name="1">  1: </a></span>Key key0 = Key.CDS;
+<span class="nocode"><a name="2">  2: </a></span>FeatureKeyQualifierPredicate featureKeyQualifierPredicate0 = new FeatureKeyQualifierPredicate(key0, (String) null, (String) null, true, true, true);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -105,13 +88,13 @@ uk.ac.sanger.artemis.FeatureKeyQualifierPredicate
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.FeatureKeyQualifierPredicate
-<li>Size: 9
-<li>Length: 30
+<li>Size: 7
+<li>Length: 22
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.9602465986394558
-<li>BranchCoverage: 0.875
+<li>Coverage: 0.8331207482993197
+<li>BranchCoverage: 0.7083333333333334
 <li>MethodCoverage: 1.0
-<li>OutputCoverage: 1.0
+<li>OutputCoverage: 0.5
 </ul></div>
 </div>
 <p><br><a href="../report-generation.html">Back to Overview</a></p>

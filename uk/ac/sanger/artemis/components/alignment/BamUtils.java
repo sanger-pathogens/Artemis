@@ -504,6 +504,8 @@ class BamUtils
   
   /**
    * Create a local index file for the given alignment file.
+   * NOTE: Index file sizes will vary across tools dependent on compression level
+   * used, amongst other things.
    * @param alignmentFilename String
    * @param indexFile File to create
    * @throws IOException
@@ -520,7 +522,7 @@ class BamUtils
 		  
 		  final SamReaderFactory factory = SamReaderFactory.makeDefault();
 		  factory.disable(Option.EAGERLY_DECODE);
-		  factory.enable(SamReaderFactory.Option.INCLUDE_SOURCE_IN_RECORDS);
+		  factory.enable(SamReaderFactory.Option.INCLUDE_SOURCE_IN_RECORDS); // required
 		  factory.validationStringency(ValidationStringency.SILENT);
 		  final SamReader bam = factory.open(new File(alignmentFilename));
 		  
@@ -536,6 +538,8 @@ class BamUtils
 
 		  BAMIndexer.createIndex(bam, indexFile);
 		  CloserUtil.close(bam);
+		  
+		  logger.debug("Finished BAM index file creation: " + indexFilePath);
 		 
 	  }
 	  else if (isCramFile(alignmentFilename))
@@ -555,6 +559,8 @@ class BamUtils
 					  SeekableStreamFactory.getInstance().getStreamFor(alignmentFilename), 
 					  new FileOutputStream(indexFile));
 		  }
+		  
+		  logger.debug("Finished CRAM index file creation: " + indexFilePath);
 	  } 
 
   }

@@ -35,7 +35,9 @@ uk.ac.sanger.artemis.circular.RestrictionEnzyme
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>RestrictionEnzyme restrictionEnzyme0 = new RestrictionEnzyme((DNADraw) null, (Vector) null);
+<span class="nocode"><a name="1">  1: </a></span>DNADraw dNADraw0 = new DNADraw();
+<span class="nocode"><a name="2">  2: </a></span>Stack&lt;List&gt; stack0 = new Stack&lt;List&gt;();
+<span class="nocode"><a name="3">  3: </a></span>RestrictionEnzyme restrictionEnzyme0 = new RestrictionEnzyme(dNADraw0, stack0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -49,7 +51,7 @@ uk.ac.sanger.artemis.circular.RestrictionEnzyme
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.circular.RestrictionEnzyme
 <li>Size: 1
-<li>Length: 1
+<li>Length: 3
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.23233543621673197
 <li>BranchCoverage: 0.23529411764705882

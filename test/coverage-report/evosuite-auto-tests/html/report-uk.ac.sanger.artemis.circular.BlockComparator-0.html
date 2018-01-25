@@ -21,9 +21,9 @@ uk.ac.sanger.artemis.circular.BlockComparator
 <div id="wrapper">
 <img src="files/evosuite.png" height="40"/>
 <br><br><h2 class=title>Summary</h2>
-<ul><li>Target class: uk.ac.sanger.artemis.circular.BlockComparator: 0.3587797619047619</ul>
+<ul><li>Target class: uk.ac.sanger.artemis.circular.BlockComparator: 0.337202380952381</ul>
 <ul>
-<li>45.166666666666664 fitness evaluations, 0 generations, null statements, 2 tests.
+<li>46.19047619047619 fitness evaluations, 0 generations, null statements, 2 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -36,20 +36,13 @@ uk.ac.sanger.artemis.circular.BlockComparator
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>BlockComparator blockComparator0 = new BlockComparator();
-<span class="nocode"><a name="2">  2: </a></span>blockComparator0.compare(blockComparator0, blockComparator0);
+<span class="nocode"><a name="2">  2: </a></span>MockThaiBuddhistDate mockThaiBuddhistDate0 = new MockThaiBuddhistDate();
+<span class="nocode"><a name="3">  3: </a></span>blockComparator0.compare(mockThaiBuddhistDate0, blockComparator0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>BlockComparator blockComparator0 = new BlockComparator();
-<span class="nocode"><a name="2">  2: </a></span>Color color0 = new Color(0.0F, 0.0F, 0.0F, 0.37F);
-<span class="nocode"><a name="3">  3: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;&quot;);
-<span class="nocode"><a name="4">  4: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
-<span class="nocode"><a name="5">  5: </a></span>MSPcrunchEntryInformation mSPcrunchEntryInformation0 = new MSPcrunchEntryInformation();
-<span class="nocode"><a name="6">  6: </a></span>PublicDBDocumentEntry publicDBDocumentEntry0 = new PublicDBDocumentEntry(mSPcrunchEntryInformation0);
-<span class="nocode"><a name="7">  7: </a></span>Entry entry0 = new Entry(bases0, publicDBDocumentEntry0);
-<span class="nocode"><a name="8">  8: </a></span>Track track0 = new Track(0.0F, &quot;&quot;, true, true, entry0);
-<span class="nocode"><a name="9">  9: </a></span>Block block0 = new Block(&quot;&quot;, 0, 0, color0, 0.0F, track0);
-<span class="nocode"><a name="10"> 10: </a></span>blockComparator0.compare(block0, (Object) null);
+<span class="nocode"><a name="2">  2: </a></span>blockComparator0.compare((Object) null, &quot;class org.biojava.bio.seq.io.SequenceBuilderBaseERROR_FEATURES_PROPERTY&quot;);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -63,9 +56,9 @@ uk.ac.sanger.artemis.circular.BlockComparator
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.circular.BlockComparator
 <li>Size: 2
-<li>Length: 12
+<li>Length: 5
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
-<li>Coverage: 0.3587797619047619
+<li>Coverage: 0.337202380952381
 <li>BranchCoverage: 0.2
 <li>MethodCoverage: 1.0
 <li>OutputCoverage: 0.0

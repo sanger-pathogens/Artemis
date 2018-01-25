@@ -36,27 +36,25 @@ uk.ac.sanger.artemis.components.ScoreChangeEvent
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>Object object0 = new Object();
-<span class="nocode"><a name="2">  2: </a></span>ScoreChangeEvent scoreChangeEvent0 = new ScoreChangeEvent(object0, (-400));
+<span class="nocode"><a name="2">  2: </a></span>ScoreChangeEvent scoreChangeEvent0 = new ScoreChangeEvent(object0, (-1));
 <span class="nocode"><a name="3">  3: </a></span>int int0 = scoreChangeEvent0.getValue();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals((-400), int0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-1), int0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>ScoreChangeEvent scoreChangeEvent0 = new ScoreChangeEvent((Object) null, 1386);
+<span class="nocode"><a name="1">  1: </a></span>ScoreChangeEvent scoreChangeEvent0 = new ScoreChangeEvent((Object) null, 1);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Object object0 = new Object();
-<span class="nocode"><a name="2">  2: </a></span>ScoreChangeEvent scoreChangeEvent0 = new ScoreChangeEvent(object0, 1945);
-<span class="nocode"><a name="3">  3: </a></span>int int0 = scoreChangeEvent0.getValue();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(1945, int0);
+<span class="nocode"><a name="1">  1: </a></span>ScoreChangeEvent scoreChangeEvent0 = new ScoreChangeEvent(&quot;) /0WW1:8}[n@B)(A&quot;, 2690);
+<span class="nocode"><a name="2">  2: </a></span>int int0 = scoreChangeEvent0.getValue();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(2690, int0);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Object object0 = new Object();
-<span class="nocode"><a name="2">  2: </a></span>ScoreChangeEvent scoreChangeEvent0 = new ScoreChangeEvent(object0, 0);
-<span class="nocode"><a name="3">  3: </a></span>int int0 = scoreChangeEvent0.getValue();
-<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, int0);
+<span class="nocode"><a name="1">  1: </a></span>ScoreChangeEvent scoreChangeEvent0 = new ScoreChangeEvent(&quot;/EvEEL~t4_&quot;, 0);
+<span class="nocode"><a name="2">  2: </a></span>int int0 = scoreChangeEvent0.getValue();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, int0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -70,7 +68,7 @@ uk.ac.sanger.artemis.components.ScoreChangeEvent
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.ScoreChangeEvent
 <li>Size: 4
-<li>Length: 10
+<li>Length: 8
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 1.0
 <li>BranchCoverage: 1.0

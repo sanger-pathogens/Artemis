@@ -49,24 +49,23 @@ uk.ac.sanger.artemis.components.Utilities
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Utilities.centreJustifyFrame((JFrame) null, (-3671));
+<span class="nocode"><a name="1">  1: </a></span>Utilities.centreJustifyFrame((JFrame) null, (-1781));
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>ImageIcon imageIcon0 = new ImageIcon();
-<span class="nocode"><a name="2">  2: </a></span>JRadioButton jRadioButton0 = new JRadioButton(imageIcon0);
-<span class="nocode"><a name="3">  3: </a></span>Utilities.centreOwningFrame(jRadioButton0);
+<span class="nocode"><a name="1">  1: </a></span>JPopupMenu jPopupMenu0 = new JPopupMenu();
+<span class="nocode"><a name="2">  2: </a></span>JFrame jFrame0 = Utilities.getComponentFrame(jPopupMenu0);
+<span class="nocode"><a name="3">  3: </a></span>assertNull(jFrame0);
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>JScrollPane jScrollPane0 = new JScrollPane();
-<span class="nocode"><a name="2">  2: </a></span>JScrollBar jScrollBar0 = jScrollPane0.getVerticalScrollBar();
-<span class="nocode"><a name="3">  3: </a></span>JFrame jFrame0 = Utilities.getComponentFrame(jScrollBar0);
-<span class="nocode"><a name="4">  4: </a></span>assertNull(jFrame0);
+<span class="nocode"><a name="1">  1: </a></span>Utilities.centreFrame((JFrame) null);
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>Utilities.centreFrame((JFrame) null);
+<span class="nocode"><a name="1">  1: </a></span>DefaultEditorKit.CutAction defaultEditorKit_CutAction0 = new DefaultEditorKit.CutAction();
+<span class="nocode"><a name="2">  2: </a></span>JMenuItem jMenuItem0 = new JMenuItem(defaultEditorKit_CutAction0);
+<span class="nocode"><a name="3">  3: </a></span>Utilities.centreOwningFrame(jMenuItem0);
 </pre>
 <h3>Test case 8</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
@@ -92,7 +91,7 @@ uk.ac.sanger.artemis.components.Utilities
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.components.Utilities
 <li>Size: 10
-<li>Length: 15
+<li>Length: 14
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.3831261837121212
 <li>BranchCoverage: 0.4166666666666667

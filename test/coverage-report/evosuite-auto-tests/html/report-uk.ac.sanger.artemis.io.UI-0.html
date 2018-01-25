@@ -23,7 +23,7 @@ uk.ac.sanger.artemis.io.UI
 <br><br><h2 class=title>Summary</h2>
 <ul><li>Target class: uk.ac.sanger.artemis.io.UI: 0.7089883010697089</ul>
 <ul>
-<li>60.482142851554926 fitness evaluations, 0 generations, null statements, 18 tests.
+<li>60.482142851554926 fitness evaluations, 0 generations, null statements, 17 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,102 +35,131 @@ uk.ac.sanger.artemis.io.UI
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>UI.info(&quot;DWm@xqVLX+S7nsq!%&quot;, &quot;@}0~zw{N'A,/ p&quot;);
+<span class="nocode"><a name="1">  1: </a></span>UI uI0 = new UI();
+<span class="nocode"><a name="2">  2: </a></span>UI.UIMode uI_UIMode0 = UI.UIMode.SCRIPT;
+<span class="nocode"><a name="3">  3: </a></span>UI.mode = uI_UIMode0;
+<span class="nocode"><a name="4">  4: </a></span>UI.initalise();
+<span class="nocode"><a name="5">  5: </a></span>UI.error(&quot;%FBQ8TFIk&quot;, &quot;%FBQ8TFIk&quot;);
+<span class="nocode"><a name="6">  6: </a></span>UI.warn(&quot;s0bn&quot;, &quot;s0bn&quot;);
+<span class="nocode"><a name="7">  7: </a></span>UI.message(&quot;&quot;, &quot;&quot;, &quot;&quot;);
+<span class="nocode"><a name="8">  8: </a></span>UI.UIMode.values();
+<span class="nocode"><a name="9">  9: </a></span>UI.info(&quot;s0bn&quot;, &quot;&quot;);
+<span class="nocode"><a name="10"> 10: </a></span>UI.message(&quot;mbB=gg|]Wu&quot;, &quot;s0bn&quot;, &quot;&quot;);
+<span class="nocode"><a name="11"> 11: </a></span>UI.message(&quot;s0bn&quot;, &quot;s0bn&quot;, &quot;R-$ZZ |e&quot;);
+<span class="nocode"><a name="12"> 12: </a></span>UI.info(&quot;mbB=gg|]Wu&quot;, &quot;&quot;);
+<span class="nocode"><a name="13"> 13: </a></span>UI.UIMode.values();
+<span class="nocode"><a name="14"> 14: </a></span>boolean boolean0 = UI.booleanUserInput(&quot;&quot;, &quot;s0bn&quot;);
+<span class="nocode"><a name="15"> 15: </a></span>assertTrue(boolean0);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>UI uI0 = new UI();
+<span class="nocode"><a name="1">  1: </a></span>UI.booleanUserInput(&quot;b^&quot;, &quot;b^&quot;);
+<span class="nocode"><a name="2">  2: </a></span>String string0 = &quot;&quot;;
+<span class="nocode"><a name="3">  3: </a></span>UI.UIMode.valueOf(string0);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>UI.initalise();
+<span class="nocode"><a name="1">  1: </a></span>UI.UIMode.valueOf(&quot;&quot;);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>UI.userInput(&quot;a! 9r(pqx/%7w&quot;, false);
+<span class="nocode"><a name="1">  1: </a></span>UI uI0 = new UI();
+<span class="nocode"><a name="2">  2: </a></span>UI.message((String) null, (String) null, &quot;gj#4 WT[nx=P'&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = &quot;M@G:w{hcNC{K?Jsp&quot;;
+<span class="nocode"><a name="4">  4: </a></span>UI.UIMode.valueOf(string0);
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>UI.booleanUserInput((String) null, &quot;Vb)ur~T&quot;);
+<span class="nocode"><a name="1">  1: </a></span>UI.UIMode uI_UIMode0 = UI.UIMode.CONSOLE;
+<span class="nocode"><a name="2">  2: </a></span>UI.mode = uI_UIMode0;
+<span class="nocode"><a name="3">  3: </a></span>SystemInUtil.addInputLine(&quot;/57hmmAdL8Y a\&quot;} ]&quot;);
+<span class="nocode"><a name="4">  4: </a></span>UI.error(&quot;&quot;, &quot;&quot;);
+<span class="nocode"><a name="5">  5: </a></span>UI.error(&quot;&quot;, &quot;&quot;);
+<span class="nocode"><a name="6">  6: </a></span>UI.error(&quot;&quot;, &quot;&quot;);
+<span class="nocode"><a name="7">  7: </a></span>UI.UIMode.values();
+<span class="nocode"><a name="8">  8: </a></span>UI.booleanUserInput(&quot;@yQ(0pZr,s7KV%V(&lt;9K&quot;, &quot;&quot;);
+<span class="nocode"><a name="9">  9: </a></span>String string0 = &quot;f 0: WuA&gt;Q1\\^U&quot;;
+<span class="nocode"><a name="10"> 10: </a></span>String string1 = &quot;n&quot;;
+<span class="nocode"><a name="11"> 11: </a></span>String string2 = &quot;zPx0+\\H&quot;;
+<span class="nocode"><a name="12"> 12: </a></span>UI.message(string0, string1, string2);
+<span class="nocode"><a name="13"> 13: </a></span>UI.UIMode.values();
+<span class="nocode"><a name="14"> 14: </a></span>UI.initalise();
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>UI.UIMode uI_UIMode0 = UI.UIMode.SCRIPT;
-<span class="nocode"><a name="2">  2: </a></span>UI.mode = uI_UIMode0;
-<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = UI.booleanUserInput((String) null, &quot;Vb)ur~T&quot;);
-<span class="nocode"><a name="4">  4: </a></span>assertTrue(boolean0);
+<span class="nocode"><a name="1">  1: </a></span>UI.message(&quot;&quot;, &quot;&quot;, &quot;&quot;);
 </pre>
 <h3>Test case 7</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>UI.UIMode uI_UIMode0 = UI.UIMode.CONSOLE;
-<span class="nocode"><a name="2">  2: </a></span>UI.mode = uI_UIMode0;
-<span class="nocode"><a name="3">  3: </a></span>UI.booleanUserInput((String) null, &quot;Vb)ur~T&quot;);
+<span class="nocode"><a name="1">  1: </a></span>UI uI0 = new UI();
+<span class="nocode"><a name="2">  2: </a></span>UI.UIMode uI_UIMode0 = UI.UIMode.SCRIPT;
+<span class="nocode"><a name="3">  3: </a></span>UI.mode = uI_UIMode0;
+<span class="nocode"><a name="4">  4: </a></span>UI.initalise();
+<span class="nocode"><a name="5">  5: </a></span>SystemInUtil.addInputLine(&quot;&quot;);
+<span class="nocode"><a name="6">  6: </a></span>UI.userInput(&quot;'SIEE6fx\&quot;&quot;, false);
+<span class="nocode"><a name="7">  7: </a></span>UI.booleanUserInput(&quot;C0|Jj?0/(&quot;, &quot;C0|Jj?0/(&quot;);
+<span class="nocode"><a name="8">  8: </a></span>UI.userInput(&quot;C0|Jj?0/(&quot;, true);
+<span class="nocode"><a name="9">  9: </a></span>UI.error(&quot;&quot;, &quot;l?:e:ehK0~r(uMa&quot;);
+<span class="nocode"><a name="10"> 10: </a></span>UI.initalise();
 </pre>
 <h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>UI.warn((String) null, (String) null);
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>UI.booleanUserInput(&quot;hE.Qsbs1-VW?!&quot;, &quot;W9L5N%7&quot;);
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>UI.error(&quot;&quot;, &quot;&quot;);
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>UI.info((String) null, (String) null);
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>UI.warn(&quot;Sa3mWr}B.!ZA,d&quot;, &quot;B.y(uW&gt;&quot;);
+</pre>
+<h3>Test case 13</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>UI.userInput((String) null, false);
+</pre>
+<h3>Test case 14</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SystemInUtil.addInputLine(&quot;=19,OFtV)h\u0000b^&quot;);
+<span class="nocode"><a name="2">  2: </a></span>UI.userInput(&quot;=19,OFtV)h\u0000b^&quot;, false);
+<span class="nocode"><a name="3">  3: </a></span>UI.UIMode.values();
+<span class="nocode"><a name="4">  4: </a></span>SystemInUtil.addInputLine(&quot;[2%&quot;);
+<span class="nocode"><a name="5">  5: </a></span>UI.initalise();
+<span class="nocode"><a name="6">  6: </a></span>UI.userInput(&quot;=19,OFtV)h\u0000b^&quot;, true);
+<span class="nocode"><a name="7">  7: </a></span>UI.UIMode.valueOf(&quot;=19,OFtV)h\u0000b^&quot;);
+</pre>
+<h3>Test case 15</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>UI.UIMode uI_UIMode0 = UI.UIMode.CONSOLE;
+<span class="nocode"><a name="2">  2: </a></span>UI.mode = uI_UIMode0;
+<span class="nocode"><a name="3">  3: </a></span>UI.error(&quot;&quot;, &quot;&quot;);
+<span class="nocode"><a name="4">  4: </a></span>UI.error(&quot;IO exception = &quot;, &quot;IO exception = &quot;);
+<span class="nocode"><a name="5">  5: </a></span>UI.error(&quot;IO exception = &quot;, &quot;IO exception = &quot;);
+<span class="nocode"><a name="6">  6: </a></span>UI.message(&quot;IO exception = &quot;, &quot;IO exception = &quot;, &quot;IO exception = &quot;);
+</pre>
+<h3>Test case 16</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>UI.booleanUserInput(&quot;b^&quot;, &quot;b^&quot;);
+</pre>
+<h3>Test case 17</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
 <span class="nocode"><a name="1">  1: </a></span>UI.UIMode uI_UIMode0 = UI.UIMode.CONSOLE;
 <span class="nocode"><a name="2">  2: </a></span>UI.mode = uI_UIMode0;
 <span class="nocode"><a name="3">  3: </a></span>SystemInUtil.addInputLine(&quot;y&quot;);
-<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = UI.booleanUserInput((String) null, &quot;Vb)ur~T&quot;);
-<span class="nocode"><a name="5">  5: </a></span>assertTrue(boolean0);
-</pre>
-<h3>Test case 9</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>UI.UIMode uI_UIMode0 = UI.UIMode.SCRIPT;
-<span class="nocode"><a name="2">  2: </a></span>UI.mode = uI_UIMode0;
-<span class="nocode"><a name="3">  3: </a></span>UI.message(&quot;p4If8$^p(1r6d&quot;, &quot;p4If8$^p(1r6d&quot;, &quot;1&gt;]4jaZ$&quot;);
-</pre>
-<h3>Test case 10</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>UI.UIMode uI_UIMode0 = UI.UIMode.CONSOLE;
-<span class="nocode"><a name="2">  2: </a></span>UI.mode = uI_UIMode0;
-<span class="nocode"><a name="3">  3: </a></span>String string0 = &quot;&quot;;
-<span class="nocode"><a name="4">  4: </a></span>SystemInUtil.addInputLine(&quot;y&quot;);
-<span class="nocode"><a name="5">  5: </a></span>UI.booleanUserInput((String) null, &quot;Vb)ur~T&quot;);
-<span class="nocode"><a name="6">  6: </a></span>UI.booleanUserInput(string0, string0);
-</pre>
-<h3>Test case 11</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>UI.message(&quot;o&quot;, &quot;q3)4GVRwt&quot;, &quot;&quot;);
-</pre>
-<h3>Test case 12</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>UI.UIMode uI_UIMode0 = UI.UIMode.CONSOLE;
-<span class="nocode"><a name="2">  2: </a></span>UI.mode = uI_UIMode0;
-<span class="nocode"><a name="3">  3: </a></span>UI.message(&quot;\b &quot;, &quot;y&quot;, &quot;Vb)ur~T&quot;);
-</pre>
-<h3>Test case 13</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>UI.error(&quot;v&quot;, &quot;a! 9r(pqx/%7w&quot;);
-</pre>
-<h3>Test case 14</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SystemInUtil.addInputLine(&quot;\b &quot;);
-<span class="nocode"><a name="2">  2: </a></span>String string0 = UI.userInput(&quot;&quot;, true);
-<span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;&quot;, string0);
-</pre>
-<h3>Test case 15</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>SystemInUtil.addInputLine(&quot;a! 9r(pqx/%7w&quot;);
-<span class="nocode"><a name="2">  2: </a></span>String string0 = UI.userInput(&quot;a! 9r(pqx/%7w&quot;, false);
-<span class="nocode"><a name="3">  3: </a></span>String string1 = UI.userInput(&quot;&quot;, false);
-<span class="nocode"><a name="4">  4: </a></span>assertFalse(string1.equals((Object)string0));
-</pre>
-<h3>Test case 16</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>UI.UIMode uI_UIMode0 = UI.UIMode.SCRIPT;
-<span class="nocode"><a name="2">  2: </a></span>UI.mode = uI_UIMode0;
-<span class="nocode"><a name="3">  3: </a></span>UI.error(&quot;&amp;m*hF~L#d,G&quot;, &quot;&amp;m*hF~L#d,G&quot;);
-</pre>
-<h3>Test case 17</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>UI.UIMode uI_UIMode0 = UI.UIMode.SCRIPT;
-<span class="nocode"><a name="2">  2: </a></span>UI.mode = uI_UIMode0;
-<span class="nocode"><a name="3">  3: </a></span>UI.info(&quot;$VALUES&quot;, &quot;$VALUES&quot;);
-</pre>
-<h3>Test case 18</h3>
-<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>UI.warn(&quot;WARN&quot;, &quot;&quot;);
+<span class="nocode"><a name="4">  4: </a></span>UI.error(&quot;&quot;, &quot;&quot;);
+<span class="nocode"><a name="5">  5: </a></span>UI.error(&quot;&quot;, &quot;&quot;);
+<span class="nocode"><a name="6">  6: </a></span>UI.UIMode.values();
+<span class="nocode"><a name="7">  7: </a></span>UI.message(&quot;&quot;, &quot;k&quot;, &quot;072QiN&gt;7m#j\&quot;O&quot;);
+<span class="nocode"><a name="8">  8: </a></span>boolean boolean0 = UI.booleanUserInput(&quot;@yQ(0pZr,s7KV%V(&lt;9K&quot;, &quot;&quot;);
+<span class="nocode"><a name="9">  9: </a></span>assertTrue(boolean0);
 </pre>
 </div><div id="post">
 <h2 class=title id=source>Source Code</h2>
@@ -143,11 +172,11 @@ uk.ac.sanger.artemis.io.UI
 <h2 id=parameters>EvoSuite Parameters</h2>
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.io.UI
-<li>Size: 18
-<li>Length: 41
+<li>Size: 17
+<li>Length: 75
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.7089883010697089
-<li>BranchCoverage: 0.6206896551724138
+<li>BranchCoverage: 0.6896551724137931
 <li>MethodCoverage: 1.0
 <li>OutputCoverage: 0.6
 </ul></div>

@@ -23,7 +23,7 @@ uk.ac.sanger.artemis.MegaBlastComparisonData
 <br><br><h2 class=title>Summary</h2>
 <ul><li>Target class: uk.ac.sanger.artemis.MegaBlastComparisonData: 0.5528096604495457</ul>
 <ul>
-<li>169.12499997920045 fitness evaluations, 0 generations, null statements, 8 tests.
+<li>169.12499998140805 fitness evaluations, 0 generations, null statements, 8 tests.
 <li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
 </ul>
 <div id="page">
@@ -35,35 +35,33 @@ uk.ac.sanger.artemis.MegaBlastComparisonData
 <div class=tests>
 <h3>Test case 1</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>boolean boolean0 = MegaBlastComparisonData.formatCorrect(&quot;({~NGECTGth&quot;);
-<span class="nocode"><a name="2">  2: </a></span>assertFalse(boolean0);
+<span class="nocode"><a name="1">  1: </a></span>StringReader stringReader0 = new StringReader(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>LinePushBackReader linePushBackReader0 = new LinePushBackReader(stringReader0);
+<span class="nocode"><a name="3">  3: </a></span>MegaBlastComparisonData megaBlastComparisonData0 = new MegaBlastComparisonData(linePushBackReader0);
+<span class="nocode"><a name="4">  4: </a></span>megaBlastComparisonData0.makeMatchFromString(&quot;&quot;);
 </pre>
 <h3>Test case 2</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>MegaBlastComparisonData megaBlastComparisonData0 = new MegaBlastComparisonData();
-<span class="nocode"><a name="2">  2: </a></span>MegaBlastComparisonData megaBlastComparisonData1 = (MegaBlastComparisonData)megaBlastComparisonData0.getNewSimpleComparisonData();
-<span class="nocode"><a name="3">  3: </a></span>assertNotSame(megaBlastComparisonData0, megaBlastComparisonData1);
+<span class="nocode"><a name="1">  1: </a></span>boolean boolean0 = MegaBlastComparisonData.formatCorrect(&quot;) is badly formatted in this line: &quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertFalse(boolean0);
 </pre>
 <h3>Test case 3</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[0];
-<span class="nocode"><a name="2">  2: </a></span>CharArrayReader charArrayReader0 = new CharArrayReader(charArray0);
-<span class="nocode"><a name="3">  3: </a></span>LinePushBackReader linePushBackReader0 = new LinePushBackReader(charArrayReader0);
-<span class="nocode"><a name="4">  4: </a></span>MegaBlastComparisonData megaBlastComparisonData0 = new MegaBlastComparisonData(linePushBackReader0);
+<span class="nocode"><a name="1">  1: </a></span>MegaBlastComparisonData megaBlastComparisonData0 = new MegaBlastComparisonData();
+<span class="nocode"><a name="2">  2: </a></span>MegaBlastComparisonData megaBlastComparisonData1 = (MegaBlastComparisonData)megaBlastComparisonData0.getNewSimpleComparisonData();
+<span class="nocode"><a name="3">  3: </a></span>assertNotSame(megaBlastComparisonData1, megaBlastComparisonData0);
 </pre>
 <h3>Test case 4</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>StringReader stringReader0 = new StringReader(&quot; ?s badly formatted in this line: &quot;);
+<span class="nocode"><a name="1">  1: </a></span>StringReader stringReader0 = new StringReader(&quot;BUG: Attempting to add duplicate filter &quot;);
 <span class="nocode"><a name="2">  2: </a></span>LinePushBackReader linePushBackReader0 = new LinePushBackReader(stringReader0);
 <span class="nocode"><a name="3">  3: </a></span>MegaBlastComparisonData megaBlastComparisonData0 = new MegaBlastComparisonData(linePushBackReader0);
 </pre>
 <h3>Test case 5</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
-<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[6];
-<span class="nocode"><a name="2">  2: </a></span>CharArrayReader charArrayReader0 = new CharArrayReader(charArray0);
-<span class="nocode"><a name="3">  3: </a></span>charArrayReader0.close();
-<span class="nocode"><a name="4">  4: </a></span>LinePushBackReader linePushBackReader0 = new LinePushBackReader(charArrayReader0);
-<span class="nocode"><a name="5">  5: </a></span>MegaBlastComparisonData megaBlastComparisonData0 = new MegaBlastComparisonData(linePushBackReader0);
+<span class="nocode"><a name="1">  1: </a></span>PipedReader pipedReader0 = new PipedReader();
+<span class="nocode"><a name="2">  2: </a></span>LinePushBackReader linePushBackReader0 = new LinePushBackReader(pipedReader0);
+<span class="nocode"><a name="3">  3: </a></span>MegaBlastComparisonData megaBlastComparisonData0 = new MegaBlastComparisonData(linePushBackReader0);
 </pre>
 <h3>Test case 6</h3>
 <pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
@@ -90,7 +88,7 @@ uk.ac.sanger.artemis.MegaBlastComparisonData
 <div class=statistics><ul>
 <li>TARGET_CLASS: uk.ac.sanger.artemis.MegaBlastComparisonData
 <li>Size: 8
-<li>Length: 19
+<li>Length: 17
 <li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
 <li>Coverage: 0.5528096604495457
 <li>BranchCoverage: 0.47058823529411764
