@@ -3272,9 +3272,26 @@ public class BamView extends JPanel
       {
         laststart = -1;
         if(feature_display != null)
+        {
           setZoomLevel(feature_display.getMaxVisibleBases());
+        }
         else
+        {
+        	  /*
+        	   * Reset the scroll bar to the left hand side when we change 
+        	   * the combo selection (for bamview). If this is not done
+        	   * then we can go to the end of one [long] contig, select a new one that's
+        	   * shorter and we will end up off the end of it in no-man's land
+        	   * - this eventually leads to an array negative index exception in 
+        	   * iterateOverBam
+        	   */
+          startBase = -1;
+          endBase = -1;
+          scrollBar.setValues(1, BamView.this.nbasesInView, 1,
+               getMaxBasesInPanel(getSequenceLength()));
           setZoomLevel(BamView.this.nbasesInView);
+          repaint();
+        }
       }
     };
     topPanel.add(combo);
