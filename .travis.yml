@@ -6,14 +6,13 @@ sudo: false
 env:
   global:
     - BUILD_CMD='make'
+    - RUN_TESTS=false
 matrix:
   include:
     - jdk: oraclejdk8
-      env: BUILD_CMD='ant -f build.xml'
-      script: 
-      - "cd test"
-      - "ln -s $(pwd)/../etc/log4j.properties ."
-      - "./RunDefaultUnitTests.sh | tee test.log && [ -z "$(grep 'Failures:\s[^0]\|Errors:\s[^0]' test.log)" ]"
+      env: 
+        - BUILD_CMD='ant -f build.xml'
+        - RUN_TESTS=true
 cache:
   directories:
   - "${HOME}/dependencies"
@@ -24,4 +23,8 @@ before_install:
   - "source install_dependencies.sh"
 install:
   - "$BUILD_CMD"
-script: skip
+script:
+  - test $RUN_TESTS = true \
+    && cd test \
+    && ln -s $(pwd)/../etc/log4j.properties . \
+    && ./RunDefaultUnitTests.sh | tee test.log && [ -z "$(grep 'Failures:\s[^0]\|Errors:\s[^0]' test.log)" ] 
