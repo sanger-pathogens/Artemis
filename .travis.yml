@@ -9,10 +9,8 @@ env:
 matrix:
   include:
     - jdk: oraclejdk8
-      install:
-        - "ant -f build.xml"
-        - "cd test"
-        - "ln -s $(pwd)/../etc/log4j.properties ."
+      env: BUILD_CMD='ant -f build.xml'
+      before-script: "cd test; ln -s $(pwd)/../etc/log4j.properties ."
       script: ./RunDefaultUnitTests.sh | tee test.log && [ -z "$(grep 'Failures:\s[^0]\|Errors:\s[^0]' test.log)" ]
 cache:
   directories:
@@ -24,3 +22,4 @@ before_install:
   - "source install_dependencies.sh"
 install:
   - "$BUILD_CMD"
+
