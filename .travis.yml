@@ -24,7 +24,8 @@ before_install:
 install:
   - "$BUILD_CMD"
 script:
-  - test $RUN_TESTS = true \
-    && cd test \
-    && ln -s $(pwd)/../etc/log4j.properties . \
-    && ./RunDefaultUnitTests.sh | tee test.log && [ -z "$(grep 'Failures:\s[^0]\|Errors:\s[^0]' test.log)" ] 
+  - if [ "$RUN_TESTS" == "true" ]; then
+      cd test;
+      ln -s $(pwd)/../etc/log4j.properties .;
+      ./RunDefaultUnitTests.sh | tee test.log && [ -z "$(grep 'Failures:\s[^0]\|Errors:\s[^0]' test.log)" ];
+    fi
