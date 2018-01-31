@@ -72,22 +72,6 @@ public class GoBox_ESTest extends GoBox_ESTest_scaffolding {
   }
 
   @Test(timeout = 4000)
-  public void test5()  throws Throwable  {
-      Dimension dimension0 = GoBox.getEvidenceListDimension();
-      GoBox goBox0 = null;
-      try {
-        goBox0 = new GoBox((Qualifier) null, "tIQ^r'?|vT*(G:JH9", (-1619437758), dimension0, dimension0);
-        fail("Expecting exception: NullPointerException");
-      
-      } catch(NullPointerException e) {
-         //
-         // no message in exception (getMessage() returned null)
-         //
-         verifyException("uk.ac.sanger.artemis.util.DatabaseDocument", e);
-      }
-  }
-
-  @Test(timeout = 4000)
   public void test6()  throws Throwable  {
       String string0 = GoBox.getEvidenceCodeGoTextFromText("");
       assertEquals("", string0);
