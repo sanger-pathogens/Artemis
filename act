@@ -33,7 +33,7 @@ usage () {
 	echo "        % act -Duserplot2=/pathToFile/userPlot"
 	echo
 	echo "HOMEPAGE"
-	echo "        http://www.sanger.ac.uk/resources/software/act/"
+	echo "        http://www.sanger.ac.uk/science/tools/artemis-comparison-tool-act"
     echo   
     
     exit 1
@@ -90,13 +90,8 @@ do
 done
 
 APPLICATION_HOME=`dirname "$PRG"`
-CLASSPATH=$APPLICATION_HOME:$APPLICATION_HOME/lib/biojava.jar:$APPLICATION_HOME/lib/jemAlign.jar:$APPLICATION_HOME/lib/jakarta-regexp-1.2.jar:$APPLICATION_HOME/lib/postgresql-8.4-701.jdbc3.jar:$CLASSPATH
-CLASSPATH=$CLASSPATH:$APPLICATION_HOME/lib/batik/batik-awt-util.jar:$APPLICATION_HOME/lib/batik/batik-dom.jar:$APPLICATION_HOME/lib/batik/batik-ext.jar:$APPLICATION_HOME/lib/batik/batik-svggen.jar:$APPLICATION_HOME/lib/batik/batik-util.jar:$APPLICATION_HOME/lib/batik/batik-xml.jar:$APPLICATION_HOME/lib/batik/batik-codec.jar
-CLASSPATH=$CLASSPATH:$APPLICATION_HOME/lib/j2ssh/commons-logging.jar:$APPLICATION_HOME/lib/j2ssh/j2ssh-core.jar:$APPLICATION_HOME/lib/j2ssh/
-CLASSPATH=$CLASSPATH:$APPLICATION_HOME/lib/ibatis/ibatis-2.3.4.726.jar:$APPLICATION_HOME/lib/ibatis/:$APPLICATION_HOME/lib/ibatis/log4j-1.2.14.jar:$APPLICATION_HOME/lib/ibatis/cglib-nodep-2.2.jar
-CLASSPATH=$APPLICATION_HOME/lib/picard/picard.jar:$APPLICATION_HOME/lib/commons-net-3.6.jar:$CLASSPATH
-CLASSPATH=$APPLICATION_HOME/lib/commons-lang-2.6.jar:$CLASSPATH
-export CLASSPATH
+JAR_NAME=act.jar
+JAR_FILE=$APPLICATION_HOME/$JAR_NAME
 
 #
 # Use a custom Java version if necessary
@@ -120,7 +115,7 @@ add_proxy_properties
 #
 if [[ "$ARTEMIS_JVM_FLAGS" = "" ]]
 then
-    FLAGS="-mx1g -ms100m -noverify"
+    FLAGS="-mx2g -ms100m -noverify"
 else
     FLAGS="$ARTEMIS_JVM_FLAGS -noverify"
 fi
@@ -136,5 +131,22 @@ then
     echo "Starting ACT with arguments: $FLAGS $APPLICATION_PROPERTIES $*"
 fi
 
-$JAVA $FLAGS $APPLICATION_PROPERTIES uk.ac.sanger.artemis.components.ActMain $*
-exit $?
+if [[ -e $JAR_FILE ]]
+then
+	$JAVA $FLAGS $APPLICATION_PROPERTIES -jar $JAR_FILE $*
+	result=$?
+else
+	CLASSPATH=$APPLICATION_HOME:$APPLICATION_HOME/lib/biojava.jar:$APPLICATION_HOME/lib/jemAlign.jar:$APPLICATION_HOME/lib/jakarta-regexp-1.2.jar:$APPLICATION_HOME/lib/postgresql-8.4-701.jdbc3.jar:$CLASSPATH
+	CLASSPATH=$CLASSPATH:$APPLICATION_HOME/lib/batik/batik-awt-util.jar:$APPLICATION_HOME/lib/batik/batik-dom.jar:$APPLICATION_HOME/lib/batik/batik-ext.jar:$APPLICATION_HOME/lib/batik/batik-svggen.jar:$APPLICATION_HOME/lib/batik/batik-util.jar:$APPLICATION_HOME/lib/batik/batik-xml.jar:$APPLICATION_HOME/lib/batik/batik-codec.jar
+	CLASSPATH=$CLASSPATH:$APPLICATION_HOME/lib/j2ssh/commons-logging.jar:$APPLICATION_HOME/lib/j2ssh/j2ssh-core.jar:$APPLICATION_HOME/lib/j2ssh/
+	CLASSPATH=$CLASSPATH:$APPLICATION_HOME/lib/ibatis/ibatis-2.3.4.726.jar:$APPLICATION_HOME/lib/ibatis/:$APPLICATION_HOME/lib/ibatis/log4j-1.2.14.jar:$APPLICATION_HOME/lib/ibatis/cglib-nodep-2.2.jar
+	CLASSPATH=$APPLICATION_HOME/lib/picard/picard.jar:$APPLICATION_HOME/lib/commons-net-3.6.jar:$CLASSPATH
+	CLASSPATH=$APPLICATION_HOME/lib/commons-lang-2.6.jar:$CLASSPATH
+	export CLASSPATH
+
+	$JAVA $FLAGS $APPLICATION_PROPERTIES uk.ac.sanger.artemis.components.ActMain $*
+	result=$?
+fi
+
+exit $result
+

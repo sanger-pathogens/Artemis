@@ -346,7 +346,7 @@ public class BamView extends JPanel
       }
     }
     
-    doInputFileValidation = Options.getOptions().getPropertyTruthValue("bamview_perform_file_validation");
+    doInputFileValidation = Options.getOptions().getPropertyTruthValue("bamview_perform_detailed_validation");
     logger4j.debug("PERFORM UP-FRONT INPUT FILE VALIDATION=" + doInputFileValidation);
     
     if(Options.getOptions().getIntegerProperty("bam_read_thread") != null)

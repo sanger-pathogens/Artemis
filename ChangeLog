@@ -1,4 +1,5 @@
 Version 17
+
 	Artemis/ACT and associated applications have been upgraded to Java 8. Java 7/6/5 are now no longer supported - RT ticket #589103
 	
 	BamView fixes/changes - 
@@ -13,16 +14,18 @@ Version 17
 		9) Performance tweak for BAM file indexing.
 		10) Fixed issue in BamView whereby if you went to the end of a long contig and then switched to a shorter one (via the combo), you would end up off the end of the sequence
 			resulting in a negative array index exception. Code has been changed to reset display to the start of sequence when the combo is changed (i.e. same as Artemis).
+		11) Added bamview_perform_detailed_validation boolean property that can be set to perform more detailed sam validation during loading - this can be slow for large files.
 		
 	Added EvoSuite unit tests and additional targeted tests (RT ticket #419534: Develop a test suite for Artemis).
 	
-	Added Jacoco unit test coverage reporting - manual tests only currently. This may be switched to Clover in the future if this proves compatible with EvoSuite.
+	Added Jacoco unit test coverage reporting - manual tests only currently. This may be switched to Clover in the future if this proves compatible with EvoSuite
+		- for the moment we are stuck with two coverage reports - evosuite and Jacoco.
 	
 	Removed redundant Corba libraries.
 	
 	Upgraded JUnit jar.
 	
-	Changed Travis yml build file. RT ticket #597497: Set up artemis tests to run on travis.
+	Changed Travis yml build file. RT ticket #597497: Set up artemis tests to run on travis build.
 	
 	Changed all build scripts and startup scripts - RT ticket #598617. Removed building of artemis_mac.jar which is not used. 
 	Removed etc/gene_builder script and the gff2embl script (and documentation references) - no longer supported. 
@@ -32,6 +35,13 @@ Version 17
 	Resized splash screen.
 	
 	Added error handling for dnaplotter template file loading in standalone mode.
+	
+	Added Bioconda recipe. RT ticket #341139 .
+	
+	KNOWN ISSUES: 
+		1) Java JDKs 1.8.0_131 and above have a Swing bug related to overlaying of modal dialogs for Mac OS X: https://bugs.openjdk.java.net/browse/JDK-8179335
+		2) There is a current bug in htsjdk whereby calls to the queryMate functionality can throw an exception on reads with secondaries and/or supplementals. 
+		   This affects looking up properties for a selected read on bamview - https://github.com/samtools/htsjdk/issues/1065
 
 Version 16
 	Add 'Features Within Selection' option to the 'Select' menu to select

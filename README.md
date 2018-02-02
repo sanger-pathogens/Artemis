@@ -21,7 +21,14 @@ The Artemis user manual is at:
   http://www.sanger.ac.uk/science/tools/artemis
 
 The ACT user manual is at:
-  http://www.sanger.ac.uk/science/tools/act
+  http://www.sanger.ac.uk/science/tools/artemis-comparison-tool-act
+  
+The DNA plotter user manual is at:
+  http://www.sanger.ac.uk/science/tools/dnaplotter
+  
+The BAM View user manual is at:
+  http://www.sanger.ac.uk/science/tools/bamview
+ 
 
 # INSTALLATION
 
