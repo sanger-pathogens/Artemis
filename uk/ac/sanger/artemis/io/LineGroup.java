@@ -152,6 +152,7 @@ abstract class LineGroup
     genbank_hash.put ("SEGMENT","SEGMENT");
     genbank_hash.put ("PRIMARY","PRIMARY");
     genbank_hash.put ("DBLINK","DBLINK");
+    genbank_hash.put ("DBSOURCE","DBSOURCE");
     genbank_hash.put ("CONTIG","CONTIG");
   }
 
