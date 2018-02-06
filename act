@@ -24,7 +24,7 @@ usage () {
 	echo "        -DuserplotX=FILE[,FILE2]    For sequence 'X' open one or more userplots"
 	echo "        -DloguserplotX=FILE[,FILE2] For sequence 'X' open one or more userplots, take log(data)"
 	echo "        -DbamX=FILE[,FILE2,...]     For sequence 'X' open one or more BAM, CRAM, VCF, or BCF files"
-	echo "        -Dchado="h:p/d?u"           Get ACT to open this CHADO database"
+	echo "        -Dchado=\"h:p/d?u\"           Get ACT to open this CHADO database"
 	echo "        -Dread_only                 Open CHADO database read-only"
 	echo "EXAMPLES"
 	echo "        % act"

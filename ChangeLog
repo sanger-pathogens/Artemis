@@ -32,13 +32,15 @@ Version 17
 	
 	Fixed RT ticket #606061 - Using EBI-Dbfetch on ARTEMIS. Change to DbfetchEntrySource.java due to incorrect regular expression and EBI URL.
 	
-	Resized splash screen.
+	Resized splash screen, as it was too small to the accommodate text info.
 	
 	Added error handling for dnaplotter template file loading in standalone mode.
 	
 	Added Bioconda recipe. RT ticket #341139 .
 	
 	Fixed RT ticket #467433 - Genbank DBSOURCE field was not recognised by Artemis. DBLINK was already added.
+	
+	Fixed RT ticket #503254 - Act doesn't detect if file does not exist.
 	
 	KNOWN ISSUES: 
 		1) Java JDKs 1.8.0_131 and above have a Swing bug related to overlaying of modal dialogs for Mac OS X: https://bugs.openjdk.java.net/browse/JDK-8179335

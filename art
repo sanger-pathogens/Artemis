@@ -31,7 +31,7 @@ usage () {
     echo "        -Dshow_cov_plot                Open coverage plot in BamView"
     echo "        -Dshow_forward_lines=?         Hide/show forward frame lines [true,false]"
     echo "        -Dshow_reverse_lines=?         Hide/show reverse frame lines [true,false]"
-    echo "        -Dchado="h:p/d?u"              Get Artemis to open this CHADO database"
+    echo "        -Dchado=\"h:p/d?u\"              Get Artemis to open this CHADO database"
     echo "        -Dread_only                    Open CHADO database read-only"
     echo "EXAMPLES"
     echo "        % art AJ006275.embl" 
