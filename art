@@ -76,6 +76,12 @@ while [ -h "$PRG" ] ; do
 	fi
 done
 
+# Special Sanger override on chado PGUSER
+if [[ "$ARTEMIS_SANGER_DBUSER" != "" ]]
+then
+	export PGUSER=$ARTEMIS_SANGER_DBUSER
+fi
+
 #
 # Parse arguments.
 #
