@@ -25,6 +25,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 import java.io.File;
+import java.net.ConnectException;
 import java.net.URL;
 
 import htsjdk.samtools.BAMIndex;
@@ -253,11 +254,19 @@ public class BamUtilsTest {
 		// Check getting the index file for a BAM file with an index for FTP
 		// Should create local copy.
 		//
-		File existingBamIndexFtpFile = BamUtils.getIndexFile("ftp://ftp.sanger.ac.uk/pub/project/pathogens/kp11/NV.bam");
-		assertNotNull(existingBamIndexFtpFile);
-		assertTrue(existingBamIndexFtpFile.exists());
-		assertTrue(existingBamIndexFtpFile.getName().endsWith(BAMIndex.BAMIndexSuffix));
-		assertTrue(existingBamIndexFtpFile.length()>0);
+		try
+		{
+			File existingBamIndexFtpFile = BamUtils.getIndexFile("ftp://ftp.sanger.ac.uk/pub/project/pathogens/kp11/NV.bam");
+			assertNotNull(existingBamIndexFtpFile);
+			assertTrue(existingBamIndexFtpFile.exists());
+			assertTrue(existingBamIndexFtpFile.getName().endsWith(BAMIndex.BAMIndexSuffix));
+			assertTrue(existingBamIndexFtpFile.length()>0);
+		}
+		catch (ConnectException e)
+		{
+			System.err.println("testGetIndexFileForFtpBam() : WARNING: Unable to run this test as cannot connect to Sanger FTP server");
+			e.printStackTrace();
+		}
 	}
 	
 	@Test
@@ -276,6 +285,11 @@ public class BamUtilsTest {
 		{
 			assertTrue(e.getMessage().contains("Failed to find an index file"));
 		}
+		catch (ConnectException e)
+		{
+			System.err.println("testCreateIndexFileForFtpCram() : WARNING: Unable to run this test as cannot connect to Sanger FTP server");
+			e.printStackTrace();
+		}
 		
 		assertNull(createdCramIndexFtpFile);
 		
@@ -289,10 +303,18 @@ public class BamUtilsTest {
 		// Check getting the index file for a CRAM file with an index for FTP
 		// Should create local copy.
 		//
-		File existingCramIndexFtpFile = BamUtils.getIndexFile("ftp://ftp.sanger.ac.uk/pub/project/pathogens/kp11/NV.cram");
-		assertNotNull(existingCramIndexFtpFile);
-		assertTrue(existingCramIndexFtpFile.exists());
-		assertTrue(existingCramIndexFtpFile.getName().endsWith(CRAIIndex.CRAI_INDEX_SUFFIX));
-		assertTrue(existingCramIndexFtpFile.length()>0);
+		try
+		{
+			File existingCramIndexFtpFile = BamUtils.getIndexFile("ftp://ftp.sanger.ac.uk/pub/project/pathogens/kp11/NV.cram");
+			assertNotNull(existingCramIndexFtpFile);
+			assertTrue(existingCramIndexFtpFile.exists());
+			assertTrue(existingCramIndexFtpFile.getName().endsWith(CRAIIndex.CRAI_INDEX_SUFFIX));
+			assertTrue(existingCramIndexFtpFile.length()>0);
+		}
+		catch (ConnectException e)
+		{
+			System.err.println("testGetExistingIndexFileForFtpCram() : WARNING: Unable to run this test as cannot connect to Sanger FTP server");
+			e.printStackTrace();
+		}
 	}
 }
