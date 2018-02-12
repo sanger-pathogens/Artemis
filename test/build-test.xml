@@ -31,7 +31,7 @@
 	
 ============================================================= -->
 
-<project name="artemis.test" default="run-manual-tests" basedir="." xmlns:jacoco="antlib:org.jacoco.ant">
+<project name="artemis.test" default="jacoco-coverage-report" basedir="." xmlns:jacoco="antlib:org.jacoco.ant">
 
 	<property name="name" value="artemis test suite" />
 	<property name="version" value="live" />
@@ -441,6 +441,8 @@
 
 	<!-- Run all manual and automated unit tests and create coverage reports -->
 	<target name="testall" depends="run-evosuite-tests,run-manual-tests,jacoco-coverage-report" />
+	
+	<target name="test" depends="jacoco-coverage-report"/>
 
 	<!-- Cleans all temporary build related folders -->
 	<target name="clean">
