@@ -32,18 +32,15 @@ import java.io.*;
 
 /**
  *  This interface is implemented by those objects that can produce an Entry
- *  object.  Examples include objects that can read an Entry from a file or
- *  from a CORBA server.
+ *  object.  Examples include objects that can read an Entry from a file.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: EntrySource.java,v 1.2 2004-12-03 17:47:04 tjc Exp $
  **/
 
 public interface EntrySource 
 {
   /**
-   *  Get an Entry object from this source (by reading from a file, reading
-   *  from a CORBA server, or whatever).
+   *  Get an Entry object from this source (by reading from a file or whatever).
    *  @param bases The Bases object to pass to the Entry constructor.
    *  @exception OutOfRangeException Thrown if one of the features in 
    *    the Entry is out of range of the Bases object.
@@ -57,9 +54,8 @@ public interface EntrySource
       throws OutOfRangeException, IOException;
 
   /**
-   *  Get an Entry object from this source (by reading from a file, reading
-   *  from a CORBA server, or whatever).  A Bases object will be created for
-   *  the sequence of the new Entry.
+   *  Get an Entry object from this source (by reading from a file or whatever).  
+   *  A Bases object will be created for the sequence of the new Entry.
    *  @exception OutOfRangeException Thrown if one of the features in
    *    the Entry is out of range of the Bases object.
    *  @exception NoSequenceException Thrown if the entry that we read has no
@@ -77,19 +73,6 @@ public interface EntrySource
    *  entries.  ie. entries that contain features and sequence.
    **/
   boolean isFullEntrySource();
-
-//    /**
-//     *  Get an Entry object from this source by name (by reading from a file,
-//     *  reading from a CORBA server, or whatever).
-//     *  @param entry_name The name (or id/accession number) of the Entry to read.
-//     *  @exception OutOfRangeException Thrown if one of the features in
-//     *    embl_entry is out of range of the Bases object.
-//     *  @exception NoSequenceException Thrown if the entry that we read has no
-//     *    sequence.
-//     *  @return null if and only if there is no Entry with that name.
-//     **/
-//    public Entry getEntryByName (final String entry_name)
-//        throws OutOfRangeException, NoSequenceException, IOException;
 
   /**
    *  Return the name of this source (to display to the user in menus).

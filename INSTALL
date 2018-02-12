@@ -68,4 +68,8 @@ Running the test suite
 ======================
 
 cd test
-ant -f build-test.xml
+
+RunDefaultUnitTests.sh - this runs all hand-written unit tests.
+RunEvoSuiteUnitTests.sh - this runs all EvoSuite generated unit tests. It will take well over 30 mins to run.
+RunAllUnitTests.sh - this runs all hand-written and EvoSuite generated unit tests. It will take well over 30 mins to run.
+

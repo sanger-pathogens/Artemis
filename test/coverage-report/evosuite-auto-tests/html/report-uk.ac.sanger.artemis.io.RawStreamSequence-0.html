@@ -1,0 +1,150 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.io.RawStreamSequence
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.io.RawStreamSequence: 0.45844943131173993</ul>
+<ul>
+<li>1004.7007935666642 fitness evaluations, 0 generations, null statements, 14 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>int int0 = rawStreamSequence0.getFormatType();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(3, int0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, rawStreamSequence0.length());
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>PipedReader pipedReader0 = new PipedReader(2960);
+<span class="nocode"><a name="2">  2: </a></span>LinePushBackReader linePushBackReader0 = new LinePushBackReader(pipedReader0);
+<span class="nocode"><a name="3">  3: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(linePushBackReader0);
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;Can't remove transition as its weight is not zero or NaN: &quot;);
+<span class="nocode"><a name="2">  2: </a></span>char[] charArray0 = new char[4];
+<span class="nocode"><a name="3">  3: </a></span>CharArrayReader charArrayReader0 = new CharArrayReader(charArray0);
+<span class="nocode"><a name="4">  4: </a></span>LinePushBackReader linePushBackReader0 = new LinePushBackReader(charArrayReader0);
+<span class="nocode"><a name="5">  5: </a></span>rawStreamSequence0.readHeader(linePushBackReader0);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(47, rawStreamSequence0.getOtherCount());
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>rawStreamSequence0.copy();
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>StringReader stringReader0 = new StringReader(&quot; as it is not an instance of CrossProductSymbol or &quot;);
+<span class="nocode"><a name="2">  2: </a></span>LinePushBackReader linePushBackReader0 = new LinePushBackReader(stringReader0);
+<span class="nocode"><a name="3">  3: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(linePushBackReader0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, rawStreamSequence0.getOtherCount());
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>ByteArrayOutputStream byteArrayOutputStream0 = new ByteArrayOutputStream();
+<span class="nocode"><a name="3">  3: </a></span>MockPrintWriter mockPrintWriter0 = new MockPrintWriter(byteArrayOutputStream0, true);
+<span class="nocode"><a name="4">  4: </a></span>rawStreamSequence0.writeToStream(mockPrintWriter0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, rawStreamSequence0.getOtherCount());
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;G*}Zh5Kg:^&amp;ac#S{G&quot;);
+<span class="nocode"><a name="2">  2: </a></span>int[] intArray0 = new int[5];
+<span class="nocode"><a name="3">  3: </a></span>int[] intArray1 = new int[3];
+<span class="nocode"><a name="4">  4: </a></span>rawStreamSequence0.setFastaHeaderPosition(intArray0, intArray1);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(17, rawStreamSequence0.length());
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;_&quot;);
+<span class="nocode"><a name="2">  2: </a></span>int[] intArray0 = rawStreamSequence0.getFastaHeaderPositions();
+<span class="nocode"><a name="3">  3: </a></span>rawStreamSequence0.setFastaHeaderPosition(intArray0, intArray0);
+<span class="nocode"><a name="4">  4: </a></span>assertArrayEquals(new int[] {}, intArray0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(1, rawStreamSequence0.length());
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>rawStreamSequence0.setFastaHeaderPositionsOnReverseComplement((RangeVector) null);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, rawStreamSequence0.length());
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;org.apache.log4j.RollingCalendar&quot;, &quot;org.apache.log4j.RollingCalendar&quot;);
+<span class="nocode"><a name="2">  2: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(fastaStreamSequence0);
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;Can't remove transition as its weight is not zero or NaN: &quot;);
+<span class="nocode"><a name="2">  2: </a></span>PipedOutputStream pipedOutputStream0 = new PipedOutputStream();
+<span class="nocode"><a name="3">  3: </a></span>MockPrintWriter mockPrintWriter0 = new MockPrintWriter(pipedOutputStream0);
+<span class="nocode"><a name="4">  4: </a></span>rawStreamSequence0.writeToStream(mockPrintWriter0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(6, rawStreamSequence0.getTCount());
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence((String) null);
+</pre>
+<h3>Test case 13</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence((LinePushBackReader) null);
+</pre>
+<h3>Test case 14</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>rawStreamSequence0.getFastaHeaderStrings();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, rawStreamSequence0.length());
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.io.RawStreamSequence
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.io.RawStreamSequence
+<li>Size: 14
+<li>Length: 38
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.45844943131173993
+<li>BranchCoverage: 0.3170731707317073
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 0.10714285714285714
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

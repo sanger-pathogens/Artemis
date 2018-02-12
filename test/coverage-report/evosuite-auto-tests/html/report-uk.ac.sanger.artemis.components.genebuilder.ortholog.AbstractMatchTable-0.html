@@ -1,0 +1,115 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.components.genebuilder.ortholog.AbstractMatchTable
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.components.genebuilder.ortholog.AbstractMatchTable: 0.30482596180153326</ul>
+<ul>
+<li>1261.995121894542 fitness evaluations, 0 generations, null statements, 8 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier(&quot;Xc'ZIZMON+ [58`ctPo&quot;, &quot;Xc'ZIZMON+ [58`ctPo&quot;);
+<span class="nocode"><a name="2">  2: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;Xc'ZIZMON+ [58`ctPo&quot;, (JPasswordField) null, (String) null, &quot;Xc'ZIZMON+ [58`ctPo&quot;, true);
+<span class="nocode"><a name="3">  3: </a></span>SimilarityTable similarityTable0 = new SimilarityTable(qualifier0, databaseDocument0);
+<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = similarityTable0.isRowOfType(&quot;bK&quot;, 2567);
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier(&quot;a ;/CHS6XNTd/]:w{r&quot;, &quot;a ;/CHS6XNTd/]:w{r&quot;);
+<span class="nocode"><a name="2">  2: </a></span>JPasswordField jPasswordField0 = new JPasswordField();
+<span class="nocode"><a name="3">  3: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;a ;/CHS6XNTd/]:w{r&quot;, jPasswordField0, &quot;a ;/CHS6XNTd/]:w{r&quot;, (String) null, false);
+<span class="nocode"><a name="4">  4: </a></span>SimilarityTable similarityTable0 = new SimilarityTable(qualifier0, databaseDocument0);
+<span class="nocode"><a name="5">  5: </a></span>AbstractMatchTable.TableTransferHandler abstractMatchTable_TableTransferHandler0 = similarityTable0.new TableTransferHandler();
+<span class="nocode"><a name="6">  6: </a></span>abstractMatchTable_TableTransferHandler0.cleanup(jPasswordField0, false);
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier(&quot;org.gmod.schema.sequence.FeatureRelationshipPub&quot;, &quot;org.gmod.schema.sequence.FeatureRelationshipPub&quot;);
+<span class="nocode"><a name="2">  2: </a></span>SimilarityTable similarityTable0 = new SimilarityTable(qualifier0, (DatabaseDocument) null);
+<span class="nocode"><a name="3">  3: </a></span>StringVector stringVector0 = similarityTable0.getOtherValues(qualifier0);
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(stringVector0.isEmpty());
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String string0 = AbstractMatchTable.getField(&quot;&quot;, &quot;uk.ac.sanger.artemis.components.ZoomScrollBar&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;uk.ac.sanger.artemis.components.ZoomScrollBar&quot;, string0);
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>AbstractMatchTable.getField(&quot;uk.ac.sanger.artemis.components.genebuilder.ortholog.AbstractMatchTable$LinkEditor&quot;, (String) null);
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String string0 = AbstractMatchTable.getField(&quot;=&quot;, &quot;=&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;&quot;, string0);
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier(&quot;Xc'ZIZMON+ [58`ctPo&quot;, &quot;Xc'ZIZMON+ [58`ctPo&quot;);
+<span class="nocode"><a name="2">  2: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;Xc'ZIZMON+ [58`ctPo&quot;, (JPasswordField) null, (String) null, &quot;Xc'ZIZMON+ [58`ctPo&quot;, true);
+<span class="nocode"><a name="3">  3: </a></span>SimilarityTable similarityTable0 = new SimilarityTable(qualifier0, databaseDocument0);
+<span class="nocode"><a name="4">  4: </a></span>JTable jTable0 = similarityTable0.getTable();
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(jTable0.isFocusTraversalPolicyProvider());
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier(&quot;K}(,&amp;7t^6&quot;, &quot;K}(,&amp;7t^6&quot;);
+<span class="nocode"><a name="2">  2: </a></span>SimilarityTable similarityTable0 = new SimilarityTable(qualifier0, (DatabaseDocument) null);
+<span class="nocode"><a name="3">  3: </a></span>DefaultTreeCellRenderer defaultTreeCellRenderer0 = new DefaultTreeCellRenderer();
+<span class="nocode"><a name="4">  4: </a></span>ImageIconUIResource imageIconUIResource0 = (ImageIconUIResource)defaultTreeCellRenderer0.getDefaultLeafIcon();
+<span class="nocode"><a name="5">  5: </a></span>JCheckBox jCheckBox0 = new JCheckBox(imageIconUIResource0);
+<span class="nocode"><a name="6">  6: </a></span>DefaultTableModel defaultTableModel0 = new DefaultTableModel();
+<span class="nocode"><a name="7">  7: </a></span>AbstractMatchTable.ButtonEditor abstractMatchTable_ButtonEditor0 = similarityTable0.new ButtonEditor(jCheckBox0, defaultTableModel0, &quot;Gene&quot;, (DatabaseDocument) null);
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.components.genebuilder.ortholog.AbstractMatchTable
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.components.genebuilder.ortholog.AbstractMatchTable
+<li>Size: 8
+<li>Length: 27
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.30482596180153326
+<li>BranchCoverage: 0.1893939393939394
+<li>MethodCoverage: 0.2
+<li>OutputCoverage: 0.3333333333333333
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

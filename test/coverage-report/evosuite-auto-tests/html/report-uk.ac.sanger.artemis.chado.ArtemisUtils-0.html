@@ -1,0 +1,339 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.chado.ArtemisUtils
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.chado.ArtemisUtils: 0.21552163688168138</ul>
+<ul>
+<li>1027.1635706774562 fitness evaluations, 0 generations, null statements, 13 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ArtemisUtils artemisUtils0 = new ArtemisUtils();
+<span class="nocode"><a name="2">  2: </a></span>String string0 = &quot;&quot;;
+<span class="nocode"><a name="3">  3: </a></span>StringVector stringVector0 = new StringVector(&quot;&quot;);
+<span class="nocode"><a name="4">  4: </a></span>String string1 = ArtemisUtils.getString(stringVector0, &quot;&quot;);
+<span class="nocode"><a name="5">  5: </a></span>ArtemisUtils.getString(stringVector0, &quot;&quot;);
+<span class="nocode"><a name="6">  6: </a></span>int int0 = 2211;
+<span class="nocode"><a name="7">  7: </a></span>JPasswordField jPasswordField0 = new JPasswordField(&quot;&quot;, 2211);
+<span class="nocode"><a name="8">  8: </a></span>IBatisDAO iBatisDAO0 = new IBatisDAO(jPasswordField0);
+<span class="nocode"><a name="9">  9: </a></span>Feature feature0 = iBatisDAO0.getFeatureById(int0);
+<span class="nocode"><a name="10"> 10: </a></span>Cv cv0 = new Cv();
+<span class="nocode"><a name="11"> 11: </a></span>String string2 = &quot;H&lt;H&quot;;
+<span class="nocode"><a name="12"> 12: </a></span>cv0.setName(string2);
+<span class="nocode"><a name="13"> 13: </a></span>DbXRef dbXRef0 = null;
+<span class="nocode"><a name="14"> 14: </a></span>String string3 = &quot;&quot;;
+<span class="nocode"><a name="15"> 15: </a></span>CvTerm cvTerm0 = new CvTerm(cv0, dbXRef0, string3, string1);
+<span class="nocode"><a name="16"> 16: </a></span>boolean boolean0 = true;
+<span class="nocode"><a name="17"> 17: </a></span>FeatureCvTerm featureCvTerm0 = iBatisDAO0.getFeatureCvTermByFeatureAndCvTerm(feature0, cvTerm0, boolean0);
+<span class="nocode"><a name="18"> 18: </a></span>ArtemisUtils.inserFeatureCvTerm(iBatisDAO0, featureCvTerm0);
+<span class="nocode"><a name="19"> 19: </a></span>ArtemisUtils.getCurrentSchema();
+<span class="nocode"><a name="20"> 20: </a></span>String string4 = ArtemisUtils.getCurrentSchema();
+<span class="nocode"><a name="21"> 21: </a></span>ArtemisUtils.getString(stringVector0, string3);
+<span class="nocode"><a name="22"> 22: </a></span>ArtemisUtils.inserFeatureCvTerm(iBatisDAO0, featureCvTerm0);
+<span class="nocode"><a name="23"> 23: </a></span>ArtemisUtils.getCurrentSchema();
+<span class="nocode"><a name="24"> 24: </a></span>LargeObject largeObject0 = mock(LargeObject.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="25"> 25: </a></span>LargeObjectDocument largeObjectDocument0 = new LargeObjectDocument(string4, string0, largeObject0);
+<span class="nocode"><a name="26"> 26: </a></span>IndexedGFFDocumentEntry indexedGFFDocumentEntry0 = new IndexedGFFDocumentEntry(largeObjectDocument0);
+<span class="nocode"><a name="27"> 27: </a></span>String string5 = &quot;L?.*&amp;1[Bs-hqT_6L,&quot;;
+<span class="nocode"><a name="28"> 28: </a></span>Key key0 = new Key(string5);
+<span class="nocode"><a name="29"> 29: </a></span>int int1 = 963;
+<span class="nocode"><a name="30"> 30: </a></span>Range range0 = new Range(int1);
+<span class="nocode"><a name="31"> 31: </a></span>Location location0 = new Location(range0);
+<span class="nocode"><a name="32"> 32: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
+<span class="nocode"><a name="33"> 33: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="34"> 34: </a></span>DatabaseInferredFeature databaseInferredFeature0 = new DatabaseInferredFeature(key0, location0, qualifierVector0, chadoCanonicalGene0);
+<span class="nocode"><a name="35"> 35: </a></span>uk.ac.sanger.artemis.io.Feature feature1 = indexedGFFDocumentEntry0.add(databaseInferredFeature0);
+<span class="nocode"><a name="36"> 36: </a></span>GFFStreamFeature gFFStreamFeature0 = new GFFStreamFeature(feature1);
+<span class="nocode"><a name="37"> 37: </a></span>boolean boolean1 = false;
+<span class="nocode"><a name="38"> 38: </a></span>ArtemisUtils.getMatchFeatureWithFeatureRelations(string0, string4, string2, gFFStreamFeature0, boolean1);
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String string0 = &quot;P&lt;)M!Zn|4OX&quot;;
+<span class="nocode"><a name="2">  2: </a></span>String string1 = &quot;&quot;;
+<span class="nocode"><a name="3">  3: </a></span>String string2 = &quot;Features have been added or removed&quot;;
+<span class="nocode"><a name="4">  4: </a></span>String string3 = &quot;zgHxNbr&quot;;
+<span class="nocode"><a name="5">  5: </a></span>GFFStreamFeature gFFStreamFeature0 = new GFFStreamFeature(&quot;zgHxNbr&quot;);
+<span class="nocode"><a name="6">  6: </a></span>boolean boolean0 = false;
+<span class="nocode"><a name="7">  7: </a></span>gFFStreamFeature0.setVisible(boolean0);
+<span class="nocode"><a name="8">  8: </a></span>Hashtable&lt;String, Range&gt; hashtable0 = gFFStreamFeature0.getSegmentRangeStore();
+<span class="nocode"><a name="9">  9: </a></span>boolean boolean1 = true;
+<span class="nocode"><a name="10"> 10: </a></span>Feature feature0 = ArtemisUtils.getMatchFeatureWithFeatureRelations(string0, string1, string2, gFFStreamFeature0, boolean1);
+<span class="nocode"><a name="11"> 11: </a></span>String string4 = ArtemisUtils.getCurrentSchema();
+<span class="nocode"><a name="12"> 12: </a></span>ArtemisUtils artemisUtils0 = new ArtemisUtils();
+<span class="nocode"><a name="13"> 13: </a></span>ArtemisUtils.getAnalysisFeature(string4, string3, gFFStreamFeature0);
+<span class="nocode"><a name="14"> 14: </a></span>int int0 = (-1431);
+<span class="nocode"><a name="15"> 15: </a></span>JPasswordField jPasswordField0 = new JPasswordField(int0);
+<span class="nocode"><a name="16"> 16: </a></span>JdbcDAO jdbcDAO0 = new JdbcDAO(string3, jPasswordField0);
+<span class="nocode"><a name="17"> 17: </a></span>IBatisDAO iBatisDAO0 = new IBatisDAO(jPasswordField0);
+<span class="nocode"><a name="18"> 18: </a></span>Cv cv0 = new Cv();
+<span class="nocode"><a name="19"> 19: </a></span>Db db0 = new Db();
+<span class="nocode"><a name="20"> 20: </a></span>String string5 = &quot;SwTH{Sl,@z&amp;)=1*Nr&amp;&quot;;
+<span class="nocode"><a name="21"> 21: </a></span>jdbcDAO0.getFeatureDbXRefsByFeatureUniquename(string5);
+<span class="nocode"><a name="22"> 22: </a></span>DbXRef dbXRef0 = new DbXRef(db0, string2);
+<span class="nocode"><a name="23"> 23: </a></span>CvTerm cvTerm0 = new CvTerm(cv0, dbXRef0, string1, string1);
+<span class="nocode"><a name="24"> 24: </a></span>boolean boolean2 = true;
+<span class="nocode"><a name="25"> 25: </a></span>String string6 = &quot;EMPTY_ANNOTATION&quot;;
+<span class="nocode"><a name="26"> 26: </a></span>gFFStreamFeature0.setSegmentRangeStore(hashtable0);
+<span class="nocode"><a name="27"> 27: </a></span>db0.setUrl(string6);
+<span class="nocode"><a name="28"> 28: </a></span>FeatureCvTerm featureCvTerm0 = iBatisDAO0.getFeatureCvTermByFeatureAndCvTerm(feature0, cvTerm0, boolean2);
+<span class="nocode"><a name="29"> 29: </a></span>ArtemisUtils.deleteFeatureCvTerm(jdbcDAO0, featureCvTerm0);
+<span class="nocode"><a name="30"> 30: </a></span>ArtemisUtils.deleteFeatureCvTerm(iBatisDAO0, featureCvTerm0);
+<span class="nocode"><a name="31"> 31: </a></span>ArtemisUtils.getMatchFeatureWithFeatureRelations(string4, string2, string2, gFFStreamFeature0, boolean0);
+<span class="nocode"><a name="32"> 32: </a></span>String string7 = &quot;zF4xBo1V6;,;qC\\\\&quot;;
+<span class="nocode"><a name="33"> 33: </a></span>String string8 = &quot;&quot;;
+<span class="nocode"><a name="34"> 34: </a></span>GFFStreamFeature gFFStreamFeature1 = null;
+<span class="nocode"><a name="35"> 35: </a></span>ArtemisUtils.getMatchFeatureWithFeatureRelations(string7, string2, string8, gFFStreamFeature1, boolean0);
+<span class="nocode"><a name="36"> 36: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="37"> 37: </a></span>Key key0 = Key.CDS;
+<span class="nocode"><a name="38"> 38: </a></span>StringVector stringVector0 = blastEntryInformation0.getRequiredQualifiers(key0);
+<span class="nocode"><a name="39"> 39: </a></span>ArtemisUtils.getString(stringVector0, string8);
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String string0 = &quot;org.biojava.bio.seq.FeatureFilter$OverlapsLocation&quot;;
+<span class="nocode"><a name="2">  2: </a></span>String string1 = &quot;KqY*W1)Z}YHJ}?y\\&quot;;
+<span class="nocode"><a name="3">  3: </a></span>SimilarityPairFeature.Template similarityPairFeature_Template0 = new SimilarityPairFeature.Template();
+<span class="nocode"><a name="4">  4: </a></span>SimpleFeature simpleFeature0 = new SimpleFeature((Sequence) null, (FeatureHolder) null, similarityPairFeature_Template0);
+<span class="nocode"><a name="5">  5: </a></span>String string2 = &quot;Q7{(cTBvf&quot;;
+<span class="nocode"><a name="6">  6: </a></span>String string3 = &quot;&quot;;
+<span class="nocode"><a name="7">  7: </a></span>SimpleAssembly simpleAssembly0 = new SimpleAssembly(string2, string3);
+<span class="nocode"><a name="8">  8: </a></span>BioJavaEntry bioJavaEntry0 = new BioJavaEntry(simpleAssembly0);
+<span class="nocode"><a name="9">  9: </a></span>BioJavaFeature bioJavaFeature0 = new BioJavaFeature(simpleFeature0, bioJavaEntry0);
+<span class="nocode"><a name="10"> 10: </a></span>Key key0 = bioJavaFeature0.getKey();
+<span class="nocode"><a name="11"> 11: </a></span>String string4 = null;
+<span class="nocode"><a name="12"> 12: </a></span>Location location0 = new Location(string4);
+<span class="nocode"><a name="13"> 13: </a></span>int int0 = 0;
+<span class="nocode"><a name="14"> 14: </a></span>Range range0 = new Range(int0, int0);
+<span class="nocode"><a name="15"> 15: </a></span>Location location1 = location0.removeRange(range0);
+<span class="nocode"><a name="16"> 16: </a></span>Location location2 = location1.truncate(range0);
+<span class="nocode"><a name="17"> 17: </a></span>QualifierVector qualifierVector0 = bioJavaFeature0.getQualifiers();
+<span class="nocode"><a name="18"> 18: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="19"> 19: </a></span>DatabaseInferredFeature databaseInferredFeature0 = new DatabaseInferredFeature(key0, location2, qualifierVector0, chadoCanonicalGene0);
+<span class="nocode"><a name="20"> 20: </a></span>boolean boolean0 = false;
+<span class="nocode"><a name="21"> 21: </a></span>ArtemisUtils.getMatchFeatureWithFeatureRelations(string0, string0, string1, databaseInferredFeature0, boolean0);
+<span class="nocode"><a name="22"> 22: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(string0);
+<span class="nocode"><a name="23"> 23: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="24"> 24: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="25"> 25: </a></span>Entry entry0 = simpleEntryGroup0.elementAt(bases0.REVERSE);
+<span class="nocode"><a name="26"> 26: </a></span>Feature feature0 = entry0.createFeature();
+<span class="nocode"><a name="27"> 27: </a></span>String string5 = &quot;` T27o4!I@((l1n.&quot;;
+<span class="nocode"><a name="28"> 28: </a></span>feature0.getFirstCodingBaseMarker();
+<span class="nocode"><a name="29"> 29: </a></span>char char0 = 's';
+<span class="nocode"><a name="30"> 30: </a></span>Bases.getIndexOfBase(char0);
+<span class="nocode"><a name="31"> 31: </a></span>StringVector stringVector0 = feature0.getValuesOfQualifier(string5);
+<span class="nocode"><a name="32"> 32: </a></span>ArtemisUtils.getString(stringVector0, string2);
+<span class="nocode"><a name="33"> 33: </a></span>ArtemisUtils artemisUtils0 = new ArtemisUtils();
+<span class="nocode"><a name="34"> 34: </a></span>ArtemisUtils.getCurrentSchema();
+<span class="nocode"><a name="35"> 35: </a></span>String string6 = &quot;Szi{ertG6i_SF ;&quot;;
+<span class="nocode"><a name="36"> 36: </a></span>ArtemisUtils.getString(stringVector0, string6);
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = new String[4];
+<span class="nocode"><a name="2">  2: </a></span>stringArray0[0] = &quot;rank&quot;;
+<span class="nocode"><a name="3">  3: </a></span>stringArray0[1] = &quot;oCH&quot;;
+<span class="nocode"><a name="4">  4: </a></span>stringArray0[2] = &quot;feature_id&quot;;
+<span class="nocode"><a name="5">  5: </a></span>stringArray0[3] = &quot;FeatureCvTermDbXRefs not the same - ignore &quot;;
+<span class="nocode"><a name="6">  6: </a></span>StringVector stringVector0 = new StringVector(stringArray0);
+<span class="nocode"><a name="7">  7: </a></span>String string0 = ArtemisUtils.getString(stringVector0, &quot;feature_id&quot;);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(&quot;feature_id&quot;, string0);
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>StringVector stringVector0 = new StringVector((String[]) null);
+<span class="nocode"><a name="2">  2: </a></span>String string0 = &quot;&quot;;
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = stringVector0.add(string0);
+<span class="nocode"><a name="4">  4: </a></span>StringVector stringVector1 = null;
+<span class="nocode"><a name="5">  5: </a></span>stringVector0.add(stringVector1);
+<span class="nocode"><a name="6">  6: </a></span>String string1 = &quot;insertAnalysis&quot;;
+<span class="nocode"><a name="7">  7: </a></span>boolean boolean1 = stringVector0.add(string1);
+<span class="nocode"><a name="8">  8: </a></span>String string2 = null;
+<span class="nocode"><a name="9">  9: </a></span>String string3 = ArtemisUtils.getString(stringVector0, string2);
+<span class="nocode"><a name="10"> 10: </a></span>String string4 = &quot;f$N-^l&quot;;
+<span class="nocode"><a name="11"> 11: </a></span>GFFStreamFeature gFFStreamFeature0 = null;
+<span class="nocode"><a name="12"> 12: </a></span>ArtemisUtils.getAnalysisFeature(string0, string4, gFFStreamFeature0);
+<span class="nocode"><a name="13"> 13: </a></span>String string5 = &quot; PeOw2*F9MQ%hB4g|&quot;;
+<span class="nocode"><a name="14"> 14: </a></span>String string6 = &quot;)rO_7I&amp;C2n}a\&quot;{B_L&quot;;
+<span class="nocode"><a name="15"> 15: </a></span>Feature feature0 = ArtemisUtils.getMatchFeatureWithFeatureRelations(string3, string5, string6, gFFStreamFeature0, boolean1);
+<span class="nocode"><a name="16"> 16: </a></span>String string7 = ArtemisUtils.getCurrentSchema();
+<span class="nocode"><a name="17"> 17: </a></span>JPasswordField jPasswordField0 = null;
+<span class="nocode"><a name="18"> 18: </a></span>IBatisDAO iBatisDAO0 = new IBatisDAO(jPasswordField0);
+<span class="nocode"><a name="19"> 19: </a></span>int int0 = 7;
+<span class="nocode"><a name="20"> 20: </a></span>String string8 = &quot; -&gt; &quot;;
+<span class="nocode"><a name="21"> 21: </a></span>stringVector0.add(int0, string8);
+<span class="nocode"><a name="22"> 22: </a></span>JPasswordField jPasswordField1 = new JPasswordField(string7, int0);
+<span class="nocode"><a name="23"> 23: </a></span>JdbcDAO jdbcDAO0 = new JdbcDAO(string0, jPasswordField1);
+<span class="nocode"><a name="24"> 24: </a></span>String string9 = &quot;&quot;;
+<span class="nocode"><a name="25"> 25: </a></span>CvTerm cvTerm0 = iBatisDAO0.getGoCvTermByAcc(string9);
+<span class="nocode"><a name="26"> 26: </a></span>String string10 = &quot;&quot;;
+<span class="nocode"><a name="27"> 27: </a></span>jdbcDAO0.getFeaturesByUniqueName(string10);
+<span class="nocode"><a name="28"> 28: </a></span>FeatureCvTerm featureCvTerm0 = jdbcDAO0.getFeatureCvTermByFeatureAndCvTerm(feature0, cvTerm0, boolean1);
+<span class="nocode"><a name="29"> 29: </a></span>ArtemisUtils.deleteFeatureCvTerm(iBatisDAO0, featureCvTerm0);
+<span class="nocode"><a name="30"> 30: </a></span>String string11 = &quot;   rank = &quot;;
+<span class="nocode"><a name="31"> 31: </a></span>ArtemisUtils.getMatchFeatureWithFeatureRelations(string11, string5, string4, gFFStreamFeature0, boolean0);
+<span class="nocode"><a name="32"> 32: </a></span>ArtemisUtils.getString(stringVector1, string11);
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String string0 = ArtemisUtils.getCurrentSchema();
+<span class="nocode"><a name="2">  2: </a></span>String string1 = ArtemisUtils.getCurrentSchema();
+<span class="nocode"><a name="3">  3: </a></span>StringVector stringVector0 = null;
+<span class="nocode"><a name="4">  4: </a></span>String string2 = null;
+<span class="nocode"><a name="5">  5: </a></span>ArtemisUtils.getString(stringVector0, string2);
+<span class="nocode"><a name="6">  6: </a></span>GmodDAO gmodDAO0 = null;
+<span class="nocode"><a name="7">  7: </a></span>String string3 = &quot;&quot;;
+<span class="nocode"><a name="8">  8: </a></span>int int0 = 0;
+<span class="nocode"><a name="9">  9: </a></span>JPasswordField jPasswordField0 = new JPasswordField(int0);
+<span class="nocode"><a name="10"> 10: </a></span>JdbcDAO jdbcDAO0 = new JdbcDAO(string3, jPasswordField0);
+<span class="nocode"><a name="11"> 11: </a></span>int int1 = 5;
+<span class="nocode"><a name="12"> 12: </a></span>CvTerm cvTerm0 = jdbcDAO0.getCvTermById(int1);
+<span class="nocode"><a name="13"> 13: </a></span>String string4 = &quot;&quot;;
+<span class="nocode"><a name="14"> 14: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature();
+<span class="nocode"><a name="15"> 15: </a></span>boolean boolean0 = false;
+<span class="nocode"><a name="16"> 16: </a></span>GFFStreamFeature gFFStreamFeature0 = new GFFStreamFeature(genbankStreamFeature0, boolean0);
+<span class="nocode"><a name="17"> 17: </a></span>boolean boolean1 = true;
+<span class="nocode"><a name="18"> 18: </a></span>Feature feature0 = ArtemisUtils.getMatchFeatureWithFeatureRelations(string3, string4, string1, gFFStreamFeature0, boolean1);
+<span class="nocode"><a name="19"> 19: </a></span>Pub pub0 = new Pub(string2);
+<span class="nocode"><a name="20"> 20: </a></span>int int2 = (-2230);
+<span class="nocode"><a name="21"> 21: </a></span>FeatureCvTerm featureCvTerm0 = new FeatureCvTerm(cvTerm0, feature0, pub0, boolean0, int2);
+<span class="nocode"><a name="22"> 22: </a></span>ArtemisUtils.inserFeatureCvTerm(gmodDAO0, featureCvTerm0);
+<span class="nocode"><a name="23"> 23: </a></span>IBatisDAO iBatisDAO0 = new IBatisDAO(jPasswordField0);
+<span class="nocode"><a name="24"> 24: </a></span>boolean boolean2 = true;
+<span class="nocode"><a name="25"> 25: </a></span>FeatureCvTerm featureCvTerm1 = iBatisDAO0.getFeatureCvTermByFeatureAndCvTerm(feature0, cvTerm0, boolean2);
+<span class="nocode"><a name="26"> 26: </a></span>ArtemisUtils.deleteFeatureCvTerm(jdbcDAO0, featureCvTerm1);
+<span class="nocode"><a name="27"> 27: </a></span>ArtemisUtils.getString(stringVector0, string2);
+<span class="nocode"><a name="28"> 28: </a></span>ArtemisUtils.getCurrentSchema();
+<span class="nocode"><a name="29"> 29: </a></span>ArtemisUtils.getString(stringVector0, string1);
+<span class="nocode"><a name="30"> 30: </a></span>String string5 = &quot;`vdz!O&lt;&amp;df&gt;deO&quot;;
+<span class="nocode"><a name="31"> 31: </a></span>ArtemisUtils.getAnalysisFeature(string5, string0, gFFStreamFeature0);
+<span class="nocode"><a name="32"> 32: </a></span>IBatisDAO iBatisDAO1 = new IBatisDAO(jPasswordField0);
+<span class="nocode"><a name="33"> 33: </a></span>ArtemisUtils.deleteFeatureCvTerm(iBatisDAO1, featureCvTerm0);
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String string0 = ArtemisUtils.getCurrentSchema();
+<span class="nocode"><a name="2">  2: </a></span>int int0 = 7;
+<span class="nocode"><a name="3">  3: </a></span>JPasswordField jPasswordField0 = new JPasswordField(int0);
+<span class="nocode"><a name="4">  4: </a></span>JdbcDAO jdbcDAO0 = new JdbcDAO(string0, jPasswordField0);
+<span class="nocode"><a name="5">  5: </a></span>int int1 = (-383);
+<span class="nocode"><a name="6">  6: </a></span>int int2 = 4624;
+<span class="nocode"><a name="7">  7: </a></span>TextArea textArea0 = new TextArea(string0, int1, int2, int2);
+<span class="nocode"><a name="8">  8: </a></span>jdbcDAO0.merge(textArea0);
+<span class="nocode"><a name="9">  9: </a></span>IBatisDAO iBatisDAO0 = new IBatisDAO(jPasswordField0);
+<span class="nocode"><a name="10"> 10: </a></span>int int3 = 199;
+<span class="nocode"><a name="11"> 11: </a></span>Feature feature0 = jdbcDAO0.getFeatureById(int3);
+<span class="nocode"><a name="12"> 12: </a></span>CvTerm cvTerm0 = DatabaseDocument.getCvTermByCvTermName(string0);
+<span class="nocode"><a name="13"> 13: </a></span>boolean boolean0 = false;
+<span class="nocode"><a name="14"> 14: </a></span>FeatureCvTerm featureCvTerm0 = iBatisDAO0.getFeatureCvTermByFeatureAndCvTerm(feature0, cvTerm0, boolean0);
+<span class="nocode"><a name="15"> 15: </a></span>ArtemisUtils.inserFeatureCvTerm(jdbcDAO0, featureCvTerm0);
+<span class="nocode"><a name="16"> 16: </a></span>ArtemisUtils.deleteFeatureCvTerm(jdbcDAO0, featureCvTerm0);
+<span class="nocode"><a name="17"> 17: </a></span>ArtemisUtils.inserFeatureCvTerm(iBatisDAO0, featureCvTerm0);
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ArtemisUtils.getMatchFeatureWithFeatureRelations((String) null, &quot;&quot;, (String) null, (GFFStreamFeature) null, true);
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>StringVector stringVector0 = SelectionViewer.getBaseSummary(&quot;h$@k.x\&quot;-[f*VP5U3&quot;);
+<span class="nocode"><a name="2">  2: </a></span>stringVector0.add(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>ArtemisUtils.getString(stringVector0, &quot;AoV=/#e1b\&quot;Hft&quot;);
+<span class="nocode"><a name="4">  4: </a></span>FileDescriptor fileDescriptor0 = new FileDescriptor();
+<span class="nocode"><a name="5">  5: </a></span>MockFileReader mockFileReader0 = new MockFileReader(fileDescriptor0);
+<span class="nocode"><a name="6">  6: </a></span>LinePushBackReader linePushBackReader0 = new LinePushBackReader(mockFileReader0);
+<span class="nocode"><a name="7">  7: </a></span>EmblStreamFeature.readFromStream(linePushBackReader0);
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = Key.CDS;
+<span class="nocode"><a name="3">  3: </a></span>blastEntryInformation0.getValidQualifierNames(key0);
+<span class="nocode"><a name="4">  4: </a></span>String string0 = &quot;~B+`P#%pi;\\u&quot;;
+<span class="nocode"><a name="5">  5: </a></span>ArtemisUtils.getString((StringVector) null, string0);
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>StringVector stringVector0 = new StringVector();
+<span class="nocode"><a name="2">  2: </a></span>StringVector stringVector1 = new StringVector(stringVector0);
+<span class="nocode"><a name="3">  3: </a></span>stringVector1.retainAll(stringVector0);
+<span class="nocode"><a name="4">  4: </a></span>stringVector1.add(&quot;MH`rS&quot;);
+<span class="nocode"><a name="5">  5: </a></span>stringVector0.add(stringVector1);
+<span class="nocode"><a name="6">  6: </a></span>ArtemisUtils.getString(stringVector1, &quot;&quot;);
+<span class="nocode"><a name="7">  7: </a></span>JPasswordField jPasswordField0 = new JPasswordField(&quot;  -&gt; &quot;, 0);
+<span class="nocode"><a name="8">  8: </a></span>JdbcDAO jdbcDAO0 = new JdbcDAO(&quot;MH`rS&quot;, jPasswordField0);
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>StringVector stringVector0 = SelectionViewer.getBaseSummary(&quot;%2C&quot;);
+<span class="nocode"><a name="2">  2: </a></span>ArtemisUtils.getString(stringVector0, &quot;%2C&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Key key0 = new Key(&quot;%2C&quot;);
+<span class="nocode"><a name="4">  4: </a></span>Range range0 = new Range(2894);
+<span class="nocode"><a name="5">  5: </a></span>Location location0 = new Location(range0);
+<span class="nocode"><a name="6">  6: </a></span>Location location1 = location0.copy();
+<span class="nocode"><a name="7">  7: </a></span>Location location2 = location1.changeRange(range0, range0);
+<span class="nocode"><a name="8">  8: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="9">  9: </a></span>DatabaseInferredFeature databaseInferredFeature0 = new DatabaseInferredFeature(key0, location2, (QualifierVector) null, chadoCanonicalGene0);
+<span class="nocode"><a name="10"> 10: </a></span>ArtemisUtils.getMatchFeatureWithFeatureRelations(&quot;%2C&quot;, &quot;&quot;, &quot;&quot;, databaseInferredFeature0, true);
+</pre>
+<h3>Test case 13</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Key key0 = new Key(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(125, 125);
+<span class="nocode"><a name="3">  3: </a></span>Location location0 = new Location(range0);
+<span class="nocode"><a name="4">  4: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
+<span class="nocode"><a name="5">  5: </a></span>GFFStreamFeature gFFStreamFeature0 = new GFFStreamFeature(key0, location0, qualifierVector0);
+<span class="nocode"><a name="6">  6: </a></span>DatabaseStreamFeature databaseStreamFeature0 = new DatabaseStreamFeature(gFFStreamFeature0);
+<span class="nocode"><a name="7">  7: </a></span>ArtemisUtils.getAnalysisFeature(&quot;&quot;, &quot;&quot;, databaseStreamFeature0);
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.chado.ArtemisUtils
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.chado.ArtemisUtils
+<li>Size: 13
+<li>Length: 240
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.21552163688168138
+<li>BranchCoverage: 0.059880239520958084
+<li>MethodCoverage: 0.7142857142857143
+<li>OutputCoverage: 0.09523809523809523
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

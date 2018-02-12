@@ -74,8 +74,6 @@ run_one_prog () {
     seq_size=`infoseq "$INPUT_FILE" -length -only -auto | awk '{ sum += $1 } END { print sum }'`
 
     FASTLIBS=/software/pathogen/external/etc/pubseqgbs export FASTLIBS
-#   EXEC=/nfs/disk222/yeastpub/bio-soft/fasta/fasta33_t
-#   EXEC=/nfs/disk222/yeastpub/bio-soft/fasta/fasta33
     EXEC=/software/pathogen/external/applications/fasta/fasta35
 
     echo "about to start $EXEC with input from $INPUT_FILE and output to" 1>&2

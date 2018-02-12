@@ -39,7 +39,10 @@ import uk.ac.sanger.artemis.io.EntryInformation;
 import uk.ac.sanger.artemis.io.SimpleEntryInformation;
 
 import java.awt.event.*;
+import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+
 import javax.swing.JFrame;
 
 /**
@@ -344,26 +347,52 @@ public class ActMain extends Splash
   {
     System.exit(0);
   }
-
+  
   /**
-   *  Main entry point for ACT
-   **/
-  public static void main(final String [] args) 
+   * Validate the program input arguments and exit
+   * if they are not valid, displaying an error message(s).
+   * @param args String array
+   */
+  protected static void validateStartupArguments(final String[] args)
   {
-    final ActMain main_window = new ActMain();
-    main_window.setVisible(true);
-
-    final InputStreamProgressListener progress_listener =
-      main_window.getInputStreamProgressListener();
-    
-    if(args.length >= 3) 
-      ActMain.makeMultiComparator(main_window, progress_listener,
-                                  args);
+	boolean valid = true;
+	  
+	if(args.length >= 3) 
+    {
+	  // Make sure the files provided are actually valid as far as possible...
+      for (String file : args)
+      {
+    	    if (file.startsWith("ftp") || file.startsWith("http"))
+    	    {
+    	    	  // web resource
+    	    	  try 
+    	    	  {
+    	    	    URL url = new URL(file);
+    	    	  }
+    	    	  catch (Exception e)
+    	    	  {
+    	    		valid = false;
+    			System.err.println("\nError - " + file + " is not a valid URL.");
+    	    	  }
+    	    }
+    	    	else
+    	    	{
+    	    	  // normal file
+		  File argFile = new File(file);
+		  if (!argFile.exists() || !argFile.isFile())
+		  {
+		    	valid = false;
+		    	System.err.println("\nError - " + argFile + " is not a valid file.");
+		  }
+    	    }
+      }
+	 
+    }
     else 
     {
       if(args.length != 0) 
       {
-        System.err.println("Error - this program needs either no " +
+        System.err.println("\nError - this program needs either no" +
                            " arguments or an odd number\n" +
                            "(3 or more):");
         System.err.println("   act sequence_1 comparison_data sequence_2");
@@ -371,8 +400,34 @@ public class ActMain extends Splash
         System.err.println("   act seq_1 comparison_data_2_v_1 seq_2 comparison_data_3_v_2 seq_3");
         System.err.println("or");
         System.err.println("   act");
-        System.exit(1);
+        valid = false;
       }
+    }  
+	
+	if (!valid)
+	{
+	  System.exit(1);
+	}
+	
+  }
+  
+  /**
+   *  Main entry point for ACT
+   **/
+  public static void main(final String [] args) 
+  {
+	validateStartupArguments(args);
+    
+    final ActMain main_window = new ActMain();
+    main_window.setVisible(true);
+
+    final InputStreamProgressListener progress_listener =
+      main_window.getInputStreamProgressListener();
+    
+    if(args.length >= 3) 
+    {
+    	  ActMain.makeMultiComparator(main_window, progress_listener,
+                                 args);
     }
   }
 

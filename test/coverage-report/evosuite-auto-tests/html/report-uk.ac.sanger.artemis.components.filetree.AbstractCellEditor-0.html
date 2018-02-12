@@ -1,0 +1,172 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.components.filetree.AbstractCellEditor
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.components.filetree.AbstractCellEditor: 0.9375</ul>
+<ul>
+<li>4.2 fitness evaluations, 0 generations, null statements, 14 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>AbstractCellEditor abstractCellEditor0 = new AbstractCellEditor();
+<span class="nocode"><a name="2">  2: </a></span>abstractCellEditor0.cancelCellEditing();
+<span class="nocode"><a name="3">  3: </a></span>assertTrue(abstractCellEditor0.stopCellEditing());
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>AbstractCellEditor abstractCellEditor0 = new AbstractCellEditor();
+<span class="nocode"><a name="2">  2: </a></span>JTable jTable0 = new JTable(0, 0);
+<span class="nocode"><a name="3">  3: </a></span>abstractCellEditor0.removeCellEditorListener(jTable0);
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(jTable0.isFocusTraversalPolicySet());
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>AbstractCellEditor abstractCellEditor0 = new AbstractCellEditor();
+<span class="nocode"><a name="2">  2: </a></span>JRadioButtonMenuItem jRadioButtonMenuItem0 = new JRadioButtonMenuItem(&quot;c_g_dKIE:nqh&quot;, false);
+<span class="nocode"><a name="3">  3: </a></span>ItemEvent itemEvent0 = new ItemEvent(jRadioButtonMenuItem0, 66, abstractCellEditor0, 66);
+<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = abstractCellEditor0.shouldSelectCell(itemEvent0);
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>AbstractCellEditor abstractCellEditor0 = new AbstractCellEditor();
+<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = abstractCellEditor0.stopCellEditing();
+<span class="nocode"><a name="3">  3: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>AbstractCellEditor abstractCellEditor0 = new AbstractCellEditor();
+<span class="nocode"><a name="2">  2: </a></span>Object object0 = abstractCellEditor0.getCellEditorValue();
+<span class="nocode"><a name="3">  3: </a></span>assertNull(object0);
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>AbstractCellEditor abstractCellEditor0 = new AbstractCellEditor();
+<span class="nocode"><a name="2">  2: </a></span>Object[] objectArray0 = new Object[3];
+<span class="nocode"><a name="3">  3: </a></span>objectArray0[0] = (Object) abstractCellEditor0;
+<span class="nocode"><a name="4">  4: </a></span>objectArray0[1] = (Object) abstractCellEditor0;
+<span class="nocode"><a name="5">  5: </a></span>objectArray0[2] = (Object) abstractCellEditor0;
+<span class="nocode"><a name="6">  6: </a></span>TreeModelEvent treeModelEvent0 = new TreeModelEvent(abstractCellEditor0, objectArray0);
+<span class="nocode"><a name="7">  7: </a></span>boolean boolean0 = abstractCellEditor0.isCellEditable(treeModelEvent0);
+<span class="nocode"><a name="8">  8: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>AbstractCellEditor abstractCellEditor0 = new AbstractCellEditor();
+<span class="nocode"><a name="2">  2: </a></span>EventListenerList eventListenerList0 = abstractCellEditor0.listenerList;
+<span class="nocode"><a name="3">  3: </a></span>JTable jTable0 = new JTable(439, 439);
+<span class="nocode"><a name="4">  4: </a></span>Class&lt;JTable&gt; class0 = Class.class;
+<span class="nocode"><a name="5">  5: </a></span>eventListenerList0.add((Class&lt;JTable&gt;) class0, jTable0);
+<span class="nocode"><a name="6">  6: </a></span>abstractCellEditor0.fireEditingStopped();
+<span class="nocode"><a name="7">  7: </a></span>assertTrue(abstractCellEditor0.stopCellEditing());
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>AbstractCellEditor abstractCellEditor0 = new AbstractCellEditor();
+<span class="nocode"><a name="2">  2: </a></span>EventListenerList eventListenerList0 = abstractCellEditor0.listenerList;
+<span class="nocode"><a name="3">  3: </a></span>Class&lt;JTable&gt; class0 = Class.class;
+<span class="nocode"><a name="4">  4: </a></span>Object[][] objectArray0 = new Object[6][2];
+<span class="nocode"><a name="5">  5: </a></span>DefaultTableModel defaultTableModel0 = new DefaultTableModel(objectArray0, objectArray0[0]);
+<span class="nocode"><a name="6">  6: </a></span>DefaultTableColumnModel defaultTableColumnModel0 = new DefaultTableColumnModel();
+<span class="nocode"><a name="7">  7: </a></span>MockDefaultListSelectionModel mockDefaultListSelectionModel0 = new MockDefaultListSelectionModel();
+<span class="nocode"><a name="8">  8: </a></span>JTable jTable0 = new JTable(defaultTableModel0, defaultTableColumnModel0, mockDefaultListSelectionModel0);
+<span class="nocode"><a name="9">  9: </a></span>eventListenerList0.add((Class&lt;JTable&gt;) class0, jTable0);
+<span class="nocode"><a name="10"> 10: </a></span>abstractCellEditor0.fireEditingCanceled();
+<span class="nocode"><a name="11"> 11: </a></span>assertTrue(abstractCellEditor0.stopCellEditing());
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>AbstractCellEditor abstractCellEditor0 = new AbstractCellEditor();
+<span class="nocode"><a name="2">  2: </a></span>abstractCellEditor0.listenerList = null;
+<span class="nocode"><a name="3">  3: </a></span>abstractCellEditor0.addCellEditorListener((CellEditorListener) null);
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>AbstractCellEditor abstractCellEditor0 = new AbstractCellEditor();
+<span class="nocode"><a name="2">  2: </a></span>abstractCellEditor0.listenerList = null;
+<span class="nocode"><a name="3">  3: </a></span>abstractCellEditor0.fireEditingCanceled();
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>AbstractCellEditor abstractCellEditor0 = new AbstractCellEditor();
+<span class="nocode"><a name="2">  2: </a></span>EventListenerList eventListenerList0 = abstractCellEditor0.listenerList;
+<span class="nocode"><a name="3">  3: </a></span>abstractCellEditor0.listenerList = eventListenerList0;
+<span class="nocode"><a name="4">  4: </a></span>abstractCellEditor0.listenerList = null;
+<span class="nocode"><a name="5">  5: </a></span>abstractCellEditor0.fireEditingStopped();
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>AbstractCellEditor abstractCellEditor0 = new AbstractCellEditor();
+<span class="nocode"><a name="2">  2: </a></span>abstractCellEditor0.listenerList = null;
+<span class="nocode"><a name="3">  3: </a></span>JTable jTable0 = new JTable((TableModel) null);
+<span class="nocode"><a name="4">  4: </a></span>abstractCellEditor0.removeCellEditorListener(jTable0);
+</pre>
+<h3>Test case 13</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>AbstractCellEditor abstractCellEditor0 = new AbstractCellEditor();
+<span class="nocode"><a name="2">  2: </a></span>JTable jTable0 = new JTable(0, 0);
+<span class="nocode"><a name="3">  3: </a></span>abstractCellEditor0.addCellEditorListener(jTable0);
+<span class="nocode"><a name="4">  4: </a></span>abstractCellEditor0.addCellEditorListener(jTable0);
+<span class="nocode"><a name="5">  5: </a></span>abstractCellEditor0.fireEditingStopped();
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(abstractCellEditor0.stopCellEditing());
+</pre>
+<h3>Test case 14</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>AbstractCellEditor abstractCellEditor0 = new AbstractCellEditor();
+<span class="nocode"><a name="2">  2: </a></span>JTable jTable0 = new JTable(0, 0);
+<span class="nocode"><a name="3">  3: </a></span>abstractCellEditor0.addCellEditorListener(jTable0);
+<span class="nocode"><a name="4">  4: </a></span>abstractCellEditor0.addCellEditorListener(jTable0);
+<span class="nocode"><a name="5">  5: </a></span>abstractCellEditor0.fireEditingCanceled();
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(abstractCellEditor0.stopCellEditing());
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.components.filetree.AbstractCellEditor
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.components.filetree.AbstractCellEditor
+<li>Size: 14
+<li>Length: 61
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.9375
+<li>BranchCoverage: 1.0
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 0.5
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

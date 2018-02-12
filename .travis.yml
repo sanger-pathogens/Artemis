@@ -1,16 +1,18 @@
 language: java
 jdk:
-  - openjdk7
-  - openjdk6
-  - oraclejdk7
+  - openjdk8
+  - oraclejdk8
 sudo: false
 env:
   global:
     - BUILD_CMD='make'
+    - RUN_TESTS=false
 matrix:
   include:
-    - jdk: openjdk7
-      env: BUILD_CMD='ant -f build.xml'
+    - jdk: oraclejdk8
+      env: 
+        - BUILD_CMD='ant -f build.xml'
+        - RUN_TESTS=true
 cache:
   directories:
   - "${HOME}/dependencies"
@@ -21,6 +23,9 @@ before_install:
   - "source install_dependencies.sh"
 install:
   - "$BUILD_CMD"
-  - "cd test"
-  - "ln -s $(pwd)/../etc/log4j.properties ."
-script: ant -f build-test.xml test -DEMBOSS_ROOT=$EMBOSS_ROOT | tee test.log && [ -z "$(grep 'Failures:\s[^0]\|Errors:\s[^0]' test.log)" ]
+script:
+  - if [ "$RUN_TESTS" == "true" ]; then
+      cd test;
+      ln -s $(pwd)/../etc/log4j.properties .;
+      ./RunDefaultUnitTests.sh | tee test.log && [ -z "$(grep 'Failures:\s[^0]\|Errors:\s[^0]' test.log)" ];
+    fi

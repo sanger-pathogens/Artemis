@@ -138,48 +138,6 @@ public class Utilities
     return_vector.add(new DbfetchEntrySource(frame));
 
     // return_vector.add(new BioJavaEntrySource());
-    
-    // this doesn't work on a v1.2 system so it is taken out with perl when
-    // necessary 
-    // CORBA_START_MARKER
-
-    // The location of the IOR for the corba server at EMBL.  Can be
-    // overridden using the options file. 
-    final String embl_ior_url =
-      Options.getOptions().getProperty("embl_ior_url");
-
-    if(embl_ior_url != null) 
-    {
-      try 
-      {
-        return_vector.add(new EMBLCorbaEntrySource(frame, embl_ior_url));
-      } 
-      catch(MalformedURLException e) 
-      {
-        new MessageDialog(frame, "the url given for the embl database is " +
-                          "badly formatted: " + e.getMessage());
-      }
-    }
-
-    // The location of the IOR for the pathogens group read-write corba
-    // server. 
-    final String db_ior_url =
-      Options.getOptions().getProperty("db_ior_url");
-    
-    if(db_ior_url != null) 
-    {
-      try 
-      {
-        return_vector.add(new WritableEMBLCorbaEntrySource(frame,
-                                                           db_ior_url));
-      }
-      catch(MalformedURLException e)
-      {
-        new MessageDialog(frame, "the url given for the embl database is " +
-                           "badly formatted: " + e.getMessage());
-      }
-    }
-    // CORBA_END_MARKER
 
     return return_vector;
   }

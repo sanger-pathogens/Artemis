@@ -26,7 +26,7 @@ package uk.ac.sanger.artemis.components.alignment;
 
 import java.util.Comparator;
 
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMRecord;
 
 import uk.ac.sanger.artemis.components.alignment.BamView.PairedRead;
 

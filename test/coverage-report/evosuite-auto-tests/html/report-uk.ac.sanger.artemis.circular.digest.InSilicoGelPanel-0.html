@@ -1,0 +1,201 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.circular.digest.InSilicoGelPanel
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.circular.digest.InSilicoGelPanel: 0.5933990960879874</ul>
+<ul>
+<li>387.04861111111114 fitness evaluations, 0 generations, null statements, 15 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LinkedList&lt;FragmentBand&gt; linkedList0 = new LinkedList&lt;FragmentBand&gt;();
+<span class="nocode"><a name="2">  2: </a></span>FragmentBand fragmentBand0 = new FragmentBand();
+<span class="nocode"><a name="3">  3: </a></span>linkedList0.add(fragmentBand0);
+<span class="nocode"><a name="4">  4: </a></span>MockFile mockFile0 = new MockFile((File) null, &quot;vug&quot;);
+<span class="nocode"><a name="5">  5: </a></span>InSilicoGelPanel inSilicoGelPanel0 = new InSilicoGelPanel(linkedList0, 8, mockFile0, &quot;vug&quot;);
+<span class="nocode"><a name="6">  6: </a></span>inSilicoGelPanel0.getBandAtLocation((Point) null);
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Vector&lt;FragmentBand&gt; vector0 = new Vector&lt;FragmentBand&gt;(0, 0);
+<span class="nocode"><a name="2">  2: </a></span>MockFile mockFile0 = new MockFile(&quot;&amp;^A7AoOT.C&quot;);
+<span class="nocode"><a name="3">  3: </a></span>InSilicoGelPanel inSilicoGelPanel0 = new InSilicoGelPanel(vector0, 0, mockFile0, (String) null);
+<span class="nocode"><a name="4">  4: </a></span>InSilicoGelPanel.PopupListener inSilicoGelPanel_PopupListener0 = inSilicoGelPanel0.new PopupListener();
+<span class="nocode"><a name="5">  5: </a></span>MouseWheelEvent mouseWheelEvent0 = new MouseWheelEvent(inSilicoGelPanel0, (-2749), 0, 2282, 0, (-2749), 76, 0, 76, false, (-2749), (-1392), (-2749));
+<span class="nocode"><a name="6">  6: </a></span>inSilicoGelPanel_PopupListener0.mousePressed(mouseWheelEvent0);
+<span class="nocode"><a name="7">  7: </a></span>assertFalse(mouseWheelEvent0.isShiftDown());
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Vector&lt;FragmentBand&gt; vector0 = new Vector&lt;FragmentBand&gt;();
+<span class="nocode"><a name="2">  2: </a></span>MockFile mockFile0 = new MockFile(&quot;{gKblY86mhr2&quot;, &quot;{gKblY86mhr2&quot;);
+<span class="nocode"><a name="3">  3: </a></span>InSilicoGelPanel inSilicoGelPanel0 = new InSilicoGelPanel(vector0, 2269, mockFile0, &quot;#0.0&quot;);
+<span class="nocode"><a name="4">  4: </a></span>InSilicoGelPanel.PopupListener inSilicoGelPanel_PopupListener0 = inSilicoGelPanel0.new PopupListener();
+<span class="nocode"><a name="5">  5: </a></span>MouseWheelEvent mouseWheelEvent0 = new MouseWheelEvent(inSilicoGelPanel0, 2269, 0L, 1233, 2269, 1233, (-1215), false, 19, 142, 2269);
+<span class="nocode"><a name="6">  6: </a></span>inSilicoGelPanel_PopupListener0.mouseReleased(mouseWheelEvent0);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(322198, mouseWheelEvent0.getUnitsToScroll());
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ArrayList&lt;CutSite&gt; arrayList0 = new ArrayList&lt;CutSite&gt;();
+<span class="nocode"><a name="2">  2: </a></span>MockFile mockFile0 = new MockFile(&quot;vSC:6&gt;KbEIlH&quot;, &quot;appworkspace&quot;);
+<span class="nocode"><a name="3">  3: </a></span>InSilicoGelPanel inSilicoGelPanel0 = new InSilicoGelPanel((-275), arrayList0, 1655, mockFile0, &quot;appworkspace&quot;);
+<span class="nocode"><a name="4">  4: </a></span>GenericDocumentType genericDocumentType0 = new GenericDocumentType(&quot;vSC:6&gt;KbEIlH&quot;, &quot;&quot;, &quot;vSC:6&gt;KbEIlH&quot;);
+<span class="nocode"><a name="5">  5: </a></span>GenericDOMImplementation genericDOMImplementation0 = (GenericDOMImplementation)GenericDOMImplementation.getDOMImplementation();
+<span class="nocode"><a name="6">  6: </a></span>GenericDocument genericDocument0 = new GenericDocument(genericDocumentType0, genericDOMImplementation0);
+<span class="nocode"><a name="7">  7: </a></span>SVGGeneratorContext sVGGeneratorContext0 = SVGGeneratorContext.createDefault(genericDocument0);
+<span class="nocode"><a name="8">  8: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(sVGGeneratorContext0, true);
+<span class="nocode"><a name="9">  9: </a></span>inSilicoGelPanel0.paintComponent(sVGGraphics2D0);
+<span class="nocode"><a name="10"> 10: </a></span>inSilicoGelPanel0.paintComponent(sVGGraphics2D0);
+<span class="nocode"><a name="11"> 11: </a></span>inSilicoGelPanel0.paintComponent(sVGGraphics2D0);
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Vector&lt;CutSite&gt; vector0 = new Vector&lt;CutSite&gt;();
+<span class="nocode"><a name="2">  2: </a></span>InSilicoGelPanel inSilicoGelPanel0 = new InSilicoGelPanel(588, vector0, 588, (File) null, &quot;aIg57|uktZ1md&quot;);
+<span class="nocode"><a name="3">  3: </a></span>GenericDocumentType genericDocumentType0 = new GenericDocumentType(&quot;NO_VARIATION&quot;, &quot;NO_VARIATION&quot;, &quot;aIg57|uktZ1md&quot;);
+<span class="nocode"><a name="4">  4: </a></span>GenericDOMImplementation genericDOMImplementation0 = (GenericDOMImplementation)GenericDOMImplementation.getDOMImplementation();
+<span class="nocode"><a name="5">  5: </a></span>GenericDocument genericDocument0 = new GenericDocument(genericDocumentType0, genericDOMImplementation0);
+<span class="nocode"><a name="6">  6: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(genericDocument0);
+<span class="nocode"><a name="7">  7: </a></span>DebugGraphics debugGraphics0 = new DebugGraphics(sVGGraphics2D0);
+<span class="nocode"><a name="8">  8: </a></span>inSilicoGelPanel0.paintComponent(debugGraphics0);
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Stack&lt;FragmentBand&gt; stack0 = new Stack&lt;FragmentBand&gt;();
+<span class="nocode"><a name="2">  2: </a></span>FragmentBand fragmentBand0 = new FragmentBand();
+<span class="nocode"><a name="3">  3: </a></span>stack0.add(fragmentBand0);
+<span class="nocode"><a name="4">  4: </a></span>stack0.add(fragmentBand0);
+<span class="nocode"><a name="5">  5: </a></span>MockFile mockFile0 = new MockFile(&quot;\&quot;GG]I mf6&quot;, &quot;\&quot;GG]I mf6&quot;);
+<span class="nocode"><a name="6">  6: </a></span>InSilicoGelPanel inSilicoGelPanel0 = new InSilicoGelPanel(stack0, (-69), mockFile0, &quot;\&quot;GG]I mf6&quot;);
+<span class="nocode"><a name="7">  7: </a></span>assertFalse(inSilicoGelPanel0.isFocusTraversalPolicyProvider());
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Vector&lt;FragmentBand&gt; vector0 = new Vector&lt;FragmentBand&gt;();
+<span class="nocode"><a name="2">  2: </a></span>FragmentBand fragmentBand0 = new FragmentBand();
+<span class="nocode"><a name="3">  3: </a></span>vector0.addElement(fragmentBand0);
+<span class="nocode"><a name="4">  4: </a></span>InSilicoGelPanel inSilicoGelPanel0 = new InSilicoGelPanel(vector0, 1667, (File) null, &quot;#0.0&quot;);
+<span class="nocode"><a name="5">  5: </a></span>GenericDocumentType genericDocumentType0 = new GenericDocumentType(&quot;#0.0&quot;, &quot;JQE0&quot;, &quot;&quot;);
+<span class="nocode"><a name="6">  6: </a></span>GenericDOMImplementation genericDOMImplementation0 = new GenericDOMImplementation();
+<span class="nocode"><a name="7">  7: </a></span>GenericDocument genericDocument0 = new GenericDocument(genericDocumentType0, genericDOMImplementation0);
+<span class="nocode"><a name="8">  8: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(genericDocument0);
+<span class="nocode"><a name="9">  9: </a></span>inSilicoGelPanel0.paintComponent(sVGGraphics2D0);
+<span class="nocode"><a name="10"> 10: </a></span>assertFalse(inSilicoGelPanel0.isFocusTraversalPolicyProvider());
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Stack&lt;CutSite&gt; stack0 = new Stack&lt;CutSite&gt;();
+<span class="nocode"><a name="2">  2: </a></span>MockFile mockFile0 = new MockFile(&quot;6&quot;, &quot;Linear scale&quot;);
+<span class="nocode"><a name="3">  3: </a></span>InSilicoGelPanel inSilicoGelPanel0 = new InSilicoGelPanel(0, stack0, (-3925), mockFile0, &quot;M_Sne8[Nl~4+j&quot;);
+<span class="nocode"><a name="4">  4: </a></span>InSilicoGelPanel.PopupListener inSilicoGelPanel_PopupListener0 = inSilicoGelPanel0.new PopupListener();
+<span class="nocode"><a name="5">  5: </a></span>MouseWheelEvent mouseWheelEvent0 = new MouseWheelEvent(inSilicoGelPanel0, (-1174), (-3925), 0, (-1514), Integer.MAX_VALUE, 0, true, (-3925), 5, 0);
+<span class="nocode"><a name="6">  6: </a></span>inSilicoGelPanel_PopupListener0.mousePressed(mouseWheelEvent0);
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Stack&lt;CutSite&gt; stack0 = new Stack&lt;CutSite&gt;();
+<span class="nocode"><a name="2">  2: </a></span>MockFile mockFile0 = new MockFile(&quot;q/h3h0xMkSwBij^q&quot;, &quot;q/h3h0xMkSwBij^q&quot;);
+<span class="nocode"><a name="3">  3: </a></span>InSilicoGelPanel inSilicoGelPanel0 = new InSilicoGelPanel(0, stack0, 0, mockFile0, &quot;q/h3h0xMkSwBij^q&quot;);
+<span class="nocode"><a name="4">  4: </a></span>MockJapaneseDate mockJapaneseDate0 = new MockJapaneseDate();
+<span class="nocode"><a name="5">  5: </a></span>ActionEvent actionEvent0 = new ActionEvent(mockJapaneseDate0, 722, &quot;q/h3h0xMkSwBij^q&quot;, 722, 0);
+<span class="nocode"><a name="6">  6: </a></span>inSilicoGelPanel0.actionPerformed(actionEvent0);
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;ic&lt;;:.G4E&gt;KC*&quot;);
+<span class="nocode"><a name="2">  2: </a></span>InSilicoGelPanel inSilicoGelPanel0 = new InSilicoGelPanel((-1534), (List&lt;CutSite&gt;) null, 150, mockFile0, &quot;,_o)2REkEg+e&gt;$bhh&quot;);
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;k&quot;);
+<span class="nocode"><a name="2">  2: </a></span>InSilicoGelPanel inSilicoGelPanel0 = new InSilicoGelPanel((List&lt;FragmentBand&gt;) null, 526, mockFile0, (String) null);
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Vector&lt;FragmentBand&gt; vector0 = new Vector&lt;FragmentBand&gt;();
+<span class="nocode"><a name="2">  2: </a></span>MockFile mockFile0 = new MockFile(&quot;{gKblY86mhr2&quot;, &quot;{gKblY86mhr2&quot;);
+<span class="nocode"><a name="3">  3: </a></span>InSilicoGelPanel inSilicoGelPanel0 = new InSilicoGelPanel(vector0, 2269, mockFile0, &quot;#0.0&quot;);
+<span class="nocode"><a name="4">  4: </a></span>inSilicoGelPanel0.actionPerformed((ActionEvent) null);
+</pre>
+<h3>Test case 13</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>LinkedList&lt;FragmentBand&gt; linkedList0 = new LinkedList&lt;FragmentBand&gt;();
+<span class="nocode"><a name="2">  2: </a></span>MockFile mockFile0 = new MockFile(&quot;)C&quot;);
+<span class="nocode"><a name="3">  3: </a></span>InSilicoGelPanel inSilicoGelPanel0 = new InSilicoGelPanel(linkedList0, (-2848), mockFile0, &quot;Log scale&quot;);
+<span class="nocode"><a name="4">  4: </a></span>inSilicoGelPanel0.paintComponent((Graphics) null);
+</pre>
+<h3>Test case 14</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Stack&lt;FragmentBand&gt; stack0 = new Stack&lt;FragmentBand&gt;();
+<span class="nocode"><a name="2">  2: </a></span>FragmentBand fragmentBand0 = new FragmentBand();
+<span class="nocode"><a name="3">  3: </a></span>MockFile mockFile0 = new MockFile(&quot;\&quot;GG]I mf6&quot;, &quot;\&quot;GG]I mf6&quot;);
+<span class="nocode"><a name="4">  4: </a></span>InSilicoGelPanel inSilicoGelPanel0 = new InSilicoGelPanel(stack0, (-69), mockFile0, &quot;\&quot;GG]I mf6&quot;);
+<span class="nocode"><a name="5">  5: </a></span>stack0.add(fragmentBand0);
+<span class="nocode"><a name="6">  6: </a></span>Point point0 = new Point();
+<span class="nocode"><a name="7">  7: </a></span>FragmentBand fragmentBand1 = inSilicoGelPanel0.getBandAtLocation(point0);
+<span class="nocode"><a name="8">  8: </a></span>assertNull(fragmentBand1);
+</pre>
+<h3>Test case 15</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Stack&lt;FragmentBand&gt; stack0 = new Stack&lt;FragmentBand&gt;();
+<span class="nocode"><a name="2">  2: </a></span>FragmentBand fragmentBand0 = new FragmentBand();
+<span class="nocode"><a name="3">  3: </a></span>stack0.add(fragmentBand0);
+<span class="nocode"><a name="4">  4: </a></span>MockFile mockFile0 = new MockFile(&quot;\&quot;GG]I mf6&quot;);
+<span class="nocode"><a name="5">  5: </a></span>InSilicoGelPanel inSilicoGelPanel0 = new InSilicoGelPanel(stack0, (-69), mockFile0, &quot;\&quot;GG]I mf6&quot;);
+<span class="nocode"><a name="6">  6: </a></span>fragmentBand0.genomeFragmentLength = 758;
+<span class="nocode"><a name="7">  7: </a></span>Point point0 = new Point();
+<span class="nocode"><a name="8">  8: </a></span>FragmentBand fragmentBand1 = inSilicoGelPanel0.getBandAtLocation(point0);
+<span class="nocode"><a name="9">  9: </a></span>assertNull(fragmentBand1);
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.circular.digest.InSilicoGelPanel
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.circular.digest.InSilicoGelPanel
+<li>Size: 15
+<li>Length: 91
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.5933990960879874
+<li>BranchCoverage: 0.5384615384615384
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 0.5
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

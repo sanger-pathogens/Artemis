@@ -314,13 +314,6 @@ feature_file_suffixes = tab embl gbk genbank tab_embl gff feature feat \
 sequence_file_suffixes = embl gbk genbank gff tab_embl seq dna \
    art artemis fa fasta fas gb fna ffn
 
-# this is the URL that contains the IOR of the EMBL server
-#embl_ior_url = http://corba.ebi.ac.uk/EMBL/IOR/Embl.IOR
-
-# this is the URL that contains the IOR of the EnsEMBL server
-# ensembl_ior_url = file:///nfs/disk12/kmr/powmap/db.ior
-
-
 # the default height for the base plot window
 base_plot_height = 100
 
@@ -865,6 +858,7 @@ hyperlinks = \
 bam_read_thread = 2
 # Max read coverage to display
 bam_max_coverage = 1000000
+bamview_ftp_buffer_size=10485760
 
 #
 # CHADO DATABASE OPTIONS 

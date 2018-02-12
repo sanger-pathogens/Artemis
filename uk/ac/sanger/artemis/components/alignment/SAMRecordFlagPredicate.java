@@ -21,7 +21,7 @@
 
 package uk.ac.sanger.artemis.components.alignment;
 
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMRecord;
 
 /**
  *  Test the SAMRecord flag.

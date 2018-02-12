@@ -78,7 +78,7 @@ abstract public class DocumentEntryFactory
       throws IOException, EntryInformationException 
   {
     if(!System.getProperty("java.version").startsWith("1.5.") &&
-        document.getInputStream() instanceof net.sf.samtools.util.BlockCompressedInputStream)
+        document.getInputStream() instanceof htsjdk.samtools.util.BlockCompressedInputStream)
     {
       if(IndexedGFFDocumentEntry.isIndexed( ((File)document.getLocation()) ))
       {

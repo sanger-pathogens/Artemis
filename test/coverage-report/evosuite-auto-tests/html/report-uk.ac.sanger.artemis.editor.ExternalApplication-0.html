@@ -1,0 +1,116 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.editor.ExternalApplication
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.editor.ExternalApplication: 0.40278802952503207</ul>
+<ul>
+<li>221.18076923076922 fitness evaluations, 0 generations, null statements, 8 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = new String[7];
+<span class="nocode"><a name="2">  2: </a></span>MockFile mockFile0 = new MockFile(&quot;{[.]3l0WK4N}1*-&quot;);
+<span class="nocode"><a name="3">  3: </a></span>ExternalApplication externalApplication0 = new ExternalApplication(stringArray0, stringArray0, mockFile0);
+<span class="nocode"><a name="4">  4: </a></span>externalApplication0.getProcess();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;1&quot;, externalApplication0.getStatus());
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = new String[1];
+<span class="nocode"><a name="2">  2: </a></span>MockFile mockFile0 = new MockFile(&quot;interval_set_rule&quot;);
+<span class="nocode"><a name="3">  3: </a></span>ExternalApplication externalApplication0 = new ExternalApplication(stringArray0, stringArray0, mockFile0);
+<span class="nocode"><a name="4">  4: </a></span>String string0 = externalApplication0.getStatus();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;1&quot;, string0);
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = new String[4];
+<span class="nocode"><a name="2">  2: </a></span>MockFile mockFile0 = new MockFile(&quot;B7HdJwe#_bZO]:9Z&quot;, &quot;B7HdJwe#_bZO]:9Z&quot;);
+<span class="nocode"><a name="3">  3: </a></span>ExternalApplication externalApplication0 = new ExternalApplication(stringArray0, stringArray0, mockFile0);
+<span class="nocode"><a name="4">  4: </a></span>externalApplication0.waitFor();
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = new String[2];
+<span class="nocode"><a name="2">  2: </a></span>MockFile mockFile0 = new MockFile(&quot;&quot;, &quot;`&quot;);
+<span class="nocode"><a name="3">  3: </a></span>ExternalApplication externalApplication0 = new ExternalApplication(stringArray0, stringArray0, mockFile0);
+<span class="nocode"><a name="4">  4: </a></span>ExternalApplication.StdoutHandler externalApplication_StdoutHandler0 = externalApplication0.new StdoutHandler(externalApplication0);
+<span class="nocode"><a name="5">  5: </a></span>externalApplication_StdoutHandler0.run();
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = new String[4];
+<span class="nocode"><a name="2">  2: </a></span>ExternalApplication externalApplication0 = new ExternalApplication(stringArray0, stringArray0, (File) null);
+<span class="nocode"><a name="3">  3: </a></span>ExternalApplication.StderrHandler externalApplication_StderrHandler0 = externalApplication0.new StderrHandler(externalApplication0);
+<span class="nocode"><a name="4">  4: </a></span>externalApplication_StderrHandler0.run();
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MockFile mockFile0 = new MockFile(&quot;=xE`q+?ll=&quot;, &quot;=xE`q+?ll=&quot;);
+<span class="nocode"><a name="2">  2: </a></span>ExternalApplication externalApplication0 = new ExternalApplication((String[]) null, (String[]) null, mockFile0);
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = new String[12];
+<span class="nocode"><a name="2">  2: </a></span>MockFile mockFile0 = new MockFile(&quot;/|B}n8*&lt;/o&quot;);
+<span class="nocode"><a name="3">  3: </a></span>ExternalApplication externalApplication0 = new ExternalApplication(stringArray0, stringArray0, mockFile0);
+<span class="nocode"><a name="4">  4: </a></span>externalApplication0.getProcessStderr();
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = new String[8];
+<span class="nocode"><a name="2">  2: </a></span>MockFile mockFile0 = new MockFile(&quot;|NtU&quot;);
+<span class="nocode"><a name="3">  3: </a></span>ExternalApplication externalApplication0 = new ExternalApplication(stringArray0, stringArray0, mockFile0);
+<span class="nocode"><a name="4">  4: </a></span>externalApplication0.getProcessStdout();
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.editor.ExternalApplication
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.editor.ExternalApplication
+<li>Size: 8
+<li>Length: 31
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.40278802952503207
+<li>BranchCoverage: 0.3170731707317073
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 0.125
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

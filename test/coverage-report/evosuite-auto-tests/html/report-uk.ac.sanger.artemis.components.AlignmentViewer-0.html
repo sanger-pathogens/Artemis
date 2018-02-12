@@ -1,0 +1,136 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.components.AlignmentViewer
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.components.AlignmentViewer: 0.18175979139021342</ul>
+<ul>
+<li>8563.664347595688 fitness evaluations, 0 generations, null statements, 13 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BlastM8ComparisonData blastM8ComparisonData0 = new BlastM8ComparisonData();
+<span class="nocode"><a name="2">  2: </a></span>AlignmentViewer alignmentViewer0 = new AlignmentViewer((FeatureDisplay) null, (FeatureDisplay) null, blastM8ComparisonData0);
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>AlignmentViewer.getRealSubjectSequenceStart((AlignMatch) null, 3, false);
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range((-806), (-806));
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, false, (-806), 0);
+<span class="nocode"><a name="3">  3: </a></span>int int0 = AlignmentViewer.getRealSubjectSequenceEnd(alignMatch0, 120018, false);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-806), int0);
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range((-806), (-806));
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, false, (-806), 0);
+<span class="nocode"><a name="3">  3: </a></span>int int0 = AlignmentViewer.getRealSubjectSequenceEnd(alignMatch0, 120000, true);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(120807, int0);
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>AlignmentViewer.getRealQuerySequenceStart((AlignMatch) null, 0, false);
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range((-1153));
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, true, (-1153), (-1153));
+<span class="nocode"><a name="3">  3: </a></span>int int0 = AlignmentViewer.getRealQuerySequenceStart(alignMatch0, (-1153), true);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1, int0);
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(0, 0);
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, true, 762, (-30000));
+<span class="nocode"><a name="3">  3: </a></span>int int0 = AlignmentViewer.getRealQuerySequenceEnd(alignMatch0, 3000, false);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, int0);
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(0, 0);
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, true, 762, (-30000));
+<span class="nocode"><a name="3">  3: </a></span>int int0 = AlignmentViewer.getRealQuerySequenceEnd(alignMatch0, 3000, true);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(3001, int0);
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>AlignmentViewer.getRealQuerySequenceEnd((AlignMatch) null, 2, true);
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>AlignmentViewer.getRealSubjectSequenceEnd((AlignMatch) null, 1798, false);
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range((-5), 2042);
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, true, 0, (-1082));
+<span class="nocode"><a name="3">  3: </a></span>int int0 = AlignmentViewer.getRealQuerySequenceEnd(alignMatch0, 3, false);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-5), int0);
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range((-1153));
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, true, (-1153), (-1153));
+<span class="nocode"><a name="3">  3: </a></span>int int0 = AlignmentViewer.getRealQuerySequenceStart(alignMatch0, (-2284), true);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-1130), int0);
+</pre>
+<h3>Test case 13</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(0, 0);
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, true, 762, (-30000));
+<span class="nocode"><a name="3">  3: </a></span>int int0 = AlignmentViewer.getRealQuerySequenceStart(alignMatch0, (-5438), true);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-5437), int0);
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.components.AlignmentViewer
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.components.AlignmentViewer
+<li>Size: 13
+<li>Length: 30
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.18175979139021342
+<li>BranchCoverage: 0.017985611510791366
+<li>MethodCoverage: 0.13157894736842105
+<li>OutputCoverage: 0.16279069767441862
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

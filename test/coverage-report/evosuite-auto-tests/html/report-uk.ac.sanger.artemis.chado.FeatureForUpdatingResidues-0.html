@@ -1,0 +1,178 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.chado.FeatureForUpdatingResidues
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.chado.FeatureForUpdatingResidues: 1.0</ul>
+<ul>
+<li>0.0 fitness evaluations, 0 generations, null statements, 17 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FeatureForUpdatingResidues featureForUpdatingResidues0 = new FeatureForUpdatingResidues();
+<span class="nocode"><a name="2">  2: </a></span>int int0 = featureForUpdatingResidues0.getLength();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, int0);
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(featureForUpdatingResidues0.isResidueUpdate());
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FeatureForUpdatingResidues featureForUpdatingResidues0 = new FeatureForUpdatingResidues();
+<span class="nocode"><a name="2">  2: </a></span>featureForUpdatingResidues0.setNewSubSequence(&quot;$_eTDN?wFMw_S(Ag&quot;);
+<span class="nocode"><a name="3">  3: </a></span>featureForUpdatingResidues0.getNewSubSequence();
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(featureForUpdatingResidues0.isResidueUpdate());
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FeatureForUpdatingResidues featureForUpdatingResidues0 = new FeatureForUpdatingResidues();
+<span class="nocode"><a name="2">  2: </a></span>featureForUpdatingResidues0.getNewSubSequence();
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(featureForUpdatingResidues0.isResidueUpdate());
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FeatureForUpdatingResidues featureForUpdatingResidues0 = new FeatureForUpdatingResidues();
+<span class="nocode"><a name="2">  2: </a></span>featureForUpdatingResidues0.setLength(42);
+<span class="nocode"><a name="3">  3: </a></span>int int0 = featureForUpdatingResidues0.getLength();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(42, int0);
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FeatureForUpdatingResidues featureForUpdatingResidues0 = new FeatureForUpdatingResidues();
+<span class="nocode"><a name="2">  2: </a></span>int int0 = featureForUpdatingResidues0.getEndBase();
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(featureForUpdatingResidues0.isResidueUpdate());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, int0);
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FeatureForUpdatingResidues featureForUpdatingResidues0 = new FeatureForUpdatingResidues();
+<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = featureForUpdatingResidues0.isResidueUpdate();
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FeatureForUpdatingResidues featureForUpdatingResidues0 = new FeatureForUpdatingResidues();
+<span class="nocode"><a name="2">  2: </a></span>int int0 = featureForUpdatingResidues0.getBasesToEnd();
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(featureForUpdatingResidues0.isResidueUpdate());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, int0);
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FeatureForUpdatingResidues featureForUpdatingResidues0 = new FeatureForUpdatingResidues();
+<span class="nocode"><a name="2">  2: </a></span>featureForUpdatingResidues0.setEndBase((-719));
+<span class="nocode"><a name="3">  3: </a></span>int int0 = featureForUpdatingResidues0.getEndBase();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-719), int0);
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FeatureForUpdatingResidues featureForUpdatingResidues0 = new FeatureForUpdatingResidues();
+<span class="nocode"><a name="2">  2: </a></span>int int0 = featureForUpdatingResidues0.getStartBase();
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(featureForUpdatingResidues0.isResidueUpdate());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, int0);
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FeatureForUpdatingResidues featureForUpdatingResidues0 = new FeatureForUpdatingResidues();
+<span class="nocode"><a name="2">  2: </a></span>featureForUpdatingResidues0.setBasesToEnd((-3257));
+<span class="nocode"><a name="3">  3: </a></span>int int0 = featureForUpdatingResidues0.getBasesToEnd();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-3257), int0);
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FeatureForUpdatingResidues featureForUpdatingResidues0 = new FeatureForUpdatingResidues();
+<span class="nocode"><a name="2">  2: </a></span>featureForUpdatingResidues0.setBasesToEnd(32);
+<span class="nocode"><a name="3">  3: </a></span>int int0 = featureForUpdatingResidues0.getBasesToEnd();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(32, int0);
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FeatureForUpdatingResidues featureForUpdatingResidues0 = new FeatureForUpdatingResidues();
+<span class="nocode"><a name="2">  2: </a></span>featureForUpdatingResidues0.setEndBase(13);
+<span class="nocode"><a name="3">  3: </a></span>int int0 = featureForUpdatingResidues0.getEndBase();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(13, int0);
+</pre>
+<h3>Test case 13</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FeatureForUpdatingResidues featureForUpdatingResidues0 = new FeatureForUpdatingResidues();
+<span class="nocode"><a name="2">  2: </a></span>featureForUpdatingResidues0.setLength((-1));
+<span class="nocode"><a name="3">  3: </a></span>int int0 = featureForUpdatingResidues0.getLength();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-1), int0);
+</pre>
+<h3>Test case 14</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FeatureForUpdatingResidues featureForUpdatingResidues0 = new FeatureForUpdatingResidues();
+<span class="nocode"><a name="2">  2: </a></span>featureForUpdatingResidues0.setNewSubSequence(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>featureForUpdatingResidues0.getNewSubSequence();
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(featureForUpdatingResidues0.isResidueUpdate());
+</pre>
+<h3>Test case 15</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FeatureForUpdatingResidues featureForUpdatingResidues0 = new FeatureForUpdatingResidues();
+<span class="nocode"><a name="2">  2: </a></span>featureForUpdatingResidues0.setStartBase((-1692));
+<span class="nocode"><a name="3">  3: </a></span>int int0 = featureForUpdatingResidues0.getStartBase();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-1692), int0);
+</pre>
+<h3>Test case 16</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FeatureForUpdatingResidues featureForUpdatingResidues0 = new FeatureForUpdatingResidues();
+<span class="nocode"><a name="2">  2: </a></span>featureForUpdatingResidues0.setStartBase(1);
+<span class="nocode"><a name="3">  3: </a></span>int int0 = featureForUpdatingResidues0.getStartBase();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1, int0);
+</pre>
+<h3>Test case 17</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FeatureForUpdatingResidues featureForUpdatingResidues0 = new FeatureForUpdatingResidues();
+<span class="nocode"><a name="2">  2: </a></span>assertFalse(featureForUpdatingResidues0.isResidueUpdate());
+<span class="nocode"><a name="3">  3: </a></span>
+<span class="nocode"><a name="4">  4: </a></span>featureForUpdatingResidues0.setResidueUpdate(true);
+<span class="nocode"><a name="5">  5: </a></span>boolean boolean0 = featureForUpdatingResidues0.isResidueUpdate();
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(boolean0);
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.chado.FeatureForUpdatingResidues
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.chado.FeatureForUpdatingResidues
+<li>Size: 17
+<li>Length: 45
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 1.0
+<li>BranchCoverage: 1.0
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 1.0
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

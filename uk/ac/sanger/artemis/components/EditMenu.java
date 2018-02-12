@@ -1227,7 +1227,7 @@ public class EditMenu extends SelectionMenu
             {
               new_feature.removeFromEntry();
             } 
-            catch(ReadOnlyException _) 
+            catch(ReadOnlyException ie) 
             {
               // give up ...
             }
@@ -1266,7 +1266,7 @@ public class EditMenu extends SelectionMenu
             {
               new_feature.removeFromEntry();
             }
-            catch(ReadOnlyException _) {}
+            catch(ReadOnlyException roe) {}
           }
         }
       }
@@ -2000,7 +2000,7 @@ public class EditMenu extends SelectionMenu
     choice.setMaximumRowCount (MAX_VISIBLE_ROWS);
     
     choice.addItemListener (new ItemListener () {
-      public void itemStateChanged (ItemEvent _) {
+      public void itemStateChanged (ItemEvent itemEvent) {
         removeQualifierFromFeatures (selected_features,
                                      (String) choice.getSelectedItem ());
         choice_frame.setVisible (false);
@@ -2009,7 +2009,7 @@ public class EditMenu extends SelectionMenu
     });
 
     choice_frame.getOKButton ().addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent _) {
+      public void actionPerformed (ActionEvent actionEvent) {
         removeQualifierFromFeatures (selected_features,
                                      (String) choice.getSelectedItem ());
       }
@@ -2169,11 +2169,11 @@ public class EditMenu extends SelectionMenu
         final Feature this_feature = features.elementAt (i);
         try {
           this_feature.removeQualifierByName (qualifier_name);
-        } catch (OutOfDateException _) {
+        } catch (OutOfDateException ode) {
           // ignore
-        } catch (EntryInformationException _) {
+        } catch (EntryInformationException eie) {
           // ignore
-        } catch (ReadOnlyException _) {
+        } catch (ReadOnlyException roe) {
           found_read_only = true;
         }
       }
@@ -2496,7 +2496,7 @@ public class EditMenu extends SelectionMenu
           this_feature.setLocation (new_location);
         } catch (OutOfRangeException e) {
           throw new Error ("internal error - unexpected exception: " + e);
-        } catch (ReadOnlyException _) {
+        } catch (ReadOnlyException roe) {
           found_read_only = true;
         }
       }
@@ -2934,10 +2934,10 @@ public class EditMenu extends SelectionMenu
           try {
             feature_start_marker.setPosition (new_start_marker.getPosition ());
             selection_feature.removeQualifierByName ("codon_start");
-          } catch (EntryInformationException _) {
+          } catch (EntryInformationException eie) {
             // ignore - if we can't remove codon_start, then it won't have
             // been there to start with
-          } catch (OutOfDateException _) {
+          } catch (OutOfDateException ode) {
             // ignore
           } catch (ReadOnlyException e) {
             throw new Error ("internal error - unexpected exception: " + e);
@@ -3524,7 +3524,7 @@ public class EditMenu extends SelectionMenu
       {
         cds_start_marker = cds_start_marker.moveBy(-1);
       }
-      catch(OutOfRangeException _) 
+      catch(OutOfRangeException ore) 
       {
         // ignore and use the original cds_start_marker
       }
@@ -3533,7 +3533,7 @@ public class EditMenu extends SelectionMenu
       {
         cds_end_marker = cds_end_marker.moveBy(1);
       } 
-      catch(OutOfRangeException _) 
+      catch(OutOfRangeException ore) 
       {
         // ignore and use the original cds_end_marker
       }

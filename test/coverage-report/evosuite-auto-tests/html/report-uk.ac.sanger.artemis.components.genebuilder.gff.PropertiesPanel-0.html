@@ -1,0 +1,160 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.components.genebuilder.gff.PropertiesPanel
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.components.genebuilder.gff.PropertiesPanel: 0.43720445843810846</ul>
+<ul>
+<li>1616.6639999677618 fitness evaluations, 0 generations, null statements, 12 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;Derives_from&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Entry entry0 = simpleEntryGroup0.createEntry(&quot;v_%|tg6.9&amp;snyu&quot;);
+<span class="nocode"><a name="5">  5: </a></span>Feature feature0 = entry0.createFeature();
+<span class="nocode"><a name="6">  6: </a></span>PropertiesPanel propertiesPanel0 = new PropertiesPanel(feature0);
+<span class="nocode"><a name="7">  7: </a></span>propertiesPanel0.setObsoleteChanged(false);
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;Derives_from&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Entry entry0 = simpleEntryGroup0.createEntry(&quot;Derives_from&quot;);
+<span class="nocode"><a name="5">  5: </a></span>Feature feature0 = entry0.createFeature();
+<span class="nocode"><a name="6">  6: </a></span>PropertiesPanel propertiesPanel0 = new PropertiesPanel(feature0);
+<span class="nocode"><a name="7">  7: </a></span>boolean boolean0 = propertiesPanel0.isEmpty();
+<span class="nocode"><a name="8">  8: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;Derives_from&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Entry entry0 = simpleEntryGroup0.createEntry(&quot;v_%|tg6.9&amp;snyu&quot;);
+<span class="nocode"><a name="5">  5: </a></span>Feature feature0 = entry0.createFeature();
+<span class="nocode"><a name="6">  6: </a></span>PropertiesPanel propertiesPanel0 = new PropertiesPanel(feature0);
+<span class="nocode"><a name="7">  7: </a></span>propertiesPanel0.makeBorder();
+<span class="nocode"><a name="8">  8: </a></span>assertTrue(propertiesPanel0.isEmpty());
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier(&quot;Start_range&quot;);
+<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = PropertiesPanel.isPropertiesTag(qualifier0, (Feature) null);
+<span class="nocode"><a name="3">  3: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier(&quot;g`&gt;C#I|y&quot;);
+<span class="nocode"><a name="2">  2: </a></span>PropertiesPanel.isPropertiesTag(qualifier0, (Feature) null);
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;Attempted to read outside of this sequence (1..&quot;, &quot;Attempted to read outside of this sequence (1..&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Entry entry0 = Entry.newEntry(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Feature feature0 = entry0.createFeature();
+<span class="nocode"><a name="5">  5: </a></span>PropertiesPanel propertiesPanel0 = new PropertiesPanel(feature0, false, true, false, true);
+<span class="nocode"><a name="6">  6: </a></span>propertiesPanel0.getGffQualifiers(feature0);
+<span class="nocode"><a name="7">  7: </a></span>assertTrue(propertiesPanel0.isEmpty());
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;Derives_from&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Entry entry0 = simpleEntryGroup0.createEntry(&quot;v_%|tg6.9&amp;snyu&quot;);
+<span class="nocode"><a name="5">  5: </a></span>Feature feature0 = entry0.createFeature();
+<span class="nocode"><a name="6">  6: </a></span>bases0.reverseComplement();
+<span class="nocode"><a name="7">  7: </a></span>PropertiesPanel propertiesPanel0 = new PropertiesPanel(feature0);
+<span class="nocode"><a name="8">  8: </a></span>assertTrue(propertiesPanel0.isEmpty());
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;Derives_from&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Entry entry0 = simpleEntryGroup0.createEntry(&quot;v_%|tg6.9&amp;snyu&quot;);
+<span class="nocode"><a name="5">  5: </a></span>Feature feature0 = entry0.createFeature();
+<span class="nocode"><a name="6">  6: </a></span>PropertiesPanel propertiesPanel0 = new PropertiesPanel(feature0);
+<span class="nocode"><a name="7">  7: </a></span>propertiesPanel0.updateFromFeature(feature0);
+<span class="nocode"><a name="8">  8: </a></span>assertTrue(propertiesPanel0.isEmpty());
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;Derives_from&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Entry entry0 = simpleEntryGroup0.createEntry(&quot;v_%|tg6.9&amp;snyu&quot;);
+<span class="nocode"><a name="5">  5: </a></span>Feature feature0 = entry0.createFeature();
+<span class="nocode"><a name="6">  6: </a></span>PropertiesPanel propertiesPanel0 = new PropertiesPanel(feature0);
+<span class="nocode"><a name="7">  7: </a></span>propertiesPanel0.getGffQualifiers(feature0);
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>PropertiesPanel propertiesPanel0 = new PropertiesPanel((Feature) null);
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamFeature emblStreamFeature0 = new EmblStreamFeature();
+<span class="nocode"><a name="2">  2: </a></span>Feature feature0 = new Feature(emblStreamFeature0);
+<span class="nocode"><a name="3">  3: </a></span>PropertiesPanel propertiesPanel0 = new PropertiesPanel(feature0, true, true, true, true);
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamFeature emblStreamFeature0 = new EmblStreamFeature();
+<span class="nocode"><a name="2">  2: </a></span>GFFStreamFeature gFFStreamFeature0 = new GFFStreamFeature(emblStreamFeature0);
+<span class="nocode"><a name="3">  3: </a></span>PropertiesPanel.updateObsoleteSettings(gFFStreamFeature0);
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.components.genebuilder.gff.PropertiesPanel
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.components.genebuilder.gff.PropertiesPanel
+<li>Size: 12
+<li>Length: 59
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.43720445843810846
+<li>BranchCoverage: 0.19708029197080293
+<li>MethodCoverage: 0.8181818181818182
+<li>OutputCoverage: 0.38461538461538464
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

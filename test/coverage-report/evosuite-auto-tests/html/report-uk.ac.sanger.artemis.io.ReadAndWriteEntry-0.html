@@ -1,0 +1,379 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.io.ReadAndWriteEntry
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.io.ReadAndWriteEntry: 0.36517715714239535</ul>
+<ul>
+<li>312.0943820201436 fitness evaluations, 0 generations, null statements, 17 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = (SimpleEntryInformation)SimpleEntryInformation.getDefaultEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>String string0 = null;
+<span class="nocode"><a name="3">  3: </a></span>MockFile mockFile0 = new MockFile((String) null, (String) null);
+<span class="nocode"><a name="4">  4: </a></span>FileDocument fileDocument0 = new FileDocument(mockFile0);
+<span class="nocode"><a name="5">  5: </a></span>IndexedGFFDocumentEntry indexedGFFDocumentEntry0 = new IndexedGFFDocumentEntry(fileDocument0);
+<span class="nocode"><a name="6">  6: </a></span>boolean boolean0 = false;
+<span class="nocode"><a name="7">  7: </a></span>MSPcrunchDocumentEntry mSPcrunchDocumentEntry0 = new MSPcrunchDocumentEntry(indexedGFFDocumentEntry0, boolean0);
+<span class="nocode"><a name="8">  8: </a></span>mSPcrunchDocumentEntry0.setDirtyFlag();
+<span class="nocode"><a name="9">  9: </a></span>GFFDocumentEntry gFFDocumentEntry0 = new GFFDocumentEntry(mSPcrunchDocumentEntry0, boolean0);
+<span class="nocode"><a name="10"> 10: </a></span>int int0 = 1272;
+<span class="nocode"><a name="11"> 11: </a></span>Feature feature0 = gFFDocumentEntry0.getFeatureAtIndex(int0);
+<span class="nocode"><a name="12"> 12: </a></span>Feature feature1 = indexedGFFDocumentEntry0.forcedAdd(feature0);
+<span class="nocode"><a name="13"> 13: </a></span>ReadAndWriteEntry.addAllKeysQualifiers(simpleEntryInformation0, feature1);
+<span class="nocode"><a name="14"> 14: </a></span>ReadAndWriteEntry readAndWriteEntry0 = new ReadAndWriteEntry();
+<span class="nocode"><a name="15"> 15: </a></span>RepositorySelector repositorySelector0 = mock(RepositorySelector.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="16"> 16: </a></span>String string1 = &quot;All terms must be from the same ontology: &quot;;
+<span class="nocode"><a name="17"> 17: </a></span>TextArea textArea0 = new TextArea(string1);
+<span class="nocode"><a name="18"> 18: </a></span>LogManager.setRepositorySelector(repositorySelector0, textArea0);
+<span class="nocode"><a name="19"> 19: </a></span>DatabaseEntrySource databaseEntrySource0 = ReadAndWriteEntry.getEntrySource();
+<span class="nocode"><a name="20"> 20: </a></span>String string2 = ReadAndWriteEntry.getFeatureId(databaseEntrySource0, string0);
+<span class="nocode"><a name="21"> 21: </a></span>ReadAndWriteEntry.readEntryFromDatabase(string0);
+<span class="nocode"><a name="22"> 22: </a></span>fileDocument0.getOutputStream();
+<span class="nocode"><a name="23"> 23: </a></span>String string3 = &quot;cC5{P5w.Xa&quot;;
+<span class="nocode"><a name="24"> 24: </a></span>ReadAndWriteEntry.readEntryFromDatabase(string3);
+<span class="nocode"><a name="25"> 25: </a></span>DatabaseEntrySource databaseEntrySource1 = ReadAndWriteEntry.getEntrySource();
+<span class="nocode"><a name="26"> 26: </a></span>ReadAndWriteEntry.readEntryFromDatabase(string2, databaseEntrySource1);
+<span class="nocode"><a name="27"> 27: </a></span>String string4 = &quot;rU&amp;_/%o(ln[W&quot;;
+<span class="nocode"><a name="28"> 28: </a></span>ReadAndWriteEntry.getFeatureId(databaseEntrySource0, string4);
+<span class="nocode"><a name="29"> 29: </a></span>ReadAndWriteEntry.getFeatureId(databaseEntrySource0, string4);
+<span class="nocode"><a name="30"> 30: </a></span>ReadAndWriteEntry.addAllKeysQualifiers(simpleEntryInformation0, feature1);
+<span class="nocode"><a name="31"> 31: </a></span>String string5 = &quot;o~\\%o&quot;;
+<span class="nocode"><a name="32"> 32: </a></span>ReadAndWriteEntry.readEntryFromDatabase(string5);
+<span class="nocode"><a name="33"> 33: </a></span>ReadAndWriteEntry.addAllKeysQualifiers(simpleEntryInformation0, feature0);
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ReadAndWriteEntry readAndWriteEntry0 = new ReadAndWriteEntry();
+<span class="nocode"><a name="2">  2: </a></span>RemoteFileNode remoteFileNode0 = new RemoteFileNode(true);
+<span class="nocode"><a name="3">  3: </a></span>RemoteFileDocument remoteFileDocument0 = new RemoteFileDocument(remoteFileNode0);
+<span class="nocode"><a name="4">  4: </a></span>remoteFileNode0.getPreviousSibling();
+<span class="nocode"><a name="5">  5: </a></span>IndexedGFFDocumentEntry indexedGFFDocumentEntry0 = new IndexedGFFDocumentEntry(remoteFileDocument0);
+<span class="nocode"><a name="6">  6: </a></span>EntryInformation entryInformation0 = indexedGFFDocumentEntry0.getEntryInformation();
+<span class="nocode"><a name="7">  7: </a></span>remoteFileDocument0.getWriter();
+<span class="nocode"><a name="8">  8: </a></span>SimpleEntryInformation simpleEntryInformation0 = new SimpleEntryInformation(entryInformation0);
+<span class="nocode"><a name="9">  9: </a></span>simpleEntryInformation0.getSortedValidKeys();
+<span class="nocode"><a name="10"> 10: </a></span>String string0 = &quot;Trp&quot;;
+<span class="nocode"><a name="11"> 11: </a></span>ReadAndWriteEntry.addQualifierToEntryInfo(simpleEntryInformation0, string0);
+<span class="nocode"><a name="12"> 12: </a></span>boolean boolean0 = true;
+<span class="nocode"><a name="13"> 13: </a></span>LogLog.setQuietMode(boolean0);
+<span class="nocode"><a name="14"> 14: </a></span>String string1 = &quot;Ij/5&quot;;
+<span class="nocode"><a name="15"> 15: </a></span>DatabaseDocument.TRANSCRIPT = string1;
+<span class="nocode"><a name="16"> 16: </a></span>ReadAndWriteEntry.getEntrySource();
+<span class="nocode"><a name="17"> 17: </a></span>ReadAndWriteEntry.getEntrySource();
+<span class="nocode"><a name="18"> 18: </a></span>EntryInformation entryInformation1 = SimpleEntryInformation.getDefaultEntryInformation();
+<span class="nocode"><a name="19"> 19: </a></span>Sequence sequence0 = null;
+<span class="nocode"><a name="20"> 20: </a></span>BioJavaEntry bioJavaEntry0 = new BioJavaEntry(sequence0);
+<span class="nocode"><a name="21"> 21: </a></span>String string2 = &quot;&quot;;
+<span class="nocode"><a name="22"> 22: </a></span>Key key0 = new Key(string2);
+<span class="nocode"><a name="23"> 23: </a></span>int int0 = 5;
+<span class="nocode"><a name="24"> 24: </a></span>Range range0 = new Range(int0, int0);
+<span class="nocode"><a name="25"> 25: </a></span>Location location0 = new Location(range0);
+<span class="nocode"><a name="26"> 26: </a></span>int int1 = (-860);
+<span class="nocode"><a name="27"> 27: </a></span>Location location1 = location0.reverseComplement(int0, int1);
+<span class="nocode"><a name="28"> 28: </a></span>Range range1 = new Range(int1);
+<span class="nocode"><a name="29"> 29: </a></span>Location location2 = location1.addRange(range1);
+<span class="nocode"><a name="30"> 30: </a></span>FramedFeature.Template framedFeature_Template0 = new FramedFeature.Template();
+<span class="nocode"><a name="31"> 31: </a></span>SimpleFramedFeature simpleFramedFeature0 = new SimpleFramedFeature(sequence0, sequence0, framedFeature_Template0);
+<span class="nocode"><a name="32"> 32: </a></span>BioJavaFeature bioJavaFeature0 = new BioJavaFeature(simpleFramedFeature0, bioJavaEntry0);
+<span class="nocode"><a name="33"> 33: </a></span>QualifierVector qualifierVector0 = bioJavaFeature0.getQualifiers();
+<span class="nocode"><a name="34"> 34: </a></span>Feature feature0 = bioJavaEntry0.createFeature(key0, location2, qualifierVector0);
+<span class="nocode"><a name="35"> 35: </a></span>ReadAndWriteEntry.addAllKeysQualifiers(entryInformation1, feature0);
+<span class="nocode"><a name="36"> 36: </a></span>ReadAndWriteEntry.getEntrySource();
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = new Key(&quot;p`jy~s&quot;);
+<span class="nocode"><a name="3">  3: </a></span>blastEntryInformation0.isValidKey(key0);
+<span class="nocode"><a name="4">  4: </a></span>SimpleEntryInformation simpleEntryInformation0 = new SimpleEntryInformation(blastEntryInformation0);
+<span class="nocode"><a name="5">  5: </a></span>blastEntryInformation0.getSortedValidKeys();
+<span class="nocode"><a name="6">  6: </a></span>InputStreamProgressListener inputStreamProgressListener0 = mock(InputStreamProgressListener.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="7">  7: </a></span>ReadAndWriteEntry.getEntrySource();
+<span class="nocode"><a name="8">  8: </a></span>ReadAndWriteEntry.addQualifierToEntryInfo(blastEntryInformation0, &quot;-z\t[y|n] gzip output, default is y&quot;);
+<span class="nocode"><a name="9">  9: </a></span>String string0 = BorderLayout.LINE_END;
+<span class="nocode"><a name="10"> 10: </a></span>assertEquals(&quot;After&quot;, string0);
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = (SimpleEntryInformation)SimpleEntryInformation.getDefaultEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>EmblStreamFeature emblStreamFeature0 = new EmblStreamFeature();
+<span class="nocode"><a name="3">  3: </a></span>ReadAndWriteEntry.addAllKeysQualifiers(simpleEntryInformation0, emblStreamFeature0);
+<span class="nocode"><a name="4">  4: </a></span>ReadAndWriteEntry.getEntrySource();
+<span class="nocode"><a name="5">  5: </a></span>ReadAndWriteEntry.readEntryFromDatabase(&quot;updateFeatureLoc&quot;, (DatabaseEntrySource) null);
+<span class="nocode"><a name="6">  6: </a></span>ReadAndWriteEntry.getEntrySource();
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = (SimpleEntryInformation)SimpleEntryInformation.getDefaultEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>EmblStreamFeature emblStreamFeature0 = new EmblStreamFeature();
+<span class="nocode"><a name="3">  3: </a></span>ReadAndWriteEntry.addAllKeysQualifiers(simpleEntryInformation0, emblStreamFeature0);
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(simpleEntryInformation0.useEMBLFormat());
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ReadAndWriteEntry.readEntryFromDatabase(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>ReadAndWriteEntry.getEntrySource();
+<span class="nocode"><a name="3">  3: </a></span>String string0 = &quot;ASCIDIAN_MITOCHONDRIAL&quot;;
+<span class="nocode"><a name="4">  4: </a></span>Entry entry0 = ReadAndWriteEntry.readEntryFromDatabase(string0);
+<span class="nocode"><a name="5">  5: </a></span>EntryInformation entryInformation0 = entry0.getEntryInformation();
+<span class="nocode"><a name="6">  6: </a></span>SimpleEntryInformation simpleEntryInformation0 = new SimpleEntryInformation(entryInformation0);
+<span class="nocode"><a name="7">  7: </a></span>simpleEntryInformation0.getSortedValidKeys();
+<span class="nocode"><a name="8">  8: </a></span>SimpleEntryInformation.getDefaultEntryInformation();
+<span class="nocode"><a name="9">  9: </a></span>EmblStreamFeature emblStreamFeature0 = new EmblStreamFeature();
+<span class="nocode"><a name="10"> 10: </a></span>ReadAndWriteEntry.addAllKeysQualifiers(simpleEntryInformation0, emblStreamFeature0);
+<span class="nocode"><a name="11"> 11: </a></span>ReadAndWriteEntry.addAllKeysQualifiers(entryInformation0, emblStreamFeature0);
+<span class="nocode"><a name="12"> 12: </a></span>ReadAndWriteEntry.readEntryFromDatabase(string0);
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ReadAndWriteEntry.getEntrySource();
+<span class="nocode"><a name="2">  2: </a></span>ReadAndWriteEntry.readEntryFromDatabase(&quot;;@(5KWNQ:muP2C+o_&quot;, (DatabaseEntrySource) null);
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>System.setCurrentTimeMillis((-3912L));
+<span class="nocode"><a name="2">  2: </a></span>DatabaseEntrySource databaseEntrySource0 = new DatabaseEntrySource();
+<span class="nocode"><a name="3">  3: </a></span>databaseEntrySource0.setLocation(false);
+<span class="nocode"><a name="4">  4: </a></span>ReadAndWriteEntry.readEntryFromDatabase(&quot;&quot;, databaseEntrySource0);
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>System.setCurrentTimeMillis((-3912L));
+<span class="nocode"><a name="2">  2: </a></span>DatabaseEntrySource databaseEntrySource0 = new DatabaseEntrySource();
+<span class="nocode"><a name="3">  3: </a></span>assertTrue(databaseEntrySource0.isFullEntrySource());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;Database&quot;, databaseEntrySource0.getSourceName());
+<span class="nocode"><a name="5">  5: </a></span>assertNull(databaseEntrySource0.getLocation());
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(databaseEntrySource0.isReadOnly());
+<span class="nocode"><a name="7">  7: </a></span>assertNotNull(databaseEntrySource0);
+<span class="nocode"><a name="8">  8: </a></span>
+<span class="nocode"><a name="9">  9: </a></span>boolean boolean0 = databaseEntrySource0.setLocation(false);
+<span class="nocode"><a name="10"> 10: </a></span>assertTrue(databaseEntrySource0.isFullEntrySource());
+<span class="nocode"><a name="11"> 11: </a></span>assertEquals(&quot;Database&quot;, databaseEntrySource0.getSourceName());
+<span class="nocode"><a name="12"> 12: </a></span>assertFalse(databaseEntrySource0.isReadOnly());
+<span class="nocode"><a name="13"> 13: </a></span>assertEquals(&quot;jdbc:postgresql://localhost:5432/chado?user=&quot;, databaseEntrySource0.getLocation());
+<span class="nocode"><a name="14"> 14: </a></span>assertTrue(boolean0);
+<span class="nocode"><a name="15"> 15: </a></span>
+<span class="nocode"><a name="16"> 16: </a></span>ReadAndWriteEntry.readEntryFromDatabase(&quot;&quot;, databaseEntrySource0);
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ReadAndWriteEntry readAndWriteEntry0 = new ReadAndWriteEntry();
+<span class="nocode"><a name="2">  2: </a></span>assertNotNull(readAndWriteEntry0);
+<span class="nocode"><a name="3">  3: </a></span>
+<span class="nocode"><a name="4">  4: </a></span>URL uRL0 = Loader.getResource(&quot;&quot;);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;&quot;, uRL0.getAuthority());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;file&quot;, uRL0.getProtocol());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(&quot;&quot;, uRL0.getHost());
+<span class="nocode"><a name="8">  8: </a></span>assertNull(uRL0.getUserInfo());
+<span class="nocode"><a name="9">  9: </a></span>assertEquals((-1), uRL0.getPort());
+<span class="nocode"><a name="10"> 10: </a></span>assertEquals((-1), uRL0.getDefaultPort());
+<span class="nocode"><a name="11"> 11: </a></span>assertNull(uRL0.getRef());
+<span class="nocode"><a name="12"> 12: </a></span>assertNull(uRL0.getQuery());
+<span class="nocode"><a name="13"> 13: </a></span>assertNotNull(uRL0);
+<span class="nocode"><a name="14"> 14: </a></span>
+<span class="nocode"><a name="15"> 15: </a></span>SimpleEntryInformation simpleEntryInformation0 = (SimpleEntryInformation)SimpleEntryInformation.getDefaultEntryInformation();
+<span class="nocode"><a name="16"> 16: </a></span>assertFalse(simpleEntryInformation0.useEMBLFormat());
+<span class="nocode"><a name="17"> 17: </a></span>assertNotNull(simpleEntryInformation0);
+<span class="nocode"><a name="18"> 18: </a></span>
+<span class="nocode"><a name="19"> 19: </a></span>ReadAndWriteEntry.addQualifierToEntryInfo(simpleEntryInformation0, (String) null);
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseEntrySource databaseEntrySource0 = ReadAndWriteEntry.getEntrySource();
+<span class="nocode"><a name="2">  2: </a></span>assertNull(databaseEntrySource0);
+<span class="nocode"><a name="3">  3: </a></span>
+<span class="nocode"><a name="4">  4: </a></span>ReadAndWriteEntry.getFeatureId((DatabaseEntrySource) null, &quot;K3H&quot;);
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseEntrySource databaseEntrySource0 = new DatabaseEntrySource();
+<span class="nocode"><a name="2">  2: </a></span>assertNull(databaseEntrySource0.getLocation());
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(databaseEntrySource0.isReadOnly());
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;Database&quot;, databaseEntrySource0.getSourceName());
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(databaseEntrySource0.isFullEntrySource());
+<span class="nocode"><a name="6">  6: </a></span>assertNotNull(databaseEntrySource0);
+<span class="nocode"><a name="7">  7: </a></span>
+<span class="nocode"><a name="8">  8: </a></span>ReadAndWriteEntry.getFeatureId(databaseEntrySource0, (String) null);
+</pre>
+<h3>Test case 13</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseEntrySource databaseEntrySource0 = ReadAndWriteEntry.getEntrySource();
+<span class="nocode"><a name="2">  2: </a></span>assertNull(databaseEntrySource0);
+<span class="nocode"><a name="3">  3: </a></span>
+<span class="nocode"><a name="4">  4: </a></span>ReadAndWriteEntry readAndWriteEntry0 = new ReadAndWriteEntry();
+<span class="nocode"><a name="5">  5: </a></span>assertNotNull(readAndWriteEntry0);
+<span class="nocode"><a name="6">  6: </a></span>
+<span class="nocode"><a name="7">  7: </a></span>UI.UIMode uI_UIMode0 = UI.UIMode.CONSOLE;
+<span class="nocode"><a name="8">  8: </a></span>UI.mode = uI_UIMode0;
+<span class="nocode"><a name="9">  9: </a></span>LogLog.setInternalDebugging(false);
+<span class="nocode"><a name="10"> 10: </a></span>MSPcrunchEntryInformation mSPcrunchEntryInformation0 = new MSPcrunchEntryInformation();
+<span class="nocode"><a name="11"> 11: </a></span>assertFalse(mSPcrunchEntryInformation0.useEMBLFormat());
+<span class="nocode"><a name="12"> 12: </a></span>assertNotNull(mSPcrunchEntryInformation0);
+<span class="nocode"><a name="13"> 13: </a></span>
+<span class="nocode"><a name="14"> 14: </a></span>QualifierInfoHash qualifierInfoHash0 = mSPcrunchEntryInformation0.getAllQualifierInfo();
+<span class="nocode"><a name="15"> 15: </a></span>assertFalse(mSPcrunchEntryInformation0.useEMBLFormat());
+<span class="nocode"><a name="16"> 16: </a></span>assertNull(qualifierInfoHash0);
+<span class="nocode"><a name="17"> 17: </a></span>
+<span class="nocode"><a name="18"> 18: </a></span>ReadAndWriteEntry.addQualifierToEntryInfo(mSPcrunchEntryInformation0, &quot;&lt;W]ezc&quot;);
+<span class="nocode"><a name="19"> 19: </a></span>assertFalse(mSPcrunchEntryInformation0.useEMBLFormat());
+<span class="nocode"><a name="20"> 20: </a></span>
+<span class="nocode"><a name="21"> 21: </a></span>ReadAndWriteEntry.readEntryFromDatabase(&quot;O1_wVQDA6uf&quot;);
+</pre>
+<h3>Test case 14</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>assertFalse(blastEntryInformation0.useEMBLFormat());
+<span class="nocode"><a name="3">  3: </a></span>assertNotNull(blastEntryInformation0);
+<span class="nocode"><a name="4">  4: </a></span>
+<span class="nocode"><a name="5">  5: </a></span>Key key0 = new Key((String) null);
+<span class="nocode"><a name="6">  6: </a></span>assertNull(key0.toString());
+<span class="nocode"><a name="7">  7: </a></span>assertNull(key0.getKeyString());
+<span class="nocode"><a name="8">  8: </a></span>assertNotNull(key0);
+<span class="nocode"><a name="9">  9: </a></span>
+<span class="nocode"><a name="10"> 10: </a></span>boolean boolean0 = blastEntryInformation0.isValidQualifier(key0, &quot;qQ}yO8&amp;VCbc8Qx/&quot;);
+<span class="nocode"><a name="11"> 11: </a></span>assertFalse(blastEntryInformation0.useEMBLFormat());
+<span class="nocode"><a name="12"> 12: </a></span>assertNull(key0.toString());
+<span class="nocode"><a name="13"> 13: </a></span>assertNull(key0.getKeyString());
+<span class="nocode"><a name="14"> 14: </a></span>assertTrue(boolean0);
+<span class="nocode"><a name="15"> 15: </a></span>
+<span class="nocode"><a name="16"> 16: </a></span>boolean boolean1 = blastEntryInformation0.isRequiredQualifier(key0, &quot;qQ}yO8&amp;VCbc8Qx/&quot;);
+<span class="nocode"><a name="17"> 17: </a></span>assertFalse(blastEntryInformation0.useEMBLFormat());
+<span class="nocode"><a name="18"> 18: </a></span>assertNull(key0.toString());
+<span class="nocode"><a name="19"> 19: </a></span>assertNull(key0.getKeyString());
+<span class="nocode"><a name="20"> 20: </a></span>assertFalse(boolean1 == boolean0);
+<span class="nocode"><a name="21"> 21: </a></span>assertFalse(boolean1);
+<span class="nocode"><a name="22"> 22: </a></span>
+<span class="nocode"><a name="23"> 23: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="24"> 24: </a></span>assertEquals(0, chadoCanonicalGene0.getSrcfeature_id());
+<span class="nocode"><a name="25"> 25: </a></span>assertEquals(0, chadoCanonicalGene0.getSeqlen());
+<span class="nocode"><a name="26"> 26: </a></span>assertNotNull(chadoCanonicalGene0);
+<span class="nocode"><a name="27"> 27: </a></span>
+<span class="nocode"><a name="28"> 28: </a></span>boolean boolean2 = blastEntryInformation0.isRequiredQualifier(key0, &quot;-08-&quot;);
+<span class="nocode"><a name="29"> 29: </a></span>assertFalse(blastEntryInformation0.useEMBLFormat());
+<span class="nocode"><a name="30"> 30: </a></span>assertNull(key0.toString());
+<span class="nocode"><a name="31"> 31: </a></span>assertNull(key0.getKeyString());
+<span class="nocode"><a name="32"> 32: </a></span>assertFalse(boolean2 == boolean0);
+<span class="nocode"><a name="33"> 33: </a></span>assertTrue(boolean2 == boolean1);
+<span class="nocode"><a name="34"> 34: </a></span>assertFalse(boolean2);
+<span class="nocode"><a name="35"> 35: </a></span>
+<span class="nocode"><a name="36"> 36: </a></span>Feature feature0 = chadoCanonicalGene0.getProteinOfTranscript(&quot;&quot;);
+<span class="nocode"><a name="37"> 37: </a></span>assertEquals(0, chadoCanonicalGene0.getSrcfeature_id());
+<span class="nocode"><a name="38"> 38: </a></span>assertEquals(0, chadoCanonicalGene0.getSeqlen());
+<span class="nocode"><a name="39"> 39: </a></span>assertNull(feature0);
+<span class="nocode"><a name="40"> 40: </a></span>
+<span class="nocode"><a name="41"> 41: </a></span>ReadAndWriteEntry.addAllKeysQualifiers(blastEntryInformation0, (Feature) null);
+</pre>
+<h3>Test case 15</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseEntrySource databaseEntrySource0 = new DatabaseEntrySource();
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;Database&quot;, databaseEntrySource0.getSourceName());
+<span class="nocode"><a name="3">  3: </a></span>assertNull(databaseEntrySource0.getLocation());
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(databaseEntrySource0.isFullEntrySource());
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(databaseEntrySource0.isReadOnly());
+<span class="nocode"><a name="6">  6: </a></span>assertNotNull(databaseEntrySource0);
+<span class="nocode"><a name="7">  7: </a></span>
+<span class="nocode"><a name="8">  8: </a></span>ReadAndWriteEntry.readEntryFromDatabase(&quot;zym~;19 uoZBm&quot;, databaseEntrySource0);
+</pre>
+<h3>Test case 16</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseEntrySource databaseEntrySource0 = new DatabaseEntrySource();
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;Database&quot;, databaseEntrySource0.getSourceName());
+<span class="nocode"><a name="3">  3: </a></span>assertNull(databaseEntrySource0.getLocation());
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(databaseEntrySource0.isReadOnly());
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(databaseEntrySource0.isFullEntrySource());
+<span class="nocode"><a name="6">  6: </a></span>assertNotNull(databaseEntrySource0);
+<span class="nocode"><a name="7">  7: </a></span>
+<span class="nocode"><a name="8">  8: </a></span>SystemInUtil.addInputLine(&quot;&quot;);
+<span class="nocode"><a name="9">  9: </a></span>boolean boolean0 = databaseEntrySource0.setLocation(false);
+<span class="nocode"><a name="10"> 10: </a></span>assertEquals(&quot;Database&quot;, databaseEntrySource0.getSourceName());
+<span class="nocode"><a name="11"> 11: </a></span>assertFalse(databaseEntrySource0.isReadOnly());
+<span class="nocode"><a name="12"> 12: </a></span>assertTrue(databaseEntrySource0.isFullEntrySource());
+<span class="nocode"><a name="13"> 13: </a></span>assertEquals(&quot;jdbc:postgresql://localhost:5432/chado?user=&quot;, databaseEntrySource0.getLocation());
+<span class="nocode"><a name="14"> 14: </a></span>assertTrue(boolean0);
+<span class="nocode"><a name="15"> 15: </a></span>
+<span class="nocode"><a name="16"> 16: </a></span>InputStreamProgressListener inputStreamProgressListener0 = mock(InputStreamProgressListener.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="17"> 17: </a></span>ReadAndWriteEntry.readEntryFromDatabase(&quot;&quot;, databaseEntrySource0);
+<span class="nocode"><a name="18"> 18: </a></span>ReadAndWriteEntry readAndWriteEntry0 = new ReadAndWriteEntry();
+<span class="nocode"><a name="19"> 19: </a></span>SimpleEntryInformation simpleEntryInformation0 = new SimpleEntryInformation();
+<span class="nocode"><a name="20"> 20: </a></span>SimpleEntryInformation simpleEntryInformation1 = new SimpleEntryInformation(simpleEntryInformation0);
+<span class="nocode"><a name="21"> 21: </a></span>String string0 = null;
+<span class="nocode"><a name="22"> 22: </a></span>ReadAndWriteEntry.addQualifierToEntryInfo(simpleEntryInformation1, string0);
+<span class="nocode"><a name="23"> 23: </a></span>String string1 = &quot;pjJ&quot;;
+<span class="nocode"><a name="24"> 24: </a></span>ReadAndWriteEntry.readEntryFromDatabase(string1);
+<span class="nocode"><a name="25"> 25: </a></span>String string2 = &quot;52XfJ&quot;;
+<span class="nocode"><a name="26"> 26: </a></span>ReadAndWriteEntry.addQualifierToEntryInfo(simpleEntryInformation0, string2);
+</pre>
+<h3>Test case 17</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseEntrySource databaseEntrySource0 = new DatabaseEntrySource();
+<span class="nocode"><a name="2">  2: </a></span>assertFalse(databaseEntrySource0.isReadOnly());
+<span class="nocode"><a name="3">  3: </a></span>assertNull(databaseEntrySource0.getLocation());
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(databaseEntrySource0.isFullEntrySource());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;Database&quot;, databaseEntrySource0.getSourceName());
+<span class="nocode"><a name="6">  6: </a></span>assertNotNull(databaseEntrySource0);
+<span class="nocode"><a name="7">  7: </a></span>
+<span class="nocode"><a name="8">  8: </a></span>boolean boolean0 = databaseEntrySource0.setLocation(false);
+<span class="nocode"><a name="9">  9: </a></span>assertFalse(databaseEntrySource0.isReadOnly());
+<span class="nocode"><a name="10"> 10: </a></span>assertEquals(&quot;jdbc:postgresql://localhost:5432/chado?user=&quot;, databaseEntrySource0.getLocation());
+<span class="nocode"><a name="11"> 11: </a></span>assertTrue(databaseEntrySource0.isFullEntrySource());
+<span class="nocode"><a name="12"> 12: </a></span>assertEquals(&quot;Database&quot;, databaseEntrySource0.getSourceName());
+<span class="nocode"><a name="13"> 13: </a></span>assertTrue(boolean0);
+<span class="nocode"><a name="14"> 14: </a></span>
+<span class="nocode"><a name="15"> 15: </a></span>InputStreamProgressListener inputStreamProgressListener0 = mock(InputStreamProgressListener.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="16"> 16: </a></span>ReadAndWriteEntry readAndWriteEntry0 = new ReadAndWriteEntry();
+<span class="nocode"><a name="17"> 17: </a></span>assertNotNull(readAndWriteEntry0);
+<span class="nocode"><a name="18"> 18: </a></span>
+<span class="nocode"><a name="19"> 19: </a></span>ReadAndWriteEntry.getFeatureId(databaseEntrySource0, &quot;-_BV.-#'sO|&quot;);
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.io.ReadAndWriteEntry
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.io.ReadAndWriteEntry
+<li>Size: 17
+<li>Length: 155
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.36517715714239535
+<li>BranchCoverage: 0.20754716981132076
+<li>MethodCoverage: 0.875
+<li>OutputCoverage: 0.07142857142857142
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

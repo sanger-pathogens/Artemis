@@ -1,0 +1,124 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.components.filetree.FileList
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.components.filetree.FileList: 0.36997441474630693</ul>
+<ul>
+<li>202.54761904761904 fitness evaluations, 0 generations, null statements, 12 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FileList fileList0 = new FileList((SshFileManager) null);
+<span class="nocode"><a name="2">  2: </a></span>fileList0.isDirectory(&quot;dbKB.jT9VbkC.8aDl}.&quot;);
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FileList fileList0 = new FileList((SshFileManager) null);
+<span class="nocode"><a name="2">  2: </a></span>fileList0.getDirList(&quot;&quot;);
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FileList fileList0 = new FileList((SshFileManager) null);
+<span class="nocode"><a name="2">  2: </a></span>fileList0.mkdir(&quot;jCC xmXHS::&quot;);
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FileList fileList0 = new FileList((SshFileManager) null);
+<span class="nocode"><a name="2">  2: </a></span>fileList0.delete(&quot;R)gxA01UC@eV_JAm=j&quot;);
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FileList fileList0 = new FileList((SshFileManager) null);
+<span class="nocode"><a name="2">  2: </a></span>MockFile mockFile0 = new MockFile((String) null, &quot;el(O&gt;m@[*{.nE|&quot;);
+<span class="nocode"><a name="3">  3: </a></span>JProgressBar jProgressBar0 = new JProgressBar();
+<span class="nocode"><a name="4">  4: </a></span>FTProgress fTProgress0 = new FTProgress(jProgressBar0, (String) null);
+<span class="nocode"><a name="5">  5: </a></span>fileList0.put(&quot;.gz&quot;, mockFile0, fTProgress0, true);
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FileList fileList0 = new FileList((SshFileManager) null);
+<span class="nocode"><a name="2">  2: </a></span>fileList0.pwd();
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FileList fileList0 = new FileList((SshFileManager) null);
+<span class="nocode"><a name="2">  2: </a></span>fileList0.rename(&quot;.gz | gunzip&quot;, (String) null);
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FileList fileList0 = new FileList((SshFileManager) null);
+<span class="nocode"><a name="2">  2: </a></span>JProgressBar jProgressBar0 = new JProgressBar(0, 47);
+<span class="nocode"><a name="3">  3: </a></span>FTProgress fTProgress0 = new FTProgress(jProgressBar0, &quot;9+dMMDW:Z'O*t[c,D]R&quot;);
+<span class="nocode"><a name="4">  4: </a></span>fileList0.getFileContents(&quot;9+dMMDW:Z'O*t[c,D]R&quot;, fTProgress0);
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FileList fileList0 = new FileList((SshFileManager) null);
+<span class="nocode"><a name="2">  2: </a></span>fileList0.stat(&quot;Ia,c]&quot;);
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FileList fileList0 = new FileList();
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>boolean boolean0 = FileList.isConnected();
+<span class="nocode"><a name="2">  2: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FileList fileList0 = new FileList((SshFileManager) null);
+<span class="nocode"><a name="2">  2: </a></span>MockFile mockFile0 = new MockFile(&quot;o_JdLN(&gt;8NeT;E&lt;dot*&quot;);
+<span class="nocode"><a name="3">  3: </a></span>fileList0.getZipEntryContents(&quot;&quot;, &quot;o_JdLN(&gt;8NeT;E&lt;dot*&quot;, mockFile0);
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.components.filetree.FileList
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.components.filetree.FileList
+<li>Size: 12
+<li>Length: 28
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.36997441474630693
+<li>BranchCoverage: 0.42857142857142855
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 0.014084507042253521
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

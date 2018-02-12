@@ -1,0 +1,467 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.io.Location
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.io.Location: 0.8022956325824981</ul>
+<ul>
+<li>1209.9166666565839 fitness evaluations, 0 generations, null statements, 54 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(132, 1932);
+<span class="nocode"><a name="2">  2: </a></span>Location location0 = new Location(range0);
+<span class="nocode"><a name="3">  3: </a></span>int int0 = location0.getLastBase();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1932, int0);
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(78, 78);
+<span class="nocode"><a name="2">  2: </a></span>Location location0 = new Location(range0);
+<span class="nocode"><a name="3">  3: </a></span>location0.removeRange(range0);
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(78, 78);
+<span class="nocode"><a name="2">  2: </a></span>Location location0 = new Location(range0);
+<span class="nocode"><a name="3">  3: </a></span>int int0 = location0.getFirstBase();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(78, int0);
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range((-2984));
+<span class="nocode"><a name="2">  2: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
+<span class="nocode"><a name="3">  3: </a></span>Location location0 = new Location(rangeVector0, true);
+<span class="nocode"><a name="4">  4: </a></span>String string0 = location0.toStringShort();
+<span class="nocode"><a name="5">  5: </a></span>assertNotNull(string0);
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(44, 78);
+<span class="nocode"><a name="2">  2: </a></span>Location location0 = new Location(range0);
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = location0.equals(location0);
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range((-2268));
+<span class="nocode"><a name="2">  2: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
+<span class="nocode"><a name="3">  3: </a></span>Location location0 = new Location(rangeVector0, true);
+<span class="nocode"><a name="4">  4: </a></span>Location location1 = location0.copy();
+<span class="nocode"><a name="5">  5: </a></span>assertNotSame(location0, location1);
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range((-51));
+<span class="nocode"><a name="2">  2: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
+<span class="nocode"><a name="3">  3: </a></span>Location location0 = new Location(rangeVector0, false);
+<span class="nocode"><a name="4">  4: </a></span>LocationParseNode locationParseNode0 = location0.getParsedLocation();
+<span class="nocode"><a name="5">  5: </a></span>location0.setParsedLocation(locationParseNode0);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(4, locationParseNode0.getType());
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(0);
+<span class="nocode"><a name="2">  2: </a></span>Location location0 = new Location(range0);
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RangeVector rangeVector0 = new RangeVector();
+<span class="nocode"><a name="2">  2: </a></span>Location location0 = new Location(rangeVector0, false);
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range((-2268));
+<span class="nocode"><a name="2">  2: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
+<span class="nocode"><a name="3">  3: </a></span>Location location0 = new Location(rangeVector0, true);
+<span class="nocode"><a name="4">  4: </a></span>Location location1 = location0.reverseComplement((-1462));
+<span class="nocode"><a name="5">  5: </a></span>Location location2 = location1.addRange(range0);
+<span class="nocode"><a name="6">  6: </a></span>Location location3 = location2.truncate(range0);
+<span class="nocode"><a name="7">  7: </a></span>assertNotNull(location3);
+<span class="nocode"><a name="8">  8: </a></span>assertNotSame(location1, location2);
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(44, 78);
+<span class="nocode"><a name="2">  2: </a></span>Location location0 = new Location(range0);
+<span class="nocode"><a name="3">  3: </a></span>Location location1 = location0.addRange(range0);
+<span class="nocode"><a name="4">  4: </a></span>location1.toStringShort();
+<span class="nocode"><a name="5">  5: </a></span>assertNotSame(location1, location0);
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(2917);
+<span class="nocode"><a name="2">  2: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
+<span class="nocode"><a name="3">  3: </a></span>rangeVector0.add(range0);
+<span class="nocode"><a name="4">  4: </a></span>Location location0 = new Location(rangeVector0, true);
+<span class="nocode"><a name="5">  5: </a></span>String string0 = location0.toStringShort();
+<span class="nocode"><a name="6">  6: </a></span>assertNotNull(string0);
+</pre>
+<h3>Test case 13</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range((-1134));
+<span class="nocode"><a name="2">  2: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
+<span class="nocode"><a name="3">  3: </a></span>Location location0 = new Location(rangeVector0, true);
+<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = location0.isPartial(false);
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 14</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(78, 78);
+<span class="nocode"><a name="2">  2: </a></span>Location location0 = new Location(range0);
+<span class="nocode"><a name="3">  3: </a></span>Location location1 = location0.addRange(range0);
+<span class="nocode"><a name="4">  4: </a></span>location1.isPartial(false);
+<span class="nocode"><a name="5">  5: </a></span>assertNotSame(location1, location0);
+</pre>
+<h3>Test case 15</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(699);
+<span class="nocode"><a name="2">  2: </a></span>Location location0 = new Location(range0);
+<span class="nocode"><a name="3">  3: </a></span>Location location1 = location0.addRange(range0);
+<span class="nocode"><a name="4">  4: </a></span>Location location2 = location1.reverseComplement(1);
+<span class="nocode"><a name="5">  5: </a></span>location2.isPartial(true);
+<span class="nocode"><a name="6">  6: </a></span>assertNotSame(location2, location1);
+<span class="nocode"><a name="7">  7: </a></span>assertNotSame(location1, location0);
+</pre>
+<h3>Test case 16</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range((-2984));
+<span class="nocode"><a name="2">  2: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
+<span class="nocode"><a name="3">  3: </a></span>Location location0 = new Location(rangeVector0, true);
+<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = location0.isComplement();
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 17</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(78, 78);
+<span class="nocode"><a name="2">  2: </a></span>Location location0 = new Location(range0);
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = location0.isComplement();
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 18</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range((-51));
+<span class="nocode"><a name="2">  2: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
+<span class="nocode"><a name="3">  3: </a></span>Location location0 = new Location(rangeVector0, false);
+<span class="nocode"><a name="4">  4: </a></span>Range range1 = location0.getTotalRange();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(51, range1.getCount());
+<span class="nocode"><a name="6">  6: </a></span>
+<span class="nocode"><a name="7">  7: </a></span>int int0 = location0.getLastBase();
+<span class="nocode"><a name="8">  8: </a></span>assertEquals((-1), int0);
+</pre>
+<h3>Test case 19</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range((-2984));
+<span class="nocode"><a name="2">  2: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
+<span class="nocode"><a name="3">  3: </a></span>Location location0 = new Location(rangeVector0, true);
+<span class="nocode"><a name="4">  4: </a></span>Location location1 = location0.addRange(range0);
+<span class="nocode"><a name="5">  5: </a></span>Range range1 = location1.getTotalRange();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(2984, range1.getCount());
+<span class="nocode"><a name="7">  7: </a></span>assertNotSame(location1, location0);
+</pre>
+<h3>Test case 20</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range((-51));
+<span class="nocode"><a name="2">  2: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
+<span class="nocode"><a name="3">  3: </a></span>rangeVector0.add(range0);
+<span class="nocode"><a name="4">  4: </a></span>Location location0 = new Location(rangeVector0, false);
+<span class="nocode"><a name="5">  5: </a></span>Location location1 = location0.getComplement();
+<span class="nocode"><a name="6">  6: </a></span>int int0 = location1.getFirstBase();
+<span class="nocode"><a name="7">  7: </a></span>assertEquals((-1), int0);
+</pre>
+<h3>Test case 21</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Location location0 = new Location(&quot;&lt;1;05C/D3c)Zf@bSEs_&quot;);
+</pre>
+<h3>Test case 22</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Location location0 = new Location(&quot;complement(order(&quot;);
+</pre>
+<h3>Test case 23</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Location location0 = new Location(&quot;K 3Pe(37&quot;);
+</pre>
+<h3>Test case 24</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Location location0 = new Location(&quot;YpGY:H.&quot;);
+</pre>
+<h3>Test case 25</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Location location0 = new Location(&quot;0#&quot;);
+</pre>
+<h3>Test case 26</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Location location0 = new Location(&quot;4|bPzNQx8\&quot;&quot;);
+</pre>
+<h3>Test case 27</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Location location0 = new Location(&quot;([^\\])\&quot;&quot;);
+</pre>
+<h3>Test case 28</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Location location0 = new Location(&quot;join&quot;);
+</pre>
+<h3>Test case 29</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(78, 78);
+<span class="nocode"><a name="2">  2: </a></span>Location location0 = new Location(range0);
+<span class="nocode"><a name="3">  3: </a></span>Location location1 = location0.addRange(range0);
+<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = location1.isComplement(range0);
+<span class="nocode"><a name="5">  5: </a></span>assertNotSame(location1, location0);
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 30</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range((-1081), (-1081));
+<span class="nocode"><a name="2">  2: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
+<span class="nocode"><a name="3">  3: </a></span>Location location0 = new Location(rangeVector0, false);
+<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = location0.isComplement(range0);
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 31</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(78, 78);
+<span class="nocode"><a name="2">  2: </a></span>Location location0 = new Location(range0);
+<span class="nocode"><a name="3">  3: </a></span>Location location1 = location0.addRange(range0);
+<span class="nocode"><a name="4">  4: </a></span>Location location2 = location1.reverseComplement(78, 3460);
+<span class="nocode"><a name="5">  5: </a></span>boolean boolean0 = location2.isComplement(range0);
+<span class="nocode"><a name="6">  6: </a></span>assertNotSame(location1, location0);
+<span class="nocode"><a name="7">  7: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 32</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range((-2984));
+<span class="nocode"><a name="2">  2: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
+<span class="nocode"><a name="3">  3: </a></span>Location location0 = new Location(rangeVector0, true);
+<span class="nocode"><a name="4">  4: </a></span>Location location1 = location0.addRange(range0);
+<span class="nocode"><a name="5">  5: </a></span>boolean boolean0 = location1.isComplement(range0);
+<span class="nocode"><a name="6">  6: </a></span>assertNotSame(location1, location0);
+<span class="nocode"><a name="7">  7: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 33</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(78, 78);
+<span class="nocode"><a name="2">  2: </a></span>Location location0 = new Location(range0);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = location0.toString();
+<span class="nocode"><a name="4">  4: </a></span>assertNotNull(string0);
+</pre>
+<h3>Test case 34</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range((-2268));
+<span class="nocode"><a name="2">  2: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
+<span class="nocode"><a name="3">  3: </a></span>Location location0 = new Location(rangeVector0, true);
+<span class="nocode"><a name="4">  4: </a></span>Location location1 = location0.addRange(range0);
+<span class="nocode"><a name="5">  5: </a></span>boolean boolean0 = location1.isComplement();
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(boolean0);
+<span class="nocode"><a name="7">  7: </a></span>assertNotSame(location1, location0);
+</pre>
+<h3>Test case 35</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range((-2268));
+<span class="nocode"><a name="2">  2: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
+<span class="nocode"><a name="3">  3: </a></span>Location location0 = new Location(rangeVector0, true);
+<span class="nocode"><a name="4">  4: </a></span>Location location1 = location0.reverseComplement((-1462));
+<span class="nocode"><a name="5">  5: </a></span>Location location2 = location1.addRange(range0);
+<span class="nocode"><a name="6">  6: </a></span>boolean boolean0 = location2.isComplement();
+<span class="nocode"><a name="7">  7: </a></span>assertNotSame(location2, location1);
+<span class="nocode"><a name="8">  8: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 36</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(0);
+<span class="nocode"><a name="2">  2: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
+<span class="nocode"><a name="3">  3: </a></span>Location location0 = new Location(rangeVector0, false);
+<span class="nocode"><a name="4">  4: </a></span>int int0 = location0.getFirstBase();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, int0);
+<span class="nocode"><a name="6">  6: </a></span>
+<span class="nocode"><a name="7">  7: </a></span>Range range1 = location0.getTotalRange();
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(0, range1.getEnd());
+</pre>
+<h3>Test case 37</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(44, 78);
+<span class="nocode"><a name="2">  2: </a></span>Location location0 = new Location(range0);
+<span class="nocode"><a name="3">  3: </a></span>RangeVector rangeVector0 = location0.getRanges();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;[44..78]&quot;, rangeVector0.toString());
+</pre>
+<h3>Test case 38</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range((-51));
+<span class="nocode"><a name="2">  2: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
+<span class="nocode"><a name="3">  3: </a></span>rangeVector0.add(range0);
+<span class="nocode"><a name="4">  4: </a></span>Location location0 = new Location(rangeVector0, false);
+<span class="nocode"><a name="5">  5: </a></span>RangeVector rangeVector1 = location0.getRanges();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;[-51, -51]&quot;, rangeVector1.toString());
+</pre>
+<h3>Test case 39</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range((-51));
+<span class="nocode"><a name="2">  2: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
+<span class="nocode"><a name="3">  3: </a></span>Location location0 = new Location(rangeVector0, false);
+<span class="nocode"><a name="4">  4: </a></span>Location location1 = location0.getComplement();
+<span class="nocode"><a name="5">  5: </a></span>Location location2 = location1.addRange(range0);
+<span class="nocode"><a name="6">  6: </a></span>RangeVector rangeVector1 = location2.getRanges();
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(&quot;[-51, -51]&quot;, rangeVector1.toString());
+</pre>
+<h3>Test case 40</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range((-51));
+<span class="nocode"><a name="2">  2: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
+<span class="nocode"><a name="3">  3: </a></span>rangeVector0.add(range0);
+<span class="nocode"><a name="4">  4: </a></span>Location location0 = new Location(rangeVector0, false);
+<span class="nocode"><a name="5">  5: </a></span>Location location1 = location0.getComplement();
+<span class="nocode"><a name="6">  6: </a></span>RangeVector rangeVector1 = location1.getRanges();
+<span class="nocode"><a name="7">  7: </a></span>assertNotSame(rangeVector1, rangeVector0);
+</pre>
+<h3>Test case 41</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Location location0 = new Location((String) null);
+</pre>
+<h3>Test case 42</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Location location0 = new Location((Range) null);
+</pre>
+<h3>Test case 43</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Location location0 = new Location((RangeVector) null, true);
+</pre>
+<h3>Test case 44</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RangeVector rangeVector0 = new RangeVector((Range) null);
+<span class="nocode"><a name="2">  2: </a></span>Location location0 = new Location(rangeVector0, true);
+<span class="nocode"><a name="3">  3: </a></span>location0.copy();
+</pre>
+<h3>Test case 45</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RangeVector rangeVector0 = new RangeVector();
+<span class="nocode"><a name="2">  2: </a></span>rangeVector0.add((Range) null);
+<span class="nocode"><a name="3">  3: </a></span>Location location0 = new Location(rangeVector0, true);
+<span class="nocode"><a name="4">  4: </a></span>location0.getComplement();
+</pre>
+<h3>Test case 46</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(0);
+<span class="nocode"><a name="2">  2: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
+<span class="nocode"><a name="3">  3: </a></span>rangeVector0.add(range0);
+<span class="nocode"><a name="4">  4: </a></span>Location location0 = new Location(rangeVector0, false);
+<span class="nocode"><a name="5">  5: </a></span>Location location1 = location0.getComplement();
+<span class="nocode"><a name="6">  6: </a></span>Location location2 = location1.addRange(range0);
+<span class="nocode"><a name="7">  7: </a></span>Location location3 = location2.reverseComplement((-1));
+<span class="nocode"><a name="8">  8: </a></span>location3.getLastBase();
+</pre>
+<h3>Test case 47</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RangeVector rangeVector0 = new RangeVector((Range) null);
+<span class="nocode"><a name="2">  2: </a></span>Location location0 = new Location(rangeVector0, true);
+<span class="nocode"><a name="3">  3: </a></span>UpperInteger upperInteger0 = new UpperInteger(2065);
+<span class="nocode"><a name="4">  4: </a></span>FuzzyRange fuzzyRange0 = (FuzzyRange)FuzzyRange.makeRange((Object) upperInteger0);
+<span class="nocode"><a name="5">  5: </a></span>location0.removeRange(fuzzyRange0);
+</pre>
+<h3>Test case 48</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(44, 78);
+<span class="nocode"><a name="2">  2: </a></span>Location location0 = new Location(range0);
+<span class="nocode"><a name="3">  3: </a></span>Location location1 = location0.addRange(range0);
+<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = location1.equals(location0);
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 49</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(0);
+<span class="nocode"><a name="2">  2: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
+<span class="nocode"><a name="3">  3: </a></span>Location location0 = new Location(rangeVector0, false);
+<span class="nocode"><a name="4">  4: </a></span>int int0 = location0.getLastBase();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, int0);
+</pre>
+<h3>Test case 50</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range((-51));
+<span class="nocode"><a name="2">  2: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
+<span class="nocode"><a name="3">  3: </a></span>rangeVector0.add(range0);
+<span class="nocode"><a name="4">  4: </a></span>Location location0 = new Location(rangeVector0, false);
+<span class="nocode"><a name="5">  5: </a></span>Location location1 = location0.removeRange(range0);
+<span class="nocode"><a name="6">  6: </a></span>assertNotSame(location1, location0);
+</pre>
+<h3>Test case 51</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(44, 78);
+<span class="nocode"><a name="2">  2: </a></span>Location location0 = new Location(range0);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = location0.toStringShort();
+<span class="nocode"><a name="4">  4: </a></span>assertNotNull(string0);
+</pre>
+<h3>Test case 52</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range((-1081), (-1081));
+<span class="nocode"><a name="2">  2: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
+<span class="nocode"><a name="3">  3: </a></span>Location location0 = new Location(rangeVector0, false);
+<span class="nocode"><a name="4">  4: </a></span>FuzzyRange fuzzyRange0 = (FuzzyRange)FuzzyRange.makeRange((Object) range0);
+<span class="nocode"><a name="5">  5: </a></span>Location location1 = location0.changeRange(range0, fuzzyRange0);
+<span class="nocode"><a name="6">  6: </a></span>assertNotSame(location1, location0);
+</pre>
+<h3>Test case 53</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(44, 78);
+<span class="nocode"><a name="2">  2: </a></span>Location location0 = new Location(range0);
+<span class="nocode"><a name="3">  3: </a></span>Location location1 = location0.addRange(range0);
+<span class="nocode"><a name="4">  4: </a></span>Range range1 = location1.getTotalRange();
+<span class="nocode"><a name="5">  5: </a></span>assertNotSame(location1, location0);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(35, range1.getCount());
+</pre>
+<h3>Test case 54</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(41, 41);
+<span class="nocode"><a name="2">  2: </a></span>Location location0 = new Location(range0);
+<span class="nocode"><a name="3">  3: </a></span>Location location1 = location0.getComplement();
+<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = location1.isComplement(range0);
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(boolean0);
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.io.Location
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.io.Location
+<li>Size: 54
+<li>Length: 197
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.8022956325824981
+<li>BranchCoverage: 0.6488888888888888
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 0.6101694915254238
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

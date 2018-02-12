@@ -1,0 +1,108 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.MUMmerComparisonData
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.MUMmerComparisonData: 0.6477988409440023</ul>
+<ul>
+<li>163.66666618889843 fitness evaluations, 0 generations, null statements, 8 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MUMmerComparisonData mUMmerComparisonData0 = new MUMmerComparisonData();
+<span class="nocode"><a name="2">  2: </a></span>MUMmerComparisonData mUMmerComparisonData1 = (MUMmerComparisonData)mUMmerComparisonData0.getNewSimpleComparisonData();
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(mUMmerComparisonData1.equals((Object)mUMmerComparisonData0));
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>StringReader stringReader0 = new StringReader(&quot;match goes off end of query sequence: &quot;);
+<span class="nocode"><a name="2">  2: </a></span>LinePushBackReader linePushBackReader0 = new LinePushBackReader(stringReader0);
+<span class="nocode"><a name="3">  3: </a></span>MUMmerComparisonData mUMmerComparisonData0 = new MUMmerComparisonData(linePushBackReader0);
+<span class="nocode"><a name="4">  4: </a></span>mUMmerComparisonData0.makeMatchFromString(&quot;]N=m|.q)#FaH4er,b&quot;);
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MUMmerComparisonData mUMmerComparisonData0 = new MUMmerComparisonData();
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = mUMmerComparisonData0.makeMatchFromString((String) null);
+<span class="nocode"><a name="3">  3: </a></span>assertNull(alignMatch0);
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MUMmerComparisonData mUMmerComparisonData0 = new MUMmerComparisonData();
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = mUMmerComparisonData0.makeMatchFromString(&quot;&gt;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>assertNull(alignMatch0);
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MUMmerComparisonData mUMmerComparisonData0 = new MUMmerComparisonData();
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = mUMmerComparisonData0.makeMatchFromString(&quot; was found when &quot;);
+<span class="nocode"><a name="3">  3: </a></span>assertNull(alignMatch0);
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>PipedReader pipedReader0 = new PipedReader();
+<span class="nocode"><a name="2">  2: </a></span>LinePushBackReader linePushBackReader0 = new LinePushBackReader(pipedReader0);
+<span class="nocode"><a name="3">  3: </a></span>MUMmerComparisonData mUMmerComparisonData0 = new MUMmerComparisonData(linePushBackReader0);
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>MUMmerComparisonData mUMmerComparisonData0 = new MUMmerComparisonData((LinePushBackReader) null);
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[6];
+<span class="nocode"><a name="2">  2: </a></span>charArray0[0] = 'i';
+<span class="nocode"><a name="3">  3: </a></span>CharArrayReader charArrayReader0 = new CharArrayReader(charArray0);
+<span class="nocode"><a name="4">  4: </a></span>LinePushBackReader linePushBackReader0 = new LinePushBackReader(charArrayReader0);
+<span class="nocode"><a name="5">  5: </a></span>MUMmerComparisonData mUMmerComparisonData0 = new MUMmerComparisonData(linePushBackReader0);
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.MUMmerComparisonData
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.MUMmerComparisonData
+<li>Size: 8
+<li>Length: 21
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.6477988409440023
+<li>BranchCoverage: 0.5238095238095238
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 0.07142857142857142
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

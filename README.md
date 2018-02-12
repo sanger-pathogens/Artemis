@@ -21,7 +21,14 @@ The Artemis user manual is at:
   http://www.sanger.ac.uk/science/tools/artemis
 
 The ACT user manual is at:
-  http://www.sanger.ac.uk/science/tools/act
+  http://www.sanger.ac.uk/science/tools/artemis-comparison-tool-act
+  
+The DNA plotter user manual is at:
+  http://www.sanger.ac.uk/science/tools/dnaplotter
+  
+The BAM View user manual is at:
+  http://www.sanger.ac.uk/science/tools/bamview
+ 
 
 # INSTALLATION
 
@@ -39,7 +46,7 @@ For information on how to get Artemis see this web page:
 
 # COPYRIGHT
 
-Copyright (C) 1998-2016  Genome Research Limited
+Copyright (C) 1998-2018  Genome Research Limited
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License

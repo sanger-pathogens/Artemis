@@ -1,0 +1,222 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.plot.BaseAlgorithm
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.plot.BaseAlgorithm: 0.4737037493562458</ul>
+<ul>
+<li>208.95454545454544 fitness evaluations, 0 generations, null statements, 9 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="4">  4: </a></span>GCWindowAlgorithm gCWindowAlgorithm0 = new GCWindowAlgorithm(strand0);
+<span class="nocode"><a name="5">  5: </a></span>gCWindowAlgorithm0.getMaximumInternal();
+<span class="nocode"><a name="6">  6: </a></span>gCWindowAlgorithm0.getAverage();
+<span class="nocode"><a name="7">  7: </a></span>ICDIAlgorithm iCDIAlgorithm0 = new ICDIAlgorithm(strand0);
+<span class="nocode"><a name="8">  8: </a></span>bases0.getGCount();
+<span class="nocode"><a name="9">  9: </a></span>GCFrameAlgorithm gCFrameAlgorithm0 = new GCFrameAlgorithm(strand0);
+<span class="nocode"><a name="10"> 10: </a></span>gCFrameAlgorithm0.getDefaultStepSize(1);
+<span class="nocode"><a name="11"> 11: </a></span>Frame frame0 = new Frame(&quot;&quot;);
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String string0 = SVGConstants.SVG_STEMH_ATTRIBUTE;
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;stemh&quot;, string0);
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;6&quot;);
+<span class="nocode"><a name="2">  2: </a></span>rawStreamSequence0.getCharSubSequence(5, 5);
+<span class="nocode"><a name="3">  3: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="4">  4: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="5">  5: </a></span>GCWindowAlgorithm gCWindowAlgorithm0 = new GCWindowAlgorithm(strand0);
+<span class="nocode"><a name="6">  6: </a></span>Bases.reverseComplement(&quot;6&quot;);
+<span class="nocode"><a name="7">  7: </a></span>gCWindowAlgorithm0.getAverage();
+<span class="nocode"><a name="8">  8: </a></span>assertFalse(gCWindowAlgorithm0.isRevCompDisplay());
+<span class="nocode"><a name="9">  9: </a></span>
+<span class="nocode"><a name="10"> 10: </a></span>gCWindowAlgorithm0.setRevCompDisplay(true);
+<span class="nocode"><a name="11"> 11: </a></span>assertTrue(gCWindowAlgorithm0.isRevCompDisplay());
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DefaultEditorKit.CopyAction defaultEditorKit_CopyAction0 = new DefaultEditorKit.CopyAction();
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = Key.CDS;
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(3, key0.length());
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;/^~4H8F&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>fastaStreamSequence0.forceReset();
+<span class="nocode"><a name="4">  4: </a></span>FileSystemHandling.shouldAllThrowIOExceptions();
+<span class="nocode"><a name="5">  5: </a></span>bases0.getLength();
+<span class="nocode"><a name="6">  6: </a></span>Bases.reverseComplement(&quot;/^~4H8F&quot;);
+<span class="nocode"><a name="7">  7: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="8">  8: </a></span>bases0.reverseComplement();
+<span class="nocode"><a name="9">  9: </a></span>fastaStreamSequence0.getSubSequence(1, 1);
+<span class="nocode"><a name="10"> 10: </a></span>EntropyAlgorithm entropyAlgorithm0 = new EntropyAlgorithm(strand0);
+<span class="nocode"><a name="11"> 11: </a></span>entropyAlgorithm0.getDefaultStepSize(0);
+<span class="nocode"><a name="12"> 12: </a></span>entropyAlgorithm0.getDefaultMinWindowSize();
+<span class="nocode"><a name="13"> 13: </a></span>ICDIAlgorithm iCDIAlgorithm0 = new ICDIAlgorithm(strand0);
+<span class="nocode"><a name="14"> 14: </a></span>fastaStreamSequence0.charAt(1);
+<span class="nocode"><a name="15"> 15: </a></span>float[] floatArray0 = new float[6];
+<span class="nocode"><a name="16"> 16: </a></span>GenericDocumentType genericDocumentType0 = new GenericDocumentType(&quot;VEU/^r9&quot;, &quot;@@d@@@@&quot;, &quot;y}:e&quot;);
+<span class="nocode"><a name="17"> 17: </a></span>GenericDOMImplementation genericDOMImplementation0 = new GenericDOMImplementation();
+<span class="nocode"><a name="18"> 18: </a></span>GenericDocument genericDocument0 = new GenericDocument(genericDocumentType0, genericDOMImplementation0);
+<span class="nocode"><a name="19"> 19: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(genericDocument0);
+<span class="nocode"><a name="20"> 20: </a></span>SVGGraphics2D sVGGraphics2D1 = (SVGGraphics2D)sVGGraphics2D0.create(1, 1, 7, (-1017));
+<span class="nocode"><a name="21"> 21: </a></span>LineAttributes[] lineAttributesArray0 = new LineAttributes[4];
+<span class="nocode"><a name="22"> 22: </a></span>DefaultTreeCellRenderer defaultTreeCellRenderer0 = new DefaultTreeCellRenderer();
+<span class="nocode"><a name="23"> 23: </a></span>ColorUIResource colorUIResource0 = (ColorUIResource)defaultTreeCellRenderer0.getBackgroundNonSelectionColor();
+<span class="nocode"><a name="24"> 24: </a></span>LineAttributes lineAttributes0 = new LineAttributes(colorUIResource0);
+<span class="nocode"><a name="25"> 25: </a></span>lineAttributesArray0[0] = lineAttributes0;
+<span class="nocode"><a name="26"> 26: </a></span>LineAttributes lineAttributes1 = new LineAttributes(colorUIResource0);
+<span class="nocode"><a name="27"> 27: </a></span>lineAttributesArray0[1] = lineAttributes1;
+<span class="nocode"><a name="28"> 28: </a></span>LineAttributes lineAttributes2 = new LineAttributes(colorUIResource0);
+<span class="nocode"><a name="29"> 29: </a></span>LineAttributes lineAttributes3 = new LineAttributes(colorUIResource0);
+<span class="nocode"><a name="30"> 30: </a></span>lineAttributesArray0[3] = lineAttributes3;
+<span class="nocode"><a name="31"> 31: </a></span>iCDIAlgorithm0.drawLegend(sVGGraphics2D1, 1195, 731, lineAttributesArray0, 0);
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="4">  4: </a></span>GCWindowAlgorithm gCWindowAlgorithm0 = new GCWindowAlgorithm(strand0);
+<span class="nocode"><a name="5">  5: </a></span>gCWindowAlgorithm0.getMaximumInternal();
+<span class="nocode"><a name="6">  6: </a></span>gCWindowAlgorithm0.getAverage();
+<span class="nocode"><a name="7">  7: </a></span>ICDIAlgorithm iCDIAlgorithm0 = new ICDIAlgorithm(strand0);
+<span class="nocode"><a name="8">  8: </a></span>bases0.getGCount();
+<span class="nocode"><a name="9">  9: </a></span>GCFrameAlgorithm gCFrameAlgorithm0 = new GCFrameAlgorithm(strand0);
+<span class="nocode"><a name="10"> 10: </a></span>gCFrameAlgorithm0.setRevCompDisplay(false);
+<span class="nocode"><a name="11"> 11: </a></span>gCFrameAlgorithm0.getDefaultStepSize(1);
+<span class="nocode"><a name="12"> 12: </a></span>Frame frame0 = new Frame(&quot;&quot;);
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;/^~4H8F&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>fastaStreamSequence0.forceReset();
+<span class="nocode"><a name="4">  4: </a></span>FileSystemHandling.shouldAllThrowIOExceptions();
+<span class="nocode"><a name="5">  5: </a></span>bases0.getLength();
+<span class="nocode"><a name="6">  6: </a></span>Bases.reverseComplement(&quot;/^~4H8F&quot;);
+<span class="nocode"><a name="7">  7: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="8">  8: </a></span>bases0.reverseComplement();
+<span class="nocode"><a name="9">  9: </a></span>fastaStreamSequence0.getSubSequence(1, 1);
+<span class="nocode"><a name="10"> 10: </a></span>EntropyAlgorithm entropyAlgorithm0 = new EntropyAlgorithm(strand0);
+<span class="nocode"><a name="11"> 11: </a></span>entropyAlgorithm0.getDefaultStepSize(0);
+<span class="nocode"><a name="12"> 12: </a></span>entropyAlgorithm0.getDefaultMinWindowSize();
+<span class="nocode"><a name="13"> 13: </a></span>ICDIAlgorithm iCDIAlgorithm0 = new ICDIAlgorithm(strand0);
+<span class="nocode"><a name="14"> 14: </a></span>fastaStreamSequence0.charAt(1);
+<span class="nocode"><a name="15"> 15: </a></span>float[] floatArray0 = new float[6];
+<span class="nocode"><a name="16"> 16: </a></span>GenericDocumentType genericDocumentType0 = new GenericDocumentType(&quot;VEU/^r9&quot;, &quot;@@d@@@@&quot;, &quot;y}:e&quot;);
+<span class="nocode"><a name="17"> 17: </a></span>GenericDOMImplementation genericDOMImplementation0 = new GenericDOMImplementation();
+<span class="nocode"><a name="18"> 18: </a></span>GenericDocument genericDocument0 = new GenericDocument(genericDocumentType0, genericDOMImplementation0);
+<span class="nocode"><a name="19"> 19: </a></span>SVGGraphics2D sVGGraphics2D0 = new SVGGraphics2D(genericDocument0);
+<span class="nocode"><a name="20"> 20: </a></span>SVGGraphics2D sVGGraphics2D1 = (SVGGraphics2D)sVGGraphics2D0.create(1, 1, 7, (-1017));
+<span class="nocode"><a name="21"> 21: </a></span>LineAttributes[] lineAttributesArray0 = new LineAttributes[4];
+<span class="nocode"><a name="22"> 22: </a></span>DefaultTreeCellRenderer defaultTreeCellRenderer0 = new DefaultTreeCellRenderer();
+<span class="nocode"><a name="23"> 23: </a></span>ColorUIResource colorUIResource0 = (ColorUIResource)defaultTreeCellRenderer0.getBackgroundNonSelectionColor();
+<span class="nocode"><a name="24"> 24: </a></span>LineAttributes lineAttributes0 = new LineAttributes(colorUIResource0);
+<span class="nocode"><a name="25"> 25: </a></span>lineAttributesArray0[0] = lineAttributes0;
+<span class="nocode"><a name="26"> 26: </a></span>LineAttributes lineAttributes1 = new LineAttributes(colorUIResource0);
+<span class="nocode"><a name="27"> 27: </a></span>lineAttributesArray0[1] = lineAttributes1;
+<span class="nocode"><a name="28"> 28: </a></span>LineAttributes lineAttributes2 = new LineAttributes(colorUIResource0);
+<span class="nocode"><a name="29"> 29: </a></span>lineAttributesArray0[2] = lineAttributes2;
+<span class="nocode"><a name="30"> 30: </a></span>LineAttributes lineAttributes3 = new LineAttributes(colorUIResource0);
+<span class="nocode"><a name="31"> 31: </a></span>lineAttributesArray0[3] = lineAttributes3;
+<span class="nocode"><a name="32"> 32: </a></span>iCDIAlgorithm0.drawLegend(sVGGraphics2D1, 1195, 731, lineAttributesArray0, 0);
+<span class="nocode"><a name="33"> 33: </a></span>floatArray0[0] = (float) 1;
+<span class="nocode"><a name="34"> 34: </a></span>floatArray0[1] = 0.395F;
+<span class="nocode"><a name="35"> 35: </a></span>floatArray0[2] = (float) 0;
+<span class="nocode"><a name="36"> 36: </a></span>floatArray0[3] = (float) 1;
+<span class="nocode"><a name="37"> 37: </a></span>FileSystemHandling.setPermissions((EvoSuiteFile) null, true, true, true);
+<span class="nocode"><a name="38"> 38: </a></span>floatArray0[4] = (float) 2;
+<span class="nocode"><a name="39"> 39: </a></span>floatArray0[5] = (float) 0;
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(emblStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>EmblStreamSequence emblStreamSequence1 = new EmblStreamSequence(rawStreamSequence0);
+<span class="nocode"><a name="4">  4: </a></span>Bases bases0 = new Bases(emblStreamSequence1);
+<span class="nocode"><a name="5">  5: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="6">  6: </a></span>EntropyAlgorithm entropyAlgorithm0 = new EntropyAlgorithm(strand0);
+<span class="nocode"><a name="7">  7: </a></span>emblStreamSequence1.forceReset();
+<span class="nocode"><a name="8">  8: </a></span>entropyAlgorithm0.getDefaultMinWindowSize();
+<span class="nocode"><a name="9">  9: </a></span>entropyAlgorithm0.getBases();
+<span class="nocode"><a name="10"> 10: </a></span>assertFalse(entropyAlgorithm0.isRevCompDisplay());
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>StringWriter stringWriter0 = new StringWriter();
+<span class="nocode"><a name="3">  3: </a></span>rawStreamSequence0.writeToStream(stringWriter0);
+<span class="nocode"><a name="4">  4: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="5">  5: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="6">  6: </a></span>GCWindowAlgorithm gCWindowAlgorithm0 = new GCWindowAlgorithm(strand0);
+<span class="nocode"><a name="7">  7: </a></span>gCWindowAlgorithm0.getMaximumInternal();
+<span class="nocode"><a name="8">  8: </a></span>strand0.getTCount();
+<span class="nocode"><a name="9">  9: </a></span>gCWindowAlgorithm0.getAverage();
+<span class="nocode"><a name="10"> 10: </a></span>ICDIAlgorithm iCDIAlgorithm0 = new ICDIAlgorithm(strand0);
+<span class="nocode"><a name="11"> 11: </a></span>bases0.getGCount();
+<span class="nocode"><a name="12"> 12: </a></span>iCDIAlgorithm0.isRevCompDisplay();
+<span class="nocode"><a name="13"> 13: </a></span>GCFrameAlgorithm gCFrameAlgorithm0 = new GCFrameAlgorithm(strand0);
+<span class="nocode"><a name="14"> 14: </a></span>gCFrameAlgorithm0.getDefaultStepSize(1);
+<span class="nocode"><a name="15"> 15: </a></span>KarlinSigAlgorithm karlinSigAlgorithm0 = new KarlinSigAlgorithm(strand0);
+<span class="nocode"><a name="16"> 16: </a></span>karlinSigAlgorithm0.getDefaultMaxWindowSize();
+<span class="nocode"><a name="17"> 17: </a></span>Frame frame0 = new Frame(&quot;&quot;);
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.plot.BaseAlgorithm
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.plot.BaseAlgorithm
+<li>Size: 9
+<li>Length: 130
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.4737037493562458
+<li>BranchCoverage: 0.5185185185185185
+<li>MethodCoverage: 0.5714285714285714
+<li>OutputCoverage: 0.15384615384615385
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

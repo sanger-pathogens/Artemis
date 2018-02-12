@@ -1,0 +1,96 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.components.variant.CDSFeature
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.components.variant.CDSFeature: 0.9095911949685535</ul>
+<ul>
+<li>3.833333333333333 fitness evaluations, 0 generations, null statements, 5 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;HG:1/Fh[g-&amp;V&amp;rf&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Entry entry0 = simpleEntryGroup0.createEntry(&quot;HG:1/Fh[g-&amp;V&amp;rf&quot;);
+<span class="nocode"><a name="5">  5: </a></span>Feature feature0 = entry0.createFeature();
+<span class="nocode"><a name="6">  6: </a></span>CDSFeature cDSFeature0 = new CDSFeature(feature0);
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>CDSFeature cDSFeature0 = new CDSFeature((Feature) null);
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RangeVector rangeVector0 = new RangeVector();
+<span class="nocode"><a name="2">  2: </a></span>CDSFeature cDSFeature0 = new CDSFeature(true, rangeVector0, 0, 0, &quot;+1ERSYcku!@&quot;);
+<span class="nocode"><a name="3">  3: </a></span>rangeVector0.add((Range) null);
+<span class="nocode"><a name="4">  4: </a></span>cDSFeature0.toString();
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(102, 102);
+<span class="nocode"><a name="2">  2: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
+<span class="nocode"><a name="3">  3: </a></span>CDSFeature cDSFeature0 = new CDSFeature(false, rangeVector0, 102, 102, &quot;&quot;);
+<span class="nocode"><a name="4">  4: </a></span>String string0 = cDSFeature0.toString();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;false\t102\t102\t\t1\t102-102\t&quot;, string0);
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range((-4414), 0);
+<span class="nocode"><a name="2">  2: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
+<span class="nocode"><a name="3">  3: </a></span>rangeVector0.add(range0);
+<span class="nocode"><a name="4">  4: </a></span>CDSFeature cDSFeature0 = new CDSFeature(false, rangeVector0, 0, 99, &quot;/,5rQS{kh+&quot;);
+<span class="nocode"><a name="5">  5: </a></span>String string0 = cDSFeature0.toString();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;false\t0\t99\t/,5rQS{kh+\t2\t-4414-0\t-4414-0\t&quot;, string0);
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.components.variant.CDSFeature
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.components.variant.CDSFeature
+<li>Size: 5
+<li>Length: 20
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.9095911949685535
+<li>BranchCoverage: 1.0
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 0.3333333333333333
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

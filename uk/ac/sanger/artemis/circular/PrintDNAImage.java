@@ -76,8 +76,7 @@ import uk.ac.sanger.artemis.components.StickyFileChooser;
 /**
 *
 * Print png/jpeg image and print preview.
-* Java 1.4 or higher is required for the imageio package
-* which is used here to create jpeg and png images of the
+* The imageio package is used here to create jpeg and png images of the
 * DNA diagram.
 *
 */
@@ -320,7 +319,7 @@ public class PrintDNAImage extends ScrollPanel
     }
     catch (IOException e)
     {
-      System.out.println("Java 1.4+ is required");
+      System.out.println("Java 1.8+ is required");
     }
   }
 
@@ -360,7 +359,7 @@ public class PrintDNAImage extends ScrollPanel
     catch(NoClassDefFoundError ex)
     {
       JOptionPane.showMessageDialog(this,
-            "This option requires Java 1.4 or higher.");
+            "This option requires Java 1.8 or higher.");
     }
   }
   

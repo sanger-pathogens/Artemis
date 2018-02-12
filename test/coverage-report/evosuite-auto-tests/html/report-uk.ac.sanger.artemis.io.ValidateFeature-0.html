@@ -1,0 +1,309 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.io.ValidateFeature
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.io.ValidateFeature: 0.5039768708436687</ul>
+<ul>
+<li>2032.074284306423 fitness evaluations, 0 generations, null statements, 32 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ValidateFeature validateFeature0 = new ValidateFeature((EntryGroup) null);
+<span class="nocode"><a name="2">  2: </a></span>validateFeature0.hasValidStop((Feature) null);
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ValidateFeature.testHeader(&quot;VNisc+}$XR{=&quot;);
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Key key0 = Key.CDS;
+<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(16000);
+<span class="nocode"><a name="3">  3: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
+<span class="nocode"><a name="4">  4: </a></span>Location location0 = new Location(rangeVector0, true);
+<span class="nocode"><a name="5">  5: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
+<span class="nocode"><a name="6">  6: </a></span>GFFStreamFeature gFFStreamFeature0 = new GFFStreamFeature(key0, location0, qualifierVector0);
+<span class="nocode"><a name="7">  7: </a></span>boolean boolean0 = ValidateFeature.isGFF(gFFStreamFeature0, (EntryGroup) null);
+<span class="nocode"><a name="8">  8: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>FeatureVector featureVector0 = new FeatureVector();
+<span class="nocode"><a name="3">  3: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, &quot;zwzS)0m&amp;p&quot;);
+<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = ValidateFeature.isGFF((Feature) null, filteredEntryGroup0);
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>boolean boolean0 = ValidateFeature.isGFF((Feature) null, (EntryGroup) null);
+<span class="nocode"><a name="2">  2: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
+<span class="nocode"><a name="2">  2: </a></span>String string0 = ValidateFeature.validateGO(qualifierVector0, (EntryInformation) null);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;&quot;, string0);
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Key key0 = Key.CDS;
+<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(16000);
+<span class="nocode"><a name="3">  3: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
+<span class="nocode"><a name="4">  4: </a></span>Location location0 = new Location(rangeVector0, true);
+<span class="nocode"><a name="5">  5: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
+<span class="nocode"><a name="6">  6: </a></span>GFFStreamFeature gFFStreamFeature0 = new GFFStreamFeature(key0, location0, qualifierVector0);
+<span class="nocode"><a name="7">  7: </a></span>int int0 = ValidateFeature.isCompleteGeneModelOK(gFFStreamFeature0);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(1, int0);
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Key key0 = Key.CDS;
+<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(11);
+<span class="nocode"><a name="3">  3: </a></span>Location location0 = new Location(range0);
+<span class="nocode"><a name="4">  4: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
+<span class="nocode"><a name="5">  5: </a></span>DatabaseStreamFeature databaseStreamFeature0 = new DatabaseStreamFeature(key0, location0, qualifierVector0);
+<span class="nocode"><a name="6">  6: </a></span>int int0 = ValidateFeature.isBoundaryOK(databaseStreamFeature0);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, int0);
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Key key0 = Key.CDS;
+<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(942, 942);
+<span class="nocode"><a name="3">  3: </a></span>Location location0 = new Location(range0);
+<span class="nocode"><a name="4">  4: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
+<span class="nocode"><a name="5">  5: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="6">  6: </a></span>DatabaseInferredFeature databaseInferredFeature0 = new DatabaseInferredFeature(key0, location0, qualifierVector0, chadoCanonicalGene0);
+<span class="nocode"><a name="7">  7: </a></span>int int0 = ValidateFeature.isBoundaryOK(databaseInferredFeature0);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(0, int0);
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature();
+<span class="nocode"><a name="2">  2: </a></span>DatabaseStreamFeature databaseStreamFeature0 = new DatabaseStreamFeature(genbankStreamFeature0);
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = ValidateFeature.isStrandOK(databaseStreamFeature0);
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Key key0 = Key.CDS;
+<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(942, 942);
+<span class="nocode"><a name="3">  3: </a></span>Location location0 = new Location(range0);
+<span class="nocode"><a name="4">  4: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
+<span class="nocode"><a name="5">  5: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="6">  6: </a></span>DatabaseInferredFeature databaseInferredFeature0 = new DatabaseInferredFeature(key0, location0, qualifierVector0, chadoCanonicalGene0);
+<span class="nocode"><a name="7">  7: </a></span>boolean boolean0 = ValidateFeature.isStrandOK(databaseInferredFeature0);
+<span class="nocode"><a name="8">  8: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature();
+<span class="nocode"><a name="2">  2: </a></span>DatabaseStreamFeature databaseStreamFeature0 = new DatabaseStreamFeature(genbankStreamFeature0);
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = ValidateFeature.isPartialConsistent(databaseStreamFeature0, &quot;Start_range&quot;);
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 13</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Key key0 = Key.CDS;
+<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(942, 942);
+<span class="nocode"><a name="3">  3: </a></span>Location location0 = new Location(range0);
+<span class="nocode"><a name="4">  4: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
+<span class="nocode"><a name="5">  5: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="6">  6: </a></span>DatabaseInferredFeature databaseInferredFeature0 = new DatabaseInferredFeature(key0, location0, qualifierVector0, chadoCanonicalGene0);
+<span class="nocode"><a name="7">  7: </a></span>boolean boolean0 = ValidateFeature.isIdPrefixConsistent(databaseInferredFeature0);
+<span class="nocode"><a name="8">  8: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 14</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Key key0 = Key.CDS;
+<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range((-360));
+<span class="nocode"><a name="3">  3: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
+<span class="nocode"><a name="4">  4: </a></span>Location location0 = new Location(rangeVector0, true);
+<span class="nocode"><a name="5">  5: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
+<span class="nocode"><a name="6">  6: </a></span>DatabaseInferredFeature databaseInferredFeature0 = new DatabaseInferredFeature(key0, location0, qualifierVector0, (ChadoCanonicalGene) null);
+<span class="nocode"><a name="7">  7: </a></span>boolean boolean0 = ValidateFeature.isIdPrefixConsistent(databaseInferredFeature0);
+<span class="nocode"><a name="8">  8: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 15</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Key key0 = Key.CDS;
+<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range((-360));
+<span class="nocode"><a name="3">  3: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
+<span class="nocode"><a name="4">  4: </a></span>Location location0 = new Location(rangeVector0, true);
+<span class="nocode"><a name="5">  5: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
+<span class="nocode"><a name="6">  6: </a></span>DatabaseInferredFeature databaseInferredFeature0 = new DatabaseInferredFeature(key0, location0, qualifierVector0, (ChadoCanonicalGene) null);
+<span class="nocode"><a name="7">  7: </a></span>boolean boolean0 = ValidateFeature.isCDSPhaseOK(databaseInferredFeature0);
+<span class="nocode"><a name="8">  8: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 16</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Key key0 = new Key(&quot;Start_range&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(4);
+<span class="nocode"><a name="3">  3: </a></span>Location location0 = new Location(range0);
+<span class="nocode"><a name="4">  4: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
+<span class="nocode"><a name="5">  5: </a></span>DatabaseStreamFeature databaseStreamFeature0 = new DatabaseStreamFeature(key0, location0, qualifierVector0);
+<span class="nocode"><a name="6">  6: </a></span>boolean boolean0 = ValidateFeature.isCDSPhaseOK(databaseStreamFeature0);
+<span class="nocode"><a name="7">  7: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 17</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Key key0 = Key.CDS;
+<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(16000);
+<span class="nocode"><a name="3">  3: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
+<span class="nocode"><a name="4">  4: </a></span>Location location0 = new Location(rangeVector0, true);
+<span class="nocode"><a name="5">  5: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
+<span class="nocode"><a name="6">  6: </a></span>GFFStreamFeature gFFStreamFeature0 = new GFFStreamFeature(key0, location0, qualifierVector0);
+<span class="nocode"><a name="7">  7: </a></span>String string0 = ValidateFeature.isAttributesOK(gFFStreamFeature0);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(&quot;&quot;, string0);
+</pre>
+<h3>Test case 18</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Key key0 = Key.CDS;
+<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(16000);
+<span class="nocode"><a name="3">  3: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
+<span class="nocode"><a name="4">  4: </a></span>Location location0 = new Location(rangeVector0, true);
+<span class="nocode"><a name="5">  5: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
+<span class="nocode"><a name="6">  6: </a></span>GFFStreamFeature gFFStreamFeature0 = new GFFStreamFeature(key0, location0, qualifierVector0);
+<span class="nocode"><a name="7">  7: </a></span>ValidateFeature validateFeature0 = new ValidateFeature((EntryGroup) null);
+<span class="nocode"><a name="8">  8: </a></span>boolean boolean0 = validateFeature0.isInternalStops(gFFStreamFeature0);
+<span class="nocode"><a name="9">  9: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 19</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Key key0 = Key.CDS;
+<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(942, 942);
+<span class="nocode"><a name="3">  3: </a></span>Location location0 = new Location(range0);
+<span class="nocode"><a name="4">  4: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
+<span class="nocode"><a name="5">  5: </a></span>ChadoCanonicalGene chadoCanonicalGene0 = new ChadoCanonicalGene();
+<span class="nocode"><a name="6">  6: </a></span>DatabaseInferredFeature databaseInferredFeature0 = new DatabaseInferredFeature(key0, location0, qualifierVector0, chadoCanonicalGene0);
+<span class="nocode"><a name="7">  7: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="8">  8: </a></span>Clipboard clipboard0 = new Clipboard(&quot;VNisc+}$XR{=&quot;);
+<span class="nocode"><a name="9">  9: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="10"> 10: </a></span>FeatureVector featureVector0 = selection0.getAllFeatures();
+<span class="nocode"><a name="11"> 11: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, &quot;VNisc+}$XR{=&quot;);
+<span class="nocode"><a name="12"> 12: </a></span>ValidateFeature validateFeature0 = new ValidateFeature(filteredEntryGroup0);
+<span class="nocode"><a name="13"> 13: </a></span>boolean boolean0 = validateFeature0.hasValidStop(databaseInferredFeature0);
+<span class="nocode"><a name="14"> 14: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 20</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Key key0 = new Key(&quot;Start_range&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(4);
+<span class="nocode"><a name="3">  3: </a></span>Location location0 = new Location(range0);
+<span class="nocode"><a name="4">  4: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
+<span class="nocode"><a name="5">  5: </a></span>DatabaseStreamFeature databaseStreamFeature0 = new DatabaseStreamFeature(key0, location0, qualifierVector0);
+<span class="nocode"><a name="6">  6: </a></span>ValidateFeature.isPartOfGene(databaseStreamFeature0);
+<span class="nocode"><a name="7">  7: </a></span>boolean boolean0 = ValidateFeature.isPartOfGene(databaseStreamFeature0);
+<span class="nocode"><a name="8">  8: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 21</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Key key0 = Key.CDS;
+<span class="nocode"><a name="2">  2: </a></span>Range range0 = new Range(16000);
+<span class="nocode"><a name="3">  3: </a></span>RangeVector rangeVector0 = new RangeVector(range0);
+<span class="nocode"><a name="4">  4: </a></span>Location location0 = new Location(rangeVector0, true);
+<span class="nocode"><a name="5">  5: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
+<span class="nocode"><a name="6">  6: </a></span>GFFStreamFeature gFFStreamFeature0 = new GFFStreamFeature(key0, location0, qualifierVector0);
+<span class="nocode"><a name="7">  7: </a></span>boolean boolean0 = ValidateFeature.isPartOfGene(gFFStreamFeature0);
+<span class="nocode"><a name="8">  8: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 22</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ValidateFeature.isAttributesOK((GFFStreamFeature) null);
+</pre>
+<h3>Test case 23</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ValidateFeature.isBoundaryOK((GFFStreamFeature) null);
+</pre>
+<h3>Test case 24</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ValidateFeature.isCDSPhaseOK((GFFStreamFeature) null);
+</pre>
+<h3>Test case 25</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ValidateFeature.isCompleteGeneModelOK((GFFStreamFeature) null);
+</pre>
+<h3>Test case 26</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ValidateFeature.isIdPrefixConsistent((GFFStreamFeature) null);
+</pre>
+<h3>Test case 27</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>FeaturePatternPredicate featurePatternPredicate0 = new FeaturePatternPredicate((AminoAcidSequence) null);
+<span class="nocode"><a name="3">  3: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featurePatternPredicate0, &quot;Ontology_term&quot;);
+<span class="nocode"><a name="4">  4: </a></span>ValidateFeature validateFeature0 = new ValidateFeature(filteredEntryGroup0);
+<span class="nocode"><a name="5">  5: </a></span>validateFeature0.isInternalStops((Feature) null);
+</pre>
+<h3>Test case 28</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ValidateFeature.isPartOfGene((GFFStreamFeature) null);
+</pre>
+<h3>Test case 29</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ValidateFeature.isPartialConsistent((GFFStreamFeature) null, &quot;evidence=&quot;);
+</pre>
+<h3>Test case 30</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ValidateFeature.isStrandOK((GFFStreamFeature) null);
+</pre>
+<h3>Test case 31</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ValidateFeature.testHeader((String) null);
+</pre>
+<h3>Test case 32</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>ValidateFeature.validateGO((QualifierVector) null, blastEntryInformation0);
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.io.ValidateFeature
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.io.ValidateFeature
+<li>Size: 32
+<li>Length: 135
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.5039768708436687
+<li>BranchCoverage: 0.17134831460674158
+<li>MethodCoverage: 0.875
+<li>OutputCoverage: 0.5
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

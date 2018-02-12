@@ -1,0 +1,99 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.io.KeyVector
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.io.KeyVector: 0.8324801810676423</ul>
+<ul>
+<li>34.05 fitness evaluations, 0 generations, null statements, 6 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>KeyVector keyVector0 = new KeyVector();
+<span class="nocode"><a name="2">  2: </a></span>KeyVector keyVector1 = keyVector0.copy();
+<span class="nocode"><a name="3">  3: </a></span>assertNotSame(keyVector1, keyVector0);
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Key key0 = Key.CDS;
+<span class="nocode"><a name="2">  2: </a></span>KeyVector keyVector0 = new KeyVector(key0);
+<span class="nocode"><a name="3">  3: </a></span>MockJapaneseDate mockJapaneseDate0 = new MockJapaneseDate();
+<span class="nocode"><a name="4">  4: </a></span>keyVector0.insertElementAfter(key0, mockJapaneseDate0);
+<span class="nocode"><a name="5">  5: </a></span>keyVector0.mysort();
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Key key0 = new Key(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>KeyVector keyVector0 = new KeyVector(key0);
+<span class="nocode"><a name="3">  3: </a></span>keyVector0.addAll(0, (Collection) keyVector0);
+<span class="nocode"><a name="4">  4: </a></span>keyVector0.mysort();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(2, keyVector0.size());
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>KeyVector keyVector0 = new KeyVector((Key) null);
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>KeyVector keyVector0 = new KeyVector();
+<span class="nocode"><a name="2">  2: </a></span>keyVector0.add(0, (Object) null);
+<span class="nocode"><a name="3">  3: </a></span>keyVector0.add(0, (Object) null);
+<span class="nocode"><a name="4">  4: </a></span>keyVector0.mysort();
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Key key0 = new Key(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>KeyVector keyVector0 = new KeyVector(key0);
+<span class="nocode"><a name="3">  3: </a></span>KeyVector keyVector1 = keyVector0.copy();
+<span class="nocode"><a name="4">  4: </a></span>assertNotSame(keyVector1, keyVector0);
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.io.KeyVector
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.io.KeyVector
+<li>Size: 6
+<li>Length: 19
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.8324801810676423
+<li>BranchCoverage: 0.8181818181818182
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 0.6666666666666666
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

@@ -169,17 +169,6 @@ There are 3 main components to the Artemis window. The two top Feature Displays 
 <p>For any of the gene features in Artemis you can select them and press the short cut key 'E' (Edit-&gt;Selected Features in Editor). This opens up the Gene Builder. Within this the Gene Model can be edited and annotation added.
 </p><p>
 <a href="genebuilder.gif" class="image" title="GeneBuilder"><img alt="GeneBuilder" src="genebuilder.gif" width="760" height="921" border="0" /></a>
-</p><p>
-It is also possible to launch the Artemis Gene Builder in a standalone mode for a particular gene:
-</p>
-<pre>etc/gene_builder -Dchado="localhost:5432/chado_pathogen?gmod" -Dibatis -Dshow_log PF10_0003
-</pre>
-<p>or in read-only mode you can open a gene in GeneDB (at the Sanger Institute):
-</p>
-
-<pre>etc/gene_builder -Dchado="db.genedb.org:5432/snapshot?genedb_ro" -Dibatis  -Dshow_log -Dread_only PFA0010c
-</pre>
-<p>Note using the JVM option 'show_log' will open the log window.
 </p>
 
 <a name="Configuration_Options"></a><h2>Configuration Options</h2>

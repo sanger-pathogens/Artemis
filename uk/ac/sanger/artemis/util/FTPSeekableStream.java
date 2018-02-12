@@ -15,7 +15,7 @@ import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
 import org.apache.log4j.Logger;
 
-import net.sf.samtools.seekablestream.SeekableStream;
+import htsjdk.samtools.seekablestream.SeekableStream;
 
 /**
  * Written independently to, but bugfixed by looking at the Savant
@@ -48,9 +48,22 @@ public class FTPSeekableStream extends SeekableStream {
 
     private File tmpFolder;
     private File index;
+    
+    private int soTimeout = 10000;
+    private int bufferSize = -1;
 
     public FTPSeekableStream(URL url) throws SocketException, IOException {
         this(url, defaultUser, defaultPassword);
+    }
+    
+    public FTPSeekableStream(URL url, int timeout) throws SocketException, IOException {
+        this(url, defaultUser, defaultPassword);
+        this.soTimeout = timeout;
+    }
+    
+    public FTPSeekableStream(URL url, int timeout, int bufferSize) throws SocketException, IOException {
+        this(url, timeout);
+        this.bufferSize = bufferSize;
     }
 
     public FTPSeekableStream(URL url, String user, String password)
@@ -88,10 +101,16 @@ public class FTPSeekableStream extends SeekableStream {
 
             client.setFileType(FTP.BINARY_FILE_TYPE);
             client.enterLocalPassiveMode();
-            client.setSoTimeout(10000);
-
+            client.setSoTimeout(soTimeout);
+            
+            if (bufferSize != -1)
+            {
+            		client.setBufferSize(bufferSize);
+            		logger.debug("Setting buffer size to " + bufferSize);
+            }
+            
             int reply = client.getReplyCode();
-            logger.info(reply);
+            logger.info("FTP reply status code: " + reply);
 
             if (!FTPReply.isPositiveCompletion(reply)) {
                 close();
@@ -99,6 +118,7 @@ public class FTPSeekableStream extends SeekableStream {
             }
 
             _client = client;
+            
         }
         return _client;
     }
@@ -193,7 +213,7 @@ public class FTPSeekableStream extends SeekableStream {
 
     @Override
     public void seek(long position) throws IOException {
-        logger.info("seek " + position);
+        logger.debug("seek " + position);
         this.position = position;
 
     }

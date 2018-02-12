@@ -1,0 +1,496 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.io.PartialSequence
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.io.PartialSequence: 0.9497783567014481</ul>
+<ul>
+<li>22.100732600732602 fitness evaluations, 0 generations, null statements, 47 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[4];
+<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short)0);
+<span class="nocode"><a name="3">  3: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 'y', 'y', short0, (Integer) null);
+<span class="nocode"><a name="4">  4: </a></span>int int0 = partialSequence0.getOtherCount();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(4, int0);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(121, partialSequence0.length());
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[0];
+<span class="nocode"><a name="2">  2: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 1, 1, (Short) null, (Integer) null);
+<span class="nocode"><a name="3">  3: </a></span>partialSequence0.charAt((-592));
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[0];
+<span class="nocode"><a name="2">  2: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 1, 1, (Short) null, (Integer) null);
+<span class="nocode"><a name="3">  3: </a></span>partialSequence0.getPhase();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1, partialSequence0.length());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, partialSequence0.getCCount());
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Short short0 = Short.valueOf((short)1);
+<span class="nocode"><a name="2">  2: </a></span>Integer integer0 = new Integer(2016);
+<span class="nocode"><a name="3">  3: </a></span>PartialSequence partialSequence0 = new PartialSequence((char[]) null, (-969), 2016, short0, integer0);
+<span class="nocode"><a name="4">  4: </a></span>partialSequence0.getSubSequence((-969), 2016);
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Short short0 = new Short((short) (-1425));
+<span class="nocode"><a name="2">  2: </a></span>Integer integer0 = new Integer((-335));
+<span class="nocode"><a name="3">  3: </a></span>PartialSequence partialSequence0 = new PartialSequence((char[]) null, 0, 0, short0, integer0);
+<span class="nocode"><a name="4">  4: </a></span>partialSequence0.getSequence();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, partialSequence0.length());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, partialSequence0.getCCount());
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Short short0 = Short.valueOf((short)97);
+<span class="nocode"><a name="2">  2: </a></span>PartialSequence partialSequence0 = new PartialSequence((char[]) null, 1838, (-1), short0, (Integer) null);
+<span class="nocode"><a name="3">  3: </a></span>partialSequence0.getStrand();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1838, partialSequence0.length());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, partialSequence0.getACount());
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[8];
+<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short)103);
+<span class="nocode"><a name="3">  3: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 0, (-1308), short0, (Integer) null);
+<span class="nocode"><a name="4">  4: </a></span>char[] charArray1 = partialSequence0.getCharSubSequence(0, (-1));
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, partialSequence0.length());
+<span class="nocode"><a name="6">  6: </a></span>assertArrayEquals(new char[] {}, charArray1);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, partialSequence0.getCCount());
+<span class="nocode"><a name="8">  8: </a></span>assertFalse(partialSequence0.isComplement());
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[3];
+<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short) (-1));
+<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = new Integer(0);
+<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 0, 0, short0, integer0);
+<span class="nocode"><a name="5">  5: </a></span>String string0 = partialSequence0.getSubSequence(0, 0);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, partialSequence0.length());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(&quot;@&quot;, string0);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(0, partialSequence0.getGCount());
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[3];
+<span class="nocode"><a name="2">  2: </a></span>charArray0[2] = 'a';
+<span class="nocode"><a name="3">  3: </a></span>Short short0 = Short.valueOf((short)99);
+<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 117, 'a', short0, (Integer) null);
+<span class="nocode"><a name="5">  5: </a></span>partialSequence0.setFromChar(charArray0);
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[3];
+<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short)99);
+<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = new Integer(5750);
+<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 'M', 'M', short0, integer0);
+<span class="nocode"><a name="5">  5: </a></span>char[] charArray1 = new char[5];
+<span class="nocode"><a name="6">  6: </a></span>charArray1[3] = 'g';
+<span class="nocode"><a name="7">  7: </a></span>partialSequence0.setFromChar(charArray1);
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[4];
+<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short)0);
+<span class="nocode"><a name="3">  3: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 'y', 'y', short0, (Integer) null);
+<span class="nocode"><a name="4">  4: </a></span>char[] charArray1 = new char[9];
+<span class="nocode"><a name="5">  5: </a></span>charArray1[1] = 't';
+<span class="nocode"><a name="6">  6: </a></span>partialSequence0.setFromChar(charArray1);
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[2];
+<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short)0);
+<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = new Integer((short)0);
+<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 1885, 1885, short0, integer0);
+<span class="nocode"><a name="5">  5: </a></span>int int0 = partialSequence0.getCCount();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, int0);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(1885, partialSequence0.length());
+</pre>
+<h3>Test case 13</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[3];
+<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short) (-1));
+<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = new Integer(0);
+<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 0, 0, short0, integer0);
+<span class="nocode"><a name="5">  5: </a></span>int int0 = partialSequence0.getACount();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, int0);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, partialSequence0.length());
+</pre>
+<h3>Test case 14</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[0];
+<span class="nocode"><a name="2">  2: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 1, 1, (Short) null, (Integer) null);
+<span class="nocode"><a name="3">  3: </a></span>int int0 = partialSequence0.getTCount();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1, partialSequence0.length());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, int0);
+</pre>
+<h3>Test case 15</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[1];
+<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short)0);
+<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = Integer.valueOf((-268));
+<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 0, 0, short0, integer0);
+<span class="nocode"><a name="5">  5: </a></span>int int0 = partialSequence0.getGCount();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, int0);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, partialSequence0.length());
+</pre>
+<h3>Test case 16</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[1];
+<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short)0);
+<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = new Integer((short)0);
+<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 0, 0, short0, integer0);
+<span class="nocode"><a name="5">  5: </a></span>int int0 = partialSequence0.length();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, int0);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, partialSequence0.getACount());
+</pre>
+<h3>Test case 17</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[0];
+<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short) (-1));
+<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = new Integer(0);
+<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 1, 3200, short0, integer0);
+<span class="nocode"><a name="5">  5: </a></span>partialSequence0.getCharSubSequence((short) (-1), 3200);
+</pre>
+<h3>Test case 18</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[5];
+<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short) (-1));
+<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = new Integer((short) (-1));
+<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 0, 0, short0, integer0);
+<span class="nocode"><a name="5">  5: </a></span>char[] charArray1 = partialSequence0.getCharSubSequence(0, 0);
+<span class="nocode"><a name="6">  6: </a></span>assertArrayEquals(new char[] {'@'}, charArray1);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, partialSequence0.length());
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(0, partialSequence0.getCCount());
+</pre>
+<h3>Test case 19</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[4];
+<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short) (-1));
+<span class="nocode"><a name="3">  3: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 3966, 497, short0, (Integer) null);
+<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = partialSequence0.isComplement();
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(boolean0);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(3966, partialSequence0.length());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(4, partialSequence0.getOtherCount());
+</pre>
+<h3>Test case 20</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[3];
+<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short)99);
+<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = Integer.valueOf((int) (short)99);
+<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, (-3448), (-3448), short0, integer0);
+<span class="nocode"><a name="5">  5: </a></span>partialSequence0.clear();
+<span class="nocode"><a name="6">  6: </a></span>partialSequence0.charAt((-2103));
+</pre>
+<h3>Test case 21</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[2];
+<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short)0);
+<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = Integer.getInteger(&quot;&quot;, 1);
+<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 1581, 1581, short0, integer0);
+<span class="nocode"><a name="5">  5: </a></span>partialSequence0.getCharSubSequence(1581, (-1));
+</pre>
+<h3>Test case 22</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[21];
+<span class="nocode"><a name="2">  2: </a></span>Short short0 = Short.valueOf((short)1086);
+<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = new Integer(4159);
+<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 1, 1, short0, integer0);
+<span class="nocode"><a name="5">  5: </a></span>partialSequence0.clear();
+<span class="nocode"><a name="6">  6: </a></span>partialSequence0.getCharSubSequence(998, (short)1086);
+</pre>
+<h3>Test case 23</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Short short0 = new Short((short)0);
+<span class="nocode"><a name="2">  2: </a></span>Integer integer0 = new Integer((short)0);
+<span class="nocode"><a name="3">  3: </a></span>PartialSequence partialSequence0 = new PartialSequence((char[]) null, 0, 0, short0, integer0);
+<span class="nocode"><a name="4">  4: </a></span>partialSequence0.getOtherCount();
+</pre>
+<h3>Test case 24</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[0];
+<span class="nocode"><a name="2">  2: </a></span>Integer integer0 = new Integer(2797);
+<span class="nocode"><a name="3">  3: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 2797, 2797, (Short) null, integer0);
+<span class="nocode"><a name="4">  4: </a></span>partialSequence0.getSubSequence(796, 2797);
+</pre>
+<h3>Test case 25</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[2];
+<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short) (-4385));
+<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = new Integer(0);
+<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, (-2724), (-2724), short0, integer0);
+<span class="nocode"><a name="5">  5: </a></span>partialSequence0.getSubSequence(1, (-2724));
+</pre>
+<h3>Test case 26</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[3];
+<span class="nocode"><a name="2">  2: </a></span>Integer integer0 = new Integer(0);
+<span class="nocode"><a name="3">  3: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 0, 0, (Short) null, integer0);
+<span class="nocode"><a name="4">  4: </a></span>partialSequence0.isComplement();
+</pre>
+<h3>Test case 27</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Short short0 = new Short((short)1808);
+<span class="nocode"><a name="2">  2: </a></span>Integer integer0 = Integer.getInteger(&quot;&quot;, (int) (short)1808);
+<span class="nocode"><a name="3">  3: </a></span>PartialSequence partialSequence0 = new PartialSequence((char[]) null, 958, 958, short0, integer0);
+<span class="nocode"><a name="4">  4: </a></span>partialSequence0.setFromChar((char[]) null);
+</pre>
+<h3>Test case 28</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[3];
+<span class="nocode"><a name="2">  2: </a></span>charArray0[0] = 'G';
+<span class="nocode"><a name="3">  3: </a></span>Short short0 = new Short((short) (-1));
+<span class="nocode"><a name="4">  4: </a></span>Integer integer0 = new Integer(0);
+<span class="nocode"><a name="5">  5: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 0, 0, short0, integer0);
+<span class="nocode"><a name="6">  6: </a></span>char char0 = partialSequence0.charAt(0);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, partialSequence0.length());
+<span class="nocode"><a name="8">  8: </a></span>assertEquals('G', char0);
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(0, partialSequence0.getGCount());
+</pre>
+<h3>Test case 29</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[4];
+<span class="nocode"><a name="2">  2: </a></span>charArray0[1] = '7';
+<span class="nocode"><a name="3">  3: </a></span>Short short0 = new Short((short) (-1));
+<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, (-4019), (-2595), short0, (Integer) null);
+<span class="nocode"><a name="5">  5: </a></span>char char0 = partialSequence0.charAt(1);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals((-4019), partialSequence0.length());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals('7', char0);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(0, partialSequence0.getGCount());
+</pre>
+<h3>Test case 30</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[4];
+<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short)0);
+<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = new Integer((short)0);
+<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 1169, 1169, short0, integer0);
+<span class="nocode"><a name="5">  5: </a></span>partialSequence0.charAt(0);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(1169, partialSequence0.length());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(4, partialSequence0.getOtherCount());
+</pre>
+<h3>Test case 31</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[0];
+<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short)97);
+<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = new Integer(88);
+<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, (-4171), (-4171), short0, integer0);
+<span class="nocode"><a name="5">  5: </a></span>int int0 = partialSequence0.getOtherCount();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, int0);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals((-4171), partialSequence0.length());
+</pre>
+<h3>Test case 32</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[7];
+<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short) (-1));
+<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = new Integer(1940);
+<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, (-1), 1940, short0, integer0);
+<span class="nocode"><a name="5">  5: </a></span>partialSequence0.getPhase();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, partialSequence0.getCCount());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals((-1), partialSequence0.length());
+</pre>
+<h3>Test case 33</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[3];
+<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short)99);
+<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = Integer.valueOf((int) (short)99);
+<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, (-3448), (-3448), short0, integer0);
+<span class="nocode"><a name="5">  5: </a></span>partialSequence0.getPhase();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals((-3448), partialSequence0.length());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(3, partialSequence0.getOtherCount());
+</pre>
+<h3>Test case 34</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[3];
+<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short) (-1));
+<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = new Integer(0);
+<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 0, 0, short0, integer0);
+<span class="nocode"><a name="5">  5: </a></span>partialSequence0.getPhase();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, partialSequence0.length());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(3, partialSequence0.getOtherCount());
+</pre>
+<h3>Test case 35</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[6];
+<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short) (-1429));
+<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = new Integer((short) (-1429));
+<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 1, 1, short0, integer0);
+<span class="nocode"><a name="5">  5: </a></span>partialSequence0.getPhase();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(1, partialSequence0.length());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(6, partialSequence0.getOtherCount());
+</pre>
+<h3>Test case 36</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[0];
+<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short)0);
+<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = new Integer(1196);
+<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 1196, 1196, short0, integer0);
+<span class="nocode"><a name="5">  5: </a></span>partialSequence0.getSequence();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(1196, partialSequence0.length());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, partialSequence0.getOtherCount());
+</pre>
+<h3>Test case 37</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[3];
+<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short) (-1));
+<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = new Integer(0);
+<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 0, 0, short0, integer0);
+<span class="nocode"><a name="5">  5: </a></span>partialSequence0.getSequence();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, partialSequence0.length());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, partialSequence0.getGCount());
+</pre>
+<h3>Test case 38</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[4];
+<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short) (-2672));
+<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = new Integer((short) (-2672));
+<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 0, 0, short0, integer0);
+<span class="nocode"><a name="5">  5: </a></span>partialSequence0.getStrand();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, partialSequence0.length());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, partialSequence0.getGCount());
+</pre>
+<h3>Test case 39</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[2];
+<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short)0);
+<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = new Integer((short)0);
+<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 1885, 1885, short0, integer0);
+<span class="nocode"><a name="5">  5: </a></span>partialSequence0.getStrand();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(1885, partialSequence0.length());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, partialSequence0.getCCount());
+</pre>
+<h3>Test case 40</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[3];
+<span class="nocode"><a name="2">  2: </a></span>Integer integer0 = new Integer(0);
+<span class="nocode"><a name="3">  3: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 0, 0, (Short) null, integer0);
+<span class="nocode"><a name="4">  4: </a></span>partialSequence0.getStrand();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, partialSequence0.length());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, partialSequence0.getCCount());
+</pre>
+<h3>Test case 41</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[1];
+<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short)0);
+<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = Integer.valueOf((-268));
+<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 0, 0, short0, integer0);
+<span class="nocode"><a name="5">  5: </a></span>String string0 = partialSequence0.getSubSequence(1, 0);
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(partialSequence0.isComplement());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, partialSequence0.length());
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(&quot;&quot;, string0);
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(0, partialSequence0.getGCount());
+</pre>
+<h3>Test case 42</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[3];
+<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short)99);
+<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = Integer.valueOf((int) (short)99);
+<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, (-3448), (-3448), short0, integer0);
+<span class="nocode"><a name="5">  5: </a></span>int int0 = partialSequence0.length();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals((-3448), int0);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, partialSequence0.getACount());
+</pre>
+<h3>Test case 43</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[2];
+<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short)0);
+<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = new Integer((short)0);
+<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 1885, 1885, short0, integer0);
+<span class="nocode"><a name="5">  5: </a></span>int int0 = partialSequence0.length();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(1885, int0);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(2, partialSequence0.getOtherCount());
+</pre>
+<h3>Test case 44</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[21];
+<span class="nocode"><a name="2">  2: </a></span>Short short0 = Short.valueOf((short)1086);
+<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = new Integer(4159);
+<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 1, 1, short0, integer0);
+<span class="nocode"><a name="5">  5: </a></span>partialSequence0.setFromChar(charArray0);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(1, partialSequence0.length());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, partialSequence0.getTCount());
+</pre>
+<h3>Test case 45</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[7];
+<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short)0);
+<span class="nocode"><a name="3">  3: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 3100, 0, short0, (Integer) null);
+<span class="nocode"><a name="4">  4: </a></span>partialSequence0.getSubSequence(0, 3100);
+</pre>
+<h3>Test case 46</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[2];
+<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short)0);
+<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = new Integer((-3247));
+<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, (-1684), (-1684), short0, integer0);
+<span class="nocode"><a name="5">  5: </a></span>partialSequence0.setFromChar(charArray0);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals((-1684), partialSequence0.length());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(2, partialSequence0.getOtherCount());
+</pre>
+<h3>Test case 47</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>char[] charArray0 = new char[3];
+<span class="nocode"><a name="2">  2: </a></span>Short short0 = new Short((short) (-2805));
+<span class="nocode"><a name="3">  3: </a></span>Integer integer0 = Integer.getInteger(&quot;&quot;, 1);
+<span class="nocode"><a name="4">  4: </a></span>PartialSequence partialSequence0 = new PartialSequence(charArray0, 0, 0, short0, integer0);
+<span class="nocode"><a name="5">  5: </a></span>boolean boolean0 = partialSequence0.isComplement();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, partialSequence0.length());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, partialSequence0.getCCount());
+<span class="nocode"><a name="8">  8: </a></span>assertFalse(boolean0);
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.io.PartialSequence
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.io.PartialSequence
+<li>Size: 47
+<li>Length: 222
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.9497783567014481
+<li>BranchCoverage: 0.96875
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 0.8428571428571429
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

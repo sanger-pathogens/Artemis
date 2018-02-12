@@ -1,0 +1,139 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.components.alignment.FileSelectionDialog
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.components.alignment.FileSelectionDialog: 0.3971872536760357</ul>
+<ul>
+<li>578.6914526982417 fitness evaluations, 0 generations, null statements, 15 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>boolean boolean0 = FileSelectionDialog.isListOfFiles(&quot;httpuk.ac.sanger.artemis.components.alignment.FileSelectionDialog&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>boolean boolean0 = FileSelectionDialog.isListOfFiles(&quot;ftpftp_z,H^]hs&amp;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>boolean boolean0 = FileSelectionDialog.isListOfFiles(&quot;Cannot findsaple requested: &quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(&quot;/Users/kp11/workspace/applications/Artemis/test/Cannot findsaple requested: &quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileSystemHandling.appendLineToFile(evoSuiteFile0, &quot;ftpftp_z,H^]hs&amp;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = FileSelectionDialog.isListOfFiles(&quot;Cannot findsaple requested: &quot;);
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(&quot;/Users/kp11/workspace/applications/Artemis/test/~TNed,=&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileSystemHandling.appendLineToFile(evoSuiteFile0, &quot;~TNed,=&quot;);
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = FileSelectionDialog.isListOfFiles(&quot;~TNed,=&quot;);
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(&quot;/Users/kp11/workspace/applications/Artemis/test/}&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileSystemHandling.appendStringToFile(evoSuiteFile0, &quot;cj62&quot;);
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = FileSelectionDialog.isListOfFiles(&quot;}&quot;);
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>List&lt;String&gt; list0 = FileSelectionDialog.getListOfFiles(&quot;htsjdk.variant.vcf.VCFHeader$HEADER_FIELDS&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertTrue(list0.isEmpty());
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>List&lt;String&gt; list0 = FileSelectionDialog.getListOfFiles(&quot;httpuk.ac.sanger.artemis.components.alignment.FileSelectionDialog&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertTrue(list0.isEmpty());
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>List&lt;String&gt; list0 = FileSelectionDialog.getListOfFiles(&quot;/&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(0, list0.size());
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(&quot;/Users/kp11/workspace/applications/Artemis/test/}&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileSystemHandling.appendStringToFile(evoSuiteFile0, &quot;cj62&quot;);
+<span class="nocode"><a name="3">  3: </a></span>List&lt;String&gt; list0 = FileSelectionDialog.getListOfFiles(&quot;}&quot;);
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(list0.isEmpty());
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FileSelectionDialog fileSelectionDialog0 = new FileSelectionDialog((Frame) null, false, &quot;httpuk.ac.sanger.artemis.components.alignment.FileSelectionDialog&quot;, &quot;httpuk.ac.sanger.artemis.components.alignment.FileSelectionDialog&quot;);
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = new String[0];
+<span class="nocode"><a name="2">  2: </a></span>FileSelectionDialog fileSelectionDialog0 = new FileSelectionDialog(stringArray0);
+</pre>
+<h3>Test case 13</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FileSelectionDialog.getListOfFiles((String) null);
+</pre>
+<h3>Test case 14</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FileSelectionDialog.isListOfFiles((String) null);
+</pre>
+<h3>Test case 15</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>boolean boolean0 = FileSelectionDialog.isListOfFiles(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertFalse(boolean0);
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.components.alignment.FileSelectionDialog
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.components.alignment.FileSelectionDialog
+<li>Size: 15
+<li>Length: 24
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.3971872536760357
+<li>BranchCoverage: 0.2608695652173913
+<li>MethodCoverage: 0.6666666666666666
+<li>OutputCoverage: 0.35294117647058826
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

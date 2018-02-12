@@ -1,0 +1,223 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.io.GFF3AttributeBuilder
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.io.GFF3AttributeBuilder: 0.9111598716120964</ul>
+<ul>
+<li>35.166666553883715 fitness evaluations, 0 generations, null statements, 23 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GFF3AttributeBuilder gFF3AttributeBuilder0 = new GFF3AttributeBuilder();
+<span class="nocode"><a name="2">  2: </a></span>GFF3AttributeAggregator gFF3AttributeAggregator0 = mock(GFF3AttributeAggregator.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="3">  3: </a></span>gFF3AttributeBuilder0.unsetAggregator(&quot;Contig cannot be null&quot;, gFF3AttributeAggregator0);
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GFF3AttributeBuilder gFF3AttributeBuilder0 = new GFF3AttributeBuilder();
+<span class="nocode"><a name="2">  2: </a></span>gFF3AttributeBuilder0.unsetMapping(&quot; intersection &quot;, (String) null);
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GFF3AttributeBuilder gFF3AttributeBuilder0 = new GFF3AttributeBuilder();
+<span class="nocode"><a name="2">  2: </a></span>gFF3AttributeBuilder0.unsetGlue((String) null);
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GFF3AttributeBuilder gFF3AttributeBuilder0 = new GFF3AttributeBuilder();
+<span class="nocode"><a name="2">  2: </a></span>gFF3AttributeBuilder0.unsetClone(&quot;&quot;);
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GFF3AttributeBuilder gFF3AttributeBuilder0 = new GFF3AttributeBuilder();
+<span class="nocode"><a name="2">  2: </a></span>gFF3AttributeBuilder0.unignore(&quot;fb+{R3V#(`&quot;);
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GFF3AttributeBuilder gFF3AttributeBuilder0 = new GFF3AttributeBuilder();
+<span class="nocode"><a name="2">  2: </a></span>StringVector stringVector0 = new StringVector();
+<span class="nocode"><a name="3">  3: </a></span>gFF3AttributeBuilder0.add(&quot;Contig cannot be null&quot;, stringVector0);
+<span class="nocode"><a name="4">  4: </a></span>gFF3AttributeBuilder0.add(&quot;mqNRtYgFVP,WGpVkEiT&quot;, &quot;Contig cannot be null&quot;);
+<span class="nocode"><a name="5">  5: </a></span>String string0 = gFF3AttributeBuilder0.toString();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;mqNRtYgFVP,WGpVkEiT=Contig cannot be null&quot;, string0);
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GFF3AttributeBuilder gFF3AttributeBuilder0 = new GFF3AttributeBuilder();
+<span class="nocode"><a name="2">  2: </a></span>String[] stringArray0 = new String[3];
+<span class="nocode"><a name="3">  3: </a></span>StringVector stringVector0 = new StringVector(stringArray0);
+<span class="nocode"><a name="4">  4: </a></span>gFF3AttributeBuilder0.add(&quot;t8\&quot;J5@K#.u.sze?{z*&quot;, stringVector0);
+<span class="nocode"><a name="5">  5: </a></span>gFF3AttributeBuilder0.setGlue(&quot;t8\&quot;J5@K#.u.sze?{z*&quot;, &quot;t8\&quot;J5@K#.u.sze?{z*&quot;);
+<span class="nocode"><a name="6">  6: </a></span>gFF3AttributeBuilder0.add(&quot;t8\&quot;J5@K#.u.sze?{z*&quot;, stringVector0);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(&quot;[null, null, null]&quot;, stringVector0.toString());
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GFF3AttributeBuilder gFF3AttributeBuilder0 = new GFF3AttributeBuilder();
+<span class="nocode"><a name="2">  2: </a></span>gFF3AttributeBuilder0.add(&quot;@{r&quot;, (StringVector) null);
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GFF3AttributeBuilder gFF3AttributeBuilder0 = new GFF3AttributeBuilder();
+<span class="nocode"><a name="2">  2: </a></span>gFF3AttributeBuilder0.setClone(&quot;5L\&quot;\&quot;Z&lt;&quot;, &quot;_jXOt/mnQ|L &quot;);
+<span class="nocode"><a name="3">  3: </a></span>GFF3AttributeAggregator gFF3AttributeAggregator0 = mock(GFF3AttributeAggregator.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="4">  4: </a></span>doReturn((String) null).when(gFF3AttributeAggregator0).process(any(uk.ac.sanger.artemis.util.StringVector.class));
+<span class="nocode"><a name="5">  5: </a></span>gFF3AttributeBuilder0.setAggregator(&quot;_jXOt/mnQ|L &quot;, gFF3AttributeAggregator0);
+<span class="nocode"><a name="6">  6: </a></span>StringVector stringVector0 = new StringVector();
+<span class="nocode"><a name="7">  7: </a></span>gFF3AttributeBuilder0.add(&quot;5L\&quot;\&quot;Z&lt;&quot;, stringVector0);
+<span class="nocode"><a name="8">  8: </a></span>assertTrue(stringVector0.isEmpty());
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GFF3AttributeBuilder gFF3AttributeBuilder0 = new GFF3AttributeBuilder();
+<span class="nocode"><a name="2">  2: </a></span>gFF3AttributeBuilder0.add(&quot;Start_range&quot;, &quot;k\&quot;7&amp;'RYp)q@k(i)C^@b&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = gFF3AttributeBuilder0.toString();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;Start_range=k\&quot;7%26'RYp)q@k(i)C^@b&quot;, string0);
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GFF3AttributeBuilder gFF3AttributeBuilder0 = new GFF3AttributeBuilder();
+<span class="nocode"><a name="2">  2: </a></span>gFF3AttributeBuilder0.setMapping(&quot;&quot;, &quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>gFF3AttributeBuilder0.get(&quot;&quot;);
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GFF3AttributeBuilder gFF3AttributeBuilder0 = new GFF3AttributeBuilder();
+<span class="nocode"><a name="2">  2: </a></span>StringVector stringVector0 = new StringVector();
+<span class="nocode"><a name="3">  3: </a></span>gFF3AttributeBuilder0.add(&quot;&quot;, stringVector0);
+<span class="nocode"><a name="4">  4: </a></span>String string0 = gFF3AttributeBuilder0.get(&quot;&quot;);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;&quot;, string0);
+</pre>
+<h3>Test case 13</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GFF3AttributeBuilder gFF3AttributeBuilder0 = new GFF3AttributeBuilder();
+<span class="nocode"><a name="2">  2: </a></span>gFF3AttributeBuilder0.add(&quot;YWPc@9\&quot;Lr[.Yxt-1=w&quot;, &quot;B/xy4:a&lt;IG,~%PWP&quot;);
+<span class="nocode"><a name="3">  3: </a></span>gFF3AttributeBuilder0.ignore(&quot;YWPc@9\&quot;Lr[.Yxt-1=w&quot;);
+<span class="nocode"><a name="4">  4: </a></span>String string0 = gFF3AttributeBuilder0.toString();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;&quot;, string0);
+</pre>
+<h3>Test case 14</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GFF3AttributeBuilder gFF3AttributeBuilder0 = new GFF3AttributeBuilder();
+<span class="nocode"><a name="2">  2: </a></span>gFF3AttributeBuilder0.add(&quot;Contig cannot be null&quot;, &quot;Contig cannot be null&quot;);
+<span class="nocode"><a name="3">  3: </a></span>gFF3AttributeBuilder0.add(&quot;mqNRtYgFVP,WGpVkEiT&quot;, &quot;Contig cannot be null&quot;);
+<span class="nocode"><a name="4">  4: </a></span>String string0 = gFF3AttributeBuilder0.toString();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;contig cannot be null=Contig cannot be null;mqNRtYgFVP,WGpVkEiT=Contig cannot be null&quot;, string0);
+</pre>
+<h3>Test case 15</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GFF3AttributeBuilder gFF3AttributeBuilder0 = new GFF3AttributeBuilder();
+<span class="nocode"><a name="2">  2: </a></span>StringVector stringVector0 = new StringVector();
+<span class="nocode"><a name="3">  3: </a></span>gFF3AttributeBuilder0.setMapping(&quot;D-?4JdOtK/XYF\&quot;&quot;, &quot;Tz^&quot;);
+<span class="nocode"><a name="4">  4: </a></span>gFF3AttributeBuilder0.add(&quot;D-?4JdOtK/XYF\&quot;&quot;, stringVector0);
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(stringVector0.isEmpty());
+</pre>
+<h3>Test case 16</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GFF3AttributeBuilder gFF3AttributeBuilder0 = new GFF3AttributeBuilder();
+<span class="nocode"><a name="2">  2: </a></span>StringVector stringVector0 = new StringVector();
+<span class="nocode"><a name="3">  3: </a></span>gFF3AttributeBuilder0.setClone(&quot;Contig cannot be null&quot;, &quot;Contig cannot be null&quot;);
+<span class="nocode"><a name="4">  4: </a></span>gFF3AttributeBuilder0.setMapping(&quot;D-?4JdOtK/XYF\&quot;&quot;, &quot;Contig cannot be null&quot;);
+<span class="nocode"><a name="5">  5: </a></span>gFF3AttributeBuilder0.add(&quot;D-?4JdOtK/XYF\&quot;&quot;, stringVector0);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, stringVector0.size());
+</pre>
+<h3>Test case 17</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GFF3AttributeBuilder gFF3AttributeBuilder0 = new GFF3AttributeBuilder();
+<span class="nocode"><a name="2">  2: </a></span>StringVector stringVector0 = new StringVector(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>gFF3AttributeBuilder0.add(&quot;&quot;, stringVector0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;[]&quot;, stringVector0.toString());
+</pre>
+<h3>Test case 18</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GFF3AttributeBuilder gFF3AttributeBuilder0 = new GFF3AttributeBuilder();
+<span class="nocode"><a name="2">  2: </a></span>StringVector stringVector0 = new StringVector();
+<span class="nocode"><a name="3">  3: </a></span>GFF3AttributeAggregator gFF3AttributeAggregator0 = mock(GFF3AttributeAggregator.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="4">  4: </a></span>doReturn((String) null).when(gFF3AttributeAggregator0).process(any(uk.ac.sanger.artemis.util.StringVector.class));
+<span class="nocode"><a name="5">  5: </a></span>gFF3AttributeBuilder0.setAggregator(&quot;D-?4JdOtK/XYF\&quot;&quot;, gFF3AttributeAggregator0);
+<span class="nocode"><a name="6">  6: </a></span>gFF3AttributeBuilder0.add(&quot;D-?4JdOtK/XYF\&quot;&quot;, stringVector0);
+<span class="nocode"><a name="7">  7: </a></span>assertTrue(stringVector0.isEmpty());
+</pre>
+<h3>Test case 19</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GFF3AttributeBuilder gFF3AttributeBuilder0 = new GFF3AttributeBuilder();
+<span class="nocode"><a name="2">  2: </a></span>gFF3AttributeBuilder0.add((String) null, (String) null);
+</pre>
+<h3>Test case 20</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GFF3AttributeBuilder gFF3AttributeBuilder0 = new GFF3AttributeBuilder();
+<span class="nocode"><a name="2">  2: </a></span>StringVector stringVector0 = new StringVector((String) null);
+<span class="nocode"><a name="3">  3: </a></span>gFF3AttributeBuilder0.add((String) null, stringVector0);
+</pre>
+<h3>Test case 21</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GFF3AttributeBuilder gFF3AttributeBuilder0 = new GFF3AttributeBuilder();
+<span class="nocode"><a name="2">  2: </a></span>StringVector stringVector0 = new StringVector(&quot;CLX,(GZhg@ET|&quot;);
+<span class="nocode"><a name="3">  3: </a></span>gFF3AttributeBuilder0.add((String) null, stringVector0);
+<span class="nocode"><a name="4">  4: </a></span>gFF3AttributeBuilder0.toString();
+</pre>
+<h3>Test case 22</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GFF3AttributeBuilder gFF3AttributeBuilder0 = new GFF3AttributeBuilder();
+<span class="nocode"><a name="2">  2: </a></span>gFF3AttributeBuilder0.add(&quot;&quot;, &quot;JEOSIzB8!$J\&quot;qOy&quot;);
+<span class="nocode"><a name="3">  3: </a></span>gFF3AttributeBuilder0.toString();
+</pre>
+<h3>Test case 23</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GFF3AttributeBuilder gFF3AttributeBuilder0 = new GFF3AttributeBuilder();
+<span class="nocode"><a name="2">  2: </a></span>gFF3AttributeBuilder0.add(&quot;&quot;, &quot;Y7LtU(@&quot;);
+<span class="nocode"><a name="3">  3: </a></span>gFF3AttributeBuilder0.setMapping(&quot;Y7LtU(@&quot;, &quot;&quot;);
+<span class="nocode"><a name="4">  4: </a></span>String string0 = gFF3AttributeBuilder0.get(&quot;Y7LtU(@&quot;);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(&quot;Y7LtU(@&quot;, string0);
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.io.GFF3AttributeBuilder
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.io.GFF3AttributeBuilder
+<li>Size: 23
+<li>Length: 81
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.9111598716120964
+<li>BranchCoverage: 0.927536231884058
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 0.6666666666666666
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

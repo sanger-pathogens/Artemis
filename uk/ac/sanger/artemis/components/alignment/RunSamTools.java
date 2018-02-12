@@ -26,7 +26,7 @@ package uk.ac.sanger.artemis.components.alignment;
 import java.io.*;
 import java.util.List;
 
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMRecord;
 
 /**
 * Used to run an samtools process this reads stdout and 

@@ -409,7 +409,7 @@ public class MultiComparator extends JFrame
           MultiComparator.this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
           String ngs[] = System.getProperty(bamProperty).split("[\\s,]");
           FileSelectionDialog fileChooser = new FileSelectionDialog(ngs);
-          List<String> listBams = fileChooser.getFiles(".*\\.bam$");
+          List<String> listBams = fileChooser.getFiles(BamView.BAM_SUFFIX);
           List<String> vcfFiles = fileChooser.getFiles(VCFview.VCFFILE_SUFFIX);
           loadBamAndVcf(listBams, vcfFiles, index);
           MultiComparator.this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
@@ -968,15 +968,15 @@ public class MultiComparator extends JFrame
         entry_group_menu.addSeparator();
       }
 
-      JMenuItem read_bam_file = new JMenuItem("Read BAM / VCF ...");
+      JMenuItem read_bam_file = new JMenuItem("Read BAM / CRAM / VCF ...");
       final int index = i;
       read_bam_file.addActionListener(new ActionListener()
       {
         public void actionPerformed(ActionEvent e)
         {
           FileSelectionDialog fileChooser = new FileSelectionDialog(
-              null, false, "BAM / VCF View", "BAM / VCF");
-          List<String> listBams = fileChooser.getFiles(".*\\.bam$");
+              null, false, "BAM / CRAM / VCF View", "BAM / CRAM / VCF");
+          List<String> listBams = fileChooser.getFiles(BamView.BAM_SUFFIX);
           List<String> vcfFiles = fileChooser.getFiles(VCFview.VCFFILE_SUFFIX);
           
           loadBamAndVcf(listBams, vcfFiles, index);

@@ -1,0 +1,130 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.components.genebuilder.ortholog.SimilarityTable
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.components.genebuilder.ortholog.SimilarityTable: 0.5058379851684162</ul>
+<ul>
+<li>864.8866837204724 fitness evaluations, 0 generations, null statements, 9 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier(&quot;Overlapping Features (to be fixed before reordering)&quot;, &quot;Overlapping Features (to be fixed before reordering)&quot;);
+<span class="nocode"><a name="2">  2: </a></span>JPasswordField jPasswordField0 = new JPasswordField(0);
+<span class="nocode"><a name="3">  3: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;Overlapping Features (to be fixed before reordering)&quot;, jPasswordField0, &quot;jBEY#EK&quot;, &quot;South&quot;, true);
+<span class="nocode"><a name="4">  4: </a></span>SimilarityTable similarityTable0 = new SimilarityTable(qualifier0, databaseDocument0);
+<span class="nocode"><a name="5">  5: </a></span>similarityTable0.updateQualifierString(0);
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>StringVector stringVector0 = new StringVector(&quot;sYFSby!V#Z]hn&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Qualifier qualifier0 = new Qualifier(&quot;&quot;, stringVector0);
+<span class="nocode"><a name="3">  3: </a></span>SimilarityTable similarityTable0 = new SimilarityTable(qualifier0, (DatabaseDocument) null);
+<span class="nocode"><a name="4">  4: </a></span>JButton jButton0 = similarityTable0.getInfoLevelButton();
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(jButton0.getIgnoreRepaint());
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier(&quot;!VB[d^Y#og v,n/6S&quot;, &quot;ySlPyw_(o/uU&quot;);
+<span class="nocode"><a name="2">  2: </a></span>String[] stringArray0 = new String[8];
+<span class="nocode"><a name="3">  3: </a></span>stringArray0[0] = &quot;!VB[d^Y#og v,n/6S&quot;;
+<span class="nocode"><a name="4">  4: </a></span>stringArray0[1] = &quot;!VB[d^Y#og v,n/6S&quot;;
+<span class="nocode"><a name="5">  5: </a></span>stringArray0[2] = &quot;\&quot;sYFSb!V#Z]hn&quot;;
+<span class="nocode"><a name="6">  6: </a></span>stringArray0[3] = &quot;sYFSby!V#Z]hn\&quot;&quot;;
+<span class="nocode"><a name="7">  7: </a></span>StringVector stringVector0 = new StringVector(stringArray0);
+<span class="nocode"><a name="8">  8: </a></span>qualifier0.addValues(stringVector0);
+<span class="nocode"><a name="9">  9: </a></span>JPasswordField jPasswordField0 = new JPasswordField(&quot;ySlPyw_(o/uU&quot;);
+<span class="nocode"><a name="10"> 10: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;!VB[d^Y#og v,n/6S&quot;, jPasswordField0);
+<span class="nocode"><a name="11"> 11: </a></span>SimilarityTable similarityTable0 = new SimilarityTable(qualifier0, databaseDocument0);
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier(&quot;'az@cZ;q0nU%W^&quot;, &quot;'az@cZ;q0nU%W^&quot;);
+<span class="nocode"><a name="2">  2: </a></span>JPasswordField jPasswordField0 = new JPasswordField(&quot;&quot;, 0);
+<span class="nocode"><a name="3">  3: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;'az@cZ;q0nU%W^&quot;, jPasswordField0, &quot;'az@cZ;q0nU%W^&quot;, &quot;&quot;, true);
+<span class="nocode"><a name="4">  4: </a></span>SimilarityTable similarityTable0 = new SimilarityTable(qualifier0, databaseDocument0);
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>StringVector stringVector0 = new StringVector();
+<span class="nocode"><a name="2">  2: </a></span>boolean boolean0 = SimilarityTable.containsStringInStringVector(&quot;subject &quot;, stringVector0);
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = new String[3];
+<span class="nocode"><a name="2">  2: </a></span>StringVector stringVector0 = new StringVector(stringArray0);
+<span class="nocode"><a name="3">  3: </a></span>SimilarityTable.containsStringInStringVector(&quot;0;=rQ&amp;;iZ&quot;, stringVector0);
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String[] stringArray0 = new String[3];
+<span class="nocode"><a name="2">  2: </a></span>stringArray0[0] = &quot;0;=rQ&amp;;iZ&quot;;
+<span class="nocode"><a name="3">  3: </a></span>StringVector stringVector0 = new StringVector(stringArray0);
+<span class="nocode"><a name="4">  4: </a></span>SimilarityTable.containsStringInStringVector(&quot;0;=rQ&amp;;iZ&quot;, stringVector0);
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier(&quot;&quot;, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>JPasswordField jPasswordField0 = new JPasswordField(&quot;&quot;);
+<span class="nocode"><a name="3">  3: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;&quot;, jPasswordField0);
+<span class="nocode"><a name="4">  4: </a></span>SimilarityTable similarityTable0 = new SimilarityTable(qualifier0, databaseDocument0);
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Qualifier qualifier0 = new Qualifier(&quot;!VB[d^Y#og v,n/6S&quot;, &quot;ySlPyw_(o/uU&quot;);
+<span class="nocode"><a name="2">  2: </a></span>JPasswordField jPasswordField0 = new JPasswordField(&quot;ySlPyw_(o/uU&quot;);
+<span class="nocode"><a name="3">  3: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;!VB[d^Y#og v,n/6S&quot;, jPasswordField0);
+<span class="nocode"><a name="4">  4: </a></span>SimilarityTable similarityTable0 = new SimilarityTable(qualifier0, databaseDocument0);
+<span class="nocode"><a name="5">  5: </a></span>similarityTable0.updateQualifierString(177);
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.components.genebuilder.ortholog.SimilarityTable
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.components.genebuilder.ortholog.SimilarityTable
+<li>Size: 9
+<li>Length: 42
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.5058379851684162
+<li>BranchCoverage: 0.275
+<li>MethodCoverage: 0.8
+<li>OutputCoverage: 0.375
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

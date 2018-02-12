@@ -42,8 +42,8 @@ import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.sequence.Bases;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
 
-import net.sf.samtools.AlignmentBlock;
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.AlignmentBlock;
+import htsjdk.samtools.SAMRecord;
 
   public class SnpPanel extends AbstractGraphPanel
   {

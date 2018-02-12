@@ -1,0 +1,486 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.AlignMatch
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.AlignMatch: 0.980359937402191</ul>
+<ul>
+<li>8.366666666666667 fitness evaluations, 0 generations, null statements, 46 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(0);
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, false, 1076, 1076);
+<span class="nocode"><a name="3">  3: </a></span>int int0 = alignMatch0.getScore();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1076, alignMatch0.getPercentID());
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(alignMatch0.isRevMatch());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(1076, int0);
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range((-635), (-635));
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, (Range) null, true, (-635), (-1));
+<span class="nocode"><a name="3">  3: </a></span>Range range1 = alignMatch0.getQuerySequenceRange();
+<span class="nocode"><a name="4">  4: </a></span>assertNull(range1);
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(alignMatch0.isRevMatch());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, alignMatch0.getLength());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals((-635), alignMatch0.getScore());
+<span class="nocode"><a name="8">  8: </a></span>assertEquals((-1), alignMatch0.getPercentID());
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(0);
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, false, 1076, 1076);
+<span class="nocode"><a name="3">  3: </a></span>alignMatch0.getSubjectSequenceRange();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1076, alignMatch0.getPercentID());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(1076, alignMatch0.getScore());
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(alignMatch0.isRevMatch());
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range((-1311));
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, (Range) null, false, (-1311), (-1));
+<span class="nocode"><a name="3">  3: </a></span>int int0 = alignMatch0.getLength();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, int0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals((-1311), alignMatch0.getScore());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals((-1), alignMatch0.getPercentID());
+<span class="nocode"><a name="7">  7: </a></span>assertFalse(alignMatch0.isRevMatch());
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(0);
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, false, 1076, 1076);
+<span class="nocode"><a name="3">  3: </a></span>int int0 = alignMatch0.getPercentID();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1076, alignMatch0.getScore());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(1076, int0);
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(alignMatch0.isRevMatch());
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range((-1311));
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, (Range) null, false, (-1311), (-1));
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = alignMatch0.isRevMatch();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, alignMatch0.getLength());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals((-1311), alignMatch0.getScore());
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(boolean0);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals((-1), alignMatch0.getPercentID());
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(0);
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, false, 1076, 1076);
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = alignMatch0.isSelfMatch();
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(alignMatch0.isRevMatch());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(1076, alignMatch0.getScore());
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(boolean0);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(1076, alignMatch0.getPercentID());
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(0);
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, false, 1076, 1076);
+<span class="nocode"><a name="3">  3: </a></span>alignMatch0.setRange(1076, 0, true, true);
+<span class="nocode"><a name="4">  4: </a></span>int int0 = alignMatch0.getQuerySequenceStart();
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(alignMatch0.isSelfMatch());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, int0);
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(1);
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, true, 1, (-1262));
+<span class="nocode"><a name="3">  3: </a></span>alignMatch0.getQuerySequenceEnd();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, alignMatch0.getLength());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals((-1262), alignMatch0.getPercentID());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(1, alignMatch0.getScore());
+<span class="nocode"><a name="7">  7: </a></span>assertTrue(alignMatch0.isRevMatch());
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(0);
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, false, 1076, 1076);
+<span class="nocode"><a name="3">  3: </a></span>alignMatch0.setRange(1076, (-1), false, false);
+<span class="nocode"><a name="4">  4: </a></span>int int0 = alignMatch0.getQuerySequenceStart();
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(alignMatch0.isSelfMatch());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals((-1), int0);
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(0);
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, false, 1076, 1076);
+<span class="nocode"><a name="3">  3: </a></span>alignMatch0.setRange((-1), 0, true, false);
+<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = alignMatch0.isSelfMatch();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals((-1), alignMatch0.getSubjectSequenceStart());
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range((-2492));
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, true, (-2492), (-2492));
+<span class="nocode"><a name="3">  3: </a></span>alignMatch0.setRange((-2492), (-2492), false, true);
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(alignMatch0.isRevMatch());
+</pre>
+<h3>Test case 13</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(0);
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, false, 1076, 1076);
+<span class="nocode"><a name="3">  3: </a></span>alignMatch0.setRange((-1), 0, true, false);
+<span class="nocode"><a name="4">  4: </a></span>alignMatch0.setRange(1076, (-1), false, false);
+<span class="nocode"><a name="5">  5: </a></span>boolean boolean0 = alignMatch0.isSelfMatch();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(1076, alignMatch0.getQuerySequenceEnd());
+<span class="nocode"><a name="7">  7: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 14</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(0);
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, false, 1076, 1076);
+<span class="nocode"><a name="3">  3: </a></span>alignMatch0.getSubjectSequenceStart();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1076, alignMatch0.getScore());
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(alignMatch0.isRevMatch());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(1076, alignMatch0.getPercentID());
+</pre>
+<h3>Test case 15</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(0);
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, false, 1076, 1076);
+<span class="nocode"><a name="3">  3: </a></span>alignMatch0.getSubjectSequenceEnd();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1076, alignMatch0.getPercentID());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(1076, alignMatch0.getScore());
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(alignMatch0.isRevMatch());
+</pre>
+<h3>Test case 16</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(0);
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, false, 1076, 1076);
+<span class="nocode"><a name="3">  3: </a></span>alignMatch0.getQuerySequenceStart();
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(alignMatch0.isRevMatch());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(1076, alignMatch0.getScore());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(1076, alignMatch0.getPercentID());
+</pre>
+<h3>Test case 17</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(0);
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, false, 0, 0);
+<span class="nocode"><a name="3">  3: </a></span>alignMatch0.getQuerySequenceEnd();
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(alignMatch0.isRevMatch());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, alignMatch0.getPercentID());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, alignMatch0.getScore());
+</pre>
+<h3>Test case 18</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>AlignMatch alignMatch0 = new AlignMatch((Range) null, (Range) null, false, 765, (-919));
+</pre>
+<h3>Test case 19</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>AlignMatch.copy((AlignMatch) null);
+</pre>
+<h3>Test case 20</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range((-1311));
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, (Range) null, false, (-1311), (-1));
+<span class="nocode"><a name="3">  3: </a></span>alignMatch0.getQuerySequenceStart();
+</pre>
+<h3>Test case 21</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(0, 0);
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, (Range) null, false, 0, (-678));
+<span class="nocode"><a name="3">  3: </a></span>alignMatch0.isSelfMatch();
+</pre>
+<h3>Test case 22</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(0, 1);
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, false, 0, 0);
+<span class="nocode"><a name="3">  3: </a></span>AlignMatch alignMatch1 = AlignMatch.copy(alignMatch0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, alignMatch1.getScore());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, alignMatch1.getPercentID());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, alignMatch0.getQuerySequenceStart());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(1, alignMatch1.getLength());
+</pre>
+<h3>Test case 23</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(0);
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, false, 1076, 1076);
+<span class="nocode"><a name="3">  3: </a></span>AlignMatch alignMatch1 = AlignMatch.copy(alignMatch0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1076, alignMatch1.getScore());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(1076, alignMatch0.getScore());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(1076, alignMatch0.getPercentID());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(1076, alignMatch1.getPercentID());
+<span class="nocode"><a name="8">  8: </a></span>assertFalse(alignMatch0.isRevMatch());
+</pre>
+<h3>Test case 24</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range((-151));
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, false, (-163), 0);
+<span class="nocode"><a name="3">  3: </a></span>AlignMatch alignMatch1 = AlignMatch.copy(alignMatch0);
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(alignMatch0.isRevMatch());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, alignMatch1.getPercentID());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals((-163), alignMatch0.getScore());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, alignMatch1.getLength());
+<span class="nocode"><a name="8">  8: </a></span>assertEquals((-163), alignMatch1.getScore());
+</pre>
+<h3>Test case 25</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(1);
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, true, 1, (-1262));
+<span class="nocode"><a name="3">  3: </a></span>AlignMatch alignMatch1 = AlignMatch.copy(alignMatch0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, alignMatch1.getLength());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(1, alignMatch1.getScore());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(1, alignMatch0.getScore());
+<span class="nocode"><a name="7">  7: </a></span>assertTrue(alignMatch0.isRevMatch());
+<span class="nocode"><a name="8">  8: </a></span>assertEquals((-1262), alignMatch1.getPercentID());
+<span class="nocode"><a name="9">  9: </a></span>assertEquals((-1262), alignMatch0.getPercentID());
+</pre>
+<h3>Test case 26</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(856, 1355);
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, true, 1355, 1);
+<span class="nocode"><a name="3">  3: </a></span>AlignMatch alignMatch1 = AlignMatch.copy(alignMatch0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1355, alignMatch1.getScore());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(1355, alignMatch0.getScore());
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(alignMatch0.isRevMatch());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(1, alignMatch1.getPercentID());
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(1, alignMatch0.getPercentID());
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(499, alignMatch1.getLength());
+</pre>
+<h3>Test case 27</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(0, 1);
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, false, 0, 0);
+<span class="nocode"><a name="3">  3: </a></span>int int0 = alignMatch0.getLength();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1, int0);
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, alignMatch0.getScore());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, alignMatch0.getPercentID());
+<span class="nocode"><a name="7">  7: </a></span>assertTrue(alignMatch0.isSelfMatch());
+</pre>
+<h3>Test case 28</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(1284, 1284);
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, false, (-2064), (-1));
+<span class="nocode"><a name="3">  3: </a></span>int int0 = alignMatch0.getPercentID();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-2064), alignMatch0.getScore());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, alignMatch0.getLength());
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(alignMatch0.isRevMatch());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals((-1), int0);
+</pre>
+<h3>Test case 29</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range((-151));
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, false, (-163), 0);
+<span class="nocode"><a name="3">  3: </a></span>int int0 = alignMatch0.getPercentID();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-163), alignMatch0.getScore());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, alignMatch0.getLength());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, int0);
+<span class="nocode"><a name="7">  7: </a></span>assertFalse(alignMatch0.isRevMatch());
+</pre>
+<h3>Test case 30</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range((-1));
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, true, (-1), (-211));
+<span class="nocode"><a name="3">  3: </a></span>alignMatch0.getQuerySequenceEnd();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-1), alignMatch0.getScore());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals((-211), alignMatch0.getPercentID());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, alignMatch0.getLength());
+<span class="nocode"><a name="7">  7: </a></span>assertTrue(alignMatch0.isRevMatch());
+</pre>
+<h3>Test case 31</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(0);
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, false, 1076, 1076);
+<span class="nocode"><a name="3">  3: </a></span>alignMatch0.getQuerySequenceRange();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(1076, alignMatch0.getScore());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(1076, alignMatch0.getPercentID());
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(alignMatch0.isRevMatch());
+</pre>
+<h3>Test case 32</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range((-649), (-649));
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, false, (-649), (-649));
+<span class="nocode"><a name="3">  3: </a></span>alignMatch0.getQuerySequenceRange();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-649), alignMatch0.getScore());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals((-649), alignMatch0.getPercentID());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, alignMatch0.getLength());
+<span class="nocode"><a name="7">  7: </a></span>assertFalse(alignMatch0.isRevMatch());
+</pre>
+<h3>Test case 33</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(14);
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, true, 14, 14);
+<span class="nocode"><a name="3">  3: </a></span>alignMatch0.getQuerySequenceRange();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(14, alignMatch0.getScore());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, alignMatch0.getLength());
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(alignMatch0.isRevMatch());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(14, alignMatch0.getPercentID());
+</pre>
+<h3>Test case 34</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(1165, 1165);
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, false, (-1), 2321);
+<span class="nocode"><a name="3">  3: </a></span>alignMatch0.getQuerySequenceStart();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(2321, alignMatch0.getPercentID());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, alignMatch0.getLength());
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(alignMatch0.isRevMatch());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals((-1), alignMatch0.getScore());
+</pre>
+<h3>Test case 35</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range((-151));
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, false, (-163), 0);
+<span class="nocode"><a name="3">  3: </a></span>int int0 = alignMatch0.getScore();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-163), int0);
+<span class="nocode"><a name="5">  5: </a></span>assertFalse(alignMatch0.isRevMatch());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, alignMatch0.getPercentID());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, alignMatch0.getLength());
+</pre>
+<h3>Test case 36</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range((-1102), (-1102));
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, true, 0, (-1102));
+<span class="nocode"><a name="3">  3: </a></span>int int0 = alignMatch0.getScore();
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(alignMatch0.isRevMatch());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(0, alignMatch0.getLength());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals((-1102), alignMatch0.getPercentID());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, int0);
+</pre>
+<h3>Test case 37</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range((-2492));
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, true, (-2492), (-2492));
+<span class="nocode"><a name="3">  3: </a></span>alignMatch0.getSubjectSequenceEnd();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals((-2492), alignMatch0.getScore());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals((-2492), alignMatch0.getPercentID());
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(alignMatch0.isRevMatch());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, alignMatch0.getLength());
+</pre>
+<h3>Test case 38</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(0);
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, false, 1076, 1076);
+<span class="nocode"><a name="3">  3: </a></span>alignMatch0.setRange(1076, 0, true, true);
+<span class="nocode"><a name="4">  4: </a></span>int int0 = alignMatch0.getSubjectSequenceEnd();
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(alignMatch0.isRevMatch());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(1076, int0);
+</pre>
+<h3>Test case 39</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range((-1999));
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, true, (-1999), (-1999));
+<span class="nocode"><a name="3">  3: </a></span>alignMatch0.getSubjectSequenceRange();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, alignMatch0.getLength());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals((-1999), alignMatch0.getPercentID());
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(alignMatch0.isRevMatch());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals((-1999), alignMatch0.getScore());
+</pre>
+<h3>Test case 40</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(14);
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, true, 14, 14);
+<span class="nocode"><a name="3">  3: </a></span>alignMatch0.getSubjectSequenceRange();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(14, alignMatch0.getScore());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(14, alignMatch0.getPercentID());
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(alignMatch0.isRevMatch());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, alignMatch0.getLength());
+</pre>
+<h3>Test case 41</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(0);
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, false, 1076, 1076);
+<span class="nocode"><a name="3">  3: </a></span>alignMatch0.setRange((-1), 1151, true, true);
+<span class="nocode"><a name="4">  4: </a></span>int int0 = alignMatch0.getSubjectSequenceStart();
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(alignMatch0.isRevMatch());
+<span class="nocode"><a name="6">  6: </a></span>assertEquals((-1), int0);
+</pre>
+<h3>Test case 42</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(138, 138);
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, false, (-2964), (-1));
+<span class="nocode"><a name="3">  3: </a></span>alignMatch0.getSubjectSequenceStart();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(0, alignMatch0.getLength());
+<span class="nocode"><a name="5">  5: </a></span>assertEquals((-2964), alignMatch0.getScore());
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(alignMatch0.isRevMatch());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals((-1), alignMatch0.getPercentID());
+</pre>
+<h3>Test case 43</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(856, 1355);
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, true, 1355, 1);
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = alignMatch0.isRevMatch();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(499, alignMatch0.getLength());
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(boolean0);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(1, alignMatch0.getPercentID());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(1355, alignMatch0.getScore());
+</pre>
+<h3>Test case 44</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(0, 0);
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, true, 0, 0);
+<span class="nocode"><a name="3">  3: </a></span>alignMatch0.setRange(0, 0, true, true);
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(alignMatch0.isRevMatch());
+</pre>
+<h3>Test case 45</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(1667, 1667);
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, false, 1667, 1667);
+<span class="nocode"><a name="3">  3: </a></span>alignMatch0.setRange(0, 92, false, true);
+<span class="nocode"><a name="4">  4: </a></span>boolean boolean0 = alignMatch0.isSelfMatch();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(92, alignMatch0.getQuerySequenceStart());
+<span class="nocode"><a name="6">  6: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 46</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Range range0 = new Range(14);
+<span class="nocode"><a name="2">  2: </a></span>AlignMatch alignMatch0 = new AlignMatch(range0, range0, true, 14, 14);
+<span class="nocode"><a name="3">  3: </a></span>alignMatch0.setRange((-1), 14, true, false);
+<span class="nocode"><a name="4">  4: </a></span>alignMatch0.setRange((-2614), (-1), false, false);
+<span class="nocode"><a name="5">  5: </a></span>boolean boolean0 = alignMatch0.isSelfMatch();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals((-1), alignMatch0.getSubjectSequenceStart());
+<span class="nocode"><a name="7">  7: </a></span>assertFalse(boolean0);
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.AlignMatch
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.AlignMatch
+<li>Size: 46
+<li>Length: 144
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.980359937402191
+<li>BranchCoverage: 1.0
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 0.8873239436619719
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

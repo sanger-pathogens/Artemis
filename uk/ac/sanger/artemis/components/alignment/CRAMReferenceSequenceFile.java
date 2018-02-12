@@ -1,4 +1,4 @@
-/* BamView
+/* CRAMReferenceSequenceFile.java
  *
  * created: 2012
  *
@@ -23,17 +23,23 @@
  */
 package uk.ac.sanger.artemis.components.alignment;
 
-import net.sf.picard.reference.ReferenceSequence;
-import net.sf.picard.reference.ReferenceSequenceFile;
-import net.sf.samtools.SAMSequenceDictionary;
+import htsjdk.samtools.reference.ReferenceSequence;
+import htsjdk.samtools.reference.ReferenceSequenceFile;
+import htsjdk.samtools.SAMSequenceDictionary;
 import uk.ac.sanger.artemis.Entry;
+import uk.ac.sanger.artemis.io.IndexFastaStream;
 import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.sequence.Bases;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
 
-
-  class CRAMReferenceSequenceFile implements ReferenceSequenceFile
-  {
+/**
+ * Holds the reference data required for CRAM file functionality.
+ * 
+ * @author kp11
+ *
+ */
+class CRAMReferenceSequenceFile implements ReferenceSequenceFile
+{
     private Entry sequence;
     private BamView bamView;
     
@@ -51,10 +57,21 @@ import uk.ac.sanger.artemis.util.OutOfRangeException;
     */
     public ReferenceSequence getSequence(String contig)
     {
-      return getSubsequenceAt(contig, 1L, sequence.getBases().getLength());
-      
-      //return new ReferenceSequence(sequence.getName(), 0, 
-      //    sequence.getBases().getForwardStrand().getStrandBases().getBytes());
+    		ReferenceSequence result = null;
+    	
+    		if(!isReferenceIndexed())
+        {
+    			result = getSubsequenceAt(contig, 1L, sequence.getBases().getLength());
+        }
+    		else
+    		{
+    			// We can use the fasta index...
+        	    //
+    			IndexFastaStream is = (IndexFastaStream)sequence.getEMBLEntry().getSequence();
+    			result = is.getIndexSeqFile().getSequence(contig);
+    		}
+    	
+    		return result;
     }
 
     public SAMSequenceDictionary getSequenceDictionary()
@@ -72,23 +89,34 @@ import uk.ac.sanger.artemis.util.OutOfRangeException;
     */
     public ReferenceSequence getSubsequenceAt(String contig, long start, long stop )
     {
+    	
+    	  ReferenceSequence result = null;
+    	  
       try
       {
-        if(bamView.isConcatSequences())
+    	  	if(!isReferenceIndexed())
         {
-          int offset = bamView.getSequenceOffset(contig);
-          start += offset;
-          stop  += offset;
+        		int offset = bamView.getSequenceOffset(contig);
+        		start += offset;
+        		stop  += offset;
+          
+        		result = new ReferenceSequence(sequence.getName(), 0, 
+                  sequence.getBases().getSubSequence(new Range((int)start, (int)stop), Bases.FORWARD).getBytes());
         }
-        
-        return new ReferenceSequence(sequence.getName(), 0, 
-            sequence.getBases().getSubSequence(new Range((int)start, (int)stop), Bases.FORWARD).getBytes());
+        else
+        {
+        		// We can use the fasta index...
+        	    //
+        	  	IndexFastaStream is = (IndexFastaStream)sequence.getEMBLEntry().getSequence();
+        	  	result = is.getIndexSeqFile().getSubsequenceAt(contig, (int)start, (int)stop);
+        }
       }
       catch (OutOfRangeException e)
       {
         e.printStackTrace();
       }
-      return null;
+      
+      return result;
     }
 
     /**
@@ -111,4 +139,23 @@ import uk.ac.sanger.artemis.util.OutOfRangeException;
     public void close()
     {
     }
-  }
+    
+    /**
+     * Return true if the reference fasta has an .fai index file.
+     * @return boolean
+     */
+    protected boolean isReferenceIndexed() 
+    {
+    		boolean result = true;
+    		
+    		try
+    		{
+    			result = ( sequence.getEMBLEntry().getSequence() instanceof IndexFastaStream );
+    		} catch (Exception e) 
+    		{
+    			result = false;
+    		}
+    		
+    		return result;
+    }
+}

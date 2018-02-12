@@ -80,7 +80,6 @@ import javax.swing.*;
  *  FeatureEdit class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureEdit.java,v 1.70 2009-09-24 15:01:27 tjc Exp $
  **/
 public class FeatureEdit extends JPanel
                          implements EntryChangeListener, FeatureChangeListener 
@@ -123,10 +122,6 @@ public class FeatureEdit extends JPanel
   /** EntryGroup that contains this Feature (passed to the constructor). */
   private EntryGroup entry_group;
 
-  /**
-   *  The datestamp of the RWCorbaFeature when updateFromFeature() was last
-   *  called or null if this is not a RWCorbaFeature.
-   **/
   private Date datestamp = null;
 
   /** The Selection that was passed to the constructor. */
@@ -387,7 +382,7 @@ public class FeatureEdit extends JPanel
 
     key_choice.addItemListener(new ItemListener() 
     {
-      public void itemStateChanged(ItemEvent _) 
+      public void itemStateChanged(ItemEvent itemEvent) 
       {
         qualifier_choice.setKey(key_choice.getSelectedItem());
       }

@@ -1,0 +1,178 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.io.StreamSequence
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.io.StreamSequence: 0.5988455850534263</ul>
+<ul>
+<li>504.79362378879574 fitness evaluations, 0 generations, null statements, 19 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>emblStreamSequence0.setSequencePackingCapacity(855);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, emblStreamSequence0.getGCount());
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;&quot;, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>int int0 = fastaStreamSequence0.getOtherCount();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, int0);
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;x1T:MlWi'Sd3p&quot;, &quot;x1T:MlWi'Sd3p&quot;);
+<span class="nocode"><a name="2">  2: </a></span>fastaStreamSequence0.forceReset();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(14, fastaStreamSequence0.getOtherCount());
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;x1T:MlWi'Sd3p&quot;, &quot;x1T:MlWi'Sd3p&quot;);
+<span class="nocode"><a name="2">  2: </a></span>char[] charArray0 = new char[7];
+<span class="nocode"><a name="3">  3: </a></span>fastaStreamSequence0.appendChar(charArray0);
+<span class="nocode"><a name="4">  4: </a></span>fastaStreamSequence0.getCharSequence();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(21, fastaStreamSequence0.length());
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;org.apache.log4j.spi.ThrowableInformation&quot;);
+<span class="nocode"><a name="2">  2: </a></span>fastaStreamSequence0.copy();
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;x1T:MlWi'Sd3p&quot;, &quot;x1T:MlWi'Sd3p&quot;);
+<span class="nocode"><a name="2">  2: </a></span>fastaStreamSequence0.getCharSequence();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(14, fastaStreamSequence0.length());
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;xEYR+2\&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>char[] charArray0 = new char[1];
+<span class="nocode"><a name="3">  3: </a></span>fastaStreamSequence0.appendChar(charArray0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(8, fastaStreamSequence0.getOtherCount());
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;pBhLW~@q&gt;c/0&lt;9'Q_cl&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(2, emblStreamSequence0.getCCount());
+<span class="nocode"><a name="3">  3: </a></span>
+<span class="nocode"><a name="4">  4: </a></span>emblStreamSequence0.setCounts();
+<span class="nocode"><a name="5">  5: </a></span>assertEquals(15, emblStreamSequence0.getOtherCount());
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>int int0 = emblStreamSequence0.getGCount();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, int0);
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature();
+<span class="nocode"><a name="2">  2: </a></span>Feature feature0 = new Feature(genbankStreamFeature0);
+<span class="nocode"><a name="3">  3: </a></span>StringReader stringReader0 = (StringReader)feature0.toReader();
+<span class="nocode"><a name="4">  4: </a></span>LinePushBackReader linePushBackReader0 = new LinePushBackReader(stringReader0);
+<span class="nocode"><a name="5">  5: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(linePushBackReader0);
+<span class="nocode"><a name="6">  6: </a></span>int int0 = rawStreamSequence0.getCCount();
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(0, rawStreamSequence0.getOtherCount());
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(0, int0);
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>int int0 = emblStreamSequence0.getACount();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(0, int0);
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>fastaStreamSequence0.setFromChar((char[]) null);
+</pre>
+<h3>Test case 13</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;@jnpNEty:]&lt;]&quot;);
+<span class="nocode"><a name="2">  2: </a></span>genbankStreamSequence0.getCharSubSequence(600, 600);
+</pre>
+<h3>Test case 14</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;8vB?I1zi?^_TGA-_&quot;);
+<span class="nocode"><a name="2">  2: </a></span>emblStreamSequence0.charAt(1490);
+</pre>
+<h3>Test case 15</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;~z&gt;Lx#!`A-&quot;);
+<span class="nocode"><a name="2">  2: </a></span>genbankStreamSequence0.setSequencePackingCapacity((-796));
+</pre>
+<h3>Test case 16</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>char[] charArray0 = emblStreamSequence0.getCharSequence();
+<span class="nocode"><a name="3">  3: </a></span>assertArrayEquals(new char[] {}, charArray0);
+</pre>
+<h3>Test case 17</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;relationship&quot;);
+<span class="nocode"><a name="2">  2: </a></span>genbankStreamSequence0.getFormatType();
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(10, genbankStreamSequence0.getOtherCount());
+</pre>
+<h3>Test case 18</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;x1T:MlWi'Sd3p&quot;, &quot;x1T:MlWi'Sd3p&quot;);
+<span class="nocode"><a name="2">  2: </a></span>char[] charArray0 = new char[7];
+<span class="nocode"><a name="3">  3: </a></span>fastaStreamSequence0.setFromChar(charArray0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(7, fastaStreamSequence0.length());
+</pre>
+<h3>Test case 19</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;BNyod$ZFBSlPh-c1%DI&quot;);
+<span class="nocode"><a name="2">  2: </a></span>rawStreamSequence0.getSubSequence((-626), (-626));
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.io.StreamSequence
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.io.StreamSequence
+<li>Size: 19
+<li>Length: 46
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.5988455850534263
+<li>BranchCoverage: 0.7721518987341772
+<li>MethodCoverage: 0.7777777777777778
+<li>OutputCoverage: 0.1346153846153846
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

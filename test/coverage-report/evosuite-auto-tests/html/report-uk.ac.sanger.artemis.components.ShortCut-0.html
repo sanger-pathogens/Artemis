@@ -1,0 +1,102 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.components.ShortCut
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.components.ShortCut: 0.8800236925236926</ul>
+<ul>
+<li>10.888888869862843 fitness evaluations, 0 generations, null statements, 6 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>boolean boolean0 = ShortCut.usingCache();
+<span class="nocode"><a name="2">  2: </a></span>assertTrue(boolean0);
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ShortCut shortCut0 = new ShortCut(&quot;qzkNX#|Y&quot;, &quot;qzkNX#|Y&quot;, (KeyStroke) null);
+<span class="nocode"><a name="2">  2: </a></span>byte[] byteArray0 = new byte[9];
+<span class="nocode"><a name="3">  3: </a></span>ImageIcon imageIcon0 = new ImageIcon(byteArray0, &quot;aue@GHtF3M~+T(CG;%R#:hZI}0w?;L`&quot;);
+<span class="nocode"><a name="4">  4: </a></span>JCheckBoxMenuItem jCheckBoxMenuItem0 = new JCheckBoxMenuItem(&quot;qzkNX#|Y&quot;, imageIcon0, false);
+<span class="nocode"><a name="5">  5: </a></span>ShortCut.applyShortCutFromCache(&quot;qzkNX#|Y&quot;, jCheckBoxMenuItem0);
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(jCheckBoxMenuItem0.getFocusTraversalKeysEnabled());
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(&quot;/Users/kp11/.artemis/cache/MenuShortCuts/qz\\kNX#|Y#qz\\kNX#|Y&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileSystemHandling.createFolder(evoSuiteFile0);
+<span class="nocode"><a name="3">  3: </a></span>ShortCut shortCut0 = new ShortCut(&quot;qzkNX#|Y&quot;, &quot;qzkNX#|Y&quot;, (KeyStroke) null);
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>ImageIcon imageIcon0 = new ImageIcon(&quot;hZI0w?`&quot;, &quot;hZI0w?`&quot;);
+<span class="nocode"><a name="2">  2: </a></span>JCheckBoxMenuItem jCheckBoxMenuItem0 = new JCheckBoxMenuItem(&quot;hZI0w?`&quot;, imageIcon0);
+<span class="nocode"><a name="3">  3: </a></span>ShortCut.applyShortCutFromCache(&quot;hZI0w?`&quot;, jCheckBoxMenuItem0);
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(jCheckBoxMenuItem0.isFocusTraversalPolicyProvider());
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EvoSuiteFile evoSuiteFile0 = new EvoSuiteFile(&quot;/Users/kp11/.artemis/cache/MenuShortCuts/qz\\kNX#|Y#qz\\kNX#|Y&quot;);
+<span class="nocode"><a name="2">  2: </a></span>FileSystemHandling.createFolder(evoSuiteFile0);
+<span class="nocode"><a name="3">  3: </a></span>byte[] byteArray0 = new byte[9];
+<span class="nocode"><a name="4">  4: </a></span>ImageIcon imageIcon0 = new ImageIcon(byteArray0, &quot;aue@GHtF3M~+T(CG;%R#:hZI}0w?;L`&quot;);
+<span class="nocode"><a name="5">  5: </a></span>JCheckBoxMenuItem jCheckBoxMenuItem0 = new JCheckBoxMenuItem(&quot;qzkNX#|Y&quot;, imageIcon0, false);
+<span class="nocode"><a name="6">  6: </a></span>ShortCut.applyShortCutFromCache(&quot;qzkNX#|Y&quot;, jCheckBoxMenuItem0);
+<span class="nocode"><a name="7">  7: </a></span>assertFalse(jCheckBoxMenuItem0.isFocusCycleRoot());
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>KeyStroke keyStroke0 = KeyStroke.getKeyStroke('.');
+<span class="nocode"><a name="2">  2: </a></span>ShortCut shortCut0 = new ShortCut(&quot;&gt;u wc'Z8Ict&quot;, &quot;leTk.~)292pkau#zx&quot;, keyStroke0);
+<span class="nocode"><a name="3">  3: </a></span>ShortCut.applyShortCutFromCache(&quot;&gt;u wc'Z8Ict&quot;, (JMenuItem) null);
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.components.ShortCut
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.components.ShortCut
+<li>Size: 6
+<li>Length: 21
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.8800236925236926
+<li>BranchCoverage: 0.9285714285714286
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 0.5
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

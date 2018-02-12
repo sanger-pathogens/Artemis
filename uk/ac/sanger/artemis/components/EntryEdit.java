@@ -154,6 +154,7 @@ public class EntryEdit extends JFrame
   public EntryEdit(final EntryGroup entry_group) 
   {
     super("Artemis Entry Edit");
+    setName("EntryEdit");
 
     setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
     entry_group.ref();
@@ -1401,14 +1402,14 @@ public class EntryEdit extends JFrame
 
       file_menu.addSeparator();
       
-      JMenuItem read_bam_file = new JMenuItem("Read BAM / VCF ...");
+      JMenuItem read_bam_file = new JMenuItem("Read BAM / CRAM / VCF ...");
       read_bam_file.addActionListener(new ActionListener()
       {
         public void actionPerformed(ActionEvent e)
         {
           FileSelectionDialog fileChooser = new FileSelectionDialog(
-              null, false, "BAM / VCF View", "BAM / VCF");
-          List<String> listBams = fileChooser.getFiles(".*\\.(bam|cram)$");
+              null, false, "BAM / CRAM / VCF View", "BAM / CRAM / VCF");
+          List<String> listBams = fileChooser.getFiles(BamView.BAM_SUFFIX);
           List<String> vcfFiles = fileChooser.getFiles(VCFview.VCFFILE_SUFFIX);
           loadBamAndVcf(listBams, vcfFiles);
         }

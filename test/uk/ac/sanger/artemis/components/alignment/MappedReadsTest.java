@@ -27,9 +27,6 @@ import java.net.URL;
 import java.util.Hashtable;
 import java.util.List;
 
-import javax.swing.JFrame;
-
-import junit.framework.Assert;
 import uk.ac.sanger.artemis.io.Utils;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -40,7 +37,6 @@ import uk.ac.sanger.artemis.FeatureVector;
 import uk.ac.sanger.artemis.components.EntryEdit;
 import uk.ac.sanger.artemis.components.alignment.BamUtils;
 import uk.ac.sanger.artemis.components.alignment.BamView;
-import uk.ac.sanger.artemis.components.alignment.MappedReads;
 import uk.ac.sanger.artemis.components.alignment.ReadCount;
 
 public class MappedReadsTest 

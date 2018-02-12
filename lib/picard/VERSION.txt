@@ -1,0 +1,3 @@
+Picard jar version - 2.17.2
+
+This jar includes htsjdk and all dependency libraries.

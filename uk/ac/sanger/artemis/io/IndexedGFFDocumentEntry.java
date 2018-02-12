@@ -38,7 +38,7 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.Vector;
 
-import net.sf.samtools.util.BlockCompressedInputStream;
+import htsjdk.samtools.util.BlockCompressedInputStream;
 
 import uk.ac.sanger.artemis.EntryGroup;
 import uk.ac.sanger.artemis.components.FeatureDisplay;

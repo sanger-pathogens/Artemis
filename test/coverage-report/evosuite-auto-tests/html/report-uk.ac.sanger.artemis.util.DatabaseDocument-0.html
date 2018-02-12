@@ -1,0 +1,543 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.util.DatabaseDocument
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.util.DatabaseDocument: 0.1777318862903312</ul>
+<ul>
+<li>5396.534958373897 fitness evaluations, 0 generations, null statements, 38 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String string0 = &quot;repeat_unit&quot;;
+<span class="nocode"><a name="2">  2: </a></span>CvTerm cvTerm0 = DatabaseDocument.getCvTermByCvTermName(&quot;repeat_unit&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string1 = null;
+<span class="nocode"><a name="4">  4: </a></span>int int0 = (-222);
+<span class="nocode"><a name="5">  5: </a></span>StringContent stringContent0 = new StringContent(int0);
+<span class="nocode"><a name="6">  6: </a></span>PlainDocument plainDocument0 = new PlainDocument(stringContent0);
+<span class="nocode"><a name="7">  7: </a></span>String string2 = &quot;the base position (&quot;;
+<span class="nocode"><a name="8">  8: </a></span>JPasswordField jPasswordField0 = new JPasswordField(plainDocument0, string2, int0);
+<span class="nocode"><a name="9">  9: </a></span>DefaultTreeCellRenderer defaultTreeCellRenderer0 = new DefaultTreeCellRenderer();
+<span class="nocode"><a name="10"> 10: </a></span>defaultTreeCellRenderer0.getVerticalTextPosition();
+<span class="nocode"><a name="11"> 11: </a></span>Color color0 = defaultTreeCellRenderer0.getBorderSelectionColor();
+<span class="nocode"><a name="12"> 12: </a></span>jPasswordField0.setForeground(color0);
+<span class="nocode"><a name="13"> 13: </a></span>jPasswordField0.setToolTipText(string2);
+<span class="nocode"><a name="14"> 14: </a></span>plainDocument0.readLock();
+<span class="nocode"><a name="15"> 15: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(string1, jPasswordField0);
+<span class="nocode"><a name="16"> 16: </a></span>String string3 = &quot;G:#rXJd&quot;;
+<span class="nocode"><a name="17"> 17: </a></span>databaseDocument0.getGffDocuments(string3, string0, string2);
+<span class="nocode"><a name="18"> 18: </a></span>String string4 = &quot;&quot;;
+<span class="nocode"><a name="19"> 19: </a></span>IBatisDAO iBatisDAO0 = new IBatisDAO(jPasswordField0);
+<span class="nocode"><a name="20"> 20: </a></span>Cv cv0 = new Cv();
+<span class="nocode"><a name="21"> 21: </a></span>String string5 = &quot;htsjdk.variant.variantcontext.Genotype&quot;;
+<span class="nocode"><a name="22"> 22: </a></span>JPasswordField jPasswordField1 = new JPasswordField(string5, int0);
+<span class="nocode"><a name="23"> 23: </a></span>KeyStroke keyStroke0 = KeyStroke.getKeyStroke(int0, int0);
+<span class="nocode"><a name="24"> 24: </a></span>jPasswordField1.getConditionForKeyStroke(keyStroke0);
+<span class="nocode"><a name="25"> 25: </a></span>HierarchyListener hierarchyListener0 = mock(HierarchyListener.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="26"> 26: </a></span>HierarchyListener hierarchyListener1 = AWTEventMulticaster.add(hierarchyListener0, hierarchyListener0);
+<span class="nocode"><a name="27"> 27: </a></span>HierarchyListener hierarchyListener2 = AWTEventMulticaster.remove(hierarchyListener1, hierarchyListener1);
+<span class="nocode"><a name="28"> 28: </a></span>jPasswordField1.removeHierarchyListener(hierarchyListener2);
+<span class="nocode"><a name="29"> 29: </a></span>JTextComponent.AccessibleJTextComponent jTextComponent_AccessibleJTextComponent0 = jPasswordField1.new AccessibleJTextComponent();
+<span class="nocode"><a name="30"> 30: </a></span>jTextComponent_AccessibleJTextComponent0.getAccessibleIcon();
+<span class="nocode"><a name="31"> 31: </a></span>plainDocument0.removeDocumentListener(jTextComponent_AccessibleJTextComponent0);
+<span class="nocode"><a name="32"> 32: </a></span>List&lt;Object&gt; list0 = iBatisDAO0.getAllTermsInCvWithCount(cv0);
+<span class="nocode"><a name="33"> 33: </a></span>databaseDocument0.getFeatureLocsByListOfIds(list0);
+<span class="nocode"><a name="34"> 34: </a></span>DatabaseDocument.getCvtermID(string4);
+<span class="nocode"><a name="35"> 35: </a></span>databaseDocument0.insertCvTerm(cvTerm0);
+<span class="nocode"><a name="36"> 36: </a></span>databaseDocument0.insertCvTerm(cvTerm0);
+<span class="nocode"><a name="37"> 37: </a></span>String string6 = &quot;9 C`1=1OI-rL&quot;;
+<span class="nocode"><a name="38"> 38: </a></span>String string7 = &quot;&quot;;
+<span class="nocode"><a name="39"> 39: </a></span>databaseDocument0.getGffDocuments(string2, string6, string7);
+<span class="nocode"><a name="40"> 40: </a></span>databaseDocument0.getIdFeatureStore();
+<span class="nocode"><a name="41"> 41: </a></span>databaseDocument0.getCdsFeatureLocsByTranscriptName(string2);
+<span class="nocode"><a name="42"> 42: </a></span>databaseDocument0.readable();
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>List&lt;String&gt; list0 = DatabaseDocument.getCvControledCurationNames();
+<span class="nocode"><a name="2">  2: </a></span>String string0 = &quot;Y1IEQFu:KvprQqYy&quot;;
+<span class="nocode"><a name="3">  3: </a></span>int int0 = 1197;
+<span class="nocode"><a name="4">  4: </a></span>GapContent gapContent0 = new GapContent(int0);
+<span class="nocode"><a name="5">  5: </a></span>StyleContext styleContext0 = null;
+<span class="nocode"><a name="6">  6: </a></span>DefaultStyledDocument defaultStyledDocument0 = new DefaultStyledDocument(gapContent0, styleContext0);
+<span class="nocode"><a name="7">  7: </a></span>int int1 = 4481;
+<span class="nocode"><a name="8">  8: </a></span>JPasswordField jPasswordField0 = new JPasswordField(defaultStyledDocument0, string0, int1);
+<span class="nocode"><a name="9">  9: </a></span>boolean boolean0 = true;
+<span class="nocode"><a name="10"> 10: </a></span>InputStreamProgressListener inputStreamProgressListener0 = mock(InputStreamProgressListener.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="11"> 11: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(string0, jPasswordField0, string0, string0, boolean0, inputStreamProgressListener0);
+<span class="nocode"><a name="12"> 12: </a></span>databaseDocument0.getParentFeaturesByChildFeatureIds(list0);
+<span class="nocode"><a name="13"> 13: </a></span>int int2 = 2;
+<span class="nocode"><a name="14"> 14: </a></span>int int3 = 1058;
+<span class="nocode"><a name="15"> 15: </a></span>TextField textField0 = new TextField(databaseDocument0.TRANSCRIPT, int3);
+<span class="nocode"><a name="16"> 16: </a></span>Timestamp timestamp0 = new Timestamp(int2);
+<span class="nocode"><a name="17"> 17: </a></span>EmblStreamFeature emblStreamFeature0 = new EmblStreamFeature();
+<span class="nocode"><a name="18"> 18: </a></span>EmblStreamFeature emblStreamFeature1 = new EmblStreamFeature(emblStreamFeature0);
+<span class="nocode"><a name="19"> 19: </a></span>GFFStreamFeature gFFStreamFeature0 = new GFFStreamFeature(emblStreamFeature1);
+<span class="nocode"><a name="20"> 20: </a></span>String string1 = &quot;[,X,,r5`g&quot;;
+<span class="nocode"><a name="21"> 21: </a></span>ChadoTransaction chadoTransaction0 = new ChadoTransaction(int2, textField0, timestamp0, gFFStreamFeature0, string1, databaseDocument0.CONTROLLED_CURATION_TAG_CVNAME);
+<span class="nocode"><a name="22"> 22: </a></span>DatabaseDocument.getUpdateResiduesColumnTransactions(chadoTransaction0);
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JPasswordField jPasswordField0 = new JPasswordField();
+<span class="nocode"><a name="2">  2: </a></span>String string0 = null;
+<span class="nocode"><a name="3">  3: </a></span>boolean boolean0 = false;
+<span class="nocode"><a name="4">  4: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;&quot;, jPasswordField0, (String) null, (String) null, false, (InputStreamProgressListener) null);
+<span class="nocode"><a name="5">  5: </a></span>String string1 = &quot;&quot;;
+<span class="nocode"><a name="6">  6: </a></span>DatabaseDocument.CONTROLLED_CURATION_TAG_CVNAME = databaseDocument0.PRODUCTS_TAG_CVNAME;
+<span class="nocode"><a name="7">  7: </a></span>JdbcDAO jdbcDAO0 = new JdbcDAO(string1, jPasswordField0);
+<span class="nocode"><a name="8">  8: </a></span>DatabaseDocument.CHADO_INFER_CDS = boolean0;
+<span class="nocode"><a name="9">  9: </a></span>List&lt;Object&gt; list0 = jdbcDAO0.getSchema();
+<span class="nocode"><a name="10"> 10: </a></span>List&lt;Object&gt; list1 = databaseDocument0.getFeaturePropByFeatureIds(list0);
+<span class="nocode"><a name="11"> 11: </a></span>jdbcDAO0.delete(string1);
+<span class="nocode"><a name="12"> 12: </a></span>jdbcDAO0.getResidueType(string0);
+<span class="nocode"><a name="13"> 13: </a></span>databaseDocument0.getFeaturePropByFeatureIds(list1);
+<span class="nocode"><a name="14"> 14: </a></span>databaseDocument0.getFeaturePropByFeatureIds(list1);
+<span class="nocode"><a name="15"> 15: </a></span>String string2 = &quot;F4gyt,4SWEfF&quot;;
+<span class="nocode"><a name="16"> 16: </a></span>databaseDocument0.getPartOfFeatures(string2);
+<span class="nocode"><a name="17"> 17: </a></span>String string3 = &quot;&quot;;
+<span class="nocode"><a name="18"> 18: </a></span>Vector&lt;Feature&gt; vector0 = databaseDocument0.getPolypeptideFeatures(string3);
+<span class="nocode"><a name="19"> 19: </a></span>databaseDocument0.ping();
+<span class="nocode"><a name="20"> 20: </a></span>DatabaseDocument.getCvControledCurationNames();
+<span class="nocode"><a name="21"> 21: </a></span>databaseDocument0.getClustersByFeatureIds(vector0);
+<span class="nocode"><a name="22"> 22: </a></span>boolean boolean1 = false;
+<span class="nocode"><a name="23"> 23: </a></span>databaseDocument0.setReadChildren(boolean1);
+<span class="nocode"><a name="24"> 24: </a></span>databaseDocument0.isLazyFeatureLoad();
+<span class="nocode"><a name="25"> 25: </a></span>int int0 = 0;
+<span class="nocode"><a name="26"> 26: </a></span>JViewport jViewport0 = new JViewport();
+<span class="nocode"><a name="27"> 27: </a></span>long long0 = (-776L);
+<span class="nocode"><a name="28"> 28: </a></span>Timestamp timestamp0 = new Timestamp(long0);
+<span class="nocode"><a name="29"> 29: </a></span>String string4 = &quot;&quot;;
+<span class="nocode"><a name="30"> 30: </a></span>GFFStreamFeature gFFStreamFeature0 = new GFFStreamFeature(string4);
+<span class="nocode"><a name="31"> 31: </a></span>String string5 = &quot;VU5|_]X&quot;;
+<span class="nocode"><a name="32"> 32: </a></span>ChadoTransaction chadoTransaction0 = new ChadoTransaction(int0, jViewport0, timestamp0, gFFStreamFeature0, string5, string1);
+<span class="nocode"><a name="33"> 33: </a></span>ChadoTransaction chadoTransaction1 = chadoTransaction0.copy();
+<span class="nocode"><a name="34"> 34: </a></span>DatabaseDocument.getUpdateResiduesColumnTransactions(chadoTransaction1);
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SshLogin sshLogin0 = new SshLogin();
+<span class="nocode"><a name="2">  2: </a></span>JPasswordField jPasswordField0 = sshLogin0.getJPasswordField();
+<span class="nocode"><a name="3">  3: </a></span>ByteBuffer byteBuffer0 = new ByteBuffer();
+<span class="nocode"><a name="4">  4: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;u&quot;, jPasswordField0, &quot;3]&quot;, &quot;3]&quot;, byteBuffer0, &quot;u&quot;);
+<span class="nocode"><a name="5">  5: </a></span>databaseDocument0.readable();
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String string0 = &quot;ungapped id&quot;;
+<span class="nocode"><a name="2">  2: </a></span>JPasswordField jPasswordField0 = new JPasswordField(0);
+<span class="nocode"><a name="3">  3: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;ungapped id&quot;, jPasswordField0);
+<span class="nocode"><a name="4">  4: </a></span>Organism organism0 = new Organism();
+<span class="nocode"><a name="5">  5: </a></span>CvTerm cvTerm0 = DatabaseDocument.getCvTermByCvPartAndCvTerm(&quot;RILEY&quot;, &quot;CC_&quot;);
+<span class="nocode"><a name="6">  6: </a></span>boolean boolean0 = true;
+<span class="nocode"><a name="7">  7: </a></span>boolean boolean1 = false;
+<span class="nocode"><a name="8">  8: </a></span>Timestamp timestamp0 = null;
+<span class="nocode"><a name="9">  9: </a></span>Feature feature0 = new Feature(organism0, cvTerm0, string0, boolean0, boolean1, timestamp0, timestamp0);
+<span class="nocode"><a name="10"> 10: </a></span>int int0 = 0;
+<span class="nocode"><a name="11"> 11: </a></span>Range range0 = new Range(int0);
+<span class="nocode"><a name="12"> 12: </a></span>InputStreamProgressListener inputStreamProgressListener0 = mock(InputStreamProgressListener.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="13"> 13: </a></span>DatabaseDocument databaseDocument1 = new DatabaseDocument(databaseDocument0, databaseDocument0.EXONMODEL, feature0, range0, inputStreamProgressListener0);
+<span class="nocode"><a name="14"> 14: </a></span>DatabaseDocument.initMDC(databaseDocument1);
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseDocument.getTYPES();
+<span class="nocode"><a name="2">  2: </a></span>JPasswordField jPasswordField0 = new JPasswordField();
+<span class="nocode"><a name="3">  3: </a></span>jPasswordField0.setAutoscrolls(false);
+<span class="nocode"><a name="4">  4: </a></span>ByteBuffer byteBuffer0 = new ByteBuffer();
+<span class="nocode"><a name="5">  5: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;GQ&quot;, jPasswordField0, &quot;/H`Z%:6L%UU&quot;, &quot;/H`Z%:6L%UU&quot;, byteBuffer0, &quot;F0wmBupZKHB&quot;);
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JPasswordField jPasswordField0 = new JPasswordField(1462);
+<span class="nocode"><a name="2">  2: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;ID=&quot;, jPasswordField0, &quot;ID=&quot;, &quot;ID=&quot;);
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JPasswordField jPasswordField0 = new JPasswordField();
+<span class="nocode"><a name="2">  2: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;Mm^&amp;'mi&quot;, jPasswordField0, &quot;;current=false&quot;, &quot;Mm^&amp;'mi&quot;);
+<span class="nocode"><a name="3">  3: </a></span>DatabaseDocument.getCvTermByCvTermName(&quot;mRNA&quot;);
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JPasswordField jPasswordField0 = new JPasswordField();
+<span class="nocode"><a name="2">  2: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;SELECT dbxref_id FROM dbxref WHERE accession='&quot;, jPasswordField0, &quot;SELECT dbxref_id FROM dbxref WHERE accession='&quot;, &quot;SELECT dbxref_id FROM dbxref WHERE accession='&quot;);
+<span class="nocode"><a name="3">  3: </a></span>String string0 = &quot;&quot;;
+<span class="nocode"><a name="4">  4: </a></span>IBatisDAO iBatisDAO0 = new IBatisDAO(jPasswordField0);
+<span class="nocode"><a name="5">  5: </a></span>int int0 = 0;
+<span class="nocode"><a name="6">  6: </a></span>Feature feature0 = iBatisDAO0.getFeatureById(int0);
+<span class="nocode"><a name="7">  7: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(databaseDocument0.PRODUCTS_TAG_CVNAME);
+<span class="nocode"><a name="8">  8: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="9">  9: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="10"> 10: </a></span>int int1 = 120;
+<span class="nocode"><a name="11"> 11: </a></span>int int2 = 1642;
+<span class="nocode"><a name="12"> 12: </a></span>MarkerRange markerRange0 = strand0.makeMarkerRangeFromRawPositions(int1, int2);
+<span class="nocode"><a name="13"> 13: </a></span>Range range0 = markerRange0.getRange();
+<span class="nocode"><a name="14"> 14: </a></span>InputStreamProgressListener inputStreamProgressListener0 = mock(InputStreamProgressListener.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="15"> 15: </a></span>DatabaseDocument databaseDocument1 = new DatabaseDocument(databaseDocument0, string0, feature0, range0, inputStreamProgressListener0);
+<span class="nocode"><a name="16"> 16: </a></span>databaseDocument1.getOutputStream();
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JPasswordField jPasswordField0 = new JPasswordField(&quot;Gap&quot;);
+<span class="nocode"><a name="2">  2: </a></span>InputStreamProgressListener inputStreamProgressListener0 = mock(InputStreamProgressListener.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="3">  3: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;public&quot;, jPasswordField0, &quot;&quot;, &quot;&quot;, true, inputStreamProgressListener0);
+<span class="nocode"><a name="4">  4: </a></span>String string0 = databaseDocument0.getSrcFeatureId();
+<span class="nocode"><a name="5">  5: </a></span>assertTrue(databaseDocument0.isLazyFeatureLoad());
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(databaseDocument0.isSingleSchema());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(&quot;&quot;, string0);
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;;&quot;, (JPasswordField) null);
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseDocument.isCvThreadAlive();
+<span class="nocode"><a name="2">  2: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;`E'&amp;[&quot;, (JPasswordField) null);
+<span class="nocode"><a name="3">  3: </a></span>JdbcDAO jdbcDAO0 = new JdbcDAO(&quot;]?&quot;, (JPasswordField) null);
+</pre>
+<h3>Test case 13</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JPasswordField jPasswordField0 = new JPasswordField();
+<span class="nocode"><a name="2">  2: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;a&quot;, jPasswordField0, &quot;@@e6}p)1dlsq&quot;, &quot;@@e6}p)1dlsq&quot;, true);
+</pre>
+<h3>Test case 14</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JPasswordField jPasswordField0 = new JPasswordField(&quot;\&quot;ht%Z4Gs9W28\&quot;7&quot;, 0);
+<span class="nocode"><a name="2">  2: </a></span>ByteBuffer byteBuffer0 = new ByteBuffer();
+<span class="nocode"><a name="3">  3: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;)?}FI&quot;, jPasswordField0, &quot;db_xref=&quot;, &quot;)?}FI&quot;, byteBuffer0, &quot;\&quot;ht%Z4Gs9W28\&quot;7&quot;);
+<span class="nocode"><a name="4">  4: </a></span>databaseDocument0.setLazyFeatureLoad(false);
+<span class="nocode"><a name="5">  5: </a></span>databaseDocument0.getIdFeatureStore();
+<span class="nocode"><a name="6">  6: </a></span>JdbcDAO jdbcDAO0 = new JdbcDAO(&quot;mRNA&quot;, jPasswordField0);
+</pre>
+<h3>Test case 15</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseDocument.isCvThreadAlive();
+<span class="nocode"><a name="2">  2: </a></span>GapContent gapContent0 = new GapContent();
+<span class="nocode"><a name="3">  3: </a></span>StyleContext styleContext0 = new StyleContext();
+<span class="nocode"><a name="4">  4: </a></span>DefaultStyledDocument defaultStyledDocument0 = new DefaultStyledDocument(gapContent0, styleContext0);
+<span class="nocode"><a name="5">  5: </a></span>JPasswordField jPasswordField0 = new JPasswordField(defaultStyledDocument0, &quot;|9:2[V84{&lt;9P;*RZwBz&quot;, 0);
+<span class="nocode"><a name="6">  6: </a></span>ByteBuffer byteBuffer0 = new ByteBuffer();
+<span class="nocode"><a name="7">  7: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;|9:2[V84{&lt;9P;*RZwBz&quot;, jPasswordField0, &quot;~=j4*#x!&quot;, &quot;yyyy/MM/dd HH:mm:ss&quot;, byteBuffer0, &quot;&quot;);
+<span class="nocode"><a name="8">  8: </a></span>databaseDocument0.getGffDocuments(&quot;p66q~0ybtb;&amp;i[OXw&quot;, &quot;@qM2*C)RBsT9=2 )^;&quot;, &quot;|9:2[V84{&lt;9P;*RZwBz&quot;);
+</pre>
+<h3>Test case 16</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseDocument.getCvTermByCvAndCvTerm(&quot;2$}m!}D?(#XZwX?JW&quot;, &quot;2$}m!}D?(#XZwX?JW&quot;);
+</pre>
+<h3>Test case 17</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SshLogin sshLogin0 = new SshLogin();
+<span class="nocode"><a name="2">  2: </a></span>JPasswordField jPasswordField0 = sshLogin0.getJPasswordField();
+<span class="nocode"><a name="3">  3: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;hA,8B`{:{YwZPwp`G&quot;, jPasswordField0);
+<span class="nocode"><a name="4">  4: </a></span>databaseDocument0.getChadoSequence(&quot;com.sshtools.j2ssh.authentication.PasswordAuthenticationClient&quot;);
+</pre>
+<h3>Test case 18</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>String string0 = &quot;&quot;;
+<span class="nocode"><a name="2">  2: </a></span>JPasswordField jPasswordField0 = new JPasswordField(&quot;4Wf3sL;E}\\%(G&quot;);
+<span class="nocode"><a name="3">  3: </a></span>InputStreamProgressListener inputStreamProgressListener0 = mock(InputStreamProgressListener.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="4">  4: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;&quot;, jPasswordField0, &quot;&quot;, &quot;4Wf3sL;E}\\%(G&quot;, true, inputStreamProgressListener0);
+<span class="nocode"><a name="5">  5: </a></span>databaseDocument0.readable();
+<span class="nocode"><a name="6">  6: </a></span>IBatisDAO iBatisDAO0 = new IBatisDAO(jPasswordField0);
+<span class="nocode"><a name="7">  7: </a></span>CvTerm cvTerm0 = iBatisDAO0.getGoCvTermByAccViaDb(string0);
+<span class="nocode"><a name="8">  8: </a></span>databaseDocument0.insertCvTerm(cvTerm0);
+</pre>
+<h3>Test case 19</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseDocument.getCvterms(&quot;&quot;, &quot;&quot;, false);
+</pre>
+<h3>Test case 20</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseDocument.getSynonymTypeNames(&quot;pA@r:;da[K![e&quot;, (GFFStreamFeature) null);
+</pre>
+<h3>Test case 21</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JPasswordField jPasswordField0 = new JPasswordField(&quot;K+1Ia&quot;);
+<span class="nocode"><a name="2">  2: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;`0XG'iDKb&quot;, jPasswordField0, &quot;polygon&quot;, &quot;polygon&quot;, true);
+<span class="nocode"><a name="3">  3: </a></span>databaseDocument0.isLazyFeatureLoad();
+</pre>
+<h3>Test case 22</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JPasswordField jPasswordField0 = new JPasswordField();
+<span class="nocode"><a name="2">  2: </a></span>jPasswordField0.echoCharIsSet();
+<span class="nocode"><a name="3">  3: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;#created &quot;, jPasswordField0);
+<span class="nocode"><a name="4">  4: </a></span>databaseDocument0.isLazyFeatureLoad();
+<span class="nocode"><a name="5">  5: </a></span>IBatisDAO iBatisDAO0 = new IBatisDAO(jPasswordField0);
+<span class="nocode"><a name="6">  6: </a></span>String string0 = &quot;VERSION     &quot;;
+<span class="nocode"><a name="7">  7: </a></span>List&lt;Object&gt; list0 = iBatisDAO0.getResiduesByUniqueName(string0);
+<span class="nocode"><a name="8">  8: </a></span>databaseDocument0.getSimilarityMatches(list0);
+<span class="nocode"><a name="9">  9: </a></span>int int0 = 11;
+<span class="nocode"><a name="10"> 10: </a></span>Key key0 = Key.CDS;
+<span class="nocode"><a name="11"> 11: </a></span>String string1 = &quot;Efu&quot;;
+<span class="nocode"><a name="12"> 12: </a></span>Location location0 = new Location(string1);
+<span class="nocode"><a name="13"> 13: </a></span>QualifierVector qualifierVector0 = new QualifierVector();
+<span class="nocode"><a name="14"> 14: </a></span>QualifierVector qualifierVector1 = qualifierVector0.copy();
+<span class="nocode"><a name="15"> 15: </a></span>QualifierVector qualifierVector2 = qualifierVector1.copy();
+<span class="nocode"><a name="16"> 16: </a></span>GFFStreamFeature gFFStreamFeature0 = new GFFStreamFeature(key0, location0, qualifierVector2);
+<span class="nocode"><a name="17"> 17: </a></span>Timestamp timestamp0 = gFFStreamFeature0.getLastModified();
+<span class="nocode"><a name="18"> 18: </a></span>String string2 = &quot;GFF:\n&quot;;
+<span class="nocode"><a name="19"> 19: </a></span>ChadoTransaction chadoTransaction0 = new ChadoTransaction(int0, iBatisDAO0, timestamp0, gFFStreamFeature0, string1, string2);
+<span class="nocode"><a name="20"> 20: </a></span>DatabaseDocument.getUpdateResiduesColumnTransactions(chadoTransaction0);
+<span class="nocode"><a name="21"> 21: </a></span>databaseDocument0.getGraphs();
+<span class="nocode"><a name="22"> 22: </a></span>int int1 = 1940;
+<span class="nocode"><a name="23"> 23: </a></span>String string3 = &quot;dqcvT M7s4jHX'I7&quot;;
+<span class="nocode"><a name="24"> 24: </a></span>databaseDocument0.getGraphData(int1, string3);
+</pre>
+<h3>Test case 23</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>InputStreamProgressListener inputStreamProgressListener0 = mock(InputStreamProgressListener.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="2">  2: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument((DatabaseDocument) null, &quot;kFOV=*0d&quot;, &quot;kFOV=*0d&quot;, true, inputStreamProgressListener0);
+</pre>
+<h3>Test case 24</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JPasswordField jPasswordField0 = new JPasswordField(45);
+<span class="nocode"><a name="2">  2: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;(85.aaj&lt;G`7R~_&quot;, jPasswordField0);
+<span class="nocode"><a name="3">  3: </a></span>InputStreamProgressListener inputStreamProgressListener0 = mock(InputStreamProgressListener.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="4">  4: </a></span>DatabaseDocument databaseDocument1 = new DatabaseDocument(databaseDocument0, &quot;&quot;, &quot;&quot;, false, inputStreamProgressListener0);
+<span class="nocode"><a name="5">  5: </a></span>databaseDocument1.addInputStreamProgressListener((InputStreamProgressListener) null);
+<span class="nocode"><a name="6">  6: </a></span>databaseDocument1.getInputStream();
+</pre>
+<h3>Test case 25</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseDocument.getCvtermFromGoId(&quot;_-/2UZ^`cSGwe&quot;);
+</pre>
+<h3>Test case 26</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseDocument.getCvtermID((String) null);
+</pre>
+<h3>Test case 27</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>StringContent stringContent0 = new StringContent(656);
+<span class="nocode"><a name="2">  2: </a></span>StyleContext styleContext0 = new StyleContext();
+<span class="nocode"><a name="3">  3: </a></span>DefaultStyledDocument defaultStyledDocument0 = new DefaultStyledDocument(stringContent0, styleContext0);
+<span class="nocode"><a name="4">  4: </a></span>JPasswordField jPasswordField0 = new JPasswordField(defaultStyledDocument0, (String) null, 0);
+<span class="nocode"><a name="5">  5: </a></span>ByteBuffer byteBuffer0 = new ByteBuffer();
+<span class="nocode"><a name="6">  6: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument((String) null, jPasswordField0, &quot;_&lt;nFvPs&quot;, (String) null, byteBuffer0, (String) null);
+</pre>
+<h3>Test case 28</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JPasswordField jPasswordField0 = null;
+<span class="nocode"><a name="2">  2: </a></span>String string0 = &quot;&quot;;
+<span class="nocode"><a name="3">  3: </a></span>String string1 = &quot;aW3(Lm-PYK*%d^#P&quot;;
+<span class="nocode"><a name="4">  4: </a></span>InputStreamProgressListener inputStreamProgressListener0 = mock(InputStreamProgressListener.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="5">  5: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;&quot;, (JPasswordField) null, &quot;&quot;, &quot;aW3(Lm-PYK*%d^#P&quot;, true, inputStreamProgressListener0);
+<span class="nocode"><a name="6">  6: </a></span>databaseDocument0.writable();
+<span class="nocode"><a name="7">  7: </a></span>databaseDocument0.showCvTermLookUp();
+<span class="nocode"><a name="8">  8: </a></span>IBatisDAO iBatisDAO0 = new IBatisDAO(jPasswordField0);
+<span class="nocode"><a name="9">  9: </a></span>String string2 = &quot;5xN\\m{x\\i&quot;;
+<span class="nocode"><a name="10"> 10: </a></span>Feature feature0 = iBatisDAO0.getFeatureByUniqueName(databaseDocument0.EXONMODEL, string2);
+<span class="nocode"><a name="11"> 11: </a></span>String string3 = &quot;&quot;;
+<span class="nocode"><a name="12"> 12: </a></span>databaseDocument0.getOrganismByCommonName(string3);
+<span class="nocode"><a name="13"> 13: </a></span>String string4 = null;
+<span class="nocode"><a name="14"> 14: </a></span>feature0.getFeatureProps();
+<span class="nocode"><a name="15"> 15: </a></span>iBatisDAO0.getFeaturesByUniqueName(string4);
+<span class="nocode"><a name="16"> 16: </a></span>List&lt;Object&gt; list0 = iBatisDAO0.getFeaturePubsBySrcFeature(feature0);
+<span class="nocode"><a name="17"> 17: </a></span>databaseDocument0.getSimilarityMatches(list0);
+<span class="nocode"><a name="18"> 18: </a></span>String string5 = null;
+<span class="nocode"><a name="19"> 19: </a></span>String string6 = &quot;&quot;;
+<span class="nocode"><a name="20"> 20: </a></span>String string7 = &quot;&quot;;
+<span class="nocode"><a name="21"> 21: </a></span>DatabaseDocument databaseDocument1 = new DatabaseDocument(string5, jPasswordField0, string6, string7);
+<span class="nocode"><a name="22"> 22: </a></span>DatabaseDocument.initMDC(databaseDocument1);
+<span class="nocode"><a name="23"> 23: </a></span>databaseDocument0.reset();
+<span class="nocode"><a name="24"> 24: </a></span>String[][][] stringArray0 = new String[1][7][0];
+<span class="nocode"><a name="25"> 25: </a></span>String[][] stringArray1 = new String[4][0];
+<span class="nocode"><a name="26"> 26: </a></span>String[] stringArray2 = new String[8];
+<span class="nocode"><a name="27"> 27: </a></span>stringArray2[0] = string6;
+<span class="nocode"><a name="28"> 28: </a></span>stringArray2[1] = databaseDocument1.CONTROLLED_CURATION_TAG_CVNAME;
+<span class="nocode"><a name="29"> 29: </a></span>stringArray2[2] = string1;
+<span class="nocode"><a name="30"> 30: </a></span>stringArray2[3] = databaseDocument1.CONTROLLED_CURATION_TAG_CVNAME;
+<span class="nocode"><a name="31"> 31: </a></span>stringArray2[4] = string0;
+<span class="nocode"><a name="32"> 32: </a></span>stringArray2[5] = databaseDocument0.CONTROLLED_CURATION_TAG_CVNAME;
+<span class="nocode"><a name="33"> 33: </a></span>stringArray2[6] = string3;
+<span class="nocode"><a name="34"> 34: </a></span>stringArray2[7] = databaseDocument0.EXONMODEL;
+<span class="nocode"><a name="35"> 35: </a></span>stringArray1[0] = stringArray2;
+<span class="nocode"><a name="36"> 36: </a></span>String[] stringArray3 = new String[5];
+<span class="nocode"><a name="37"> 37: </a></span>stringArray3[0] = databaseDocument1.RILEY_TAG_CVNAME;
+<span class="nocode"><a name="38"> 38: </a></span>stringArray3[1] = string1;
+<span class="nocode"><a name="39"> 39: </a></span>stringArray3[2] = databaseDocument0.EXONMODEL;
+<span class="nocode"><a name="40"> 40: </a></span>stringArray3[3] = databaseDocument1.RILEY_TAG_CVNAME;
+<span class="nocode"><a name="41"> 41: </a></span>stringArray3[4] = databaseDocument1.RILEY_TAG_CVNAME;
+<span class="nocode"><a name="42"> 42: </a></span>stringArray1[1] = stringArray3;
+<span class="nocode"><a name="43"> 43: </a></span>String[] stringArray4 = new String[8];
+<span class="nocode"><a name="44"> 44: </a></span>stringArray4[0] = databaseDocument0.PRODUCTS_TAG_CVNAME;
+<span class="nocode"><a name="45"> 45: </a></span>stringArray4[1] = string0;
+<span class="nocode"><a name="46"> 46: </a></span>stringArray4[2] = databaseDocument1.EXONMODEL;
+<span class="nocode"><a name="47"> 47: </a></span>stringArray4[3] = string4;
+<span class="nocode"><a name="48"> 48: </a></span>stringArray4[4] = string2;
+<span class="nocode"><a name="49"> 49: </a></span>stringArray4[5] = databaseDocument0.PRODUCTS_TAG_CVNAME;
+<span class="nocode"><a name="50"> 50: </a></span>stringArray4[6] = string1;
+<span class="nocode"><a name="51"> 51: </a></span>stringArray4[7] = databaseDocument1.TRANSCRIPT;
+<span class="nocode"><a name="52"> 52: </a></span>stringArray1[2] = stringArray4;
+<span class="nocode"><a name="53"> 53: </a></span>String[] stringArray5 = new String[3];
+<span class="nocode"><a name="54"> 54: </a></span>stringArray5[0] = string5;
+<span class="nocode"><a name="55"> 55: </a></span>stringArray5[1] = string1;
+<span class="nocode"><a name="56"> 56: </a></span>stringArray5[2] = databaseDocument1.RILEY_TAG_CVNAME;
+<span class="nocode"><a name="57"> 57: </a></span>stringArray1[3] = stringArray5;
+<span class="nocode"><a name="58"> 58: </a></span>stringArray0[0] = stringArray1;
+<span class="nocode"><a name="59"> 59: </a></span>DatabaseDocument.setTYPES(stringArray0);
+</pre>
+<h3>Test case 29</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamFeature emblStreamFeature0 = new EmblStreamFeature();
+<span class="nocode"><a name="2">  2: </a></span>GFFStreamFeature gFFStreamFeature0 = new GFFStreamFeature(emblStreamFeature0);
+<span class="nocode"><a name="3">  3: </a></span>GenbankStreamFeature genbankStreamFeature0 = new GenbankStreamFeature(gFFStreamFeature0);
+<span class="nocode"><a name="4">  4: </a></span>DatabaseDocument.getCvTermByCvTermId(0, genbankStreamFeature0);
+</pre>
+<h3>Test case 30</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>StringContent stringContent0 = new StringContent(1142);
+<span class="nocode"><a name="2">  2: </a></span>StyleContext styleContext0 = StyleContext.getDefaultStyleContext();
+<span class="nocode"><a name="3">  3: </a></span>DefaultStyledDocument defaultStyledDocument0 = new DefaultStyledDocument(stringContent0, styleContext0);
+<span class="nocode"><a name="4">  4: </a></span>JPasswordField jPasswordField0 = new JPasswordField(defaultStyledDocument0, &quot;Runtime Problems...\n&quot;, 1142);
+<span class="nocode"><a name="5">  5: </a></span>InputStreamProgressListener inputStreamProgressListener0 = mock(InputStreamProgressListener.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="6">  6: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;Runtime Problems...\n&quot;, jPasswordField0, &quot;g*&quot;, &quot;Runtime Problems...\n&quot;, false, inputStreamProgressListener0);
+<span class="nocode"><a name="7">  7: </a></span>DatabaseDocument.LocationComarator databaseDocument_LocationComarator0 = databaseDocument0.new LocationComarator();
+<span class="nocode"><a name="8">  8: </a></span>JdbcDAO jdbcDAO0 = new JdbcDAO(&quot;&quot;, jPasswordField0);
+</pre>
+<h3>Test case 31</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SshLogin sshLogin0 = new SshLogin();
+<span class="nocode"><a name="2">  2: </a></span>JPasswordField jPasswordField0 = sshLogin0.getJPasswordField();
+<span class="nocode"><a name="3">  3: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument((String) null, jPasswordField0, (String) null, (String) null, true);
+</pre>
+<h3>Test case 32</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JPasswordField jPasswordField0 = new JPasswordField();
+<span class="nocode"><a name="2">  2: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument((String) null, jPasswordField0);
+</pre>
+<h3>Test case 33</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JPasswordField jPasswordField0 = new JPasswordField(71);
+<span class="nocode"><a name="2">  2: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;+Rf9$ZU5ghkDPZs)?&quot;, jPasswordField0, &quot;+Rf9$ZU5ghkDPZs)?&quot;, &quot;+Rf9$ZU5ghkDPZs)?&quot;);
+<span class="nocode"><a name="3">  3: </a></span>databaseDocument0.reset();
+<span class="nocode"><a name="4">  4: </a></span>Timestamp.valueOf((String) null);
+</pre>
+<h3>Test case 34</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JPasswordField jPasswordField0 = new JPasswordField();
+<span class="nocode"><a name="2">  2: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument((String) null, jPasswordField0, (String) null, &quot;?Rj3d!%.{BusxC5&quot;);
+</pre>
+<h3>Test case 35</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>DatabaseDocument.isCvThreadAlive();
+<span class="nocode"><a name="2">  2: </a></span>DatabaseDocument.isCvThreadAlive();
+<span class="nocode"><a name="3">  3: </a></span>JPasswordField jPasswordField0 = new JPasswordField();
+<span class="nocode"><a name="4">  4: </a></span>String string0 = &quot;oiy&quot;;
+<span class="nocode"><a name="5">  5: </a></span>InputStreamProgressListener inputStreamProgressListener0 = mock(InputStreamProgressListener.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="6">  6: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;,kPCOAgKXP#;{&quot;, jPasswordField0, &quot;oiy&quot;, &quot;&quot;, false, inputStreamProgressListener0);
+<span class="nocode"><a name="7">  7: </a></span>String string1 = &quot;sR bw7vQ,TMLX&amp;&gt;O&quot;;
+<span class="nocode"><a name="8">  8: </a></span>databaseDocument0.setName(&quot;,kPCOAgKXP#;{&quot;);
+<span class="nocode"><a name="9">  9: </a></span>boolean boolean0 = false;
+<span class="nocode"><a name="10"> 10: </a></span>InputStreamProgressListener inputStreamProgressListener1 = mock(InputStreamProgressListener.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="11"> 11: </a></span>databaseDocument0.getOrganismsContainingSrcFeatures();
+<span class="nocode"><a name="12"> 12: </a></span>DatabaseDocument databaseDocument1 = new DatabaseDocument(databaseDocument0, string1, string0, boolean0, inputStreamProgressListener1);
+<span class="nocode"><a name="13"> 13: </a></span>databaseDocument1.readable();
+<span class="nocode"><a name="14"> 14: </a></span>String string2 = &quot;aspect=C%3B&quot;;
+<span class="nocode"><a name="15"> 15: </a></span>DatabaseDocument.getCvTermByCvTermName(string2);
+<span class="nocode"><a name="16"> 16: </a></span>databaseDocument0.getPartOfFeatures(string2);
+</pre>
+<h3>Test case 36</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JPasswordField jPasswordField0 = new JPasswordField(0);
+<span class="nocode"><a name="2">  2: </a></span>jPasswordField0.isFocusable();
+<span class="nocode"><a name="3">  3: </a></span>InputStreamProgressListener inputStreamProgressListener0 = mock(InputStreamProgressListener.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="4">  4: </a></span>jPasswordField0.getX();
+<span class="nocode"><a name="5">  5: </a></span>HierarchyBoundsListener hierarchyBoundsListener0 = mock(HierarchyBoundsListener.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="6">  6: </a></span>AWTEventMulticaster.remove(hierarchyBoundsListener0, hierarchyBoundsListener0);
+<span class="nocode"><a name="7">  7: </a></span>AWTEventMulticaster.add((HierarchyBoundsListener) null, (HierarchyBoundsListener) null);
+<span class="nocode"><a name="8">  8: </a></span>jPasswordField0.addHierarchyBoundsListener((HierarchyBoundsListener) null);
+<span class="nocode"><a name="9">  9: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument((String) null, jPasswordField0, (String) null, (String) null, true, inputStreamProgressListener0);
+</pre>
+<h3>Test case 37</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>boolean boolean0 = true;
+<span class="nocode"><a name="2">  2: </a></span>InputStreamProgressListener inputStreamProgressListener0 = mock(InputStreamProgressListener.class, new ViolatedAssumptionAnswer());
+<span class="nocode"><a name="3">  3: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;-b5z&lt;1&quot;, (JPasswordField) null, &quot;-b5z&lt;1&quot;, &quot;-b5z&lt;1&quot;, true, inputStreamProgressListener0);
+<span class="nocode"><a name="4">  4: </a></span>String string0 = &quot;feature_relationship_rank=&quot;;
+<span class="nocode"><a name="5">  5: </a></span>DatabaseDocument.isCvThreadAlive();
+<span class="nocode"><a name="6">  6: </a></span>databaseDocument0.getFeatureLocsByListOfIds((List) null);
+<span class="nocode"><a name="7">  7: </a></span>databaseDocument0.getChadoSequence(string0);
+<span class="nocode"><a name="8">  8: </a></span>DatabaseDocument.CHADO_INFER_CDS = boolean0;
+<span class="nocode"><a name="9">  9: </a></span>DatabaseDocument.initMDC(databaseDocument0);
+<span class="nocode"><a name="10"> 10: </a></span>databaseDocument0.readable();
+<span class="nocode"><a name="11"> 11: </a></span>String string1 = &quot;(!L2_;_r&lt;6C1P'2j%5&quot;;
+<span class="nocode"><a name="12"> 12: </a></span>databaseDocument0.getPartOfFeatures(string1);
+<span class="nocode"><a name="13"> 13: </a></span>databaseDocument0.getCdsFeatureLocsByTranscriptName(string0);
+<span class="nocode"><a name="14"> 14: </a></span>EmblStreamFeature emblStreamFeature0 = new EmblStreamFeature();
+<span class="nocode"><a name="15"> 15: </a></span>Feature feature0 = new Feature(emblStreamFeature0);
+<span class="nocode"><a name="16"> 16: </a></span>Strand strand0 = feature0.getStrand();
+<span class="nocode"><a name="17"> 17: </a></span>Range range0 = feature0.getMaxRawRange();
+<span class="nocode"><a name="18"> 18: </a></span>strand0.getSpacedTranslation(range0, databaseDocument0.CHADO_INFER_CDS);
+<span class="nocode"><a name="19"> 19: </a></span>strand0.getTCount();
+<span class="nocode"><a name="20"> 20: </a></span>EntropyAlgorithm entropyAlgorithm0 = new EntropyAlgorithm(strand0);
+<span class="nocode"><a name="21"> 21: </a></span>Feature feature1 = null;
+<span class="nocode"><a name="22"> 22: </a></span>boolean boolean1 = feature0.rawGreaterThan(feature1);
+<span class="nocode"><a name="23"> 23: </a></span>boolean boolean2 = false;
+<span class="nocode"><a name="24"> 24: </a></span>entropyAlgorithm0.setUserMaxMin(boolean2);
+<span class="nocode"><a name="25"> 25: </a></span>Integer integer0 = entropyAlgorithm0.getDefaultMinWindowSize();
+<span class="nocode"><a name="26"> 26: </a></span>databaseDocument0.getResidueFeatures(integer0);
+<span class="nocode"><a name="27"> 27: </a></span>String string2 = &quot;&quot;;
+<span class="nocode"><a name="28"> 28: </a></span>DatabaseDocument.getCvTermByCvPartAndCvTerm(databaseDocument0.RILEY_TAG_CVNAME, string2);
+<span class="nocode"><a name="29"> 29: </a></span>String[][][] stringArray0 = new String[0][5][7];
+<span class="nocode"><a name="30"> 30: </a></span>DatabaseDocument.setTYPES(stringArray0);
+<span class="nocode"><a name="31"> 31: </a></span>String string3 = &quot;org.gmod.schema.general.DbXRef&quot;;
+<span class="nocode"><a name="32"> 32: </a></span>DatabaseDocument.getCvterms(string3, databaseDocument0.RILEY_TAG_CVNAME, boolean1);
+</pre>
+<h3>Test case 38</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>JPasswordField jPasswordField0 = new JPasswordField();
+<span class="nocode"><a name="2">  2: </a></span>DatabaseDocument databaseDocument0 = new DatabaseDocument(&quot;&quot;, jPasswordField0, &quot;&quot;, &quot;&gt;9+'u.:15GsD&quot;, false);
+<span class="nocode"><a name="3">  3: </a></span>databaseDocument0.getCvTermsByCvName(&quot;&quot;);
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.util.DatabaseDocument
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.util.DatabaseDocument
+<li>Size: 38
+<li>Length: 367
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.1777318862903312
+<li>BranchCoverage: 0.05357142857142857
+<li>MethodCoverage: 0.6216216216216216
+<li>OutputCoverage: 0.02147239263803681
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

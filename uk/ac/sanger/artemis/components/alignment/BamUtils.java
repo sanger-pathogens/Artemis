@@ -1,6 +1,6 @@
 /* BamUtils
  *
- * created: 2011
+ * created: 2017
  *
  * This file is part of Artemis
  *
@@ -23,6 +23,13 @@
  */
 package uk.ac.sanger.artemis.components.alignment;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
@@ -30,17 +37,42 @@ import java.util.Vector;
 
 import javax.swing.JProgressBar;
 
-import net.sf.samtools.AlignmentBlock;
-import net.sf.samtools.SAMFileReader;
-import net.sf.samtools.SAMRecord;
-import net.sf.samtools.util.CloseableIterator;
+import htsjdk.samtools.AlignmentBlock;
+import htsjdk.samtools.BAMIndex;
+import htsjdk.samtools.BAMIndexer;
+import htsjdk.samtools.BamFileIoUtils;
+import htsjdk.samtools.BamIndexValidator;
+import htsjdk.samtools.CRAMCRAIIndexer;
+import htsjdk.samtools.SAMException;
+import htsjdk.samtools.SAMFileHeader;
+import htsjdk.samtools.SAMRecord;
+import htsjdk.samtools.SamFileValidator;
+import htsjdk.samtools.SamReader;
+import htsjdk.samtools.SamReaderFactory;
+import htsjdk.samtools.SamReaderFactory.Option;
+import htsjdk.samtools.ValidationStringency;
+import htsjdk.samtools.cram.CRAIIndex;
+import htsjdk.samtools.cram.build.CramIO;
+import htsjdk.samtools.seekablestream.SeekableStreamFactory;
+import htsjdk.samtools.util.CloseableIterator;
+import htsjdk.samtools.util.CloserUtil;
 import uk.ac.sanger.artemis.Feature;
 import uk.ac.sanger.artemis.FeatureSegmentVector;
 import uk.ac.sanger.artemis.FeatureVector;
+import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.io.Range;
+import uk.ac.sanger.artemis.util.FTPSeekableStream;
 
+/**
+ * Utility methods for BamView.
+ * 
+ * @author kp11
+ *
+ */
 class BamUtils
 {
+  private static org.apache.log4j.Logger logger = 
+		    org.apache.log4j.Logger.getLogger(BamUtils.class);
 
   protected static float getFeatureLength(Feature f)
   {
@@ -135,7 +167,7 @@ class BamUtils
           final boolean useStrandTag)
   {
     final String refName = (String) bamView.getCombo().getSelectedItem();
-    final Hashtable<String, SAMFileReader> samFileReaderHash = bamView.getSamFileReaderHash();
+    final Hashtable<String, SamReader> samFileReaderHash = bamView.getSamFileReaderHash();
     final SAMRecordPredicate samRecordFlagPredicate = bamView.getSamRecordFlagPredicate();
     final SAMRecordPredicate samRecordMapQPredicate = bamView.getSamRecordMapQPredicate();
 
@@ -143,7 +175,7 @@ class BamUtils
     cnt[0] = 0;
     cnt[1] = 0;
     
-    SAMFileReader inputSam = samFileReaderHash.get(bam);
+    SamReader inputSam = samFileReaderHash.get(bam);
     final CloseableIterator<SAMRecord> it = inputSam.query(refName, start, end, contained);
 
     while ( it.hasNext() )
@@ -244,11 +276,11 @@ class BamUtils
       final int cnt[][])
   {
     final String refName = (String) bamView.getCombo().getSelectedItem();
-    final Hashtable<String, SAMFileReader> samFileReaderHash = bamView.getSamFileReaderHash();
+    final Hashtable<String, SamReader> samFileReaderHash = bamView.getSamFileReaderHash();
     final SAMRecordPredicate samRecordFlagPredicate = bamView.getSamRecordFlagPredicate();
     final SAMRecordPredicate samRecordMapQPredicate = bamView.getSamRecordMapQPredicate();
 
-    SAMFileReader inputSam = samFileReaderHash.get(bamFile);
+    SamReader inputSam = samFileReaderHash.get(bamFile);
     final CloseableIterator<SAMRecord> it = 
         inputSam.query(refName, start, end, false);
 
@@ -362,5 +394,365 @@ class BamUtils
     }
     return featureReadCount;
   }
+  
+  /**
+   * Check whether two SAM records are the same.
+   * @param bamRec1 SamViewRecord
+   * @param bamRec2 SamViewRecord
+   * @return boolean - true if equality holds.
+   */
+  public static boolean samRecordEqualityCheck(SAMRecord rec1, SAMRecord rec2)
+  {
+	  boolean result = false;
+	  
+	  if (rec1 == null && rec2 == null)
+		  return true;
+	  
+	  result = (
+		(rec1.getReadName().equals(rec2.getReadName())) &&
+		(rec1.getAlignmentStart() == rec2.getAlignmentStart()) &&
+		(rec1.getAlignmentEnd() == rec2.getAlignmentEnd()) &&
+		(rec1.getFlags() == rec2.getFlags())
+	  );
+	  
+	  return result;
+  }
+  
+  /**
+   * Determine if the given file name is expected to be a CRAM file
+   * based on its extension.
+   * @param filename String
+   * @return boolean
+   */
+  public static boolean isCramFile(String filename) 
+  {
+	  boolean result = false;
+	  
+	  try 
+	  {
+		  result = ( filename.endsWith(CramIO.CRAM_FILE_EXTENSION) );
+	  }
+	  catch (Exception e)
+	  {
+		  result = false;
+	  }
+	  
+	  return result;
+  }
+  
+  /**
+   * Determine if the given file name is expected to be a BAM file
+   * based on its extension.
+   * @param filename String
+   * @return boolean
+   */
+  public static boolean isBamFile(String filename) 
+  {
+	  boolean result = false;
+	  
+	  try 
+	  {
+		  result = ( filename.endsWith(BamFileIoUtils.BAM_FILE_EXTENSION) );
+	  }
+	  catch (Exception e)
+	  {
+		  result = false;
+	  }
+	  
+	  return result;
+  }
+  
+  /**
+   * Construct the index file name given the alignment file name.
+   * @param filename String
+   * @return String
+   */
+  public static String constructIndexFilename(String alignmentFilename) 
+  {
+	  String result = null;
+	  
+	  if (isBamFile(alignmentFilename))
+		  result = alignmentFilename + BAMIndex.BAMIndexSuffix;
+	  else if (isCramFile(alignmentFilename))
+		  result = alignmentFilename + CRAIIndex.CRAI_INDEX_SUFFIX;
+	  
+	  return result;
+  }
+  
+  /**
+   * Create a temporary local index file.
+   * @param alignmentFileName String
+   * @return String
+   * @throws IOException
+   */
+  public static File createTempIndexFile(URL alignmentFileName) throws IOException
+  {
+	  File file = null;
+	  String ext = null;
+	  
+	  if (isBamFile(alignmentFileName.getFile()))
+		  ext = BAMIndex.BAMIndexSuffix;
+	  
+	  else if (isCramFile(alignmentFileName.getFile()))
+		  ext = CRAIIndex.CRAI_INDEX_SUFFIX;
+	  
+	  file = File.createTempFile(alignmentFileName.getFile().replaceAll("[\\/\\s]", "_"), ext);
+	  file.deleteOnExit();
+	      
+	  return file;
+  }
+  
+  /**
+   * Create a local index file for the given alignment file.
+   * NOTE: Index file sizes will vary across tools dependent on compression level
+   * used, amongst other things.
+   * @param alignmentFilename String
+   * @param indexFile File to create
+   * @throws IOException
+   */
+  public static void createIndexFileFromScratch(String alignmentFilename, File indexFile) throws IOException
+  {
+	  String indexFilePath = indexFile.getAbsolutePath();
+	  
+	  if (isBamFile(alignmentFilename))
+	  {
+		  // Only bother with local indexes
+		  
+		  logger.debug("Creating BAM index file from scratch: " + indexFilePath);
+		  
+		  final SamReaderFactory factory = SamReaderFactory.makeDefault();
+		  factory.disable(Option.EAGERLY_DECODE);
+		  factory.enable(SamReaderFactory.Option.INCLUDE_SOURCE_IN_RECORDS); // required
+		  factory.validationStringency(ValidationStringency.SILENT);
+		  final SamReader bam = factory.open(new File(alignmentFilename));
+		  
+		  if (bam.type() != SamReader.Type.BAM_TYPE) 
+		  {
+			  throw new IOException("Input file must be a valid BAM file.");
+	      }
+
+		  if (!bam.getFileHeader().getSortOrder().equals(SAMFileHeader.SortOrder.coordinate)) 
+		  {
+			  throw new IOException("Input BAM file must be sorted by coordinate.");
+		  }
+
+		  BAMIndexer.createIndex(bam, indexFile);
+		  CloserUtil.close(bam);
+		  
+		  logger.debug("Finished BAM index file creation: " + indexFilePath);
+		 
+	  }
+	  else if (isCramFile(alignmentFilename))
+	  {
+		  logger.debug("Creating CRAM index file from scratch: " + indexFilePath);
+		  
+		  if (alignmentFilename.startsWith("ftp")) 
+		  {
+			  // special case for FTP
+			  CRAMCRAIIndexer.writeIndex(
+					  new FTPSeekableStream(new URL(alignmentFilename), getFtpSocketTimeout(), getFtpBufferSize()), 
+					  new FileOutputStream(indexFile));
+		  } 
+		  else 
+		  {
+			  CRAMCRAIIndexer.writeIndex(
+					  SeekableStreamFactory.getInstance().getStreamFor(alignmentFilename), 
+					  new FileOutputStream(indexFile));
+		  }
+		  
+		  logger.debug("Finished CRAM index file creation: " + indexFilePath);
+	  } 
+
+  }
+  
+  /**
+   * Validate a BAM/CRAM file,
+   * @param reader SamReader
+   * @param ref CRAMReferenceSequenceFile
+   * @param throwOnError boolean
+   * @throws SamException
+   */
+  public static void validateSAMFile(SamReader reader, CRAMReferenceSequenceFile ref, boolean throwOnError) throws SAMException
+  { 
+	  logger.debug("Performing alignment file validation...");
+	  
+	  try 
+	  {
+		  SamFileValidator validator = new SamFileValidator(new PrintWriter(System.out), 20);
+		  validator.setIndexValidationStringency(BamIndexValidator.IndexValidationStringency.LESS_EXHAUSTIVE );
+		  validator.validateSamFileSummary(reader, ref);
+	  }
+	  catch(SAMException e)
+	  {
+		 logger.warn("Validation errors: " + e.getMessage());
+		 
+		 if (throwOnError)
+			 throw e;
+	  }
+  }
+  
+  /**
+   * Read a SAM/BAM/CRAM index file and if one does not exist then
+   * try to create it.
+   * 
+   * @param alignmentFile String
+   * @return File index file
+   * @throws IOException
+   * @throws SAMException
+   */
+  static File getIndexFile(String alignmentFile) throws SAMException, IOException
+  {
+    File indexFile = null;
+    boolean indexFileExists = false;
+    boolean alignmentFileIsRemote = false;
+    
+    
+    String indexFilename = constructIndexFilename(alignmentFile);
+    if (indexFilename == null) {
+    		// We cannot determine the alignment file type
+  	  	throw new SAMException("Alignment file is not a known file type. The file suffix may be incorrect.");
+    }
+    
+    if (alignmentFile.startsWith("http") || alignmentFile.startsWith("ftp"))
+    {
+      alignmentFileIsRemote = true;
+    	  final URL urlIndexFile = new URL(indexFilename);
+    	  
+    	  /*
+    	   * Create a local copy of the remote index file if possible.
+    	   * [copy it to a temp file].
+    	   */
+      indexFile = createTempIndexFile(new URL(alignmentFile));
+
+      InputStream is = null;
+      FileOutputStream out = null;
+      try 
+      {
+	      is = urlIndexFile.openStream();
+	      out = new FileOutputStream(indexFile);
+	      int c;
+	      
+	      while ((c = is.read()) != -1)
+	        out.write(c);
+	      
+	      out.flush();
+	      
+	      indexFileExists = true;
+	      logger.debug("Created local index file from remote... " + indexFile.getAbsolutePath());
+      }
+      catch (FileNotFoundException e)
+      {
+    	  	indexFileExists = false;
+    	  	logger.debug("Cannot locate a remote index file: " + indexFile.getAbsolutePath());
+      } 
+      finally
+      {
+    	  	if (out != null)
+    	  		out.close();
+    	  	
+    	  	if (is != null)
+    	  		is.close();
+      }
+ 
+    }
+    else
+    {
+    		// Use the local file index
+    	
+    		indexFile = new File(indexFilename);
+    		indexFileExists = indexFile.exists();
+    		
+    		logger.debug("Using index file... " + indexFile.getAbsolutePath());
+    }
+    
+    
+    /*
+     * We can't find an index file so try and create one locally
+     * if the alignment file is local. If it is remote, then just flag
+     * an error immediately.
+     */
+    if(!indexFileExists)
+    {
+	    	if (alignmentFileIsRemote) 
+	    	{
+	    		// Remote file
+	    		
+	    		String ls = System.getProperty("line.separator");
+	    		String msg = ls+
+		            "Failed to find an index file. Remote BAM/CRAM files must be indexed."+ls+
+		            "Please download the file to your local file system."+ls+
+		            "Indexing can then be done using samtools (http://www.htslib.org). For example: "+ls+ls+
+		            "samtools sort <in.bam> -o <sorted.bam>"+ls+
+		            "samtools index <sorted.bam>"+ls;
+		        
+		    logger.error("Failed to find an index file for remote alignment file: " + alignmentFile);
+		    throw new SAMException(msg);
+	    	}
+	    	else 
+	    	{
+	    		// Local file
+	    		
+	    		try
+	    		{
+	    			logger.warn("Index file not found, so we will create one using the alignment file.");
+	        
+	    			createIndexFileFromScratch(alignmentFile, indexFile);
+	    		}
+	    		catch(Exception e)
+	    		{
+	    			String ls = System.getProperty("line.separator");
+	    			String msg = ls+
+		            "An index file could not be created."+ls+
+		            "The BAM/CRAM file needs to be accessible, sorted and indexed."+ls+
+		            "Indexing and sorting can be done using samtools (http://www.htslib.org). For example: "+ls+ls+
+		            "samtools sort <in.bam> -o <sorted.bam>"+ls+
+		            "samtools index <sorted.bam>"+ls;
+		        
+	    			logger.error("Failed to create index file " + indexFile.getAbsolutePath(), e);
+		      
+	    			throw new SAMException(msg);
+	    		}
+	    	}
+    }
+
+    return indexFile;
+  }
+  
+  /**
+   * Get an FTP timeout from options, if specified.
+   * @return int
+   */
+  public static int getFtpSocketTimeout() 
+  {
+	  int timeout = 10000;
+	  
+	  if(Options.getOptions().getIntegerProperty("bamview_ftp_socket_timeout") != null)
+	  { 
+		  timeout = Options.getOptions().getIntegerProperty("bamview_ftp_socket_timeout");
+    	  
+		  logger.debug("BAM VIEW FTP SOCKET TIMEOUT=" + timeout);
+	  }
+	  
+	  return timeout;
+  }
+  
+  /**
+   * Get an FTP buffer size from options, if specified.
+   * @return int
+   */
+  public static int getFtpBufferSize() 
+  {
+	  int bufferSize = -1;  // automatically set
+	  
+	  if(Options.getOptions().getIntegerProperty("bamview_ftp_buffer_size") != null)
+	  { 
+		  bufferSize = Options.getOptions().getIntegerProperty("bamview_ftp_buffer_size");
+    	  
+		  logger.debug("BAM VIEW FTP BUFFER SIZE=" + bufferSize);
+	  }
+	  
+	  return bufferSize;
+  }
+  
 }
 

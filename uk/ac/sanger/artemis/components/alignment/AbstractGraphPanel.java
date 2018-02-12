@@ -95,7 +95,7 @@ public class AbstractGraphPanel extends JPanel
     final JMenuItem setScale = new JMenuItem("Set the Window Size...");
     setScale.addActionListener(new ActionListener()
     {
-      public void actionPerformed(ActionEvent _)
+      public void actionPerformed(ActionEvent event)
       {
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();

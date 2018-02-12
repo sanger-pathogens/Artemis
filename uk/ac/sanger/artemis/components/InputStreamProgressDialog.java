@@ -80,6 +80,7 @@ public class InputStreamProgressDialog extends JDialog
                                    final boolean modal) 
   {
     super(parent_frame, title, modal);
+    setName("InputStreamProgressDialog");
     getContentPane().add(new JLabel(message), "North");
 
     final JLabel bytes_label = new JLabel("                               ");

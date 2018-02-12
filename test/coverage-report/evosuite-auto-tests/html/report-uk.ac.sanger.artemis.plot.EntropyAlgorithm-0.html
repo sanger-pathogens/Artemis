@@ -1,0 +1,218 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.plot.EntropyAlgorithm
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.plot.EntropyAlgorithm: 0.871749104439671</ul>
+<ul>
+<li>103.18843953059837 fitness evaluations, 0 generations, null statements, 16 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;SoftMaskedAlphabets cannot remove Symbols&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="4">  4: </a></span>EntropyAlgorithm entropyAlgorithm0 = new EntropyAlgorithm(strand0);
+<span class="nocode"><a name="5">  5: </a></span>entropyAlgorithm0.getAverage();
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="4">  4: </a></span>EntropyAlgorithm entropyAlgorithm0 = new EntropyAlgorithm(strand0);
+<span class="nocode"><a name="5">  5: </a></span>int int0 = entropyAlgorithm0.getValueCount();
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(entropyAlgorithm0.scalingFlag());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(&quot;Informational Entropy&quot;, entropyAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(1, int0);
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;SoftMaskedAlphabets cannot remove Symbols&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="4">  4: </a></span>EntropyAlgorithm entropyAlgorithm0 = new EntropyAlgorithm(strand0);
+<span class="nocode"><a name="5">  5: </a></span>Float float0 = entropyAlgorithm0.getMaximumInternal();
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(entropyAlgorithm0.scalingFlag());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(&quot;Informational Entropy&quot;, entropyAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(100.0F, (float)float0, 0.01F);
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="4">  4: </a></span>EntropyAlgorithm entropyAlgorithm0 = new EntropyAlgorithm(strand0);
+<span class="nocode"><a name="5">  5: </a></span>Float float0 = entropyAlgorithm0.getMinimumInternal();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;Informational Entropy&quot;, entropyAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(0.0F, (float)float0, 0.01F);
+<span class="nocode"><a name="8">  8: </a></span>assertTrue(entropyAlgorithm0.scalingFlag());
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="4">  4: </a></span>EntropyAlgorithm entropyAlgorithm0 = new EntropyAlgorithm(strand0);
+<span class="nocode"><a name="5">  5: </a></span>float[] floatArray0 = new float[8];
+<span class="nocode"><a name="6">  6: </a></span>entropyAlgorithm0.getValues(1327, 0, floatArray0);
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;SoftMaskedAlphabets cannot remove Symbols&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="4">  4: </a></span>EntropyAlgorithm entropyAlgorithm0 = new EntropyAlgorithm(strand0);
+<span class="nocode"><a name="5">  5: </a></span>float[] floatArray0 = new float[8];
+<span class="nocode"><a name="6">  6: </a></span>entropyAlgorithm0.getValues(5, 4037, floatArray0);
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Short short0 = new Short((short)774);
+<span class="nocode"><a name="2">  2: </a></span>Integer integer0 = JLayeredPane.MODAL_LAYER;
+<span class="nocode"><a name="3">  3: </a></span>PartialSequence partialSequence0 = new PartialSequence((char[]) null, 1, 1024, short0, integer0);
+<span class="nocode"><a name="4">  4: </a></span>Bases bases0 = new Bases(partialSequence0);
+<span class="nocode"><a name="5">  5: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="6">  6: </a></span>EntropyAlgorithm entropyAlgorithm0 = new EntropyAlgorithm(strand0);
+<span class="nocode"><a name="7">  7: </a></span>float[] floatArray0 = new float[1];
+<span class="nocode"><a name="8">  8: </a></span>entropyAlgorithm0.getValues(2, 2, floatArray0);
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(&quot;Reverse Informational Entropy&quot;, entropyAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="10"> 10: </a></span>assertTrue(entropyAlgorithm0.scalingFlag());
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="4">  4: </a></span>EntropyAlgorithm entropyAlgorithm0 = new EntropyAlgorithm(strand0);
+<span class="nocode"><a name="5">  5: </a></span>Integer integer0 = entropyAlgorithm0.getDefaultWindowSize();
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(entropyAlgorithm0.scalingFlag());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(&quot;Informational Entropy&quot;, entropyAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(500, (int)integer0);
+<span class="nocode"><a name="9">  9: </a></span>assertNotNull(integer0);
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="4">  4: </a></span>EntropyAlgorithm entropyAlgorithm0 = new EntropyAlgorithm(strand0);
+<span class="nocode"><a name="5">  5: </a></span>Integer integer0 = entropyAlgorithm0.getDefaultMaxWindowSize();
+<span class="nocode"><a name="6">  6: </a></span>assertTrue(entropyAlgorithm0.scalingFlag());
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(&quot;Informational Entropy&quot;, entropyAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="8">  8: </a></span>assertNotNull(integer0);
+<span class="nocode"><a name="9">  9: </a></span>assertEquals(5000, (int)integer0);
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>RawStreamSequence rawStreamSequence0 = new RawStreamSequence(&quot;SoftMaskedAlphabets cannot remove Symbols&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(rawStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="4">  4: </a></span>EntropyAlgorithm entropyAlgorithm0 = new EntropyAlgorithm(strand0);
+<span class="nocode"><a name="5">  5: </a></span>Integer integer0 = entropyAlgorithm0.getDefaultMinWindowSize();
+<span class="nocode"><a name="6">  6: </a></span>assertNotNull(integer0);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(25, (int)integer0);
+<span class="nocode"><a name="8">  8: </a></span>assertEquals(&quot;Informational Entropy&quot;, entropyAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="9">  9: </a></span>assertTrue(entropyAlgorithm0.scalingFlag());
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="4">  4: </a></span>EntropyAlgorithm entropyAlgorithm0 = new EntropyAlgorithm(strand0);
+<span class="nocode"><a name="5">  5: </a></span>Integer integer0 = entropyAlgorithm0.getDefaultStepSize((-1880));
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;Informational Entropy&quot;, entropyAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="7">  7: </a></span>assertTrue(entropyAlgorithm0.scalingFlag());
+<span class="nocode"><a name="8">  8: </a></span>assertNull(integer0);
+</pre>
+<h3>Test case 12</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Bases bases0 = new Bases((Sequence) null);
+<span class="nocode"><a name="2">  2: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="3">  3: </a></span>EntropyAlgorithm entropyAlgorithm0 = new EntropyAlgorithm(strand0);
+<span class="nocode"><a name="4">  4: </a></span>Integer integer0 = entropyAlgorithm0.getDefaultStepSize(500);
+<span class="nocode"><a name="5">  5: </a></span>assertNotNull(integer0);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(50, (int)integer0);
+<span class="nocode"><a name="7">  7: </a></span>assertEquals(&quot;Reverse Informational Entropy&quot;, entropyAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="8">  8: </a></span>assertTrue(entropyAlgorithm0.scalingFlag());
+</pre>
+<h3>Test case 13</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EntropyAlgorithm entropyAlgorithm0 = new EntropyAlgorithm((Strand) null);
+</pre>
+<h3>Test case 14</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Bases bases0 = new Bases((Sequence) null);
+<span class="nocode"><a name="2">  2: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="3">  3: </a></span>EntropyAlgorithm entropyAlgorithm0 = new EntropyAlgorithm(strand0);
+<span class="nocode"><a name="4">  4: </a></span>entropyAlgorithm0.getAverage();
+</pre>
+<h3>Test case 15</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Bases bases0 = new Bases((Sequence) null);
+<span class="nocode"><a name="2">  2: </a></span>Strand strand0 = bases0.getReverseStrand();
+<span class="nocode"><a name="3">  3: </a></span>EntropyAlgorithm entropyAlgorithm0 = new EntropyAlgorithm(strand0);
+<span class="nocode"><a name="4">  4: </a></span>float[] floatArray0 = new float[4];
+<span class="nocode"><a name="5">  5: </a></span>entropyAlgorithm0.getValues(0, 126, floatArray0);
+</pre>
+<h3>Test case 16</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>Strand strand0 = bases0.getForwardStrand();
+<span class="nocode"><a name="4">  4: </a></span>EntropyAlgorithm entropyAlgorithm0 = new EntropyAlgorithm(strand0);
+<span class="nocode"><a name="5">  5: </a></span>entropyAlgorithm0.getAverage();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(&quot;Informational Entropy&quot;, entropyAlgorithm0.getAlgorithmName());
+<span class="nocode"><a name="7">  7: </a></span>assertTrue(entropyAlgorithm0.scalingFlag());
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.plot.EntropyAlgorithm
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.plot.EntropyAlgorithm
+<li>Size: 16
+<li>Length: 79
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.871749104439671
+<li>BranchCoverage: 0.8695652173913043
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 0.3716216216216216
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

@@ -1,0 +1,137 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.components.KeyChoice
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.components.KeyChoice: 0.9328703703703703</ul>
+<ul>
+<li>5.249999981668825 fitness evaluations, 0 generations, null statements, 11 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = new SimpleEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>KeyChoice keyChoice0 = new KeyChoice(simpleEntryInformation0);
+<span class="nocode"><a name="3">  3: </a></span>keyChoice0.setEnabled(true);
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = (SimpleEntryInformation)SimpleEntryInformation.getDefaultEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>KeyChoice keyChoice0 = new KeyChoice(simpleEntryInformation0);
+<span class="nocode"><a name="3">  3: </a></span>keyChoice0.removeItemListener((ItemListener) null);
+<span class="nocode"><a name="4">  4: </a></span>assertTrue(keyChoice0.getFocusTraversalKeysEnabled());
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>KeyChoice keyChoice0 = new KeyChoice(blastEntryInformation0);
+<span class="nocode"><a name="3">  3: </a></span>keyChoice0.addItemListener((ItemListener) null);
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(keyChoice0.isFocusTraversalPolicySet());
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>KeyChoice keyChoice0 = new KeyChoice(blastEntryInformation0);
+<span class="nocode"><a name="3">  3: </a></span>Key key0 = keyChoice0.getSelectedItem();
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(&quot;CDS&quot;, key0.toString());
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>KeyChoice keyChoice0 = new KeyChoice(blastEntryInformation0);
+<span class="nocode"><a name="3">  3: </a></span>Key key0 = new Key(&quot;&quot;);
+<span class="nocode"><a name="4">  4: </a></span>keyChoice0.setKey(key0);
+<span class="nocode"><a name="5">  5: </a></span>keyChoice0.setKey(key0);
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, key0.length());
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = new Key(&quot;NFa&quot;);
+<span class="nocode"><a name="3">  3: </a></span>KeyChoice keyChoice0 = new KeyChoice(blastEntryInformation0, key0);
+<span class="nocode"><a name="4">  4: </a></span>assertFalse(keyChoice0.getIgnoreRepaint());
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>KeyChoice keyChoice0 = new KeyChoice((EntryInformation) null);
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = blastEntryInformation0.getDefaultKey();
+<span class="nocode"><a name="3">  3: </a></span>KeyChoice keyChoice0 = new KeyChoice((EntryInformation) null, key0);
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryInformation simpleEntryInformation0 = (SimpleEntryInformation)SimpleEntryInformation.getDefaultEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>KeyChoice keyChoice0 = new KeyChoice(simpleEntryInformation0);
+<span class="nocode"><a name="3">  3: </a></span>keyChoice0.setKey((Key) null);
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>KeyChoice keyChoice0 = new KeyChoice(blastEntryInformation0);
+<span class="nocode"><a name="3">  3: </a></span>Key key0 = new Key(&quot;&quot;);
+<span class="nocode"><a name="4">  4: </a></span>keyChoice0.setKey(key0);
+<span class="nocode"><a name="5">  5: </a></span>Key key1 = keyChoice0.getSelectedItem();
+<span class="nocode"><a name="6">  6: </a></span>assertEquals(0, key1.length());
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="2">  2: </a></span>Key key0 = blastEntryInformation0.getDefaultKey();
+<span class="nocode"><a name="3">  3: </a></span>blastEntryInformation0.addKey(key0);
+<span class="nocode"><a name="4">  4: </a></span>Key key1 = Key.CDS;
+<span class="nocode"><a name="5">  5: </a></span>blastEntryInformation0.addKey(key1);
+<span class="nocode"><a name="6">  6: </a></span>KeyChoice keyChoice0 = new KeyChoice(blastEntryInformation0, key1);
+<span class="nocode"><a name="7">  7: </a></span>assertTrue(keyChoice0.getFocusTraversalKeysEnabled());
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.components.KeyChoice
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.components.KeyChoice
+<li>Size: 11
+<li>Length: 38
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.9328703703703703
+<li>BranchCoverage: 1.0
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 0.5
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

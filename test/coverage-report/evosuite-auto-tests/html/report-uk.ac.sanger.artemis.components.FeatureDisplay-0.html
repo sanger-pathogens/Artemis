@@ -1,0 +1,122 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.components.FeatureDisplay
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.components.FeatureDisplay: 0.17058671226853794</ul>
+<ul>
+<li>18246.64493262217 fitness evaluations, 0 generations, null statements, 7 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>EmblStreamSequence emblStreamSequence0 = new EmblStreamSequence(&quot;?)&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(emblStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>BlastEntryInformation blastEntryInformation0 = new BlastEntryInformation();
+<span class="nocode"><a name="5">  5: </a></span>MSPcrunchDocumentEntry mSPcrunchDocumentEntry0 = new MSPcrunchDocumentEntry(blastEntryInformation0);
+<span class="nocode"><a name="6">  6: </a></span>Entry entry0 = new Entry(bases0, mSPcrunchDocumentEntry0);
+<span class="nocode"><a name="7">  7: </a></span>FeatureVector featureVector0 = entry0.checkFeatureStartCodons();
+<span class="nocode"><a name="8">  8: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, &quot;gap&quot;);
+<span class="nocode"><a name="9">  9: </a></span>Clipboard clipboard0 = new Clipboard(&quot;internal error - unexpected exception: &quot;);
+<span class="nocode"><a name="10"> 10: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="11"> 11: </a></span>SimpleGotoEventSource simpleGotoEventSource0 = new SimpleGotoEventSource(simpleEntryGroup0);
+<span class="nocode"><a name="12"> 12: </a></span>FeatureDisplay featureDisplay0 = new FeatureDisplay(filteredEntryGroup0, selection0, simpleGotoEventSource0, (BasePlotGroup) null, (-2367));
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>GenbankStreamSequence genbankStreamSequence0 = new GenbankStreamSequence(&quot;Metal&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(genbankStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>FeatureVector featureVector0 = simpleEntryGroup0.getFeaturesInIndexRange(520, 1);
+<span class="nocode"><a name="5">  5: </a></span>FilteredEntryGroup filteredEntryGroup0 = new FilteredEntryGroup(simpleEntryGroup0, featureVector0, &quot;xId]Rso.&lt;ZXeOOE5s}&quot;);
+<span class="nocode"><a name="6">  6: </a></span>Clipboard clipboard0 = new Clipboard(&quot;t&amp;7vXqrbjEF.X(z&quot;);
+<span class="nocode"><a name="7">  7: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="8">  8: </a></span>SimpleGotoEventSource simpleGotoEventSource0 = new SimpleGotoEventSource(filteredEntryGroup0);
+<span class="nocode"><a name="9">  9: </a></span>FeatureDisplay featureDisplay0 = new FeatureDisplay(filteredEntryGroup0, selection0, simpleGotoEventSource0, (BasePlotGroup) null);
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>FastaStreamSequence fastaStreamSequence0 = new FastaStreamSequence(&quot;uk.ac.sanger.artemis.components.LogViewer$1&quot;, &quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>Bases bases0 = new Bases(fastaStreamSequence0);
+<span class="nocode"><a name="3">  3: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup(bases0);
+<span class="nocode"><a name="4">  4: </a></span>Entry entry0 = simpleEntryGroup0.createEntry(&quot;Mac OS X Aqua&quot;);
+<span class="nocode"><a name="5">  5: </a></span>Feature feature0 = entry0.createFeature();
+<span class="nocode"><a name="6">  6: </a></span>String string0 = FeatureDisplay.getParentQualifier(feature0);
+<span class="nocode"><a name="7">  7: </a></span>assertNull(string0);
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Vector&lt;String&gt; vector0 = FeatureDisplay.getContigKeys();
+<span class="nocode"><a name="2">  2: </a></span>assertEquals(&quot;[fasta_record, contig, insertion_gap]&quot;, vector0.toString());
+<span class="nocode"><a name="3">  3: </a></span>assertNotNull(vector0);
+<span class="nocode"><a name="4">  4: </a></span>assertEquals(3, vector0.capacity());
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>Vector&lt;String&gt; vector0 = FeatureDisplay.getAllPossibleContigKeys();
+<span class="nocode"><a name="2">  2: </a></span>assertNotNull(vector0);
+<span class="nocode"><a name="3">  3: </a></span>assertEquals(&quot;[fasta_record, contig, insertion_gap, gap, scaffold, source]&quot;, vector0.toString());
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleEntryGroup simpleEntryGroup0 = new SimpleEntryGroup();
+<span class="nocode"><a name="2">  2: </a></span>Clipboard clipboard0 = new Clipboard(&quot;org.biojava.bio.symbol.FuzzyLocation$AverageRangeResolver&quot;);
+<span class="nocode"><a name="3">  3: </a></span>Selection selection0 = new Selection(clipboard0);
+<span class="nocode"><a name="4">  4: </a></span>SimpleGotoEventSource simpleGotoEventSource0 = new SimpleGotoEventSource(simpleEntryGroup0);
+<span class="nocode"><a name="5">  5: </a></span>FeatureDisplay featureDisplay0 = new FeatureDisplay(simpleEntryGroup0, selection0, simpleGotoEventSource0, (BasePlotGroup) null);
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SimpleGotoEventSource simpleGotoEventSource0 = new SimpleGotoEventSource((EntryGroup) null);
+<span class="nocode"><a name="2">  2: </a></span>FeatureDisplay featureDisplay0 = new FeatureDisplay((EntryGroup) null, (Selection) null, simpleGotoEventSource0, (BasePlotGroup) null, 116);
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.components.FeatureDisplay
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.components.FeatureDisplay
+<li>Size: 7
+<li>Length: 36
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.17058671226853794
+<li>BranchCoverage: 0.03525179856115108
+<li>MethodCoverage: 0.05952380952380952
+<li>OutputCoverage: 0.07368421052631578
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

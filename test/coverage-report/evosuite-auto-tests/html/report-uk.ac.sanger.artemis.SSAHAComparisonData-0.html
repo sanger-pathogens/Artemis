@@ -1,0 +1,119 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>
+uk.ac.sanger.artemis.SSAHAComparisonData
+</title>
+<link href="files/prettify.css" type="text/css" rel="stylesheet" />
+<link href="files/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="files/prettify.js"></script>
+<script type="text/javascript" src="files/jquery.js"></script>
+<script type="text/javascript" src="files/foldButton.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('H2#tests').foldButton();
+    $('H2#source').foldButton();
+    $('H2#parameters').foldButton();
+  });</script>
+<link href="files/foldButton.css" rel="stylesheet" type="text/css">
+</head>
+<body onload="prettyPrint()">
+<div id="wrapper">
+<img src="files/evosuite.png" height="40"/>
+<br><br><h2 class=title>Summary</h2>
+<ul><li>Target class: uk.ac.sanger.artemis.SSAHAComparisonData: 0.5294438106938106</ul>
+<ul>
+<li>176.95714285714286 fitness evaluations, 0 generations, null statements, 11 tests.
+<li>Covered null/null branches, <li>Covered null/null methods, <li>Covered null/null total goals
+</ul>
+<div id="page">
+<div id="page-bgtop">
+<div id="page-bgbtm">
+<div id="content">
+<div id="post">
+<h2 class=title id=tests>Test suite</h2>
+<div class=tests>
+<h3>Test case 1</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>PipedReader pipedReader0 = new PipedReader();
+<span class="nocode"><a name="2">  2: </a></span>LinePushBackReader linePushBackReader0 = new LinePushBackReader(pipedReader0);
+<span class="nocode"><a name="3">  3: </a></span>SSAHAComparisonData sSAHAComparisonData0 = new SSAHAComparisonData(linePushBackReader0);
+</pre>
+<h3>Test case 2</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SSAHAComparisonData sSAHAComparisonData0 = new SSAHAComparisonData();
+<span class="nocode"><a name="2">  2: </a></span>SSAHAComparisonData sSAHAComparisonData1 = (SSAHAComparisonData)sSAHAComparisonData0.getNewSimpleComparisonData();
+<span class="nocode"><a name="3">  3: </a></span>assertFalse(sSAHAComparisonData1.equals((Object)sSAHAComparisonData0));
+</pre>
+<h3>Test case 3</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>boolean boolean0 = SSAHAComparisonData.formatCorrect(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>assertFalse(boolean0);
+</pre>
+<h3>Test case 4</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>StringReader stringReader0 = new StringReader(&quot;&quot;);
+<span class="nocode"><a name="2">  2: </a></span>LinePushBackReader linePushBackReader0 = new LinePushBackReader(stringReader0);
+<span class="nocode"><a name="3">  3: </a></span>SSAHAComparisonData sSAHAComparisonData0 = new SSAHAComparisonData(linePushBackReader0);
+</pre>
+<h3>Test case 5</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SSAHAComparisonData.makeMatchFromStringStatic(&quot;.]&quot;);
+</pre>
+<h3>Test case 6</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SSAHAComparisonData sSAHAComparisonData0 = new SSAHAComparisonData((LinePushBackReader) null);
+</pre>
+<h3>Test case 7</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>byte[] byteArray0 = new byte[9];
+<span class="nocode"><a name="2">  2: </a></span>byteArray0[6] = (byte)54;
+<span class="nocode"><a name="3">  3: </a></span>ByteArrayInputStream byteArrayInputStream0 = new ByteArrayInputStream(byteArray0);
+<span class="nocode"><a name="4">  4: </a></span>DataInputStream dataInputStream0 = new DataInputStream(byteArrayInputStream0);
+<span class="nocode"><a name="5">  5: </a></span>Charset charset0 = Charset.defaultCharset();
+<span class="nocode"><a name="6">  6: </a></span>InputStreamReader inputStreamReader0 = new InputStreamReader(dataInputStream0, charset0);
+<span class="nocode"><a name="7">  7: </a></span>LinePushBackReader linePushBackReader0 = new LinePushBackReader(inputStreamReader0);
+<span class="nocode"><a name="8">  8: </a></span>SSAHAComparisonData sSAHAComparisonData0 = new SSAHAComparisonData(linePushBackReader0);
+</pre>
+<h3>Test case 8</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SSAHAComparisonData.formatCorrect((String) null);
+</pre>
+<h3>Test case 9</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SSAHAComparisonData sSAHAComparisonData0 = new SSAHAComparisonData();
+<span class="nocode"><a name="2">  2: </a></span>sSAHAComparisonData0.makeMatchFromString((String) null);
+</pre>
+<h3>Test case 10</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SSAHAComparisonData sSAHAComparisonData0 = new SSAHAComparisonData();
+<span class="nocode"><a name="2">  2: </a></span>sSAHAComparisonData0.makeMatchFromString(&quot; values but the header says this should have &quot;);
+</pre>
+<h3>Test case 11</h3>
+<pre class="prettyprint" style="border: 1px solid #888;padding: 2px">
+<span class="nocode"><a name="1">  1: </a></span>SSAHAComparisonData.makeMatchFromStringStatic((String) null);
+</pre>
+</div><div id="post">
+<h2 class=title id=source>Source Code</h2>
+<div class=source>
+<p><pre class="prettyprint" style="border: 1px solid #888;padding: 2px"><span class="nocode"><a name="1">  1: </a></span>No source found for uk.ac.sanger.artemis.SSAHAComparisonData
+</pre>
+</p>
+</div>
+<div id="post">
+<h2 id=parameters>EvoSuite Parameters</h2>
+<div class=statistics><ul>
+<li>TARGET_CLASS: uk.ac.sanger.artemis.SSAHAComparisonData
+<li>Size: 11
+<li>Length: 25
+<li>criterion: LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH
+<li>Coverage: 0.5294438106938106
+<li>BranchCoverage: 0.6666666666666666
+<li>MethodCoverage: 1.0
+<li>OutputCoverage: 0.03571428571428571
+</ul></div>
+</div>
+<p><br><a href="../report-generation.html">Back to Overview</a></p>
+</div>
+</body>
+</html>

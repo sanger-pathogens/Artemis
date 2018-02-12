@@ -1,117 +1,474 @@
 <?xml version="1.0"?>
 
-<!--  Ant build file for Artemis Test Suite -->
+<!-- ========================================================
 
-<project name="artemis.test" default="test" basedir=".">
-
-  <target name="init">
-    <tstamp />
-    <property name="name" value="artemis test suite" />
-    <property name="version" value="live" />
-    <property name="build.compiler" value="modern" />
-    <property name="classpath" value="." />
-    <property name="src.tests.dir" value="." />
-  	<property name="src.lib.dir" value="lib" />
-  	<property name="mainlib.dir" value="../lib" />
-
-    <property name="build.dir" value="./ant-build" />
-
-    <!-- Subdirectories for tests source and classes -->
-    <property name="build.src.tests" value="${build.dir}/src/tests" />
-    <property name="build.dest.tests" value="${build.dir}/classes/tests" />
+	Ant build file for Artemis Test Suite.
+	
+	The following additional property can be passed in on the ant
+  	command line if you need to run the Blast unit tests
+  	(which send simple queries to NCBI).....
+  		
+  	-Drun.blast.test.flag=true 
   	
-    <!-- Compile classpath -->
-    <path id="compile.classpath">
-        <!-- Main classes from build -->
-    	<pathelement path="${classpath}" />
-    	<pathelement path="../ant-build/classes/main/" />
-        <pathelement path="${build.dest.tests}" />
-        <!-- Dependency classes -->
-        <fileset dir="${src.lib.dir}">
-        	 <include name="**/*.jar" />
-        </fileset>
-        <fileset dir="${mainlib.dir}">
-        	 <include name="**/*.jar" />
-        </fileset>
-    	<pathelement path=".." />
-    </path>
-  </target>
-
-  <!-- Prepares the build directory -->
-  <target name="prepare" depends="init">
-    <mkdir dir="${build.dir}" />
-  </target>
-
-  <!-- Prepares the source code -->
-  <target name="prepare-core" depends="init,prepare">
-    <!-- Creates directories -->
-    <mkdir dir="${build.src.tests}" />
-	<mkdir dir="${build.dest.tests}" />
-
-    <!-- Copies src files -->
-    <copy todir="${build.src.tests}">
-	  <fileset dir="${src.tests.dir}">
-	   	<exclude name="**/CVS/**" />
-	  	<exclude name="**/data/**" />
-	  	<exclude name="**/lib/**" />
-	  	<exclude name="**/ant-build/**" />
-	  </fileset>
-    </copy>
-
-	<!-- Copies jars -->
-	<copy todir="${build.dir}">
-	  <fileset dir="${src.lib.dir}">
-	    <include name="*.jar" />
-      </fileset>
-	</copy>
-  </target>
+  	This ant script can be used to create Evosuite tests 
+  	from scratch using the "create-evotests" target, and
+  	to run them along with the current set of manually 
+  	constructed tests, producing coverage reports at the end.
+  	These coverage reports are stored in the :
+  	
+  	ant-build/coverage-report 
+  	
+  	folder. Note, however, that the EvoSuite tests may need some degree
+  	of manual modification after creation as a small number 
+  	may not be cross-platform compatible and I noticed one instance
+  	of heap exhaustion caused by incorrect object sizing.
+  	
+  	Jacoco is used for the manual unit tests and Evosuite
+  	creates its own reports at the unit test creation stage. 
+  	Unfortunately, neither Jacoco nor Cobertura work properly with
+  	EvoSuite due to interactions at the bytecode instrumentation
+  	level.
 	
-  <!-- Compiles the source directory -->
-  <target name="compile" depends="init,prepare-core">
-	 <javac
-	  fork="true"
-	  srcdir="${build.src.tests}"
-	  destdir="${build.dest.tests}"
-	  deprecation="false"
-	  depend="no"
-	  debug="true">
-	  <classpath refid="compile.classpath"/>
-	</javac>
-  </target>	
+============================================================= -->
+
+<project name="artemis.test" default="jacoco-coverage-report" basedir="." xmlns:jacoco="antlib:org.jacoco.ant">
+
+	<property name="name" value="artemis test suite" />
+	<property name="version" value="live" />
+	<property name="halt.tests.on.error" value="no" />
+	<property name="java.major.version" value="1.8" />
+	<property name="build.compiler" value="modern" />
+	<property name="classpath" value="." />
+	<property name="src.tests.dir" value="." />
+	<property name="src.lib.dir" value="lib" />
+	<property name="mainlib.dir" value="../lib" />
+
+	<property name="build.dir" value="./ant-build" />
+
+	<property name="jacoco.dir" value="jacoco-lib" />
+	<property name="junit.reports.dir" value="${build.dir}/junit-reports" />
+	<property name="coverage.report.dir" value="${basedir}/coverage-report" />
+	<property name="coverage.report.jacoco.dir" value="${coverage.report.dir}/jacoco-manual-tests" />
+	<property name="coverage.report.evosuite.dir" value="${coverage.report.dir}/evosuite-auto-tests" />
+	<property name="artemis.build.dir" value="../ant-build" />
+	<property name="artemis.classes.dir" value="${artemis.build.dir}/classes/main" />
+	<property name="artemis.src.dir" value="${artemis.build.dir}/src/main" />
+	<property name="artemis.properties.dir" value="${basedir}/data" />
+	<property name="artemis.missing.dependency.classes.dir" value="${build.dir}/evosuite-dependencies/classes" />
+	<property name="artemis.missing.dependency.src.dir" value="${build.dir}/evosuite-dependencies/src" />
+	<property name="artemis.missing.dependency.dir" value="${basedir}/evosuite-dependencies" />
+	<property name="artemis.base.package.path" value="uk/ac/sanger/artemis" />
+
+	<!-- Subdirectories for tests source and classes -->
+	<property name="build.src.tests" value="${build.dir}/src/tests" />
+	<property name="build.dest.tests" value="${build.dir}/classes/tests" />
+
+	<!-- Evosuite properties for auto unit test generation -->
+	<!-- If evosuite.run.tests.flag is set to false then EvoSuite generated tests are not run -->
+	<property name="evosuite.run.tests.flag" value="true" />
+	<property name="evosuite.lib.dir" value="${basedir}/evosuite-lib" />
+	<property name="evosuite.jar" value="${evosuite.lib.dir}/evosuite-1.0.5.jar" />
+	<property name="evosuite.standalone.jar" value="${evosuite.lib.dir}/evosuite-standalone-runtime-1.0.5.jar" />
+	<property name="evosuite.tests.dir" value="." />
+	<property name="evosuite.tests.src.dir" value="${evosuite.tests.dir}/evosuite-tests" />
+	<property name="evosuite.tests.build.dir" value="${build.dir}/evosuite-tests" />
+	<property name="evosuite.tests.classes.dir" value="${evosuite.tests.build.dir}/classes" />
+	<property name="evosuite.tests.report.dir" value="evosuite-report" />
+	<property name="evosuite.tests.package.prefix" value="uk.ac.sanger.artemis" />
+
+	<condition property="do.run.evosuite.tests">
+		<istrue value="${evosuite.run.tests.flag}" />
+	</condition>
+
+	<!-- Compile classpath -->
+	<path id="compile.classpath">
+		<!-- Main classes from build -->
+		<pathelement path="${classpath}" />
+		<pathelement path="${artemis.classes.dir}" />
+		<pathelement path="${build.dest.tests}" />
+		<!-- Dependency classes -->
+		<fileset dir="${src.lib.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+		<fileset dir="${mainlib.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+		<pathelement path=".." />
+	</path>
+
+	<path id="evosuite.classpath">
+		<!-- Main classes from build -->
+		<pathelement path="${artemis.classes.dir}" />
+		<pathelement path="${mainlib.dir}/j2ssh" />
+		<!-- pick up props file -->
+		<pathelement path=".." />
+		<!-- Missing Artemis dependency required for EvoSuite tests -->
+		<pathelement path="${artemis.missing.dependency.classes.dir}" />
+		<!-- Dependency classes -->
+		<fileset dir="${src.lib.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+		<fileset dir="${mainlib.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+		<pathelement path="${evosuite.jar}" />
+	</path>
 	
-  <target name="test" depends="compile">
-  	<echo>Running test with EMBOSS_ROOT=${EMBOSS_ROOT}</echo>
-  	<junit description="alltests" fork="yes">
-  	 <jvmarg value="-DEMBOSS_ROOT=${EMBOSS_ROOT}"/>
-  	 <batchtest todir="${build.dest.tests}">
-  	 	<fileset dir="${build.src.tests}">
-  	 		<include name="uk/ac/sanger/artemis/**/**Test.java"/>
-  	 		<include name="uk/ac/sanger/artemis/**/**/**Test.java"/>
-  	 	</fileset>
-  	 </batchtest>
-  	 <formatter type="plain" usefile="false"/>
-  	 <classpath refid="compile.classpath"/> 
-  	</junit>
-  </target>
+	<path id="evosuite.jar.classpath">
+		<pathelement path="${evosuite.jar}" />
+	</path>
 	
-  <target name="test-headless" depends="compile">
-  	<echo>Running test with EMBOSS_ROOT=${EMBOSS_ROOT}</echo>
-  	<junit description="alltests" fork="yes">
-  	 <jvmarg value="-DEMBOSS_ROOT=${EMBOSS_ROOT}"/>
-     <jvmarg value="-Djava.awt.headless=true"/>
-  	 <batchtest todir="${build.dest.tests}">
-  	 	<fileset dir="${build.src.tests}">
-  	 		<include name="uk/ac/sanger/artemis/**/**Test.java"/>
-  	 		<include name="uk/ac/sanger/artemis/**/**/**Test.java"/>
-  	 	</fileset>
-  	 </batchtest>
-  	 <formatter type="plain" usefile="false"/>
-  	 <classpath refid="compile.classpath"/> 
-  	</junit>
-  </target>
+	<path id="evosuite.runtime.classpath">
+		<!-- Main classes from build -->
+		<pathelement path="${classpath}" />
+		<pathelement path="${artemis.classes.dir}" />
+		<pathelement path="${mainlib.dir}/j2ssh" />
+		<!-- pick up props file -->
+		<pathelement path="${artemis.properties.dir}" />
+		<pathelement path="${evosuite.standalone.jar}" />
+		<!-- Dependency classes -->
+		<fileset dir="${src.lib.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+		<fileset dir="${mainlib.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+		<pathelement path=".." />
+		<pathelement path="${evosuite.tests.classes.dir}" />
+		<pathelement path="${build.dest.tests}" />
+	</path>
+
+	<path id="runtime.classpath">
+		<!-- Main classes from build -->
+		<pathelement path="${classpath}" />
+		<pathelement path="${artemis.classes.dir}" />
+		<pathelement path="${mainlib.dir}/j2ssh" />
+		<!-- pick up props file -->
+		<pathelement path="${artemis.properties.dir}" />
+		<!-- Dependency classes -->
+		<fileset dir="${src.lib.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+		<fileset dir="${mainlib.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+		<pathelement path=".." />
+		<pathelement path="${build.dest.tests}" />
+	</path>
 	
-  <!-- Cleans everything -->
-  <target name="clean" depends="init">
-    <delete dir="${build.dir}" />
-  </target>
+	<taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml">
+	  	<classpath path="${jacoco.dir}/jacocoant.jar"/>
+	 </taskdef>
+	
+	<target name="get-java-version">
+		<echo>Java/JVM version: ${ant.java.version}</echo> 
+		<echo>Java/JVM detail version: ${java.version}</echo>
+	    <condition property="java.version.check">
+	      <not>
+	          <equals arg1="${ant.java.version}" arg2="${java.major.version}"/>
+	      </not>
+	    </condition>
+	</target>
+	
+	<target name="check-java-version" depends="get-java-version" if="java.version.check">
+	    <fail message="Unsupported Java version: ${ant.java.version}. The Java version must be ${java.major.version} or greater for EvoSuite testing."/>
+	</target>
+
+	<!-- Prepares the build directory -->
+	<target name="prepare" depends="check-java-version">
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${coverage.report.dir}"/>
+	</target>
+
+	<!-- Setup directories needed for EvoSuite -->
+	<target name="prepare-evo" depends="prepare">
+		<mkdir dir="${evosuite.tests.src.dir}" />
+		<mkdir dir="${evosuite.tests.build.dir}" />
+		<mkdir dir="${evosuite.tests.classes.dir}" />
+
+		<mkdir dir="${build.dir}/evosuite-dependencies" />
+		<mkdir dir="${artemis.missing.dependency.classes.dir}" />
+
+		<!-- 
+			These missing dependencies are missing Artemis dependent classes that cause EvoSuite issues
+		-->
+		<copy todir="${artemis.missing.dependency.src.dir}">
+			<fileset dir="${artemis.missing.dependency.dir}" />
+		</copy>
+	</target>
+
+	<!-- Prepares the source code -->
+	<target name="prepare-core" depends="prepare">
+		<!-- Creates directories -->
+		<mkdir dir="${build.src.tests}" />
+		<mkdir dir="${build.dest.tests}" />
+		<mkdir dir="${junit.reports.dir}" />
+
+		<!-- Copies src files -->
+		<copy todir="${build.src.tests}">
+			<fileset dir="${src.tests.dir}">
+				<exclude name="**/CVS/**" />
+				<exclude name="**/data/**" />
+				<exclude name="**/lib/**" />
+				<exclude name="**/ant-build/**" />
+				<exclude name="**/evosuite*/**" />
+				<exclude name="**/*.xml" />
+				<exclude name="**/*.log" />
+				<exclude name="**/cobertura*/**" />
+				<exclude name="**/jacoco*/**" />
+				<exclude name="**/org/w3c/**" />
+				<exclude name="coverage-report" />
+			</fileset>
+		</copy>
+
+		<!-- Copies jars -->
+		<copy todir="${build.dir}">
+			<fileset dir="${src.lib.dir}">
+				<include name="*.jar" />
+			</fileset>
+		</copy>
+
+	</target>
+
+	<!-- Compile the manual tests -->
+	<target name="compile" depends="prepare-core">
+		<javac fork="true" includeantruntime="false" target="${java.major.version}" srcdir="${build.src.tests}" destdir="${build.dest.tests}" deprecation="false" depend="no" debug="true">
+			<classpath refid="compile.classpath" />
+		</javac>
+	</target>
+
+	<!-- 
+		Create all EvoSuite Unit test source files. This step can take many hours, 
+		so don't run unless you really have to re-create all the tests from scratch! 
+		
+		This target is "standalone".
+		
+		Using -class <package.class> instead of -prefix will create a test for an individual class.
+	-->
+	<target name="create-evotests" depends="clean-evotests,prepare-evo,compile-evotest-dependencies">
+	
+		<mkdir dir="${coverage.report.evosuite.dir}" />
+		
+		<pathconvert pathsep=":" property="evosuite.projectcp.arg" refid="evosuite.classpath" />
+		<echo>Using classpath ${evosuite.projectcp.arg} for EvoSuite test creation</echo>
+		<exec executable="CreateEvoSuiteTests.sh" failonerror="yes">
+		    <arg value="${evosuite.jar}"/>
+		    <arg value="${evosuite.jar.classpath}"/>
+		    <arg value="-Dlog_timeout=true -Dstatistics_backend=HTML -Duse_separate_classloader=true -Dreport_dir=${coverage.report.evosuite.dir} -Dshow_progress=false -Dconsider_main_methods=false -Dheadless_mode=true -Doutput_variables=TARGET_CLASS,Size,Length,criterion,Coverage,BranchCoverage,MethodCoverage,OutputCoverage -base_dir ${evosuite.tests.dir} -mem 5000 -projectCP ${evosuite.projectcp.arg}"/>
+			<arg value="${coverage.report.evosuite.dir}"/>
+		</exec>
+		
+	</target>
+
+	<target name="compile-evotests" depends="prepare-evo">
+		<javac fork="true" includeantruntime="false" target="${java.major.version}" srcdir="${evosuite.tests.src.dir}" destdir="${evosuite.tests.classes.dir}" deprecation="false" depend="no" debug="true">
+			<classpath refid="evosuite.classpath" />
+		</javac>
+	</target>
+
+	<target name="compile-evotest-dependencies">
+		<javac fork="true" includeantruntime="false" target="${java.major.version}" srcdir="${artemis.missing.dependency.src.dir}" destdir="${artemis.missing.dependency.classes.dir}" deprecation="false" depend="no" debug="true">
+		</javac>
+	</target>
+	
+	<!-- Pre-instrument the Java bytecode for Jacoco or Cobertura coverage reporting -->
+	<target name="instrument" depends="compile,compile-evotests">
+
+		<!-- 
+			Does nothing currently as Jacoco is used in dynamic mode for 
+			the manual JUnit tests ONLY. If used in bytecode pre-instrumentation
+			mode for all unit tests then currently EvoSuite's sandbox will
+			prevent it writing out its .ser file - this is an EvoSuite bug, 
+			but disabling the sandbox would be dangerous as unit tests would
+			be able to write to external interfaces with abandon!
+		-->
+		
+	</target>
+
+	<target name="run-manual-tests" depends="instrument">
+
+		<delete dir="${coverage.report.jacoco.dir}" />
+		<mkdir dir="${coverage.report.jacoco.dir}" />
+		<delete dir="${build.dir}/jacoco-nonauto-tests.exec"/>
+
+		<echo>Running non-Evosuite unit tests with EMBOSS_ROOT=${EMBOSS_ROOT}</echo>
+		<jacoco:coverage destfile="${build.dir}/jacoco-nonauto-tests.exec">
+			<junit description="Artemis JUnit Manual Tests" fork="yes" showoutput="yes" printsummary="yes" haltonerror="${halt.tests.on.error}">
+				<jvmarg value="-DEMBOSS_ROOT=${EMBOSS_ROOT}" />
+				<jvmarg value="-noverify" />
+				<jvmarg value="-Xmx4g" />
+				<batchtest fork="yes" todir="${junit.reports.dir}">
+					<fileset dir="${build.src.tests}">
+						<include name="${artemis.base.package.path}/**/**Test.java" />
+						<exclude name="${artemis.base.package.path}/**/RunBlastAtNCBITest.java" unless="${run.blast.test.flag}" />
+						<exclude name="**/*_ESTest*" />
+					</fileset>
+				</batchtest>
+				<formatter type="plain" usefile="false" />
+				<formatter type="xml" />
+				<classpath refid="runtime.classpath" />
+	
+			</junit>
+		</jacoco:coverage>
+	</target>
+	
+	<target name="run-manual-tests-headless" depends="instrument">
+
+		<delete dir="${coverage.report.jacoco.dir}" />
+		<mkdir dir="${coverage.report.jacoco.dir}" />
+		<delete dir="${build.dir}/jacoco-nonauto-tests.exec"/>
+
+		<echo>Running non-Evosuite unit tests with EMBOSS_ROOT=${EMBOSS_ROOT}</echo>
+		<jacoco:coverage destfile="${build.dir}/jacoco-nonauto-tests.exec">
+			<junit description="Artemis JUnit Headless Manual Tests" fork="yes" showoutput="yes" printsummary="yes" haltonerror="${halt.tests.on.error}">
+				<jvmarg value="-DEMBOSS_ROOT=${EMBOSS_ROOT}" />
+				<jvmarg value="-noverify" />
+				<jvmarg value="-Xmx4g" />
+				<jvmarg value="-Djava.awt.headless=true" />
+				<batchtest fork="yes" todir="${junit.reports.dir}">
+					<fileset dir="${build.src.tests}">
+						<include name="${artemis.base.package.path}/**/**Test.java" />
+						<exclude name="${artemis.base.package.path}/**/RunBlastAtNCBITest.java" unless="${run.blast.test.flag}" />
+						<exclude name="**/*_ESTest*" />
+					</fileset>
+				</batchtest>
+				<formatter type="plain" usefile="false" />
+				<formatter type="xml" />
+				<classpath refid="runtime.classpath" />
+	
+			</junit>
+		</jacoco:coverage>
+	</target>
+
+	<target name="run-evosuite-tests" depends="compile,compile-evotests">
+
+		<echo>Running EvoSuite unit tests with EMBOSS_ROOT=${EMBOSS_ROOT}</echo>
+		<!--jacoco:coverage destfile="${build.dir}/jacoco-evosuite-tests.exec"-->
+			<junit description="Artemis Automated Evosuite Tests" fork="yes" showoutput="yes" printsummary="yes" haltonerror="${halt.tests.on.error}">
+				<jvmarg value="-DEMBOSS_ROOT=${EMBOSS_ROOT}" />
+				<jvmarg value="-noverify" />
+				<jvmarg value="-Djava.awt.headless=true" />
+				<batchtest fork="yes" todir="${junit.reports.dir}">
+					<fileset dir="${evosuite.tests.src.dir}">
+						
+						<include name="**/*_ESTest.java" if="${do.run.evosuite.tests}" />
+						
+						<!-- Default excludes -->
+						<exclude name="**/chado/*"/>
+						<exclude name="**/*Database*"/>
+						<exclude name="**/DNADraw_ESTest.*"/>
+						
+						<!-- TODO The following excluded evosuite tests need fixing -->
+						
+						<!-- core dump issue on Java 1.6.181 -->
+						<exclude name="**/BamUtils_ESTest.*"/>
+						<exclude name="**/BamView_ESTest.*"/>
+						<exclude name="**/CRAMReferenceSequenceFile_ESTest.*"/>
+						<exclude name="**/CoveragePanel_ESTest.*"/>
+						<exclude name="**/PairedReadComparator_ESTest.*"/>
+						<exclude name="**/SAMRecordFilter_ESTest.*"/>
+						<exclude name="**/SAMRecordPositionComparator_ESTest.*"/>
+						<exclude name="**/SnpPanel_ESTest.*"/>
+						
+						<!-- Failed after JDK update -->
+						<exclude name="**/DocumentFeature_ESTest.*"/>
+						<exclude name="**/Options_ESTest.*"/>
+						<exclude name="**/LazyQualifierValue_ESTest.*"/>
+						<exclude name="**/OSXAdapter_ESTest.*"/>
+						<exclude name="**/BamOSXAdapter_ESTest.*"/>
+						<exclude name="**/DocumentEntry_ESTest.*"/>
+						
+						<!-- Always produce broken tests -->
+						<exclude name="**/ChangeListener_ESTest.*"/>
+						<exclude name="**/EntryChangeListener_ESTest.*"/>
+						<exclude name="**/FeatureChangeListener_ESTest.*"/>
+						<exclude name="**/GotoListener_ESTest.*"/>
+						<exclude name="**/OptionChangeListener_ESTest.*"/>
+						<exclude name="**/Selectable_ESTest.*"/>
+						<exclude name="**/SelectionChangeListener_ESTest.*"/>
+						<exclude name="**/DisplayAdjustmentListener_ESTest.*"/>
+						<exclude name="**/DisplayComponent_ESTest.*"/>
+						<exclude name="**/FeatureListFrame_ESTest.*"/>
+						<exclude name="**/GraphMenu_ESTest.*"/>
+						<exclude name="**/MultiComparator_ESTest.*"/>
+						<exclude name="**/ComparableFeature_ESTest.*"/>
+						<exclude name="**/StreamFeature_ESTest.*"/>
+						<exclude name="**/MarkerChangeListener_ESTest.*"/>
+					
+					</fileset>
+				</batchtest>
+				<formatter type="plain" usefile="false" />
+				<formatter type="xml" />
+				<classpath refid="evosuite.runtime.classpath" />
+	
+			</junit>
+		<!-- /jacoco:coverage -->
+	</target>
+	
+	<!-- Create Jacoco reports -->
+	<target name="jacoco-coverage-report" depends="run-manual-tests">
+
+		<delete dir="${coverage.report.jacoco.dir}" />
+		<mkdir dir="${coverage.report.jacoco.dir}" />
+		
+		<jacoco:report>
+		  		                        
+	  	    <executiondata>
+	  	    		<fileset dir="${build.dir}">
+	  	    			<include name="*exec"/>
+	  	    		</fileset>
+	    		  <!--file file="${build.dir}/jacoco.exec"/-->
+	    		</executiondata>
+	  		                        
+	  		<structure name="Artemis non-Evosuite Unit Test Code Coverage Report">
+	  		  <classfiles>
+	  		    <fileset dir="${artemis.build.dir}/classes">
+	  		    		<include name="**/uk/**/*.class"/>
+	  		    	</fileset>
+	  		  </classfiles>
+	  		  <sourcefiles encoding="UTF-8">
+	  		    <fileset dir="${artemis.build.dir}/src">
+			    		<include name="**/uk/**/*.java"/>
+			    	</fileset>
+	  		  </sourcefiles>
+	  		</structure>
+	  		                        
+	  		<html destdir="${coverage.report.jacoco.dir}"/>
+		  		                        
+		</jacoco:report>
+		
+	</target>
+
+	<!-- Run all manual and automated unit tests and create coverage reports -->
+	<target name="testall" depends="run-evosuite-tests,run-manual-tests,jacoco-coverage-report" />
+	
+	<target name="test" depends="jacoco-coverage-report"/>
+
+	<!-- Cleans all temporary build related folders -->
+	<target name="clean">
+		<delete dir="${build.dir}" />
+		<delete dir="${evosuite.tests.build.dir}" />
+		<delete dir="${junit.reports.dir}" />
+		
+		<!-- 
+			This folder is re-created when the tests are RUN.
+			Evosuite coverage reports are generated when the tests are CREATED.
+		-->
+		<delete dir="${coverage.report.jacoco.dir}" />
+	</target>
+
+	<!-- 
+		Clean all auto-generated Evosuite unit test source and associated coverage reports. 
+		This will take a long time to re-create, so be careful! 
+	-->
+	<target name="clean-evotests">
+		<delete dir="${evosuite.tests.src.dir}" />
+		
+		<!-- 
+			This folder is re-created when the tests are CREATED.
+			Jacoco coverage reports are generated when the tests are RUN.
+		-->
+		<delete dir="${coverage.report.evosuite.dir}" />
+	</target>
+
 </project>
