@@ -219,7 +219,6 @@ abstract public class Splash extends JFrame
     getContentPane().add(helix_canvas, "Center");
     getContentPane().add(status_line, "South");
 
-    //ClassLoader cl = this.getClass().getClassLoader();
     ImageIcon icon = new ImageIcon(cl.getResource("images/icon.gif"));
 
     if(icon != null) 
@@ -240,7 +239,7 @@ abstract public class Splash extends JFrame
     }
     
     pack();
-    setSize(460, 280);
+    setSize(450, 275);
 
     final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
     setLocation(new Point((screen.width - getSize().width) / 2,
@@ -438,7 +437,7 @@ abstract public class Splash extends JFrame
         if(helix == null) 
         {
           ClassLoader cl = this.getClass().getClassLoader();
-          ImageIcon helix_icon = new ImageIcon(cl.getResource("images/PSUlogo.gif"));
+          ImageIcon helix_icon = new ImageIcon(cl.getResource("images/Wellcome_Sanger_Institute_Logo_Landscape_Digital_RGB_Full_Colour.jpg"));
           helix = helix_icon.getImage();
 
           tracker = new MediaTracker(this);

@@ -58,7 +58,7 @@ manual :
 
 CLASS_FILES := `find org uk -name '*.class' -print`
 
-OTHER_FILES := `find images/PSUlogo.gif images/icon.gif README.md`
+OTHER_FILES := `find images/Wellcome_Sanger_Institute_Logo_Landscape_Digital_RGB_Full_Colour.jpg images/icon.gif README.md`
 
 dist :
 	rm -rf artemis_compiled.tar.gz tar_build
@@ -95,22 +95,22 @@ artemis.jar : $(CLASSES)
       rm -rf META-INF/MANIFEST.MF; \
     done; \
 	cp -R ../../lib/LICENSE.* ../../uk ../../org ../../etc ../../images ../../lib/j2ssh/j2ssh.properties \
-	      ../../images/PSUlogo.gif ../../images/icon.gif ../../README.md ../../artemis_sqlmap .
+	      ../../images/Wellcome_Sanger_Institute_Logo_Landscape_Digital_RGB_Full_Colour.jpg ../../images/icon.gif ../../README.md ../../artemis_sqlmap .
 	find jar_build/build -name '*.java' -print | xargs rm -f
 	find jar_build/build -name '.svn' -print | xargs rm -rf
 	find jar_build/build -name '*.DS_Store' -print | xargs rm -rf
 	cd jar_build/build; \
 	rm -rf META-INF/MANIFEST.MF; \
 	echo "Main-Class: uk.ac.sanger.artemis.components.ArtemisMain\nPermissions: all-permissions" > manifest-art; \
-	jar cmf manifest-art ../artemis.jar META-INF/services images/PSUlogo.gif images/icon.gif README.md etc \
+	jar cmf manifest-art ../artemis.jar META-INF/services images/Wellcome_Sanger_Institute_Logo_Landscape_Digital_RGB_Full_Colour.jpg images/icon.gif README.md etc \
 	                     artemis_sqlmap org uk com net htsjdk picard gov joptsimple ngs freemarker LICENSE.Apache LICENSE.Picard LICENSE.JDBC LICENSE j2ssh.properties; \
     echo "Main-Class: uk.ac.sanger.artemis.circular.DNADraw\nPermissions: all-permissions" > manifest-circular; \
-    jar cmf manifest-circular ../DNAPlotter.jar images/PSUlogo.gif README.md etc \
+    jar cmf manifest-circular ../DNAPlotter.jar images/Wellcome_Sanger_Institute_Logo_Landscape_Digital_RGB_Full_Colour.jpg README.md etc \
                          org uk com net htsjdk picard gov joptsimple ngs freemarker LICENSE.Apache LICENSE.Picard LICENSE.JDBC LICENSE j2ssh.properties; \
 	echo "Main-Class: uk.ac.sanger.artemis.components.alignment.BamView\nPermissions: all-permissions" > manifest-bamview; \
 	jar cmf manifest-bamview ../bamview.jar META-INF/services etc org uk com net htsjdk picard gov joptsimple ngs freemarker LICENSE.Apache LICENSE.Picard LICENSE.JDBC LICENSE; \
 	echo "Main-Class: uk.ac.sanger.artemis.components.ActMain\nPermissions: all-permissions" > manifest-act; \
-	jar cmf manifest-act ../act.jar META-INF/services images/PSUlogo.gif images/icon.gif README.md etc \
+	jar cmf manifest-act ../act.jar META-INF/services images/Wellcome_Sanger_Institute_Logo_Landscape_Digital_RGB_Full_Colour.jpg images/icon.gif README.md etc \
 	                     artemis_sqlmap org uk com net htsjdk picard gov joptsimple ngs freemarker LICENSE.Apache LICENSE.Picard LICENSE.JDBC LICENSE j2ssh.properties; \
 	
 	rm -rf jar_build/build;
