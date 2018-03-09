@@ -9,7 +9,7 @@ Version 17
 		4) Upgraded Apache Commons Net jar - used for ftp'ing. 
 		5) Added Cram file loading and fixed defects around that code area (also related RT ticket #560982: Artemis fails to build from source).
 		6) Added display of bam secondary & supplementary alignment flags to read details pop-up window.
-		7) Improved error handling/reporting for standalone BamView application.
+		7) Improved error handling/reporting, although this still needs more work.
 		8) Added buffer sizing to FTPSeekableStream.
 		9) Performance tweak for BAM file indexing.
 		10) Fixed issue in BamView whereby if you went to the end of a long contig and then switched to a shorter one (via the combo), you would end up off the end of the sequence
@@ -34,9 +34,11 @@ Version 17
 	
 	Resized splash screen, as it was too small to the accommodate text info.
 	
+	Updated splash screen logo.
+	
 	Added error handling for dnaplotter template file loading in standalone mode.
 	
-	Added Bioconda recipe. RT ticket #341139 .
+	Bioconda recipe prep work - RT ticket #341139.
 	
 	Fixed RT ticket #467433 - Genbank DBSOURCE field was not recognised by Artemis. DBLINK was already added.
 	

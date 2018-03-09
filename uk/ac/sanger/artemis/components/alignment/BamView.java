@@ -62,6 +62,8 @@ import java.io.InputStreamReader;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.net.URL;
+import java.nio.BufferOverflowException;
+import java.nio.BufferUnderflowException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -625,6 +627,11 @@ public class BamView extends JPanel
     {
     	  return exception;
     }
+    
+    public short getBamIndex() 
+    {
+    	  return bamIndex;
+    }
 
     public void run() 
     {
@@ -641,7 +648,6 @@ public class BamView extends JPanel
       catch(Exception e)
       {
     	    exception = e;
-        e.printStackTrace();
       }
       finally
       {
@@ -991,14 +997,22 @@ public class BamView extends JPanel
 	          /*
 	           * Check for errors during the bam/cram read process...
 	           */
-	          String errorText = "Error(s): \n";
+	          String errorText = "Failed to load ";
 	          boolean foundErrors = false;
 	          for (BamReadTask task : tasks) 
 	          {
 	        	    if (task.getException() != null)
 	        	    {
 	        	    	  foundErrors = true;
-	        	    	  errorText = errorText + task.getException().getMessage() + "\n";
+	        	    	  
+	        	    	  if (task.getException() instanceof BufferUnderflowException || task.getException() instanceof BufferOverflowException)
+	        	    	    errorText = errorText + bamList.get(task.getBamIndex()) + ".\nThis may be due to an invalid index file.";
+	        	    	  else
+	        	    	    errorText = errorText + bamList.get(task.getBamIndex()) + ".\nError: " + task.getException().getMessage();
+	        	    	  
+	        	    	  logger4j.error(errorText, task.getException());
+	        	    	  
+	        	    	  break;
 	            }
 	          }
 	          
