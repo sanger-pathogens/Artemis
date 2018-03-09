@@ -239,7 +239,7 @@ abstract public class Splash extends JFrame
     }
     
     pack();
-    setSize(455, 280);
+    setSize(455, 290);
 
     final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
     setLocation(new Point((screen.width - getSize().width) / 2,
