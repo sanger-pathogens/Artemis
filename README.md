@@ -44,7 +44,7 @@ For information on how to get Artemis see this web page:
   http://www.sanger.ac.uk/science/tools/artemis
 
 
-# COPYRIGHT
+# COPYRIGHT
 
 Copyright (C) 1998-2018  Genome Research Limited
 
@@ -61,4 +61,3 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-
