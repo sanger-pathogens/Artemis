@@ -1,0 +1,55 @@
+<!DOCTYPE sqlMap 
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd"> 
+ 
+
+<sqlMap namespace="FeatureCvTermPub">
+
+     <typeAlias alias="FeatureCvTermPub"
+        type="org.gmod.schema.sequence.FeatureCvTermPub"/>  
+        
+     <resultMap id="feature_cvterm_pub" class="FeatureCvTermPub">
+        <result property="featureCvTerm.featureCvTermId"   column="feature_cvterm_id" />
+        <result property="pub.pubId"   column="pub_id"/>
+        <result property="pub.cvTerm.cvTermId"  column="type_id" />
+        <result property="pub.uniqueName" column="uniquename"/>
+     </resultMap>
+     
+     <select id="getFeatureCvTermPubByFeature" parameterClass="Feature"
+             resultMap="feature_cvterm_pub">
+       SELECT fcp.feature_cvterm_id, pub.* 
+       FROM feature_cvterm_pub fcp 
+       LEFT JOIN pub ON fcp.pub_id=pub.pub_id
+       <dynamic>
+          <isNotNull property="uniqueName">
+            LEFT JOIN feature_cvterm fc ON fcp.feature_cvterm_id=fc.feature_cvterm_id
+            WHERE
+            feature_id=(SELECT feature_id FROM feature WHERE uniquename=#uniqueName#)
+          </isNotNull>
+       </dynamic>
+    </select>
+	
+	
+	<select id="getFeatureCvTermPubBySrcFeature" parameterClass="org.gmod.schema.sequence.Feature"
+             resultMap="feature_cvterm_pub">
+       SELECT fcp.feature_cvterm_id, pub.* 
+       FROM feature_cvterm_pub fcp 
+       LEFT JOIN pub ON fcp.pub_id=pub.pub_id
+       LEFT JOIN feature_cvterm fc ON fcp.feature_cvterm_id=fc.feature_cvterm_id
+       WHERE feature_id IN 
+       (SELECT feature_id FROM featureloc fl WHERE srcfeature_id=$featureId$
+	    <isGreaterThan property="featureLoc.fmin" compareValue="0" prepend="AND"> 
+           <![CDATA[ fl.fmin > $featureLoc.fmin$ AND fl.fmax < $featureLoc.fmax$ ]]>
+        </isGreaterThan>)
+    </select>
+	
+    
+    <!-- INSERT -->
+    <insert id="insertFeatureCvTermPub" 
+            parameterClass="FeatureCvTermPub">
+      INSERT INTO feature_cvterm_pub
+        ( feature_cvterm_id, pub_id )
+      VALUES
+        ( $featureCvTerm.featureCvTermId$, $pub.pubId$ )
+    </insert>
+</sqlMap>

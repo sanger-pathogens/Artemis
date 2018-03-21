@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+ 
+<!DOCTYPE sqlMap 
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd"> 
+ 
+
+<sqlMap namespace="Db"> 
+
+  <typeAlias alias="Db"
+        type="org.gmod.schema.general.Db"/>
+   
+  <resultMap id="select-db" 
+               class="Db">
+    <result property="dbId"   column="db_id"/>    
+    <result property="name"   column="name"/>
+    <result property="description" column="description"/>
+	<result property="urlPrefix"   column="urlPrefix"/>
+	<result property="url"   column="url"/>
+  </resultMap>
+	     
+  <select id="getDbId" parameterClass="Db"
+                       resultClass="java.lang.Integer">
+    SELECT db_id FROM db WHERE name=#name#
+  </select>
+  
+  <select id="getDbIdIgnoreCase" parameterClass="Db"
+                       resultClass="java.lang.Integer">
+    SELECT db_id FROM db WHERE lower(name)=lower(#name#)
+  </select>
+  
+  <select id="getDbByDbId" resultClass="Db">
+    SELECT * FROM db WHERE db_id=$db_id$
+  </select>
+
+  <select id="getDbs" resultClass="Db">
+    SELECT * FROM db 
+  </select>
+</sqlMap>
+  

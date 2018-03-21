@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+ 
+ <!DOCTYPE sqlMapConfig      
+     PUBLIC "-//ibatis.apache.org//DTD SQL Map Config 2.0//EN"      
+     "http://ibatis.apache.org/dtd/sql-map-config-2.dtd">
+
+<!-- Always ensure to use the correct XML header as above! --> 
+ 
+<sqlMapConfig> 
+ 
+  <!-- The properties (name=value) in the file specified here can be used placeholders in this config  
+         file (e.g. ${driver}.  The file is usually relative to the classpath and is optional.  --> 
+  <!--  
+  <properties resource="artemis_sqlmap/chado_iBatis_config.properties" /> 
+  -->
+
+  <!-- These settings control SqlMap configuration details, primarily to do with transaction  
+         management.  They are all optional (see the Developer Guide for more).  --> 
+    <settings 
+      cacheModelsEnabled="true" 
+      enhancementEnabled="true" 
+      lazyLoadingEnabled="true" 
+      maxRequests="128" 
+      maxSessions="3" 
+      maxTransactions="3" 
+      useStatementNamespaces="false" 
+  /> 
+  
+ 
+  <!-- Type aliases allow you to use a shorter name for long fully qualified class names. --> 
+ 
+  <!-- 
+    <typeAlias alias="order" type="testdomain.Order"/> 
+  -->
+  
+  <!-- Configure a datasource to use with this SQL Map using SimpleDataSource. 
+         Notice the use of the properties from the above resource --> 
+  <transactionManager type="JDBC" > 
+    <dataSource type="SIMPLE"> 
+      <property name="JDBC.Driver" value="org.postgresql.Driver"/> 
+      <property name="JDBC.ConnectionURL" value="jdbc:postgresql://${chado}"/> 
+      <property name="JDBC.Username" value="${username}"/> 
+      <property name="JDBC.Password" value="${password}"/>
+      <property name="Pool.MaximumActiveConnections" value="2" />
+      <property name="Pool.MaximumIdleConnections"   value="1"/>
+      <property name="Pool.MaximumCheckoutTime" value="1800000" />
+	  <property name="Pool.TimeToWait" value="10000"/>
+	  <property name="Pool.PingQuery" value="select * from cv"/>
+      <property name="Pool.PingEnabled" value="true"/>
+      <property name="Pool.PingConnectionsOlderThan" value="0"/>
+      <property name="Pool.PingConnectionsNotUsedFor" value="1800000"/>
+    </dataSource> 
+  </transactionManager> 
+	
+  <!-- the following alternative transactionmanager requires the
+	   libraries commons-dbcp and common-pool in the CLASSPATH
+  <transactionManager type="JDBC">
+    <dataSource type="DBCP">
+     <property name="driverClassName" value="org.postgresql.Driver"/>
+     <property name="url" value="jdbc:postgresql://${chado}"/>
+     <property name="username" value="${username}"/>
+     <property name="password" value="${password}"/>
+
+     <property name="maxActive" value="3"/>
+     <property name="maxIdle" value="1"/>
+     <property name="maxWait" value="10000"/>
+
+     <property name="validationQuery" value="select * from cv"/>
+     <property name="logAbandoned" value="false"/>
+     <property name="removeAbandoned" value="false"/>
+     <property name="removeAbandonedTimeout" value="50000"/>
+    </dataSource>
+  </transactionManager>
+  -->
+
+  <!-- Identify all SQL Map XML files to be loaded by this SQL map.  Notice the paths  
+         are relative to the classpath.  --> 
+
+  <sqlMap resource="artemis_sqlmap/Cv.xml" />
+  <sqlMap resource="artemis_sqlmap/CvTerm.xml" />
+  <sqlMap resource="artemis_sqlmap/Pub.xml" />
+  <sqlMap resource="artemis_sqlmap/PubDbXRef.xml" />
+  <sqlMap resource="artemis_sqlmap/Feature.xml" />
+  <sqlMap resource="artemis_sqlmap/Organism.xml" />
+  <sqlMap resource="artemis_sqlmap/OrganismProp.xml" />
+  <sqlMap resource="artemis_sqlmap/FeatureCvTerm.xml" />
+  <sqlMap resource="artemis_sqlmap/FeatureCvTermDbXRef.xml" />
+  <sqlMap resource="artemis_sqlmap/FeatureCvTermProp.xml" />
+  <sqlMap resource="artemis_sqlmap/FeatureCvTermPub.xml" />
+  <sqlMap resource="artemis_sqlmap/FeatureDbXRef.xml" />
+  <sqlMap resource="artemis_sqlmap/FeatureLoc.xml" />
+  <sqlMap resource="artemis_sqlmap/FeatureProp.xml" />
+  <sqlMap resource="artemis_sqlmap/FeatureRelationship.xml" />
+  <sqlMap resource="artemis_sqlmap/FeaturePub.xml" />
+  <sqlMap resource="artemis_sqlmap/FeatureSynonym.xml" />
+  <sqlMap resource="artemis_sqlmap/Db.xml" />
+  <sqlMap resource="artemis_sqlmap/DbXRef.xml" />
+  <sqlMap resource="artemis_sqlmap/Synonym.xml" />
+  <sqlMap resource="artemis_sqlmap/AnalysisFeature.xml" />
+  <sqlMap resource="artemis_sqlmap/Analysis.xml" />
+  <sqlMap resource="artemis_sqlmap/Graph.xml" />
+  
+</sqlMapConfig> 
+

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+ 
+<!DOCTYPE sqlMap 
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd"> 
+ 
+
+<sqlMap namespace="FeatureDbXRef"> 
+ 
+  <typeAlias alias="FeatureDbXRef"
+        type="org.gmod.schema.sequence.FeatureDbXRef"/>
+        
+  <resultMap id="map-feature-dbxref" 
+               class="FeatureDbXRef">
+    <result property="feature.featureId"  column="feature_id"/>
+    <result property="dbXRef.db.name"     column="name"/>
+    <result property="dbXRef.accession"   column="accession"/>
+    <result property="dbXRef.version"     column="version"/>
+    <result property="dbXRef.description" column="description"/>
+    <result property="current"            column="is_current" nullValue="false"/>
+  </resultMap>
+  
+  <resultMap id="map-feature-of-feature-dbxref" 
+               class="Feature" groupBy="featureId">
+    <result property="featureId" column="feature_id"/>
+    <result property="featureDbXRefs" resultMap="FeatureDbXRef.map-feature-dbxref" />
+  </resultMap>
+	
+  <select id="getFeatureDbXRef" 
+          parameterClass="org.gmod.schema.sequence.Feature"
+          resultMap="map-feature-dbxref">
+   	SELECT db.name, dbx.accession, dbx.version, dbx.description,
+   	       dbx_f.feature_id, dbx_f.is_current
+ 	FROM feature_dbxref dbx_f 
+        LEFT JOIN dbxref dbx ON dbx.dbxref_id=dbx_f.dbxref_id
+        LEFT JOIN db ON db.db_id=dbx.db_id 
+        <!--LEFT JOIN feature f ON dbx_f.feature_id=f.feature_id-->
+        <isNotNull property="uniqueName"> 
+          WHERE dbx_f.feature_id=(SELECT feature_id FROM feature where uniquename=#uniqueName#)
+        </isNotNull>
+        <isGreaterThan property="featureId" compareValue="0">
+          WHERE dbx_f.feature_id=$featureId$
+        </isGreaterThan>
+        ORDER BY feature_id
+  </select>
+	
+  <select id="getFeatureDbXRefsByFeatureId" resultMap="map-feature-of-feature-dbxref">
+   	SELECT db.name, dbx.accession, dbx.version, dbx.description,
+   	       dbx_f.feature_id, dbx_f.is_current
+ 	FROM feature_dbxref dbx_f 
+    LEFT JOIN dbxref dbx ON dbx.dbxref_id=dbx_f.dbxref_id
+    LEFT JOIN db ON db.db_id=dbx.db_id 
+    <!-- RIGHT JOIN feature f ON dbx_f.feature_id=f.feature_id -->
+    WHERE dbx_f.feature_id IN <iterate open="(" close=")" conjunction=","> $[]$ </iterate>
+    ORDER BY dbx_f.feature_id
+  </select>
+
+  <select id="getFeatureDbXRefsBySrcFeature" 
+          parameterClass="org.gmod.schema.sequence.Feature"
+          resultMap="map-feature-dbxref">
+	SELECT db.name, dbx.accession, dbx.version, dbx.description, 
+	       dbx_f.feature_id, dbx_f.is_current   
+	FROM featureloc fl 
+	RIGHT JOIN feature_dbxref dbx_f ON fl.feature_id = dbx_f.feature_id  
+	LEFT JOIN dbxref dbx ON dbx.dbxref_id=dbx_f.dbxref_id     
+	LEFT JOIN db ON db.db_id=dbx.db_id    
+	WHERE srcfeature_id = $featureId$ 
+	  <isGreaterThan property="featureLoc.fmin" compareValue="0" prepend="AND"> 
+           <![CDATA[ fl.fmin > $featureLoc.fmin$ AND fl.fmax < $featureLoc.fmax$ ]]>
+      </isGreaterThan>
+	ORDER BY fl.feature_id, dbx.accession , db.name;
+  </select>
+  
+  <!-- WRITE BACK -->
+  <delete id="deleteFeatureDbXRef" parameterClass="FeatureDbXRef">
+     DELETE FROM feature_dbxref 
+     WHERE dbxref_id=
+           (SELECT dbxref_id FROM dbxref WHERE accession=#dbXRef.accession#
+            AND db_id=(SELECT db_id FROM db WHERE name=#dbXRef.db.name#))
+     AND feature_id=
+           (SELECT feature_id FROM feature WHERE uniquename=#feature.uniqueName#)
+  </delete>
+  
+  <insert id="insertFeatureDbXRef" parameterClass="FeatureDbXRef">
+    INSERT INTO feature_dbxref 
+           (feature_id, dbxref_id, is_current)
+           VALUES
+           ($feature.featureId$, $dbXRef.dbXRefId$, $current$)
+  </insert>
+        
+</sqlMap>

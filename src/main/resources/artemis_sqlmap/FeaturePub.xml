@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+ 
+<!DOCTYPE sqlMap 
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd"> 
+ 
+
+<sqlMap namespace="FeaturePub">
+
+     <typeAlias alias="FeaturePub"
+        type="org.gmod.schema.sequence.FeaturePub"/>
+     
+     
+     <resultMap id="map-featurepubs" 
+                class="FeaturePub" >
+       <result property="feature.featureId" column="id"/>        
+       <result property="pub.pubId"       column="pub_id"/>
+       <result property="pub.title"       column="title" />
+       <result property="pub.volumeTitle" column="volumetitle" />
+       <result property="pub.volume"      column="volume" />
+       <result property="pub.seriesName"  column="series_name" />
+       <result property="pub.issue"       column="issue" />
+       <result property="pub.pyear"       column="pyear"/>
+       <result property="pub.pages"       column="pages"/>
+       <result property="pub.miniRef"     column="miniref"/>
+       <result property="pub.uniqueName"  column="uniquename" />
+       <result property="pub.obsolete"    column="is_obsolete" />
+       <result property="pub.publisher"   column="publisher" />
+       <result property="pub.pubPlace"    column="pubplace" />
+       <result property="pub.cvTerm.cvTermId" column="type_id" />   
+     </resultMap>
+    
+     <select id="getFeaturePubsBySrcFeature" parameterClass="org.gmod.schema.sequence.Feature" 
+             resultMap="map-featurepubs">
+        SELECT
+          f.feature_id AS id, pub.*
+        FROM feature f
+        INNER JOIN feature_pub fpub ON fpub.feature_id = f.feature_id 
+        LEFT JOIN pub               ON fpub.pub_id=pub.pub_id  
+        WHERE f.feature_id IN
+        (SELECT feature_id FROM featureloc fl WHERE srcfeature_id=$featureId$
+	    <isGreaterThan property="featureLoc.fmin" compareValue="0" prepend="AND"> 
+           <![CDATA[ fl.fmin > $featureLoc.fmin$ AND fl.fmax < $featureLoc.fmax$ ]]>
+        </isGreaterThan>)
+        ORDER BY f.uniquename
+     </select>
+	
+	
+	 <select id="getFeaturePubsByFeature" parameterClass="org.gmod.schema.sequence.Feature"
+		     resultMap="map-featurepubs">
+        SELECT
+          f.feature_id AS id, pub.*
+        FROM feature f
+        INNER JOIN feature_pub fpub ON fpub.feature_id = f.feature_id 
+        LEFT JOIN pub               ON fpub.pub_id=pub.pub_id 
+        <isGreaterThan property="featureId" compareValue="0">
+          WHERE f.feature_id = $featureId$
+        </isGreaterThan>
+		<isEqual property="featureId" compareValue="0">
+	      <isNotNull property="uniqueName"> 
+            WHERE f.uniquename=#uniqueName#
+          </isNotNull>
+	    </isEqual>
+     </select>
+     
+     <insert id="insertFeaturePub" parameterClass="FeaturePub">
+       INSERT INTO feature_pub
+                  (feature_id, pub_id)
+           VALUES
+           ( (SELECT feature_id FROM feature WHERE uniquename=#feature.uniqueName#), 
+             $pub.pubId$)
+    </insert>
+    
+    <delete id="deleteFeaturePub" parameterClass="FeaturePub">
+      DELETE FROM feature_pub WHERE
+      feature_pub_id=( 
+        SELECT feature_pub_id FROM feature_pub WHERE 
+           feature_id=(SELECT feature_id FROM feature WHERE uniquename=#feature.uniqueName#) AND
+           pub_id    =(SELECT pub_id     FROM pub     WHERE uniquename=#pub.uniqueName#) )
+    </delete>
+    
+</sqlMap> 

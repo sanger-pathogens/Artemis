@@ -1,0 +1,29 @@
+<!DOCTYPE sqlMap 
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd"> 
+ 
+
+<sqlMap namespace="FeatureCvTermProp">
+
+     <typeAlias alias="FeatureCvTermProp"
+        type="org.gmod.schema.sequence.FeatureCvTermProp"/>  
+        
+     <resultMap id="feature_cvtermprop" class="FeatureCvTermProp">
+        <result property="cvTerm.cvTermId" column="type_id" />
+        <result property="value" column="value" />
+        <result property="rank" column="fcp_rank" />
+     </resultMap>
+     
+    <!-- INSERT -->
+    <insert id="insertFeatureCvTermProp" 
+            parameterClass="FeatureCvTermProp">
+      INSERT INTO feature_cvtermprop
+        ( feature_cvtermprop_id, feature_cvterm_id, type_id, value, rank )
+      VALUES
+        ( nextval('feature_cvtermprop_feature_cvtermprop_id_seq'),
+          $featureCvTerm.featureCvTermId$,
+          $cvTerm.cvTermId$,
+          #value#,
+          $rank$ )
+    </insert>
+</sqlMap>

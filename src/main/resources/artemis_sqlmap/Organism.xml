@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+ 
+<!DOCTYPE sqlMap 
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd"> 
+ 
+<sqlMap namespace="Organism"> 
+      
+    <cacheModel id="organism-cache" type ="LRU" readOnly="true"> 
+      <flushInterval hours="24"/>  
+      <property name="cache-size" value="85" /> 
+    </cacheModel> 
+    
+    <resultMap id="map-organism" class="org.gmod.schema.organism.Organism">
+       <result property="organismId" column="organismId"/>
+       <result property="abbreviation" column="abbreviation"/>
+       <result property="commonName" column="commonName"/>
+       <result property="genus" column="genus"/>
+       <result property="species" column="species"/>
+       <result property="comment" column="comment"/>
+       <result property="organismProps" column="organismId" select="getOrganismPropByOrganismIdLazy"/>
+    </resultMap>
+    
+    <select id="getOrganism" resultMap="map-organism" cacheModel="organism-cache"> 
+      SELECT organism_id AS organismId, abbreviation, genus, species, common_name AS commonName, comment 
+      FROM organism
+      <dynamic>
+        <isNotNull property="organismId">
+			<isGreaterThan property="organismId" compareValue="0"> 
+				WHERE organism_id=#organismId#
+			    <isNotNull prepend="AND" property="commonName">
+                    common_name=#commonName#
+                </isNotNull>
+			</isGreaterThan>
+			
+			<isLessEqual property="organismId" compareValue="0">
+				<isNotNull prepend="WHERE" property="commonName">
+                  common_name=#commonName#
+                </isNotNull>
+			</isLessEqual>
+        </isNotNull>
+		
+		<isNull property="organismId">
+	  	   <isNotNull prepend="WHERE" property="commonName">
+             common_name=#commonName#
+           </isNotNull>
+		</isNull>
+		  
+        <isNull prepend="ORDER BY" property="organismId">
+           commonName
+        </isNull>
+      </dynamic>
+    </select> 
+    
+    
+    <select id="getOrganismIdBySrcFeatureIdOrFeatureId" resultClass="java.lang.Integer" 
+            parameterClass="org.gmod.schema.sequence.Feature" cacheModel="organism-cache">
+      SELECT organism_id AS organismId FROM feature f WHERE
+        <isGreaterThan property="featureLoc.featureBySrcFeatureId.featureId" compareValue="0"> 
+             f.feature_id=$featureLoc.featureBySrcFeatureId.featureId$
+        </isGreaterThan>
+		<isEqual property="featureLoc.featureBySrcFeatureId.featureId" compareValue="0">
+			<isGreaterThan property="featureId" compareValue="0"> 
+				f.feature_id=$featureId$
+			</isGreaterThan>
+		</isEqual>
+		<isNull property="featureLoc.featureBySrcFeatureId">
+			f.feature_id=$featureId$
+		</isNull>
+    </select>
+	
+	<select id="getOrganismsContainingSrcFeatures" resultMap="map-organism">
+	  SELECT DISTINCT ON( feature.organism_id )  
+		organism.organism_id AS organismId, abbreviation, genus, species, common_name AS commonName, comment
+		FROM feature 
+		join  organism using (organism_id) 
+		join cvterm on feature.type_id = cvterm.cvterm_id 
+		WHERE residues notnull AND residues != '' 
+		AND ( <include refid="source_feature_cvterm_names"/> ) 
+	</select>
+	
+	<select id="getTopLevelOrganisms" resultMap="map-organism">
+	  SELECT organism.organism_id AS organismId, abbreviation, genus, species, common_name AS commonName, comment
+      FROM organism
+      WHERE exists (
+        SELECT *
+        FROM organismprop
+        JOIN cvterm on organismprop.type_id = cvterm.cvterm_id
+        JOIN cv using (cv_id)
+        WHERE organism_id = organism.organism_id
+        AND cv.name = 'genedb_misc' and cvterm.name = 'populated' )
+	</select>	
+ 
+</sqlMap> 

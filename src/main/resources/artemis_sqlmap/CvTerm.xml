@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+ 
+<!DOCTYPE sqlMap 
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd"> 
+ 
+
+<sqlMap namespace="CvTerm"> 
+
+    <cacheModel id="cvterm-cache" type ="LRU" readOnly="true"> 
+      <flushInterval hours="24"/>  
+      <property name="cache-size" value="100" /> 
+    </cacheModel> 
+    
+    <typeAlias alias="CvTerm"
+        type="org.gmod.schema.cv.CvTerm"/>
+ 
+    <resultMap id="select-cvterm-names-result" class="CvTerm">
+   	  <result property="cvTermId" column="cvterm_id"/>
+      <result property="cv.cvId" column="cv_id"/>
+   	  <result property="cv.name" column="cv_name"/>
+  	  <result property="name" column="name"/>
+      <result property="definition" column="definition"/>
+      <result property="dbXRef" column="dbxref_id" select="getDbXRefByDbXRefId"/>
+      <result property="isObsolete" column="is_obsolete"/>
+      <result property="isRelationshipType" column="is_relationshiptype"/>
+    </resultMap>
+    
+    <resultMap id="lazy-cvterm" class="CvTerm">
+   	  <result property="cvTermId" column="cvterm_id"/>
+   	  <result property="cv" column="cv_id" select="selectCv"/>
+  	  <result property="name" column="name"/>
+      <result property="definition" column="definition"/>
+      <result property="dbXRef" column="dbxref_id" select="getDbXRefByDbXRefId"/>
+      <result property="isObsolete" column="is_obsolete"/>
+      <result property="isRelationshipType" column="is_relationshiptype"/>
+    </resultMap>
+    
+
+    <!-- look up cvterms names and id -->
+     <select id="getCvterm" resultMap="select-cvterm-names-result"> 
+   	SELECT  
+	  cvterm.*, cv.name as cv_name
+        FROM cvterm, cv
+        WHERE 
+            <dynamic>
+             <isNotNull property="name">
+               cvterm.name LIKE #name# AND
+             </isNotNull>
+             <isNotNull property="cv.name">
+               cv.name=#cv.name# AND
+             </isNotNull>
+			 <isNotNull property="cvTermId">
+               <isGreaterThan property="cvTermId" compareValue="0">
+                 cvterm_id=$cvTermId$ AND
+               </isGreaterThan>
+			</isNotNull>
+            </dynamic>	
+	    cv.cv_id = cvterm.cv_id
+     </select> 
+     
+      <!-- look up cvterms names and id -->
+     <select id="getCvtermByCvTermId" 
+             resultMap="lazy-cvterm" cacheModel="cvterm-cache"> 
+       SELECT *
+       FROM cvterm
+       WHERE cvterm_id=#value# 
+     </select> 
+
+	  <!-- WRITE BACK -->
+  <insert id="insertCvTerm" parameterClass="CvTerm">
+    INSERT INTO cvterm ( cv_id, name <isNotNull property="definition">, definition</isNotNull>, dbxref_id ) 
+           VALUES ($cv.cvId$, #name# <isNotNull property="definition"> ,#definition# </isNotNull>, $dbXRef.dbXRefId$)
+  </insert> 
+</sqlMap> 

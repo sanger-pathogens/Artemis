@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+ 
+<!DOCTYPE sqlMap 
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd"> 
+ 
+
+<sqlMap namespace="AnalysisFeature"> 
+
+  <typeAlias alias="AnalysisFeature"
+        type="org.gmod.schema.analysis.AnalysisFeature"/>
+   
+	<resultMap id="map-analysisfeature" 
+                class="AnalysisFeature">
+        <result property="rawScore" column="rawscore" />
+	    <result property="identity" column="identity" />
+        <result property="normScore" column="normscore" />
+        <result property="significance" column="significance" />
+        <result property="analysis.description" column="description" />
+        <result property="analysis.program" column="program" />
+        <result property="analysis.programVersion" column="programversion" />
+		<result property="analysis.algorithm" column="algorithm" />
+		<result property="analysis.sourceName" column="sourcename" />
+		<result property="analysis.sourceVersion" column="sourceversion" />
+		<result property="analysis.sourceUri" column="sourceuri" />
+		<result property="analysis.timeExecuted" column="timeexecuted" />
+    </resultMap>
+	
+    <resultMap id="map-analysisfeaturelazy" 
+                class="AnalysisFeature">
+        <result property="rawScore" column="rawscore" />
+        <result property="normScore" column="normscore" />
+        <result property="significance" column="significance" />
+        <result property="analysis" column="analysis_id" select="getAnalysisByAnalysisId" />
+    </resultMap>  
+        
+    <select id="getAnalysisFeaturesByFeatureId" resultMap="map-analysisfeaturelazy">
+       SELECT rawscore, normscore, significance, analysis_id
+       FROM analysisfeature
+       WHERE feature_id=#feature_id#
+    </select>
+     
+     
+    <!--  INSERT  -->
+    <insert id="insertAnalysisFeature" 
+            parameterClass="AnalysisFeature">
+      INSERT INTO analysisfeature 
+        ( feature_id, analysis_id
+        <isNotNull property="rawScore">     ,rawscore </isNotNull>
+        <isNotNull property="normScore">    ,normscore </isNotNull>
+        <isNotNull property="significance"> ,significance </isNotNull>
+        <isNotNull property="identity">     ,identity </isNotNull>)
+      VALUES
+        ( $feature.featureId$, $analysis.analysisId$
+          <isNotNull property="rawScore">     ,$rawScore$ </isNotNull>
+          <isNotNull property="normScore">    ,$normScore$ </isNotNull>
+          <isNotNull property="significance"> ,$significance$ </isNotNull>
+          <isNotNull property="identity">     ,$identity$ </isNotNull> )
+    </insert>
+
+</sqlMap>

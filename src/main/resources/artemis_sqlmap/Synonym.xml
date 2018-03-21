@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+ 
+<!DOCTYPE sqlMap 
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd"> 
+ 
+
+<sqlMap namespace="Synonym"> 
+  
+    <typeAlias alias="Synonym"
+        type="org.gmod.schema.sequence.Synonym"/>
+
+     <resultMap id="map-synonym-lazy"
+                class="Synonym">
+        <result property="synonymId" column="synonym_id"/>
+   	    <result property="name" column="name"/>
+   	    <result property="synonymSgml" column="synonym_sgml"/>
+  	    <result property="cvTerm" column="type_id" select="getCvtermByCvTermId"/>
+     </resultMap>
+     
+     
+    <!-- SQL -->   
+    <select id="getSynonymByNameAndType" resultMap="map-synonym-lazy"
+            parameterClass="Synonym">
+      SELECT * FROM synonym WHERE 
+        <isNotNull property="name">
+          name=#name# AND
+        </isNotNull>
+        <isNotNull property="cvTerm">
+          type_id=$cvTerm.cvTermId$ AND
+        </isNotNull> 
+        synonym_id > 0
+    </select>
+    
+    <select id="getSynonymBySynonymId" resultMap="map-synonym-lazy">
+      SELECT * FROM synonym WHERE synonym_id=#value#
+    </select>
+   
+
+   
+  <!-- WRITE BACK -->
+    <delete id="deleteAlias" parameterClass="FeatureSynonym">
+      DELETE FROM synonym WHERE synonym_id=$synonym.synonymId$
+    </delete>
+  
+    <insert id="insertAlias" parameterClass="FeatureSynonym">
+      INSERT INTO synonym ( name, type_id, synonym_sgml ) 
+      VALUES ( #synonym.name#, $synonym.cvTerm.cvTermId$, #synonym.name# )
+    </insert>
+  
+</sqlMap> 

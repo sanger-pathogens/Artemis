@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+ 
+<!DOCTYPE sqlMap 
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd"> 
+ 
+
+<sqlMap namespace="Pub"> 
+ 
+  <typeAlias alias="Pub"
+        type="org.gmod.schema.pub.Pub"/>
+        
+  <resultMap id="select-pub"
+             class="Pub">
+     <result property="pubId"       column="pub_id" />
+     <result property="title"       column="title" />
+     <result property="volumeTitle" column="volumetitle" />
+     <result property="volume"      column="volume" />
+     <result property="seriesName"  column="series_name" />
+     <result property="issue"       column="issue" />
+     <result property="pyear"       column="pyear"/>
+     <result property="pages"       column="pages"/>
+     <result property="miniRef"     column="miniref"/>
+     <result property="uniqueName"  column="uniquename" />
+     <result property="obsolete"    column="is_obsolete" />
+     <result property="publisher"   column="publisher" />
+     <result property="pubPlace"    column="pubplace" />
+     <result property="cvTerm"      column="type_id" select="getCvtermByCvTermId" />
+  </resultMap>
+  
+  <!-- SQL -->
+       
+  <select id="selectPub" resultMap="select-pub">
+    SELECT * FROM pub WHERE pub_id=$pub_id$
+  </select>
+  
+  <select id="getPubByUniqueName" resultMap="select-pub">
+    SELECT * FROM pub WHERE uniquename=#uniqueName#
+  </select>
+  
+  <!-- WRITE BACK -->
+  <insert id="insertPub" parameterClass="Pub">
+    INSERT INTO pub ( 
+       <isNotNull property="title">  title, </isNotNull>
+       <isNotNull property="volumeTitle"> volumetitle, </isNotNull>
+       <isNotNull property="volume"> volume, </isNotNull>
+       <isNotNull property="seriesName"> series_name, </isNotNull>
+       <isNotNull property="issue"> issue, </isNotNull>
+       <isNotNull property="pyear"> pyear, </isNotNull>
+       <isNotNull property="pages"> pages, </isNotNull>
+       <isNotNull property="miniRef"> miniref, </isNotNull>
+       uniquename, type_id
+       <isNotNull property="obsolete"> , is_obsolete </isNotNull>
+       <isNotNull property="publisher"> , publisher </isNotNull>
+       <isNotNull property="pubPlace"> , pubplace </isNotNull> ) 
+    VALUES (
+       <isNotNull property="title"> #title#, </isNotNull>
+       <isNotNull property="volumeTitle"> #volumeTitle#, </isNotNull>
+       <isNotNull property="volume"> #volume#, </isNotNull>
+       <isNotNull property="seriesName"> #seriesName#, </isNotNull>
+       <isNotNull property="issue"> #issue#, </isNotNull>
+       <isNotNull property="pyear"> #pyear#, </isNotNull>
+       <isNotNull property="pages"> #pages#, </isNotNull>
+       <isNotNull property="miniRef"> #miniRef#, </isNotNull>
+       #uniqueName#, $cvTerm.cvTermId$
+       <isNotNull property="obsolete"> , $obsolete$ </isNotNull>
+       <isNotNull property="publisher"> , #publisher# </isNotNull>
+       <isNotNull property="pubPlace"> , #pubPlace# </isNotNull> )
+  </insert>    
+</sqlMap> 

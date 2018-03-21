@@ -1,7 +1,5 @@
 *.class
 .settings
-ant-build
-test/ant-build
 **/.DS_Store
 **/*.log
 test/coverage-report
@@ -10,3 +8,8 @@ tar_build
 artemis_compiled.tar
 /eclipse-classes/
 /test-kjp/
+.scaffolding*
+/target/
+**/.scaffolding_list.tmp
+dependency-reduced-pom.xml
+maven.properties

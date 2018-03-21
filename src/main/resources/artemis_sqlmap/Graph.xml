@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+ 
+<!DOCTYPE sqlMap 
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd"> 
+ 
+
+<sqlMap namespace="Graph"> 
+    
+  <typeAlias alias="Graph"
+        type="uk.ac.sanger.artemis.chado.Graph"/>
+
+  <resultMap id="select-graph" 
+               class="Graph">
+    <result property="graphId"        column="graph_id"/>  
+    <result property="featureId"   column="feature_id"/>           
+    <result property="name"        column="name"/>
+    <result property="description" column="description"/>
+  </resultMap>
+  
+  <resultMap id="select-graphdata" 
+               class="Graph">
+    <result property="graphId"        column="graph_id"/>  
+    <result property="featureId"   column="feature_id"/>           
+    <result property="name"        column="name"/>
+    <result property="description" column="description"/>
+    <result property="data" column="data"/>
+  </resultMap>
+  
+  <select id="getGraphs" resultMap="select-graph">
+    SELECT graph_id, feature_id, name, description FROM graph.graph WHERE feature_id=$featureId$
+  </select>
+  
+  <select id="getGraph" resultMap="select-graphdata">
+    SELECT * FROM graph.graph WHERE graph_id=$graphId$
+  </select>
+  
+  <select id="getTableColumns" parameterClass="java.lang.String"
+             resultClass="java.lang.String">
+    SELECT pg_attribute.attname
+    FROM pg_attribute, pg_class, pg_namespace
+    WHERE pg_namespace.oid=pg_class.relnamespace AND
+           attrelid=pg_class.oid AND
+           relname=#value# AND
+           attnum > 0
+           <!--AND nspname=#value#-->
+   </select>
+  
+  
+</sqlMap>

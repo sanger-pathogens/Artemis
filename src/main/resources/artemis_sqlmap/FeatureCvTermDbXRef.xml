@@ -1,0 +1,67 @@
+<!DOCTYPE sqlMap 
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd"> 
+ 
+
+<sqlMap namespace="FeatureCvTermDbXRef"> 
+
+     <typeAlias alias="FeatureCvTermDbXRef"
+        type="org.gmod.schema.sequence.FeatureCvTermDbXRef"/>
+        
+     <resultMap id="map-featurecvtermdbxref" class="FeatureCvTermDbXRef"
+                groupBy="featureCvTermId">
+        <result property="featureCvTerm.featureCvTermId"   column="feature_cvterm_id" />
+        <result property="dbXRef.accession"   column="accession"/>
+        <result property="dbXRef.version"     column="version"/>
+        <result property="dbXRef.description" column="description"/>
+        <result property="dbXRef.db.name" column="name"/>
+    </resultMap>
+   
+    <select id="getFeatureCvTermDbXRefByFeature" parameterClass="Feature"
+             resultMap="map-featurecvtermdbxref">
+       SELECT fcd.feature_cvterm_id, dbx.*, db.name 
+       FROM feature_cvterm_dbxref fcd 
+       LEFT JOIN dbxref dbx ON dbx.dbxref_id=fcd.dbxref_id 
+       LEFT JOIN db ON db.db_id=dbx.db_id
+       <dynamic>
+          <isNotNull property="uniqueName">
+            LEFT JOIN feature_cvterm fc ON fcd.feature_cvterm_id=fc.feature_cvterm_id
+            WHERE
+            feature_id=(SELECT feature_id FROM feature WHERE uniquename=#uniqueName#)
+          </isNotNull>
+       </dynamic>
+    </select>
+	
+	<select id="getFeatureCvTermDbXRefBySrcFeature" parameterClass="org.gmod.schema.sequence.Feature"
+             resultMap="map-featurecvtermdbxref">
+       SELECT fcd.feature_cvterm_id, dbx.*, db.name 
+       FROM feature_cvterm_dbxref fcd 
+       LEFT JOIN dbxref dbx ON dbx.dbxref_id=fcd.dbxref_id 
+       LEFT JOIN db ON db.db_id=dbx.db_id
+	   LEFT JOIN feature_cvterm fc ON fcd.feature_cvterm_id=fc.feature_cvterm_id
+	   WHERE feature_id IN 
+       (SELECT feature_id FROM featureloc fl WHERE srcfeature_id=$featureId$
+	    <isGreaterThan property="featureLoc.fmin" compareValue="0" prepend="AND"> 
+           <![CDATA[ fl.fmin > $featureLoc.fmin$ AND fl.fmax < $featureLoc.fmax$ ]]>
+        </isGreaterThan>)
+    </select>
+     
+    <select id="getFeatureCvTermDbXRefByFeatureCvTerm" parameterClass="java.lang.Integer"
+             resultMap="map-featurecvtermdbxref">
+       SELECT fcd.feature_cvterm_id, dbx.*, db.name 
+       FROM feature_cvterm_dbxref fcd 
+       LEFT JOIN dbxref dbx ON dbx.dbxref_id=fcd.dbxref_id 
+       LEFT JOIN db ON db.db_id=dbx.db_id
+       WHERE feature_cvterm_id=$feature_cvterm_id$
+    </select>
+    
+    <!-- INSERT -->
+    <insert id="insertFeatureCvTermDbXRef" 
+            parameterClass="FeatureCvTermDbXRef">
+      INSERT INTO feature_cvterm_dbxref
+        ( feature_cvterm_id, dbxref_id )
+      VALUES
+        ( $featureCvTerm.featureCvTermId$, $dbXRef.dbXRefId$  )
+    </insert>
+    
+</sqlMap>

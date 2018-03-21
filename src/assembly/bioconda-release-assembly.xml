@@ -1,0 +1,59 @@
+<assembly 
+  xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 
+  http://maven.apache.org/xsd/assembly-1.1.2.xsd">
+ 
+  <!-- Assembles a simple release zip with jars and scripts -->
+  <id>assemble-bioconda-release</id>
+	<formats>
+		<format>zip</format>
+	</formats>
+	<includeBaseDirectory>false</includeBaseDirectory>
+	
+	<files>
+		<file>
+			<source>target/assembly/${artemis.signed.jar.name}</source>
+			<outputDirectory>${bioconda.assembly.folder}</outputDirectory>
+			<destName>artemis.jar</destName>
+		</file>
+		<file>
+			<source>target/assembly/${act.signed.jar.name}</source>
+			<outputDirectory>${bioconda.assembly.folder}</outputDirectory>
+			<destName>act.jar</destName>
+		</file>
+		<file>
+			<source>target/assembly/${dnaplotter.signed.jar.name}</source>
+			<outputDirectory>${bioconda.assembly.folder}</outputDirectory>
+			<destName>dnaplotter.jar</destName>
+		</file>
+		<file>
+			<source>target/assembly/${bamview.signed.jar.name}</source>
+			<outputDirectory>${bioconda.assembly.folder}</outputDirectory>
+			<destName>bamview.jar</destName>
+		</file>
+	</files>
+	<fileSets>
+		<fileSet>
+			<outputDirectory>${bioconda.assembly.folder}</outputDirectory>
+			<includes>
+				<include>AUTHORS</include>
+				<include>LICENSE</include>
+				<include>README*</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<outputDirectory>${bioconda.assembly.folder}</outputDirectory>
+			<includes>
+				<include>art</include>
+				<include>act</include>
+				<include>dnaplotter</include>
+				<include>bamview</include>
+				<include>setenv</include>
+			</includes>
+			<fileMode>0755</fileMode>
+			<lineEnding>unix</lineEnding>
+		</fileSet>
+	</fileSets>
+</assembly>
+

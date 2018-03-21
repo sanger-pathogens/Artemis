@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+ 
+<!DOCTYPE sqlMap 
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd"> 
+ 
+
+<sqlMap namespace="FeatureLoc"> 
+ 
+     <typeAlias alias="FeatureLoc"
+        type="org.gmod.schema.sequence.FeatureLoc"/>
+        
+     <resultMap id="map-location-lazy"
+                class="FeatureLoc">
+		<result property="featureByFeatureId.featureId" column="feature_id" />
+        <result property="srcFeatureId" column="srcfeature_id" nullValue="-999" />
+        <result property="featureBySrcFeatureId" column="{featureId=srcfeature_id}" 
+                                                 select="getLazyFeatureNoResiduesById" />
+        <result property="fmin"   column="fmin"   nullValue="-999" />
+        <result property="fmax"   column="fmax"   nullValue="-999" />
+        <result property="strand" column="strand" nullValue="0" />
+        <result property="phase"  column="phase" />
+        <result property="residueInfo" column="residue_info"/>
+        <result property="locGroup"    column="locgroup"/>
+        <result property="rank"        column="rank"/>
+        <result property="fminPartial" column="is_fmin_partial"/>
+        <result property="fmaxPartial" column="is_fmax_partial"/>
+     </resultMap>
+     
+	  
+     <!--  select featureloc -->
+     <select id="getFeatureLoc" resultMap="map-location-lazy">
+       SELECT feature_id, srcfeature_id, fmin, fmax, strand, phase, residue_info, locgroup, rank, is_fmin_partial, is_fmax_partial
+       FROM  featureloc
+       WHERE featureloc.feature_id=#id#
+     </select>
+     
+     <select id="getFeatureLocBySrcFeatureId" resultMap="map-location-lazy">
+       SELECT feature_id, srcfeature_id, fmin, fmax, strand, phase, residue_info, locgroup, rank, is_fmin_partial, is_fmax_partial
+       FROM  featureloc
+       WHERE srcfeature_id=#id#
+     </select>
+     
+	 <select id="getFeatureLocsByListOfIds" resultMap ="map-location-lazy">
+	   SELECT feature_id, srcfeature_id, fmin, fmax, strand, phase, residue_info, locgroup, rank, is_fmin_partial, is_fmax_partial
+       FROM  featureloc
+       WHERE featureloc.feature_id IN <iterate open="(" close=")" conjunction=","> $[]$ </iterate>
+     </select>
+	
+     <!-- used to find match feature from the subject and query featureId -->
+     <select id="getFeatureIdBySrcFeatureId" parameterClass="Feature" resultClass="java.lang.Integer">
+        <iterate property="featureLocsForFeatureId" conjunction="INTERSECT" >
+           SELECT feature_id FROM featureloc WHERE srcfeature_id=#featureLocsForFeatureId[].featureBySrcFeatureId.featureId#  
+        </iterate>
+     </select>
+     
+   <!--  WRITE BACK METHODS  -->
+    
+   <!--  UPDATE  -->
+   <update id="updateFeatureLoc" 
+            parameterClass="FeatureLoc">
+      UPDATE featureloc
+      SET fmin=$fmin$, fmax=$fmax$, strand=$strand$,
+          is_fmin_partial=#fminPartial#,
+          is_fmax_partial=#fmaxPartial#
+      <isNotNull property="phase">
+        , phase=$phase$
+      </isNotNull>
+      <isNull property="phase">
+        , phase=NULL
+      </isNull>
+      WHERE
+      <isGreaterThan property="featureByFeatureId.featureId" compareValue="0">
+        feature_id=$featureByFeatureId.featureId$
+      </isGreaterThan>
+      <isLessEqual property="featureByFeatureId.featureId" compareValue="0">
+         <isNotNull property="featureByFeatureId.uniqueName">
+           feature_id=(SELECT feature_id FROM feature WHERE uniquename=#featureByFeatureId.uniqueName#)
+         </isNotNull>
+      </isLessEqual>
+      <isGreaterThan property="featureBySrcFeatureId.featureId" compareValue="0" prepend="AND">
+        srcfeature_id=$featureBySrcFeatureId.featureId$
+      </isGreaterThan>
+   </update>
+   
+   <update id="updateFeatureLocByChangingSequence" 
+            parameterClass="uk.ac.sanger.artemis.chado.FeatureForUpdatingResidues">
+      UPDATE featureloc
+      SET 
+       <isNotNull property="newSubSequence">
+         fmin=fmin+$length$, fmax=fmax+$length$
+       </isNotNull>
+       <isNull property="newSubSequence">
+         fmin=fmin-$length$, fmax=fmax-$length$
+       </isNull>
+      WHERE fmin >= $startBase$ AND srcfeature_id=$featureId$
+    </update>
+   
+    <insert id="insertFeatureLoc" 
+            parameterClass="FeatureLoc">
+      INSERT INTO featureloc
+        ( featureloc_id, feature_id, srcfeature_id, fmin, fmax, strand, rank
+          <isNotNull property="phase">
+           , phase
+          </isNotNull> 
+        )
+      VALUES
+        ( nextval('featureloc_featureloc_id_seq'),
+          $featureByFeatureId.featureId$,
+          $featureBySrcFeatureId.featureId$,
+          $fmin$,
+          $fmax$,
+          $strand$,
+          $rank$
+          <isNotNull property="phase">
+            , $phase$
+          </isNotNull>
+        )
+    </insert>
+         
+</sqlMap> 

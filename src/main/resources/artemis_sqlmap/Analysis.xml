@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+ 
+<!DOCTYPE sqlMap 
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd"> 
+ 
+
+<sqlMap namespace="Analysis"> 
+
+  <typeAlias alias="Analysis"
+        type="org.gmod.schema.analysis.Analysis"/>
+   
+    <select id="getAnalysisByAnalysisId" resultClass="Analysis">
+       SELECT name, description, program, programversion, algorithm, 
+              sourcename, sourceversion,sourceuri, timeexecuted
+       FROM analysis
+       WHERE analysis_id=#analysis_id#
+    </select>
+
+	<!--  INSERT  -->
+    <insert id="insertAnalysis" parameterClass="Analysis">
+      INSERT INTO analysis
+        ( 
+		 program, programversion
+		<isNotNull property="name">          ,name </isNotNull>
+		<isNotNull property="description">   ,description </isNotNull>
+        <isNotNull property="algorithm">     ,algorithm </isNotNull>
+        <isNotNull property="sourceName">    ,sourcename </isNotNull>
+        <isNotNull property="sourceVersion"> ,sourceversion </isNotNull>
+        <isNotNull property="sourceUri">     ,sourceuri </isNotNull>
+		<isNotNull property="timeExecuted">  ,timeexecuted </isNotNull>
+		)
+      VALUES
+        ( #program#, #programVersion#
+		<isNotNull property="name">          ,#name# </isNotNull>
+		<isNotNull property="description">   ,#description# </isNotNull>
+        <isNotNull property="algorithm">     ,#algorithm# </isNotNull>
+        <isNotNull property="sourceName">    ,#sourceName# </isNotNull>
+        <isNotNull property="sourceVersion"> ,#sourceVersion# </isNotNull>
+        <isNotNull property="sourceUri">     ,#sourceUri# </isNotNull>
+		<isNotNull property="timeExecuted">  ,#timeExecuted# </isNotNull>
+		)
+	   <selectKey keyProperty="analysisId" resultClass="int">
+          SELECT currval('analysis_analysis_id_seq')
+       </selectKey>
+    </insert>
+</sqlMap>

@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+ 
+<!DOCTYPE sqlMap 
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd"> 
+ 
+
+<sqlMap namespace="FeatureRelationship">
+
+        
+     <typeAlias alias="FeatureRelationship"
+        type="org.gmod.schema.sequence.FeatureRelationship"/>
+     
+	 <resultMap id="map-basic-feature-relationship" class="FeatureRelationship">
+		<result property="featureRelationshipId" column="feature_relationship_id"/>
+  	    <result property="cvTerm.cvTermId" column="relation_type_id"/>
+  	    <result property="rank" column="rank"/>
+  	    <result property="value" column="relation_value" />
+     </resultMap>
+	   
+     <resultMap id="map-feature-relationship-for-objectId" class="FeatureRelationship" 
+		        extends="map-basic-feature-relationship">
+		<result property="featureByObjectId.featureId" column="object_id"/>
+     </resultMap>
+
+	<resultMap id="map-feature-relationship-for-subjectId" class="FeatureRelationship">
+		<result property="cvTerm.name" column="fr_name"/>
+		<result property="featureBySubjectId.featureId" column="subject_id"/>
+		<result property="featureBySubjectId.uniqueName" column="subject_name"/>
+		<result property="featureBySubjectId.organism.commonName" column="subject_common_name"/>
+		<result property="featureBySubjectId.cvTerm.name" column="subject_cvterm" />
+		<result property="featureBySubjectId.featureCvTerms"
+			                           column="{{uniqueName=subject_name}}"
+			                           select="getFeatureCvTermsByFeature"/>
+		<result property="featureBySubjectId.featureRelationshipsForSubjectId" 
+			                           column="{{subject_id=subject_id}}" 
+                                       select="getParentFeatureRelationship" /> 
+    </resultMap>
+	
+    <resultMap id="select-relationship" class="FeatureRelationship">
+		<result property="featureRelationshipId" column="feature_relationship_id"/>
+        <result property="featureBySubjectId" column="subject_id" 
+			                                  select="getLazyFeatureNoResiduesById" />
+        <result property="featureByObjectId"  column="object_id"
+			                                  select="getLazyFeatureNoResiduesById" />
+        <result property="value" column="value" />
+        <result property="rank" column="rank" />
+        <result property="cvTerm" column="type_id" select="getCvtermByCvTermId" />
+     </resultMap>
+
+    <resultMap id="map-parent-relationship" class="FeatureRelationship">
+		<result property="featureRelationshipId" column="feature_relationship_id"/>
+        <result property="featureBySubjectId.featureId" column="subject_id" />
+        <!--<result property="featureByObjectId"  column="object_id"
+			                                  select="getLazyFeatureNameAndTypeById" />-->
+		<result property="featureByObjectId" resultMap="Feature.map-feature-name-lazy" />
+        <result property="value" column="value" />
+        <result property="rank" column="rank" />
+        <result property="cvTerm.name" column="fr_name" />
+     </resultMap>	
+	     
+     <!--  select feature_relationship -->
+     <select id="getFeatureRelationship" resultMap="select-relationship">
+       SELECT feature_relationship_id, subject_id, object_id, type_id, value, rank 
+       FROM feature_relationship
+       WHERE
+         <dynamic>
+             <isNotNull property="object_id">                        
+               object_id=#object_id#
+             </isNotNull>
+             <isNotNull property="subject_id">                        
+               subject_id=#subject_id#
+             </isNotNull>
+         </dynamic>
+     </select>
+
+	<select id="getParentFeatureRelationship" resultMap="map-parent-relationship">
+       SELECT feature_relationship_id, subject_id, object_id, value, rank, 
+		      fr_cvterm.name AS fr_name, parent.uniquename, parent_cvterm.name AS name, parent.feature_id AS id
+       FROM feature_relationship AS fr
+	   LEFT JOIN cvterm AS fr_cvterm ON fr_cvterm.cvterm_id=fr.type_id
+	   LEFT JOIN feature AS parent  ON object_id=feature_id
+       LEFT JOIN cvterm AS parent_cvterm ON parent_cvterm.cvterm_id=parent.type_id
+       WHERE subject_id=#subject_id# AND 
+		( fr_cvterm.name='derives_from' OR fr_cvterm.name='part_of' OR fr_cvterm.name='proper_part_of' )
+	 
+	<!--
+     SELECT feature_relationship_id, subject_id, object_id, value, rank,
+		     fr_cvterm.name AS fr_name, parent.uniquename, parent_cvterm.name, parent.feature_id AS id       
+      FROM feature_relationship AS fr     
+      LEFT JOIN cvterm AS fr_cvterm ON fr_cvterm.cvterm_id=fr.type_id     
+      LEFT JOIN feature AS parent  ON object_id=feature_id        
+      LEFT JOIN cvterm AS parent_cvterm ON parent_cvterm.cvterm_id=parent.type_id        
+      WHERE 
+		    ( subject_id=#subject_id# 
+		      AND (fr_cvterm.name='derives_from' OR fr_cvterm.name='part_of' OR fr_cvterm.name='proper_part_of') 
+		      AND (parent_cvterm.name='gene' OR  parent_cvterm.name='pseudogene'))
+         OR ( subject_id IN (SELECT object_id FROM feature_relationship AS fr2  
+                             LEFT JOIN cvterm AS fr2_cvterm ON fr2_cvterm.cvterm_id=fr2.type_id 
+                             WHERE subject_id=#subject_id#
+		                     AND (fr2_cvterm.name='derives_from' OR fr2_cvterm.name='part_of' OR fr2_cvterm.name='proper_part_of'))  
+              AND (fr_cvterm.name='derives_from' OR fr_cvterm.name='part_of' OR fr_cvterm.name='proper_part_of') 
+		      AND (parent_cvterm.name='gene' OR  parent_cvterm.name='pseudogene')) ;
+    -->
+	
+     </select>
+	
+	<select id="getParentFeaturesByChildFeatureIds" resultMap="map-parent-relationship">
+	  SELECT feature_relationship_id, subject_id, object_id, value, rank,
+		     fr_cvterm.name AS fr_name, parent.uniquename, parent_cvterm.name AS name, parent.feature_id AS id       
+      FROM feature_relationship AS fr     
+      LEFT JOIN cvterm AS fr_cvterm ON fr_cvterm.cvterm_id=fr.type_id     
+      LEFT JOIN feature AS parent  ON object_id=feature_id        
+      LEFT JOIN cvterm AS parent_cvterm ON parent_cvterm.cvterm_id=parent.type_id        
+      WHERE 
+		    ( subject_id IN <iterate open="(" close=")" conjunction=","> $[]$ </iterate> 
+		      AND (fr_cvterm.name='derives_from' OR fr_cvterm.name='part_of' OR fr_cvterm.name='proper_part_of') )
+    </select>
+	
+	<!--
+    <select id="getGeneFeaturesByChildFeatureIds" resultMap="map-parent-relationship">
+	  SELECT feature_relationship_id, subject_id, object_id, value, rank,
+		     fr_cvterm.name AS fr_name, parent.uniquename, parent_cvterm.name AS name, parent.feature_id AS id       
+      FROM feature_relationship AS fr     
+      LEFT JOIN cvterm AS fr_cvterm ON fr_cvterm.cvterm_id=fr.type_id     
+      LEFT JOIN feature AS parent  ON object_id=feature_id        
+      LEFT JOIN cvterm AS parent_cvterm ON parent_cvterm.cvterm_id=parent.type_id        
+      WHERE 
+		    ( subject_id IN <iterate open="(" close=")" conjunction=","> $[]$ </iterate> 
+		      AND (fr_cvterm.name='derives_from' OR fr_cvterm.name='part_of' OR fr_cvterm.name='proper_part_of') 
+		      AND (parent_cvterm.name='gene' OR  parent_cvterm.name='pseudogene') )
+         OR ( subject_id IN (SELECT object_id FROM feature_relationship AS fr2  
+                             LEFT JOIN cvterm AS fr2_cvterm ON fr2_cvterm.cvterm_id=fr2.type_id 
+                             WHERE subject_id IN <iterate open="(" close=")" conjunction=","> $[]$ </iterate> 
+		                     AND (fr2_cvterm.name='derives_from' OR fr2_cvterm.name='part_of' OR fr2_cvterm.name='proper_part_of'))  
+              AND (fr_cvterm.name='derives_from' OR fr_cvterm.name='part_of' OR fr_cvterm.name='proper_part_of') 
+		      AND (parent_cvterm.name='gene' OR  parent_cvterm.name='pseudogene') ) ;
+    </select>
+	-->
+	
+    <update id="updateFeatureRelationshipsForSubjectId" 
+           parameterClass="FeatureRelationship">
+      UPDATE feature_relationship
+      SET
+        rank=$rank$, type_id=$cvTerm.cvTermId$
+      WHERE subject_id=
+           ( SELECT feature_id FROM feature WHERE uniquename=#featureBySubjectId.uniqueName# )
+      AND   object_id=
+           ( SELECT feature_id FROM feature WHERE uniquename=#featureByObjectId.uniqueName# )
+   </update>
+   
+   <insert id="insertFeatureRelationship" 
+           parameterClass="FeatureRelationship">
+      INSERT INTO feature_relationship
+        ( subject_id, object_id, type_id, rank )
+      VALUES
+        ( (SELECT feature_id FROM feature WHERE uniquename=#featureBySubjectId.uniqueName#),
+          (SELECT feature_id FROM feature WHERE uniquename=#featureByObjectId.uniqueName#),
+          $cvTerm.cvTermId$, $rank$ )
+   </insert>
+   
+   <delete id="deleteFeatureRelationship" 
+           parameterClass="FeatureRelationship">
+      DELETE FROM feature_relationship WHERE 
+       object_id=(SELECT feature_id FROM feature WHERE uniquename=#featureByObjectId.uniqueName#) 
+      AND 
+       subject_id=(SELECT feature_id FROM feature WHERE uniquename=#featureBySubjectId.uniqueName#) 
+      AND type_id=$cvTerm.cvTermId$;
+   </delete>
+</sqlMap> 

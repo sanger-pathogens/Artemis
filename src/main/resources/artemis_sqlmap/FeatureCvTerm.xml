@@ -1,0 +1,167 @@
+<!DOCTYPE sqlMap 
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd"> 
+ 
+
+<sqlMap namespace="FeatureCvTerm"> 
+ 
+    <cacheModel id="featurecvterm-rank-cache" type ="LRU" readOnly="true"> 
+      <flushInterval hours="24"/>  
+      <property name="cache-size" value="15" /> 
+    </cacheModel> 
+    
+    <typeAlias alias="FeatureCvTerm"
+        type="org.gmod.schema.sequence.FeatureCvTerm"/>
+
+     <resultMap id="select-featurecvterm-no-rank" class="FeatureCvTerm" 
+                groupBy="featureCvTermId">
+        <result property="featureCvTermId"   column="feature_cvterm_id" />
+        <result property="feature.featureId" column="feature_id" />
+        <result property="cvTerm.cvTermId"   column="cvterm_id" />
+        <result property="cvTerm.name"       column="cvterm_name" />
+        <result property="cvTerm.cv.name"    column="cv_name" />
+        <result property="not"               column="is_not" />
+
+        <result property="featureCvTermProps" resultMap="FeatureCvTermProp.feature_cvtermprop"  />
+        <result property="pub.pubId"         column="pub_id" />
+        <result property="pub.uniqueName"    column="uniquename" />
+        <result property="cvTerm.dbXRef.accession" column="accession" />
+        <result property="cvTerm.dbXRef.db.name"   column="name" />
+        <result property="featureCvTermDbXRefs"    column="feature_cvterm_id"
+                                          select="getFeatureCvTermDbXRefByFeatureCvTerm" />
+        <!-- <result property="pub" column="pub_id" select="selectPub" /> -->
+     </resultMap>
+     
+     <resultMap id="select-featurecvterm" class="FeatureCvTerm" 
+                extends="select-featurecvterm-no-rank">
+        <result property="rank" column="rank" />
+     </resultMap>
+
+ 
+      <!--  select feature_cvterm -->
+      <sql id="sql_select_feature_cvterm">
+         SELECT
+          fc.*, 
+          fcp.type_id, fcp.value, fcp.rank AS fcp_rank,
+          cvterm.name AS cvterm_name,
+          cv.name AS cv_name,
+          pub.pub_id, 
+          pub.uniquename,
+          db.name,
+          dbxref.accession
+        FROM feature_cvterm fc 
+        LEFT JOIN feature_cvtermprop fcp ON fc.feature_cvterm_id=fcp.feature_cvterm_id 
+        LEFT JOIN cvterm ON cvterm.cvterm_id=fc.cvterm_id 
+        LEFT JOIN cv ON cvterm.cv_id=cv.cv_id 
+        LEFT JOIN pub ON fc.pub_id=pub.pub_id
+        LEFT JOIN dbxref ON cvterm.dbxref_id=dbxref.dbxref_id 
+        LEFT JOIN db ON dbxref.db_id=db.db_id
+      </sql>
+  
+	<select id="getFeatureCvTermsBySrcFeature" parameterClass="org.gmod.schema.sequence.Feature"
+             resultMap="select-featurecvterm">
+        <include refid="sql_select_feature_cvterm"/> 
+        WHERE feature_id IN 
+		(SELECT feature_id FROM featureloc fl WHERE srcfeature_id=$featureId$
+	    <isGreaterThan property="featureLoc.fmin" compareValue="0" prepend="AND"> 
+           <![CDATA[ fl.fmin > $featureLoc.fmin$ AND fl.fmax < $featureLoc.fmax$ ]]>
+        </isGreaterThan>)
+        ORDER BY fc.feature_cvterm_id, fc.rank, type_id, fcp.rank;
+     </select>
+	
+	
+	<select id="getFeatureCvTermsNoRankBySrcFeature" parameterClass="org.gmod.schema.sequence.Feature"
+             resultMap="select-featurecvterm-no-rank">
+        <include refid="sql_select_feature_cvterm"/>
+        WHERE feature_id IN 
+		(SELECT feature_id FROM featureloc fl WHERE srcfeature_id=$featureId$
+	    <isGreaterThan property="featureLoc.fmin" compareValue="0" prepend="AND"> 
+           <![CDATA[ fl.fmin > $featureLoc.fmin$ AND fl.fmax < $featureLoc.fmax$ ]]>
+        </isGreaterThan>)
+        ORDER BY fc.feature_cvterm_id, type_id, fcp.rank;
+     </select>
+	
+	
+     <select id="getFeatureCvTermsByFeature" parameterClass="Feature"
+             resultMap="select-featurecvterm">
+        <include refid="sql_select_feature_cvterm"/>
+        <dynamic>
+          <isNotNull property="uniqueName" prepend="WHERE">
+            feature_id IN (SELECT feature_id FROM feature WHERE uniquename=#uniqueName#)
+          </isNotNull>
+        </dynamic>
+        ORDER BY fc.feature_cvterm_id, fc.rank, type_id, fcp.rank;
+     </select>
+
+
+     <!-- same as getFeatureCvTermsByFeature but without feature_cvterm.rank -->   
+     <select id="getFeatureCvTermsNoRankByFeature" parameterClass="Feature"
+             resultMap="select-featurecvterm-no-rank">
+        <include refid="sql_select_feature_cvterm"/>
+        <dynamic>
+          <isNotNull property="uniqueName" prepend="WHERE">
+            feature_id=(SELECT feature_id FROM feature WHERE uniquename=#uniqueName#)
+          </isNotNull>
+        </dynamic>
+        ORDER BY fc.feature_cvterm_id, type_id, fcp.rank;
+     </select>
+     
+     
+     <select id="getFeatureCvTermColumnsForASchema" parameterClass="java.lang.String"
+             resultClass="java.lang.String" cacheModel="featurecvterm-rank-cache">
+       SELECT pg_attribute.attname 
+       FROM pg_attribute, pg_class, pg_namespace 
+       WHERE pg_namespace.oid=pg_class.relnamespace AND 
+             attrelid=pg_class.oid AND 
+             relname='feature_cvterm' AND 
+             attnum > 0
+             <!--AND nspname=#value#-->
+     </select>
+     
+     
+    <delete id="deleteFeatureCvTerm" parameterClass="FeatureCvTerm">
+      DELETE FROM feature_cvterm WHERE
+      feature_cvterm_id=$featureCvTermId$
+    </delete>
+    
+    <!--  UPDATE  -->
+    <update id="updateFeatureCvTerm" 
+            parameterClass="FeatureCvTerm">
+      UPDATE feature_cvterm
+      SET rank=$rank$
+      WHERE feature_cvterm_id=$featureCvTermId$
+    </update>
+    
+    <!-- INSERT -->
+    <insert id="insertFeatureCvTerm" 
+            parameterClass="FeatureCvTerm">
+      INSERT INTO feature_cvterm
+        ( feature_cvterm_id, feature_id, cvterm_id, pub_id, rank, is_not )
+      VALUES
+        ( nextval('feature_cvterm_feature_cvterm_id_seq'),
+          (SELECT feature_id FROM feature WHERE uniquename=#feature.uniqueName#),
+		  <isGreaterThan property="cvTerm.cvTermId" compareValue="0">
+            $cvTerm.cvTermId$,
+	      </isGreaterThan>
+		  <isEqual property="cvTerm.cvTermId" compareValue="0">
+			(SELECT cvterm_id FROM cvterm WHERE name=#cvTerm.name# AND 
+			  cv_id = (SELECT cv_id FROM cv WHERE name=#cvTerm.cv.name#)), 
+	      </isEqual>
+          <dynamic>
+            <isNotNull property="pub">
+              <isEqual property="pub.pubId" compareValue="0">
+               (SELECT pub_id FROM pub WHERE uniquename=#pub.uniqueName#), 
+              </isEqual>
+              <isGreaterThan property="pub.pubId" compareValue="0">
+               $pub.pubId$, 
+              </isGreaterThan>
+            </isNotNull>
+            <isNull property="pub"> 
+              (SELECT pub_id FROM pub WHERE uniquename='null' OR uniquename='NULL'), 
+            </isNull>     
+          </dynamic>
+          $rank$,
+          $not$ )
+    </insert>
+     
+</sqlMap>

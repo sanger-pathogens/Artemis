@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+ 
+<!DOCTYPE sqlMap 
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd"> 
+ 
+
+<sqlMap namespace="FeatureSynonym"> 
+  
+    <typeAlias alias="FeatureSynonym"
+        type="org.gmod.schema.sequence.FeatureSynonym"/>
+        
+    <typeAlias alias="Feature"
+        type="org.gmod.schema.sequence.Feature"/>
+     
+    <typeAlias alias="Synonym"
+        type="org.gmod.schema.sequence.Synonym"/>
+	     
+    <resultMap id="map-featuresynonyms" class="Feature" groupBy="featureId" >
+      <result property="featureId" column="feature_id"/>
+      <result property="featureSynonyms" resultMap="map-alias" /> 
+    </resultMap>
+    
+    <resultMap id="map-alias" 
+               class="FeatureSynonym">
+   	    <result property="feature.featureId" column="feature_id"/>
+   	    <result property="pub.pubId" column="pub_id"/>
+   	    <result property="current" column="is_current"/>
+   	    <result property="internal" column="is_internal"/>
+		<result property="synonym.synonymId" column="synonym_id"/>
+   	    <result property="synonym.name" column="name"/>
+   	    <result property="synonym.synonymSgml" column="synonym_sgml"/>
+  	    <result property="synonym.cvTerm.cvTermId" column="type_id" />
+     </resultMap>
+     
+     <resultMap id="map-alias-part-lazy" 
+               class="FeatureSynonym">
+   	    <result property="feature.featureId" column="feature_id"/>
+   	    <result property="pub.pubId" column="pub_id"/>
+   	    <result property="current" column="is_current"/>
+   	    <result property="internal" column="is_internal"/>
+   	    <result property="synonym" column="synonym_id" select="getSynonymBySynonymId"/>
+     </resultMap>
+	
+	 <resultMap id="map-alias-part-lazy2" 
+               class="FeatureSynonym">
+   	    <result property="feature.featureId" column="feature_id"/>
+   	    <result property="pub.pubId" column="pub_id"/>
+   	    <result property="current" column="is_current"/>
+   	    <result property="internal" column="is_internal"/>
+		<result property="synonym" resultMap="Synonym.map-synonym-lazy"/>
+     </resultMap>
+     
+     <resultMap id="map-alias-lazy" 
+               class="FeatureSynonym">
+   	    <result property="feature.featureId" column="feature_id"/>
+   	    <result property="pub.pubId" column="pub_id"/>
+   	    <result property="current" column="is_current"/>
+   	    <result property="internal" column="is_internal"/>
+   	    <result property="synonym" column="synonym_id" select="getSynonymBySynonymId"/>
+     </resultMap>
+     
+     
+    <!-- SQL -->
+    <select id="getAllFeatureSynonymsAsFeature" resultMap="map-featuresynonyms">
+      SELECT fs.*, s.name, s.synonym_sgml, s.type_id, s.synonym_id
+      FROM feature_synonym fs 
+      LEFT JOIN synonym s ON fs.synonym_id=s.synonym_id 
+    </select>
+             
+    <select id="getFeatureSynonymsByUniquename" resultMap="map-alias"
+            parameterClass="Feature">
+      SELECT fs.*, s.name, s.synonym_sgml, s.type_id
+      FROM feature_synonym fs 
+      LEFT JOIN feature f ON f.feature_id=fs.feature_id 
+      LEFT JOIN synonym s ON fs.synonym_id=s.synonym_id 
+      <isNotNull property="uniqueName">                        
+          WHERE uniquename=#uniqueName#
+      </isNotNull>
+    </select>
+    
+	<select id="getFeatureSynonymsBySrcFeature" resultMap="map-alias"
+            parameterClass="Feature">
+      SELECT fs.*, s.name, s.synonym_sgml, s.type_id 
+      FROM feature_synonym fs 
+      LEFT JOIN synonym s  ON fs.synonym_id=s.synonym_id 
+	  LEFT JOIN featureloc fl ON fl.feature_id=fs.feature_id AND srcfeature_id=$featureId$  
+	  WHERE srcfeature_id=$featureId$		
+	  <isGreaterThan property="featureLoc.fmin" compareValue="0" prepend="AND"> 
+           <![CDATA[ fl.fmin > $featureLoc.fmin$ AND fl.fmax < $featureLoc.fmax$ ]]>
+      </isGreaterThan>
+   <!--		
+      SELECT fs.*, s.name, s.synonym_sgml, s.type_id
+      FROM feature_synonym fs 
+      LEFT JOIN feature f ON f.feature_id=fs.feature_id 
+      LEFT JOIN synonym s ON fs.synonym_id=s.synonym_id
+      WHERE f.feature_id IN 
+        (SELECT feature_id FROM featureloc fl WHERE srcfeature_id=$featureId$
+	  <isGreaterThan property="featureLoc.fmin" compareValue="0" prepend="AND"> 
+           <![CDATA[ fl.fmin > $featureLoc.fmin$ AND fl.fmax < $featureLoc.fmax$ ]]>
+      </isGreaterThan>)
+	-->
+    </select>
+	
+	<select id="getFeatureSynonymsByFeatureIds" resultMap="map-alias-part-lazy2">
+      SELECT fs.*, s.name, s.synonym_sgml, s.type_id 
+      FROM feature_synonym fs 
+      LEFT JOIN synonym s  ON fs.synonym_id=s.synonym_id 
+	  WHERE fs.feature_id IN 	
+	  <iterate open="(" close=")" conjunction=","> $[]$ </iterate>
+    </select>
+	
+	
+    <select id="getLazyFeatureSynonymsByUniquename" resultMap="map-alias-part-lazy"
+            parameterClass="FeatureSynonym">
+      SELECT fs.* 
+      FROM feature_synonym fs 
+      LEFT JOIN feature f ON f.feature_id=fs.feature_id 
+      <isNotNull property="feature.uniqueName">                        
+          WHERE uniquename=#feature.uniqueName#
+      </isNotNull>
+    </select>
+	
+    <select id="getFeatureSynonymsByName" resultMap="map-alias-lazy"
+            parameterClass="Synonym">
+      SELECT * FROM feature_synonym 
+      WHERE
+        synonym_id=
+		( SELECT synonym_id FROM synonym WHERE name=#name#
+	      <isNotNull property="cvTerm">  AND type_id=#cvTerm.cvTermId# </isNotNull> )
+    </select>
+
+
+  <!-- WRITE BACK -->
+    <delete id="deleteFeatureAlias" parameterClass="FeatureSynonym">
+      DELETE FROM feature_synonym WHERE
+         synonym_id=$synonym.synonymId$ AND 
+         feature_id=(SELECT feature_id FROM feature WHERE  
+         uniquename=#feature.uniqueName#)
+    </delete>
+  
+    <insert id="insertFeatureAlias" parameterClass="FeatureSynonym">
+      INSERT INTO feature_synonym
+		( synonym_id, feature_id, pub_id, is_current )
+      VALUES ( $synonym.synonymId$ , 
+              (SELECT feature_id FROM feature WHERE uniquename=#feature.uniqueName#), 
+              1, #current# )
+    </insert>
+  
+</sqlMap> 

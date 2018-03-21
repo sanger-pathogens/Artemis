@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+ 
+<!DOCTYPE sqlMap 
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd"> 
+ 
+
+<sqlMap namespace="DbXRef"> 
+
+  <typeAlias alias="DbXRef"
+        type="org.gmod.schema.general.DbXRef"/>
+        
+  <resultMap id="select-dbxref-lazy" 
+               class="DbXRef">
+    <result property="dbXRefId"    column="dbxref_id"/>           
+    <result property="db"          column="db_id" select="getDbByDbId"/>
+    <result property="accession"   column="accession"/>
+    <result property="version"     column="version"/>
+    <result property="description" column="description"/>
+  </resultMap>
+	
+  <resultMap id="select-dbxref" 
+               class="DbXRef">
+    <result property="dbXRefId"    column="dbxref_id"/>           
+    <result property="accession"   column="accession"/>
+    <result property="version"     column="version"/>
+    <result property="description" column="description"/>
+	<result property="db"   resultMap="Db.select-db"/>
+  </resultMap>
+  
+  <select id="getDbXRefId" parameterClass="DbXRef"
+                           resultClass="java.lang.Integer">
+    SELECT dbxref_id FROM dbxref WHERE accession=#accession#
+           AND db_id=$db.dbId$
+  </select>
+  
+  <select id="getDbXRefByDbXRefIdLazy" resultMap="select-dbxref-lazy">
+    SELECT * FROM dbxref WHERE dbxref_id=$dbXRefId$
+  </select>
+	
+  <select id="getDbXRefByDbXRefId" resultMap="select-dbxref">
+	SELECT * FROM dbxref LEFT JOIN db ON dbxref.db_id=db.db_id WHERE dbxref_id=$dbXRefId$
+  </select>
+  
+  <select id="getDbXRef" parameterClass="DbXRef"
+                         resultMap="select-dbxref">
+    SELECT * FROM dbxref 
+    <dynamic>
+      <isNotNull property="db">
+        LEFT JOIN db ON db.db_id=dbxref.db_id 
+      </isNotNull>
+      WHERE
+      <isGreaterThan property="dbXRefId" compareValue="0">
+        dbxref_id=$dbXRefId$
+      </isGreaterThan>
+      <isEqual property="dbXRefId" compareValue="0">
+        accession=#accession#
+      </isEqual>
+      <isNotNull property="db">
+        AND db.name=#db.name# 
+      </isNotNull>
+    </dynamic>
+  </select>
+  
+  
+  <!-- WRITE BACK -->
+  <insert id="insertDbXRef" parameterClass="DbXRef">
+    INSERT INTO dbxref ( db_id, accession <isNotNull property="version"> ,version   </isNotNull>) 
+           VALUES ($db.dbId$, #accession# <isNotNull property="version"> ,#version# </isNotNull>)
+  </insert>    
+
+</sqlMap> 
