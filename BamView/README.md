@@ -8,7 +8,7 @@ If you make use of this software in your research, please cite as:
   
 __BamView: viewing mapped read alignment data in the context of the reference sequence.__  
 Carver T, Böhme U, Otto TD, Parkhill J and Berriman M  
-_Bioinformatics (Oxford, England) 2010;26;5;676-7  
+_Bioinformatics (Oxford, England) 2010;26;5;676-7_  
 PUBMED: [20071372](http://ukpmc.ac.uk/abstract/MED/22253280); PMC: [2828118](http://ukpmc.ac.uk/articles/PMC2828118); DOI: [10.1093/bioinformatics/btq010](10.1093/bioinformatics/btq010)
 
 ## Software Availability

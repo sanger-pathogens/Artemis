@@ -6,7 +6,7 @@ The Artemis Software is a set of software tools for genome browsing and annotati
 
 * [Artemis](Artemis/)
 * [Artemis Comparison Tool (ACT)](ACT/)
-* [BamView](BAMView/)
+* [BamView](BamView/)
 * [DNAPlotter](DNAPlotter)
 
-For more information about the tools, please visit their individual pages.
+For more information about each tool, please visit their individual pages.

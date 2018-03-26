@@ -27,8 +27,8 @@ For older versions of the Artemis software please see the [Artemis FTP site](ftp
   
 For further instructions please see the [Artemis manual](ftp://ftp.sanger.ac.uk/pub/resources/software/artemis/artemis.pdf) and our [GitHub page](https://github.com/sanger-pathogens/Artemis/).
    
-__Notes for Download__
-   
+### Notes for Download
+
 __Note for all operating systems__: The Artemis tool suite requires Java version 1.8 to run. This must be installed first.
    
 __Note for MacOSX__: occasionally a browser decides to display the contents of the .dmg.gz archive file rather than downloading it. If this happens hold down the <control> key and click on the download link. A popup menu should appear, containing several choices. One of the choices should be something like "Save Link As" (or perhaps "Download Link...", "Save Link to Desktop", or a variation on this theme). Select that option, and the archive file should be download correctly.
