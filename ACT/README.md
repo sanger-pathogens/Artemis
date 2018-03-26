@@ -13,7 +13,7 @@ The Artemis Comparison Tool (ACT) allows an interactive visualisation of compari
 If you make use of this software in your research, please cite as:
    
 __ACT: the Artemis Comparison Tool.__  
-Carver TJ, Rutherford KM, Berriman M, Rajandream MA, Barrell BG and Parkhill 
+Carver TJ, Rutherford KM, Berriman M, Rajandream MA, Barrell BG and Parkhill  
 _Bioinformatics (Oxford, England) 2005;21;16;3422-3_   
 PUBMED: [15976072](http://ukpmc.ac.uk/abstract/MED/15976072); DOI: [10.1093/bioinformatics/bti553](http://dx.doi.org/10.1093/bioinformatics/bti553)
 
