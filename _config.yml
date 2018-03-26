@@ -1,1 +1,4 @@
 theme: jekyll-theme-cayman
+title: The Artemis Software
+description: The Artemis Software is a set of software tools for genome browsing and annotation
+baseurl: /Artemis
