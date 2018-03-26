@@ -1,5 +1,3 @@
----
----
 PLEASE NOTE THAT THIS SITE IS UNDER CONSTRUCTION
 # The Artemis Software - a set of software tools for genome browsing and annotation
 
