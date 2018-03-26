@@ -1,3 +1,5 @@
+---
+---
 PLEASE NOTE THAT THIS SITE IS UNDER CONSTRUCTION
 # The Artemis Software - a set of software tools for genome browsing and annotation
 
@@ -5,7 +7,7 @@ PLEASE NOTE THAT THIS SITE IS UNDER CONSTRUCTION
 The Artemis Software is a set of software tools for genome browsing and annotation. It includes:
 
 * Artemis
-* ACT
+* [ACT](ACT/)
 * BamView
 * DNAPlotter
 
