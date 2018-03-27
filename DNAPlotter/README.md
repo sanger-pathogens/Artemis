@@ -29,7 +29,7 @@ For installation instructions please see the [Artemis manual](ftp://ftp.sanger.a
 For instructions please see the [Artemis manual](ftp://ftp.sanger.ac.uk/pub/resources/software/artemis/artemis.pdf)
 
 ## Contact
-For issues encountered with installing the software please contact your local system administrator. For all other issues, please report them to our [Github issues page](https://github.com/sanger-pathogens/Artemis/issues) or email artemis-help@sanger.ac.uk.
+For issues encountered with installing the software please contact your local system administrator. For all other issues, please report them to our [Github issues page](https://github.com/sanger-pathogens/Artemis/issues) or email <artemis-help@sanger.ac.uk>.
 
 ## Publications
 __DNAPlotter: circular and linear interactive genome visualization.__  
