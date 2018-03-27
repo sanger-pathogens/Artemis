@@ -45,7 +45,7 @@ For installation instructions please see the [ACT manual](ftp://ftp.sanger.ac.uk
 For instructions please see the [ACT manual](ftp://ftp.sanger.ac.uk/pub/resources/software/artemis/act.pdf).
 
 ## Contact
-For issues encountered with installing the software please contact your local system administrator. For all other issues, please report them to our [Github issues page](https://github.com/sanger-pathogens/Artemis/issues) or email artemis-help@sanger.ac.uk.
+For issues encountered with installing the software please contact your local system administrator. For all other issues, please report them to our [Github issues page](https://github.com/sanger-pathogens/Artemis/issues) or email <artemis-help@sanger.ac.uk>.
 
 ## References
 __WebACT: an online genome comparison suite.__   

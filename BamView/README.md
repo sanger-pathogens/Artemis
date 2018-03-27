@@ -34,4 +34,4 @@ For installation instructions please see the [BamView SourceForge page](http://b
 For instructions please see the [BamView SourceForge page](http://bamview.sourceforge.net/).
 
 ## Contact
-For issues encountered with installing the software please contact your local system administrator. For all other issues, please report them to our [Github issues page](https://github.com/sanger-pathogens/Artemis/issues) or email artemis-help@sanger.ac.uk.
+For issues encountered with installing the software please contact your local system administrator. For all other issues, please report them to our [Github issues page](https://github.com/sanger-pathogens/Artemis/issues) or email <artemis-help@sanger.ac.uk>.
