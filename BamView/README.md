@@ -16,17 +16,6 @@ Carver T, Böhme U, Otto TD, Parkhill J and Berriman M
 _Bioinformatics (Oxford, England) 2010;26;5;676-7_  
 PUBMED: [20071372](http://ukpmc.ac.uk/abstract/MED/20071372); PMC: [2828118](http://ukpmc.ac.uk/articles/PMC2828118); DOI: [10.1093/bioinformatics/btq010](http://dx.doi.org/10.1093/bioinformatics/btq010)
 
-## Software Availability
-BamView is available under GPL3. The source code is available as part of the Artemis code which can be downloaded from [GitHub](https://github.com/sanger-pathogens/Artemis).
-  
-The latest release of BamView can be downloaded from our ftp site:
-
-* [UNIX](ftp://ftp.sanger.ac.uk/pub/resources/software/artemis/bamview.jar)
-* [MacOS](ftp://ftp.sanger.ac.uk/pub/resources/software/artemis/artemis.dmg.gz)
-* [Windows](ftp://ftp.sanger.ac.uk/pub/resources/software/artemis/bamview.jar)
-
-For further instructions please see the [BamView SourceForge page](http://bamview.sourceforge.net/).
-
 ## Installation 
 For installation instructions please see the [BamView SourceForge page](http://bamview.sourceforge.net/).
 
