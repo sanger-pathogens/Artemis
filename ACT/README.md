@@ -73,8 +73,30 @@ __Note__: For additional information please see the [ACT manual](ftp://ftp.sange
 For issues encountered with installing the software please contact your local system administrator. For all other issues, please report them to our [Github issues page](https://github.com/sanger-pathogens/Artemis/issues) or email <artemis-help@sanger.ac.uk>.
 
 ## FAQ
-### Memory usage
-If you need to increase the maximum memory available to the application then follow the same procedure detailed in the Artemis page FAQ, for the ACT application files.
+### Why does ACT run out of memory on UNIX or GNU/Linux even though the machine has lots of memory?
+
+The Java Virtual Machine (JVM) on UNIX has a fixed upper limit on the amount of memory that is available for applications, but this limit can be changed at runtime. As shipped ACT will use a maximum of 2GB of memory.
+
+There are two ways of fixing this problem:
+1. Change the act script. Find the line that reads: FLAGS="-mx2g -ms100m -noverify" and change the 2g (2 gigabytes) to a bigger number dependent on your machine memory (try 3g), or
+2. Create an ARTEMIS_JVM_FLAGS environment variable set to "-mx2g -ms100m", adjusting the mx value as required. No script change is required for this, but it would need to be added to your environment.
+
+### Why does ACT run out of memory on MacOSX even though the machine has lots of memory?
+To change the memory allocated to ACT on MacOSX, set the value in the file ACT.cfg in the directory ACT.app/Contents/Java. There are a couple of lines that look like this:
+
+```
+[JVMOptions]
+-Xmx2g
+```
+Changing the value after -Xmx will change the memory used by ACT.
+
+### Why does ACT run out of memory on Windows even though the machine has lots of memory?
+
+Normally the Java virtual machine artificially limits the amount of memory that ACT can use. The fix is as follows:
+
+Create a shortcut to the act.jar JAR file. Edit the properties of the shortcut and add java -mx2g -jar to the start of the Target: field. -mx2g sets the maximum memory Java will allocate to ACT (2 gigabytes in this case). We recommend choosing a number that is about 50 megabytes less than the total amount of memory in the machine (to allow for the overhead of windows and the Java virtual machine).
+
+You will need to use the shortcut to run ACT from then on.
 
 ## References
 __WebACT: an online genome comparison suite.__   

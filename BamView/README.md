@@ -79,8 +79,52 @@ For issues encountered with installing the software please contact your local sy
 BamView will attempt to download CRAM reference sequences from EBI if none is specified on startup or via CRAM headers. This behaviour can be further governed using two environment variables REF_PATH and REF_CACHE. The usage of these variables is the same as for samtools. Please refer to [this article](http://www.htslib.org/workflow/) for details.
 
 ### Troubleshooting
-The alignment file needs to be indexed and sorted. Check that you have the index file in the same directory. BamView assumes that the name of the index file is the same as the alignment file but with the added .bai [BAM] or .crai [CRAM] extension.
+The alignment file needs to be sorted and indexed. Samtools may be used for this:
+
+to sort:
+samtools sort <in.bam> <out.prefix>
+
+and then index:
+samtools index <in.bam> [<out.index>]
+
+Check that you have placed the index file in the same directory. BamView assumes that the name of the index file is the same as the alignment file but with the added .bai [BAM] or .crai [CRAM] extension.
+
 If the BamView window is actually opening but just blank then try changing to a different view by right clicking on the BamView window. You may need to select the correct reference from the top left drop down list.
 
-### Memory usage
-If you need to increase the maximum memory available to the application then follow the same procedure detailed in the Artemis page FAQ, for the BamView application files.
+BamView in Artemis:
+The asynchronous option (when selected from the menu) means that when you scroll along the sequence the BamView window only updates when scrolling stops. This makes scrolling faster when the coverage is high in the region being viewed. However this can be turned off to see the reads as you scroll along.
+
+### Colour schemes
+Stack view and Strand stack view: paired reads are blue; single reads or reads with an unmapped pair are black; duplicate reads are green.
+
+Inferred size view: paired reads are blue and those with an inversion are red. Reads that do not have a mapped mate are black and are optionally shown in the inferred insert size view.
+
+Paired stack view: paired reads are blue and those with an inversion are red.
+
+Zoomed in to the nucleotide level: the bases can be coloured by their mapping quality score:
+blue <10; green <20; orange <30; black ≥30.
+
+### Why does BamView run out of memory on UNIX or GNU/Linux even though the machine has lots of memory?
+
+The Java Virtual Machine (JVM) on UNIX has a fixed upper limit on the amount of memory that is available for applications, but this limit can be changed at runtime. As shipped BamView will use a maximum of 2GB of memory.
+
+There are two ways of fixing this problem:
+1. Change the bamview script. Find the line that reads: FLAGS="-mx2g -ms100m -noverify" and change the 2g (2 gigabytes) to a bigger number dependent on your machine memory (try 3g), or
+2. Create an ARTEMIS_JVM_FLAGS environment variable set to "-mx2g -ms100m", adjusting the mx value as required. No script change is required for this, but it would need to be added to your environment.
+
+### Why does BamView run out of memory on MacOSX even though the machine has lots of memory?
+To change the memory allocated to BamView on MacOSX, set the value in the file BamView.cfg in the directory BamView.app/Contents/Java. There are a couple of lines that look like this:
+
+```
+[JVMOptions]
+-Xmx2g
+```
+Changing the value after -Xmx will change the memory used by BamView.
+
+### Why does BamView run out of memory on Windows even though the machine has lots of memory?
+
+Normally the Java virtual machine artificially limits the amount of memory that BamView can use. The fix is as follows:
+
+Create a shortcut to the bamview.jar JAR file. Edit the properties of the shortcut and add java -mx2g -jar to the start of the Target: field. -mx2g sets the maximum memory Java will allocate to BamView (2 gigabytes in this case). We recommend choosing a number that is about 50 megabytes less than the total amount of memory in the machine (to allow for the overhead of windows and the Java virtual machine).
+
+You will need to use the shortcut to run BamView from then on.

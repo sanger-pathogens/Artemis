@@ -3,6 +3,8 @@ Artemis is a free genome browser and annotation tool that allows visualisation o
 Artemis is written in Java, and is available for UNIX, Macintosh and Windows systems. It can read EMBL and GENBANK database entries or sequence in FASTA, indexed FASTA or raw format. Other sequence features can be in EMBL, GENBANK or GFF format.
 Full information about the latest release of Artemis can be found in the [Artemis manual](ftp://ftp.sanger.ac.uk/pub/resources/software/artemis/artemis.pdf) and the [current release notes](ftp://ftp.sanger.ac.uk/pub/resources/software/artemis/release_notes.txt).
 
+The [Artemis poster](ftp://ftp.sanger.ac.uk/pub/resources/software/artemis/artemis_genome_informatics_2010.pdf) gives an overview of browsing genomes and visualisation of next generation data in Artemis.
+
 ## Publication
 
 > High-throughput sequencing (HTS) technologies have made low-cost sequencing of large numbers of samples commonplace. An explosion in the type, not just number, of sequencing experiments has also taken place including genome re-sequencing, population-scale variation detection, whole transcriptome sequencing and genome-wide analysis of protein-bound nucleic acids.We present Artemis as a tool for integrated visualization and computational analysis of different types of HTS datasets in the context of a reference genome and its corresponding annotation.
@@ -106,6 +108,6 @@ Changing the value after -Xmx will change the memory used by Artemis.
 
 Normally the Java virtual machine artificially limits the amount of memory that Artemis can use. The fix is as follows:
 
-Create a shortcut to the Artemis JAR file. Edit the properties of the shortcut and add java -mx2g -jar to the start of the Target: field. -mx2g sets the maximum memory Java will allocate to Artemis (2 gigabytes in this case). We recommend choosing a number that is about 50 megabytes less than the total amount of memory in the machine (to allow for the overhead of windows and the Java virtual machine).
+Create a shortcut to the artemis.jar JAR file. Edit the properties of the shortcut and add java -mx2g -jar to the start of the Target: field. -mx2g sets the maximum memory Java will allocate to Artemis (2 gigabytes in this case). We recommend choosing a number that is about 50 megabytes less than the total amount of memory in the machine (to allow for the overhead of windows and the Java virtual machine).
 
 You will need to use the shortcut to run Artemis from then on.
