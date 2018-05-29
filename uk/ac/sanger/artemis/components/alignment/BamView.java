@@ -276,6 +276,9 @@ public class BamView extends JPanel
   /** Whether we should strictly validate upfront the input BAM/CRAM file.*/
   boolean doInputFileValidation = false;
   
+  /** Whether to use htsjdk file index caching.*/
+  boolean useHtsjdkIndexCaching = false;
+  
   private volatile AtomicBoolean foundFatalErrors = new AtomicBoolean(false);
   
   /** busy cursor */
@@ -365,7 +368,10 @@ public class BamView extends JPanel
     { 
       logger4j.debug("BAM MAX COVERAGE="+Options.getOptions().getIntegerProperty("bam_max_coverage"));
       MAX_COVERAGE = Options.getOptions().getIntegerProperty("bam_max_coverage");
-    }  
+    }
+    
+    useHtsjdkIndexCaching = Options.getOptions().getPropertyTruthValue("bamview_use_htsjdk_file_index_caching");
+    logger4j.debug("USE HTSJDK BAM FILE INDEX CACHING=" + useHtsjdkIndexCaching);
 
     try
     {
@@ -524,7 +530,11 @@ public class BamView extends JPanel
     // so need to set the default stringency (from properties).
     //
     final SamReaderFactory samReaderFactory = SamReaderFactory.makeDefault();
-    samReaderFactory.enable(SamReaderFactory.Option.CACHE_FILE_BASED_INDEXES);
+    if (useHtsjdkIndexCaching)
+    	  samReaderFactory.enable(SamReaderFactory.Option.CACHE_FILE_BASED_INDEXES);
+    else
+      samReaderFactory.disable(SamReaderFactory.Option.CACHE_FILE_BASED_INDEXES);
+    
     samReaderFactory.disable(Option.EAGERLY_DECODE);
     samReaderFactory.validationStringency(validationStringency);
     

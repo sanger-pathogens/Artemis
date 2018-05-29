@@ -357,6 +357,8 @@
 						<exclude name="**/chado/*"/>
 						<exclude name="**/*Database*"/>
 						<exclude name="**/DNADraw_ESTest.*"/>
+						<exclude name="**/ExternalApplication_ESTest.*"/>
+						<exclude name="**/PublicDBDocumentEntry_ESTest.*"/>
 						
 						<!-- TODO The following excluded evosuite tests need fixing -->
 						
