@@ -1,3 +1,13 @@
+Version 18
+
+	Switched build process to use Maven.
+	
+Version 17.0.2-test - patch release for Sanger. Changes incorporated into GitHub master.
+ 
+ 	1) Added bamview_use_htsjdk_file_index_caching property to allow switching off of htsjdk caching for bam files. 
+ 	   This gets around a bug for large bams whereby parts of the bam fail to get loaded - RT ticket #624271. 
+ 	   See htsjdk GitHub issue 1127 for details.
+ 
 Version 17
 
 	Artemis/ACT and associated applications have been upgraded to Java 8. Java 7/6/5 are now no longer supported - RT ticket #589103

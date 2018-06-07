@@ -24,12 +24,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" path="src/assembly"/>
-	<classpathentry kind="src" output="target/test-classes" path="src/test/evosuite">
-		<attributes>
-			<attribute name="optional" value="true"/>
-			<attribute name="maven.pomderived" value="true"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="src" path="src/site"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8">
 		<attributes>
@@ -38,14 +32,8 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/jemAlign.jar"/>
 	<classpathentry kind="lib" path="lib/biojava.jar"/>
-	<classpathentry kind="lib" path="lib/j2ssh/j2ssh-core.jar"/>
-	<classpathentry kind="lib" path="lib/j2ssh/j2ssh-artemis-plugin.jar"/>
-	<classpathentry kind="lib" path="lib/j2ssh/commons-logging.jar"/>
 	<classpathentry kind="lib" path="lib/ibatis/ibatis-2.3.4.726.jar"/>
 	<classpathentry kind="lib" path="lib/postgresql-8.4-701.jdbc3.jar"/>
-	<classpathentry kind="lib" path="lib/commons-lang-2.6.jar"/>
-	<classpathentry kind="lib" path="test/evosuite-lib/evosuite-1.0.5.jar"/>
-	<classpathentry kind="lib" path="lib/commons-net-3.6.jar"/>
 	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>

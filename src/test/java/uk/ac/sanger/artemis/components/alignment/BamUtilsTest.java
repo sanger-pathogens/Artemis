@@ -27,6 +27,7 @@ import org.junit.Test;
 import java.io.File;
 import java.net.ConnectException;
 import java.net.URL;
+import java.net.UnknownHostException;
 
 import htsjdk.samtools.BAMIndex;
 import htsjdk.samtools.SAMException;
@@ -124,14 +125,14 @@ public class BamUtilsTest {
 		fileBai.deleteOnExit();
 		assertTrue(fileBai.exists());
 		assertTrue(fileBai.length()==0);
-		BamUtils.createIndexFileFromScratch("data/MAL_8h.bam", fileBai);
+		BamUtils.createIndexFileFromScratch("test/data/MAL_8h.bam", fileBai);
 		assertTrue(fileBai.length()>0);
 		
 		File fileCrai = File.createTempFile("unit_test_bam_index_file1", ".crai");
 		fileCrai.deleteOnExit();
 		assertTrue(fileCrai.exists());
 		assertTrue(fileCrai.length()==0);
-		BamUtils.createIndexFileFromScratch("data/NV.cram", fileCrai);
+		BamUtils.createIndexFileFromScratch("test/data/NV.cram", fileCrai);
 		assertTrue(fileCrai.length()>0);
 	}
 	
@@ -179,7 +180,7 @@ public class BamUtilsTest {
 		
 		// Check getting an already existing BAM index file
 		//
-		File alreadyExistingBamIndexFile = BamUtils.getIndexFile("data/MAL_8h.bam");
+		File alreadyExistingBamIndexFile = BamUtils.getIndexFile("test/data/MAL_8h.bam");
 		assertNotNull(alreadyExistingBamIndexFile);
 		assertTrue(alreadyExistingBamIndexFile.exists());
 		assertEquals("MAL_8h.bam.bai", alreadyExistingBamIndexFile.getName());
@@ -187,7 +188,7 @@ public class BamUtilsTest {
 		// Check getting an index file for a BAM file with no index.
 		// Should create one.
 		//
-		File checkFile = new File("data/MAL_8h_noindex.bam.bai");
+		File checkFile = new File("test/data/MAL_8h_noindex.bam.bai");
 		if (checkFile.exists())
 		{
 			// Remove any leftover index from a previous run...
@@ -195,7 +196,7 @@ public class BamUtilsTest {
 		}
 		try 
 		{
-			File createdBamIndexFile = BamUtils.getIndexFile("data/MAL_8h_noindex.bam");
+			File createdBamIndexFile = BamUtils.getIndexFile("test/data/MAL_8h_noindex.bam");
 			assertNotNull(createdBamIndexFile);
 			assertTrue(createdBamIndexFile.exists());
 			assertEquals("MAL_8h_noindex.bam.bai", createdBamIndexFile.getName());
@@ -213,7 +214,7 @@ public class BamUtilsTest {
 		// Check getting an index file for a CRAM file with no index.
 		// Should create one.
 		//
-		File createdCramIndexFile = BamUtils.getIndexFile("data/NV.cram");
+		File createdCramIndexFile = BamUtils.getIndexFile("test/data/NV.cram");
 		assertNotNull(createdCramIndexFile);
 		assertTrue(createdCramIndexFile.exists());
 		assertEquals("NV.cram.crai", createdCramIndexFile.getName());
@@ -221,7 +222,7 @@ public class BamUtilsTest {
 				
 		// Check getting an already existing CRAM index file
 		//
-		File alreadyExistingCramIndexFile = BamUtils.getIndexFile("data/NV.cram");
+		File alreadyExistingCramIndexFile = BamUtils.getIndexFile("test/data/NV.cram");
 		assertNotNull(alreadyExistingCramIndexFile);
 		assertTrue(alreadyExistingCramIndexFile.exists());
 		assertEquals("NV.cram.crai", alreadyExistingCramIndexFile.getName());
@@ -248,6 +249,10 @@ public class BamUtilsTest {
 		{
 			assertTrue(e.getMessage().contains("Failed to find an index file"));
 		}
+		catch (ConnectException | UnknownHostException e)
+		{
+			System.err.println("testGetIndexFileForFtpBam() : WARNING: Unable to run this test as cannot connect to Sanger FTP server");
+		}
 		
 		assertNull(createdBamIndexFtpFile);
 		
@@ -262,10 +267,9 @@ public class BamUtilsTest {
 			assertTrue(existingBamIndexFtpFile.getName().endsWith(BAMIndex.BAMIndexSuffix));
 			assertTrue(existingBamIndexFtpFile.length()>0);
 		}
-		catch (ConnectException e)
+		catch (ConnectException | UnknownHostException e)
 		{
 			System.err.println("testGetIndexFileForFtpBam() : WARNING: Unable to run this test as cannot connect to Sanger FTP server");
-			e.printStackTrace();
 		}
 	}
 	
@@ -285,10 +289,9 @@ public class BamUtilsTest {
 		{
 			assertTrue(e.getMessage().contains("Failed to find an index file"));
 		}
-		catch (ConnectException e)
+		catch (ConnectException | UnknownHostException e)
 		{
 			System.err.println("testCreateIndexFileForFtpCram() : WARNING: Unable to run this test as cannot connect to Sanger FTP server");
-			e.printStackTrace();
 		}
 		
 		assertNull(createdCramIndexFtpFile);
@@ -311,10 +314,9 @@ public class BamUtilsTest {
 			assertTrue(existingCramIndexFtpFile.getName().endsWith(CRAIIndex.CRAI_INDEX_SUFFIX));
 			assertTrue(existingCramIndexFtpFile.length()>0);
 		}
-		catch (ConnectException e)
+		catch (ConnectException | UnknownHostException e)
 		{
 			System.err.println("testGetExistingIndexFileForFtpCram() : WARNING: Unable to run this test as cannot connect to Sanger FTP server");
-			e.printStackTrace();
 		}
 	}
 }

@@ -74,7 +74,7 @@ do
 	fi
 	if [ '-l' == "${arg}" ]; then
 		let "nextID = $idx + 2";
-                eval MAPPING_PATH="${!nextID}"
+        eval MAPPING_PATH="${!nextID}"
 		CLASSPATH="${MAPPING_PATH}:$CLASSPATH"
 		export CLASSPATH
 	fi

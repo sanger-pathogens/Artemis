@@ -37,6 +37,9 @@ import java.io.*;
  **/
 
 public class DocumentEntryAutosaveThread extends Thread {
+	
+  private static boolean disabled = false;
+  
   /**
    *  Create a new DocumentEntryAutosaveThread with MIN_PRIORITY.
    **/
@@ -57,6 +60,9 @@ public class DocumentEntryAutosaveThread extends Thread {
    **/
   public void run () {
     java.util.Date last_save_time = null;
+    
+    if (disabled)
+    	  return;
 
     // Set to true the first time we save.
     boolean have_saved = false;
@@ -102,7 +108,7 @@ public class DocumentEntryAutosaveThread extends Thread {
           have_saved = true;
         } catch (IOException e) {
           System.err.println ("warning: could not auto save to: " +
-                              save_document.getName () +
+                              save_file.getAbsolutePath() +
                               " (will try again later)");
         } catch (java.util.ConcurrentModificationException e) {
           // this Exception means that the tree that stores the features has
@@ -148,7 +154,17 @@ public class DocumentEntryAutosaveThread extends Thread {
            System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0;
   }
   
-  /**
+  public static boolean isDisabled()
+  {
+	return disabled;
+  }
+
+  public static void setDisabled(boolean disabled)
+  {
+	DocumentEntryAutosaveThread.disabled = disabled;
+  }
+
+/**
    *  The DocumentEntry we will save.
    **/
   private DocumentEntry document_entry;

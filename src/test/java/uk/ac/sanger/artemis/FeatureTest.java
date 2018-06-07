@@ -36,6 +36,7 @@ import org.junit.After;
 import uk.ac.sanger.artemis.Entry;
 import uk.ac.sanger.artemis.EntryGroup;
 import uk.ac.sanger.artemis.Feature;
+import uk.ac.sanger.artemis.io.DocumentEntryAutosaveThread;
 import uk.ac.sanger.artemis.io.EntryInformation;
 import uk.ac.sanger.artemis.io.Key;
 import uk.ac.sanger.artemis.io.Location;
@@ -353,7 +354,7 @@ public class FeatureTest
 	@Before
 	public void setup() 
 	{
-		
+		DocumentEntryAutosaveThread.setDisabled(true);
 		egrp = Utils.getEntryGroup("/data/Pf3D7_01_02_v3.gff.gz");
 
 	    features = egrp.getAllFeatures();
