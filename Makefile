@@ -101,15 +101,19 @@ artemis.jar : $(CLASSES)
 	find jar_build/build -name '*.DS_Store' -print | xargs rm -rf
 	cd jar_build/build; \
 	rm -rf META-INF/MANIFEST.MF; \
-	echo "Main-Class: uk.ac.sanger.artemis.components.ArtemisMain\nPermissions: all-permissions" > manifest-art; \
+	echo "Main-Class: uk.ac.sanger.artemis.components.ArtemisMain" > manifest-art; \
+	echo "Permissions: all-permissions" >> manifest-art; \
 	jar cmf manifest-art ../artemis.jar META-INF/services images/Wellcome_Sanger_Institute_Logo_Landscape_Digital_RGB_Full_Colour.jpg images/icon.gif README.md etc \
 	                     artemis_sqlmap org uk com net htsjdk picard gov joptsimple ngs freemarker LICENSE.Apache LICENSE.Picard LICENSE.JDBC LICENSE j2ssh.properties; \
-    echo "Main-Class: uk.ac.sanger.artemis.circular.DNADraw\nPermissions: all-permissions" > manifest-circular; \
-    jar cmf manifest-circular ../DNAPlotter.jar images/Wellcome_Sanger_Institute_Logo_Landscape_Digital_RGB_Full_Colour.jpg README.md etc \
+    echo "Main-Class: uk.ac.sanger.artemis.circular.DNADraw" > manifest-circular; \
+	echo "Permissions: all-permissions" >> manifest-circular; \
+    jar cmf manifest-circular ../dnaplotter.jar images/Wellcome_Sanger_Institute_Logo_Landscape_Digital_RGB_Full_Colour.jpg README.md etc \
                          org uk com net htsjdk picard gov joptsimple ngs freemarker LICENSE.Apache LICENSE.Picard LICENSE.JDBC LICENSE j2ssh.properties; \
-	echo "Main-Class: uk.ac.sanger.artemis.components.alignment.BamView\nPermissions: all-permissions" > manifest-bamview; \
+	echo "Main-Class: uk.ac.sanger.artemis.components.alignment.BamView" > manifest-bamview; \
+	echo "Permissions: all-permissions" >> manifest-bamview; \
 	jar cmf manifest-bamview ../bamview.jar META-INF/services etc org uk com net htsjdk picard gov joptsimple ngs freemarker LICENSE.Apache LICENSE.Picard LICENSE.JDBC LICENSE; \
-	echo "Main-Class: uk.ac.sanger.artemis.components.ActMain\nPermissions: all-permissions" > manifest-act; \
+	echo "Main-Class: uk.ac.sanger.artemis.components.ActMain" > manifest-act; \
+	echo "Permissions: all-permissions" >> manifest-act; \
 	jar cmf manifest-act ../act.jar META-INF/services images/Wellcome_Sanger_Institute_Logo_Landscape_Digital_RGB_Full_Colour.jpg images/icon.gif README.md etc \
 	                     artemis_sqlmap org uk com net htsjdk picard gov joptsimple ngs freemarker LICENSE.Apache LICENSE.Picard LICENSE.JDBC LICENSE j2ssh.properties; \
 	
