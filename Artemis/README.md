@@ -1,7 +1,7 @@
 # Artemis
 Artemis is a free genome browser and annotation tool that allows visualisation of sequence features, next generation data and the results of analyses within the context of the sequence, and also its six-frame translation.
 Artemis is written in Java, and is available for UNIX, Macintosh and Windows systems. It can read EMBL and GENBANK database entries or sequence in FASTA, indexed FASTA or raw format. Other sequence features can be in EMBL, GENBANK or GFF format.
-Full information about the latest release of Artemis can be found in the [Artemis manual](https://kpepper.github.io/Artemis/Artemis/artemis-manual.html).
+Full information about the latest release of Artemis can be found in the [Artemis manual](https://sanger-pathogens.github.io/Artemis/Artemis/artemis-manual.html).
 
 The [Artemis poster](ftp://ftp.sanger.ac.uk/pub/resources/software/artemis/artemis_genome_informatics_2010.pdf) gives an overview of browsing genomes and visualisation of next generation data in Artemis.
 
@@ -81,7 +81,7 @@ On MacOSX machines, Artemis can be started by double clicking on the Artemis ico
 ### Running Artemis on Windows Systems
 Artemis can be started by double clicking on the artemis.jar icon.
 
-__Note__: For additional information please see the [Artemis manual](https://kpepper.github.io/Artemis/Artemis/artemis-manual.html) and our [GitHub page](https://github.com/sanger-pathogens/Artemis/). A PDF version of the manual is also available for download [here](https://kpepper.github.io/Artemis/Artemis/artemis-manual.pdf).
+__Note__: For additional information please see the [Artemis manual](https://sanger-pathogens.github.io/Artemis/Artemis/artemis-manual.html) and our [GitHub page](https://github.com/sanger-pathogens/Artemis/). A PDF version of the manual is also available for download [here](https://sanger-pathogens.github.io/Artemis/Artemis/artemis-manual.pdf).
 
 ## Contact
 For issues encountered with installing the software please contact your local system administrator. For all other issues, please report them to our [Github issues page](https://github.com/sanger-pathogens/Artemis/issues) or email <artemis-help@sanger.ac.uk>.

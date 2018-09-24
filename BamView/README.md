@@ -69,7 +69,7 @@ On MacOSX machines, BamView can be started by double clicking on the BamView ico
 ### Running BamView on Windows Systems
 BamView can be started by double clicking on the bamview.jar icon.
 
-__Note__: For additional information on viewing alignment files please see the [Artemis manual](https://kpepper.github.io/Artemis/Artemis/artemis-manual.html) and our [GitHub page](https://github.com/sanger-pathogens/Artemis/). A PDF version of the manual is also available for download [here](https://kpepper.github.io/Artemis/Artemis/artemis-manual.pdf).
+__Note__: For additional information on viewing alignment files please see the [Artemis manual](https://sanger-pathogens.github.io/Artemis/Artemis/artemis-manual.html) and our [GitHub page](https://github.com/sanger-pathogens/Artemis/). A PDF version of the manual is also available for download [here](https://sanger-pathogens.github.io/Artemis/Artemis/artemis-manual.pdf).
 
 ## Contact
 For issues encountered with installing the software please contact your local system administrator. For all other issues, please report them to our [Github issues page](https://github.com/sanger-pathogens/Artemis/issues) or email <artemis-help@sanger.ac.uk>.
