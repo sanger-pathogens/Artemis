@@ -61,7 +61,7 @@ On MacOSX machines, DNAPlotter can be started by double clicking on the DNAPlott
 ### Running DNAPlotter on Windows Systems
 DNAPlotter can be started by double clicking on the dnaplotter.jar icon.
 
-__Note__: For additional information please see the [Artemis manual](ftp://ftp.sanger.ac.uk/pub/resources/software/artemis/artemis.pdf) and our [GitHub page](https://github.com/sanger-pathogens/Artemis/).
+__Note__: or additional information please see the [Artemis manual](https://kpepper.github.io/Artemis/Artemis/artemis-manual.html) and our [GitHub page](https://github.com/sanger-pathogens/Artemis/). A PDF version of the manual is also available for download [here](https://kpepper.github.io/Artemis/Artemis/artemis-manual.pdf).
 
 ## Contact
 For issues encountered with installing the software please contact your local system administrator. For all other issues, please report them to our [Github issues page](https://github.com/sanger-pathogens/Artemis/issues) or email <artemis-help@sanger.ac.uk>.
