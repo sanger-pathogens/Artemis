@@ -1,12 +1,10 @@
-*.class
 .settings
 **/.DS_Store
 **/*.log
 test/coverage-report
 /eclipse-classes/
-/test-kjp/
-.scaffolding*
 /target/
 **/.scaffolding_list.tmp
 dependency-reduced-pom.xml
 maven.properties
+BACKUPS

@@ -7,8 +7,13 @@ echo
 sleep 5
 cd ..
 
-# No instrumentation
-mvn -Dinfo=true -DEMBOSS_ROOT=$EMBOSS_ROOT clean evosuite:prepare test jacoco:report
-# Instrumentation
-#mvn -DEMBOSS_ROOT=$EMBOSS_ROOT clean evosuite:prepare test jacoco:restore-instrumented-classes jacoco:report -f pom-jacoco-offline-instrumentation.xml
+mvn -Dinfo=true -DEMBOSS_ROOT=$EMBOSS_ROOT test-compile evosuite:prepare -P dev-evo
+
+if [[ ! -e ./.scaffolding_list.tmp ]]
+then
+	echo "ERROR: Cannot find Evosuite .scaffolding_list.tmp file - unit tests will not be sand-boxed! Exiting."
+	exit 1
+fi 
+
+mvn -Dinfo=true -DEMBOSS_ROOT=$EMBOSS_ROOT test jacoco:report -P dev-evo
 

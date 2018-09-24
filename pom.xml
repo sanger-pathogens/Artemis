@@ -189,29 +189,11 @@
 		
 		<!-- End of IBATIS jars (local) -->
 		
-		
-		<!-- Start of J2SSH jars (local) -->
-		
-		<!-- NEW VERSION..... -->
-		<!--  dependency>
-		   <groupId>com.sshtools</groupId>
-		   <artifactId>j2ssh-maverick</artifactId>
-		   <version>1.5.5</version>
-		</dependency-->
-		
-		<!-- THIS MUST BE REMOVED WHEN NEW VERSION IS SWITCHED IN!!! -->
-		<dependency>
-		    <groupId>com.sshtools</groupId>
-		    <artifactId>j2ssh-artemis-plugin</artifactId>
-		    <version>0.2.9</version>
-		</dependency>
-		
 		<dependency>
 		    <groupId>com.sshtools</groupId>
 		    <artifactId>j2ssh-core</artifactId>
 		    <version>0.2.9</version>
 		</dependency>
-		<!-- ======================================================== -->
 		
 		<!--  Latest commons logging from 2014! -->
 		<!-- https://mvnrepository.com/artifact/commons-logging/commons-logging -->
@@ -410,7 +392,7 @@
 			            </configuration>
 			        </execution>
 			        
-			        <!--  TRYING TO TAKE THESE OUT.... -->
+			        <!--  THESE NEED UPGRADE.... -->
 			        <execution>
 			        		<id>install-j2ssh-core-jar</id>
 			            <phase>clean</phase>
@@ -426,7 +408,7 @@
 			                <generatePom>true</generatePom>
 			            </configuration>
 			        </execution>
-			        <execution>
+			        <!--  execution>
 			        		<id>install-j2ssh-plugin-jar</id>
 			            <phase>clean</phase>
 			            <goals>
@@ -440,7 +422,7 @@
 			                <file>${project.basedir}/lib/j2ssh/j2ssh-artemis-plugin.jar</file>
 			                <generatePom>true</generatePom>
 			            </configuration>
-			        </execution>
+			        </execution -->
 			        <!-- ========================= -->
 			        
 			        <execution>
@@ -618,65 +600,11 @@
  		
 						<!--  Start of Evosuite excludes -->
 						
-						<!-- exclude>${evosuite.exclude.filter}</exclude -->
-					
-	          			<!-- Default excludes -->
+						<exclude>${evosuite.exclude.filter}</exclude>
+
 	          			<exclude>**/RunBlastAtNCBITest.*</exclude>
-	          			<exclude>**/ExternalApplication_ESTest.*</exclude>
-	          			<exclude>**/PublicDBDocumentEntry_ESTest.*</exclude>
-						<exclude>**/chado/*_ESTest.*</exclude>
-						<exclude>**/*Database*_ESTest.*</exclude>
-						<!--  exclude>**/DNADraw_ESTest.*</exclude-->
-						<exclude>**/j2ssh/**</exclude>
-						<exclude>**/sshtools/**</exclude>
-						<exclude>**/DocumentEntry_ESTest.*</exclude>
-						<exclude>**/Options_ESTest.*</exclude>
-						<exclude>**/BamUtils_ESTest.*</exclude>
-						<exclude>org/**</exclude>
-						
-						<exclude>**/FeatureTest_ESTest.*</exclude>
-						<exclude>**/GffToEMBL_ESTest.*</exclude>
-						<exclude>**/GFFStreamFeature_ESTest.*</exclude>
-						
-						
-						
-							<!-- TODO The following excluded evosuite tests need fixing -->
-							
-							<!-- core dump issue on Java 1.6.181 -->
-							<!-- exclude>**/BamUtils_ESTest.*</exclude>
-							<exclude>**/BamView_ESTest.*</exclude>
-							<exclude>**/CRAMReferenceSequenceFile_ESTest.*</exclude>
-							<exclude>**/CoveragePanel_ESTest.*</exclude>
-							<exclude>**/PairedReadComparator_ESTest.*</exclude>
-							<exclude>**/SAMRecordFilter_ESTest.*</exclude>
-							<exclude>**/SAMRecordPositionComparator_ESTest.*</exclude>
-							<exclude>**/SnpPanel_ESTest.*</exclude -->
-							
-							<!-- Failed after JDK update -->
-							<!--  exclude>**/DocumentFeature_ESTest.*</exclude>
-							<exclude>**/Options_ESTest.*</exclude>
-							<exclude>**/LazyQualifierValue_ESTest.*</exclude>
-							<exclude>**/OSXAdapter_ESTest.*</exclude>
-							<exclude>**/BamOSXAdapter_ESTest.*</exclude>
-							<exclude>**/DocumentEntry_ESTest.*</exclude-->
-							
-							<!-- Always produce broken tests -->
-							<!-- exclude>**/ChangeListener_ESTest.*</exclude>
-							<exclude>**/EntryChangeListener_ESTest.*</exclude>
-							<exclude>**/FeatureChangeListener_ESTest.*</exclude>
-							<exclude>**/GotoListener_ESTest.*</exclude>
-							<exclude>**/OptionChangeListener_ESTest.*</exclude>
-							<exclude>**/Selectable_ESTest.*</exclude>
-							<exclude>**/SelectionChangeListener_ESTest.*</exclude>
-							<exclude>**/DisplayAdjustmentListener_ESTest.*</exclude>
-							<exclude>**/DisplayComponent_ESTest.*</exclude>
-							<exclude>**/FeatureListFrame_ESTest.*</exclude>
-							<exclude>**/GraphMenu_ESTest.*</exclude>
-							<exclude>**/MultiComparator_ESTest.*</exclude>
-							<exclude>**/ComparableFeature_ESTest.*</exclude>
-							<exclude>**/StreamFeature_ESTest.*</exclude>
-							<exclude>**/MarkerChangeListener_ESTest.*</exclude -->
-    
+	          			<exclude>**/j2ssh/**</exclude>
+	          			
     						<!--  End of Evosuite excludes -->
     						
           			</excludes>
@@ -1476,8 +1404,11 @@
 	         				<phase>process-test-classes</phase>
 	      				</execution>
 	      			</executions>
+	      			<configuration>
+	      				<extraArgs>-Dsearch_budget=90 -Dconsider_main_methods=false -Duse_separate_classloader=false</extraArgs>
+	      			</configuration>
 				</plugin>
-		  
+
 			</plugins>
   		</pluginManagement>
   
@@ -1535,7 +1466,7 @@
 	        		<skip.tests>true</skip.tests>
         			<evosuite.exclude.filter>**/*_ESTest*</evosuite.exclude.filter>
         			<jarsigner.skip>true</jarsigner.skip>
-        			<skip.artifact.creation>true</skip.artifact.creation>
+        			<skip.artifact.creation>false</skip.artifact.creation>
         			<skip.manual.creation>true</skip.manual.creation>
         			<skip.coverage.reporting>true</skip.coverage.reporting>
         			<skip.javadoc>true</skip.javadoc>
@@ -1554,7 +1485,7 @@
 	        		<skip.tests>false</skip.tests>     
         			<evosuite.exclude.filter></evosuite.exclude.filter>
         			<jarsigner.skip>true</jarsigner.skip>
-        			<skip.artifact.creation>true</skip.artifact.creation>
+        			<skip.artifact.creation>false</skip.artifact.creation>
         			<skip.manual.creation>true</skip.manual.creation>
         			<skip.coverage.reporting>false</skip.coverage.reporting>
         			<skip.javadoc>true</skip.javadoc>
