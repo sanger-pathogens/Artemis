@@ -67,7 +67,7 @@ On MacOSX machines, ACT can be started by double clicking on the ACT icon.
 ### Running ACT on Windows Systems
 ACT can be started by double clicking on the act.jar icon.
 
-__Note__: For additional information please see the [ACT manual](ftp://ftp.sanger.ac.uk/pub/resources/software/artemis/act.pdf) and our [GitHub page](https://github.com/sanger-pathogens/Artemis/).
+__Note__: For additional information please see the [ACT manual](https://sanger-pathogens.github.io/Artemis/ACT/act-manual.html). A PDF version of the manual is also available for download [here](https://sanger-pathogens.github.io/Artemis/ACT/act-manual.pdf).
 
 ## Contact
 For issues encountered with installing the software please contact your local system administrator. For all other issues, please report them to our [Github issues page](https://github.com/sanger-pathogens/Artemis/issues) or email <artemis-help@sanger.ac.uk>.
