@@ -246,11 +246,12 @@
 		<!-- Start of Picard jars -->
 		
 		<!-- https://mvnrepository.com/artifact/com.github.broadinstitute/picard -->
-		<!--  Latest as of 4th Jun 2018 -->
+		<!-- Latest as of 24th Set 2018 -->
+		<!--  It contains two htsjdk fixes for CRAM index caching and the query mate issue -->
 		<dependency>
 		    <groupId>com.github.broadinstitute</groupId>
 		    <artifactId>picard</artifactId>
-		    <version>2.18.4</version>
+		    <version>2.18.14</version>
 		</dependency>
 		
 		<!-- End of Picard jars -->
