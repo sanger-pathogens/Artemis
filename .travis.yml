@@ -11,7 +11,7 @@ matrix:
   include:
   - jdk: oraclejdk8
     env:
-    - RUN_TESTS=true
+    - RUN_TESTS=false
 cache:
   directories:
   - "${HOME}/dependencies"
