@@ -3,11 +3,13 @@
 echo
 echo "This may take 30 minutes or more..."
 echo
+echo "EMBOSS_ROOT set to: "$EMBOSS_ROOT
+echo
 
 sleep 5
 cd ..
 
-mvn -Dinfo=true -DEMBOSS_ROOT=$EMBOSS_ROOT test-compile evosuite:prepare -P dev-evo
+#mvn clean compile test-compile
 
 if [[ ! -e ./.scaffolding_list.tmp ]]
 then
@@ -15,5 +17,5 @@ then
 	exit 1
 fi 
 
-mvn -Dinfo=true -DEMBOSS_ROOT=$EMBOSS_ROOT test jacoco:report -P dev-evo
+mvn -Devosuite.exclude.filter='' test jacoco:report
 

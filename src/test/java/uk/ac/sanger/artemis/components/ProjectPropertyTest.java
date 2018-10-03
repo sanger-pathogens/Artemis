@@ -108,14 +108,24 @@ public class ProjectPropertyTest
     if(GraphicsEnvironment.getLocalGraphicsEnvironment().isHeadless())
       return;
 
+    ProjectProperty pp = null;
+    
     try
     {
-      ProjectProperty pp = new ProjectProperty();
+      pp = new ProjectProperty();
     }
     catch(Exception e)
     {
       org.junit.Assert.fail(e.getMessage());
     }
+    finally 
+    {
+    	  if (pp != null)
+    	  {
+      	pp.dispose();
+    	  }
+    }
+    
   }
   
   /**

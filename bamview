@@ -41,7 +41,8 @@ done
 APPLICATION_PROPERTIES="-Djdbc.drivers=org.postgresql.Driver -Dartemis.environment=UNIX $SANGER_ARTEMIS_OPTIONS"
 APPLICATION_HOME=`dirname "$PRG"`
 JAR_NAME=bamview.jar
-JAR_FILE=$APPLICATION_HOME/$JAR_NAME
+JAR_FILE_DEFAULT=$APPLICATION_HOME/target/unix-jars/$JAR_NAME
+JAR_FILE_INSTALLED=$APPLICATION_HOME/$JAR_NAME
 
 #
 # Use a custom Java version if necessary
@@ -73,7 +74,7 @@ fi
 PLATTMP=`uname`
 if [[ "$PLATTMP" = "Darwin" ]]
 then
-  	APPLICATION_PROPERTIES="$APPLICATION_PROPERTIES -Dcom.apple.mrj.application.apple.menu.about.name=BamView"
+  	APPLICATION_PROPERTIES="$APPLICATION_PROPERTIES -Xdock:name=BamView"
 fi
 
 if [[ "$QUIET" = "no" ]]
@@ -81,7 +82,7 @@ then
     echo "Starting BamView with arguments: $FLAGS $APPLICATION_PROPERTIES $*"
 fi
 
-$JAVA $FLAGS $APPLICATION_PROPERTIES -cp "$JAR_FILE:$APPLICATION_HOME" uk.ac.sanger.artemis.components.alignment.BamView $*
+$JAVA $FLAGS $APPLICATION_PROPERTIES -cp "$JAR_FILE_DEFAULT:$JAR_FILE_INSTALLED" uk.ac.sanger.artemis.components.alignment.BamView $*
 result=$?
 
 exit $result

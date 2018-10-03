@@ -3,12 +3,12 @@ Installation instructions for UNIX
 ==================================
 
    1. change to /some/directory
-   2. uncompress and untar the artemis_compiled.tar.gz file
-      On UNIX the command is:   tar xzvf artemis_compiled.tar.gz 
+   2. uncompress and untar the artemis-unix-releases-<version number>.tar.gz file
+      On UNIX the command is:   tar xzvf artemis-unix-releases-<version number>.tar.gz
 
-This will create a "artemis" directory containing all the java classes.  On
+This will create an "artemis" directory containing all the java classes.  On
 Unix the easiest way to run the program is to run the script called art in the
-diana directory:
+project directory:
 
     /some/directory/artemis/art
 
@@ -26,50 +26,26 @@ Installation instructions for GitHub download
       git clone http://github.com/sanger-pathogens/Artemis.git
    2. Compile the code:
       cd Artemis
-      make
+      mvn clean package
    3. Run Artemis:
       ./art
       or ACT:
       ./act
-      
-Makefile targets
-================
 
-make		- compile code  
-make jar	- create Artemis (jar_build/artemis.jar) and ACT 
-			  (jar_build/act.jar) jar files.
-make dist	- create a tar ball of the Artemis/ACT distribution
 
-Creating signed jar files for Artemis/ACT Java Web Start launch
-===============================================================
+Doing a full release with signed jar files
+==========================================
 
-Use 'make jar' to create jar_build/artemis.jar. See the following pages 
-for a description of deploying and signing jar files:
+You will need to drop the Pathogen Informatics Artemis maven.properties file in the project root, then run:
 
-http://java.sun.com/docs/books/tutorial/deployment/webstart/deploying.html
-http://java.sun.com/docs/books/tutorial/deployment/jar/signing.html
-
-Use the Java keytool to generate a keystore (e.g. artemisstore below) file:
-
-keytool -genkey -alias signFiles -dname "CN=$NAME, \
-        OU=$ORGU, O=$ORG, L=$LOC, S=$STATE, C=$CODE" \
-        -keypass $KEYPASS -storepass $STOREPASS -keystore artemisstore  -validity $VALID
-
-The following can be used to view the key store and list entry details:
-
-keytool -list -v -keystore artemisstore
-
-Then use the following to create a signed jar to use in the JNLP file:
-
-jarsigner -keystore artemisstore -storepass $STOREPASS -keypass $KEYPASS \
-           -signedjar sartemis.jar artemis.jar signFiles
+mvn -DEMBOSS_ROOT=<Emboss installation folder> clean release -P release
 
 Running the test suite
 ======================
 
 cd test
 
-RunDefaultUnitTests.sh - this runs all hand-written unit tests.
-RunEvoSuiteUnitTests.sh - this runs all EvoSuite generated unit tests. It will take well over 30 mins to run.
-RunAllUnitTests.sh - this runs all hand-written and EvoSuite generated unit tests. It will take well over 30 mins to run.
+RunDefaultUnitTests.sh - this runs all non-automated unit tests.
+RunEvoSuiteUnitTests.sh - this runs all EvoSuite generated unit tests. 
+RunAllUnitTests.sh - this runs all non-automated and EvoSuite generated unit tests. 
 

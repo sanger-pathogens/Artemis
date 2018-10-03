@@ -10,30 +10,15 @@
 		<format>zip</format>
 	</formats>
 	<includeBaseDirectory>false</includeBaseDirectory>
-	
-	<files>
-		<file>
-			<source>target/assembly/${artemis.signed.jar.name}</source>
-			<outputDirectory>${bioconda.assembly.folder}</outputDirectory>
-			<destName>artemis.jar</destName>
-		</file>
-		<file>
-			<source>target/assembly/${act.signed.jar.name}</source>
-			<outputDirectory>${bioconda.assembly.folder}</outputDirectory>
-			<destName>act.jar</destName>
-		</file>
-		<file>
-			<source>target/assembly/${dnaplotter.signed.jar.name}</source>
-			<outputDirectory>${bioconda.assembly.folder}</outputDirectory>
-			<destName>dnaplotter.jar</destName>
-		</file>
-		<file>
-			<source>target/assembly/${bamview.signed.jar.name}</source>
-			<outputDirectory>${bioconda.assembly.folder}</outputDirectory>
-			<destName>bamview.jar</destName>
-		</file>
-	</files>
+
 	<fileSets>
+		<fileSet>
+			<directory>target/jars</directory>
+			<outputDirectory>${bioconda.assembly.folder}</outputDirectory>
+			<includes>
+				<include>*.jar</include>
+			</includes>
+		</fileSet>
 		<fileSet>
 			<outputDirectory>${bioconda.assembly.folder}</outputDirectory>
 			<includes>

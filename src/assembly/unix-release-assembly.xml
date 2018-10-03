@@ -11,29 +11,15 @@
 	</formats>
 	<includeBaseDirectory>false</includeBaseDirectory>
 	
-	<files>
-		<file>
-			<source>target/unix-assembly/${artemis.signed.jar.name}</source>
-			<outputDirectory>${unix.assembly.folder}</outputDirectory>
-			<destName>artemis.jar</destName>
-		</file>
-		<file>
-			<source>target/unix-assembly/${act.signed.jar.name}</source>
-			<outputDirectory>${unix.assembly.folder}</outputDirectory>
-			<destName>act.jar</destName>
-		</file>
-		<file>
-			<source>target/unix-assembly/${dnaplotter.signed.jar.name}</source>
-			<outputDirectory>${unix.assembly.folder}</outputDirectory>
-			<destName>dnaplotter.jar</destName>
-		</file>
-		<file>
-			<source>target/unix-assembly/${bamview.signed.jar.name}</source>
-			<outputDirectory>${unix.assembly.folder}</outputDirectory>
-			<destName>bamview.jar</destName>
-		</file>
-	</files>
+	<!-- Assembles a simple release tar gz with jars and scripts -->
 	<fileSets>
+		<fileSet>
+			<directory>target/unix-jars</directory>
+			<outputDirectory>${unix.assembly.folder}</outputDirectory>
+			<includes>
+				<include>*.jar</include>
+			</includes>
+		</fileSet>
 		<fileSet>
 			<directory>etc</directory>
 			<outputDirectory>${unix.assembly.folder}/etc</outputDirectory>

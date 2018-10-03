@@ -14,6 +14,14 @@
 	</description>
 	<inceptionYear>1998</inceptionYear>
 	
+	<!-- GitHub repo connection -->
+	<scm>
+   	 	<connection>scm:https://github.com/sanger-pathogens/Artemis.git</connection>
+   	 	<url>https://github.com/sanger-pathogens/Artemis</url>
+    		<developerConnection>scm:https://github.com/sanger-pathogens/Artemis.git</developerConnection>
+    		<tag>HEAD</tag>
+  	</scm>
+  
 	<organization>
 		<name>Sanger Institute</name>
 		<url>http://www.sanger.ac.uk/</url>
@@ -61,7 +69,7 @@
         <version.file>${project.basedir}/etc/versions</version.file>
         
         <!-- Properties passed into Maven on command line -->
-        <emboss.installation.root>${EMBOSS_ROOT}</emboss.installation.root>
+        <emboss.installation.root>${env.EMBOSS_ROOT}</emboss.installation.root>
         
         <!-- Application names -->
         <artemis.application.name>Artemis</artemis.application.name>
@@ -70,10 +78,10 @@
         <bamview.application.name>BamView</bamview.application.name>
         
         <!-- Deployable jar names -->
-        <artemis.signed.jar.name>artemis-${project.version}.jar</artemis.signed.jar.name>
-        <act.signed.jar.name>act-${project.version}.jar</act.signed.jar.name>
-        <bamview.signed.jar.name>bamview-${project.version}.jar</bamview.signed.jar.name>
-        <dnaplotter.signed.jar.name>dnaplotter-${project.version}.jar</dnaplotter.signed.jar.name>
+        <artemis.jar.name>artemis.jar</artemis.jar.name>
+        <act.jar.name>act.jar</act.jar.name>
+        <bamview.jar.name>bamview.jar</bamview.jar.name>
+        <dnaplotter.jar.name>dnaplotter.jar</dnaplotter.jar.name>
         
         <!-- Main classes -->
         <artemis.main.class>uk.ac.sanger.artemis.components.ArtemisMain</artemis.main.class>
@@ -91,9 +99,15 @@
         <evosuite.runtime.version>1.0.6</evosuite.runtime.version>
         <evosuite.plugin.version>1.0.6</evosuite.plugin.version>
         
+        <!-- Assembly folders -->
+        <bioconda.assembly.folder>artemis</bioconda.assembly.folder>
+        <windows.assembly.folder>artemis</windows.assembly.folder>
+        <unix.assembly.folder>artemis</unix.assembly.folder>
+        <osx.assembly.folder>artemis</osx.assembly.folder>
+        
         <!-- Release deliverable folder -->
         <release.artifact.folder>${project.build.directory}/release-artifacts</release.artifact.folder>       
-        <signed.jars.folder>${release.artifact.folder}/windows-release</signed.jars.folder>
+        <windows.release.folder>${release.artifact.folder}/windows-release</windows.release.folder>
         <osx.app.folder>${release.artifact.folder}/mac-osx-release</osx.app.folder>
         <unix.release.folder>${release.artifact.folder}/unix-release</unix.release.folder>
         <bioconda.release.folder>${release.artifact.folder}/bioconda-release</bioconda.release.folder>
@@ -105,7 +119,7 @@
         <osx.release.filename>artemis-macosx-release-${project.version}</osx.release.filename>
         
         <!-- Surefire unit test plugin arguments -->
-        <surefireArgLine>-Xmx4g -noverify -DEMBOSS_ROOT=${emboss.installation.root} -Djdbc.drivers=org.postgresql.Driver</surefireArgLine>
+        <surefireArgLine>-Xmx4g -noverify -Djdbc.drivers=org.postgresql.Driver -Duse_separate_classloader=false -DEMBOSS_ROOT=${emboss.installation.root}</surefireArgLine>
         
         <!-- Application JVM options -->
         <jvm.options.base>-Djdbc.drivers=org.postgresql.Driver -Dartemis.environment=UNIX -mx2g -ms128m -noverify</jvm.options.base>
@@ -119,6 +133,9 @@
         
         <!-- Files to exclude from the build, e.g. Mac resource files. -->
         <default.file.excludes>**/log4j*.xml META-INF/* **/.DS_Store **/._*</default.file.excludes>
+        
+        <!-- Etc files to exclude from the build. -->
+        <etc.file.excludes>*.html *.seq *.fasta *.embl *.tab *.crunch *.genbank</etc.file.excludes>
         
         <artemis.icons.path>${project.basedir}/icons</artemis.icons.path>
 
@@ -171,7 +188,7 @@
    			<version>2.3.4.726</version>
 		</dependency>
 		
-		<!-- This is now out of date -->
+		<!-- This is now out of date but is used by the ibatis jar-->
 		<!-- https://mvnrepository.com/artifact/cglib/cglib-nodep -->
 		<dependency>
 		    <groupId>cglib</groupId>
@@ -393,7 +410,7 @@
 			            </configuration>
 			        </execution>
 			        
-			        <!--  THESE NEED UPGRADE.... -->
+			        <!--  NEEDS UPGRADE.... -->
 			        <execution>
 			        		<id>install-j2ssh-core-jar</id>
 			            <phase>clean</phase>
@@ -409,38 +426,7 @@
 			                <generatePom>true</generatePom>
 			            </configuration>
 			        </execution>
-			        <!--  execution>
-			        		<id>install-j2ssh-plugin-jar</id>
-			            <phase>clean</phase>
-			            <goals>
-			                <goal>install-file</goal>
-			            </goals>
-			            <configuration>
-			                <groupId>com.sshtools</groupId>
-			                <artifactId>j2ssh-artemis-plugin</artifactId>
-			                <version>0.2.9</version>
-			                <packaging>jar</packaging>
-			                <file>${project.basedir}/lib/j2ssh/j2ssh-artemis-plugin.jar</file>
-			                <generatePom>true</generatePom>
-			            </configuration>
-			        </execution -->
-			        <!-- ========================= -->
 			        
-			        <execution>
-			        		<id>install-ibatis-jar</id>
-			            <phase>clean</phase>
-			            <goals>
-			                <goal>install-file</goal>
-			            </goals>
-			            <configuration>
-			                <groupId>com.ibatis</groupId>
-			                <artifactId>ibatis</artifactId>
-			                <version>2.3.4.726</version>
-			                <packaging>jar</packaging>
-			                <file>${project.basedir}/lib/ibatis/ibatis-2.3.4.726.jar</file>
-			                <generatePom>true</generatePom>
-			            </configuration>
-			        </execution>
 			    </executions>
 			</plugin>
 			
@@ -563,24 +549,7 @@
 		          			</resources>
 		        			</configuration>
 		      		</execution>
-		      		
-		      		<!-- Copy unsigned jars ready for signing - signing is done in integration-test phase-->
-		      		<!--  execution>
-		        			<id>copy-unsigned-jars</id>
-		        			<phase>pre-integration-test</phase>
-		        			<goals>
-		          			<goal>copy-resources</goal>
-		        			</goals>
-		        			<configuration>
-		        				<skip>${jarsigner.skip}</skip>
-		          			<outputDirectory>${signed.jars.folder}</outputDirectory>
-		          			<resources>
-		            				<resource>
-		             				<directory>${project.build.directory}/assembly</directory>
-		            				</resource>
-		          			</resources>
-		        			</configuration>
-		      		</execution-->
+
 		    		</executions>
 		  	</plugin>
 			
@@ -593,8 +562,8 @@
               	<configuration>
                     <skipTests>${skip.tests}</skipTests>
                     <trimStackTrace>false</trimStackTrace>
-                    <!--  forkCount>1</forkCount>
-                    <reuseForks>false</reuseForks-->
+                    <forkCount>1</forkCount>
+                    <reuseForks>false</reuseForks>
                     <testFailureIgnore>${ignore.test.failures}</testFailureIgnore>
                     <argLine>@{surefireArgLine}</argLine>
           			<excludes>
@@ -603,6 +572,7 @@
 						
 						<exclude>${evosuite.exclude.filter}</exclude>
 
+						<exclude>org/gmod/**</exclude>
 	          			<exclude>**/RunBlastAtNCBITest.*</exclude>
 	          			<exclude>**/j2ssh/**</exclude>
 	          			
@@ -699,7 +669,7 @@
 							<goal>shade</goal>
 						</goals>
 						<configuration>
-							<outputFile>target/assembly/${artemis.signed.jar.name}</outputFile>
+							<outputFile>target/jars/${artemis.jar.name}</outputFile>
 							<createDependencyReducedPom>false</createDependencyReducedPom>
 							<minimizeJar>false</minimizeJar>
 							<transformers>
@@ -727,6 +697,7 @@
 								 	<artifact>*:*</artifact>
 								  	<excludes>
 										<exclude>${default.file.excludes}</exclude>
+										<exclude>${etc.file.excludes}</exclude>
 								  	</excludes>
 								</filter>
 							</filters>
@@ -739,7 +710,7 @@
 							<goal>shade</goal>
 						</goals>
 						<configuration>
-							<outputFile>target/unix-assembly/${artemis.signed.jar.name}</outputFile>
+							<outputFile>target/unix-jars/${artemis.jar.name}</outputFile>
 							<createDependencyReducedPom>false</createDependencyReducedPom>
 							<minimizeJar>false</minimizeJar>
 							<transformers>
@@ -780,7 +751,7 @@
 							<goal>shade</goal>
 						</goals>
 						<configuration>
-							<outputFile>target/assembly/${act.signed.jar.name}</outputFile>
+							<outputFile>target/jars/${act.jar.name}</outputFile>
 							<createDependencyReducedPom>false</createDependencyReducedPom>
 							<minimizeJar>false</minimizeJar>
 							<transformers>
@@ -808,6 +779,7 @@
 								 	<artifact>*:*</artifact>
 								  	<excludes>
 										<exclude>${default.file.excludes}</exclude>
+										<exclude>${etc.file.excludes}</exclude>
 								  	</excludes>
 								</filter>
 							</filters>
@@ -820,7 +792,7 @@
 							<goal>shade</goal>
 						</goals>
 						<configuration>
-							<outputFile>target/unix-assembly/${act.signed.jar.name}</outputFile>
+							<outputFile>target/unix-jars/${act.jar.name}</outputFile>
 							<createDependencyReducedPom>false</createDependencyReducedPom>
 							<minimizeJar>false</minimizeJar>
 							<transformers>
@@ -861,7 +833,7 @@
 							<goal>shade</goal>
 						</goals>
 						<configuration>
-							<outputFile>target/assembly/${dnaplotter.signed.jar.name}</outputFile>
+							<outputFile>target/jars/${dnaplotter.jar.name}</outputFile>
 							<createDependencyReducedPom>false</createDependencyReducedPom>
 							<minimizeJar>false</minimizeJar>
 							<transformers>
@@ -890,6 +862,7 @@
 								  	<excludes>
 										<exclude>${default.file.excludes}</exclude>
 										<exclude>artemis_sqlmap/**</exclude>
+										<exclude>${etc.file.excludes}</exclude>
 								  	</excludes>
 								</filter>
 							</filters>
@@ -902,7 +875,7 @@
 							<goal>shade</goal>
 						</goals>
 						<configuration>
-							<outputFile>target/unix-assembly/${dnaplotter.signed.jar.name}</outputFile>
+							<outputFile>target/unix-jars/${dnaplotter.jar.name}</outputFile>
 							<createDependencyReducedPom>false</createDependencyReducedPom>
 							<minimizeJar>false</minimizeJar>
 							<transformers>
@@ -944,7 +917,7 @@
 							<goal>shade</goal>
 						</goals>
 						<configuration>
-							<outputFile>target/assembly/${bamview.signed.jar.name}</outputFile>
+							<outputFile>target/jars/${bamview.jar.name}</outputFile>
 							<createDependencyReducedPom>false</createDependencyReducedPom>
 							<minimizeJar>false</minimizeJar>
 							<transformers>
@@ -973,6 +946,7 @@
 								  	<excludes>
 										<exclude>${default.file.excludes}</exclude>
 										<exclude>artemis_sqlmap/**</exclude>
+										<exclude>${etc.file.excludes}</exclude>
 								  	</excludes>
 								</filter>
 							</filters>
@@ -985,7 +959,7 @@
 							<goal>shade</goal>
 						</goals>
 						<configuration>
-							<outputFile>target/unix-assembly/${bamview.signed.jar.name}</outputFile>
+							<outputFile>target/unix-jars/${bamview.jar.name}</outputFile>
 							<createDependencyReducedPom>false</createDependencyReducedPom>
 							<minimizeJar>false</minimizeJar>
 							<transformers>
@@ -1027,7 +1001,7 @@
 			</plugin>
 			
 			
-			<!-- ============================= Sign executable jar files (non-unix) ============================ -->
+			<!-- ============================= Sign executable jar files ============================ -->
 			
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -1045,13 +1019,14 @@
 							<verbose>false</verbose>
 							<processMainArtifact>false</processMainArtifact>
 							<processAttachedArtifacts>false</processAttachedArtifacts>
-							<archiveDirectory>target/assembly</archiveDirectory>
+							<archiveDirectory>target/jars</archiveDirectory>
 							<keystore>${signer-keystore-path}</keystore>
 							<storetype>${signer-keystore-type}</storetype>
 							<alias>${signer-keystore-alias}</alias>
 							<storepass>${signer-keystore-password}</storepass>
 							<keypass>${signer-keystore-password}</keypass>
 							<removeExistingSignatures>true</removeExistingSignatures>
+							<tsa>http://timestamp.comodoca.com/rfc3161</tsa>
 						</configuration>
 					</execution>
 					<execution>
@@ -1065,13 +1040,14 @@
 							<verbose>false</verbose>
 							<processMainArtifact>false</processMainArtifact>
 							<processAttachedArtifacts>false</processAttachedArtifacts>
-							<archiveDirectory>target/unix-assembly</archiveDirectory>
+							<archiveDirectory>target/unix-jars</archiveDirectory>
 							<keystore>${signer-keystore-path}</keystore>
 							<storetype>${signer-keystore-type}</storetype>
 							<alias>${signer-keystore-alias}</alias>
 							<storepass>${signer-keystore-password}</storepass>
 							<keypass>${signer-keystore-password}</keypass>
 							<removeExistingSignatures>true</removeExistingSignatures>
+							<tsa>http://timestamp.comodoca.com/rfc3161</tsa>
 						</configuration>
 					</execution>
 				</executions>
@@ -1079,126 +1055,7 @@
 			</plugin>
 
 
-			<!-- ===========   Package jar files into OSX .apps and create dmg images ====================== -->
-			<!-- ========== NOTE: artemis_sqlmap is already included in the original jar =================== -->
-			 
-			 <plugin>
-			    <groupId>sh.tak.appbundler</groupId>
-			    <artifactId>appbundle-maven-plugin</artifactId>
-			    <version>1.1.0</version>
-			    <executions>
-			        <execution>
-			        		<id>create-artemis-osx-app</id>
-			            <phase>package</phase>
-			            <goals>
-			                <goal>bundle</goal>
-			            </goals>
-			            <configuration>
-					    		<skip>false</skip>
-					    		<version>${project.version}</version>
-					    		<buildDirectory>${osx.app.folder}</buildDirectory>
-					    		<generateDiskImageFile>false</generateDiskImageFile>
-					    		<bundleName>${artemis.application.name}</bundleName>
-					    		<jrePath>${java.jdk.home}</jrePath>
-					        <mainClass>${artemis.main.class}</mainClass>
-					        <iconFile>${project.build.directory}/icons/artemis.icns</iconFile>
-					        <jvmVersion>${java.target.version}</jvmVersion>
-					        <jvmOptions>${jvm.options.artemis}</jvmOptions>
-					        <additionalBundledClasspathResources>
-					        		<fileSet>
-					        			<directory>${project.build.directory}/icons</directory>
-					        			<includes>
-					        				<include>Readme.txt</include>
-					        			</includes>
-					        		</fileSet>
-					        </additionalBundledClasspathResources>
-					    </configuration>
-			        </execution>
-			        <execution>
-			        		<id>create-act-osx-app</id>
-			            <phase>package</phase>
-			            <goals>
-			                <goal>bundle</goal>
-			            </goals>
-			            <configuration>
-					    		<skip>false</skip>
-					    		<version>${project.version}</version>
-					    		<buildDirectory>${osx.app.folder}</buildDirectory>
-					    		<generateDiskImageFile>false</generateDiskImageFile>
-					    		<bundleName>${act.application.name}</bundleName>
-					    		<jrePath>${java.jdk.home}</jrePath>
-					        <mainClass>${act.main.class}</mainClass>
-					        <iconFile>${project.build.directory}/icons/act.icns</iconFile>
-					        <jvmVersion>${java.target.version}</jvmVersion>
-					        <jvmOptions>${jvm.options.act}</jvmOptions>
-					        <additionalBundledClasspathResources>
-					        		<fileSet>
-					        			<directory>${project.build.directory}/icons</directory>
-					        			<includes>
-					        				<include>Readme.txt</include>
-					        			</includes>
-					        		</fileSet>
-					        </additionalBundledClasspathResources>
-					    </configuration>
-			        </execution>
-			        <execution>
-			        		<id>create-dnaplotter-osx-app</id>
-			            <phase>package</phase>
-			            <goals>
-			                <goal>bundle</goal>
-			            </goals>
-			            <configuration>
-			            		<skip>false</skip>
-			            		<version>${project.version}</version>
-			            		<buildDirectory>${osx.app.folder}</buildDirectory>
-			            		<generateDiskImageFile>false</generateDiskImageFile>
-			            		<bundleName>${dnaplotter.application.name}</bundleName>
-					    		<jrePath>${java.jdk.home}</jrePath>
-					        <mainClass>${dnaplotter.main.class}</mainClass>
-					        <iconFile>${project.build.directory}/icons/dnaplotter.icns</iconFile>
-					        <jvmVersion>${java.target.version}</jvmVersion>
-					        <jvmOptions>${jvm.options.dnaplotter}</jvmOptions>
-					        <additionalBundledClasspathResources>
-					        		<fileSet>
-					        			<directory>${project.build.directory}/icons</directory>
-					        			<includes>
-					        				<include>Readme.txt</include>
-					        			</includes>
-					        		</fileSet>
-					        </additionalBundledClasspathResources>
-					    </configuration>
-			        </execution>
-			        <!--  The last execution also creates the disk image file... -->
-			        <execution>
-			        		<id>create-bamview-osx-app</id>
-			            <phase>package</phase>
-			            <goals>
-			                <goal>bundle</goal>
-			            </goals>
-			            <configuration>
-					    		<skip>false</skip>
-					    		<version>${project.version}</version>
-					    		<buildDirectory>${osx.app.folder}</buildDirectory>
-					    		<generateDiskImageFile>true</generateDiskImageFile>
-					    		<diskImageFile>${osx.app.folder}/${osx.release.filename}.dmg</diskImageFile>
-					    		<bundleName>${bamview.application.name}</bundleName>
-					    		<jrePath>${java.jdk.home}</jrePath>
-					        <mainClass>${bamview.main.class}</mainClass>
-					        <iconFile>${project.build.directory}/icons/bamview.icns</iconFile>
-					        <jvmVersion>${java.target.version}</jvmVersion>
-					        <jvmOptions>${jvm.options.bamview}</jvmOptions>
-					        <additionalBundledClasspathResources>
-					        		<fileSet>
-					        			<directory>${project.build.directory}/icons</directory>
-					        			<includes>
-					        				<include>Readme.txt</include>
-					        			</includes>
-					        		</fileSet>
-					        </additionalBundledClasspathResources>
-					    </configuration>
-			        </execution>
-			    </executions>
-			</plugin>
+			
 			
 			
 			<!-- ==========================   Create release zips ============================ -->
@@ -1246,7 +1103,7 @@
 						</goals>
 			            <configuration>
 			                <appendAssemblyId>false</appendAssemblyId>
-			                <outputDirectory>${signed.jars.folder}</outputDirectory>
+			                <outputDirectory>${windows.release.folder}</outputDirectory>
 			                <descriptors>
 								<descriptor>src/assembly/windows-release-assembly.xml</descriptor>
 							</descriptors>
@@ -1258,106 +1115,6 @@
 					<skipAssembly>${skip.artifact.creation}</skipAssembly>
 				</configuration>
 			</plugin>
-			
-			
-			<!-- =============================   Sign executable jar files ============================ -->
-			
-			<!-- plugin>
-		    		<groupId>org.apache.maven.plugins</groupId>
-		    		<artifactId>maven-resources-plugin</artifactId>
-		    		<version>3.0.2</version>
-		    		<executions>
-		    			<execution>
-		        			<id>copy-unsigned-jars</id>
-		        			<phase>package</phase>
-		        			<goals>
-		          			<goal>copy-resources</goal>
-		        			</goals>
-		        			<configuration>
-		        				<skip>${jarsigner.skip}</skip>
-		          			<outputDirectory>${signed.jars.folder}</outputDirectory>
-		          			<resources>
-		            				<resource>
-		             				<directory>${project.build.directory}/assembly</directory>
-		            				</resource>
-		          			</resources>
-		        			</configuration>
-		      		</execution>
-		    		</executions>
-		  	</plugin-->
-		  	
-			
-			
-			<!-- Create latex-HTML documentation -->
-			<!--  plugin>
-				<groupId>com.agilejava.docbkx</groupId>
-				<artifactId>docbkx-maven-plugin</artifactId>
-				<version>2.0.17</version>
-				<dependencies>
-					<dependency>
-						<groupId>docbook</groupId>
-						<artifactId>docbook-sgml</artifactId>
-						<version>4.1</version>
-						<scope>system</scope>
-						<systemPath>/Users/kp11/Documents/dtd_4.1/CATALOG</systemPath>
-					</dependency>
-				</dependencies>
-				<executions>
-		        		<execution>
-						<goals>
-							<goal>generate-html</goal>
-							<goal>generate-pdf</goal>
-						</goals>
-						<phase>pre-site</phase>
-					</execution>
-		        </executions>
-				<configuration>
-					<targetDirectory>${project.build.directory}/manual/artemis</targetDirectory>
-					<sourceDirectory>${project.basedir}/docs</sourceDirectory>
-					<imgSrcPath>${project.basedir}/docs</imgSrcPath>
-					<htmlStylesheet>${project.basedir}/psu.css</htmlStylesheet>
-					<includes>manual.sgml</includes>
-				</configuration>
-			</plugin-->
-			
-			<!-- TODO: Can only be run on pcs5. Check this works and if so, add the other manual formats in here (see makefile) !!!!! -->
-			<!-- plugin>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<version>1.8</version>
-				<executions>
-					<execution>
-						<id>create-manual</id>
-						<phase>site</phase>
-			            <goals>
-			                <goal>run</goal>
-			            </goals>
-						<configuration>
-							<skip>${skip.manual.creation}</skip>
-							<target>
-								<mkdir dir="${docs.output.folder}/artemis-html-manual"/>
-								<cd></cd>
-								<exec executable="openjade">
-								    <arg value="-t sgml"/>
-								    <arg value="-c ${artemis.jade.catalog.path}"/>
-								    <arg value="-d ${docs.folder}/artemis.dsl\#html"/>
-								    <arg value="-D ${docs.folder}"/>
-								    <arg value="-o ${docs.output.folder}/artemis-html-manual/manual.sgml"/>
-								</exec>
-								<exec executable="openjade">
-								    <arg value="-t sgml"/>
-								    <arg value="-c ${artemis.jade.catalog.path}"/>
-								    <arg value="-d ${docs.folder}/artemis.dsl\#html"/>
-								    <arg value="-V nochunks"/>
-								    <arg value="-D ${docs.folder}"/>
-								    <arg value="-o ${docs.output.folder}/artemis-html-manual/artemis_manual_complete.html"/>
-								    <arg value="${docs.output.folder}/artemis-html-manual/manual.sgml"/>
-								</exec>
-								
-							</target>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin-->
       
 		</plugins>
 		
@@ -1409,6 +1166,33 @@
 	      				<extraArgs>-Dsearch_budget=90 -Dconsider_main_methods=false -Duse_separate_classloader=false</extraArgs>
 	      			</configuration>
 				</plugin>
+				
+				<!--  
+					Deploy artifacts to a GitHub release - run manually using: 
+					mvn github-release:release
+				-->
+				<!--  plugin>
+					<groupId>de.jutzig</groupId>
+					<artifactId>github-release-plugin</artifactId>
+					<version>1.2.0</version>
+					<inherited>false</inherited>
+					<configuration>
+						<description>See ChangeLog for details</description>
+						<releaseName>Release v${project.version}</releaseName>
+						<tag>v${project.version}</tag>
+						<draft>true</draft>
+						<artifact>${unix.release.folder}/${unix.release.filename}</artifact>
+						<fileSets>
+							<fileSet>
+								<includes>
+									<include>${osx.app.folder}/${osx.release.filename}.dmg</include>
+									<include>${windows.release.folder}/${windows.release.filename}</include>
+									<include>${project.basedir}/ChangeLog</include>
+								</includes>
+							</fileSet>
+						</fileSets>
+					</configuration>
+				</plugin -->
 
 			</plugins>
   		</pluginManagement>
@@ -1453,22 +1237,22 @@
 		</site>
 	</distributionManagement -->
 	
+	
 	<!-- ========================== Profile section =================================-->
 	
 	<profiles>
 	    <!-- The configuration of the default development profile -->
 	    <profile>
 	        <id>dev</id>
-	        <!-- The development profile is active by default -->
+	        <!-- The development profile is active by default and does not run any tests -->
 	        <activation>
 	            <activeByDefault>true</activeByDefault>
 	        </activation>
 	        <properties>
-	        		<skip.tests>true</skip.tests>
+	        		<skip.tests>false</skip.tests>
         			<evosuite.exclude.filter>**/*_ESTest*</evosuite.exclude.filter>
         			<jarsigner.skip>true</jarsigner.skip>
-        			<skip.artifact.creation>false</skip.artifact.creation>
-        			<skip.manual.creation>true</skip.manual.creation>
+        			<skip.artifact.creation>true</skip.artifact.creation>
         			<skip.coverage.reporting>true</skip.coverage.reporting>
         			<skip.javadoc>true</skip.javadoc>
         			
@@ -1476,8 +1260,8 @@
 	        </properties>
 	    </profile>
 	    
-	    <!-- dev-evo profile that will also run all evosuite tests (which takes a LONG time) -->
-	    <profile>
+	    <!-- dev-evo profile that will also run all evosuite tests (which takes a long time) -->
+	    <!--  profile>
 	        <id>dev-evo</id>
 	        <activation>
                 <activeByDefault>false</activeByDefault>
@@ -1486,18 +1270,16 @@
 	        		<skip.tests>false</skip.tests>     
         			<evosuite.exclude.filter></evosuite.exclude.filter>
         			<jarsigner.skip>true</jarsigner.skip>
-        			<skip.artifact.creation>false</skip.artifact.creation>
-        			<skip.manual.creation>true</skip.manual.creation>
+        			<skip.artifact.creation>true</skip.artifact.creation>
         			<skip.coverage.reporting>false</skip.coverage.reporting>
         			<skip.javadoc>true</skip.javadoc>
         			
 	            <build.profile.id>dev-evo</build.profile.id>
 	        </properties>
-	    </profile>
+	    </profile -->
 	    
-	    <!-- Release profile: Release builds and executes deliverable uploads - will be run from Travis. -->
 	    <profile>
-	        <id>release</id>
+	        <id>site</id>
 	        <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
@@ -1506,16 +1288,144 @@
         			<evosuite.exclude.filter></evosuite.exclude.filter>
         			<jarsigner.skip>false</jarsigner.skip>
         			<skip.artifact.creation>false</skip.artifact.creation>
-        			<skip.manual.creation>false</skip.manual.creation>
-        			<skip.coverage.reporting>true</skip.coverage.reporting>
+        			<skip.coverage.reporting>false</skip.coverage.reporting>
         			<skip.javadoc>false</skip.javadoc>
         			
-	            <build.profile.id>release</build.profile.id>
+	            <build.profile.id>site</build.profile.id>
 	        </properties>
+	        <build>    
+	            <plugins>
+	            
+	            		<!-- 
+	            			Package jar files into OSX .apps and create dmg images.
+						NOTE1: artemis_sqlmap is already included in the original jar
+						NOTE2: The skip flag does not work on this plugin so it needs to be added into the profile [hack]
+					-->
+			 
+					<plugin>
+					    <groupId>sh.tak.appbundler</groupId>
+					    <artifactId>appbundle-maven-plugin</artifactId>
+					    <version>1.1.0</version>
+					    <executions>
+					        <execution>
+					        		<id>create-artemis-osx-app</id>
+					            <phase>package</phase>
+					            <goals>
+					                <goal>bundle</goal>
+					            </goals>
+					            <configuration>
+							    		<skip>${skip.artifact.creation}</skip>
+							    		<version>${project.version}</version>
+							    		<buildDirectory>${osx.app.folder}</buildDirectory>
+							    		<generateDiskImageFile>false</generateDiskImageFile>
+							    		<bundleName>${artemis.application.name}</bundleName>
+							    		<jrePath>${java.jdk.home}</jrePath>
+							        <mainClass>${artemis.main.class}</mainClass>
+							        <iconFile>${project.build.directory}/icons/artemis.icns</iconFile>
+							        <jvmVersion>${java.target.version}</jvmVersion>
+							        <jvmOptions>${jvm.options.artemis}</jvmOptions>
+							        <additionalBundledClasspathResources>
+							        		<fileSet>
+							        			<directory>${project.build.directory}/icons</directory>
+							        			<includes>
+							        				<include>Readme.txt</include>
+							        			</includes>
+							        		</fileSet>
+							        </additionalBundledClasspathResources>
+							    </configuration>
+					        </execution>
+					        <execution>
+					        		<id>create-act-osx-app</id>
+					            <phase>package</phase>
+					            <goals>
+					                <goal>bundle</goal>
+					            </goals>
+					            <configuration>
+							    		<skip>false</skip>
+							    		<version>${project.version}</version>
+							    		<buildDirectory>${osx.app.folder}</buildDirectory>
+							    		<generateDiskImageFile>false</generateDiskImageFile>
+							    		<bundleName>${act.application.name}</bundleName>
+							    		<jrePath>${java.jdk.home}</jrePath>
+							        <mainClass>${act.main.class}</mainClass>
+							        <iconFile>${project.build.directory}/icons/act.icns</iconFile>
+							        <jvmVersion>${java.target.version}</jvmVersion>
+							        <jvmOptions>${jvm.options.act}</jvmOptions>
+							        <additionalBundledClasspathResources>
+							        		<fileSet>
+							        			<directory>${project.build.directory}/icons</directory>
+							        			<includes>
+							        				<include>Readme.txt</include>
+							        			</includes>
+							        		</fileSet>
+							        </additionalBundledClasspathResources>
+							    </configuration>
+					        </execution>
+					        <execution>
+					        		<id>create-dnaplotter-osx-app</id>
+					            <phase>package</phase>
+					            <goals>
+					                <goal>bundle</goal>
+					            </goals>
+					            <configuration>
+					            		<skip>false</skip>
+					            		<version>${project.version}</version>
+					            		<buildDirectory>${osx.app.folder}</buildDirectory>
+					            		<generateDiskImageFile>false</generateDiskImageFile>
+					            		<bundleName>${dnaplotter.application.name}</bundleName>
+							    		<jrePath>${java.jdk.home}</jrePath>
+							        <mainClass>${dnaplotter.main.class}</mainClass>
+							        <iconFile>${project.build.directory}/icons/dnaplotter.icns</iconFile>
+							        <jvmVersion>${java.target.version}</jvmVersion>
+							        <jvmOptions>${jvm.options.dnaplotter}</jvmOptions>
+							        <additionalBundledClasspathResources>
+							        		<fileSet>
+							        			<directory>${project.build.directory}/icons</directory>
+							        			<includes>
+							        				<include>Readme.txt</include>
+							        			</includes>
+							        		</fileSet>
+							        </additionalBundledClasspathResources>
+							    </configuration>
+					        </execution>
+					        <!--  The last execution also creates the disk image file... -->
+					        <execution>
+					        		<id>create-bamview-osx-app</id>
+					            <phase>package</phase>
+					            <goals>
+					                <goal>bundle</goal>
+					            </goals>
+					            <configuration>
+							    		<skip>false</skip>
+							    		<version>${project.version}</version>
+							    		<buildDirectory>${osx.app.folder}</buildDirectory>
+							    		<generateDiskImageFile>true</generateDiskImageFile>
+							    		<diskImageFile>${osx.app.folder}/${osx.release.filename}.dmg</diskImageFile>
+							    		<bundleName>${bamview.application.name}</bundleName>
+							    		<jrePath>${java.jdk.home}</jrePath>
+							        <mainClass>${bamview.main.class}</mainClass>
+							        <iconFile>${project.build.directory}/icons/bamview.icns</iconFile>
+							        <jvmVersion>${java.target.version}</jvmVersion>
+							        <jvmOptions>${jvm.options.bamview}</jvmOptions>
+							        <additionalBundledClasspathResources>
+							        		<fileSet>
+							        			<directory>${project.build.directory}/icons</directory>
+							        			<includes>
+							        				<include>Readme.txt</include>
+							        			</includes>
+							        		</fileSet>
+							        </additionalBundledClasspathResources>
+							    </configuration>
+					        </execution>
+					    </executions>
+					</plugin>
+										
+	            </plugins>
+	         </build>   
 	    </profile>
 	    
 	    <!-- Release profile: Creates the site HTML reports. -->
-	    <profile>
+	    <!--  profile>
 	        <id>site</id>
 	        <activation>
                 <activeByDefault>false</activeByDefault>
@@ -1525,31 +1435,12 @@
         			<evosuite.exclude.filter></evosuite.exclude.filter>
         			<jarsigner.skip>true</jarsigner.skip>
         			<skip.artifact.creation>true</skip.artifact.creation>
-        			<skip.manual.creation>true</skip.manual.creation>
         			<skip.coverage.reporting>false</skip.coverage.reporting>
         			<skip.javadoc>false</skip.javadoc>
         			
 	            <build.profile.id>site</build.profile.id>
 	        </properties>
-	    </profile>
-	    
-	    <!-- Release profile: Run all goals -->
-	    <profile>
-	        <id>all</id>
-	        <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-	        <properties>
-	        		<skip.tests>false</skip.tests>
-        			<evosuite.exclude.filter></evosuite.exclude.filter>
-        			<jarsigner.skip>false</jarsigner.skip>
-        			<skip.artifact.creation>false</skip.artifact.creation>
-        			<skip.manual.creation>false</skip.manual.creation>
-        			<skip.coverage.reporting>false</skip.coverage.reporting>
-        			
-	            <build.profile.id>all</build.profile.id>
-	        </properties>
-	    </profile>
+	    </profile -->
 	    
 	</profiles>
 	

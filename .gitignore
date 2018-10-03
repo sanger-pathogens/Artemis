@@ -7,4 +7,4 @@ test/coverage-report
 **/.scaffolding_list.tmp
 dependency-reduced-pom.xml
 maven.properties
-BACKUPS
+

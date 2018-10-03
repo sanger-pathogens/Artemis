@@ -97,7 +97,8 @@ done
 
 APPLICATION_HOME=`dirname "$PRG"`
 JAR_NAME=act.jar
-JAR_FILE=$APPLICATION_HOME/$JAR_NAME
+JAR_FILE_DEFAULT=$APPLICATION_HOME/target/unix-jars/$JAR_NAME
+JAR_FILE_INSTALLED=$APPLICATION_HOME/$JAR_NAME
 
 #
 # Use a custom Java version if necessary
@@ -129,7 +130,7 @@ fi
 PLATTMP=`uname`
 if [[ "$PLATTMP" = "Darwin" ]]
 then
-  	APPLICATION_PROPERTIES="$APPLICATION_PROPERTIES -Dapple.laf.useScreenMenuBar=true -Dcom.apple.mrj.application.apple.menu.about.name=ACT"
+  	APPLICATION_PROPERTIES="$APPLICATION_PROPERTIES -Dapple.laf.useScreenMenuBar=true -Xdock:name=ACT"
 fi
 
 if [[ "$QUIET" = no ]]
@@ -137,7 +138,7 @@ then
     echo "Starting ACT with arguments: $FLAGS $APPLICATION_PROPERTIES $*"
 fi
 
-$JAVA $FLAGS $APPLICATION_PROPERTIES -cp "$JAR_FILE:$APPLICATION_HOME" uk.ac.sanger.artemis.components.ActMain $*
+$JAVA $FLAGS $APPLICATION_PROPERTIES -cp "$JAR_FILE_DEFAULT:$JAR_FILE_INSTALLED" uk.ac.sanger.artemis.components.ActMain $*
 result=$?
 
 exit $result

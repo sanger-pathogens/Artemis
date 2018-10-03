@@ -614,7 +614,7 @@ public class EvidenceViewer_ESTest extends EvidenceViewer_ESTest_scaffolding {
       assertEquals((-12490326), color0.getRGB());
       assertEquals(170, color0.getBlue());
       assertEquals(255, color0.getAlpha());
-      assertEquals(255, color0.getRed());
+      assertEquals(65, color0.getRed());
       assertEquals(1, color0.getTransparency());
       assertEquals(255, color0.getGreen());
       assertTrue(jDesktopPane0.isFocusTraversalPolicySet());
@@ -944,7 +944,7 @@ public class EvidenceViewer_ESTest extends EvidenceViewer_ESTest_scaffolding {
       assertEquals((-12490326), color0.getRGB());
       assertEquals(170, color0.getBlue());
       assertEquals(255, color0.getAlpha());
-      assertEquals(255, color0.getRed());
+      assertEquals(65, color0.getRed());
       assertEquals(1, color0.getTransparency());
       assertEquals(255, color0.getGreen());
       assertTrue(jDesktopPane0.isFocusCycleRoot());

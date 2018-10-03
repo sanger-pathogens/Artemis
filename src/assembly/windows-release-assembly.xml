@@ -11,14 +11,13 @@
 		<format>zip</format>
 	</formats>
 	<includeBaseDirectory>false</includeBaseDirectory>
-
-	<!-- copy jars to an area where they can be signed -->
+	
 	<fileSets>
 		<fileSet>
-			<directory>target/assembly</directory>
+			<directory>target/jars</directory>
 			<outputDirectory>${windows.assembly.folder}</outputDirectory>
 			<includes>
-				<include>*</include>
+				<include>*.jar</include>
 			</includes>
 		</fileSet>
 	</fileSets>

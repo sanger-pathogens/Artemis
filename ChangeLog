@@ -1,6 +1,12 @@
 Version 18
 
-	Switched build process to use Maven.
+	1) Switched build process to use Maven. Changed directory structure. Removed ant and Make files.
+	2) Retired a number of jars and upgraded others. Removed the ssh plugin jar as it's not used.
+	3) Upgraded to Picard 2.18.14 jar, which has a number of important bug fixes. 
+	4) Removed old documentation functionality. HTML/PDF manuals are now stored in gh-pages and generated from a word doc.
+	5) Changed application scripts jar paths.
+	6) Rewrote writedb_entry script.
+	7) 
 	
 Version 17.0.2-test - patch release for Sanger. Changes incorporated into GitHub master.
  

@@ -1,4 +1,9 @@
 #! /bin/bash
 
-mvn -DEMBOSS_ROOT=$EMBOSS_ROOT evosuite:prepare test -P dev
+echo "EMBOSS_ROOT set to: "$EMBOSS_ROOT
+echo
+
+cd ..
+
+mvn test
 

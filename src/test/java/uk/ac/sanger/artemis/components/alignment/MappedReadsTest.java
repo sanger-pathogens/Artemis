@@ -28,6 +28,8 @@ import java.util.Hashtable;
 import java.util.List;
 
 import uk.ac.sanger.artemis.io.Utils;
+
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -44,6 +46,8 @@ public class MappedReadsTest
   private static BamView bv;
   private static FeatureVector fv;
   
+  private static EntryEdit ee; 
+  
   @BeforeClass
   public static void setUp() 
   {
@@ -53,14 +57,14 @@ public class MappedReadsTest
     URL entryFile = MappedReadsTest.class.getResource("/data/MAL_8h.bam");
     System.setProperty("bam", entryFile.getFile());
     final EntryGroup egrp = Utils.getEntryGroup("/data/MAL1.embl.gz");
-    final EntryEdit ee = new EntryEdit(egrp);
+    ee = new EntryEdit(egrp);
     ee.setVisible(true);
 
     while( (bv = ee.getJamView()) == null) 
     {
       // wait for BamView to be constructed
       try {
-        Thread.sleep(100);
+        Thread.sleep(1000);
       } catch(Exception e){};
     }
     
@@ -73,6 +77,19 @@ public class MappedReadsTest
       if(f.getSystematicName().equals("PFA0110w"))
         fv.add(f);
     }
+    
+  }
+  
+  /**
+   * Cleanup after by closing the GUI window.
+   */
+  @AfterClass
+  public static void cleanUp()
+  {
+	  if (ee != null)
+	  {
+		  ee.dispose();
+	  }
   }
   
   @Test
