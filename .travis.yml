@@ -4,7 +4,7 @@ jdk:
 sudo: false
 env:
   global:
-    - BUILD_CMD='mvn -Dskip.tests=true clean package'
+    - BUILD_CMD='mvn -Dskip.tests=true clean install'
     - RUN_TESTS=false
 matrix:
   include:
@@ -20,6 +20,7 @@ before_install:
   - "sh -e /etc/init.d/xvfb start"
   - "source install_dependencies.sh"
 install:
+  - "echo About to run $BUILD_CMD" 
   - "$BUILD_CMD"
 script:
   - if [ "$RUN_TESTS" == "true" ]; then
