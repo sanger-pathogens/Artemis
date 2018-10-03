@@ -5,7 +5,7 @@ jdk:
 sudo: false
 env:
   global:
-    - BUILD_CMD='mvn clean compile test-compile evosuite:prepare'
+    - BUILD_CMD='mvn -Dskip.tests=true clean package'
     - RUN_TESTS=false
 matrix:
   include:
