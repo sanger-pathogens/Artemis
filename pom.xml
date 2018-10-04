@@ -380,7 +380,7 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 			    <executions>
 			        <execution>
 			        		<id>install-biojava-jar</id>
-			            <phase>initialize</phase>
+			            <phase>validate</phase>
 			            <goals>
 			                <goal>install-file</goal>
 			            </goals>
@@ -395,7 +395,7 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 			        </execution>
 			        <execution>
 			        		<id>install-jemalign-jar</id>
-			            <phase>initialize</phase>
+			            <phase>validate</phase>
 			            <goals>
 			                <goal>install-file</goal>
 			            </goals>
@@ -412,7 +412,7 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 			        <!--  NEEDS UPGRADE.... -->
 			        <execution>
 			        		<id>install-j2ssh-core-jar</id>
-			            <phase>initialize</phase>
+			            <phase>validate</phase>
 			            <goals>
 			                <goal>install-file</goal>
 			            </goals>
@@ -428,7 +428,7 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 			        
 			        <execution>
 			        		<id>install-ibatis-jar</id>
-			            <phase>initialize</phase>
+			            <phase>validate</phase>
 			            <goals>
 			                <goal>install-file</goal>
 			            </goals>
