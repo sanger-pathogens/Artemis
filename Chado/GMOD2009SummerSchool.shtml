@@ -1,0 +1,331 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+				<meta name="keywords" content="Artemis, Chado, ACT" />
+		
+		<title>GMOD : Artemis Chado Set Up Tutorial</title>
+	</head>
+<body>
+
+<a name="Contents"></a><h2>Contents</h2>
+<ul>
+<li> <a href="#Overview" title="">Overview</a></li>
+<li> <a href="#Download_and_Install_Postgres" title="">Download and Install Postgres</a>
+</li><li> <a href="#Download_and_Install_Chado" title="">Download and Install Chado</a>
+</li><li> <a href="#Examples_of_Loading_Sequences_into_the_Database" title="">Examples of Loading Sequences into the Database</a>
+
+</li><li> <a href="#Download_Artemis_and_ACT" title="">Download Artemis and ACT</a>
+</li><li> <a href="#Running_Artemis" title="">Running Artemis</a>
+</li><li> <a href="#Configuration_Options" title="">Configuration Options</a>
+</li><li> <a href="#Adding_Controlled_Vocabulary_Qualifiers_in_the_Artemis_Gene_Builder" title="">Adding Controlled Vocabulary Qualifiers in the Artemis Gene Builder</a>
+</li><li> <a href="#Transfer_Annotation_Tool_.28TAT.29" title="">Transfer Annotation Tool (TAT)</a>
+</li><li> <a href="#Logging_Information" title="">Logging Information</a>
+
+</li><li> <a href="#Running_ACT" title="">Running ACT</a>
+</li><li> <a href="#Writing_Out_Sequence_Files" title="">Writing Out Sequence Files</a>
+</li><li> <a href="#Mailing_List" title="">Mailing List</a>
+</li><li> <a href="#References" title="">References</a>
+</li></ul>
+
+<a name="Overview"></a><h2>Overview</h2>
+<p>In this tutorial we present how to install and configure 
+<a href="http://www.sanger.ac.uk/Software/Artemis/">Artemis</a> and 
+<a href="http://www.sanger.ac.uk/Software/ACT/">ACT</a> to use with a 
+Chado database. The first two sections relate to installing Postgres 
+and Chado, this is included for completeness only and you should refer 
+to the Chado session for more details on this.
+
+</p>Artemis is a DNA sequence browser which works with flat files (e.g. EMBL, GenBank, GFF) and more recently with Chado databases. ACT (Artemis Comparison Tool) is based on Artemis. ACT uses BLAST comparison files to highlight regions of interest between pairs of sequences. Artemis and ACT in database mode are increasingly being used in the Pathogen Genomics Group at the Sanger Institute.
+</p>
+
+
+<a name="Download_and_Install_Postgres"></a><h2>Download and Install Postgres</h2>
+
+<pre>./configure --prefix=/home/gmod/gmod_test/pgsl --with-pgport=5432 --with-includes=/Developer
+make
+make install
+
+cd /home/gmod/gmod_test/pgsl
+bin/initdb -D data/
+</pre>
+<p>Added the line to data/postgresql.conf:
+</p>
+<pre>listen_addresses = 'localhost'
+</pre>
+<p>Create the database:
+</p>
+<pre>postmaster -D data &amp;
+createuser --createdb username
+createlang plpgsql template1
+createdb --port=5432 chado_pathogen
+</pre>
+<a name="Download_and_Install_Chado"></a><h2>Download and Install Chado</h2>
+
+<ul><li> Download stable release (gmod-1.0.tar.gz)
+</li><li> Install BioPerl (<a href="http://www.bioperl.org/wiki/Installing_Bioperl_for_Unix" class="external free" title="http://www.bioperl.org/wiki/Installing_Bioperl_for_Unix" rel="nofollow">http://www.bioperl.org/wiki/Installing_Bioperl_for_Unix</a>)
+</li><li> Install go-perl <a href="http://search.cpan.org/~cmungall/go-perl/" class="external free" title="http://search.cpan.org/~cmungall/go-perl/" rel="nofollow">http://search.cpan.org/~cmungall/go-perl/</a>
+</li><li> Install BioPerl (<a href="http://www.bioperl.org/wiki/Installing_Bioperl_for_Unix" class="external free" title="http://www.bioperl.org/wiki/Installing_Bioperl_for_Unix" rel="nofollow">http://www.bioperl.org/wiki/Installing_Bioperl_for_Unix</a>)
+</li><li> Install go-perl <a href="http://search.cpan.org/~cmungall/go-perl/" class="external free" title="http://search.cpan.org/~cmungall/go-perl/" rel="nofollow">http://search.cpan.org/~cmungall/go-perl/</a>
+
+</li><li> Install Bundle::GMOD from cpan
+</li></ul>
+<pre>export GMOD_ROOT=/usr/local/gmod CHADO_DB_NAME=chado_pathogen CHADO_DB_USERNAME=username CHADO_DB_PORT=5432
+</pre>
+<p>Now compile Chado and install the standard components (schema and ontologies):
+</p>
+<pre>perl Makefile.PL
+make
+sudo make install
+make load_schema
+make prepdb
+make ontologies
+</pre>
+<a name="Examples_of_Loading_Sequences_into_the_Database">
+</a><h2>Examples of Loading Sequences into the Database</h2>
+<p>In this section we detail how to load 3 Plasmodium sequences into Chado for viewing in Artemis and ACT. Alternatively you can use your own sequences of interest.
+</p><p>The GenBank files are available from Entrez with the links below. Make sure you download it with the sequence by clicking on the option 'Show sequence' and 'Update View'. Then go to the Download menu and select GenBank(Full):
+
+</p>
+<ul><li> <a href="http://www.ncbi.nlm.nih.gov/sites/entrez?db=nucleotide&amp;cmd=search&amp;term=NC_004314" class="external text" title="http://www.ncbi.nlm.nih.gov/sites/entrez?db=nucleotide&amp;cmd=search&amp;term=NC_004314" rel="nofollow">NC_004314</a> (Plasmodium falciparum 3D7 chromosome 10)
+</li><li> <a href="http://www.ncbi.nlm.nih.gov/sites/entrez?db=nucleotide&amp;cmd=search&amp;term=NC_011907" class="external text" title="http://www.ncbi.nlm.nih.gov/sites/entrez?db=nucleotide&amp;cmd=search&amp;term=NC_011907" rel="nofollow">NC_011907</a> (Plasmodium knowlesi chromosome 6) and
+</li><li> <a href="http://www.ncbi.nlm.nih.gov/sites/entrez?db=nucleotide&amp;cmd=search&amp;term=NC_011909" class="external text" title="http://www.ncbi.nlm.nih.gov/sites/entrez?db=nucleotide&amp;cmd=search&amp;term=NC_011909" rel="nofollow">NC_011909</a> (Plasmodium knowlesi chromosome 8).
+</li></ul>
+<p>These are usually downloaded to the Desktop directory (depending on the browser). They are saved as something like sequences.gbwithparts. Re-name them as NC_004314.gbk, NC_011907.gbk and NC_011909.gbk. Pfalciparum and Pknowlesi will need to be added to your organism table in Chado.
+</p>
+<pre> psql chado_pathogen
+</pre>
+
+<pre class="code">   <span style="color:red">INSERT INTO</span> organism 
+     &#40; abbreviation, genus, species, common_name &#41;
+   <span style="color:red">VALUES</span>
+     &#40; 'Pfalciparum', 'Plasmodium', 'falciparum', 'Pfalciparum'&#41;,
+     &#40; 'Pknowlesi', 'Plasmodium', 'knowlesi', 'Pknowlesi'&#41;;</pre>
+
+<p>Using the perl script 'bp_genbank2gff3.pl' to convert the GenBank files to GFF3 format:
+</p>
+<pre>bp_genbank2gff3.pl -noCDS *.gbk
+</pre>
+<p>You need to modify the gff files so that the correct SO term is used:
+</p>
+<pre>perl -pi~ -e s'|processed_transcript|mature_transcript|' *.gff
+</pre>
+<p>Then load the GFF3 files that have been created:
+</p>
+<pre>gmod_bulk_load_gff3.pl -organism Pfalciparum -dbname chado_pathogen \
+    -dbuser gmod -dbport 5432 -dbpass dd -recreate_cache &lt; NC_004314.gbk.gff
+
+gmod_bulk_load_gff3.pl -organism Pknowlesi -dbname chado_pathogen \
+    -dbuser gmod -dbport 5432 -dbpass dd -recreate_cache &lt; NC_011907.gbk.gff
+
+gmod_bulk_load_gff3.pl -organism Pknowlesi -dbname chado_pathogen \
+    -dbuser gmod -dbport 5432 -dbpass dd -recreate_cache &lt; NC_011909.gbk.gff
+
+</pre>
+<a name="Download_Artemis_and_ACT"></a><h2>Download Artemis and ACT</h2>
+<p>You can download <a href="http://www.sanger.ac.uk/Software/Artemis/" class="external text" title="http://www.sanger.ac.uk/Software/Artemis/" rel="nofollow">Artemis</a> and <a href="http://www.sanger.ac.uk/Software/ACT/" class="external text" title="http://www.sanger.ac.uk/Software/ACT/" rel="nofollow">ACT</a> from their home pages at the Sanger Institute. For the most up-to-date developments download the software from the CVS server:
+</p>
+<pre>cvs -d&nbsp;:pserver:cvsuser@cvs.sanger.ac.uk:/cvsroot/pathsoft co artemis
+</pre>
+<p>Now compile the software:
+</p>
+<pre>cd artemis
+make
+</pre>
+<p>Or download the development version from the <a href="http://www.sanger.ac.uk/Software/Artemis/#development" class="external text" title="http://www.sanger.ac.uk/Software/Artemis/#development" rel="nofollow">Development section</a> on the Artemis home page. Note that on the Artemis web site there is also a <a href="http://www.sanger.ac.uk/Software/Artemis/stable/" class="external text" title="http://www.sanger.ac.uk/Software/Artemis/stable/" rel="nofollow">stable</a> release available.
+</p>
+<a name="Running_Artemis"></a><h2>Running Artemis</h2>
+
+<p>Try running the 'art' script in the download:
+</p>
+<pre>./art -Dchado="localhost:5432/chado_pathogen?gmod" -Dibatis
+</pre>
+<p>This opens the login window:
+</p><p>
+<a href="ArtemisLogin.gif" class="image" title="Artemis Login"><img alt="Image:ArtemisLogin.gif" src="ArtemisLogin.gif" width="550" height="253" border="0" /></a>
+</p><p>
+The Artemis Database Manager and File Manager will open once your login has been authenticated. The top part of this relates to the Chado database and the bottom comprises the file management:
+</p><p>
+<a href="databasemanager.gif" class="image" title="Database Manager"><img alt="Image:DatabaseManager.gif" src="databasemanager.gif" width="434" height="867" border="0" /></a>
+</p><p>
+Select the sequence NC_004314 and double click on it to open it up in Artemis.
+</p><p>
+<a href="Artemis.gif" class="image" title="Artemis"><img alt="Artemis.gif" src="Artemis.gif" width="900" height="700" border="0" /></a>
+</p><p>
+There are 3 main components to the Artemis window. The two top Feature Displays show the sequence at different levels of granularity and below these is a feature list:
+
+</p>
+<ol><li> the <b>top Feature Display</b> is a zoomed out view of the sequence. The 3 forward and 3 reverse frames of translation are show with stop codons marked as black vertical lines.
+</li><li> the <b>second Feature Display</b> shows the sequence at the nucleotide level. The amino acid translations are seen in this view.
+</li><li> the <b>Feature List</b> shows the feature types and location. Options for displaying user defined qualifiers (e.g. Dbxref) can be accessed by right clicking on this list and selecting "Show Selected Qualifiers".
+</li></ol>
+
+<p>These three components are connected, so that if you select a feature in one then that feature becomes selected in the others. Double clicking on the feature centers the feature in both feature displays. The scroll bars on the right hand side of the feature displays allow you to zoom in and out.
+</p><p>The alternative way to open your sequence is to provide the entry (e.g. Pfalciparum:NC_004314) you want to open as a command line argument:
+</p>
+<pre> ./art -Dchado="localhost:5432/chado_pathogen?gmod" -Dibatis \
+        Pfalciparum:NC_004314
+</pre>
+<p>For any of the gene features in Artemis you can select them and press the short cut key 'E' (Edit-&gt;Selected Features in Editor). This opens up the Gene Builder. Within this the Gene Model can be edited and annotation added.
+</p><p>
+<a href="genebuilder.gif" class="image" title="GeneBuilder"><img alt="GeneBuilder" src="genebuilder.gif" width="760" height="921" border="0" /></a>
+</p>
+
+<a name="Configuration_Options"></a><h2>Configuration Options</h2>
+<p>Edit 'etc/options' (to change settings globally) or create a file ~/.artemis_options in your home directory (for your own settings). There are various flags that can be used to configure Artemis and ACT with Chado.
+</p><p><b>chado_servers</b> This allows you to provide a list of available servers for the user to select:
+</p>
+<pre>chado_servers = \
+  Plasmodium localhost:5432/chado_pathogen?username \
+  GeneDB db.genedb.org:5432/snapshot?genedb_ro
+</pre>
+
+<p><b>product_cv</b> In the Pathogen Genomics Group the product qualifiers are stored as an ontology (as a cv in feature_cvterm). This can be changed so that they are stored as featureprop's by setting the product_cv option:  
+</p>
+<pre>product_cv=no
+</pre>
+<p>This will mean that the product will be shown in the "Core" section of the Artemis Gene Builder rather than the "Controlled Vocabulary" section.
+</p><p><b>synonym_cvname</b> If synonym types are loaded into a CV, Artemis checks this ontology.
+</p><p><b>set_obsolete_on_delete</b> This will set the default behaviour of Artemis when features are deleted. If set to:  
+</p>
+<pre>set_obsolete_on_delete=yes
+</pre>
+<p>the features will be made obsolete. The user is still prompted with the option to permanently delete the feature. If this line is not in the option file the default is to permanently delete features.
+
+</p><p><b>Selecting an alternative gene model</b> Artemis supports 2 types of gene model representations: 
+</p><p>A) Pathogen Genomics Gene Model - implicit CDS + explicit UTRs 
+</p>
+<pre>  gene
+  |
+  |- part_of mRNA
+     |
+     |---- part_of exon
+     |
+     |---- derives_from polypeptide
+     |
+     |---- part_of five_prime_UTR
+     |
+     |---- part_of three_prime_UTR
+
+</pre>
+<p>B) implicit CDS + UTRs 
+</p>
+<pre>  gene
+  |
+  |- part_of mRNA
+     |
+     |---- part_of exon
+     |
+     |---- derives_from polypeptide
+</pre>
+<p>The Artemis default is model A. To use model B then set:  
+</p>
+<pre>chado_infer_CDS_UTR=yes
+</pre>
+
+<p><b>sequence_update_features</b> This lists the features that Artemis will maintain the feature.residue column for. This is generally useful for polypeptide and transcript features.
+</p>
+<a name="Artemis_Database_Manager"></a><h2>Artemis Database Manager</h2>
+<p>The database manager provides the list of organisms that have features with residues (currently Artemis searches for these on features of type: '*chromosome*', '*sequence*', 'supercontig', 'ultra_scaffold', 'golden_path_region', 'contig'). The database manager is cached between sessions (this is on by default and can be switched off with -Ddatabase_manager_cache_off). There is an option under the File menu to clear this cache.
+</p>
+<a name="Adding_Controlled_Vocabulary_Qualifiers_in_the_Artemis_Gene_Builder"></a><h2>
+Adding Controlled Vocabulary Qualifiers in the Artemis Gene Builder</h2>
+
+<p>These use evidence codes which are stored as a feature_cvtermprop's with a type_id which corresponds to a cvterm.name = 'evidence'. There is a useful SQL script (etc/chado_extra.sql) in the Artemis distribution for creating this term in Chado. Run this on the chado_pathogen instance of the database:
+</p>
+<pre>psql -d chado_pathogen -f etc/chado_extra.sql
+</pre>
+<p>(This will also create other terms that are used to store literature (PMID's) qualifiers.)
+</p><p>GO terms can now be selected in the Controlled Vocabulary (CV) section of the Gene Builder and added to features. Additional custom CV's can also be used. For Artemis to recognise it and display it the name of the CV needs to be prefixed by 'CC_'. These then appear in a drop down list when adding CV terms to a feature. Try adding a new CV:
+</p>
+<pre> psql chado_pathogen
+</pre>
+<pre> <span style="color:red">INSERT INTO</span> cv ( name, definition ) <span style="color:red">VALUES</span> ( 'CC_test', 'test' );                                                  
+</pre>
+<p>and create a CvTerm in this CV:
+</p>
+<pre>  <span style="color:red">INSERT INTO</span> dbxref 
+    ( db_id, accession )  
+  <span style="color:red">VALUES</span>
+    ( (SELECT db_id FROM db WHERE name = 'CCGEN'), 'test1' );
+</pre>
+<pre>  <span style="color:red">INSERT INTO</span> cvterm  
+    ( cv_id,  name, dbxref_id )   
+  <span style="color:red">VALUES</span>
+
+    ( (SELECT cv_id FROM cv WHERE name ='CC_test'), 'test1',
+      (SELECT dbxref_id FROM dbxref WHERE accession='test1') );
+</pre>
+<p>Now re-launch Artemis and open the Gene Builder at any feature and go to the 'Controlled Vocabulary' section and click the 'ADD' button. This CV (CC_test) will appear in the drop down menu:
+</p><p>
+<a href="AddCV.gif" class="image" title="Add CV"><img alt="Image:AddCV.gif" src="AddCV.gif" width="284" height="172" border="0" /></a>
+</p><p>
+Click on CC_test and hit the 'Next' button. This opens a keyword selection box. If you leave this blank all the terms are retrieved and displayed. If you keep clicking 'Next' this term is then added to the 'Controlled Vocabulary' section.
+</p><p>
+</p>
+<a name="Transfer_Annotation_Tool_.28TAT.29"></a><h2>Transfer Annotation Tool (TAT)</h2>
+
+<p>This tool can be accessed from the Gene Builder - look for the TAT button. It allows you to transfer annotation between sequences. In database mode Artemis provides an editable list of genes constructed from ortholog/parlog links. These links can be added in the Gene Builder in the Match section (for example you can try creating the ortholog link between PF10_0165 in  Pfalciparum and PKH_060110 in Pknowlesi).
+
+</p>
+<a name="Logging_Information"></a><h2>Logging Information</h2>
+<p>Note that you can easily access the logging information Artemis produces. In the Artemis launch window under the 'Options' menu select the 'Show Log Window', this provides the logs. This is controlled by etc/log4j.properties. The logs can be useful for debugging and for monitoring activity if appended to a central file. See the <a href="http://logging.apache.org/log4j/" class="external text" title="http://logging.apache.org/log4j/" rel="nofollow">log4j</a> documentation for more information.
+</p>
+<a name="Running_ACT"></a><h2>Running ACT</h2>
+
+<p>ACT can read sequences in from the database as well. However, it currently does not read the BLAST comparisons from Chado but reads this data from files. These comparisons are displayed as the matches between the sequences. To distinguish forward and reverse matches the forward matches are red and reverse matches are blue.
+</p><p>For convenience the comparison files have been pre-generated for this exercise and can be downloaded from:
+</p>
+<pre><span style="color:red">wget</span> <a href="ftp://ftp.sanger.ac.uk/pub/pathogens/workshops/GMOD2009/NC_004314_v_NC_011907_tblastx.gz" class="external free" title="ftp://ftp.sanger.ac.uk/pub/pathogens/workshops/GMOD2009/NC_004314_v_NC_011907_tblastx.gz" rel="nofollow">ftp://ftp.sanger.ac.uk/pub/pathogens/workshops/GMOD2009/NC_004314_v_NC_011907_tblastx.gz</a>
+<span style="color:red">wget</span> <a href="ftp://ftp.sanger.ac.uk/pub/pathogens/workshops/GMOD2009/NC_004314_v_NC_011909_tblastx.gz" class="external free" title="ftp://ftp.sanger.ac.uk/pub/pathogens/workshops/GMOD2009/NC_004314_v_NC_011909_tblastx.gz" rel="nofollow">ftp://ftp.sanger.ac.uk/pub/pathogens/workshops/GMOD2009/NC_004314_v_NC_011909_tblastx.gz</a>
+</pre>
+<p>Note that both Artemis and ACT automatically open gzipped files. For details on generating these files go to <a href="ACT.html" title="ACT Comparison Files">ACT Comparison Files</a>.
+</p><p>To run ACT use the 'act' script:
+</p>
+
+<pre>./act -Dchado="localhost:5432/chado_pathogen?gmod" -Dibatis
+</pre>
+<p>From the 'File' menu select the option 'Open Database and SSH File Manager' and login. Drag and drop the Plasmodium entries from the Database Manager into the ACT selection window. Also, drag and drop the comparison files into this window, so it looks something like this (note the featureId numbers may well be different as these are the Chado feature_id):
+</p><p><br />
+<a href="ActSelection2seqs.gif" class="image" title="Image:ActSelection2seqs.gif"><img alt="Image:ActSelection2seqs.gif" src="ActSelection2seqs.gif" width="528" height="187" border="0" /></a>
+</p><p>
+Click on Apply to read these entries and open up ACT. You can use the right hand scroll bar to zoom in and out. If you zoom out you can indentify the regions that match between these sequences.
+</p><p>
+<a href="Pf10_Pk6.gif" class="image" title="Image:Pf10_Pk6.gif"><img alt="Image:Pf10_Pk6.gif" src="Pf10_Pk6.gif" width="900" height="700" border="0" /></a>
+</p><p>
+ACT can display multiple pairwise comparison. So the two P.knowlesi sequences can be compared to the P.falciparum sequence. From the ACT launch window go to the File menu and select 'Open Database and SSH File Manager'. Drag in the sequences and comparison files (clicking on 'more files' to add the additional sequence and comparison).
+</p><p>
+<a href="ActSelection.gif" class="image" title="Image:ActSelection.gif"><img alt="Image:ActSelection.gif" src="ActSelection.gif" width="528" height="245" border="0" /></a>
+</p><p>
+Zooming out you will see that Pfalciparum chromosome 10 matches to regions in Pknowlesi chromosome 7 and 9.
+</p><p>
+<a href="Pk6_Pf10_Pk8.gif" class="image" title="Image:Pk6_Pf10_Pk8.gif"><img alt="Image:Pk6_Pf10_Pk8.gif" src="Pk6_Pf10_Pk8.gif" width="900" height="700" border="0" /></a>
+
+</p><p>
+</p>
+<a name="Writing_Out_Sequence_Files"></a><h2>Writing Out Sequence Files</h2>
+<p>Artemis can write out EMBL and GFF files for an entry opened from the database. You can optionally flatten the gene model (i.e. gene, transcript, exon) to just a CDS feature. Also an option is given to ignore any obsolete features. For EMBL it uses mappings for conversion of the keys and qualifiers. These mappings are stored in the 'etc/key_mapping' and 'etc/qualifier_mapping' files.
+</p><p>A utility script (etc/write_db_entry) is also provided as a means of writing out multiple sequences from the database. The script takes the following options:
+</p>
+<pre>-h      show help
+-f      [y|n] flatten the gene model, default is y
+-i      [y|n] ignore obsolete features, default is y
+-s      space separated list of sequences to read and write out
+-o      [EMBL|GFF] output format, default is EMBL
+-a      [y|n] for EMBL submission format change to n, default is y
+</pre>
+<p>Try running:
+</p>
+<pre>etc/writedb_entry -Dchado="localhost:5432/chado_pathogen?gmod" NC_004314
+</pre>
+
+<a name="Mailing_List"></a><h2>Mailing List</h2>
+<p>There is an Artemis mailing list: <a href="http://lists.sanger.ac.uk/mailman/listinfo/artemis-users" class="external text" title="http://lists.sanger.ac.uk/mailman/listinfo/artemis-users" rel="nofollow">artemis-user</a>.
+</p>
+<a name="References"></a><h2>References</h2>
+<p><a href="http://www.sanger.ac.uk/Software/Artemis/" class="external text" title="http://www.sanger.ac.uk/Software/Artemis/" rel="nofollow">Artemis home page</a><br /><a href="http://www.sanger.ac.uk/Software/ACT/" class="external text" title="http://www.sanger.ac.uk/Software/ACT/" rel="nofollow">ACT home page</a><br /><a href="http://www.sanger.ac.uk/Software/Artemis/v11/chado/" class="external text" title="http://www.sanger.ac.uk/Software/Artemis/v11/chado/" rel="nofollow">Artemis Connecting to Chado Databases</a><br /><a href="http://www.sanger.ac.uk/Software/Artemis/v11/database/chado.practical.guide.pdf" class="external text" title="http://www.sanger.ac.uk/Software/Artemis/v11/database/chado.practical.guide.pdf" rel="nofollow">User Practical Guide</a>
+
+</p><p>
+
+</body></html>
+

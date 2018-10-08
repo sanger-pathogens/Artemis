@@ -1,0 +1,30 @@
+<!--#set var="banner" value="Artemis Connecting to Chado Databases"-->
+<!--#include virtual="/perl/header"-->
+
+	<a href="http://www.sanger.ac.uk/Software/Artemis/"><b>Artemis</b></a> and
+        <a href="http://www.sanger.ac.uk/Software/ACT/"><b>ACT</b></a> can be used
+	to connect to <a href="http://www.gmod.org/"><b>Chado</b></a> databases.
+        They are being developed to read from and write to the database and perform the
+        same functions as the standard Artemis and ACT. 
+	
+	<p>
+	An example read-only database can be found
+	<a href="http://www.sanger.ac.uk/Software/Artemis/databases/">here</a>.
+	<p>
+	<h3>Documentation</h3>
+	<p>
+	<ul>
+	<li><a href="overview.shtml">Overview Document</a></li>
+	<li><a href="admin.shtml">Admin Document</a></li>
+	<li><a href="storage.html">Data Storage</a> (for the Pathogen Group)</li>
+	<li><a href="dbloading.shtml">Data Loading Examples</a></li>
+	<li><a href="writedb_entry.html">Exporting from the command-line using writedb_entry</a></li>
+	</ul>
+      
+<p>
+
+<!--#set var="pubmed_tabulate" value="yes"-->
+<!--#set var="pubmed_ids" value="18845581"-->
+<!--#include virtual="/perl/utils/pubmedalizer"-->
+
+

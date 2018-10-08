@@ -1,0 +1,137 @@
+<style>
+	
+	body {
+		background:#ffffff;
+		color:#003366;
+		font-family:sans-serif;
+	}
+	
+	img.displayed {
+    	display: block;
+    	margin-left: auto;
+    	margin-right: auto 
+    }
+    
+    div.imageLegend {
+    	margin:auto;
+    	width:400px;
+    	text-align:center;
+    	color:#990000;
+    	font-style:italic;
+    }
+    	
+	
+	code {
+		background:#9999aa;
+		color:white;
+		margin:10px;
+		padding:10px;
+		font-weight:bold;
+		display:block;
+		white-space: pre;
+		-webkit-border-radius: 10px;
+    	-moz-border-radius: 10px;
+	}
+		
+</style>
+
+<h3>writedb_entry - exports EMBL or GFF3 files from Chado.</h3>
+
+<h3>Synopsys</h3>
+<P>
+writedb_entry is a wrapper script around Artemis's ReadAndWrite entry functions, which allows export to EMBL and GFF3 formats. It can be run in 3 ways. 
+<P></P>
+The default method is the 'swing' method (because that's the original behaviour), which assumes that you are running it either on your own machine or on a server with X11 forwarding setup. Any errors or login prompts will popup in a graphical user interface as windows. In this mode, if it is not on your machine or no X11 is available, then any attempts to prompt will result in exceptions. 
+<P></P>
+The 'console' mode is for running interactively on the shell without the need for a graphical user interface. All user-prompting (like password entry) is done inside the shell. Useful for one-offs where there is no X11 forwarding. 
+<P></P>
+The 'script' mode is for batch runs where you don't want any user prompting. Passwords must be supplied as a command line parameter if needed in this case. 
+</P>
+<h3>Command line parameters</h3>
+
+<dl>
+	<dt>-f</dt>	<dd>[y|n] flatten the gene model, default is y</dd>
+	
+	<dt>-i</dt>	<dd>[y|n] ignore obsolete features, default is y</dd>
+	
+	<dt>-s</dt>	<dd>space separated list of sequences to read and write out</dd>
+	
+	<dt>-o</dt>	<dd>[EMBL|GFF] output format, default is EMBL</dd>
+	
+	<dt>-a</dt>	<dd>[y|n] for EMBL submission format change to n, default is y</dd>
+	
+	<dt>-pp</dt> <dd>[y|n] read polypeptide domain features, default is n</dd>
+	
+	<dt>-c</dt>	<dd>the URL for your Chado database e.g. db.genedb.org:5432/snapshot?genedb_ro (you can also do this by using the -Dchado=... method, but this -c parameter will override that) </dd>
+	
+	<dt>-u</dt>	<dd>[swing|console|script] the UI mode : run in swing (with popup dialog boxes) mode, run in console mode (choices entered in the console window), or in script mode (all choices default to continue, all parameters passed on command line) </dd>
+	
+	<dt>-p</dt>	<dd>the password for connecting to the Chado database (this is required in script mode, where passwords can not be passed interactively)</dd>
+	
+	<dt>-fp</dt> <dd>the file path (the folder you want to save the files in)</dd>
+
+</dl>
+<h3>Examples</h3>
+
+
+<h4>1. Using in swing mode. </h4>
+
+All prompting would then happen via graphical dialog boxes. In this example I am running this locally on my desktop machine.
+
+<CODE>$ /Volumes/us/data/gv1/workspace/artemis/etc/writedb_entry -c "db.genedb.org:5432/snapshot?genedb_ro" -o GFF -s Tcruzi_999 
+
+read :: Tcruzi_999 write :: Tcruzi_999.gff
+reading options from "/Users/gv1/.artemis_options"
+done
+</CODE> 
+
+<img class="displayed" src="prompt1.png">
+<div class="imageLegend">A prompt for login details.</div>
+<img class="displayed" src="prompt2.png">
+<div class="imageLegend">A prompt detailing a problem.</div>
+
+
+
+
+
+
+<h4>2. Using interactively in console mode : </h4>
+
+All prompting would then happen on the console. In this example I am running this on a server. 
+
+<CODE>$ writedb_entry -c "db.genedb.org:5432/snapshot?genedb_ro" -o GFF -u console -s Tcruzi_999
+
+read :: Tcruzi_999 write :: Tcruzi_999.gff
+Enter Password:        
+Destination format can't handle all keys/qualifiers - continue?
+region can't have isObsolete as a qualifier(y/n): y
+done
+
+</CODE> 
+
+
+
+
+
+
+
+<h4>3. Using in script mode : </h4>
+
+In these examples I am running them on a server. Note that there is no password needed as it's going to the public snapshot. 
+
+<CODE>$ writedb_entry -c "db.genedb.org:5432/snapshot?genedb_ro" -o GFF -u script -s Tcruzi_999 
+
+read :: Tcruzi_999 write :: Tcruzi_999.gff
+Desti
+</CODE> 
+
+If there was a password needed, you would have to enter it as follows. 
+
+<CODE>$ writedb_entry -c "db.genedb.org:5432/snapshot?genedb_ro" -o GFF -u script -p mypass -s Tcruzi_999
+
+read :: Tcruzi_999 write :: Tcruzi_999.gff
+Destination format can't handle all keys/qualifiers - continue? : region can't have isObsolete as a qualifier : y
+done
+
+</CODE> 
+
