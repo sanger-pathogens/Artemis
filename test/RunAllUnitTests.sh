@@ -17,7 +17,7 @@ cd ..
 
 #mvn clean compile test-compile
 
-if [[ ! -e ./.scaffolding_list.tmp ]]
+if [[ ! -f ".scaffolding_list.tmp" ]]
 then
 	echo "ERROR: Cannot find Evosuite .scaffolding_list.tmp file - unit tests will not be sand-boxed! Exiting."
 	exit 1
