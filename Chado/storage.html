@@ -1,0 +1,296 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" dir="ltr" lang="en"><head>
+
+  
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="KEYWORDS" content="Chado Data Storage">
+<meta name="robots" content="index,follow">
+<title>Chado Data Storage - SangerWiki</title>
+    
+</head><body class="ns-0">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="top"></a>
+	  	  <h1 class="firstHeading">Chado Data Storage</h1>
+	  <div id="bodyContent">
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <table id="toc" class="toc"><tbody><tr><td><div id="toctitle"><h2>Contents</h2> </div>
+<ul>
+<li class="toclevel-1"><a href="#Chado_Canonical_Gene"><span class="tocnumber">1</span> <span class="toctext">Chado Canonical Gene</span></a></li>
+<li class="toclevel-1"><a href="#Chado_Pseudogene"><span class="tocnumber">2</span> <span class="toctext">Chado Pseudogene</span></a></li>
+<li class="toclevel-1"><a href="#Gene_Model"><span class="tocnumber">3</span> <span class="toctext">Gene Model</span></a></li>
+<li class="toclevel-1"><a href="#Qualifier_Storage"><span class="tocnumber">4</span> <span class="toctext">Qualifier Storage</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Note"><span class="tocnumber">4.1</span> <span class="toctext">Note</span></a></li>
+<li class="toclevel-2"><a href="#codon_start"><span class="tocnumber">4.2</span> <span class="toctext">codon_start</span></a></li>
+<li class="toclevel-2"><a href="#Similarity"><span class="tocnumber">4.3</span> <span class="toctext">Similarity</span></a></li>
+<li class="toclevel-2"><a href="#Controlled_Vocabulary_Qualifiers"><span class="tocnumber">4.4</span> <span class="toctext">Controlled Vocabulary Qualifiers</span></a>
+<ul>
+<li class="toclevel-3"><a href="#GO"><span class="tocnumber">4.4.1</span> <span class="toctext">GO</span></a></li>
+<li class="toclevel-3"><a href="#controlled_curation"><span class="tocnumber">4.4.2</span> <span class="toctext">controlled_curation</span></a></li>
+<li class="toclevel-3"><a href="#product"><span class="tocnumber">4.4.3</span> <span class="toctext">product</span></a></li>
+<li class="toclevel-3"><a href="#class_.28Riley_classification.29"><span class="tocnumber">4.4.4</span> <span class="toctext">class (Riley classification)</span></a></li>
+</ul>
+</li>
+<li class="toclevel-2"><a href="#Dbxref"><span class="tocnumber">4.5</span> <span class="toctext">Dbxref</span></a></li>
+<li class="toclevel-2"><a href="#EC_number"><span class="tocnumber">4.6</span> <span class="toctext">EC_number</span></a></li>
+<li class="toclevel-2"><a href="#literature"><span class="tocnumber">4.7</span> <span class="toctext">literature</span></a></li>
+<li class="toclevel-2"><a href="#Search_and_Results_files"><span class="tocnumber">4.8</span> <span class="toctext">Search and Results files</span></a>
+<ul>
+<li class="toclevel-3"><a href="#.2Fblast_file"><span class="tocnumber">4.8.1</span> <span class="toctext">/blast_file</span></a></li>
+<li class="toclevel-3"><a href="#.2Fblastn_file"><span class="tocnumber">4.8.2</span> <span class="toctext">/blastn_file</span></a></li>
+<li class="toclevel-3"><a href="#.2Fblastp.2Bgo_file"><span class="tocnumber">4.8.3</span> <span class="toctext">/blastp+go_file</span></a></li>
+<li class="toclevel-3"><a href="#.2Fblastp_file"><span class="tocnumber">4.8.4</span> <span class="toctext">/blastp_file</span></a></li>
+<li class="toclevel-3"><a href="#.2Fblastx_file"><span class="tocnumber">4.8.5</span> <span class="toctext">/blastx_file</span></a></li>
+<li class="toclevel-3"><a href="#.2Ffasta_file"><span class="tocnumber">4.8.6</span> <span class="toctext">/fasta_file</span></a></li>
+<li class="toclevel-3"><a href="#.2Ffastx_file"><span class="tocnumber">4.8.7</span> <span class="toctext">/fastx_file</span></a></li>
+<li class="toclevel-3"><a href="#.2Ftblastn_file"><span class="tocnumber">4.8.8</span> <span class="toctext">/tblastn_file</span></a></li>
+<li class="toclevel-3"><a href="#.2Ftblastx_file"><span class="tocnumber">4.8.9</span> <span class="toctext">/tblastx_file</span></a></li>
+<li class="toclevel-3"><a href="#.2Fclustalx_file"><span class="tocnumber">4.8.10</span> <span class="toctext">/clustalx_file</span></a></li>
+<li class="toclevel-3"><a href="#.2Fsigcleave_file"><span class="tocnumber">4.8.11</span> <span class="toctext">/sigcleave_file</span></a></li>
+<li class="toclevel-3"><a href="#.2Fpepstats_file"><span class="tocnumber">4.8.12</span> <span class="toctext">/pepstats_file</span></a></li>
+</ul>
+</li>
+<li class="toclevel-2"><a href="#Synonyms"><span class="tocnumber">4.9</span> <span class="toctext">Synonyms</span></a>
+<ul>
+<li class="toclevel-3"><a href="#.2Freserved_name"><span class="tocnumber">4.9.1</span> <span class="toctext">/reserved_name</span></a></li>
+<li class="toclevel-3"><a href="#.2Fsynonym"><span class="tocnumber">4.9.2</span> <span class="toctext">/synonym</span></a></li>
+<li class="toclevel-3"><a href="#.2Fprimary_name"><span class="tocnumber">4.9.3</span> <span class="toctext">/primary_name</span></a></li>
+<li class="toclevel-3"><a href="#.2Fprotein_name"><span class="tocnumber">4.9.4</span> <span class="toctext">/protein_name</span></a></li>
+<li class="toclevel-3"><a href="#.2Fsystematic_id"><span class="tocnumber">4.9.5</span> <span class="toctext">/systematic_id</span></a></li>
+<li class="toclevel-3"><a href="#.2Ftemporary_systematic_id"><span class="tocnumber">4.9.6</span> <span class="toctext">/temporary_systematic_id</span></a></li>
+</ul>
+</li>
+<li class="toclevel-2"><a href="#colour"><span class="tocnumber">4.10</span> <span class="toctext">colour</span></a></li>
+<li class="toclevel-2"><a href="#ortholog.2Fparalog.2Fcluster"><span class="tocnumber">4.11</span> <span class="toctext">ortholog/paralog/cluster</span></a></li>
+</ul>
+</li>
+</ul>
+</td></tr></tbody></table>
+<p><script type="text/javascript"> if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } </script>
+</p>
+<a name="Chado_Canonical_Gene"></a><h2> Chado Canonical Gene </h2>
+<pre>gene
+|
+|- part_of mRNA
+     |
+     |---- part_of exon
+     |
+     |---- derives_from polypeptide
+</pre>
+<a name="Chado_Pseudogene"></a><h2> Chado Pseudogene </h2>
+<pre>pseudogene
+|
+|- part_of pseudogenic_transcript
+     |
+     |---- part_of pseudogenic_exon
+     |
+     |---- derives_from polypeptide
+</pre>
+<a name="Gene_Model"></a><h2> Gene Model </h2>
+<p><a href="Chado_gene_model.gif" class="image" title="Image:Chado_gene_model.gif"><img src="Chado_gene_model.gif" alt="Image:Chado_gene_model.gif" height="540" width="720"></a>
+</p>
+<a name="Qualifier_Storage"></a><h2> Qualifier Storage </h2>
+<a name="Note"></a><h3> Note </h3>
+<p>-stored as a FeatureProp with CvTerm = comment
+</p>
+<a name="codon_start"></a><h3> codon_start </h3>
+<p>This is loaded as phase in the FeatureLoc table.
+</p><p>phase = 0 =&gt; codon_start = 1;<br>
+phase = 1 =&gt; codon_start = 2;<br>
+phase = 2 =&gt; codon_start = 3
+</p>
+<a name="Similarity"></a><h3> Similarity </h3>
+<p><i>e.g.</i>: /similarity="fasta; SWALL:O85168
+(EMBL:AF047828);Pseudomonas syringae; syringomycin synthetase;
+syrE;length 9376 aa; id=31.93%; ungapped id=35.04%;E()=1.5e-105;&nbsp;;
+6198 aa overlap; query 36-6020 aa; subject 2593-8452 aa"
+</p>
+<pre>                             analysis ------ fasta
+                                 |
+                                 |
+                                 |
+                          analysisfeature ---- raw score (null), evalue, id
+                                 |
+                                 |
+                                 |          |---featureprop---ungapped id (35.04)
+                                 |          |
+                            Matchfeature ---| 
+                             /   |          |
+                            /    |          |---featureprop---overlap (6198)
+rank=0                     /     |
+(srcfeature_id=product    /      |
+FeatureId)               /       |
+(subject 2593-8452)featureloc  featureloc (query 36-6020) srcfeature_id=queryFeatureId rank=1
+                |                |
+                |                |
+  featuredbxref |                |
+     (AF04782)  |                |
+            \   |                |
+             \  |                |
+              \ |                |
+               \|                |
+(dbxref=O85168) |                |
+(seqlen=9376)feature          feature (polypeptide if protein match |   transcript if nucleotide match)
+               /|\          
+              / | \   
+             /  |  \    
+            /   |   \
+           /    |    \
+          /     |     \       
+         / featureprop \       
+ featureprop    |     featureprop
+     |          |           |  
+     |       product        |  
+     | (syringomycin s)     |
+     |                      |
+     |                      | 
+ organism                  gene(syrE) 
+(Pseudomonas syringae)
+
+</pre>
+<p>N.B. For now the match feature is entered as CvTerm = '<b>region'</b>.
+The Cv '<b>genedb_misc'</b> is used for Cvterms like 'ungapped id'  found in /similarity.
+</p>
+<a name="Controlled_Vocabulary_Qualifiers"></a><h3> Controlled Vocabulary Qualifiers </h3>
+<p>These qualifiers are all FeatureCvTerm's.
+</p>
+<a name="GO"></a><h4> GO </h4>
+<p><br>
+/GO="aspect=;GOid=;term=;qualifer=;evidence='db_xref=;with=;date="
+</p>
+<p>GO annotation can be attached at different levels of the heirarchy.
+The GeneDB loader attaches it by default to the polypeptide as that
+seems to be the most typical case.
+</p>
+<p>Each GO entry has a CvTerm and a DbXRef associated with it. The GO
+term should be looked up by its DbXRef i.e. GO:123456, to get the
+correspontding CvTerm. A FeatureCvTerm links this CvTerm to the
+Feature. The FeatureCvTerm may well exist so needs to be looked up. The
+qualifier NOT is treated specially, as a field in FeatureCvTerm,
+becauses it reverses the meaning of the assignment, rather than adding
+more details as most qualifiers do. The FeatureCvTerm may have a number
+of associated FeatureCvTermProp's. This is general storage for the GO
+evidence code, extra qualifiers and the date of the assignment. (A hack
+for the evidence code would be possible, using a CvTerm to represent
+key and evidence code, but it wouldn't work for the date). One or more
+FeatureCvTermDbXRef's can be associated with the FeatureCvTerm which
+corresponds to the WITH/FROM column in GO. The dbxref value in this
+case correspond to publications, so the primary Pub is linked to the
+FeatureCvTerm.pub_id. One or more FeatureCvTermPub's can be associated
+with the FeatureCvTerm which corresponds to any ID's after the pipe
+symbol in the publication column.
+</p>
+<a name="controlled_curation"></a><h4> controlled_curation </h4>
+<p>/controlled_curation="term=;cv=; qualifier=;evidence=;db_xref=;residue=; attribution=;date="
+</p><p>Storage is similar to GO. The db_xref is stored either as a FeatureCvTermDbXref or a FeatureCvTermPub:
+</p>
+<ol><li> if the value is a PMID:12345 then it is stored in the pub
+table. a dummy dbxref is created with the 'accession' = 12345. a
+pubdbxref is created to link the pub with the dbxref.
+</li><li> if the value is other database like UNIPROT:23456 then it is
+stored in the dbxref table with accession=23456 and an entry is also
+created in the feature_cvterm_dbxref table to link the featurecvterm
+and the dbxref
+</li></ol>
+<a name="product"></a><h4> product </h4>
+<p>This is stored as a FeatureCvTerm with a CvTerm from the '<b>genedb_products'</b> Cv.
+</p>
+<a name="class_.28Riley_classification.29"></a><h4> class (Riley classification) </h4>
+<p><i>e.g.</i> /class=6.2.2
+</p>
+<p>
+These are linked to the Feature as below:
+
+</p><pre>              Feature
+                 |
+           FeatureCvTerm--name='anti sigma factor' 
+                 |
+              CvTerm
+                 |
+             -----------
+             |         |
+      RILEY--Cv       DbXRef--accession=6.2.2
+                       |
+                       Db-name=RILEY
+</pre>
+
+<a name="Dbxref"></a><h3> Dbxref </h3>
+<p>- stored as a FeatureDbXRef
+</p>
+<a name="EC_number"></a><h3> EC_number </h3>
+<p>- stored as a FeatureProp
+</p>
+<a name="literature"></a><h3> literature </h3>
+<p>- stored as FeaturePub
+</p>
+<a name="Search_and_Results_files"></a><h3> Search and Results files </h3>
+<p>The following are stored as FeatureProp's:<br>
+</p>
+<a name=".2Fblast_file"></a><h4> /blast_file </h4>
+<a name=".2Fblastn_file"></a><h4> /blastn_file </h4>
+<a name=".2Fblastp.2Bgo_file"></a><h4> /blastp+go_file </h4>
+<a name=".2Fblastp_file"></a><h4> /blastp_file </h4>
+<a name=".2Fblastx_file"></a><h4> /blastx_file </h4>
+<a name=".2Ffasta_file"></a><h4> /fasta_file </h4>
+<a name=".2Ffastx_file"></a><h4> /fastx_file </h4>
+<a name=".2Ftblastn_file"></a><h4> /tblastn_file </h4>
+<a name=".2Ftblastx_file"></a><h4> /tblastx_file </h4>
+<a name=".2Fclustalx_file"></a><h4> /clustalx_file </h4>
+<a name=".2Fsigcleave_file"></a><h4> /sigcleave_file </h4>
+<a name=".2Fpepstats_file"></a><h4> /pepstats_file </h4>
+<a name="Synonyms"></a><h3> Synonyms </h3>
+<p>The following qualifiers are loaded in the Synonym table:<br>
+</p>
+<a name=".2Freserved_name"></a><h4> /reserved_name </h4>
+<a name=".2Fsynonym"></a><h4> /synonym </h4>
+<a name=".2Fprimary_name"></a><h4> /primary_name </h4>
+<a name=".2Fprotein_name"></a><h4> /protein_name </h4>
+<a name=".2Fsystematic_id"></a><h4> /systematic_id </h4>
+<a name=".2Ftemporary_systematic_id"></a><h4> /temporary_systematic_id </h4>
+<p>and these are linked to the Feature via FeatureSynonym's. These
+Synonym's are in the '<b>genedb_synonym_type'</b> Cv table.
+FeatureSynonym.is_current is used to store previous/obsolete
+synonyms.
+</p>
+<a name="colour"></a><h3> colour </h3>
+<p>Presumably a FeatureProp (at least for now). Additional qualifiers
+are being preposed status (containing information about functional
+annotation and whether the annotation is manual or automatic) and
+evidence. These are likely to be FeatureProp's.
+</p>
+<a name="ortholog.2Fparalog.2Fcluster"></a><h3> ortholog/paralog/cluster </h3>
+<p>Orthologue/paralogues cluster are stored in a similar way to <a href="#Similarity" title="">/similarity</a>. 
+As input we have:
+<br>a) manually curated orthologues which simply list other genes' 
+systematic ids and the relationship type
+<br>b) auto-generated clusters of genes which also have associated data like clustering method, cut-off/score etc.
+<br>However, they features are linked to each other by
+feature_relationship's (rather than featureloc which are used with
+/similarity). The feature_relationship's are given the type_id =
+'orthologous_to' or 'paralogous_to'. For manually curated
+ortholog/paralog data the analysisfeature and analysis are not required
+and are not added.
+</p>
+<pre>analysis
+ |
+ + analysisfeature
+    |
+    feature (type_id == protein_match)
+      |
+ +----+-------+------------+
+ |            |            |
+ |            |            |
+feature1    feature2    feature3
+gene        gene        gene
+
+</pre>
+<p>The bottom links are feature_relationships of SO type orthologous_to.
+</p>
+
+      <div id="footer">
+      </div>
+    </div>
+  </body></html>
