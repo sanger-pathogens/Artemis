@@ -1,5 +1,11 @@
 #! /bin/bash
 
+############################################################
+# Run all hand-crafted and Evosuite generated unit tests.
+# Evosuite unit tests are run in a sandbox by the 
+# Evosuite unit test listener which is invoked by Surefire.
+#
+############################################################
 echo
 echo "This may take 30 minutes or more..."
 echo
