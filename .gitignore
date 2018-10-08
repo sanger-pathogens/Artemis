@@ -4,7 +4,6 @@
 test/coverage-report
 /eclipse-classes/
 /target/
-**/.scaffolding_list.tmp
 dependency-reduced-pom.xml
 maven.properties
 .evosuite
