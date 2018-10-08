@@ -373,7 +373,6 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 							<files>
 								<file>maven.properties</file>
 							</files>
-							<quiet>false</quiet>
 						</configuration>
 					</execution>
 				</executions>
