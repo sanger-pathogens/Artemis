@@ -8,6 +8,7 @@
   <id>assemble-unix-release</id>
 	<formats>
 		<format>tar.gz</format>
+		<format>zip</format>
 	</formats>
 	<includeBaseDirectory>false</includeBaseDirectory>
 	
@@ -19,14 +20,6 @@
 			<includes>
 				<include>*.jar</include>
 			</includes>
-		</fileSet>
-		<fileSet>
-			<directory>etc</directory>
-			<outputDirectory>${unix.assembly.folder}/etc</outputDirectory>
-			<includes>
-				<include>*</include>
-			</includes>
-			<lineEnding>unix</lineEnding>
 		</fileSet>
 		<fileSet>
 			<outputDirectory>${unix.assembly.folder}</outputDirectory>

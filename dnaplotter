@@ -119,7 +119,7 @@ then
     echo "Starting DNA Plotter with arguments: $FLAGS $APPLICATION_PROPERTIES $TEMPLATE_FILE_ARG"
 fi
 
-$JAVA $FLAGS $APPLICATION_PROPERTIES -cp "$JAR_FILE_DEFAULT:$JAR_FILE_INSTALLED" uk.ac.sanger.artemis.circular.DNADraw $TEMPLATE_FILE_ARG
+$JAVA $FLAGS $APPLICATION_PROPERTIES -cp ".:$JAR_FILE_DEFAULT:$JAR_FILE_INSTALLED" uk.ac.sanger.artemis.circular.DNADraw $TEMPLATE_FILE_ARG
 result=$?
 
 exit $result

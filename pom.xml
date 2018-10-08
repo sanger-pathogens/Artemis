@@ -45,7 +45,7 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
   	<licenses>
         <license>
             <name>The GNU General Public License, Version 3, June 2007</name>
-            <url>https://github.com/sanger-pathogens/Artemis/blob/master/LICENSE</url>
+            <url>https://raw.githubusercontent.com/sanger-pathogens/Artemis/master/LICENSE</url>
         </license>
     </licenses>
     
@@ -92,6 +92,7 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 		<java.source.version>1.8</java.source.version>
 		<java.target.version>1.8</java.target.version>
 		<java.javadoc.url>https://docs.oracle.com/javase/8/docs/api/</java.javadoc.url>
+		<osx.jdk.path>${env.JAVA_HOME}/../..</osx.jdk.path>
 		      
         <!-- Evosuite properties-->
         <targetFolder>src/test/evosuite</targetFolder>
@@ -99,7 +100,6 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
         <evosuite.plugin.version>1.0.6</evosuite.plugin.version>
         
         <!-- Assembly folders -->
-        <bioconda.assembly.folder>artemis</bioconda.assembly.folder>
         <windows.assembly.folder>artemis</windows.assembly.folder>
         <unix.assembly.folder>artemis</unix.assembly.folder>
         <osx.assembly.folder>artemis</osx.assembly.folder>
@@ -108,25 +108,31 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
         <release.artifact.folder>${project.build.directory}/release-artifacts</release.artifact.folder>       
         <windows.release.folder>${release.artifact.folder}/windows-release</windows.release.folder>
         <osx.app.folder>${release.artifact.folder}/mac-osx-release</osx.app.folder>
+        <osx.app.chado.folder>${release.artifact.folder}/mac-osx-chado-release</osx.app.chado.folder>
         <unix.release.folder>${release.artifact.folder}/unix-release</unix.release.folder>
-        <bioconda.release.folder>${release.artifact.folder}/bioconda-release</bioconda.release.folder>
         
         <!-- Release file names -->
-        <bioconda.release.filename>artemis-bioconda-release-${project.version}</bioconda.release.filename>
         <unix.release.filename>artemis-unix-release-${project.version}</unix.release.filename>
         <windows.release.filename>artemis-windows-release-${project.version}</windows.release.filename>
         <osx.release.filename>artemis-macosx-release-${project.version}</osx.release.filename>
+        <osx.chado.release.filename>artemis-macosx-chado-release-${project.version}</osx.chado.release.filename>
+ 
+        <!-- Mac OS application JVM options -->
+        <postgres.command.line.arg>-Djdbc.drivers=org.postgresql.Driver</postgres.command.line.arg>
+        <maxheap.command.line.arg>-mx2g</maxheap.command.line.arg>
+        <initialheap.command.line.arg>-ms128m</initialheap.command.line.arg>
+        <noverify.command.line.arg>-noverify</noverify.command.line.arg>
+        <unixenv.command.line.arg>-Dartemis.environment=UNIX</unixenv.command.line.arg>
+        <macosx.menuname.command.line.arg>-Dcom.apple.mrj.application.apple.menu.about.name</macosx.menuname.command.line.arg>
+        <macosx.dock.command.line.arg>-Xdock:name</macosx.dock.command.line.arg>
+        <chado.command.line.arg>-Dchado="localhost:5432/databasename?username"</chado.command.line.arg>
+        <ibatis.command.line.arg>-Dibatis</ibatis.command.line.arg>
+        <sangeroptions.command.line.arg>-Dsanger_options=yes</sangeroptions.command.line.arg>
+        <j2ssh.command.line.arg>-Dj2ssh</j2ssh.command.line.arg>
         
         <!-- Surefire unit test plugin arguments -->
-        <surefireArgLine>-Xmx4g -noverify -Djdbc.drivers=org.postgresql.Driver -Duse_separate_classloader=false -DEMBOSS_ROOT=${emboss.installation.root}</surefireArgLine>
-        
-        <!-- Application JVM options -->
-        <jvm.options.base>-Djdbc.drivers=org.postgresql.Driver -Dartemis.environment=UNIX -mx2g -ms128m -noverify</jvm.options.base>
-        <jvm.options.artemis>${jvm.options.base} -Dcom.apple.mrj.application.apple.menu.about.name=${artemis.application.name} -Dapple.laf.useScreenMenuBar=true -Xdock:name=${artemis.application.name}</jvm.options.artemis>
-        <jvm.options.act>${jvm.options.base} -Dcom.apple.mrj.application.apple.menu.about.name=${act.application.name} -Dapple.laf.useScreenMenuBar=true -Xdock:name=${act.application.name}</jvm.options.act>
-        <jvm.options.dnaplotter>${jvm.options.base} -Dcom.apple.mrj.application.apple.menu.about.name=${dnaplotter.application.name} -Dapple.laf.useScreenMenuBar=true -Xdock:name=${dnaplotter.application.name}</jvm.options.dnaplotter>
-        <jvm.options.bamview>${jvm.options.base} -Dcom.apple.mrj.application.apple.menu.about.name=${bamview.application.name} -Dapple.laf.useScreenMenuBar=false -Xdock:name=${bamview.application.name}</jvm.options.bamview>
-        
+        <surefireArgLine>-Xmx4g ${noverify.command.line.arg} ${postgres.command.line.arg} -Duse_separate_classloader=false -DEMBOSS_ROOT=${emboss.installation.root}</surefireArgLine>
+         
         <docs.folder>${project.basedir}/docs</docs.folder>
         <docs.output.folder>${project.build.directory}/docs</docs.output.folder>
         
@@ -134,7 +140,7 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
         <default.file.excludes>**/log4j*.xml META-INF/* **/.DS_Store **/._*</default.file.excludes>
         
         <!-- Etc files to exclude from the build. -->
-        <etc.file.excludes>*.html *.seq *.fasta *.embl *.tab *.crunch *.genbank</etc.file.excludes>
+        <etc.file.excludes>*.seq *.fasta *.embl *.tab *.crunch *.genbank</etc.file.excludes>
         
         <artemis.icons.path>${project.basedir}/icons</artemis.icons.path>
 
@@ -249,7 +255,7 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 		<dependency>
 		    <groupId>org.postgresql</groupId>
 		    <artifactId>postgresql</artifactId>
-		    <version>42.2.1</version>
+		    <version>42.2.5</version>
 		</dependency>
 		
 		<!-- Using latest version gives compilation errors! -->
@@ -262,7 +268,7 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 		<!-- Start of Picard jars -->
 		
 		<!-- https://mvnrepository.com/artifact/com.github.broadinstitute/picard -->
-		<!-- Latest as of 24th Set 2018 -->
+		<!-- Latest as of 24th Sept 2018 -->
 		<!--  It contains two htsjdk fixes for CRAM index caching and the query mate issue -->
 		<dependency>
 		    <groupId>com.github.broadinstitute</groupId>
@@ -348,7 +354,7 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
                 </executions>
             </plugin>
             
-			<!-- ======================   Read project build properties ======================= -->
+            <!-- ======================   Read signing related properties ======================= -->
 			
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -362,6 +368,8 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 							<goal>read-project-properties</goal>
 						</goals>
 						<configuration>
+							<!-- Build will not fail if properties file is not found, but signing will fail -->
+							<quiet>true</quiet>
 							<files>
 								<file>maven.properties</file>
 							</files>
@@ -408,8 +416,6 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 			                <generatePom>true</generatePom>
 			            </configuration>
 			        </execution>
-			        
-			        <!--  NEEDS UPGRADE.... -->
 			        <execution>
 			        		<id>install-j2ssh-core-jar</id>
 			            <phase>validate</phase>
@@ -425,7 +431,6 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 			                <generatePom>true</generatePom>
 			            </configuration>
 			        </execution>
-			        
 			        <execution>
 			        		<id>install-ibatis-jar</id>
 			            <phase>validate</phase>
@@ -473,6 +478,25 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 				<configuration>
 					<source>${java.source.version}</source>
 					<target>${java.target.version}</target>
+				</configuration>
+			</plugin>
+			
+			<!-- ============================== Jar customisation ===================================== -->
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.1.0</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<addClasspath>false</addClasspath>
+						</manifest>
+						<manifestEntries>
+							<Permissions>all-permissions</Permissions>
+                    			<Codebase>*</Codebase>
+						</manifestEntries>
+					</archive>
 				</configuration>
 			</plugin>
 			
@@ -532,7 +556,7 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 		        			</configuration>
 		      		</execution>
 		      		<!--  Copy non-maven legacy jars to build area for inclusion in assembly -->
-		      		<execution>
+		      		<!--  execution>
 		        			<id>copy-old-jars</id>
 		        			<phase>process-test-resources</phase>
 		        			<goals>
@@ -546,7 +570,7 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 		            				</resource>
 		          			</resources>
 		        			</configuration>
-		      		</execution>
+		      		</execution-->
 		      		<execution>
 		        			<id>copy-icons-to-target-folder</id>
 		        			<phase>package</phase>
@@ -1069,9 +1093,6 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 			</plugin>
 
 
-			
-			
-			
 			<!-- ==========================   Create release zips ============================ -->
 			
 			<plugin>
@@ -1079,21 +1100,6 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>3.1.0</version>
 				<executions>
-					<execution>
-						<id>create-bioconda-release</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-			            <configuration>
-			                <appendAssemblyId>false</appendAssemblyId>
-			                <outputDirectory>${bioconda.release.folder}</outputDirectory>
-			                <descriptors>
-								<descriptor>src/assembly/bioconda-release-assembly.xml</descriptor>
-							</descriptors>
-			                <finalName>${bioconda.release.filename}</finalName>
-			            </configuration>
-					</execution>
 					<execution>
 						<id>create-unix-release</id>
 						<phase>package</phase>
@@ -1227,6 +1233,7 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 					<failOnError>false</failOnError>
 					<quiet>true</quiet>
 					<excludePackageNames>org.*</excludePackageNames>
+					<excludes>**/*Test.java, **/*_scaffolding*.java</excludes>
 				</configuration>
 				<reportSets>
 					<reportSet>
@@ -1241,15 +1248,6 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 		</plugins>
 		
 	</reporting>
-	
-	<!-- Site deployment -->
-	<!--  distributionManagement>
-		<site>
-			<id>site.deployments</id>
-			<name>Site deployments</name>
-			<url></url>
-		</site>
-	</distributionManagement -->
 	
 	
 	<!-- ========================== Profile section =================================-->
@@ -1274,38 +1272,20 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 	        </properties>
 	    </profile>
 	    
-	    <!-- dev-evo profile that will also run all evosuite tests (which takes a long time) -->
-	    <!--  profile>
-	        <id>dev-evo</id>
-	        <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-	        <properties>
-	        		<skip.tests>false</skip.tests>     
-        			<evosuite.exclude.filter></evosuite.exclude.filter>
-        			<jarsigner.skip>true</jarsigner.skip>
-        			<skip.artifact.creation>true</skip.artifact.creation>
-        			<skip.coverage.reporting>false</skip.coverage.reporting>
-        			<skip.javadoc>true</skip.javadoc>
-        			
-	            <build.profile.id>dev-evo</build.profile.id>
-	        </properties>
-	    </profile -->
-	    
 	    <profile>
-	        <id>site</id>
+	        <id>release</id>
 	        <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
 	        <properties>
 	        		<skip.tests>false</skip.tests>
-        			<evosuite.exclude.filter></evosuite.exclude.filter>
+        			<evosuite.exclude.filter>**/*_ESTest*</evosuite.exclude.filter>
         			<jarsigner.skip>false</jarsigner.skip>
         			<skip.artifact.creation>false</skip.artifact.creation>
         			<skip.coverage.reporting>false</skip.coverage.reporting>
         			<skip.javadoc>false</skip.javadoc>
         			
-	            <build.profile.id>site</build.profile.id>
+	            <build.profile.id>release</build.profile.id>
 	        </properties>
 	        <build>    
 	            <plugins>
@@ -1333,11 +1313,20 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 							    		<buildDirectory>${osx.app.folder}</buildDirectory>
 							    		<generateDiskImageFile>false</generateDiskImageFile>
 							    		<bundleName>${artemis.application.name}</bundleName>
-							    		<jrePath>${java.jdk.home}</jrePath>
+							    		<jrePath>${osx.jdk.path}</jrePath>
 							        <mainClass>${artemis.main.class}</mainClass>
 							        <iconFile>${project.build.directory}/icons/artemis.icns</iconFile>
 							        <jvmVersion>${java.target.version}</jvmVersion>
-							        <jvmOptions>${jvm.options.artemis}</jvmOptions>
+							        <jvmOptions>
+							   			<jvmOption>${maxheap.command.line.arg}</jvmOption>
+										<jvmOption>${initialheap.command.line.arg}</jvmOption>
+										<jvmOption>${noverify.command.line.arg}</jvmOption> 
+										<jvmOption>${unixenv.command.line.arg}</jvmOption> 
+										<jvmOption>${macosx.menuname.command.line.arg}=${artemis.application.name}</jvmOption>
+										<jvmOption>${macosx.dock.command.line.arg}=${artemis.application.name}</jvmOption>
+										<jvmOption>${sangeroptions.command.line.arg}</jvmOption>
+        									<jvmOption>${j2ssh.command.line.arg}</jvmOption>
+							        </jvmOptions>
 							        <additionalBundledClasspathResources>
 							        		<fileSet>
 							        			<directory>${project.build.directory}/icons</directory>
@@ -1360,11 +1349,20 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 							    		<buildDirectory>${osx.app.folder}</buildDirectory>
 							    		<generateDiskImageFile>false</generateDiskImageFile>
 							    		<bundleName>${act.application.name}</bundleName>
-							    		<jrePath>${java.jdk.home}</jrePath>
+							    		<jrePath>${osx.jdk.path}</jrePath>
 							        <mainClass>${act.main.class}</mainClass>
 							        <iconFile>${project.build.directory}/icons/act.icns</iconFile>
 							        <jvmVersion>${java.target.version}</jvmVersion>
-							        <jvmOptions>${jvm.options.act}</jvmOptions>
+							        <jvmOptions>
+							   			<jvmOption>${maxheap.command.line.arg}</jvmOption>
+										<jvmOption>${initialheap.command.line.arg}</jvmOption>
+										<jvmOption>${noverify.command.line.arg}</jvmOption> 
+										<jvmOption>${unixenv.command.line.arg}</jvmOption> 
+										<jvmOption>${macosx.menuname.command.line.arg}=${act.application.name}</jvmOption>
+										<jvmOption>${macosx.dock.command.line.arg}=${act.application.name}</jvmOption>
+										<jvmOption>${sangeroptions.command.line.arg}</jvmOption>
+        									<jvmOption>${j2ssh.command.line.arg}</jvmOption>
+							        </jvmOptions>
 							        <additionalBundledClasspathResources>
 							        		<fileSet>
 							        			<directory>${project.build.directory}/icons</directory>
@@ -1387,11 +1385,20 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 					            		<buildDirectory>${osx.app.folder}</buildDirectory>
 					            		<generateDiskImageFile>false</generateDiskImageFile>
 					            		<bundleName>${dnaplotter.application.name}</bundleName>
-							    		<jrePath>${java.jdk.home}</jrePath>
+							    		<jrePath>${osx.jdk.path}</jrePath>
 							        <mainClass>${dnaplotter.main.class}</mainClass>
 							        <iconFile>${project.build.directory}/icons/dnaplotter.icns</iconFile>
 							        <jvmVersion>${java.target.version}</jvmVersion>
-							        <jvmOptions>${jvm.options.dnaplotter}</jvmOptions>
+							        <jvmOptions>
+							   			<jvmOption>${maxheap.command.line.arg}</jvmOption>
+										<jvmOption>${initialheap.command.line.arg}</jvmOption>
+										<jvmOption>${noverify.command.line.arg}</jvmOption> 
+										<jvmOption>${unixenv.command.line.arg}</jvmOption> 
+										<jvmOption>${macosx.menuname.command.line.arg}=${dnaplotter.application.name}</jvmOption>
+										<jvmOption>${macosx.dock.command.line.arg}=${dnaplotter.application.name}</jvmOption>
+										<jvmOption>${sangeroptions.command.line.arg}</jvmOption>
+        									<jvmOption>${j2ssh.command.line.arg}</jvmOption>
+							        </jvmOptions>
 							        <additionalBundledClasspathResources>
 							        		<fileSet>
 							        			<directory>${project.build.directory}/icons</directory>
@@ -1416,11 +1423,175 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 							    		<generateDiskImageFile>true</generateDiskImageFile>
 							    		<diskImageFile>${osx.app.folder}/${osx.release.filename}.dmg</diskImageFile>
 							    		<bundleName>${bamview.application.name}</bundleName>
-							    		<jrePath>${java.jdk.home}</jrePath>
+							    		<jrePath>${osx.jdk.path}</jrePath>
 							        <mainClass>${bamview.main.class}</mainClass>
 							        <iconFile>${project.build.directory}/icons/bamview.icns</iconFile>
 							        <jvmVersion>${java.target.version}</jvmVersion>
-							        <jvmOptions>${jvm.options.bamview}</jvmOptions>
+							        <jvmOptions>
+							   			<jvmOption>${maxheap.command.line.arg}</jvmOption>
+										<jvmOption>${initialheap.command.line.arg}</jvmOption>
+										<jvmOption>${noverify.command.line.arg}</jvmOption> 
+										<jvmOption>${unixenv.command.line.arg}</jvmOption> 
+										<jvmOption>${macosx.menuname.command.line.arg}=${bamview.application.name}</jvmOption>
+										<jvmOption>${macosx.dock.command.line.arg}=${bamview.application.name}</jvmOption>
+										<jvmOption>${sangeroptions.command.line.arg}</jvmOption>
+        									<jvmOption>${j2ssh.command.line.arg}</jvmOption>
+							        </jvmOptions>
+							        <additionalBundledClasspathResources>
+							        		<fileSet>
+							        			<directory>${project.build.directory}/icons</directory>
+							        			<includes>
+							        				<include>Readme.txt</include>
+							        			</includes>
+							        		</fileSet>
+							        </additionalBundledClasspathResources>
+							    </configuration>
+					        </execution>
+					        
+					        <!-- Package CHADO version of toolkit -->
+					
+					        <execution>
+					        		<id>create-artemis-osx-app-CHADO</id>
+					            <phase>package</phase>
+					            <goals>
+					                <goal>bundle</goal>
+					            </goals>
+					            <configuration>
+							    		<skip>${skip.artifact.creation}</skip>
+							    		<version>${project.version}</version>
+							    		<buildDirectory>${osx.app.chado.folder}</buildDirectory>
+							    		<generateDiskImageFile>false</generateDiskImageFile>
+							    		<bundleName>${artemis.application.name} (CHADO)</bundleName>
+							    		<jrePath>${osx.jdk.path}</jrePath>
+							        <mainClass>${artemis.main.class}</mainClass>
+							        <iconFile>${project.build.directory}/icons/artemis.icns</iconFile>
+							        <jvmVersion>${java.target.version}</jvmVersion>
+							        <jvmOptions>
+							   			<jvmOption>${postgres.command.line.arg}</jvmOption>
+							   			<jvmOption>${chado.command.line.arg}</jvmOption>
+							   			<jvmOption>${ibatis.command.line.arg}</jvmOption>
+										<jvmOption>${maxheap.command.line.arg}</jvmOption>
+										<jvmOption>${initialheap.command.line.arg}</jvmOption>
+										<jvmOption>${noverify.command.line.arg}</jvmOption> 
+										<jvmOption>${unixenv.command.line.arg}</jvmOption> 
+										<jvmOption>${macosx.menuname.command.line.arg}=${artemis.application.name}</jvmOption>
+										<jvmOption>${macosx.dock.command.line.arg}=${artemis.application.name}</jvmOption>
+										<jvmOption>${sangeroptions.command.line.arg}</jvmOption>
+        									<jvmOption>${j2ssh.command.line.arg}</jvmOption>
+							        </jvmOptions>
+							        <additionalBundledClasspathResources>
+							        		<fileSet>
+							        			<directory>${project.build.directory}/icons</directory>
+							        			<includes>
+							        				<include>Readme.txt</include>
+							        			</includes>
+							        		</fileSet>
+							        </additionalBundledClasspathResources>
+							    </configuration>
+					        </execution>
+					        <execution>
+					        		<id>create-act-osx-app-CHADO</id>
+					            <phase>package</phase>
+					            <goals>
+					                <goal>bundle</goal>
+					            </goals>
+					            <configuration>
+							    		<skip>false</skip>
+							    		<version>${project.version}</version>
+							    		<buildDirectory>${osx.app.chado.folder}</buildDirectory>
+							    		<generateDiskImageFile>false</generateDiskImageFile>
+							    		<bundleName>${act.application.name} (CHADO)</bundleName>
+							    		<jrePath>${osx.jdk.path}</jrePath>
+							        <mainClass>${act.main.class}</mainClass>
+							        <iconFile>${project.build.directory}/icons/act.icns</iconFile>
+							        <jvmVersion>${java.target.version}</jvmVersion>
+							        <jvmOptions>
+							   			<jvmOption>${postgres.command.line.arg}</jvmOption>
+							   			<jvmOption>${chado.command.line.arg}</jvmOption>
+							   			<jvmOption>${ibatis.command.line.arg}</jvmOption>
+										<jvmOption>${maxheap.command.line.arg}</jvmOption>
+										<jvmOption>${initialheap.command.line.arg}</jvmOption>
+										<jvmOption>${noverify.command.line.arg}</jvmOption> 
+										<jvmOption>${unixenv.command.line.arg}</jvmOption> 
+										<jvmOption>${macosx.menuname.command.line.arg}=${act.application.name}</jvmOption>
+										<jvmOption>${macosx.dock.command.line.arg}=${act.application.name}</jvmOption>
+										<jvmOption>${sangeroptions.command.line.arg}</jvmOption>
+        									<jvmOption>${j2ssh.command.line.arg}</jvmOption>
+							        </jvmOptions>
+							        <additionalBundledClasspathResources>
+							        		<fileSet>
+							        			<directory>${project.build.directory}/icons</directory>
+							        			<includes>
+							        				<include>Readme.txt</include>
+							        			</includes>
+							        		</fileSet>
+							        </additionalBundledClasspathResources>
+							    </configuration>
+					        </execution>
+					        <execution>
+					        		<id>create-dnaplotter-osx-app-CHADO</id>
+					            <phase>package</phase>
+					            <goals>
+					                <goal>bundle</goal>
+					            </goals>
+					            <configuration>
+					            		<skip>false</skip>
+					            		<version>${project.version}</version>
+					            		<buildDirectory>${osx.app.chado.folder}</buildDirectory>
+					            		<generateDiskImageFile>false</generateDiskImageFile>
+					            		<bundleName>${dnaplotter.application.name}</bundleName>
+							    		<jrePath>${osx.jdk.path}</jrePath>
+							        <mainClass>${dnaplotter.main.class}</mainClass>
+							        <iconFile>${project.build.directory}/icons/dnaplotter.icns</iconFile>
+							        <jvmVersion>${java.target.version}</jvmVersion>
+							        <jvmOptions>
+							   			<jvmOption>${maxheap.command.line.arg}</jvmOption>
+										<jvmOption>${initialheap.command.line.arg}</jvmOption>
+										<jvmOption>${noverify.command.line.arg}</jvmOption> 
+										<jvmOption>${unixenv.command.line.arg}</jvmOption> 
+										<jvmOption>${macosx.menuname.command.line.arg}=${dnaplotter.application.name}</jvmOption>
+										<jvmOption>${macosx.dock.command.line.arg}=${dnaplotter.application.name}</jvmOption>
+										<jvmOption>${sangeroptions.command.line.arg}</jvmOption>
+        									<jvmOption>${j2ssh.command.line.arg}</jvmOption>
+							        </jvmOptions>
+							        <additionalBundledClasspathResources>
+							        		<fileSet>
+							        			<directory>${project.build.directory}/icons</directory>
+							        			<includes>
+							        				<include>Readme.txt</include>
+							        			</includes>
+							        		</fileSet>
+							        </additionalBundledClasspathResources>
+							    </configuration>
+					        </execution>
+					        <!--  The last execution also creates the disk image file... -->
+					        <execution>
+					        		<id>create-bamview-osx-app-CHADO</id>
+					            <phase>package</phase>
+					            <goals>
+					                <goal>bundle</goal>
+					            </goals>
+					            <configuration>
+							    		<skip>false</skip>
+							    		<version>${project.version}</version>
+							    		<buildDirectory>${osx.app.chado.folder}</buildDirectory>
+							    		<generateDiskImageFile>true</generateDiskImageFile>
+							    		<diskImageFile>${osx.app.chado.folder}/${osx.chado.release.filename}.dmg</diskImageFile>
+							    		<bundleName>${bamview.application.name}</bundleName>
+							    		<jrePath>${osx.jdk.path}</jrePath>
+							        <mainClass>${bamview.main.class}</mainClass>
+							        <iconFile>${project.build.directory}/icons/bamview.icns</iconFile>
+							        <jvmVersion>${java.target.version}</jvmVersion>
+							        <jvmOptions>
+							   			<jvmOption>${maxheap.command.line.arg}</jvmOption>
+										<jvmOption>${initialheap.command.line.arg}</jvmOption>
+										<jvmOption>${noverify.command.line.arg}</jvmOption> 
+										<jvmOption>${unixenv.command.line.arg}</jvmOption> 
+										<jvmOption>${macosx.menuname.command.line.arg}=${bamview.application.name}</jvmOption>
+										<jvmOption>${macosx.dock.command.line.arg}=${bamview.application.name}</jvmOption>
+										<jvmOption>${sangeroptions.command.line.arg}</jvmOption>
+        									<jvmOption>${j2ssh.command.line.arg}</jvmOption>
+							        </jvmOptions>
 							        <additionalBundledClasspathResources>
 							        		<fileSet>
 							        			<directory>${project.build.directory}/icons</directory>
@@ -1432,8 +1603,7 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 							    </configuration>
 					        </execution>
 					    </executions>
-					</plugin>
-										
+					</plugin>	
 	            </plugins>
 	         </build>   
 	    </profile>

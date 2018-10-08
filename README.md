@@ -33,13 +33,19 @@ ACT is a free tool for displaying pairwise comparisons between two or more DNA s
 
 For further information, please see the [Artemis GitHub page](http://sanger-pathogens.github.io/Artemis/)
 
-## Installation
+## Installation and Usage
 
-For instructions on how to install Artemis, please see the [Artemis manual](ftp://ftp.sanger.ac.uk/pub/resources/software/artemis/artemis.pdf).
+Please refer to the relevant documentation in the Documentation section below.
 
-## Usage
+## Building the Applications From Scratch
 
-For instructions please see the [Artemis manual](ftp://ftp.sanger.ac.uk/pub/resources/software/artemis/artemis.pdf)
+If you would prefer to build the applications from scratch rather than use the pre-built releases in GitHub, then you will firstly need the source code from GitHub. This can be obtained by cloning the repository:
+
+git clone http://github.com/sanger-pathogens/Artemis.git
+
+or by downloadng the source zip file for a particular release. Apache Maven and Java 8 will need to be installed beforehand, in order to build. The applications can be built by issuing the following command in the top-level folder:
+
+mvn validate clean test package
 
 ## License
 Artemis is free software, licensed under [GPLv3](https://github.com/sanger-pathogens/artemis/blob/master/LICENSE).
@@ -49,15 +55,13 @@ For more information on how to download Artemis, please see the [Artemis GitHub 
 ## Documentation
 
 The Artemis user manual is at:
-  http://www.sanger.ac.uk/science/tools/artemis
+  http://sanger-pathogens.github.io/Artemis/Artemis/
 
 The ACT user manual is at:
-  http://www.sanger.ac.uk/science/tools/artemis-comparison-tool-act
-  
-The DNA plotter user manual is at:
-  http://www.sanger.ac.uk/science/tools/dnaplotter
-  
-The BAM View user manual is at:
-  http://www.sanger.ac.uk/science/tools/bamview
- 
+  http://sanger-pathogens.github.io/Artemis/ACT/
 
+The DNA plotter documentation is at:
+  http://sanger-pathogens.github.io/Artemis/Artemis/DNAPlotter/
+
+The BAM View documentation is at:
+  http://sanger-pathogens.github.io/Artemis/Artemis/BamView/

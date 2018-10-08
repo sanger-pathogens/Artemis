@@ -20,6 +20,14 @@
 				<include>*.jar</include>
 			</includes>
 		</fileSet>
+		<fileSet>
+			<outputDirectory>${windows.assembly.folder}</outputDirectory>
+			<includes>
+				<include>AUTHORS</include>
+				<include>LICENSE</include>
+				<include>README*</include>
+			</includes>
+		</fileSet>
 	</fileSets>
 </assembly>
 

@@ -4,13 +4,13 @@ jdk:
 sudo: true
 env:
   global:
-    - BUILD_CMD='mvn -X -Dskip.tests=true validate clean install'
-    - RUN_TESTS=false
+    - BUILD_CMD='mvn -Dskip.tests=true clean package'
+    - RUN_TESTS=true
 matrix:
   include:
   - jdk: oraclejdk8
     env:
-    - RUN_TESTS=false
+    - RUN_TESTS=true
 cache:
   directories:
   - "${HOME}/dependencies"
@@ -19,7 +19,7 @@ before_install:
   - "export DISPLAY=:99.0"
   - "sh -e /etc/init.d/xvfb start"
   - "source install_dependencies.sh"
-  - mvn -X validate
+  - mvn validate
 install:
   - "$BUILD_CMD"
 script:

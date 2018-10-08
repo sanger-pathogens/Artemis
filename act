@@ -138,7 +138,7 @@ then
     echo "Starting ACT with arguments: $FLAGS $APPLICATION_PROPERTIES $*"
 fi
 
-$JAVA $FLAGS $APPLICATION_PROPERTIES -cp "$JAR_FILE_DEFAULT:$JAR_FILE_INSTALLED" uk.ac.sanger.artemis.components.ActMain $*
+$JAVA $FLAGS $APPLICATION_PROPERTIES -cp ".:$JAR_FILE_DEFAULT:$JAR_FILE_INSTALLED" uk.ac.sanger.artemis.components.ActMain $*
 result=$?
 
 exit $result
