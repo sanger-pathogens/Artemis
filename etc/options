@@ -841,7 +841,7 @@ hyperlinks = \
   PIRSF http://pir.georgetown.edu/cgi-bin/ipcSF?id= \
   TIGR_TIGRFAMS http://cmr.tigr.org/tigr-scripts/CMR/HmmReport.cgi?hmm_acc= \
   OPI http://chemlims.com/OPI/MServlet.ChemInfo?module=GeneGo&act=findGenes&Gene_Name_= \
-  GO http://amigo.geneontology.org/cgi-bin/amigo/term_details?term=GO: \
+  GO http://amigo.geneontology.org/amigo/term/GO: \
   PANTHER http://www.pantherdb.org/panther/family.do?clsAccession= \
   Superfamily http://supfam.org/SUPERFAMILY/cgi-bin/scop.cgi?ipid= \
   PDB http://www.rcsb.org/pdb/explore.do?structureId= \
