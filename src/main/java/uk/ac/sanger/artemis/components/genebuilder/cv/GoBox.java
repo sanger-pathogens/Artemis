@@ -315,7 +315,7 @@ public class GoBox extends AbstractCvBox
           return;
         }
       }
-      AMIGOURL = "http://amigo.geneontology.org/cgi-bin/amigo/term-details.cgi?term=";
+      AMIGOURL = "http://amigo.geneontology.org/amigo/term/GO:";
     }
   }
   
