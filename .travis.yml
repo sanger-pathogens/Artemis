@@ -8,13 +8,14 @@ matrix:
   include:
     - jdk: oraclejdk8
       env: 
-       - EVOSUITE_TEST_EXCLUDES=**/artemis/*ESTest.*
+       - TEST_EXCLUDES="**/artemis/*ESTest*,**/artemis/chado/*ESTest*,**/artemis/io/*ESTest*"
     - jdk: openjdk8
       env: 
-       - EVOSUITE_TEST_EXCLUDES=**/artemis/**/*ESTest.*
+       - TEST_EXCLUDES="**/artemis/components/**/*ESTest*"
 cache:
   directories:
   - "${HOME}/dependencies"
+  - "${HOME}/.m2"
 before_install:
   - "export CASHER_TIME_OUT=300"
   - "export DISPLAY=:99.0"
@@ -27,5 +28,5 @@ script:
   - if [ "$RUN_TESTS" == "true" ]; then
       cd test;
       ln -s $(pwd)/../etc/log4j.properties .;
-      ./RunTravisTests.sh -e $EVOSUITE_TEST_EXCLUDES | tee test.log && [ -z "$(grep 'Failures:\s[^0]\|Errors:\s[^0]' test.log)" ];
+      ./RunTravisTests.sh -e "$TEST_EXCLUDES" | tee test.log && [ -z "$(grep 'Failures:\s[^0]\|Errors:\s[^0]' test.log)" ];
     fi
