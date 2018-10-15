@@ -523,7 +523,7 @@ public class FileDocument_ESTest extends FileDocument_ESTest_scaffolding {
       Document document0 = fileDocument0.getParent();
       boolean boolean0 = document0.readable();
       assertTrue(fileDocument0.readable());
-      assertFalse(boolean0);
+      assertTrue(boolean0);
   }
 
   @Test(timeout = 4000)
