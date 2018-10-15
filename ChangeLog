@@ -1,11 +1,22 @@
-Version 17.0.2-test - TBD next release
+Version 18
 
-	1) Added bamview_use_htsjdk_file_index_caching property to allow switching off of htsjdk caching for bam files. 
-	   This gets around a bug for large bams whereby parts of the bam fail to get loaded - RT ticket #624271. 
-	   See htsjdk GitHub issue 1127 for details.
-
-
-Version 17.0.1
+	1) Switched build process to use Maven. Changed directory structure. Removed ant and Make files.
+	2) Retired a number of jars and upgraded others. Removed the ssh-plugin jar.
+	3) Upgraded to Picard 2.18.14 jar, which has a number of important bug fixes. 
+	4) Removed old documentation functionality. HTML/PDF manuals are now stored in gh-pages branch and exported directly from a word doc.
+	5) Changed application script jar paths.
+	6) Rewrote writedb_entry script.
+	7) Replaced script usage of -Dcom.apple.mrj.application.apple.menu.about.name with -Xdock:name.
+	8) Fixed incorrect Amigo GO term URL, used in the Artemis gene builder window.
+	9) Updated README.
+	
+Version 17.0.2-test - patch release for Sanger. Changes incorporated into GitHub master.
+ 
+ 	1) Added bamview_use_htsjdk_file_index_caching property to allow switching off of htsjdk caching for bam files. 
+ 	   This gets around a bug for large bams whereby parts of the bam fail to get loaded - RT ticket #624271. 
+ 	   See htsjdk GitHub issue 1127 for details.
+ 
+Version 17
 
 	Artemis/ACT and associated applications have been upgraded to Java 8. Java 7/6/5 are now no longer supported - RT ticket #589103
 	

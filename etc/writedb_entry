@@ -1,36 +1,65 @@
-#!/bin/sh -
+#!/bin/bash -
+
 #
-# This script reads and writes entries from a database.
+# This script reads and writes entries from a Chado database.
 # Examples:
 # writedb_entry -help
 # writedb_entry -s Pf3D7_01 Pf3D7_05 Pf3D7_07
 #
-# The Java JRE to use is taken from the ARTEMIS_JAVA_JRE
-# environment variable. If this is not set then the JRE is defaulted to 
-# a Java 8 version.
+# If the environment variable ARTEMIS_JAVA_JRE points to a Java JRE
+# then this JRE will be used in preference to any other.
 #
 
-#if [ -z "$ARTEMIS_HOME" ]; then
-#  PRG=`readlink -f "$0"`
-#  echo $PRG
-#  ARTEMIS_HOME=`dirname "$PRG"`/..
-#fi
-
+QUIET=no
 PRG=$0
+PROXY_SETTINGS=
 
+add_proxy_properties() {
+
+	if [[ "$http_proxy" = "" ]]
+	then
+		http_proxy=$HTTP_PROXY
+	fi
+	
+	if [[ "$http_proxy" = "" ]]
+	then
+	 	http_proxy=$HTTP_proxy
+	fi
+	
+	if [[ "$http_proxy" != "" ]]
+	then
+		PROXY_SETTINGS="${PROXY_SETTINGS} -DproxySet=true "`echo $http_proxy | sed 's/http:\/\/\(.*\):\(.*\)/ -Dhttp.proxyHost=\1 -Dhttp.proxyPort=\2/'`
+	fi
+}
+
+#
+# Resolve links - $0 may be a link
+#
 while [ -h "$PRG" ] ; do
-  ls=`ls -ld "$PRG"`
-  link=`expr "$ls" : '.*-> \(.*\)$'`
-  if expr "$link" : '.*/.*' > /dev/null; then
-    PRG="$link"
-  else
-    PRG="`dirname $PRG`/$link"
-  fi
+	ls=`ls -ld "$PRG"`
+	link=`expr "$ls" : '.*-> \(.*\)$'`
+	if expr "$link" : '.*/.*' > /dev/null; then
+		PRG="$link"
+	else
+		PRG="`dirname $PRG`/$link"
+	fi
 done
 
-ARTEMIS_HOME=`dirname "$PRG"`/..
+#
+# Allow URLs to work from behind firewalls.
+#
+add_proxy_properties
 
-# Default Java to use
+FLAGS="-mx2048m -ms20m -Djdbc.drivers=org.postgresql.Driver -Dibatis"
+DEFAULT_CONNECTION="-Dchado=db.genedb.org:5432/snapshot?genedb_ro -Dread_only"
+APPLICATION_HOME=`dirname "$PRG"`/..
+JAR_NAME=artemis.jar
+JAR_FILE_DEFAULT=$APPLICATION_HOME/target/unix-jars/$JAR_NAME
+JAR_FILE_INSTALLED=$APPLICATION_HOME/$JAR_NAME
+
+#
+# Use a custom Java version if necessary
+#
 if [[ "$ARTEMIS_JAVA_JRE" = "" ]]
 then
 	JAVA=`which java`
@@ -42,16 +71,9 @@ fi
 JAVA_VERSION=`${JAVA} -version 2>&1`
 echo ${JAVA_VERSION}
 
-CLASSPATH="$ARTEMIS_HOME:$ARTEMIS_HOME/lib/biojava.jar:$ARTEMIS_HOME/lib/jemAlign.jar:$ARTEMIS_HOME/lib/jakarta-regexp-1.2.jar:$ARTEMIS_HOME/lib/postgresql-8.4-701.jdbc3.jar:$CLASSPATH"
-CLASSPATH="$ARTEMIS_HOME/lib/commons-lang-2.6.jar:$CLASSPATH"
-CLASSPATH="$CLASSPATH:$ARTEMIS_HOME/lib/ibatis/ibatis-2.3.4.726.jar:$ARTEMIS_HOME/lib/ibatis/:$ARTEMIS_HOME/lib/ibatis/log4j-1.2.14.jar:$ARTEMIS_HOME/lib/ibatis/cglib-nodep-2.2.jar"
-CLASSPATH="$CLASSPATH:$ARTEMIS_HOME/lib/picard/picard.jar"
-export CLASSPATH
-
-FLAGS="-mx2048m -ms20m -Djdbc.drivers=org.postgresql.Driver -Dibatis"
-DEFAULT_CONNECTION="-Dchado=db.genedb.org:5432/snapshot?genedb_ro -Dread_only"
-
-
+#
+# Parse arguments.
+#
 while test $# != 0
     do
     case $1 in
@@ -74,13 +96,19 @@ do
 	fi
 	if [ '-l' == "${arg}" ]; then
 		let "nextID = $idx + 2";
-                eval MAPPING_PATH="${!nextID}"
+        eval MAPPING_PATH="${!nextID}"
 		CLASSPATH="${MAPPING_PATH}:$CLASSPATH"
 		export CLASSPATH
 	fi
 	let idx++
 done
 
-echo starting to write with flags: $DEFAULT_CONNECTION $FLAGS 1>&2
+if [[ "$QUIET" = "no" ]]
+then
+    echo "Starting writedb_entry with arguments: $PROXY_SETTINGS $DEFAULT_CONNECTION $FLAGS $@"
+fi
 
-$JAVA $DEFAULT_CONNECTION $FLAGS uk.ac.sanger.artemis.io.ReadAndWriteEntry "$@"
+$JAVA $PROXY_SETTINGS $DEFAULT_CONNECTION $FLAGS -cp "$APPLICATION_HOME:$JAR_FILE_DEFAULT:$JAR_FILE_INSTALLED" uk.ac.sanger.artemis.io.ReadAndWriteEntry "$@"
+result=$?
+
+exit $result

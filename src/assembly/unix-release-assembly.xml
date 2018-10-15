@@ -1,0 +1,55 @@
+<assembly 
+  xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 
+  http://maven.apache.org/xsd/assembly-1.1.2.xsd">
+ 
+  <!-- Assembles a release tar with jars, scripts and property files etc for unix based systems-->
+  <id>assemble-unix-release</id>
+	<formats>
+		<format>tar.gz</format>
+		<format>zip</format>
+	</formats>
+	<includeBaseDirectory>false</includeBaseDirectory>
+	
+	<!-- Assembles a simple release tar gz with jars and scripts -->
+	<fileSets>
+		<fileSet>
+			<directory>target/unix-jars</directory>
+			<outputDirectory>${unix.assembly.folder}</outputDirectory>
+			<includes>
+				<include>*.jar</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<outputDirectory>${unix.assembly.folder}</outputDirectory>
+			<includes>
+				<include>etc/**</include>
+			</includes>
+			<directoryMode>0755</directoryMode>
+			<fileMode>0755</fileMode>
+			<lineEnding>unix</lineEnding>
+		</fileSet>
+		<fileSet>
+			<outputDirectory>${unix.assembly.folder}</outputDirectory>
+			<includes>
+				<include>AUTHORS</include>
+				<include>LICENSE</include>
+				<include>README*</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<outputDirectory>${unix.assembly.folder}</outputDirectory>
+			<includes>
+				<include>art</include>
+				<include>act</include>
+				<include>dnaplotter</include>
+				<include>bamview</include>
+				<include>setenv</include>
+			</includes>
+			<fileMode>0755</fileMode>
+			<lineEnding>unix</lineEnding>
+		</fileSet>
+	</fileSets>
+</assembly>
+

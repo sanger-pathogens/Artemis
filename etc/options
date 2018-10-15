@@ -841,7 +841,7 @@ hyperlinks = \
   PIRSF http://pir.georgetown.edu/cgi-bin/ipcSF?id= \
   TIGR_TIGRFAMS http://cmr.tigr.org/tigr-scripts/CMR/HmmReport.cgi?hmm_acc= \
   OPI http://chemlims.com/OPI/MServlet.ChemInfo?module=GeneGo&act=findGenes&Gene_Name_= \
-  GO http://amigo.geneontology.org/cgi-bin/amigo/term_details?term=GO: \
+  GO http://amigo.geneontology.org/amigo/term/GO: \
   PANTHER http://www.pantherdb.org/panther/family.do?clsAccession= \
   Superfamily http://supfam.org/SUPERFAMILY/cgi-bin/scop.cgi?ipid= \
   PDB http://www.rcsb.org/pdb/explore.do?structureId= \
@@ -857,8 +857,7 @@ bam_read_thread = 2
 # Max read coverage to display
 bam_max_coverage = 1000000
 bamview_ftp_buffer_size=10485760
-# The following setting is turned off due to htsjdk issue no. 1127 (see GitHub)
-bamview_use_htsjdk_file_index_caching=false
+bamview_use_htsjdk_file_index_caching=true
 
 #
 # CHADO DATABASE OPTIONS 

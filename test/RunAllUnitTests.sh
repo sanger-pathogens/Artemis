@@ -1,11 +1,27 @@
 #! /bin/bash
 
+############################################################
+# Run all hand-crafted and Evosuite generated unit tests.
+# Evosuite unit tests are run in a sandbox by the 
+# Evosuite unit test listener which is invoked by Surefire.
+#
+############################################################
 echo
 echo "This may take 30 minutes or more..."
 echo
+echo "EMBOSS_ROOT set to: "$EMBOSS_ROOT
+echo
 
 sleep 5
+cd ..
 
-SCRIPT_DIR=$(dirname $0)
-ant -Dlib=${SCRIPT_DIR}/jacoco-lib -DEMBOSS_ROOT=$EMBOSS_ROOT -buildfile build-test.xml testall
+#mvn clean compile test-compile
+
+if [[ ! -f ".scaffolding_list.tmp" ]]
+then
+	echo "ERROR: Cannot find Evosuite .scaffolding_list.tmp file - unit tests will not be sand-boxed! Exiting."
+	exit 1
+fi 
+
+mvn -Devosuite.exclude.filter='' test jacoco:report
 
