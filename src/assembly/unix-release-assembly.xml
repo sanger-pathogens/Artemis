@@ -24,6 +24,15 @@
 		<fileSet>
 			<outputDirectory>${unix.assembly.folder}</outputDirectory>
 			<includes>
+				<include>etc/**</include>
+			</includes>
+			<directoryMode>0755</directoryMode>
+			<fileMode>0755</fileMode>
+			<lineEnding>unix</lineEnding>
+		</fileSet>
+		<fileSet>
+			<outputDirectory>${unix.assembly.folder}</outputDirectory>
+			<includes>
 				<include>AUTHORS</include>
 				<include>LICENSE</include>
 				<include>README*</include>

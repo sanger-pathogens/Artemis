@@ -6,9 +6,8 @@
 # writedb_entry -help
 # writedb_entry -s Pf3D7_01 Pf3D7_05 Pf3D7_07
 #
-# The Java JRE to use is taken from the ARTEMIS_JAVA_JRE
-# environment variable. If this is not set then the JRE is defaulted to 
-# a Java 8 version.
+# If the environment variable ARTEMIS_JAVA_JRE points to a Java JRE
+# then this JRE will be used in preference to any other.
 #
 
 QUIET=no
@@ -55,7 +54,8 @@ FLAGS="-mx2048m -ms20m -Djdbc.drivers=org.postgresql.Driver -Dibatis"
 DEFAULT_CONNECTION="-Dchado=db.genedb.org:5432/snapshot?genedb_ro -Dread_only"
 APPLICATION_HOME=`dirname "$PRG"`/..
 JAR_NAME=artemis.jar
-JAR_FILE=$APPLICATION_HOME/target/unix-jars/$JAR_NAME
+JAR_FILE_DEFAULT=$APPLICATION_HOME/target/unix-jars/$JAR_NAME
+JAR_FILE_INSTALLED=$APPLICATION_HOME/$JAR_NAME
 
 #
 # Use a custom Java version if necessary
@@ -106,10 +106,9 @@ done
 if [[ "$QUIET" = "no" ]]
 then
     echo "Starting writedb_entry with arguments: $PROXY_SETTINGS $DEFAULT_CONNECTION $FLAGS $@"
-    echo "Classpath: $CLASSPATH"
 fi
 
-$JAVA $PROXY_SETTINGS $DEFAULT_CONNECTION $FLAGS -cp "$JAR_FILE" uk.ac.sanger.artemis.io.ReadAndWriteEntry "$@"
+$JAVA $PROXY_SETTINGS $DEFAULT_CONNECTION $FLAGS -cp "$APPLICATION_HOME:$JAR_FILE_DEFAULT:$JAR_FILE_INSTALLED" uk.ac.sanger.artemis.io.ReadAndWriteEntry "$@"
 result=$?
 
 exit $result
