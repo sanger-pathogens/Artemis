@@ -1,5 +1,6 @@
 language: java
 jdk:
+  - openjdk8
   - oraclejdk8
 sudo: true
 env:
@@ -8,9 +9,12 @@ env:
     - RUN_TESTS=true
 matrix:
   include:
-  - jdk: oraclejdk8
-    env:
-    - RUN_TESTS=true
+    - jdk: oraclejdk8
+      env: 
+       - EVOSUITE_TEST_EXCLUDES=**/artemis/*ESTest.*
+    - jdk: openjdk8
+      env: 
+       - EVOSUITE_TEST_EXCLUDES=**/artemis/**/*ESTest.*
 cache:
   directories:
   - "${HOME}/dependencies"
@@ -26,5 +30,5 @@ script:
   - if [ "$RUN_TESTS" == "true" ]; then
       cd test;
       ln -s $(pwd)/../etc/log4j.properties .;
-      ./RunAllUnitTests.sh | tee test.log && [ -z "$(grep 'Failures:\s[^0]\|Errors:\s[^0]' test.log)" ];
+      ./RunTravisTests.sh -e $EVOSUITE_TEST_EXCLUDES | tee test.log && [ -z "$(grep 'Failures:\s[^0]\|Errors:\s[^0]' test.log)" ];
     fi

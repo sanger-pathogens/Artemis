@@ -132,7 +132,7 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
         
         <!-- Surefire unit test plugin parameters -->
         <surefireArgLine>-Xmx4g ${noverify.command.line.arg} ${postgres.command.line.arg} -Duse_separate_classloader=false -DEMBOSS_ROOT=${emboss.installation.root}</surefireArgLine>
-        <surefire.num.forks>2</surefire.num.forks>
+        <surefire.num.forks>1</surefire.num.forks>
 
         <!-- Files to exclude from the build, e.g. Mac resource files. -->
         <default.file.excludes>**/log4j*.xml META-INF/* **/.DS_Store **/._*</default.file.excludes>
