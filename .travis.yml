@@ -1,19 +1,16 @@
 language: java
-jdk:
-  - openjdk8
-  - oraclejdk8
+env:
+  global:
+    - BUILD_CMD='mvn -Dskip.tests=true clean package'
+    - RUN_TESTS=true
 sudo: true
 matrix:
   include:
     - jdk: oraclejdk8
       env: 
-       - BUILD_CMD='mvn -Dskip.tests=true clean package'
-       - RUN_TESTS=true
        - EVOSUITE_TEST_EXCLUDES=**/artemis/*ESTest.*
     - jdk: openjdk8
       env: 
-       - BUILD_CMD='mvn -Dskip.tests=true clean package'
-       - RUN_TESTS=true
        - EVOSUITE_TEST_EXCLUDES=**/artemis/**/*ESTest.*
 cache:
   directories:
