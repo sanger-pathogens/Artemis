@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>uk.ac.sanger</groupId>
 	<artifactId>artemis</artifactId>
-	<version>18.0.0-SNAPSHOT</version>
+	<version>18.0.0-RC1</version>
 	
 	<name>Artemis</name>
 	<description>Artemis is a free genome browser and annotation tool that allows visualisation of sequence features, next generation data and the results of analyses within the context of the sequence, and also its six-frame translation.
@@ -132,7 +132,7 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
         
         <!-- Surefire unit test plugin parameters -->
         <surefireArgLine>-Xmx4g ${noverify.command.line.arg} ${postgres.command.line.arg} -Duse_separate_classloader=false -DEMBOSS_ROOT=${emboss.installation.root}</surefireArgLine>
-        <surefire.num.forks>1</surefire.num.forks>
+        <surefire.num.forks>2</surefire.num.forks>
 
         <!-- Files to exclude from the build, e.g. Mac resource files. -->
         <default.file.excludes>**/log4j*.xml META-INF/* **/.DS_Store **/._*</default.file.excludes>
@@ -296,7 +296,17 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 			<artifactId>slf4j-nop</artifactId>
 			<version>1.7.25</version>
 			<scope>test</scope>
-		</dependency>    
+		</dependency>  
+		
+		<!-- https://mvnrepository.com/artifact/org.mockito/mockito-core -->
+		<dependency>
+		    <groupId>org.mockito</groupId>
+		    <artifactId>mockito-core</artifactId>
+		    <version>2.23.0</version>
+		    <scope>test</scope>
+		</dependency>  
+		
+		<!--  End of testing only -->
 		
 		<!-- Redundant dependencies..... -->
 		
