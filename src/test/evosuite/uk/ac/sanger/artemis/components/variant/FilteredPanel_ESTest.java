@@ -117,56 +117,6 @@ public class FilteredPanel_ESTest extends FilteredPanel_ESTest_scaffolding {
   }
 
   @Test(timeout = 4000)
-  public void test07()  throws Throwable  {
-      // Undeclared exception!
-      try { 
-        FilteredPanel.getHeaderLineFiltersIDs();
-        fail("Expecting exception: NullPointerException");
-      
-      } catch(NullPointerException e) {
-         //
-         // no message in exception (getMessage() returned null)
-         //
-         verifyException("uk.ac.sanger.artemis.components.variant.FilteredPanel", e);
-      }
-  }
-
-  @Test(timeout = 4000)
-  public void test08()  throws Throwable  {
-      KeyVector keyVector0 = new KeyVector();
-      FilteredPanel filteredPanel0 = new FilteredPanel(keyVector0);
-      DefaultFormatterFactory defaultFormatterFactory0 = new DefaultFormatterFactory();
-      JFormattedTextField jFormattedTextField0 = new JFormattedTextField((JFormattedTextField.AbstractFormatterFactory) defaultFormatterFactory0);
-      keyVector0.add((Object) jFormattedTextField0);
-      // Undeclared exception!
-      try { 
-        FilteredPanel.getHeaderLineFiltersIDs();
-        fail("Expecting exception: ClassCastException");
-      
-      } catch(ClassCastException e) {
-         //
-         // javax.swing.JFormattedTextField cannot be cast to uk.ac.sanger.artemis.components.variant.HeaderLine
-         //
-         verifyException("uk.ac.sanger.artemis.components.variant.FilteredPanel", e);
-      }
-  }
-
-  @Test(timeout = 4000)
-  public void test09()  throws Throwable  {
-      // Undeclared exception!
-      try { 
-        FilteredPanel.getHeader();
-        fail("Expecting exception: NullPointerException");
-      
-      } catch(NullPointerException e) {
-         //
-         // no message in exception (getMessage() returned null)
-         //
-         verifyException("uk.ac.sanger.artemis.components.variant.FilteredPanel", e);
-      }
-  }
-
-  @Test(timeout = 4000)
   public void test10()  throws Throwable  {
       FilteredPanel filteredPanel0 = null;
       try {
@@ -262,30 +212,6 @@ public class FilteredPanel_ESTest extends FilteredPanel_ESTest_scaffolding {
       filteredPanel0.addFilter("", headerLine0, 8);
       filteredPanel0.updateFilters();
       assertFalse(filteredPanel0.getIgnoreRepaint());
-  }
-
-  @Test(timeout = 4000)
-  public void test17()  throws Throwable  {
-      LinkedList<HeaderLine> linkedList0 = new LinkedList<HeaderLine>();
-      Hashtable<String, String> hashtable0 = new Hashtable<String, String>();
-      HeaderLine headerLine0 = new HeaderLine("86=.N '=(_", "86=.N '=(_", hashtable0);
-      linkedList0.add(headerLine0);
-      FilteredPanel filteredPanel0 = new FilteredPanel(linkedList0);
-      List<String> list0 = FilteredPanel.getHeaderLineFiltersIDs();
-      assertNotNull(list0);
-      assertEquals(1, list0.size());
-  }
-
-  @Test(timeout = 4000)
-  public void test18()  throws Throwable  {
-      Hashtable<String, RecordFilter> hashtable0 = FilteredPanel.getFilters();
-      assertTrue(hashtable0.isEmpty());
-  }
-
-  @Test(timeout = 4000)
-  public void test19()  throws Throwable  {
-      List<HeaderLine> list0 = FilteredPanel.getHeaderLineFilters();
-      assertNull(list0);
   }
 
   @Test(timeout = 4000)
