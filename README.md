@@ -16,6 +16,7 @@ The Artemis Software is a set of software tools for genome browsing and annotati
   * [Introduction](#introduction)
   * [Installation](#installation)
   * [Usage](#usage)
+  * [Building](#building)
   * [License](#license)
   * [Documentation](#documentation)
 
@@ -33,17 +34,21 @@ ACT is a free tool for displaying pairwise comparisons between two or more DNA s
 
 For further information, please see the [Artemis GitHub page](http://sanger-pathogens.github.io/Artemis/)
 
-## Installation and Usage
+## Installation
 
 Please refer to the relevant documentation in the Documentation section below.
 
-## Building the Applications From Scratch
+## Usage
+
+Please refer to the relevant documentation in the Documentation section below.
+
+## Building
 
 If you would prefer to build the applications from scratch rather than use the pre-built releases in GitHub, then you will firstly need the source code from GitHub. This can be obtained by cloning the repository:
 
 git clone http://github.com/sanger-pathogens/Artemis.git
 
-or by downloadng the source zip file for a particular release. Apache Maven and Java 8 will need to be installed beforehand, in order to build. The applications can be built by issuing the following command in the top-level folder:
+or by downloading the source zip file for a particular release. Apache Maven and Java 8 will need to be installed beforehand, in order to build. The applications can be built by issuing the following command in the top-level folder:
 
 mvn validate clean test package
 
