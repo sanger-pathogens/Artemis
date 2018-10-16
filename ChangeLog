@@ -9,6 +9,8 @@ Version 18
 	7) Replaced script usage of -Dcom.apple.mrj.application.apple.menu.about.name with -Xdock:name.
 	8) Fixed incorrect Amigo GO term URL, used in the Artemis gene builder window.
 	9) Updated README.
+	10) Fix for RT ticket #400288: "GO term warnings in Artemis" - we now no longer put out a warning for ISM, as it's optional in certain cases
+	    [http://wiki.geneontology.org/index.php/Inferred_from_Sequence_Model_(ISM)].
 	
 Version 17.0.2-test - patch release for Sanger. Changes incorporated into GitHub master.
  

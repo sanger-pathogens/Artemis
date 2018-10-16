@@ -20,38 +20,43 @@
  */
 package uk.ac.sanger.artemis.io;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.io.IOException;
-import java.net.URL;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-import org.apache.log4j.Level;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import junit.framework.Assert;
 
 import uk.ac.sanger.artemis.EntryGroup;
 import uk.ac.sanger.artemis.Feature;
-import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.SimpleEntryGroup;
-import uk.ac.sanger.artemis.components.EntryFileDialog;
 import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
-import uk.ac.sanger.artemis.io.DocumentEntryFactory;
 import uk.ac.sanger.artemis.io.Entry;
-import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.FeatureVector;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.io.ValidateFeature;
-import uk.ac.sanger.artemis.util.Document;
-import uk.ac.sanger.artemis.util.DocumentFactory;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
+import uk.ac.sanger.artemis.util.StringVector;
 import uk.ac.sanger.artemis.sequence.NoSequenceException;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 public class ValidateFeatureTest
 {
+  @Mock
+  QualifierInfo qInfo;
+  @Mock
+  QualifierVector qualifiers;
+  @Mock
+  EntryInformation eInfo;
+  
+  @Before
+  public void setUp() throws Exception {
+
+      MockitoAnnotations.initMocks(this);
+  }
+	
   @Test
   public void testGFF()
   {
@@ -328,6 +333,102 @@ public class ValidateFeatureTest
     {
       Assert.fail(e.getMessage());
     }
+  }
+  
+  /**
+   * Test RT ticket #400288: "GO term warnings in Artemis" fix.
+   */
+  @Test
+  public void testValidateGO()
+  {
+	 // ========== Test ISS with NO with/from - required field ========
+	  
+	 // Given
+	 Qualifier q = new Qualifier("GO");
+	 q.addValue("aspect=F;GOid=GO:0004672;term=protein kinase activity;db_xref=PMID:17181785;date=20090715;evidence=ISS");
+	 //q.addValue("aspect=P;GOid=GO:0006468;term=protein amino acid phosphorylation;db_xref=PMID:17181785;date=20090715;evidence=ISS");
+	 //q.addValue("aspect=F;GOid=GO:0005524;term=ATP binding;date=20100915;evidence=IEA;autocomment=From iprscan");
+	 //q.addValue("aspect=F;GOid=GO:0004674;term=protein serine/threonine kinase activity;date=20100915;evidence=IEA;autocomment=From iprscan");
+	 
+	 QualifierInfo qInfo = new QualifierInfo("GO", QualifierInfo.QUOTED_TEXT, null, null, false);
+	  
+	 // When
+	 
+	 when( qualifiers.getQualifierByName("GO") ).thenReturn(q);
+	 when( eInfo.getQualifierInfo("GO") ).thenReturn(qInfo);
+
+	 String term = ValidateFeature.validateGO(qualifiers, eInfo);
+
+	 // Then
+	 
+	 assertEquals("With/From is mandatory for ISM", "GOid=GO:0004672, the with/from field must be filled when using ISS\n", term);
+	 
+	 
+	 // =========  Test ISS with with/from field ======================
+	 
+	 // Given
+	 q = new Qualifier("GO");
+	 q.addValue("aspect=F;GOid=GO:0004672;term=protein kinase activity;db_xref=PMID:17181785;date=20090715;with=DUMMY;evidence=ISS");
+	
+	 // When
+	 
+     when( qualifiers.getQualifierByName("GO") ).thenReturn(q);
+		 
+	 term = ValidateFeature.validateGO(qualifiers, eInfo);
+
+	 // Then
+	 
+	 assertEquals("With/From is optional for ISS (with/from present)", "", term);
+	 
+		 
+	 // =========  Test ISM with NO with/from field [optional] ========
+	 
+	 // Given
+	 q = new Qualifier("GO");
+	 q.addValue("aspect=F;GOid=GO:0004672;term=protein kinase activity;db_xref=PMID:17181785;date=20090715;evidence=ISM");
+	
+	 // When
+	 
+     when( qualifiers.getQualifierByName("GO") ).thenReturn(q);
+		 
+	 term = ValidateFeature.validateGO(qualifiers, eInfo);
+
+	 // Then
+	 
+	 assertEquals("With/From is optional for ISM (with/from absent)", "", term);
+	 
+	 // =========  Test ISM with a with/from [optional] ========
+	 
+	 // Given
+	 q = new Qualifier("GO");
+	 q.addValue("aspect=F;GOid=GO:0004672;term=protein kinase activity;db_xref=PMID:17181785;date=20090715;with=DUMMY;evidence=ISM");
+	
+	 // When
+	 
+     when( qualifiers.getQualifierByName("GO") ).thenReturn(q);
+		 
+	 term = ValidateFeature.validateGO(qualifiers, eInfo);
+
+	 // Then
+	 
+	 assertEquals("With/From is optional for ISM (with/from present)", "", term);
+	 
+	 
+	 // =========  Test ISM with a with/from field that has spaces ========
+	 
+	 // Given
+	 q = new Qualifier("GO");
+	 q.addValue("aspect=F;GOid=GO:0004672;term=protein kinase activity;db_xref=PMID:17181785;date=20090715;with=      VAL;evidence=ISM");
+	
+	 // When
+	 
+	 when( qualifiers.getQualifierByName("GO") ).thenReturn(q);
+		 
+	 term = ValidateFeature.validateGO(qualifiers, eInfo);
+	
+	 // Then
+	 
+	 assertEquals("With/From field with spaces for ISM", "GOid=GO:0004672, with/from field (      VAL) contains white space \n", term);
   }
   
 }

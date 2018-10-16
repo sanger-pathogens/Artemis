@@ -360,9 +360,14 @@ public class ValidateFeature
                   + ", the with/from must be empty when using " + code + "\n");
             }
             else if (code.equals("ISS") || code.equals("ISA") || 
-                     code.equals("ISO") || code.equals("ISM"))
+                     code.equals("ISO"))
             {
-              // with field must be filled
+              /* 
+               * with field must be filled.
+               * Changed for RT ticket #400288: GO term warnings in Artemis:
+               * 	- we now no longer put out a warning for ISM,as it is optional in certain cases.
+               * 	- see http://wiki.geneontology.org/index.php/Inferred_from_Sequence_Model_(ISM)
+               */
               if (with.length() == 0)
                 buff.append("GOid=" + goid +
                   ", the with/from field must be filled when using " + code + "\n");
