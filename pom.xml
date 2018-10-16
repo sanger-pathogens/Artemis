@@ -131,8 +131,9 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
         <j2ssh.command.line.arg>-Dj2ssh</j2ssh.command.line.arg>
         
         <!-- Surefire unit test plugin parameters -->
-        <surefireArgLine>-Xmx4g ${noverify.command.line.arg} ${postgres.command.line.arg} -Duse_separate_classloader=false -DEMBOSS_ROOT=${emboss.installation.root}</surefireArgLine>
+        <unit.test.timeout.ms>8000</unit.test.timeout.ms>
         <surefire.num.forks>2</surefire.num.forks>
+        <surefireArgLine>-Xmx4g ${noverify.command.line.arg} ${postgres.command.line.arg} -Dtimeout=${unit.test.timeout.ms} -Duse_separate_classloader=false -DEMBOSS_ROOT=${emboss.installation.root}</surefireArgLine>
 
         <!-- Files to exclude from the build, e.g. Mac resource files. -->
         <default.file.excludes>**/log4j*.xml META-INF/* **/.DS_Store **/._*</default.file.excludes>
