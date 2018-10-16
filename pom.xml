@@ -1615,24 +1615,6 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 	         </build>   
 	    </profile>
 	    
-	    <!-- Release profile: Creates the site HTML reports. -->
-	    <!--  profile>
-	        <id>site</id>
-	        <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-	        <properties>
-	        		<skip.tests>false</skip.tests>
-        			<evosuite.exclude.filter></evosuite.exclude.filter>
-        			<jarsigner.skip>true</jarsigner.skip>
-        			<skip.artifact.creation>true</skip.artifact.creation>
-        			<skip.coverage.reporting>false</skip.coverage.reporting>
-        			<skip.javadoc>false</skip.javadoc>
-        			
-	            <build.profile.id>site</build.profile.id>
-	        </properties>
-	    </profile -->
-	    
 	</profiles>
 	
 </project>

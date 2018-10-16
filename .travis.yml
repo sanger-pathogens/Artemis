@@ -8,7 +8,7 @@ matrix:
   include:
     - jdk: oraclejdk8
       env: 
-       - TEST_EXCLUDES="**/artemis/*ESTest*,**/artemis/chado/*ESTest*,**/artemis/io/*ESTest*"
+       - TEST_EXCLUDES="**/artemis/*ESTest*,**/artemis/chado/*ESTest*,**/artemis/io/*ESTest*,**/artemis/plot/*ESTest*,**/artemis/sequence/*ESTest*,**/artemis/util/*ESTest*"
     - jdk: openjdk8
       env: 
        - TEST_EXCLUDES="**/artemis/components/**/*ESTest*"
