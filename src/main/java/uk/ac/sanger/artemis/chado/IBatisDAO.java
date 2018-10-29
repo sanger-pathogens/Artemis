@@ -101,7 +101,7 @@ public class IBatisDAO extends GmodDAO
    * without the feature_cvterm.rank column.
    * @return true if the feature_cvterm.rank column exists.
    */
-  private boolean isFeatureCvTermRank()
+  boolean isFeatureCvTermRank()
   {
   	if(featureCvTermRankChecked)
   		return featureCvTermRank;
