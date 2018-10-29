@@ -934,7 +934,7 @@ public class JdbcDAO extends GmodDAO
         sql = sql + "f.feature_id = " + feature_id;
 
       if(cvTerm != null && cvTerm.getName() != null)
-        sql = sql + " AND cvterm.name="+cvTerm.getName();
+        sql = sql + " AND cvterm.name="+ "'" + cvTerm.getName() + "'";
       
       sql = sql
           + " ORDER BY f.type_id, uniquename";
