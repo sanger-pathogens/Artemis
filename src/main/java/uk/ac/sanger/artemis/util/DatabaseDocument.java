@@ -2638,13 +2638,18 @@ public class DatabaseDocument extends Document
     if(!iBatis)
     {
       if(jdbcDAO == null)
-       jdbcDAO = new JdbcDAO((String)getLocation(), pfield); 
+      {
+        logger4j.info("Creating Jdbc DAO");
+        jdbcDAO = new JdbcDAO((String)getLocation(), pfield); 
+      }
+      
       return jdbcDAO;
     }
     else
     {   
       if(connIB == null)
       {
+        logger4j.info("Creating Ibatis DAO");
         System.setProperty("chado", (String)getLocation());
         connIB = new IBatisDAO(pfield);
       }
