@@ -27,7 +27,6 @@ import org.evosuite.runtime.EvoRunner;
 import org.evosuite.runtime.EvoRunnerParameters;
 import org.junit.runner.RunWith;
 import org.w3c.dom.DOMImplementation;
-import sun.java2d.SunGraphics2D;
 import uk.ac.sanger.artemis.editor.HitInfo;
 import uk.ac.sanger.artemis.editor.MouseOverButton;
 
@@ -111,10 +110,8 @@ public class MouseOverButton_ESTest extends MouseOverButton_ESTest_scaffolding {
       MouseOverButton mouseOverButton0 = new MouseOverButton("$I:z6e2J`79&^CK,");
       GraphicsConfigurationWithoutTransparency graphicsConfigurationWithoutTransparency0 = new GraphicsConfigurationWithoutTransparency();
       BufferedImage bufferedImage0 = graphicsConfigurationWithoutTransparency0.createCompatibleImage(1893, 1893, 0);
-      SunGraphics2D sunGraphics2D0 = (SunGraphics2D)bufferedImage0.getGraphics();
-      mouseOverButton0.paintComponent(sunGraphics2D0);
-      assertEquals(0, sunGraphics2D0.strokeState);
-      assertEquals((-1), sunGraphics2D0.pixel);
+      Graphics graphics2D0 = bufferedImage0.getGraphics();
+      mouseOverButton0.paintComponent(graphics2D0);
   }
 
   @Test(timeout = 4000)

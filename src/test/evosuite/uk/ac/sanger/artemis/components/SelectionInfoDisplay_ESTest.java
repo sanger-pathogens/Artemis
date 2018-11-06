@@ -15,7 +15,6 @@ import java.awt.image.BufferedImage;
 import org.evosuite.runtime.EvoRunner;
 import org.evosuite.runtime.EvoRunnerParameters;
 import org.junit.runner.RunWith;
-import sun.java2d.SunGraphics2D;
 import uk.ac.sanger.artemis.EntryGroup;
 import uk.ac.sanger.artemis.Selection;
 import uk.ac.sanger.artemis.SelectionChangeEvent;
@@ -91,10 +90,9 @@ public class SelectionInfoDisplay_ESTest extends SelectionInfoDisplay_ESTest_sca
       Selection selection0 = new Selection(clipboard0);
       SelectionInfoDisplay selectionInfoDisplay0 = new SelectionInfoDisplay(simpleEntryGroup0, selection0);
       BufferedImage bufferedImage0 = new BufferedImage(3, 3, 1);
-      SunGraphics2D sunGraphics2D0 = (SunGraphics2D)bufferedImage0.getGraphics();
-      selectionInfoDisplay0.paintComponent(sunGraphics2D0);
-      assertEquals((-16777216), sunGraphics2D0.eargb);
-      assertEquals((-16777216), sunGraphics2D0.pixel);
+      Graphics graphics2D0 = bufferedImage0.getGraphics();
+      selectionInfoDisplay0.paintComponent(graphics2D0);
+      assertEquals((-16777216), graphics2D0.getColor().getRGB());
   }
 
   @Test(timeout = 4000)

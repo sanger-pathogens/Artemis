@@ -6,10 +6,13 @@
 package uk.ac.sanger.artemis.components.filetree;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+
 import static org.junit.Assert.*;
 import static org.evosuite.runtime.EvoAssertions.*;
 import java.awt.HeadlessException;
 import java.awt.RenderingHints;
+import java.awt.RenderingHints.Key;
 import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
@@ -22,8 +25,6 @@ import org.apache.commons.io.filefilter.OrFileFilter;
 import org.evosuite.runtime.EvoRunner;
 import org.evosuite.runtime.EvoRunnerParameters;
 import org.evosuite.runtime.mock.java.io.MockFile;
-import org.junit.runner.RunWith;
-import sun.awt.SunHints;
 import uk.ac.sanger.artemis.components.filetree.FileList;
 import uk.ac.sanger.artemis.components.filetree.FileNode;
 import uk.ac.sanger.artemis.components.filetree.FileSystemModel;
@@ -415,8 +416,8 @@ public class FileSystemModel_ESTest extends FileSystemModel_ESTest_scaffolding {
   @Test(timeout = 4000)
   public void test29()  throws Throwable  {
       FileSystemModel fileSystemModel0 = new FileSystemModel((JFrame) null);
-      SunHints.Key sunHints_Key0 = (SunHints.Key)RenderingHints.KEY_COLOR_RENDERING;
-      Object object0 = fileSystemModel0.getValueAt(sunHints_Key0, 41);
+      Key key0 = RenderingHints.KEY_COLOR_RENDERING;
+      Object object0 = fileSystemModel0.getValueAt(key0, 41);
       assertNull(object0);
   }
 

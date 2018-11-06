@@ -24,7 +24,7 @@ public class CanvasPanel_ESTest extends CanvasPanel_ESTest_scaffolding {
       Selection selection0 = new Selection((Clipboard) null);
       SelectionInfoDisplay selectionInfoDisplay0 = new SelectionInfoDisplay((EntryGroup) null, selection0);
       int int0 = selectionInfoDisplay0.getFontWidth();
-      assertEquals(7, int0);
+      assertEquals(11, int0);
   }
 
   @Test(timeout = 4000)
@@ -34,7 +34,7 @@ public class CanvasPanel_ESTest extends CanvasPanel_ESTest_scaffolding {
       Selection selection0 = new Selection(clipboard0);
       SelectionInfoDisplay selectionInfoDisplay0 = new SelectionInfoDisplay(simpleEntryGroup0, selection0);
       int int0 = selectionInfoDisplay0.getFontMaxAscent();
-      assertEquals(12, int0);
+      assertEquals(13, int0);
   }
 
   @Test(timeout = 4000)
@@ -42,7 +42,7 @@ public class CanvasPanel_ESTest extends CanvasPanel_ESTest_scaffolding {
       Selection selection0 = new Selection((Clipboard) null);
       SelectionInfoDisplay selectionInfoDisplay0 = new SelectionInfoDisplay((EntryGroup) null, selection0);
       int int0 = selectionInfoDisplay0.getFontHeight();
-      assertEquals(15, int0);
+      assertEquals(16, int0);
   }
 
   @Test(timeout = 4000)

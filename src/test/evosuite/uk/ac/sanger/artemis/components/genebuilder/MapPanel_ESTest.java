@@ -20,7 +20,6 @@ import org.apache.xmlgraphics.java2d.GraphicsConfigurationWithoutTransparency;
 import org.evosuite.runtime.EvoRunner;
 import org.evosuite.runtime.EvoRunnerParameters;
 import org.junit.runner.RunWith;
-import sun.java2d.SunGraphics2D;
 import uk.ac.sanger.artemis.components.genebuilder.MapPanel;
 
 @RunWith(EvoRunner.class) @EvoRunnerParameters(mockJVMNonDeterminism = true, useVFS = true, useVNET = true, resetStaticState = true, separateClassLoader = false, useJEE = true) 
@@ -59,20 +58,11 @@ public class MapPanel_ESTest extends MapPanel_ESTest_scaffolding {
   }
 
   @Test(timeout = 4000)
-  public void test02()  throws Throwable  {
-      GraphicsConfigurationWithoutTransparency graphicsConfigurationWithoutTransparency0 = new GraphicsConfigurationWithoutTransparency();
-      BufferedImage bufferedImage0 = graphicsConfigurationWithoutTransparency0.createCompatibleImage(3, 3, 3);
-      SunGraphics2D sunGraphics2D0 = (SunGraphics2D)bufferedImage0.createGraphics();
-      MapPanel.drawFeature(sunGraphics2D0, (-1203), 3, 0, sunGraphics2D0.backgroundColor, sunGraphics2D0.foregroundColor, 0, true, 3, 3);
-      assertEquals(2, sunGraphics2D0.strokeState);
-      assertEquals((-1), sunGraphics2D0.pixel);
-  }
-
-  @Test(timeout = 4000)
   public void test03()  throws Throwable  {
       MapPanel mapPanel0 = new MapPanel();
+      mapPanel0.setFont(new Font("TimesRoman", Font.PLAIN, 16));
       int int0 = mapPanel0.getFontHeight();
-      assertEquals(15, int0);
+      assertEquals(16, int0);
   }
 
   @Test(timeout = 4000)
@@ -112,7 +102,7 @@ public class MapPanel_ESTest extends MapPanel_ESTest_scaffolding {
       SystemColor systemColor0 = SystemColor.infoText;
       // Undeclared exception!
       try { 
-        MapPanel.drawFeature(graphics2D0, 0, (-1), 0, systemColor0, ((SunGraphics2D) graphics2D0).foregroundColor, 0, true, (-1.0F), 75);
+        MapPanel.drawFeature(graphics2D0, 0, (-1), 0, systemColor0, graphics2D0.getColor(), 0, true, (-1.0F), 75);
         fail("Expecting exception: IllegalArgumentException");
       
       } catch(IllegalArgumentException e) {
@@ -142,6 +132,7 @@ public class MapPanel_ESTest extends MapPanel_ESTest_scaffolding {
   @Test(timeout = 4000)
   public void test08()  throws Throwable  {
       MapPanel mapPanel0 = new MapPanel();
+      mapPanel0.setFont(new Font("TimesRoman", Font.PLAIN, 16));
       int int0 = mapPanel0.getViewerBorder();
       assertEquals(15, int0);
   }
@@ -149,7 +140,8 @@ public class MapPanel_ESTest extends MapPanel_ESTest_scaffolding {
   @Test(timeout = 4000)
   public void test10()  throws Throwable  {
       MapPanel mapPanel0 = new MapPanel();
+      mapPanel0.setFont(new Font("TimesRoman", Font.PLAIN, 16));
       int int0 = mapPanel0.getTranscriptSize();
-      assertEquals(75, int0);
+      assertEquals(78, int0);
   }
 }

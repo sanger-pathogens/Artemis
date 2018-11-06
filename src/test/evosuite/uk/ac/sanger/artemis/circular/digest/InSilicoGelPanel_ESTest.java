@@ -48,7 +48,6 @@ import org.evosuite.runtime.EvoRunnerParameters;
 import org.evosuite.runtime.ViolatedAssumptionAnswer;
 import org.evosuite.runtime.mock.java.io.MockFile;
 import org.junit.runner.RunWith;
-import sun.java2d.SunGraphics2D;
 import uk.ac.sanger.artemis.circular.digest.CutSite;
 import uk.ac.sanger.artemis.circular.digest.FragmentBand;
 import uk.ac.sanger.artemis.circular.digest.InSilicoGelPanel;

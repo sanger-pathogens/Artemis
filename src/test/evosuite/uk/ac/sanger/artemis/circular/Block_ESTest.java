@@ -29,7 +29,6 @@ import org.evosuite.runtime.EvoRunner;
 import org.evosuite.runtime.EvoRunnerParameters;
 import org.evosuite.runtime.ViolatedAssumptionAnswer;
 import org.junit.runner.RunWith;
-import sun.java2d.SunGraphics2D;
 import uk.ac.sanger.artemis.Entry;
 import uk.ac.sanger.artemis.SimpleEntryGroup;
 import uk.ac.sanger.artemis.circular.Block;
@@ -1494,9 +1493,8 @@ public class Block_ESTest extends Block_ESTest_scaffolding {
       Block block0 = new Block("fm3", (-535), 279, color0, 279, track0, dNADraw0);
       GraphicsConfigurationWithoutTransparency graphicsConfigurationWithoutTransparency0 = new GraphicsConfigurationWithoutTransparency();
       BufferedImage bufferedImage0 = graphicsConfigurationWithoutTransparency0.createCompatibleImage(279, 251, 2147);
-      SunGraphics2D sunGraphics2D0 = (SunGraphics2D)bufferedImage0.createGraphics();
-      block0.drawLinear(sunGraphics2D0);
-      assertEquals((-4144960), sunGraphics2D0.pixel);
+      Graphics2D graphics2D0 = bufferedImage0.createGraphics();
+      block0.drawLinear(graphics2D0);
       assertEquals(279, block0.getBend());
   }
 

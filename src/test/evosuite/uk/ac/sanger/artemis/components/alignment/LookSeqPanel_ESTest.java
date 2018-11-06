@@ -23,7 +23,6 @@ import org.evosuite.runtime.mock.java.net.MockURL;
 import org.evosuite.runtime.testdata.EvoSuiteURL;
 import org.evosuite.runtime.testdata.NetworkHandling;
 import org.junit.runner.RunWith;
-import sun.java2d.SunGraphics2D;
 import uk.ac.sanger.artemis.components.DisplayAdjustmentEvent;
 import uk.ac.sanger.artemis.components.FeatureDisplay;
 import uk.ac.sanger.artemis.components.alignment.LookSeqPanel;
@@ -166,9 +165,8 @@ public class LookSeqPanel_ESTest extends LookSeqPanel_ESTest_scaffolding {
       LookSeqPanel lookSeqPanel0 = new LookSeqPanel();
       GraphicsConfigurationWithoutTransparency graphicsConfigurationWithoutTransparency0 = new GraphicsConfigurationWithoutTransparency();
       BufferedImage bufferedImage0 = graphicsConfigurationWithoutTransparency0.createCompatibleImage(4, 102, 1897);
-      SunGraphics2D sunGraphics2D0 = (SunGraphics2D)bufferedImage0.getGraphics();
-      lookSeqPanel0.paintComponent(sunGraphics2D0);
-      assertEquals(140, sunGraphics2D0.lcdTextContrast);
+      Graphics graphics2D0 = bufferedImage0.getGraphics();
+      lookSeqPanel0.paintComponent(graphics2D0);
   }
 
   @Test(timeout = 4000)

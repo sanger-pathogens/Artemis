@@ -59,7 +59,6 @@ import org.evosuite.runtime.Random;
 import org.evosuite.runtime.ViolatedAssumptionAnswer;
 import org.evosuite.runtime.testdata.FileSystemHandling;
 import org.junit.runner.RunWith;
-import sun.java2d.SunGraphics2D;
 import uk.ac.sanger.artemis.SimpleEntryGroup;
 import uk.ac.sanger.artemis.components.EntryEdit;
 import uk.ac.sanger.artemis.components.alignment.BamView;
@@ -117,8 +116,8 @@ public class CoveragePanel_ESTest extends CoveragePanel_ESTest_scaffolding {
       assertEquals(1, bufferedImage0.getType());
       assertEquals(0, bufferedImage0.getMinTileY());
       
-      SunGraphics2D sunGraphics2D0 = (SunGraphics2D)bufferedImage0.createGraphics();
-      assertNotNull(sunGraphics2D0);
+      Graphics2D graphics2D0 = bufferedImage0.createGraphics();
+      assertNotNull(graphics2D0);
       assertEquals(0, bufferedImage0.getMinX());
       assertEquals(0, bufferedImage0.getTileGridXOffset());
       assertEquals(1, bufferedImage0.getNumXTiles());
@@ -136,27 +135,10 @@ public class CoveragePanel_ESTest extends CoveragePanel_ESTest_scaffolding {
       assertEquals(0, bufferedImage0.getMinTileX());
       assertEquals(1, bufferedImage0.getType());
       assertEquals(0, bufferedImage0.getMinTileY());
-      assertEquals(0, sunGraphics2D0.strokeHint);
-      assertEquals(0, sunGraphics2D0.transformState);
-      assertEquals(1, sunGraphics2D0.interpolationType);
-      assertEquals(0, sunGraphics2D0.textAntialiasHint);
-      assertEquals(0, sunGraphics2D0.renderHint);
-      assertEquals(0, sunGraphics2D0.transY);
-      assertEquals(140, sunGraphics2D0.lcdTextContrast);
-      assertEquals(0, sunGraphics2D0.transX);
-      assertEquals((-1), sunGraphics2D0.pixel);
-      assertEquals((-1), sunGraphics2D0.eargb);
-      assertEquals(0, sunGraphics2D0.clipState);
-      assertEquals(0, sunGraphics2D0.constrainX);
-      assertEquals(1, sunGraphics2D0.antialiasHint);
-      assertEquals(0, sunGraphics2D0.compositeState);
-      assertEquals(0, sunGraphics2D0.strokeState);
-      assertEquals(0, sunGraphics2D0.constrainY);
-      assertEquals(0, sunGraphics2D0.paintState);
       
-      SunGraphics2D sunGraphics2D1 = (SunGraphics2D)bufferedImage0.getGraphics();
-      assertFalse(sunGraphics2D1.equals((Object)sunGraphics2D0));
-      assertNotNull(sunGraphics2D1);
+      Graphics2D graphics2D1 = (Graphics2D)bufferedImage0.getGraphics();
+      assertFalse(graphics2D1.equals(graphics2D0));
+      assertNotNull(graphics2D1);
       assertEquals(0, bufferedImage0.getMinX());
       assertEquals(0, bufferedImage0.getTileGridXOffset());
       assertEquals(1, bufferedImage0.getNumXTiles());
@@ -174,27 +156,9 @@ public class CoveragePanel_ESTest extends CoveragePanel_ESTest_scaffolding {
       assertEquals(0, bufferedImage0.getMinTileX());
       assertEquals(1, bufferedImage0.getType());
       assertEquals(0, bufferedImage0.getMinTileY());
-      assertNotSame(sunGraphics2D1, sunGraphics2D0);
-      assertEquals(0, sunGraphics2D1.strokeHint);
-      assertEquals(0, sunGraphics2D1.paintState);
-      assertEquals((-1), sunGraphics2D1.pixel);
-      assertEquals(0, sunGraphics2D1.constrainX);
-      assertEquals(1, sunGraphics2D1.interpolationType);
-      assertEquals(0, sunGraphics2D1.renderHint);
-      assertEquals(0, sunGraphics2D1.clipState);
-      assertEquals(0, sunGraphics2D1.textAntialiasHint);
-      assertEquals((-1), sunGraphics2D1.eargb);
-      assertEquals(0, sunGraphics2D1.constrainY);
-      assertEquals(0, sunGraphics2D1.strokeState);
-      assertEquals(140, sunGraphics2D1.lcdTextContrast);
-      assertEquals(0, sunGraphics2D1.transX);
-      assertEquals(1, sunGraphics2D1.antialiasHint);
-      assertEquals(0, sunGraphics2D1.compositeState);
-      assertEquals(0, sunGraphics2D1.transY);
-      assertEquals(0, sunGraphics2D1.transformState);
       
-      coveragePanel0.paintComponent(sunGraphics2D1);
-      assertFalse(sunGraphics2D1.equals((Object)sunGraphics2D0));
+      coveragePanel0.paintComponent(graphics2D1);
+      assertFalse(graphics2D1.equals(graphics2D0));
       assertTrue(coveragePanel0.getFocusTraversalKeysEnabled());
       assertFalse(coveragePanel0.isFocusCycleRoot());
       assertFalse(coveragePanel0.isFocusTraversalPolicyProvider());
@@ -217,24 +181,6 @@ public class CoveragePanel_ESTest extends CoveragePanel_ESTest_scaffolding {
       assertEquals(0, bufferedImage0.getMinTileX());
       assertEquals(1, bufferedImage0.getType());
       assertEquals(0, bufferedImage0.getMinTileY());
-      assertNotSame(sunGraphics2D1, sunGraphics2D0);
-      assertEquals(0, sunGraphics2D1.strokeHint);
-      assertEquals(0, sunGraphics2D1.paintState);
-      assertEquals((-1), sunGraphics2D1.pixel);
-      assertEquals(0, sunGraphics2D1.constrainX);
-      assertEquals(1, sunGraphics2D1.interpolationType);
-      assertEquals(0, sunGraphics2D1.renderHint);
-      assertEquals(0, sunGraphics2D1.clipState);
-      assertEquals(0, sunGraphics2D1.textAntialiasHint);
-      assertEquals((-1), sunGraphics2D1.eargb);
-      assertEquals(0, sunGraphics2D1.constrainY);
-      assertEquals(0, sunGraphics2D1.strokeState);
-      assertEquals(140, sunGraphics2D1.lcdTextContrast);
-      assertEquals(0, sunGraphics2D1.transX);
-      assertEquals(1, sunGraphics2D1.antialiasHint);
-      assertEquals(0, sunGraphics2D1.compositeState);
-      assertEquals(0, sunGraphics2D1.transY);
-      assertEquals(0, sunGraphics2D1.transformState);
       
       List<String> list0 = coveragePanel0.getSelected();
       assertNotNull(list0);
@@ -264,8 +210,8 @@ public class CoveragePanel_ESTest extends CoveragePanel_ESTest_scaffolding {
       assertFalse(coveragePanel0.isFocusTraversalPolicySet());
       assertFalse(coveragePanel0.getIgnoreRepaint());
       
-      coveragePanel0.paintComponent(sunGraphics2D1);
-      assertFalse(sunGraphics2D1.equals((Object)sunGraphics2D0));
+      coveragePanel0.paintComponent(graphics2D1);
+      assertFalse(graphics2D1.equals(graphics2D0));
       assertTrue(coveragePanel0.getFocusTraversalKeysEnabled());
       assertFalse(coveragePanel0.isFocusCycleRoot());
       assertFalse(coveragePanel0.isFocusTraversalPolicyProvider());
@@ -288,24 +234,6 @@ public class CoveragePanel_ESTest extends CoveragePanel_ESTest_scaffolding {
       assertEquals(0, bufferedImage0.getMinTileX());
       assertEquals(1, bufferedImage0.getType());
       assertEquals(0, bufferedImage0.getMinTileY());
-      assertNotSame(sunGraphics2D1, sunGraphics2D0);
-      assertEquals(0, sunGraphics2D1.strokeHint);
-      assertEquals(0, sunGraphics2D1.paintState);
-      assertEquals((-1), sunGraphics2D1.pixel);
-      assertEquals(0, sunGraphics2D1.constrainX);
-      assertEquals(1, sunGraphics2D1.interpolationType);
-      assertEquals(0, sunGraphics2D1.renderHint);
-      assertEquals(0, sunGraphics2D1.clipState);
-      assertEquals(0, sunGraphics2D1.textAntialiasHint);
-      assertEquals((-1), sunGraphics2D1.eargb);
-      assertEquals(0, sunGraphics2D1.constrainY);
-      assertEquals(0, sunGraphics2D1.strokeState);
-      assertEquals(140, sunGraphics2D1.lcdTextContrast);
-      assertEquals(0, sunGraphics2D1.transX);
-      assertEquals(1, sunGraphics2D1.antialiasHint);
-      assertEquals(0, sunGraphics2D1.compositeState);
-      assertEquals(0, sunGraphics2D1.transY);
-      assertEquals(0, sunGraphics2D1.transformState);
       
       String string1 = coveragePanel0.getToolTipText(259);
       assertNull(string1);
@@ -333,56 +261,6 @@ public class CoveragePanel_ESTest extends CoveragePanel_ESTest_scaffolding {
       assertFalse(coveragePanel0.isFocusTraversalPolicyProvider());
       assertFalse(coveragePanel0.isFocusTraversalPolicySet());
       assertFalse(coveragePanel0.getIgnoreRepaint());
-      
-      DebugGraphics debugGraphics0 = new DebugGraphics(sunGraphics2D0);
-      assertFalse(sunGraphics2D0.equals((Object)sunGraphics2D1));
-      assertNotNull(debugGraphics0);
-      assertEquals(0, bufferedImage0.getMinX());
-      assertEquals(0, bufferedImage0.getTileGridXOffset());
-      assertEquals(1, bufferedImage0.getNumXTiles());
-      assertEquals(0, bufferedImage0.getMinY());
-      assertEquals(4163, bufferedImage0.getWidth());
-      assertTrue(bufferedImage0.hasTileWriters());
-      assertEquals(0.5F, bufferedImage0.getAccelerationPriority(), 0.01F);
-      assertEquals(4163, bufferedImage0.getHeight());
-      assertEquals(4163, bufferedImage0.getTileWidth());
-      assertEquals(0, bufferedImage0.getTileGridYOffset());
-      assertEquals(1, bufferedImage0.getTransparency());
-      assertEquals(1, bufferedImage0.getNumYTiles());
-      assertFalse(bufferedImage0.isAlphaPremultiplied());
-      assertEquals(4163, bufferedImage0.getTileHeight());
-      assertEquals(0, bufferedImage0.getMinTileX());
-      assertEquals(1, bufferedImage0.getType());
-      assertEquals(0, bufferedImage0.getMinTileY());
-      assertEquals(0, sunGraphics2D0.strokeHint);
-      assertEquals(0, sunGraphics2D0.transformState);
-      assertEquals(1, sunGraphics2D0.interpolationType);
-      assertEquals(0, sunGraphics2D0.textAntialiasHint);
-      assertEquals(0, sunGraphics2D0.renderHint);
-      assertEquals(0, sunGraphics2D0.transY);
-      assertEquals(140, sunGraphics2D0.lcdTextContrast);
-      assertEquals(0, sunGraphics2D0.transX);
-      assertEquals((-1), sunGraphics2D0.pixel);
-      assertEquals((-1), sunGraphics2D0.eargb);
-      assertEquals(0, sunGraphics2D0.clipState);
-      assertEquals(0, sunGraphics2D0.constrainX);
-      assertEquals(1, sunGraphics2D0.antialiasHint);
-      assertEquals(0, sunGraphics2D0.compositeState);
-      assertEquals(0, sunGraphics2D0.strokeState);
-      assertEquals(0, sunGraphics2D0.constrainY);
-      assertEquals(0, sunGraphics2D0.paintState);
-      
-      // Undeclared exception!
-      try { 
-        coveragePanel0.paintComponent(debugGraphics0);
-        fail("Expecting exception: ClassCastException");
-      
-      } catch(ClassCastException e) {
-         //
-         // javax.swing.DebugGraphics cannot be cast to java.awt.Graphics2D
-         //
-         verifyException("uk.ac.sanger.artemis.components.alignment.CoveragePanel", e);
-      }
   }
 
   @Test(timeout = 4000)
@@ -2017,8 +1895,8 @@ public class CoveragePanel_ESTest extends CoveragePanel_ESTest_scaffolding {
       assertEquals(10, dimension0.width);
       assertEquals(11, dimension0.height);
       
-      SunGraphics2D sunGraphics2D0 = (SunGraphics2D)bufferedImage0.getGraphics();
-      assertNotNull(sunGraphics2D0);
+      Graphics graphics2D0 = bufferedImage0.getGraphics();
+      assertNotNull(graphics2D0);
       assertFalse(coveragePanel0.getIgnoreRepaint());
       assertFalse(coveragePanel0.isFocusTraversalPolicyProvider());
       assertFalse(coveragePanel0.isFocusTraversalPolicySet());
@@ -2047,25 +1925,8 @@ public class CoveragePanel_ESTest extends CoveragePanel_ESTest_scaffolding {
       assertEquals(0, bufferedImage0.getMinY());
       assertEquals(10, dimension0.width);
       assertEquals(11, dimension0.height);
-      assertEquals(0, sunGraphics2D0.compositeState);
-      assertEquals((-1), sunGraphics2D0.eargb);
-      assertEquals(0, sunGraphics2D0.strokeState);
-      assertEquals(0, sunGraphics2D0.textAntialiasHint);
-      assertEquals(0, sunGraphics2D0.clipState);
-      assertEquals(0, sunGraphics2D0.constrainX);
-      assertEquals(0, sunGraphics2D0.strokeHint);
-      assertEquals(0, sunGraphics2D0.constrainY);
-      assertEquals(0, sunGraphics2D0.paintState);
-      assertEquals(1, sunGraphics2D0.interpolationType);
-      assertEquals(1, sunGraphics2D0.antialiasHint);
-      assertEquals((-1), sunGraphics2D0.pixel);
-      assertEquals(0, sunGraphics2D0.transformState);
-      assertEquals(0, sunGraphics2D0.renderHint);
-      assertEquals(0, sunGraphics2D0.transY);
-      assertEquals(140, sunGraphics2D0.lcdTextContrast);
-      assertEquals(0, sunGraphics2D0.transX);
       
-      coveragePanel0.paintComponent(sunGraphics2D0);
+      coveragePanel0.paintComponent(graphics2D0);
       assertFalse(coveragePanel0.getIgnoreRepaint());
       assertFalse(coveragePanel0.isFocusTraversalPolicyProvider());
       assertFalse(coveragePanel0.isFocusTraversalPolicySet());
@@ -2094,23 +1955,6 @@ public class CoveragePanel_ESTest extends CoveragePanel_ESTest_scaffolding {
       assertEquals(0, bufferedImage0.getMinY());
       assertEquals(10, dimension0.width);
       assertEquals(11, dimension0.height);
-      assertEquals(0, sunGraphics2D0.compositeState);
-      assertEquals((-1), sunGraphics2D0.eargb);
-      assertEquals(0, sunGraphics2D0.strokeState);
-      assertEquals(0, sunGraphics2D0.textAntialiasHint);
-      assertEquals(0, sunGraphics2D0.clipState);
-      assertEquals(0, sunGraphics2D0.constrainX);
-      assertEquals(0, sunGraphics2D0.strokeHint);
-      assertEquals(0, sunGraphics2D0.constrainY);
-      assertEquals(0, sunGraphics2D0.paintState);
-      assertEquals(1, sunGraphics2D0.interpolationType);
-      assertEquals(1, sunGraphics2D0.antialiasHint);
-      assertEquals((-1), sunGraphics2D0.pixel);
-      assertEquals(0, sunGraphics2D0.transformState);
-      assertEquals(0, sunGraphics2D0.renderHint);
-      assertEquals(0, sunGraphics2D0.transY);
-      assertEquals(140, sunGraphics2D0.lcdTextContrast);
-      assertEquals(0, sunGraphics2D0.transX);
   }
 
   @Test(timeout = 4000)
