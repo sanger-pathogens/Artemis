@@ -117,7 +117,7 @@ public class RunMenu extends SelectionMenu
         if(features.size() != 1)
         {
           JOptionPane.showMessageDialog(RunMenu.this,
-              "Selected a single feature to send to Pfam for searching.", 
+              "Please select a single feature to send to Pfam for searching.", 
               "Pfam Search", JOptionPane.INFORMATION_MESSAGE);
           return; 
         }
@@ -140,7 +140,7 @@ public class RunMenu extends SelectionMenu
         if(features.size() != 1)
         {
           JOptionPane.showMessageDialog(RunMenu.this,
-              "Selected a single feature to send to Rfam for searching.", 
+              "Please select a single feature to send to Rfam for searching.", 
               "Rfam Search", JOptionPane.INFORMATION_MESSAGE);
           return; 
         }
