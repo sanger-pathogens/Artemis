@@ -42,6 +42,7 @@ import java.io.InputStreamReader;
 import java.lang.management.ManagementFactory;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Frame;
@@ -52,6 +53,13 @@ import java.awt.MediaTracker;
 import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
+import java.awt.desktop.AboutEvent;
+import java.awt.desktop.AboutHandler;
+import java.awt.desktop.OpenFilesEvent;
+import java.awt.desktop.OpenFilesHandler;
+import java.awt.desktop.QuitEvent;
+import java.awt.desktop.QuitHandler;
+import java.awt.desktop.QuitResponse;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -83,6 +91,7 @@ import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -297,26 +306,59 @@ abstract public class Splash extends JFrame
   {
     if(isWindows())
       setWorkingDirectory();
+    
     if(isMac()) 
     {
       setWorkingDirectory();
       try 
-      {
-        // Generate and register the OSXAdapter, passing it a hash of all the methods we wish to
-        // use as delegates for various com.apple.eawt.ApplicationListener methods
-        Class<?> splashClass = Class.forName("uk.ac.sanger.artemis.components.Splash");
-        OSXAdapter.setQuitHandler(this, 
-            splashClass.getDeclaredMethod("exitApp", (Class[])null));
-        OSXAdapter.setAboutHandler(this, 
-            splashClass.getDeclaredMethod("about", (Class[])null));
-        //OSXAdapter.setPreferencesHandler(this, 
-        //  splashClass.getDeclaredMethod("preferences", (Class[])null));
-        OSXAdapter.setFileHandler(this, 
-            splashClass.getDeclaredMethod("loadFile", new Class[] { String.class }));
+      { 
+    	// Special changes for Java 9...
+        Desktop desktop = Desktop.getDesktop();
+        desktop.setAboutHandler(new AboutHandler() 
+        {
+        	@Override
+			public void handleAbout(AboutEvent e)
+			{
+				about();
+			}
+        });
+        
+        desktop.setQuitHandler(new QuitHandler()
+        {
+			@Override
+			public void handleQuitRequestWith(QuitEvent e, QuitResponse response)
+			{
+				exitApp();
+			}
+        });
+        
+        desktop.setOpenFileHandler(new OpenFilesHandler()
+        {
+			@Override
+			public void openFiles(OpenFilesEvent e)
+			{
+				List<File> files = e.getFiles();
+				
+				if (files != null && files.size() > 0) 
+				{
+					try 
+					{
+						loadFile(files.get(0).getCanonicalPath());
+					} 
+					catch (Exception ex)
+					{
+						logger4j.error("Unable to load file, caught exception: " + ex.getMessage());
+					}
+				}
+			}
+			
+			
+        });
+        
       } 
       catch (Exception e)
       {
-        logger4j.error("Error while loading the OSXAdapter:");
+        logger4j.error("Error while setting up OSX menus:");
         logger4j.error(e.getMessage());
       }
     }
@@ -374,7 +416,10 @@ abstract public class Splash extends JFrame
   protected void loadFile(final String fileName)
   {
     if(this instanceof ArtemisMain)
+    {
+      logger4j.info("Read file argument: " + fileName);
       ((ArtemisMain)this).readArgsAndOptions(new String[]{ fileName }, this);
+    }
   }
 
 
@@ -770,8 +815,7 @@ abstract public class Splash extends JFrame
     bacross.add(hide);
     bacross.add(Box.createHorizontalGlue());
     bdown.add(bacross);
-    
-    
+     
     Object[] possibleValues = { "OK" };
     JOptionPane.showOptionDialog(null,
                                bdown,

@@ -392,6 +392,11 @@ public class ArtemisMain extends Splash
           last_entry_edit = null;
         }
 
+        if (new_entry_name.indexOf ("-psn_") != -1) 
+        {
+        	// Bit of a hack - to ignore special Mac OSX args
+        	continue;
+        }
       
         if (new_entry_name.indexOf ("://") == -1) 
         {

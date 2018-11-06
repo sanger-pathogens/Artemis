@@ -3212,11 +3212,6 @@ public class BamView extends JPanel
       {
         public void actionPerformed(ActionEvent e)
         {
-          int status = JOptionPane.showConfirmDialog(BamView.this, 
-              "Exit BamView?", "Exit", 
-              JOptionPane.OK_CANCEL_OPTION);
-          if(status != JOptionPane.OK_OPTION)
-            return;
           System.exit(0);
         } 
       });
@@ -4536,7 +4531,9 @@ public class BamView extends JPanel
   public static void main(String[] args)
   {
     BamFrame frame = new BamFrame();
-    if(args.length == 0 && BamFrame.isMac())
+    
+    if( (args.length == 0 || (args.length == 1 && args[0].startsWith("-psn_"))) &&
+    	BamFrame.isMac())
     {
       try
       {
