@@ -28,11 +28,8 @@ import org.junit.Before;
 import org.junit.After;
 
 import uk.ac.sanger.artemis.Entry;
-import uk.ac.sanger.artemis.EntryGroup;
 import uk.ac.sanger.artemis.Feature;
 import uk.ac.sanger.artemis.Options;
-import uk.ac.sanger.artemis.FeatureVector;
-import uk.ac.sanger.artemis.SimpleEntryGroup;
 import uk.ac.sanger.artemis.io.DocumentEntryFactory;
 import uk.ac.sanger.artemis.io.EntryInformation;
 import uk.ac.sanger.artemis.io.Range;
@@ -41,7 +38,6 @@ import uk.ac.sanger.artemis.util.DocumentFactory;
 import uk.ac.sanger.artemis.util.ReadOnlyException;
 import uk.ac.sanger.artemis.util.StringVector;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
-import uk.ac.sanger.artemis.io.Range;
 
 /**
  * Unit test for the Bases class.
@@ -546,53 +542,53 @@ public class BasesTest
 	{
 		
 		// Error case
-		assertEquals('@', bases.complement('%'));
+		assertEquals('@', Bases.complement('%'));
 		
-		assertEquals('t', bases.complement('a'));
-		assertEquals('t', bases.complement('A'));
+		assertEquals('t', Bases.complement('a'));
+		assertEquals('t', Bases.complement('A'));
 		
-		assertEquals('a', bases.complement('t'));
-		assertEquals('a', bases.complement('T'));
-		assertEquals('a', bases.complement('U'));
+		assertEquals('a', Bases.complement('t'));
+		assertEquals('a', Bases.complement('T'));
+		assertEquals('a', Bases.complement('U'));
 		
-		assertEquals('c', bases.complement('g'));
-		assertEquals('c', bases.complement('G'));
+		assertEquals('c', Bases.complement('g'));
+		assertEquals('c', Bases.complement('G'));
 		
-		assertEquals('g', bases.complement('c'));
-		assertEquals('g', bases.complement('C'));
+		assertEquals('g', Bases.complement('c'));
+		assertEquals('g', Bases.complement('C'));
 		
-		assertEquals('y', bases.complement('r'));
-		assertEquals('y', bases.complement('R'));
+		assertEquals('y', Bases.complement('r'));
+		assertEquals('y', Bases.complement('R'));
 		
-		assertEquals('m', bases.complement('k'));
-		assertEquals('m', bases.complement('K'));
+		assertEquals('m', Bases.complement('k'));
+		assertEquals('m', Bases.complement('K'));
 		
-		assertEquals('k', bases.complement('m'));
-		assertEquals('k', bases.complement('M'));
+		assertEquals('k', Bases.complement('m'));
+		assertEquals('k', Bases.complement('M'));
 		
-		assertEquals('s', bases.complement('s'));
-		assertEquals('s', bases.complement('S'));
+		assertEquals('s', Bases.complement('s'));
+		assertEquals('s', Bases.complement('S'));
 		
-		assertEquals('w', bases.complement('w'));
-		assertEquals('w', bases.complement('W'));
+		assertEquals('w', Bases.complement('w'));
+		assertEquals('w', Bases.complement('W'));
 		
-		assertEquals('v', bases.complement('b'));
-		assertEquals('v', bases.complement('B'));
+		assertEquals('v', Bases.complement('b'));
+		assertEquals('v', Bases.complement('B'));
 		
-		assertEquals('h', bases.complement('d'));
-		assertEquals('h', bases.complement('D'));
+		assertEquals('h', Bases.complement('d'));
+		assertEquals('h', Bases.complement('D'));
 		
-		assertEquals('d', bases.complement('h'));
-		assertEquals('d', bases.complement('H'));
+		assertEquals('d', Bases.complement('h'));
+		assertEquals('d', Bases.complement('H'));
 		
-		assertEquals('b', bases.complement('v'));
-		assertEquals('b', bases.complement('V'));
+		assertEquals('b', Bases.complement('v'));
+		assertEquals('b', Bases.complement('V'));
 		
-		assertEquals('n', bases.complement('n'));
-		assertEquals('n', bases.complement('N'));
+		assertEquals('n', Bases.complement('n'));
+		assertEquals('n', Bases.complement('N'));
 		
-		assertEquals('x', bases.complement('x'));
-		assertEquals('x', bases.complement('X'));
+		assertEquals('x', Bases.complement('x'));
+		assertEquals('x', Bases.complement('X'));
 	
 	}
 	
@@ -600,20 +596,20 @@ public class BasesTest
 	public void testIsLegalBase() throws Exception 
 	{
 		
-		assertFalse(bases.isLegalBase ('1'));
-		assertFalse(bases.isLegalBase ('$'));
-		assertFalse(bases.isLegalBase ('E'));
-		assertFalse(bases.isLegalBase ('l'));
+		assertFalse(Bases.isLegalBase ('1'));
+		assertFalse(Bases.isLegalBase ('$'));
+		assertFalse(Bases.isLegalBase ('E'));
+		assertFalse(Bases.isLegalBase ('l'));
 		
-		assertTrue(bases.isLegalBase ('a'));
-		assertTrue(bases.isLegalBase ('A'));
-		assertTrue(bases.isLegalBase ('t'));
-		assertTrue(bases.isLegalBase ('T'));
-		assertTrue(bases.isLegalBase ('u'));
-		assertTrue(bases.isLegalBase ('U'));
-		assertTrue(bases.isLegalBase ('g'));
-		assertTrue(bases.isLegalBase ('G'));
-		assertTrue(bases.isLegalBase ('c'));
-		assertTrue(bases.isLegalBase ('C'));
+		assertTrue(Bases.isLegalBase ('a'));
+		assertTrue(Bases.isLegalBase ('A'));
+		assertTrue(Bases.isLegalBase ('t'));
+		assertTrue(Bases.isLegalBase ('T'));
+		assertTrue(Bases.isLegalBase ('u'));
+		assertTrue(Bases.isLegalBase ('U'));
+		assertTrue(Bases.isLegalBase ('g'));
+		assertTrue(Bases.isLegalBase ('G'));
+		assertTrue(Bases.isLegalBase ('c'));
+		assertTrue(Bases.isLegalBase ('C'));
 	}
 }
