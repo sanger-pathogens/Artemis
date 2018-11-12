@@ -150,6 +150,7 @@ import uk.ac.sanger.artemis.sequence.NoSequenceException;
 import uk.ac.sanger.artemis.util.Document;
 import uk.ac.sanger.artemis.util.DocumentFactory;
 import uk.ac.sanger.artemis.util.FTPSeekableStream;
+import uk.ac.sanger.artemis.util.IconManager;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
 
 /**
@@ -4532,6 +4533,8 @@ public class BamView extends JPanel
   {
     BamFrame frame = new BamFrame();
     
+    BamView.setStandaloneMode(true);
+    
     if( (args.length == 0 || (args.length == 1 && args[0].startsWith("-psn_"))) &&
     	BamFrame.isMac())
     {
@@ -4543,14 +4546,16 @@ public class BamView extends JPanel
       if(frame.getBamFile() != null)
         args = new String[]{ frame.getBamFile() };
     }
-      
+    
+    IconManager.setApplicationIcon(IconManager.BAMVIEW_NAME);
+    
     List<String> alignmentFileList = new Vector<String>();
     String reference = null;
     if(args.length == 0 || args[0].equals("NEW-BAMVIEW"))
-    {
+    {	
       System.setProperty("default_directory", System.getProperty("user.dir"));
       FileSelectionDialog fileSelection = new FileSelectionDialog(
-          null, true, "BamView", "BAM/CRAM");
+          null, true, IconManager.BAMVIEW_NAME, "BAM/CRAM");
       alignmentFileList = fileSelection.getFiles(BAM_SUFFIX); 
       reference = fileSelection.getReferenceFile();
       if(reference == null || reference.trim().equals(""))
@@ -4628,7 +4633,7 @@ public class BamView extends JPanel
       }
     }
     
-    BamView.setStandaloneMode(true);
+    
     
     /*
      * If a reference was specified then make sure that it's a valid file.

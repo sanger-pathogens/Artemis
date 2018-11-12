@@ -23,7 +23,13 @@ package uk.ac.sanger.artemis.circular;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.Dimension;
+import java.awt.desktop.AboutEvent;
+import java.awt.desktop.AboutHandler;
+import java.awt.desktop.QuitEvent;
+import java.awt.desktop.QuitHandler;
+import java.awt.desktop.QuitResponse;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -38,6 +44,8 @@ import java.util.Hashtable;
 
 import javax.swing.Box;
 import javax.swing.ButtonGroup;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -67,6 +75,7 @@ import uk.ac.sanger.artemis.sequence.Bases;
 import uk.ac.sanger.artemis.sequence.NoSequenceException;
 import uk.ac.sanger.artemis.util.Document;
 import uk.ac.sanger.artemis.util.DocumentFactory;
+import uk.ac.sanger.artemis.util.IconManager;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
 import uk.ac.sanger.artemis.util.ReadOnlyException;
 import uk.ac.sanger.artemis.util.WorkingGZIPInputStream;
@@ -88,8 +97,24 @@ public class Wizard
   private SwingWorker workerGraph;
   public static Track[] tracks = { TRACK_1, TRACK_2, TRACK_3, TRACK_4, TRACK_5 };
   
+  /*
+   * Default constructor.
+   */
+  protected Wizard()
+  {
+	  IconManager.setApplicationIcon(IconManager.DNAPLOTTER_NAME);
+		
+	  if (System.getProperty("mrj.version") != null ||
+	            System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0)
+	  {
+		  initMac();
+	  }
+  }
+  
   public Wizard(DNADraw dna_current)
   {
+	this();
+	    
     int n = getOption(dna_current);  // option 0 - read data file
                                      // option 1 - edit existing dna
                                      // option 2 - read template
@@ -208,6 +233,7 @@ public class Wizard
    */
   public Wizard(final String templateName)
   {
+	this();
     loadTemplate(templateName);
   }
   
@@ -1004,6 +1030,52 @@ public class Wizard
   public SwingWorker getWorkerGraph()
   {
     return workerGraph;
+  }
+  
+  /**
+   * Set up about and exit Mac menu options.
+   */
+  protected void initMac()
+  {
+        try 
+        { 
+          // Special changes for Java 9...
+          Desktop desktop = Desktop.getDesktop();
+          desktop.setAboutHandler(new AboutHandler() 
+          {
+          	@Override
+  			public void handleAbout(AboutEvent e)
+  			{
+  				about();
+  			}
+          });
+          
+          desktop.setQuitHandler(new QuitHandler()
+          {
+  			@Override
+  			public void handleQuitRequestWith(QuitEvent e, QuitResponse response)
+  			{
+  				System.exit(0);
+  			}
+          });
+          
+        } 
+        catch (Exception e)
+        {
+      	  e.printStackTrace();
+        }
+  }
+  
+  /**
+   * Display aboout dialog.
+   */
+  protected void about()
+  {
+		final JOptionPane pane = new JOptionPane("Circular-Plot\nthis is free software and is distributed"
+				+ "\nunder the terms of the GNU General Public License.", JOptionPane.INFORMATION_MESSAGE);
+		final JDialog d = pane.createDialog((JFrame) null, "About");
+		d.setLocation(10, 10);
+		d.setVisible(true);
   }
 }
 

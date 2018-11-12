@@ -11,6 +11,7 @@ import java.awt.desktop.QuitResponse;
 import java.io.File;
 import java.util.List;
 
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -80,12 +81,16 @@ import javax.swing.JOptionPane;
           }
     }
 
+    /**
+     * Display about dialog.
+     */
     protected void about()
     {
-      JOptionPane.showMessageDialog(this,
-          "BamView\nthis is free software and is distributed"
-              + "\nunder the terms of the GNU General Public License.",
-          "About", JOptionPane.INFORMATION_MESSAGE);
+  		final JOptionPane pane = new JOptionPane("BamView\nthis is free software and is distributed"
+  				+ "\nunder the terms of the GNU General Public License.", JOptionPane.INFORMATION_MESSAGE);
+  		final JDialog d = pane.createDialog((JFrame) null, "About");
+  		d.setLocation(10, 10);
+  		d.setVisible(true);
     }
 
     protected void loadFile(final String bamFile)

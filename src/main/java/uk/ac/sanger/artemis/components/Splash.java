@@ -1,4 +1,4 @@
-/* Splash.java
+/* Splash.java 
  *
  * This file is part of Artemis
  *
@@ -25,6 +25,7 @@ import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.EntrySourceVector;
 import uk.ac.sanger.artemis.Logger;
 import uk.ac.sanger.artemis.util.InputStreamProgressListener;
+import uk.ac.sanger.artemis.util.IconManager;
 import uk.ac.sanger.artemis.util.InputStreamProgressEvent;
 import uk.ac.sanger.artemis.util.StringVector;
 import uk.ac.sanger.artemis.sequence.Bases;
@@ -114,6 +115,9 @@ abstract public class Splash extends JFrame
 
   /** program version passed to the constructor. */
   private String program_version;
+  
+  /** program title **/
+  private String programTitle;
 
   /** JComponent to draw the main splash screen into */
   private JComponent helix_canvas;
@@ -128,6 +132,7 @@ abstract public class Splash extends JFrame
   private static boolean save_wd_properties = false;
   public static boolean save_display_name = false;
   public static boolean save_systematic_names = false;
+  
   /**  The Artemis LogViewer. */
   private final static LogViewer logger = new LogViewer();
   private static String optionsLogString[];
@@ -138,6 +143,7 @@ abstract public class Splash extends JFrame
                 final String program_name)
   {
     super(program_title);
+    this.programTitle = program_title;
     initLogger();
     
     logger4j.info(System.getProperty("java.version"));
@@ -168,6 +174,7 @@ abstract public class Splash extends JFrame
     
     this.program_name    = program_name;
     this.program_version = program_version;
+    this.programTitle    = program_title;
     
     final ClassLoader cl = this.getClass().getClassLoader();
     try
@@ -227,25 +234,9 @@ abstract public class Splash extends JFrame
 
     getContentPane().add(helix_canvas, "Center");
     getContentPane().add(status_line, "South");
-
-    ImageIcon icon = new ImageIcon(cl.getResource("images/icon.gif"));
-
-    if(icon != null) 
-    {
-      final Image icon_image = icon.getImage();
-      MediaTracker tracker = new MediaTracker(this);
-      tracker.addImage(icon_image, 0);
-
-      try
-      {
-        tracker.waitForAll();
-        setIconImage(icon_image);
-      }
-      catch(InterruptedException e) 
-      {
-        // ignore and continue
-      }
-    }
+    
+    IconManager.setApplicationIcon(programTitle);
+    IconManager.setDockIcon(this, programTitle);
     
     pack();
     setSize(455, 290);
@@ -299,8 +290,8 @@ abstract public class Splash extends JFrame
   }
   
   /**
-   * Generic registration with the Mac OS X application menu
-   * Checks the platform, then attempts to register with the Apple EAWT
+   * Generic registration with the Mac OS X application menu.
+   * EAWT is no longer used as this has been phased out in Java 9.
    */
   private void registerForMacOSXEvents()
   {
@@ -362,6 +353,7 @@ abstract public class Splash extends JFrame
         logger4j.error(e.getMessage());
       }
     }
+    
     logger4j.info("Working directory: "+System.getProperty("user.dir"));
   }
   
@@ -381,7 +373,7 @@ abstract public class Splash extends JFrame
   protected void about()
   {
     ClassLoader cl = this.getClass().getClassLoader();
-    ImageIcon icon = new ImageIcon(cl.getResource("images/icon.gif"));
+    ImageIcon icon = new ImageIcon(cl.getResource(IconManager.getDockIcon(programTitle)));
 
     JOptionPane.showMessageDialog(this,
             getTitle()+ "\nthis is free software and is distributed"+
@@ -599,24 +591,12 @@ abstract public class Splash extends JFrame
     makeGeneticCodeMenu(options_menu);
     options_menu.addSeparator();
 
-    final JCheckBoxMenuItem j2ssh_option = new JCheckBoxMenuItem(
-                                         "Send Searches via SSH");
-
-    j2ssh_option.setState((System.getProperty("j2ssh") != null));
-    j2ssh_option.addItemListener(new ItemListener() 
+    // The SSH ability will be removed in future releases.
+    // We now override this option here.
+    if (System.getProperty("j2ssh") != null)
     {
-      public void itemStateChanged(ItemEvent event) 
-      {
-        final boolean item_state = j2ssh_option.getState();
-        if(item_state) 
-          System.setProperty("j2ssh", "");
-        else
-          System.setProperty("j2ssh", "false");
-      }
-    });
-    options_menu.add(j2ssh_option);
-    options_menu.addSeparator();
-    
+    	System.setProperty("j2ssh", "false");
+    }  
 
     final JCheckBoxMenuItem autohide_option = new JCheckBoxMenuItem(
                                          "Auto hide scrollbar");
@@ -817,11 +797,13 @@ abstract public class Splash extends JFrame
     bdown.add(bacross);
      
     Object[] possibleValues = { "OK" };
+    
     JOptionPane.showOptionDialog(null,
                                bdown,
                                "Set Working Directory",
                                JOptionPane.DEFAULT_OPTION,
-                               JOptionPane.QUESTION_MESSAGE,null,
+                               JOptionPane.QUESTION_MESSAGE,
+                               null,
                                possibleValues, possibleValues[0]);
 
     if(hide.isSelected() || 

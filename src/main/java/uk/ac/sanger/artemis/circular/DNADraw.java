@@ -1397,7 +1397,7 @@ public class DNADraw extends ScrollPanel
     user.add(userOptions);
     
     
-// options menu
+    // options menu
     JMenu optionMenu = new JMenu("Options");
     menuBar.add(optionMenu);
 
@@ -1553,7 +1553,7 @@ public class DNADraw extends ScrollPanel
       {
         /*ClassLoader cl = DNADraw.this.getClass().getClassLoader();
         URL url = cl.getResource("etc/readmeDNADraw.html");*/
-        BrowserControl.displayURL("http://www.sanger.ac.uk/Software/Artemis/circular/");
+        BrowserControl.displayURL("https://www.sanger.ac.uk/science/tools/dnaplotter");
       }
     });
 
