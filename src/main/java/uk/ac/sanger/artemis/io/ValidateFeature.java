@@ -352,7 +352,8 @@ public class ValidateFeature
           if (code != null)
           {
             if (code.equals("IDA") || code.equals("NAS") || code.equals("ND") || 
-                code.equals("TAS") || code.equals("EXP"))
+                code.equals("TAS") || code.equals("EXP") || code.equals("HTP") ||
+                code.equals("HDA"))
             {
               // with/from must be empty
               if (with.length() > 0)
@@ -365,7 +366,7 @@ public class ValidateFeature
               /* 
                * with field must be filled.
                * Changed for RT ticket #400288: GO term warnings in Artemis:
-               * 	- we now no longer put out a warning for ISM,as it is optional in certain cases.
+               * 	- we now no longer put out a warning for ISM, as it is optional in certain cases.
                * 	- see http://wiki.geneontology.org/index.php/Inferred_from_Sequence_Model_(ISM)
                */
               if (with.length() == 0)
@@ -382,6 +383,11 @@ public class ValidateFeature
           if (code != null && code.equals("IEP")
               && !getField("aspect=", qualifierStr).equals("P"))
             buff.append("GOid=" + goid + ", IEP is restricted to Biological Process terms\n");
+          
+          // HEP is not allowed for molecular_function and cellular_component terms
+          if (code != null && code.equals("HEP")
+                  && !getField("aspect=", qualifierStr).equals("P"))
+                buff.append("GOid=" + goid + ", HEP is restricted to Biological Process terms\n");
 
           if (with.indexOf(" ") > -1 || dbxref.indexOf(" ") > -1)
           {

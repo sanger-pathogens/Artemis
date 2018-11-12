@@ -399,36 +399,266 @@ public class ValidateFeatureTest
 	 
 	 // =========  Test ISM with a with/from [optional] ========
 	 
-	 // Given
-	 q = new Qualifier("GO");
-	 q.addValue("aspect=F;GOid=GO:0004672;term=protein kinase activity;db_xref=PMID:17181785;date=20090715;with=DUMMY;evidence=ISM");
+     // Given
+     q = new Qualifier("GO");
+     q.addValue("aspect=F;GOid=GO:0004672;term=protein kinase activity;db_xref=PMID:17181785;date=20090715;with=DUMMY;evidence=ISM");
 	
-	 // When
+     // When
 	 
      when( qualifiers.getQualifierByName("GO") ).thenReturn(q);
 		 
-	 term = ValidateFeature.validateGO(qualifiers, eInfo);
+     term = ValidateFeature.validateGO(qualifiers, eInfo);
 
-	 // Then
+     // Then
 	 
-	 assertEquals("With/From is optional for ISM (with/from present)", "", term);
+     assertEquals("With/From is optional for ISM (with/from present)", "", term);
 	 
 	 
-	 // =========  Test ISM with a with/from field that has spaces ========
+     // =========  Test ISM with a with/from field that has spaces ========
 	 
-	 // Given
-	 q = new Qualifier("GO");
-	 q.addValue("aspect=F;GOid=GO:0004672;term=protein kinase activity;db_xref=PMID:17181785;date=20090715;with=      VAL;evidence=ISM");
+     // Given
+     q = new Qualifier("GO");
+     q.addValue("aspect=F;GOid=GO:0004672;term=protein kinase activity;db_xref=PMID:17181785;date=20090715;with=      VAL;evidence=ISM");
 	
-	 // When
+     // When
 	 
-	 when( qualifiers.getQualifierByName("GO") ).thenReturn(q);
+     when( qualifiers.getQualifierByName("GO") ).thenReturn(q);
 		 
-	 term = ValidateFeature.validateGO(qualifiers, eInfo);
+     term = ValidateFeature.validateGO(qualifiers, eInfo);
 	
-	 // Then
+     // Then
 	 
-	 assertEquals("With/From field with spaces for ISM", "GOid=GO:0004672, with/from field (      VAL) contains white space \n", term);
+     assertEquals("With/From field with spaces for ISM", "GOid=GO:0004672, with/from field (      VAL) contains white space \n", term);
+	 
+	 
+     // ====================================================================
+     // RT #642350 Specific testing now follows...
+     // ====================================================================
+	 
+
+     // =========  Test HTP with with/from field ======================
+	 
+     // Given
+     q = new Qualifier("GO");
+     q.addValue("aspect=F;GOid=GO:0004672;term=protein kinase activity;db_xref=PMID:17181785;date=20090715;with=DUMMY;evidence=HTP");
+	
+     // When
+	 
+     when( qualifiers.getQualifierByName("GO") ).thenReturn(q);
+		 
+     term = ValidateFeature.validateGO(qualifiers, eInfo);
+
+     // Then
+	 
+     assertEquals("With/From must be empty for HTP", "GOid=GO:0004672, the with/from must be empty when using HTP\n", term);
+	 
+	 
+     // =========  Test HTP without with/from field ======================
+	 
+     // Given
+     q = new Qualifier("GO");
+     q.addValue("aspect=F;GOid=GO:0004672;term=protein kinase activity;db_xref=PMID:17181785;date=20090715;evidence=HTP");
+	
+     // When
+	 
+     when( qualifiers.getQualifierByName("GO") ).thenReturn(q);
+		 
+     term = ValidateFeature.validateGO(qualifiers, eInfo);
+
+     // Then
+	 
+     assertEquals("Check empty With/From is accepted for HTP", "", term);
+	 
+	 
+     // =========  Test HDA with with/from field ======================
+	 
+     // Given
+     q = new Qualifier("GO");
+     q.addValue("aspect=F;GOid=GO:0004672;term=protein kinase activity;db_xref=PMID:17181785;date=20090715;with=DUMMY;evidence=HDA");
+	
+     // When
+	 
+     when( qualifiers.getQualifierByName("GO") ).thenReturn(q);
+		 
+     term = ValidateFeature.validateGO(qualifiers, eInfo);
+
+     // Then
+	 
+     assertEquals("With/From must be empty for HDA", "GOid=GO:0004672, the with/from must be empty when using HDA\n", term);
+	 
+	 
+     // =========  Test HDA without with/from field ======================
+	 
+     // Given
+     q = new Qualifier("GO");
+     q.addValue("aspect=F;GOid=GO:0004672;term=protein kinase activity;db_xref=PMID:17181785;date=20090715;evidence=HDA");
+	
+     // When
+	 
+     when( qualifiers.getQualifierByName("GO") ).thenReturn(q);
+		 
+     term = ValidateFeature.validateGO(qualifiers, eInfo);
+
+     // Then
+	 
+     assertEquals("Check empty With/From is accepted for HDA", "", term);
+	 
+	 
+	 
+     // =========  Test HMP with with/from field ======================
+	 
+     // Given
+     q = new Qualifier("GO");
+     q.addValue("aspect=F;GOid=GO:0004672;term=protein kinase activity;db_xref=PMID:17181785;date=20090715;with=DUMMY;evidence=HMP");
+	
+     // When
+	 
+     when( qualifiers.getQualifierByName("GO") ).thenReturn(q);
+		 
+     term = ValidateFeature.validateGO(qualifiers, eInfo);
+
+     // Then
+	 
+     assertEquals("With/From is optional for HMP (with/from present)", "", term);
+	 
+	 
+     // =========  Test HMP without with/from field ======================
+	 
+     // Given
+     q = new Qualifier("GO");
+     q.addValue("aspect=F;GOid=GO:0004672;term=protein kinase activity;db_xref=PMID:17181785;date=20090715;evidence=HMP");
+	
+     // When
+	 
+     when( qualifiers.getQualifierByName("GO") ).thenReturn(q);
+		 
+     term = ValidateFeature.validateGO(qualifiers, eInfo);
+
+     // Then
+	 
+     assertEquals("With/From is optional for HMP (with/from not present)", "", term);
+     
+     
+     
+     // =========  Test HGI with with/from field ======================
+	 
+     // Given
+     q = new Qualifier("GO");
+     q.addValue("aspect=F;GOid=GO:0004672;term=protein kinase activity;db_xref=PMID:17181785;date=20090715;with=DUMMY;evidence=HGI");
+	
+     // When
+	 
+     when( qualifiers.getQualifierByName("GO") ).thenReturn(q);
+		 
+     term = ValidateFeature.validateGO(qualifiers, eInfo);
+
+     // Then
+	 
+     assertEquals("With/From is optional for HGI (with/from present)", "", term);
+	 
+	 
+     // =========  Test HGI without with/from field ======================
+	 
+     // Given
+     q = new Qualifier("GO");
+     q.addValue("aspect=F;GOid=GO:0004672;term=protein kinase activity;db_xref=PMID:17181785;date=20090715;evidence=HGI");
+	
+     // When
+	 
+     when( qualifiers.getQualifierByName("GO") ).thenReturn(q);
+		 
+     term = ValidateFeature.validateGO(qualifiers, eInfo);
+
+     // Then
+	 
+     assertEquals("With/From is optional for HGI (with/from not present)", "", term);
+     
+     
+     // =========  Test HEP for Biological Process terms (with with/from field)  ======================
+	 
+     // Given
+     q = new Qualifier("GO");
+     q.addValue("aspect=P;GOid=GO:0006468;term=protein amino acid phosphorylation;db_xref=PMID:17181785;date=20090715;with=DUMMY;evidence=HEP");
+	
+     // When
+	 
+     when( qualifiers.getQualifierByName("GO") ).thenReturn(q);
+		 
+     term = ValidateFeature.validateGO(qualifiers, eInfo);
+
+     // Then
+	 
+     assertEquals("HEP is only allowed for Biological Process terms", "", term);
+	 
+	 
+     // =========  Test HEP for non-Biological Process terms (without with/from field) ======================
+	 
+     // Given
+     q = new Qualifier("GO");
+     q.addValue("aspect=F;GOid=GO:0004672;term=protein kinase activity;db_xref=PMID:17181785;date=20090715;evidence=HEP");
+	
+     // When
+	 
+     when( qualifiers.getQualifierByName("GO") ).thenReturn(q);
+		 
+     term = ValidateFeature.validateGO(qualifiers, eInfo);
+
+     // Then
+	 
+     assertEquals("HEP is not only allowed for non Biological Process terms", "GOid=GO:0004672, HEP is restricted to Biological Process terms\n", term);
+     
+     
+     // =========  Test HEP with with/from field ======================
+	 
+     // Given
+     q = new Qualifier("GO");
+     q.addValue("aspect=P;GOid=GO:0006468;term=protein amino acid phosphorylation;db_xref=PMID:17181785;date=20090715;with=DUMMY;evidence=HGI");
+	
+     // When
+	 
+     when( qualifiers.getQualifierByName("GO") ).thenReturn(q);
+		 
+     term = ValidateFeature.validateGO(qualifiers, eInfo);
+
+     // Then
+	 
+     assertEquals("With/From is optional for HEP (with/from present)", "", term);
+	 
+	 
+     // =========  Test HEP without with/from field ======================
+	 
+     // Given
+     q = new Qualifier("GO");
+     q.addValue("aspect=P;GOid=GO:0006468;term=protein amino acid phosphorylation;db_xref=PMID:17181785;date=20090715;evidence=HGI");
+	
+     // When
+	 
+     when( qualifiers.getQualifierByName("GO") ).thenReturn(q);
+		 
+     term = ValidateFeature.validateGO(qualifiers, eInfo);
+
+     // Then
+	 
+     assertEquals("With/From is optional for HEP (with/from not present)", "", term);
+     
+     
+     // =========  Test HGI with a with/from field that has spaces ========
+	 
+     // Given
+     q = new Qualifier("GO");
+     q.addValue("aspect=P;GOid=GO:0006468;term=protein amino acid phosphorylation;db_xref=PMID:17181785;date=20090715;;with=      VAL;evidence=HGI");
+	
+     // When
+	 
+     when( qualifiers.getQualifierByName("GO") ).thenReturn(q);
+		 
+     term = ValidateFeature.validateGO(qualifiers, eInfo);
+	
+     // Then
+	 
+     assertEquals("With/From field with spaces for HGI", "GOid=GO:0006468, with/from field (      VAL) contains white space \n", term);
+     
+     
   }
   
 }
