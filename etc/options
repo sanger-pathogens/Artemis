@@ -834,7 +834,7 @@ hyperlinks = \
   InterPro http://www.ebi.ac.uk/interpro/entry/ \
   OrthoMCLDB http://www.orthomcl.org/cgi-bin/OrthoMclWeb.cgi?rm=groupList&type=ackeyword&in=Accession&q= \
   PlasmoDB http://plasmodb.org/plasmodb/servlet/sv?page=gene&source_id= \
-  Pfam http://pfam.sanger.ac.uk/family?acc= \
+  Pfam https://pfam.xfam.org/family/ \
   SMART http://smart.embl-heidelberg.de/smart/do_annotation.pl?DOMAIN= \
   Prosite http://www.expasy.org/prosite/ \
   ProDom http://prodom.prabi.fr/prodom/current/cgi-bin/request.pl?question=DBEN&query= \

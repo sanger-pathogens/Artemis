@@ -53,8 +53,18 @@ public class EvidenceViewer extends JPanel
   private float unitLength;
   private int YDISPLACEMENT = 20;
   private JDesktopPane desktop;
+  
+  /** URL of Pfam database. */
+  protected String pfamUrl;
 
 
+  /**
+   * Constructor.
+   * 
+   * @param edit_feature
+   * @param overlapFeature
+   * @param desktop
+   */
   public EvidenceViewer(Feature edit_feature, 
                         FeatureVector overlapFeature, JDesktopPane desktop)
   {
@@ -72,6 +82,8 @@ public class EvidenceViewer extends JPanel
     final Dimension dim = new Dimension(500,hgt);
     setPreferredSize(dim);
     setMaximumSize(dim);
+    
+    setPfamUrl();
 
     addMouseListener(new MouseClickListener());
   }
@@ -266,7 +278,7 @@ public class EvidenceViewer extends JPanel
           String pfamID = tok.nextToken();
 
 
-          String pfam_cmd = "http://www.sanger.ac.uk/cgi-bin/Pfam/getacc?"+pfamID;
+          String pfam_cmd = pfamUrl+pfamID;
           BrowserControl.displayURL(pfam_cmd);
 
           if(BigPane.srsTabPane.isSelected())
@@ -295,6 +307,18 @@ public class EvidenceViewer extends JPanel
       }
       setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
     }
+  }
+  
+  /**
+   * Determine the PFAM database URL from properties
+   * if possible.
+   */
+  protected void setPfamUrl() 
+  {
+	  if (pfamUrl == null)
+	  {
+		  pfamUrl = Options.getOptions().getDatabaseHyperlinkProperty(Options.PFAM_HYPERLINK_PROPERTY_NAME);
+	  }
   }
 
 }

@@ -118,6 +118,10 @@ public class Options extends Properties
       System.getProperty("user.home") + File.separatorChar +
       ".artemis" + File.separatorChar + "cache" + File.separatorChar;
 
+  /* Property name constants */
+  public static final String HYPERLINKS_PROPERTY_NAME     = "hyperlinks";
+  public static final String PFAM_HYPERLINK_PROPERTY_NAME = "Pfam";
+		  
   /** 
    *  Create a new Options object with default settings for the options.
    **/
@@ -1250,7 +1254,25 @@ public class Options extends Properties
     else 
       return false;
   }
-
+  
+  /**
+   * Get the hyperlink associated with a particular bio-database, from properties.
+   * @param databaseName String
+   * @return String - hyperlink or null if not found
+   */
+  public String getDatabaseHyperlinkProperty(String databaseName)
+  {
+      StringVector links = Options.getOptions().getOptionValues(Options.HYPERLINKS_PROPERTY_NAME);
+      for(int i=0; i<links.size(); i+=2)
+      {
+        if(links.get(i).equals(databaseName))
+        {
+          return links.get(i+1);
+        }
+      }
+      
+      return null;
+  }
 
   /**
    *  Return the EntryInformation object to use for EMBL and GENBANK entries.

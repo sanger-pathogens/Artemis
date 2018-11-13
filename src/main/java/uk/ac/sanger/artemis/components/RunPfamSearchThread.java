@@ -61,6 +61,8 @@ public class RunPfamSearchThread extends Thread
   public void run()
   {
     boolean isPfam = searchURL.equals(pfamUrl);
+    
+    ProgressBarFrame progress = null;
 
     try
     {
@@ -108,14 +110,25 @@ public class RunPfamSearchThread extends Thread
           if(index > -1)
             eta = eta.substring(0, index);
         }
-        else if((index = line.indexOf("<error>")) > -1)
+        else if((index = line.indexOf("<h2>Error</h2>")) > -1)
         {
-          line = line.substring(index+7);
-          index = line.indexOf("<");
-          if(index > -1)
-            line = line.substring(0, index);
+          // Got an error tag in the page so read the 
+          // error message in the next line...
+          String next  = rd.readLine();
+          String error = "Pfam search error";
+         
+          if (next != null)
+          {
+        	  // Get rid of any double quotes and whitespace
+        	  String errorLine = next.replace("\"", "").trim();
+        	  if (errorLine.length() > 0)
+        	  {
+        		  error = errorLine;
+        	  }
+          }
+          
           JOptionPane.showMessageDialog(null,
-              line, "Pfam search error", JOptionPane.INFORMATION_MESSAGE);
+        		  error, "Pfam search error", JOptionPane.INFORMATION_MESSAGE);
           return;
         }
       }
@@ -123,7 +136,7 @@ public class RunPfamSearchThread extends Thread
       rd.close();
       
       int waitTime = Integer.parseInt(eta);
-      ProgressBarFrame progress = new ProgressBarFrame(waitTime, (isPfam ? "Pfam" : "Rfam"));
+      progress = new ProgressBarFrame(waitTime, (isPfam ? "Pfam" : "Rfam"));
       URL result = new URL(urlResults);
       Thread.sleep(waitTime*1000);
       
@@ -136,8 +149,17 @@ public class RunPfamSearchThread extends Thread
       }
 
       BrowserControl.displayURL(urlResults);
-      progress.dispose();
     }
-    catch (Exception e){ e.printStackTrace(); }
+    catch (Exception e)
+    { 
+    	e.printStackTrace(); 
+    }
+    finally
+    {
+    	if (progress != null)
+    	{
+    		progress.dispose();
+    	}
+    }
   }
 }
