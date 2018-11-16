@@ -25,8 +25,6 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import junit.framework.Assert;
-
 import uk.ac.sanger.artemis.EntryGroup;
 import uk.ac.sanger.artemis.Feature;
 import uk.ac.sanger.artemis.SimpleEntryGroup;
@@ -36,7 +34,6 @@ import uk.ac.sanger.artemis.io.FeatureVector;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.io.ValidateFeature;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
-import uk.ac.sanger.artemis.util.StringVector;
 import uk.ac.sanger.artemis.sequence.NoSequenceException;
 
 import static org.junit.Assert.*;
@@ -296,11 +293,11 @@ public class ValidateFeatureTest
     }
     catch (OutOfRangeException e)
     {
-      Assert.fail(e.getMessage());
+      fail(e.getMessage());
     }
     catch (NoSequenceException e)
     {
-      Assert.fail(e.getMessage());
+      fail(e.getMessage());
     }
   }
 
@@ -327,11 +324,11 @@ public class ValidateFeatureTest
     }
     catch (OutOfRangeException e)
     {
-      Assert.fail(e.getMessage());
+      fail(e.getMessage());
     }
     catch (NoSequenceException e)
     {
-      Assert.fail(e.getMessage());
+      fail(e.getMessage());
     }
   }
   
