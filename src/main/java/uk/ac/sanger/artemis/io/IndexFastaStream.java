@@ -116,7 +116,7 @@ public class IndexFastaStream extends StreamSequence
           catch(UnsupportedClassVersionError e)
           {
             System.err.println("Java version "+System.getProperty("java.version")+
-                " does not support indexed fasta - use Java 1.8 or higher.");
+                " does not support indexed fasta - use Java 1.9 or higher.");
             return false;
           }
           return true;

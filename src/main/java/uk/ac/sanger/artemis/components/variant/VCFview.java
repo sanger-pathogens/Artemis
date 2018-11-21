@@ -252,7 +252,7 @@ public class VCFview extends JPanel
     catch(java.lang.UnsupportedClassVersionError err)
     {
       JOptionPane.showMessageDialog(null, 
-          "This requires Java 1.8 or higher.", 
+          "This requires Java 1.9 or higher.", 
           "Check Java Version", JOptionPane.WARNING_MESSAGE);
     }
 

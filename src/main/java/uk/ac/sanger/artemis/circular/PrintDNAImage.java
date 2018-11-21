@@ -319,7 +319,7 @@ public class PrintDNAImage extends ScrollPanel
     }
     catch (IOException e)
     {
-      System.out.println("Java 1.8+ is required");
+      System.out.println("An error occurred: " + e.getMessage());
     }
   }
 
@@ -359,7 +359,7 @@ public class PrintDNAImage extends ScrollPanel
     catch(NoClassDefFoundError ex)
     {
       JOptionPane.showMessageDialog(this,
-            "This option requires Java 1.8 or higher.");
+            "This option requires Java 1.9 or higher.");
     }
   }
   

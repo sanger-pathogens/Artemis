@@ -201,7 +201,7 @@ public class PrintVCFview extends ScrollPanel implements Printable
     catch(NoClassDefFoundError ex)
     {
       JOptionPane.showMessageDialog(this,
-            "This option requires Java 1.8 or higher.");
+            "This option requires Java 1.9 or higher.");
     }
   }
   
@@ -252,7 +252,7 @@ public class PrintVCFview extends ScrollPanel implements Printable
     }
     catch ( IOException e )
     {
-      System.out.println("Java 1.8+ is required");
+      System.out.println("An error occurred: " + e.getMessage());
       e.printStackTrace();
     }
   }

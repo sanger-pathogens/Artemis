@@ -126,11 +126,11 @@ public class PrintBamView
     catch(NoClassDefFoundError ex)
     {
       JOptionPane.showMessageDialog(null,
-            "This option requires Java 1.8 or higher.");
+            "This option requires Java 1.9 or higher.");
     }
     catch ( IOException e )
     {
-      System.out.println("Java 1.8+ is required");
+      System.out.println("An error occurred: " + e.getMessage());
       e.printStackTrace();
     }
   }
