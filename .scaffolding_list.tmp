@@ -90,7 +90,6 @@ uk.ac.sanger.artemis.components.ActMain_ESTest_scaffolding
 uk.ac.sanger.artemis.components.ActPanelResizer_ESTest_scaffolding
 uk.ac.sanger.artemis.components.AlignMatchViewer_ESTest_scaffolding
 uk.ac.sanger.artemis.components.alignment.AbstractGraphPanel_ESTest_scaffolding
-uk.ac.sanger.artemis.components.alignment.BamOSXAdapter_ESTest_scaffolding
 uk.ac.sanger.artemis.components.alignment.BamUtils_ESTest_scaffolding
 uk.ac.sanger.artemis.components.alignment.BamView_ESTest_scaffolding
 uk.ac.sanger.artemis.components.alignment.BamViewRecord_ESTest_scaffolding
@@ -190,7 +189,6 @@ uk.ac.sanger.artemis.components.MarkerRangeRequester_ESTest_scaffolding
 uk.ac.sanger.artemis.components.MultiComparator_ESTest_scaffolding
 uk.ac.sanger.artemis.components.Navigator_ESTest_scaffolding
 uk.ac.sanger.artemis.components.NonModalDialog_ESTest_scaffolding
-uk.ac.sanger.artemis.components.OSXAdapter_ESTest_scaffolding
 uk.ac.sanger.artemis.components.Plot_ESTest_scaffolding
 uk.ac.sanger.artemis.components.PrintACT_ESTest_scaffolding
 uk.ac.sanger.artemis.components.PrintArtemis_ESTest_scaffolding
@@ -366,7 +364,6 @@ uk.ac.sanger.artemis.plot.HydroAlgorithm_ESTest_scaffolding
 uk.ac.sanger.artemis.plot.HydrophilicityAlgorithm_ESTest_scaffolding
 uk.ac.sanger.artemis.plot.HydrophobicityAlgorithm_ESTest_scaffolding
 uk.ac.sanger.artemis.plot.ICDIAlgorithm_ESTest_scaffolding
-uk.ac.sanger.artemis.plot.LineStyleListRenderer_ESTest_scaffolding
 uk.ac.sanger.artemis.plot.MRIAlgorithm_ESTest_scaffolding
 uk.ac.sanger.artemis.plot.NcAlgorithm_ESTest_scaffolding
 uk.ac.sanger.artemis.plot.PositionalAsymmetryAlgorithm_ESTest_scaffolding

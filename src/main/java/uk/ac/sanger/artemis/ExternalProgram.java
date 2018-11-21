@@ -130,58 +130,6 @@ public class ExternalProgram
 
     try
     {
-      if( System.getProperty("j2ssh") != null && 
-         !System.getProperty("j2ssh").equals("false") && 
-          (getRealName().indexOf("blast") > -1 || getRealName().startsWith("fast")))
-      {
-        logger4j.debug("GET READY TO CALL SSH CLIENT " + getRealName());
-
-        final Feature this_feature = features.elementAt(0);
-        Entry entry = this_feature.getEntry();
-        String[] args;
-
-        if (((DocumentEntry) entry.getEMBLEntry()).getDocument() instanceof RemoteFileDocument)
-        {
-          RemoteFileDocument nodeDoc = (RemoteFileDocument) (((DocumentEntry) entry
-              .getEMBLEntry()).getDocument());
-          RemoteFileNode node = nodeDoc.getRemoteFileNode();
-
-          String wdir = node.getRootDir() + "/" + node.getFullName();
-          int index = wdir.lastIndexOf("/");
-          wdir = wdir.substring(0, index);
-
-          args = new String[9];
-
-          args[0] = "-f";
-          args[1] = file_of_filenames.getPath();
-          args[2] = "-cmd";
-          args[3] = getRealName();
-          args[4] = "-wdir";
-          args[5] = wdir;
-          args[6] = "-d";
-          args[7] = getProgramOptions();
-          args[8] = "-keep";
-        }
-        else
-        {
-          args = new String[6];
-
-          args[0] = "-f";
-          args[1] = file_of_filenames.getPath();
-          args[2] = "-cmd";
-          args[3] = getRealName();
-          args[4] = "-d";
-          args[5] = getProgramOptions();
-        }
-
-        logger4j.debug("CALL SSH CLIENT " + getRealName());
-        uk.ac.sanger.artemis.j2ssh.SshPSUClient ssh = new uk.ac.sanger.artemis.j2ssh.SshPSUClient(
-            args);
-        ssh.start();
-        new ProgressBarFrame(1, getName());
-        return null;
-      }
-
       final String[] arguments;
       switch (program_type)
       {
@@ -427,7 +375,7 @@ public class ExternalProgram
     filenames_printwriter.close();
     filenames_writer.close();
 
-    logger4j.debug("WRITTEN "+file_of_filenames.getCanonicalPath());
+    logger4j.info(name + " input file: "+file_of_filenames.getCanonicalPath());
 
 
     return file_of_filenames;
@@ -509,7 +457,7 @@ public class ExternalProgram
     }
     catch(Exception e)
     {
-      logger4j.debug(e.getMessage());
+      logger4j.error(e.getMessage());
     }
   }
 

@@ -9,8 +9,8 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.evosuite.shaded.org.mockito.Mockito.*;
 import static org.evosuite.runtime.EvoAssertions.*;
-import com.sshtools.j2ssh.io.ByteArrayReader;
-import java.awt.HeadlessException;
+
+import java.io.ByteArrayInputStream;
 import java.awt.datatransfer.Clipboard;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
@@ -118,10 +118,7 @@ public class GFFStreamFeature_ESTest extends GFFStreamFeature_ESTest_scaffolding
       byteArray0[4] = (byte) (-68);
       byteArray0[5] = (byte)116;
       byteArray0[6] = (byte)57;
-      ByteArrayReader byteArrayReader0 = new ByteArrayReader(byteArray0);
-      assertArrayEquals(new byte[] {(byte) (-18), (byte)0, (byte)11, (byte)119, (byte) (-68), (byte)116, (byte)57}, byteArray0);
-      assertNotNull(byteArrayReader0);
-      assertEquals(7, byteArray0.length);
+      ByteArrayInputStream byteArrayReader0 = new ByteArrayInputStream(byteArray0);
       assertEquals(7, byteArrayReader0.available());
       
       LoggerRepository loggerRepository0 = Category.getDefaultHierarchy();
@@ -437,10 +434,7 @@ public class GFFStreamFeature_ESTest extends GFFStreamFeature_ESTest_scaffolding
       byteArray0[4] = (byte) (-68);
       byteArray0[5] = (byte)116;
       byteArray0[6] = (byte)119;
-      ByteArrayReader byteArrayReader0 = new ByteArrayReader(byteArray0);
-      assertArrayEquals(new byte[] {(byte)0, (byte)0, (byte)0, (byte)119, (byte) (-68), (byte)116, (byte)119}, byteArray0);
-      assertNotNull(byteArrayReader0);
-      assertEquals(7, byteArray0.length);
+      ByteArrayInputStream byteArrayReader0 = new ByteArrayInputStream(byteArray0);
       assertEquals(7, byteArrayReader0.available());
       
       LoggerRepository loggerRepository0 = Category.getDefaultHierarchy();
@@ -862,10 +856,7 @@ public class GFFStreamFeature_ESTest extends GFFStreamFeature_ESTest_scaffolding
       byteArray0[3] = (byte)119;
       byteArray0[4] = (byte) (-68);
       byteArray0[6] = (byte)57;
-      ByteArrayReader byteArrayReader0 = new ByteArrayReader(byteArray0);
-      assertArrayEquals(new byte[] {(byte)0, (byte)0, (byte)11, (byte)119, (byte) (-68), (byte)0, (byte)57}, byteArray0);
-      assertNotNull(byteArrayReader0);
-      assertEquals(7, byteArray0.length);
+      ByteArrayInputStream byteArrayReader0 = new ByteArrayInputStream(byteArray0);
       assertEquals(7, byteArrayReader0.available());
       
       LoggerRepository loggerRepository0 = Category.getDefaultHierarchy();
@@ -1160,10 +1151,7 @@ public class GFFStreamFeature_ESTest extends GFFStreamFeature_ESTest_scaffolding
       byteArray0[4] = (byte) (-68);
       byteArray0[5] = (byte)116;
       byteArray0[6] = (byte)119;
-      ByteArrayReader byteArrayReader0 = new ByteArrayReader(byteArray0);
-      assertArrayEquals(new byte[] {(byte)0, (byte)0, (byte)11, (byte)119, (byte) (-68), (byte)116, (byte)119}, byteArray0);
-      assertNotNull(byteArrayReader0);
-      assertEquals(7, byteArray0.length);
+      ByteArrayInputStream byteArrayReader0 = new ByteArrayInputStream(byteArray0);
       assertEquals(7, byteArrayReader0.available());
       
       LoggerRepository loggerRepository0 = Category.getDefaultHierarchy();
@@ -1598,10 +1586,7 @@ public class GFFStreamFeature_ESTest extends GFFStreamFeature_ESTest_scaffolding
       byteArray0[4] = (byte) (-68);
       byteArray0[5] = (byte)99;
       byteArray0[6] = (byte)57;
-      ByteArrayReader byteArrayReader0 = new ByteArrayReader(byteArray0);
-      assertArrayEquals(new byte[] {(byte) (-18), (byte)0, (byte)11, (byte) (-18), (byte) (-68), (byte)99, (byte)57}, byteArray0);
-      assertNotNull(byteArrayReader0);
-      assertEquals(7, byteArray0.length);
+      ByteArrayInputStream byteArrayReader0 = new ByteArrayInputStream(byteArray0);
       assertEquals(7, byteArrayReader0.available());
       
       LoggerRepository loggerRepository0 = Category.getDefaultHierarchy();
@@ -1898,10 +1883,7 @@ public class GFFStreamFeature_ESTest extends GFFStreamFeature_ESTest_scaffolding
       byteArray0[3] = (byte)119;
       byteArray0[4] = (byte) (-68);
       byteArray0[6] = (byte)57;
-      ByteArrayReader byteArrayReader0 = new ByteArrayReader(byteArray0);
-      assertArrayEquals(new byte[] {(byte)0, (byte)11, (byte)0, (byte)119, (byte) (-68), (byte)0, (byte)57}, byteArray0);
-      assertNotNull(byteArrayReader0);
-      assertEquals(7, byteArray0.length);
+      ByteArrayInputStream byteArrayReader0 = new ByteArrayInputStream(byteArray0);
       assertEquals(7, byteArrayReader0.available());
       
       LoggerRepository loggerRepository0 = Category.getDefaultHierarchy();
@@ -2151,10 +2133,7 @@ public class GFFStreamFeature_ESTest extends GFFStreamFeature_ESTest_scaffolding
       byteArray0[4] = (byte) (-68);
       byteArray0[5] = (byte)116;
       byteArray0[6] = (byte)119;
-      ByteArrayReader byteArrayReader0 = new ByteArrayReader(byteArray0);
-      assertArrayEquals(new byte[] {(byte)0, (byte)0, (byte)11, (byte)119, (byte) (-68), (byte)116, (byte)119}, byteArray0);
-      assertNotNull(byteArrayReader0);
-      assertEquals(7, byteArray0.length);
+      ByteArrayInputStream byteArrayReader0 = new ByteArrayInputStream(byteArray0);
       assertEquals(7, byteArrayReader0.available());
       
       LoggerRepository loggerRepository0 = Category.getDefaultHierarchy();
@@ -2570,10 +2549,7 @@ public class GFFStreamFeature_ESTest extends GFFStreamFeature_ESTest_scaffolding
       byteArray0[4] = (byte) (-68);
       byteArray0[5] = (byte)116;
       byteArray0[6] = (byte)57;
-      ByteArrayReader byteArrayReader0 = new ByteArrayReader(byteArray0);
-      assertArrayEquals(new byte[] {(byte) (-18), (byte)0, (byte)11, (byte)119, (byte) (-68), (byte)116, (byte)57}, byteArray0);
-      assertNotNull(byteArrayReader0);
-      assertEquals(7, byteArray0.length);
+      ByteArrayInputStream byteArrayReader0 = new ByteArrayInputStream(byteArray0);
       assertEquals(7, byteArrayReader0.available());
       
       LoggerRepository loggerRepository0 = Category.getDefaultHierarchy();
@@ -2882,10 +2858,7 @@ public class GFFStreamFeature_ESTest extends GFFStreamFeature_ESTest_scaffolding
       byteArray0[4] = (byte) (-68);
       byteArray0[5] = (byte)116;
       byteArray0[6] = (byte)57;
-      ByteArrayReader byteArrayReader0 = new ByteArrayReader(byteArray0);
-      assertArrayEquals(new byte[] {(byte) (-18), (byte)0, (byte)11, (byte)119, (byte) (-68), (byte)116, (byte)57}, byteArray0);
-      assertNotNull(byteArrayReader0);
-      assertEquals(7, byteArray0.length);
+      ByteArrayInputStream byteArrayReader0 = new ByteArrayInputStream(byteArray0);
       assertEquals(7, byteArrayReader0.available());
       
       LoggerRepository loggerRepository0 = Category.getDefaultHierarchy();
@@ -3100,10 +3073,7 @@ public class GFFStreamFeature_ESTest extends GFFStreamFeature_ESTest_scaffolding
       byteArray0[4] = (byte) (-68);
       byteArray0[5] = (byte)116;
       byteArray0[6] = (byte)57;
-      ByteArrayReader byteArrayReader0 = new ByteArrayReader(byteArray0);
-      assertArrayEquals(new byte[] {(byte) (-18), (byte)0, (byte)11, (byte)119, (byte) (-68), (byte)116, (byte)57}, byteArray0);
-      assertNotNull(byteArrayReader0);
-      assertEquals(7, byteArray0.length);
+      ByteArrayInputStream byteArrayReader0 = new ByteArrayInputStream(byteArray0);
       assertEquals(7, byteArrayReader0.available());
       
       LoggerRepository loggerRepository0 = Category.getDefaultHierarchy();
@@ -3430,10 +3400,7 @@ public class GFFStreamFeature_ESTest extends GFFStreamFeature_ESTest_scaffolding
       byteArray0[4] = (byte) (-68);
       byteArray0[5] = (byte)116;
       byteArray0[6] = (byte)57;
-      ByteArrayReader byteArrayReader0 = new ByteArrayReader(byteArray0);
-      assertArrayEquals(new byte[] {(byte) (-18), (byte)0, (byte)11, (byte)119, (byte) (-68), (byte)116, (byte)57}, byteArray0);
-      assertNotNull(byteArrayReader0);
-      assertEquals(7, byteArray0.length);
+      ByteArrayInputStream byteArrayReader0 = new ByteArrayInputStream(byteArray0);
       assertEquals(7, byteArrayReader0.available());
       
       LoggerRepository loggerRepository0 = Category.getDefaultHierarchy();
@@ -3756,10 +3723,7 @@ public class GFFStreamFeature_ESTest extends GFFStreamFeature_ESTest_scaffolding
       byteArray0[4] = (byte) (-68);
       byteArray0[5] = (byte)116;
       byteArray0[6] = (byte)57;
-      ByteArrayReader byteArrayReader0 = new ByteArrayReader(byteArray0);
-      assertArrayEquals(new byte[] {(byte) (-18), (byte)0, (byte)11, (byte)119, (byte) (-68), (byte)116, (byte)57}, byteArray0);
-      assertNotNull(byteArrayReader0);
-      assertEquals(7, byteArray0.length);
+      ByteArrayInputStream byteArrayReader0 = new ByteArrayInputStream(byteArray0);
       assertEquals(7, byteArrayReader0.available());
       
       LoggerRepository loggerRepository0 = Category.getDefaultHierarchy();
@@ -4185,10 +4149,7 @@ public class GFFStreamFeature_ESTest extends GFFStreamFeature_ESTest_scaffolding
       byteArray0[4] = (byte) (-68);
       byteArray0[5] = (byte)116;
       byteArray0[6] = (byte)57;
-      ByteArrayReader byteArrayReader0 = new ByteArrayReader(byteArray0);
-      assertArrayEquals(new byte[] {(byte) (-18), (byte)0, (byte)11, (byte)119, (byte) (-68), (byte)116, (byte)57}, byteArray0);
-      assertNotNull(byteArrayReader0);
-      assertEquals(7, byteArray0.length);
+      ByteArrayInputStream byteArrayReader0 = new ByteArrayInputStream(byteArray0);
       assertEquals(7, byteArrayReader0.available());
       
       int int0 = byteArrayReader0.read(byteArray0);
@@ -4502,10 +4463,7 @@ public class GFFStreamFeature_ESTest extends GFFStreamFeature_ESTest_scaffolding
       byteArray0[4] = (byte) (-68);
       byteArray0[5] = (byte)116;
       byteArray0[6] = (byte)57;
-      ByteArrayReader byteArrayReader0 = new ByteArrayReader(byteArray0);
-      assertArrayEquals(new byte[] {(byte) (-18), (byte)0, (byte)11, (byte)119, (byte) (-68), (byte)116, (byte)57}, byteArray0);
-      assertNotNull(byteArrayReader0);
-      assertEquals(7, byteArray0.length);
+      ByteArrayInputStream byteArrayReader0 = new ByteArrayInputStream(byteArray0);
       assertEquals(7, byteArrayReader0.available());
       
       LoggerRepository loggerRepository0 = Category.getDefaultHierarchy();
@@ -4810,10 +4768,7 @@ public class GFFStreamFeature_ESTest extends GFFStreamFeature_ESTest_scaffolding
       byteArray0[4] = (byte) (-68);
       byteArray0[5] = (byte)116;
       byteArray0[6] = (byte)119;
-      ByteArrayReader byteArrayReader0 = new ByteArrayReader(byteArray0);
-      assertArrayEquals(new byte[] {(byte) (-18), (byte)0, (byte)11, (byte)119, (byte) (-68), (byte)116, (byte)119}, byteArray0);
-      assertNotNull(byteArrayReader0);
-      assertEquals(7, byteArray0.length);
+      ByteArrayInputStream byteArrayReader0 = new ByteArrayInputStream(byteArray0);
       assertEquals(7, byteArrayReader0.available());
       
       LoggerRepository loggerRepository0 = Category.getDefaultHierarchy();
@@ -5132,10 +5087,7 @@ public class GFFStreamFeature_ESTest extends GFFStreamFeature_ESTest_scaffolding
       byteArray0[4] = (byte) (-68);
       byteArray0[5] = (byte)116;
       byteArray0[6] = (byte)57;
-      ByteArrayReader byteArrayReader0 = new ByteArrayReader(byteArray0);
-      assertArrayEquals(new byte[] {(byte) (-18), (byte)0, (byte)0, (byte)119, (byte) (-68), (byte)116, (byte)57}, byteArray0);
-      assertNotNull(byteArrayReader0);
-      assertEquals(7, byteArray0.length);
+      ByteArrayInputStream byteArrayReader0 = new ByteArrayInputStream(byteArray0);
       assertEquals(7, byteArrayReader0.available());
       
       LoggerRepository loggerRepository0 = Category.getDefaultHierarchy();
@@ -5456,10 +5408,7 @@ public class GFFStreamFeature_ESTest extends GFFStreamFeature_ESTest_scaffolding
       byteArray0[4] = (byte) (-68);
       byteArray0[5] = (byte)116;
       byteArray0[6] = (byte)57;
-      ByteArrayReader byteArrayReader0 = new ByteArrayReader(byteArray0);
-      assertArrayEquals(new byte[] {(byte) (-18), (byte) (-18), (byte)11, (byte)119, (byte) (-68), (byte)116, (byte)57}, byteArray0);
-      assertNotNull(byteArrayReader0);
-      assertEquals(7, byteArray0.length);
+      ByteArrayInputStream byteArrayReader0 = new ByteArrayInputStream(byteArray0);
       assertEquals(7, byteArrayReader0.available());
       
       LoggerRepository loggerRepository0 = Category.getDefaultHierarchy();
@@ -5811,10 +5760,7 @@ public class GFFStreamFeature_ESTest extends GFFStreamFeature_ESTest_scaffolding
       byteArray0[4] = (byte) (-68);
       byteArray0[5] = (byte)116;
       byteArray0[6] = (byte)57;
-      ByteArrayReader byteArrayReader0 = new ByteArrayReader(byteArray0);
-      assertArrayEquals(new byte[] {(byte) (-18), (byte)0, (byte)11, (byte)119, (byte) (-68), (byte)116, (byte)57}, byteArray0);
-      assertNotNull(byteArrayReader0);
-      assertEquals(7, byteArray0.length);
+      ByteArrayInputStream byteArrayReader0 = new ByteArrayInputStream(byteArray0);
       assertEquals(7, byteArrayReader0.available());
       
       LoggerRepository loggerRepository0 = Category.getDefaultHierarchy();
@@ -6126,10 +6072,7 @@ public class GFFStreamFeature_ESTest extends GFFStreamFeature_ESTest_scaffolding
       byteArray0[4] = (byte) (-68);
       byteArray0[5] = (byte)116;
       byteArray0[6] = (byte)57;
-      ByteArrayReader byteArrayReader0 = new ByteArrayReader(byteArray0);
-      assertArrayEquals(new byte[] {(byte) (-18), (byte)0, (byte)11, (byte)119, (byte) (-68), (byte)116, (byte)57}, byteArray0);
-      assertNotNull(byteArrayReader0);
-      assertEquals(7, byteArray0.length);
+      ByteArrayInputStream byteArrayReader0 = new ByteArrayInputStream(byteArray0);
       assertEquals(7, byteArrayReader0.available());
       
       LoggerRepository loggerRepository0 = Category.getDefaultHierarchy();
@@ -6715,10 +6658,7 @@ public class GFFStreamFeature_ESTest extends GFFStreamFeature_ESTest_scaffolding
       byteArray0[4] = (byte) (-68);
       byteArray0[5] = (byte)116;
       byteArray0[6] = (byte)57;
-      ByteArrayReader byteArrayReader0 = new ByteArrayReader(byteArray0);
-      assertArrayEquals(new byte[] {(byte) (-18), (byte)0, (byte)11, (byte)119, (byte) (-68), (byte)116, (byte)57}, byteArray0);
-      assertNotNull(byteArrayReader0);
-      assertEquals(7, byteArray0.length);
+      ByteArrayInputStream byteArrayReader0 = new ByteArrayInputStream(byteArray0);
       assertEquals(7, byteArrayReader0.available());
       
       LoggerRepository loggerRepository0 = Category.getDefaultHierarchy();
@@ -7053,10 +6993,7 @@ public class GFFStreamFeature_ESTest extends GFFStreamFeature_ESTest_scaffolding
       byteArray0[4] = (byte) (-68);
       byteArray0[5] = (byte)116;
       byteArray0[6] = (byte)57;
-      ByteArrayReader byteArrayReader0 = new ByteArrayReader(byteArray0);
-      assertArrayEquals(new byte[] {(byte) (-18), (byte)0, (byte)11, (byte)119, (byte) (-68), (byte)116, (byte)57}, byteArray0);
-      assertNotNull(byteArrayReader0);
-      assertEquals(7, byteArray0.length);
+      ByteArrayInputStream byteArrayReader0 = new ByteArrayInputStream(byteArray0);
       assertEquals(7, byteArrayReader0.available());
       
       LoggerRepository loggerRepository0 = Category.getDefaultHierarchy();
@@ -7387,10 +7324,7 @@ public class GFFStreamFeature_ESTest extends GFFStreamFeature_ESTest_scaffolding
       byteArray0[4] = (byte) (-68);
       byteArray0[5] = (byte)116;
       byteArray0[6] = (byte)57;
-      ByteArrayReader byteArrayReader0 = new ByteArrayReader(byteArray0);
-      assertArrayEquals(new byte[] {(byte) (-18), (byte)0, (byte)11, (byte) (-18), (byte) (-68), (byte)116, (byte)57}, byteArray0);
-      assertNotNull(byteArrayReader0);
-      assertEquals(7, byteArray0.length);
+      ByteArrayInputStream byteArrayReader0 = new ByteArrayInputStream(byteArray0);
       assertEquals(7, byteArrayReader0.available());
       
       LoggerRepository loggerRepository0 = Category.getDefaultHierarchy();
@@ -7715,10 +7649,7 @@ public class GFFStreamFeature_ESTest extends GFFStreamFeature_ESTest_scaffolding
       byteArray0[4] = (byte) (-68);
       byteArray0[5] = (byte)116;
       byteArray0[6] = (byte)57;
-      ByteArrayReader byteArrayReader0 = new ByteArrayReader(byteArray0);
-      assertArrayEquals(new byte[] {(byte) (-18), (byte)0, (byte)11, (byte)119, (byte) (-68), (byte)116, (byte)57}, byteArray0);
-      assertNotNull(byteArrayReader0);
-      assertEquals(7, byteArray0.length);
+      ByteArrayInputStream byteArrayReader0 = new ByteArrayInputStream(byteArray0);
       assertEquals(7, byteArrayReader0.available());
       
       LoggerRepository loggerRepository0 = Category.getDefaultHierarchy();
@@ -7968,10 +7899,7 @@ public class GFFStreamFeature_ESTest extends GFFStreamFeature_ESTest_scaffolding
       byteArray0[4] = (byte) (-68);
       byteArray0[5] = (byte)116;
       byteArray0[6] = (byte)57;
-      ByteArrayReader byteArrayReader0 = new ByteArrayReader(byteArray0);
-      assertArrayEquals(new byte[] {(byte) (-18), (byte)0, (byte)11, (byte)119, (byte) (-68), (byte)116, (byte)57}, byteArray0);
-      assertNotNull(byteArrayReader0);
-      assertEquals(7, byteArray0.length);
+      ByteArrayInputStream byteArrayReader0 = new ByteArrayInputStream(byteArray0);
       assertEquals(7, byteArrayReader0.available());
       
       LoggerRepository loggerRepository0 = Category.getDefaultHierarchy();
@@ -8896,10 +8824,7 @@ public class GFFStreamFeature_ESTest extends GFFStreamFeature_ESTest_scaffolding
       byteArray0[4] = (byte) (-68);
       byteArray0[5] = (byte)116;
       byteArray0[6] = (byte)119;
-      ByteArrayReader byteArrayReader0 = new ByteArrayReader(byteArray0);
-      assertArrayEquals(new byte[] {(byte)0, (byte)0, (byte)0, (byte)119, (byte) (-68), (byte)116, (byte)119}, byteArray0);
-      assertNotNull(byteArrayReader0);
-      assertEquals(7, byteArray0.length);
+      ByteArrayInputStream byteArrayReader0 = new ByteArrayInputStream(byteArray0);
       assertEquals(7, byteArrayReader0.available());
       
       LoggerRepository loggerRepository0 = Category.getDefaultHierarchy();
@@ -9424,10 +9349,7 @@ public class GFFStreamFeature_ESTest extends GFFStreamFeature_ESTest_scaffolding
       
       byteArray0[4] = (byte) (-68);
       byteArray0[6] = (byte)57;
-      ByteArrayReader byteArrayReader0 = new ByteArrayReader(byteArray0);
-      assertArrayEquals(new byte[] {(byte)0, (byte)0, (byte)11, (byte)119, (byte) (-68), (byte)0, (byte)57}, byteArray0);
-      assertNotNull(byteArrayReader0);
-      assertEquals(7, byteArray0.length);
+      ByteArrayInputStream byteArrayReader0 = new ByteArrayInputStream(byteArray0);
       assertEquals(7, byteArrayReader0.available());
       
       LoggerRepository loggerRepository0 = Category.getDefaultHierarchy();
@@ -9638,7 +9560,7 @@ public class GFFStreamFeature_ESTest extends GFFStreamFeature_ESTest_scaffolding
       byteArray0[3] = (byte)119;
       byteArray0[4] = (byte) (-68);
       byteArray0[5] = (byte)57;
-      ByteArrayReader byteArrayReader0 = new ByteArrayReader(byteArray0);
+      ByteArrayInputStream byteArrayReader0 = new ByteArrayInputStream(byteArray0);
       LoggerRepository loggerRepository0 = Category.getDefaultHierarchy();
       OptionConverter.selectAndConfigure((InputStream) byteArrayReader0, "internal error - unexpected exception: ", loggerRepository0);
       GFFStreamFeature gFFStreamFeature1 = new GFFStreamFeature(gFFStreamFeature0);
@@ -9670,7 +9592,7 @@ public class GFFStreamFeature_ESTest extends GFFStreamFeature_ESTest_scaffolding
       byteArray0[3] = (byte)119;
       byteArray0[4] = (byte) (-68);
       byteArray0[6] = (byte)57;
-      ByteArrayReader byteArrayReader0 = new ByteArrayReader(byteArray0);
+      ByteArrayInputStream byteArrayReader0 = new ByteArrayInputStream(byteArray0);
       LoggerRepository loggerRepository0 = Category.getDefaultHierarchy();
       OptionConverter.selectAndConfigure((InputStream) byteArrayReader0, "internal error - unexpected exception: ", loggerRepository0);
       GFFStreamFeature gFFStreamFeature1 = new GFFStreamFeature(gFFStreamFeature0);
@@ -9708,7 +9630,7 @@ public class GFFStreamFeature_ESTest extends GFFStreamFeature_ESTest_scaffolding
       byteArray0[4] = (byte) (-68);
       byteArray0[5] = (byte)116;
       byteArray0[6] = (byte)57;
-      ByteArrayReader byteArrayReader0 = new ByteArrayReader(byteArray0);
+      ByteArrayInputStream byteArrayReader0 = new ByteArrayInputStream(byteArray0);
       LoggerRepository loggerRepository0 = Category.getDefaultHierarchy();
       OptionConverter.selectAndConfigure((InputStream) byteArrayReader0, "internal error - unexpected exception: ", loggerRepository0);
       GFFStreamFeature gFFStreamFeature1 = new GFFStreamFeature(gFFStreamFeature0);
@@ -9746,7 +9668,7 @@ public class GFFStreamFeature_ESTest extends GFFStreamFeature_ESTest_scaffolding
       byteArray0[4] = (byte) (-68);
       byteArray0[5] = (byte)116;
       byteArray0[6] = (byte)57;
-      ByteArrayReader byteArrayReader0 = new ByteArrayReader(byteArray0);
+      ByteArrayInputStream byteArrayReader0 = new ByteArrayInputStream(byteArray0);
       Category.getDefaultHierarchy();
       GFFStreamFeature gFFStreamFeature1 = new GFFStreamFeature(gFFStreamFeature0);
       Hashtable<String, Range> hashtable0 = gFFStreamFeature0.getSegmentRangeStore();
@@ -9775,7 +9697,7 @@ public class GFFStreamFeature_ESTest extends GFFStreamFeature_ESTest_scaffolding
       byteArray0[4] = (byte) (-23);
       byteArray0[5] = (byte)116;
       byteArray0[6] = (byte)57;
-      ByteArrayReader byteArrayReader0 = new ByteArrayReader(byteArray0);
+      ByteArrayInputStream byteArrayReader0 = new ByteArrayInputStream(byteArray0);
       LoggerRepository loggerRepository0 = Category.getDefaultHierarchy();
       OptionConverter.selectAndConfigure((InputStream) byteArrayReader0, "internal error - unexpected exception: ", loggerRepository0);
       GFFStreamFeature gFFStreamFeature0 = new GFFStreamFeature(databaseStreamFeature0);
