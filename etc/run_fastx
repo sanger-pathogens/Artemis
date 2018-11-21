@@ -6,9 +6,9 @@
 # to customise this script see the function called run_one_prog below
 
 
-RCS_HEADER="$Header: //tmp/pathsoft/artemis/etc/run_fastx,v 1.3 2005-02-21 11:54:10 tjc Exp $"
-
-PROG=`echo $RCS_HEADER | sed 's/.*run_\(.*\),v.*/\1/'`
+PROG=fastx
+PROG_VERSION=36
+EXENAME=${PROG}${PROG_VERSION}
 
 
 if [ $# = 4 -a x$1 = x-onefile ]
@@ -37,38 +37,67 @@ eval EXPANDED_DATABASE="$DATABASE"
 run_one_prog () {
     INPUT_FILE=$1
     OUTPUT_FILE=$2
-    DATABASE=$3
+    DATABASE_ARG=$3
 
 
     ### change these lines:
 
-    FASTLIBS=/nfs/disk222/yeastpub/bio-soft/fasta/pubseqgbs export FASTLIBS
-    EXEC=/nfs/disk222/yeastpub/bio-soft/fasta/fastx33_t
-
-    echo "about to start $EXEC with input from $INPUT_FILE and output to" 1>&2
-    echo "$OUTPUT_FILE using database $DATABASE" 1>&2
-
-    # add/change the flags to suit your site:
-    COMMAND="$EXEC -B -S -q -b 40 -H $INPUT_FILE $DATABASE ktup 2"
-
-    echo "command line: $COMMAND" 1>&2
-
-    $COMMAND 2>&1 > $OUTPUT_FILE | 
-      tee ${PROG}_errors.new 1>&2
-
-    #### end of changes
-
-
-    # Artemis can read compressed files
-    gzip -9 $OUTPUT_FILE &
-
-    if [ -s ${PROG}_errors.new ]
+    PLATFORM_INFO=`uname`
+	if [ "$PLATFORM_INFO" = "Darwin" ]
+	then
+		# Mac OSX: Attempt to initialise environment variables from profile.
+		echo "running $HOME/.profile..."
+		source $HOME/.profile 2>/dev/null
+	fi
+	
+	EXEC=${EXEC-`which $EXENAME 2>/dev/null`}
+	
+	if [ ! -x "$EXEC" ] && [ -x "/usr/local/fasta/bin/$EXENAME" ]
     then
-        ( echo ERROR running $PROG: ; echo; 
-          echo ===================================================
-          cat ${PROG}_errors.new ) >> $OUTPUT_FILE
-        cat ${PROG}_errors.new >> ${PROG}_errors
+    	EXEC=/usr/local/fasta/bin/$EXENAME
     fi
+    
+    if [ ! -x "$EXEC" ]
+    then
+    	echo "ERROR: Cannot find an executable $EXENAME program. Exiting."
+    	exit 1
+    fi
+ 
+    if [ ! -f "$FASTLIBS" ]; then
+    
+    	DATABASE=`echo $DATABASE_ARG | sed 's|\%||'`
+
+      	if [ ! -f "$DATABASE" ]
+      	then
+ 
+        	# Check home directory...
+        	echo "Checking $HOME/blast-data/ for database..."
+        	if [ -f "$HOME/blast-data/$DATABASE" ]
+        	then
+          		DATABASE=$HOME/blast-data/$DATABASE
+        	fi
+      	fi
+
+      	if [ ! -f "$DATABASE" ]
+      	then
+        	echo "ERROR: Cannot find database $DATABASE. Exiting."
+        	exit 1
+      	fi
+    
+    fi
+   
+   
+    # add/change the flags to suit your site (note: ktup is set to 2):
+    COMMAND="$EXEC -S -q -b 40 -H $INPUT_FILE $DATABASE 2"
+
+    echo
+    echo "input file: $INPUT_FILE"
+    echo "output will be written to: $OUTPUT_FILE"
+    echo "executing command: $COMMAND" 1>&2
+
+    nice -n 19 $COMMAND 2>&1 > $OUTPUT_FILE | tee ${PROG}_errors.new 1>&2
+    
+    #### end of changes
 }
 
 (echo "#!/bin/sh -"; echo "kill $$") > $PROG.kill

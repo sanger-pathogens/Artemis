@@ -5,10 +5,7 @@
 
 # to customise this script see the function called run_one_prog below
 
-
-RCS_HEADER="$Header: //tmp/pathsoft/artemis/etc/run_blastp,v 1.6 2007-02-27 10:59:41 tjc Exp $"
-
-PROG=`echo $RCS_HEADER | sed 's/.*run_\(.*\),v.*/\1/'`
+PROG=blastp
 
 
 if [ $# = 4 -a x$1 = x-onefile ]
@@ -37,34 +34,68 @@ eval EXPANDED_DATABASE="$DATABASE"
 run_one_prog () {
     INPUT_FILE=$1
     OUTPUT_FILE=$2
-    DATABASE=$3
+    DATABASE_ARG=$3
 
 
     ### change these lines:
-    EXEC=${EXEC-`which blastall 2>/dev/null`}
-
-    if [ ! -x "$EXEC" ]; then
-      EXEC=`find Artemis* -name blastall 2>/dev/null`
+    
+    PLATFORM_INFO=`uname`
+	if [ "$PLATFORM_INFO" = "Darwin" ]
+	then
+		# Mac OSX: Attempt to initialise environment variables from profile.
+		echo "running $HOME/.profile..."
+		source $HOME/.profile 2>/dev/null	
+	fi
+	
+	EXEC=${EXEC-`which $PROG 2>/dev/null`}
+	
+	if [ "$EXEC" = "" ] && [ -x /usr/local/ncbi/blast/bin/$PROG ]
+	then
+		EXEC=/usr/local/ncbi/blast/bin/$PROG
+    fi
+    
+    if [ ! -x "$EXEC" ]
+    then
+    	echo "ERROR: Cannot find an executable $PROG blast program. Exiting."
+    	exit 1
     fi
 
-    if [ ! -d "$BLASTDB" ]; then
-      DATABASE_TMP=`echo $DATABASE | sed 's|\%||'`
-      DATABASE_TMP="$PWD/"`find Artemis* -name blast-data 2>/dev/null`"/$DATABASE_TMP"
-      if [ -f "$DATABASE_TMP" ]; then
-        DATABASE="$DATABASE_TMP"
-      fi
+	#
+    # Check for setting of NCBI BLASTDB environment variable
+    #
+	if [ "$BLASTDB" = "" ]; then
+
+      	DATABASE=`echo $DATABASE_ARG | sed 's|\%||'`
+
+      	if [ ! -f "$DATABASE" ]
+      	then
+ 
+        	# Check home directory...
+        	echo "Checking $HOME/blast-data/ for database..."
+        	if [ -f "$HOME/blast-data/$DATABASE" ]
+        	then
+          		DATABASE=$HOME/blast-data/$DATABASE
+        	fi
+      	fi
+
+      	if [ ! -f "$DATABASE" ]
+      	then
+        	echo "ERROR: Cannot find database $DATABASE. Exiting."
+        	exit 1
+      	fi
+
     fi
 
-    echo "about to start $EXEC with input from $INPUT_FILE and output to"
-    echo "$OUTPUT_FILE using database $DATABASE"
 
-
-    EXTRA_ARGS=
-
+    COMMAND="$EXEC -db $DATABASE -query $INPUT_FILE -num_threads 2"
+	
+    echo
+    echo "input file: $INPUT_FILE"
+    echo "output will be written to: $OUTPUT_FILE"
+    echo "executing command: $COMMAND" 1>&2
+	
     # add/change the flags to suit your site:
-    nice -19 $EXEC -d $DATABASE -i $INPUT_FILE -p blastp \
-      $EXTRA_ARGS 2>&1 > $OUTPUT_FILE | 
-      tee ${PROG}_errors.new 1>&2
+    nice -n 19 $COMMAND 2>&1 > $OUTPUT_FILE | tee ${PROG}_errors.new 1>&2
 
     #### end of changes
 

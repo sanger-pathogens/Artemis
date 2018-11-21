@@ -4,7 +4,9 @@
 # Script that can be used to set up specific     #
 # environment variables for Artemis and related  #
 # applications.                                  #
-# Uncomment as required and run before startup.  #
+# Uncomment as required and either run from your #
+# shell .profile or copy and paste the variables #
+# directly into your shell profile.              #
 #                                                #
 ##################################################
 
@@ -27,11 +29,27 @@
 #export PGDATABASE=
 #export PGUSER=
 
+########### Variables for locally installed Blast databases ##############
+
 #
-# Specify locally installed Blast databases,
+# Use the following path setting to specify
+# where blast+ and fasta executables can be found.
+# Change as required.
+#
+#export PATH=/usr/local/ncbi/blast/bin/:/usr/local/fasta/bin/:$PATH
+
+#
+# Specify locally installed Blast databases.
+# [See NCBI Blast+ documentation]
 # e.g. /data/blastdb/Supported/UNIPROT/current:/data/blastdb/Supported/EMBL/current/con etc
 #
 #export BLASTDB=
 
+#
+# Fasta36 FASTLIBS environment variable.
+# [See Fasta documentation]
+# Specifies location of library choice file.
+#
+#export FASTLIBS=
 
-                         
+                

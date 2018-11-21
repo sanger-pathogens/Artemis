@@ -13,9 +13,7 @@
 # to customise this script see the function called run_one_prog below
 
 
-RCS_HEADER="$Header: //tmp/pathsoft/artemis/etc/run_smart,v 1.1 2004-06-09 10:03:12 tjc Exp $"
-
-PROG=`echo $RCS_HEADER | sed 's/.*run_\(.*\),v.*/\1/'`
+PROG=smart
 
 
 if [ $# = 3 -a x$1 = x-onefile -o $# = 4 -a x$1 = x-onefile ]
@@ -54,17 +52,15 @@ run_one_prog () {
     ### change these lines:
     EXEC=lynx
 
-    echo "about to start $EXEC with input from $INPUT_FILE and output to" 1>&2
-    echo "$OUTPUT_FILE" 1>&2
-
     COMMAND="$EXEC -force_html -dump $URL"
 
-    echo "command line: $COMMAND" 1>&2
+    echo
+    echo "executing command: $COMMAND" 1>&2
+    echo "output will be written to: $OUTPUT_FILE"
 
     (echo "read from $URL"; echo) > $OUTPUT_FILE
 
-    $COMMAND 2>&1 >> $OUTPUT_FILE |
-      tee ${PROG}_errors.new 1>&2
+    $COMMAND 2>&1 >> $OUTPUT_FILE | tee ${PROG}_errors.new 1>&2
 
     #### end of changes
 
