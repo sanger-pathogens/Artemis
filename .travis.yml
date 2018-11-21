@@ -6,10 +6,13 @@ env:
 sudo: true
 matrix:
   include:
-    - jdk: oraclejdk8
+    - jdk: oraclejdk9
       env: 
        - TEST_EXCLUDES="**/*_ESTest*"
-    - jdk: openjdk8
+    - jdk: openjdk9
+      env: 
+       - TEST_EXCLUDES="**/*_ESTest*"
+    - jdk: openjdk11
       env: 
        - TEST_EXCLUDES="**/*_ESTest*"
 cache:
