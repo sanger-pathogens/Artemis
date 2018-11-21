@@ -54,8 +54,8 @@ FLAGS="-mx2048m -ms20m -Djdbc.drivers=org.postgresql.Driver -Dibatis"
 DEFAULT_CONNECTION="-Dchado=db.genedb.org:5432/snapshot?genedb_ro -Dread_only"
 APPLICATION_HOME=`dirname "$PRG"`/..
 JAR_NAME=artemis.jar
-JAR_FILE_DEFAULT=$APPLICATION_HOME/target/unix-jars/$JAR_NAME
-JAR_FILE_INSTALLED=$APPLICATION_HOME/$JAR_NAME
+JAR_FILE_DEFAULT=$APPLICATION_HOME/target/jars/$JAR_NAME
+JAR_FILE_INSTALLED=$APPLICATION_HOME/dist/$JAR_NAME
 
 #
 # Use a custom Java version if necessary

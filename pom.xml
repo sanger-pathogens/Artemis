@@ -67,12 +67,16 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
         
         <version.file>${project.basedir}/etc/versions</version.file>
         
+        <copyright.text>2018 Wellcome Trust Sanger Institute</copyright.text>
+        
         <!-- Properties passed into Maven on command line -->
         <emboss.installation.root>${env.EMBOSS_ROOT}</emboss.installation.root>
         
         <!-- Application names -->
         <artemis.application.name>Artemis</artemis.application.name>
+        <artemis.chado.application.name>${artemis.application.name} (CHADO)</artemis.chado.application.name>
         <act.application.name>ACT</act.application.name>
+        <act.chado.application.name>${act.application.name} (CHADO)</act.chado.application.name>
         <dnaplotter.application.name>Circular-Plot</dnaplotter.application.name>
         <bamview.application.name>BamView</bamview.application.name>
         
@@ -89,10 +93,12 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
         <dnaplotter.main.class>uk.ac.sanger.artemis.circular.DNADraw</dnaplotter.main.class>
         
         <!-- Java version-->
-		<java.source.version>1.8</java.source.version>
-		<java.target.version>1.8</java.target.version>
-		<java.javadoc.url>https://docs.oracle.com/javase/8/docs/api/</java.javadoc.url>
-		<osx.jdk.path>${env.JAVA_HOME}/../..</osx.jdk.path>
+        <java.compatibility.major.version>9</java.compatibility.major.version>
+		
+		<bundler.jdk.path>/Library/Java/JavaVirtualMachines/jdk-10.0.2.jdk</bundler.jdk.path>
+		<osx.bundler.jar>${project.basedir}/maven-lib/appbundler-1.0ea.jar</osx.bundler.jar>
+		<osx.bundler.volume>Artemis_Tools</osx.bundler.volume>
+		<osx.bundler.chado.volume>Artemis_Tools_Chado</osx.bundler.chado.volume>
 		      
         <!-- Evosuite properties-->
         <targetFolder>src/test/evosuite</targetFolder>
@@ -125,23 +131,35 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
         <unixenv.command.line.arg>-Dartemis.environment=UNIX</unixenv.command.line.arg>
         <macosx.menuname.command.line.arg>-Dcom.apple.mrj.application.apple.menu.about.name</macosx.menuname.command.line.arg>
         <macosx.dock.command.line.arg>-Xdock:name</macosx.dock.command.line.arg>
+        <macosx.use.menubar.arg>-Dapple.laf.useScreenMenuBar=true</macosx.use.menubar.arg>
         <chado.command.line.arg>-Dchado="localhost:5432/databasename?username"</chado.command.line.arg>
         <ibatis.command.line.arg>-Dibatis</ibatis.command.line.arg>
         <sangeroptions.command.line.arg>-Dsanger_options=yes</sangeroptions.command.line.arg>
-        <j2ssh.command.line.arg>-Dj2ssh</j2ssh.command.line.arg>
+        <blackbelt.command.line.arg>-Dblack_belt_mode=false</blackbelt.command.line.arg>
         
         <!-- Surefire unit test plugin parameters -->
         <unit.test.timeout.ms>8000</unit.test.timeout.ms>
-        <surefire.num.forks>2</surefire.num.forks>
-        <surefireArgLine>-Xmx4g ${noverify.command.line.arg} ${postgres.command.line.arg} -Dtimeout=${unit.test.timeout.ms} -Duse_separate_classloader=false -DEMBOSS_ROOT=${emboss.installation.root}</surefireArgLine>
-
+        <surefire.num.forks>1</surefire.num.forks>
+		<default.tests.surefireArgLine>-Xmx4g ${noverify.command.line.arg} ${postgres.command.line.arg} -DEMBOSS_ROOT=${emboss.installation.root} --illegal-access=warn</default.tests.surefireArgLine>
+		<surefireArgLine>${default.tests.surefireArgLine} -Dtimeout=${unit.test.timeout.ms} -Duse_separate_classloader=false</surefireArgLine>
+		
         <!-- Files to exclude from the build, e.g. Mac resource files. -->
         <default.file.excludes>**/log4j*.xml META-INF/* **/.DS_Store **/._*</default.file.excludes>
         
         <!-- Etc files to exclude from the build. -->
         <etc.file.excludes>*.seq *.fasta *.embl *.tab *.crunch *.genbank</etc.file.excludes>
         
+        <!-- Images -->
         <artemis.icons.path>${project.basedir}/icons</artemis.icons.path>
+        <artemis.images.path>${project.basedir}/images</artemis.images.path>
+        
+        <!--  Default build flag settings -->
+        <skip.tests>false</skip.tests>
+        <evosuite.exclude.filter>**/*_ESTest*</evosuite.exclude.filter>
+        <jarsigner.skip>true</jarsigner.skip>
+        <skip.artifact.creation>true</skip.artifact.creation>
+        <skip.coverage.reporting>true</skip.coverage.reporting>
+        <skip.javadoc>true</skip.javadoc>
 
     </properties>
 	
@@ -435,7 +453,7 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 			                <artifactId>j2ssh-core</artifactId>
 			                <version>0.2.9</version>
 			                <packaging>jar</packaging>
-			                <file>${project.basedir}/lib/j2ssh/j2ssh-core.jar</file>
+			                <file>${project.basedir}/lib/j2ssh-core.jar</file>
 			                <generatePom>true</generatePom>
 			            </configuration>
 			        </execution>
@@ -477,36 +495,6 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 					</execution>
 				</executions>
 			</plugin>
-
-			<!-- ==================================== Compile ========================================= -->
-			
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.7.0</version>
-				<configuration>
-					<source>${java.source.version}</source>
-					<target>${java.target.version}</target>
-				</configuration>
-			</plugin>
-			
-			<!-- ============================== Jar customisation ===================================== -->
-			
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>3.1.0</version>
-				<configuration>
-					<archive>
-						<manifest>
-							<addClasspath>false</addClasspath>
-						</manifest>
-						<manifestEntries>
-							<Permissions>all-permissions</Permissions>
-                    			<Codebase>*</Codebase>
-						</manifestEntries>
-					</archive>
-				</configuration>
-			</plugin>
 			
 			<!-- ============================== Copy resources to build folder ======================== -->
 			
@@ -515,26 +503,10 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 		    		<artifactId>maven-resources-plugin</artifactId>
 		    		<version>3.0.2</version>
 		    		<executions>
-		    			<!--  Copy test data for unit tests -->
-		      		<execution>
-		        			<id>copy-test-data</id>
-		        			<phase>process-test-resources</phase>
-		        			<goals>
-		          			<goal>copy-resources</goal>
-		        			</goals>
-		        			<configuration>
-		          			<outputDirectory>${project.build.testOutputDirectory}/data</outputDirectory>
-		          			<resources>
-		            				<resource>
-		             				<directory>${project.basedir}/test/data</directory>
-		            				</resource>
-		          			</resources>
-		        			</configuration>
-		      		</execution>
 		      		<!--  Copy etc on to classpath -->
 		      		<execution>
 		        			<id>copy-property-files</id>
-		        			<phase>process-test-resources</phase>
+		        			<phase>process-resources</phase>
 		        			<goals>
 		          			<goal>copy-resources</goal>
 		        			</goals>
@@ -547,46 +519,13 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 		          			</resources>
 		        			</configuration>
 		      		</execution>
-		      		<!--  Copy images on to classpath -->
 		      		<execution>
-		        			<id>copy-image-folder</id>
-		        			<phase>process-test-resources</phase>
+		        			<id>copy-icons-folder</id>
+		        			<phase>process-resources</phase>
 		        			<goals>
 		          			<goal>copy-resources</goal>
 		        			</goals>
 		        			<configuration>
-		          			<outputDirectory>${project.build.outputDirectory}/images</outputDirectory>
-		          			<resources>
-		            				<resource>
-		             				<directory>${project.basedir}/images</directory>
-		            				</resource>
-		          			</resources>
-		        			</configuration>
-		      		</execution>
-		      		<!--  Copy non-maven legacy jars to build area for inclusion in assembly -->
-		      		<!--  execution>
-		        			<id>copy-old-jars</id>
-		        			<phase>process-test-resources</phase>
-		        			<goals>
-		          			<goal>copy-resources</goal>
-		        			</goals>
-		        			<configuration>
-		          			<outputDirectory>${project.build.directory}/lib</outputDirectory>
-		          			<resources>
-		            				<resource>
-		             				<directory>${project.basedir}/lib/**/*.jar</directory>
-		            				</resource>
-		          			</resources>
-		        			</configuration>
-		      		</execution-->
-		      		<execution>
-		        			<id>copy-icons-to-target-folder</id>
-		        			<phase>package</phase>
-		        			<goals>
-		          			<goal>copy-resources</goal>
-		        			</goals>
-		        			<configuration>
-		        				<skip>${jarsigner.skip}</skip>
 		          			<outputDirectory>${project.build.directory}/icons</outputDirectory>
 		          			<resources>
 		            				<resource>
@@ -598,43 +537,38 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 
 		    		</executions>
 		  	</plugin>
-			
-			<!-- ============================== Run JUnit tests =============================== -->
+		  	
+		  	<!-- ===================================== Compile ========================================= -->
+		  	
+		  	<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.8.0</version>
+				<configuration>
+					<verbose>false</verbose>
+					<showWarnings>true</showWarnings>
+					<!--  We use the release option for Java 9+ -->
+        			<release>${java.compatibility.major.version}</release>
+    			</configuration>
+			</plugin>
+					
+		  	<!-- ============================== Jar customisation ===================================== -->
 			
 			<plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.20.1</version>
-              	<configuration>
-                    <skipTests>${skip.tests}</skipTests>
-                    <trimStackTrace>false</trimStackTrace>
-                    <forkCount>${surefire.num.forks}</forkCount>
-                    <reuseForks>false</reuseForks>
-                    <testFailureIgnore>${ignore.test.failures}</testFailureIgnore>
-                    <argLine>@{surefireArgLine}</argLine>
-          			<excludes>
- 		
-						<!--  Start of Evosuite excludes -->
-						
-						<exclude>${evosuite.exclude.filter}</exclude>
-
-						<exclude>org/gmod/**</exclude>
-	          			<exclude>**/RunBlastAtNCBITest.*</exclude>
-	          			<exclude>**/j2ssh/**</exclude>
-	          			
-    						<!--  End of Evosuite excludes -->
-    						
-          			</excludes>
-          			
-          			<!-- Required when running Evosuite tests along with normal tests -->
-          			<properties>
-						<property>
-							<name>listener</name>
-							<value>org.evosuite.runtime.InitializingListener</value>
-				      	</property>
-				    </properties>
-                </configuration>
-            </plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.1.0</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<addClasspath>false</addClasspath>
+						</manifest>
+						<manifestEntries>
+							<Permissions>all-permissions</Permissions>
+                    		<Codebase>*</Codebase>
+						</manifestEntries>
+					</archive>
+				</configuration>
+			</plugin>
             
             <!-- =========================   Required for Evosuite test running ========================-->
             
@@ -657,13 +591,39 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 			  		</execution>
 			  	</executions>
 			</plugin>
+			
+			<!-- =======================================  Surefire Unit tests ==========================================-->
+			
+			<!-- Only currently runs default unit tests because of bug in Evosuite on Java 9+. -->
+			<plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.1</version>
+              	<configuration>
+                    <skipTests>${skip.tests}</skipTests>
+                    <trimStackTrace>true</trimStackTrace>
+                    <forkCount>${surefire.num.forks}</forkCount>
+                    <reuseForks>false</reuseForks>
+                    <testFailureIgnore>${ignore.test.failures}</testFailureIgnore>
+                    <argLine>@{default.tests.surefireArgLine}</argLine>
+          			<excludes>
+ 						<!-- Exclude Evosuite tests -->
+						<exclude>**/*ESTest*</exclude>
+						
+						<!--  Exclude manual adhoc tests -->
+						<exclude>**/RunBlastAtNCBITest.*</exclude>
+						<exclude>**/TestIbatisDAO.*</exclude>
+						<exclude>**/TestJdbcDAO.*</exclude>
+          			</excludes>
+                </configuration>
+            </plugin>
             
             <!-- ===================================   Run Jacoco coverage report ======================================-->
             
             <plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.8.0</version>
+				<version>0.8.1</version>
 				<configuration>
                     <skip>${skip.coverage.reporting}</skip>
                 </configuration>
@@ -709,13 +669,13 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 				<version>3.1.0</version>
 				<executions>
 					<execution>
-						<id>package-nonunix-artemis-jar</id>
+						<id>package-win-artemis-jar</id>
 						<phase>package</phase>
 						<goals>
 							<goal>shade</goal>
 						</goals>
 						<configuration>
-							<outputFile>target/jars/${artemis.jar.name}</outputFile>
+							<outputFile>target/win-jars/${artemis.jar.name}</outputFile>
 							<createDependencyReducedPom>false</createDependencyReducedPom>
 							<minimizeJar>false</minimizeJar>
 							<transformers>
@@ -750,13 +710,13 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 						</configuration>
 					</execution>
 					<execution>
-						<id>package-unix-artemis-jar</id>
+						<id>package-default-artemis-jar</id>
 						<phase>package</phase>
 						<goals>
 							<goal>shade</goal>
 						</goals>
 						<configuration>
-							<outputFile>target/unix-jars/${artemis.jar.name}</outputFile>
+							<outputFile>target/jars/${artemis.jar.name}</outputFile>
 							<createDependencyReducedPom>false</createDependencyReducedPom>
 							<minimizeJar>false</minimizeJar>
 							<transformers>
@@ -791,7 +751,48 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 						</configuration>
 					</execution>
 					<execution>
-						<id>package-nonunix-act-jar</id>
+						<id>package-win-act-jar</id>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<outputFile>target/win-jars/${act.jar.name}</outputFile>
+							<createDependencyReducedPom>false</createDependencyReducedPom>
+							<minimizeJar>false</minimizeJar>
+							<transformers>
+				                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+									<manifestEntries>
+										<Main-Class>${act.main.class}</Main-Class>
+										<Permissions>all-permissions</Permissions>
+									</manifestEntries>
+								</transformer>
+							</transformers>
+				            <filters>
+				            		<filter>
+								 	<artifact>org.mozilla:rhino:*</artifact>
+								  	<excludes>
+										<exclude>**</exclude>
+								  	</excludes>
+								</filter>
+								<filter>
+								 	<artifact>org.python:jython:*</artifact>
+								  	<excludes>
+										<exclude>**</exclude>
+								  	</excludes>
+								</filter>
+				            		<filter>
+								 	<artifact>*:*</artifact>
+								  	<excludes>
+										<exclude>${default.file.excludes}</exclude>
+										<exclude>${etc.file.excludes}</exclude>
+								  	</excludes>
+								</filter>
+							</filters>
+						</configuration>
+					</execution>
+					<execution>
+						<id>package-default-act-jar</id>
 						<phase>package</phase>
 						<goals>
 							<goal>shade</goal>
@@ -825,26 +826,26 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 								 	<artifact>*:*</artifact>
 								  	<excludes>
 										<exclude>${default.file.excludes}</exclude>
-										<exclude>${etc.file.excludes}</exclude>
+										<exclude>etc/**</exclude>
 								  	</excludes>
 								</filter>
 							</filters>
 						</configuration>
 					</execution>
 					<execution>
-						<id>package-unix-act-jar</id>
+						<id>package-win-dnaplotter-jar</id>
 						<phase>package</phase>
 						<goals>
 							<goal>shade</goal>
 						</goals>
 						<configuration>
-							<outputFile>target/unix-jars/${act.jar.name}</outputFile>
+							<outputFile>target/win-jars/${dnaplotter.jar.name}</outputFile>
 							<createDependencyReducedPom>false</createDependencyReducedPom>
 							<minimizeJar>false</minimizeJar>
 							<transformers>
 				                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
 									<manifestEntries>
-										<Main-Class>${act.main.class}</Main-Class>
+										<Main-Class>${dnaplotter.main.class}</Main-Class>
 										<Permissions>all-permissions</Permissions>
 									</manifestEntries>
 								</transformer>
@@ -866,14 +867,15 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 								 	<artifact>*:*</artifact>
 								  	<excludes>
 										<exclude>${default.file.excludes}</exclude>
-										<exclude>etc/**</exclude>
+										<exclude>artemis_sqlmap/**</exclude>
+										<exclude>${etc.file.excludes}</exclude>
 								  	</excludes>
 								</filter>
 							</filters>
 						</configuration>
 					</execution>
 					<execution>
-						<id>package-nonunix-dnaplotter-jar</id>
+						<id>package-default-dnaplotter-jar</id>
 						<phase>package</phase>
 						<goals>
 							<goal>shade</goal>
@@ -908,48 +910,6 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 								  	<excludes>
 										<exclude>${default.file.excludes}</exclude>
 										<exclude>artemis_sqlmap/**</exclude>
-										<exclude>${etc.file.excludes}</exclude>
-								  	</excludes>
-								</filter>
-							</filters>
-						</configuration>
-					</execution>
-					<execution>
-						<id>package-unix-dnaplotter-jar</id>
-						<phase>package</phase>
-						<goals>
-							<goal>shade</goal>
-						</goals>
-						<configuration>
-							<outputFile>target/unix-jars/${dnaplotter.jar.name}</outputFile>
-							<createDependencyReducedPom>false</createDependencyReducedPom>
-							<minimizeJar>false</minimizeJar>
-							<transformers>
-				                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<manifestEntries>
-										<Main-Class>${dnaplotter.main.class}</Main-Class>
-										<Permissions>all-permissions</Permissions>
-									</manifestEntries>
-								</transformer>
-							</transformers>
-				            <filters>
-				            		<filter>
-								 	<artifact>org.mozilla:rhino:*</artifact>
-								  	<excludes>
-										<exclude>**</exclude>
-								  	</excludes>
-								</filter>
-								<filter>
-								 	<artifact>org.python:jython:*</artifact>
-								  	<excludes>
-										<exclude>**</exclude>
-								  	</excludes>
-								</filter>
-				            		<filter>
-								 	<artifact>*:*</artifact>
-								  	<excludes>
-										<exclude>${default.file.excludes}</exclude>
-										<exclude>artemis_sqlmap/**</exclude>
 										<exclude>etc/**</exclude>
 								  	</excludes>
 								</filter>
@@ -957,13 +917,13 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 						</configuration>
 					</execution>
 					<execution>
-						<id>package-nonunix-bamview-jar</id>
+						<id>package-win-bamview-jar</id>
 						<phase>package</phase>
 						<goals>
 							<goal>shade</goal>
 						</goals>
 						<configuration>
-							<outputFile>target/jars/${bamview.jar.name}</outputFile>
+							<outputFile>target/win-jars/${bamview.jar.name}</outputFile>
 							<createDependencyReducedPom>false</createDependencyReducedPom>
 							<minimizeJar>false</minimizeJar>
 							<transformers>
@@ -999,13 +959,13 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 						</configuration>
 					</execution>
 					<execution>
-						<id>package-unix-bamview-jar</id>
+						<id>package-default-bamview-jar</id>
 						<phase>package</phase>
 						<goals>
 							<goal>shade</goal>
 						</goals>
 						<configuration>
-							<outputFile>target/unix-jars/${bamview.jar.name}</outputFile>
+							<outputFile>target/jars/${bamview.jar.name}</outputFile>
 							<createDependencyReducedPom>false</createDependencyReducedPom>
 							<minimizeJar>false</minimizeJar>
 							<transformers>
@@ -1055,7 +1015,7 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 				<version>1.4</version>
 				<executions>
 					<execution>
-						<id>sign-non-unix-jars</id>
+						<id>sign-win-jars</id>
 						<phase>package</phase>
 						<goals>
 							<goal>sign</goal>
@@ -1065,7 +1025,7 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 							<verbose>false</verbose>
 							<processMainArtifact>false</processMainArtifact>
 							<processAttachedArtifacts>false</processAttachedArtifacts>
-							<archiveDirectory>target/jars</archiveDirectory>
+							<archiveDirectory>target/win-jars</archiveDirectory>
 							<keystore>${signer-keystore-path}</keystore>
 							<storetype>${signer-keystore-type}</storetype>
 							<alias>${signer-keystore-alias}</alias>
@@ -1076,7 +1036,7 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 						</configuration>
 					</execution>
 					<execution>
-						<id>sign-unix-jars</id>
+						<id>sign-default-jars</id>
 						<phase>package</phase>
 						<goals>
 							<goal>sign</goal>
@@ -1086,7 +1046,7 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 							<verbose>false</verbose>
 							<processMainArtifact>false</processMainArtifact>
 							<processAttachedArtifacts>false</processAttachedArtifacts>
-							<archiveDirectory>target/unix-jars</archiveDirectory>
+							<archiveDirectory>target/jars</archiveDirectory>
 							<keystore>${signer-keystore-path}</keystore>
 							<storetype>${signer-keystore-type}</storetype>
 							<alias>${signer-keystore-alias}</alias>
@@ -1195,6 +1155,17 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 	      			</configuration>
 				</plugin>
 				
+				<!-- =========== Check for plugin updates ================== -->
+				<!--        Use: mvn versions:display-plugin-updates         -->
+				<plugin>
+				    <groupId>org.codehaus.mojo</groupId>
+				    <artifactId>versions-maven-plugin</artifactId>
+				    <version>2.7</version>
+				    <configuration>
+				        <generateBackupPoms>false</generateBackupPoms>
+				    </configuration>
+				</plugin>
+				
 				<!--  
 					Deploy artifacts to a GitHub release - run manually using: 
 					mvn github-release:release
@@ -1261,24 +1232,117 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 	<!-- ========================== Profile section =================================-->
 	
 	<profiles>
-	    <!-- The configuration of the default development profile -->
+
 	    <profile>
-	        <id>dev</id>
-	        <!-- The development profile is active by default and does not run any tests -->
+	        <id>old-java8-profile-deprecated</id>
+	        <!-- This profile runs all unit tests including Evosuite ones on Java 8. -->
+	        <!-- Note however that some code changes will now be needed to compile on Java 8. -->
 	        <activation>
-	            <activeByDefault>true</activeByDefault>
-	        </activation>
+      			<jdk>1.8</jdk>
+    		</activation>
 	        <properties>
-	        		<skip.tests>false</skip.tests>
-        			<evosuite.exclude.filter>**/*_ESTest*</evosuite.exclude.filter>
-        			<jarsigner.skip>true</jarsigner.skip>
-        			<skip.artifact.creation>true</skip.artifact.creation>
-        			<skip.coverage.reporting>true</skip.coverage.reporting>
-        			<skip.javadoc>true</skip.javadoc>
-        			
-	            <build.profile.id>dev</build.profile.id>
+	            <build.profile.id>java8-profile</build.profile.id>
 	        </properties>
+	        <build>
+	        		<plugins>
+
+					<!--  
+						Compiling with Java 8 JDK... the compiler does not have the -release parameter, 
+						so we fall back to source and target 
+					-->
+					<plugin>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<version>3.8.0</version>
+						<configuration>
+							<verbose>false</verbose>
+		        				<source>1.8</source>
+								<target>1.8</target>
+		    				</configuration>
+					</plugin>
+					
+	        			<plugin>
+		                <groupId>org.apache.maven.plugins</groupId>
+		                <artifactId>maven-surefire-plugin</artifactId>
+		                <version>2.22.1</version>
+		              	<configuration>
+		                    <skipTests>${skip.tests}</skipTests>
+		                    <trimStackTrace>true</trimStackTrace>
+		                    <forkCount>${surefire.num.forks}</forkCount>
+		                    <reuseForks>false</reuseForks>
+		                    <testFailureIgnore>${ignore.test.failures}</testFailureIgnore>
+		                    <argLine>@{surefireArgLine}</argLine>
+		          			<excludes>
+		 		
+								<!--  Start of Evosuite excludes -->
+								<exclude>${evosuite.exclude.filter}</exclude>
+								<exclude>org/gmod/**</exclude>
+			          			<exclude>**/j2ssh/**</exclude>
+		    					<!--  End of Evosuite excludes -->
+		    						
+		    					<!--  Exclude manual adhoc tests -->
+								<exclude>**/RunBlastAtNCBITest.*</exclude>
+								<exclude>**/TestIbatisDAO.*</exclude>
+								<exclude>**/TestJdbcDAO.*</exclude>
+		    						
+		          			</excludes>
+		          			
+		          			<!-- Required when running Evosuite tests along with normal tests -->
+		          			<properties>
+								<property>
+									<name>listener</name>
+									<value>org.evosuite.runtime.InitializingListener</value>
+						      	</property>
+						    </properties>
+		                </configuration>
+		            </plugin>
+		            
+	        		</plugins>
+	        </build>
 	    </profile>
+	    
+	    <profile>
+	        <id>mac-osx-dmg-packaging</id>
+	        <!-- 
+	        		App/dmg packaging that can only be run on a Mac.
+	         -->
+	        <activation>
+		        <os> 
+			    	<family>mac</family>
+			    </os>
+			</activation>
+	        <properties>
+	            <build.profile.id>mac-osx-dmg-packaging</build.profile.id>
+	        </properties>
+	        <build>
+	        		<plugins>
+	        		
+	        			<plugin>
+							<groupId>org.apache.maven.plugins</groupId>
+							<artifactId>maven-antrun-plugin</artifactId>
+							<version>1.8</version>
+							<executions>
+								<execution>
+									<id>build-macosx</id>
+									<phase>verify</phase>
+									<configuration>
+										<skip>${skip.artifact.creation}</skip>
+										<target>
+								            <ant antfile="${project.basedir}/src/assembly/macosx-release-assembly.xml">
+								            	<target name="bundle-mac-osx"/>
+								                <target name="bundle-mac-osx-chado"/>
+								            </ant>
+								        </target>
+									</configuration>
+									<goals>
+										<goal>run</goal>
+									</goals>
+								</execution>
+							</executions>
+						</plugin>
+					
+	        		</plugins>
+	        	</build>
+		</profile>
 	    
 	    <profile>
 	        <id>release</id>
@@ -1287,335 +1351,16 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
             </activation>
 	        <properties>
 	        		<skip.tests>false</skip.tests>
-        			<evosuite.exclude.filter>**/*_ESTest*</evosuite.exclude.filter>
+        			<evosuite.exclude.filter></evosuite.exclude.filter>
         			<jarsigner.skip>false</jarsigner.skip>
         			<skip.artifact.creation>false</skip.artifact.creation>
         			<skip.coverage.reporting>false</skip.coverage.reporting>
         			<skip.javadoc>false</skip.javadoc>
         			
 	            <build.profile.id>release</build.profile.id>
-	        </properties>
-	        <build>    
-	            <plugins>
-	            
-	            		<!-- 
-	            			Package jar files into OSX .apps and create dmg images.
-						NOTE1: artemis_sqlmap is already included in the original jar
-						NOTE2: The skip flag does not work on this plugin so it needs to be added into the profile [hack]
-					-->
-			 
-					<plugin>
-					    <groupId>sh.tak.appbundler</groupId>
-					    <artifactId>appbundle-maven-plugin</artifactId>
-					    <version>1.1.0</version>
-					    <executions>
-					        <execution>
-					        		<id>create-artemis-osx-app</id>
-					            <phase>package</phase>
-					            <goals>
-					                <goal>bundle</goal>
-					            </goals>
-					            <configuration>
-							    		<skip>${skip.artifact.creation}</skip>
-							    		<version>${project.version}</version>
-							    		<buildDirectory>${osx.app.folder}</buildDirectory>
-							    		<generateDiskImageFile>false</generateDiskImageFile>
-							    		<bundleName>${artemis.application.name}</bundleName>
-							    		<jrePath>${osx.jdk.path}</jrePath>
-							        <mainClass>${artemis.main.class}</mainClass>
-							        <iconFile>${project.build.directory}/icons/artemis.icns</iconFile>
-							        <jvmVersion>${java.target.version}</jvmVersion>
-							        <jvmOptions>
-							   			<jvmOption>${maxheap.command.line.arg}</jvmOption>
-										<jvmOption>${initialheap.command.line.arg}</jvmOption>
-										<jvmOption>${noverify.command.line.arg}</jvmOption> 
-										<jvmOption>${unixenv.command.line.arg}</jvmOption> 
-										<jvmOption>${macosx.menuname.command.line.arg}=${artemis.application.name}</jvmOption>
-										<jvmOption>${macosx.dock.command.line.arg}=${artemis.application.name}</jvmOption>
-										<jvmOption>${sangeroptions.command.line.arg}</jvmOption>
-        									<jvmOption>${j2ssh.command.line.arg}</jvmOption>
-							        </jvmOptions>
-							        <additionalBundledClasspathResources>
-							        		<fileSet>
-							        			<directory>${project.build.directory}/icons</directory>
-							        			<includes>
-							        				<include>Readme.txt</include>
-							        			</includes>
-							        		</fileSet>
-							        </additionalBundledClasspathResources>
-							    </configuration>
-					        </execution>
-					        <execution>
-					        		<id>create-act-osx-app</id>
-					            <phase>package</phase>
-					            <goals>
-					                <goal>bundle</goal>
-					            </goals>
-					            <configuration>
-							    		<skip>false</skip>
-							    		<version>${project.version}</version>
-							    		<buildDirectory>${osx.app.folder}</buildDirectory>
-							    		<generateDiskImageFile>false</generateDiskImageFile>
-							    		<bundleName>${act.application.name}</bundleName>
-							    		<jrePath>${osx.jdk.path}</jrePath>
-							        <mainClass>${act.main.class}</mainClass>
-							        <iconFile>${project.build.directory}/icons/act.icns</iconFile>
-							        <jvmVersion>${java.target.version}</jvmVersion>
-							        <jvmOptions>
-							   			<jvmOption>${maxheap.command.line.arg}</jvmOption>
-										<jvmOption>${initialheap.command.line.arg}</jvmOption>
-										<jvmOption>${noverify.command.line.arg}</jvmOption> 
-										<jvmOption>${unixenv.command.line.arg}</jvmOption> 
-										<jvmOption>${macosx.menuname.command.line.arg}=${act.application.name}</jvmOption>
-										<jvmOption>${macosx.dock.command.line.arg}=${act.application.name}</jvmOption>
-										<jvmOption>${sangeroptions.command.line.arg}</jvmOption>
-        									<jvmOption>${j2ssh.command.line.arg}</jvmOption>
-							        </jvmOptions>
-							        <additionalBundledClasspathResources>
-							        		<fileSet>
-							        			<directory>${project.build.directory}/icons</directory>
-							        			<includes>
-							        				<include>Readme.txt</include>
-							        			</includes>
-							        		</fileSet>
-							        </additionalBundledClasspathResources>
-							    </configuration>
-					        </execution>
-					        <execution>
-					        		<id>create-dnaplotter-osx-app</id>
-					            <phase>package</phase>
-					            <goals>
-					                <goal>bundle</goal>
-					            </goals>
-					            <configuration>
-					            		<skip>false</skip>
-					            		<version>${project.version}</version>
-					            		<buildDirectory>${osx.app.folder}</buildDirectory>
-					            		<generateDiskImageFile>false</generateDiskImageFile>
-					            		<bundleName>${dnaplotter.application.name}</bundleName>
-							    		<jrePath>${osx.jdk.path}</jrePath>
-							        <mainClass>${dnaplotter.main.class}</mainClass>
-							        <iconFile>${project.build.directory}/icons/dnaplotter.icns</iconFile>
-							        <jvmVersion>${java.target.version}</jvmVersion>
-							        <jvmOptions>
-							   			<jvmOption>${maxheap.command.line.arg}</jvmOption>
-										<jvmOption>${initialheap.command.line.arg}</jvmOption>
-										<jvmOption>${noverify.command.line.arg}</jvmOption> 
-										<jvmOption>${unixenv.command.line.arg}</jvmOption> 
-										<jvmOption>${macosx.menuname.command.line.arg}=${dnaplotter.application.name}</jvmOption>
-										<jvmOption>${macosx.dock.command.line.arg}=${dnaplotter.application.name}</jvmOption>
-										<jvmOption>${sangeroptions.command.line.arg}</jvmOption>
-        									<jvmOption>${j2ssh.command.line.arg}</jvmOption>
-							        </jvmOptions>
-							        <additionalBundledClasspathResources>
-							        		<fileSet>
-							        			<directory>${project.build.directory}/icons</directory>
-							        			<includes>
-							        				<include>Readme.txt</include>
-							        			</includes>
-							        		</fileSet>
-							        </additionalBundledClasspathResources>
-							    </configuration>
-					        </execution>
-					        <!--  The last execution also creates the disk image file... -->
-					        <execution>
-					        		<id>create-bamview-osx-app</id>
-					            <phase>package</phase>
-					            <goals>
-					                <goal>bundle</goal>
-					            </goals>
-					            <configuration>
-							    		<skip>false</skip>
-							    		<version>${project.version}</version>
-							    		<buildDirectory>${osx.app.folder}</buildDirectory>
-							    		<generateDiskImageFile>true</generateDiskImageFile>
-							    		<diskImageFile>${osx.app.folder}/${osx.release.filename}.dmg</diskImageFile>
-							    		<bundleName>${bamview.application.name}</bundleName>
-							    		<jrePath>${osx.jdk.path}</jrePath>
-							        <mainClass>${bamview.main.class}</mainClass>
-							        <iconFile>${project.build.directory}/icons/bamview.icns</iconFile>
-							        <jvmVersion>${java.target.version}</jvmVersion>
-							        <jvmOptions>
-							   			<jvmOption>${maxheap.command.line.arg}</jvmOption>
-										<jvmOption>${initialheap.command.line.arg}</jvmOption>
-										<jvmOption>${noverify.command.line.arg}</jvmOption> 
-										<jvmOption>${unixenv.command.line.arg}</jvmOption> 
-										<jvmOption>${macosx.menuname.command.line.arg}=${bamview.application.name}</jvmOption>
-										<jvmOption>${macosx.dock.command.line.arg}=${bamview.application.name}</jvmOption>
-										<jvmOption>${sangeroptions.command.line.arg}</jvmOption>
-        									<jvmOption>${j2ssh.command.line.arg}</jvmOption>
-							        </jvmOptions>
-							        <additionalBundledClasspathResources>
-							        		<fileSet>
-							        			<directory>${project.build.directory}/icons</directory>
-							        			<includes>
-							        				<include>Readme.txt</include>
-							        			</includes>
-							        		</fileSet>
-							        </additionalBundledClasspathResources>
-							    </configuration>
-					        </execution>
-					        
-					        <!-- Package CHADO version of toolkit -->
-					
-					        <execution>
-					        		<id>create-artemis-osx-app-CHADO</id>
-					            <phase>package</phase>
-					            <goals>
-					                <goal>bundle</goal>
-					            </goals>
-					            <configuration>
-							    		<skip>${skip.artifact.creation}</skip>
-							    		<version>${project.version}</version>
-							    		<buildDirectory>${osx.app.chado.folder}</buildDirectory>
-							    		<generateDiskImageFile>false</generateDiskImageFile>
-							    		<bundleName>${artemis.application.name} (CHADO)</bundleName>
-							    		<jrePath>${osx.jdk.path}</jrePath>
-							        <mainClass>${artemis.main.class}</mainClass>
-							        <iconFile>${project.build.directory}/icons/artemis.icns</iconFile>
-							        <jvmVersion>${java.target.version}</jvmVersion>
-							        <jvmOptions>
-							   			<jvmOption>${postgres.command.line.arg}</jvmOption>
-							   			<jvmOption>${chado.command.line.arg}</jvmOption>
-							   			<jvmOption>${ibatis.command.line.arg}</jvmOption>
-										<jvmOption>${maxheap.command.line.arg}</jvmOption>
-										<jvmOption>${initialheap.command.line.arg}</jvmOption>
-										<jvmOption>${noverify.command.line.arg}</jvmOption> 
-										<jvmOption>${unixenv.command.line.arg}</jvmOption> 
-										<jvmOption>${macosx.menuname.command.line.arg}=${artemis.application.name}</jvmOption>
-										<jvmOption>${macosx.dock.command.line.arg}=${artemis.application.name}</jvmOption>
-										<jvmOption>${sangeroptions.command.line.arg}</jvmOption>
-        									<jvmOption>${j2ssh.command.line.arg}</jvmOption>
-							        </jvmOptions>
-							        <additionalBundledClasspathResources>
-							        		<fileSet>
-							        			<directory>${project.build.directory}/icons</directory>
-							        			<includes>
-							        				<include>Readme.txt</include>
-							        			</includes>
-							        		</fileSet>
-							        </additionalBundledClasspathResources>
-							    </configuration>
-					        </execution>
-					        <execution>
-					        		<id>create-act-osx-app-CHADO</id>
-					            <phase>package</phase>
-					            <goals>
-					                <goal>bundle</goal>
-					            </goals>
-					            <configuration>
-							    		<skip>false</skip>
-							    		<version>${project.version}</version>
-							    		<buildDirectory>${osx.app.chado.folder}</buildDirectory>
-							    		<generateDiskImageFile>false</generateDiskImageFile>
-							    		<bundleName>${act.application.name} (CHADO)</bundleName>
-							    		<jrePath>${osx.jdk.path}</jrePath>
-							        <mainClass>${act.main.class}</mainClass>
-							        <iconFile>${project.build.directory}/icons/act.icns</iconFile>
-							        <jvmVersion>${java.target.version}</jvmVersion>
-							        <jvmOptions>
-							   			<jvmOption>${postgres.command.line.arg}</jvmOption>
-							   			<jvmOption>${chado.command.line.arg}</jvmOption>
-							   			<jvmOption>${ibatis.command.line.arg}</jvmOption>
-										<jvmOption>${maxheap.command.line.arg}</jvmOption>
-										<jvmOption>${initialheap.command.line.arg}</jvmOption>
-										<jvmOption>${noverify.command.line.arg}</jvmOption> 
-										<jvmOption>${unixenv.command.line.arg}</jvmOption> 
-										<jvmOption>${macosx.menuname.command.line.arg}=${act.application.name}</jvmOption>
-										<jvmOption>${macosx.dock.command.line.arg}=${act.application.name}</jvmOption>
-										<jvmOption>${sangeroptions.command.line.arg}</jvmOption>
-        									<jvmOption>${j2ssh.command.line.arg}</jvmOption>
-							        </jvmOptions>
-							        <additionalBundledClasspathResources>
-							        		<fileSet>
-							        			<directory>${project.build.directory}/icons</directory>
-							        			<includes>
-							        				<include>Readme.txt</include>
-							        			</includes>
-							        		</fileSet>
-							        </additionalBundledClasspathResources>
-							    </configuration>
-					        </execution>
-					        <execution>
-					        		<id>create-dnaplotter-osx-app-CHADO</id>
-					            <phase>package</phase>
-					            <goals>
-					                <goal>bundle</goal>
-					            </goals>
-					            <configuration>
-					            		<skip>false</skip>
-					            		<version>${project.version}</version>
-					            		<buildDirectory>${osx.app.chado.folder}</buildDirectory>
-					            		<generateDiskImageFile>false</generateDiskImageFile>
-					            		<bundleName>${dnaplotter.application.name}</bundleName>
-							    		<jrePath>${osx.jdk.path}</jrePath>
-							        <mainClass>${dnaplotter.main.class}</mainClass>
-							        <iconFile>${project.build.directory}/icons/dnaplotter.icns</iconFile>
-							        <jvmVersion>${java.target.version}</jvmVersion>
-							        <jvmOptions>
-							   			<jvmOption>${maxheap.command.line.arg}</jvmOption>
-										<jvmOption>${initialheap.command.line.arg}</jvmOption>
-										<jvmOption>${noverify.command.line.arg}</jvmOption> 
-										<jvmOption>${unixenv.command.line.arg}</jvmOption> 
-										<jvmOption>${macosx.menuname.command.line.arg}=${dnaplotter.application.name}</jvmOption>
-										<jvmOption>${macosx.dock.command.line.arg}=${dnaplotter.application.name}</jvmOption>
-										<jvmOption>${sangeroptions.command.line.arg}</jvmOption>
-        									<jvmOption>${j2ssh.command.line.arg}</jvmOption>
-							        </jvmOptions>
-							        <additionalBundledClasspathResources>
-							        		<fileSet>
-							        			<directory>${project.build.directory}/icons</directory>
-							        			<includes>
-							        				<include>Readme.txt</include>
-							        			</includes>
-							        		</fileSet>
-							        </additionalBundledClasspathResources>
-							    </configuration>
-					        </execution>
-					        <!--  The last execution also creates the disk image file... -->
-					        <execution>
-					        		<id>create-bamview-osx-app-CHADO</id>
-					            <phase>package</phase>
-					            <goals>
-					                <goal>bundle</goal>
-					            </goals>
-					            <configuration>
-							    		<skip>false</skip>
-							    		<version>${project.version}</version>
-							    		<buildDirectory>${osx.app.chado.folder}</buildDirectory>
-							    		<generateDiskImageFile>true</generateDiskImageFile>
-							    		<diskImageFile>${osx.app.chado.folder}/${osx.chado.release.filename}.dmg</diskImageFile>
-							    		<bundleName>${bamview.application.name}</bundleName>
-							    		<jrePath>${osx.jdk.path}</jrePath>
-							        <mainClass>${bamview.main.class}</mainClass>
-							        <iconFile>${project.build.directory}/icons/bamview.icns</iconFile>
-							        <jvmVersion>${java.target.version}</jvmVersion>
-							        <jvmOptions>
-							   			<jvmOption>${maxheap.command.line.arg}</jvmOption>
-										<jvmOption>${initialheap.command.line.arg}</jvmOption>
-										<jvmOption>${noverify.command.line.arg}</jvmOption> 
-										<jvmOption>${unixenv.command.line.arg}</jvmOption> 
-										<jvmOption>${macosx.menuname.command.line.arg}=${bamview.application.name}</jvmOption>
-										<jvmOption>${macosx.dock.command.line.arg}=${bamview.application.name}</jvmOption>
-										<jvmOption>${sangeroptions.command.line.arg}</jvmOption>
-        									<jvmOption>${j2ssh.command.line.arg}</jvmOption>
-							        </jvmOptions>
-							        <additionalBundledClasspathResources>
-							        		<fileSet>
-							        			<directory>${project.build.directory}/icons</directory>
-							        			<includes>
-							        				<include>Readme.txt</include>
-							        			</includes>
-							        		</fileSet>
-							        </additionalBundledClasspathResources>
-							    </configuration>
-					        </execution>
-					    </executions>
-					</plugin>	
-	            </plugins>
-	         </build>   
+	        </properties>  
 	    </profile>
-	    
+
 	</profiles>
 	
 </project>

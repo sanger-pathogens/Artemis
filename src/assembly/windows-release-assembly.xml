@@ -14,7 +14,7 @@
 	
 	<fileSets>
 		<fileSet>
-			<directory>target/jars</directory>
+			<directory>target/win-jars</directory>
 			<outputDirectory>${windows.assembly.folder}</outputDirectory>
 			<includes>
 				<include>*.jar</include>

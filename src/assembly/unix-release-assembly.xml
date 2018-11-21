@@ -15,8 +15,8 @@
 	<!-- Assembles a simple release tar gz with jars and scripts -->
 	<fileSets>
 		<fileSet>
-			<directory>target/unix-jars</directory>
-			<outputDirectory>${unix.assembly.folder}</outputDirectory>
+			<directory>target/jars</directory>
+			<outputDirectory>${unix.assembly.folder}/dist</outputDirectory>
 			<includes>
 				<include>*.jar</include>
 			</includes>
@@ -27,7 +27,6 @@
 				<include>etc/**</include>
 			</includes>
 			<directoryMode>0755</directoryMode>
-			<fileMode>0755</fileMode>
 			<lineEnding>unix</lineEnding>
 		</fileSet>
 		<fileSet>
@@ -37,6 +36,7 @@
 				<include>LICENSE</include>
 				<include>README*</include>
 			</includes>
+			<lineEnding>unix</lineEnding>
 		</fileSet>
 		<fileSet>
 			<outputDirectory>${unix.assembly.folder}</outputDirectory>

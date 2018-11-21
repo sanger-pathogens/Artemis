@@ -78,8 +78,8 @@ done
 
 APPLICATION_HOME=`dirname "$PRG"`
 JAR_NAME=dnaplotter.jar
-JAR_FILE_DEFAULT=$APPLICATION_HOME/target/unix-jars/$JAR_NAME
-JAR_FILE_INSTALLED=$APPLICATION_HOME/$JAR_NAME
+JAR_FILE_DEFAULT=$APPLICATION_HOME/target/jars/$JAR_NAME
+JAR_FILE_INSTALLED=$APPLICATION_HOME/dist/$JAR_NAME
 
 #
 # Use a custom Java version if necessary
@@ -98,7 +98,7 @@ fi
 add_proxy_properties
 
 #
-# "-mx1g" sets the maximum amount of memory to use. 
+# "-mx2g" sets the maximum amount of memory to use. 
 # This may need to be increased when dealing with large files
 #
 if [[ "$ARTEMIS_JVM_FLAGS" = "" ]]
