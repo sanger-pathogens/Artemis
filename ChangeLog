@@ -6,7 +6,7 @@ Version 18
 	4) Removed old documentation functionality. HTML/PDF manuals are now stored in gh-pages branch and exported directly from word docs.
 	5) Changed application script jar paths.
 	6) Rewrote writedb_entry script.
-	7) Fixed broken Amigo GO term URL, used in the Artemis gene builder window.
+	7) Fixed broken Amigo, GO term, Uniprot and UniprotKB URLs, used in the Artemis gene builder/feature edit windows.
 	8) Updated README.md
 	9) Fix for RT ticket #400288: "GO term warnings in Artemis" - we now no longer put out a warning for ISM, as it's optional in certain cases
 	    [http://wiki.geneontology.org/index.php/Inferred_from_Sequence_Model_(ISM)].
@@ -16,7 +16,7 @@ Version 18
 	13) Added temporary Java 9+ --add-opens flags to art/act scripts. These will be removed when Ibatis is replaced.
 	14) Added basic unit tests for Chado access to enable Postgres 10 testing.
 	15) Added Mockito for unit test mocking.
-	16) Updated/fixed run_blast<..> and run_fast<..> scripts in the etc folder. These now use blast+. And added local blast+/fasta/fastx capability back into the Mac release.
+	16) Updated/fixed run_blast<..> scripts in the etc folder. These now use blast+. Removed options to run Smart, Jalview, fasta & fastx.
 	    Results are displayed using View->Search Results.
 	17) Removed the old icons/Readme doc for local blast setup and added an updated version to the main README.md.
 	18) Updated setup_blast_dbs.sh script and added to etc folder, for setup of local blast environment (See README.md).

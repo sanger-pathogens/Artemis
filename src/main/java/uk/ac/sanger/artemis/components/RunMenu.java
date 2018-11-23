@@ -53,8 +53,6 @@ public class RunMenu extends SelectionMenu
  
   /** */
   private static final long serialVersionUID = 1L;
-  private JMenu fastaMenu = null;
-  private JMenu fastaMenuOptions = null;
   private Hashtable<String, JMenu> blastMenu = null;
   private Hashtable<String, JMenu> blastMenuOptions = null;
 
@@ -304,16 +302,7 @@ public class RunMenu extends SelectionMenu
       }
     });
 
-    if(program_name.startsWith("fasta"))
-    {
-      if(fastaMenu == null)
-      {
-        fastaMenu = new JMenu("Run fasta on selected features against");
-        add(fastaMenu);
-      }
-      fastaMenu.add(new_menu);
-    }
-    else if(program.getName().indexOf("blast")>-1)
+    if(program.getName().indexOf("blast")>-1)
     {
       if(blastMenu == null)
         blastMenu = new Hashtable<String, JMenu>();
@@ -346,17 +335,7 @@ public class RunMenu extends SelectionMenu
     final JMenuItem new_options_menu;
     final String program_name = program.getName();
 
-    if(program_name.startsWith("fasta"))
-    {
-      if(fastaMenuOptions == null)
-      {
-        fastaMenuOptions = new JMenu("Set " + program_name + " options");
-        add(fastaMenuOptions);
-      }
-      new_options_menu = new JMenuItem(program.getProgramOptions());
-      fastaMenuOptions.add(new_options_menu);
-    }  
-    else if(program_name.indexOf("blast")>-1)
+    if(program_name.indexOf("blast")>-1)
     {
       if(blastMenuOptions == null)
         blastMenuOptions = new Hashtable<String, JMenu>();

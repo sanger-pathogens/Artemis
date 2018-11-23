@@ -75,6 +75,26 @@ Note that if you are running a build from behind a proxy you will need to add th
 ```
 mvn -Dhttps.proxyHost=myproxyhost -Dhttps.proxyPort=myproxyport -DproxySet=true package
 ```
+This will build the application jars and place them in target/jars and win-jars folders. The win-jars jars have the etc folder files bundled in, for Windows.
+
+## Building Release artifacts
+To build .zip or .gz installables with unsigned jars, use the following command:
+```
+mvn -Djarsigner.skip=true clean package -P release
+```
+If building on a Mac then .app packages and a .dmg image can additionally be produced using:
+```
+mvn -Djarsigner.skip=true clean package verify -P release
+```
+The release artifacts can then be found in the target/release-artifacts directory.
+
+Jar signing can be included in the build cycle by <b>not</b> supplying a -Djarsigner.skip flag. A <i>maven.properties</i> file needs to be placed in the top-level Artemis folder containing the following keystore properties:
+```
+signer-keystore-path=<The path to a .jks keystore>
+signer-keystore-alias=<certificate alias name>
+signer-keystore-password=<keystore password>
+signer-keystore-type=JKS
+```
 
 ## Searching and Using Local Sequence Databases
 
@@ -101,46 +121,21 @@ If you wish to do this then carry out the following steps:
   ```
   For a Mac OS X install you can mount the resulting .dmg image by double-clicking it and then selecting the .pkg installer file to actually install the BLAST+ executables into the default location (/usr/local/ncbi/blast). Comprehensive installation instructions for all operating systems are provided  [here](https://www.ncbi.nlm.nih.gov/books/NBK279690/).
 
-2. To download and install Fasta locally, check here:
-
-  ```
-  ftp://ftp.ebi.ac.uk/pub/software/unix/fasta/
-  ```
-
-  and download the latest release, e.g.
-
-  ```
-  ftp://ftp.ebi.ac.uk/pub/software/unix/fasta/fasta3/fasta-36.3.8g.tar.gz
-  ```
-  Uncompress the tar:
-
-  ```
-  tar -zxvf fasta-36.3.8g.tar.gz
-  ```
-
-  Build the executables, e.g. for a Mac:
-
-  ```
-  cd fasta/src
-  make -f ../make/Makefile.os_x86_64 all
-  ```
-  Move the fasta folder to a convenient area, preferably /usr/local/ for Macs:
-
-3. Ensure that the BLAST+ and Fasta executables are available in your PATH and that local databases can be found by Artemis:
+2. Ensure that the BLAST+ executables are available in your PATH and that local
+   databases can be found by Artemis:
 
   On the command line type:
 
   ```
   blastp -help
-  fasta36 -help
   ```
-  If the executables are not found then their respective installation bin folders will need to be added to your .profile PATH variable. This can be achieved by uncommenting and setting the relevant environment variables in the **Variables for locally installed Blast databases** section of the Artemis **setenv** script. The location of the databases is assumed by default to be &lt;home directory&gt;/blast-data but this can be overridden by setting the BLASTDB and FASTLIBS variables. The setenv script should then be called from your login **.profile** file. Alternatively copy the relevant variables into your profile.
+  If the executables are not found then their respective installation bin folders will need to be added to your .profile PATH variable. This can be achieved by uncommenting and setting the relevant environment variables in the **Variables for locally installed Blast databases** section of the Artemis **setenv** script. The location of the databases is assumed by default to be &lt;home directory&gt;/blast-data but this can be overridden by setting the BLASTDB variable (See Blast+ documentation). The setenv script should then be called from your login **.profile** file. Alternatively copy the relevant variables into your profile.
 
   Note that database locations can also be specified directly within the Artemis/ACT applications.
 
 4. Download and format the uniprot database(s):
 
-  You can do this by using the Artemis etc/setup_uniprot_dbs.sh script. This script can be changed as desired, to for instance, include additional databases or create a FASTLIBS file.
+  You can do this by using the Artemis etc/setup_uniprot_dbs.sh script. This script can be changed as desired, to for instance, include additional databases.
 
   ```
   mkdir $HOME/blast-data

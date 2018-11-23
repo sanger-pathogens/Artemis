@@ -30,38 +30,6 @@ cd $HOME
 mkdir -p $INSTALL_AREA
 cd $INSTALL_AREA
 
-# Uncomment the following section to create a FASTLIBS file.
-# 
-#CWD=`pwd`
-#
-#cat > $CWD/pubseqgbs <<EOF
-#UNIPROT\$0U@$CWD/uniprot.nam 12
-#UNIPROT_EUKARYOTA\$0E@$CWD/uniprot_eukaryota.nam 12
-#UNIPROT_BACTERIA\$0B@$CWD/uniprot_bacteria.nam 12
-#FALC_CHAB_BERB_YOEL_PROTEINS\$0F@$CWD/falc_chab_berb_yoel_proteins.nam 12
-#EOF
-#
-#cat > $CWD/uniprot.nam <<EOF
-#<$CWD
-#uniprot 0
-#EOF
-#
-#cat > $CWD/uniprot_bacteria.nam <<EOF
-#<$CWD
-#uniprot_bacteria 0
-#EOF
-#
-#cat > $CWD/uniprot_eukaryota.nam <<EOF
-#<$CWD
-#uniprot_eukaryota 0
-#EOF
-#
-#cat > $CWD/falc_chab_berb_yoel_proteins.nam <<EOF
-#<$CWD
-#falc_chab_berb_yoel_proteins 0
-#EOF
-#
-
 echo "Downloading and formatting databases..."
 
 if test ! -f uniprot; then
@@ -89,7 +57,7 @@ if test -f uniprot_eukaryota.gz; then
   $BLAST -in uniprot_eukaryota -dbtype prot -parse_seqids -title uniprot_eukaryota &
 fi
 
-# format falc_chab_berb_yoel_proteins (aeb) if we have it
+# Add other databases here as required...
 #if test -f falc_chab_berb_yoel_proteins.gz; then
 #  gunzip -f falc_chab_berb_yoel_proteins.gz
 #  $BLAST -i falc_chab_berb_yoel_proteins -o T -p T -t falc_chab_berb_yoel_proteins &

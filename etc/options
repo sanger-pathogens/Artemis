@@ -767,15 +767,6 @@ invisible_qualifiers_gff= \
 # search.
 #
 feature_protein_programs = \
-    fasta %uniprot \
-    fasta %uniprot_archaea \
-    fasta %uniprot_bacteria \
-    fasta %uniprot_eukaryota \
-    fasta %uniprot_viruses \
-    fasta %uniprot_rest \
-    fasta %malaria \
-    sigcleave 0 \
-    pepstats - \
     blastp uniprot \
     blastp uniprot_archaea \
     blastp uniprot_bacteria \
@@ -783,19 +774,17 @@ feature_protein_programs = \
     blastp uniprot_viruses \
     tblastn %embl_other \
     hth - \
-    smart - \
-    clustalx PROTEIN \
-    jalview PROTEIN
+    sigcleave 0 \
+    pepstats - \
+    clustalx PROTEIN
 
 feature_dna_programs = \
     tblastx %embl_other \
     blastn %embl_other \
     blastx %uniprot \
-    fastx %uniprot \
     clustalx DNA
 
-application_programs = \
-    jalview
+application_programs =
 
 ncbi_dna_search = \
    blastn http://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE=Nucleotides&PROGRAM=blastn&MEGABLAST=on&BLAST_PROGRAMS=blastn&PAGE_TYPE=BlastSearch&DATABASE=nr&SHOW_DEFAULTS=on&QUERY= \
@@ -818,12 +807,11 @@ common_keys = \
     BLASTN_HIT BLASTCDS 3'UTR 5'UTR
 
 # SRS
-#srs_url = http://srs.ebi.ac.uk/srsbin/cgi-bin/
 srs_url = http://www.bioinformatics.nl/srsbin/cgi-bin/
 
 # hyperlinked databases in feature editor
 hyperlinks = \
-  SWALL+UniProt+UniProtKB srs_url \
+  SWALL srs_url \
   EMBL http://www.ebi.ac.uk/Tools/dbfetch/expasyfetch? \
   PubMed+PMID http://www.ncbi.nlm.nih.gov/sites/entrez?Db=pubmed&Cmd=ShowDetailView&TermToSearch= \
   InterPro http://www.ebi.ac.uk/interpro/entry/ \
@@ -844,6 +832,8 @@ hyperlinks = \
   GeneID http://www.ncbi.nlm.nih.gov/sites/entrez?db=gene&cmd=Retrieve&dopt=full_report&list_uids= \
   Rfam http://rfam.sanger.ac.uk/family/ \
   GI http://www.ncbi.nlm.nih.gov/entrez/sutils/girevhist.cgi?val= \
+  UniProt https://www.uniprot.org/uniprot/ \
+  UniProtKB https://www.uniprot.org/uniprot/ \
   TCDB http://www.tcdb.org/search/result.php?tc=
 
 # BamView
