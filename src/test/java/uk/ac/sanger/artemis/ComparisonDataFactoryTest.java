@@ -29,7 +29,7 @@ import uk.ac.sanger.artemis.util.LinePushBackReader;
 public class ComparisonDataFactoryTest
 {
 	@Mock
-	Document comparisonDoc;
+	private Document comparisonDoc;
 	
 	@Before
 	public void setUp() throws Exception {

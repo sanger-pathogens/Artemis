@@ -33,9 +33,12 @@ public class RunInterProSearchTest
 	@Spy
 	private Options options;
 	
-	@Mock HttpURLConnection conn;
-	@Mock OutputStream outStream;
-	@Mock InputStream  inStream;
+	@Mock 
+	private HttpURLConnection conn;
+	@Mock 
+	private OutputStream outStream;
+	@Mock
+	private InputStream  inStream;
 	
 	@Spy
 	private RunInterProSearch ipSearch;
