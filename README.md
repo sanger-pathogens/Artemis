@@ -129,9 +129,9 @@ If you wish to do this then carry out the following steps:
   ```
   blastp -help
   ```
-  If the executables are not found then their respective installation bin folders will need to be added to your .profile PATH variable. This can be achieved by uncommenting and setting the relevant environment variables in the **Variables for locally installed Blast databases** section of the Artemis **setenv** script. The location of the databases is assumed by default to be &lt;home directory&gt;/blast-data but this can be overridden by setting the BLASTDB variable (See Blast+ documentation). The setenv script should then be called from your login **.profile** file. Alternatively copy the relevant variables into your profile.
+  If the executables are not found then their installation bin folder will need to be added to your .profile PATH variable. This can be achieved by uncommenting and setting the relevant environment variables in the **Variables for locally installed Blast databases** section of the Artemis **setenv** script. The location of the databases is assumed by default to be &lt;home directory&gt;/blast-data but this can be overridden by setting the BLASTDB variable (See Blast+ documentation). The setenv script should then be called from your login **.profile** file. Alternatively copy the relevant variables into your profile.
 
-  Note that database locations can also be specified directly within the Artemis/ACT applications.
+  Note that database locations can also be specified directly within the Artemis/ACT applications using the run menu - set options functionality.
 
 4. Download and format the uniprot database(s):
 
