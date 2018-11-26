@@ -82,7 +82,7 @@ public class RunInterProSearchTest
 		when( conn.getOutputStream() ).thenReturn(outStream);
 		when( conn.getInputStream() ).thenReturn(inStream);
 		when( conn.getHeaderField(anyString()) ).thenReturn(TEST_WEBSITE_URL_REDIRECT);
-		when( conn.getResponseCode() ).thenReturn(200);
+		when( conn.getResponseCode() ).thenReturn(HttpURLConnection.HTTP_OK);
 		doNothing().when(ipSearch).displayURL(any()); // So we don't pop up a browser window
 		
 		ipSearch.start();
@@ -113,7 +113,7 @@ public class RunInterProSearchTest
 		when( conn.getOutputStream() ).thenReturn(outStream);
 		when( conn.getInputStream() ).thenReturn(inStream);
 		when( conn.getHeaderField(anyString()) ).thenReturn(TEST_WEBSITE_URL_REDIRECT);
-		when( conn.getResponseCode() ).thenReturn(302); // Different response code
+		when( conn.getResponseCode() ).thenReturn(HttpURLConnection.HTTP_MOVED_TEMP); // Different response code
 		doNothing().when(ipSearch).displayURL(any()); // So we don't pop up a browser window
 		
 		ipSearch.start();
@@ -144,7 +144,7 @@ public class RunInterProSearchTest
 		when( conn.getOutputStream() ).thenReturn(outStream);
 		when( conn.getInputStream() ).thenReturn(inStream);
 		when( conn.getHeaderField(anyString()) ).thenReturn(TEST_WEBSITE_URL_REDIRECT);
-		when( conn.getResponseCode() ).thenReturn(200);
+		when( conn.getResponseCode() ).thenReturn(HttpURLConnection.HTTP_OK);
 		doNothing().when(ipSearch).displayURL(any()); 
 		doNothing().when(ipSearch).showError(any()); // mock out error display
 		
@@ -171,7 +171,7 @@ public class RunInterProSearchTest
 		when( conn.getOutputStream() ).thenReturn(outStream);
 		when( conn.getInputStream() ).thenReturn(inStream);
 		when( conn.getHeaderField(anyString()) ).thenReturn(TEST_WEBSITE_URL_REDIRECT);
-		when( conn.getResponseCode() ).thenReturn(200);
+		when( conn.getResponseCode() ).thenReturn(HttpURLConnection.HTTP_OK);
 		doNothing().when(ipSearch).displayURL(any());
 		doNothing().when(ipSearch).showError(any()); // mock out error display
 		
@@ -198,7 +198,7 @@ public class RunInterProSearchTest
 		when( conn.getOutputStream() ).thenReturn(outStream);
 		when( conn.getInputStream() ).thenReturn(inStream);
 		when( conn.getHeaderField(anyString()) ).thenReturn(TEST_WEBSITE_URL_REDIRECT);
-		when( conn.getResponseCode() ).thenReturn(403);
+		when( conn.getResponseCode() ).thenReturn(HttpURLConnection.HTTP_FORBIDDEN);
 		doNothing().when(ipSearch).displayURL(any());
 		doNothing().when(ipSearch).showError(any()); // mock out error display
 		

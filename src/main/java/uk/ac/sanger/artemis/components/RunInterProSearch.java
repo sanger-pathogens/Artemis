@@ -106,6 +106,7 @@ public class RunInterProSearch
       HttpURLConnection conn = getConnection();
       
       conn.setDoOutput(true);
+      conn.setRequestMethod("POST");
       conn.setInstanceFollowRedirects(false);
       
       wr = new OutputStreamWriter(conn.getOutputStream());
@@ -118,7 +119,8 @@ public class RunInterProSearch
 
       // Check response status
       int status = conn.getResponseCode();
-      if (status != 200 && status != 302) 
+      if (status != HttpURLConnection.HTTP_OK && 
+    	  status != HttpURLConnection.HTTP_MOVED_TEMP) 
       {
     	  // [not Accepted]
     	  
