@@ -74,7 +74,7 @@ fi
 PLATTMP=`uname`
 if [[ "$PLATTMP" = "Darwin" ]]
 then
-  	APPLICATION_PROPERTIES="$APPLICATION_PROPERTIES -Dapple.laf.useScreenMenuBar=true -Xdock:name=BamView"
+  	APPLICATION_PROPERTIES="$APPLICATION_PROPERTIES -Xdock:name=BamView"
 fi
 
 if [[ "$QUIET" = "no" ]]
