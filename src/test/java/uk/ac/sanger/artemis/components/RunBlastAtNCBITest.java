@@ -23,26 +23,15 @@ package uk.ac.sanger.artemis.components;
 import static org.junit.Assert.*;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.URLEncoder;
-
-import javax.swing.JOptionPane;
 
 import org.junit.Test;
 
 import uk.ac.sanger.artemis.components.RunBlastAtNCBI;
-import uk.ac.sanger.artemis.Options;
-import uk.ac.sanger.artemis.ExternalProgramVector;
-import uk.ac.sanger.artemis.ExternalProgram;
 
-import org.junit.Before;
-import org.junit.After;
 
 /**
  * Run some Blast queries.
