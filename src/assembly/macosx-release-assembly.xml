@@ -138,7 +138,6 @@
 		<option value="${initialheap.command.line.arg}" />
 		<option value="${noverify.command.line.arg}" />
 		<option value="${unixenv.command.line.arg}" />
-		<option value="${macosx.use.menubar.arg}" />
 		<option value="${macosx.menuname.command.line.arg}=${bamview.application.name}" />
 		<option value="${macosx.dock.command.line.arg}=${bamview.application.name}" />
 	</bundleapp>
@@ -292,7 +291,6 @@
 		<option value="${initialheap.command.line.arg}" />
 		<option value="${noverify.command.line.arg}" />
 		<option value="${unixenv.command.line.arg}" />
-		<option value="${macosx.use.menubar.arg}" />
 		<option value="${macosx.menuname.command.line.arg}=${bamview.application.name}" />
 		<option value="${macosx.dock.command.line.arg}=${bamview.application.name}" />
 	</bundleapp>
