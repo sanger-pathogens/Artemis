@@ -795,6 +795,8 @@ ncbi_protein_search = \
    blastp http://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE=Proteins&PROGRAM=blastp&BLAST_PROGRAMS=blastp&PAGE_TYPE=BlastSearch&QUERY= \
    tblastn http://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE=Translations&PROGRAM=tblastn&BLAST_PROGRAMS=tblastn&PAGE_TYPE=BlastSearch&SHOW_DEFAULTS=on&QUERY=
 
+interpro_search_url = https://www.ebi.ac.uk/interpro/
+
 mess_fasta_hits = 10
 
 # this is the list of keys that should be displayed by default in the edit

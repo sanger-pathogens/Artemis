@@ -29,6 +29,7 @@ import uk.ac.sanger.artemis.*;
 import uk.ac.sanger.artemis.util.ReadOnlyException;
 import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.InvalidKeyException;
+import uk.ac.sanger.artemis.sequence.AminoAcidSequence;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -68,8 +69,10 @@ public class RunMenu extends SelectionMenu
   {
     super(frame, menu_name, selection);
 
+    addInterProSearch(selection);
     addNCBISearches(selection);
     addPfamSearches(selection);
+    
     if(Options.isUnixHost())
     {
       addSeparator();
@@ -179,7 +182,7 @@ public class RunMenu extends SelectionMenu
           if(features.size() != 1)
           {
             JOptionPane.showMessageDialog(RunMenu.this,
-                "Selected a single feature to send to NCBI for searching.", 
+                "Select a single feature to send to NCBI for searching.", 
                 "NCBI Search", JOptionPane.INFORMATION_MESSAGE);
             return; 
           }
@@ -205,6 +208,37 @@ public class RunMenu extends SelectionMenu
         }
       });
     }
+  }
+  
+  /**
+   * Add menu for InterPro searches
+   * @param selection
+   */
+  private void addInterProSearch(final Selection selection)
+  {
+    final JMenuItem interproSearchLink = new JMenuItem("InterPro Search");
+    add(interproSearchLink);
+    
+    interproSearchLink.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent arg0)
+      {
+        final FeatureVector features = selection.getAllFeatures();
+        
+        if(features.size() != 1)
+        {
+          JOptionPane.showMessageDialog(RunMenu.this,
+              "Select a single feature to send to EBI for searching.", 
+              "InterPro Search", JOptionPane.INFORMATION_MESSAGE);
+          return; 
+        }
+        
+        AminoAcidSequence seq = features.elementAt(0).getTranslation();
+          
+        RunInterProSearch interproSearch = new RunInterProSearch(seq.toString());
+        interproSearch.start();
+      }
+    });
   }
   
   /**
