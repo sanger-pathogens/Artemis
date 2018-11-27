@@ -35,7 +35,7 @@ public class IconManager
 	}
 	
 	/**
-	 * Set an application icon.
+	 * Set an application task bar icon.
 	 * 
 	 * @param app String - application name/identifier
 	 */
@@ -59,6 +59,11 @@ public class IconManager
 			{
 				// TODO Log4j does not seem to be set up for DnaPlotter/BamView.
 				//logger4j.error("ERROR: Unable to locate application icon");
+			}
+			catch (UnsupportedOperationException uoe)
+			{
+				// This can happen on Windows so
+				// we just ignore it as there's nothing else we can do.
 			}
 	    }
 		
