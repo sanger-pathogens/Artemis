@@ -1,10 +1,10 @@
-/* RunPfamSearch.java
+/* RunInterProSearch.java
  *
- * created: 2009
+ * created: 2018
  *
  * This file is part of Artemis
  *
- * Copyright(C) 2009  Genome Research Limited
+ * Copyright(C) 2018  Genome Research Limited
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -42,10 +42,12 @@ import uk.ac.sanger.artemis.editor.BrowserControl;
 
 /**
  * InterPro sequence search functionality.
+ * Can be run as a thread to avoid blocking 
+ * event dispatching. 
  * 
  * @author kp11
  */
-public class RunInterProSearch
+public class RunInterProSearch extends Thread
 {
   /** The InterPro web site URL */
   protected String searchURL = Options.getOptions().getProperty("interpro_search_url");
@@ -64,7 +66,7 @@ public class RunInterProSearch
    */
   public RunInterProSearch()
   {
-    // Do nothing
+    setDaemon(true);
   }
   
   /**
@@ -73,6 +75,7 @@ public class RunInterProSearch
    */
   public RunInterProSearch(final String sequence)
   {
+	this();
     this.sequence = sequence;
   }
   
@@ -83,14 +86,14 @@ public class RunInterProSearch
    */
   public RunInterProSearch(final String sequence, final String searchURL)
   {
-    this.sequence = sequence;
+	this(sequence);
     this.searchURL = searchURL;
   }
   
   /**
    * Run a search.
    */
-  public void start()
+  public void run()
   { 
 	OutputStreamWriter wr = null;
 	BufferedReader rd = null;

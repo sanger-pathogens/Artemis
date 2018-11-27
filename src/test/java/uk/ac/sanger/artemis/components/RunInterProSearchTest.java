@@ -64,6 +64,7 @@ public class RunInterProSearchTest
 	{
 		RunInterProSearch interproSearch1 = new RunInterProSearch(TEST_SEQUENCE);
 		assertEquals(TEST_SEQUENCE, interproSearch1.getSequence());
+		assertTrue(interproSearch1.isDaemon());
 		
 		RunInterProSearch interproSearch2 = new RunInterProSearch(TEST_SEQUENCE, TEST_WEBSITE_URL);
 		assertEquals(TEST_SEQUENCE, interproSearch2.getSequence());
@@ -85,7 +86,7 @@ public class RunInterProSearchTest
 		when( conn.getResponseCode() ).thenReturn(HttpURLConnection.HTTP_OK);
 		doNothing().when(ipSearch).displayURL(any()); // So we don't pop up a browser window
 		
-		ipSearch.start();
+		ipSearch.run();
 		
 		// Then
 		verify(ipSearch, times(1)).getConnection();
@@ -116,7 +117,7 @@ public class RunInterProSearchTest
 		when( conn.getResponseCode() ).thenReturn(HttpURLConnection.HTTP_MOVED_TEMP); // Different response code
 		doNothing().when(ipSearch).displayURL(any()); // So we don't pop up a browser window
 		
-		ipSearch.start();
+		ipSearch.run();
 		
 		// Then
 		verify(ipSearch, times(1)).getConnection();
@@ -148,7 +149,7 @@ public class RunInterProSearchTest
 		doNothing().when(ipSearch).displayURL(any()); 
 		doNothing().when(ipSearch).showError(any()); // mock out error display
 		
-		ipSearch.start();
+		ipSearch.run();
 		
 		// Then
 		verify(ipSearch, times(1)).showError(anyString());
@@ -175,7 +176,7 @@ public class RunInterProSearchTest
 		doNothing().when(ipSearch).displayURL(any());
 		doNothing().when(ipSearch).showError(any()); // mock out error display
 		
-		ipSearch.start();
+		ipSearch.run();
 		
 		// Then
 		verify(ipSearch, times(1)).showError(anyString());
@@ -202,7 +203,7 @@ public class RunInterProSearchTest
 		doNothing().when(ipSearch).displayURL(any());
 		doNothing().when(ipSearch).showError(any()); // mock out error display
 		
-		ipSearch.start();
+		ipSearch.run();
 		
 		// Then
 		verify(ipSearch, times(1)).showError(anyString());
