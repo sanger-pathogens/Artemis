@@ -46,7 +46,7 @@
 		copyright="${copyright.text}"
 		plistClassPaths="$APP_ROOT/Contents,$APP_ROOT/Contents/Java/${artemis.jar.name}">
 	
-		<bundledocument extensions="gff,gff3,embl,EMBL,genbank,gbk,fasta,fa"
+		<bundledocument extensions="gff,gff3,embl,EMBL,genbank,gbk,fasta,fa,seq"
         		name="sequence"
         		role="viewer"
         		handlerRank="owner">
@@ -193,7 +193,7 @@
 		workingdirectory="$APP_ROOT/Contents/"
 		plistClassPaths="$APP_ROOT/Contents,$APP_ROOT/Contents/Java/${artemis.jar.name}">
 	
-		<bundledocument extensions="gff,gff3,embl,EMBL,genbank,gbk,fasta,fa"
+		<bundledocument extensions="gff,gff3,embl,EMBL,genbank,gbk,fasta,fa,seq"
         		name="sequence"
         		role="viewer"
         		handlerRank="owner">
