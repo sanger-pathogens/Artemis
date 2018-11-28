@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- */
+ */ 
 
 package uk.ac.sanger.artemis.components;
 
@@ -239,7 +239,7 @@ abstract public class Splash extends JFrame
     IconManager.setDockIcon(this, programTitle);
     
     pack();
-    setSize(455, 290);
+    setSize(455, 305);
 
     final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
     setLocation(new Point((screen.width - getSize().width) / 2,

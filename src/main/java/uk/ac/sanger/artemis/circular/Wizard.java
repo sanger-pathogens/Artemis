@@ -103,7 +103,7 @@ public class Wizard
   protected Wizard()
   {
 	  IconManager.setApplicationIcon(IconManager.DNAPLOTTER_NAME);
-		
+
 	  if (System.getProperty("mrj.version") != null ||
 	            System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0)
 	  {
@@ -114,12 +114,14 @@ public class Wizard
   public Wizard(DNADraw dna_current)
   {
 	this();
-	    
+	
     int n = getOption(dna_current);  // option 0 - read data file
                                      // option 1 - edit existing dna
                                      // option 2 - read template
     if(n == 0)
+    {
       dna = getDNADrawFromFile(dna_current);
+    }
     else if(n == 2)
     {
       StickyFileChooser chooser = new StickyFileChooser();

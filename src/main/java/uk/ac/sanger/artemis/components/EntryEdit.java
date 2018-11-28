@@ -45,6 +45,7 @@ import uk.ac.sanger.artemis.util.OutOfRangeException;
 import uk.ac.sanger.artemis.util.ReadOnlyException;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.util.Document;
+import uk.ac.sanger.artemis.util.IconManager;
 import uk.ac.sanger.artemis.io.DatabaseInferredFeature;
 import uk.ac.sanger.artemis.io.DocumentEntry;
 import uk.ac.sanger.artemis.io.DocumentEntryFactory;
@@ -478,25 +479,7 @@ public class EntryEdit extends JFrame
     makeMenus(splitPane, jspLookSeq, lookseqPanel);
     pack();
 
-    ClassLoader cl = this.getClass().getClassLoader();
-    ImageIcon icon = new ImageIcon(cl.getResource("images/icon.gif"));
-
-    if(icon != null) 
-    {
-      final Image icon_image = icon.getImage();
-      MediaTracker tracker = new MediaTracker(this);
-      tracker.addImage(icon_image, 0);
-  
-      try 
-      {
-        tracker.waitForAll();
-        setIconImage(icon_image);
-      }
-      catch(InterruptedException e) 
-      {
-        // ignore and continue
-      }
-    }
+    IconManager.setDockIcon(this, IconManager.ARTEMIS_NAME);
 
     final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
     int screen_height = screen.height;

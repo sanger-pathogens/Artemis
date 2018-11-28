@@ -78,6 +78,23 @@ public class IconManager
 	public static void setDockIcon(JFrame frame, String app) 
 	{
 		final ClassLoader cl = frame.getClass().getClassLoader();
+		
+		setDockIcon(frame, cl, app);
+	}
+	
+	/**
+	 * Set a dock icon on the provided frame using the given
+	 * class loader.
+	 * 
+	 * @param frame JFrame - parent frame
+	 * @param cl ClassLoader
+	 * @param app String - application name/identifier
+	 */
+	public static void setDockIcon(JFrame frame, ClassLoader cl, String app) 
+	{
+		if (isMac())
+			return;
+		
 		ImageIcon icon = new ImageIcon(cl.getResource(getDockIcon(app)));
 
 	    if(icon != null) 
@@ -141,15 +158,33 @@ public class IconManager
 	{
 		if (ARTEMIS_NAME.equalsIgnoreCase(app))
 		{
-			return "images/icon.gif";
+			return "images/artemis_icon.png";
 		} 
 		else if (ACT_NAME.equalsIgnoreCase(app))
 		{
-			return "images/act.gif";
+			return "images/act_icon.png";
+		}
+		else if (DNAPLOTTER_NAME.equalsIgnoreCase(app))
+		{
+			return "images/dnaplotter_icon.png";
+		}
+		else if (BAMVIEW_NAME.equalsIgnoreCase(app))
+		{
+			return "images/bamview_icon.png";
 		}
 		else
 		{
 			throw new IllegalArgumentException("Application name '" + app + "' not recognised");
 		}
+	}
+	
+	/**
+	 * Are we running on a Mac.
+	 * @return true for Mac
+	 */
+	static boolean isMac() 
+	{
+	    return System.getProperty("mrj.version") != null ||
+	           System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0;
 	}
 }

@@ -85,6 +85,7 @@ import uk.ac.sanger.artemis.EntryGroup;
 import uk.ac.sanger.artemis.editor.BrowserControl;
 import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.sequence.Bases;
+import uk.ac.sanger.artemis.util.IconManager;
 
 
 public class DNADraw extends ScrollPanel
@@ -1916,6 +1917,17 @@ public class DNADraw extends ScrollPanel
     userDraw.add(thisGraphDraw);
   }
   
+  /** 
+   * Set an Icon for the frame.
+   */
+  public void setDockIcon()
+  {
+	  if (mainFrame != null)
+	  {
+		  IconManager.setDockIcon(mainFrame, this.getClass().getClassLoader(), IconManager.DNAPLOTTER_NAME);
+	  }
+  }
+  
   public static void main(final String arg[])
   {
     SwingUtilities.invokeLater(new Runnable() 
@@ -1946,6 +1958,10 @@ public class DNADraw extends ScrollPanel
         //
         final String version = dna.getVersion();
         final JFrame f = new JFrame();
+        
+        dna.setCloseAndDispose(false, f);
+        dna.setDockIcon();
+          		
         if(version == null)
           f.setTitle("DNAPlotter");
         else
@@ -1966,7 +1982,7 @@ public class DNADraw extends ScrollPanel
         
         //dna.add(dna.new BlockPanel(dna));
         f.setVisible(true);
-        
+
         if(wiz.getWorkerGraph() != null)
           wiz.getWorkerGraph().start();
       }

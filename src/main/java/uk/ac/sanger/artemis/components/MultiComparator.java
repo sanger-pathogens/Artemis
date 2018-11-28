@@ -34,6 +34,7 @@ import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 import uk.ac.sanger.artemis.components.variant.VCFview;
 import uk.ac.sanger.artemis.util.RemoteFileDocument;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
+import uk.ac.sanger.artemis.util.IconManager;
 import uk.ac.sanger.artemis.util.InputStreamProgressListener;
 import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.DocumentEntryFactory;
@@ -352,24 +353,7 @@ public class MultiComparator extends JFrame
       }
     });
 
-    final URL icon_url = Splash.class.getResource("/images/act.gif");
-    if(icon_url != null) 
-    {
-      Toolkit toolkit = Toolkit.getDefaultToolkit();
-      final Image icon_image = toolkit.getImage(icon_url);
-      MediaTracker tracker = new MediaTracker(this);
-      tracker.addImage(icon_image, 0);
-
-      try 
-      {
-        tracker.waitForAll();
-        setIconImage(icon_image);
-      } 
-      catch(InterruptedException e) 
-      {
-        // ignore and continue
-      }
-    }
+    IconManager.setDockIcon(this, IconManager.ACT_NAME);
 
     final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
 

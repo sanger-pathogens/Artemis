@@ -46,13 +46,33 @@ public class IconManagerTest
 			}
 		};
 		
-		IconTestFrame win = new IconTestFrame("test frame");
 		
-		IconManager.setDockIcon(win, IconManager.ARTEMIS_NAME);
+		// Pretend we are on non-Mac system
 		
-		Image icon = win.getIconImage();
+		IconTestFrame win1 = new IconTestFrame("test frame 1");
 		
-		assertNotNull("Dock image has been set", icon);
+		System.clearProperty("mrj.version");
+		System.setProperty("os.name", "unix");
+		IconManager.setDockIcon(win1, IconManager.ARTEMIS_NAME);
+		
+		assertNotNull("Dock image has been set", win1.getIconImage());
+		
+		
+		// Pretend we are on a Mac - dock icon not currently set
+		
+		IconTestFrame win2 = new IconTestFrame("test frame 2");
+		
+		System.setProperty("mrj.version", "mrj");
+		System.setProperty("os.name", "");
+		IconManager.setDockIcon(win2, IconManager.ARTEMIS_NAME);
+
+		assertNull("Dock image not set", win2.getIconImage());
+		
+		System.clearProperty("mrj.version");
+		System.setProperty("os.name", "mac os x");
+		IconManager.setDockIcon(win2, IconManager.ARTEMIS_NAME);
+
+		assertNull("Dock image not set", win2.getIconImage());
 		
 	}
 	
@@ -80,6 +100,8 @@ public class IconManagerTest
 	{
 		assertTrue(IconManager.getDockIcon(IconManager.ARTEMIS_NAME).contains("icon"));
 		assertTrue(IconManager.getDockIcon(IconManager.ACT_NAME).contains("act"));
+		assertTrue(IconManager.getDockIcon(IconManager.DNAPLOTTER_NAME).contains("dnaplotter"));
+		assertTrue(IconManager.getDockIcon(IconManager.BAMVIEW_NAME).contains("bamview"));
 		
 		try 
 		{
