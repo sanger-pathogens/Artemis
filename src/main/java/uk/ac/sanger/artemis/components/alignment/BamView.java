@@ -381,7 +381,7 @@ public class BamView extends JPanel
     catch(java.lang.UnsupportedClassVersionError err)
     {
       JOptionPane.showMessageDialog(null, 
-          "This requires Java 1.8 or higher.", 
+          "This requires Java 1.9 or higher.", 
           "Check Java Version", JOptionPane.WARNING_MESSAGE);
     }
     catch (IOException ioe)
@@ -4548,6 +4548,7 @@ public class BamView extends JPanel
     }
     
     IconManager.setApplicationIcon(IconManager.BAMVIEW_NAME);
+    IconManager.setDockIcon(frame, IconManager.BAMVIEW_NAME);
     
     List<String> alignmentFileList = new Vector<String>();
     String reference = null;
@@ -4555,7 +4556,7 @@ public class BamView extends JPanel
     {	
       System.setProperty("default_directory", System.getProperty("user.dir"));
       FileSelectionDialog fileSelection = new FileSelectionDialog(
-          null, true, IconManager.BAMVIEW_NAME, "BAM/CRAM");
+          null, true, IconManager.BAMVIEW_NAME, "BAM / CRAM");
       alignmentFileList = fileSelection.getFiles(BAM_SUFFIX); 
       reference = fileSelection.getReferenceFile();
       if(reference == null || reference.trim().equals(""))

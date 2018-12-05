@@ -52,7 +52,7 @@ public class MappedReadsTest
   public static void setUp() 
   {
     // ignore if in headless mode with no x11
-    if(GraphicsEnvironment.getLocalGraphicsEnvironment().isHeadless())
+    if(GraphicsEnvironment.isHeadless())
       return;
     URL entryFile = MappedReadsTest.class.getResource("/data/MAL_8h.bam");
     System.setProperty("bam", entryFile.getFile());
@@ -92,14 +92,14 @@ public class MappedReadsTest
 	  }
   }
   
-  @Test
   /**
    * Test the read count for a gene
    */
+  @Test
   public void readCounts()
   {
     // ignore if in headless mode with no x11
-    if(GraphicsEnvironment.getLocalGraphicsEnvironment().isHeadless())
+    if(GraphicsEnvironment.isHeadless())
       return;
 
     final Hashtable<String, List<ReadCount>> featureReadCount =
@@ -111,14 +111,14 @@ public class MappedReadsTest
     assertTrue(998.f == c.antiCnt);
   }
   
-  @Test
   /**
    * Read count for a gene excluding the intron
    */
+  @Test
   public void readCountsExcludeIntron()
   {
     // ignore if in headless mode with no x11
-    if(GraphicsEnvironment.getLocalGraphicsEnvironment().isHeadless())
+    if(GraphicsEnvironment.isHeadless())
       return;
 
     final Hashtable<String, List<ReadCount>> featureReadCount =
@@ -130,14 +130,14 @@ public class MappedReadsTest
     assertTrue(997.f == c.antiCnt);
   }
   
-  @Test
   /**
-   * Tes the read count for a gene not including those in the intron
+   * Test the read count for a gene not including those in the intron
    */
+  @Test
   public void rpkm()
   {
     // ignore if in headless mode with no x11
-    if(GraphicsEnvironment.getLocalGraphicsEnvironment().isHeadless())
+    if(GraphicsEnvironment.isHeadless())
       return;
 
     String refName = (String) bv.getCombo().getSelectedItem();

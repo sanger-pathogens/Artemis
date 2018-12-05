@@ -140,6 +140,8 @@ class BamUtils
           if(thisEnd > thisLength)
             thisEnd = thisLength;
 
+          // The result array will have two elements - one for each strand, as we are
+          // specifying byStrand as true.
           cnt = count(bamView, bam, thisStart, thisEnd, contained, true, useStrandTag);
 
         }
@@ -148,6 +150,8 @@ class BamUtils
     }
     else
     {
+      // The result array will have two elements - one for each strand, as we are
+      // specifying byStrand as true.
       cnt = count(bamView, bam, start, end, contained, true, useStrandTag);
     }
     
@@ -157,6 +161,21 @@ class BamUtils
     return cntf;
   }
 
+  /**
+   * Return an array of mapped read counts for the currently selected contig, for a given range. 
+   * The array will have two elements -  if the byStrand argument is true one for each strand,
+   * else the first element contains the count if false.
+   * The selected contig is obtained from the given BamView object.
+   * 
+   * @param bamView - bam view panel
+   * @param bam - bam/cram file to operate on
+   * @param start - start position of range
+   * @param end - end position of range
+   * @param contained - whether reads must be completely contained in the range
+   * @param byStrand - whether or not to provide counts by strand
+   * @param useStrandTag
+   * @return counts array - 2 elements if by strand selected
+   */
   protected static int[] count(
           final BamView bamView,
           final String bam, 
@@ -176,17 +195,24 @@ class BamUtils
     cnt[1] = 0;
     
     SamReader inputSam = samFileReaderHash.get(bam);
+    
+    // SAM iterator across the range
     final CloseableIterator<SAMRecord> it = inputSam.query(refName, start, end, contained);
 
+    // Iterate through in-range SAM records
     while ( it.hasNext() )
     {
       SAMRecord samRecord = it.next();
       if( samRecordFlagPredicate == null ||
           !samRecordFlagPredicate.testPredicate(samRecord))
        {
+    	 // The samRecordFlagPredicate filters out unmapped reads.
+    	  
          if(samRecordMapQPredicate == null ||
             samRecordMapQPredicate.testPredicate(samRecord))
          {
+           // The samRecordMapQPredicate provides a quality cut-off
+        	 
            if(byStrand && BamView.isNegativeStrand(samRecord, useStrandTag))
              cnt[1]++;
            else
@@ -198,6 +224,16 @@ class BamUtils
     return cnt;
   }
   
+  /**
+   * Return an array of mapped read counts. One element for each 
+   * bam/cram file.
+   * @param bamView BamView panel
+   * @param refName String - Not Used 
+   * @param sequenceLength - length of this sequence
+   * @param useStrandTag
+   * @param progressBar
+   * @return array of mapped read counts
+   */
   protected static int[] calc(
       final BamView bamView, 
       final String refName, 
@@ -212,9 +248,14 @@ class BamUtils
     {
       if(progressBar != null)
         progressBar.setValue(i);
+      
+      // We iterate through the sequence bases in chunks
       int sbegc = i;
       int sendc = i + MAX_BASE_CHUNK - 1;
 
+      // We keep track of no. of mapped reads in mappedReads[j]
+      // where j is the bam/cram file index.
+      //
       for (int j = 0; j < bamView.bamList.size(); j++)
       {
         String bam = bamView.bamList.get(j);
@@ -222,6 +263,8 @@ class BamUtils
         {
           int len = 0;
           int lastLen = 1;
+          
+          // Iterate through all contigs
           for (String name : bamView.getSeqNames())
           {
             int thisLength = bamView.getSeqLengths().get(name);
@@ -240,6 +283,7 @@ class BamUtils
               if (thisEnd > thisLength)
                 thisEnd = thisLength;
 
+              // Add the no. of mapped reads for the current interval to the total
               mappedReads[j] += BamUtils.count(bamView, bam, thisStart, thisEnd, 
                   contained, false, useStrandTag)[0];
             }
@@ -248,6 +292,7 @@ class BamUtils
         }
         else
         {
+          // Add the no. of mapped reads for the current interval to the total
           mappedReads[j] += BamUtils.count(bamView, bam, sbegc, sendc,
               contained, false, useStrandTag)[0];
         }
@@ -321,15 +366,17 @@ class BamUtils
   }
 
   /**
-   * For a list of features calculate the read count for each
+   * For a list of features calculate counts for each.
+   * If the mappedReads argument is null then counts are returned. If non-null
+   * then RPKM values are returned.
    * @param bamView
    * @param features
-   * @param contained
-   * @param useIntrons
+   * @param contained - if true, reads should be completely contained within a feature
+   * @param useIntrons - if true, include reads wholly within an intron
    * @param useStrandTag
-   * @param mappedReads
+   * @param mappedReads - array of total mapped reads indexed by alignment file
    * @param progressBar
-   * @return
+   * @return Hashtable of RPKM read counts keyed on feature name
    */
   protected static Hashtable<String, List<ReadCount>> calculateMappedReads(
       final BamView bamView,
@@ -342,6 +389,8 @@ class BamUtils
   {
     final Hashtable<String, List<ReadCount>> featureReadCount = 
         new Hashtable<String, List<ReadCount>>();
+    
+    // Iterate through the provided list of features to look at
     for (int i = 0; i < features.size(); i++)
     {
       final Feature f = features.elementAt(i);
@@ -353,15 +402,20 @@ class BamUtils
       final float fLen = BamUtils.getFeatureLength(f);
       List<ReadCount> sampleCounts = new Vector<ReadCount>();
 
+      // Iterate through loaded alignment files
       for (int j = 0; j < bamView.bamList.size(); j++)
       {
         final String bam = bamView.bamList.get(j);
-        float cnt[] = new float[2];
+        float cnt[] = null;
 
+        // Get the TOTAL no. of mapped reads between start/end for all sequences
         cnt = BamUtils.getCount(bamView, start, end, bam, contained, useStrandTag);
+        
         if (!useIntrons && f.getSegments().size() > 1)
         {
-          // remove reads contained by intron
+          /* Introns included checkbox is de-selected */
+        	
+          // Remove reads contained by intron - iterate over feature segments
           for (int k = 0; k < f.getSegments().size()-1; k++)
           {
             int seg = k;
@@ -372,16 +426,20 @@ class BamUtils
               nextSeg = seg-1;
             }
 
-            start = f.getSegments().elementAt(seg).getRawRange().getEnd();
-            end = f.getSegments().elementAt(nextSeg).getRawRange().getStart();
+            // start and end represent the intron range...
+            // end of last segment [exon] to start of next [exon].
+            int intronStart = f.getSegments().elementAt(seg).getRawRange().getEnd();
+            int intronEnd   = f.getSegments().elementAt(nextSeg).getRawRange().getStart();
 
+            // Get number of mapped reads fully contained in the intron
             float tmpcnt[] = new float[2];
-            tmpcnt = BamUtils.getCount(bamView, start, end, bam, true, useStrandTag);
+            tmpcnt = BamUtils.getCount(bamView, intronStart, intronEnd, bam, true, useStrandTag);
             cnt[0] -= tmpcnt[0];
             cnt[1] -= tmpcnt[1];
           }
         }
         
+        // Calculate the sense/antisense RPKM counts for the current bamList alignment file
         if (mappedReads != null)
         {
           cnt[0] = (cnt[0] / (((float) mappedReads[j] / 1000000.f) * (fLen / 1000.f)));

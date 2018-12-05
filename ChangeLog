@@ -27,11 +27,12 @@ Version 18
 	23) Fixed incorrect Pfam URL, used in Feature Edit and Evidence Viewer screens.
 	24) Fixed error handling on Run->Pfam/Rfam search (RT Ticket #420623).
 	25) Enabled ability to drag and drop data files on to Artemis and BamView apps [Mac OS X] for immediate display.
-	26) Fixed RT ticket #642944: "ACT crunch-m8 file generation". Web ACT and Double ACT are no longer working, so ACT can now handle tblastx or blastn
+	26) Fixed RT ticket #642944: "ACT crunch-m8 file generation". ACT can now handle tblastx or blastn
 	    hit table files produced from fasta comparisons on the NCBI Blast web site. This is an alternative to Web ACT / Double ACT.
 	    [e.g. https://blast.ncbi.nlm.nih.gov/Blast.cgi?PROGRAM=tblastx&PAGE_TYPE=BlastSearch&BLAST_SPEC=blast2seq&LINK_LOC=blasttab&LAST_PAGE=tblastx&BLAST_INIT=blast2seq]
 	27) Removed the /lustre/scratch101/blastdb/Pathogen/Kineto_aa run->blast menu option. This database path no longer exists.
 	28) Added new InterPro sequence search on the run menu - RT Ticket #643820. 
+	29) RT Ticket #472601: Artemis RPKM and read count broken since version 16.0.6. Fixed bug related to intron region reads. New unit tests added.
 	
 	
 Version 17.0.2-test - patch release for Sanger. Changes incorporated into GitHub master.
