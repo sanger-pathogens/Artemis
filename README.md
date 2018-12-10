@@ -36,7 +36,7 @@ DNAPlotter generates images of circular and linear DNA maps.
 
 BamView is a standalone BAM/CRAM file viewer.
 
-For further information, please see the [Artemis GitHub page](http://sanger-pathogens.github.io/Artemis/)
+For further information and details on how to download the Artemis software, please see the [Artemis GitHub page](http://sanger-pathogens.github.io/Artemis/)
 
 ## Prerequisites
 
@@ -52,7 +52,7 @@ Please refer to the relevant documentation in the Documentation section below.
 
 ## Building
 
-If you would prefer to build the applications from scratch rather than use the pre-built releases in GitHub, then you will firstly need the source code from GitHub. This can be obtained by cloning the repository:
+If you would prefer to build the applications from scratch rather than use the pre-built releases, then you will firstly need the source code from GitHub. This can be obtained by cloning the repository:
 ```
 git clone https://github.com/sanger-pathogens/Artemis.git
 ```
