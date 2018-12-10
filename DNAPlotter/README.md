@@ -12,33 +12,42 @@ _Bioinformatics (Oxford, England) 2009;25;1;119-20_
 PUBMED: [18990721](http://ukpmc.ac.uk/abstract/MED/18990721); PMC: [2612626](http://ukpmc.ac.uk/articles/PMC2612626); DOI: [10.1093/bioinformatics/btn578](http://dx.doi.org/10.1093/bioinformatics/btn578)
 
 ## Software Availability
-The Artemis Software is available under GPL3. The source code can be found on [GitHub](https://github.com/sanger-pathogens/Artemis).
+DNAPlotter is packaged as part of the Artemis Software. The Artemis Software is available under GPL3. The source code can be found on [GitHub](https://github.com/sanger-pathogens/Artemis).
 
 The latest release of Artemis can be downloaded from our ftp site:
 
 * [UNIX](ftp://ftp.sanger.ac.uk/pub/resources/software/artemis/artemis.tar.gz)
 * [MacOS](ftp://ftp.sanger.ac.uk/pub/resources/software/artemis/artemis.dmg.gz)
+* [MacOS (CHADO)](ftp://ftp.sanger.ac.uk/pub/resources/software/artemis/artemis.dmg.gz)
 * [Windows](ftp://ftp.sanger.ac.uk/pub/resources/software/artemis/artemis-windows.zip)
 
-For older versions of the Artemis software please see the [Artemis FTP site](ftp://ftp.sanger.ac.uk/pub/resources/software/artemis/)
+For older versions of the software please see the [Artemis FTP site](ftp://ftp.sanger.ac.uk/pub/resources/software/artemis/)
+
+The previous v17.0.1 version of the Artemis software required Java version 1.8 to run. All subsequent versions from v18.0.0 onwards require a minimum of Java 9 and preferably Java 11. This must be installed first.
 
 ### Notes for Download
 
-__Note for UNIX/Windows operating systems__: The Artemis tool suite requires Java version 1.8 to run. This must be installed first.
-
-__Note for MacOSX__: occasionally a browser decides to display the contents of the .dmg.gz archive file rather than downloading it. If this happens hold down the <control> key and click on the download link. A popup menu should appear, containing several choices. One of the choices should be something like "Save Link As" (or perhaps "Download Link...", "Save Link to Desktop", or a variation on this theme). Select that option, and the archive file should be download correctly.
+__Note for MacOSX__: We recommend using Firefox or Chrome to download from the links above.
 
 ## Installation
 ### For UNIX/Linux
-Copy the artemis.tar.gz file to the directory that you wish to install to. Change to that directory and uncompress and untar the file. On UNIX, the command is:
+Change directory to the directory you wish to install the Artemis software in. We will use ~/ in this example and in the next chapter.
+
+Uncompress and untar the artemis-unix-release-{version}.tar.gz or artemis-unix-release-{version}.zip file. On UNIX the command is:
 ```
-tar zxf artemis.tar.gz
+tar zxf artemis-unix-release-{version}.tar.gz
 ```
+This will create a directory called ~/artemis which will contain all the files necessary for running DNAPlotter and the other Artemis tools.
+
 ### For MacOSX
-For MacOSX users an archive artemis.dmg.gz disk image is provided. Click on this file in your Downloads folder. This should automatically unzip and mount the disk image, opening a Finder window that contains the Artemis, ACT, BamView and DNAPlotter applications. These apps can then be dragged to any desired location, for example, your desktop.
+For MacOSX users, an artemis-macosx-release-{version}.dmg.gz disk image is provided. Double-click on this file in your Downloads folder to unzip it. Then double-click the unzipped artemis-macosx-release-{version}.dmg to mount the "Artemis_Tools" image and display its contents - the Artemis, ACT, BamView and DNAPlotter applications. These apps can then be dragged to any desired location, for example, your dock or desktop. The download file can be unzipped from the command line using gunzip, if necessary:
+```
+gunzip artemis-macosx-release-{version}.dmg.gz
+```
+There’s also an artemis-macosx-chado-release-{version}.dmg disk image that will start up Artemis with a Chado connection window displayed, if you wish to work connected to a Chado database in Artemis or ACT. This is installed in exactly the same way.
 
 ### For Windows
-Copy the artemis-windows.zip file to the directory that you wish to install to and then unzip using an application such as WinZip.
+Copy the artemis-windows-release-{version}.zip file to the directory that you wish to install to and then unzip using an application such as WinZip.
 This should unpack the artemis.jar, act.jar, bamview.jar and dnaplotter.jar application files.
 
 ## Usage
@@ -61,7 +70,8 @@ On MacOSX machines, DNAPlotter can be started by double clicking on the DNAPlott
 ### Running DNAPlotter on Windows Systems
 DNAPlotter can be started by double clicking on the dnaplotter.jar icon.
 
-__Note__: or additional information please see the [Artemis manual](https://sanger-pathogens.github.io/Artemis/Artemis/artemis-manual.html) and our [GitHub page](https://github.com/sanger-pathogens/Artemis/). A PDF version of the manual is also available for download [here](https://sanger-pathogens.github.io/Artemis/Artemis/artemis-manual.pdf).
+## The User Manual
+For additional information please see the [Artemis manual](https://sanger-pathogens.github.io/Artemis/Artemis/artemis-manual.html) and our [GitHub page](https://github.com/sanger-pathogens/Artemis/). A PDF version of the manual is also available for download [here](https://sanger-pathogens.github.io/Artemis/Artemis/artemis-manual.pdf).
 
 ## Contact
 For issues encountered with installing the software please contact your local system administrator. For all other issues, please report them to our [Github issues page](https://github.com/sanger-pathogens/Artemis/issues) or email <artemis-help@sanger.ac.uk>.
@@ -76,13 +86,13 @@ There are two ways of fixing this problem:
 2. Create an ARTEMIS_JVM_FLAGS environment variable set to "-mx2g -ms100m", adjusting the mx value as required. No script change is required for this, but it would need to be added to your environment.
 
 ### Why does DNAPlotter run out of memory on MacOSX even though the machine has lots of memory?
-To change the memory allocated to DNAPlotter on MacOSX, set the value in the file DNAPlotter.cfg in the directory DNAPlotter.app/Contents/Java. There are a couple of lines that look like this:
-
+To change the memory allocated to DNAPlotter on MacOSX, set the value in the file Info.plist in the directory DNAPlotter.app/Contents. Towards the bottom of the file you will see these lines:
 ```
-[JVMOptions]
--Xmx2g
+<key>JVMOptions</key>
+<array>
+<string>-mx2g</string>
 ```
-Changing the value after -Xmx will change the memory used by DNAPlotter.
+Changing the value after -mx will change the max memory used by DNAPlotter. The default is 2Gb.
 
 ### Why does DNAPlotter run out of memory on Windows even though the machine has lots of memory?
 

@@ -2,8 +2,8 @@
  <o:MainFile HRef="../artemis-manual.html"/>
  <o:File HRef="themedata.thmx"/>
  <o:File HRef="colorschememapping.xml"/>
- <o:File HRef="image001.png"/>
- <o:File HRef="image002.jpg"/>
+ <o:File HRef="image001.jpg"/>
+ <o:File HRef="image002.png"/>
  <o:File HRef="image003.png"/>
  <o:File HRef="image004.png"/>
  <o:File HRef="image005.png"/>
@@ -14,8 +14,8 @@
  <o:File HRef="image010.png"/>
  <o:File HRef="image011.png"/>
  <o:File HRef="image012.png"/>
- <o:File HRef="image013.png"/>
- <o:File HRef="image014.jpg"/>
+ <o:File HRef="image013.jpg"/>
+ <o:File HRef="image014.png"/>
  <o:File HRef="image015.png"/>
  <o:File HRef="image016.png"/>
  <o:File HRef="image017.png"/>
@@ -26,6 +26,5 @@
  <o:File HRef="image022.png"/>
  <o:File HRef="image023.png"/>
  <o:File HRef="image024.png"/>
- <o:File HRef="image025.png"/>
  <o:File HRef="filelist.xml"/>
 </xml>
