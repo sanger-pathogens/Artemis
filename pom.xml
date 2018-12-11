@@ -29,7 +29,6 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 	
 	<developers>
 	    <developer>
-			<id>kp11</id>
 			<name>Kevin Pepper</name>
 			<email>artemis-help@sanger.ac.uk</email>
 			<url>http://www.sanger.ac.uk/science/tools/artemis</url>
@@ -605,7 +604,7 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
                     <forkCount>${surefire.num.forks}</forkCount>
                     <reuseForks>false</reuseForks>
                     <testFailureIgnore>${ignore.test.failures}</testFailureIgnore>
-                    <argLine>@{default.tests.surefireArgLine}</argLine>
+                    <argLine>@{surefireArgLine}</argLine>
           			<excludes>
  						<!-- Exclude Evosuite tests -->
 						<exclude>**/*ESTest*</exclude>
@@ -623,7 +622,7 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
             <plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.8.1</version>
+				<version>0.8.2</version>
 				<configuration>
                     <skip>${skip.coverage.reporting}</skip>
                 </configuration>
@@ -1206,7 +1205,7 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>3.0.0</version>
+				<version>3.0.1</version>
 				<configuration>
 					<skip>${skip.javadoc}</skip>
 					<failOnError>false</failOnError>
