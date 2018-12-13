@@ -32,7 +32,7 @@ public interface ChadoTestConstants
 {
 	// Connection parameters for tests...
 	final String CHADO_CONNECTION_USERNAME = "<Enter username here>";
-	final String CHADO_CONNECTION_URL = "vm-pg-path-dev-02.internal.sanger.ac.uk:5432/pathogens_pg10?" + CHADO_CONNECTION_USERNAME;
+	final String CHADO_CONNECTION_URL = "<server>:<port>/<database name>?" + CHADO_CONNECTION_USERNAME;
 	final String CHADO_CONNECTION_PASSWORD = "<Enter password here>";
 	
 	// Test parameters that may need to be tuned per database instance...
