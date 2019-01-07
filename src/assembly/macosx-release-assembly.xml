@@ -1,0 +1,324 @@
+<?xml version="1.0"?>
+<project name="Mac OSX bundle script">
+
+<path id="artemis.class.path">
+	<pathelement path="${project.build.directory}/jars/${artemis.jar.name}" />
+</path>
+
+<path id="act.class.path">
+	<pathelement path="${project.build.directory}/jars/${act.jar.name}" />
+</path>
+
+<path id="dnaplotter.class.path">
+	<!-- Use self-contained jar -->
+	<pathelement path="${project.build.directory}/win-jars/${dnaplotter.jar.name}" />
+</path>
+
+<path id="bamview.class.path">
+	<!-- Use self-contained jar -->
+	<pathelement path="${project.build.directory}/win-jars/${bamview.jar.name}" />
+</path>
+
+<taskdef name="bundleapp"
+		classpath="${osx.bundler.jar}"
+		classname="com.oracle.appbundler.AppBundlerTask" />
+
+	
+<target name="bundle-mac-osx" description="Bundle Mac OSX Non-CHADO configured jars">
+
+	<mkdir dir="${osx.app.folder}/apps" />
+	<delete quiet="true">
+		<fileset dir="${osx.app.folder}" includes="${osx.release.filename}.*"/>
+	</delete>
+	
+	<!-- Artemis App -->
+	<bundleapp jvmrequired="${java.compatibility.major.version}"
+		classpathref="artemis.class.path" 
+		outputdirectory="${osx.app.folder}/apps"
+		name="${artemis.application.name}" 
+		displayname="${artemis.application.name}"
+		executableName="${artemis.application.name}" 
+		identifier="uk.ac.sanger.artemis" 
+		shortversion="${project.version}"
+		version="${project.version}" 
+		icon="${project.build.directory}/icons/artemis.icns"
+		mainclassname="${artemis.main.class}" 
+		copyright="${copyright.text}"
+		plistClassPaths="$APP_ROOT/Contents,$APP_ROOT/Contents/Java/${artemis.jar.name}">
+	
+		<bundledocument extensions="gff,gff3,embl,EMBL,genbank,gbk,fasta,fa,seq"
+        		name="sequence"
+        		role="viewer"
+        		handlerRank="owner">
+      	</bundledocument>
+ 
+		<option value="${maxheap.command.line.arg}" />
+		<option value="${initialheap.command.line.arg}" />
+		<option value="${noverify.command.line.arg}" />
+		<option value="${unixenv.command.line.arg}" />
+		<option value="${macosx.use.menubar.arg}" />
+		<option value="${macosx.menuname.command.line.arg}=${artemis.application.name}" />
+		<option value="${macosx.dock.command.line.arg}=${artemis.application.name}" />
+		<option value="${sangeroptions.command.line.arg}" />
+		<option value="${blackbelt.command.line.arg}" />
+	</bundleapp>
+	
+	<!-- ACT App -->
+	<bundleapp jvmrequired="${java.compatibility.major.version}"
+		classpathref="act.class.path" 
+		outputdirectory="${osx.app.folder}/apps"
+		name="${act.application.name}" 
+		displayname="${act.application.name}"
+		executableName="${act.application.name}" 
+		identifier="uk.ac.sanger.act" 
+		shortversion="${project.version}"
+		version="${project.version}" 
+		icon="${project.build.directory}/icons/act.icns"
+		mainclassname="${act.main.class}" 
+		copyright="${copyright.text}"
+		plistClassPaths="$APP_ROOT/Contents,$APP_ROOT/Contents/Java/${act.jar.name}">
+
+		<option value="${maxheap.command.line.arg}" />
+		<option value="${initialheap.command.line.arg}" />
+		<option value="${noverify.command.line.arg}" />
+		<option value="${unixenv.command.line.arg}" />
+		<option value="${macosx.use.menubar.arg}" />
+		<option value="${macosx.menuname.command.line.arg}=${act.application.name}" />
+		<option value="${macosx.dock.command.line.arg}=${act.application.name}" />
+		<option value="${sangeroptions.command.line.arg}" />
+		<option value="${blackbelt.command.line.arg}" />
+	</bundleapp>
+	
+	<!-- DNA Plotter App -->
+	<bundleapp jvmrequired="${java.compatibility.major.version}"
+		classpathref="dnaplotter.class.path" 
+		outputdirectory="${osx.app.folder}/apps"
+		name="${dnaplotter.application.name}" 
+		displayname="${dnaplotter.application.name}"
+		executableName="${dnaplotter.application.name}" 
+		identifier="uk.ac.sanger.dnaplotter" 
+		shortversion="${project.version}"
+		version="${project.version}" 
+		icon="${project.build.directory}/icons/dnaplotter.icns"
+		mainclassname="${dnaplotter.main.class}" 
+		copyright="${copyright.text}">
+		
+		<option value="${maxheap.command.line.arg}" />
+		<option value="${initialheap.command.line.arg}" />
+		<option value="${noverify.command.line.arg}" />
+		<option value="${unixenv.command.line.arg}" />
+		<option value="${macosx.use.menubar.arg}" />
+		<option value="${macosx.menuname.command.line.arg}=${dnaplotter.application.name}" />
+		<option value="${macosx.dock.command.line.arg}=${dnaplotter.application.name}" />
+		<option value="${sangeroptions.command.line.arg}" />
+		<option value="${blackbelt.command.line.arg}" />
+	</bundleapp>
+	
+	<!-- BamView App -->
+	<bundleapp jvmrequired="${java.compatibility.major.version}"
+		classpathref="bamview.class.path" 
+		outputdirectory="${osx.app.folder}/apps"
+		name="${bamview.application.name}" 
+		displayname="${bamview.application.name}"
+		executableName="${bamview.application.name}" 
+		identifier="uk.ac.sanger.bamview" 
+		shortversion="${project.version}"
+		version="${project.version}" 
+		icon="${project.build.directory}/icons/bamview.icns"
+		mainclassname="${bamview.main.class}" 
+		copyright="${copyright.text}">
+	
+		<bundledocument extensions="bam,cram"
+	    		name="alignment"
+	    		role="viewer"
+	    		handlerRank="owner">
+	  	</bundledocument>
+		
+		<option value="${maxheap.command.line.arg}" />
+		<option value="${initialheap.command.line.arg}" />
+		<option value="${noverify.command.line.arg}" />
+		<option value="${unixenv.command.line.arg}" />
+		<option value="${macosx.menuname.command.line.arg}=${bamview.application.name}" />
+		<option value="${macosx.dock.command.line.arg}=${bamview.application.name}" />
+	</bundleapp>
+	
+	<copy file="${artemis.icons.path}/dmg_icon.icns" tofile="${osx.app.folder}/apps/.VolumeIcon.icns"/>
+	
+	<!-- Set up additional folders -->
+	<copy todir="${osx.app.folder}/apps/${artemis.application.name}.app/Contents/etc">
+		<fileset dir="etc"/>
+	</copy>
+	<copy todir="${osx.app.folder}/apps/${act.application.name}.app/Contents/etc">
+		<fileset dir="etc"/>
+	</copy>
+	
+	<echo>NOTE: hdiutil must be installed to create a Mac .dmg image file...</echo>
+	
+	<exec executable="hdiutil">
+	    <arg value="create"/>
+	    <arg value="${osx.app.folder}/${osx.release.filename}.dmg"/>
+	    <arg value="-srcfolder"/>
+	    <arg value="${osx.app.folder}/apps"/>
+	    <arg value="-volname"/>
+	    <arg value="${osx.bundler.volume}"/>
+	 </exec>
+
+	 <exec executable="gzip">
+	    <arg value="${osx.app.folder}/${osx.release.filename}.dmg"/>
+	 </exec>
+	 
+</target>
+
+
+<target name="bundle-mac-osx-chado" description="Bundle Mac OSX CHADO configured jars">
+
+	<mkdir dir="${osx.app.chado.folder}/apps" />
+	<delete quiet="true">
+		<fileset dir="${osx.app.chado.folder}" includes="${osx.chado.release.filename}.*"/>
+	</delete>
+
+	<!-- Artemis (Chado enabled) App -->
+	<bundleapp jvmrequired="${java.compatibility.major.version}"
+		classpathref="artemis.class.path" 
+		outputdirectory="${osx.app.chado.folder}/apps"
+		name="${artemis.chado.application.name}" 
+		displayname="${artemis.chado.application.name}"
+		executableName="${artemis.chado.application.name}" 
+		identifier="uk.ac.sanger.artemis" 
+		shortversion="${project.version}"
+		version="${project.version}" 
+		icon="${project.build.directory}/icons/artemis.icns"
+		mainclassname="${artemis.main.class}" 
+		copyright="${copyright.text}"
+		workingdirectory="$APP_ROOT/Contents/"
+		plistClassPaths="$APP_ROOT/Contents,$APP_ROOT/Contents/Java/${artemis.jar.name}">
+	
+		<bundledocument extensions="gff,gff3,embl,EMBL,genbank,gbk,fasta,fa,seq"
+        		name="sequence"
+        		role="viewer"
+        		handlerRank="owner">
+      	</bundledocument>
+		
+		<option value="${postgres.command.line.arg}" />
+		<option value="${chado.command.line.arg}" />
+		<option value="${ibatis.command.line.arg}" />
+		<option value="${maxheap.command.line.arg}" />
+		<option value="${initialheap.command.line.arg}" />
+		<option value="${noverify.command.line.arg}" />
+		<option value="${unixenv.command.line.arg}" />
+		<option value="${macosx.use.menubar.arg}" />
+		<option value="${macosx.menuname.command.line.arg}=${artemis.application.name}" />
+		<option value="${macosx.dock.command.line.arg}=${artemis.application.name}" />
+		<option value="${sangeroptions.command.line.arg}" />
+		<option value="${blackbelt.command.line.arg}" />
+	</bundleapp>
+	
+	<!-- ACT (Chado enabled) App -->
+	<bundleapp jvmrequired="${java.compatibility.major.version}"
+		classpathref="act.class.path" 
+		outputdirectory="${osx.app.chado.folder}/apps"
+		name="${act.chado.application.name}" 
+		displayname="${act.chado.application.name}"
+		executableName="${act.chado.application.name}" 
+		identifier="uk.ac.sanger.act" 
+		shortversion="${project.version}"
+		version="${project.version}" 
+		icon="${project.build.directory}/icons/act.icns"
+		mainclassname="${act.main.class}" 
+		copyright="${copyright.text}"
+		plistClassPaths="$APP_ROOT/Contents,$APP_ROOT/Contents/Java/${act.jar.name}">
+	
+		<option value="${postgres.command.line.arg}" />
+		<option value="${chado.command.line.arg}" />
+		<option value="${ibatis.command.line.arg}" />
+		<option value="${maxheap.command.line.arg}" />
+		<option value="${initialheap.command.line.arg}" />
+		<option value="${noverify.command.line.arg}" />
+		<option value="${unixenv.command.line.arg}" />
+		<option value="${macosx.use.menubar.arg}" />
+		<option value="${macosx.menuname.command.line.arg}=${act.application.name}" />
+		<option value="${macosx.dock.command.line.arg}=${act.application.name}" />
+		<option value="${sangeroptions.command.line.arg}" />
+		<option value="${blackbelt.command.line.arg}" />
+	</bundleapp>
+	
+	<!-- DNA Plotter App -->
+	<bundleapp jvmrequired="${java.compatibility.major.version}"
+		classpathref="dnaplotter.class.path" 
+		outputdirectory="${osx.app.chado.folder}/apps"
+		name="${dnaplotter.application.name}" 
+		displayname="${dnaplotter.application.name}"
+		executableName="${dnaplotter.application.name}" 
+		identifier="uk.ac.sanger.dnaplotter" 
+		shortversion="${project.version}"
+		version="${project.version}" 
+		icon="${project.build.directory}/icons/dnaplotter.icns"
+		mainclassname="${dnaplotter.main.class}" 
+		copyright="${copyright.text}">
+	
+		<option value="${maxheap.command.line.arg}" />
+		<option value="${initialheap.command.line.arg}" />
+		<option value="${noverify.command.line.arg}" />
+		<option value="${unixenv.command.line.arg}" />
+		<option value="${macosx.use.menubar.arg}" />
+		<option value="${macosx.menuname.command.line.arg}=${dnaplotter.application.name}" />
+		<option value="${macosx.dock.command.line.arg}=${dnaplotter.application.name}" />
+		<option value="${sangeroptions.command.line.arg}" />
+		<option value="${blackbelt.command.line.arg}" />
+	</bundleapp>
+	
+	<!-- BamView App -->
+	<bundleapp jvmrequired="${java.compatibility.major.version}"
+		classpathref="bamview.class.path" 
+		outputdirectory="${osx.app.chado.folder}/apps"
+		name="${bamview.application.name}" 
+		displayname="${bamview.application.name}"
+		executableName="${bamview.application.name}" 
+		identifier="uk.ac.sanger.bamview" 
+		shortversion="${project.version}"
+		version="${project.version}" 
+		icon="${project.build.directory}/icons/bamview.icns"
+		mainclassname="${bamview.main.class}" 
+		copyright="${copyright.text}">
+	
+		<bundledocument extensions="bam,cram"
+	    		name="alignment"
+	    		role="viewer"
+	    		handlerRank="owner">
+	  	</bundledocument>
+		
+		<option value="${maxheap.command.line.arg}" />
+		<option value="${initialheap.command.line.arg}" />
+		<option value="${noverify.command.line.arg}" />
+		<option value="${unixenv.command.line.arg}" />
+		<option value="${macosx.menuname.command.line.arg}=${bamview.application.name}" />
+		<option value="${macosx.dock.command.line.arg}=${bamview.application.name}" />
+	</bundleapp>
+	
+	<copy file="${artemis.icons.path}/dmg_icon.icns" tofile="${osx.app.chado.folder}/apps/.VolumeIcon.icns"/>
+	
+	<!-- Set up additional folders -->
+	<copy todir="${osx.app.chado.folder}/apps/${artemis.chado.application.name}.app/Contents/etc">
+		<fileset dir="etc"/>
+	</copy>
+	<copy todir="${osx.app.chado.folder}/apps/${act.chado.application.name}.app/Contents/etc">
+		<fileset dir="etc"/>
+	</copy>
+	
+	<echo>NOTE: hdiutil must be installed to create a Mac .dmg image file...</echo>
+	
+	<exec executable="hdiutil">
+	    <arg value="create"/>
+	    <arg value="${osx.app.chado.folder}/${osx.chado.release.filename}.dmg"/>
+	    <arg value="-srcfolder"/>
+	    <arg value="${osx.app.chado.folder}/apps"/> 
+	    <arg value="-volname"/>
+	    <arg value="${osx.bundler.chado.volume}"/>
+	 </exec>
+	 
+	 <exec executable="gzip">
+	    <arg value="${osx.app.chado.folder}/${osx.chado.release.filename}.dmg"/>
+	 </exec>
+</target>
+
+</project>

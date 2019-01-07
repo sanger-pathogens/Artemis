@@ -1,0 +1,1365 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>uk.ac.sanger</groupId>
+	<artifactId>artemis</artifactId>
+	<version>18.0.0</version>
+	
+	<name>Artemis</name>
+	<description>Artemis is a free genome browser and annotation tool that allows visualisation of sequence features, next generation data and the results of analyses within the context of the sequence, and also its six-frame translation.
+
+Artemis is written in Java, and is available for UNIX, Macintosh and Windows systems. It can read EMBL and GENBANK database entries or sequence in FASTA, indexed FASTA or raw format. Other sequence features can be in EMBL, GENBANK or GFF format.</description>
+	<inceptionYear>1998</inceptionYear>
+	
+	<!-- GitHub repo connection -->
+	<scm>
+   	 	<connection>scm:https://github.com/sanger-pathogens/Artemis.git</connection>
+   	 	<url>https://github.com/sanger-pathogens/Artemis</url>
+    		<developerConnection>scm:https://github.com/sanger-pathogens/Artemis.git</developerConnection>
+    		<tag>HEAD</tag>
+  	</scm>
+  
+	<organization>
+		<name>Sanger Institute</name>
+		<url>http://www.sanger.ac.uk/</url>
+	</organization>
+	<url>http://sanger-pathogens.github.io/Artemis/</url>
+	
+	<developers>
+	    <developer>
+			<name>Kevin Pepper</name>
+			<email>artemis-help@sanger.ac.uk</email>
+			<url>http://www.sanger.ac.uk/science/tools/artemis</url>
+			<organization>Sanger Institute</organization>
+			<organizationUrl>http://www.sanger.ac.uk/</organizationUrl>
+			<roles>
+				<role>developer</role>
+			</roles>
+			<timezone>GB/London</timezone>
+		</developer>
+  	</developers>
+  	
+  	<licenses>
+        <license>
+            <name>The GNU General Public License, Version 3, June 2007</name>
+            <url>https://raw.githubusercontent.com/sanger-pathogens/Artemis/master/LICENSE</url>
+        </license>
+    </licenses>
+    
+    <issueManagement>
+        <system>Github</system>
+        <url>https://github.com/sanger-pathogens/Artemis/issues</url>
+    </issueManagement>
+    
+    <mailingLists>
+		<mailingList>
+			<name>Artemis support email address</name>
+			<post>artemis-help@sanger.ac.uk</post>
+		</mailingList>
+	</mailingLists>
+  
+	<properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <ignore.test.failures>true</ignore.test.failures> 
+        
+        <version.file>${project.basedir}/etc/versions</version.file>
+        
+        <copyright.text>2019 Wellcome Trust Sanger Institute</copyright.text>
+        
+        <!-- Properties passed into Maven on command line -->
+        <emboss.installation.root>${env.EMBOSS_ROOT}</emboss.installation.root>
+        
+        <!-- Application names -->
+        <artemis.application.name>Artemis</artemis.application.name>
+        <artemis.chado.application.name>${artemis.application.name} (CHADO)</artemis.chado.application.name>
+        <act.application.name>ACT</act.application.name>
+        <act.chado.application.name>${act.application.name} (CHADO)</act.chado.application.name>
+        <dnaplotter.application.name>Circular-Plot</dnaplotter.application.name>
+        <bamview.application.name>BamView</bamview.application.name>
+        
+        <!-- Deployable jar names -->
+        <artemis.jar.name>artemis.jar</artemis.jar.name>
+        <act.jar.name>act.jar</act.jar.name>
+        <bamview.jar.name>bamview.jar</bamview.jar.name>
+        <dnaplotter.jar.name>dnaplotter.jar</dnaplotter.jar.name>
+        
+        <!-- Main classes -->
+        <artemis.main.class>uk.ac.sanger.artemis.components.ArtemisMain</artemis.main.class>
+        <act.main.class>uk.ac.sanger.artemis.components.ActMain</act.main.class>
+        <bamview.main.class>uk.ac.sanger.artemis.components.alignment.BamView</bamview.main.class>
+        <dnaplotter.main.class>uk.ac.sanger.artemis.circular.DNADraw</dnaplotter.main.class>
+        
+        <!-- Java version-->
+        <java.compatibility.major.version>9</java.compatibility.major.version>
+		
+		<bundler.jdk.path>/Library/Java/JavaVirtualMachines/jdk-10.0.2.jdk</bundler.jdk.path>
+		<osx.bundler.jar>${project.basedir}/maven-lib/appbundler-1.0ea.jar</osx.bundler.jar>
+		<osx.bundler.volume>Artemis_Tools</osx.bundler.volume>
+		<osx.bundler.chado.volume>Artemis_Tools_Chado</osx.bundler.chado.volume>
+		      
+        <!-- Evosuite properties-->
+        <targetFolder>src/test/evosuite</targetFolder>
+        <evosuite.runtime.version>1.0.6</evosuite.runtime.version>
+        <evosuite.plugin.version>1.0.6</evosuite.plugin.version>
+        
+        <!-- Assembly folders -->
+        <windows.assembly.folder>artemis</windows.assembly.folder>
+        <unix.assembly.folder>artemis</unix.assembly.folder>
+        <osx.assembly.folder>artemis</osx.assembly.folder>
+        
+        <!-- Release deliverable folder -->
+        <release.artifact.folder>${project.build.directory}/release-artifacts</release.artifact.folder>       
+        <windows.release.folder>${release.artifact.folder}/windows-release</windows.release.folder>
+        <osx.app.folder>${release.artifact.folder}/mac-osx-release</osx.app.folder>
+        <osx.app.chado.folder>${release.artifact.folder}/mac-osx-chado-release</osx.app.chado.folder>
+        <unix.release.folder>${release.artifact.folder}/unix-release</unix.release.folder>
+        
+        <!-- Release file names -->
+        <unix.release.filename>artemis-unix-release-${project.version}</unix.release.filename>
+        <windows.release.filename>artemis-windows-release-${project.version}</windows.release.filename>
+        <osx.release.filename>artemis-macosx-release-${project.version}</osx.release.filename>
+        <osx.chado.release.filename>artemis-macosx-chado-release-${project.version}</osx.chado.release.filename>
+ 
+        <!-- Mac OS application JVM options -->
+        <postgres.command.line.arg>-Djdbc.drivers=org.postgresql.Driver</postgres.command.line.arg>
+        <maxheap.command.line.arg>-mx2g</maxheap.command.line.arg>
+        <initialheap.command.line.arg>-ms128m</initialheap.command.line.arg>
+        <noverify.command.line.arg>-noverify</noverify.command.line.arg>
+        <unixenv.command.line.arg>-Dartemis.environment=UNIX</unixenv.command.line.arg>
+        <macosx.menuname.command.line.arg>-Dcom.apple.mrj.application.apple.menu.about.name</macosx.menuname.command.line.arg>
+        <macosx.dock.command.line.arg>-Xdock:name</macosx.dock.command.line.arg>
+        <macosx.use.menubar.arg>-Dapple.laf.useScreenMenuBar=true</macosx.use.menubar.arg>
+        <chado.command.line.arg>-Dchado="localhost:5432/databasename?username"</chado.command.line.arg>
+        <ibatis.command.line.arg>-Dibatis</ibatis.command.line.arg>
+        <sangeroptions.command.line.arg>-Dsanger_options=yes</sangeroptions.command.line.arg>
+        <blackbelt.command.line.arg>-Dblack_belt_mode=false</blackbelt.command.line.arg>
+        
+        <!-- Surefire unit test plugin parameters -->
+        <unit.test.timeout.ms>8000</unit.test.timeout.ms>
+        <surefire.num.forks>1</surefire.num.forks>
+		<default.tests.surefireArgLine>-Xmx4g ${noverify.command.line.arg} ${postgres.command.line.arg} -DEMBOSS_ROOT=${emboss.installation.root} --illegal-access=warn</default.tests.surefireArgLine>
+		<surefireArgLine>${default.tests.surefireArgLine} -Dtimeout=${unit.test.timeout.ms} -Duse_separate_classloader=false</surefireArgLine>
+		
+        <!-- Files to exclude from the build, e.g. Mac resource files. -->
+        <default.file.excludes>**/log4j*.xml META-INF/* **/.DS_Store **/._*</default.file.excludes>
+        
+        <!-- Etc files to exclude from the build. -->
+        <etc.file.excludes>*.seq *.fasta *.embl *.tab *.crunch *.genbank</etc.file.excludes>
+        
+        <!-- Images -->
+        <artemis.icons.path>${project.basedir}/icons</artemis.icons.path>
+        <artemis.images.path>${project.basedir}/images</artemis.images.path>
+        
+        <!--  Default build flag settings -->
+        <skip.tests>false</skip.tests>
+        <evosuite.exclude.filter>**/*_ESTest*</evosuite.exclude.filter>
+        <jarsigner.skip>true</jarsigner.skip>
+        <skip.artifact.creation>true</skip.artifact.creation>
+        <skip.coverage.reporting>true</skip.coverage.reporting>
+        <skip.javadoc>true</skip.javadoc>
+
+    </properties>
+	
+	<dependencies>
+	
+		<!-- Start of BATIK Jars -->
+		
+		<!-- https://mvnrepository.com/artifact/org.apache.xmlgraphics/batik-codec -->
+		<dependency>
+		    <groupId>org.apache.xmlgraphics</groupId>
+		    <artifactId>batik-codec</artifactId>
+		    <version>1.9.1</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.xmlgraphics/batik-dom -->
+		<dependency>
+		    <groupId>org.apache.xmlgraphics</groupId>
+		    <artifactId>batik-dom</artifactId>
+		    <version>1.9.1</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.xmlgraphics/batik-ext -->
+		<dependency>
+		    <groupId>org.apache.xmlgraphics</groupId>
+		    <artifactId>batik-ext</artifactId>
+		    <version>1.9.1</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.xmlgraphics/batik-svggen -->
+		<dependency>
+		    <groupId>org.apache.xmlgraphics</groupId>
+		    <artifactId>batik-svggen</artifactId>
+		    <version>1.9.1</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.xmlgraphics/batik-util -->
+		<dependency>
+		    <groupId>org.apache.xmlgraphics</groupId>
+		    <artifactId>batik-util</artifactId>
+		    <version>1.9.1</version>
+		</dependency>
+
+		<!-- End of BATIK Jars -->
+		
+		
+		<!-- Start of IBATIS jars -->
+		
+		<!-- https://mvnrepository.com/artifact/com.ibatis/ibatis (local legacy jar) -->
+		<dependency>
+    			<groupId>com.ibatis</groupId>
+    			<artifactId>ibatis</artifactId>
+   			<version>2.3.4.726</version>
+		</dependency>
+		
+		<!-- This is now out of date but is used by the ibatis jar-->
+		<!-- https://mvnrepository.com/artifact/cglib/cglib-nodep -->
+		<dependency>
+		    <groupId>cglib</groupId>
+		    <artifactId>cglib-nodep</artifactId>
+		    <version>2.2</version>
+		</dependency>
+		
+		<!-- This is now out of date - the package name has changed and so updating will mean many changes -->
+		<!-- https://mvnrepository.com/artifact/log4j/log4j -->
+		<dependency>
+		    <groupId>log4j</groupId>
+		    <artifactId>log4j</artifactId>
+		    <version>1.2.17</version>
+		</dependency>
+		
+		<!-- End of IBATIS jars (local) -->
+		
+		<dependency>
+		    <groupId>com.sshtools</groupId>
+		    <artifactId>j2ssh-core</artifactId>
+		    <version>0.2.9</version>
+		</dependency>
+		
+		<!--  Latest commons logging from 2014! -->
+		<!-- https://mvnrepository.com/artifact/commons-logging/commons-logging -->
+		<dependency>
+		    <groupId>commons-logging</groupId>
+		    <artifactId>commons-logging</artifactId>
+		    <version>1.2</version>
+		</dependency>
+		
+		<!-- End of J2SSH jars (local) -->
+		
+		<dependency>
+		    <groupId>org.emboss</groupId>
+		    <artifactId>jemboss</artifactId>
+		    <version>1.0</version>
+		</dependency>
+		
+		<!--  Very out of date, but using the latest v3 will not compile atm -->
+		<!-- https://mvnrepository.com/artifact/commons-lang/commons-lang -->
+		<dependency>
+		    <groupId>commons-lang</groupId>
+		    <artifactId>commons-lang</artifactId>
+		    <version>2.6</version>
+		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/commons-net/commons-net -->
+		<dependency>
+		    <groupId>commons-net</groupId>
+		    <artifactId>commons-net</artifactId>
+		    <version>3.6</version>
+		</dependency>
+
+		<!--  NOTE: IBatis is no longer supported and very out of date -->
+		<!--  Using the new postgres driver may cause issues - needs testing -->
+		
+		<!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
+		<dependency>
+		    <groupId>org.postgresql</groupId>
+		    <artifactId>postgresql</artifactId>
+		    <version>42.2.5</version>
+		</dependency>
+		
+		<!-- Using latest version gives compilation errors! -->
+		<dependency>
+		    <groupId>org.biojava</groupId>
+		    <artifactId>biojava</artifactId>
+		    <version>1.6</version>
+		</dependency>
+		
+		<!-- Start of Picard jars -->
+		
+		<!-- https://mvnrepository.com/artifact/com.github.broadinstitute/picard -->
+		<!-- Latest as of 24th Sept 2018 -->
+		<!--  It contains two htsjdk fixes for CRAM index caching and the query mate issue -->
+		<dependency>
+		    <groupId>com.github.broadinstitute</groupId>
+		    <artifactId>picard</artifactId>
+		    <version>2.18.14</version>
+		</dependency>
+		
+		<!-- End of Picard jars -->
+				
+		<!--  Testing only -->
+		
+		<!-- https://mvnrepository.com/artifact/junit/junit -->
+		<dependency>
+		    <groupId>junit</groupId>
+		    <artifactId>junit</artifactId>
+		    <version>4.12</version>
+		    <scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.evosuite</groupId>
+			<artifactId>evosuite-standalone-runtime</artifactId>
+			<version>${evosuite.runtime.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-nop</artifactId>
+			<version>1.7.25</version>
+			<scope>test</scope>
+		</dependency>  
+		
+		<!-- https://mvnrepository.com/artifact/org.mockito/mockito-core -->
+		<dependency>
+		    <groupId>org.mockito</groupId>
+		    <artifactId>mockito-core</artifactId>
+		    <version>2.23.0</version>
+		    <scope>test</scope>
+		</dependency>  
+		
+		<!--  End of testing only -->
+		
+		<!-- Redundant dependencies..... -->
+		
+		<!-- Latest version as of 2005 -->
+		<!-- https://mvnrepository.com/artifact/jakarta-regexp/jakarta-regexp -->
+		<!--  dependency>
+		    <groupId>jakarta-regexp</groupId>
+		    <artifactId>jakarta-regexp</artifactId>
+		    <version>1.4</version>
+		</dependency-->
+		
+		<!-- https://mvnrepository.com/artifact/batik/batik-awt-util -->
+		<!--  dependency>
+		    <groupId>batik</groupId>
+		    <artifactId>batik-awt-util</artifactId>
+		    <version>1.6-1</version>
+		</dependency-->
+		
+		<!-- https://mvnrepository.com/artifact/batik/batik-xml -->
+		<!--  dependency>
+		    <groupId>batik</groupId>
+		    <artifactId>batik-xml</artifactId>
+		    <version>1.6-1</version>
+		</dependency-->
+		
+	</dependencies>
+	
+	<build>
+		<plugins>
+		
+			<!-- ===================   Evosuite needs at least Maven 3.1 ======================= -->
+			
+			<plugin>
+                <inherited>true</inherited>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>1.3.1</version>
+                <executions>
+                    <execution>
+                        <id>enforce-maven-3</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireMavenVersion>
+                                    <version>3.1</version>
+                                </requireMavenVersion>
+                            </rules>
+                            <fail>true</fail>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            
+            <!-- ======================   Read signing related properties ======================= -->
+			
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>properties-maven-plugin</artifactId>
+				<version>1.0.0</version>
+				<executions>
+					<execution>
+						<id>load-external-properties</id>
+						<phase>initialize</phase>
+						<goals>
+							<goal>read-project-properties</goal>
+						</goals>
+						<configuration>
+							<!-- Build will not fail if properties file is not found, but signing will fail -->
+							<quiet>true</quiet>
+							<files>
+								<file>maven.properties</file>
+							</files>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		
+			<!-- ======================   Install essential old jars into the local Maven repo ======================= -->
+			
+			<plugin>
+			    <groupId>org.apache.maven.plugins</groupId>
+			    <artifactId>maven-install-plugin</artifactId>
+			    <version>2.5.2</version>
+			    <executions>
+			        <execution>
+			        		<id>install-biojava-jar</id>
+			            <phase>validate</phase>
+			            <goals>
+			                <goal>install-file</goal>
+			            </goals>
+			            <configuration>
+			                <groupId>org.biojava</groupId>
+			                <artifactId>biojava</artifactId>
+			                <version>1.6</version>
+			                <packaging>jar</packaging>
+			                <file>${project.basedir}/lib/biojava.jar</file>
+			                <generatePom>true</generatePom>
+			            </configuration>
+			        </execution>
+			        <execution>
+			        		<id>install-jemalign-jar</id>
+			            <phase>validate</phase>
+			            <goals>
+			                <goal>install-file</goal>
+			            </goals>
+			            <configuration>
+			                <groupId>org.emboss</groupId>
+			                <artifactId>jemboss</artifactId>
+			                <version>1.0</version>
+			                <packaging>jar</packaging>
+			                <file>${project.basedir}/lib/jemAlign.jar</file>
+			                <generatePom>true</generatePom>
+			            </configuration>
+			        </execution>
+			        <execution>
+			        		<id>install-j2ssh-core-jar</id>
+			            <phase>validate</phase>
+			            <goals>
+			                <goal>install-file</goal>
+			            </goals>
+			            <configuration>
+			                <groupId>com.sshtools</groupId>
+			                <artifactId>j2ssh-core</artifactId>
+			                <version>0.2.9</version>
+			                <packaging>jar</packaging>
+			                <file>${project.basedir}/lib/j2ssh-core.jar</file>
+			                <generatePom>true</generatePom>
+			            </configuration>
+			        </execution>
+			        <execution>
+			        		<id>install-ibatis-jar</id>
+			            <phase>validate</phase>
+			            <goals>
+			                <goal>install-file</goal>
+			            </goals>
+			            <configuration>
+			                <groupId>com.ibatis</groupId>
+			                <artifactId>ibatis</artifactId>
+			                <version>2.3.4.726</version>
+			                <packaging>jar</packaging>
+			                <file>${project.basedir}/lib/ibatis-2.3.4.726.jar</file>
+			                <generatePom>true</generatePom>
+			            </configuration>
+			        </execution>
+			    </executions>
+			</plugin>
+			
+			<!-- ========= Store release version number to the Artemis splash screen version file ======== -->
+			
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.8</version>
+				<executions>
+					<execution>
+						<id>updating-software-version-number</id>
+						<phase>initialize</phase>
+			            <goals>
+			                <goal>run</goal>
+			            </goals>
+						<configuration>
+							<target>
+								<echo file="${version.file}">Artemis Release ${project.version}${line.separator}ACT Release ${project.version}${line.separator}DNAPlotter Release ${project.version}${line.separator}BamView ${project.version}</echo>
+							</target>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			
+			<!-- ============================== Copy resources to build folder ======================== -->
+			
+			<plugin>
+		    		<groupId>org.apache.maven.plugins</groupId>
+		    		<artifactId>maven-resources-plugin</artifactId>
+		    		<version>3.0.2</version>
+		    		<executions>
+		      		<!--  Copy etc on to classpath -->
+		      		<execution>
+		        			<id>copy-property-files</id>
+		        			<phase>process-resources</phase>
+		        			<goals>
+		          			<goal>copy-resources</goal>
+		        			</goals>
+		        			<configuration>
+		          			<outputDirectory>${project.build.outputDirectory}/etc</outputDirectory>
+		          			<resources>
+		            				<resource>
+		             				<directory>${project.basedir}/etc</directory>
+		            				</resource>
+		          			</resources>
+		        			</configuration>
+		      		</execution>
+		      		<execution>
+		        			<id>copy-icons-folder</id>
+		        			<phase>process-resources</phase>
+		        			<goals>
+		          			<goal>copy-resources</goal>
+		        			</goals>
+		        			<configuration>
+		          			<outputDirectory>${project.build.directory}/icons</outputDirectory>
+		          			<resources>
+		            				<resource>
+		             				<directory>${artemis.icons.path}</directory>
+		            				</resource>
+		          			</resources>
+		        			</configuration>
+		      		</execution>
+
+		    		</executions>
+		  	</plugin>
+		  	
+		  	<!-- ===================================== Compile ========================================= -->
+		  	
+		  	<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.8.0</version>
+				<configuration>
+					<verbose>false</verbose>
+					<showWarnings>true</showWarnings>
+					<!--  We use the release option for Java 9+ -->
+        			<release>${java.compatibility.major.version}</release>
+    			</configuration>
+			</plugin>
+					
+		  	<!-- ============================== Jar customisation ===================================== -->
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.1.0</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<addClasspath>false</addClasspath>
+						</manifest>
+						<manifestEntries>
+							<Permissions>all-permissions</Permissions>
+                    		<Codebase>*</Codebase>
+						</manifestEntries>
+					</archive>
+				</configuration>
+			</plugin>
+            
+            <!-- =========================   Required for Evosuite test running ========================-->
+            
+            <plugin>
+			    <groupId>org.codehaus.mojo</groupId>
+			    <artifactId>build-helper-maven-plugin</artifactId>
+			    <version>3.0.0</version>
+			    <executions>
+			    		<execution>
+			       		<id>add-test-source</id>
+			       		<phase>generate-test-sources</phase>
+			       		<goals>
+			         		<goal>add-test-source</goal>
+			       		</goals>
+			       		<configuration>
+			          		<sources>
+			            			<source>${targetFolder}</source>
+			          		</sources>
+			       		</configuration>
+			  		</execution>
+			  	</executions>
+			</plugin>
+			
+			<!-- =======================================  Surefire Unit tests ==========================================-->
+			
+			<!-- Only currently runs default unit tests because of bug in Evosuite on Java 9+. -->
+			<plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.1</version>
+              	<configuration>
+                    <skipTests>${skip.tests}</skipTests>
+                    <trimStackTrace>true</trimStackTrace>
+                    <forkCount>${surefire.num.forks}</forkCount>
+                    <reuseForks>false</reuseForks>
+                    <testFailureIgnore>${ignore.test.failures}</testFailureIgnore>
+                    <argLine>@{surefireArgLine}</argLine>
+          			<excludes>
+ 						<!-- Exclude Evosuite tests -->
+						<exclude>**/*ESTest*</exclude>
+						
+						<!--  Exclude manual adhoc tests -->
+						<exclude>**/RunBlastAtNCBITest.*</exclude>
+						<exclude>**/TestIbatisDAO.*</exclude>
+						<exclude>**/TestJdbcDAO.*</exclude>
+          			</excludes>
+                </configuration>
+            </plugin>
+            
+            <!-- ===================================   Run Jacoco coverage report ======================================-->
+            
+            <plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.2</version>
+				<configuration>
+                    <skip>${skip.coverage.reporting}</skip>
+                </configuration>
+				<executions>
+					<execution>
+						<id>pre-unit-test</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+						<configuration>
+							<output>file</output>
+							<!-- Sets the path to the file which contains the execution data. -->
+							<destFile>${project.build.directory}/jacoco-ut.exec</destFile>
+							<!-- Sets the name of the property containing the settings for JaCoCo 
+								runtime agent. -->
+							<propertyName>surefireArgLine</propertyName>
+						</configuration>
+					</execution>
+					<!-- Ensures that the code coverage report for unit tests is created after 
+						unit tests have been run. -->
+					<execution>
+						<id>post-unit-test</id>
+						<phase>test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+						<configuration>
+							<dataFile>${project.build.directory}/jacoco-ut.exec</dataFile>
+            					<outputDirectory>${project.build.directory}/coverage-report</outputDirectory>
+            					<excludes>
+        							<exclude>org/**</exclude>
+        						</excludes>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			
+			<!-- ============= Package the code and dependent jars into one executable jar for each applications ========= -->
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>3.1.0</version>
+				<executions>
+					<execution>
+						<id>package-win-artemis-jar</id>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<outputFile>target/win-jars/${artemis.jar.name}</outputFile>
+							<createDependencyReducedPom>false</createDependencyReducedPom>
+							<minimizeJar>false</minimizeJar>
+							<transformers>
+				                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+									<manifestEntries>
+										<Main-Class>${artemis.main.class}</Main-Class>
+										<Permissions>all-permissions</Permissions>
+									</manifestEntries>
+								</transformer>
+							</transformers>
+				            <filters>
+				            		<filter>
+								 	<artifact>org.mozilla:rhino:*</artifact>
+								  	<excludes>
+										<exclude>**</exclude>
+								  	</excludes>
+								</filter>
+								<filter>
+								 	<artifact>org.python:jython:*</artifact>
+								  	<excludes>
+										<exclude>**</exclude>
+								  	</excludes>
+								</filter>
+				            		<filter>
+								 	<artifact>*:*</artifact>
+								  	<excludes>
+										<exclude>${default.file.excludes}</exclude>
+										<exclude>${etc.file.excludes}</exclude>
+								  	</excludes>
+								</filter>
+							</filters>
+						</configuration>
+					</execution>
+					<execution>
+						<id>package-default-artemis-jar</id>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<outputFile>target/jars/${artemis.jar.name}</outputFile>
+							<createDependencyReducedPom>false</createDependencyReducedPom>
+							<minimizeJar>false</minimizeJar>
+							<transformers>
+				                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+									<manifestEntries>
+										<Main-Class>${artemis.main.class}</Main-Class>
+										<Permissions>all-permissions</Permissions>
+									</manifestEntries>
+								</transformer>
+							</transformers>
+				            <filters>
+				            		<filter>
+								 	<artifact>org.mozilla:rhino:*</artifact>
+								  	<excludes>
+										<exclude>**</exclude>
+								  	</excludes>
+								</filter>
+								<filter>
+								 	<artifact>org.python:jython:*</artifact>
+								  	<excludes>
+										<exclude>**</exclude>
+								  	</excludes>
+								</filter>
+								<filter>
+								 	<artifact>*:*</artifact>
+								  	<excludes>
+										<exclude>${default.file.excludes}</exclude>
+										<exclude>etc/**</exclude>
+								  	</excludes>
+								</filter>
+							</filters>
+						</configuration>
+					</execution>
+					<execution>
+						<id>package-win-act-jar</id>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<outputFile>target/win-jars/${act.jar.name}</outputFile>
+							<createDependencyReducedPom>false</createDependencyReducedPom>
+							<minimizeJar>false</minimizeJar>
+							<transformers>
+				                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+									<manifestEntries>
+										<Main-Class>${act.main.class}</Main-Class>
+										<Permissions>all-permissions</Permissions>
+									</manifestEntries>
+								</transformer>
+							</transformers>
+				            <filters>
+				            		<filter>
+								 	<artifact>org.mozilla:rhino:*</artifact>
+								  	<excludes>
+										<exclude>**</exclude>
+								  	</excludes>
+								</filter>
+								<filter>
+								 	<artifact>org.python:jython:*</artifact>
+								  	<excludes>
+										<exclude>**</exclude>
+								  	</excludes>
+								</filter>
+				            		<filter>
+								 	<artifact>*:*</artifact>
+								  	<excludes>
+										<exclude>${default.file.excludes}</exclude>
+										<exclude>${etc.file.excludes}</exclude>
+								  	</excludes>
+								</filter>
+							</filters>
+						</configuration>
+					</execution>
+					<execution>
+						<id>package-default-act-jar</id>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<outputFile>target/jars/${act.jar.name}</outputFile>
+							<createDependencyReducedPom>false</createDependencyReducedPom>
+							<minimizeJar>false</minimizeJar>
+							<transformers>
+				                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+									<manifestEntries>
+										<Main-Class>${act.main.class}</Main-Class>
+										<Permissions>all-permissions</Permissions>
+									</manifestEntries>
+								</transformer>
+							</transformers>
+				            <filters>
+				            		<filter>
+								 	<artifact>org.mozilla:rhino:*</artifact>
+								  	<excludes>
+										<exclude>**</exclude>
+								  	</excludes>
+								</filter>
+								<filter>
+								 	<artifact>org.python:jython:*</artifact>
+								  	<excludes>
+										<exclude>**</exclude>
+								  	</excludes>
+								</filter>
+				            		<filter>
+								 	<artifact>*:*</artifact>
+								  	<excludes>
+										<exclude>${default.file.excludes}</exclude>
+										<exclude>etc/**</exclude>
+								  	</excludes>
+								</filter>
+							</filters>
+						</configuration>
+					</execution>
+					<execution>
+						<id>package-win-dnaplotter-jar</id>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<outputFile>target/win-jars/${dnaplotter.jar.name}</outputFile>
+							<createDependencyReducedPom>false</createDependencyReducedPom>
+							<minimizeJar>false</minimizeJar>
+							<transformers>
+				                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+									<manifestEntries>
+										<Main-Class>${dnaplotter.main.class}</Main-Class>
+										<Permissions>all-permissions</Permissions>
+									</manifestEntries>
+								</transformer>
+							</transformers>
+				            <filters>
+				            		<filter>
+								 	<artifact>org.mozilla:rhino:*</artifact>
+								  	<excludes>
+										<exclude>**</exclude>
+								  	</excludes>
+								</filter>
+								<filter>
+								 	<artifact>org.python:jython:*</artifact>
+								  	<excludes>
+										<exclude>**</exclude>
+								  	</excludes>
+								</filter>
+				            		<filter>
+								 	<artifact>*:*</artifact>
+								  	<excludes>
+										<exclude>${default.file.excludes}</exclude>
+										<exclude>artemis_sqlmap/**</exclude>
+										<exclude>${etc.file.excludes}</exclude>
+								  	</excludes>
+								</filter>
+							</filters>
+						</configuration>
+					</execution>
+					<execution>
+						<id>package-default-dnaplotter-jar</id>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<outputFile>target/jars/${dnaplotter.jar.name}</outputFile>
+							<createDependencyReducedPom>false</createDependencyReducedPom>
+							<minimizeJar>false</minimizeJar>
+							<transformers>
+				                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+									<manifestEntries>
+										<Main-Class>${dnaplotter.main.class}</Main-Class>
+										<Permissions>all-permissions</Permissions>
+									</manifestEntries>
+								</transformer>
+							</transformers>
+				            <filters>
+				            		<filter>
+								 	<artifact>org.mozilla:rhino:*</artifact>
+								  	<excludes>
+										<exclude>**</exclude>
+								  	</excludes>
+								</filter>
+								<filter>
+								 	<artifact>org.python:jython:*</artifact>
+								  	<excludes>
+										<exclude>**</exclude>
+								  	</excludes>
+								</filter>
+				            		<filter>
+								 	<artifact>*:*</artifact>
+								  	<excludes>
+										<exclude>${default.file.excludes}</exclude>
+										<exclude>artemis_sqlmap/**</exclude>
+										<exclude>etc/**</exclude>
+								  	</excludes>
+								</filter>
+							</filters>
+						</configuration>
+					</execution>
+					<execution>
+						<id>package-win-bamview-jar</id>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<outputFile>target/win-jars/${bamview.jar.name}</outputFile>
+							<createDependencyReducedPom>false</createDependencyReducedPom>
+							<minimizeJar>false</minimizeJar>
+							<transformers>
+				                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+									<manifestEntries>
+										<Main-Class>${bamview.main.class}</Main-Class>
+										<Permissions>all-permissions</Permissions>
+									</manifestEntries>
+								</transformer>
+							</transformers>
+				            <filters>
+				            		<filter>
+								 	<artifact>org.mozilla:rhino:*</artifact>
+								  	<excludes>
+										<exclude>**</exclude>
+								  	</excludes>
+								</filter>
+								<filter>
+								 	<artifact>org.python:jython:*</artifact>
+								  	<excludes>
+										<exclude>**</exclude>
+								  	</excludes>
+								</filter>
+				            		<filter>
+								 	<artifact>*:*</artifact>
+								  	<excludes>
+										<exclude>${default.file.excludes}</exclude>
+										<exclude>artemis_sqlmap/**</exclude>
+										<exclude>${etc.file.excludes}</exclude>
+								  	</excludes>
+								</filter>
+							</filters>
+						</configuration>
+					</execution>
+					<execution>
+						<id>package-default-bamview-jar</id>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<outputFile>target/jars/${bamview.jar.name}</outputFile>
+							<createDependencyReducedPom>false</createDependencyReducedPom>
+							<minimizeJar>false</minimizeJar>
+							<transformers>
+				                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+									<manifestEntries>
+										<Main-Class>${bamview.main.class}</Main-Class>
+										<Permissions>all-permissions</Permissions>
+									</manifestEntries>
+								</transformer>
+							</transformers>
+				            <filters>
+				            		<filter>
+								 	<artifact>org.mozilla:rhino:*</artifact>
+								  	<excludes>
+										<exclude>**</exclude>
+								  	</excludes>
+								</filter>
+								<filter>
+								 	<artifact>org.python:jython:*</artifact>
+								  	<excludes>
+										<exclude>**</exclude>
+								  	</excludes>
+								</filter>
+				            		<filter>
+								 	<artifact>*:*</artifact>
+								  	<excludes>
+										<exclude>${default.file.excludes}</exclude>
+										<exclude>artemis_sqlmap/**</exclude>
+										<exclude>etc/**</exclude>
+								  	</excludes>
+								</filter>
+							</filters>
+						</configuration>
+					</execution>
+				</executions>
+				<configuration>
+					<skipAssembly>${skip.artifact.creation}</skipAssembly>
+				</configuration>
+			</plugin>
+			
+			
+			<!-- ============================= Sign executable jar files ============================ -->
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jarsigner-plugin</artifactId>
+				<version>1.4</version>
+				<executions>
+					<execution>
+						<id>sign-win-jars</id>
+						<phase>package</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+						<configuration>
+							<skip>${jarsigner.skip}</skip>
+							<verbose>false</verbose>
+							<processMainArtifact>false</processMainArtifact>
+							<processAttachedArtifacts>false</processAttachedArtifacts>
+							<archiveDirectory>target/win-jars</archiveDirectory>
+							<keystore>${signer-keystore-path}</keystore>
+							<storetype>${signer-keystore-type}</storetype>
+							<alias>${signer-keystore-alias}</alias>
+							<storepass>${signer-keystore-password}</storepass>
+							<keypass>${signer-keystore-password}</keypass>
+							<removeExistingSignatures>true</removeExistingSignatures>
+							<tsa>http://timestamp.comodoca.com/rfc3161</tsa>
+						</configuration>
+					</execution>
+					<execution>
+						<id>sign-default-jars</id>
+						<phase>package</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+						<configuration>
+							<skip>${jarsigner.skip}</skip>
+							<verbose>false</verbose>
+							<processMainArtifact>false</processMainArtifact>
+							<processAttachedArtifacts>false</processAttachedArtifacts>
+							<archiveDirectory>target/jars</archiveDirectory>
+							<keystore>${signer-keystore-path}</keystore>
+							<storetype>${signer-keystore-type}</storetype>
+							<alias>${signer-keystore-alias}</alias>
+							<storepass>${signer-keystore-password}</storepass>
+							<keypass>${signer-keystore-password}</keypass>
+							<removeExistingSignatures>true</removeExistingSignatures>
+							<tsa>http://timestamp.comodoca.com/rfc3161</tsa>
+						</configuration>
+					</execution>
+				</executions>
+				
+			</plugin>
+
+
+			<!-- ==========================   Create release zips ============================ -->
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>3.1.0</version>
+				<executions>
+					<execution>
+						<id>create-unix-release</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+			            <configuration>
+			                <appendAssemblyId>false</appendAssemblyId>
+			                <outputDirectory>${unix.release.folder}</outputDirectory>
+			                <descriptors>
+								<descriptor>src/assembly/unix-release-assembly.xml</descriptor>
+							</descriptors>
+			                <finalName>${unix.release.filename}</finalName>
+			            </configuration>
+					</execution>
+					<execution>
+						<id>create-windows-release</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+			            <configuration>
+			                <appendAssemblyId>false</appendAssemblyId>
+			                <outputDirectory>${windows.release.folder}</outputDirectory>
+			                <descriptors>
+								<descriptor>src/assembly/windows-release-assembly.xml</descriptor>
+							</descriptors>
+							<finalName>${windows.release.filename}</finalName>
+			            </configuration>
+					</execution>
+				</executions>
+				<configuration>
+					<skipAssembly>${skip.artifact.creation}</skipAssembly>
+				</configuration>
+			</plugin>
+      
+		</plugins>
+		
+		<pluginManagement>
+		    <plugins>
+
+		    		<!-- We need this next bit to get rid of a warning on the enforcer plugin in Eclipse -->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.apache.maven.plugins</groupId>
+										<artifactId>maven-enforcer-plugin</artifactId>
+										<versionRange>[1.3.1,)</versionRange>
+										<goals>
+											<goal>enforce</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore />
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+				
+				<!-- ============= Special task used on an ad-hoc basis to create EvoSuite tests ============ -->
+			
+				<plugin>
+			        <groupId>org.evosuite.plugins</groupId>
+			        <artifactId>evosuite-maven-plugin</artifactId>
+			        <version>${evosuite.plugin.version}</version>
+			        <executions>
+			        		<execution>
+			        			<id>create-evosuite-tests</id>
+	         				<goals> 
+	         					<goal>prepare</goal> 
+	         				</goals>
+	         				<phase>process-test-classes</phase>
+	      				</execution>
+	      			</executions>
+	      			<configuration>
+	      				<extraArgs>-Dsearch_budget=90 -Dconsider_main_methods=false -Duse_separate_classloader=false</extraArgs>
+	      			</configuration>
+				</plugin>
+				
+				<!-- =========== Check for plugin updates ================== -->
+				<!--        Use: mvn versions:display-plugin-updates         -->
+				<plugin>
+				    <groupId>org.codehaus.mojo</groupId>
+				    <artifactId>versions-maven-plugin</artifactId>
+				    <version>2.7</version>
+				    <configuration>
+				        <generateBackupPoms>false</generateBackupPoms>
+				    </configuration>
+				</plugin>
+				
+				<!--  
+					Deploy artifacts to a GitHub release - run manually using: 
+					mvn github-release:release
+				-->
+				<!--  plugin>
+					<groupId>de.jutzig</groupId>
+					<artifactId>github-release-plugin</artifactId>
+					<version>1.2.0</version>
+					<inherited>false</inherited>
+					<configuration>
+						<description>See ChangeLog for details</description>
+						<releaseName>Release v${project.version}</releaseName>
+						<tag>v${project.version}</tag>
+						<draft>true</draft>
+						<artifact>${unix.release.folder}/${unix.release.filename}</artifact>
+						<fileSets>
+							<fileSet>
+								<includes>
+									<include>${osx.app.folder}/${osx.release.filename}.dmg</include>
+									<include>${windows.release.folder}/${windows.release.filename}</include>
+									<include>${project.basedir}/ChangeLog</include>
+								</includes>
+							</fileSet>
+						</fileSets>
+					</configuration>
+				</plugin -->
+
+			</plugins>
+  		</pluginManagement>
+  
+	</build>
+	
+	<reporting>
+	
+		<plugins>
+
+			<!-- Javadoc -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.0.1</version>
+				<configuration>
+					<skip>${skip.javadoc}</skip>
+					<failOnError>false</failOnError>
+					<quiet>true</quiet>
+					<excludePackageNames>org.*</excludePackageNames>
+					<excludes>**/*Test.java, **/*_scaffolding*.java</excludes>
+				</configuration>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<report>javadoc-no-fork</report>
+							<report>test-javadoc-no-fork</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>
+			
+		</plugins>
+		
+	</reporting>
+	
+	
+	<!-- ========================== Profile section =================================-->
+	
+	<profiles>
+
+	    <profile>
+	        <id>old-java8-profile-deprecated</id>
+	        <!-- This profile runs all unit tests including Evosuite ones on Java 8. -->
+	        <!-- Note however that some code changes will now be needed to compile on Java 8. -->
+	        <activation>
+      			<jdk>1.8</jdk>
+    		</activation>
+	        <properties>
+	            <build.profile.id>java8-profile</build.profile.id>
+	        </properties>
+	        <build>
+	        		<plugins>
+
+					<!--  
+						Compiling with Java 8 JDK... the compiler does not have the -release parameter, 
+						so we fall back to source and target 
+					-->
+					<plugin>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<version>3.8.0</version>
+						<configuration>
+							<verbose>false</verbose>
+		        				<source>1.8</source>
+								<target>1.8</target>
+		    				</configuration>
+					</plugin>
+					
+	        			<plugin>
+		                <groupId>org.apache.maven.plugins</groupId>
+		                <artifactId>maven-surefire-plugin</artifactId>
+		                <version>2.22.1</version>
+		              	<configuration>
+		                    <skipTests>${skip.tests}</skipTests>
+		                    <trimStackTrace>true</trimStackTrace>
+		                    <forkCount>${surefire.num.forks}</forkCount>
+		                    <reuseForks>false</reuseForks>
+		                    <testFailureIgnore>${ignore.test.failures}</testFailureIgnore>
+		                    <argLine>@{surefireArgLine}</argLine>
+		          			<excludes>
+		 		
+								<!--  Start of Evosuite excludes -->
+								<exclude>${evosuite.exclude.filter}</exclude>
+								<exclude>org/gmod/**</exclude>
+			          			<exclude>**/j2ssh/**</exclude>
+		    					<!--  End of Evosuite excludes -->
+		    						
+		    					<!--  Exclude manual adhoc tests -->
+								<exclude>**/RunBlastAtNCBITest.*</exclude>
+								<exclude>**/TestIbatisDAO.*</exclude>
+								<exclude>**/TestJdbcDAO.*</exclude>
+		    						
+		          			</excludes>
+		          			
+		          			<!-- Required when running Evosuite tests along with normal tests -->
+		          			<properties>
+								<property>
+									<name>listener</name>
+									<value>org.evosuite.runtime.InitializingListener</value>
+						      	</property>
+						    </properties>
+		                </configuration>
+		            </plugin>
+		            
+	        		</plugins>
+	        </build>
+	    </profile>
+	    
+	    <profile>
+	        <id>mac-osx-dmg-packaging</id>
+	        <!-- 
+	        		App/dmg packaging that can only be run on a Mac.
+	         -->
+	        <activation>
+		        <os> 
+			    	<family>mac</family>
+			    </os>
+			</activation>
+	        <properties>
+	            <build.profile.id>mac-osx-dmg-packaging</build.profile.id>
+	        </properties>
+	        <build>
+	        		<plugins>
+	        		
+	        			<plugin>
+							<groupId>org.apache.maven.plugins</groupId>
+							<artifactId>maven-antrun-plugin</artifactId>
+							<version>1.8</version>
+							<executions>
+								<execution>
+									<id>build-macosx</id>
+									<phase>verify</phase>
+									<configuration>
+										<skip>${skip.artifact.creation}</skip>
+										<target>
+								            <ant antfile="${project.basedir}/src/assembly/macosx-release-assembly.xml">
+								            	<target name="bundle-mac-osx"/>
+								                <target name="bundle-mac-osx-chado"/>
+								            </ant>
+								        </target>
+									</configuration>
+									<goals>
+										<goal>run</goal>
+									</goals>
+								</execution>
+							</executions>
+						</plugin>
+					
+	        		</plugins>
+	        	</build>
+		</profile>
+	    
+	    <profile>
+	        <id>release</id>
+	        <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+	        <properties>
+	        		<skip.tests>false</skip.tests>
+        			<evosuite.exclude.filter></evosuite.exclude.filter>
+        			<jarsigner.skip>false</jarsigner.skip>
+        			<skip.artifact.creation>false</skip.artifact.creation>
+        			<skip.coverage.reporting>false</skip.coverage.reporting>
+        			<skip.javadoc>false</skip.javadoc>
+        			
+	            <build.profile.id>release</build.profile.id>
+	        </properties>  
+	    </profile>
+
+	</profiles>
+	
+</project>

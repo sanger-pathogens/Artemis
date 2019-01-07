@@ -1,5 +1,14 @@
 #! /bin/bash
 
-SCRIPT_DIR=$(dirname $0)
-ant -Dlib=${SCRIPT_DIR}/jacoco-lib -DEMBOSS_ROOT=$EMBOSS_ROOT -buildfile build-test.xml jacoco-coverage-report
+##########################################################
+# Run all non-evosuite unit tests, which is the 
+# default option. 
+##########################################################
+
+echo "EMBOSS_ROOT set to: "$EMBOSS_ROOT
+echo
+
+cd ..
+
+mvn test
 

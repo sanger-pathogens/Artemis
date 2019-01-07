@@ -1,0 +1,9 @@
+# blastn
+# Iteration: 0
+# Query: NC_001954_1_1
+# RID: YUYABC86114
+# Database: n/a
+# Fields: query acc.ver, subject acc.ver, % identity, alignment length, mismatches, gap opens, q. start, q. end, s. start, s. end, evalue, bit score
+# 0 hits found
+
+

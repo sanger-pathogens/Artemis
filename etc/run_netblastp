@@ -41,24 +41,35 @@ run_one_prog () {
 
 
     ### change these lines:
-    EXEC=${EXEC-`which blastcl3 2>/dev/null`}
-
-    if [ ! -x "$EXEC" ]; then
-      EXEC=`find Artemis* -name blastcl3 2>/dev/null`
-      if [ ! -x "$EXEC" ]; then
-        EXEC=`find ../.. -name blastcl3 2>/dev/null`
-      fi
+    
+    EXEC=${EXEC-`which $PROG 2>/dev/null`}
+    
+    #
+    # Mac specific - NCBI .dmg installation area
+    #
+    PLATTMP=`uname`
+	if [ "$PLATTMP" = "Darwin" ] && [ "$EXEC" = "" ] && [ -x /usr/local/ncbi/blast/bin/$PROG ]
+	then
+		EXEC=/usr/local/ncbi/blast/bin/$PROG
+    fi
+    
+    if [ ! -x "$EXEC" ]
+    then
+    	echo "ERROR: Cannot find an executable $PROG blast program. Exiting."
+    	exit 1
     fi
 
-    echo "about to start $EXEC with input from $INPUT_FILE and output to"
-    echo "$OUTPUT_FILE using database $DATABASE"
 
-    EXTRA_ARGS=
-
+	# Use remote flag for a NCBI command line search...
+    COMMAND="$EXEC -db $DATABASE -query $INPUT_FILE -remote"
+	
+	echo
+	echo "input file: $INPUT_FILE"
+	echo "output will be written to: $OUTPUT_FILE"
+	echo "executing command: $COMMAND" 1>&2
+	
     # add/change the flags to suit your site:
-    $EXEC -d $DATABASE -i $INPUT_FILE -p blastp \
-      $EXTRA_ARGS -o $OUTPUT_FILE | 
-      tee ${PROG}_errors.new 1>&2
+    nice -n 19 $COMMAND 2>&1 > $OUTPUT_FILE | tee ${PROG}_errors.new 1>&2
 
     #### end of changes
 
