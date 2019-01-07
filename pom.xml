@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>uk.ac.sanger</groupId>
 	<artifactId>artemis</artifactId>
-	<version>18.0.0-RC1</version>
+	<version>18.0.0</version>
 	
 	<name>Artemis</name>
 	<description>Artemis is a free genome browser and annotation tool that allows visualisation of sequence features, next generation data and the results of analyses within the context of the sequence, and also its six-frame translation.
@@ -66,7 +66,7 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
         
         <version.file>${project.basedir}/etc/versions</version.file>
         
-        <copyright.text>2018 Wellcome Trust Sanger Institute</copyright.text>
+        <copyright.text>2019 Wellcome Trust Sanger Institute</copyright.text>
         
         <!-- Properties passed into Maven on command line -->
         <emboss.installation.root>${env.EMBOSS_ROOT}</emboss.installation.root>

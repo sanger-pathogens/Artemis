@@ -1,4 +1,4 @@
-/* Splash.java 
+/* Splash.java
  *
  * This file is part of Artemis
  *
@@ -454,7 +454,7 @@ abstract public class Splash extends JFrame
         g.drawString(geneticCode,
                      left_margin, yPos+(font_height * 3));
 
-        g.drawString("Copyright 1998 - 2018",
+        g.drawString("Copyright 1998 - 2019",
                      left_margin, yPos+(font_height * 9 / 2));
         g.drawString("Genome Research Limited",
                      left_margin, yPos+(font_height * 11 / 2));
