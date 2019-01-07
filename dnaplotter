@@ -5,7 +5,6 @@
 #
 
 QUIET=no
-PRG=$0
 
 usage () {
     echo "SYNOPSIS"
@@ -44,18 +43,18 @@ add_proxy_properties() {
 	fi
 }
 
+
 #
-# Resolve links - $0 may be a link
+# Resolve script path (inc symlinks)
 #
-while [ -h "$PRG" ] ; do
-	ls=`ls -ld "$PRG"`
-	link=`expr "$ls" : '.*-> \(.*\)$'`
-	if expr "$link" : '.*/.*' > /dev/null; then
-		PRG="$link"
-	else
-		PRG="`dirname $PRG`/$link"
-	fi
+SOURCE="${BASH_SOURCE[0]}"
+while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
+    DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+    SOURCE="$(readlink "$SOURCE")"
+    [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE" # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
 done
+APPLICATION_HOME="$( cd -P "$( dirname "$SOURCE" )" && pwd )"; # get final path of this script
+
 
 #
 # Parse arguments.
@@ -76,7 +75,7 @@ do
     shift
 done
 
-APPLICATION_HOME=`dirname "$PRG"`
+
 JAR_NAME=dnaplotter.jar
 JAR_FILE_DEFAULT=$APPLICATION_HOME/target/jars/$JAR_NAME
 JAR_FILE_INSTALLED=$APPLICATION_HOME/dist/$JAR_NAME

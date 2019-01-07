@@ -1,38 +1,40 @@
 Version 18
 
-	1) Switched build process to use Maven. Changed directory structure. Removed ant and Make files.
-	2) Retired a number of jars and upgraded others. Removed the ssh-plugin jar.
-	3) Upgraded to Picard 2.18.14 jar, which has a number of important bug fixes. 
-	4) Removed old documentation functionality. HTML/PDF manuals are now stored in gh-pages branch and exported directly from word docs.
-	5) Changed application script jar paths.
-	6) Rewrote writedb_entry script.
-	7) Fixed broken Amigo, GO term, Uniprot and UniprotKB URLs, used in the Artemis gene builder/feature edit windows.
-	8) Updated README.md
-	9) Fix for RT ticket #400288: "GO term warnings in Artemis" - we now no longer put out a warning for ISM, as it's optional in certain cases
+	1)	Switched build process to use Apache Maven. Changed directory structure. Removed ant and Make files. Most jar files are now pulled directly from the Maven repository.
+	2)	Upgraded Java version as Java 8 will be going out of support. Artemis will now only build/run with Java versions 9 to 11 (RT ticket #589103).
+	3)	Upgraded to Picard 2.18.14 jar, which has a number of important bug fixes, including:
+		i)  RT tickets #625730 - Loading bams into Artemis
+		ii) RT ticket #624271 -  Problems with some bams loaded into Artemis causing data not to be viewable
+	4)	Removed broken documentation functionality. 
+		HTML/PDF manuals are now stored in Github gh-pages branch and exported from word docs (RT ticket #618907).
+	5)	Added run menu option to execute an InterPro sequence search for a selected feature - RT ticket #643820.
+	6)	Updated application scripts.
+	7)	Fixed broken Amigo, GO term, Uniprot (RT ticket #639930) and UniprotKB URLs, used in the Artemis gene builder/feature edit windows. 
+	8)	Updated README.md
+	9)	Fix for RT ticket #400288: "GO term warnings in Artemis" - we now no longer put out a warning for ISM, as it's optional in certain cases
 	    [http://wiki.geneontology.org/index.php/Inferred_from_Sequence_Model_(ISM)].
-	10) Upgrade of Java version as Java 8 will be going out of support. Artemis will now only build with Java versions 9 to 11.
-	11) Removed the INSTALL document as the content is covered elsewhere.
-	12) Changed error message displayed when multiple features are selected for pfam/rfam search.
-	13) Added temporary Java 9+ --add-opens flags to art/act scripts. These will be removed when Ibatis is replaced.
-	14) Added basic unit tests for Chado access to enable Postgres 10 testing.
-	15) Added Mockito for unit test mocking.
-	16) Updated/fixed run_blast<..> scripts in the etc folder. These now use blast+. Removed options to run Smart, Jalview, fasta & fastx.
-	    Results are displayed using View->Search Results.
-	17) Removed the old icons/Readme doc for local blast setup and added an updated version to the main README.md.
-	18) Updated setup_blast_dbs.sh script and added to etc folder, for setup of local blast environment (See README.md).
-	19) Removed ability to run remote blast, fasta34 etc using SSH. This functionality is old, does not work and is not used.
-	20) Removed old ".sanger" and ".sanger.linux" scripts from etc folder - these were very out of date, with incorrect file paths etc.
-	21) Fixed RT ticket #642350: "GO term evidence codes in chado Artemis" - Added HTP, HDA, HMP, HGI, HEP GO evidence codes to Artemis.
-	22) Added fix for Java 9 JDK-8181568 issue across all apps, related to display of application icons on Macs.
-	23) Fixed incorrect Pfam URL, used in Feature Edit and Evidence Viewer screens.
-	24) Fixed error handling on Run->Pfam/Rfam search (RT Ticket #420623).
-	25) Enabled ability to drag and drop data files on to Artemis and BamView apps [Mac OS X] for immediate display.
-	26) Fixed RT ticket #642944: "ACT crunch-m8 file generation". ACT can now handle tblastx or blastn
-	    hit table files produced from fasta comparisons on the NCBI Blast web site. This is an alternative to Web ACT / Double ACT.
+	10)	Removed the INSTALL document as the content is now covered elsewhere.
+	11)	Changed error message displayed when multiple features are selected for pfam/rfam search.
+	12)	Added temporary Java 9+ --add-opens flags to art/act scripts. These will be removed when Ibatis is replaced.
+	13)	Added unit tests for Chado access to enable Postgres 10 testing (RT ticket #632896).
+	14)	Added Mockito for unit test mocking.
+	15)	Updated/fixed run_blast<..> scripts in the etc folder. Running blast from the run menu now uses blast+. Removed options to run Smart, Jalview, fasta & fastx.
+		Results are displayed using View->Search Results. 
+		Related RT ticket #596281 also closed.
+	16)	Removed the old icons/Readme doc for local blast setup and added an updated version to the main README.md.
+	17)	Updated setup_blast_dbs.sh script and added to etc folder, for setup of a local blast environment (detailed in the README.md and manuals).
+	18)	Removed ability to run remote blast, fasta34 etc using SSH. This functionality is being retired.
+	19)	Removed old ".sanger" and ".sanger.linux" scripts from etc folder - these were very out of date, with incorrect file paths etc.
+	20)	Fixed RT ticket #642350: "GO term evidence codes in chado Artemis" - Added HTP, HDA, HMP, HGI, HEP GO evidence codes to Artemis.
+	21)	Added fix for Java 9 JDK-8181568 issue across all apps, related to display of application icons on Macs.
+	22)	Fixed incorrect Pfam URL, used in Feature Edit and Evidence Viewer screens.
+	23)	Fixed error handling on Run->Pfam/Rfam search (RT ticket #420623).
+	24)	Enabled ability to drag and drop data files on to Artemis and BamView apps [Mac OS X] for immediate display.
+	25)	Fixed RT ticket #642944: "ACT crunch-m8 file generation". ACT can now handle tblastx hit table files produced from comparisons 
+		on the NCBI Blast web site. This is an alternative to Web ACT / Double ACT.
 	    [e.g. https://blast.ncbi.nlm.nih.gov/Blast.cgi?PROGRAM=tblastx&PAGE_TYPE=BlastSearch&BLAST_SPEC=blast2seq&LINK_LOC=blasttab&LAST_PAGE=tblastx&BLAST_INIT=blast2seq]
-	27) Removed the /lustre/scratch101/blastdb/Pathogen/Kineto_aa run->blast menu option. This database path no longer exists.
-	28) Added new InterPro sequence search on the run menu - RT Ticket #643820. 
-	29) RT Ticket #472601: Artemis RPKM and read count broken since version 16.0.6. Fixed bug related to intron region reads. New unit tests added.
+	26)	Removed the /lustre/scratch101/blastdb/Pathogen/Kineto_aa run->blast menu option. This database path no longer exists.
+	27)	RT ticket #472601: Artemis RPKM and read count broken since version 16.0.6. Fixed bug related to intron region reads. New unit tests added.
 	
 	
 Version 17.0.2-test - patch release for Sanger. Changes incorporated into GitHub master.

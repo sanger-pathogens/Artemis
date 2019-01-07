@@ -544,7 +544,8 @@ abstract public class SimpleDocumentEntry
     final Key new_key = feature.getKey();
 
     // check the qualifiers
-    for(int i = 0 ; i < new_qualifiers.size() ; ++i) 
+    int numQual = new_qualifiers.size();
+    for(int i = 0 ; i < numQual ; ++i) 
     {
       final Qualifier this_qualifier = (Qualifier)new_qualifiers.elementAt(i);
       final String this_qualifier_name = this_qualifier.getName();

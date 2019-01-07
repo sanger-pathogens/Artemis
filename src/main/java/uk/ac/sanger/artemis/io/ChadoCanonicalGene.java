@@ -485,7 +485,8 @@ public class ChadoCanonicalGene
    */
   public Feature containsTranscript(final StringVector names)
   {
-    for(int i=0; i<transcripts.size(); i++)
+	final int numTranscripts = transcripts.size();
+    for(int i=0; i < numTranscripts; i++)
     {
       try
       {
@@ -510,7 +511,9 @@ public class ChadoCanonicalGene
     {
       List<Feature> splicedFeaturesOfTranscript = splicedFeatures.get(transcript_name);
       List<Feature> results = new Vector<Feature>();
-      for(int i=0; i<splicedFeaturesOfTranscript.size(); i++)
+      
+      int numSplicedFeatures = splicedFeaturesOfTranscript.size();
+      for(int i=0; i < numSplicedFeatures; i++)
       {
         Feature feature = (Feature)splicedFeaturesOfTranscript.get(i);
         if(feature.getKey().getKeyString().equals(type))
@@ -533,7 +536,9 @@ public class ChadoCanonicalGene
     {
       List<Feature> splicedFeaturesOfTranscript = splicedFeatures.get(transcript_name);
       Set<String> splicedTypes = new HashSet<String>();
-      for(int i=0; i<splicedFeaturesOfTranscript.size(); i++)
+      
+      int numSplicedfeatures = splicedFeaturesOfTranscript.size();
+      for(int i=0; i < numSplicedfeatures; i++)
       {
         Feature feature = (Feature)splicedFeaturesOfTranscript.get(i);
         splicedTypes.add( feature.getKey().getKeyString() );
