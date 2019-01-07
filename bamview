@@ -5,7 +5,6 @@
 #
 
 QUIET=no
-PRG=$0
 
 add_proxy_properties() {
 
@@ -26,20 +25,18 @@ add_proxy_properties() {
 }
 
 #
-# Resolve links - $0 may be a link
+# Resolve script path (inc symlinks)
 #
-while [ -h "$PRG" ] ; do
-	ls=`ls -ld "$PRG"`
-	link=`expr "$ls" : '.*-> \(.*\)$'`
-	if expr "$link" : '.*/.*' > /dev/null; then
-		PRG="$link"
-	else
-		PRG="`dirname $PRG`/$link"
-	fi
+SOURCE="${BASH_SOURCE[0]}"
+while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
+    DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+    SOURCE="$(readlink "$SOURCE")"
+    [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE" # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
 done
+APPLICATION_HOME="$( cd -P "$( dirname "$SOURCE" )" && pwd )"; # get final path of this script
+
 
 APPLICATION_PROPERTIES="-Djdbc.drivers=org.postgresql.Driver -Dartemis.environment=UNIX $SANGER_ARTEMIS_OPTIONS"
-APPLICATION_HOME=`dirname "$PRG"`
 JAR_NAME=bamview.jar
 JAR_FILE_DEFAULT=$APPLICATION_HOME/target/jars/$JAR_NAME
 JAR_FILE_INSTALLED=$APPLICATION_HOME/dist/$JAR_NAME
