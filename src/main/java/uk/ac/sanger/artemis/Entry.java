@@ -1196,7 +1196,8 @@ public class Entry implements FeatureChangeListener, Selectable
       final Location location = feature.getLocation();
       final RangeVector ranges = location.getRanges();
 
-      for(int i = 0 ; i < ranges.size() ; ++i) 
+      int numRanges = ranges.size();
+      for(int i = 0 ; i < numRanges ; ++i) 
       {
         if(((Range)ranges.elementAt(i)).getEnd() > getBases().getLength())
         {
