@@ -19,20 +19,16 @@ PUBMED: [20071372](http://ukpmc.ac.uk/abstract/MED/20071372); PMC: [2828118](htt
 ## Software Availability
 Bamview is packaged as part of the Artemis Software. The Artemis Software is available under GPL3. The source code can be found on [GitHub](https://github.com/sanger-pathogens/Artemis).
 
-The latest release of Artemis can be downloaded from our ftp site:
+The latest release of Artemis can be downloaded by clicking on the relevant link below:
 
-* [UNIX](ftp://ftp.sanger.ac.uk/pub/resources/software/artemis/artemis.tar.gz)
-* [MacOS](ftp://ftp.sanger.ac.uk/pub/resources/software/artemis/artemis.dmg.gz)
-* [MacOS (CHADO)](ftp://ftp.sanger.ac.uk/pub/resources/software/artemis/artemis.dmg.gz)
-* [Windows](ftp://ftp.sanger.ac.uk/pub/resources/software/artemis/artemis-windows.zip)
+* [UNIX](https://github.com/sanger-pathogens/Artemis/releases/download/v18.0.0/artemis-unix-release-18.0.0.tar.gz)
+* [MacOS](https://github.com/sanger-pathogens/Artemis/releases/download/v18.0.0/artemis-macosx-release-18.0.0.dmg.gz)
+* [MacOS (CHADO) - for out of the box CHADO database connectivity](https://github.com/sanger-pathogens/Artemis/releases/download/v18.0.0/artemis-macosx-chado-release-18.0.0.dmg.gz)
+* [Windows](https://github.com/sanger-pathogens/Artemis/releases/download/v18.0.0/artemis-windows-release-18.0.0.zip)
 
 For older versions of the software please see the [Artemis FTP site](ftp://ftp.sanger.ac.uk/pub/resources/software/artemis/)
 
 The previous v17.0.1 version of the Artemis software required Java version 1.8 to run. All subsequent versions from v18.0.0 onwards require a minimum of Java 9 and preferably Java 11. This must be installed first.
-
-### Notes for Download
-
-__Note for MacOSX__: We recommend using Firefox or Chrome to download from the links above.
 
 ## Installation
 ### For UNIX/Linux
