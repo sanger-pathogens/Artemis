@@ -71,6 +71,8 @@ artemis/bamview -help
 ### Running BamView on Macintosh Systems
 On MacOSX machines, BamView can be started by double clicking on the BamView icon.
 
+You may find that when trying to run the BamView app for the first time, that you get a security warning window displayed stating that "the application cannot be opened because it is from an unidentified developer" (because the apps are not obtained from the app store). If that's the case, then just okay the window. Go into your System Preferences via the apple symbol at top left of screen. Then select "Security and Privacy". You should then see a button called "Open Anyway", next to some text saying "BamView was blocked from opening because it is not from an identified developer". Click on the "Open Anyway" button, which will then display the security warning window again - click the "Open" button on it and BamView should then start. The application will then open straight away after this, without any further security warnings.
+
 ### Running BamView on Windows Systems
 BamView can be started by double clicking on the bamview.jar icon.
 
