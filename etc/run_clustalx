@@ -4,9 +4,7 @@
 # contents of files listed in a file of filenames
 
 
-RCS_HEADER="$Header: //tmp/pathsoft/artemis/etc/run_clustalx,v 1.3 2005-02-21 11:50:01 tjc Exp $"
-
-PROG=`echo $RCS_HEADER | sed 's/.*run_\(.*\),v.*/\1/'`
+PROG=clustalx
 
 
 if [ $# != 1 ]

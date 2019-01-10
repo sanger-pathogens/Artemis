@@ -766,41 +766,25 @@ invisible_qualifiers_gff= \
 # For blast and fasta the parameter string is the name of the database to
 # search.
 #
-# /nfs/pathsoft/databases/GO/new
-# /nfs/pathsoft/databases/protein/go_all
 feature_protein_programs = \
-    fasta %uniprot \
-    fasta %uniprot_archaea \
-    fasta %uniprot_bacteria \
-    fasta %uniprot_eukaryota \
-    fasta %uniprot_viruses \
-    fasta %uniprot_rest \
-    fasta %malaria \
-    fasta %kineto_aa \
-    sigcleave 0 \
-    pepstats - \
     blastp uniprot \
     blastp uniprot_archaea \
     blastp uniprot_bacteria \
     blastp uniprot_eukaryota \
     blastp uniprot_viruses \
-    blastp uniprot_rest \
-    blastp /lustre/scratch101/blastdb/Pathogen/Kineto_aa \
     tblastn %embl_other \
     hth - \
-    smart - \
-    clustalx PROTEIN \
-    jalview PROTEIN
+    sigcleave 0 \
+    pepstats - \
+    clustalx PROTEIN
 
 feature_dna_programs = \
     tblastx %embl_other \
     blastn %embl_other \
     blastx %uniprot \
-    fastx %uniprot \
     clustalx DNA
 
-application_programs = \
-    jalview
+application_programs =
 
 ncbi_dna_search = \
    blastn http://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE=Nucleotides&PROGRAM=blastn&MEGABLAST=on&BLAST_PROGRAMS=blastn&PAGE_TYPE=BlastSearch&DATABASE=nr&SHOW_DEFAULTS=on&QUERY= \
@@ -810,6 +794,8 @@ ncbi_dna_search = \
 ncbi_protein_search = \
    blastp http://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE=Proteins&PROGRAM=blastp&BLAST_PROGRAMS=blastp&PAGE_TYPE=BlastSearch&QUERY= \
    tblastn http://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE=Translations&PROGRAM=tblastn&BLAST_PROGRAMS=tblastn&PAGE_TYPE=BlastSearch&SHOW_DEFAULTS=on&QUERY=
+
+interpro_search_url = https://www.ebi.ac.uk/interpro/
 
 mess_fasta_hits = 10
 
@@ -823,25 +809,24 @@ common_keys = \
     BLASTN_HIT BLASTCDS 3'UTR 5'UTR
 
 # SRS
-#srs_url = http://srs.ebi.ac.uk/srsbin/cgi-bin/
 srs_url = http://www.bioinformatics.nl/srsbin/cgi-bin/
 
 # hyperlinked databases in feature editor
 hyperlinks = \
-  SWALL+UniProt+UniProtKB srs_url \
+  SWALL srs_url \
   EMBL http://www.ebi.ac.uk/Tools/dbfetch/expasyfetch? \
   PubMed+PMID http://www.ncbi.nlm.nih.gov/sites/entrez?Db=pubmed&Cmd=ShowDetailView&TermToSearch= \
   InterPro http://www.ebi.ac.uk/interpro/entry/ \
   OrthoMCLDB http://www.orthomcl.org/cgi-bin/OrthoMclWeb.cgi?rm=groupList&type=ackeyword&in=Accession&q= \
   PlasmoDB http://plasmodb.org/plasmodb/servlet/sv?page=gene&source_id= \
-  Pfam http://pfam.sanger.ac.uk/family?acc= \
+  Pfam https://pfam.xfam.org/family/ \
   SMART http://smart.embl-heidelberg.de/smart/do_annotation.pl?DOMAIN= \
   Prosite http://www.expasy.org/prosite/ \
   ProDom http://prodom.prabi.fr/prodom/current/cgi-bin/request.pl?question=DBEN&query= \
   PIRSF http://pir.georgetown.edu/cgi-bin/ipcSF?id= \
   TIGR_TIGRFAMS http://cmr.tigr.org/tigr-scripts/CMR/HmmReport.cgi?hmm_acc= \
   OPI http://chemlims.com/OPI/MServlet.ChemInfo?module=GeneGo&act=findGenes&Gene_Name_= \
-  GO http://amigo.geneontology.org/cgi-bin/amigo/term_details?term=GO: \
+  GO http://amigo.geneontology.org/amigo/term/GO: \
   PANTHER http://www.pantherdb.org/panther/family.do?clsAccession= \
   Superfamily http://supfam.org/SUPERFAMILY/cgi-bin/scop.cgi?ipid= \
   PDB http://www.rcsb.org/pdb/explore.do?structureId= \
@@ -849,6 +834,8 @@ hyperlinks = \
   GeneID http://www.ncbi.nlm.nih.gov/sites/entrez?db=gene&cmd=Retrieve&dopt=full_report&list_uids= \
   Rfam http://rfam.sanger.ac.uk/family/ \
   GI http://www.ncbi.nlm.nih.gov/entrez/sutils/girevhist.cgi?val= \
+  UniProt https://www.uniprot.org/uniprot/ \
+  UniProtKB https://www.uniprot.org/uniprot/ \
   TCDB http://www.tcdb.org/search/result.php?tc=
 
 # BamView
@@ -857,8 +844,7 @@ bam_read_thread = 2
 # Max read coverage to display
 bam_max_coverage = 1000000
 bamview_ftp_buffer_size=10485760
-# The following setting is turned off due to htsjdk issue no. 1127 (see GitHub)
-bamview_use_htsjdk_file_index_caching=false
+bamview_use_htsjdk_file_index_caching=true
 
 #
 # CHADO DATABASE OPTIONS 

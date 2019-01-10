@@ -1,4 +1,0 @@
-Picard jar version - 2.18.4
-
-This jar includes the latest htsjdk and all dependency libraries. 
-Downloaded from Github on 21/5/2018

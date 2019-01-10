@@ -5,7 +5,6 @@
 #
 
 QUIET=no
-PRG=$0
 
 usage () {
     echo "SYNOPSIS"
@@ -44,18 +43,18 @@ add_proxy_properties() {
 	fi
 }
 
+
 #
-# Resolve links - $0 may be a link
+# Resolve script path (inc symlinks)
 #
-while [ -h "$PRG" ] ; do
-	ls=`ls -ld "$PRG"`
-	link=`expr "$ls" : '.*-> \(.*\)$'`
-	if expr "$link" : '.*/.*' > /dev/null; then
-		PRG="$link"
-	else
-		PRG="`dirname $PRG`/$link"
-	fi
+SOURCE="${BASH_SOURCE[0]}"
+while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
+    DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+    SOURCE="$(readlink "$SOURCE")"
+    [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE" # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
 done
+APPLICATION_HOME="$( cd -P "$( dirname "$SOURCE" )" && pwd )"; # get final path of this script
+
 
 #
 # Parse arguments.
@@ -76,9 +75,10 @@ do
     shift
 done
 
-APPLICATION_HOME=`dirname "$PRG"`
+
 JAR_NAME=dnaplotter.jar
-JAR_FILE=$APPLICATION_HOME/$JAR_NAME
+JAR_FILE_DEFAULT=$APPLICATION_HOME/target/jars/$JAR_NAME
+JAR_FILE_INSTALLED=$APPLICATION_HOME/dist/$JAR_NAME
 
 #
 # Use a custom Java version if necessary
@@ -97,7 +97,7 @@ fi
 add_proxy_properties
 
 #
-# "-mx1g" sets the maximum amount of memory to use. 
+# "-mx2g" sets the maximum amount of memory to use. 
 # This may need to be increased when dealing with large files
 #
 if [[ "$ARTEMIS_JVM_FLAGS" = "" ]]
@@ -110,7 +110,7 @@ fi
 PLATTMP=`uname`
 if [[ "$PLATTMP" = "Darwin" ]]
 then
-  	APPLICATION_PROPERTIES="$APPLICATION_PROPERTIES -Dapple.laf.useScreenMenuBar=true -Dcom.apple.mrj.application.apple.menu.about.name=Circular-Plot"
+  	APPLICATION_PROPERTIES="$APPLICATION_PROPERTIES -Dapple.laf.useScreenMenuBar=true -Xdock:name=Circular-Plot"
 fi
 
 if [[ "$QUIET" = "no" ]]
@@ -118,22 +118,8 @@ then
     echo "Starting DNA Plotter with arguments: $FLAGS $APPLICATION_PROPERTIES $TEMPLATE_FILE_ARG"
 fi
 
-if [[ -e $JAR_FILE ]]
-then
-	$JAVA $FLAGS $APPLICATION_PROPERTIES -jar $JAR_FILE $TEMPLATE_FILE_ARG
-	result=$?
-else
-	CLASSPATH=$APPLICATION_HOME:$APPLICATION_HOME/lib/biojava.jar:$APPLICATION_HOME/lib/jemAlign.jar:$APPLICATION_HOME/lib/jakarta-regexp-1.2.jar:$APPLICATION_HOME/lib/postgresql-8.4-701.jdbc3.jar:$CLASSPATH
-	CLASSPATH=$CLASSPATH:$APPLICATION_HOME/lib/j2ssh/commons-logging.jar:$APPLICATION_HOME/lib/j2ssh/j2ssh-core.jar:$APPLICATION_HOME/lib/j2ssh/
-	CLASSPATH=$CLASSPATH:$APPLICATION_HOME/lib/ibatis/ibatis-2.3.4.726.jar:$APPLICATION_HOME/lib/ibatis/:$APPLICATION_HOME/lib/ibatis/log4j-1.2.14.jar:$APPLICATION_HOME/lib/ibatis/cglib-nodep-2.2.jar
-	CLASSPATH=$CLASSPATH:$APPLICATION_HOME/lib/batik/batik-awt-util.jar:$APPLICATION_HOME/lib/batik/batik-dom.jar:$APPLICATION_HOME/lib/batik/batik-ext.jar:$APPLICATION_HOME/lib/batik/batik-svggen.jar:$APPLICATION_HOME/lib/batik/batik-util.jar:$APPLICATION_HOME/lib/batik/batik-xml.jar
-	CLASSPATH=$APPLICATION_HOME/lib/picard/picard.jar:$APPLICATION_HOME/lib/commons-net-3.6.jar:$CLASSPATH
-	CLASSPATH=$APPLICATION_HOME/lib/commons-lang-2.6.jar:$CLASSPATH
-	export CLASSPATH
-	
-	$JAVA $FLAGS $APPLICATION_PROPERTIES uk.ac.sanger.artemis.circular.DNADraw $TEMPLATE_FILE_ARG
-	result=$?
-fi
+$JAVA $FLAGS $APPLICATION_PROPERTIES -cp "$APPLICATION_HOME:$JAR_FILE_DEFAULT:$JAR_FILE_INSTALLED" uk.ac.sanger.artemis.circular.DNADraw $TEMPLATE_FILE_ARG
+result=$?
 
 exit $result
 
