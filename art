@@ -103,6 +103,7 @@ done
 JAR_NAME=artemis.jar
 JAR_FILE_DEFAULT=$APPLICATION_HOME/target/jars/$JAR_NAME
 JAR_FILE_INSTALLED=$APPLICATION_HOME/dist/$JAR_NAME
+ARTEMIS_CP=$APPLICATION_HOME:$JAR_FILE_DEFAULT:$JAR_FILE_INSTALLED
 
 #
 # Use a custom Java version if necessary
@@ -142,6 +143,8 @@ PLATTMP=`uname`
 if [[ "$PLATTMP" = "Darwin" ]]
 then
   	APPLICATION_PROPERTIES="$APPLICATION_PROPERTIES -Dapple.laf.useScreenMenuBar=true -Xdock:name=Artemis"
+  	JAR_FILE_MACAPP=$APPLICATION_HOME/Java/$JAR_NAME
+  	ARTEMIS_CP="$JAR_FILE_MACAPP:$ARTEMIS_CP"
 fi
 
 if [[ "$QUIET" = "no" ]]
@@ -149,7 +152,7 @@ then
     echo "Starting Artemis with arguments: $FLAGS $APPLICATION_PROPERTIES $*"
 fi
 
-$JAVA $FLAGS $APPLICATION_PROPERTIES -cp "$APPLICATION_HOME:$JAR_FILE_DEFAULT:$JAR_FILE_INSTALLED" uk.ac.sanger.artemis.components.ArtemisMain $*
+$JAVA $FLAGS $APPLICATION_PROPERTIES -cp "$ARTEMIS_CP" uk.ac.sanger.artemis.components.ArtemisMain $*
 result=$?
 
 exit $result
