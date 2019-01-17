@@ -306,7 +306,7 @@ public class ReadAndWriteEntry
         System.out.println("-a\t[y|n] for EMBL submission format change to n, default is y");
         System.out.println("-pp\t[y|n] read polypeptide domain features, default is n");
         System.out.println("-r\t[y|n] remove product qualifiers from pseudogene (only for EMBL submission format), default is n");
-        System.out.println("-c\tthe URL for your Chado database e.g. db.genedb.org:5432/snapshot?genedb_ro (if not using default)");
+        System.out.println("-c\tthe URL for your Chado database e.g. server_name:port/database_name?user (if not using default)");
         System.out.println("-u\t[swing|console|script] the UI mode : run in swing (with popup dialog boxes) mode, run in console mode (choices entered in the console window), or in script mode (all choices default to continue, all parameters passed on command line) ");
         System.out.println("-p\tthe password for connecting to the Chado database");
         System.out.println("-fp\t the file path (the folder you want to save the files in)");

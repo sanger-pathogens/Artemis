@@ -1016,7 +1016,7 @@ public class ValidateFeature
       System.out.println("Artemis validation options:");
       System.out.println("-h\tshow help");
       System.out.println("-s\tspace separated list of sequences to read and write out");
-      System.out.println("-c\tthe URL for your Chado database e.g. db.genedb.org:5432/snapshot?genedb_ro");
+      System.out.println("-c\tthe URL for your Chado database e.g. server_name:port/database_name?user");
       System.out.println("-o\twrite report to specified file");
       System.exit(0);
     }
