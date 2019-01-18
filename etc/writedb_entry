@@ -49,7 +49,7 @@ PRG="$( cd -P "$( dirname "$SOURCE" )" && pwd )"; # get final path of this scrip
 add_proxy_properties
 
 FLAGS="-mx2048m -ms20m -Djdbc.drivers=org.postgresql.Driver -Dibatis"
-DEFAULT_CONNECTION="-Dchado=db.genedb.org:5432/snapshot?genedb_ro -Dread_only"
+DEFAULT_CONNECTION=
 APPLICATION_HOME="$PRG/.."
 JAR_NAME=artemis.jar
 JAR_FILE_DEFAULT=$APPLICATION_HOME/target/jars/$JAR_NAME
@@ -107,6 +107,13 @@ do
 	fi
 	let idx++
 done
+
+# Check that a database connection has been provided
+if [[ "$DEFAULT_CONNECTION" = "" ]]
+then 
+	echo "ERROR: Please supply a database connection argument"
+	exit 1
+fi
 
 if [[ "$QUIET" = "no" ]]
 then
