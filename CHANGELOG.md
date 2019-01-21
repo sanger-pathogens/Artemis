@@ -1,24 +1,26 @@
 # Change Log
 
-## [Unreleased](https://github.com/sanger-pathogens/Artemis/tree/HEAD)
+## [v18.0.1](https://github.com/sanger-pathogens/artemis/tree/v18.0.1) (2019-01-21)
 
-[Full Changelog](https://github.com/sanger-pathogens/Artemis/compare/v18.0.0...HEAD)
+[Full Changelog](https://github.com/sanger-pathogens/artemis/compare/v18.0.0...v18.0.1)
 
 **Merged pull requests:**
 
+- Artemis Release v18.0.1 draft changes [\#274](https://github.com/sanger-pathogens/Artemis/pull/274) ([kpepper](https://github.com/kpepper))
+- Autogenerate CHANGELOG.md [\#273](https://github.com/sanger-pathogens/Artemis/pull/273) ([ssjunnebo](https://github.com/ssjunnebo))
 - Added section on security warnings for Macs [\#272](https://github.com/sanger-pathogens/Artemis/pull/272) ([kpepper](https://github.com/kpepper))
 - Artemis v18.0.0 Documentation Changes [\#271](https://github.com/sanger-pathogens/Artemis/pull/271) ([kpepper](https://github.com/kpepper))
 
-## [v18.0.0](https://github.com/sanger-pathogens/Artemis/tree/v18.0.0) (2019-01-07)
-[Full Changelog](https://github.com/sanger-pathogens/Artemis/compare/v18.0.0-RC1...v18.0.0)
+## [v18.0.0](https://github.com/sanger-pathogens/artemis/tree/v18.0.0) (2019-01-07)
+[Full Changelog](https://github.com/sanger-pathogens/artemis/compare/v18.0.0-RC1...v18.0.0)
 
 **Merged pull requests:**
 
 - Merge build 18.0.0 changes to master [\#270](https://github.com/sanger-pathogens/Artemis/pull/270) ([kpepper](https://github.com/kpepper))
 - Prep for Release 18.0.0 [\#269](https://github.com/sanger-pathogens/Artemis/pull/269) ([kpepper](https://github.com/kpepper))
 
-## [v18.0.0-RC1](https://github.com/sanger-pathogens/Artemis/tree/v18.0.0-RC1) (2018-12-13)
-[Full Changelog](https://github.com/sanger-pathogens/Artemis/compare/v17.0.1...v18.0.0-RC1)
+## [v18.0.0-RC1](https://github.com/sanger-pathogens/artemis/tree/v18.0.0-RC1) (2018-12-13)
+[Full Changelog](https://github.com/sanger-pathogens/artemis/compare/v17.0.1...v18.0.0-RC1)
 
 **Closed issues:**
 
@@ -57,8 +59,8 @@
 - first draft of gh pages [\#242](https://github.com/sanger-pathogens/Artemis/pull/242) ([ssjunnebo](https://github.com/ssjunnebo))
 - Set up github pages [\#241](https://github.com/sanger-pathogens/Artemis/pull/241) ([ssjunnebo](https://github.com/ssjunnebo))
 
-## [v17.0.1](https://github.com/sanger-pathogens/Artemis/tree/v17.0.1) (2018-03-09)
-[Full Changelog](https://github.com/sanger-pathogens/Artemis/compare/v17.0.0...v17.0.1)
+## [v17.0.1](https://github.com/sanger-pathogens/artemis/tree/v17.0.1) (2018-03-09)
+[Full Changelog](https://github.com/sanger-pathogens/artemis/compare/v17.0.0...v17.0.1)
 
 **Merged pull requests:**
 
@@ -66,8 +68,8 @@
 - V17 patch branch [\#237](https://github.com/sanger-pathogens/Artemis/pull/237) ([kpepper](https://github.com/kpepper))
 - Rebranded splash screen [\#235](https://github.com/sanger-pathogens/Artemis/pull/235) ([kpepper](https://github.com/kpepper))
 
-## [v17.0.0](https://github.com/sanger-pathogens/Artemis/tree/v17.0.0) (2018-02-12)
-[Full Changelog](https://github.com/sanger-pathogens/Artemis/compare/v16.0.17...v17.0.0)
+## [v17.0.0](https://github.com/sanger-pathogens/artemis/tree/v17.0.0) (2018-02-12)
+[Full Changelog](https://github.com/sanger-pathogens/artemis/compare/v16.0.17...v17.0.0)
 
 **Closed issues:**
 
@@ -82,8 +84,8 @@
 - Artemis unit testing v17.0.0 branch merge [\#233](https://github.com/sanger-pathogens/Artemis/pull/233) ([kpepper](https://github.com/kpepper))
 - update scratch108 to scratch118 - v16.0.18 [\#230](https://github.com/sanger-pathogens/Artemis/pull/230) ([vaofford](https://github.com/vaofford))
 
-## [v16.0.17](https://github.com/sanger-pathogens/Artemis/tree/v16.0.17) (2016-11-23)
-[Full Changelog](https://github.com/sanger-pathogens/Artemis/compare/v16.0.0...v16.0.17)
+## [v16.0.17](https://github.com/sanger-pathogens/artemis/tree/v16.0.17) (2016-11-23)
+[Full Changelog](https://github.com/sanger-pathogens/artemis/compare/v16.0.0...v16.0.17)
 
 **Closed issues:**
 
@@ -135,8 +137,8 @@
 - misc [\#178](https://github.com/sanger-pathogens/Artemis/pull/178) ([tcarver](https://github.com/tcarver))
 - misc [\#177](https://github.com/sanger-pathogens/Artemis/pull/177) ([tcarver](https://github.com/tcarver))
 
-## [v16.0.0](https://github.com/sanger-pathogens/Artemis/tree/v16.0.0) (2014-01-14)
-[Full Changelog](https://github.com/sanger-pathogens/Artemis/compare/v15.0.0...v16.0.0)
+## [v16.0.0](https://github.com/sanger-pathogens/artemis/tree/v16.0.0) (2014-01-14)
+[Full Changelog](https://github.com/sanger-pathogens/artemis/compare/v15.0.0...v16.0.0)
 
 **Merged pull requests:**
 
@@ -188,8 +190,8 @@
 - misc [\#130](https://github.com/sanger-pathogens/Artemis/pull/130) ([tcarver](https://github.com/tcarver))
 - misc [\#129](https://github.com/sanger-pathogens/Artemis/pull/129) ([tcarver](https://github.com/tcarver))
 
-## [v15.0.0](https://github.com/sanger-pathogens/Artemis/tree/v15.0.0) (2013-02-15)
-[Full Changelog](https://github.com/sanger-pathogens/Artemis/compare/v14.0.0...v15.0.0)
+## [v15.0.0](https://github.com/sanger-pathogens/artemis/tree/v15.0.0) (2013-02-15)
+[Full Changelog](https://github.com/sanger-pathogens/artemis/compare/v14.0.0...v15.0.0)
 
 **Merged pull requests:**
 
@@ -270,8 +272,8 @@
 - misc GFF support [\#53](https://github.com/sanger-pathogens/Artemis/pull/53) ([tcarver](https://github.com/tcarver))
 - misc [\#52](https://github.com/sanger-pathogens/Artemis/pull/52) ([tcarver](https://github.com/tcarver))
 
-## [v14.0.0](https://github.com/sanger-pathogens/Artemis/tree/v14.0.0) (2012-02-20)
-[Full Changelog](https://github.com/sanger-pathogens/Artemis/compare/v13.2.0...v14.0.0)
+## [v14.0.0](https://github.com/sanger-pathogens/artemis/tree/v14.0.0) (2012-02-20)
+[Full Changelog](https://github.com/sanger-pathogens/artemis/compare/v13.2.0...v14.0.0)
 
 **Merged pull requests:**
 
@@ -325,7 +327,7 @@
 - 2 commits [\#4](https://github.com/sanger-pathogens/Artemis/pull/4) ([tcarver](https://github.com/tcarver))
 - update to 13.2.1 [\#3](https://github.com/sanger-pathogens/Artemis/pull/3) ([tcarver](https://github.com/tcarver))
 
-## [v13.2.0](https://github.com/sanger-pathogens/Artemis/tree/v13.2.0) (2011-07-13)
+## [v13.2.0](https://github.com/sanger-pathogens/artemis/tree/v13.2.0) (2011-07-13)
 **Merged pull requests:**
 
 - update readme [\#2](https://github.com/sanger-pathogens/Artemis/pull/2) ([tcarver](https://github.com/tcarver))
