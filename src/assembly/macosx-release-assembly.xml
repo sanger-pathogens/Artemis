@@ -152,6 +152,28 @@
 		<fileset dir="etc"/>
 	</copy>
 	
+	<!-- Copy in scripts for use on command line -->
+	<copy todir="${osx.app.folder}/apps/${artemis.application.name}.app/Contents/">
+		<fileset file="art"/>
+	</copy>
+	<copy todir="${osx.app.folder}/apps/${act.application.name}.app/Contents/">
+		<fileset file="act"/>
+	</copy>
+	<copy todir="${osx.app.folder}/apps/${dnaplotter.application.name}.app/Contents/">
+		<fileset file="dnaplotter"/>
+	</copy>
+	<copy todir="${osx.app.folder}/apps/${bamview.application.name}.app/Contents/">
+		<fileset file="bamview"/>
+	</copy>
+	
+	<!-- Set script permission -->
+	<chmod perm="a+x">
+		<fileset file="${osx.app.folder}/apps/${artemis.application.name}.app/Contents/art"/>
+		<fileset file="${osx.app.folder}/apps/${act.application.name}.app/Contents/act"/>
+		<fileset file="${osx.app.folder}/apps/${dnaplotter.application.name}.app/Contents/dnaplotter"/>
+		<fileset file="${osx.app.folder}/apps/${bamview.application.name}.app/Contents/bamview"/>
+	</chmod>
+	
 	<echo>NOTE: hdiutil must be installed to create a Mac .dmg image file...</echo>
 	
 	<exec executable="hdiutil">
@@ -304,6 +326,28 @@
 	<copy todir="${osx.app.chado.folder}/apps/${act.chado.application.name}.app/Contents/etc">
 		<fileset dir="etc"/>
 	</copy>
+	
+	<!-- Copy in scripts for use on command line -->
+	<copy todir="${osx.app.chado.folder}/apps/${artemis.chado.application.name}.app/Contents/">
+		<fileset file="art"/>
+	</copy>
+	<copy todir="${osx.app.chado.folder}/apps/${act.chado.application.name}.app/Contents/">
+		<fileset file="act"/>
+	</copy>
+	<copy todir="${osx.app.chado.folder}/apps/${dnaplotter.application.name}.app/Contents/">
+		<fileset file="dnaplotter"/>
+	</copy>
+	<copy todir="${osx.app.chado.folder}/apps/${bamview.application.name}.app/Contents/">
+		<fileset file="bamview"/>
+	</copy>
+	
+	<!-- Set script permission -->
+	<chmod perm="a+x">
+		<fileset file="${osx.app.chado.folder}/apps/${artemis.chado.application.name}.app/Contents/art"/>
+		<fileset file="${osx.app.chado.folder}/apps/${act.chado.application.name}.app/Contents/act"/>
+		<fileset file="${osx.app.chado.folder}/apps/${dnaplotter.application.name}.app/Contents/dnaplotter"/>
+		<fileset file="${osx.app.chado.folder}/apps/${bamview.application.name}.app/Contents/bamview"/>
+	</chmod>
 	
 	<echo>NOTE: hdiutil must be installed to create a Mac .dmg image file...</echo>
 	

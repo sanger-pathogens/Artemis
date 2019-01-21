@@ -126,7 +126,7 @@ public class ReadAndWriteEntry_ESTest extends ReadAndWriteEntry_ESTest_scaffoldi
   public void test05()  throws Throwable  {
       String[] stringArray0 = new String[6];
       stringArray0[0] = "auVD>k`jr-(";
-      stringArray0[1] = "-c\tthe URL for your Chado database e.g. db.genedb.org:5432/snapshot?genedb_ro (if not using default)";
+      stringArray0[1] = "-c\tthe URL for your Chado database e.g. server_name:port/database_name?user (if not using default)";
       stringArray0[2] = "org.biojava.bio.seq.MergeFeatureHolder";
       stringArray0[3] = "tlnG";
       stringArray0[4] = "-u";

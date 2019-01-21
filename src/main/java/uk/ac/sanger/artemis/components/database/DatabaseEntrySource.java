@@ -467,8 +467,6 @@ class DatabaseLoginPrompt extends JPanel implements ILoginPrompt
     if(serversVector == null)
     {
       serversVector = new StringVector();
-      serversVector.add("GeneDB (read-only)");
-      serversVector.add("db.genedb.org:5432/snapshot?genedb_ro");
     }
     
     

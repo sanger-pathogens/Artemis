@@ -8,3 +8,4 @@ dependency-reduced-pom.xml
 maven.properties
 .evosuite
 maven-archiver
+.dribble.*

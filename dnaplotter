@@ -79,6 +79,7 @@ done
 JAR_NAME=dnaplotter.jar
 JAR_FILE_DEFAULT=$APPLICATION_HOME/target/jars/$JAR_NAME
 JAR_FILE_INSTALLED=$APPLICATION_HOME/dist/$JAR_NAME
+ARTEMIS_CP=$APPLICATION_HOME:$JAR_FILE_DEFAULT:$JAR_FILE_INSTALLED
 
 #
 # Use a custom Java version if necessary
@@ -111,6 +112,8 @@ PLATTMP=`uname`
 if [[ "$PLATTMP" = "Darwin" ]]
 then
   	APPLICATION_PROPERTIES="$APPLICATION_PROPERTIES -Dapple.laf.useScreenMenuBar=true -Xdock:name=Circular-Plot"
+  	JAR_FILE_MACAPP=$APPLICATION_HOME/Java/$JAR_NAME
+  	ARTEMIS_CP="$JAR_FILE_MACAPP:$ARTEMIS_CP"
 fi
 
 if [[ "$QUIET" = "no" ]]
@@ -118,7 +121,7 @@ then
     echo "Starting DNA Plotter with arguments: $FLAGS $APPLICATION_PROPERTIES $TEMPLATE_FILE_ARG"
 fi
 
-$JAVA $FLAGS $APPLICATION_PROPERTIES -cp "$APPLICATION_HOME:$JAR_FILE_DEFAULT:$JAR_FILE_INSTALLED" uk.ac.sanger.artemis.circular.DNADraw $TEMPLATE_FILE_ARG
+$JAVA $FLAGS $APPLICATION_PROPERTIES -cp "$ARTEMIS_CP" uk.ac.sanger.artemis.circular.DNADraw $TEMPLATE_FILE_ARG
 result=$?
 
 exit $result
