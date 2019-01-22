@@ -49,11 +49,12 @@ PRG="$( cd -P "$( dirname "$SOURCE" )" && pwd )"; # get final path of this scrip
 add_proxy_properties
 
 FLAGS="-mx2048m -ms20m -Djdbc.drivers=org.postgresql.Driver -Dibatis"
-DEFAULT_CONNECTION="-Dchado=db.genedb.org:5432/snapshot?genedb_ro -Dread_only"
+DEFAULT_CONNECTION=
 APPLICATION_HOME="$PRG/.."
 JAR_NAME=artemis.jar
 JAR_FILE_DEFAULT=$APPLICATION_HOME/target/jars/$JAR_NAME
 JAR_FILE_INSTALLED=$APPLICATION_HOME/dist/$JAR_NAME
+WRITE_DBENTRY_CP=$APPLICATION_HOME:$JAR_FILE_DEFAULT:$JAR_FILE_INSTALLED
 
 #
 # Use a custom Java version if necessary
@@ -84,6 +85,13 @@ while test $# != 0
     shift
 done
 
+PLATTMP=`uname`
+if [[ "$PLATTMP" = "Darwin" ]]
+then
+	# For running within an App folder
+  	WRITE_DBENTRY_CP="$APPLICATION_HOME/Java/$JAR_NAME:$WRITE_DBENTRY_CP"
+fi
+
 # searches for the -c option (needs to know the index)
 idx=0
 for arg in "$@"
@@ -95,18 +103,25 @@ do
 	if [ '-l' == "${arg}" ]; then
 		let "nextID = $idx + 2";
         eval MAPPING_PATH="${!nextID}"
-		CLASSPATH="${MAPPING_PATH}:$CLASSPATH"
-		export CLASSPATH
+		WRITE_DBENTRY_CP="${MAPPING_PATH}:$WRITE_DBENTRY_CP"
 	fi
 	let idx++
 done
 
-if [[ "$QUIET" = "no" ]]
-then
-    echo "Starting writedb_entry with arguments: $PROXY_SETTINGS $DEFAULT_CONNECTION $FLAGS $@"
+# Check that a database connection has been provided
+if [[ "$DEFAULT_CONNECTION" = "" ]]
+then 
+	echo "ERROR: Please supply a database connection argument"
+	exit 1
 fi
 
-$JAVA $PROXY_SETTINGS $DEFAULT_CONNECTION $FLAGS -cp "$APPLICATION_HOME:$JAR_FILE_DEFAULT:$JAR_FILE_INSTALLED" uk.ac.sanger.artemis.io.ReadAndWriteEntry "$@"
+if [[ "$QUIET" = "no" ]]
+then
+	echo "Starting writedb_entry with arguments: $PROXY_SETTINGS $DEFAULT_CONNECTION $FLAGS $@"
+	echo "Using classpath: $WRITE_DBENTRY_CP"
+fi
+
+$JAVA $PROXY_SETTINGS $DEFAULT_CONNECTION $FLAGS -cp "$WRITE_DBENTRY_CP" uk.ac.sanger.artemis.io.ReadAndWriteEntry "$@"
 result=$?
 
 exit $result

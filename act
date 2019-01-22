@@ -97,6 +97,7 @@ done
 JAR_NAME=act.jar
 JAR_FILE_DEFAULT=$APPLICATION_HOME/target/jars/$JAR_NAME
 JAR_FILE_INSTALLED=$APPLICATION_HOME/dist/$JAR_NAME
+ARTEMIS_CP=$APPLICATION_HOME:$JAR_FILE_DEFAULT:$JAR_FILE_INSTALLED
 
 #
 # Use a custom Java version if necessary
@@ -135,6 +136,8 @@ PLATTMP=`uname`
 if [[ "$PLATTMP" = "Darwin" ]]
 then
   	APPLICATION_PROPERTIES="$APPLICATION_PROPERTIES -Dapple.laf.useScreenMenuBar=true -Xdock:name=ACT"
+  	JAR_FILE_MACAPP=$APPLICATION_HOME/Java/$JAR_NAME
+  	ARTEMIS_CP="$JAR_FILE_MACAPP:$ARTEMIS_CP"
 fi
 
 if [[ "$QUIET" = no ]]
@@ -142,7 +145,7 @@ then
     echo "Starting ACT with arguments: $FLAGS $APPLICATION_PROPERTIES $*"
 fi
 
-$JAVA $FLAGS $APPLICATION_PROPERTIES -cp "$APPLICATION_HOME:$JAR_FILE_DEFAULT:$JAR_FILE_INSTALLED" uk.ac.sanger.artemis.components.ActMain $*
+$JAVA $FLAGS $APPLICATION_PROPERTIES -cp "$ARTEMIS_CP" uk.ac.sanger.artemis.components.ActMain $*
 result=$?
 
 exit $result
