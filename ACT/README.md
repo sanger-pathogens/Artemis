@@ -24,10 +24,10 @@ ACT is packaged as part of the Artemis Software. The Artemis Software is availab
 
 The latest release of Artemis can be downloaded by clicking on the relevant link below:
 
-* [UNIX](https://github.com/sanger-pathogens/Artemis/releases/download/v18.0.0/artemis-unix-release-18.0.0.tar.gz)
-* [MacOS](https://github.com/sanger-pathogens/Artemis/releases/download/v18.0.0/artemis-macosx-release-18.0.0.dmg.gz)
-* [MacOS (CHADO) - for out of the box CHADO database connectivity](https://github.com/sanger-pathogens/Artemis/releases/download/v18.0.0/artemis-macosx-chado-release-18.0.0.dmg.gz)
-* [Windows](https://github.com/sanger-pathogens/Artemis/releases/download/v18.0.0/artemis-windows-release-18.0.0.zip)
+* [UNIX](https://github.com/sanger-pathogens/Artemis/releases/download/v18.0.1/artemis-unix-release-18.0.1.tar.gz)
+* [MacOS](https://github.com/sanger-pathogens/Artemis/releases/download/v18.0.1/artemis-macosx-release-18.0.1.dmg.gz)
+* [MacOS (CHADO) - for out of the box CHADO database connectivity](https://github.com/sanger-pathogens/Artemis/releases/download/v18.0.1/artemis-macosx-chado-release-18.0.1.dmg.gz)
+* [Windows](https://github.com/sanger-pathogens/Artemis/releases/download/v18.0.1/artemis-windows-release-18.0.1.zip)
 
 For older versions of the software please see the [Artemis FTP site](ftp://ftp.sanger.ac.uk/pub/resources/software/artemis/)
 
