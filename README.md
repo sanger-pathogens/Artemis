@@ -19,13 +19,19 @@ The latest release of Artemis can be downloaded by clicking on the relevant link
 * [MacOS (CHADO) - for out of the box CHADO database connectivity](https://github.com/sanger-pathogens/Artemis/releases/download/v18.0.1/artemis-macosx-chado-release-18.0.1.dmg.gz)
 * [Windows](https://github.com/sanger-pathogens/Artemis/releases/download/v18.0.1/artemis-windows-release-18.0.1.zip)
 
+Or via [Bioconda](https://bioconda.github.io). Simply use:
+```
+conda install artemis -c bioconda
+```
+from the command line, and you're ready to go.
+
 For older versions of the Artemis software please see the [Artemis FTP site](ftp://ftp.sanger.ac.uk/pub/resources/software/artemis/)
 
 For further instructions please select the relevant application link at the top of this page or view our [GitHub page](https://github.com/sanger-pathogens/Artemis/).
 
 ### Notes for Download
 
-__Note on Java versions__: The previous v17.0.1 version of the Artemis software required Java version 1.8 to run. All subsequent versions from v18.0.0 onwards require a minimum of Java 9 and preferably Java 11. This must be installed first.
+__Note on Java versions__: The previous v17.0.1 version of the Artemis software required Java version 1.8 to run. All subsequent versions from v18.0.0 onwards require a minimum of Java 9 and preferably Java 11. This must be installed first. A Java installation is not required for the Bioconda route.
 
 __Note for MacOSX__: occasionally a browser decides to display the contents of the .dmg.gz archive file rather than downloading it. If this happens hold down the <control> key and click on the download link. A popup menu should appear, containing several choices. One of the choices should be something like "Save Link As" (or perhaps "Download Link...", "Save Link to Desktop", or a variation on this theme). Select that option, and the archive file should be download correctly.
 
