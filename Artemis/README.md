@@ -40,9 +40,15 @@ The latest release of Artemis can be downloaded by clicking on the relevant link
 * [MacOS (CHADO) - for out of the box CHADO database connectivity](https://github.com/sanger-pathogens/Artemis/releases/download/v18.0.1/artemis-macosx-chado-release-18.0.1.dmg.gz)
 * [Windows](https://github.com/sanger-pathogens/Artemis/releases/download/v18.0.1/artemis-windows-release-18.0.1.zip)
 
+Or via [Bioconda](https://bioconda.github.io). Simply use:
+```
+conda install artemis -c bioconda
+```
+from the command line, and you're ready to go.
+
 For older versions of the software please see the [Artemis FTP site](ftp://ftp.sanger.ac.uk/pub/resources/software/artemis/)
 
-The previous v17.0.1 version of the Artemis software required Java version 1.8 to run. All subsequent versions from v18.0.0 onwards require a minimum of Java 9 and preferably Java 11. This must be installed first.
+The previous v17.0.1 version of the Artemis software required Java version 1.8 to run. All subsequent versions from v18.0.0 onwards require a minimum of Java 9 and preferably Java 11. This must be installed first. A Java installation is not required for the Bioconda route.
 
 ## Installation
 ### For UNIX/Linux
@@ -87,6 +93,12 @@ You may find that when trying to run the Artemis app for the first time, that yo
 
 ### Running Artemis on Windows Systems
 Artemis can be started by double clicking on the artemis.jar icon.
+
+### Running ACT via Bioconda
+The Artemis start script is available in the path, so in a terminal window just use:
+```
+art
+```
 
 ## The User Manual
 For additional information please see the [Artemis manual](https://sanger-pathogens.github.io/Artemis/Artemis/artemis-manual.html) and our [GitHub page](https://github.com/sanger-pathogens/Artemis/). A PDF version of the manual is also available for download [here](https://sanger-pathogens.github.io/Artemis/Artemis/artemis-manual.pdf).
