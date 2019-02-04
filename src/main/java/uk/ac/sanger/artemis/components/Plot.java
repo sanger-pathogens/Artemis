@@ -222,8 +222,12 @@ public abstract class Plot extends JPanel
   {
     /**
      *  Listen for mouse press popup menu and crosshair events.
-     **/
-    public void mousePressed(MouseEvent event) 
+     *  
+     *  This has been changed to fix RT ticket 649125
+	 *   - the pop-up menu was not working on Windows
+     */
+    @Override
+    public void mouseReleased(MouseEvent event)
     {
       if(event.isPopupTrigger() || event.isMetaDown()) 
       {
@@ -515,7 +519,7 @@ public abstract class Plot extends JPanel
         else
           cancelCrossHairs();
 
-        if(event.getClickCount() == 2) 
+        if(event.getClickCount() >= 2) 
           fireDoubleClickEvent();
         else
           fireClickEvent();
