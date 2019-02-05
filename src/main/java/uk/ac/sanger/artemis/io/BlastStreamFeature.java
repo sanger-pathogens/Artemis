@@ -39,6 +39,9 @@ import java.io.*;
 public class BlastStreamFeature
     extends SimpleDocumentFeature
     implements DocumentFeature, StreamFeature, ComparableFeature {
+	
+	public static final String BLAST_FEATURE_NAME = "BLASTCDS";
+	
   /**
    *  Create a new BlastStreamFeature object.  The feature should be added
    *  to an Entry (with Entry.add ()).
@@ -126,6 +129,9 @@ public class BlastStreamFeature
       final String subject_id = (String)line_bits.elementAt (1);
       final String subject_start_string = (String)line_bits.elementAt (8);
       final String subject_end_string = (String)line_bits.elementAt (9);
+      
+      int subject_start = Integer.valueOf (subject_start_string).intValue ();
+      int subject_end = Integer.valueOf (subject_end_string).intValue ();
 
       final String score = (String)line_bits.elementAt (11);
       final String e_value = (String)line_bits.elementAt (10);
@@ -154,10 +160,7 @@ public class BlastStreamFeature
       setQualifier (subject_end_qualifier);
       setQualifier (subject_id_qualifier);
 
-      int subject_start = Integer.valueOf (subject_start_string).intValue ();
-      int subject_end = Integer.valueOf (subject_end_string).intValue ();
-
-      final Key key = new Key ("BLASTCDS");
+      final Key key = new Key (BLAST_FEATURE_NAME);
 
       setKey (key);
 
@@ -175,22 +178,22 @@ public class BlastStreamFeature
 
       boolean complement_flag;
 
-      if (subject_end < subject_start) {
+      if (query_end < query_start) {
         complement_flag = true;
       } else {
         complement_flag = false;
       }
 
-      if (query_start > query_end) {
-        final int tmp = query_end;
-        query_end = query_start;
-        query_start = tmp;
+      if (subject_start > subject_end) {
+        final int tmp = subject_end;
+        subject_end = subject_start;
+        subject_start = tmp;
 
         complement_flag = !complement_flag;
       }
 
       final RangeVector ranges =
-        new RangeVector (new Range (query_start, query_end));
+        new RangeVector (new Range (subject_start, subject_end));
 
       setLocation (new Location (ranges, complement_flag));
     } catch (ReadOnlyException e) {
