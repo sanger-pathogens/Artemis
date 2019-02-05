@@ -203,7 +203,7 @@ public class BlastStreamFeatureTest
 	}
 	
 	@Test
-	public void testInvalidBlastLine() throws Exception
+	public void testInvalidBlastLine1() throws Exception
 	{
 		@SuppressWarnings("unused")
 		BlastStreamFeature blastFeature = null;
@@ -218,8 +218,13 @@ public class BlastStreamFeatureTest
 		{
 			// Expected
 		}
-		
-		blastFeature = getBlastStreamFeature("");
-		assertNull("Expected a ReadFormatException to be thrown", blastFeature);
 	}
+
+        @Test
+        public void testInvalidBlastLine2() throws Exception
+        {
+                @SuppressWarnings("unused")
+                BlastStreamFeature blastFeature = getBlastStreamFeature("");
+                assertNull(blastFeature);
+        }
 }
