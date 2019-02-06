@@ -10,7 +10,6 @@ using and setting up an Artemis and ACT connection with a Chado database.
 <li><a href="#DATABASEMANAGER">Opening the Database Manager</a>
 <li><a href="#OPENART">Opening the main Artemis/ACT window</a>
 <li><a href="#CONFIG">Option File Configuration</a>
-<li><a href="#GENEBUILDER">Opening the Standalone Gene Builder</a>
 </ul>
 
 
@@ -21,13 +20,13 @@ The Artemis Database Manager is cached between sessions in the directory
 '.artemis/cache' in the users home directory. There is an option under the File menu
 to clear this cache.
 <p>
-To open the Artemis Database Manager panel (from which the browser is launched), 
-Artemis looks initially for the existence of the cvterm.name = 'top_level_seq' which 
+To open the Artemis Database Manager panel (from which the browser is launched),
+Artemis looks initially for the existence of the cvterm.name = 'top_level_seq' which
 belongs to cv.name = 'genedb_misc'. If these exist it follows method A:
 
 <ol type="A">
 <li>
--call 'getTopLevelOrganisms' (in Organism.xml mapping). This relies on the the source 
+-call 'getTopLevelOrganisms' (in Organism.xml mapping). This relies on the the source
 features (e.g. chromosome) having a featureprop with a type_id corresponding to 'top_level_seq'.
 <p>
 If the 'top_level_seq' is not implemented in the database it then follows method B:
@@ -35,22 +34,22 @@ If the 'top_level_seq' is not implemented in the database it then follows method
 </li>
 
 <li>
--call 'getOrganismsContainingSrcFeatures' (in Organism.xml mapping). This searches for those 
-organisms that contain sequences with residues and have a type_id that 
+-call 'getOrganismsContainingSrcFeatures' (in Organism.xml mapping). This searches for those
+organisms that contain sequences with residues and have a type_id that
 corresponds to a cvterm name that matches:
 <p>
 *chromosome*, *sequence*, supercontig, ultra_scaffold, golden_path_region, or contig
 <p>
 </li>
 </ol>
-When the organisms with the source feature have been identified these are displayed. When 
-a user clicks on an organism it opens that node and finds the types (e.g. chromosome, contig) of source 
+When the organisms with the source feature have been identified these are displayed. When
+a user clicks on an organism it opens that node and finds the types (e.g. chromosome, contig) of source
 features and the underlying features that have residues (getResidueFeatures in Feature.xml).
 <p>
 <h3><a name="OPENART">Opening the main Artemis/ACT window</a></h3>
 <p>
-The organismprop's are loaded lazily when a sequence is opened. If an organismprop 
-is of type 'translationTable' the value of the organismprop is then used as the 
+The organismprop's are loaded lazily when a sequence is opened. If an organismprop
+is of type 'translationTable' the value of the organismprop is then used as the
 translation table when Artemis opens a sequence from that organism.
 <p>
 When a sequence is double clicked to open it in Artemis, most things for that sequence
@@ -59,9 +58,9 @@ summarised below.
 <p>
 <table border=1 cellspacing=1 cellpadding=2>
 <tr><td>Statement ID</td><td>SQL Mapping File</td><td>Description</td></tr>
-<tr><td>getFeature                         </td><td>(Feature.xml)</td> 
+<tr><td>getFeature                         </td><td>(Feature.xml)</td>
    <td>Retrieves all the features and their featureloc's, featureprop's, feature_relationship's and primary dbxref</td></tr>
-<tr><td>getFeatureDbXRefsBySrcFeature      </td><td>(FeatureDbXRef.xml)</td>      
+<tr><td>getFeatureDbXRefsBySrcFeature      </td><td>(FeatureDbXRef.xml)</td>
     <td>Retrieves all secondary dbxref's</td></tr>
 <tr><td>getFeatureSynonymsBySrcFeature     </td><td>(FeatureSynonym.xml)</td>
     <td>Retrieves feature synonyms</td></tr>
@@ -73,7 +72,7 @@ summarised below.
     <td>Retrieves feature_cvterm_pub's.</td></tr>
 </table>
 <p>
-Artemis constructs an internal GFF3 stream from these calls for the selected sequence. 
+Artemis constructs an internal GFF3 stream from these calls for the selected sequence.
 This is then read in the same way as a GFF3 file as an Artemis DatabaseDocumentEntry
 (which extends GFFDocumentEntry) and creating GFFStreamFeatures.
 <p>
@@ -83,12 +82,12 @@ and FeatureDbXRefs, FeatureSynonyms, FeatureCvTerms, FeatureCvTermDbXRefs
 and FeatureCvTermPubs are read from the database for a feature when the Gene Builder is opened.
 <p>
 The feature_relationship (from getFeature) is used to create the gene hierarchy; 'part_of'a
-and 'derives_from' relationships become Parent and Derives_from in GFF3 terms. If the 
-feature_relationship type_id does not correspond to one of these terms (derives_from, 
-part_of, proper_part_of, partof, producedby) then the object_id is recorded as a qualifer 
-value. This is used to read orthologous_to and paralogous_to relations. The qualifier 
-values for these are lazily stored (as ClusterLazyQualifierValue.java). When Artemis 
-displays these qualifiers in the Gene Builder it then queries the database further to 
+and 'derives_from' relationships become Parent and Derives_from in GFF3 terms. If the
+feature_relationship type_id does not correspond to one of these terms (derives_from,
+part_of, proper_part_of, partof, producedby) then the object_id is recorded as a qualifer
+value. This is used to read orthologous_to and paralogous_to relations. The qualifier
+values for these are lazily stored (as ClusterLazyQualifierValue.java). When Artemis
+displays these qualifiers in the Gene Builder it then queries the database further to
 list the related genes.
 <p>
 Other properties that have a featureloc association with a feature
@@ -100,8 +99,8 @@ blast/fasta similarity and polypeptide_domains.
 <p>
 The gene hierarchy is stored internally by the ChadoCanonicalGene.java object and is based
 on the Parent/Derives_from relationships. It stores the related children of the gene.
-The spliced features (exon, pseudogenic_exon) are combined into a single Artemis 
-Feature. The joined exons become an Artemis CDS feature (GFFStreamFeature), which stores 
+The spliced features (exon, pseudogenic_exon) are combined into a single Artemis
+Feature. The joined exons become an Artemis CDS feature (GFFStreamFeature), which stores
 the uniquenames of the original exons in the database.
 
 <p>
@@ -112,7 +111,7 @@ This is an example extract from the Artemis options file for the chado related o
 <p>
 <pre style="color: #0000FF;">
 #
-# CHADO DATABASE OPTIONS 
+# CHADO DATABASE OPTIONS
 #
 # chado gene model features default types
 chado_exon_model=CDS
@@ -142,20 +141,20 @@ sequence_update_features = polypeptide mRNA rRNA tRNA snRNA snoRNA
 </pre>
 
 <p>
-Artemis combines the exons stored in chado and describes it as a 'CDS' 
-feature by default. The <b>chado_exon_model</b> flag in the options file 
-allows this to be changed. 
+Artemis combines the exons stored in chado and describes it as a 'CDS'
+feature by default. The <b>chado_exon_model</b> flag in the options file
+allows this to be changed.
 <p>
-When a gene model is created in Artemis it creates the transcript as a 'mRNA' 
-feature by default. The <b>chado_transcript</b> flag in the options file allows this 
+When a gene model is created in Artemis it creates the transcript as a 'mRNA'
+feature by default. The <b>chado_transcript</b> flag in the options file allows this
 to be changed.
 <p>
 For Artemis the default gene model representation is described in the <a href="overview.shtml#GENE">
 overview</a>. In this representation the UTRs are explicitly created in the database.
-However the gmod loader (gmod_bulk_load_gff3.pl) does not create the UTRs and they can 
+However the gmod loader (gmod_bulk_load_gff3.pl) does not create the UTRs and they can
 be inferred from the exon and protein features. If the gmod loader is used then Artemis
-can infer the CDS and UTR features by setting <b>chado_infer_CDS_UTR=yes</b> in the 
-options file. Adjusting the polypeptide boundaries in the Gene Builder will result in the generation 
+can infer the CDS and UTR features by setting <b>chado_infer_CDS_UTR=yes</b> in the
+options file. Adjusting the polypeptide boundaries in the Gene Builder will result in the generation
 or deletion of UTRs.
 
 <p>
@@ -168,24 +167,3 @@ and set <b>product_cvname</b> is set to the name of the controlled vocabulary (c
 <p>
 When features are deleted in Artemis the default behaviour can be set to make these
 features obsolete rather than permanently delete them from the database.
-
-<a name="GENEBUILDER"></a><h3>Opening the Standalone Gene Builder</h3>
-<p>
-The Gene Builder can be launched on its own without opening up Artemis. The following
-opens up a window which lets you type in a gene name to be opened:
-
- <pre>
- java -mx500m -Dibatis -Dchado="localhost:5432/database?" \
-      -Djdbc.drivers=org.postgresql.Driver -classpath artemis.jar \
-      uk.ac.sanger.artemis.components.genebuilder.GeneEdit
- </pre>
-
-Alternatively the gene name can be given as an argument:
- <pre>
- java -mx500m -Dibatis -Dchado="db.genedb.org:5432/snapshot?genedb_ro" \
-      -Djdbc.drivers=org.postgresql.Driver -Dshow_log -Dread_only \
-      -classpath jar_build/artemis.jar:etc 
-       uk.ac.sanger.artemis.components.genebuilder.GeneEdit PFA0010c
- </pre>
-
-
