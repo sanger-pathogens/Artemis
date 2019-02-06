@@ -14,16 +14,16 @@ The Artemis Software is available under GPL3. The source code can be found on [G
 
 The latest release of Artemis can be downloaded by clicking on the relevant link below:
 
-* [UNIX](https://github.com/sanger-pathogens/Artemis/releases/download/v18.0.1/artemis-unix-release-18.0.1.tar.gz)
-* [MacOS](https://github.com/sanger-pathogens/Artemis/releases/download/v18.0.1/artemis-macosx-release-18.0.1.dmg.gz)
-* [MacOS (CHADO) - for out of the box CHADO database connectivity](https://github.com/sanger-pathogens/Artemis/releases/download/v18.0.1/artemis-macosx-chado-release-18.0.1.dmg.gz)
-* [Windows](https://github.com/sanger-pathogens/Artemis/releases/download/v18.0.1/artemis-windows-release-18.0.1.zip)
+* [UNIX](https://github.com/sanger-pathogens/Artemis/releases/download/v18.0.2/artemis-unix-release-18.0.2.tar.gz)
+* [MacOS](https://github.com/sanger-pathogens/Artemis/releases/download/v18.0.2/artemis-macosx-release-18.0.2.dmg.gz)
+* [MacOS (CHADO) - for out of the box CHADO database connectivity](https://github.com/sanger-pathogens/Artemis/releases/download/v18.0.2/artemis-macosx-chado-release-18.0.2.dmg.gz)
+* [Windows](https://github.com/sanger-pathogens/Artemis/releases/download/v18.0.2/artemis-windows-release-18.0.2.zip)
 
 Or via [Bioconda](https://bioconda.github.io). Simply use:
 ```
 conda install artemis -c bioconda
 ```
-from the command line, and you're ready to go.
+from the command line, and you're ready to go (no Java installation required).
 
 For older versions of the Artemis software please see the [Artemis FTP site](ftp://ftp.sanger.ac.uk/pub/resources/software/artemis/)
 

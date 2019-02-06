@@ -21,16 +21,16 @@ Bamview is packaged as part of the Artemis Software. The Artemis Software is ava
 
 The latest release of Artemis can be downloaded by clicking on the relevant link below:
 
-* [UNIX](https://github.com/sanger-pathogens/Artemis/releases/download/v18.0.1/artemis-unix-release-18.0.1.tar.gz)
-* [MacOS](https://github.com/sanger-pathogens/Artemis/releases/download/v18.0.1/artemis-macosx-release-18.0.1.dmg.gz)
-* [MacOS (CHADO) - for out of the box CHADO database connectivity](https://github.com/sanger-pathogens/Artemis/releases/download/v18.0.1/artemis-macosx-chado-release-18.0.1.dmg.gz)
-* [Windows](https://github.com/sanger-pathogens/Artemis/releases/download/v18.0.1/artemis-windows-release-18.0.1.zip)
+* [UNIX](https://github.com/sanger-pathogens/Artemis/releases/download/v18.0.2/artemis-unix-release-18.0.2.tar.gz)
+* [MacOS](https://github.com/sanger-pathogens/Artemis/releases/download/v18.0.2/artemis-macosx-release-18.0.2.dmg.gz)
+* [MacOS (CHADO) - for out of the box CHADO database connectivity](https://github.com/sanger-pathogens/Artemis/releases/download/v18.0.2/artemis-macosx-chado-release-18.0.2.dmg.gz)
+* [Windows](https://github.com/sanger-pathogens/Artemis/releases/download/v18.0.2/artemis-windows-release-18.0.2.zip)
 
 Or via [Bioconda](https://bioconda.github.io). Simply use:
 ```
 conda install artemis -c bioconda
 ```
-from the command line, and you're ready to go.
+from the command line, and you're ready to go (no Java installation required).
 
 For older versions of the software please see the [Artemis FTP site](ftp://ftp.sanger.ac.uk/pub/resources/software/artemis/)
 
@@ -52,6 +52,11 @@ For MacOSX users, an artemis-macosx-release-{version}.dmg.gz disk image is provi
 gunzip artemis-macosx-release-{version}.dmg.gz
 ```
 There’s also an artemis-macosx-chado-release-{version}.dmg disk image that will start up Artemis with a Chado connection window displayed, if you wish to work connected to a Chado database in Artemis or ACT. This is installed in exactly the same way.
+
+If you wish to run BamView from the command line instead, then a script is provided within the app package to do this:
+```
+BamView.app/Contents/bamview
+```
 
 ### For Windows
 Copy the artemis-windows-release-{version}.zip file to the directory that you wish to install to and then unzip using an application such as WinZip.
