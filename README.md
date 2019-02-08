@@ -3,6 +3,7 @@ The Artemis Software is a set of software tools for genome browsing and annotati
 
 [![Build Status](https://travis-ci.org/sanger-pathogens/Artemis.svg?branch=master)](https://travis-ci.org/sanger-pathogens/Artemis)  
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-brightgreen.svg)](https://github.com/sanger-pathogens/Artemis/blob/master/LICENSE)  
+[![install with bioconda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg?style=flat-square)](http://bioconda.github.io/recipes/artemis/README.html)   
 [![status](https://img.shields.io/badge/Bioinformatics-10.1093%2Fbioinformatics%2F16.10.944-brightgreen.svg)](https://doi.org/10.1093/bioinformatics/16.10.944)  
 [![status](https://img.shields.io/badge/Bioinformatics-10.1093%2Fbioinformatics%2Fbtr703-brightgreen.svg)](https://doi.org/10.1093/bioinformatics/btr703)   
 [![status](https://img.shields.io/badge/Bioinformatics-10.1093%2Fbioinformatics%2Fbtn529-brightgreen.svg)](https://doi.org/10.1093/bioinformatics/btn529)   
@@ -44,11 +45,11 @@ Java 9+ must be installed. Ideally Java 11.
 
 ## Installation
 
-Please refer to the relevant documentation in the Documentation section below.
+Please refer to the relevant documentation in the [Documentation](#documentation) section below.
 
 ## Usage
 
-Please refer to the relevant documentation in the Documentation section below.
+Please refer to the relevant documentation in the [Documentation](#documentation) section below.
 
 ## Building
 
@@ -64,7 +65,7 @@ mvn validate
 ```
 This is required to install some legacy libraries to the Maven repository and will be phased out in future releases.
 
-And then to build/rebuild the applications :
+And then to build/rebuild the applications:
 ```
 mvn clean package
 ```
