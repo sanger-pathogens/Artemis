@@ -45,11 +45,11 @@ Java 9+ must be installed. Ideally Java 11.
 
 ## Installation
 
-Please refer to the relevant documentation in the Documentation section below.
+Please refer to the relevant documentation in the [Documentation](#documentation) section below.
 
 ## Usage
 
-Please refer to the relevant documentation in the Documentation section below.
+Please refer to the relevant documentation in the [Documentation](#documentation) section below.
 
 ## Building
 
@@ -65,7 +65,7 @@ mvn validate
 ```
 This is required to install some legacy libraries to the Maven repository and will be phased out in future releases.
 
-And then to build/rebuild the applications :
+And then to build/rebuild the applications:
 ```
 mvn clean package
 ```
