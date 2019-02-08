@@ -54,4 +54,6 @@ The Wellcome Genome Campus currently offers online Bacterial Genome Artemis & AC
 * [Bacterial Genomes: From DNA to Protein Function Using Bioinformatics](https://www.futurelearn.com/courses/bacterial-genomes-bioinformatics)
 * [Bacterial Genomes: Accessing and Analysing Microbial Genome Data](https://www.futurelearn.com/courses/bacterial-genomes-access-and-analysis)
 
+A [Bacterial Genomics Introductory Course](https://www.futurelearn.com/courses/introduction-to-bacterial-genomics) is also available.
+
 A complete list of courses can be found on the [Wellcome Genome Campus advanced courses web site](https://coursesandconferences.wellcomegenomecampus.org/event-type/courses/).
