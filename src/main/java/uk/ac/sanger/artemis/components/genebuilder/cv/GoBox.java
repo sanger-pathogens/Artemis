@@ -4,7 +4,7 @@
  *
  * This file is part of Artemis
  *
- * Copyright (C) 2007  Genome Research Limited
+ * Copyright (C) 2019  Genome Research Limited
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,7 +21,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  **/
-
 package uk.ac.sanger.artemis.components.genebuilder.cv;
 
 import java.awt.Color;
@@ -51,6 +50,11 @@ import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.util.StringVector;
 
+/**
+ * 
+ * Widget for adding/editing/deleting gene GO terms.
+ * 
+ */
 public class GoBox extends AbstractCvBox
 {
   public static String[][] evidenceCodes = 
@@ -115,15 +119,34 @@ public class GoBox extends AbstractCvBox
         "Not Recorded"}
   };
   
+  /** 
+   * Default option for the source combo (index 0). 
+   * Unfortunately, we have to make this a space else it won't display
+   */
+  public static final String SOURCE_DEFAULT_OPTION = " ";
+  
+  /** 
+   * List of source databases obtained from application properties, 
+   * e.g. GeneDB.<br/>
+   * This list is not generated from the Chado db table as it would need significant 
+   * filtering to be usable.
+   */
+  public static final StringVector sources = generateSourcesList();
+  
   private Dimension go_dimension;
   private static Dimension evidenceListDimension;
+  private static Dimension sourceListDimension;
   
   private Box xBox;
+  
+  /** The index of this GO Box row within the "table". */
   private int value_index;
+  
   private JTextField withTextField;
   private JTextField dbxrefTextField;
   private JExtendedComboBox evidenceList;
   private JTextField qualfTextField;
+  private JExtendedComboBox sourceList;
   private DatePanel dateField;
   private String origQualifierString;
   private Qualifier origQualifier;
@@ -136,11 +159,19 @@ public class GoBox extends AbstractCvBox
   
   private static String AMIGOURL;
   
+  /**
+   * Constructor
+   * @param qualifier Qualifier
+   * @param qualifierString Qualifier
+   * @param value_index int
+   * @param go_dimension Dimension
+   * @param dimension Dimension
+   */
   protected GoBox(final Qualifier qualifier,
                   final String qualifierString,
                   final int value_index,
                   Dimension go_dimension, final Dimension dimension)
-  {
+  {	  
     this.origQualifier = qualifier;
     this.origQualifierString = qualifierString;
     this.go_dimension = go_dimension;
@@ -149,7 +180,7 @@ public class GoBox extends AbstractCvBox
     
     String goId = getField("GOid=", qualifierString);
     final String term = getField("term=", qualifierString);
-    CvTerm cvTerm = getGOCvTerm(term);
+    CvTerm cvTerm = getGOCvTermFromChado(term);
     
     final JLabel goTermField = new JLabel(goId);
     addGoLabelLiteners(goTermField);
@@ -243,6 +274,34 @@ public class GoBox extends AbstractCvBox
     qualfTextField.setActionCommand("qualifier=");
     xBox.add(qualfTextField);
     
+    // ========================================
+    // Source combo - RT ticket 621414
+    // ========================================
+    
+    // Get source database name from the qualifier string
+    String source = getField(ASSIGNEDBY_QUALIFIER, qualifierString);
+    
+    sourceList = new JExtendedComboBox(sources);
+    sourceList.setOpaque(false);
+    sourceList.setToolTipText("source column");
+    
+    if ("".equals(source) || getSourceIndex(source) == -1)
+    {
+      // Default option
+      sourceList.setSelectedIndex(0);
+    }
+    else
+    {
+      sourceList.setSelectedIndex( getSourceIndex(source) );
+    }
+    
+    sourceListDimension = sourceList.getPreferredSize();
+    sourceListDimension = new Dimension(90,(int)sourceListDimension.getHeight());
+    sourceList.setPreferredSize(sourceListDimension);
+    sourceList.setMaximumSize(sourceListDimension);
+    sourceList.setActionCommand(ASSIGNEDBY_QUALIFIER);
+    xBox.add(sourceList);
+    
     dateField = new DatePanel( getField("date=", qualifierString), 
                                         dimension.height); 
     xBox.add(dateField);
@@ -273,8 +332,18 @@ public class GoBox extends AbstractCvBox
   }
   
   /**
+   * A Non-static version of getGOCvTerm.
+   * @param term String
+   * @return CvTerm
+   */
+  public CvTerm getGOCvTermFromChado(String term)
+  {
+	  return getGOCvTerm(term);
+  }
+  
+  /**
    * Add GO listeners for opening Amigo.
-   * @param goTermField
+   * @param goTermField JLabel
    */
   private void addGoLabelLiteners(final JLabel goTermField)
   {
@@ -329,6 +398,12 @@ public class GoBox extends AbstractCvBox
     }
   }
   
+  /**
+   * Determine the integer index of a given item, in the 
+   * evidence list.
+   * @param source String
+   * @return int
+   */
   protected static int getEvidenceIndex(String evidence)
   {
     for(int i=0; i<evidenceCodes[2].length; i++)
@@ -341,73 +416,101 @@ public class GoBox extends AbstractCvBox
     return -1;
   }
   
-  protected Dimension getGoDimension()
+  /**
+   * Determine the integer index of a given item, in the 
+   * sources list.
+   * @param source String
+   * @return int
+   */
+  protected static int getSourceIndex(final String source) 
   {
-    return go_dimension;
-  }
-  
-  protected Box getBox()
-  {
-    return xBox;
+	final int numSources = sources.size();
+	for(int i = 0; i < numSources; i++)
+	{
+	  // look for full text in the list of sources
+	  if(sources.elementAt(i).equalsIgnoreCase(source))
+	    return i;
+	}
+	
+	return -1;
   }
 
+  /**
+   * Determine if the user has changed any of the GO fields.
+   * @return boolean
+   */
   protected boolean isQualifierChanged()
   {
-    String old = getField("with=", origQualifierString);
-    if(!old.equals(withTextField.getText().trim()))
+    final String origQual = getOrigQualifierString();
+    
+    String old = getField("with=", origQual);
+    if(!old.equals(getWithTextFieldValue()))
       return true;
     
-    old = getField("db_xref=", origQualifierString);
-    if(!old.equals(dbxrefTextField.getText().trim()))
+    old = getField("db_xref=", origQual);
+    if(!old.equals(getDbxrefTextFieldValue()))
       return true;
     
-    old = getField("evidence=", origQualifierString);
-    
-    if(evidenceList.getSelectedIndex() > -1 &&
-       !old.equalsIgnoreCase(evidenceCodes[2][ evidenceList.getSelectedIndex() ]))
+    old = getField("evidence=", origQual);
+    if(getEvidenceListSelectedIndex() > -1 &&
+       !old.equalsIgnoreCase(evidenceCodes[2][ getEvidenceListSelectedIndex() ]))
       return true;
     
-    old = getField("qualifier=", origQualifierString);
-    if(!old.equals(qualfTextField.getText()))
+    old = getField("qualifier=", origQual);
+    if(!old.equals(getQualifierTextFieldValue()))
       return true;
     
-    old = getField("date=", origQualifierString);
-    if(!old.equals(dateField.getText()))
+    old = getField(ASSIGNEDBY_QUALIFIER, origQual);
+    if(getSourceListSelectedIndex() > -1 &&
+    	!old.equalsIgnoreCase(getSourceListSelectedValue()) )
+      return true;
+    
+    old = getField("date=", origQual);
+    if(!old.equals(getDateFieldValue()))
       return true;
     
     return false;
   }
   
-  protected int getValueIndex()
-  {
-    return value_index;  
-  }
-  
   /**
    * Update the qualifier from the GO form.
+   * @param  qv QualifierVector
    */
   protected void updateQualifier(final QualifierVector qv)
   {
-    int index = qv.indexOfQualifierWithName(origQualifier.getName());
+	int index = qv.indexOfQualifierWithName(origQualifier.getName());
     Qualifier oldQualifier = qv.getQualifierByName(origQualifier.getName());
+    final String origQualifierString = getOrigQualifierString();
     
     final String goId = getField("GOid=", origQualifierString);
     
+    // Get the old GO rows
     StringVector oldValues = oldQualifier.getValues();
     Vector<Integer> values_index = new Vector<Integer>();
+    
+    // Find only the "old" GO term rows that match our goId
+    // and add their indexes to the values_index list.
     for(int i=0; i<oldValues.size(); i++)
     {
       String oldValue = oldValues.get(i);
       String newGoId = getField("GOid=", oldValue);
       if(newGoId.equals(goId))
-        values_index.add(new Integer(i));
+      {
+    	// We have a match, add to our list
+        values_index.add(Integer.valueOf(i));
+      }
     }
   
     if(values_index.size() > 0)
     { 
+      // We are here, because there were some "old" GO rows
+      // that matched the GO id of this term.
+    	
+      // Get the GO id at this term's current index from the "old" terms list
       String oldValue = oldValues.get(value_index);
       String oldGoId  = getField("GOid=", oldValue);
       
+      // Really not sure what the point of this code block is....
       if(!goId.equals(oldGoId))
       {
         if(values_index.size() == 1)
@@ -417,6 +520,7 @@ public class GoBox extends AbstractCvBox
           final String with = getField("with=", origQualifierString);
           final String evidence = getField("evidence=", origQualifierString);
           final String dbxref = getField("dbxref=", origQualifierString);
+          final String source = getField(ASSIGNEDBY_QUALIFIER, origQualifierString);
           for(int i=0; i<values_index.size(); i++)
           {
             int ind = values_index.get(i).intValue();
@@ -440,6 +544,10 @@ public class GoBox extends AbstractCvBox
             String thisEvidence = getField("evidence=", value);
             if(thisEvidence.equals(evidence))
               break;
+            
+            String thisSource = getField(ASSIGNEDBY_QUALIFIER, value);
+            if(thisSource.equals(source))
+              break;
           }
         }
       }
@@ -460,37 +568,53 @@ public class GoBox extends AbstractCvBox
     qv.add(index, origQualifier);
   }
   
-  private String updateQualifierString()
+  /**
+   * Update the qualifier string with any new values
+   * from the GUI fields.
+   * @return String - new qualifier string
+   */
+  protected String updateQualifierString()
   {
-    String newQualifierString = origQualifierString;
+    String newQualifierString = getOrigQualifierString();
+    final String origQual = newQualifierString;
     
-    String old = getField("with=", origQualifierString);
-    if(!old.equals(withTextField.getText().trim()))
-      newQualifierString = changeField("with=", withTextField.getText().trim(), 
+    String old = getField("with=", origQual);
+    if(!old.equals(getWithTextFieldValue()))
+      newQualifierString = changeField("with=", getWithTextFieldValue(), 
                                        newQualifierString);
     
-    old = getField("db_xref=", origQualifierString);
-    if(!old.equals(dbxrefTextField.getText().trim()))
-      newQualifierString = changeField("db_xref=", dbxrefTextField.getText().trim(), 
+    old = getField("db_xref=", origQual);
+    if(!old.equals(getDbxrefTextFieldValue()))
+      newQualifierString = changeField("db_xref=", getDbxrefTextFieldValue(), 
                                        newQualifierString);
     
-    old = getField("evidence=", origQualifierString);
-    if(!old.equals(evidenceCodes[2][ evidenceList.getSelectedIndex() ]))
-      newQualifierString = changeField("evidence=", evidenceCodes[2][ evidenceList.getSelectedIndex() ], 
+    old = getField("evidence=", origQual);
+    if(!old.equals(evidenceCodes[2][ getEvidenceListSelectedIndex() ]))
+      newQualifierString = changeField("evidence=", evidenceCodes[2][ getEvidenceListSelectedIndex() ], 
                                        newQualifierString);
     
-    old = getField("qualifier=", origQualifierString);
-    if(!old.equals(qualfTextField.getText()))
-      newQualifierString = changeField("qualifier=", qualfTextField.getText().trim(), 
+    old = getField("qualifier=", origQual);
+    if(!old.equals(getQualifierTextFieldValue()))
+      newQualifierString = changeField("qualifier=", getQualifierTextFieldValue(), 
                                        newQualifierString);
     
-    old = getField("date=", origQualifierString);
-    if(!old.equals(dateField.getText()))
-      newQualifierString = changeField("date=", dateField.getText().trim(), 
+    old = getField(ASSIGNEDBY_QUALIFIER, origQual);
+    String newSource = getSourceListSelectedValue();
+    if( !old.equals(newSource) )
+        newQualifierString = changeField(ASSIGNEDBY_QUALIFIER, newSource, 
+                                       newQualifierString);
+    
+    old = getField("date=", origQual);
+    if(!old.equals(getDateFieldValue()))
+      newQualifierString = changeField("date=", getDateFieldValue(), 
                                        newQualifierString);
     return newQualifierString;
   }
 
+  /**
+   * Get the dimension associated with the evidence list combo.
+   * @return Dimension
+   */
   protected static Dimension getEvidenceListDimension()
   {
     if(evidenceListDimension == null)
@@ -503,12 +627,27 @@ public class GoBox extends AbstractCvBox
   }
   
   /**
+   * Get the dimension associated with the source list combo.
+   * @return Dimension
+   */
+  protected static Dimension getSourceListDimension()
+  {
+    if(sourceListDimension == null)
+    {
+      JExtendedComboBox sourceList = new JExtendedComboBox(sources);
+      sourceListDimension = sourceList.getPreferredSize();
+      sourceListDimension = new Dimension(80,(int)sourceListDimension.getHeight());
+    }
+    return sourceListDimension;
+  }
+  
+  /**
    * Given the string:
    * aspect=F;GOid=GO:0003674;term=molecular_function;evidence=No biological Data available
    * return the string:
    * aspect=F;GOid=GO:0003674;term=molecular_function;evidence=ND
    * @param goText
-   * @return
+   * @return String
    */
   public static String getEvidenceCodeGoTextFromText(String goText)
   {
@@ -527,5 +666,136 @@ public class GoBox extends AbstractCvBox
     if(!oldEvidence.equals(newEvidence))
       goText = goText.replaceAll(oldEvidence, newEvidence);
     return goText;
+  }
+  
+  /**
+   * Initialise the static list of sources.
+   * A "source" corresponds to the "assigned by" field
+   * in a GAF file.
+   * 
+   * @return StringVector of sources
+   */
+  public static StringVector generateSourcesList()
+  {
+	  // Get list of sources from system properties...
+	  StringVector sourcesList = Options.getOptions().getOptionValues("GO_evidence_sources"); 
+	  if (sourcesList == null)
+	  {
+	    	// Just create an empty list
+		  sourcesList = new StringVector();
+	  }
+	  
+	  // Add blank default element to the start of the sources list
+	  sourcesList.insertElementAt(SOURCE_DEFAULT_OPTION, 0);
+	  
+	  return sourcesList;
+  }
+  
+  // ========================================================
+  // Basic getters and setters
+  // ========================================================
+  
+  /**
+   * Get the GO box dimension object
+   * @return Dimension
+   */
+  protected Dimension getGoDimension()
+  {
+    return go_dimension;
+  }
+  
+  /** 
+   * Get the GoBox window widget.
+   * @return Box
+   */
+  protected Box getBox()
+  {
+    return xBox;
+  }
+  
+  /**
+   * Get the value index
+   * @return int
+   */
+  protected int getValueIndex()
+  {
+    return value_index;  
+  }
+  
+  /**
+   * Getter method for the origQualifierString property.
+   * @return String
+   */
+  public String getOrigQualifierString()
+  {
+	  return origQualifierString;
+  }
+  
+  /**
+   * Return the trimmed contents of the "With" text field.
+   * @return String
+   */
+  public String getWithTextFieldValue()
+  {
+	  return withTextField.getText().trim();
+  }
+  
+  /**
+   * Return the trimmed contents of the "Dbxref" text field.
+   * @return String
+   */
+  public String getDbxrefTextFieldValue()
+  {
+	  return dbxrefTextField.getText().trim();
+  }
+  
+  /**
+   * Return the integer index of the currently selected 
+   * Evidence combo item.
+   * @return int
+   */
+  public int getEvidenceListSelectedIndex()
+  {
+	  return evidenceList.getSelectedIndex();
+  }
+  
+  /**
+   * Return the trimmed contents of the "Qualifier" text field.
+   * @return String
+   */
+  public String getQualifierTextFieldValue()
+  {
+	  return qualfTextField.getText().trim();
+  }
+  
+  /**
+   * Return the integer index of the currently selected 
+   * Source combo item.
+   * @return int
+   */
+  public int getSourceListSelectedIndex()
+  {
+	  return sourceList.getSelectedIndex();
+  }
+  
+  /**
+   * Return the value of the currently selected 
+   * Source combo item.
+   * Obviously, if you call this method with nothing selected
+   * you'll get an ArrayIndexOutOfBoundsException.
+   * @return String
+   */
+  public String getSourceListSelectedValue()
+  {
+	  return sources.elementAt(getSourceListSelectedIndex()).trim();
+  }
+  
+  /**
+   * Return the trimmed contents of the "Date" text field.
+   * @return String
+   */
+  public String getDateFieldValue()
+  {
+	  return dateField.getText().trim();
   }
 }
