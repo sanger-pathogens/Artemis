@@ -31,7 +31,9 @@ The latest release of Artemis can be downloaded by clicking on the relevant link
 
 Or via [Bioconda](https://bioconda.github.io). Simply use:
 ```
-conda install artemis -c bioconda
+conda config --add channels bioconda     (to add the bioconda channel)
+conda config --add channels conda-forge  (to add the conda-forge channel)
+conda install artemis
 ```
 from the command line, and you're ready to go (no Java installation required).
 
