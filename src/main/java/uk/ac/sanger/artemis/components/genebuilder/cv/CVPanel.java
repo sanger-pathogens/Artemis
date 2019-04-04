@@ -233,6 +233,11 @@ public class CVPanel extends JPanel
         final JLabel qualLabel = new JLabel("Qualifier");
         qualLabel.setPreferredSize(dimension);
         goHeadings.add(qualLabel);
+        
+        final JLabel sourceLabel = new JLabel("Source");
+        sourceLabel.setPreferredSize(GoBox.getSourceListDimension());
+        goHeadings.add(sourceLabel);
+        
         goHeadings.add(new JLabel("Date"));
         
         goHeadings.add(Box.createHorizontalGlue());

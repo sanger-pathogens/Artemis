@@ -35,6 +35,8 @@ import uk.ac.sanger.artemis.io.QualifierVector;
  */
 abstract class AbstractCvBox
 {
+  /** Key [cvtermprop] name for the GAF "assigned by" field. */
+  public static final String ASSIGNEDBY_QUALIFIER = "assigned_by=";
 
   /**
    * Strip out the value of a field of interest from a qualifier string
