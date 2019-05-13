@@ -4,7 +4,7 @@
  *
  * This file is part of Artemis
  * 
- * Copyright (C) 1998,1999,2000  Genome Research Limited
+ * Copyright (C) 2019  Genome Research Limited
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,8 +19,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/FeatureTable.java,v 1.2 2009-06-01 09:45:32 tjc Exp $
+ * 
  */
 
 package uk.ac.sanger.artemis.io;
@@ -29,7 +28,6 @@ package uk.ac.sanger.artemis.io;
  *  This object contains all the features in an entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureTable.java,v 1.2 2009-06-01 09:45:32 tjc Exp $
  */
 
 abstract class FeatureTable extends LineGroup {
@@ -51,7 +49,7 @@ abstract class FeatureTable extends LineGroup {
   }
 
   /**
-   *  Return a count of the number of Feature obejcts in this FeatureTable.
+   *  Return a count of the number of Feature objects in this FeatureTable.
    **/
   int getFeatureCount () {
     return getFeatures ().size ();
