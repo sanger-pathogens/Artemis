@@ -30,8 +30,8 @@ public class WriteVariantSitesTest
   public void testSNPSites()
   {
     // load VCF
-    final URL ref = WriteVCFTest.class.getResource("/data/test.embl.gz");
-    final URL vcf = WriteVCFTest.class.getResource("/data/test1.vcf.gz");
+    final URL ref = WriteVCFTest.class.getResource("/data/embl/test.embl.gz");
+    final URL vcf = WriteVCFTest.class.getResource("/data/vcf/test1.vcf.gz");
     VCFview vcfView = getVcfView(ref, vcf);
     
     StringWriter sw = new StringWriter();
@@ -59,8 +59,8 @@ public class WriteVariantSitesTest
   public void testInsertionSites()
   {
     // load VCF
-    final URL ref = WriteVCFTest.class.getResource("/data/test.embl.gz");
-    final URL vcf = WriteVCFTest.class.getResource("/data/test2.vcf.gz");
+    final URL ref = WriteVCFTest.class.getResource("/data/embl/test.embl.gz");
+    final URL vcf = WriteVCFTest.class.getResource("/data/vcf/test2.vcf.gz");
     VCFview vcfView = getVcfView(ref, vcf);
     
     StringWriter sw = new StringWriter();
@@ -88,8 +88,8 @@ public class WriteVariantSitesTest
   public void testMultiAlleleSites()
   {
     // load VCF
-    final URL ref = WriteVCFTest.class.getResource("/data/test.embl.gz");
-    final URL vcf = WriteVCFTest.class.getResource("/data/test3.vcf.gz");
+    final URL ref = WriteVCFTest.class.getResource("/data/embl/test.embl.gz");
+    final URL vcf = WriteVCFTest.class.getResource("/data/vcf/test3.vcf.gz");
     VCFview vcfView = getVcfView(ref, vcf);
     
     StringWriter sw = new StringWriter();
@@ -118,8 +118,8 @@ public class WriteVariantSitesTest
   public void testDeletionSites()
   {
     // load VCF
-    final URL ref = WriteVCFTest.class.getResource("/data/test.embl.gz");
-    final URL vcf = WriteVCFTest.class.getResource("/data/test4.vcf.gz");
+    final URL ref = WriteVCFTest.class.getResource("/data/embl/test.embl.gz");
+    final URL vcf = WriteVCFTest.class.getResource("/data/vcf/test4.vcf.gz");
     VCFview vcfView = getVcfView(ref, vcf);
     
     StringWriter sw = new StringWriter();
@@ -153,8 +153,8 @@ public class WriteVariantSitesTest
         ref.getFile(), null, null);
     
     // load BCF
-/*    ref = WriteVCFTest.class.getResource("/data/MAL1.embl.gz");
-    vcf = WriteVCFTest.class.getResource("/data/MAL1_8_16_24h.raw.bcf");
+/*    ref = WriteVCFTest.class.getResource("/data/embl/MAL1.embl.gz");
+    vcf = WriteVCFTest.class.getResource("/data/vcf/MAL1_8_16_24h.raw.bcf");
     
     List<String> bcfFileList = new Vector<String>();
     bcfFileList.add(vcf.getFile());

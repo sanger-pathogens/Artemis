@@ -37,7 +37,7 @@ public class EvidenceViewerTest
 	    
 	    // Given
 	    
-	    final EntryGroup egrp = Utils.getEntryGroup("/data/Pf3D7_01_02_v3.gff.gz");
+	    final EntryGroup egrp = Utils.getEntryGroup("/data/gff/Pf3D7_01_02_v3.gff.gz");
 
 	    FeatureVector features = egrp.getAllFeatures();
 	    

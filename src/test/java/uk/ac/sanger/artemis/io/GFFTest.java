@@ -21,19 +21,16 @@
 package uk.ac.sanger.artemis.io;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.junit.Assert.assertEquals;
-import junit.framework.Assert;
 
 import org.junit.Test;
 
 import uk.ac.sanger.artemis.EntryGroup;
-import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.SimpleEntryGroup;
-import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 
 import uk.ac.sanger.artemis.sequence.NoSequenceException;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
-import uk.ac.sanger.artemis.util.StringVector;
 
 public class GFFTest
 {
@@ -46,7 +43,7 @@ public class GFFTest
   {
     try
     {
-      final Entry entry = Utils.getEntry("/data/test_boundary.gff.gz");
+      final Entry entry = Utils.getEntry("/data/gff/test_boundary.gff.gz");
       Feature f = Utils.getCDSFeatureByIdPrefix("PF3D7_0200200.1", entry.getAllFeatures());
       Location oldLocation = f.getLocation();
       Location newLocation = new Location("join(25234..29035,29837..31168)");
@@ -59,7 +56,7 @@ public class GFFTest
     }
     catch (Exception e)
     {
-      Assert.fail(e.getMessage());
+      fail(e.getMessage());
     }
   }
   
@@ -72,7 +69,7 @@ public class GFFTest
   {
     try
     {
-      final Entry entry = Utils.getEntry("/data/Pf3D7_01_02_v3.gff.gz");
+      final Entry entry = Utils.getEntry("/data/gff/Pf3D7_01_02_v3.gff.gz");
       final EntryGroup egrp = new SimpleEntryGroup();
       egrp.add(new uk.ac.sanger.artemis.Entry(entry));
       final uk.ac.sanger.artemis.FeatureVector features = egrp.getAllFeatures();
@@ -104,7 +101,7 @@ public class GFFTest
         }
         catch(InvalidRelationException e)
         {
-          Assert.fail(e.getMessage());
+          fail(e.getMessage());
         }
       }
       
@@ -112,11 +109,11 @@ public class GFFTest
     }
     catch (OutOfRangeException e)
     {
-      Assert.fail(e.getMessage());
+      fail(e.getMessage());
     }
     catch (NoSequenceException e)
     {
-      Assert.fail(e.getMessage());
+      fail(e.getMessage());
     }
   }
 }

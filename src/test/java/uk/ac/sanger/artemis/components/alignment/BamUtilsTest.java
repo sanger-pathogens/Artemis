@@ -125,14 +125,14 @@ public class BamUtilsTest {
 		fileBai.deleteOnExit();
 		assertTrue(fileBai.exists());
 		assertTrue(fileBai.length()==0);
-		BamUtils.createIndexFileFromScratch(this.getClass().getResource("/data/MAL_8h.bam").getPath(), fileBai);
+		BamUtils.createIndexFileFromScratch(this.getClass().getResource("/data/alignment/MAL_8h.bam").getPath(), fileBai);
 		assertTrue(fileBai.length()>0);
 		
 		File fileCrai = File.createTempFile("unit_test_bam_index_file1", ".crai");
 		fileCrai.deleteOnExit();
 		assertTrue(fileCrai.exists());
 		assertTrue(fileCrai.length()==0);
-		BamUtils.createIndexFileFromScratch(this.getClass().getResource("/data/NV.cram").getPath(), fileCrai);
+		BamUtils.createIndexFileFromScratch(this.getClass().getResource("/data/alignment/NV.cram").getPath(), fileCrai);
 		assertTrue(fileCrai.length()>0);
 	}
 	
@@ -180,7 +180,7 @@ public class BamUtilsTest {
 		
 		// Check getting an already existing BAM index file
 		//
-		File alreadyExistingBamIndexFile = BamUtils.getIndexFile(this.getClass().getResource("/data/MAL_8h.bam").getPath());
+		File alreadyExistingBamIndexFile = BamUtils.getIndexFile(this.getClass().getResource("/data/alignment/MAL_8h.bam").getPath());
 		assertNotNull(alreadyExistingBamIndexFile);
 		assertTrue(alreadyExistingBamIndexFile.exists());
 		assertEquals("MAL_8h.bam.bai", alreadyExistingBamIndexFile.getName());
@@ -196,7 +196,7 @@ public class BamUtilsTest {
 		}
 		try 
 		{
-			File createdBamIndexFile = BamUtils.getIndexFile(this.getClass().getResource("/data/MAL_8h_noindex.bam").getPath());
+			File createdBamIndexFile = BamUtils.getIndexFile(this.getClass().getResource("/data/alignment/MAL_8h_noindex.bam").getPath());
 			assertNotNull(createdBamIndexFile);
 			assertTrue(createdBamIndexFile.exists());
 			assertEquals("MAL_8h_noindex.bam.bai", createdBamIndexFile.getName());
@@ -214,7 +214,7 @@ public class BamUtilsTest {
 		// Check getting an index file for a CRAM file with no index.
 		// Should create one.
 		//
-		File createdCramIndexFile = BamUtils.getIndexFile(this.getClass().getResource("/data/NV.cram").getPath());
+		File createdCramIndexFile = BamUtils.getIndexFile(this.getClass().getResource("/data/alignment/NV.cram").getPath());
 		assertNotNull(createdCramIndexFile);
 		assertTrue(createdCramIndexFile.exists());
 		assertEquals("NV.cram.crai", createdCramIndexFile.getName());
@@ -222,7 +222,7 @@ public class BamUtilsTest {
 				
 		// Check getting an already existing CRAM index file
 		//
-		File alreadyExistingCramIndexFile = BamUtils.getIndexFile(this.getClass().getResource("/data/NV.cram").getPath());
+		File alreadyExistingCramIndexFile = BamUtils.getIndexFile(this.getClass().getResource("/data/alignment/NV.cram").getPath());
 		assertNotNull(alreadyExistingCramIndexFile);
 		assertTrue(alreadyExistingCramIndexFile.exists());
 		assertEquals("NV.cram.crai", alreadyExistingCramIndexFile.getName());

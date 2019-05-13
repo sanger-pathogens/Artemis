@@ -123,7 +123,7 @@ public class MappedReadsWithMultipleFilesTest
     
     System.setProperty("bam", buf.toString());
     
-    final EntryGroup egrp = Utils.getEntryGroup("/data/MAL1.embl.gz");
+    final EntryGroup egrp = Utils.getEntryGroup("/data/embl/MAL1.embl.gz");
     ee = new EntryEdit(egrp);
     ee.setVisible(true);
 

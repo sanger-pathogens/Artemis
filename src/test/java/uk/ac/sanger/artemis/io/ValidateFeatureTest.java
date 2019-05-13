@@ -57,7 +57,7 @@ public class ValidateFeatureTest
   @Test
   public void testGFF()
   {
-    testAll(Utils.getEntryGroup("/data/test.gff.gz"));
+    testAll(Utils.getEntryGroup("/data/gff/test.gff.gz"));
   }
   
   public static void testAll(final EntryGroup egrp)
@@ -97,7 +97,7 @@ public class ValidateFeatureTest
   @Test
   public void testGFFBoundary()
   {
-    final Entry entry = Utils.getEntry("/data/test_boundary.gff.gz");
+    final Entry entry = Utils.getEntry("/data/gff/test_boundary.gff.gz");
     final FeatureVector features = entry.getAllFeatures();
 
     for(uk.ac.sanger.artemis.io.Feature f: features)
@@ -120,7 +120,7 @@ public class ValidateFeatureTest
   @Test
   public void testGFFStrand()
   {
-    final Entry entry = Utils.getEntry("/data/test_boundary.gff.gz");
+    final Entry entry = Utils.getEntry("/data/gff/test_boundary.gff.gz");
     final FeatureVector features = entry.getAllFeatures();
 
     for(uk.ac.sanger.artemis.io.Feature f: features)
@@ -143,7 +143,7 @@ public class ValidateFeatureTest
   @Test
   public void testGFFPhase()
   {
-    final Entry entry = Utils.getEntry("/data/test_boundary.gff.gz");
+    final Entry entry = Utils.getEntry("/data/gff/test_boundary.gff.gz");
     final FeatureVector features = entry.getAllFeatures();
 
     for(uk.ac.sanger.artemis.io.Feature f: features)
@@ -166,7 +166,7 @@ public class ValidateFeatureTest
   @Test
   public void testGFFCompleteGeneModel()
   {
-    final Entry entry = Utils.getEntry("/data/test_boundary.gff.gz");
+    final Entry entry = Utils.getEntry("/data/gff/test_boundary.gff.gz");
     final FeatureVector features = entry.getAllFeatures();
 
     for(uk.ac.sanger.artemis.io.Feature f: features)
@@ -195,7 +195,7 @@ public class ValidateFeatureTest
   @Test
   public void testGFFId()
   {
-    final Entry entry = Utils.getEntry("/data/test_boundary.gff.gz");
+    final Entry entry = Utils.getEntry("/data/gff/test_boundary.gff.gz");
     final FeatureVector features = entry.getAllFeatures();
 
     for(uk.ac.sanger.artemis.io.Feature f: features)
@@ -220,7 +220,7 @@ public class ValidateFeatureTest
   @Test
   public void testGFFPartials()
   {
-    final Entry entry = Utils.getEntry("/data/test_boundary.gff.gz");
+    final Entry entry = Utils.getEntry("/data/gff/test_boundary.gff.gz");
     final FeatureVector features = entry.getAllFeatures();
 
     for(uk.ac.sanger.artemis.io.Feature f: features)
@@ -247,7 +247,7 @@ public class ValidateFeatureTest
   @Test
   public void testGFFAttributes()
   {
-    final Entry entry = Utils.getEntry("/data/test_boundary.gff.gz");
+    final Entry entry = Utils.getEntry("/data/gff/test_boundary.gff.gz");
     final FeatureVector features = entry.getAllFeatures();
 
     for(uk.ac.sanger.artemis.io.Feature f: features)
@@ -274,7 +274,7 @@ public class ValidateFeatureTest
   {
     try
     {
-      final Entry entry = Utils.getEntry("/data/test_boundary.gff.gz");
+      final Entry entry = Utils.getEntry("/data/gff/test_boundary.gff.gz");
       final FeatureVector features = entry.getAllFeatures();
       final EntryGroup egrp = new SimpleEntryGroup();
       egrp.add(new uk.ac.sanger.artemis.Entry(entry));
@@ -309,7 +309,7 @@ public class ValidateFeatureTest
   {
     try
     {
-      final Entry entry = Utils.getEntry("/data/test_boundary.gff.gz");
+      final Entry entry = Utils.getEntry("/data/gff/test_boundary.gff.gz");
       final FeatureVector features = entry.getAllFeatures();
       final EntryGroup egrp = new SimpleEntryGroup();
       egrp.add(new uk.ac.sanger.artemis.Entry(entry));

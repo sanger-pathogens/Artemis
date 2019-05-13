@@ -355,7 +355,7 @@ public class FeatureTest
 	public void setup() 
 	{
 		DocumentEntryAutosaveThread.setDisabled(true);
-		egrp = Utils.getEntryGroup("/data/Pf3D7_01_02_v3.gff.gz");
+		egrp = Utils.getEntryGroup("/data/gff/Pf3D7_01_02_v3.gff.gz");
 
 	    features = egrp.getAllFeatures();
 	}
@@ -891,7 +891,7 @@ public class FeatureTest
 	public void testHasRequiredQualifiers() throws Exception
 	{
 		//Feature f = Utils.getFeatureByIdAndKey(POLYPEPTIDE_FEATURE_ID, POLYPEPTIDE_ID, features);
-		/*egrp = Utils.getEntryGroup("/data/MAL1.embl.gz");
+		/*egrp = Utils.getEntryGroup("/data/embl/MAL1.embl.gz");
 	    features = egrp.getAllFeatures();
 	    
 		Feature f = Utils.getFeatureByIdAndKey("PFA0410w", CDS_FEATURE_ID, features);
