@@ -83,6 +83,8 @@ while test $# != 0
        FLAGS="$FLAGS $1" ;;
     -help)
        HELP_FLAG=true ;;
+    -h)
+       HELP_FLAG=true ;;
     *) break ;;
     esac
     shift
