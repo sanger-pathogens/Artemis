@@ -335,6 +335,12 @@ public class TabixReader extends AbstractVCFReader
 	};
 
 	public Iterator query(final int tid, final int beg, final int end) {
+		
+        if (tid == -1)
+        {
+        	throw new NoFeaturesException("The current contig has no features [missing index entry].");
+        }
+        
 		TPair64[] off, chunks;
 		long min_off;
 		TIndex idx = mIndex[tid];

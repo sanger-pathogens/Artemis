@@ -44,6 +44,7 @@ import uk.ac.sanger.artemis.EntryGroup;
 import uk.ac.sanger.artemis.components.FeatureDisplay;
 import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 import uk.ac.sanger.artemis.components.variant.FeatureContigPredicate;
+import uk.ac.sanger.artemis.components.variant.NoFeaturesException;
 import uk.ac.sanger.artemis.components.variant.TabixReader;
 import uk.ac.sanger.artemis.util.CacheHashMap;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
@@ -255,6 +256,10 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
       tabixIterator = reader.query(r);
     }
     catch(NullPointerException npe){}
+    catch (NoFeaturesException e) 
+    {
+  	  // tabixIterator will be null
+    }
      
     if(tabixIterator == null)
       return;
@@ -890,12 +895,21 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
 
     featureCount = 0;
     List<IndexContig> contigs = getListOfContigs();
+    TabixReader.Iterator tabixIterator = null;
     for(IndexContig c: contigs)
     {
       int nfeatures = 0;
       final String r = c.chr+":"+1+"-"+Integer.MAX_VALUE;
 
-      TabixReader.Iterator tabixIterator = reader.query(r);
+      try 
+      {
+    	  tabixIterator = reader.query(r);
+      } 
+      catch (NoFeaturesException e) 
+      {
+    	  // tabixIterator will be null
+      }
+      
       if(tabixIterator == null)
         continue;
 
