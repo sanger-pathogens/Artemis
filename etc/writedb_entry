@@ -12,6 +12,7 @@
 
 QUIET=no
 PROXY_SETTINGS=
+HELP_FLAG=false
 
 add_proxy_properties() {
 
@@ -80,6 +81,8 @@ while test $# != 0
        DEFAULT_CONNECTION="$1" ;;
     -D*)
        FLAGS="$FLAGS $1" ;;
+    -help)
+       HELP_FLAG=true ;;
     *) break ;;
     esac
     shift
@@ -109,7 +112,7 @@ do
 done
 
 # Check that a database connection has been provided
-if [[ "$DEFAULT_CONNECTION" = "" ]]
+if [[ "$DEFAULT_CONNECTION" = "" ]] && [[ "$HELP_FLAG" != "true" ]]
 then 
 	echo "ERROR: Please supply a database connection argument"
 	exit 1
