@@ -47,8 +47,6 @@ public class FastVector extends ArrayList
   {
     if(object == null)
       throw new Error("internal error - adding a null object");
-    else if(contains(object))
-      throw new Error("internal error - object added a second time");
 
     return super.add(object);
   }
