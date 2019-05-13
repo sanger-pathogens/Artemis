@@ -61,6 +61,12 @@ abstract public class DocumentEntryFactory
   final public static int GFF_FORMAT = 3;
 
   public static boolean REMOVE_PRODUCT_FROM_PSEUDOGENE = false;
+  
+  /** 
+   * Boolean indicating whether or not the user should 
+   * be asked if they want to use a GFF index. 
+   */
+  private static boolean displayIndexingQuestionForGffs = true;
 
 
   /**
@@ -77,19 +83,23 @@ abstract public class DocumentEntryFactory
                                                  final ReadListener listener)
       throws IOException, EntryInformationException 
   {
-    if(!System.getProperty("java.version").startsWith("1.5.") &&
-        document.getInputStream() instanceof htsjdk.samtools.util.BlockCompressedInputStream)
+    if(document.getInputStream() instanceof htsjdk.samtools.util.BlockCompressedInputStream)
     {
       if(IndexedGFFDocumentEntry.isIndexed( ((File)document.getLocation()) ))
       {
-        Object[] possibleValues = { "Use index", "Ignore index" };
-        int sel = JOptionPane.showOptionDialog(null, 
-            "Use the GFF index file (to increase the performance)\n"+ 
-            "or concatenate the sequences together?",
-            "Indexed GFF", 
-            JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
-            null, possibleValues, possibleValues[0]);
-
+    	int sel = 0;
+    	
+    	if (getDisplayIndexingQuestionForGffs())
+    	{
+          Object[] possibleValues = { "Use index", "Ignore index" };
+          sel = JOptionPane.showOptionDialog(null, 
+              "Use the GFF index file (to increase the performance)\n"+ 
+              "or concatenate the sequences together?",
+              "Indexed GFF", 
+              JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
+              null, possibleValues, possibleValues[0]);
+    	}
+    	
         if(sel == 0)
           return new IndexedGFFDocumentEntry(document);
       }
@@ -236,5 +246,23 @@ abstract public class DocumentEntryFactory
           f.getQualifiers().remove(q);
       }
     }
+  }
+
+  /**
+   * Get the value of the displayIndexingQuestionForGffs property.
+   * @return boolean
+   */
+  public static boolean getDisplayIndexingQuestionForGffs()
+  {
+	return displayIndexingQuestionForGffs;
+  }
+
+  /**
+   * Set the value of the displayIndexingQuestionForGffs property.
+   * @param displayIndexingQuestionForGffs boolean
+   */
+  public static void setDisplayIndexingQuestionForGffs(boolean displayIndexingQuestionForGffs)
+  {
+	DocumentEntryFactory.displayIndexingQuestionForGffs = displayIndexingQuestionForGffs;
   }
 }
