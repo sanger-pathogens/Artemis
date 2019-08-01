@@ -19,10 +19,11 @@ cache:
   directories:
   - "${HOME}/dependencies"
   - "${HOME}/.m2"
+services:
+  - xvfb
 before_install:
   - "export CASHER_TIME_OUT=300"
   - "export DISPLAY=:99.0"
-  - "sh -e /etc/init.d/xvfb start"
   - "source install_dependencies.sh"
   - mvn validate
 install:
