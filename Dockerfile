@@ -1,24 +1,11 @@
 ##############################################################
 # Experimental Docker file for the Artemis software suite.
+#
+# Please see usage documentation at Docker Hub:
+#
+# https://hub.docker.com/r/sangerpathogens/artemis
+#
 ##############################################################
-
-#
-# INSTRUCTIONS:
-# To start the applications with Docker you will need to run one the following:
-# docker run -e DISPLAY="<your display name>:0" -v <your data folder>:/artemis --user $(id -u):$(id -g) -it --rm artemis art -Djava.io.tmpdir=/artemis -Duser.home=/artemis <Any addional Artemis arguments> 
-# docker run -e DISPLAY="<your display name>:0" -v <your data folder>:/artemis --user $(id -u):$(id -g) -it --rm artemis act -Djava.io.tmpdir=/artemis -Duser.home=/artemis <Any addional Act arguments>
-# docker run -e DISPLAY="<your display name>:0" -v <your data folder>:/artemis --user $(id -u):$(id -g) -it --rm artemis dnaplotter -Djava.io.tmpdir=/artemis -Duser.home=/artemis <Any addional DNAPlotter arguments>
-# docker run -e DISPLAY="<your display name>:0" -v <your data folder>:/artemis --user $(id -u):$(id -g) -it --rm artemis bamview -Djava.io.tmpdir=/artemis -Duser.home=/artemis <Any addional Bamview arguments>
-# Memory allocation can be changed by passing the ARTEMIS_JVM_FLAGS variable, for example: -e ARTEMIS_JVM_FLAGS="-mx1g -ms100m" 
-# 
-# CURRENT LIMITATIONS:
-# 1. Printing does not work
-# 2. FTP download of bam files does not work
-# 
-# WARNINGS:
-# Firefox is invoked for display of some results such as rfam/pfam. The Firefox instance 
-# is not meant for general browsing, only for viewing analysis results. 
-#
 FROM ubuntu:18.04
 
 ENV DEBIAN_FRONTEND=noninteractive
