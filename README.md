@@ -81,7 +81,7 @@ mvn -Dhttps.proxyHost=myproxyhost -Dhttps.proxyPort=myproxyport -DproxySet=true 
 ```
 This will build the application jars and place them in target/jars and win-jars folders. The win-jars jars have the etc folder files bundled in, for Windows.
 
-## Building Release artifacts
+## Building Release Artifacts
 To build .zip or .gz installables with unsigned jars, use the following command:
 ```
 mvn -Djarsigner.skip=true clean package -P release
@@ -156,6 +156,9 @@ Artemis is free software, licensed under [GPLv3](https://github.com/sanger-patho
 For more information on how to download Artemis, please see the [Artemis GitHub page](http://sanger-pathogens.github.io/Artemis/)
 
 ## Documentation
+
+Artemis GitHub pages:
+  http://sanger-pathogens.github.io/Artemis/
 
 The Artemis user manual is at:
   http://sanger-pathogens.github.io/Artemis/Artemis/
