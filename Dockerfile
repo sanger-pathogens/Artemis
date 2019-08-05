@@ -75,4 +75,9 @@ ENV HOME=$ARTEMIS_WORKDIR
 WORKDIR $ARTEMIS_WORKDIR
 
 # Define default command.
-CMD art
+CMD   echo 'Usage:  docker run -d -e DISPLAY="<your display name>:0" -v <your data folder>:/artemis' && \
+      echo '          --user $(id -u):$(id -g) -e ARTEMIS_JVM_FLAGS="-Duser.home=/artemis -Djava.io.tmpdir=/artemis"' && \
+      echo '          -v <your data directory>:/artemis artemis <program name [art|act|bamview|dnaplotter]> [program arguments]' && \
+      echo && \
+      echo 'For help, please go to http://sanger-pathogens.github.io/Artemis/'
+
