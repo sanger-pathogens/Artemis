@@ -9,3 +9,4 @@ maven.properties
 .evosuite
 maven-archiver
 .dribble.*
+.Dockerfile*
