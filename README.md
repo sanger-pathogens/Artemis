@@ -44,7 +44,7 @@ For further information and details on how to download the Artemis software, ple
 
 ## Prerequisites
 
-Java 9+ must be installed. Ideally Java 11 should be used. The easiest way to install is from [AdoptOpenJDK](https://adoptopenjdk.net/releases.html) - just select the OpenJDK 11 and Hotspot options for the relevant platform. A Java installation is not required if installing via Bioconda or Docker.
+Java version 9 or later must be installed. Ideally Java 11 should be used. The easiest way to install a non-commercial open source Java version is from [AdoptOpenJDK](https://adoptopenjdk.net/releases.html) - just select the OpenJDK 11 and Hotspot options for the relevant platform. See the [GitHub pages and manuals](#documentation) for further options. A Java installation is not required if installing via Bioconda or Docker.
 
 ## Installation
 
