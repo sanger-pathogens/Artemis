@@ -31,7 +31,7 @@ from the command line, and you're ready to go (no Java installation required).
 
 For older versions of the software please see the [Artemis FTP site](ftp://ftp.sanger.ac.uk/pub/resources/software/artemis/)
 
-The previous v17.0.1 version of the Artemis software required Java version 1.8 to run. All subsequent versions from v18.0.0 onwards require a minimum of Java 9 and preferably Java 11. This must be installed first. A Java installation is not required for the Bioconda route.
+The old v17.0.1 version of the Artemis software required Java version 1.8 to run. All recent releases from v18.0.0 onwards require a minimum of Java 9 and ideally Java 11. This must be installed first. The easiest way to install a non-commercial open source Java version is from [AdoptOpenJDK](https://adoptopenjdk.net/releases.html) - just select the OpenJDK version and Hotspot options for the relevant platform. See the Artemis user manual for further options. A Java installation is not required for the Bioconda or Docker options.
 
 ## Installation
 ### For UNIX/Linux
