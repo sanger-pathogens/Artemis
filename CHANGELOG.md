@@ -1,14 +1,38 @@
 # Change Log
 
-## [v18.0.2](https://github.com/sanger-pathogens/artemis/tree/v18.0.2) (2019-02-06)
+## [v18.0.3](https://github.com/sanger-pathogens/artemis/tree/v18.0.3) (2019-08-07)
+[Full Changelog](https://github.com/sanger-pathogens/artemis/compare/v18.0.2...v18.0.3)
 
+**Closed issues:**
+
+- Artemis vs. Java [\#293](https://github.com/sanger-pathogens/Artemis/issues/293)
+- For windows Error: A JNI error has occurred, please check your installation and try again [\#292](https://github.com/sanger-pathogens/Artemis/issues/292)
+- Supported JDKs/JREs [\#290](https://github.com/sanger-pathogens/Artemis/issues/290)
+- Cannot install Java 9 on MacOSX [\#288](https://github.com/sanger-pathogens/Artemis/issues/288)
+- unrecognized option [\#287](https://github.com/sanger-pathogens/Artemis/issues/287)
+- no .jar files in Artemis download [\#285](https://github.com/sanger-pathogens/Artemis/issues/285)
+- Problem installing via conda [\#284](https://github.com/sanger-pathogens/Artemis/issues/284)
+- I am trying to open Artemis in windows 10 pro.  The screen is not opening [\#283](https://github.com/sanger-pathogens/Artemis/issues/283)
+
+**Merged pull requests:**
+
+- Add a docker file, build and documentation updates. Fix for issue 293. [\#294](https://github.com/sanger-pathogens/Artemis/pull/294) ([kpepper](https://github.com/kpepper))
+- RT ticket 621414 - addition of source field to Gene Builder GO Term panel [\#289](https://github.com/sanger-pathogens/Artemis/pull/289) ([kpepper](https://github.com/kpepper))
+- Documentation update for bioconda installs [\#286](https://github.com/sanger-pathogens/Artemis/pull/286) ([kpepper](https://github.com/kpepper))
+- Add Bioconda badge [\#282](https://github.com/sanger-pathogens/Artemis/pull/282) ([kpepper](https://github.com/kpepper))
+- Added additional course link [\#281](https://github.com/sanger-pathogens/Artemis/pull/281) ([kpepper](https://github.com/kpepper))
+- Added documentation and courses sections [\#280](https://github.com/sanger-pathogens/Artemis/pull/280) ([kpepper](https://github.com/kpepper))
+- Documentation updates [\#279](https://github.com/sanger-pathogens/Artemis/pull/279) ([kpepper](https://github.com/kpepper))
+
+## [v18.0.2](https://github.com/sanger-pathogens/artemis/tree/v18.0.2) (2019-02-06)
 [Full Changelog](https://github.com/sanger-pathogens/artemis/compare/v18.0.1...v18.0.2)
 
 **Merged pull requests:**
 
-- RT Ticket 648115, input blast file column ordering in Artemis [\#278](https://github.com/sanger-pathogens/Artemis/pull/278) ([kpepper](https://github.com/kpepper))
-- Fix for RT ticket 649125, plot window background menu issue on Windows [\#277](https://github.com/sanger-pathogens/Artemis/pull/277) ([kpepper](https://github.com/kpepper))
+- RT Ticket 648115 blast issue [\#278](https://github.com/sanger-pathogens/Artemis/pull/278) ([kpepper](https://github.com/kpepper))
+- Fix for RT ticket 649125 [\#277](https://github.com/sanger-pathogens/Artemis/pull/277) ([kpepper](https://github.com/kpepper))
 - Added information on installation via Bioconda [\#276](https://github.com/sanger-pathogens/Artemis/pull/276) ([kpepper](https://github.com/kpepper))
+- Updated Artemis release number to v18.0.1 [\#275](https://github.com/sanger-pathogens/Artemis/pull/275) ([kpepper](https://github.com/kpepper))
 
 ## [v18.0.1](https://github.com/sanger-pathogens/artemis/tree/v18.0.1) (2019-01-22)
 [Full Changelog](https://github.com/sanger-pathogens/artemis/compare/v18.0.0...v18.0.1)
