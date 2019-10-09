@@ -194,7 +194,16 @@ public class ValidateFeature
     if(isGFF(f, entryGrp))
     {
       final GFFStreamFeature gffFeature = (GFFStreamFeature)f;
-      report.put("\n"+GeneUtils.getUniqueName(gffFeature)+" ("+fTxt+"):", Level.INFO);
+      
+      try 
+      {
+    	  report.put("\n"+GeneUtils.getUniqueName(gffFeature)+" ("+fTxt+"):", Level.INFO);
+      } 
+      catch (NullPointerException e)
+      {
+    	  // Fix to avoid the whole validation bombing out if an ID is not found
+    	  report.put("\n"+fTxt+"):", Level.INFO);
+      }
       
       if(isPartOfGene(gffFeature))
       {
