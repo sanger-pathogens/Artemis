@@ -85,9 +85,9 @@ public class LineGroupCache
 		{
 			sequence = lineGroup;
 		}
-		else if (lineGroup instanceof GFFMisc && FORWARD_REF_DELIM.equals(((GFFMisc) lineGroup).getLine()))
+		else if (lineGroup instanceof GFFMisc && ((GFFMisc) lineGroup).getLine().startsWith(FORWARD_REF_DELIM))
 		{
-			// Remove these forward ref delimiters as we don't need them.
+			// Remove these GFF delimiters as we don't need them.
 			return;
 		}
 		else
