@@ -2,8 +2,6 @@
 
 # (Note that comment lines start with a hash (#) symbol)
 
-# $Header: //tmp/pathsoft/artemis/etc/options,v 1.73 2009-08-06 16:15:19 tjc Exp $
-
 # This file should contain option settings that look like this:
 #
 # option_name = option_value
@@ -305,11 +303,11 @@ colour_of_GFF = 11
 colour_of_start_codon = 6
 
 # suffixes used on files that contain features - used in file requesters
-feature_file_suffixes = tab embl gbk genbank tab_embl gff feature feat \
+feature_file_suffixes = tab embl gbk genbank tab_embl gff gff3 feature feat \
    art artemis
 
 # suffixes used on files that contain sequence - used in file requesters
-sequence_file_suffixes = embl gbk genbank gff tab_embl seq dna \
+sequence_file_suffixes = embl gbk genbank gff gff3 tab_embl seq dna dat \
    art artemis fa fasta fas gb fna ffn
 
 # the default height for the base plot window
