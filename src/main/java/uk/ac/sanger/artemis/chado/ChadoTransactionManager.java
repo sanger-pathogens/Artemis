@@ -2509,7 +2509,7 @@ public class ChadoTransactionManager
         
         if(cvTerm == null)
         {
-          if(cvName.equals(HISTORY_CV))
+          if(HISTORY_CV.equals(cvName))
           {
             cvTerm = getCvTerm("qualifier", null);
             prop = this_qualifier_part_lowercase;

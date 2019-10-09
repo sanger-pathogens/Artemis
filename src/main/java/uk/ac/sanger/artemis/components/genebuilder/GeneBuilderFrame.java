@@ -259,9 +259,15 @@ public class GeneBuilderFrame extends JFrame
     final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
 
     int height = getPreferredSize().height;
+    // Default size adjustment so all components are visible.
+    int width  = (int)(getPreferredSize().width*1.18);
     if(height > (screen.height*0.9))
     {    
-      setSize(getPreferredSize().width, (int)(screen.height*0.9));
+      setSize(width, (int)(screen.height*0.9));
+    }
+    else
+    {
+      setSize(width, height);
     }
 
     Utilities.centreFrame(this);

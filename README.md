@@ -3,6 +3,8 @@ The Artemis Software is a set of software tools for genome browsing and annotati
 
 [![Build Status](https://travis-ci.org/sanger-pathogens/Artemis.svg?branch=master)](https://travis-ci.org/sanger-pathogens/Artemis)  
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-brightgreen.svg)](https://github.com/sanger-pathogens/Artemis/blob/master/LICENSE)  
+[![install with bioconda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg?style=flat-square)](http://bioconda.github.io/recipes/artemis/README.html)  
+![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/sangerpathogens/artemis)  
 [![status](https://img.shields.io/badge/Bioinformatics-10.1093%2Fbioinformatics%2F16.10.944-brightgreen.svg)](https://doi.org/10.1093/bioinformatics/16.10.944)  
 [![status](https://img.shields.io/badge/Bioinformatics-10.1093%2Fbioinformatics%2Fbtr703-brightgreen.svg)](https://doi.org/10.1093/bioinformatics/btr703)   
 [![status](https://img.shields.io/badge/Bioinformatics-10.1093%2Fbioinformatics%2Fbtn529-brightgreen.svg)](https://doi.org/10.1093/bioinformatics/btn529)   
@@ -10,7 +12,9 @@ The Artemis Software is a set of software tools for genome browsing and annotati
 [![status](https://img.shields.io/badge/Bioinformatics-10.1093%2Fbioinformatics%2Fbti553-brightgreen.svg)](https://doi.org/10.1093/bioinformatics/bti553)   
 [![status](https://img.shields.io/badge/BIB-10.1093%2Fbib%2Fbbr073-brightgreen.svg)](https://doi.org/10.1093/bib/bbr073)   
 [![status](https://img.shields.io/badge/Bioinformatics-10.1093%2Fbioinformatics%2Fbtq010-brightgreen.svg)](https://doi.org/10.1093/bioinformatics/btq010)   
-[![status](https://img.shields.io/badge/Bioinformatics-10.1093%2Fbioinformatics%2Fbtn578-brightgreen.svg)](https://doi.org/10.1093/bioinformatics/btn578)   
+[![status](https://img.shields.io/badge/Bioinformatics-10.1093%2Fbioinformatics%2Fbtn578-brightgreen.svg)](https://doi.org/10.1093/bioinformatics/btn578)  
+
+![GitHub Releases (by Release)](https://img.shields.io/github/downloads/sanger-pathogens/artemis/v18.0.2/total)
 
 ## Contents
   * [Introduction](#introduction)
@@ -40,15 +44,15 @@ For further information and details on how to download the Artemis software, ple
 
 ## Prerequisites
 
-Java 9+ must be installed. Ideally Java 11.
+Java version 9 or later must be installed. Ideally Java 11 should be used. The easiest way to install a non-commercial open source Java version is from [AdoptOpenJDK](https://adoptopenjdk.net/releases.html) - just select the OpenJDK 11 and Hotspot options for the relevant platform. See the [GitHub pages and manuals](#documentation) for further options. A Java installation is not required if installing via Bioconda or Docker.
 
 ## Installation
 
-Please refer to the relevant documentation in the Documentation section below.
+Please refer to the relevant documentation in the [Documentation](#documentation) section below.
 
 ## Usage
 
-Please refer to the relevant documentation in the Documentation section below.
+Please refer to the relevant documentation in the [Documentation](#documentation) section below.
 
 ## Building
 
@@ -64,7 +68,7 @@ mvn validate
 ```
 This is required to install some legacy libraries to the Maven repository and will be phased out in future releases.
 
-And then to build/rebuild the applications :
+And then to build/rebuild the applications:
 ```
 mvn clean package
 ```
@@ -77,7 +81,7 @@ mvn -Dhttps.proxyHost=myproxyhost -Dhttps.proxyPort=myproxyport -DproxySet=true 
 ```
 This will build the application jars and place them in target/jars and win-jars folders. The win-jars jars have the etc folder files bundled in, for Windows.
 
-## Building Release artifacts
+## Building Release Artifacts
 To build .zip or .gz installables with unsigned jars, use the following command:
 ```
 mvn -Djarsigner.skip=true clean package -P release
@@ -152,6 +156,9 @@ Artemis is free software, licensed under [GPLv3](https://github.com/sanger-patho
 For more information on how to download Artemis, please see the [Artemis GitHub page](http://sanger-pathogens.github.io/Artemis/)
 
 ## Documentation
+
+Artemis GitHub pages:
+  http://sanger-pathogens.github.io/Artemis/
 
 The Artemis user manual is at:
   http://sanger-pathogens.github.io/Artemis/Artemis/
