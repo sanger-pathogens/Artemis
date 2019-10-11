@@ -189,6 +189,12 @@ public class SimpleDocumentEntryTest
 	
 	@Mock
 	private FileDocument saveToDoc;
+	@Mock
+	private EntryInformation entryInfo;
+	@Mock
+	private StreamSequence seq;
+	@Mock
+	private FeatureTable ft;
 	
 	@Before
 	public void setUp() throws Exception {
@@ -1204,5 +1210,51 @@ public class SimpleDocumentEntryTest
 		assertEquals( "hit to 200 181..174  score: 15.9  percent id: 100.000  e-value: 3.8", nextFeature.getQualifierByName("note").getValues().elementAt(0) );
 		assertEquals( 174, nextFeature.getFirstBase() );
 		assertEquals( 181, nextFeature.getLastBase() );
+	}
+	
+	/**
+	 * Test the removeFeatureTable method.
+	 */
+	@Test
+	public void testRemoveFeatureTable() 
+	{
+		// Given
+		
+		SimpleDocumentEntry entry = new GFFDocumentEntry(entryInfo);
+		entry.addLineGroup(ft);
+		
+		assertNotNull(entry.getFeatureTable());
+		assertEquals(ft, entry.getFeatureTable());
+		
+		// When
+		
+		entry.removeFeatureTable(ft);
+		
+		// Then
+		
+		assertNull(entry.line_groups.getFeatureTable());
+	}
+	
+	/**
+	 * Test the removeSequence method.
+	 */
+	@Test
+	public void testRemoveSequence() 
+	{
+		// Given
+		
+		SimpleDocumentEntry entry = new GFFDocumentEntry(entryInfo);
+		entry.addLineGroup(seq);
+		
+		assertNotNull(entry.getSequence());
+		assertEquals(seq, entry.getSequence());
+		
+		// When
+		
+		entry.removeSequence(seq);
+		
+		// Then
+		
+		assertNull(entry.line_groups.getSequence());
 	}
 }

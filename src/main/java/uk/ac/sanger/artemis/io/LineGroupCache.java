@@ -3,7 +3,6 @@ package uk.ac.sanger.artemis.io;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -21,9 +20,9 @@ public class LineGroupCache
 	
 	public static final String FORWARD_REF_DELIM = "###";
 	
-	private LinkedHashMap<Long, LineGroup> headers = new LinkedHashMap<Long, LineGroup>();
+	private List<LineGroup> headers = new ArrayList<LineGroup>();
 	
-	private LinkedHashMap<Long, LineGroup> misc = new LinkedHashMap<Long, LineGroup>();
+	private List<LineGroup> misc = new ArrayList<LineGroup>();
 	
 	/**
 	 * The Sequence line group.
@@ -38,9 +37,9 @@ public class LineGroupCache
 	/**
 	 * Determine which internal data structure is associated with the given group.
 	 * @param group LineGroup
-	 * @return LinkedHashMap
+	 * @return List
 	 */
-	protected LinkedHashMap<Long, LineGroup> findRelevantList(LineGroup group)
+	protected List<LineGroup> findRelevantList(LineGroup group)
 	{
 		if (group instanceof FeatureHeader)
 		{
@@ -75,7 +74,7 @@ public class LineGroupCache
 	 * 
 	 * @param lineGroup LineGroup
 	 */
-	public synchronized void add(LineGroup lineGroup)
+	public void add(LineGroup lineGroup)
 	{
 		if (lineGroup instanceof FeatureTable)
 		{
@@ -92,16 +91,16 @@ public class LineGroupCache
 		}
 		else
 		{
-			findRelevantList(lineGroup).put(lineGroup.getUniqueId(), lineGroup);
+			findRelevantList(lineGroup).add(lineGroup);
 		}
 	}
 
 	/**
-	 * Remove the given line group from this cache and return it.
+	 * Remove the given feature table from this cache and return it.
 	 * @param lineGroup LineGroup
 	 * @return LineGroup
 	 */
-	public synchronized LineGroup remove(LineGroup lineGroup)
+	public LineGroup removeFeatureTable(LineGroup lineGroup)
 	{	
 		LineGroup group = null;
 		
@@ -111,14 +110,23 @@ public class LineGroupCache
 			featureTable = null;
 			
 		}
-		else if (lineGroup instanceof Sequence)
+		
+		return group;
+	}
+	
+	/**
+	 * Remove the given sequence from this cache and return it.
+	 * @param lineGroup LineGroup
+	 * @return LineGroup
+	 */
+	public LineGroup removeSequence(LineGroup lineGroup)
+	{	
+		LineGroup group = null;
+		
+		if (lineGroup instanceof Sequence)
 		{
 			group = sequence;
 			sequence = null;
-		}
-		else 
-		{
-			group = findRelevantList(lineGroup).remove(lineGroup.getUniqueId());
 		}
 		
 		return group;
@@ -129,7 +137,7 @@ public class LineGroupCache
      *  added to line_groups in the appropriate place.
      *  @return FeatureTable
      **/
-    public synchronized FeatureTable createFeatureTable() 
+    public FeatureTable createFeatureTable() 
     {
     	featureTable = new StreamFeatureTable();
 
@@ -141,14 +149,14 @@ public class LineGroupCache
      *  header.
      *  @return String
      **/
-    public synchronized String getHeadersAsText() 
+    public String getHeadersAsText() 
     {
       int numLineGroups = headers.size() + misc.size();
       
       List<LineGroup> groups = new ArrayList<LineGroup>(numLineGroups);
       
-      groups.addAll(misc.values());
-      groups.addAll(headers.values());
+      groups.addAll(misc);
+      groups.addAll(headers);
       
       final StringBuilder buffer = 
     		  new StringBuilder( numLineGroups*80 );
@@ -168,12 +176,11 @@ public class LineGroupCache
      * Return a list of all line groups in the cache.
      * @return List
      */
-    public synchronized List<LineGroup> getAllLineGroups()
+    public List<LineGroup> getAllLineGroups()
     {
     	List<LineGroup> allGroups = new ArrayList<LineGroup>();
-    	allGroups.addAll(misc.values());
-    	allGroups.addAll(headers.values());
-    	//allGroups.addAll(features.values());
+    	allGroups.addAll(misc);
+    	allGroups.addAll(headers);
     	
     	if (featureTable != null)
     		allGroups.add(featureTable);
@@ -188,7 +195,7 @@ public class LineGroupCache
     /**
      * Clear all miscellaneous line groups.
      */
-    public synchronized void clearMiscLineGroups()
+    public void clearMiscLineGroups()
     {
     	misc.clear();
     }
@@ -196,7 +203,7 @@ public class LineGroupCache
     /**
      * Clear the cache.
      */
-    public synchronized void clear()
+    public void clear()
     {
     	headers.clear();
     	misc.clear();
@@ -216,15 +223,15 @@ public class LineGroupCache
     	boolean hasSequence = false;
     	boolean hasFeatureTable = false;
     	
-    	for (java.util.Map.Entry<Long, LineGroup> miscGroup : misc.entrySet())
+    	for (LineGroup miscGroup : misc)
     	{
-    		miscGroup.getValue().writeToStream(writer);
+    		miscGroup.writeToStream(writer);
     		++num;
     	}
     	
-    	for (java.util.Map.Entry<Long, LineGroup> headerGroup : headers.entrySet())
+    	for (LineGroup headerGroup : headers)
         {
-        	headerGroup.getValue().writeToStream(writer);
+        	headerGroup.writeToStream(writer);
         	++num;
         }
     	

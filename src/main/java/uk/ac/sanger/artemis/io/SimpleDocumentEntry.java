@@ -662,7 +662,7 @@ abstract public class SimpleDocumentEntry
 
         // get rid of the feature table
         if(feature_table.getFeatureCount() == 0) 
-          removeLineGroup(feature_table);
+          removeFeatureTable(feature_table);
 
         setDirtyFlag();
 
@@ -902,12 +902,22 @@ abstract public class SimpleDocumentEntry
   }
 
   /**
-   *  Remove the given LineGroup from this SimpleDocumentEntry.
+   *  Remove the given feature table LineGroup from this SimpleDocumentEntry.
    **/
-  protected void removeLineGroup(final LineGroup line_group) 
+  protected void removeFeatureTable(final FeatureTable ft) 
   {
-	LineGroup group = line_groups.remove(line_group);
-	if (group != null)
+	if (line_groups.removeFeatureTable(ft) != null)
+	{
+	  setDirtyFlag();	
+	}
+  }
+  
+  /**
+   *  Remove the given sequence LineGroup from this SimpleDocumentEntry.
+   **/
+  protected void removeSequence(final StreamSequence seq) 
+  {
+	if (line_groups.removeSequence(seq) != null)
 	{
 	  setDirtyFlag();	
 	}
@@ -1033,7 +1043,7 @@ abstract public class SimpleDocumentEntry
     final Sequence old_sequence = getSequence();
 
     if(old_sequence != null) 
-      removeLineGroup((StreamSequence) old_sequence);
+      removeSequence((StreamSequence) old_sequence);
 
     addLineGroup(sequence);
   }

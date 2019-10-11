@@ -24,7 +24,6 @@ import static org.junit.Assert.*;
 
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.junit.After;
@@ -142,18 +141,12 @@ public class LineGroupCacheTest
 	{
 		// When
 		
-		LinkedHashMap<Long, LineGroup> result = groups.findRelevantList(hdr1);
+		List<LineGroup> result = groups.findRelevantList(hdr1);
 		
 		// Then
 		
-		assertNotNull( hdr1.getUniqueId() );
-		assertTrue( hdr1.getUniqueId() >= 0 );
 		assertNotNull( result );
 		assertEquals( NUM_EMBL_HDRS_FOR_TESTS, result.size() );
-		assertEquals( hdr1, result.get(hdr1.getUniqueId()) );
-		assertNotNull( hdr2.getUniqueId() );
-		assertTrue( hdr2.getUniqueId() >= 0 );
-		assertEquals( hdr2, result.get(hdr2.getUniqueId()) );
 		
 		// When
 		
@@ -161,8 +154,6 @@ public class LineGroupCacheTest
 		
 		// Then
 		
-		assertNotNull( misc1.getUniqueId() );
-		assertTrue( misc1.getUniqueId() >= 0 );
 		assertNotNull( result );
 		assertEquals( NUM_EMBL_MISC_FEATURES_FOR_TESTS, result.size() );
 		
@@ -227,55 +218,33 @@ public class LineGroupCacheTest
 	}
 	
 	/**
-	 * Test the remove() method.
+	 * Test the testRemoveFeatureTable() method.
 	 * @throws Exception
 	 */
 	@Test
-	public void testRemove() throws Exception
-	{	
+	public void testRemoveFeatureTable() throws Exception
+	{					
 		// When
 		
-		LineGroup removedHdr1 = groups.remove(hdr1);
-		
-		// Then
-		
-		assertNotNull( removedHdr1 );
-		assertEquals( hdr1, removedHdr1 );
-		assertEquals( NUM_EMBL_HDRS_FOR_TESTS-1, groups.findRelevantList(hdr2).size() );
-		
-		// When
-		
-		LineGroup removedHdr2 = groups.remove(hdr2);
-		
-		// Then
-		
-		assertNotNull( removedHdr2 );
-		assertEquals( hdr2, removedHdr2 );
-		assertEquals( NUM_EMBL_HDRS_FOR_TESTS-2, groups.findRelevantList(hdr2).size() );
-				
-		// When
-		
-		LineGroup removedMisc1 = groups.remove(misc1);
-		
-		// Then
-		
-		assertNotNull( removedMisc1 );
-		assertEquals( misc1, removedMisc1 );
-		assertEquals( NUM_EMBL_MISC_FEATURES_FOR_TESTS-1, groups.findRelevantList(misc1).size() );
-				
-		// When
-		
-		LineGroup removedFT = groups.remove(ft);
+		LineGroup removedFT = groups.removeFeatureTable(ft);
 		
 		// Then
 		
 		assertNotNull( removedFT );
 		assertEquals( ft, removedFT );
 		assertNull( groups.getFeatureTable() );
-		
+	}
+	
+	/**
+	 * Test the testRemoveSequence() method.
+	 * @throws Exception
+	 */
+	@Test
+	public void testRemoveSequence() throws Exception
+	{
 		// When
 		
-		LineGroup removedSeq = groups.remove(sequence);
+		LineGroup removedSeq = groups.removeSequence(sequence);
 		
 		// Then
 		
@@ -352,6 +321,9 @@ public class LineGroupCacheTest
 		// Check multiple calls
 		groups.clear();
 		groups.clear();
+		
+		assertNull(groups.getFeatureTable());
+		assertNull(groups.getSequence());
 	}
 	
 	/**

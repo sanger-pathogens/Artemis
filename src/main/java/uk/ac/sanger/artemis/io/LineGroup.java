@@ -156,9 +156,6 @@ public abstract class LineGroup
     genbank_hash.put ("CONTIG","CONTIG");
   }
   
-  /** A unique ID for this line group */
-  private Long uniqueId = LineGroupIdGenerator.createID();
-
   /**
    *  Try to read and return a new LineGroup object from a stream.
    *  @param reader The stream to read from.
@@ -470,14 +467,5 @@ public abstract class LineGroup
    **/
   public abstract void writeToStream (final Writer out_stream)
       throws IOException;
-
-  /**
-   * Return the line group's unique ID.
-   * @return Long
-   */
-  public Long getUniqueId()
-  {
-	return uniqueId;
-  }
 
 }
