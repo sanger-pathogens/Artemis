@@ -80,9 +80,9 @@ public class Strand {
    **/
   public String getStrandBases () {
     if (getDirection () == FORWARD) {
-      return getBases ().toString ();
+      return bases.toString ();
     } else {
-      return Bases.reverseComplement (getBases ().toString ());
+      return Bases.reverseComplement (bases.toString ());
     }
   }
 
@@ -90,7 +90,7 @@ public class Strand {
    *  Return the direction of this strand.
    **/
   public int getDirection () {
-    if (getBases ().getForwardStrand () == this) {
+    if (bases.getForwardStrand () == this) {
       return FORWARD;
     } else {
       return REVERSE;
@@ -112,7 +112,7 @@ public class Strand {
    *  Return the length of this Strand in bases.
    **/
   public int getSequenceLength () {
-    return getBases ().getLength ();
+    return bases.getLength ();
   }
 
   /**
@@ -499,9 +499,7 @@ public class Strand {
    **/
   public Marker makeMarker (int position)
       throws OutOfRangeException {
-    final Marker new_marker = new Marker (this, position);
-
-    return new_marker;
+    return new Marker (this, position);
   }
 
   /**
@@ -514,7 +512,7 @@ public class Strand {
     if (getDirection () == FORWARD) {
       return makeMarker (position);
     } else {
-      return makeMarker (getBases ().getComplementPosition (position));
+      return makeMarker (bases.getComplementPosition (position));
     }
   }
 
@@ -539,9 +537,9 @@ public class Strand {
       return new MarkerRange (this, raw_start_position, raw_end_position);
     } else {
       final int real_start_position =
-        getBases ().getComplementPosition (raw_start_position);
+        bases.getComplementPosition (raw_start_position);
       final int real_end_position =
-        getBases ().getComplementPosition (raw_end_position);
+        bases.getComplementPosition (raw_end_position);
       return new MarkerRange (this, real_start_position, real_end_position);
     }
   }
@@ -550,7 +548,7 @@ public class Strand {
    *  Return the position on the Bases object of the argument base.
    **/
   public int getRawPosition (int strand_position) {
-    return getBases ().getRawPosition (strand_position, getDirection ());
+    return bases.getRawPosition (strand_position, getDirection ());
   }
 
   /**
@@ -596,12 +594,12 @@ public class Strand {
    **/
   public AminoAcidSequence getTranslation(final Range range,
                                           final boolean unknown_is_x) {
-    return getBases ().getTranslation (range, getDirection (), unknown_is_x);
+    return bases.getTranslation (range, getDirection (), unknown_is_x);
   }
 
   public AminoAcidSequence getSpacedTranslation(final Range range,
                                           final boolean unknown_is_x) {
-    return getBases ().getSpacedTranslation (range, getDirection (), unknown_is_x);
+    return bases.getSpacedTranslation (range, getDirection (), unknown_is_x);
   }
 
 
@@ -610,7 +608,7 @@ public class Strand {
    *  @param range The inclusive range of bases to return.
    **/
   public String getSubSequence (Range range) {
-    return getBases ().getSubSequence (range, getDirection ());
+    return bases.getSubSequence (range, getDirection ());
   }
 
   /**
@@ -619,7 +617,7 @@ public class Strand {
    *  @param range The inclusive range of bases to return.
    **/
   public char[] getRawSubSequenceC (Range range) {
-    return getBases ().getSubSequenceC (range, FORWARD);
+    return bases.getSubSequenceC (range, FORWARD);
   }
   
   /**
@@ -629,7 +627,7 @@ public class Strand {
    *  @param range The inclusive range of bases to return.
    **/
   public String getRawSubSequence (Range range) {
-    return getBases ().getSubSequence (range, FORWARD);
+    return bases.getSubSequence (range, FORWARD);
   }
 
   /**
@@ -644,9 +642,9 @@ public class Strand {
    **/
   public int getACount () {
     if (isForwardStrand ()) {
-      return getBases ().getACount ();
+      return bases.getACount ();
     } else {
-      return getBases ().getTCount ();
+      return bases.getTCount ();
     }
   }
 
@@ -655,9 +653,9 @@ public class Strand {
    **/
   public int getTCount () {
     if (isForwardStrand ()) {
-      return getBases ().getTCount ();
+      return bases.getTCount ();
     } else {
-      return getBases ().getACount ();
+      return bases.getACount ();
     }
   }
 
@@ -666,9 +664,9 @@ public class Strand {
    **/
   public int getGCount () {
     if (isForwardStrand ()) {
-      return getBases ().getGCount ();
+      return bases.getGCount ();
     } else {
-      return getBases ().getCCount ();
+      return bases.getCCount ();
     }
   }
 
@@ -677,9 +675,9 @@ public class Strand {
    **/
   public int getCCount () {
     if (isForwardStrand ()) {
-      return getBases ().getCCount ();
+      return bases.getCCount ();
     } else {
-      return getBases ().getGCount ();
+      return bases.getGCount ();
     }
   }
 

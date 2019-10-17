@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>uk.ac.sanger</groupId>
 	<artifactId>artemis</artifactId>
-	<version>18.0.3</version>
+	<version>18.1.0</version>
 	
 	<name>Artemis</name>
 	<description>Artemis is a free genome browser and annotation tool that allows visualisation of sequence features, next generation data and the results of analyses within the context of the sequence, and also its six-frame translation.
