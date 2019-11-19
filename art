@@ -41,7 +41,7 @@ usage () {
     echo "        http://www.sanger.ac.uk/science/tools/artemis"
     echo   
     
-    exit 1
+    exit 0
 }
 
 add_proxy_properties() {
