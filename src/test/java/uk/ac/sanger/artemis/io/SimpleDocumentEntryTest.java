@@ -50,10 +50,6 @@ import uk.ac.sanger.artemis.util.FileDocument;
  * JUnit test suite for the SimpleDocumentEntry class
  * and underlying functionality (more of an integration test really!).
  * 
- * This test module carries out multiple tests in each test method
- * - this is done for efficiency reasons to avoid having to 
- *   repeatedly load test files.
- * 
  * @author kp11
  *
  */
@@ -64,7 +60,7 @@ public class SimpleDocumentEntryTest
 	
 	// Indexed
 	private final String INDEXED_GFF_FILE = "/data/gff/indexed-gff.gff.gz";
-	private final String INDEXED_GFF_FASTA_FILE = "/data/gff/indexed-gff.fa";
+	private final String NON_INDEXED_FASTA_FILE = "/data/fasta/non-indexed-fasta.fa";
 	private final int NUM_INDEXED_GFF_FEATURES = 2238;
 	
 	// Non-indexed
@@ -72,11 +68,12 @@ public class SimpleDocumentEntryTest
 	
 	private final String GFF_OUTPUT_FILE = "out.gff3";
 	private final int NUM_GFF_FEATURES = 1584;
-	private final int GFF_SEQ_LEN = 1587953;
+	private final int GFF_SEQ_LEN = 1588013;
 	private final String GFF_FEATURE_ID_KEY = "ID";
 	
 	private final String GFF_SEQ_START = "tgaaccctaaaacctaaaccctaaaccctaaaccctgaaccctaaaccctgaaccctaaaccctaaaccctgaac";
-	private final String GFF_SEQ_END = "tagggttcagggtttaggtgtcagggttca";
+	private final String GFF_SEQ_END = "ttagggtttagggtttagggttcagggtttagggtttagggtttagggttcagggtttag";
+	private final String NONINDEXED_GFF_SEQ_END = "tagggttcagggtttaggtgtcagggttca";
 			
 	private final String GFF_HDRS = 
 			"##gff-version 3\n" + 
@@ -631,14 +628,14 @@ public class SimpleDocumentEntryTest
 		String seqString = String.valueOf( sequence.getCharSubSequence(1, sequence.length()) );
 		
 		assertTrue(sequence instanceof FastaStreamSequence);
-		assertEquals( GFF_SEQ_LEN, seqString.length() );
+		assertEquals( 1587953, seqString.length() );
 		assertEquals( 639816, sequence.getACount() );
 		assertEquals( 159003, sequence.getCCount() );
 		assertEquals( 159425, sequence.getGCount() );
 		assertEquals( 629709, sequence.getTCount() );
 		
 		assertTrue(seqString.indexOf(GFF_SEQ_START) == 0);
-		assertTrue(seqString.lastIndexOf(GFF_SEQ_END) == (seqString.length()-GFF_SEQ_END.length()));
+		assertTrue(seqString.lastIndexOf(NONINDEXED_GFF_SEQ_END) == (seqString.length()-NONINDEXED_GFF_SEQ_END.length()));
 
 		//printFeatures("testNonIndexedGFF", entry);
 		
@@ -781,10 +778,10 @@ public class SimpleDocumentEntryTest
 		when( saveToDoc.getOutputStream() ).thenReturn (outStream);
 		
 		final Entry entry = loadFile(INDEXED_GFF_FILE);
-		final Entry fastaEntry = loadFile(INDEXED_GFF_FASTA_FILE);
+		final Entry fastaEntry = loadFile(NON_INDEXED_FASTA_FILE);
 		
 		final Bases bases = new Bases(fastaEntry.getSequence());
-		final EntryGroup group = new SimpleEntryGroup(bases);
+		final EntryGroup group = new SimpleEntryGroup();
 		final uk.ac.sanger.artemis.Entry artFastaEntry = new uk.ac.sanger.artemis.Entry(bases, fastaEntry);
 		final uk.ac.sanger.artemis.Entry artGffEntry = new uk.ac.sanger.artemis.Entry(bases, entry);
 		group.add(artFastaEntry);
@@ -824,26 +821,26 @@ public class SimpleDocumentEntryTest
 		nextFeature = artGffEntry.getFeature(idx);
 		assertEquals( "gene", nextFeature.getKey().getKeyString() );
 		assertEquals( "PF3D7_0100200", nextFeature.getQualifierByName(GFF_FEATURE_ID_KEY).getValues().elementAt(0) );
-		assertEquals( 1547747, nextFeature.getFirstBase() );
-		assertEquals( 1548972, nextFeature.getLastBase() );
+		assertEquals( 1547807, nextFeature.getFirstBase() );
+		assertEquals( 1549032, nextFeature.getLastBase() );
 		
 		nextFeature = artGffEntry.getFeature(++idx);
 		assertEquals( "mRNA", nextFeature.getKey().getKeyString() );
 		assertEquals( "PF3D7_0100200.1", nextFeature.getQualifierByName(GFF_FEATURE_ID_KEY).getValues().elementAt(0) );
-		assertEquals( 1547747, nextFeature.getFirstBase() );
-		assertEquals( 1548972, nextFeature.getLastBase() );
+		assertEquals( 1547807, nextFeature.getFirstBase() );
+		assertEquals( 1549032, nextFeature.getLastBase() );
 		
 		nextFeature = artGffEntry.getFeature(++idx);
 		assertEquals( "polypeptide", nextFeature.getKey().getKeyString() );
 		assertEquals( "PF3D7_0100200.1:pep", nextFeature.getQualifierByName(GFF_FEATURE_ID_KEY).getValues().elementAt(0) );
-		assertEquals( 1547747, nextFeature.getFirstBase() );
-		assertEquals( 1548972, nextFeature.getLastBase() );
+		assertEquals( 1547807, nextFeature.getFirstBase() );
+		assertEquals( 1549032, nextFeature.getLastBase() );
 		
 		nextFeature = artGffEntry.getFeature(++idx);
 		assertEquals( "CDS", nextFeature.getKey().getKeyString() );
 		assertEquals( "PF3D7_0100200.1:exon:2", nextFeature.getQualifierByName(GFF_FEATURE_ID_KEY).getValues().elementAt(0) );
-		assertEquals( 1547747, nextFeature.getFirstBase() );
-		assertEquals( 1547800, nextFeature.getLastBase() );
+		assertEquals( 1547807, nextFeature.getFirstBase() );
+		assertEquals( 1547860, nextFeature.getLastBase() );
 		
 		idx = 22;
 		nextFeature = artGffEntry.getFeature(idx);
@@ -937,10 +934,6 @@ public class SimpleDocumentEntryTest
 		final OutputStream outStream = new FileOutputStream(savefile);
 		
 		log("testNonIndexedFastaFile", "Writing to file: " + savefile.getAbsolutePath());
-		
-		// We don't want GUI pop-ups displayed during unit tests...
-		DocumentEntryFactory.setDisplayIndexingQuestionForGffs(false);
-		
 		
 		// When
 		
