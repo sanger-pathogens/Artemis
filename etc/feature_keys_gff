@@ -78,4 +78,5 @@ repeat_unit     	ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontolo
 #stem_loop       	ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id isObsolete timelastmodified allele citation evidence function gene label locus_tag map note comment operon partial standard_name 
 #terminator      	ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id isObsolete timelastmodified allele citation evidence gene label locus_tag map note comment operon partial standard_name 
 #transit_peptide 	ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id isObsolete timelastmodified allele citation codon codon_start evidence function gene label locus_tag map note comment partial product pseudo standard_name
-
+low_complexity_region	ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term Start_range End_range feature_id isObsolete timelastmodified note comment private score
+tandem_repeat 			ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id isObsolete timelastmodified score
