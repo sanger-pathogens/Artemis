@@ -32,7 +32,6 @@ import java.util.*;
  *  object.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureTree.java,v 1.3 2005-11-28 16:46:38 tjc Exp $
  **/
 
 public class FeatureTree extends TreeSet {
@@ -109,19 +108,20 @@ public class FeatureTree extends TreeSet {
                                    final FeatureVector features_in_range,
                                    final Range range,
                                    final int max_feature_length) {
+	
+		
     // find the leftmost node in the range
-    final SortedSet tail_set =
+    final SortedSet<Feature> tail_set =
       findByBase (tree, range.getStart () - max_feature_length);
 
-    final Iterator tail_set_iterator = tail_set.iterator ();
+    final int rangeEnd = range.getEnd ();
 
     // now loop over all the features that could possibly be in the range
     // (ie. those between range.getStart () - max_feature_length and
     // range.getEnd ())
-    while (tail_set_iterator.hasNext ()) {
-      final Feature this_feature = (Feature) tail_set_iterator.next ();
+    for (Feature this_feature : tail_set) {
 
-      if (this_feature.getFirstBase () > range.getEnd ()) {
+      if (this_feature.getFirstBase () > rangeEnd) {
         return;
       }
       
@@ -145,12 +145,17 @@ public class FeatureTree extends TreeSet {
     // this default size will cover many common cases
     final FeatureVector return_features = new FeatureVector();
 
-    for (int i = 0 ;
-         i < rbtree_buckets.size () && rbtree_buckets.elementAt (i) != null ;
-         ++i) {
-      getFeaturesInRange ((TreeSet) rbtree_buckets.elementAt (i),
+    final int numBuckets = rbtree_buckets.size();
+    
+    for (int i = 0; i < numBuckets; ++i) {
+    
+      TreeSet bucket = (TreeSet)rbtree_buckets.elementAt (i);
+    	
+      if (bucket != null && bucket.size() > 0) {
+    	  getFeaturesInRange (bucket,
                           return_features, range,
                           (int) Math.pow (BUCKET_MULTIPLIER, i + 1));
+      }
     }
     
     return return_features;
