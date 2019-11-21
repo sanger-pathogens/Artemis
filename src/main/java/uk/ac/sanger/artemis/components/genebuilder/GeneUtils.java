@@ -1,7 +1,7 @@
 /* GeneUtils.java
  *
  * This file is part of Artemis
- * Copyright (C) 2007  Genome Research Limited
+ * Copyright (C) 2019  Genome Research Limited
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -43,6 +43,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import org.apache.log4j.Logger;
 import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.sequence.FeatureCvTerm;
 import org.gmod.schema.sequence.FeatureDbXRef;
@@ -98,6 +99,9 @@ public class GeneUtils
                                 { "tRNA", "rRNA", "snRNA", "snoRNA", "ncRNA", "scRNA" };
   private static StringVector featuresToUpdateResidues = 
     Options.getOptions().getOptionValues("sequence_update_features");
+  
+  /** Logging instance. */
+  private static Logger logger = Logger.getLogger(GeneUtils.class);
   
   static
   {
@@ -1452,6 +1456,16 @@ public class GeneUtils
     catch(InvalidRelationException e)
     {
       e.printStackTrace();
+    }
+    catch(NullPointerException e)
+    {
+      StringBuilder buf = new StringBuilder(80);
+      buf.append("Feature at position ")
+         .append(feature.getFirstBase())
+         .append("-")
+         .append(feature.getLastBase())
+         .append(" has no ID");
+      logger.warn(buf.toString());
     }
     return null;
   }
