@@ -31,6 +31,7 @@ import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
 import uk.ac.sanger.artemis.io.Entry;
 import uk.ac.sanger.artemis.io.DocumentEntryFactory;
 import uk.ac.sanger.artemis.io.GFFDocumentEntry;
+import uk.ac.sanger.artemis.io.IndexedGFFDocumentEntry;
 import uk.ac.sanger.artemis.io.ReadFormatException;
 import uk.ac.sanger.artemis.io.EntryInformation;
 import uk.ac.sanger.artemis.io.EntryInformationException;
@@ -470,7 +471,8 @@ public class EntryFileDialog extends StickyFileChooser
         {
           DocumentEntryFactory.REMOVE_PRODUCT_FROM_PSEUDOGENE = removeProductForPseudo.isSelected();
           if(entry.getEMBLEntry() instanceof DatabaseDocumentEntry ||
-             entry.getEMBLEntry() instanceof GFFDocumentEntry)
+             entry.getEMBLEntry() instanceof GFFDocumentEntry ||
+             entry.getEMBLEntry() instanceof IndexedGFFDocumentEntry)
             ReadAndWriteEntry.writeDatabaseEntryToFile(entry, file, 
                 flattenGeneModel.isSelected(), 
                 ignoreObsoleteFeatures.isSelected(), false, 

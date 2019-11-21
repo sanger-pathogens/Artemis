@@ -450,7 +450,7 @@ public class FeatureList extends EntryGroupPanel
       final Feature clicked_feature =
         getEntryGroup().featureAt(clicked_feature_index);
 
-      if(selected_features.contains(clicked_feature)) 
+      if(clicked_feature != null && selected_features.contains(clicked_feature)) 
       {
         getSelection().remove(clicked_feature);
         getSelection().removeSegmentsOf(clicked_feature);
@@ -527,7 +527,7 @@ public class FeatureList extends EntryGroupPanel
           ++i)
       {
         final Feature this_feature = entry_group.featureAt(i);
-        if(selected_features.contains(this_feature))
+        if(this_feature != null && selected_features.contains(this_feature))
         {
           a_selected_feature_is_visible = true;
           break;
@@ -603,6 +603,7 @@ public class FeatureList extends EntryGroupPanel
       {
         final Feature this_feature  = features_in_view.elementAt(i);
         final String feature_string = makeFeatureString(this_feature, false);
+        
         drawFeatureLine(g, this_feature, feature_string);
       }
     }

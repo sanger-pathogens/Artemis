@@ -246,7 +246,7 @@ public class TabixReader extends AbstractVCFReader
 			if (col == mSc) {
 				intv.tid = chr2tid(s.substring(beg, end));
 			} else if (col == mBc) {
-				intv.beg = intv.end = Integer.parseInt(s.substring(beg, end));
+				intv.beg = intv.end = Integer.parseInt(s.substring(beg, end==-1?s.length():end));
 				if ((mPreset&0x10000) != 0) ++intv.end;
 				else --intv.beg;
 				if (intv.beg < 0) intv.beg = 0;
@@ -338,7 +338,7 @@ public class TabixReader extends AbstractVCFReader
 		
         if (tid == -1)
         {
-        	throw new NoFeaturesException("The current contig has no features [missing index entry].");
+        	return null;
         }
         
 		TPair64[] off, chunks;
@@ -360,6 +360,7 @@ public class TabixReader extends AbstractVCFReader
 				for (int j = 0; j < chunks.length; ++j)
 					if (less64(min_off, chunks[j].v))
 						off[n_off++] = new TPair64(chunks[j]);
+		if (n_off == 0) return null;
 		Arrays.sort(off, 0, n_off);
 		// resolve completely contained adjacent blocks
 		for (i = 1, l = 0; i < n_off; ++i) {

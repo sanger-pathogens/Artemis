@@ -239,7 +239,8 @@ public class Selection
    *    selection.
    **/
   private boolean addWithoutEvent (final Feature feature) {
-    if (features.contains (feature)) {
+
+    if (feature != null && features.contains (feature)) {
       return false;
       // do nothing
     } else {
