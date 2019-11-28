@@ -46,7 +46,7 @@ public class UserPlotTest
   public void basePosition()
   {
     URL gffURL = UserPlotTest.class.getResource("/data/plot/base_position.plot.gz");
-    EntryGroup entryGrp = Utils.getEntryGroup("/data/MAL1.embl.gz");
+    EntryGroup entryGrp = Utils.getEntryGroup("/data/embl/MAL1.embl.gz");
     final Strand fwdStrand = entryGrp.getBases ().getForwardStrand ();
     final FileDocument doc = new FileDocument (new File(gffURL.getFile()));
     
@@ -72,7 +72,7 @@ public class UserPlotTest
   public void labelBasePosition()
   {
     URL gffURL = UserPlotTest.class.getResource("/data/plot/base_position_labels.plot.gz");
-    EntryGroup entryGrp = Utils.getEntryGroup("/data/MAL1.embl.gz");
+    EntryGroup entryGrp = Utils.getEntryGroup("/data/embl/MAL1.embl.gz");
     final Strand fwdStrand = entryGrp.getBases ().getForwardStrand ();
     final FileDocument doc = new FileDocument (new File(gffURL.getFile()));
     
@@ -102,7 +102,7 @@ public class UserPlotTest
   public void indexed()
   {
     URL gffURL = UserPlotTest.class.getResource("/data/plot/index_tab_sorted.plot.gz");
-    EntryGroup entryGrp = Utils.getEntryGroup("/data/MAL1.embl.gz");
+    EntryGroup entryGrp = Utils.getEntryGroup("/data/embl/MAL1.embl.gz");
     final Strand fwdStrand = entryGrp.getBases ().getForwardStrand ();
     final FileDocument doc = new FileDocument (new File(gffURL.getFile()));
     try

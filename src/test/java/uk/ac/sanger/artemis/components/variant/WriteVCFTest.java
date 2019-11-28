@@ -535,8 +535,8 @@ public class WriteVCFTest
   public static void oneTimeSetUp()
   {
     // load VCF
-    URL ref = WriteVCFTest.class.getResource("/data/test.embl.gz");
-    URL vcf = WriteVCFTest.class.getResource("/data/test.vcf.gz");
+    URL ref = WriteVCFTest.class.getResource("/data/embl/test.embl.gz");
+    URL vcf = WriteVCFTest.class.getResource("/data/vcf/test.vcf.gz");
   
     List<String> vcfFileList = new Vector<String>();
     vcfFileList.add(vcf.getFile());
@@ -547,8 +547,8 @@ public class WriteVCFTest
         ref.getFile(), null, null);
     
     // load BCF
-    ref = WriteVCFTest.class.getResource("/data/MAL1.embl.gz");
-    vcf = WriteVCFTest.class.getResource("/data/MAL1_8_16_24h.raw.bcf");
+    ref = WriteVCFTest.class.getResource("/data/embl/MAL1.embl.gz");
+    vcf = WriteVCFTest.class.getResource("/data/vcf/MAL1_8_16_24h.raw.bcf");
     
     List<String> bcfFileList = new Vector<String>();
     bcfFileList.add(vcf.getFile());

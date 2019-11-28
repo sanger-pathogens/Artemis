@@ -228,7 +228,8 @@ public class Entry implements FeatureChangeListener, Selectable
     final EntryInformation artemis_entry_information;
     
     if((getEMBLEntry() instanceof DatabaseDocumentEntry ||
-        getEMBLEntry() instanceof GFFDocumentEntry) &&
+        getEMBLEntry() instanceof GFFDocumentEntry || 
+        getEMBLEntry() instanceof IndexedGFFDocumentEntry) &&
        destination_type == DocumentEntryFactory.EMBL_FORMAT)
       artemis_entry_information = Options.getArtemisEntryInformation();
     else
@@ -1164,6 +1165,11 @@ public class Entry implements FeatureChangeListener, Selectable
   private Feature
     getFeatureOf(uk.ac.sanger.artemis.io.Feature embl_feature) 
   {
+	if (embl_feature == null)
+	{
+	  return null;
+	}
+	
     final Feature test_feature =(Feature) embl_feature.getUserData();
  
     if(test_feature == null) 

@@ -322,15 +322,16 @@ public class Location
    **/
   public boolean isComplement() 
   {
-    if(getParsedLocation ().getType () == LocationParseNode.COMPLEMENT) 
+	int type = getParsedLocation ().getType ();
+	
+    if(type == LocationParseNode.COMPLEMENT) 
     {
       // COMPLEMENT(RANGE)
       return true;
     }
     else 
     {
-      if(getParsedLocation().getType() == LocationParseNode.JOIN ||
-         getParsedLocation().getType() == LocationParseNode.ORDER) 
+      if(type == LocationParseNode.JOIN || type == LocationParseNode.ORDER) 
       {
         // a join/order must have at least one child node
         if(getParsedLocation().getChildren().elementAt(0).getType() ==

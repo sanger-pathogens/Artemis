@@ -61,8 +61,7 @@ public class LinePushBackReader extends Reader {
       line_buffer = null;
       return tmp_string;
     } else {
-      String line = buffered_reader.readLine ();
-      return line;
+      return buffered_reader.readLine ();
     }
   }
 

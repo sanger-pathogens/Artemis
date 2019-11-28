@@ -27,3 +27,5 @@ nucleotide_match                           misc_feature    note=nucleotide_match
 uORF                                       misc_feature    note=uORF
 sORF                                       misc_feature    note=sORF
 tnaORF                                     misc_feature    note=tnaORF
+low_complexity_region                      misc_feature    note=low_complexity_region
+tandem_repeat                              repeat_region   rpt_type=tandem

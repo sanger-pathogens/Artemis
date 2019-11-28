@@ -189,7 +189,7 @@ public class FeatureSegment
    **/
   void setStartPosition (final int position)
       throws OutOfRangeException {
-    getStart ().setPosition (position);
+    start.setPosition (position);
     updateRange ();
   }
 
@@ -198,7 +198,7 @@ public class FeatureSegment
    **/
   void setEndPosition (final int position)
       throws OutOfRangeException {
-    getEnd ().setPosition (position);
+    end.setPosition (position);
     updateRange ();
   }
 
@@ -216,8 +216,8 @@ public class FeatureSegment
   public MarkerRange getMarkerRange () {
     try {
       return new MarkerRange (getFeature ().getStrand (),
-                              getStart ().getPosition (),
-                              getEnd ().getPosition ());
+                              start.getPosition (),
+                              end.getPosition ());
     } catch (OutOfRangeException e) {
       throw new Error ("internal error - " + e);
     }
@@ -236,7 +236,7 @@ public class FeatureSegment
    *  Return the number of bases in this feature (total of all segments).
    **/
   public int getBaseCount () {
-    return getEnd ().getPosition () - getStart ().getPosition () + 1;
+    return end.getPosition () - start.getPosition () + 1;
   }
 
   /**
@@ -245,8 +245,8 @@ public class FeatureSegment
   public String getBases () {
     final Strand strand = getFeature ().getStrand ();
     try {
-      return strand.getSubSequence (new Range (getStart ().getPosition (),
-                                               getEnd ().getPosition ()));
+      return strand.getSubSequence (new Range (start.getPosition (),
+                                               end.getPosition ()));
     } catch (OutOfRangeException e) {
       throw new Error ("internal error - unexpected exception: " + e);
     }
@@ -306,11 +306,11 @@ public class FeatureSegment
 
     try {
       if (getFeature ().isForwardFeature ()) {
-        new_range = range.change (getStart ().getRawPosition (),
-                                  getEnd ().getRawPosition ());
+        new_range = range.change (start.getRawPosition (),
+                                  end.getRawPosition ());
       } else {
-        new_range = range.change (getEnd ().getRawPosition (),
-                                  getStart ().getRawPosition ());
+        new_range = range.change (end.getRawPosition (),
+                                  start.getRawPosition ());
       }
 
       range = new_range;
@@ -440,7 +440,7 @@ public class FeatureSegment
   public int getFrameID () {
     // this will be 0, 1 or 2 depending on which frame the segment is in
     final int start_base_modulo =
-      (getStart ().getPosition () - 1 + getFrameShift ()) % 3;
+      (start.getPosition () - 1 + getFrameShift ()) % 3;
 
 //  if (getFeature ().getStrand ().isForwardStrand ()) 
     if(isForwardSegment())

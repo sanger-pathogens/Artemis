@@ -62,7 +62,7 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
    private String name;
    
    private String contig;
-   private boolean combinedReference = false;
+   private boolean combinedReference = true;
    
    private Document document;
    private EntryInformation entryInfo;
@@ -352,7 +352,7 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
    * Get the list of contigs in the feature display.
    * @return
    */
-  private List<IndexContig> getListOfContigs()
+  protected List<IndexContig> getListOfContigs()
   {
     List<IndexContig> contigs = new Vector<IndexContig>();
     for (String key : contigHash.keySet())
@@ -890,12 +890,14 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
 
     featureCount = 0;
     List<IndexContig> contigs = getListOfContigs();
+    TabixReader.Iterator tabixIterator = null;
     for(IndexContig c: contigs)
     {
       int nfeatures = 0;
       final String r = c.chr+":"+1+"-"+Integer.MAX_VALUE;
 
-      TabixReader.Iterator tabixIterator = reader.query(r);
+      tabixIterator = reader.query(r);
+      
       if(tabixIterator == null)
         continue;
 
@@ -945,7 +947,7 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
     for(IndexContig c: contigs)
     {
       int nfeatures = c.nfeatures;
-      if(idx > cnt+nfeatures)
+      if(nfeatures == 0 || idx > cnt+nfeatures)
       {
         cnt+=nfeatures;
         continue;
@@ -953,8 +955,10 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
       String r = c.chr+":"+start+"-"+Integer.MAX_VALUE;
 
       TabixReader.Iterator tabixIterator = reader.query(r);
+      
       if(tabixIterator == null)
         return null;
+      
       try
       {
         String ln;
@@ -1021,9 +1025,12 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
       }
       
       String r = c.chr+":"+1+"-"+Integer.MAX_VALUE;
+      
       TabixReader.Iterator tabixIterator = reader.query(r);
+      
       if(tabixIterator == null)
         continue;
+      
       try
       {
         String ln;
@@ -1315,6 +1322,16 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
     {
       return end+offset;
     }
+    
+    private int getStart()
+    {
+      return start;
+    }
+    
+    private int getEnd()
+    {
+      return end;
+    }
   }
 
   class ContigCompare implements Comparator<IndexContig>
@@ -1329,6 +1346,9 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
     }
   }
   
+  /**
+   * Iterates through all features of an Indexed GFF file.
+   */
   class IndexGFFFeatureEnumeration implements FeatureEnumeration
   { 
     private FeatureVector features;
@@ -1352,19 +1372,21 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
           }
           catch (OutOfRangeException e){}
         }
-        getFeaturesInContig();
+        getFeaturesInFirstContig();
       }
 
       if(idx < features.size())
         return true;
       else
       {
-        idx = 0;
-        contigIdx++;
-        if(contigIdx < contigs.size())
-        {
+    	idx = 0;
+    	  
+    	// we have to be careful about sequences with no features here...
+    	while (++contigIdx < contigs.size())
+        {   
           getFeaturesInContig();
-          if(idx < features.size())
+            
+          if(features.size() > 0)
             return true;
         }
       }
@@ -1377,13 +1399,32 @@ public class IndexedGFFDocumentEntry implements DocumentEntry
       return features.elementAt(idx-1);
     }
     
+    /**
+     * Populate the features collection with all features in the 
+     * contig given by the start and end offsets.
+     */
     private void getFeaturesInContig()
     {
       try
       {
-        features = getFeaturesInRange(
+          features = getFeaturesInRange(
             new Range(contigs.get(contigIdx).getOffsetStart(), 
-                      contigs.get(contigIdx).getOffsetEnd()));
+            		  contigs.get(contigIdx).getOffsetEnd()));
+      }
+      catch (OutOfRangeException e){}
+    }
+    
+    /**
+     * Populate the features collection with all features in the 
+     * first contig.
+     */
+    private void getFeaturesInFirstContig()
+    {
+      try
+      {
+    	features = getFeaturesInRange(
+    	    new Range(contigs.get(0).getStart(), 
+    	              contigs.get(0).getEnd()));
       }
       catch (OutOfRangeException e){}
     }

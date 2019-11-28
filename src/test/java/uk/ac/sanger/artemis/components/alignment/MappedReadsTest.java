@@ -54,9 +54,9 @@ public class MappedReadsTest
     // ignore if in headless mode with no x11
     if(GraphicsEnvironment.isHeadless())
       return;
-    URL entryFile = MappedReadsTest.class.getResource("/data/MAL_8h.bam");
+    URL entryFile = MappedReadsTest.class.getResource("/data/alignment/MAL_8h.bam");
     System.setProperty("bam", entryFile.getFile());
-    final EntryGroup egrp = Utils.getEntryGroup("/data/MAL1.embl.gz");
+    final EntryGroup egrp = Utils.getEntryGroup("/data/embl/MAL1.embl.gz");
     ee = new EntryEdit(egrp);
     ee.setVisible(true);
 

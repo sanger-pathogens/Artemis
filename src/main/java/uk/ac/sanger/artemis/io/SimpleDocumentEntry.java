@@ -4,7 +4,7 @@
  *
  * This file is part of Artemis
  *
- * Copyright(C) 2000  Genome Research Limited
+ * Copyright(C) 2019  Genome Research Limited
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,7 +20,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleDocumentEntry.java,v 1.30 2009-09-03 13:33:18 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -28,20 +27,17 @@ package uk.ac.sanger.artemis.io;
 import uk.ac.sanger.artemis.util.*;
 
 import java.io.*;
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
 import java.util.Hashtable;
-import java.util.Map;
+import java.util.List;
 
 /**
  *  This class contains the methods common to all DocumentEntry objects.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: SimpleDocumentEntry.java,v 1.30 2009-09-03 13:33:18 tjc Exp $
  **/
 
 abstract public class SimpleDocumentEntry
@@ -71,7 +67,7 @@ abstract public class SimpleDocumentEntry
    *  This contains all the lines(stored as LineGroup objects) from the entry
    *  stream that was passed to the constructor.
    **/
-  protected Vector<LineGroup> line_groups = new Vector<LineGroup>();
+  protected LineGroupCache line_groups = new LineGroupCache();
                                                                                                                
   /**
    *  The DocumentEntryAutosaveThread that is started when the first call is
@@ -183,7 +179,6 @@ abstract public class SimpleDocumentEntry
         final int[] header_positions =
                       fasta_sequence.getFastaHeaderPositions();
 
-        //final FeatureTable feature_table = 
         getFeatureTable();
 
         for(int i = 0 ; i < header_strings.length ; ++i) 
@@ -354,21 +349,7 @@ abstract public class SimpleDocumentEntry
    **/
   public String getHeaderText() 
   {
-    final StringBuffer buffer = new StringBuffer();
-
-    for(int i = 0 ; i < line_groups.size() ; ++i) 
-    {
-      final LineGroup current_line_group = line_groups.elementAt(i);
-
-      if(!(current_line_group instanceof FeatureTable) &&
-         !(current_line_group instanceof Sequence)) 
-        buffer.append(current_line_group.toString());
-    }
-
-    if(buffer.length() > 0) 
-      return buffer.toString();
-    else 
-      return null;
+	return line_groups.getHeadersAsText();
   }
 
   /**
@@ -416,19 +397,13 @@ abstract public class SimpleDocumentEntry
 
     // now remove all the EmblMisc and GenbankMisc LineGroup objects from
     // this Entry
-    for(int i = line_groups.size() - 1 ; i >= 0  ; --i) 
-    {
-      final LineGroup current_line_group = line_groups.elementAt(i);
-
-      if(current_line_group instanceof MiscLineGroup) 
-        line_groups.removeElementAt(i);
-    }
+    line_groups.clearMiscLineGroups();
 
     if(new_header != null) 
     {
       // then add the new LineGroup objects
       for(int i = 0 ; i < new_line_groups.size() ; ++i) 
-        line_groups.insertElementAt(new_line_groups.elementAt(i), i);
+    	  line_groups.add(new_line_groups.elementAt(i));
     }
 
     setDirtyFlag();
@@ -448,39 +423,7 @@ abstract public class SimpleDocumentEntry
 
     try
     {
-      for(int i = 0 ; i < line_groups.size() ; ++i) 
-      {
-        final LineGroup current_line_group = line_groups.elementAt(i);
-        if(this instanceof GFFDocumentEntry && 
-           current_line_group instanceof FastaStreamSequence)
-          LineGroup.writeStartOfGFFEntry(writer);
-        current_line_group.writeToStream(writer);
-      }
-
-      if(line_groups.size() == 1) 
-      {
-        // don't write out the "//" end of entry marker if we have only one
-        // LineGroup - this makes life easier for external programs that need
-        // to read the feature table or sequence
-        return;
-      }
-      else
-      {
-        if(line_groups.size() == 2) 
-        {
-          final LineGroup second_line_group = line_groups.elementAt(1);
-
-          // don't write out the "//" end of entry marker if this is raw or
-          // FASTA sequence
-          if(second_line_group instanceof RawStreamSequence ||
-             second_line_group instanceof FastaStreamSequence) 
-            return;
-        }
-      }
-
-      if(this instanceof PublicDBDocumentEntry) 
-        LineGroup.writeEndOfEMBLEntry(writer);
-
+      line_groups.writeToStream(this, writer);
     } 
     finally
     {
@@ -493,7 +436,7 @@ abstract public class SimpleDocumentEntry
    **/
   public int getFeatureCount() 
   {
-    final FeatureTable feature_table = findFeatureTable();
+    final FeatureTable feature_table = line_groups.getFeatureTable();
 
     if(feature_table == null) 
       return 0;
@@ -695,7 +638,7 @@ abstract public class SimpleDocumentEntry
    **/
   protected boolean removeInternal(Feature feature) 
   {
-    final FeatureTable feature_table = findFeatureTable();
+    final FeatureTable feature_table = line_groups.getFeatureTable();
 
     if(feature_table == null) 
       return false;
@@ -719,7 +662,7 @@ abstract public class SimpleDocumentEntry
 
         // get rid of the feature table
         if(feature_table.getFeatureCount() == 0) 
-          removeLineGroup(feature_table);
+          removeFeatureTable(feature_table);
 
         setDirtyFlag();
 
@@ -747,7 +690,7 @@ abstract public class SimpleDocumentEntry
    **/
   public Feature getFeatureAtIndex(int i) 
   {
-    final FeatureTable feature_table = findFeatureTable();
+    final FeatureTable feature_table = line_groups.getFeatureTable();
 
     if(feature_table == null) 
       return null;
@@ -761,7 +704,7 @@ abstract public class SimpleDocumentEntry
    **/
   public int indexOf(final Feature feature) 
   {
-    final FeatureTable feature_table = findFeatureTable();
+    final FeatureTable feature_table = line_groups.getFeatureTable();
 
     if(feature_table == null) 
       return -1;
@@ -774,7 +717,7 @@ abstract public class SimpleDocumentEntry
    **/
   public boolean contains(final Feature feature) 
   {
-    final FeatureTable feature_table = findFeatureTable();
+    final FeatureTable feature_table = line_groups.getFeatureTable();
 
     if(feature_table == null) 
       return false;
@@ -827,7 +770,7 @@ abstract public class SimpleDocumentEntry
    **/
   public FeatureVector getFeaturesInRange(Range range) 
   {
-    final FeatureTable feature_table = findFeatureTable();
+    final FeatureTable feature_table = line_groups.getFeatureTable();
 
     if(feature_table == null) 
       return new FeatureVector();
@@ -843,7 +786,7 @@ abstract public class SimpleDocumentEntry
    **/
   public FeatureVector getAllFeatures() 
   {
-    final FeatureTable feature_table = findFeatureTable();
+    final FeatureTable feature_table = line_groups.getFeatureTable();
 
     if(feature_table == null) 
       return new FeatureVector();
@@ -859,7 +802,7 @@ abstract public class SimpleDocumentEntry
    **/
   public FeatureEnumeration features() 
   {
-    final FeatureTable feature_table = findFeatureTable();
+    final FeatureTable feature_table = line_groups.getFeatureTable();
 
     if(feature_table == null)
     {
@@ -885,82 +828,23 @@ abstract public class SimpleDocumentEntry
    **/
   public Sequence getSequence() 
   {
-    for(int i = 0 ; i < line_groups.size() ; ++i) 
-    {
-      final LineGroup current_line_group = line_groups.elementAt(i);
-
-      if(current_line_group instanceof Sequence)
-        return(Sequence) current_line_group;
-    }
-
-    return null;
+    return (Sequence)line_groups.getSequence();
   }
 
   /**
    *  Add a new LineGroup object to this Entry.
    *  @param new_line_group A new LineGroup to add.
    **/
-  private void addLineGroup(final LineGroup new_line_group) 
+  protected void addLineGroup(final LineGroup new_line_group) 
   {
-    if(new_line_group instanceof FeatureHeader) 
+    if(new_line_group instanceof GFFMisc)
     {
-      // insert FH lines before the Sequence and Features(if any)
-      for(int i = 0 ; i < line_groups.size() ; ++i) 
-      {
-        final LineGroup this_line_group = line_groups.elementAt(i);
-
-        if(this_line_group instanceof Feature ||
-            this_line_group instanceof FeatureTable ||
-            this_line_group instanceof Sequence) 
-        {
-          line_groups.insertElementAt(new_line_group, i);
-          return;
-        }
-      }
-    } 
-    else if(new_line_group instanceof Feature)
-    {
-      // Features before the Sequence and FeatureTable(if any)
-      for(int i = 0 ; i < line_groups.size() ; ++i) 
-      {
-        final LineGroup this_line_group = line_groups.elementAt(i);
-
-        if(this_line_group instanceof FeatureTable ||
-            this_line_group instanceof Sequence) 
-        {
-          line_groups.insertElementAt(new_line_group, i);
-          return;
-        }
-      }
-    } 
-    else if(!(new_line_group instanceof Sequence) &&
-            !(new_line_group instanceof FeatureTable)) 
-    {
-      if(new_line_group instanceof GFFMisc)
-      {
-        String line = ((GFFMisc)new_line_group).toString();
-        if(line.indexOf("FASTA") > -1)  // ignore
-          return;
-      }   
-
-      // insert before features and sequence
-      for(int i = 0 ; i < line_groups.size() ; ++i) 
-      {
-        final LineGroup this_line_group = line_groups.elementAt(i);
-
-        if(this_line_group instanceof Feature ||
-           this_line_group instanceof FeatureTable ||
-           this_line_group instanceof FeatureHeader ||
-           this_line_group instanceof Sequence)
-        {
-          line_groups.insertElementAt(new_line_group, i);
-          return;
-        }
-      }
+      String line = ((GFFMisc)new_line_group).getLine();
+      if(line.indexOf("FASTA") > -1)  // ignore
+        return;
     }
 
-    // otherwise add at end
-    line_groups.addElement(new_line_group);
+    line_groups.add(new_line_group);
   }
 
   /**
@@ -1000,47 +884,6 @@ abstract public class SimpleDocumentEntry
   }
 
   /**
-   *  Create and return a new FeatureTable().  The new FeatureTable will be
-   *  added to line_groups in the appropriate place.
-   **/
-  private FeatureTable createFeatureTable() 
-  {
-    final FeatureTable new_feature_table;
-
-    new_feature_table = new StreamFeatureTable();
-
-    // put feature table just before SEQUENCE LineGroup
-    if(line_groups.size() > 0 &&           
-        line_groups.lastElement() instanceof Sequence) 
-      line_groups.insertElementAt(new_feature_table,
-                                   line_groups.size() - 1);
-    else  // no SEQUENCE so add the feature table at the end
-      line_groups.insertElementAt(new_feature_table, line_groups.size());
-
-    return new_feature_table;
-  }
-
-  /**
-   *  Return the FeatureTable of this DocumentEntry or null if there isn't one
-   *  yet.
-   **/
-  private FeatureTable findFeatureTable() 
-  {
-    final int line_groups_size = line_groups.size();
-
-    for(int i = 0; i < line_groups_size; ++i) 
-    {
-      final LineGroup current_line_group = line_groups.elementAt(i);
-
-      if(current_line_group instanceof FeatureTable) 
-        return (FeatureTable)current_line_group;
-    }
-
-    return null;
-  }
-
-
-  /**
    *  Return the FeatureTable object from this entry(which will be created if
    *  this object does not already contain one).  This method has package
    *  scope because other package should add, remove and query Features in the
@@ -1048,32 +891,36 @@ abstract public class SimpleDocumentEntry
    *  @return a FeatureTable object for this Entry.  the returned object is
    *    not a copy - changes to it will change the Entry object itself
    **/
-  private FeatureTable getFeatureTable() 
+  protected FeatureTable getFeatureTable() 
   {
-    final FeatureTable found_feature_table = findFeatureTable();
+    final FeatureTable found_feature_table = line_groups.getFeatureTable();
 
     if(found_feature_table == null) 
-      return createFeatureTable();
+      return line_groups.createFeatureTable();
     else
       return found_feature_table;
   }
 
   /**
-   *  Remove the given LineGroup from this SimpleDocumentEntry.
+   *  Remove the given feature table LineGroup from this SimpleDocumentEntry.
    **/
-  private void removeLineGroup(final LineGroup line_group) 
+  protected void removeFeatureTable(final FeatureTable ft) 
   {
-    for(int i = 0 ; i < line_groups.size() ; ++i) 
-    {
-      final LineGroup current_line_group = line_groups.elementAt(i);
-
-      if(current_line_group == line_group) 
-      {
-        line_groups.removeElementAt(i);
-        setDirtyFlag();
-        return;
-      }
-    }
+	if (line_groups.removeFeatureTable(ft) != null)
+	{
+	  setDirtyFlag();	
+	}
+  }
+  
+  /**
+   *  Remove the given sequence LineGroup from this SimpleDocumentEntry.
+   **/
+  protected void removeSequence(final StreamSequence seq) 
+  {
+	if (line_groups.removeSequence(seq) != null)
+	{
+	  setDirtyFlag();	
+	}
   }
 
   /**
@@ -1196,7 +1043,7 @@ abstract public class SimpleDocumentEntry
     final Sequence old_sequence = getSequence();
 
     if(old_sequence != null) 
-      removeLineGroup((StreamSequence) old_sequence);
+      removeSequence((StreamSequence) old_sequence);
 
     addLineGroup(sequence);
   }
@@ -1224,7 +1071,7 @@ abstract public class SimpleDocumentEntry
   /**
    *  Add the elements of fake_fasta_features to the feature table.
    **/
-  private void addFakeFeatures() 
+  protected void addFakeFeatures() 
   {
     final FeatureTable feature_table = getFeatureTable();
 
@@ -1235,7 +1082,7 @@ abstract public class SimpleDocumentEntry
   /**
    *  Remove the elements of fake_fasta_features from the feature table.
    **/
-  private void removeFakeFeatures() 
+  protected void removeFakeFeatures() 
   {
     final FeatureTable feature_table = getFeatureTable();
 
@@ -1262,8 +1109,6 @@ abstract public class SimpleDocumentEntry
 
   public void dispose()
   {
-    for(int i=0; i<line_groups.size(); i++)
-      line_groups.removeElementAt(i);
-    line_groups = null;
+    line_groups.clear();
   }
 }

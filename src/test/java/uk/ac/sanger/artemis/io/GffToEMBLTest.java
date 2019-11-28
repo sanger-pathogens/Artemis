@@ -38,9 +38,9 @@ public class GffToEMBLTest
    */
   public void testGffToEMBL()
   {
-    testGffConversion("/data/Pf3D7_01_02_v3.gff.gz");
-    testGffConversion("/data/test.gff.gz");
-    testGffConversion("/data/test_boundary.gff.gz");
+    testGffConversion("/data/gff/Pf3D7_01_02_v3.gff.gz");
+    testGffConversion("/data/gff/test.gff.gz");
+    testGffConversion("/data/gff/test_boundary.gff.gz");
   }
   
   private void testGffConversion(String gff)

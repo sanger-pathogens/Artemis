@@ -490,8 +490,16 @@ public class SimpleEntryGroup extends EntryVector
   {
     final FeatureVector return_vector = new FeatureVector();
 
+    Feature f = null;
+    		
     for(int i = start_index; i <= end_index; ++i) 
-      return_vector.add(featureAt(i));
+    {
+      f = featureAt(i);
+      if (f != null) 
+      {
+    	  return_vector.add(featureAt(i));
+      }
+    }
 
     return return_vector;
   }

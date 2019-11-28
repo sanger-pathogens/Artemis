@@ -66,6 +66,11 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
   
   public static boolean IGNORE_OBSOLETE_FEATURES = true;
   
+  //Load all the mappings from file
+  static {
+    initDatabaseMappings();
+  }
+  
   /**
    *  Create a new PublicDBDocumentEntry object associated with the given
    *  Document.
@@ -165,10 +170,7 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
    * @return
    */
   private Object mapGffToNativeFeature(final Feature feature)
-  {
-    if(DATABASE_MAP_KEYS == null)
-      initDatabaseMappings();
-    
+  { 
     Key key = feature.getKey();
     QualifierVector qualifiers = feature.getQualifiers().copy();
     
@@ -571,8 +573,6 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
    */
   protected static Key mapKeys(final Key key)
   {
-    if(DATABASE_MAP_KEYS == null)
-      initDatabaseMappings();
     for(int i=0; i<DATABASE_MAP_KEYS.length; i++)
     {
       if(key.getKeyString().equals(DATABASE_MAP_KEYS[i][0]))
@@ -590,8 +590,6 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
    */
   private Key map(final Key key, final QualifierVector qualifiers)
   {
-    if(DATABASE_MAP_KEYS == null)
-      initDatabaseMappings();
     for(int i=0; i<DATABASE_MAP_KEYS.length; i++)
     {
       if(key.getKeyString().equals(DATABASE_MAP_KEYS[i][0]))
@@ -677,7 +675,6 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
   
   public static Object[] getDatabaseQualifiersToRemove()  
   {
-    initDatabaseMappings();
     return DATABASE_QUALIFIERS_TO_REMOVE;
   }
   

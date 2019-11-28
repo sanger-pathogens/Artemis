@@ -155,7 +155,7 @@ public abstract class LineGroup
     genbank_hash.put ("DBSOURCE","DBSOURCE");
     genbank_hash.put ("CONTIG","CONTIG");
   }
-
+  
   /**
    *  Try to read and return a new LineGroup object from a stream.
    *  @param reader The stream to read from.

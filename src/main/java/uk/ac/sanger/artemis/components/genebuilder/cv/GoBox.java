@@ -474,21 +474,24 @@ public class GoBox extends AbstractCvBox
   
   /**
    * Update the qualifier from the GO form.
-   * @param  qv QualifierVector
+   * @param  qv QualifierVector - Vector of controlled vocab qualifiers
    */
   protected void updateQualifier(final QualifierVector qv)
   {
 	int index = qv.indexOfQualifierWithName(origQualifier.getName());
+	
+	// Get the qualifier containing all the cached GO terms strings
     Qualifier oldQualifier = qv.getQualifierByName(origQualifier.getName());
-    final String origQualifierString = getOrigQualifierString();
     
+    // Get the GO id
+    final String origQualifierString = getOrigQualifierString();
     final String goId = getField("GOid=", origQualifierString);
     
-    // Get the old GO rows
+    // Get the cached GO term strings from the GO qualifier
     StringVector oldValues = oldQualifier.getValues();
     Vector<Integer> values_index = new Vector<Integer>();
     
-    // Find only the "old" GO term rows that match our goId
+    // Find only the cached GO term rows that match our goId
     // and add their indexes to the values_index list.
     for(int i=0; i<oldValues.size(); i++)
     {
@@ -503,14 +506,15 @@ public class GoBox extends AbstractCvBox
   
     if(values_index.size() > 0)
     { 
-      // We are here, because there were some "old" GO rows
+      // We are here, because there were some cached GO rows
       // that matched the GO id of this term.
     	
-      // Get the GO id at this term's current index from the "old" terms list
+      // Get the GO id at this term's current index from the cached terms list
       String oldValue = oldValues.get(value_index);
       String oldGoId  = getField("GOid=", oldValue);
       
       // Really not sure what the point of this code block is....
+      // Potentially remove in the future.
       if(!goId.equals(oldGoId))
       {
         if(values_index.size() == 1)
@@ -520,7 +524,6 @@ public class GoBox extends AbstractCvBox
           final String with = getField("with=", origQualifierString);
           final String evidence = getField("evidence=", origQualifierString);
           final String dbxref = getField("dbxref=", origQualifierString);
-          final String source = getField(ASSIGNEDBY_QUALIFIER, origQualifierString);
           for(int i=0; i<values_index.size(); i++)
           {
             int ind = values_index.get(i).intValue();
@@ -544,10 +547,6 @@ public class GoBox extends AbstractCvBox
             String thisEvidence = getField("evidence=", value);
             if(thisEvidence.equals(evidence))
               break;
-            
-            String thisSource = getField(ASSIGNEDBY_QUALIFIER, value);
-            if(thisSource.equals(source))
-              break;
           }
         }
       }
@@ -555,8 +554,11 @@ public class GoBox extends AbstractCvBox
     else
       value_index = -99;
 
+    // Remove this GO term from the cached list of GO table rows
     if(value_index > -1)
       oldValues.remove(value_index);
+    
+    // Get the latest field values and add in
     
     String updatedQualifierString = updateQualifierString();
     logger4j.debug(origQualifierString);

@@ -362,7 +362,7 @@ abstract class SimpleDocumentFeature extends LineGroup
       throw new ReadOnlyException ();
     }
 
-    getQualifiers ().setQualifier (qualifier);
+    this.qualifiers.setQualifier (qualifier);
 
     setDirtyFlag ();
   }
@@ -380,7 +380,7 @@ abstract class SimpleDocumentFeature extends LineGroup
       throw new ReadOnlyException ();
     }
 
-    getQualifiers ().removeQualifierByName (name);
+    this.qualifiers.removeQualifierByName (name);
 
     setDirtyFlag ();
   }
@@ -401,7 +401,7 @@ abstract class SimpleDocumentFeature extends LineGroup
 
     setDirtyFlag ();
 
-    return getQualifiers ().addQualifierValues (qualifier);
+    return this.qualifiers.addQualifierValues (qualifier);
   }
 
   /**
@@ -430,7 +430,7 @@ abstract class SimpleDocumentFeature extends LineGroup
    **/
   public int getFirstBase () {
     if (first_base == -1) {
-      first_base = getLocation ().getFirstBase ();
+      first_base = location.getFirstBase ();
     }
     return first_base;
   }
@@ -440,7 +440,7 @@ abstract class SimpleDocumentFeature extends LineGroup
    **/
   public int getLastBase () {
     if (last_base == -1) {
-      last_base = getLocation ().getLastBase ();
+      last_base = location.getLastBase ();
     }
     return last_base;
   }
@@ -459,7 +459,7 @@ abstract class SimpleDocumentFeature extends LineGroup
    *  there no such Qualifier.
    **/
   public Qualifier getQualifierByName (String name) {
-    return getQualifiers ().getQualifierByName (name);
+    return this.qualifiers.getQualifierByName (name);
   }
 
 
