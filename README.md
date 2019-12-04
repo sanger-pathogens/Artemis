@@ -16,10 +16,10 @@ The Artemis Software is available under GPL3. The source code can be found on [G
 
 The latest release of Artemis can be downloaded by clicking on the relevant link below:
 
-* [UNIX](https://github.com/sanger-pathogens/Artemis/releases/download/v18.0.3/artemis-unix-release-18.0.3.tar.gz)
-* [MacOS](https://github.com/sanger-pathogens/Artemis/releases/download/v18.0.3/artemis-macosx-release-18.0.3.dmg.gz)
-* [MacOS (CHADO) - for out of the box CHADO database connectivity](https://github.com/sanger-pathogens/Artemis/releases/download/v18.0.3/artemis-macosx-chado-release-18.0.3.dmg.gz)
-* [Windows](https://github.com/sanger-pathogens/Artemis/releases/download/v18.0.3/artemis-windows-release-18.0.3.zip)
+* [UNIX](https://github.com/sanger-pathogens/Artemis/releases/download/v18.1.0/artemis-unix-release-18.1.0.tar.gz)
+* [MacOS](https://github.com/sanger-pathogens/Artemis/releases/download/v18.1.0/artemis-macosx-release-18.1.0.dmg.gz)
+* [MacOS (CHADO) - for out of the box CHADO database connectivity](https://github.com/sanger-pathogens/Artemis/releases/download/v18.1.0/artemis-macosx-chado-release-18.1.0.dmg.gz)
+* [Windows](https://github.com/sanger-pathogens/Artemis/releases/download/v18.1.0/artemis-windows-release-18.1.0.zip)
 
 __Note on Java versions__: The old v17.0.1 version of the Artemis software required Java version 1.8 to run. All recent releases from v18.0.0 onwards require a minimum of Java 9 and ideally Java 11. This must be installed first. The easiest way to install a non-commercial open source Java version is from [AdoptOpenJDK](https://adoptopenjdk.net/releases.html) - just select the OpenJDK version and Hotspot options for the relevant platform. See the [manuals](#documentation) for further options. A Java installation is not required for the Bioconda or Docker options.
 
