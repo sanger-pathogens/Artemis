@@ -1,5 +1,8 @@
 # Change Log
 
+## [v18.1.0](https://github.com/sanger-pathogens/artemis/tree/v18.1.0) (2019-12-04)
+[Full Changelog](https://github.com/sanger-pathogens/artemis/compare/v18.0.3...v18.1.0)
+
 ## [v18.0.3](https://github.com/sanger-pathogens/artemis/tree/v18.0.3) (2019-08-07)
 [Full Changelog](https://github.com/sanger-pathogens/artemis/compare/v18.0.2...v18.0.3)
 
