@@ -288,7 +288,7 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 		<dependency>
 		    <groupId>com.github.broadinstitute</groupId>
 		    <artifactId>picard</artifactId>
-		    <version>2.18.14</version>
+		    <version>2.21.2</version>
 		</dependency>
 		
 		<!-- End of Picard jars -->
