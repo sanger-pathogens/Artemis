@@ -85,14 +85,14 @@ class BamUtils
     }
     return (float)len;
   }
-  
+
   /**
    * Count the reads in a range.
    * @param start
    * @param end
    * @param bam
    * @param refName
-   * @param samFileReaderHash
+   * @param samFReaderHash
    * @param seqNames
    * @param offsetLengths
    * @param concatSequences
@@ -132,7 +132,7 @@ class BamUtils
             (start >= lastLen && start < len) ||
             (end > lastLen && end < len) )
         {
-          int offset = offsetLengths.get(name); 
+          int offset = offsetLengths.get(name);
           int thisStart = start - offset;
           if(thisStart < 1)
             thisStart = 1;
@@ -154,7 +154,7 @@ class BamUtils
       // specifying byStrand as true.
       cnt = count(bamView, bam, start, end, contained, true, useStrandTag);
     }
-    
+
     float cntf[] = new float[2];
     cntf[0] = cnt[0];
     cntf[1] = cnt[1];
@@ -178,7 +178,7 @@ class BamUtils
    */
   protected static int[] count(
           final BamView bamView,
-          final String bam, 
+          final String bam,
           final int start,
           final int end,
           final boolean contained,
@@ -234,7 +234,7 @@ class BamUtils
    * @param progressBar
    * @return array of mapped read counts
    */
-  protected static int[] calc(
+  static int[] calc(
       final BamView bamView, 
       final String refName, 
       final int sequenceLength,
@@ -340,7 +340,7 @@ class BamUtils
         {
           List<AlignmentBlock> blocks = samRecord.getAlignmentBlocks();
           boolean isFwd = !samRecord.getReadNegativeStrandFlag();
-          
+
           for(int j=0; j<blocks.size(); j++)
           {
             AlignmentBlock block = blocks.get(j);
@@ -351,12 +351,12 @@ class BamUtils
               int bin = pos - start;
               if(bin < 0 || bin > cnt.length-1)
                 continue;
-              
+
               if(isFwd)
                 cnt[bin][0]++;
               else
                 cnt[bin][1]++;
-            } 
+            }
           }
         }
       }
@@ -381,13 +381,13 @@ class BamUtils
   protected static Hashtable<String, List<ReadCount>> calculateMappedReads(
       final BamView bamView,
       final FeatureVector features,
-      final boolean contained, 
+      final boolean contained,
       final boolean useIntrons,
       final boolean useStrandTag,
       final int mappedReads[],
       final JProgressBar progressBar)
   {
-    final Hashtable<String, List<ReadCount>> featureReadCount = 
+    final Hashtable<String, List<ReadCount>> featureReadCount =
         new Hashtable<String, List<ReadCount>>();
     
     // Iterate through the provided list of features to look at
