@@ -167,7 +167,7 @@ The ACT user manual is at:
   http://sanger-pathogens.github.io/Artemis/ACT/
 
 The DNA plotter documentation is at:
-  http://sanger-pathogens.github.io/Artemis/Artemis/DNAPlotter/
+  http://sanger-pathogens.github.io/Artemis/DNAPlotter/
 
 The BAM View documentation is at:
-  http://sanger-pathogens.github.io/Artemis/Artemis/BamView/
+  http://sanger-pathogens.github.io/Artemis/BamView/
