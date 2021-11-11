@@ -546,6 +546,10 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 					<showWarnings>true</showWarnings>
 					<!--  We use the release option for Java 9+ -->
         			<release>${java.compatibility.major.version}</release>
+							<fork>true</fork>
+							<useIncrementalCompilation>true</useIncrementalCompilation>
+
+
     			</configuration>
 			</plugin>
 					
@@ -1255,6 +1259,10 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 							<verbose>false</verbose>
 		        				<source>1.8</source>
 								<target>1.8</target>
+							<fork>true</fork>
+							<useIncrementalCompilation>true</useIncrementalCompilation>
+
+
 		    				</configuration>
 					</plugin>
 					
