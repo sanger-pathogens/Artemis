@@ -270,7 +270,7 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 		<dependency>
 		    <groupId>org.postgresql</groupId>
 		    <artifactId>postgresql</artifactId>
-		    <version>42.2.5</version>
+		    <version>42.2.25</version>
 		</dependency>
 		
 		<!-- Using latest version gives compilation errors! -->
