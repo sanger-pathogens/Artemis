@@ -1,8 +1,7 @@
 #! /bin/bash
 
 ############################################################
-# Run a selection of tests for a Travis build that will 
-# fit within the Travis 50 minute build window.
+# Run Travis build tests.
 ############################################################
 
 echo
@@ -11,5 +10,5 @@ echo
 
 cd ..
 
-mvn test jacoco:report
+mvn -DEMBOSS_ROOT=${EMBOSS_ROOT} test jacoco:report
 
