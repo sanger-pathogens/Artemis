@@ -81,7 +81,9 @@ public class IndexFastaStream extends StreamSequence
             "Expecting fasta extensions:\n"+
             ReferenceSequenceFileFactory.FASTA_EXTENSIONS.toString()+
             "\n"+ie.getMessage(), 
-            "Error", JOptionPane.ERROR_MESSAGE);
+            "Error", JOptionPane.DEFAULT_OPTION);
+        // Re-throw to abandon the load
+        throw ie;
       }
     }
     
@@ -107,20 +109,9 @@ public class IndexFastaStream extends StreamSequence
           fastaIndexFile = new File(parentDir.getAbsolutePath(), fasta.getName() + ".fai");
         else
           fastaIndexFile = new File(fasta.getName() + ".fai");
-        if (fastaIndexFile.exists())
-        {
-          try
-          {
-            setExtensions();
-          }
-          catch(UnsupportedClassVersionError e)
-          {
-            System.err.println("Java version "+System.getProperty("java.version")+
-                " does not support indexed fasta - use Java 1.9 or higher.");
-            return false;
-          }
+
+        if (fastaIndexFile.exists()) 
           return true;
-        }
       }
     }
     catch(Exception e)
@@ -144,19 +135,6 @@ public class IndexFastaStream extends StreamSequence
         null, possibleValues, possibleValues[0]);
    
     return sel == 0;
-  }
-  
-  /**
-   * Add to supported FASTA allowed suffixes.
-   */
-  private static void setExtensions()
-  {
-    if(ReferenceSequenceFileFactory.FASTA_EXTENSIONS.contains(".dna"))
-      return;
-    ReferenceSequenceFileFactory.FASTA_EXTENSIONS.add(".dna");
-    ReferenceSequenceFileFactory.FASTA_EXTENSIONS.add(".seq");
-    ReferenceSequenceFileFactory.FASTA_EXTENSIONS.add(".fas");
-    ReferenceSequenceFileFactory.FASTA_EXTENSIONS.add(".ffn");
   }
   
   public void setContigByIndex(int seqIndex) 

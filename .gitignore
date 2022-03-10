@@ -10,3 +10,4 @@ maven.properties
 maven-archiver
 .dribble.*
 .Dockerfile*
+*.jks
