@@ -627,6 +627,7 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 									<manifestEntries>
 										<Main-Class>${artemis.main.class}</Main-Class>
 										<Permissions>all-permissions</Permissions>
+										<Multi-Release>true</Multi-Release>
 									</manifestEntries>
 								</transformer>
 							</transformers>
@@ -668,6 +669,7 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 									<manifestEntries>
 										<Main-Class>${artemis.main.class}</Main-Class>
 										<Permissions>all-permissions</Permissions>
+										<Multi-Release>true</Multi-Release>
 									</manifestEntries>
 								</transformer>
 							</transformers>
@@ -709,6 +711,7 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 									<manifestEntries>
 										<Main-Class>${act.main.class}</Main-Class>
 										<Permissions>all-permissions</Permissions>
+										<Multi-Release>true</Multi-Release>
 									</manifestEntries>
 								</transformer>
 							</transformers>
@@ -750,6 +753,7 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 									<manifestEntries>
 										<Main-Class>${act.main.class}</Main-Class>
 										<Permissions>all-permissions</Permissions>
+										<Multi-Release>true</Multi-Release>
 									</manifestEntries>
 								</transformer>
 							</transformers>
@@ -791,6 +795,7 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 									<manifestEntries>
 										<Main-Class>${dnaplotter.main.class}</Main-Class>
 										<Permissions>all-permissions</Permissions>
+										<Multi-Release>true</Multi-Release>
 									</manifestEntries>
 								</transformer>
 							</transformers>
@@ -833,6 +838,7 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 									<manifestEntries>
 										<Main-Class>${dnaplotter.main.class}</Main-Class>
 										<Permissions>all-permissions</Permissions>
+										<Multi-Release>true</Multi-Release>
 									</manifestEntries>
 								</transformer>
 							</transformers>
@@ -875,6 +881,7 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 									<manifestEntries>
 										<Main-Class>${bamview.main.class}</Main-Class>
 										<Permissions>all-permissions</Permissions>
+										<Multi-Release>true</Multi-Release>
 									</manifestEntries>
 								</transformer>
 							</transformers>
@@ -917,6 +924,7 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 									<manifestEntries>
 										<Main-Class>${bamview.main.class}</Main-Class>
 										<Permissions>all-permissions</Permissions>
+										<Multi-Release>true</Multi-Release>
 									</manifestEntries>
 								</transformer>
 							</transformers>
