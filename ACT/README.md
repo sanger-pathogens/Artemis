@@ -18,10 +18,10 @@ ACT is packaged as part of the Artemis Software. The Artemis Software is availab
 
 The latest release of Artemis can be downloaded by clicking on the relevant link below:
 
-* [UNIX](https://github.com/sanger-pathogens/Artemis/releases/download/v18.1.0/artemis-unix-release-18.1.0.tar.gz)
-* [MacOS](https://github.com/sanger-pathogens/Artemis/releases/download/v18.1.0/artemis-macosx-release-18.1.0.dmg.gz)
-* [MacOS (CHADO) - for out of the box CHADO database connectivity](https://github.com/sanger-pathogens/Artemis/releases/download/v18.1.0/artemis-macosx-chado-release-18.1.0.dmg.gz)
-* [Windows](https://github.com/sanger-pathogens/Artemis/releases/download/v18.1.0/artemis-windows-release-18.1.0.zip)
+* [UNIX](https://github.com/sanger-pathogens/Artemis/releases/download/v18.2.0/artemis-unix-release-18.2.0.tar.gz)
+* [MacOS](https://github.com/sanger-pathogens/Artemis/releases/download/v18.2.0/artemis-macosx-release-18.2.0.dmg.gz)
+* [MacOS (CHADO) - for out of the box CHADO database connectivity](https://github.com/sanger-pathogens/Artemis/releases/download/v18.2.0/artemis-macosx-chado-release-18.2.0.dmg.gz)
+* [Windows](https://github.com/sanger-pathogens/Artemis/releases/download/v18.2.0/artemis-windows-release-18.2.0.zip)
 
 Or via [Bioconda](https://bioconda.github.io). Simply use:
 ```
