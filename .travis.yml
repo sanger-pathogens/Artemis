@@ -6,15 +6,9 @@ env:
 sudo: true
 matrix:
   include:
-    - jdk: oraclejdk12
-      env: 
-       - TEST_EXCLUDES="**/*_ESTest*"
-    - jdk: openjdk9
-      env: 
-       - TEST_EXCLUDES="**/*_ESTest*"
     - jdk: openjdk11
-      env: 
-       - TEST_EXCLUDES="**/*_ESTest*"
+    - jdk: oraclejdk12
+    - jdk: openjdk17
 cache:
   directories:
   - "${HOME}/dependencies"
@@ -32,5 +26,5 @@ script:
   - if [ "$RUN_TESTS" == "true" ]; then
       cd test;
       ln -s $(pwd)/../etc/log4j.properties .;
-      ./RunTravisTests.sh -e "$TEST_EXCLUDES" | tee test.log && [ -z "$(grep 'Failures:\s[^0]\|Errors:\s[^0]' test.log)" ];
+      ./RunTravisTests.sh | tee test.log && [ -z "$(grep 'Failures:\s[^0]\|Errors:\s[^0]' test.log)" ];
     fi

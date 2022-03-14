@@ -3,8 +3,7 @@ The Artemis Software is a set of software tools for genome browsing and annotati
 
 [![Build Status](https://travis-ci.org/sanger-pathogens/Artemis.svg?branch=master)](https://travis-ci.org/sanger-pathogens/Artemis)  
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-brightgreen.svg)](https://github.com/sanger-pathogens/Artemis/blob/master/LICENSE)  
-[![install with bioconda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg?style=flat-square)](http://bioconda.github.io/recipes/artemis/README.html)  
-![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/sangerpathogens/artemis)  
+[![install with bioconda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg?style=flat-square)](http://bioconda.github.io/recipes/artemis/README.html)   
 [![status](https://img.shields.io/badge/Bioinformatics-10.1093%2Fbioinformatics%2F16.10.944-brightgreen.svg)](https://doi.org/10.1093/bioinformatics/16.10.944)  
 [![status](https://img.shields.io/badge/Bioinformatics-10.1093%2Fbioinformatics%2Fbtr703-brightgreen.svg)](https://doi.org/10.1093/bioinformatics/btr703)   
 [![status](https://img.shields.io/badge/Bioinformatics-10.1093%2Fbioinformatics%2Fbtn529-brightgreen.svg)](https://doi.org/10.1093/bioinformatics/btn529)   
@@ -14,7 +13,7 @@ The Artemis Software is a set of software tools for genome browsing and annotati
 [![status](https://img.shields.io/badge/Bioinformatics-10.1093%2Fbioinformatics%2Fbtq010-brightgreen.svg)](https://doi.org/10.1093/bioinformatics/btq010)   
 [![status](https://img.shields.io/badge/Bioinformatics-10.1093%2Fbioinformatics%2Fbtn578-brightgreen.svg)](https://doi.org/10.1093/bioinformatics/btn578)  
 
-![GitHub Releases (by Release)](https://img.shields.io/github/downloads/sanger-pathogens/artemis/v18.1.0/total)
+![GitHub Releases (by Release)](https://img.shields.io/github/downloads/sanger-pathogens/artemis/v18.2.0/total)
 
 ## Contents
   * [Introduction](#introduction)

@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>uk.ac.sanger</groupId>
 	<artifactId>artemis</artifactId>
-	<version>18.1.0</version>
+	<version>18.2.0</version>
 	
 	<name>Artemis</name>
 	<description>Artemis is a free genome browser and annotation tool that allows visualisation of sequence features, next generation data and the results of analyses within the context of the sequence, and also its six-frame translation.
@@ -22,7 +22,7 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
   	</scm>
   
 	<organization>
-		<name>Sanger Institute</name>
+		<name>Wellcome Sanger Institute</name>
 		<url>http://www.sanger.ac.uk/</url>
 	</organization>
 	<url>http://sanger-pathogens.github.io/Artemis/</url>
@@ -32,7 +32,7 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 			<name>Kevin Pepper</name>
 			<email>artemis-help@sanger.ac.uk</email>
 			<url>http://www.sanger.ac.uk/science/tools/artemis</url>
-			<organization>Sanger Institute</organization>
+			<organization>Wellcome Sanger Institute</organization>
 			<organizationUrl>http://www.sanger.ac.uk/</organizationUrl>
 			<roles>
 				<role>developer</role>
@@ -66,7 +66,7 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
         
         <version.file>${project.basedir}/etc/versions</version.file>
         
-        <copyright.text>2019 Wellcome Trust Sanger Institute</copyright.text>
+        <copyright.text>2022 Wellcome Sanger Institute</copyright.text>
         
         <!-- Properties passed into Maven on command line -->
         <emboss.installation.root>${env.EMBOSS_ROOT}</emboss.installation.root>
@@ -97,13 +97,8 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 		<osx.bundler.jar>${project.basedir}/maven-lib/appbundler-1.0ea.jar</osx.bundler.jar>
 		<osx.bundler.volume>Artemis_Tools</osx.bundler.volume>
 		<osx.bundler.chado.volume>Artemis_Tools_Chado</osx.bundler.chado.volume>
-		      
-        <!-- Evosuite properties-->
-        <targetFolder>src/test/evosuite</targetFolder>
-        <evosuite.runtime.version>1.0.6</evosuite.runtime.version>
-        <evosuite.plugin.version>1.0.6</evosuite.plugin.version>
-        
-        <!-- Assembly folders -->
+	
+		<!-- Assembly folders -->
         <windows.assembly.folder>artemis</windows.assembly.folder>
         <unix.assembly.folder>artemis</unix.assembly.folder>
         <osx.assembly.folder>artemis</osx.assembly.folder>
@@ -153,7 +148,6 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
         
         <!--  Default build flag settings -->
         <skip.tests>false</skip.tests>
-        <evosuite.exclude.filter>**/*_ESTest*</evosuite.exclude.filter>
         <jarsigner.skip>true</jarsigner.skip>
         <skip.artifact.creation>true</skip.artifact.creation>
         <skip.coverage.reporting>true</skip.coverage.reporting>
@@ -216,14 +210,6 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 		    <version>2.2</version>
 		</dependency>
 		
-		<!-- This is now out of date - the package name has changed and so updating will mean many changes -->
-		<!-- https://mvnrepository.com/artifact/log4j/log4j -->
-		<dependency>
-		    <groupId>log4j</groupId>
-		    <artifactId>log4j</artifactId>
-		    <version>1.2.17</version>
-		</dependency>
-		
 		<!-- End of IBATIS jars (local) -->
 		
 		<dependency>
@@ -279,19 +265,32 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 		    <artifactId>biojava</artifactId>
 		    <version>1.6</version>
 		</dependency>
-		
-		<!-- Start of Picard jars -->
+
+		<!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-api -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>2.17.2</version>
+        </dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
+		<dependency>
+		    <groupId>org.apache.logging.log4j</groupId>
+		    <artifactId>log4j-core</artifactId>
+		    <version>2.17.2</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-1.2-api -->
+		<dependency>
+		    <groupId>org.apache.logging.log4j</groupId>
+		    <artifactId>log4j-1.2-api</artifactId>
+		    <version>2.17.2</version>
+		</dependency>
 		
 		<!-- https://mvnrepository.com/artifact/com.github.broadinstitute/picard -->
-		<!-- Latest as of 24th Sept 2018 -->
-		<!--  It contains two htsjdk fixes for CRAM index caching and the query mate issue -->
 		<dependency>
 		    <groupId>com.github.broadinstitute</groupId>
 		    <artifactId>picard</artifactId>
-		    <version>2.21.2</version>
+		    <version>2.26.11</version>
 		</dependency>
-		
-		<!-- End of Picard jars -->
 				
 		<!--  Testing only -->
 		
@@ -301,12 +300,6 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 		    <artifactId>junit</artifactId>
 		    <version>4.12</version>
 		    <scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.evosuite</groupId>
-			<artifactId>evosuite-standalone-runtime</artifactId>
-			<version>${evosuite.runtime.version}</version>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -325,36 +318,12 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 		
 		<!--  End of testing only -->
 		
-		<!-- Redundant dependencies..... -->
-		
-		<!-- Latest version as of 2005 -->
-		<!-- https://mvnrepository.com/artifact/jakarta-regexp/jakarta-regexp -->
-		<!--  dependency>
-		    <groupId>jakarta-regexp</groupId>
-		    <artifactId>jakarta-regexp</artifactId>
-		    <version>1.4</version>
-		</dependency-->
-		
-		<!-- https://mvnrepository.com/artifact/batik/batik-awt-util -->
-		<!--  dependency>
-		    <groupId>batik</groupId>
-		    <artifactId>batik-awt-util</artifactId>
-		    <version>1.6-1</version>
-		</dependency-->
-		
-		<!-- https://mvnrepository.com/artifact/batik/batik-xml -->
-		<!--  dependency>
-		    <groupId>batik</groupId>
-		    <artifactId>batik-xml</artifactId>
-		    <version>1.6-1</version>
-		</dependency-->
-		
 	</dependencies>
 	
 	<build>
 		<plugins>
 		
-			<!-- ===================   Evosuite needs at least Maven 3.1 ======================= -->
+			<!-- ===================   Enforce at least Maven 3.1 ======================= -->
 			
 			<plugin>
                 <inherited>true</inherited>
@@ -411,7 +380,7 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 			    <version>2.5.2</version>
 			    <executions>
 			        <execution>
-			        		<id>install-biojava-jar</id>
+			        	<id>install-biojava-jar</id>
 			            <phase>validate</phase>
 			            <goals>
 			                <goal>install-file</goal>
@@ -426,7 +395,7 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 			            </configuration>
 			        </execution>
 			        <execution>
-			        		<id>install-jemalign-jar</id>
+			        	<id>install-jemalign-jar</id>
 			            <phase>validate</phase>
 			            <goals>
 			                <goal>install-file</goal>
@@ -441,7 +410,7 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 			            </configuration>
 			        </execution>
 			        <execution>
-			        		<id>install-j2ssh-core-jar</id>
+			        	<id>install-j2ssh-core-jar</id>
 			            <phase>validate</phase>
 			            <goals>
 			                <goal>install-file</goal>
@@ -456,7 +425,7 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 			            </configuration>
 			        </execution>
 			        <execution>
-			        		<id>install-ibatis-jar</id>
+			        	<id>install-ibatis-jar</id>
 			            <phase>validate</phase>
 			            <goals>
 			                <goal>install-file</goal>
@@ -546,6 +515,7 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 					<showWarnings>true</showWarnings>
 					<!--  We use the release option for Java 9+ -->
         			<release>${java.compatibility.major.version}</release>
+					<forceJavacCompilerUse>true</forceJavacCompilerUse>
     			</configuration>
 			</plugin>
 					
@@ -567,32 +537,10 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 					</archive>
 				</configuration>
 			</plugin>
-            
-            <!-- =========================   Required for Evosuite test running ========================-->
-            
-            <plugin>
-			    <groupId>org.codehaus.mojo</groupId>
-			    <artifactId>build-helper-maven-plugin</artifactId>
-			    <version>3.0.0</version>
-			    <executions>
-			    		<execution>
-			       		<id>add-test-source</id>
-			       		<phase>generate-test-sources</phase>
-			       		<goals>
-			         		<goal>add-test-source</goal>
-			       		</goals>
-			       		<configuration>
-			          		<sources>
-			            			<source>${targetFolder}</source>
-			          		</sources>
-			       		</configuration>
-			  		</execution>
-			  	</executions>
-			</plugin>
 			
 			<!-- =======================================  Surefire Unit tests ==========================================-->
 			
-			<!-- Only currently runs default unit tests because of bug in Evosuite on Java 9+. -->
+			<!-- Runs unit tests. -->
 			<plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -604,11 +552,9 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
                     <reuseForks>false</reuseForks>
                     <testFailureIgnore>${ignore.test.failures}</testFailureIgnore>
                     <argLine>@{surefireArgLine}</argLine>
+                    <argLine>-Dlog4j.configurationFile=file:${project.build.testOutputDirectory}/log4j.properties</argLine>
           			<excludes>
- 						<!-- Exclude Evosuite tests -->
-						<exclude>**/*ESTest*</exclude>
-						
-						<!--  Exclude manual adhoc tests -->
+ 						<!--  Exclude manual adhoc tests -->
 						<exclude>**/RunBlastAtNCBITest.*</exclude>
 						<exclude>**/TestIbatisDAO.*</exclude>
 						<exclude>**/TestJdbcDAO.*</exclude>
@@ -681,6 +627,7 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 									<manifestEntries>
 										<Main-Class>${artemis.main.class}</Main-Class>
 										<Permissions>all-permissions</Permissions>
+										<Multi-Release>true</Multi-Release>
 									</manifestEntries>
 								</transformer>
 							</transformers>
@@ -722,6 +669,7 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 									<manifestEntries>
 										<Main-Class>${artemis.main.class}</Main-Class>
 										<Permissions>all-permissions</Permissions>
+										<Multi-Release>true</Multi-Release>
 									</manifestEntries>
 								</transformer>
 							</transformers>
@@ -763,6 +711,7 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 									<manifestEntries>
 										<Main-Class>${act.main.class}</Main-Class>
 										<Permissions>all-permissions</Permissions>
+										<Multi-Release>true</Multi-Release>
 									</manifestEntries>
 								</transformer>
 							</transformers>
@@ -804,6 +753,7 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 									<manifestEntries>
 										<Main-Class>${act.main.class}</Main-Class>
 										<Permissions>all-permissions</Permissions>
+										<Multi-Release>true</Multi-Release>
 									</manifestEntries>
 								</transformer>
 							</transformers>
@@ -845,6 +795,7 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 									<manifestEntries>
 										<Main-Class>${dnaplotter.main.class}</Main-Class>
 										<Permissions>all-permissions</Permissions>
+										<Multi-Release>true</Multi-Release>
 									</manifestEntries>
 								</transformer>
 							</transformers>
@@ -887,6 +838,7 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 									<manifestEntries>
 										<Main-Class>${dnaplotter.main.class}</Main-Class>
 										<Permissions>all-permissions</Permissions>
+										<Multi-Release>true</Multi-Release>
 									</manifestEntries>
 								</transformer>
 							</transformers>
@@ -929,6 +881,7 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 									<manifestEntries>
 										<Main-Class>${bamview.main.class}</Main-Class>
 										<Permissions>all-permissions</Permissions>
+										<Multi-Release>true</Multi-Release>
 									</manifestEntries>
 								</transformer>
 							</transformers>
@@ -971,6 +924,7 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 									<manifestEntries>
 										<Main-Class>${bamview.main.class}</Main-Class>
 										<Permissions>all-permissions</Permissions>
+										<Multi-Release>true</Multi-Release>
 									</manifestEntries>
 								</transformer>
 							</transformers>
@@ -1133,26 +1087,6 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 					</configuration>
 				</plugin>
 				
-				<!-- ============= Special task used on an ad-hoc basis to create EvoSuite tests ============ -->
-			
-				<plugin>
-			        <groupId>org.evosuite.plugins</groupId>
-			        <artifactId>evosuite-maven-plugin</artifactId>
-			        <version>${evosuite.plugin.version}</version>
-			        <executions>
-			        		<execution>
-			        			<id>create-evosuite-tests</id>
-	         				<goals> 
-	         					<goal>prepare</goal> 
-	         				</goals>
-	         				<phase>process-test-classes</phase>
-	      				</execution>
-	      			</executions>
-	      			<configuration>
-	      				<extraArgs>-Dsearch_budget=90 -Dconsider_main_methods=false -Duse_separate_classloader=false</extraArgs>
-	      			</configuration>
-				</plugin>
-				
 				<!-- =========== Check for plugin updates ================== -->
 				<!--        Use: mvn versions:display-plugin-updates         -->
 				<plugin>
@@ -1233,7 +1167,7 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 
 	    <profile>
 	        <id>old-java8-profile-deprecated</id>
-	        <!-- This profile runs all unit tests including Evosuite ones on Java 8. -->
+	        <!-- This profile runs all unit tests on Java 8. -->
 	        <!-- Note however that some code changes will now be needed to compile on Java 8. -->
 	        <activation>
       			<jdk>1.8</jdk>
@@ -1270,27 +1204,10 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
 		                    <testFailureIgnore>${ignore.test.failures}</testFailureIgnore>
 		                    <argLine>@{surefireArgLine}</argLine>
 		          			<excludes>
-		 		
-								<!--  Start of Evosuite excludes -->
-								<exclude>${evosuite.exclude.filter}</exclude>
-								<exclude>org/gmod/**</exclude>
-			          			<exclude>**/j2ssh/**</exclude>
-		    					<!--  End of Evosuite excludes -->
-		    						
-		    					<!--  Exclude manual adhoc tests -->
 								<exclude>**/RunBlastAtNCBITest.*</exclude>
 								<exclude>**/TestIbatisDAO.*</exclude>
 								<exclude>**/TestJdbcDAO.*</exclude>
-		    						
 		          			</excludes>
-		          			
-		          			<!-- Required when running Evosuite tests along with normal tests -->
-		          			<properties>
-								<property>
-									<name>listener</name>
-									<value>org.evosuite.runtime.InitializingListener</value>
-						      	</property>
-						    </properties>
 		                </configuration>
 		            </plugin>
 		            
@@ -1349,7 +1266,6 @@ Artemis is written in Java, and is available for UNIX, Macintosh and Windows sys
             </activation>
 	        <properties>
 	        		<skip.tests>false</skip.tests>
-        			<evosuite.exclude.filter></evosuite.exclude.filter>
         			<jarsigner.skip>false</jarsigner.skip>
         			<skip.artifact.creation>false</skip.artifact.creation>
         			<skip.coverage.reporting>false</skip.coverage.reporting>
