@@ -52,7 +52,7 @@ RUN rm -rf $ARTEMIS_BUILD_DIR && rm -rf ~/.m2
 
 # Install Blast+
 RUN mkdir -p $BLAST_INSTALL_DIR
-RUN curl --fail -L ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/ncbi-blast-2.9.0+-x64-linux.tar.gz | tar xzf - --strip-components=1 -C $BLAST_INSTALL_DIR
+RUN curl --fail -L ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/2.9.0/ncbi-blast-2.9.0+-x64-linux.tar.gz | tar xzf - --strip-components=1 -C $BLAST_INSTALL_DIR
 
 # Install Firefox for use with pfam etc (use firejail for increased security)
 RUN apt-get install --quiet --assume-yes libgtk-3-0 libdbus-glib-1-2 libxt6 firejail
