@@ -1,0 +1,10 @@
+.settings
+target
+*.jks
+maven.properties
+eclipse-classes
+**/.DS_Store
+Dockerfile
+.dribble.*
+**/*.log
+.git
