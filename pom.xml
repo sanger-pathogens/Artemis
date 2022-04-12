@@ -478,7 +478,7 @@
           <forkCount>${surefire.num.forks}</forkCount>
           <reuseForks>false</reuseForks>
           <testFailureIgnore>${ignore.test.failures}</testFailureIgnore>
-          <argLine>@{surefireArgLine} -Dlog4j.configuration=file:${project.build.testOutputDirectory}/log4j.properties</argLine>
+          <argLine>@{surefireArgLine} -Dlog4j.configurationFile=file:${project.build.testOutputDirectory}/log4j.properties</argLine>
           <excludes>
             <!--  Exclude manual adhoc tests -->
             <exclude>**/RunBlastAtNCBITest.*</exclude>
