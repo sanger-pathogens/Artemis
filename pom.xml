@@ -201,7 +201,7 @@
     <dependency>
       <groupId>commons-net</groupId>
       <artifactId>commons-net</artifactId>
-      <version>3.6</version>
+      <version>3.9.0</version>
     </dependency>
     <!--  NOTE: IBatis is no longer supported and very out of date -->
     <!--  Using the new postgres driver may cause issues - needs testing -->
