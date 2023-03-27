@@ -46,7 +46,7 @@ class SAMRecordFilter extends JFrame
     c.gridy = nrows++;
     
     // MAPQ
-    pane.add(new JLabel(" By Mappying Quality (mapq) cut-off:"),c);
+    pane.add(new JLabel(" By Mapping Quality (mapq) cut-off:"),c);
     
     c.gridy = nrows++;
     c.gridwidth = 1;
